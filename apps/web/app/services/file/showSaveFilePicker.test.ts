@@ -2,9 +2,9 @@
 import { showSaveFilePicker } from "@/services/file/showSaveFilePicker";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const downloads: { download: string; href: string }[] = [];
-
 describe(showSaveFilePicker, () => {
+  const downloads: { download: string; href: string }[] = [];
+
   afterEach(() => {
     delete window.showSaveFilePicker;
     vi.restoreAllMocks();

@@ -1,8 +1,7 @@
 // @vitest-environment happy-dom
+import { blocksBasicPlugin } from "@/services/webpageEditor/plugins/blocksBasicPlugin";
 import grapesJS, { usePlugin } from "grapesjs";
 import { describe, expect, test } from "vitest";
-
-import { blocksBasicPlugin } from "@/services/webpageEditor/plugins/blocksBasicPlugin";
 
 const createEditor = (flexGrid?: boolean) =>
   grapesJS.init({ headless: true, plugins: [usePlugin(blocksBasicPlugin, { flexGrid })], storageManager: false });

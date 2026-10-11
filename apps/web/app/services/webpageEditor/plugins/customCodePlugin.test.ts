@@ -1,22 +1,12 @@
 // @vitest-environment happy-dom
-import grapesJS from "grapesjs";
 import type { Component, Editor } from "grapesjs";
-import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { customCodePlugin } from "@/services/webpageEditor/plugins/customCodePlugin";
-
-const CUSTOM_CODE_ID = "custom-code";
-const CODE_PROPERTY = "custom-code-plugin__code";
-const DEFAULT_TEXT = "Insert here your custom code";
-const PLACEHOLDER_TEXT = "can't be rendered on the canvas";
-const SCRIPT_CODE = "<script>alert(1)</script><p>ok</p>";
-const PLAIN_CODE = "<p>ok</p>";
+import grapesJS from "grapesjs";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const createEditor = () => grapesJS.init({ headless: true, plugins: [customCodePlugin], storageManager: false });
 
-const addCustomCode = (editor: Editor) => editor.addComponents({ type: CUSTOM_CODE_ID })[0];
-
-// The canvas mounts no view headless, so the view's own methods run on a stand-in carrying the same members
 // The view classes are read from their registered type, whose view is typed any
 const readViewPrototype = (editor: Editor, type: string) => {
   const definition = editor.Components.getType(type);
@@ -24,17 +14,27 @@ const readViewPrototype = (editor: Editor, type: string) => {
   return view.prototype;
 };
 
-const mountStandInView = (editor: Editor, component: Component) => {
-  const prototype = readViewPrototype(editor, CUSTOM_CODE_ID);
-  return {
-    el: document.createElement("div"),
-    model: component,
-    onComponentsChange: prototype.onComponentsChange,
-    updatePlaceholder: prototype.updatePlaceholder,
-  };
-};
-
 describe(customCodePlugin, () => {
+  const CUSTOM_CODE_ID = "custom-code";
+  const CODE_PROPERTY = "custom-code-plugin__code";
+  const DEFAULT_TEXT = "Insert here your custom code";
+  const PLACEHOLDER_TEXT = "can't be rendered on the canvas";
+  const SCRIPT_CODE = "<script>alert(1)</script><p>ok</p>";
+  const PLAIN_CODE = "<p>ok</p>";
+
+  const addCustomCode = (editor: Editor) => editor.addComponents({ type: CUSTOM_CODE_ID })[0];
+
+  // The canvas mounts no view headless, so the view's own methods run on a stand-in carrying the same members
+  const mountStandInView = (editor: Editor, component: Component) => {
+    const prototype = readViewPrototype(editor, CUSTOM_CODE_ID);
+    return {
+      el: document.createElement("div"),
+      model: component,
+      onComponentsChange: prototype.onComponentsChange,
+      updatePlaceholder: prototype.updatePlaceholder,
+    };
+  };
+
   afterEach(() => {
     vi.useRealTimers();
   });

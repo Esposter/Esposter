@@ -1,11 +1,7 @@
 // @vitest-environment happy-dom
+import { countdownPlugin } from "@/services/webpageEditor/plugins/countdownPlugin";
 import grapesJS from "grapesjs";
 import { afterEach, describe, expect, test, vi } from "vitest";
-
-import { countdownPlugin } from "@/services/webpageEditor/plugins/countdownPlugin";
-
-const COUNTDOWN_ID = "countdown";
-const DIGIT_NAMES = ["day", "hour", "minute", "second"];
 
 const createEditor = () => grapesJS.init({ headless: true, plugins: [countdownPlugin], storageManager: false });
 
@@ -20,28 +16,31 @@ const localDayFromEpoch = (days: number) => {
 const toDateInput = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
-// The hooks the script writes to, as the component renders them. The test DOM drops the attributes grapesjs parses
-// From a component's markup string, so the fixture is written out here and the script is the real one
-const COUNTDOWN_MARKUP = `<span data-js="countdown">${["day", "hour", "minute", "second"]
-  .map((name) => `<div><div data-js="countdown-${name}"></div></div>`)
-  .join("")}</span><span data-js="countdown-endtext"></span>`;
-
-// Mounts a countdown the way the canvas does: its markup, then its script bound to the element
-const mountCountdown = (startfrom: string, endText = "EXPIRED") => {
-  const editor = createEditor();
-  const [component] = editor.addComponents({ endText, startfrom, type: COUNTDOWN_ID });
-  const script = component.get("script");
-  const element = document.createElement("div");
-  element.innerHTML = COUNTDOWN_MARKUP;
-  if (typeof script === "function") script.call(element, { endText, startfrom });
-  return element;
-};
-
 const readElement = (element: HTMLElement, name: string) => element.querySelector<HTMLElement>(`[data-js=${name}]`);
-const readDigits = (element: HTMLElement) =>
-  DIGIT_NAMES.map((name) => readElement(element, `countdown-${name}`)?.textContent);
 
 describe(countdownPlugin, () => {
+  const COUNTDOWN_ID = "countdown";
+  const DIGIT_NAMES = ["day", "hour", "minute", "second"];
+  // The hooks the script writes to, as the component renders them. The test DOM drops the attributes grapesjs parses
+  // From a component's markup string, so the fixture is written out here and the script is the real one
+  const COUNTDOWN_MARKUP = `<span data-js="countdown">${["day", "hour", "minute", "second"]
+    .map((name) => `<div><div data-js="countdown-${name}"></div></div>`)
+    .join("")}</span><span data-js="countdown-endtext"></span>`;
+
+  // Mounts a countdown the way the canvas does: its markup, then its script bound to the element
+  const mountCountdown = (startfrom: string, endText = "EXPIRED") => {
+    const editor = createEditor();
+    const [component] = editor.addComponents({ endText, startfrom, type: COUNTDOWN_ID });
+    const script = component.get("script");
+    const element = document.createElement("div");
+    element.innerHTML = COUNTDOWN_MARKUP;
+    if (typeof script === "function") script.call(element, { endText, startfrom });
+    return element;
+  };
+
+  const readDigits = (element: HTMLElement) =>
+    DIGIT_NAMES.map((name) => readElement(element, `countdown-${name}`)?.textContent);
+
   afterEach(() => {
     vi.useRealTimers();
   });

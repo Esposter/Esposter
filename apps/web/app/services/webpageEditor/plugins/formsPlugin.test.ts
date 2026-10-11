@@ -1,18 +1,17 @@
 // @vitest-environment happy-dom
+import { formsPlugin } from "@/services/webpageEditor/plugins/formsPlugin";
 import grapesJS, { usePlugin } from "grapesjs";
 import { describe, expect, test } from "vitest";
-
-import { formsPlugin } from "@/services/webpageEditor/plugins/formsPlugin";
-
-const FORM_TYPE = "form";
-const INPUT_TYPE = "input";
-const SELECT_OPTIONS_TRAIT = "select-options";
-const DEFAULT_BLOCK_IDS = ["form", "input", "textarea", "select", "button", "label", "checkbox", "radio"];
 
 const createEditor = (options: Parameters<typeof formsPlugin>[1] = {}) =>
   grapesJS.init({ headless: true, plugins: [usePlugin(formsPlugin, options)], storageManager: false });
 
 describe(formsPlugin, () => {
+  const FORM_TYPE = "form";
+  const INPUT_TYPE = "input";
+  const SELECT_OPTIONS_TRAIT = "select-options";
+  const DEFAULT_BLOCK_IDS = ["form", "input", "textarea", "select", "button", "label", "checkbox", "radio"];
+
   test("registers the eight upstream blocks in the Forms category", () => {
     expect.hasAssertions();
 
