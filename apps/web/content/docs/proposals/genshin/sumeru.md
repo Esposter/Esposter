@@ -3,15 +3,7 @@ title: Sumeru
 description: Proposal — Sumeru, the Dendro nation of wisdom, as two biomes. A rainforest of giant trees, mushrooms and plants that glow at night around a city grown into a colossal tree, and a desert of dunes, oases, sandstorms and the ruins of a desert king's civilisation. Two building kits: the city's tree-borne terraces, and the desert's sandstone ruins.
 model: claude-opus-5-5
 needs: [game-exports, parity-page]
-touches:
-  [
-    "packages/genshin-world/src/models/sumeru/**",
-    "packages/genshin-world/src/services/sumeru/**",
-    "packages/genshin-world/src/components/World/Screen/Index.fixture.ts",
-    "packages/genshin-world/parity/main.ts",
-    "packages/genshin-world/parity/models/ScreenFixture.ts",
-    "scripts/src/services/genshinParity/shared/openParityPage.ts",
-  ]
+touches: ["packages/genshin-world/src/services/sumeru/**"]
 ---
 
 # Sumeru
@@ -71,12 +63,7 @@ Sumeru City from the gate and from the Akademiya, Port Ormos, a Gandharva Ville 
 
 **Still to build, in order:**
 
-1. **Sumeru City's witness claims**, which `sumeru-every-renderer` on the roadmap waits on, in the shape [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions settle.
-   - `models/sumeru/SumeruPartFamily.ts` (`Ground`, `Buildings`) and `services/sumeru/SumeruPartFamilyMeshRegexMap.ts`, `Ground` matching `/^BigWorldTerrain_/u` and `Buildings` `/^Area_Xm_Build_/u`. `Xm` is the game's code for Sumeru, as Fontaine's export names its Sumeru plants `Area_Xm_Lvy_`; today's export has none of the city's houses, which the `sumeru-capital` re-extraction brings.
-   - `services/sumeru/SumeruUndrawnMeshRegexMap.ts` for what the export holds now (`~/Esposter/genshin-parity/extracted/sumeru/`): `props` `/^Area_(?:Dq|Common)_Prop_/u`, `commonBuildings` `/^Area_Common_Build_/u`, `plants` `/^Stages_(?:LYLvy|Lvy)/u`, `stagePlanes` `/^Stages_Plane_/u` and `effects` `/^Eff_/u`.
-   - `sumeru` joins the `World/Screen` fixture's `witnessComponents` with both maps.
-   - The proof is the Inventory pass, `pnpm -C scripts genshin:parity passes sumeru --pass Inventory`, at 0 renderers unclaimed on the witness as it stands.
-2. **The region's full palette**, sampled from its references once the surface pass reaches it.
+1. **The region's full palette**, sampled from its references once the surface pass reaches it.
 
 ## Sources
 
