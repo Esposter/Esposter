@@ -7,8 +7,8 @@ export const getSupersededCatalogEntries = (
 ): string[] =>
   catalogNames.flatMap((catalogName) => {
     // A catalog may name a package `constructor` or `toString`, which a plain lookup reads off the prototype
-    if (!Object.hasOwn(supersededPackageMap, catalogName)) return [];
-    const superseded = supersededPackageMap[catalogName];
+    const superseded = Object.hasOwn(supersededPackageMap, catalogName) ? supersededPackageMap[catalogName] : undefined;
+    if (!superseded) return [];
 
     return [`${catalogName} is superseded by ${superseded.successor} (${superseded.source})`];
   });
