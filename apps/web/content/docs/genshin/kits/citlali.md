@@ -16,8 +16,8 @@ Citlali's kit is one module, `createCitlaliKit`, avatar 10000107: her three stri
 ## Decisions
 
 - **The strikes land 10 frames after their hitmarks.** gcsim queues each strike with a 10-frame travel, so each lands at its hitmark plus 10, as the bow kits and Ororon do.
-- **Her strikes and charged attack give no poise.** gcsim gives them none, so they read 0, as Ororon's do. This is on the roadmap's manual verification list through Ororon's poise question.
-- **Her plunges are the shared table's, with no gcsim plunge file to time them.** The collision, low and high plunge read the proud group's 5, 6 and 7, and they land as their action starts with a zero animation, as the Ororon kit does. The roadmap's manual verification list asks about them.
+- **Her strikes and charged attack give no poise.** gcsim gives them none, so `citlaliKit.ts` stands them at 0, as Ororon's do. A recording of the game's poise on them would settle it: yes if they deal none, otherwise the amounts are the ones to set.
+- **Her plunges are the shared table's, with no gcsim plunge file to time them.** The collision, low and high plunge read the proud group's 5, 6 and 7, and they land as their action starts with a zero animation, as the Ororon kit does. A recording of her plunges landing at once with the shared reach would settle it; a later landing would need its frames.
 
 ## Key files
 
