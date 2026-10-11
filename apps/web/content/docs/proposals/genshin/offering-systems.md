@@ -30,7 +30,7 @@ Beside the Statues of The Seven, many areas keep an offering of their own: the F
 
 ## Scope and order
 
-**Built:** the rule, `offerItems`, shared with the statues; the bag's offer, `offerBagItems`, which takes the items out of the bag and pays the rewards in; the Frostbearing Tree's levels, read from the game's table; its place in Mondstadt, written from the official map; its items, which the items step publishes with their names and `buildItems`'s test asserts; and its prompt name, `GameTextKey.FrostbearingTree`, in every language, on the [Offering systems](/docs/genshin/offering-systems) page.
+**Built:** the rule, `offerItems`, shared with the statues; the bag's offer, `offerBagItems`, which takes the items out of the bag and pays the rewards in; the Frostbearing Tree's levels, read from the game's table; its place in Mondstadt, written from the official map; its items, which the items step publishes with their names, and whose inclusion `buildItems`'s test asserts; and its prompt name, `GameTextKey.FrostbearingTree`, in every language, on the [Offering systems](/docs/genshin/offering-systems) page.
 
 **This still adds:**
 
