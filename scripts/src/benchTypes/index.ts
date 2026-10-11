@@ -5,7 +5,7 @@ import { TYPE_BENCH_GLOB } from "#src/services/benchTypes/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runCommand } from "#src/services/timing/runCommand";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { InvalidOperationError } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -39,7 +39,9 @@ await runCommand(
       const driftedPaths = sourcePaths.filter((sourcePath) => isTypeBenchDrifted(sourcePath));
       if (driftedPaths.length > 0)
         throw new InvalidOperationError(
-          `Type benches drifted from their committed results (run pnpm bench:types -u): ${driftedPaths.join(", ")}`,
+          Operation.Read,
+          "bench:types",
+          `drifted from their committed results (run pnpm bench:types -u): ${driftedPaths.join(", ")}`,
         );
     },
   }),
