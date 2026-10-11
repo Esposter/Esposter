@@ -1,5 +1,6 @@
+import type { DuplicateCodeClone } from "#src/models/sweeps/duplicateCode/DuplicateCodeClone";
 import type { DuplicateCodeFinding } from "#src/models/sweeps/duplicateCode/DuplicateCodeFinding";
-import type { detectClones as DetectClones } from "jscpd";
+import type { DuplicateCodeFragment } from "#src/models/sweeps/duplicateCode/DuplicateCodeFragment";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import {
@@ -10,27 +11,79 @@ import {
   MIN_DUPLICATE_TOKENS,
 } from "#src/services/sweeps/duplicateCode/constants";
 import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindings";
-import { readFileSync } from "node:fs";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
-import { resolve, sep } from "node:path";
+import { tmpdir } from "node:os";
+import { join, resolve, sep } from "node:path";
 
-// jscpd's ESM build imports `colors/safe` by name, which Node cannot read off that CommonJS module, so the package is
-// Loaded through its `require` entry, which exposes the same API. The types come from the ESM declarations above.
-const require = createRequire(import.meta.url);
-// oxlint-disable-next-line typescript/no-unsafe-assignment -- the `require` entry is untyped, and the type is taken from the declarations above
-const { detectClones }: { detectClones: typeof DetectClones } = require("jscpd");
+interface JscpdReport {
+  duplicates: { firstFile: JscpdReportFragment; format: string; secondFile: JscpdReportFragment }[];
+}
 
-// The scan runs in memory with no reporter, so it writes nothing to disk and prints nothing of jscpd's own. Its paths
-// Are forward-slashed, since jscpd finds no file under a Windows backslash path and reports zero clones without an error.
+interface JscpdReportFragment {
+  end: number;
+  name: string;
+  start: number;
+}
+
+// The `jscpd` package is the Rust engine's launcher, with no JavaScript API, so the scan runs as its command line and
+// Reads the JSON report it writes. The launcher picks the platform binary, and `--absolute` keeps every fragment's name
+// The absolute path the finder relates to the repository root.
+const JSCPD_LAUNCHER = createRequire(import.meta.url).resolve("jscpd/run-jscpd.js");
+
+// A fragment's name is its path, behind Windows' verbatim `\\?\` prefix, and a Vue file's name ends in `:` and the
+// Format its script was read as. A drive's `:` is never followed by letters, so the suffix matches only the format.
+const WINDOWS_VERBATIM_PREFIX_REGEX = /^\\\\\?\\/u;
+const FORMAT_SUFFIX_REGEX = /:[a-z]+$/u;
+const getSourceId = ({ name }: JscpdReportFragment) =>
+  name.replace(WINDOWS_VERBATIM_PREFIX_REGEX, "").replace(FORMAT_SUFFIX_REGEX, "");
+
+const toDuplicateCodeFragment = (fragment: JscpdReportFragment): DuplicateCodeFragment => ({
+  end: { line: fragment.end },
+  sourceId: getSourceId(fragment),
+  start: { line: fragment.start },
+});
+
+// The JSON report goes into a temporary directory that is removed once it is read, so the scan leaves nothing behind.
 export const readDuplicateCodeFindings = async (): Promise<DuplicateCodeFinding[]> => {
-  const clones = await detectClones({
-    format: DUPLICATE_CODE_FORMATS,
-    ignore: DUPLICATE_CODE_IGNORED_GLOBS,
-    minLines: MIN_DUPLICATE_LINES,
-    minTokens: MIN_DUPLICATE_TOKENS,
-    path: DUPLICATE_CODE_SCOPES.map((scope) => resolve(REPOSITORY_ROOT, scope).split(sep).join("/")),
-    reporters: [],
-    silent: true,
-  });
+  const outputDirectory = mkdtempSync(join(tmpdir(), "duplicate-code-"));
+  const scopes = DUPLICATE_CODE_SCOPES.map((scope) => resolve(REPOSITORY_ROOT, scope).split(sep).join("/"));
+  const result = spawnSync(
+    process.execPath,
+    [
+      JSCPD_LAUNCHER,
+      ...scopes,
+      "--absolute",
+      "--format",
+      DUPLICATE_CODE_FORMATS.join(","),
+      "--ignore",
+      DUPLICATE_CODE_IGNORED_GLOBS.join(","),
+      "--min-lines",
+      String(MIN_DUPLICATE_LINES),
+      "--min-tokens",
+      String(MIN_DUPLICATE_TOKENS),
+      "--no-gitignore",
+      "--no-tips",
+      "--output",
+      outputDirectory,
+      "--reporters",
+      "json",
+      "--silent",
+    ],
+    { encoding: "utf8" },
+  );
+  if (result.status !== 0) {
+    rmSync(outputDirectory, { force: true, recursive: true });
+    throw new InvalidOperationError(Operation.Read, "jscpd", result.stderr || result.stdout);
+  }
+
+  const report = JSON.parse(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8")) as JscpdReport;
+  rmSync(outputDirectory, { force: true, recursive: true });
+  const clones: DuplicateCodeClone[] = report.duplicates.map(({ firstFile, secondFile }) => ({
+    duplicationA: toDuplicateCodeFragment(firstFile),
+    duplicationB: toDuplicateCodeFragment(secondFile),
+  }));
   return getDuplicateCodeFindings(clones, (sourceId) => readFileSync(sourceId, "utf8"));
 };
