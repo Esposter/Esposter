@@ -66,16 +66,16 @@ describe(createDahliaKit, () => {
       normalAttackHitmarkFrames: DAHLIA_KIT.normalAttacks.map(({ hits }) =>
         Math.round(takeOne(hits).hitmarkSeconds * 60),
       ),
+      skillHitmarkFrames: DAHLIA_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
       skillHoldHitmarkFrames: takeOne(DAHLIA_KIT.elementalSkillHolds ?? []).action.hits.map(({ hitmarkSeconds }) =>
         Math.round(hitmarkSeconds * 60),
       ),
-      skillHitmarkFrames: DAHLIA_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
     }).toStrictEqual({
       burstHitmarkFrames: [30],
       chargedAttackHitmarkFrames: [10, 10],
       normalAttackHitmarkFrames: [15, 13, 14, 21],
-      skillHoldHitmarkFrames: [28],
       skillHitmarkFrames: [27],
+      skillHoldHitmarkFrames: [28],
     });
   });
 
@@ -88,6 +88,7 @@ describe(createDahliaKit, () => {
       combatant,
       kitEffectState,
       party: createParty([DAHLIA_CHARACTER_ID]),
+      random: () => 0,
     });
     const field = takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
     expect(field.nextTickSeconds).toBeCloseTo(31 / 60);

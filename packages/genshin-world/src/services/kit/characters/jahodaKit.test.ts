@@ -62,10 +62,10 @@ describe(createJahodaKit, () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
     const combatant = createJahodaCombatant();
-    JAHODA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    JAHODA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     expect(kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["field", "status", "field"]);
     const drain = takeOne(JAHODA_KIT.elementalSkillChain?.followUps ?? []);
-    drain.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    drain.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     expect(kitEffectState.effects).toHaveLength(1);
     const [summon] = kitEffectState.effects;
     expect(summon?.kind === "summon" && takeOne(summon.hits)).toStrictEqual({

@@ -39,6 +39,7 @@ describe(createIneffaKit, () => {
       combatant: createIneffaCombatant(),
       kitEffectState,
       party: createParty([INEFFA_CHARACTER_ID]),
+      random: () => 0,
     });
     return kitEffectState.effects;
   };
@@ -114,6 +115,7 @@ describe(createIneffaKit, () => {
       combatant: createIneffaCombatant(),
       kitEffectState,
       party: createParty([INEFFA_CHARACTER_ID]),
+      random: () => 0,
     });
     const birgittas = kitEffectState.effects.filter(
       (effect): effect is KitSummon => effect.kind === "summon" && effect.id === "birgitta",
@@ -132,6 +134,7 @@ describe(createIneffaKit, () => {
       combatant,
       kitEffectState,
       party: createParty([INEFFA_CHARACTER_ID]),
+      random: () => 0,
     });
     const field = takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
     expect(field.nextTickSeconds).toBeCloseTo(4 / 60);

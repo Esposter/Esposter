@@ -35,7 +35,7 @@ describe(createColumbinaKit, () => {
   const party = createParty([COLUMBINA_CHARACTER_ID]);
   // The effects a skill's press adds, as the kit's effects hold them
   const startEffects = (kitEffectState: KitEffectState): void =>
-    COLUMBINA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    COLUMBINA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
