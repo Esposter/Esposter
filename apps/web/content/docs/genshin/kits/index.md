@@ -231,6 +231,7 @@ flowchart TD
 | [Kokomi](/docs/genshin/kits/kokomi)                 | Bake-Kurage and Nereid's Ascension                                   |
 | [Kujou Sara](/docs/genshin/kits/kujou-sara)         | The Cover and its Ambush                                             |
 | [Kuki](/docs/genshin/kits/kuki)                     | Grass Ring of Sanctification                                         |
+| [Layla](/docs/genshin/kits/layla)                   | Nights of Formal Focus and Starlight Slug                            |
 | [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                        |
 | [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                     |
 | [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                            |
