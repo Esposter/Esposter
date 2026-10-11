@@ -1,4 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Element } from "#src/models/Element";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
@@ -43,6 +44,7 @@ export const props = {
   member: {
     burstCooldown: 0,
     burstCooldownSeconds: 0,
+    element: Element.Anemo,
     energy: 14.2,
     energyCost: 60,
     health: 17286,

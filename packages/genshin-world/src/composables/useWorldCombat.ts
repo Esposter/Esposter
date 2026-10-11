@@ -122,6 +122,7 @@ export const useWorldCombat = ({
     return {
       burstCooldown: partyMember.burstCooldownSeconds,
       burstCooldownSeconds: combatant.kit.burstCooldownSeconds,
+      element: combatant.element,
       energy: partyMember.energy,
       energyCost: combatant.kit.burstEnergyCost,
       health: partyMember.healthShare * combatant.attributes.maxHealth,

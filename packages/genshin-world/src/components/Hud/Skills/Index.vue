@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { Element } from "#src/models/Element";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
 import { ACTION_BUTTON_BACKGROUND } from "#src/services/hud/constants";
+import { ElementBurstColorsMap } from "#src/services/hud/ElementBurstColorsMap";
 import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { InputAction } from "genshin-engine";
@@ -12,6 +14,8 @@ interface Props {
   // The member on the field's burst: the seconds left of its cooldown and its whole cooldown, its energy and its cost
   burstCooldown: number;
   burstCooldownSeconds: number;
+  // The element the burst's fill and charged disc are coloured in, none for a member the roster's table gives none
+  element?: Element;
   energy: number;
   energyCost: number;
   // The game's words in the reader's language
@@ -27,6 +31,7 @@ interface Props {
 const {
   burstCooldown,
   burstCooldownSeconds,
+  element,
   energy,
   energyCost,
   gameText,
@@ -37,6 +42,7 @@ const {
 } = defineProps<Props>();
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
+const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
 // The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
 // Kit's own, as a stance's end sets
 const getCooldownShare = (secondsLeft: number, seconds: number) =>
@@ -50,7 +56,8 @@ onUnmounted(() => {
 
 <template>
   <!-- The skill and burst buttons at the bottom right. A cooldown darkens its button by the share left and counts its
-       Seconds down to a tenth, and the burst fills with its energy from the foot, lit once full.
+       Seconds down to a tenth, and the burst fills with its energy from the foot in its element's colour, the whole disc
+       In that colour once full.
        Pressing and holding one holds its key, as the touch controls hold theirs, and Enter or Space holds a focused one's,
        Stopped before the world's own keys hear them -->
   <div class="skills" :class="{ touch: isTouch }">
@@ -72,6 +79,8 @@ onUnmounted(() => {
       :class="{ ready: energy >= energyCost && burstCooldown <= 0 }"
       :aria-label="gameText[GameTextKey.ElementalBurst]"
       :style="{
+        '--burst-bright': burstColors?.bright,
+        '--burst-charged': burstColors?.charged,
         '--cooldown': getCooldownShare(burstCooldown, burstCooldownSeconds),
         '--energy': Math.min(energy / energyCost, 1),
       }"
@@ -116,23 +125,29 @@ onUnmounted(() => {
   height: calc(var(--unit) * 76);
 }
 
+/* The burst's fill rises in its element's bright tone at a third over the disc, the share `ElementBurstColorsMap` was
+   Solved at, and a member with no element fills in white */
 .burst {
+  --burst-fill: color-mix(in srgb, var(--burst-bright, #fff) 33%, transparent);
+
   width: calc(var(--unit) * 104);
   height: calc(var(--unit) * 104);
   background:
     conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), transparent 0),
-    linear-gradient(to top, rgb(255 214 120 / 0.8) calc(var(--energy) * 100%), rgb(23 29 41 / 0.45) 0);
+    linear-gradient(to top, var(--burst-fill) calc(var(--energy) * 100%), rgb(23 29 41 / 0.45) 0);
 }
 
-.ready {
-  box-shadow: 0 0 calc(var(--unit) * 16) rgb(255 214 120 / 0.9);
+/* Charged, the disc is its element's charged tone, ringed and lit in its bright one */
+.burst.ready {
+  border-color: var(--burst-bright, #fff);
+  background: var(--burst-charged, #fff);
+  box-shadow: 0 0 calc(var(--unit) * 16) var(--burst-bright, #fff);
 }
 
 /* The touch layout's skill and burst as `hud-world-pickup` shows them, each a disc as the action buttons' are, measured
    In that recording's pixels from the right edge and the foot of `GrpActionBtn` at 1080 / 934 units a pixel: the
    Skill's of radius 61 centred 482.6 in and 129 up, and the burst's of radius 44.5 at 629.1 in and 93.5 up. Provisional:
-   Each one's own icon, the character's, and the burst's fill, drawn in the gold of the keys' layout where the game fills
-   With the element's colour */
+   Each one's own icon, the character's */
 .touch .skill,
 .touch .burst {
   position: absolute;
@@ -154,7 +169,11 @@ onUnmounted(() => {
   height: calc(var(--unit) * 102.9);
   background:
     conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), transparent 0),
-    linear-gradient(to top, rgb(255 214 120 / 0.8) calc(var(--energy) * 100%), v-bind(ACTION_BUTTON_BACKGROUND) 0);
+    linear-gradient(to top, var(--burst-fill) calc(var(--energy) * 100%), v-bind(ACTION_BUTTON_BACKGROUND) 0);
+}
+
+.touch .burst.ready {
+  background: var(--burst-charged, #fff);
 }
 
 .cooldown {
