@@ -1,7 +1,6 @@
 import type { MachineHeartbeat } from "#src/models/fleet/MachineHeartbeat";
 
-import { lastPushSchema } from "#src/models/queue/LastPush";
-import { checkIsInstant } from "#src/services/shared/checkIsInstant";
+import { lastPushSchema } from "#src/models/fleet/LastPush";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
 
