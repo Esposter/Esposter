@@ -125,7 +125,7 @@ The limits are declared in `apps/web/shared/services/app/constants.ts` (`MAX_REQ
 
 ## Sources
 
-- [Request Size Limiter](https://nuxt-security.vercel.app/middleware/request-size-limiter) (nuxt-security) — the documented 2,000,000-byte default for a request body, which is `MAX_REQUEST_SIZE`, and the limiter a staged save never trips.
+- [Request Size Limiter](/docs/nuxt-security-module) (nuxt-security-module) — the module's 2,000,000-byte default for a request body, which is `MAX_REQUEST_SIZE`, and the limiter a staged save never trips.
 - [Public networking specs and limits](https://docs.railway.com/networking/public-networking/specs-and-limits) (Railway) — the host sets no body size limit of its own, only a five-minute window for a body to finish uploading, so the security module's limit is the only one in the request path.
 - [Size limits in Google Drive](https://support.google.com/drive/answer/37603) (Google) — a spreadsheet up to 100 MB, the reference product's ceiling `MAX_RESOURCE_CONTENT_SIZE` takes.
 - [Valet Key pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/valet-key) (Microsoft Azure Architecture Center) — the key cannot bound the size written, so the application checks the size once the upload completes, which is what the staged commit's checks do.

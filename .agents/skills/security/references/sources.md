@@ -92,7 +92,7 @@ The index is https://cheatsheetseries.owasp.org/Glossary.html. These are the pag
 
 ## Vendor guides for this stack
 
-- nuxt-security — https://nuxt-security.vercel.app/ — the module behind the CSP and headers.
+- nuxt-security-module — `apps/web/content/docs/nuxt-security-module/` — the module behind the CSP and headers, and the audit of the upstream it replaced.
 - tRPC authorization — https://trpc.io/docs/server/authorization — middleware-based authorization, the pattern the procedure builders follow.
 - better-auth session management — https://www.better-auth.com/docs/concepts/session-management — cookie sessions and their expiry.
 - Drizzle `sql` operator — https://orm.drizzle.team/docs/sql — which interpolations parameterize and what `sql.raw` does not.

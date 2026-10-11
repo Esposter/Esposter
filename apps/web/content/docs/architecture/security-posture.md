@@ -1,11 +1,11 @@
 ---
 title: Security posture
-description: How nuxt-security is configured for the app — the CSP, permissions policy, request size limits, and the two features deliberately turned off.
+description: How nuxt-security-module is configured for the app — the CSP, permissions policy, request size limits, and the two features deliberately turned off.
 ---
 
 # Security Posture
 
-The app's runtime hardening is [`nuxt-security`](https://nuxt-security.vercel.app), registered in `configuration/modules.ts`. It appears only in the production branch of that list: the Vitest branch is an allowlist of the modules a unit test actually exercises, and security headers are something no test asserts, so including the module would only slow config resolution. Nothing about the posture is therefore observable from a unit test — it is a property of a running server.
+The app's runtime hardening is [`nuxt-security-module`](/docs/nuxt-security-module), which replaces nuxt-security and is registered in `configuration/modules.ts`. It appears only in the production branch of that list: the Vitest branch is an allowlist of the modules a unit test actually exercises, and security headers are something no test asserts, so including the module would only slow config resolution. Nothing about the posture is therefore observable from a unit test — it is a property of a running server.
 
 This page covers the **app**. The Azure estate's posture — network exposure, managed identities, key handling — is owned by the [cost and security posture](/docs/infra/cost-and-security-posture).
 
@@ -13,9 +13,9 @@ This page covers the **app**. The Azure estate's posture — network exposure, m
 
 ```mermaid
 flowchart TD
-  modules["configuration/modules.ts — production branch only"] -->|"registers nuxt-security"| module["nuxt-security"]
+  modules["configuration/modules.ts — production branch only"] -->|"registers nuxt-security-module"| module["nuxt-security-module"]
   config["configuration/security.ts"] -->|"headers, requestSizeLimiter"| module
-  plugin["server/plugins/security.ts"] -->|"nuxt-security:routeRules hook"| module
+  plugin["server/plugins/security.ts"] -->|"nuxt-security-module:routeRules hook"| module
   module -->|"Content-Security-Policy and Permissions-Policy"| response["every response"]
   module -->|"rejects an oversized body before the handler"| upload["request size limit"]
   response --> browser["browser enforces the policy"]
@@ -25,7 +25,7 @@ flowchart TD
   rules["configuration/routeRules.ts"] -->|"Cross-Origin-Embedder-Policy on /_nuxt/**"| worker["a dedicated worker's script"]
   worker --> browser
   config -.->|"rateLimiter false"| rate["app's own rate limiting"]
-  config -.->|"xssValidator false"| xss["rich text sanitised at its Zod boundary"]
+  config -.->|"no XSS validator in the module"| xss["rich text sanitised at its Zod boundary"]
 ```
 
 ### Content Security Policy
@@ -52,7 +52,9 @@ The module's `sri` is left at its default, so every script the page loads carrie
 
 ### The messages route override
 
-`server/plugins/security.ts` hooks `nuxt-security:routeRules` and widens `img-src` to include `https:` under the messages route, merged over whatever rules already apply via `defu`. Members post arbitrary image links to each other, and an allowlist cannot enumerate the web; every other route keeps the narrow whitelist, so the widening is scoped to exactly the surface that needs it.
+`connect-src` and `media-src` are written in the security config as well, since `default-src 'self'` would otherwise cover them: `connect-src` names the Azure container, the LiveKit socket and its HTTPS region lookup, Web PubSub, and the two hosts `@livekit/track-processors` fetches its wasm and segmenter model from; `media-src` names the container and `blob:`. Each entry carries its reason beside it in `configuration/security.ts`, and `configuration/security.test.ts` pins them.
+
+`server/plugins/security.ts` hooks `nuxt-security-module:routeRules` and widens `img-src` to include `https:` under the messages route, merged over whatever rules already apply via `defu`. Members post arbitrary image links to each other, and an allowlist cannot enumerate the web; every other route keeps the narrow whitelist, so the widening is scoped to exactly the surface that needs it.
 
 The accepted cost is a privacy one, and it is accepted rather than unnoticed: a rendered image is a request the viewer's browser makes to whatever origin the poster chose, so that origin learns every viewer's IP address and the moment they opened the room. Nothing mitigates it today. The only real fix is proxying message images through the app, which trades the leak for bandwidth, a cache and a fetch-side SSRF surface — worth revisiting when rooms hold people who do not already trust each other, not before.
 
@@ -67,7 +69,7 @@ Paths relative to `apps/web`.
 
 | File                                          | Role                                                                 |
 | --------------------------------------------- | -------------------------------------------------------------------- |
-| `configuration/modules.ts`                    | registers `nuxt-security` in the production module list only         |
+| `configuration/modules.ts`                    | registers `nuxt-security-module` in the production module list only  |
 | `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features      |
 | `configuration/security.test.ts`              | the XSS validator measurement that keeps it off                      |
 | `configuration/development.ts`                | the dev-only `img-src` entries for the DevTools button and tab icons |

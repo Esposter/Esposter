@@ -69,7 +69,7 @@ The second is [trpc-nuxt-module](/docs/trpc-nuxt-module), the shape an absorptio
 
 The third is [pitch-transcription](/docs/pitch-transcription), the shape an absorption takes around a trained model. `@spotify/basic-pitch` held every consumer to an old TensorFlow.js major because it loaded and ran its network through its own copy; the replacement keeps the engine as a peer and the weights as shipped data, and takes back only the layer between them — the windows, the model call and the note creation — following the model repository wherever the port had drifted from it.
 
-The fourth, in progress, is [nuxt-security-module](/docs/nuxt-security-module), the first security-shaped package absorbed under the exception the stop list below now carries. Its upstream audit is complete and its code is the next phase.
+The fourth is [nuxt-security-module](/docs/nuxt-security-module), the first security-shaped package absorbed under the exception the stop list below now carries. The app runs it in place of nuxt-security.
 
 ## The stop list
 

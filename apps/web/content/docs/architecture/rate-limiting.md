@@ -54,7 +54,7 @@ Three procedure builders sit on top: `standardRateLimitedProcedure` (public, sta
 ## Notes
 
 - better-auth's own endpoints are budgeted to match: `server/auth.ts` sets its `rateLimit.max` and `rateLimit.window` from `standardRateLimiter.points` and `standardRateLimiter.duration`, so the numbers stay in one place even though better-auth keeps its own counters.
-- `nuxt-security` ships a rate limiter and it is explicitly turned off (`rateLimiter: false`) — see [security posture](/docs/architecture/security-posture). This page describes the only rate limiting the app performs.
+- `nuxt-security-module` ships a rate limiter and it is explicitly turned off (`rateLimiter: false`) — see [security posture](/docs/architecture/security-posture). This page describes the only rate limiting the app performs.
 
 ## Key files
 
