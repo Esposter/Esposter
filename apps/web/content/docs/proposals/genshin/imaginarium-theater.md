@@ -16,7 +16,7 @@ touches:
 
 The Imaginarium Theater is the game's roguelike combat challenge, held in the Mondstadt Library's Theater Lobby. Each season names three elements and a few characters; a player brings a cast of their own of those elements and plays through acts, each character able to perform twice, choosing events between battles that add characters or blessings. It is fought with the [character kits](/docs/proposals/genshin/character-kits) and opens at [Adventure Rank](/docs/proposals/genshin/adventure-rank) 35 with its quest, so this page waits on both.
 
-The season schedule, the difficulties and their level floors, Vigor, Blessing Level, the opening character's bonus and the Stella rewards are built, as the [as-built page](/docs/genshin/imaginarium-theater) names. What stays here is the cast's makeup, the stage, the acts and events, and the screen.
+The [as-built page](/docs/genshin/imaginarium-theater) holds the season schedule, the difficulties and their level floors, Vigor, Blessing Level, the opening character's bonus and the Stella rewards. What stays here is the cast's makeup, the stage, the acts and events, and the screen.
 
 ## Decisions
 
@@ -24,7 +24,7 @@ The season schedule, the difficulties and their level floors, Vigor, Blessing Le
 - **Events between battles.** A Battle Event gives Fantasia Flowers and the choice of one of two Alternate Cast members to join the Principal Cast. The other events are paid in Fantasia Flowers: a Companion event invites a character, a Brilliant Blessing grants a reaction's buff, and a Mystery Cache grants an effect, some for the worse. Events can be rerolled, and a run can be rewound to the end of its last boss stage a limited number of times.
 - **Vigor comes back only from a Mystery Cache's option.** A character with none left cannot perform again this run.
 - **Stella for each act's star challenge.** An act's star challenge, enemies defeated in time, a number defeated, or a monolith kept above its health, gives one Stella. The run's Stellas are counted and their rewards given as the built rule counts them.
-- **Five difficulties**, each with its cast size, level floor and acts, from the season's tables. The level floors are built; the cast sizes and acts are waiting on their table fields to be named.
+- **Five difficulties**, each with its cast size, level floor and acts, from the season's tables. The cast sizes and acts wait on their table fields to be named.
 - **A season's cast is the role combat avatar table's.** `RoleCombatAvatarConfigExcelConfigData`, joined to a schedule row by its `avatarConfigId`, holds each season's three elements, its six opening characters, its four special guests and the openers' trial versions, under the dump's obfuscated keys at this revision: `OELGONFGFGP` the element codes (three, then a trailing 0), `KHOAOIDDJGB` the openers' avatar ids, `DIKGJFHIMIN` the guests' and `JAKBMPALEEN` the trial versions'. The codes read 2 Pyro, 3 Hydro, 4 Dendro, 5 Electro, 6 Cryo, 7 Anemo and 8 Geo: in all 26 rows the master holds, the openers' own elements, two to an element, are exactly the season's three. The writer keeps that check, so a renamed key or a shifted code fails the run rather than writing a wrong cast.
 - **The cast's floor is the difficulty's.** A character joins the Alternate Cast when its element is one of the season's three or it is one of the season's special guests, whatever its element, and its level is at least the difficulty's level floor, which the difficulty slice already holds.
 - **What this leaves out.** The Supporting Cast, characters lent by friends, needs other players and is left with [co-op](/docs/genshin/deferred/co-op).
@@ -45,8 +45,6 @@ flowchart TD
 ```
 
 ## Scope and order
-
-**Built:** the rules and schedule, as the [as-built page](/docs/genshin/imaginarium-theater) states.
 
 **This adds, in order:**
 

@@ -1,6 +1,6 @@
 ---
 title: Map unlocking
-description: Proposal — what is left of the map's unlocking past the statues. A Teleport Waypoint or a domain's entrance is unlocked by reaching it, its first unlock rewarded from the game's table, a waypoint the game hides until a further step stays hidden, and a locked waypoint within 30 metres is pointed to. The statues' unlocking, the filled areas and the jumps are built ([map unlocking](/docs/genshin/map-unlocking)).
+description: Proposal — what is left of the map's unlocking past the statues. A Teleport Waypoint or a domain's entrance is unlocked by reaching it, its first unlock rewarded from the game's table, a waypoint the game hides until a further step stays hidden, and a locked waypoint within 30 metres is pointed to.
 model: claude-haiku-5-5
 needs: [media-engine]
 touches:
@@ -13,7 +13,7 @@ touches:
 
 # Map unlocking
 
-The statues' unlocking is built, as the [map unlocking](/docs/genshin/map-unlocking) page records. What is left is the rest of the game's places. They wait on the [exploring](/docs/proposals/genshin/exploring) proposal, which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point, and on the [interaction](/docs/genshin/interaction) prompts a waypoint and a domain are unlocked through.
+The [map unlocking](/docs/genshin/map-unlocking) page holds the statues' unlocking, the filled areas and the jumps. What is left is the rest of the game's places. They wait on the [exploring](/docs/proposals/genshin/exploring) proposal, which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point, and on the [interaction](/docs/genshin/interaction) prompts a waypoint and a domain are unlocked through.
 
 ## Decisions
 
@@ -34,8 +34,6 @@ flowchart TD
 ```
 
 ## Scope and order
-
-**Built:** the statues' unlocking, the filled areas, and the jumps and revives filtered to what is unlocked ([map unlocking](/docs/genshin/map-unlocking)).
 
 **This adds, in order:**
 
