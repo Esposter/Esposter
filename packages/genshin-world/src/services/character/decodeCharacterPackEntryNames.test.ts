@@ -29,6 +29,14 @@ describe(decodeCharacterPackEntryNames, () => {
     ]);
   });
 
+  // Ningguang's release writes "凝光/表情" with 表's 0x5C trail byte rewritten as a slash
+  test("restores a Shift-JIS trail byte an archiver rewrote as a separator", () => {
+    expect.hasAssertions();
+    expect(
+      decodeCharacterPackEntryNames([getLatin1Name([0x8b, 0xc3, 0x8c, 0xf5, 0x2f, 0x95, 0x2f, 0x8f, 0xee])]),
+    ).toStrictEqual(["凝光/表情"]);
+  });
+
   test("keeps fflate's reading of names no encoding reads whole", () => {
     expect.hasAssertions();
 
