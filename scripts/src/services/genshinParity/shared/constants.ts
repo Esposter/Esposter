@@ -107,6 +107,13 @@ export const RECORD_ENCODING: string[] = [
 export const VIDEO_EXTENSIONS: ReadonlySet<string> = new Set([".mkv", ".mov", ".mp4", ".webm"]);
 // Each image of a comparison is drawn this high, side by side
 export const COMPARISON_HEIGHT = 540;
+// The FLIP a shot must score under its reference to be approved. The committed scores put the interface screens that
+// Match the game at 0.001 to 0.05 (the loading, the publisher's splash, the login's interface), most other references
+// At 0.14 or more, and the settings' graphics rows at 0.10, so the bar sits under the lowest of the rest
+export const APPROVAL_FLIP_BAR = 0.05;
+// The separator between a screen's name and a fixture variant's in its visual test's title and its image's name, as
+// The interface's `FIXTURE_VARIANT_SEPARATOR` spells it
+export const VISUAL_VARIANT_SEPARATOR = "-";
 // The contact sheet `frames` writes beside its frames, which is not one of them
 export const CONTACT_SHEET_NAME = "sheet.png";
 // The map naming every reference, whose held cameras `pose --write` rewrites
