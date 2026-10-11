@@ -13,6 +13,7 @@ import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -81,13 +82,12 @@ export const createCandaceKitBehaviour = ({
 
   // The shield is the one Candace casts onto the team, for the seconds until its hit lands, as gcsim sets its shield to
   // Expire at the hitmark
-  const createShield = (combatant: Combatant, secondsRemaining: number): KitShield => ({
-    characterId: combatant.characterId,
-    element: Element.Hydro,
-    health: shieldFlat + shieldShare * combatant.attributes.maxHealth,
-    kind: "shield",
-    secondsRemaining,
-  });
+  const castShield = (kitEffectState: KitEffectState, combatant: Combatant, secondsRemaining: number): KitShield =>
+    castKitShield(kitEffectState, combatant.characterId, {
+      element: Element.Hydro,
+      health: shieldFlat + shieldShare * combatant.attributes.maxHealth,
+      secondsRemaining,
+    });
 
   return {
     // The Prayer's field infuses the character on the field each tick, from the hitmark, and the wave count is a status,
@@ -145,12 +145,12 @@ export const createCandaceKitBehaviour = ({
     },
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        addKitEffect(kitEffectState, createShield(combatant, tapHitmarkSeconds)),
+        castShield(kitEffectState, combatant, tapHitmarkSeconds),
     },
     skillHolds: [
       {
         onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-          addKitEffect(kitEffectState, createShield(combatant, chargedHitmarkSeconds)),
+          castShield(kitEffectState, combatant, chargedHitmarkSeconds),
       },
     ],
   };

@@ -1,11 +1,12 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitShield } from "#src/models/kit/KitShield";
 
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 
 export const BAIZHU_CHARACTER_ID = 10_000_082;
 
@@ -26,23 +27,21 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
   const refreshFieldSeconds = readSeconds("seamlessShieldRefreshField");
   const spiritvein = readHit("spiritvein");
   // The shield a cast or a recast sets on the team, its health the share of Max HP plus its flat amount, and its explosion
-  const createShield = (combatant: Combatant, secondsRemaining: number): KitShield => ({
-    characterId: combatant.characterId,
-    element: Element.Dendro,
-    explosion: { combatant, hit: spiritvein },
-    health: shieldMaxHealthShare * combatant.attributes.maxHealth + shieldFlatHealth,
-    kind: "shield",
-    secondsRemaining,
-  });
+  const castShield = (kitEffectState: KitEffectState, combatant: Combatant, secondsRemaining: number): KitShield =>
+    castKitShield(kitEffectState, combatant.characterId, {
+      element: Element.Dendro,
+      explosion: { combatant, hit: spiritvein },
+      health: shieldMaxHealthShare * combatant.attributes.maxHealth + shieldFlatHealth,
+      secondsRemaining,
+    });
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        addKitEffect(kitEffectState, createShield(combatant, firstShieldSeconds));
+        castShield(kitEffectState, combatant, firstShieldSeconds);
         // The field recasts the shield at each refresh, from wherever the body stands, so its radius reaches every body
         castKitField(kitEffectState, combatant.characterId, body.position, {
           nextTickSeconds: firstRefreshSeconds,
-          onTick: ({ kitEffectState: tickKitEffectState }) =>
-            addKitEffect(tickKitEffectState, createShield(combatant, shieldSeconds)),
+          onTick: ({ kitEffectState: tickKitEffectState }) => castShield(tickKitEffectState, combatant, shieldSeconds),
           secondsRemaining: refreshFieldSeconds,
           tickIntervalSeconds: refreshIntervalSeconds,
         });

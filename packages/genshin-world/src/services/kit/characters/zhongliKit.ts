@@ -6,15 +6,14 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
-import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Element, Elements } from "#src/models/Element";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { takeOne } from "@esposter/shared";
@@ -108,14 +107,11 @@ export const createZhongliKitBehaviour = ({
   // Once the shield is spent or recast over
   const castJadeShield = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant): void => {
     const { characterId } = combatant;
-    const shield: KitShield = {
-      characterId,
+    const shield = castKitShield(kitEffectState, characterId, {
       element: Element.Geo,
       health: shieldFlatHealth + shieldMaxHealthShare * combatant.attributes.maxHealth,
-      kind: "shield",
       secondsRemaining: shieldSeconds,
-    };
-    addKitEffect(kitEffectState, shield);
+    });
     const resistanceCut = castKitSummon(kitEffectState, body, combatant, jadeShieldHits, {
       isFollowing: true,
       secondsRemaining: shieldSeconds,

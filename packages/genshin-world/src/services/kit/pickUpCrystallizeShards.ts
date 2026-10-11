@@ -7,7 +7,7 @@ import {
   CRYSTALLIZE_SHARD_SECONDS,
   CRYSTALLIZE_SHIELD_SECONDS,
 } from "#src/services/combat/shield/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 
 // The Crystallize shards the body on the field stands within reach of, picked up once each may be: each ends, and grants
 // The team its Crystallize shield, which overwrites the one the team held
@@ -22,12 +22,10 @@ export const pickUpCrystallizeShards = (kitEffectState: KitEffectState, body: Gr
       continue;
     const { characterId, element, health } = effect;
     effect.secondsRemaining = 0;
-    addKitEffect(kitEffectState, {
-      characterId,
+    castKitShield(kitEffectState, characterId, {
       element,
       health,
       isCrystallize: true,
-      kind: "shield",
       secondsRemaining: CRYSTALLIZE_SHIELD_SECONDS,
     });
   }

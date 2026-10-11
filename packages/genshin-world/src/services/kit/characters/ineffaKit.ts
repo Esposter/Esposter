@@ -6,7 +6,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { takeOne } from "@esposter/shared";
@@ -86,11 +86,9 @@ export const createIneffaKitBehaviour = ({
       // Lasts the seconds gcsim gives it from its placement
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         scheduleKitTask(kitEffectState, combatant.characterId, shieldStartSeconds, ({ kitEffectState: tickState }) =>
-          addKitEffect(tickState, {
-            characterId: combatant.characterId,
+          castKitShield(tickState, combatant.characterId, {
             element: Element.Electro,
             health: shieldAttackShare * combatant.attributes.attack + shieldFlatHealth,
-            kind: "shield",
             secondsRemaining: shieldSeconds,
           }),
         );

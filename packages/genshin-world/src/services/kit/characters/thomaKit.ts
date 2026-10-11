@@ -7,6 +7,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -51,14 +52,12 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
               checkIsKitShieldLive(effect) && !effect.isCrystallize && effect.characterId === characterId,
           )?.health ?? 0;
         const maxHealth = maxShieldMaxHealthShare * attributes.maxHealth + maxShieldFlatHealth;
-        addKitEffect(kitEffectState, {
-          characterId,
+        castKitShield(kitEffectState, characterId, {
           element: Element.Pyro,
           health: Math.min(
             standingHealth + fieryCollapseShieldMaxHealthShare * attributes.maxHealth + fieryCollapseShieldFlatHealth,
             maxHealth,
           ),
-          kind: "shield",
           secondsRemaining: fieryCollapseShieldSeconds,
         });
       },
@@ -93,12 +92,10 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
     // Seconds. It also infuses his own attacks with Pyro for the infusion's seconds
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
+        castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Pyro,
           health:
             blazingBlessingShieldMaxHealthShare * combatant.attributes.maxHealth + blazingBlessingShieldFlatHealth,
-          kind: "shield",
           secondsRemaining: blazingBlessingShieldSeconds,
         });
         addKitEffect(kitEffectState, {

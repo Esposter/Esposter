@@ -9,10 +9,10 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -108,11 +108,9 @@ export const createXinyanKitBehaviour = ({
     const { characterId } = combatant;
     const defenseShare = takeOne(shieldDefenseShares, level - 1);
     const flatHealth = takeOne(shieldFlatHealths, level - 1);
-    addKitEffect(kitEffectState, {
-      characterId,
+    castKitShield(kitEffectState, characterId, {
       element: Element.Pyro,
       health: flatHealth + defenseShare * combatant.attributes.defense,
-      kind: "shield",
       secondsRemaining: shieldSeconds,
     });
     addKitStatus(kitEffectState, characterId, {

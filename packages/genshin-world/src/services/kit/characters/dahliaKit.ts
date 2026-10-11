@@ -2,7 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 
 export const DAHLIA_CHARACTER_ID = 10_000_115;
@@ -22,11 +22,9 @@ export const createDahliaKitBehaviour = ({ readParameter, readSeconds }: KitReco
       // Is placed when the task runs, and the shield then reads the caster's Max HP as it stands then
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         scheduleKitTask(kitEffectState, combatant.characterId, shieldSeconds, ({ kitEffectState: tickState }) =>
-          addKitEffect(tickState, {
-            characterId: combatant.characterId,
+          castKitShield(tickState, combatant.characterId, {
             element: Element.Hydro,
             health: burstShieldShare * combatant.attributes.maxHealth + burstShieldFlat,
-            kind: "shield",
             secondsRemaining: favonianFavorSeconds,
           }),
         ),

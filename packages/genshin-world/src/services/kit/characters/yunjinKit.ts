@@ -3,7 +3,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { takeOne } from "@esposter/shared";
 
 export const YUNJIN_CHARACTER_ID = 10_000_064;
@@ -19,11 +19,9 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
   const createShieldOnStart = ({ hits }: KitAction): KitAction["onStart"] => {
     const shieldSeconds = takeOne(hits).hitmarkSeconds;
     return ({ activeCombatant: combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, {
-        characterId: combatant.characterId,
+      castKitShield(kitEffectState, combatant.characterId, {
         element: Element.Geo,
         health: shieldShare * combatant.attributes.maxHealth + shieldFlat,
-        kind: "shield",
         secondsRemaining: shieldSeconds,
       });
   };

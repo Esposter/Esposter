@@ -4,6 +4,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { takeOne } from "@esposter/shared";
 
@@ -45,14 +46,12 @@ export const createKiraraKitBehaviour = ({
   const skillStart: KitActionBehaviour = {
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       const { maxHealth } = combatant.attributes;
-      addKitEffect(kitEffectState, {
-        characterId: combatant.characterId,
+      castKitShield(kitEffectState, combatant.characterId, {
         element: Element.Dendro,
         health: Math.min(
           shieldMaxHealthShare * maxHealth + shieldFlatHealth,
           shieldMaximumMaxHealthShare * maxHealth + shieldMaximumFlatHealth,
         ),
-        kind: "shield",
         secondsRemaining: SHIELD_SECONDS,
       });
       addKitEffect(kitEffectState, {

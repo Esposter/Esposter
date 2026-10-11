@@ -8,7 +8,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { takeOne } from "@esposter/shared";
 
@@ -122,11 +122,9 @@ export const createBeidouKitBehaviour = ({
     // Stands until the hit, as gcsim's does
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
+        castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Electro,
           health: shieldMaxHealthShare * combatant.attributes.maxHealth + shieldFlatHealth,
-          kind: "shield",
           secondsRemaining: tidecallerHitmarkSeconds,
         }),
     },

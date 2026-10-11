@@ -2,11 +2,12 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitShield } from "#src/models/kit/KitShield";
 
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -46,15 +47,13 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
   const signatureMixTicks = readHits("signatureMixTicks");
   const signatureMixHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   // The shield is a share of her Max HP and a flat amount, times its strength, which Constellation 2 raises by 15%
-  const addShield = (kitEffectState: KitEffectState, combatant: Combatant, strengthMultiplier: number): void =>
-    addKitEffect(kitEffectState, {
-      characterId: combatant.characterId,
+  const castShield = (kitEffectState: KitEffectState, combatant: Combatant, strengthMultiplier: number): KitShield =>
+    castKitShield(kitEffectState, combatant.characterId, {
       element: Element.Cryo,
       health:
         (shieldMaxHealthShare * combatant.attributes.maxHealth + shieldFlatHealth) *
         strengthMultiplier *
         (combatant.constellationCount >= SHIELD_CONSTELLATION ? SHIELD_CONSTELLATION_MULTIPLIER : 1),
-      kind: "shield",
       secondsRemaining: shieldSeconds,
     });
   return {
@@ -88,11 +87,11 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
       )
         gainPartyMemberEnergy(party, combatant, SIGNATURE_MIX_CONSTELLATION_ENERGY);
     },
-    skill: { onStart: ({ activeCombatant: combatant, kitEffectState }) => addShield(kitEffectState, combatant, 1) },
+    skill: { onStart: ({ activeCombatant: combatant, kitEffectState }) => castShield(kitEffectState, combatant, 1) },
     skillHolds: [
       {
         onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-          addShield(kitEffectState, combatant, holdShieldMultiplier),
+          castShield(kitEffectState, combatant, holdShieldMultiplier),
       },
     ],
   };

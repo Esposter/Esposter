@@ -4,8 +4,8 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 
 // Measured: gcsim (MIT) layla/burst.go, Starlight Slug's field holds a circle of radius 12 round the body. Each tick strikes
@@ -52,11 +52,9 @@ export const createLaylaKitBehaviour = ({ readHit, readParameter, readSeconds }:
     },
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
+        castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Cryo,
           health: shieldFlatHealth + shieldMaxHealthShare * combatant.attributes.maxHealth,
-          kind: "shield",
           secondsRemaining: shieldSeconds,
         }),
     },

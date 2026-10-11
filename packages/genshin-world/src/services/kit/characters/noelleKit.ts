@@ -6,6 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 
 // Breastplate's constellations, gated on the level the save holds: I Got Your Back at 1 makes its heal certain while
 // Sweeping Time is up, and To Be Cleaned at 4 explodes the shield as it ends
@@ -66,8 +67,7 @@ export const createNoelleKitBehaviour = ({
     skill: {
       hits: [breastplateHealBehaviour],
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
+        castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Geo,
           // To Be Cleaned's explosion is priced by Noelle as she stood when she cast the shield, and lands on the character
           // On the field as the shield ends, whoever holds it then
@@ -75,7 +75,6 @@ export const createNoelleKitBehaviour = ({
             explosion: { combatant, hit: toBeCleanedHit },
           }),
           health: shieldFlatHealth + shieldDefenseShare * combatant.attributes.defense,
-          kind: "shield",
           secondsRemaining: shieldSeconds,
         }),
     },
