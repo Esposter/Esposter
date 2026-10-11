@@ -9,6 +9,7 @@ import { AuraType } from "#src/models/combat/AuraType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { applyBurningInternalCooldown } from "#src/services/combat/aura/applyBurningInternalCooldown";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
@@ -25,9 +26,10 @@ import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 // Place and priced from the combatant that triggered it. An Overloaded's or a Superconduct's explosion deals each its
 // Damage, and a Superconduct's takes each one's Physical RES down. A Swirl applies its element to each at the gauge it
 // Spreads, and every Swirl but a Hydro one deals each its damage, which what its element triggers there amplifies or
-// Adds to, as the reactions it triggers deal their own. Electro-Charged arcs to the nearest Wet enemy alone, dealing it
+// Adds to, as the reactions it triggers deal their own. A Burning tick applies its Pyro to each under that enemy's own
+// Burning internal cooldown and deals each its damage. Electro-Charged arcs to the nearest Wet enemy alone, dealing it
 // Its damage and applying nothing. The damage on each is limited by the source's internal cooldown there. It returns
-// What each enemy reached took, a Swirl's reactions there reaching further in turn
+// What each enemy reached took, the reactions it triggered there reaching further in turn
 export const landReactionReach = (
   { enemyKindMap }: EnemyTables,
   origin: Enemy,
@@ -58,10 +60,10 @@ export const landReactionReach = (
     .slice(0, reactionType === TransformativeReactionType.ElectroCharged ? 1 : undefined);
   for (const { enemy } of reachedEnemies) {
     const { elementalState, internalCooldownMap } = enemy;
+    const gauge =
+      reactionType === TransformativeReactionType.Burning ? applyBurningInternalCooldown(elementalState) : spreadGauge;
     const reactions =
-      element === undefined || spreadGauge === undefined
-        ? []
-        : applyEnemyElement(enemy, element, spreadGauge, combatant);
+      element === undefined || gauge === undefined ? [] : applyEnemyElement(enemy, element, gauge, combatant);
     if (reactionType === TransformativeReactionType.Superconduct) addSuperconductStatus(enemy);
     const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
     const { additiveBaseDamageBonus, amplifyingMultiplier, reachingReactions, transformativeDamage } =

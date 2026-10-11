@@ -75,6 +75,28 @@ describe(landReactionReach, () => {
     expect([origin.health, far.health]).toStrictEqual([STURDY_HEALTH, STURDY_HEALTH]);
   });
 
+  test("applies a Burning tick's Pyro to an enemy it reaches under that enemy's own Burning internal cooldown", () => {
+    expect.hasAssertions();
+
+    const origin = createSturdyEnemy(0);
+    const near = createSturdyEnemy(1);
+    const burningTick: TransformativeReaction = {
+      element: Element.Pyro,
+      reactionType: TransformativeReactionType.Burning,
+      spreadGauge: 0,
+    };
+
+    landReactionReach(enemyTables, origin, [origin, near], burningTick, combatant);
+    const pyroGauge = near.elementalState.auras.get(AuraType.Pyro)?.gauge;
+    landReactionReach(enemyTables, origin, [origin, near], burningTick, combatant);
+
+    expect(pyroGauge).toBeGreaterThan(0);
+    expect(near.elementalState.auras.get(AuraType.Pyro)?.gauge).toBe(pyroGauge);
+    expect(near.maxHealth - near.health).toBeCloseTo(
+      2 * getReactionDamage(TransformativeReactionType.Burning, Element.Pyro),
+    );
+  });
+
   test("takes a Superconduct's 40% off the Physical RES of each enemy it reaches", () => {
     expect.hasAssertions();
 
