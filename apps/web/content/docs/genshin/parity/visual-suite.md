@@ -11,11 +11,11 @@ The visual suite holds approved screens to their own last images. It says nothin
 
 ## Key files
 
-| File                                              | Role             |
-| :------------------------------------------------ | :--------------- |
-| `packages/genshin-world/parity/screens.visual.ts` | The visual suite |
+| File                                                               | Role                                                                                                |
+| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/parity/screens.visual.ts`                  | The visual suite                                                                                    |
 | `scripts/src/services/genshinParity/reference/approveReference.ts` | Approves one screen's image: the compare under the bar, then the suite's `-u` for that screen alone |
-| `scripts/src/services/genshinParity/reference/decideApproval.ts` | The approval decision: a reference on disk, judging the whole screen, scoring under the bar |
+| `scripts/src/services/genshinParity/reference/decideApproval.ts`   | The approval decision: a reference on disk, judging the whole screen, scoring under the bar         |
 
 ## Sources
 
