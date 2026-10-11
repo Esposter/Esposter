@@ -211,6 +211,7 @@ flowchart TD
 | [Diluc](/docs/genshin/kits/diluc)                   | Searing Onslaught and Dawn                                           |
 | [Diona](/docs/genshin/kits/diona)                   | Icy Paws and Signature Mix's field                                   |
 | [Eula](/docs/genshin/kits/eula)                     | Grimheart stacks, Icewhirls and Glacial Illumination                 |
+| [Faruzan](/docs/genshin/kits/faruzan)               | Wind Realm of Nasamjnin and the Dazzling Polyhedron                  |
 | [Fischl](/docs/genshin/kits/fischl)                 | Oz, Midnight Phantasmagoria and Thundering Retribution               |
 | [Ganyu](/docs/genshin/kits/ganyu)                   | Frostflake Arrow, Ice Lotus and Celestial Shower                     |
 | [Gorou](/docs/genshin/kits/gorou)                   | General's War Banner and Crystal Collapse                            |

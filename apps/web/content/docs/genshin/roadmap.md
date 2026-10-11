@@ -19,6 +19,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does the keys' burst fill from its foot while uncharged, as the touch layout's does?** `hud-world-keys` places and tones the PC client's skill and burst, but its burst is charged in every PC frame of `world-pickup.mkv`, so the uncharged disc is the touch layout's dark disc filling in the element's bright tone: yes if a PC frame with an uncharged burst shows that fill, no if it fills another way.
 - **Does the stamina meter pulse red once it falls under an eighth, or only once it runs out?** The climbing clip behind `hud-stamina-climb` shows the track pulsing red with a glow from the moment the pool runs out at 33 seconds, but no frame under an eighth before it, so the pulse starts under an eighth as the flash it replaced did: yes if a clip shows it pulsing with some stamina left, no if it pulses only from empty.
 - **Is the snow in the wiki's Snezhnaya still falling snow?** `File:Snezhnaya.png` shows a few faint flakes against the sky: yes if they are the snowfall `world-snow.mkv` measures the density of, no if they are a detail of the sky.
+- **Does a near teleport within one region also fade through the loading screen?** The map's teleport fades through its pale-grey loading screen, read off the cross-region clip `captures/yt-UVCdkuNpmf4-world-teleport.mp4`: yes if a near teleport within one region passes through the same screen, no if it fades to black or some other way.
 - **Approve the visual-suite images** the screen passes wrote, each untracked until approved with `test:visual -u`. Each is a screen's current build, not its target, and is the `Index.win32.png` in its component's folder:
   - `packages/genshin-interface/src/components/CharacterMenu`
   - `packages/genshin-interface/src/components/InventoryScreen`, with `Index-materials.win32.png` beside it
@@ -83,6 +84,8 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
   - Does a body treading still water spend stamina a stroke at a time, as a swimming one does?
 
 - **Are Nahida's plunges' hits at the frames and with the poise of Bennett's?** Her gcsim folder has no plunge file, so her collision, low and high plunge take Bennett's timings and poise (36 and 38 frames for the low and high hits, 100 and 150 poise) with her own multipliers, as `nahidaKit.ts` writes them: yes if her plunge lands the same, no if her animation shows otherwise.
+- **Does Faruzan's Dazzling Polyhedron stand 12.4 seconds, so its sixth Whirlwind Pulse lands at 13?** The burst's field is gcsim's 745 frames, where the game's table gives 12 seconds: yes if the polyhedron still stands for its sixth Pulse at 13 seconds, no if it ends at 12.
+- **Do Faruzan's poise values match the stand-ins her kit gives?** Her strikes, fully charged shot and plunges are given Yelan's and Ganyu's poise, as gcsim gives none: 20 for the fully charged shot, 50 for the low plunge and 100 for the high one, read beside a recording of each hit: yes if the game's poise for them match, no if they differ.
 
 ## References sought
 
