@@ -185,6 +185,8 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does Sayu's short hold begin at 0.5 seconds?** No table or wiki page gives the seconds a press must be held to become a hold, so her short hold and roll levels start at Venti's 0.5 seconds, as Kazuha's hold does: yes if a recording of her Skill held for half a second plays the short hold, no if it plays the press.
 - **Are Sayu's charged attack and plunges right?** gcsim gives her neither, as its charged attack's hitbox is unimplemented, so her two charged hits are read from the table's charged slots at half a second and a second, with 40 flat stamina, and her plunges land at half a second on the reaches the other kits' use: yes if a recording of them matches, no if not.
 - **Does Mujina Flurry cost 80 energy?** The table and gcsim's energy maximum give 80, while gcsim consumes 7 at the cast, which the kit does not read: yes if the game's burst costs 80 energy, no if another value.
+- **Does Nereid's Ascension cost 70 energy?** The table and gcsim's energy maximum give 70, where gcsim's burst consumes 57, which the kit does not read: yes if the game's burst costs 70 energy, no if another value.
+- **Are Kokomi's charged attack's stamina and plunges right?** Her charged attack's stamina is the table's flat 50 and her plunges land at half a second, both provisional as gcsim gives neither: yes if a recording of her charged attack spends 50 stamina and her plunges land at half a second, no if not.
 
 ## References sought
 
