@@ -5,7 +5,7 @@ description: The webpage editor's custom code block, absorbed from the grapesjs-
 
 # Webpage Plugin Custom Code
 
-The webpage editor's Extra category holds a custom code block: a component the author fills with HTML from a modal, with a code editor and a Save button. It comes from `customCodePlugin`, our own module that replaces the `grapesjs-custom-code` npm package. The module is registered as a bare plugin in the editor's plugin list, so it takes no options: the app never passed any.
+The webpage editor's Extra category holds a custom code block: a component the author fills with HTML from a modal, with a code editor and a Save button. It comes from `customCodePlugin`, our own module that replaces the `grapesjs-custom-code` npm package. Registered with no options, since the app passed none.
 
 ## How it works
 
@@ -19,7 +19,7 @@ The editor saves the page as `getHtml()` and `getCss()` only, so a reloaded page
 
 ## Upstream
 
-The package is no longer a dependency. Its 39 issues and pull requests were read and given one verdict each; the table is the record. Dependabot bumps of the package's own dependencies are grouped in one row. The upstream source was read from its published source map, and two defects it shows with no issue behind them are fixed in the module, each with a test named "no upstream issue".
+Its 39 issues and pull requests with their verdicts, the Dependabot bumps sharing a row. Two defects its source map showed beyond them follow the table.
 
 | Upstream                     | Subject                                                                            | Verdict                     | Proof or owner                                                                                                                                                                                               |
 | :--------------------------- | :--------------------------------------------------------------------------------- | :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -46,19 +46,19 @@ The package is no longer a dependency. Its 39 issues and pull requests were read
 | #38                          | CSS from the code persists after the block is removed                              | Out of scope, grapesjs core | A `<style>` in the code is removed by the parser and parsed into global CSS (`parserCss`), not into the component; the app registers `grapesjs-parser-postcss` for it                                        |
 | #39                          | Editing the children does not update the code                                      | Feature, not built          | The stored code is the source the modal edits; syncing the children back would change what the source is, a design decision                                                                                  |
 
-The defects fixed in the module, with no issue behind them:
+Fixed beyond the issues, each tested as "no upstream issue":
 
 - Two custom codes shared one pending placeholder update, so the second change cancelled the first's, and the first never showed its placeholder or stopped being droppable. Fixed by keeping the pending update per view (test "no upstream issue: two custom codes each get their own pending placeholder update").
 
 ## Security
 
-The module passes user HTML through grapesjs's parser exactly as the upstream does, so the script and escaping behaviour is unchanged by the rewrite. The parser's own checks, read from grapesjs 0.23.6 (`sanitizeNode`), remove an element's `on*` attributes and an attribute value that starts with `javascript:` exactly. Those checks are weaker than they look, and the verdicts below are read from the source; they were not reproduced in a browser, since the test DOM drops every attribute the parser reads.
+The module passes user HTML through grapesjs's parser exactly as the upstream does, so the script and escaping behaviour is unchanged by the rewrite. The parser's own checks, read from grapesjs 0.23.6 ("sanitizeNode"), remove an element's `on*` attributes and an attribute value that starts with `javascript:` exactly. Those checks are weaker than they look, and the verdicts below are read from the source; they were not reproduced in a browser, since the test DOM drops every attribute the parser reads.
 
 | Vector                                                                                            | Verdict                                 | Owner                                                                 |
 | :------------------------------------------------------------------------------------------------ | :-------------------------------------- | :-------------------------------------------------------------------- |
 | `<script>` in the code                                                                            | Blocked (parser, by default)            | grapesjs core; a test pins that it is absent from the export          |
 | `on*` attributes                                                                                  | Blocked (parser)                        | grapesjs core                                                         |
-| `javascript:` with a leading space or a different case, `srcdoc`, SVG `xlink:href`, `form action` | Open, not blocked by the parser's check | grapesjs core parser (`sanitizeNode`); the rewrite does not change it |
+| `javascript:` with a leading space or a different case, `srcdoc`, SVG `xlink:href`, `form action` | Open, not blocked by the parser's check | grapesjs core parser ("sanitizeNode"); the rewrite does not change it |
 | `allowScripts` or `allowUnsafeAttr` set on the editor                                             | Off; the app does not set them          | `Resource/Webpage/Editor.vue` and `WebpageEditorPlugins.ts`           |
 
 The open vectors reach the stored HTML the editor saves, so a published page with them can run script in a viewer's browser. Closing them is a decision for the webpage publish or render path (sanitising the saved HTML once at its boundary), not for this block; it is recorded here and not fixed by the rewrite.
@@ -66,4 +66,4 @@ The open vectors reach the stored HTML the editor saves, so a published page wit
 ## Sources
 
 - Upstream repository: `GrapesJS/components-custom-code` (version 1.0.2, read from its published source map).
-- grapesjs 0.23.6 for the parser's sanitising (`sanitizeNode`, `allowScripts`), `resetFromString` and the component types.
+- grapesjs 0.23.6 for the parser's sanitising ("sanitizeNode", `allowScripts`), `resetFromString` and the component types.

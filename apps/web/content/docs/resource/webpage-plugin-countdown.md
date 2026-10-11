@@ -5,7 +5,7 @@ description: The webpage editor's countdown block, absorbed from the grapesjs-co
 
 # Webpage Plugin Countdown
 
-The webpage editor's Extra category holds a countdown block: a day, hour, minute and second clock to a start date, then an end text. It comes from `countdownPlugin`, our own module that replaces the `grapesjs-component-countdown` npm package. The module is registered as a bare plugin in the editor's plugin list, so it takes no options: the app never passed any.
+The webpage editor's Extra category holds a countdown block: a day, hour, minute and second clock to a start date, then an end text. It comes from `countdownPlugin`, our own module that replaces the `grapesjs-component-countdown` npm package. It takes no options, as the app never passed the package any.
 
 ## How it works
 
@@ -15,7 +15,7 @@ The script counts down to the start, reading a date-only value as local midnight
 
 ## Upstream
 
-The package is no longer a dependency. Its 17 issues and pull requests were read and given one verdict each; the table is the record. The source was then read for defects the issues do not cover, and three were fixed.
+Its 17 issues and pull requests, with their verdicts, then the three defects its source showed beyond them:
 
 | Upstream    | Subject                                                      | Verdict                      | Proof or owner                                                                                                                                                              |
 | :---------- | :----------------------------------------------------------- | :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -26,19 +26,19 @@ The package is no longer a dependency. Its 17 issues and pull requests were read
 | #6          | A saved start date does not update the script                | Out of scope, grapesjs core  | A `startfrom` change re-renders the component through `__scriptPropsChange` (grapesjs 0.23), so the script re-runs; the maintainer calls the saved-script report an old bug |
 | #8          | Editing text in Safari 12                                    | Out of scope, grapesjs core  | The canvas's contenteditable, not the countdown; Safari 12 is end of life                                                                                                   |
 | #9          | A fixed clock that restarts at each load                     | Feature not needed           | The clock is the `startfrom` value by design; the maintainer's answer is to edit it                                                                                         |
-| #11         | `pluginOpts` ignored                                         | False positive               | The reporter wrapped the options under `options`; the maintainer's reply gives the right shape. The module takes no options                                                 |
+| #11         | "pluginOpts" ignored                                         | False positive               | The reporter wrapped the options under `options`; the maintainer's reply gives the right shape. The module takes no options                                                 |
 | #12         | Styling one countdown restyles every countdown               | Out of scope, grapesjs core  | Class selectors are shared; the maintainer's answer is grapesjs's component-first selectors                                                                                 |
 | #14, #17    | Styles lost after reloading from storage                     | Out of scope, grapesjs core  | Closed upstream as no longer reproducing (#14); the component's styles are its own, stored with the project                                                                 |
 | #15         | `style` and `styleAdditional` do not replace the default     | Feature not needed           | Both options are removed; the component's default styles are its own and editable in the style manager                                                                      |
-| #18, PR #13 | Breaking change from grapesjs 0.20.1, and an empty update PR | Out of scope, fixed upstream | Version 1.0.2 is the upstream fix; the module is written against the grapesjs 0.23 API the editor runs                                                                      |
+| #18, PR #13 | Breaking change from grapesjs 0.20.1, and an empty update PR | Out of scope, fixed upstream | Version 1.0.2 is the upstream fix, and the module targets grapesjs 0.23                                                                                                     |
 
-Defects found in the source, with no issue behind them, are fixed in the module and each has a test named "no upstream issue":
+Beyond the issues, the source showed these, each fixed and tested as "no upstream issue":
 
 - A date-only start was read as UTC midnight, so the countdown ended hours away from local midnight of the chosen day. Fixed by parsing the fields as local time.
 - The end text was written with `innerHTML`, so markup typed into it ran in the published page. Fixed by writing it as text.
-- A countdown whose element was re-rendered kept its interval running on the detached element until another countdown's script happened to run. The window-level `__gjsCountdownIntervals` registry only pruned those intervals then, and it held the detached elements. Fixed: the registry is gone and each timer stops itself once its element is detached. The registry lives on the canvas frame's window, so it never crossed editor instances.
+- A countdown whose element was re-rendered kept its interval running on the detached element until another countdown's script happened to run. The window-level "__gjsCountdownIntervals" registry only pruned those intervals then, and it held the detached elements. Fixed: the registry is gone and each timer stops itself once its element is detached. The registry lives on the canvas frame's window, so it never crossed editor instances.
 
 ## Sources
 
-- Upstream repository: `GrapesJS/components-countdown` (version 1.0.2, read from its published source map).
+- Upstream repository: `GrapesJS/components-countdown` at 1.0.2, from its source map.
 - grapesjs 0.23 for `script-props`, the canvas script container and component re-rendering.
