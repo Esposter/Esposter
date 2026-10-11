@@ -280,6 +280,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Kujou Sara](/docs/genshin/kits/kujou-sara)         | The Cover and its Ambush                                             |
 | [Kuki](/docs/genshin/kits/kuki)                     | Grass Ring of Sanctification                                         |
 | [Lan Yan](/docs/genshin/kits/lan-yan)               | Four strikes, the charged attack and Lustrous Moonrise               |
+| [Lauma](/docs/genshin/kits/lauma)                   | Three strikes, the charged attack and Hymn of Hunting                |
 | [Layla](/docs/genshin/kits/layla)                   | Nights of Formal Focus and Starlight Slug                            |
 | [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                        |
 | [Lynette](/docs/genshin/kits/lynette)               | Enigmatic Feint and the Bogglecat Box of Magic Trick                 |
