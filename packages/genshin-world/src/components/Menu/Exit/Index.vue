@@ -4,15 +4,17 @@ import type { GameText } from "genshin-text";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import { MenuPromptIcon } from "#src/models/menu/MenuPromptIcon";
 import { MenuPromptGlyphMap } from "#src/services/menu/MenuPromptGlyphMap";
-import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen, InteractionState } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // A state every pill is drawn in, forced by a fixture; a reader's pointer sets it itself
+  interactionState?: InteractionState;
 }
 
-const { gameText } = defineProps<Props>();
+const { gameText, interactionState } = defineProps<Props>();
 const emit = defineEmits<{ close: []; quit: [] }>();
 const continueButton = useTemplateRef("continueButton");
 // The prompt is a dialog over the world, so focus starts on its first button, the way back to the game
@@ -25,7 +27,13 @@ onMounted(() => {
   <!-- The quit prompt that Quit Game opens over the world: Continue Game sets the world back, and the two exits leave for
        the app's home, since the browser cannot close the game. Each button is the game's cream pill with its dark disc and
        icon at the left and its label centred in the rest, every place in the reference's own pixels -->
-  <GameScreen class="exit" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.QuitGame]">
+  <GameScreen
+    class="exit"
+    role="dialog"
+    aria-modal="true"
+    :aria-label="gameText[GameTextKey.QuitGame]"
+    :interaction-state="interactionState"
+  >
     <div class="stack">
       <GameButton ref="continueButton" class="prompt" :kind="GameButtonKind.Pill" @click="emit('close')">
         <span class="disc" />

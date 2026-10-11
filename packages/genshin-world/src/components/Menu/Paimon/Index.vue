@@ -18,7 +18,7 @@ import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuEntryGlyphMap } from "#src/services/menu/MenuEntryGlyphMap";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
-import { GAME_SMOOTHSTEP_EASING, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_SMOOTHSTEP_EASING, GameButton, GameButtonKind, GameScreen, InteractionState } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -29,6 +29,8 @@ interface Props {
   checkIsBuilt: (screenKind: TitledScreenKind) => boolean;
   // The game's words in the reader's language
   gameText: GameText;
+  // A state every entry is drawn in, forced by a fixture; a reader's pointer sets it itself
+  interactionState?: InteractionState;
   // Whether the World Level can be lowered or restored at all, and whether it is lowered, for its dialog's button
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
@@ -44,6 +46,7 @@ const {
   adventureRank,
   checkIsBuilt,
   gameText,
+  interactionState,
   isWorldLevelAdjustable,
   isWorldLevelLowered,
   worldLevel,
@@ -92,6 +95,7 @@ onBeforeUnmount(() => {
     role="dialog"
     aria-modal="true"
     :aria-label="gameText[GameTextKey.Paimon]"
+    :interaction-state="interactionState"
     :style="{
       '--menu-ease': GAME_SMOOTHSTEP_EASING,
       '--menu-fade': `${PAIMON_MENU_FADE_MS}ms`,
