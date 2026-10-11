@@ -10,12 +10,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 
-export interface ParityPreview {
+export interface ParityServer {
   origin: string;
   stop: () => void;
 }
 
-// A port nothing listens on at the moment of asking, which the preview server then takes
+// A port nothing listens on at the moment of asking, which the server then takes
 const getFreePort = (): Promise<number> =>
   new Promise((resolve, reject) => {
     const server = createServer();
@@ -29,44 +29,41 @@ const getFreePort = (): Promise<number> =>
     });
   });
 
-// Serves the production build on a free port with Vite's preview server, and resolves once it announces that address. The
-// Caller stops it with `stop` when it is done, success or not
-export const startParityPreview = async (): Promise<ParityPreview> => {
+// The arguments Vite runs the parity page with on a port: its dev server, or its preview of the production build
+export const getParityServerArgs = (isDev: boolean, port: number): string[] => {
+  const portArgs = ["--config", PARITY_CONFIG_PATH, "--port", String(port), "--strictPort"];
+  return isDev
+    ? [VITE_BIN_PATH, ...portArgs]
+    : [VITE_BIN_PATH, "preview", ...portArgs, "--outDir", PARITY_BUILD_DIRECTORY_NAME];
+};
+
+// Serves the parity page on a free port with Vite, its dev server or its preview of the production build, and resolves
+// Once it announces that address. The caller stops it with `stop` when it is done, success or not
+export const startParityServer = async (isDev: boolean): Promise<ParityServer> => {
   const port = await getFreePort();
   const origin = `http://localhost:${port}`;
-  const preview = spawn(
-    process.execPath,
-    [
-      VITE_BIN_PATH,
-      "preview",
-      "--config",
-      PARITY_CONFIG_PATH,
-      "--outDir",
-      PARITY_BUILD_DIRECTORY_NAME,
-      "--port",
-      String(port),
-      "--strictPort",
-    ],
-    { cwd: GENSHIN_WORLD_DIRECTORY, stdio: ["ignore", "pipe", "inherit"] },
-  );
+  const server = spawn(process.execPath, getParityServerArgs(isDev, port), {
+    cwd: GENSHIN_WORLD_DIRECTORY,
+    stdio: ["ignore", "pipe", "inherit"],
+  });
   await new Promise<void>((resolve, reject) => {
     const fail = (error: InvalidOperationError) => {
       clearTimeout(timeout);
-      preview.kill();
+      server.kill();
       reject(error);
     };
     const timeout = setTimeout(() => {
-      fail(new InvalidOperationError(Operation.Create, origin, "its preview did not announce its address in time"));
+      fail(new InvalidOperationError(Operation.Create, origin, "its server did not announce its address in time"));
     }, PARITY_PREVIEW_TIMEOUT_MS);
-    preview.stdout.on("data", (chunk: Buffer) => {
+    server.stdout.on("data", (chunk: Buffer) => {
       // Vite colours the address, its port between escape codes, so they are stripped before it is looked for
       if (!chunk.toString().replaceAll(ANSI_ESCAPE_REGEX, "").includes(origin)) return;
       clearTimeout(timeout);
       resolve();
     });
-    preview.once("exit", (code) => {
-      fail(new InvalidOperationError(Operation.Create, origin, `its preview exited with ${code}`));
+    server.once("exit", (code) => {
+      fail(new InvalidOperationError(Operation.Create, origin, `its server exited with ${code}`));
     });
   });
-  return { origin, stop: () => preview.kill() };
+  return { origin, stop: () => server.kill() };
 };
