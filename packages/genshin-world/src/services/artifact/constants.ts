@@ -3,6 +3,8 @@ import type { WeightedValue } from "#src/models/shared/WeightedValue";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 
+// Instructor's id in the set table
+export const INSTRUCTOR_ARTIFACT_SET_ID = 10_007;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
