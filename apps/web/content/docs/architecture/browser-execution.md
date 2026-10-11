@@ -7,7 +7,7 @@ description: app/ runs in two environments, so a browser API is reached through 
 
 [Module boundaries](/docs/architecture/module-boundaries) settles which way an import may point: `app/` is client code and `shared/` may not reach into it. That is a statement about the **import graph**, and it is silent about the thing this page is about — `app/` is _evaluated_ in more than one environment. The SSR render runs it in Node with no `window`, the browser runs it with one, and a test runs it in whichever environment its directive names, which by default is Node.
 
-So every module that touches a browser API faces the same question, and the failure mode is that each one answers it separately. That is not hypothetical: one draft reader guarded with `checkIsServer()`, its sibling writers did not, and a debounced draft save firing after its test environment was torn down threw `window is not defined` — a green test run that still exited non-zero.
+So every module that touches a browser API faces the same question, and the failure mode is that each one answers it separately: a guard on one reader, none on its sibling writers, and a debounced save that fires after its test environment is torn down throws `window is not defined` — the run stays green on its assertions and still exits non-zero.
 
 **The guard belongs where the environment is decided, and there are only two such places.** A leaf never decides.
 

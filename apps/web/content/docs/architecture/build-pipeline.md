@@ -30,7 +30,7 @@ flowchart LR
   P --> Z
 ```
 
-The barrel is one `export * from` line per module that exports something, read from rolldown's own parse rather than a TypeScript program, so it costs milliseconds and a name two modules export is a `TS2308` typecheck error rather than a name quietly missing from the package. It was ctix's until that silent drop and ctix's per-package program — most of a package's build — made it the one layer here worth replacing. It is generated on every build and never committed, which is why CI caches the generated `src/**/index.ts` files alongside `dist`, and a new module file reaches a sibling typechecking against source at the package's next `pnpm build`, which regenerates the barrel in the same pass. The flat `.` export it makes is the shape everywhere but the [Nuxt module package](/docs/architecture/nuxt-module-packages), which Nuxt reads file by file: `.agents/skills/build/references/barrels.md`.
+The barrel is one `export * from` line per module that exports something, read from rolldown's own parse rather than a TypeScript program, so it costs milliseconds and a name two modules export is a `TS2308` typecheck error rather than a name quietly missing from the package. A per-package TypeScript program would cost most of a build. It is generated on every build and never committed, which is why CI caches the generated `src/**/index.ts` files alongside `dist`, and a new module file reaches a sibling typechecking against source at the package's next `pnpm build`, which regenerates the barrel in the same pass. The flat `.` export it makes is the shape everywhere but the [Nuxt module package](/docs/architecture/nuxt-module-packages), which Nuxt reads file by file: `.agents/skills/build/references/barrels.md`.
 
 The only data JSON `genshin-world` imports is its lock and one save bound: every dataset the package reads is published to the hosted game data and fetched when a screen needs it, so neither the bundle nor the declaration program reads a record ([hosted game data](/docs/genshin/hosted-game-data)). The package's `tsconfig.build.json` exists for its `include` alone, which drops the `parity` page, and the excludes it inherits from `tsconfig.build.base.json` drop the tests, whose `vitest` and `happy-dom` types the declaration program would otherwise read.
 
@@ -74,7 +74,7 @@ A published package owes an installable promise to a stranger, and two more opti
 | `publint` | a manifest entry names a file that is not in the tarball         |
 | `attw`    | the declarations fail under a resolution mode a consumer may use |
 
-A private package gets neither, and emits no declarations either: its `dist` is only ever reached by something that _runs_ it, while everything that types against a workspace package reads its source. That saving is real — a package whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program, and for the Drizzle schema that was minutes of work — and it left the invariant that declarations are emitted only where `isolatedDeclarations` holds.
+A private package gets neither, and emits no declarations either: its `dist` is only ever reached by something that _runs_ it, while everything that types against a workspace package reads its source. That saving is real — a package whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program, which for the Drizzle schema takes minutes — and it left the invariant that declarations are emitted only where `isolatedDeclarations` holds.
 
 ## A package's own source is a subpath import
 
@@ -117,7 +117,7 @@ flowchart TD
   X["tsconfig.build.base.json — excludes only"] --> BU
 ```
 
-A build reads `tsconfig.json`, tsdown's default, so it shares the platform its source was typechecked against. The build preset contributes excludes and nothing else, and only the Vue declaration build names a `tsconfig.build.json` extending it — its declaration program is the one loaded from a tsconfig's file list, where the excludes keep the tests out; every other package's `dist` came out byte-identical without a build tsconfig. Which packages turn `isolatedDeclarations` off and why is `.agents/skills/build/references/tsconfig-presets.md`.
+A build reads `tsconfig.json`, tsdown's default, so it shares the platform its source was typechecked against. The build preset contributes excludes and nothing else, and only the Vue declaration build names a `tsconfig.build.json` extending it — its declaration program is the one loaded from a tsconfig's file list, where the excludes keep the tests out; no other package needs one. Which packages turn `isolatedDeclarations` off and why is `.agents/skills/build/references/tsconfig-presets.md`.
 
 ## Declarations see the entrypoints, not the tsconfig
 
