@@ -20,7 +20,6 @@ import { useLoop, useTres } from "@tresjs/core";
 import {
   checkTerrainTileCasts,
   computeTerrainIndices,
-  MAX_TILE_ATTEMPTS,
   createFlowerMaterial,
   createFlowerTileGeometry,
   createTerrainMaterial,
@@ -31,6 +30,7 @@ import {
   getTerrainTileColumn,
   getTerrainTileLevel,
   getTerrainTileRow,
+  MAX_TILE_ATTEMPTS,
   resolveTerrainDraws,
   selectTerrainTiles,
   TERRAIN_LAYER,

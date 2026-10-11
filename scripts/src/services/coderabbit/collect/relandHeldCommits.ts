@@ -2,7 +2,6 @@ import type { RelandInput } from "#src/models/coderabbit/collect/RelandInput";
 import type { RelandResult } from "#src/models/coderabbit/collect/RelandResult";
 
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
@@ -34,6 +33,7 @@ import { relandHeldCommit } from "#src/services/coderabbit/collect/relandHeldCom
 import { releaseHeldBranch } from "#src/services/coderabbit/collect/releaseHeldBranch";
 import { replyRelandedAnswers } from "#src/services/coderabbit/collect/replyRelandedAnswers";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { runGit } from "#src/services/shared/runGit";
 import { takeOne } from "@esposter/shared";
 

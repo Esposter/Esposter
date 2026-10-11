@@ -24,7 +24,7 @@ describe(readProducerStaleness, () => {
   test("reads no stamp and no commits from an output that has none", async () => {
     expect.hasAssertions();
 
-    expect(await readProducerStaleness(directory)).toStrictEqual({ commits: [], isApproximate: false });
+    await expect(readProducerStaleness(directory)).resolves.toStrictEqual({ commits: [], isApproximate: false });
   });
 
   test("lists no commits for an output stamped at HEAD", async () => {

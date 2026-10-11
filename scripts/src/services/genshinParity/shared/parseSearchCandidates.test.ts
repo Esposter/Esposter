@@ -29,8 +29,8 @@ describe(parseSearchCandidates, () => {
         fps: 60,
         height: 1080,
         title: "Pick up items",
-        uploader: "Guide Channel",
         uploadDate: "2024-05-01",
+        uploader: "Guide Channel",
         url: "https://www.youtube.com/watch?v=abcdefghijk",
       },
     ]);

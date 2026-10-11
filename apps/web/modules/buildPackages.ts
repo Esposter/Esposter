@@ -6,9 +6,9 @@ const BUILD_CACHE_SCRIPT_PATH = ".agents/skills/throughput/scripts/build-cached.
 const logger = useLogger("build-packages");
 
 // Under `nuxt dev` the app's workspace packages are brought up to date once, at start, through the build cache, and no
-// tsdown watcher runs: every package edit by any session sharing the checkout used to rebuild and reload the page, and
-// competed with the agents for CPU and memory. A start with nothing changed restores every `dist` instantly, and a
-// package edit reaches the page on the next start.
+// Tsdown watcher runs: every package edit by any session sharing the checkout used to rebuild and reload the page, and
+// Competed with the agents for CPU and memory. A start with nothing changed restores every `dist` instantly, and a
+// Package edit reaches the page on the next start.
 export default defineNuxtModule({
   meta: { name: "build-packages" },
   setup: (_options, nuxt) => {

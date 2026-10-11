@@ -1,7 +1,7 @@
 import type { PushBranchInput } from "#src/models/coderabbit/collect/PushBranchInput";
 
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";

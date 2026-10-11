@@ -1,11 +1,11 @@
 import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInput";
 
 import { ReplayOutcome } from "#src/models/coderabbit/collect/ReplayOutcome";
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { DEVELOP_BRANCH, QUEUE_BRANCH, REVIEW_FIXES_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { pushQueueRewrite } from "#src/services/coderabbit/collect/pushQueueRewrite";
 import { replayOwed } from "#src/services/coderabbit/collect/replayOwed";
 import { reshapeQueue } from "#src/services/coderabbit/collect/reshapeQueue";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { runGit } from "#src/services/shared/runGit";
 
 // The queue follows what the collector pushed, rewritten by the collector itself: the commits it still owes are

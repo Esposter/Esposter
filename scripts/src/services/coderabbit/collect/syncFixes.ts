@@ -3,12 +3,12 @@ import type { SyncFixesResult } from "#src/models/coderabbit/collect/SyncFixesRe
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { ReplayOutcome } from "#src/models/coderabbit/collect/ReplayOutcome";
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { DEVELOP_BRANCH, REVIEW_FIXES_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { replayOwed } from "#src/services/coderabbit/collect/replayOwed";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 
 // The fixes branch follows develop as the queue follows the fixes: a drain builds on the develop it read, and
 // Develop can move before the fixes port — the return stroke, a fold, a repair, a revert — so the fixes are

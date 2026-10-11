@@ -1,10 +1,10 @@
 import type { ReturnStrokeInput } from "#src/models/coderabbit/collect/ReturnStrokeInput";
 import type { ReturnStrokeResult } from "#src/models/coderabbit/collect/ReturnStrokeResult";
 
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 
 // `main` is ahead and `develop` has nothing of its own, so it follows by fast-forward. What moved `main` is not
 // Asked — a window that merged, an express cut and a bump pushed straight at it all arrive in this shape, and all
