@@ -16,6 +16,7 @@ import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSum
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
+import { infuseKitStrike } from "#src/services/kit/effects/infuseKitStrike";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
@@ -129,14 +130,17 @@ export const stepActiveKit = (
   action?.onStart?.({ body: copyKitBody(kitBody), combatant, kitEffectState, party, target });
   if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState, party });
   for (const oreHit of landedOreHits) strikeOre(kitBody, oreHit);
+  // A normal attack's first hit lands in the attack's seconds or, past them, from the summon its end queued it on
+  const landedFirstHits = new Set([...stepHits, ...summonStrikes.map(({ hit }) => hit)]);
   for (const normalAttack of kit.normalAttacks) {
     const [firstHit] = normalAttack.hits;
-    if (firstHit && stepHits.includes(firstHit)) emit({ action: normalAttack, kind: KitEventKind.NormalAttackLanded });
+    if (firstHit && landedFirstHits.has(firstHit))
+      emit({ action: normalAttack, kind: KitEventKind.NormalAttackLanded });
   }
-  // The summons' hits land from their own bodies, priced by the combatants that cast them, and the step's own hits from
-  // The turned body and the character on the field
+  // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their infusions,
+  // And the step's own hits from the turned body and the character on the field
   const strikes: KitStrike[] = [
-    ...summonStrikes,
+    ...summonStrikes.map((strike) => infuseKitStrike(strike, kitEffectState.effects)),
     ...landedHits.map((hit, index): KitStrike => ({ attackTag: attackTags[index], body: kitBody, combatant, hit })),
   ];
   landedHits.length = 0;
