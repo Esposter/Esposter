@@ -39,13 +39,6 @@ describe(getKitAttackTag, () => {
     expect.hasAssertions();
     const normalAttackHit = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
     const stance: KitStance = {
-      actions: {
-        chargedAttack: TRAVELER_KIT.chargedAttack,
-        chargedAttackStamina: 0,
-        elementalBurst: TRAVELER_KIT.elementalBurst,
-        elementalSkill: TRAVELER_KIT.elementalSkill,
-        normalAttacks: TRAVELER_KIT.normalAttacks,
-      },
       attackTags: {
         chargedAttack: AttackTag.ChargedAttack,
         elementalBurst: AttackTag.ElementalBurst,
@@ -55,6 +48,7 @@ describe(getKitAttackTag, () => {
       characterId: TRAVELER_CHARACTER_ID,
       elapsedSeconds: 0,
       kind: "stance",
+      kit: TRAVELER_KIT,
       secondsRemaining: 1,
     };
 

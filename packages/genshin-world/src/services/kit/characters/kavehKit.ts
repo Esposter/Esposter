@@ -1,16 +1,14 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitStance } from "#src/models/kit/KitStance";
 
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Kaveh's proud skill groups, read at his talent level. The attack group holds his four strikes at 0 to 3, the charged
@@ -147,30 +145,21 @@ export const createKavehKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: burstMultiplier(0),
       },
     ],
-    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-      // Painted Dome's stance widens his strikes for its duration, and plays the rest of his kit as it stands
-      const stance: KitStance = {
-        actions: {
+    // Painted Dome's stance widens his strikes for its duration, and plays the rest of his kit as it stands. The widened
+    // Strikes stay Normal Attack DMG, gcsim's AttackTagNormal in kaveh/attack.go's Attack
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      enterKitStance(
+        kitEffectState,
+        combatant,
+        {
           chargedAttack,
           chargedAttackStamina: CHARGED_ATTACK_STAMINA,
           elementalBurst,
           elementalSkill,
           normalAttacks: burstNormalAttacks,
         },
-        // The widened strikes stay Normal Attack DMG, gcsim's AttackTagNormal in kaveh/attack.go's Attack
-        attackTags: {
-          chargedAttack: AttackTag.ChargedAttack,
-          elementalBurst: AttackTag.ElementalBurst,
-          elementalSkill: AttackTag.ElementalSkill,
-          normalAttacks: AttackTag.NormalAttack,
-        },
-        characterId: combatant.characterId,
-        elapsedSeconds: 0,
-        kind: "stance",
-        secondsRemaining: BURST_STANCE_SECONDS,
-      };
-      addKitEffect(kitEffectState, stance);
-    },
+        BURST_STANCE_SECONDS,
+      ),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };

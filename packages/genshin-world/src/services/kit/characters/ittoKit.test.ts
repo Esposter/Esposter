@@ -11,7 +11,7 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createIttoKit, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -88,7 +88,8 @@ describe(createIttoKit, () => {
     const context = createKitTestContext(createIttoCombatant());
     const { kitEffectState } = context;
     landNormalAttacks(context);
-    const { chargedAttack, chargedAttackStamina } = getStancedKit(ITTO_KIT, kitEffectState.effects, ITTO_CHARACTER_ID);
+    const { chargedAttack, chargedAttackStamina } =
+      findKitStance(kitEffectState.effects, ITTO_CHARACTER_ID)?.kit ?? ITTO_KIT;
 
     expect(chargedAttackStamina).toBe(0);
     expect(

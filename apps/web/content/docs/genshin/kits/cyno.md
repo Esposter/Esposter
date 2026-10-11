@@ -24,7 +24,7 @@ Cyno's kit is one module, `createCynoKit`, on avatar 10000071: the Invoker's Spe
 
 - **Constellation 1's Normal Attack SPD of 20% is not built.** gcsim raises it for ten seconds after the burst, and while Cyno is in a normal attack, and the kit has no attack speed to price. The hook is a team attribute that lifts attack speed in the normal attack state, which the framework does not have.
 - **Judication's 35% DMG on Mortuary Rite is not built.** The hit's bonus would apply only to that hit while Endseer holds. `getStrikeDamageBonus` reads the strike and the enemy but not the team's effects, and no hit reads a percent from them, so the bonus waits on a hook that prices a strike's DMG Bonus from the team's effects. The bolts are built, so Judication's bolts land without the 35%.
-- **Pactsworn Pathclearer's plunges are not built.** Its low, high and collision plunges are gcsim's Electro plunges with a wider reach, and `KitStance`'s actions carry no plunges, so `getStancedKit` keeps the Invoker's plunges during the stance. The hook is plunges on `KitStance.actions`.
+- **Pactsworn Pathclearer's plunges are not built.** Its low, high and collision plunges are gcsim's Electro plunges with a wider reach, and a stance's actions carry no plunges, so its kit keeps the Invoker's plunges during the stance. The hook is plunges on `KitStanceActions`.
 - **The stance's slide is not built.** gcsim extends the burst so a hit that lands after its end still counts (its burst-slide check). The stance ends on its seconds alone, so a late hit of the stance is cut.
 - **Mortuary Rite's cooldown after the stance is approximate**, as the Decisions say. The kit has one cooldown per character, so the stance's skill cannot set a second one for Secret Rite.
 

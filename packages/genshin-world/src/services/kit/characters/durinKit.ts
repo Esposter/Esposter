@@ -3,7 +3,6 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -15,6 +14,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -234,31 +234,29 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   // Tap E starts the window's stance, whose normal attacks are Denial of Darkness, and whose skill press is the chain's
   // White recast, which the chain plays whatever the cooldown Tap E set
-  const createWindowStance = (characterId: number, skillPress: KitAction): KitStance => ({
-    actions: {
-      chargedAttack,
-      chargedAttackStamina: attackMultiplier(6),
-      elementalBurst,
-      elementalSkill: skillPress,
-      normalAttacks: [blackRecast],
-    },
-    // Denial of Darkness is Elemental Art DMG, gcsim's AttackTagElementalArt in durin/skill.go, so its group is the skill's
-    attackTags: {
-      chargedAttack: AttackTag.ChargedAttack,
-      elementalBurst: AttackTag.ElementalBurst,
-      elementalSkill: AttackTag.ElementalSkill,
-      normalAttacks: AttackTag.ElementalSkill,
-    },
-    characterId,
-    elapsedSeconds: 0,
-    kind: "stance",
-    secondsRemaining: SKILL_WINDOW_SECONDS,
-  });
-
   const elementalSkill: KitAction = {
     hits: [],
     onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, createWindowStance(combatant.characterId, elementalSkill)),
+      enterKitStance(
+        kitEffectState,
+        combatant,
+        {
+          chargedAttack,
+          chargedAttackStamina: attackMultiplier(6),
+          elementalBurst,
+          elementalSkill,
+          normalAttacks: [blackRecast],
+        },
+        SKILL_WINDOW_SECONDS,
+        // Denial of Darkness is Elemental Art DMG, gcsim's AttackTagElementalArt in durin/skill.go, so its group is the
+        // Skill's
+        {
+          chargedAttack: AttackTag.ChargedAttack,
+          elementalBurst: AttackTag.ElementalBurst,
+          elementalSkill: AttackTag.ElementalSkill,
+          normalAttacks: AttackTag.ElementalSkill,
+        },
+      ),
     seconds: SKILL_PRESS_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };

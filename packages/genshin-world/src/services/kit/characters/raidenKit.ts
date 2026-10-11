@@ -6,7 +6,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
+import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -21,6 +21,8 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -183,10 +185,6 @@ const gainResolve = (kitEffectState: KitEffectState, characterId: number, stacks
     ),
   });
 
-// The Raiden Shogun's Musou Isshin, while it holds
-const findMusouIsshin = (effects: readonly KitEffect[], characterId: number): KitStance | undefined =>
-  effects.find((effect): effect is KitStance => effect.kind === "stance" && effect.characterId === characterId);
-
 // Whether she holds the Eye, or her skill's field is about to give it
 const checkHasEye = (effects: readonly KitEffect[], characterId: number): boolean =>
   checkHasKitStatus(effects, characterId, EYE_STATUS_ID) ||
@@ -254,7 +252,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   const createMusouIsshinActions = (
     stacks: number,
     damageBonus: number,
-  ): Pick<KitStance["actions"], "chargedAttack" | "chargedAttackStamina" | "normalAttacks"> => {
+  ): Pick<KitStanceActions, "chargedAttack" | "chargedAttackStamina" | "normalAttacks"> => {
     const createHit = (hitArea: AttackArea, hitmarkFrames: number, index: number): KitHit => ({
       damageBonus,
       element: Element.Electro,
@@ -337,25 +335,24 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             },
           ]),
         );
-        addKitEffect(kitEffectState, {
-          actions: {
+        enterKitStance(
+          kitEffectState,
+          combatant,
+          {
             ...createMusouIsshinActions(stacks, damageBonus),
             elementalBurst: kit.elementalBurst,
             elementalSkill: kit.elementalSkill,
           },
+          BURST_HITMARK_FRAMES / 60 + musouIsshinSeconds,
           // The Musou Isshin strikes and charged attack are Elemental Burst DMG, gcsim's AttackTagElementalBurst in
           // In raiden/attack.go's swordAttack and raiden/charge.go's swordCharge
-          attackTags: {
+          {
             chargedAttack: AttackTag.ElementalBurst,
             elementalBurst: AttackTag.ElementalBurst,
             elementalSkill: AttackTag.ElementalSkill,
             normalAttacks: AttackTag.ElementalBurst,
           },
-          characterId,
-          elapsedSeconds: 0,
-          kind: "stance",
-          secondsRemaining: BURST_HITMARK_FRAMES / 60 + musouIsshinSeconds,
-        });
+        );
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
@@ -426,7 +423,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // And count. A member holding the Eye who deals damage sets off its coordinated attack on the enemy struck
     onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
-      const musouIsshin = findMusouIsshin(kitEffectState.effects, characterId);
+      const musouIsshin = findKitStance(kitEffectState.effects, characterId);
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (event.previousCharacterId === characterId && musouIsshin) musouIsshin.secondsRemaining = 0;
         return;
@@ -485,9 +482,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       if (
         musouIsshin &&
         striker.characterId === characterId &&
-        [...musouIsshin.actions.normalAttacks, musouIsshin.actions.chargedAttack].some(({ hits }) =>
-          hits.includes(hit),
-        ) &&
+        [...musouIsshin.kit.normalAttacks, musouIsshin.kit.chargedAttack].some(({ hits }) => hits.includes(hit)) &&
         restoreCount < RESTORE_MAX_COUNT &&
         !checkHasKitStatus(kitEffectState.effects, characterId, RESTORE_ICD_ID)
       ) {

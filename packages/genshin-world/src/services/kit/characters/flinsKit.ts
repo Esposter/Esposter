@@ -2,16 +2,14 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
 
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Flins's proud skill groups, read at his talent level. The attack group holds the five strikes at 0 to 4, the charged
@@ -172,31 +170,21 @@ export const createFlinsKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     // Lasts the Manifest Flame's seconds, and whose strikes and charged attack are the Electro ones
     elementalSkill: {
       hits: [],
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        const { characterId, kit } = combatant;
-        const stance: KitStance = {
-          // The Electro strikes are Normal Attack DMG and the charged attack Extra, gcsim's AttackTagNormal and
-          // AttackTagExtra in flins/attack.go and charge.go, so each group takes its kit tag
-          actions: {
+      // The Electro strikes are Normal Attack DMG and the charged attack Extra, gcsim's AttackTagNormal and
+      // AttackTagExtra in flins/attack.go and charge.go, so each group takes its kit tag
+      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+        enterKitStance(
+          kitEffectState,
+          combatant,
+          {
             chargedAttack: stanceChargedAttack,
             chargedAttackStamina: attackMultiplier(6),
-            elementalBurst: kit.elementalBurst,
-            elementalSkill: kit.elementalSkill,
+            elementalBurst: combatant.kit.elementalBurst,
+            elementalSkill: combatant.kit.elementalSkill,
             normalAttacks: stanceNormalAttacks,
           },
-          attackTags: {
-            chargedAttack: AttackTag.ChargedAttack,
-            elementalBurst: AttackTag.ElementalBurst,
-            elementalSkill: AttackTag.ElementalSkill,
-            normalAttacks: AttackTag.NormalAttack,
-          },
-          characterId,
-          elapsedSeconds: 0,
-          kind: "stance",
-          secondsRemaining: skillMultiplier(8),
-        };
-        addKitEffect(kitEffectState, stance);
-      },
+          skillMultiplier(8),
+        ),
       seconds: SKILL_PRESS_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },

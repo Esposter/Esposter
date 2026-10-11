@@ -100,7 +100,7 @@ describe(createHuTaoKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     HU_TAO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
-    const bloodBlossom = stance?.actions.chargedAttack.hits[0]?.enemyStatus?.(combatant);
+    const bloodBlossom = stance?.kit.chargedAttack.hits[0]?.enemyStatus?.(combatant);
     if (!bloodBlossom) throw new Error("the Paramita's charged attack gave no Blood Blossom");
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), statuses: [bloodBlossom] };
 

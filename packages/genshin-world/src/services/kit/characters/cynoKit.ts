@@ -10,11 +10,9 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -26,6 +24,8 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -246,7 +246,7 @@ const onNormalAttackStrike = ({ kitEffectState }: KitContext, { body, combatant 
   }
   if (
     constellationCount >= CONSTELLATION_6 &&
-    findStance(kitEffectState.effects, characterId) &&
+    findKitStance(kitEffectState.effects, characterId) &&
     !checkHasKitStatus(kitEffectState.effects, characterId, C6_ICD_STATUS_ID)
   ) {
     const day = findKitStatus(kitEffectState.effects, characterId, C6_STATUS_ID);
@@ -283,9 +283,7 @@ const createStrikeAction = (
   targetingArea: STRIKE_TARGETING_AREA,
 });
 
-// The stance a character holds, and the Judication field it holds
-const findStance = (effects: readonly KitEffect[], characterId: number): KitStance | undefined =>
-  effects.find((effect): effect is KitStance => effect.kind === "stance" && effect.characterId === characterId);
+// The Judication field a character holds
 const findJudicationField = (effects: readonly KitEffect[], characterId: number): KitField | undefined =>
   effects.find(
     (effect): effect is KitField =>
@@ -383,7 +381,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     hits: [mortuaryRiteHit],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { characterId } = combatant;
-      const stance = findStance(kitEffectState.effects, characterId);
+      const stance = findKitStance(kitEffectState.effects, characterId);
       if (!stance) return;
       const extensions = findKitStatus(kitEffectState.effects, characterId, BURST_EXTENSIONS_STATUS_ID)?.stacks ?? 0;
       if (extensions < BURST_EXTENSIONS_MAX) {
@@ -432,7 +430,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     kind: "field",
     nextTickSeconds: JUDICATION_FIRST_FRAMES / 60,
     onTick: ({ kitEffectState }) => {
-      if (!findStance(kitEffectState.effects, characterId)) return;
+      if (!findKitStance(kitEffectState.effects, characterId)) return;
       addKitEffect(kitEffectState, {
         characterId,
         id: ENDSEER_STATUS_ID,
@@ -450,29 +448,21 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     hits: [],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { ascension, characterId, constellationCount } = combatant;
-      const stance: KitStance = {
-        actions: {
+      // The Pactsworn Pathclearer strikes stay Normal Attack DMG though they deal Electro, gcsim's AttackTagNormal in
+      // Cyno/attack.go's attackB, beside AttackTagExtra in cyno/charge.go's chargeB and AttackTagElementalArt in
+      // Cyno/skill.go's skillB
+      enterKitStance(
+        kitEffectState,
+        combatant,
+        {
           chargedAttack: pactswornChargedAttack,
           chargedAttackStamina: attackMultiplier(6),
           elementalBurst,
           elementalSkill: mortuaryRite,
           normalAttacks: pactswornNormalAttacks,
         },
-        // The Pactsworn Pathclearer strikes stay Normal Attack DMG though they deal Electro, gcsim's AttackTagNormal in
-        // Cyno/attack.go's attackB, beside AttackTagExtra in cyno/charge.go's chargeB and AttackTagElementalArt in
-        // Cyno/skill.go's skillB
-        attackTags: {
-          chargedAttack: AttackTag.ChargedAttack,
-          elementalBurst: AttackTag.ElementalBurst,
-          elementalSkill: AttackTag.ElementalSkill,
-          normalAttacks: AttackTag.NormalAttack,
-        },
-        characterId,
-        elapsedSeconds: 0,
-        kind: "stance",
-        secondsRemaining: burstSeconds,
-      };
-      addKitEffect(kitEffectState, stance);
+        burstSeconds,
+      );
       addKitEffect(kitEffectState, {
         amount: burstMultiplier(11),
         attribute: Attribute.ElementalMastery,
@@ -535,7 +525,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     // Mortuary Rite's cooldown is the factor of Secret Rite's while Pactsworn Pathclearer holds, so the stance's skill press
     // Waits out three seconds rather than seven and a half
     getSkillCooldownMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
-      findStance(kitEffectState.effects, combatant.characterId)
+      findKitStance(kitEffectState.effects, combatant.characterId)
         ? mortuaryRiteCooldownSeconds / skillCooldownSeconds
         : 1,
     highPlunge: createPlunge(
@@ -558,7 +548,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       const { characterId } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (event.previousCharacterId !== characterId) return;
-        const stance = findStance(kitEffectState.effects, characterId);
+        const stance = findKitStance(kitEffectState.effects, characterId);
         if (stance) stance.secondsRemaining = 0;
         const buff = kitEffectState.effects.find(
           (effect) =>
@@ -578,7 +568,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         event.striker.characterId !== characterId ||
         !counter ||
         (counter.stacks ?? 0) >= C4_STACKS_MAX ||
-        !findStance(kitEffectState.effects, characterId) ||
+        !findKitStance(kitEffectState.effects, characterId) ||
         !event.reactions.some(checkIsC4Reaction)
       )
         return;

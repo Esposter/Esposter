@@ -5,10 +5,9 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
+import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
@@ -16,6 +15,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -204,29 +204,16 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const lowHealthSpiritSoother = createSpiritSoother(burstTalentMultiplier(1));
 
   // Guide to Afterlife's Paramita Papilio: a stance on her for its seconds, playing her strikes and charged attack in its
-  // Own reach, which infuses her normal attacks, charged attack and plunges with Pyro, and raises her ATK by her Max HP
-  const paramitaActions = {
+  // Own reach, which infuses her normal attacks, charged attack and plunges with Pyro, and raises her ATK by her Max HP.
+  // Its strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal in
+  // Hutao/attack.go's ppAttack and AttackTagExtra in hutao/charge.go's ppChargeAttack
+  const paramitaActions: KitStanceActions = {
     chargedAttack: paramitaChargedAttack,
     chargedAttackStamina: attackTalentMultiplier(8),
     elementalBurst: spiritSoother,
     elementalSkill: { hits: [], seconds: SKILL_ANIMATION_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
     normalAttacks: paramitaNormalAttacks,
   };
-  // The Paramita strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal in
-  // In hutao/attack.go's ppAttack and AttackTagExtra in hutao/charge.go's ppChargeAttack
-  const createParamitaStance = (characterId: number): KitStance => ({
-    actions: paramitaActions,
-    attackTags: {
-      chargedAttack: AttackTag.ChargedAttack,
-      elementalBurst: AttackTag.ElementalBurst,
-      elementalSkill: AttackTag.ElementalSkill,
-      normalAttacks: AttackTag.NormalAttack,
-    },
-    characterId,
-    elapsedSeconds: 0,
-    kind: "stance",
-    secondsRemaining: paramitaSeconds,
-  });
   const createPyroInfusion = (characterId: number): KitEffect => ({
     characterId,
     element: Element.Pyro,
@@ -256,7 +243,7 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           Math.min(skillTalentMultiplier(0) * healthShare, healthShare - minimumHealthShare),
         );
         damagePartyMember(party, combatant.characterId, lostHealthShare);
-        addKitEffect(kitEffectState, createParamitaStance(combatant.characterId));
+        enterKitStance(kitEffectState, combatant, paramitaActions, paramitaSeconds);
         addKitEffect(kitEffectState, createPyroInfusion(combatant.characterId));
         addKitEffect(kitEffectState, {
           amount: skillTalentMultiplier(1) * combatant.attributes.maxHealth,
