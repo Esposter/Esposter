@@ -11,13 +11,13 @@ Citlali's kit is one module, `createCitlaliKit`, avatar 10000107: her three stri
 
 - **Itzpapa and the Opal Shield wait on the Nightsoul hook.** Obsidian Tzitzimitl summons Itzpapa and gives the party's active character a shield that scales with Elemental Mastery, and the Opal Fire state those start is the Nightsoul state the framework does not hold. The skill's hit is built; the summon and the shield are not, so the skill has no shield in this kit.
 - **The Spirit Vessel skulls wait on the burst's start reading the enemies.** Ice Storm summons a skull on each of the first three enemies within 7 of Citlali as it is cast, and each lands at a random time between 87 and 117 frames after the burst's hit. The start can draw those times from the world's random source, but it reads no enemies but the one it turned to, so the skulls are not built, and the burst's hit is Ice Storm alone.
-- **Ascension 1 and 4 and Constellations 1, 2, 4 and 6 wait on the Nightsoul hook.** Each reads the Nightsoul points, the Nightsoul burst, the Opal Fire state, Itzpapa or the Opal Shield, so none is built.
+- **Citlali's Ascension 1 and 4 and Constellations 1, 2, 4 and 6 wait on the Nightsoul hook.** Each reads the Nightsoul points, the Nightsoul burst, the Opal Fire state, Itzpapa or the Opal Shield, so none is built.
 
 ## Decisions
 
 - **The strikes land 10 frames after their hitmarks.** gcsim queues each strike with a 10-frame travel, so each lands at its hitmark plus 10, as the bow kits and Ororon do.
-- **Her strikes and charged attack give no poise.** gcsim gives them none, so `citlaliKit.ts` stands them at 0, as Ororon's do. A recording of the game's poise on them would settle it: yes if they deal none, otherwise the amounts are the ones to set.
-- **Her plunges are the shared table's, with no gcsim plunge file to time them.** The collision, low and high plunge read the proud group's 5, 6 and 7, and they land as their action starts with a zero animation, as the Ororon kit does. A recording of her plunges landing at once with the shared reach would settle it; a later landing would need its frames.
+- **Her strikes and charged attack give no poise.** gcsim gives them none, so `citlaliKit.ts` stands them at 0, as Ororon's do. A recording of the game's poise on them would settle it.
+- **Her plunges are the proud group's 5, 6 and 7.** With no gcsim plunge file to time them, the collision, low and high plunge land at the start of their action with a zero animation, as the Ororon kit's do. A recording of her plunges landing at once would settle it; a later landing would need its frames.
 
 ## Key files
 

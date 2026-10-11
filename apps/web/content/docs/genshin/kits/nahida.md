@@ -9,7 +9,7 @@ Nahida's kit is one module, `createNahidaKit`, on avatar 10000073: four strikes,
 
 ## Decisions
 
-- **Nahida's plunges take Bennett's timings and poise.** Her gcsim folder has no plunge file, so her collision, low and high plunge land at Bennett's frames (36 and 38 frames for the low and high hits, 100 and 150 poise) with her own multipliers, as `nahidaKit.ts` writes them; her animation showing otherwise would move them.
+- **Nahida's plunges take Bennett's timings and poise.** No plunge file exists in her gcsim folder, so the collision, low and high plunge in `nahidaKit.ts` use Bennett's timings (frames 36 and 38 for the low and high hits) and poise of 100 and 150, under her own multipliers. A different animation of hers would move them.
 
 ## Key files
 

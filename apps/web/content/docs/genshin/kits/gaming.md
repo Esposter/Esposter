@@ -5,7 +5,7 @@ description: Gaming's kit as built: his four strikes, a provisional charged atta
 
 # Gaming
 
-Gaming's kit is one module, `createGamingKit`, avatar 10000092: four strikes, a charged attack, a collision and two plunges, Bestial Ascent, whose cast strikes nothing of its own, and Suanni's Gilded Dance's one strike. His multipliers are read from proud skill groups 9231, 9232 and 9239; the skill's cooldown, the burst's cooldown and energy cost, and the charged attack's stamina are read from the same groups. Ascension and Constellations are not built, and Bestial Ascent's Charmed Cloudstrider plunge, which is the skill's whole damage, is not either.
+Gaming's kit is one module, `createGamingKit`, avatar 10000092: four strikes, a charged attack, a collision and two plunges, Bestial Ascent, whose cast strikes nothing of its own, and Suanni's Gilded Dance's one strike. His multipliers are read from proud skill groups 9231, 9232 and 9239, its cooldowns and the burst's energy cost among them. Ascension and Constellations are not built, and Bestial Ascent's Charmed Cloudstrider plunge, which is the skill's whole damage, is not either.
 
 ## Not yet built
 
@@ -16,7 +16,7 @@ Gaming's kit is one module, `createGamingKit`, avatar 10000092: four strikes, a 
 
 ## Decisions
 
-- **The charged attack is provisional.** gcsim gives Gaming no charged attack, as its charge is not implemented, so the charged attack takes Ayato's measured claymore charge's frames and reach, the strike landing at 24 frames of a 55-frame animation, and the table's index 5 (113.09% of ATK) and 6 (40 stamina) for its multiplier and stamina, as a best estimate until a recording of the attack settles them.
+- **The charged attack is provisional.** gcsim has none for Gaming, since its charge is not implemented, so it takes the frames and reach of Ayato's measured claymore charge (the strike at 24 frames of 55) and the table's index 5 (113.09% of ATK) and 6 (40 stamina), until a recording of the attack settles it.
 - **Bestial Ascent strikes nothing of its own.** gcsim's skill has no hit: its damage is the special plunge that follows it, which is not built, so the skill's animation and cooldown are the kit's and its hits are none.
 - **The burst's strike is one circle of radius 5 round the body**, at 60 frames, as gcsim queues it. The burst's status, its Man Chai and its heal are not built, so the burst's cooldown and energy cost are the whole of its state.
 

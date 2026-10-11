@@ -9,7 +9,7 @@ Layla's kit is one module, `createLaylaKit`, on avatar 10000074: three strikes, 
 
 ## Decisions
 
-- **Layla's plunges take Bennett's timings and poise.** Her gcsim folder has no plunge file, so her collision, low and high plunge land at Bennett's frames (36 and 38 frames for the low and high hits, 100 and 150 poise) with her own multipliers, as `laylaKit.ts` writes them; her animation showing otherwise would move them.
+- **Layla's plunges take Bennett's timings and poise.** gcsim has no plunge file for her, so `laylaKit.ts` lands the collision, low and high plunge at Bennett's frames, 36 for the low hit and 38 for the high, with 100 and 150 poise and her own multipliers. Her animation would move them if it showed otherwise.
 
 ## Key files
 
