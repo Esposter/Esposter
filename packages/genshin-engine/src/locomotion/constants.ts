@@ -14,12 +14,16 @@ export const SWIM_STROKE_STAMINA_COST = 4;
 export const SWIM_DASH_STAMINA_COST = 2;
 export const SWIM_DASH_STAMINA_PER_SECOND = 10.2;
 export const CLIMB_START_STAMINA = 5;
-// Provisional: the wiki's approximation from player testing, measured off a recording of the meter draining in a glide
+// A second of glide, the wiki's approximation, which a published study timing a full pool of 240 drained in 80 seconds
+// Confirms
 export const GLIDE_STAMINA_PER_SECOND = 3;
-// Provisional: unknown on the wiki, measured off a recording of the meter draining on a wall
-export const CLIMB_STAMINA_PER_SECOND = 4;
-// Provisional: the seconds between swimming strokes, read off the swim clip's length by `genshin:assets locomotion`
-export const SWIM_STROKE_SECONDS = 1;
+// A second of climbing, which the wiki leaves unknown: 1 a climbing action, as a published study counts 240 actions
+// Draining a pool of 240, and two actions to each second-long climb cycle of a body's clip. The short female body's
+// Action costs 0.89 and its cycle lasts 0.67 seconds, 2.67 a second, which the shared cost does not tell apart
+export const CLIMB_STAMINA_PER_SECOND = 2;
+// The seconds between swimming strokes, a stroke to each cycle of the swim clip, 1.67 seconds for every body
+// (`genshin:assets locomotion`)
+export const SWIM_STROKE_SECONDS = 1.67;
 // The states stamina refills in, on the ground and in the air outside the glider; a wall, water and the glider hold it
 export const STAMINA_REFILL_STATES: readonly LocomotionState[] = [
   LocomotionState.Fall,
