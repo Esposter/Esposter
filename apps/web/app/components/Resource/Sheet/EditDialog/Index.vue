@@ -3,7 +3,7 @@ import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 
 interface Props {
   editedValue: unknown;
@@ -21,7 +21,7 @@ const { editedValue, isCreate, schema, submit, title, value } = defineProps<Prop
 const emit = defineEmits<{ reset: [] }>();
 const styledDialog = useTemplateRef("styledDialog");
 const errorIcon = useTemplateRef("errorIcon");
-const isEqual = computed(() => deepEqual(value, editedValue));
+const isEqual = computed(() => checkIsDeepEqual(value, editedValue));
 </script>
 
 <template>

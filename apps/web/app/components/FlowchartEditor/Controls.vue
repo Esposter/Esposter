@@ -3,10 +3,10 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DEFAULT_VIEWPORT_TRANSFORM } from "@/services/flowchartEditor/constants";
 import { ControlButton, Controls } from "@vue-flow/controls";
 import { useVueFlow } from "@vue-flow/core";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 
 const { setViewport, viewport } = useVueFlow();
-const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANSFORM));
+const disabled = computed(() => checkIsDeepEqual(viewport.value, DEFAULT_VIEWPORT_TRANSFORM));
 </script>
 
 <template>

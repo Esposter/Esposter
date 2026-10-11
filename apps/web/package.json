@@ -123,7 +123,6 @@
     "diff": "catalog:",
     "drizzle-orm": "catalog:",
     "emojilib": "catalog:",
-    "fast-deep-equal": "catalog:",
     "fflate": "catalog:",
     "genshin-engine": "workspace:*",
     "genshin-interface": "workspace:*",

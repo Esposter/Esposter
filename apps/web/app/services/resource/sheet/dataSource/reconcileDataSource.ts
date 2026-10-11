@@ -1,7 +1,7 @@
 import type { AItemEntity } from "#shared/models/entity/AItemEntity";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 
 const inheritIdentity = (item: AItemEntity, previousItem: AItemEntity, isUnchanged: boolean) => {
   item.id = previousItem.id;
@@ -24,12 +24,12 @@ export const reconcileDataSource = (dataSource: DataSource, previousDataSource: 
     if (!previousColumn) continue;
     // Handed over once, so two columns can never end up sharing the id the content schema requires be unique
     previousColumnMap.delete(column.sourceName);
-    inheritIdentity(column, previousColumn, deepEqual(toComparable(column), toComparable(previousColumn)));
+    inheritIdentity(column, previousColumn, checkIsDeepEqual(toComparable(column), toComparable(previousColumn)));
   }
 
   for (const [index, row] of dataSource.rows.entries()) {
     const previousRow = previousDataSource.rows[index];
     if (!previousRow) break;
-    inheritIdentity(row, previousRow, deepEqual(row.data, previousRow.data));
+    inheritIdentity(row, previousRow, checkIsDeepEqual(row.data, previousRow.data));
   }
 };

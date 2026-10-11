@@ -61,8 +61,7 @@
   },
   "dependencies": {
     "@esposter/azure": "workspace:*",
-    "@esposter/shared": "workspace:*",
-    "fast-deep-equal": "catalog:"
+    "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",

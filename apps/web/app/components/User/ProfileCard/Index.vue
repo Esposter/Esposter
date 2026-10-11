@@ -10,7 +10,7 @@ import { requireAuthData } from "@/services/auth/requireAuthData";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { PROFILE_MUTATION_KEY } from "@/services/user/constants";
 import { DatabaseEntityType } from "@esposter/db-schema";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 
 interface Props {
   section?: UserSettingsPageSection;
@@ -42,7 +42,7 @@ const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
 const isEditMode = ref(false);
 const isEditFormValid = ref(true);
 const disabled = computed(
-  () => !isEditFormValid.value || deepEqual(profileCardRowValues.value, editedProfileCardRows.value),
+  () => !isEditFormValid.value || checkIsDeepEqual(profileCardRowValues.value, editedProfileCardRows.value),
 );
 </script>
 

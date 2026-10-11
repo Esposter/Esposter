@@ -5,7 +5,7 @@ import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { HealthLabelTextStyle } from "@/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { prettify } from "@/util/text/prettify";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 import { Input } from "phaser";
 import { Container, Image, Text } from "vue-phaserjs";
 
@@ -18,7 +18,9 @@ interface Props {
 const { columnIndex, monster, rowIndex } = defineProps<Props>();
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
-const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, monsterPartyOptionGrid.position.value));
+const isActive = computed(() =>
+  checkIsDeepEqual({ x: columnIndex, y: rowIndex }, monsterPartyOptionGrid.position.value),
+);
 const monsterName = computed(() => prettify(monster.key));
 </script>
 

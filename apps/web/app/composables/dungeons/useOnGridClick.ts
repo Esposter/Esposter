@@ -3,7 +3,7 @@ import type { Position } from "grid-engine";
 
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useControlsStore } from "@/store/dungeons/controls";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 
 export const useOnGridClick = <TGrid extends readonly (readonly unknown[])[]>(
   grid: Grid<TGrid>,
@@ -17,7 +17,7 @@ export const useOnGridClick = <TGrid extends readonly (readonly unknown[])[]>(
   };
   return () => {
     const positionValue = toValue(position);
-    if (deepEqual(positionValue, grid.position.value)) (onConfirm ?? defaultOnConfirm)();
+    if (checkIsDeepEqual(positionValue, grid.position.value)) (onConfirm ?? defaultOnConfirm)();
     else grid.position.value = positionValue;
   };
 };

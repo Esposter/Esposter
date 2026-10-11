@@ -569,9 +569,6 @@ catalogs:
     fast-check:
       specifier: ^4.10.2
       version: 4.10.2
-    fast-deep-equal:
-      specifier: ^3.1.3
-      version: 3.1.3
     fflate:
       specifier: ^0.8.3
       version: 0.8.3
@@ -1242,9 +1239,6 @@ importers:
       emojilib:
         specifier: 'catalog:'
         version: 4.0.3
-      fast-deep-equal:
-        specifier: 'catalog:'
-        version: 3.1.3
       fflate:
         specifier: 'catalog:'
         version: 0.8.3
@@ -1693,9 +1687,6 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
-      fast-deep-equal:
-        specifier: 'catalog:'
-        version: 3.1.3
     devDependencies:
       '@arethetypeswrong/core':
         specifier: 'catalog:'
