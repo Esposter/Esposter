@@ -3,10 +3,12 @@ import type { ModuleOptions } from "trpc-nuxt-module";
 
 import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "../app/services/trpc/constants.ts";
 
-// Registered by its source rather than its package name: `nuxt prepare` loads every module from the app's
-// `postinstall`, before any workspace package is built, and a name resolves to the `dist` a fresh clone does not have
-// Yet. Its options are the router and context the generated handlers import, the endpoints they are registered at, and
-// The Keep-alive the WebSocket handler pings its connections with
+// The workspace's own modules are registered by their source rather than their package name: `nuxt prepare` loads every
+// Module from the app's `postinstall`, before any workspace package is built, and a name resolves to the `dist` a fresh
+// Clone does not have yet
+const NUXT_SECURITY_MODULE_PATH = "../../packages/nuxt-security-module/src/module.ts";
+// The tRPC module's options are the router and context the generated handlers import, the endpoints they are
+// Registered at, and the keep-alive the WebSocket handler pings its connections with
 const trpcModule: [string, ModuleOptions] = [
   "../../packages/trpc-nuxt-module/src/module.ts",
   {
@@ -37,6 +39,6 @@ export const modules: NuxtConfig["modules"] = process.env.VITEST
       "@unocss/nuxt",
       "@vite-pwa/nuxt",
       "@vueuse/nuxt",
-      "nuxt-security-module",
+      NUXT_SECURITY_MODULE_PATH,
       trpcModule,
     ];
