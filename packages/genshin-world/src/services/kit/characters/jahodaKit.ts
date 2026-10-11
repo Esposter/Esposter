@@ -13,6 +13,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
@@ -165,19 +166,15 @@ export const createJahodaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         if (absorbed === undefined) return;
         const flaskElement = readFlaskElement(tickState, characterId);
         if (flaskElement === undefined)
-          addKitEffect(tickState, {
-            characterId,
+          addKitStatus(tickState, characterId, {
             id: `${FLASK_ABSORBED_STATUS_PREFIX}${absorbed}`,
-            kind: "status",
             secondsRemaining: pursuitSeconds,
           });
         // A flask that has absorbed an element fills by its full value from that element and by half from another
         const amount = flaskElement === undefined || flaskElement === absorbed ? flaskFillValue : flaskWeakFillValue;
         const gauge = Math.min(readFlaskGauge(tickState, characterId) + amount, FLASK_GAUGE_MAXIMUM);
-        addKitEffect(tickState, {
-          characterId,
+        addKitStatus(tickState, characterId, {
           id: FLASK_GAUGE_STATUS_ID,
-          kind: "status",
           secondsRemaining: pursuitSeconds,
           stacks: gauge,
         });
@@ -189,10 +186,8 @@ export const createJahodaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       tickIntervalSeconds: FILL_INTERVAL_FRAMES / 60,
     });
     addKitEffect(kitEffectState, pursuit);
-    addKitEffect(kitEffectState, {
-      characterId,
+    addKitStatus(kitEffectState, characterId, {
       id: FLASK_GAUGE_STATUS_ID,
-      kind: "status",
       secondsRemaining: pursuitSeconds,
       stacks: 0,
     });

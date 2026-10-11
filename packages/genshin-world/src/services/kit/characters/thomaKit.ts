@@ -16,9 +16,9 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Thoma's proud skill groups, read at his talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -157,13 +157,15 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // Within the table's seconds
   const setOffFieryCollapse = (ooyoroi: KitSummon, { body, kitEffectState }: KitContext): void => {
     const { combatant } = ooyoroi;
-    if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, FIERY_COLLAPSE_COOLDOWN_STATUS_ID)) return;
-    addKitEffect(kitEffectState, {
-      characterId: combatant.characterId,
-      id: FIERY_COLLAPSE_COOLDOWN_STATUS_ID,
-      kind: "status",
-      secondsRemaining: burstTalentMultiplier(THOMA_BURST_FIERY_COLLAPSE_INTERVAL_INDEX),
-    });
+    if (
+      !startKitCooldown(
+        kitEffectState,
+        combatant.characterId,
+        FIERY_COLLAPSE_COOLDOWN_STATUS_ID,
+        burstTalentMultiplier(THOMA_BURST_FIERY_COLLAPSE_INTERVAL_INDEX),
+      )
+    )
+      return;
     castKitSummon(kitEffectState, body, combatant, [createFieryCollapseHit()]);
   };
 

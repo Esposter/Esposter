@@ -18,13 +18,14 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -176,10 +177,8 @@ const countStatusStacks = (effects: readonly KitEffect[], characterId: number, i
 
 // Adds Resolve stacks to those she holds, up to their cap, held until her burst spends them
 const gainResolve = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>
-  addKitEffect(kitEffectState, {
-    characterId,
+  addKitStatus(kitEffectState, characterId, {
     id: RESOLVE_STATUS_ID,
-    kind: "status",
     secondsRemaining: Number.POSITIVE_INFINITY,
     stacks: Math.min(
       countStatusStacks(kitEffectState.effects, characterId, RESOLVE_STATUS_ID) + stacks,
@@ -362,12 +361,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           EYE_DELAY_FRAMES / 60,
           ({ kitEffectState: tickEffectState, party }) => {
             for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-              addKitEffect(tickEffectState, {
-                characterId,
-                id: EYE_STATUS_ID,
-                kind: "status",
-                secondsRemaining: eyeSeconds,
-              });
+              addKitStatus(tickEffectState, characterId, { id: EYE_STATUS_ID, secondsRemaining: eyeSeconds });
           },
           { id: EYE_PENDING_TASK_ID },
         );
@@ -430,14 +424,11 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       }
 
       if (event.kind === KitEventKind.EnergyParticleCollected) {
-        if (ascension < ASCENSION_1 || checkHasKitStatus(kitEffectState.effects, characterId, ASCENSION_1_ICD_ID))
+        if (
+          ascension < ASCENSION_1 ||
+          !startKitCooldown(kitEffectState, characterId, ASCENSION_1_ICD_ID, ASCENSION_1_ICD_SECONDS)
+        )
           return;
-        addKitEffect(kitEffectState, {
-          characterId,
-          id: ASCENSION_1_ICD_ID,
-          kind: "status",
-          secondsRemaining: ASCENSION_1_ICD_SECONDS,
-        });
         gainResolve(kitEffectState, characterId, ASCENSION_1_RESOLVE_STACKS);
         return;
       }
@@ -471,19 +462,11 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           hits.includes(hit),
         ) &&
         restoreCount < RESTORE_MAX_COUNT &&
-        !checkHasKitStatus(kitEffectState.effects, characterId, RESTORE_ICD_ID)
+        startKitCooldown(kitEffectState, characterId, RESTORE_ICD_ID, RESTORE_ICD_SECONDS)
       ) {
-        addKitEffect(kitEffectState, {
-          characterId,
-          id: RESTORE_ICD_ID,
-          kind: "status",
-          secondsRemaining: RESTORE_ICD_SECONDS,
-        });
         // The count lasts as long as the stance, so the next cast starts its own
-        addKitEffect(kitEffectState, {
-          characterId,
+        addKitStatus(kitEffectState, characterId, {
           id: RESTORE_COUNT_ID,
-          kind: "status",
           secondsRemaining: musouIsshin.secondsRemaining,
           stacks: restoreCount + 1,
         });
@@ -513,16 +496,10 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       if (
         hit === coordinatedAttackHit ||
         hit.talentMultiplier === 0 ||
-        checkHasKitStatus(kitEffectState.effects, characterId, COORDINATED_ATTACK_ICD_ID) ||
-        !checkHasKitStatus(kitEffectState.effects, striker.characterId, EYE_STATUS_ID)
+        !checkHasKitStatus(kitEffectState.effects, striker.characterId, EYE_STATUS_ID) ||
+        !startKitCooldown(kitEffectState, characterId, COORDINATED_ATTACK_ICD_ID, COORDINATED_ATTACK_ICD_SECONDS)
       )
         return;
-      addKitEffect(kitEffectState, {
-        characterId,
-        id: COORDINATED_ATTACK_ICD_ID,
-        kind: "status",
-        secondsRemaining: COORDINATED_ATTACK_ICD_SECONDS,
-      });
       castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, combatant, [
         coordinatedAttackHit,
       ]);

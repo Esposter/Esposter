@@ -19,7 +19,7 @@ import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -394,16 +394,10 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
           event.striker.characterId !== characterId ||
           activeCombatant.characterId !== characterId ||
           !event.enemy.elementalState.auras.has(AuraType.Cryo) ||
-          checkHasKitStatus(kitEffectState.effects, characterId, FROZEN_SKIES_COOLDOWN_STATUS_ID)
+          !startKitCooldown(kitEffectState, characterId, FROZEN_SKIES_COOLDOWN_STATUS_ID, FROZEN_SKIES_COOLDOWN_SECONDS)
         )
           return;
         gainPartyMemberEnergy(party, combatant, FROZEN_SKIES_ENERGY);
-        addKitEffect(kitEffectState, {
-          characterId,
-          id: FROZEN_SKIES_COOLDOWN_STATUS_ID,
-          kind: "status",
-          secondsRemaining: FROZEN_SKIES_COOLDOWN_SECONDS,
-        });
       }
     },
     plungeCollision: {

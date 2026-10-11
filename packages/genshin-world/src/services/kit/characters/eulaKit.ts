@@ -17,10 +17,12 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Eula's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the charged
@@ -146,14 +148,11 @@ const countLightfallStacks = (effects: readonly KitEffect[], characterId: number
       effect.kind === "status" && effect.characterId === characterId && LIGHTFALL_STACK_IDS.includes(effect.id),
   ).length;
 
-const checkHasStatus = (effects: readonly KitEffect[], characterId: number, id: string): boolean =>
-  effects.some((effect) => effect.kind === "status" && effect.characterId === characterId && effect.id === id);
-
 // Each Grimheart stack gained refreshes every stack's seconds, as gcsim refreshes its one duration, and two is the most
 const gainGrimheartStack = (kitEffectState: KitEffectState, combatant: Combatant, seconds: number): void => {
   const count = Math.min(countGrimheartStacks(kitEffectState.effects, combatant.characterId) + 1, GRIMHEART_MAX_STACKS);
   for (const id of GRIMHEART_STACK_IDS.slice(0, count))
-    addKitEffect(kitEffectState, { characterId: combatant.characterId, id, kind: "status", secondsRemaining: seconds });
+    addKitStatus(kitEffectState, combatant.characterId, { id, secondsRemaining: seconds });
 };
 
 const clearGrimheartStacks = (kitEffectState: KitEffectState, characterId: number): void => {
@@ -191,23 +190,12 @@ const gainLightfallStack = (
     summon === undefined ||
     summon.elapsedSeconds < LIGHTFALL_STATUS_START_FRAMES / 60 ||
     summon.elapsedSeconds >= LIGHTFALL_STATUS_END_FRAMES / 60 ||
-    checkHasStatus(kitEffectState.effects, characterId, LIGHTFALL_STACK_ICD_ID)
+    !startKitCooldown(kitEffectState, characterId, LIGHTFALL_STACK_ICD_ID, LIGHTFALL_STACK_ICD_SECONDS)
   )
     return;
-  addKitEffect(kitEffectState, {
-    characterId,
-    id: LIGHTFALL_STACK_ICD_ID,
-    kind: "status",
-    secondsRemaining: LIGHTFALL_STACK_ICD_SECONDS,
-  });
   const count = countLightfallStacks(kitEffectState.effects, characterId);
   if (count >= LIGHTFALL_MAX_STACKS) return;
-  addKitEffect(kitEffectState, {
-    characterId,
-    id: getLightfallStackId(count),
-    kind: "status",
-    secondsRemaining: Infinity,
-  });
+  addKitStatus(kitEffectState, characterId, { id: getLightfallStackId(count), secondsRemaining: Infinity });
   const hits = [createLightfallExplosion(explodeBase, explodePerStack, count + 1, LIGHTFALL_EXPLOSION_FRAMES / 60)];
   kitEffectState.effects = kitEffectState.effects.map((effect) => (effect === summon ? { ...summon, hits } : effect));
 };
@@ -316,7 +304,7 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           gainGrimheartStack(kitEffectState, combatant, grimheartSeconds);
         const startingStacks = combatant.constellationCount >= 6 ? CONSTELLATION_6_STARTING_STACKS : 0;
         for (const id of LIGHTFALL_STACK_IDS.slice(0, startingStacks))
-          addKitEffect(kitEffectState, { characterId, id, kind: "status", secondsRemaining: Infinity });
+          addKitStatus(kitEffectState, characterId, { id, secondsRemaining: Infinity });
         const lightfall: KitSummon = createKitSummon(
           body,
           combatant,
@@ -337,13 +325,8 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           hitmarkSeconds: PRESS_HITMARK_FRAMES / 60,
           isBlunt: true,
           onStrike: ({ kitEffectState }, { combatant }) => {
-            if (checkHasStatus(kitEffectState.effects, combatant.characterId, GRIMHEART_ICD_ID)) return;
-            addKitEffect(kitEffectState, {
-              characterId: combatant.characterId,
-              id: GRIMHEART_ICD_ID,
-              kind: "status",
-              secondsRemaining: GRIMHEART_ICD_SECONDS,
-            });
+            if (!startKitCooldown(kitEffectState, combatant.characterId, GRIMHEART_ICD_ID, GRIMHEART_ICD_SECONDS))
+              return;
             gainGrimheartStack(kitEffectState, combatant, grimheartSeconds);
             gainLightfallStack(kitEffectState, combatant, explodeBase, explodePerStack);
           },

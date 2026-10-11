@@ -14,7 +14,7 @@ import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -248,10 +248,8 @@ export const createChevreuseKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       )
         return;
       if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, OVERCHARGED_BALL_STATUS_ID)) return;
-      addKitEffect(kitEffectState, {
-        characterId: combatant.characterId,
+      addKitStatus(kitEffectState, combatant.characterId, {
         id: OVERCHARGED_BALL_STATUS_ID,
-        kind: "status",
         secondsRemaining: Number.POSITIVE_INFINITY,
       });
     },

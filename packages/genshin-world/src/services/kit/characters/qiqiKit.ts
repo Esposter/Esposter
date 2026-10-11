@@ -20,12 +20,13 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { reviveParty } from "#src/services/party/reviveParty";
@@ -317,15 +318,14 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       onStart: ({ activeCombatant: { characterId, constellationCount }, kitEffectState }) => {
         if (
           constellationCount < RITE_OF_RESURRECTION_CONSTELLATION ||
-          checkHasKitStatus(kitEffectState.effects, characterId, RITE_OF_RESURRECTION_COOLDOWN_STATUS_ID)
+          !startKitCooldown(
+            kitEffectState,
+            characterId,
+            RITE_OF_RESURRECTION_COOLDOWN_STATUS_ID,
+            RITE_OF_RESURRECTION_COOLDOWN_SECONDS,
+          )
         )
           return;
-        addKitEffect(kitEffectState, {
-          characterId,
-          id: RITE_OF_RESURRECTION_COOLDOWN_STATUS_ID,
-          kind: "status",
-          secondsRemaining: RITE_OF_RESURRECTION_COOLDOWN_SECONDS,
-        });
         scheduleKitTask(kitEffectState, characterId, 0, ({ party }) =>
           reviveParty(party, RITE_OF_RESURRECTION_HEALTH_SHARE),
         );
@@ -409,10 +409,8 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       )
         return;
       addEnemyStatus(enemy, createTalisman(combatant, A_GLIMPSE_INTO_ARCANUM_TALISMAN_SECONDS));
-      addKitEffect(kitEffectState, {
-        characterId,
+      addKitStatus(kitEffectState, characterId, {
         id: A_GLIMPSE_INTO_ARCANUM_COOLDOWN_STATUS_ID,
-        kind: "status",
         secondsRemaining: A_GLIMPSE_INTO_ARCANUM_COOLDOWN_SECONDS,
       });
     },

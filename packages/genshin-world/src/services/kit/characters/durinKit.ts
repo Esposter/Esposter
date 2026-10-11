@@ -11,10 +11,11 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -170,14 +171,9 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   // Each recast gives the skill's energy once every six seconds, as gcsim's energy ICD does, and the energy is the table's
   const gainRecastEnergy = ({ activeCombatant: combatant, kitEffectState, party }: KitContext): void => {
-    if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, SKILL_ENERGY_ICD_STATUS_ID)) return;
+    if (!startKitCooldown(kitEffectState, combatant.characterId, SKILL_ENERGY_ICD_STATUS_ID, SKILL_ENERGY_ICD_SECONDS))
+      return;
     gainPartyMemberEnergy(party, combatant, skillMultiplier(4));
-    addKitEffect(kitEffectState, {
-      characterId: combatant.characterId,
-      id: SKILL_ENERGY_ICD_STATUS_ID,
-      kind: "status",
-      secondsRemaining: SKILL_ENERGY_ICD_SECONDS,
-    });
   };
 
   const whiteRecast: KitAction = {
@@ -223,10 +219,8 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     onStart: (start) => {
       endWindow(start);
       gainRecastEnergy(start);
-      addKitEffect(start.kitEffectState, {
-        characterId: start.activeCombatant.characterId,
+      addKitStatus(start.kitEffectState, start.activeCombatant.characterId, {
         id: BLACK_STATUS_ID,
-        kind: "status",
         secondsRemaining: BLACK_STATUS_SECONDS,
       });
     },

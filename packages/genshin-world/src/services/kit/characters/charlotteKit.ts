@@ -19,9 +19,9 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Charlotte's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
@@ -177,13 +177,7 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       };
       const thornBody: KitBody = { facing: 0, height: 0, position: { x: position.x, z: position.z } };
       scheduleKitTask(kitEffectState, characterId, THORN_HITMARK_SECONDS, ({ kitEffectState: effectState }) => {
-        if (checkHasKitStatus(effectState.effects, characterId, THORN_COOLDOWN_STATUS_ID)) return;
-        addKitEffect(effectState, {
-          characterId,
-          id: THORN_COOLDOWN_STATUS_ID,
-          kind: "status",
-          secondsRemaining: attackMultiplier(9),
-        });
+        if (!startKitCooldown(effectState, characterId, THORN_COOLDOWN_STATUS_ID, attackMultiplier(9))) return;
         castKitSummon(effectState, thornBody, combatant, [thornHit]);
       });
     },

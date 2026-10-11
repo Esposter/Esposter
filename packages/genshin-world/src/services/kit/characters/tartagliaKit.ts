@@ -16,7 +16,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -275,10 +275,8 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       hits: [lightOfObliterationHit],
       onStart: ({ activeCombatant: { characterId, constellationCount }, kitEffectState }) => {
         if (constellationCount >= HAVOC_ANNIHILATION_CONSTELLATION)
-          addKitEffect(kitEffectState, {
-            characterId,
+          addKitStatus(kitEffectState, characterId, {
             id: HAVOC_ANNIHILATION_STATUS_ID,
-            kind: "status",
             secondsRemaining: stanceSeconds,
           });
       },

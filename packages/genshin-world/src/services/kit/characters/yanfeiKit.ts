@@ -12,7 +12,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -114,7 +114,7 @@ const getMaximumSeals = (combatant: Combatant): number =>
 // Sets the seals Yanfei holds to the count given, each restarting its slot, so every seal runs out together
 const setSeals = (kitEffectState: KitEffectState, characterId: number, count: number): void => {
   for (const id of SEAL_STATUS_IDS.slice(0, count))
-    addKitEffect(kitEffectState, { characterId, id, kind: "status", secondsRemaining: SEAL_SECONDS });
+    addKitStatus(kitEffectState, characterId, { id, secondsRemaining: SEAL_SECONDS });
 };
 
 const gainSeals = (kitEffectState: KitEffectState, combatant: Combatant, gained: number): void => {
@@ -223,10 +223,8 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     elementalBurst: {
       hits: [burstHit],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
+        addKitStatus(kitEffectState, combatant.characterId, {
           id: DONE_DEAL_STATUS_ID,
-          kind: "status",
           secondsRemaining: BURST_SECONDS,
         });
         castKitField(kitEffectState, combatant.characterId, body.position, {

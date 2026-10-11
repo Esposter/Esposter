@@ -18,12 +18,11 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Fischl's proud skill groups, read at her talent level. The attack group holds the five arrows at 0 to 4, the aimed shot
@@ -369,18 +368,20 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         if (
           ascension < UNDONE_BE_THY_SINFUL_HEX_ASCENSION ||
           striker.characterId !== activeCharacterId ||
-          !reactions.some((reaction) => checkIsElectroReaction(reaction)) ||
-          checkHasKitStatus(effects, activeCharacterId, THUNDERING_RETRIBUTION_COOLDOWN_STATUS_ID)
+          !reactions.some((reaction) => checkIsElectroReaction(reaction))
         )
           return;
         const oz = findStandingKitSummon(effects, OZ_SUMMON_ID, characterId);
-        if (!oz) return;
-        addKitEffect(kitEffectState, {
-          characterId: activeCharacterId,
-          id: THUNDERING_RETRIBUTION_COOLDOWN_STATUS_ID,
-          kind: "status",
-          secondsRemaining: THUNDERING_RETRIBUTION_COOLDOWN_SECONDS,
-        });
+        if (
+          !oz ||
+          !startKitCooldown(
+            kitEffectState,
+            activeCharacterId,
+            THUNDERING_RETRIBUTION_COOLDOWN_STATUS_ID,
+            THUNDERING_RETRIBUTION_COOLDOWN_SECONDS,
+          )
+        )
+          return;
         castKitSummon(
           kitEffectState,
           { facing: 0, height: 0, position: enemy.position },

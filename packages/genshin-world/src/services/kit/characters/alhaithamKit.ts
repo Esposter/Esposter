@@ -24,11 +24,13 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -179,10 +181,8 @@ const setMirrorCount = (kitEffectState: KitEffectState, characterId: number, mir
     }
     return;
   }
-  addKitEffect(kitEffectState, {
-    characterId,
+  addKitStatus(kitEffectState, characterId, {
     id: MIRROR_STATUS_ID,
-    kind: "status",
     secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
     stacks: mirrors,
   });
@@ -219,10 +219,8 @@ const startMirrorDecay = (kitEffectState: KitEffectState, body: KitBody, combata
 // Adds Constellation 2's Elemental Mastery for one Mirror made, on the next of its four sources, as gcsim cycles them
 const addConstellation2Buff = (kitEffectState: KitEffectState, characterId: number): void => {
   const cursor = findKitStatus(kitEffectState.effects, characterId, CONSTELLATION_2_CURSOR_STATUS_ID)?.stacks ?? 0;
-  addKitEffect(kitEffectState, {
-    characterId,
+  addKitStatus(kitEffectState, characterId, {
     id: CONSTELLATION_2_CURSOR_STATUS_ID,
-    kind: "status",
     secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
     stacks: (cursor + 1) % CONSTELLATION_2_STACKS_MAX,
   });
@@ -313,24 +311,15 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     if (
       isMirrorSource &&
       ascension >= ASCENSION_1 &&
-      !findKitStatus(kitEffectState.effects, characterId, ASCENSION_1_ICD_STATUS_ID)
-    ) {
-      addKitEffect(kitEffectState, {
-        characterId,
-        id: ASCENSION_1_ICD_STATUS_ID,
-        kind: "status",
-        secondsRemaining: ASCENSION_1_ICD_SECONDS,
-      });
+      startKitCooldown(kitEffectState, characterId, ASCENSION_1_ICD_STATUS_ID, ASCENSION_1_ICD_SECONDS)
+    )
       gainMirrors(kitEffectState, body, combatant, 1);
-    }
     const count = getMirrorCount(kitEffectState.effects, characterId);
-    if (count === 0 || findKitStatus(kitEffectState.effects, characterId, PROJECTION_ICD_STATUS_ID)) return;
-    addKitEffect(kitEffectState, {
-      characterId,
-      id: PROJECTION_ICD_STATUS_ID,
-      kind: "status",
-      secondsRemaining: PROJECTION_ICD_FRAMES / 60,
-    });
+    if (
+      count === 0 ||
+      !startKitCooldown(kitEffectState, characterId, PROJECTION_ICD_STATUS_ID, PROJECTION_ICD_FRAMES / 60)
+    )
+      return;
     const { hitArea, hitmarkFrames } = takeOne(PROJECTION_ATTACK_SHAPES, count - 1);
     castKitSummon(
       kitEffectState,

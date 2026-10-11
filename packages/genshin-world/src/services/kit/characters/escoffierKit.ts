@@ -15,8 +15,8 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitField } from "#src/services/kit/effects/createKitField";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Escoffier's proud skill groups, read at her talent level. The attack group holds the normal attack's hits at 0 to 3,
@@ -240,13 +240,15 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       ],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitSummon(kitEffectState, body, combatant, skillTickHits);
-        if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, ALIGNED_INTERVAL_STATUS_ID)) return;
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
-          id: ALIGNED_INTERVAL_STATUS_ID,
-          kind: "status",
-          secondsRemaining: skillMultiplier(SKILL_ALIGNED_INTERVAL_INDEX),
-        });
+        if (
+          !startKitCooldown(
+            kitEffectState,
+            combatant.characterId,
+            ALIGNED_INTERVAL_STATUS_ID,
+            skillMultiplier(SKILL_ALIGNED_INTERVAL_INDEX),
+          )
+        )
+          return;
         castKitSummon(kitEffectState, body, combatant, [
           {
             hitArea: SURGING_BLADE_HIT_AREA,

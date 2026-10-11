@@ -19,6 +19,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
@@ -187,10 +188,8 @@ const setShield = (
     kind: "shield",
     secondsRemaining: shieldSeconds,
   });
-  addKitEffect(kitEffectState, {
-    characterId,
+  addKitStatus(kitEffectState, characterId, {
     id: SHIELD_LEVEL_STATUS_ID,
-    kind: "status",
     secondsRemaining: shieldSeconds,
     stacks: level,
   });
@@ -336,10 +335,8 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (findShieldLevel(kitEffectState.effects, combatant.characterId) === 0)
           setShield(kitEffectState, combatant, body, SHIELD_LEVEL_ONE, talentMultiplierMap);
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
+        addKitStatus(kitEffectState, combatant.characterId, {
           id: HIT_COUNT_STATUS_ID,
-          kind: "status",
           secondsRemaining: SKILL_HIT_WINDOW_SECONDS,
           stacks: 0,
         });
