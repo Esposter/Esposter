@@ -10,7 +10,12 @@ import {
   GAME_EXECUTABLE_PATH,
   PARITY_DIRECTORY,
 } from "#src/services/genshinParity/shared/constants";
-import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
+import {
+  EXCEL_DIRECTORY,
+  GAME_TEXT_DIRECTORY,
+  SCENE_WORLD_AREA_DIRECTORY,
+  SCENE_WORLD_AREA_FILE_NAME,
+} from "#src/services/genshinText/constants";
 import {
   CLI_EXECUTABLE_NAME,
   PUBLISH_DIRECTORY_NAME,
@@ -279,12 +284,18 @@ export const DECOMPILER_DIRECTORY: string = join(TOOL_CACHE_ROOT, "3dmigoto");
 export const DECOMPILER_BATCH_SIZE = 200;
 // Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
 export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
-// The catalogue's file in the world data, the regions, areas and outlines people edit and `fitAreaOutlines` outlines
+// The catalogue's file in the world data, the regions, areas and subareas people edit and `fitAreaOutlines` outlines
 export const CATALOGUE_FILE = "catalogue.json";
 // The game's own area table in the community's dump, each area's id and the text id of its name, and the field a scene
 // Point files the area it stands in under, as the dump obfuscates it: Windrise's statue's holds 201, which the table
 // Names Windrise
 export const WORLD_AREAS_PATH: string = join(EXCEL_DIRECTORY, "WorldAreaConfigData.json");
+// The open world's areas' outlines in the community's dump, the game's own polygon for each of its areas
+export const WORLD_AREA_POLYGONS_PATH: string = join(
+  GAME_TEXT_DIRECTORY,
+  SCENE_WORLD_AREA_DIRECTORY,
+  SCENE_WORLD_AREA_FILE_NAME,
+);
 export const SCENE_POINT_AREA_FIELD = "HDMEDFBJMPK";
 // The open world's scene, whose groups, points, NPC births and transport points the world is placed from
 export const OPEN_WORLD_SCENE_ID = 3;

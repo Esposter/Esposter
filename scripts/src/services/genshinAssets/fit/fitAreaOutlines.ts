@@ -1,89 +1,90 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
+import type { WorldAreaPolygonFile } from "#src/models/genshinAssets/world/WorldAreaPolygonFile";
+import type { GroundPoint } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { WorldAreaType } from "#src/models/genshinAssets/world/WorldAreaType";
 import { CATALOGUE_KEY } from "#src/services/gameData/constants";
-import { computeAreaCells } from "#src/services/genshinAssets/fit/computeAreaCells";
-import { computeLoopArea } from "#src/services/genshinAssets/fit/computeLoopArea";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 import {
   CATALOGUE_FILE,
-  TERRAIN_TILE_SIZE,
+  OPEN_WORLD_SCENE_ID,
+  WORLD_AREA_POLYGONS_PATH,
   WORLD_AREAS_PATH,
   WORLD_DATA_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
-import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameLanguage } from "genshin-text";
-import { catalogueSchema } from "genshin-world";
+import { AreaTerrainType, catalogueSchema } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// The side of the cells an area's outline is traced over, in metres, a sixteenth of a tile
-const AREA_OUTLINE_CELL_SIZE = 64;
-// How far a traced outline may stray from its cells' own edges, in cells
-const AREA_OUTLINE_TOLERANCE = 1;
-// Each area's outline in the catalogue, drawn round the tiles its places stand on, since the game ships no area's
-// Shape the inventory finds: the waypoints and statues the game's area table files under each of its level-one areas
-// (`readSceneTransportPoints`), every tile any of them stands on split between the areas by the point nearest each
-// Cell (`computeAreaCells`), and each area's cells traced round, its largest piece kept, in the world's axes round the
-// Oak's foot to the metre. An area is the game's level-one area of its English name, and one the table files no point
-// Under keeps the outline the file gives it. The catalogue is written back, as the source people edit, and is also its
-// Record, with each area's outline as the notes
+// Each area's and subarea's outline in the catalogue, the game's own: the polygons the community's dump holds for the
+// Open world's areas, carried into the world's axes round the oak's foot to the metre. An area is the game's level-one
+// Area of its English name and takes its polygon, and a subarea takes the polygon of every level-two area of its name
+// In that area, since the game splits some places into several (Sumeru City's lower and upper town), and the kind of
+// Ground the game's table files them under, a city's among them. An area the file holds no polygon for keeps the
+// Outline the catalogue gives it, and a subarea the table files no row for takes no outline and no terrain.
+// The catalogue is written back, as the source people edit, and is also its record, with what was outlined as the notes
 export const fitAreaOutlines = async (): Promise<GameDataBuild> => {
-  const [areasJson, transportPoints, [originX, , originZ], catalogueJson] = await Promise.all([
+  const [areasJson, polygonsJson, [originX, , originZ], catalogueJson] = await Promise.all([
     readFile(WORLD_AREAS_PATH, "utf8"),
-    readSceneTransportPoints(),
+    readFile(WORLD_AREA_POLYGONS_PATH, "utf8"),
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFile(join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE), "utf8"),
   ]);
   const textMap = readTextMap(GameLanguage.English);
-  const areas = parseMachineJson<WorldArea[]>(areasJson);
+  const areas = parseMachineJson<WorldArea[]>(areasJson).filter(({ sceneID }) => sceneID === OPEN_WORLD_SCENE_ID);
+  const { level1Areas } = parseMachineJson<WorldAreaPolygonFile>(polygonsJson);
   const catalogue = catalogueSchema.parse(parseMachineJson(catalogueJson));
+  const toOutline = ({ roadPoints }: { roadPoints: readonly GroundPoint[] }): GroundPoint[] =>
+    roadPoints.map(({ x, z }) => ({ x: roundFitted(x - originX, 0), z: roundFitted(originZ - z, 0) }));
+  const levelOneOutlineMap = new Map(
+    level1Areas.map(({ level1Area: { id1, polygonData } }) => [id1, toOutline(polygonData)]),
+  );
+  const levelTwoOutlineMap = new Map(
+    level1Areas.flatMap(({ level2Areas = [] }) =>
+      level2Areas.map(({ id2, polygonData }) => [id2, toOutline(polygonData)] as const),
+    ),
+  );
+  const getName = ({ areaNameTextMapHash }: WorldArea): string | undefined => textMap.get(String(areaNameTextMapHash));
   const levelOneIdMap = new Map(
-    areas.filter(({ areaType }) => areaType === WorldAreaType.Level2).map(({ areaID1, areaID2 }) => [areaID2, areaID1]),
+    areas.filter(({ areaType }) => areaType === WorldAreaType.Level1).map((area) => [getName(area), area.areaID1]),
   );
-  const levelOneNameMap = new Map(
-    areas
-      .filter(({ areaType }) => areaType === WorldAreaType.Level1)
-      .map(({ areaID1, areaNameTextMapHash }) => [textMap.get(String(areaNameTextMapHash)), areaID1]),
-  );
-  const points = transportPoints.flatMap(({ area, position }) => {
-    const levelOneId = area === undefined ? undefined : levelOneIdMap.get(area);
-    return levelOneId === undefined ? [] : [{ area: levelOneId, ...position }];
-  });
-  const { areaCellsMap, corner, width } = computeAreaCells(points, {
-    cellSize: AREA_OUTLINE_CELL_SIZE,
-    tileSize: TERRAIN_TILE_SIZE,
-  });
-  const notes: string[] = [];
-  // The catalogue is parsed afresh, so each area's outline is written into it in place
+  const levelTwoAreas = areas.filter(({ areaType }) => areaType === WorldAreaType.Level2);
+  // The areas the game's polygon outlines, and those whose own outline the catalogue keeps
+  const gameAreaIds: string[] = [];
+  const keptAreaIds: string[] = [];
+  // The catalogue is parsed afresh, so each outline is written into it in place
   for (const region of catalogue.regions)
     for (const area of region.areas) {
-      const levelOneId = levelOneNameMap.get(area.name);
-      const cells = levelOneId === undefined ? undefined : areaCellsMap.get(levelOneId);
-      if (!cells) continue;
-      const loops = traceCellLoops(cells, {
-        cellSize: AREA_OUTLINE_CELL_SIZE,
-        corner,
-        minCells: 0,
-        tolerance: AREA_OUTLINE_TOLERANCE,
-        width,
-      });
-      const [loop = []] = loops.toSorted(
-        (firstLoop, secondLoop) => computeLoopArea(secondLoop) - computeLoopArea(firstLoop),
-      );
-      area.outline = loop.map(([x, z]) => ({ x: roundFitted(x - originX, 0), z: roundFitted(originZ - z, 0) }));
-      const keptShare = roundFitted((100 * computeLoopArea(loop)) / (cells.length * AREA_OUTLINE_CELL_SIZE ** 2));
-      notes.push(
-        `${region.id}/${area.id}: ${area.outline.length} corners round ${cells.length} cells, ${keptShare}% kept of ${loops.length} loops`,
-      );
+      const levelOneId = levelOneIdMap.get(area.name);
+      const outline = levelOneId === undefined ? undefined : levelOneOutlineMap.get(levelOneId);
+      if (outline) {
+        area.outline = outline;
+        gameAreaIds.push(area.id);
+      } else if (area.outline.length > 0) keptAreaIds.push(`${region.id}/${area.id}`);
+      for (const subarea of area.subareas) {
+        const rows = levelTwoAreas.filter((row) => row.areaID1 === levelOneId && getName(row) === subarea.name);
+        subarea.areaTerrainType = rows[0]?.terrainType ?? AreaTerrainType.None;
+        subarea.outlines = rows.flatMap(({ areaID2 }) => {
+          const subareaOutline = levelTwoOutlineMap.get(areaID2);
+          return subareaOutline ? [subareaOutline] : [];
+        });
+      }
     }
+  const catalogueAreas = catalogue.regions.flatMap((region) => region.areas);
+  const subareas = catalogueAreas.flatMap((area) => area.subareas);
+  const outlinedSubareas = subareas.filter(({ outlines }) => outlines.length > 0);
+  const cities = subareas.filter(({ areaTerrainType }) => areaTerrainType === AreaTerrainType.City);
+  const notes = [
+    `${gameAreaIds.length} of ${catalogueAreas.length} areas take the game's outline, ${keptAreaIds.length} keep the catalogue's (${keptAreaIds.join(", ")})`,
+    `${outlinedSubareas.length} of ${subareas.length} subareas take the game's outlines, among them ${outlinedSubareas.filter((subarea) => cities.includes(subarea)).length} of the ${cities.length} cities the game marks`,
+  ];
   return {
     notes: [...notes, await writeWorldData(CATALOGUE_FILE, catalogue)],
     objects: { [CATALOGUE_KEY]: catalogue },

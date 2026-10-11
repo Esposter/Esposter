@@ -11,6 +11,8 @@ import {
   GameLanguageCodeMap,
   SCENE_NPC_BORN_DIRECTORY,
   SCENE_NPC_BORN_FILE_NAME,
+  SCENE_WORLD_AREA_DIRECTORY,
+  SCENE_WORLD_AREA_FILE_NAME,
 } from "#src/services/genshinText/constants";
 import { selectDumpFiles } from "#src/services/genshinText/selectDumpFiles";
 import { fetchJson } from "#src/services/shared/fetchJson";
@@ -33,17 +35,22 @@ const listRemoteDirectory = async (directory: string): Promise<DumpFile[]> => {
 };
 
 // The dump's own files a fetch may add: the readable texts of every language's folder, the tables a reader names, whole or
-// In their numbered parts, and the scene's NPC births, each at its path under the dump's folder
+// In their numbered parts, and the scene's NPC births and area outlines, each at its path under the dump's folder
 const listDumpFiles = async (): Promise<DumpFile[]> => {
   const tableRegex = new RegExp(String.raw`^ExcelBinOutput/(?:${DUMP_TABLE_NAMES.join("|")})(?:_\d+)?\.json$`, "u");
   const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) => tableRegex.test(path));
   const readableFiles = await Promise.all(
     Object.values(GameLanguageCodeMap).map((code) => listRemoteDirectory(`Readable/${code}`)),
   );
-  const sceneNpcBornFiles = (await listRemoteDirectory(SCENE_NPC_BORN_DIRECTORY)).filter(
-    ({ path }) => path === `${SCENE_NPC_BORN_DIRECTORY}/${SCENE_NPC_BORN_FILE_NAME}`,
+  const sceneFiles = await Promise.all(
+    [
+      { directory: SCENE_NPC_BORN_DIRECTORY, fileName: SCENE_NPC_BORN_FILE_NAME },
+      { directory: SCENE_WORLD_AREA_DIRECTORY, fileName: SCENE_WORLD_AREA_FILE_NAME },
+    ].map(async ({ directory, fileName }) =>
+      (await listRemoteDirectory(directory)).filter(({ path }) => path === `${directory}/${fileName}`),
+    ),
   );
-  return [...tableFiles, ...readableFiles.flat(), ...sceneNpcBornFiles];
+  return [...tableFiles, ...readableFiles.flat(), ...sceneFiles.flat()];
 };
 
 // The fetch's download of every dump file the dump lacks or holds at another size, into the dump beside the others. A

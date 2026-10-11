@@ -28,7 +28,7 @@ The roof is a convex solid: its base closes it, so a camera under the eaves sees
 
 ## Region data
 
-`data/regions/inazuma.json` is the region's data in the shape `regionDataSchema` reads, holding Inazuma City's building. Each of its areas takes its outline from its waypoints' tiles ([world map](/docs/genshin/world-map)), so the region is fetched as the camera nears any of them.
+`data/regions/inazuma.json` is the region's data in the shape `regionDataSchema` reads, holding Inazuma City's building. Each of its areas takes the game's own outline ([world map](/docs/genshin/world-map)), so the region is fetched as the camera nears any of them.
 
 When the [parity](/docs/genshin/parity) inventory draws Inazuma City's witness, the post-and-beam building stands in for the meshes named "Area_Dq_Build_", the Tenshukaku's tiers among them, and the terrain tiles are its ground; every other mesh there is named undrawn, kind by kind (`InazumaUndrawnMeshRegexMap`).
 
