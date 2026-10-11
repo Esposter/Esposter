@@ -1,0 +1,91 @@
+{{Advanced Properties
+|title   = Normal Attack 1-Hit
+|gu      = 1U
+|icdtag  = Normal Attack
+|icdtype = 2.5s/3 Hits
+|poise   = 16
+|impulse = 3
+
+|title2   = Normal Attack 2-Hit
+|gu2      = 1U
+|icdtag2  = Normal Attack
+|icdtype2 = 2.5s/3 Hits
+|poise2   = 19.2
+|impulse2 = 3
+
+|title3   = Normal Attack 3-Hit A
+|gu3      = 1U
+|icdtag3  = Normal Attack
+|icdtype3 = 2.5s/3 Hits
+|poise3   = 19.2
+|impulse3 = 2
+
+|title4   = Normal Attack 3-Hit B
+|gu4      = 1U
+|icdtag4  = Normal Attack
+|icdtype4 = 2.5s/3 Hits
+|poise4   = 20
+|impulse4 = 3
+
+|title5   = Normal Attack 4-Hit A
+|gu5      = 1U
+|icdtag5  = Normal Attack
+|icdtype5 = 2.5s/3 Hits
+|poise5   = 19.2
+|impulse5 = 2
+
+|title6   = Normal Attack 4-Hit B
+|gu6      = 1U
+|icdtag6  = Normal Attack
+|icdtype6 = 2.5s/3 Hits
+|poise6   = 19.2
+|impulse6 = 2
+
+|title7   = Normal Attack 4-Hit C
+|gu7      = 1U
+|icdtag7  = Normal Attack
+|icdtype7 = 2.5s/3 Hits
+|poise7   = 19.2
+|impulse7 = 3
+
+|title8   = Normal Attack 4-Hit D
+|gu8      = 1U
+|icdtag8  = Normal Attack
+|icdtype8 = 2.5s/3 Hits
+|poise8   = 12.8
+|impulse8 = 3
+
+|title9   = Normal Attack 5-Hit
+|gu9      = 1U
+|icdtag9  = Normal Attack
+|icdtype9 = 2.5s/3 Hits
+|poise9   = 71.2
+|impulse9 = 6
+
+|title10   = Charged Attack
+|gu10      = 1U
+|icdtag10  = Charged Attack
+|icdtype10 = 0.5s
+|poise10   = 120
+|impulse10 = 5
+
+|title11   = Plunging Attack Collision
+|gu11      = 0U
+|icdtag11  = none
+|poise11   = 25
+|impulse11 = 2
+
+|title12   = Low Plunge
+|gu12      = 1U
+|icdtag12  = none
+|poise12   = 100
+|impulse12 = 4
+|blunt12   = 1
+
+|title13   = High Plunge
+|gu13      = 1U
+|icdtag13  = none
+|poise13   = 150
+|impulse13 = 7
+|blunt13   = 1
+}}

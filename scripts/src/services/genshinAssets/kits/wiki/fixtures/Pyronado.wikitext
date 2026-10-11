@@ -1,0 +1,14 @@
+{{Advanced Properties
+|title   = Swing DMG
+|gu      = 1U
+|icdtag  = Elemental Burst
+|icdtype = 2.5s/3 Hits
+|poise   = 30
+|impulse = 3
+
+|title2   = Pyronado DMG
+|gu2      = 1U
+|icdtag2  = none
+|poise2   = 30
+|impulse2 = 3
+}}
