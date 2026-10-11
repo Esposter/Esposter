@@ -35,7 +35,7 @@
 | `invariants`              | 2026-10-05 · Opus 5.5  |       |
 | `llm-delegation`          | 2026-10-08 · Opus 5.5  |       |
 | `naming`                  | 2026-10-05 · Opus 5.5  |       |
-| `no-compatibility-debt`   | —                      |       |
+| `no-compatibility-debt`   | 2026-10-11 · Opus 5.5  |       |
 | `over-engineering`        | 2026-10-05 · Opus 5.5  |       |
 | `oxlint`                  | 2026-10-05 · Opus 5.5  |       |
 | `package-scripts`         | 2026-10-05 · Opus 5.5  |       |
