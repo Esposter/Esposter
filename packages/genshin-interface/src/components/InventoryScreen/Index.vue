@@ -365,6 +365,8 @@ watch(
 }
 
 .detail {
+  --detail-head-color: #655c83;
+
   position: absolute;
   top: calc(var(--unit) * 114);
   left: calc(var(--unit) * 1298);
@@ -374,7 +376,7 @@ watch(
   padding-top: calc(var(--unit) * 4);
   background: linear-gradient(
     to bottom,
-    #655c83 calc(var(--unit) * 286),
+    var(--detail-head-color) calc(var(--unit) * 286),
     #ece3d8 calc(var(--unit) * 286),
     #ece3d8 calc(var(--unit) * 786),
     #ffebbf calc(var(--unit) * 786)
@@ -383,13 +385,7 @@ watch(
 }
 
 .detail[data-rarity="5"] {
-  background: linear-gradient(
-    to bottom,
-    #7a4e22 calc(var(--unit) * 286),
-    #ece3d8 calc(var(--unit) * 286),
-    #ece3d8 calc(var(--unit) * 786),
-    #ffebbf calc(var(--unit) * 786)
-  );
+  --detail-head-color: #7a4e22;
 }
 
 .detail-name {
