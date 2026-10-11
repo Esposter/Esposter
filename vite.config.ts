@@ -54,13 +54,15 @@ interface PackageManifest {
   scripts?: Record<string, string>;
 }
 
+// Read from the config file's own directory, since `vp run -w` from a package (the app's `pnpm dev`) loads it with
+// That package as the working directory, while the tasks' patterns and `cwd` below stay relative to the root package
 const readPackageBuildManifests = () =>
-  readdirSync(PACKAGES_DIRECTORY).flatMap((directory) => {
+  readdirSync(new URL(`${PACKAGES_DIRECTORY}/`, import.meta.url)).flatMap((directory) => {
     // The root config cannot import `@esposter/shared`, whose `dist` is one of the builds this file orders, and no
     // Manifest carries a Date
     // eslint-disable-next-line no-restricted-properties -- a manifest holds no Date for jsonDateParse to revive
     const manifest: PackageManifest = JSON.parse(
-      readFileSync(`${PACKAGES_DIRECTORY}/${directory}/package.json`, "utf8"),
+      readFileSync(new URL(`${PACKAGES_DIRECTORY}/${directory}/package.json`, import.meta.url), "utf8"),
     );
     return manifest.scripts?.build ? [{ directory, manifest }] : [];
   });
