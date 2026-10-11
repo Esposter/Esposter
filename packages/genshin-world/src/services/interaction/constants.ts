@@ -1,10 +1,13 @@
-// Provisional: how far from the body a thing can be acted on, in metres, until the passes' recording of a pick up
-// Measures the game's reach
+// Provisional best estimate, on the roadmap's Manual verification: how far from the body a thing can be acted on, in
+// Metres. No published clip walks slowly up to a lone thing where its distance can be solved
 export const INTERACTION_REACH = 2.5;
-// Provisional: how many rows the prompt list shows at once, until the passes' recording of a pile of drops counts them
+// Provisional best estimate, on the roadmap's Manual verification: how many rows the prompt list shows at once. No
+// Published clip or wiki still shows a pile of more things than the list holds
 export const INTERACTION_WINDOW_SIZE = 5;
-// Provisional: how often a held F picks up again, in seconds, until a recording of the game's held pick up measures it
-export const INTERACTION_HELD_REPEAT_SECONDS = 0.15;
+// How often a held F picks up again, in seconds: three pick ups by F, each 27 frames at 60 a second after the last, in a
+// Published PC clip of the English client, `captures/world-pickup.mkv` from 38.5 to 39.6 seconds. Whether F is held
+// There rather than tapped is on the roadmap's Manual verification
+export const INTERACTION_HELD_REPEAT_SECONDS = 0.45;
 // The radius of a drop's stand-in sphere, in metres
 export const DROP_STAND_IN_RADIUS = 0.15;
 // How many drops and how many residents the world draws stand-ins for at once, one instanced mesh of each kind

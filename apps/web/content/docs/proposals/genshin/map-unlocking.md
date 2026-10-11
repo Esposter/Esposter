@@ -13,7 +13,7 @@ touches:
 
 # Map unlocking
 
-The statues' unlocking is built, as the [map unlocking](/docs/genshin/map-unlocking) page records. What is left is the rest of the game's places. They wait on the [exploring](/docs/proposals/genshin/exploring) proposal, which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point, and on the [interaction](/docs/proposals/genshin/interaction) prompts a waypoint and a domain are unlocked through.
+The statues' unlocking is built, as the [map unlocking](/docs/genshin/map-unlocking) page records. What is left is the rest of the game's places. They wait on the [exploring](/docs/proposals/genshin/exploring) proposal, which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point, and on the [interaction](/docs/genshin/interaction) prompts a waypoint and a domain are unlocked through.
 
 ## Decisions
 
