@@ -1,7 +1,7 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
 import { requestBlobStorage } from "@/services/azure/container/requestBlobStorage";
-import dedent from "dedent";
+import { dedent } from "@esposter/shared";
 
 // Put Block List is the only call in the upload that sets the blob's own headers — Put Block ignores them — so
 // The file's type has to be stamped here or the blob keeps whatever Azure defaults to. The two content types
