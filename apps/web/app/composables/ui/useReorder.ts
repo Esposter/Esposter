@@ -4,8 +4,8 @@ import { getMovedItems } from "@/services/shared/getMovedItems";
 // At the end it is moving towards
 const getKeyedOrder = <T>(event: KeyboardEvent, values: T[], index: number) => {
   if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return undefined;
-  else if (event.key === "ArrowUp") return getMovedItems(values, index, -1);
-  else if (event.key === "ArrowDown") return getMovedItems(values, index, 1);
+  else if (event.key === "ArrowUp") return getMovedItems(values, index, index - 1);
+  else if (event.key === "ArrowDown") return getMovedItems(values, index, index + 1);
   else return undefined;
 };
 

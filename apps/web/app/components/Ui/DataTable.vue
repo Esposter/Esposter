@@ -11,13 +11,10 @@ import {
   DATA_TABLE_SKELETON_ROW_COUNT,
   MAX_DATA_TABLE_COLUMN_WIDTH,
   MIN_DATA_TABLE_COLUMN_WIDTH,
-  REORDER_ANIMATION_MS,
   REORDER_HANDLE_CLASS,
-  TOUCH_DRAG_DELAY_MS,
 } from "@/services/ui/constants";
 import { getNextGridCellPosition } from "@/services/ui/getNextGridCellPosition";
 import { checkIsNestedInteraction } from "@esposter/shared";
-import { VueDraggable } from "vue-draggable-plus";
 
 interface Props {
   columns: UiDataTableColumn<T, TSortKey>[];
@@ -275,23 +272,17 @@ const tabStopCell = computed(() => {
 // A drag or a key reorders only rows shown in their own order, one group of them, so a move lands where it is seen
 const isReorderActive = computed(() => isReorderable && sortBy.value.length === 0 && !search && !groupBy);
 const { announce, announcement, getKeyedOrder } = useReorder();
-const reducedMotion = usePreferredReducedMotion();
-// What the one body takes while it drags: the page's rows, and their new order handed back as ids
-const reorderProps = computed(() => ({
-  animation: reducedMotion.value === "reduce" ? 0 : REORDER_ANIMATION_MS,
-  delay: TOUCH_DRAG_DELAY_MS,
-  delayOnTouchOnly: true,
-  ghostClass: "reorder-ghost",
-  handle: `.${REORDER_HANDLE_CLASS}`,
-  modelValue: pageItems.value,
-  "onUpdate:modelValue": (newItems: T[]) => {
-    emit(
-      "reorder",
-      newItems.map(({ id }) => id),
-    );
-  },
-  tag: "tbody",
-}));
+const getDragReorderProps = useDragReorder();
+// What the one body takes while it drags: the page's rows by their handle, and their new order handed back as ids
+const reorderProps = computed(() =>
+  getDragReorderProps(
+    pageIds.value,
+    (ids) => {
+      emit("reorder", ids);
+    },
+    `.${REORDER_HANDLE_CLASS}`,
+  ),
+);
 // The page's rows in their new order; a key's move is read out, and the focus the moved row held is put back, since
 // Re-rendered in its new place the row is a moved element that lost it on the way
 const onReorderKeydown = async (event: KeyboardEvent) => {
@@ -438,12 +429,7 @@ const onGridKeydown = useGridKeyboard({
         </tbody>
         <template v-else>
           <!-- An unsorted, ungrouped table has one body, whose rows drag by their handle while the rest move aside -->
-          <component
-            :is="isReorderActive ? VueDraggable : 'tbody'"
-            v-for="group of groups"
-            :key="String(group.value)"
-            :="isReorderActive ? reorderProps : {}"
-          >
+          <tbody v-for="group of groups" :key="String(group.value)" :="isReorderActive ? reorderProps : {}">
             <tr v-if="groupBy">
               <td class="cell" :colspan="columnCount" px-3>
                 <button
@@ -535,7 +521,7 @@ const onGridKeydown = useGridKeyboard({
                 </td>
               </tr>
             </template>
-          </component>
+          </tbody>
         </template>
         <tfoot v-if="$slots.foot && pageItems.length > 0">
           <tr>

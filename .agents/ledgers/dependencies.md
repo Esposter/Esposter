@@ -222,7 +222,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vitest-browser-vue`                    | —                     | Keep — tooling    | browser-mode component tests                                                                           |
 | `vue`                                   | —                     | Keep — framework  | the UI framework                                                                                       |
 | `vue-codemirror`                        | —                     | Keep — engine     | the code viewer (the admission doc's keep list: thinning costs more lines)                             |
-| `vue-draggable-plus`                    | —                     | Absorb — own code | only the pointer drag; the keys and read-out are the UI library's, so not accessibility-shaped         |
 | `vue-eslint-parser`                     | —                     | Keep — tooling    | ESLint's Vue parser                                                                                    |
 | `vue-pdf-embed`                         | —                     | Keep — engine     | the PDF thumbnail embed (PDF viewer consolidation, rejected)                                           |
 | `vue-router`                            | —                     | Keep — framework  | routing                                                                                                |

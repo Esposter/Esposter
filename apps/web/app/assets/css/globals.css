@@ -89,11 +89,21 @@ p:empty::before {
   content: "";
   display: inline-block;
 }
-/* Where a dragged row will land, in every reorderable list, table and sidebar: a line in the accent over the faded row, */
-/* Drawn inset so a table row, which takes no border of its own, shows it too */
+/* The row a drag holds, in every reorderable list, table and sidebar: lifted off the rest as a panel over the page is, */
+/* And drawn over each row it passes while they move aside to open the slot it will land in */
 .reorder-ghost {
-  box-shadow: inset 0 calc(var(--ui-border-width) * 2) 0 0 var(--ui-accent);
-  opacity: 0.5;
+  position: relative;
+  z-index: 1;
+  background-color: var(--ui-lifted);
+  box-shadow: var(--ui-lifted-shadow);
+  cursor: grabbing;
+}
+/* Forced colours drop the shadow and the fill, so an edge they paint keeps it apart from the rows it passes: an outline, */
+/* Not the border a lifted panel gets, since a border would resize the row from the slots the drag measured */
+@media (forced-colors: active) {
+  .reorder-ghost {
+    outline: var(--ui-border-width) solid transparent;
+  }
 }
 
 /* Whoever is speaking glows in the accent, easing in and out with their voice. The glow itself is the caller's own */

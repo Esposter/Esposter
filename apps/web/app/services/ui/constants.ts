@@ -40,20 +40,33 @@ export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
 // How long a finger rests on a touch screen before a drag starts under it, so a swipe that starts on a draggable row
 // Scrolls instead. Shorter than the long press, so a finger that holds still still opens the context menu
 export const TOUCH_DRAG_DELAY_MS = 200;
+// How far a mouse or pen press moves, in CSS pixels, before it is a drag rather than a click
+export const DRAG_START_DISTANCE = 4;
+// How near a scroller's top or bottom edge, in CSS pixels, a drag's pointer starts it scrolling
+export const DRAG_AUTOSCROLL_EDGE = 48;
+// How fast a drag scrolls, in CSS pixels a millisecond, with the pointer at or past the edge: slower further in
+export const DRAG_AUTOSCROLL_SPEED = 1;
 // What a reorderable table's rows are dragged by, drawn by the call site in a column of its own, since a row's cells
 // Are its own to press and select across
 export const REORDER_HANDLE_CLASS = "reorder-handle";
-// How long the rest of a list takes to close the gap a dragged row leaves or open one where it lands, three
-// Motion units
-export const REORDER_ANIMATION_MS = 150;
+// What the row a drag holds wears, drawn by the global stylesheet
+export const REORDER_GHOST_CLASS = "reorder-ghost";
+// How the rows a drag passes move aside, and every row slides into its slot on a drop: the short motion, which reduced
+// Motion zeroes
+export const REORDER_SLIDE_TRANSITION = "translate var(--ui-motion-short)";
 // How long a finger rests on a touch screen before the context menu opens under it, the platforms' own long press
 export const LONG_PRESS_MS = 500;
 // How far a resting finger may drift, in CSS pixels, before the press counts as the start of a scroll instead
 export const LONG_PRESS_MOVE_TOLERANCE = 10;
+// What takes text: a field or an editable region
+const EDITABLE_SELECTOR =
+  'input, textarea, [contenteditable=""], [contenteditable="plaintext-only"], [contenteditable="true"]';
 // Where the browser's own context menu is worth more than ours: in a field, with its spell-check and paste, and on a
 // Link, with opening it in a new tab and copying its address
-export const CONTEXT_MENU_BROWSER_SELECTOR =
-  'a[href], input, textarea, [contenteditable=""], [contenteditable="plaintext-only"], [contenteditable="true"]';
+export const CONTEXT_MENU_BROWSER_SELECTOR = `a[href], ${EDITABLE_SELECTOR}`;
+// Where a press keeps its own meaning rather than starting a drag: in a field, whose caret, selection and slider it
+// Moves, and on a select, which it opens
+export const DRAG_IGNORE_SELECTOR = `select, ${EDITABLE_SELECTOR}`;
 export const THEME_COOKIE_NAME = "theme";
 // Written with an explicit lifetime, because a cookie with none is a session cookie — and an installed PWA ends
 // Its session whenever the OS evicts the standalone window, which it does routinely. The chosen theme then

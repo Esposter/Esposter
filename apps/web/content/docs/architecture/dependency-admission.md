@@ -93,6 +93,8 @@ The third is [pitch-transcription](/docs/pitch-transcription), the shape an abso
 
 The fourth is [nuxt-security-module](/docs/nuxt-security-module), the first security-shaped package absorbed under the exception the stop list below now carries. The app runs it in place of nuxt-security. The fifth is [sanitize-html](/docs/shared/sanitize-html), the second security-shaped absorption: the parser that did not read markup as a browser does is replaced by the standard's own parser, and the upstream's feed of bypasses is replaced by a watch on its advisories and on DOMPurify's, read when the suite runs.
 
+The sixth is [drag reorder](/docs/architecture/drag-reorder), the first package taken off the stop list by reading its item again. `vue-draggable-plus` was kept as accessibility-shaped, but the keyboard reorder and its announcement were already the UI library's, and what it did — through the SortableJS it bundled — was only the pointer drag. That drag is now a composable on Pointer Events, which never hands the browser a native drag and never moves a row Vue rendered.
+
 ## The stop list
 
 These stay packages whatever their size or call-site count, so the initiative cannot talk itself into the expensive mistake later:

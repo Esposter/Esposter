@@ -1,10 +1,8 @@
 <script setup lang="ts" generic="T extends string">
 import type { UiListItem } from "@/models/ui/UiListItem";
 
-import { REORDER_ANIMATION_MS, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { takeOne } from "@esposter/shared";
 import { useRovingFocus } from "@vuetify/v0";
-import { VueDraggable } from "vue-draggable-plus";
 
 interface Props {
   // Anything a row takes beside what the list gives it, such as the props that open its context menu
@@ -40,7 +38,7 @@ const { focus, focusedId, onKeydown } = useRovingFocus(
 );
 const typeahead = useTypeahead();
 const { announce, announcement, getKeyedOrder } = useReorder();
-const reducedMotion = usePreferredReducedMotion();
+const getDragReorderProps = useDragReorder();
 
 // Rows sharing a group sit together under its heading, in the order they come
 const groups = computed(() => {
@@ -66,20 +64,14 @@ const reorder = (groupIndex: number, groupValues: T[]) => {
   );
   emit("reorder", values);
 };
-// What a group's rows take while they drag: the group's rows, and their new order handed back as the whole list's
-const getReorderProps = (groupIndex: number, groupItems: UiListItem<T>[]) => ({
-  animation: reducedMotion.value === "reduce" ? 0 : REORDER_ANIMATION_MS,
-  delay: TOUCH_DRAG_DELAY_MS,
-  delayOnTouchOnly: true,
-  ghostClass: "reorder-ghost",
-  modelValue: groupItems,
-  "onUpdate:modelValue": (newGroupItems: UiListItem<T>[]) => {
+// What a group's rows take while they drag: their new order is handed back as the whole list's
+const getReorderProps = (groupIndex: number, groupItems: UiListItem<T>[]) =>
+  getDragReorderProps(groupItems, (newGroupItems) => {
     reorder(
       groupIndex,
       newGroupItems.map(({ value }) => value),
     );
-  },
-});
+  });
 const pick = (value: T, event: KeyboardEvent | MouseEvent) => {
   emit("select", value, event);
   if (!modelValue.value) return;
@@ -144,8 +136,7 @@ const onListKeydown = async (event: KeyboardEvent) => {
     >
       <div v-if="group" aria-hidden="true" text-sm text-muted px-2 pt-2>{{ group }}</div>
       <!-- A drag moves a row within its own group, and the rest of the group moves aside for it as it goes -->
-      <component
-        :is="isReorderable ? VueDraggable : 'div'"
+      <div
         :aria-label="group && !modelValue ? group : undefined"
         :role="group && !modelValue ? 'list' : 'none'"
         :="isReorderable ? getReorderProps(index, groupItems) : {}"
@@ -169,7 +160,7 @@ const onListKeydown = async (event: KeyboardEvent) => {
           <template v-if="$slots.append" #append><slot name="append" :item /></template>
           <template v-if="$slots.actions" #actions><slot name="actions" :item /></template>
         </UiListRow>
-      </component>
+      </div>
     </div>
     <!-- A key's move is read out; a drop is seen where it lands -->
     <div v-if="isReorderable" aria-live="polite" sr-only>{{ announcement }}</div>

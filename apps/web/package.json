@@ -172,7 +172,6 @@
     "unicode-emoji-json": "catalog:",
     "vue": "catalog:",
     "vue-codemirror": "catalog:",
-    "vue-draggable-plus": "catalog:",
     "vue-pdf-embed": "catalog:",
     "vue-phaserjs": "workspace:*",
     "vue-router": "catalog:",
