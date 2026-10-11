@@ -1,7 +1,6 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { PaletteColour } from "#src/models/genshinAssets/palette/PaletteColour";
 import type { PaletteRegion } from "#src/models/genshinAssets/palette/PaletteRegion";
-import type { Vector } from "#src/models/shared/Vector";
 
 import { computeDominantColour } from "#src/services/genshinAssets/palette/computeDominantColour";
 import { matchFamilyTextures } from "#src/services/genshinAssets/palette/matchFamilyTextures";
@@ -22,22 +21,13 @@ export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDa
   const notes: string[] = [];
   const palette: Record<string, PaletteColour> = {};
   for (const [field, families] of Object.entries(PaletteFamilyMap[region])) {
-    const texels: Vector[] = [];
-    // A field is recorded with only the families whose textures gave it texels, so its evidence never names a family the
-    // Extraction lacks or one whose texels are all transparent
-    const sampledFamilies: string[] = [];
-    for (const family of families)
-      for (const fileName of matchFamilyTextures(fileNames, [family])) {
-        // oxlint-disable-next-line no-await-in-loop -- one texture is read at a time
-        const textureTexels = await readTextureTexels(join(textureDirectory, fileName));
-        if (textureTexels.length === 0) continue;
-        texels.push(...textureTexels);
-        if (!sampledFamilies.includes(family)) sampledFamilies.push(family);
-      }
-    if (texels.length === 0) {
-      notes.push(`${region} ${field}: no visible texel in a diffuse texture of its families, left provisional`);
+    const texturePaths = matchFamilyTextures(fileNames, families).map((fileName) => join(textureDirectory, fileName));
+    if (texturePaths.length === 0) {
+      notes.push(`${region} ${field}: no diffuse texture of its families in the extraction, left provisional`);
       continue;
     }
+    // oxlint-disable-next-line no-await-in-loop -- one field's textures are read at a time
+    const texels = await readFamilyTexels(texturePaths);
     const { linear, spread, texelCount } = computeDominantColour(texels);
     const hex = `#${linear
       .map((channel) =>
@@ -46,9 +36,9 @@ export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDa
           .padStart(2, "0"),
       )
       .join("")}`;
-    palette[field] = { families: sampledFamilies, hex, linear, spread, texelCount };
+    palette[field] = { families, hex, linear, spread, texelCount };
     notes.push(
-      `${region} ${field}: ${hex}, ${texelCount} texels in its largest cluster, from ${sampledFamilies.join(", ")}, spread ${spread.toFixed(4)} linear`,
+      `${region} ${field}: ${hex}, ${texelCount} texels in its largest cluster, from ${families.join(", ")}, spread ${spread.toFixed(4)} linear`,
     );
   }
   return { notes, objects: { [`${GameDataset.Regions}/${region}/palette`]: palette } };

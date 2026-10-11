@@ -77,24 +77,11 @@ export const readDuplicateCodeFindings = (): DuplicateCodeFinding[] => {
   );
   if (result.status !== 0) {
     rmSync(outputDirectory, { force: true, recursive: true });
-    // A launcher that never started has no output, only its spawn error
-    throw new InvalidOperationError(
-      Operation.Read,
-      "jscpd",
-      result.stderr || result.stdout || (result.error?.message ?? ""),
-    );
+    throw new InvalidOperationError(Operation.Read, "jscpd", result.stderr || result.stdout);
   }
 
-  const reportResult = getResult(() =>
-    jsonDateParse<JscpdReport>(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8")),
-  );
+  const report = jsonDateParse<JscpdReport>(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8"));
   rmSync(outputDirectory, { force: true, recursive: true });
-  const report = reportResult.match(
-    (value) => value,
-    (error) => {
-      throw error;
-    },
-  );
   const clones: DuplicateCodeClone[] = report.duplicates.map(({ firstFile, secondFile }) => ({
     duplicationA: toDuplicateCodeFragment(firstFile),
     duplicationB: toDuplicateCodeFragment(secondFile),

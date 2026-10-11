@@ -29,7 +29,7 @@ import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
-import { capitalize, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { capitalize, jsonDateParse } from "@esposter/shared";
 import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
@@ -185,9 +185,6 @@ if (screen && root) {
   if (motion === "entry") holdAnimations();
   await window.document.fonts.ready;
   await ready;
-  // The load is read the moment the screen is ready, before the tool reading it has waited on the network to idle, so
-  // Neither its time nor its requests count what the page fetches after
-  Reflect.set(window, "loadReading", { bench: benchLoad(sceneContext.value), readyMs: performance.now() });
   if (motion === "props" && screen.motionProps) {
     await Promise.all(window.document.getAnimations().map(({ finished }) => finished));
     // A style flush now records the entry's end as the state the motion transitions from; without one the browser folds

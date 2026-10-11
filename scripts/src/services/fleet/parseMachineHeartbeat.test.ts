@@ -52,7 +52,7 @@ describe(parseMachineHeartbeat, () => {
     expect(parseMachineHeartbeat(JSON.stringify({ ...HEARTBEAT, platform: 3 }))).toBeUndefined();
     expect(parseMachineHeartbeat(JSON.stringify({ ...HEARTBEAT, at: "invalid" }))).toBeUndefined();
     expect(
-      parseMachineHeartbeat(JSON.stringify({ ...HEARTBEAT, lastPush: { at: "invalid", count: 1, sha: "sha" } })),
+      parseMachineHeartbeat(JSON.stringify({ ...HEARTBEAT, lastPush: { at: "invalid", sha: "sha" } })),
     ).toBeUndefined();
     expect(parseMachineHeartbeat("{")).toBeUndefined();
   });

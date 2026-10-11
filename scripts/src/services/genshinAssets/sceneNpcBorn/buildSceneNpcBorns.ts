@@ -8,7 +8,6 @@ import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constant
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFileSync } from "node:fs";
-import { z } from "zod";
 
 // One birth as the dataset holds it: its place and turn kept, the dump's underscores dropped, and an unset turn or suite
 // List left out or empty rather than written as a value
@@ -38,7 +37,7 @@ export const buildSceneNpcBorns = (): GameDataBuild => {
       NPC_BORN_PATH,
       `is scene ${sceneId}, not scene ${OPEN_WORLD_SCENE_ID}`,
     );
-  const births = z.array(sceneNpcBornSchema).parse(bornPosList.map((born) => toSceneNpcBorn(born)));
+  const births = bornPosList.map((born) => toSceneNpcBorn(born));
   return {
     notes: [`${births.length} NPC births in scene ${OPEN_WORLD_SCENE_ID}`],
     objects: { [SCENE_NPC_BORN_KEY]: births },

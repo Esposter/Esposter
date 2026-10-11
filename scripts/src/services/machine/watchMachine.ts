@@ -26,9 +26,8 @@ import { setTimeout as sleep } from "node:timers/promises";
 // Watches the machine, one reading a minute, printing a line only when the state changes or an idle or tight state's
 // Reminder falls due, and writing each reading to the state file the genshin-mods pulse reads (the throughput skill)
 export const watchMachine = async (): Promise<void> => {
-  // Each session starts a watcher, and the one holding the lock is left to keep the state file, so a second never samples
-  // The machine twice or pushes a heartbeat twice. The lock is the watcher's until it exits
-  if (!acquireProcessLock(MACHINE_WATCHER_LOCK_PATH)) {
+  // The session starts one watcher, and a watcher already keeping the state file is left to keep it
+  if (checkIsWatching(readMachineState(), process.pid, Temporal.Now.instant().epochMilliseconds)) {
     console.info("the machine watcher is already running");
     return;
   }

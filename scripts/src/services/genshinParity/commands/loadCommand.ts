@@ -67,6 +67,6 @@ export const loadCommand: SubCommandsDef[string] = defineCommand({
     );
     const { isFailed, lines } = formatLoadMeter(reading, ScreenLoadBudgetMap[args.screen], hostname());
     for (const line of lines) console.log(line);
-    if (isFailed) process.exitCode = 1;
+    if (isOver) process.exitCode = 1;
   },
 });

@@ -7,4 +7,4 @@ export interface LastPush {
   sha: string;
 }
 
-export const lastPushSchema: z.ZodType<LastPush> = z.object({ at: z.string(), sha: z.string() });
+export const lastPushSchema: z.ZodType<LastPush> = z.object({ at: z.iso.datetime({ offset: true }), sha: z.string() });

@@ -93,7 +93,7 @@ export const formatLoadMeter = (
   { bench, crossing, readyMs }: LoadReading,
   budget: LoadBudget | undefined,
   machine: string,
-): { isFailed: boolean; lines: string[] } => {
+): { isOver: boolean; lines: string[] } => {
   const isTimeChecked = budget?.machine === machine;
   const objects = Object.values(bench.kindCounts).reduce((sum, count) => sum + count, 0);
   const figures: Figure[] = [
