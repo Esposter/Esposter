@@ -186,7 +186,7 @@ The Styled components are the app's composites over the library, each with a rol
 - **A dialog writes its own margins.** The browser centres a `<dialog>` with auto margins, and the UnoCSS reset zeroes every element's margin, so each placement in `UiDialog` states them: auto on every side in the middle, auto but the top when high. A dialog left to the browser's margins sits against the corner of the page.
 - **A closed dialog is still in the document.** `UiDialog` is the browser's `<dialog>`, which keeps its content mounted while it is shut. A body that reads something or draws a table therefore mounts under `v-if` on the dialog's open model, as the user settings and the sheet's duplicate rows do, so it costs nothing until it is opened and no table of a closed dialog is counted among the page's own.
 
-### What building them taught
+### Working around Vuetify 0
 
 - **The call site's attributes win over the primitive's.** Vuetify 0's button lays its own attributes over the ones passed to it, which would drop a form's submit type and a toggle's pressed state. `UiButton` renders the element itself, from the primitive's attributes with the call site's on top. It exposes that element, because a renderless primitive leaves a fragment rather than an element as the component's root. `UiTextField` renders its control the same way, so suggestions can complete it.
 - **A select's model sees only choices.** Vuetify 0's select clears the old choice before it selects the new one, which a model would see as the select going empty for a moment. `UiSelect` passes on only a value, so a call site that sends every change to a server never sends the empty one.
@@ -249,7 +249,7 @@ flowchart TD
 - **The page loading bar** is the library's loading line along the top edge, the full width and a step thick, driven by Nuxt's own loading indicator. It hangs over the page, so its drawing is free of the in-flow bar's box.
 - **The dialog shell** takes the library's words — a title, what confirming does — over the library's dialog, and mounts its body only while open ([dialog shell](/docs/architecture/dialog-shell)). It drops in and stands in the middle, as a confirmation does ([motion](/docs/architecture/design-language#motion)).
 
-The theme mode and the design style are two menus of their own beside it, each a choice listed whole with the chosen one marked: the theme menu's mark is the mode in force, and the style menu also holds the [readable-text setting](/docs/architecture/design-language#type) while the voxel style is drawn. One menu over all three had grown too crowded to scan. The dock's command button, after the launcher, opens the [command palette](/docs/architecture/command-palette), and anything on the dock with actions of its own opens them as a [context menu](/docs/architecture/context-menus).
+The theme mode and the design style are two menus of their own beside it, each a choice listed whole with the chosen one marked: the theme menu's mark is the mode in force, and the style menu also holds the [readable-text setting](/docs/architecture/design-language#type) while the voxel style is drawn. One menu over all three is too crowded to scan. The dock's command button, after the launcher, opens the [command palette](/docs/architecture/command-palette), and anything on the dock with actions of its own opens them as a [context menu](/docs/architecture/context-menus).
 
 ## The boundary
 
@@ -360,6 +360,6 @@ The accessibility patterns, usability references, platform documents and design 
 - [Vue SFC compiler](https://github.com/vuejs/core/tree/main/packages/compiler-sfc): the parser the flow map reads each template's component tags with.
 - [grid-template-columns](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns), MDN: a track list that keeps its track count interpolates, which is what animates a drawer's column open and shut.
 - [overflow-clip-margin](https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-clip-margin), MDN: how far past its edge a clipped drawer still draws, where the resize handle straddles its border.
-- [flex-basis](https://developer.mozilla.org/en-US/docs/Web/CSS/flex-basis), MDN: a basis other than `auto` outranks the item's height, which is why a region sized by `flex-1` never became viewport-tall and the shell sizes it as a grid row instead.
+- [flex-basis](https://developer.mozilla.org/en-US/docs/Web/CSS/flex-basis), MDN: a basis other than `auto` outranks the item's height, so a region sized by `flex-1` does not reach the viewport's height, and the shell sizes it as a grid row instead.
 - [Viewport units](https://web.dev/blog/viewport-units), web.dev: `dvh` follows the mobile toolbars as they expand and retract, so a viewport-height page never hides its bottom edge under them.
 - [Drawer](https://mui.com/material-ui/react-drawer/), MUI: a drawer names the side it originates from, a responsive shell pairs a temporary drawer on a small screen with a permanent one on a wide screen, and a temporary drawer closes when a section is picked — the shell's DrawerStart/DrawerEnd sheets and their close on navigation.
