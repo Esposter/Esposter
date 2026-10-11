@@ -3,6 +3,7 @@ import type { TreeCluster } from "#src/models/kits/tree/TreeCluster";
 import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
 
 import { sampleTreeNormalField } from "#src/kits/tree/sampleTreeNormalField";
+import { writeQuadIndices } from "#src/kits/writeQuadIndices";
 import { LEAF_SHAPE_KEPT_SHARE } from "#src/nodes/constants";
 import { createSeededRandom } from "#src/random/createSeededRandom";
 
@@ -78,12 +79,7 @@ export const computeLeafCards = (
         uvs[vertex * 2 + 1] = (bitangentSign + 1) / 2;
       }
       const indexStart = card * INDICES_PER_CARD;
-      indices[indexStart] = vertexStart;
-      indices[indexStart + 1] = vertexStart + 1;
-      indices[indexStart + 2] = vertexStart + 2;
-      indices[indexStart + 3] = vertexStart;
-      indices[indexStart + 4] = vertexStart + 2;
-      indices[indexStart + 5] = vertexStart + 3;
+      writeQuadIndices(indices, indexStart, vertexStart);
     }
   return { indices, normals, positions, uvs };
 };

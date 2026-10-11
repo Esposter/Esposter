@@ -44,14 +44,14 @@ A refused command is denied with the form it used and the path forms to use inst
 
 ## Key files
 
-| File                                                              | Role                                                               |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------- |
-| `packages/genshin-mods/src/services/ward/registerWholeIndex.ts`   | The Bash call hook: denies a refused form while a peer is live     |
-| `packages/genshin-mods/src/services/ward/getWholeIndexRefusal.ts` | The pure refusal check of the command's text, and its deny message |
-| `packages/genshin-mods/src/services/ward/getCheckoutPeer.ts`      | Whether the ward's records show another session in this checkout   |
-| `packages/genshin-mods/src/services/ward/getCheckoutRoot.ts`      | The checkout a session's working directory sits in                 |
-| `packages/genshin-mods/src/services/shell/getShellRefusal.ts`     | The segment, quoting and nesting reader both shell guards share    |
-| `packages/genshin-mods/src/services/shell/joinDirectory.ts`       | A folder a `cd` or a `-C` names, joined onto the one before it     |
+| File                                                              | Role                                                                |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `packages/genshin-mods/src/services/ward/registerWholeIndex.ts`   | The Bash call hook: denies a refused form while a peer is live      |
+| `packages/genshin-mods/src/services/ward/getWholeIndexRefusal.ts` | The pure refusal check of the command's text, and its deny message  |
+| `packages/genshin-mods/src/services/ward/getCheckoutPeer.ts`      | Whether the ward's records show another session in this checkout    |
+| `packages/genshin-mods/src/services/ward/getParentFolder.ts`      | The folder above a path, which the search for the checkout walks up |
+| `packages/genshin-mods/src/services/shell/getShellRefusal.ts`     | The segment, quoting and nesting reader both shell guards share     |
+| `packages/genshin-mods/src/services/shell/joinDirectory.ts`       | A folder a `cd` or a `-C` names, joined onto the one before it      |
 
 ## Notes
 

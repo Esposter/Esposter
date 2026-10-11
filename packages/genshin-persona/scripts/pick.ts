@@ -3,13 +3,12 @@ import { formatLoreChart } from "#src/services/formatLoreChart";
 import { formatUpcomingBirthdays } from "#src/services/formatUpcomingBirthdays";
 import { getCard } from "#src/services/getCard";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
-import { parseHookInput } from "#src/services/parseHookInput";
 import { readInterfaceLanguage } from "#src/services/readInterfaceLanguage";
 import { readLocalization } from "#src/services/readLocalization";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readReplyLanguage } from "#src/services/readReplyLanguage";
 import { readRoster } from "#src/services/readRoster";
-import { readStdin } from "#src/services/readStdin";
+import { readStdinSessionId } from "#src/services/readStdinSessionId";
 import { readVoiceRemark } from "#src/services/readVoiceRemark";
 import { registerQuietExit } from "#src/services/registerQuietExit";
 import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
@@ -18,8 +17,7 @@ import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 // No card, and the output style answers plainly
 registerQuietExit();
 const today = Temporal.Now.plainDateISO();
-const input = await readStdin();
-const { session_id: sessionId = "" } = parseHookInput(input);
+const sessionId = await readStdinSessionId();
 // Both are a file read on this path: what was written to either was checked against the data package then, and the
 // Roster cache is keyed by the interface language, so a language changed since is a cache miss and not a mismatch
 const language = readInterfaceLanguage();

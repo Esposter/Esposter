@@ -16,6 +16,7 @@ import { getRoomMemberAuthority } from "#server/services/room/rbac/getRoomMember
 import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
 import { readRoleWithAuthority } from "#server/services/room/rbac/readRoleWithAuthority";
 import { setMemberPermissionOverride } from "#server/services/room/rbac/setMemberPermissionOverride";
+import { requireUserToRoom } from "#server/services/room/requireUserToRoom";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -63,14 +64,7 @@ export const roleRouter = router({
         roleId,
       ),
       getRoomMemberAuthority(ctx.db, actorUserId, roomId),
-      requireEntity(
-        ctx.db.query.usersToRoomsInMessage.findFirst({
-          columns: { userId: true },
-          where: { roomId: { eq: roomId }, userId: { eq: userId } },
-        }),
-        DatabaseEntityType.UserToRoom,
-        userId,
-      ),
+      requireUserToRoom(ctx.db, roomId, userId),
     ]);
 
     if (role.isEveryone) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, roleId);
@@ -278,14 +272,7 @@ export const roleRouter = router({
 
     const [{ isOwner }] = await Promise.all([
       getRoomMemberAuthority(ctx.db, actorUserId, roomId),
-      requireEntity(
-        ctx.db.query.usersToRoomsInMessage.findFirst({
-          columns: { userId: true },
-          where: { roomId: { eq: roomId }, userId: { eq: userId } },
-        }),
-        DatabaseEntityType.UserToRoom,
-        userId,
-      ),
+      requireUserToRoom(ctx.db, roomId, userId),
       assertIsManageable(ctx.db, actorUserId, userId, roomId),
     ]);
     // A member may give an override only what they hold themselves, as a role may carry only what its author holds

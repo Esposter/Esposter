@@ -5,6 +5,7 @@ import { createToonMaterial } from "#src/nodes/createToonMaterial";
 import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
 import { createWetSheenNode } from "#src/nodes/createWetSheenNode";
 import { createWindNode } from "#src/nodes/createWindNode";
+import { sampleGroundCapture } from "#src/nodes/sampleGroundCapture";
 import { DoubleSide } from "three";
 import {
   cameraViewMatrix,
@@ -17,7 +18,6 @@ import {
   sin,
   smoothstep,
   step,
-  texture,
   varying,
   vec2,
   vec3,
@@ -65,15 +65,7 @@ export const createGrassMaterial = ({
       .sub(0.5)
       .mul(spacing),
   );
-  const captureUV = vec2(
-    ground.x.sub(groundCapture.center.x).div(groundCapture.size).add(0.5),
-    float(0.5).sub(ground.y.sub(groundCapture.center.y).div(groundCapture.size)),
-  );
-  const captured = texture(groundCapture.renderTarget.texture, captureUV).level(float(0));
-  const isInsideCapture = step(0, captureUV.x)
-    .mul(step(captureUV.x, 1))
-    .mul(step(0, captureUV.y))
-    .mul(step(captureUV.y, 1));
+  const { captured, isInsideCapture } = sampleGroundCapture(groundCapture, ground);
   const greenness = captured.g.sub(captured.r.max(captured.b));
   const isGrown = isInsideCapture
     .mul(step(MIN_GREENNESS, greenness))

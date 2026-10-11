@@ -5,11 +5,11 @@ import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
 import { transformPublishedBlobUrls } from "#server/services/resource/transformPublishedBlobUrls";
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
+import { openSurveyResponseWrite } from "#server/services/survey/openSurveyResponseWrite";
 import { readSurveyResponseRecords } from "#server/services/survey/readSurveyResponseRecords";
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
 import { requireSurveyResponse } from "#server/services/survey/requireSurveyResponse";
 import { resolveSurveyResponseRead } from "#server/services/survey/resolveSurveyResponseRead";
-import { resolveSurveyResponseWrite } from "#server/services/survey/resolveSurveyResponseWrite";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -33,8 +33,11 @@ export const surveyRouter = router({
   createSurveyResponse: slowRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
-      const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
-      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(
+        ctx.db,
+        input.partitionKey,
+        input.participantToken,
+      );
       // A submitted response carries no draft key at all, since the reads ask for the key to be absent
       const newSurveyResponse = new SurveyResponseEntity({ ...input, ...(isDraft && { isDraft }), participantToken });
       await createEntity(surveyResponseClient, newSurveyResponse);
@@ -78,8 +81,11 @@ export const surveyRouter = router({
   updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
-      const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
-      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(
+        ctx.db,
+        input.partitionKey,
+        input.participantToken,
+      );
       const entityWithEtag = await requireEntity(
         getEntityWithEtag(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
         AzureEntityType.SurveyResponse,

@@ -77,6 +77,8 @@ export enum GameTextKey {
   CharacterTalents = "UI_STC_CHARACTERPAGE_SKILL",
   CharacterWeapons = "UI_STC_CHARACTERPAGE_WEAPON",
   Chat = "UI_CHAT_CHAT_BUTTON",
+  // The City Reputation the Paimon menu names, and the Reputation Reward its screen titles over its nation
+  CityReputation = "81370119",
   ClearwaterJade = "2720928108",
   // The crafting bench's recipe tabs, one per combine type, by the names the manual text map files each under
   CombineTypeBait = "COMBINE_TYPE_NAME10",
@@ -278,6 +280,7 @@ export enum GameTextKey {
   MidsommarBerry = "3263853588",
   Mint = "4131305812",
   MistFlowerCorolla = "3227888900",
+  Mondstadt = "UI_MAP_AREA1_TITLE_7",
   MoonfallSilver = "1570138468",
   Mora = "3578052980",
   MourningFlower = "1761418508",
@@ -324,6 +327,8 @@ export enum GameTextKey {
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RedBerryshroom = "1096616044",
+  ReputationNotAchieved = "UI_WISHINGPOND_OFFERING_LEVEL_UNREACH",
+  ReputationReward = "REPUTATION_CITY_REWARD",
   RomaritimeFlower = "3918052700",
   RukkhashavaMushrooms = "225599940",
   SakuraBloom = "3896942756",

@@ -7,6 +7,7 @@ import { createParticipant } from "#server/services/message/call/createParticipa
 import { requireCallDoorkeeper } from "#server/services/message/call/requireCallDoorkeeper";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
 import { requireKnockerCallSession } from "#server/services/message/call/requireKnockerCallSession";
+import { yieldCallerKnockerEvents } from "#server/services/message/call/yieldCallerKnockerEvents";
 import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
@@ -71,13 +72,7 @@ export const knockerRouter = router({
   }) {
     const events = on(callEventEmitter, "knockerAdmitted", { signal });
     await requireKnockerCallSession(ctx.db, ctx.getSessionPayload, input);
-
-    const callerSessionId = ctx.getSessionPayload.session.id;
-
-    for await (const [{ callSessionId, knockerSessionId }] of events) {
-      if (callSessionId !== input || knockerSessionId !== callerSessionId) continue;
-      yield undefined;
-    }
+    yield* yieldCallerKnockerEvents(events, input, ctx.getSessionPayload.session.id);
   }),
   onKnockerDismissed: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
     ctx,
@@ -86,12 +81,6 @@ export const knockerRouter = router({
   }) {
     const events = on(callEventEmitter, "knockerDismissed", { signal });
     await requireKnockerCallSession(ctx.db, ctx.getSessionPayload, input);
-
-    const callerSessionId = ctx.getSessionPayload.session.id;
-
-    for await (const [{ callSessionId, knockerSessionId }] of events) {
-      if (callSessionId !== input || knockerSessionId !== callerSessionId) continue;
-      yield undefined;
-    }
+    yield* yieldCallerKnockerEvents(events, input, ctx.getSessionPayload.session.id);
   }),
 });

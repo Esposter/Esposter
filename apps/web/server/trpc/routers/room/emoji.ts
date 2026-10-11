@@ -10,6 +10,7 @@ import { checkIsUnicodeEmojiSlug } from "#server/services/message/emoji/checkIsU
 import { getRoomEmojiBlobName } from "#server/services/message/emoji/getRoomEmojiBlobName";
 import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmojiNameQuery";
 import { getRoomEmojiWithSasUrl } from "#server/services/message/emoji/getRoomEmojiWithSasUrl";
+import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
 import { roomEmojiEventEmitter } from "#server/services/message/events/roomEmojiEventEmitter";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -33,8 +34,8 @@ import {
   RoomPermission,
   roomsInMessage,
 } from "@esposter/db-schema";
-import { getResultAsync, noop, Operation, takeOne } from "@esposter/shared";
-import { and, count, eq, notExists } from "drizzle-orm";
+import { getResultAsync, noop, Operation } from "@esposter/shared";
+import { and, eq, notExists } from "drizzle-orm";
 
 export const roomEmojiRouter = router({
   createRoomEmoji: getPermissionsProcedure(
@@ -67,9 +68,7 @@ export const roomEmojiRouter = router({
         .from(roomsInMessage)
         .where(eq(roomsInMessage.id, roomId))
         .for("update");
-      const roomEmojiCount = takeOne(
-        await tx.select({ count: count() }).from(roomEmojisInMessage).where(eq(roomEmojisInMessage.roomId, roomId)),
-      ).count;
+      const roomEmojiCount = await readRoomEmojiCount(tx, roomId);
       if (roomEmojiCount >= MAX_ROOM_EMOJIS)
         throw getInvalidOperationError(
           Operation.Create,
@@ -138,9 +137,7 @@ export const roomEmojiRouter = router({
       );
     // Rejected here rather than at create, so a room at its cap never receives a write target it cannot use.
     // The create counts again inside its own transaction — this check is the early no, not the guarantee
-    const roomEmojiCount = takeOne(
-      await ctx.db.select({ count: count() }).from(roomEmojisInMessage).where(eq(roomEmojisInMessage.roomId, roomId)),
-    ).count;
+    const roomEmojiCount = await readRoomEmojiCount(ctx.db, roomId);
     if (roomEmojiCount >= MAX_ROOM_EMOJIS)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomId);
 

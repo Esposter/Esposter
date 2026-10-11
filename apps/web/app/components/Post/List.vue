@@ -2,7 +2,6 @@
 import { PostSortTypes } from "@/models/post/PostSortType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { POST_SKELETON_COUNT } from "@/services/post/constants";
 import { PostSortTypeIconMeaningMap } from "@/services/post/PostSortTypeIconMeaningMap";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
@@ -13,7 +12,7 @@ const postSortTypeItems = PostSortTypes.map((postSortType) => ({
   value: postSortType,
 }));
 const postStore = usePostStore();
-const { hasMore, items, sortType } = storeToRefs(postStore);
+const { sortType } = storeToRefs(postStore);
 const { resetCursorPaginationData } = postStore;
 const { readMorePosts, readPosts } = useReadPosts();
 const { isPending, refresh } = await readPosts();
@@ -39,17 +38,11 @@ watch(sortType, async () => {
       </UiButtonLink>
     </div>
     <!-- A sort change empties the feed before it reads again, so the empty state waits for a read that settled -->
-    <div v-if="isPending && items.length === 0" aria-busy="true" flex flex-col gap-4>
-      <PostCardSkeleton v-for="index of POST_SKELETON_COUNT" :key="index" />
-    </div>
-    <PostCard v-for="post of items" :key="post.id" :post />
-    <UiEmptyState
-      v-if="!isPending && items.length === 0"
-      description="A post someone creates shows up here."
-      :meaning="UiIconMeaning.Comment"
-      title="Nothing posted yet"
+    <PostFeed
+      empty-description="A post someone creates shows up here."
+      :is-pending
+      @read-more="(onComplete) => readMorePosts(onComplete)"
     />
-    <StyledWaypoint flex justify-center :is-active="hasMore" @change="(onComplete) => readMorePosts(onComplete)" />
   </div>
   <PostConfirmDeleteDialog />
 </template>

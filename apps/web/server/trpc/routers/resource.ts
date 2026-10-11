@@ -16,7 +16,6 @@ import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { readCursorPaginationDataAzureTable } from "#server/services/pagination/cursor/readCursorPaginationDataAzureTable";
-import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
 import { DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
@@ -28,6 +27,7 @@ import { getSearchSimilarity } from "#server/services/resource/getSearchSimilari
 import { readResourceConsumers } from "#server/services/resource/readResourceConsumers";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceDependencies } from "#server/services/resource/readResourceDependencies";
+import { readResourceListPage } from "#server/services/resource/readResourceListPage";
 import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiveResourceContent";
 import { resourceListSelection } from "#server/services/resource/resourceListSelection";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
@@ -171,21 +171,12 @@ export const resourceRouter = router({
   }),
   readDeletedResources: standardAuthedProcedure
     .input(readDeletedResourcesInputSchema)
-    .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy } }) => {
+    .query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy } }) => {
       const userId = ctx.getSessionPayload.user.id;
-      const resultResources = await ctx.db
-        .select(resourceListSelection)
-        .from(resourcesInResource)
-        .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
-        .where(getResourcesWhere(ctx.db, userId, {}, true))
-        .orderBy(
-          ...(sortBy.length > 0
-            ? parseSortByToSql(resourceListSelection, sortBy)
-            : [desc(resourcesInResource.deletedAt)]),
-        )
-        .limit(limit + 1)
-        .offset(offset);
-      return getBasePaginationData(resultResources, limit);
+      const where = getResourcesWhere(ctx.db, userId, {}, true);
+      const orderBy =
+        sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resourcesInResource.deletedAt)];
+      return readResourceListPage(ctx.db, userId, where, orderBy, limit, offset);
     }),
   readDeletedResourcesCount: standardAuthedProcedure.query<number>(
     async ({ ctx }) =>
@@ -236,30 +227,24 @@ export const resourceRouter = router({
   ),
   readResources: standardAuthedProcedure
     .input(readResourceListInputSchema.prefault({}))
-    .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
+    .query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
       const userId = ctx.getSessionPayload.user.id;
-      const resultResources = await ctx.db
-        .select(resourceListSelection)
-        .from(resourcesInResource)
-        .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
-        .where(getResourcesWhere(ctx.db, userId, filter))
-        .orderBy(
-          // Relevance ladder: closest trigram match first so a typo still ranks its resource top, then
-          // Prefix matches above the remaining substring matches (true sorts before false under desc),
-          // Then newest-first within each tier; every search value is bound through the query builder
-          ...(filter.searchQuery
-            ? [
-                desc(getSearchSimilarity(filter.searchQuery)),
-                desc(ilike(resourcesInResource.name, `${escapeLike(filter.searchQuery)}%`)),
-              ]
-            : []),
-          ...(sortBy.length > 0
-            ? parseSortByToSql(resourceListSelection, sortBy)
-            : [desc(resourcesInResource.updatedAt)]),
-        )
-        .limit(limit + 1)
-        .offset(offset);
-      return getBasePaginationData(resultResources, limit);
+      const where = getResourcesWhere(ctx.db, userId, filter);
+      const orderBy = [
+        // Relevance ladder: closest trigram match first so a typo still ranks its resource top, then
+        // Prefix matches above the remaining substring matches (true sorts before false under desc),
+        // Then newest-first within each tier; every search value is bound through the query builder
+        ...(filter.searchQuery
+          ? [
+              desc(getSearchSimilarity(filter.searchQuery)),
+              desc(ilike(resourcesInResource.name, `${escapeLike(filter.searchQuery)}%`)),
+            ]
+          : []),
+        ...(sortBy.length > 0
+          ? parseSortByToSql(resourceListSelection, sortBy)
+          : [desc(resourcesInResource.updatedAt)]),
+      ];
+      return readResourceListPage(ctx.db, userId, where, orderBy, limit, offset);
     }),
   readResourcesCount: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
     async ({ ctx, input }) =>

@@ -1,3 +1,5 @@
+import { getNeighbourPixels } from "#src/services/genshinParity/shared/getNeighbourPixels";
+
 // A mask's specks cleared in place, each a run of like pixels smaller than a speck: an island of ink becomes paper, and
 // A hole of paper the region's edge does not reach becomes ink. The source carries both as noise, a sparkle printed on
 // A logo or a pixel of compression, and a pale sparkle inside a letter would trace as a pinhole through it; a mark's
@@ -20,13 +22,8 @@ export const removeMaskSpecks = (isInk: Uint8Array, width: number, height: numbe
         const x = pixel % width;
         const y = Math.floor(pixel / width);
         if (x === 0 || y === 0 || x === width - 1 || y === height - 1) isOpen = true;
-        for (const neighbour of [
-          x > 0 ? pixel - 1 : -1,
-          x < width - 1 ? pixel + 1 : -1,
-          y > 0 ? pixel - width : -1,
-          y < height - 1 ? pixel + width : -1,
-        ])
-          if (neighbour !== -1 && !isVisited[neighbour] && isInk[neighbour] === value) {
+        for (const neighbour of getNeighbourPixels(pixel, width, height))
+          if (!isVisited[neighbour] && isInk[neighbour] === value) {
             isVisited[neighbour] = 1;
             stack.push(neighbour);
           }

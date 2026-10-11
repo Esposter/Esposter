@@ -1,10 +1,6 @@
 import { ClaimAttempt } from "#src/models/fleet/ClaimAttempt";
-import { claimFleetEntry } from "#src/services/fleet/claimFleetEntry";
+import { claimFleetEntryHere } from "#src/services/fleet/claimFleetEntryHere";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
-import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
-import { readRequiredMachineProfile } from "#src/services/fleet/readMachineProfile";
-import { readMachineSample } from "#src/services/fleet/readMachineSample";
-import { requireFleetWorker } from "#src/services/fleet/requireFleetWorker";
 import { defineCommand, runMain } from "citty";
 
 // `pnpm ai:fleet:claim <id> [--worker <id>]` — takes an entry for this worker as a claim ref on origin. Exit 0 when won,
@@ -17,18 +13,9 @@ await runMain(
     },
     meta: { description: "Claim an entry for this worker on origin, or name the worker that holds it", name: "claim" },
     run: async ({ args }) => {
-      const profile = readRequiredMachineProfile();
-      const worker = requireFleetWorker(args.worker);
-      const sample = await readMachineSample();
-      const load = formatMachineLoad(
-        sample.cpuPercentage,
-        sample.gpuPercentage,
-        sample.freeGigabytes,
-        process.platform,
-      );
-      const { attempt, claimed } = claimFleetEntry(args.id, { machine: profile.id, worker }, load);
+      const { attempt, claimed, holder } = await claimFleetEntryHere(args.id, args.worker);
       if (attempt === ClaimAttempt.Won) {
-        console.info(`claimed ${args.id} as worker ${worker}`);
+        console.info(`claimed ${args.id} as worker ${holder.worker}`);
         return;
       }
       console.info(`${args.id} is held by ${formatClaimHolder(claimed.message)} since ${claimed.message.claimedAt}`);

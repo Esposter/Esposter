@@ -2,6 +2,7 @@
 import type { Promisable } from "type-fest";
 
 import { getResultAsync } from "#src/services/error/getResultAsync";
+import { reportFinalizerError } from "#src/services/error/reportFinalizerError";
 import { noop } from "#src/util/function/noop";
 
 export const withFinalizerAsync = async <T>(
@@ -11,14 +12,7 @@ export const withFinalizerAsync = async <T>(
   const callbackResult = await getResultAsync(async () => callback());
   if (finalizer)
     await getResultAsync(async () => finalizer()).match(noop, (error) => {
-      callbackResult.match(
-        () => {
-          throw error;
-        },
-        () => {
-          console.error(error);
-        },
-      );
+      reportFinalizerError(callbackResult, error);
     });
   return callbackResult.match(
     (value) => value,

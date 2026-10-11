@@ -6,6 +6,7 @@ import type { Texture } from "three";
 
 import { getCloudAtlasColumns } from "#src/atmosphere/getCloudAtlasColumns";
 import { orderByViewDepth } from "#src/atmosphere/orderByViewDepth";
+import { getCloudSunColors } from "#src/nodes/getCloudSunColors";
 import { InstancedBufferAttribute, Matrix4, Sprite } from "three";
 import {
   asin,
@@ -15,7 +16,6 @@ import {
   instancedBufferAttribute,
   max,
   mix,
-  pow,
   saturate,
   smoothstep,
   step,
@@ -57,16 +57,7 @@ export const createCloudBandSprite = (
   { aspect, spriteCount }: CloudBandSpriteOptions,
   skyUniforms: SkyUniforms,
 ): CloudBandSprite => {
-  const {
-    cloudCoverage,
-    cloudFrontBackBlend,
-    cloudLitBackColor,
-    cloudLitColor,
-    cloudShadeBackColor,
-    cloudShadeColor,
-    cloudSunBrighten,
-    sunDirection,
-  } = skyUniforms;
+  const { cloudCoverage, cloudSunBrighten, sunDirection } = skyUniforms;
   const columns = getCloudAtlasColumns(spriteCount);
   const places = clouds.map(({ position }): [number, number, number] => [...position]);
   // A cloud's cell is `aspect` times as wide as it is tall
@@ -86,9 +77,7 @@ export const createCloudBandSprite = (
   const direction = place.sub(cameraPosition).normalize();
   const elevation = asin(clamp(direction.y, -1, 1)).mul(2 / Math.PI);
   const sunCosine = direction.dot(sunDirection);
-  const toward = pow(max(sunCosine.mul(cloudFrontBackBlend).add(float(1).sub(cloudFrontBackBlend)), 0), 3);
-  const lit = mix(cloudLitBackColor, cloudLitColor, toward);
-  const shade = mix(cloudShadeBackColor, cloudShadeColor, toward);
+  const { lit, shade } = getCloudSunColors(skyUniforms, sunCosine);
   // The crown's share of the cloud's own cover, so a cloud's fading edge keeps the colour inside it rather than
   // Darkening to its shade where its crown's blur and its outline's both thin out
   const crown = saturate(mask.g.div(max(mask.r, MIN_CROWN_COVER)));

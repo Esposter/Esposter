@@ -72,16 +72,20 @@ const selectedEntry = computed(() => entries[entryIndex.value]);
   display: block;
   width: 100%;
   margin-bottom: calc(var(--unit) * 8);
-  padding: calc(var(--unit) * 12) calc(var(--unit) * 16);
-  border: calc(var(--unit) * 1) solid rgb(236 229 216 / 0.4);
-  border-radius: calc(var(--unit) * 4);
-  background: rgb(20 40 70 / 0.5);
   color: rgb(236 229 216 / 0.7);
   cursor: inherit;
   font: inherit;
+  text-align: start;
+}
+
+.entry,
+.namecard {
+  border: calc(var(--unit) * 1) solid rgb(236 229 216 / 0.4);
+  border-radius: calc(var(--unit) * 4);
+  background: rgb(20 40 70 / 0.5);
+  padding: calc(var(--unit) * 12) calc(var(--unit) * 16);
   font-size: calc(var(--unit) * 22);
   font-weight: 600;
-  text-align: start;
 }
 
 .entry[aria-pressed="true"] {
@@ -95,12 +99,6 @@ const selectedEntry = computed(() => entries[entryIndex.value]);
 
 .namecard {
   margin: calc(var(--unit) * 16) 0 0;
-  padding: calc(var(--unit) * 12) calc(var(--unit) * 16);
-  border: calc(var(--unit) * 1) solid rgb(236 229 216 / 0.4);
-  border-radius: calc(var(--unit) * 4);
-  background: rgb(20 40 70 / 0.5);
-  font-size: calc(var(--unit) * 22);
-  font-weight: 600;
 }
 
 .story {

@@ -19,6 +19,7 @@ import { deleteRoom } from "#server/services/room/deleteRoom";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
+import { readJoinedRoomsPage } from "#server/services/room/readJoinedRoomsPage";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -428,14 +429,7 @@ export const baseRoomRouter = router({
       if (filter?.name) wheres.push(ilike(roomsInMessage.name, `%${escapeLike(filter.name)}%`));
       if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
-      const rooms = await ctx.db
-        .select(getColumns(roomsInMessage))
-        .from(roomsInMessage)
-        .innerJoin(usersToRoomsInMessage, innerJoinCondition)
-        .where(and(...wheres))
-        .orderBy(...parseSortByToSql(roomsInMessage, sortBy))
-        .limit(limit + 1);
-      const cursorPaginationData = getCursorPaginationData(rooms, limit, sortBy);
+      const cursorPaginationData = await readJoinedRoomsPage(ctx.db, innerJoinCondition, wheres, limit, sortBy);
       if (room) cursorPaginationData.items.push(room);
       return cursorPaginationData;
     },

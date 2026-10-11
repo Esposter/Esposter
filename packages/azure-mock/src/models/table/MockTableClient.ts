@@ -210,19 +210,15 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
 
     this.#assertEtag(existingEntity.etag, etag);
-    if (mode === "Merge") this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
-    // "Replace"
-    else this.table.set(key, { ...entity, etag: this.#getEtag() });
+    this.#writeEntity(key, entity, mode, existingEntity);
   }
 
   #applyUpsert<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
-    if (existingEntity && mode === "Merge")
-      this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
-    // "Replace" or entity doesn't exist (which is an insert)
-    else this.table.set(key, { ...entity, etag: this.#getEtag() });
+    this.#writeEntity(key, entity, mode, existingEntity);
   }
+
   // A conditional write only lands when the caller saw the current version — the real service's
   // Optimistic-concurrency contract ("*" is the wildcard that always matches), for a delete as for an update
   #assertEtag(existingEtag: unknown, etag?: string): void {
@@ -239,8 +235,19 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   #getEtag(): string {
     return `W/"${crypto.randomUUID()}"`;
   }
-
   #withMetadata<T extends object>(entity: T & { etag?: string }): T & { etag: string } {
     return { ...entity, etag: entity.etag ?? this.#getEtag() };
+  }
+
+  #writeEntity<T extends object>(
+    key: string,
+    entity: TableEntity<T>,
+    mode: UpdateMode,
+    existingEntity?: TableEntity,
+  ): void {
+    if (existingEntity && mode === "Merge")
+      this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
+    // "Replace" or entity doesn't exist (which is an insert)
+    else this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 }

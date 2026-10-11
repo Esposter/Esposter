@@ -34,12 +34,15 @@ flowchart TD
 - **The weekly limit is three of each kind, across nations.** Bounties and requests are counted apart, and each kind's claims are counted from the weekly reset, Monday at the daily reset's hour, a claim at the reset counting toward the new week. The count is the bosses' weekly helper, moved to a shared `services/weekly` folder.
 - **A discount is 10% off, rounded down to a multiple of five Mora.** The rounding is the player's favour, the five beneath the discounted price. The wiki's Reputation page did not answer when this was built (HTTP 402), so the reading follows the proposal's own wording and the [shops](/docs/proposals/genshin/shops) proposal's.
 - **The discount's shops are the function's text, not yet ids.** Which shops a discount covers is named in the function's text, and the shops' own ids are not joined yet. The discount is the [shops](/docs/genshin/shops) page's to apply once it has a screen.
-- **Not built.** The keeper placed in region data, requests run as world quests, a bounty's trail and its spawned target, the nation's exploration percentage the thresholds are checked against, the discount applied to a shop's price, the Reputation screen, and Natlan's tribes and supply notices. The [proposal](/docs/proposals/genshin/reputation) keeps them.
+- **The reward page.** The `ReputationScreen` lists each level of the nation with its achieved mark and its item count, as the public clip's reward page does (its icons are slots until the items' own names are read). The picked level's name and requirement, and each feature's unlock line, stay empty: the hosted data names no item or feature in words yet. It is shown on the parity page through its fixture, and the comparison is queued on the roadmap.
+- **Not built.** The keeper placed in region data and the screen opened from her talk, requests run as world quests, a bounty's trail and its spawned target, the nation's exploration percentage the thresholds are checked against, the discount applied to a shop's price, the reward page's sources tabs, and Natlan's tribes and supply notices. The [proposal](/docs/proposals/genshin/reputation) keeps them.
 
 ## Key files
 
 | File                                                                                    | Role                                                                        |
 | :-------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/genshin-interface/src/components/ReputationScreen/Index.vue`                  | The reward page: each level's mark, item slots and unlock line              |
+| `packages/genshin-world/src/components/Reputation/Screen/Index.vue`                     | The nation's reward page wired to its levels and the Reputation's level     |
 | `packages/genshin-world/src/services/reputation/addReputationExp.ts`                    | The EXP carried up through each level's requirement, held at the last level |
 | `packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`    | A price's 10% off, rounded down to a multiple of five Mora                  |
 | `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | Whether a kind's claims this week have reached the limit across nations     |

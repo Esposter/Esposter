@@ -3,6 +3,7 @@ import type { GroundPaint } from "#src/models/terrain/GroundPaint";
 
 import { GroundLayer, GroundLayers } from "#src/models/terrain/GroundLayer";
 import { fileByCell } from "#src/terrain/fileByCell";
+import { getSegmentBounds } from "#src/terrain/getSegmentBounds";
 import { measureSegment } from "#src/terrain/measureSegment";
 import { sampleGroundLayerField } from "#src/terrain/sampleGroundLayerField";
 import { MathUtils } from "three";
@@ -41,15 +42,9 @@ export const createGroundLayerWeights = ({
     [GroundLayer.Sand]: 0,
     [GroundLayer.Snow]: 0,
   };
-  const getPaths = fileByCell(paths, ({ endX, endZ, startX, startZ, width }) => {
-    const reach = width / 2 + pathFalloff;
-    return {
-      maxX: Math.max(startX, endX) + reach,
-      maxZ: Math.max(startZ, endZ) + reach,
-      minX: Math.min(startX, endX) - reach,
-      minZ: Math.min(startZ, endZ) - reach,
-    };
-  });
+  const getPaths = fileByCell(paths, ({ endX, endZ, startX, startZ, width }) =>
+    getSegmentBounds(startX, startZ, endX, endZ, width / 2 + pathFalloff),
+  );
   return (height, slope, x, z) => {
     if (layerField) sampleGroundLayerField(layerField, x, z, weights);
     else {

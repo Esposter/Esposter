@@ -23,6 +23,7 @@ export enum ScreenKind {
   PartySetup = "PartySetup",
   PhotoMode = "PhotoMode",
   Quests = "Quests",
+  Reputation = "Reputation",
   Settings = "Settings",
   Shop = "Shop",
   Time = "Time",
