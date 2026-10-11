@@ -1,7 +1,7 @@
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
-import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
@@ -107,9 +107,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Court of Fontaine.png",
   },
   // The crafting table's Craft screen at 1080 high from a public video (yt-qQILsaJKlsI), about 40 seconds in: Condensed
-  // Resin picked, Crafting Performed 1 and Diluc as the crafter. A video's frame, so its art is not drawn and only its
-  // Tints, words and places are scored
-  "crafting-table": { capture: "yt-qQILsaJKlsI-crafting-table.mp4", screen: "CraftingScreen", seconds: 39.5 },
+  // Resin picked, Crafting Performed 1 and Diluc as the crafter. No frame shows the spot with the screen closed, so no
+  // Plate: the mask scores the opaque panels (the recipe grid, the title and the details, the materials band and the
+  // Close), clear of the scene's glass and the streamer's overlay in the corner
+  "crafting-table": {
+    capture: "yt-qQILsaJKlsI-crafting-table.mp4",
+    mask: [
+      { height: 850, width: 585, x: 60, y: 115 },
+      { height: 90, width: 310, x: 1150, y: 115 },
+      { height: 110, width: 570, x: 1020, y: 620 },
+      { height: 215, width: 1145, x: 735, y: 745 },
+      { height: 70, width: 70, x: 1820, y: 14 },
+    ],
+    screen: "CraftingScreen",
+    seconds: 39.5,
+  },
   // The English PC client's dialogue at 720 high from the public recording, about 19 seconds in: Sara's line with the
   // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. Each is drawn over the
   // Frame's clean plate, its scored region filled from its surroundings (`getCleanPlatePath`)
@@ -559,6 +571,24 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
   "quest-screen": { screen: "QuestScreen", wikiTitle: "File:Quest Screen.png" },
+  // The same still's band across the top, the tabs, the banner and the close button, clear of the blurred world
+  "quest-screen-header": {
+    region: { height: 95, width: 1920, x: 0, y: 0 },
+    screen: "QuestScreen",
+    wikiTitle: "File:Quest Screen.png",
+  },
+  // The same still's list down the left, its quest rows and series panels, the translucent glass scored as drawn
+  "quest-screen-list": {
+    region: { height: 850, width: 666, x: 150, y: 105 },
+    screen: "QuestScreen",
+    wikiTitle: "File:Quest Screen.png",
+  },
+  // The same still's details column on the right, the title, journal, objective and description, clear of the rewards
+  "quest-screen-details": {
+    region: { height: 680, width: 899, x: 877, y: 100 },
+    screen: "QuestScreen",
+    wikiTitle: "File:Quest Screen.png",
+  },
   // The City Reputation's reward page of Mondstadt at 1080 high from the public City Reputation Guide, 18 seconds in: the
   // Level list down the right at level 3, the levels' rewards and each one's achieved mark, clear of the clip's own
   // Recording timer and its UID. Scored over the list's panel only, since the nation's art on the left is not drawn yet
