@@ -12,7 +12,6 @@ import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { RegionPaletteMap } from "#src/models/world/RegionPaletteMap";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
@@ -123,6 +122,8 @@ interface Props {
   enemyTables: EnemyTables;
   // The Frostbearing Trees the official map marks, each stood in at its place
   frostbearingTreePlaces: FrostbearingTreePlace[];
+  // Where the hosted game data is read from, which each region's palettes are read from as it comes within reach
+  gameDataBaseUrl: string;
   // The world's ground at a point in its own coordinates, which everything placed in the world stands on
   getGroundHeight: (x: number, z: number) => number;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
@@ -144,8 +145,6 @@ interface Props {
   questTargetId: string;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
-  // The building colours each region's palette record samples, which its kit draws its buildings in
-  regionPalettes: RegionPaletteMap;
   // The Mondstadt animals the official map marks, each stood at its place
   wildlifePlaces: WildlifePlace[];
   // Windrise's records: its ground and the regions' grounds, its surfaces, its oak, plants, paving and statue, and its
@@ -167,6 +166,7 @@ const {
   enemyMap,
   enemyTables,
   frostbearingTreePlaces,
+  gameDataBaseUrl,
   getGroundHeight,
   heldMinutes,
   interactables,
@@ -178,7 +178,6 @@ const {
   qualityTier,
   questTargetId,
   regionDataBaseUrl,
-  regionPalettes,
   wildlifePlaces,
   windriseData,
   worldLevel,
@@ -236,7 +235,7 @@ const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar
 // Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
 const hemisphere = new HemisphereLight();
 const worldOffset = useFloatingOrigin(origin);
-const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl, catalogue);
+const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl, gameDataBaseUrl, catalogue);
 const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
@@ -454,7 +453,6 @@ onUnmounted(() => {
       :light-uniforms
       :ramp-texture
       :region-data-map
-      :region-palettes
       :statue
       :surfaces
       :tree-species-options-map
