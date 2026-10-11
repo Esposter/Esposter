@@ -63,7 +63,7 @@ export const serveSessionChild = async (
 
   const receive = async (text: string) => {
     const command = getResult(
-      // oxlint-disable-next-line no-restricted-properties -- the command schema validates the payload and coerces its dates, the pair /docs/architecture/serialization.md names
+      // oxlint-disable-next-line no-restricted-properties -- the command schema validates the payload and coerces its dates, the pair /docs/architecture/serialization names
       () => driverCommandSchema.parse(JSON.parse(text)),
     )
       .orTee((error) => {
