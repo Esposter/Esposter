@@ -21,6 +21,7 @@ attach(content);
     :style="contentStyles"
     pointer-events-none
     ui-popover
+    ui-popover-motion
   >
     <div text-sm px-2 py-1 text-nowrap ui-lifted>
       <slot />
@@ -31,13 +32,7 @@ attach(content);
 <style scoped>
 /* It pops out of what it names the moment the pointer arrives, and back into it on the way out */
 .tooltip {
-  opacity: 0;
   transform: scale(0.5);
-  transition:
-    opacity var(--ui-motion-short),
-    transform var(--ui-motion-short),
-    display var(--ui-motion-short) allow-discrete,
-    overlay var(--ui-motion-short) allow-discrete;
 }
 
 .tooltip:popover-open {
