@@ -19,9 +19,10 @@ Each screen of the game is held to a budget for what it loads before it shows. T
 ```bash
 pnpm -C scripts genshin:parity load WorldScreen        # 1920 by 1080, the default
 pnpm -C scripts genshin:parity load LoginScreen 1280 720
+pnpm -C scripts genshin:parity load WorldScreen --dev  # the dev server, not a build
 ```
 
-The command measures a production build of the parity page, not the dev server. It builds the page into the genshin-world package's `parity-build` folder through a run slot, reuses that build while nothing it reads has changed (its key is the commit and each changed file's size and time), then serves the build with Vite's preview server on a free port and loads the screen there. The dev server is not used for the measure because its unbundled modules are slow to start: the terrain worker waited seconds to begin on it, which hid every other step's cost. The screen is a fixture on the parity page, opened cold in a fresh browser, so its cache is empty. The command prints one meter row per figure: the value, its budget, the share used as a bar, and OVER when past it, then the measures slowest first, then the requests and the objects by kind. It exits non-zero when a figure checked here is over its budget. Time is checked only on the machine the budget names (`os.hostname()`); on any other machine the time is printed beside its row and does not fail.
+The command measures a production build of the parity page by default. It builds the page with `vite build` into the genshin-world package's `parity-build` folder, reuses that build while nothing it reads has changed (its key is the commit and each changed file's size and time), then serves the build with Vite's preview server on a free port and loads the screen there. With `--dev` it skips the build and serves the parity page with Vite's dev server on a free port instead, so the same measures can be read on the dev server (see the decision below). The production build is the default because the dev server's unbundled modules are slow to start: the terrain worker waited seconds to begin on it, which hid every other step's cost. The screen is a fixture on the parity page, opened cold in a fresh browser, so its cache is empty. The command prints one meter row per figure: the value, its budget, the share used as a bar, and OVER when past it, then the measures slowest first, then the requests and the objects by kind. It exits non-zero when a figure checked here is over its budget. Time is checked only on the machine the budget names (`os.hostname()`); on any other machine the time is printed beside its row and does not fail.
 
 ## Reading the Timings track
 
@@ -37,7 +38,7 @@ The time column is checked on the budget's machine only. A screen's own load ste
 
 ```mermaid
 flowchart LR
-  BUILD["buildParityPage<br/>production build, reused by key"] --> PREVIEW["startParityPreview<br/>Vite preview on a free port"]
+  BUILD["buildParityPage<br/>production build, reused by key"] --> PREVIEW["startParityServer<br/>Vite preview on a free port, or the dev server with --dev"]
   PREVIEW --> STEP["each awaited load step<br/>measureLoadStep → genshin:load:step"]
   STEP --> READY["the screen signals ready"]
   READY --> READ["parity page reads the measures,<br/>resource timing, renderer and scene counts"]
@@ -52,19 +53,20 @@ flowchart LR
 - **The parity page raises the resource timing buffer.** The browser keeps 250 resource timings by default, and a world's load makes more requests than that, so the buffer is raised before the first request in `openParityPage`; without it the request and game data counts stop at the buffer.
 - **Ready waits on the finest terrain tiles only.** The terrain reports ready once every finest-level tile the view wants is held or given up, and the coarser rings keep streaming after ready without holding it. On the production build the world's ready is mostly that wait, so the next trim is chosen from the terrain measure, see the proposal.
 - **The load is measured on a production build.** On the dev server each terrain worker waited seconds before it ran its first load, since the engine's barrel was served as a waterfall of unbundled modules, so every figure read on it was dominated by that start. A production build bundles the worker and the page into a few chunks, and the same world reads ready far sooner than on the dev server. The build is served by Vite's preview server with the same game data route as the dev server, so the requests and game data counts match what the page fetches; only the module graph differs.
+- **Vite's bundled dev mode does not load the world, so it is not used.** `--dev` measured the dev server against `experimental: { bundledDev: true }` on the parity page, three runs each on `WorldScreen`. The ready medians were 36,512 ms on the plain dev server and 10,650 ms with bundled dev, but with bundled dev every run failed its `regions` step: each region's JSON (`/src/data/regions/<id>.json`) answered `HTTP 404 Not Found`, so the page drew 292 objects against the 322 of the full load and read ready on partial data. The slowest three steps were `terrain` 25.1, 24.9 and 24.0 s, `compile` 3.3, 2.8 and 3.1 s, and `regions` 0.5 s per run on the dev server; with bundled dev `terrain` 7.4, 8.0 and 8.8 s, `compile` 0.8, 0.8 and 0.9 s, and `regions` 0.6 s, failed each time. The setting is not landed, and the app's Nuxt config was not tried with it.
 - **The time's machine is named by the budget.** The counts are the same on every machine and the milliseconds are not, so a budget names the machine it was measured on.
 
 ## Key files
 
-| File                                                                     | Role                                                              |
-| :----------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `packages/genshin-world/src/services/loading/measureLoadStep.ts`         | Times an awaited load step as `genshin:load:<name>`               |
-| `packages/genshin-world/src/services/loading/constants.ts`               | `LOAD_STEP_MEASURE_PREFIX`, the one prefix the measures carry     |
-| `packages/genshin-world/parity/benchLoad.ts`                             | The parity page's read at ready: measures, requests, scene counts |
-| `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`         | Each screen's budget, by screen name                              |
-| `scripts/src/services/genshinParity/commands/loadCommand.ts`             | The `load` command, beside `bench`                                |
-| `scripts/src/services/genshinParity/load/buildParityPage.ts`             | Builds the parity page for production, keyed so a build is reused |
-| `scripts/src/services/genshinParity/load/startParityPreview.ts`          | Serves the production build with Vite's preview server            |
-| `packages/genshin-world/scripts/gameData/mirror/gameDataMirrorPlugin.ts` | The game data route, on the dev server and the preview server     |
-| `scripts/src/services/genshinParity/shared/formatLoadMeter.ts`           | The meter's rows, the measures and the exit rule                  |
-| `scripts/src/services/genshinParity/shared/openParityPage.ts`            | Opens the page cold and raises the resource timing buffer         |
+| File                                                                     | Role                                                               |
+| :----------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/genshin-world/src/services/loading/measureLoadStep.ts`         | Times an awaited load step as `genshin:load:<name>`                |
+| `packages/genshin-world/src/services/loading/constants.ts`               | `LOAD_STEP_MEASURE_PREFIX`, the one prefix the measures carry      |
+| `packages/genshin-world/parity/benchLoad.ts`                             | The parity page's read at ready: measures, requests, scene counts  |
+| `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`         | Each screen's budget, by screen name                               |
+| `scripts/src/services/genshinParity/commands/loadCommand.ts`             | The `load` command, beside `bench`                                 |
+| `scripts/src/services/genshinParity/load/buildParityPage.ts`             | Builds the parity page for production, keyed so a build is reused  |
+| `scripts/src/services/genshinParity/load/startParityServer.ts`           | Serves the production build with Vite's preview, or the dev server |
+| `packages/genshin-world/scripts/gameData/mirror/gameDataMirrorPlugin.ts` | The game data route, on the dev server and the preview server      |
+| `scripts/src/services/genshinParity/shared/formatLoadMeter.ts`           | The meter's rows, the measures and the exit rule                   |
+| `scripts/src/services/genshinParity/shared/openParityPage.ts`            | Opens the page cold and raises the resource timing buffer          |
