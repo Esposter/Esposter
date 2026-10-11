@@ -1,6 +1,6 @@
 ---
 title: Terrain shape height
-description: A ground's height composed in three layers, each read only where it reaches: Gaussian hills over a base, sharp features the hills smear (cliff terraces, ridges and plateaus, each blended by its own falloff), and a fine residual of simplex noise summed over octaves, drawn only where its fade was fitted and never under a feature. Every layer is optional, so a ground of hills alone is the same ground it was.
+description: A ground's height composed in three layers, each read only where it reaches: Gaussian hills over a base, sharp features the hills smear (cliff terraces, ridges and plateaus, each blended by its own falloff), and a fine residual of simplex noise summed over octaves, drawn only where its fade was fitted and never under a feature. Every layer is optional, so a ground of hills alone is the same ground it was, and grounds laid over another are composed into the same layers, each lifted onto its own base.
 ---
 
 # Terrain shape height
@@ -13,6 +13,7 @@ A region's ground is a [terrain](/docs/genshin/terrain) heightfield, and its hei
 flowchart TD
   PT["A point's x and z on the ground"] --> HL["Hills: base plus every hill whose reach covers the point"]
   PT --> FT["Features: each cliff, ridge or plateau its cell reaches"]
+  PT --> LV["Levels: each ground laid over lifted by its base over the first's, on its hills' disc"]
   PT --> FD{"Residual's fade: its grid's weight times each clearing's, none outside the grid"}
   FD -->|"above none"| RS["Residual: simplex noise summed over its octaves, times the weight"]
   FD -->|"none: no octave summed"| SUM["Heights summed"]
@@ -21,6 +22,7 @@ flowchart TD
   CL --> SUM
   HL --> SUM
   FT --> SUM
+  LV --> SUM
   SUM --> TILE["A tile's grid of heights, from computeTerrainTile"]
 ```
 
@@ -35,6 +37,10 @@ The three feature kinds are:
 The residual is simplex noise with the given seed, its first octave's amplitude and scale in metres, each octave after at half the amplitude and half the scale. Noise drawn by its statistics is not the ground point for point, so wherever it is drawn it adds its own error, and it is read only where it reaches. Its optional fade is a grid of weights from none to one on nodes a cell apart, read bilinearly between the four round a point, and the residual's height there is scaled by that weight. A point outside the grid draws none of it, since nothing was fitted there, and each of the fade's clearings, a disc with a radius and a falloff, holds it at none inside the radius and fades it in across the falloff. Without a fade every point draws the whole residual, so a residual without one is the residual it was. Where the weight is none no octave is summed at all.
 
 The features keep the residual off their own ground too: the composed height multiplies the residual by one less the largest blend any feature stands at there, the same share of its height each feature adds, so a plateau's top, a terrace or a ridge's crest carries no noise and the residual comes back across their falloffs.
+
+## Grounds laid over another
+
+`createTerrainShapeHeight` takes one ground and any grounds laid over it, and composes them into the same three layers rather than summing whole heights: every ground's hills and features are filed into the same cells, so a point reads only the few near it, whichever ground they came from. Only the first ground's base is the hills layer's, so each ground laid over it that has hills is lifted onto its own base by its level (`getTerrainShapeLevel`): a plateau of its base less the first's, on the disc round the box its hills stand in, falling to none across its widest hill's reach past that disc. Inside it, the ground laid over stands exactly as it is drawn alone; past it, where its hills have fallen to none too, the base under it shows. A level is filed with the features' heights but never their blend, so the residual of the ground laid over is drawn on its own level. A ground laid over with no hills has no level, so its features stand on the first ground's base. Each ground's residual is summed in, each faded by its own grid and kept off every ground's features.
 
 ## Not yet
 
@@ -58,9 +64,10 @@ The features keep the residual off their own ground too: the composed height mul
 | `packages/genshin-engine/src/terrain/createResidualHeight.ts`        | The residual's octaves of simplex noise, scaled by its fade's weight                   |
 | `packages/genshin-engine/src/terrain/sampleTerrainResidualFade.ts`   | The fade's weight at a point, bilinear in its grid, none outside it                    |
 | `packages/genshin-engine/src/terrain/fileByCell.ts`                  | Items filed under the cells their bounds cover, read by a point                        |
-| `packages/genshin-world/src/services/world/createWorldHeight.ts`     | The world's ground, Windrise's fitted ground and features with every region's plateaus |
+| `packages/genshin-engine/src/terrain/getTerrainShapeLevel.ts`        | A ground laid over another lifted onto its own base, round its hills                   |
+| `packages/genshin-world/src/services/world/createWorldHeight.ts`     | The world's ground: every region's laid over Windrise's, a fitted one on its own level |
 
 ## Notes
 
-- **Windrise's ground is hills, features and a faded residual.** Its data is the fitted hills, the plateaus, cliffs and ridges its fit places ([scene derivation](/docs/genshin/scene-derivation), "Each region's ground") and the residual's noise, faded out where the hills hold and cleared from the bar's 60 metres round the oak and from every place a region file stands a landmark on inside the fitted extent ([terrain shapes](/docs/proposals/genshin/terrain-shapes)). The world's features are Windrise's own beside the other regions' provisional plateaus, each raised under its capital ([region buildings](/docs/genshin/region-buildings)), and past the fitted extent no residual is drawn; coastlines are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal's.
+- **Windrise's ground is hills, features and a faded residual.** Its data is the fitted hills, the plateaus, cliffs and ridges its fit places ([scene derivation](/docs/genshin/scene-derivation), "Each region's ground") and the residual's noise, faded out where the hills hold and cleared from the bar's 60 metres round the oak and from every place a region file stands a landmark on inside the fitted extent ([terrain shapes](/docs/proposals/genshin/terrain-shapes)). The world lays every other region's ground over it: one no fit has drawn adds its provisional plateau, raised under its capital ([region buildings](/docs/genshin/region-buildings)), and one a fit has drawn adds its hills, features and faded residual on its own level. Past every fitted extent no residual is drawn; coastlines are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal's.
 - **A feature's falloff is positive.** The blends divide by their falloff, so a sharp edge is a falloff of a small positive length rather than zero.
