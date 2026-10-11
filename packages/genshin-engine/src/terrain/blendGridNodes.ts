@@ -1,5 +1,5 @@
 // The bilinear blend of a grid's four nodes round a point, read row by row along z from the point's column and row, which
-// the caller has already kept to the grid's edges
+// The caller has already kept to the grid's edges
 export const blendGridNodes = (
   values: readonly number[],
   sizeX: number,
