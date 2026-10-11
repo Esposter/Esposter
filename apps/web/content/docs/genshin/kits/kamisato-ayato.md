@@ -9,7 +9,7 @@ Ayato's kit is one module, `createAyatoKit`, on avatar 10000066: five strikes, a
 
 ## Decisions
 
-- **Ayato's Namisen stacks are a status that each Shunsuiken strike reads through the team's effects as it prices.** A hit's `additiveBaseDamageBonus` receives the striker alone, so the stance's strikes close over the owner of the team's effects that Kyouka's cast writes into, and read the stacks there. Each enemy a strike hits adds a stack through `onStrike`, and the status has no end, which a swap ends, as gcsim clears the stacks when he leaves the field; the swap ends the stance by the same event. Soukai Kanka replaces his normal attacks only, as a stance's charged attack and plunges are the kit's own: gcsim refuses both in the skill state, which a stance cannot express.
+- **Ayato's Namisen stacks are a status that each Shunsuiken strike reads through the team's effects as it prices.** A hit's `additiveBaseDamageBonus` receives the striker alone, so the stance's strikes close over the owner of the team's effects that Kyouka's cast writes into, and read the stacks there. Each enemy a strike hits adds a stack through `onStrike`, and the status has no end, which a swap ends, as gcsim clears the stacks when he leaves the field; the stance ends on the same swap. Soukai Kanka replaces his normal attacks only, as a stance's charged attack and plunges are the kit's own: gcsim refuses both in the skill state, which a stance cannot express.
 - **Kamisato Art: Kyouka's water illusion explodes 35 frames after the cast.** gcsim takes the illusion's least delay, which a player's parameter may only raise, so `ayatoKit.ts` takes 35 frames, about 0.58 seconds.
 
 ## Key files

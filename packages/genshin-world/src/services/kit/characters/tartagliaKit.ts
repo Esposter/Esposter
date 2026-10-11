@@ -362,7 +362,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       // The Melee Stance's strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
       // In tartaglia/attack.go's meleeAttack and AttackTagExtra in tartaglia/charge.go's ChargeAttack
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterKitStance(kitEffectState, combatant, meleeStanceActions, stanceSeconds),
+        enterKitStance(kitEffectState, combatant, meleeStanceActions, stanceSeconds, { isEndedOnSwap: true }),
       seconds: STANCE_CHANGE_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
@@ -402,18 +402,13 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       seconds: animationFrames / 60,
       targetingArea: STRIKE_TARGETING_AREA,
     })),
-    // The Melee Stance ends as Tartaglia leaves the field, and its end sets the skill's cooldown by the whole seconds it
+    // The end of the Melee Stance, which leaving the field brings, sets the skill's cooldown by the whole seconds it
     // Held, or its longest cooldown once it held its longest, cut from one constellation, or ends the cooldown from six
     // Once the burst was cast in it. Hydrospout's tick sets off a Slash in the Melee Stance or a Flash out of it, outside
     // Their intervals, and each hit Tartaglia lands gives and sets off Riptide
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
       const meleeStance = findKitStance(kitEffectState.effects, characterId);
-      if (event.kind === KitEventKind.CharacterSwapped) {
-        if (event.previousCharacterId === characterId && meleeStance) meleeStance.secondsRemaining = 0;
-        return;
-      }
-
       if (event.kind === KitEventKind.EffectExpired) {
         const { effect } = event;
         if (effect.kind !== "stance" || effect.characterId !== characterId) return;

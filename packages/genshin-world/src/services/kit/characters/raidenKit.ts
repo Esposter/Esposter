@@ -344,6 +344,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             elementalSkill: kit.elementalSkill,
           },
           BURST_HITMARK_FRAMES / 60 + musouIsshinSeconds,
+          { isEndedOnSwap: true },
         );
       },
       seconds: BURST_FRAMES / 60,
@@ -398,18 +399,13 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     },
     normalAttacks,
     // Another member's burst gives her Resolve, and from Ascension 1 the party's particles and orbs give her 2 stacks
-    // Once every 3 seconds. Musou Isshin ends as she leaves the field, and its end gives the rest of the team
+    // Once every 3 seconds. The end of Musou Isshin, which leaving the field brings, gives the rest of the team
     // Constellation 4's ATK. A Musou Isshin attack that lands restores the team's energy, and from Constellation 6 cuts
     // The others' burst cooldowns, once a second and five times a cast, as gcsim's two callbacks keep the same interval
     // And count. A member holding the Eye who deals damage sets off its coordinated attack on the enemy struck
     onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
       const musouIsshin = findKitStance(kitEffectState.effects, characterId);
-      if (event.kind === KitEventKind.CharacterSwapped) {
-        if (event.previousCharacterId === characterId && musouIsshin) musouIsshin.secondsRemaining = 0;
-        return;
-      }
-
       if (event.kind === KitEventKind.BurstUsed) {
         if (event.characterId === characterId) return;
         const isElectro = characterIdCombatantMap.get(event.characterId)?.element === Element.Electro;

@@ -7,14 +7,12 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Element } from "#src/models/Element";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
-import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -200,6 +198,7 @@ export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         normalAttacks: sevenPhaseNormalAttacks,
       },
       SEVEN_PHASE_FLASH_FRAMES / 60,
+      { isEndedOnSwap: true },
     );
 
   // The Seven-Phase Flash's press lands no hit: its state is entered on the field 19 frames on, through a task
@@ -223,12 +222,6 @@ export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     highPlunge: createPlunge(PLUNGE_HIT_AREAS.high, HIGH_PLUNGE_POISE_DAMAGE, attackMultiplier(10)),
     lowPlunge: createPlunge(PLUNGE_HIT_AREAS.low, LOW_PLUNGE_POISE_DAMAGE, attackMultiplier(9)),
     normalAttacks,
-    // Leaving the field ends the Seven-Phase Flash, as gcsim's exit from the field does
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
-      const stance = findKitStance(kitEffectState.effects, combatant.characterId);
-      if (stance) stance.secondsRemaining = 0;
-    },
     plungeCollision: {
       hitArea: PLUNGE_HIT_AREAS.collision,
       hitmarkSeconds: 0,

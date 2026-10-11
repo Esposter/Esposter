@@ -8,10 +8,8 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createSkirkKit, SKIRK_CHARACTER_ID } from "#src/services/kit/characters/skirkKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -125,18 +123,5 @@ describe(createSkirkKit, () => {
     expect(SKIRK_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
       109, 111, 114, 125, 135, 158,
     ]);
-  });
-
-  test("leaving the field ends the Seven-Phase Flash", () => {
-    expect.hasAssertions();
-    const combatant = createSkirkCombatant();
-    const kitEffectState = enterSevenPhaseFlash(combatant);
-    SKIRK_KIT.onKitEvent?.(
-      { characterId: KUKI_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: SKIRK_CHARACTER_ID },
-      createKitTestContext(combatant, { kitEffectState }),
-      combatant,
-    );
-
-    expect(findStance(kitEffectState)?.secondsRemaining).toBe(0);
   });
 });
