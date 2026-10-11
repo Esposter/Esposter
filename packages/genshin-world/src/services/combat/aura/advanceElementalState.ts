@@ -18,12 +18,13 @@ import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged
 // A target's elements some seconds on, written in place, and the reactions those seconds bring pushed onto
 // `reactions`, so a quiet step allocates nothing. The auras decay from one tick to the next: Electro-Charged ticks each
 // Second, and once an aura decays out from under it, a last time if half a second has passed since the one before;
-// Burning ticks each quarter second, its Pyro applied to the target itself under Burning's internal cooldown
+// Burning ticks each quarter second, its Pyro applied to the target itself under Burning's internal cooldown. Electro and
+// Hydro lying together as Lunar-Charged tick nothing here, and are Lunar-Charged no longer once either is gone
 export const advanceElementalState = (state: ElementalState, deltaSeconds: number, reactions: Reaction[]): void => {
   const { auras } = state;
   const endSeconds = state.seconds + deltaSeconds;
   while (state.seconds < endSeconds) {
-    const wasElectroCharged = checkIsElectroCharged(auras);
+    const wasElectroCharged = checkIsElectroCharged(auras) && !state.isLunarCharged;
     const electroChargedTickSeconds = wasElectroCharged
       ? state.electroChargedSeconds + ELECTRO_CHARGED_TICK_SECONDS
       : Infinity;
@@ -31,7 +32,8 @@ export const advanceElementalState = (state: ElementalState, deltaSeconds: numbe
     const seconds = Math.min(endSeconds, electroChargedTickSeconds, burningTickSeconds);
     decayAuras(auras, seconds - state.seconds);
     state.seconds = seconds;
-    const isElectroCharged = checkIsElectroCharged(auras);
+    if (!checkIsElectroCharged(auras)) state.isLunarCharged = false;
+    const isElectroCharged = checkIsElectroCharged(auras) && !state.isLunarCharged;
     if (isElectroCharged && seconds === electroChargedTickSeconds) {
       state.electroChargedSeconds = seconds;
       reactions.push(tickElectroCharged(auras));

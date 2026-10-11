@@ -73,3 +73,11 @@ export const ASCENDANT_GLEAM_STATUS_ID = "ascendantGleam";
 export const VERDANT_DEW_MAXIMUM_COUNT = 3;
 export const VERDANT_DEW_GATHERING_SECONDS = 149 / 60;
 export const VERDANT_DEW_GATHER_SECONDS = 146 / 60;
+// A Lunar-Charged forms the party's cloud for 5.5 seconds, or keeps the one standing for 5.5 seconds again. A new cloud
+// First ticks 9 frames on and every 6 frames after, each tick striking every Lunar-Charged enemy within 8 metres of the
+// Character on the field, as gcsim (MIT) pkg/reactable/lunarcharged.go ticks it
+// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcharged.go
+export const LUNAR_CHARGED_CLOUD_SECONDS = 5.5;
+export const LUNAR_CHARGED_CLOUD_FIRST_TICK_SECONDS = 9 / 60;
+export const LUNAR_CHARGED_CLOUD_TICK_SECONDS = 6 / 60;
+export const LUNAR_CHARGED_CLOUD_RADIUS = 8;

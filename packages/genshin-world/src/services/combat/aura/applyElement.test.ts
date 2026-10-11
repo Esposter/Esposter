@@ -149,7 +149,9 @@ describe(applyElement, () => {
     const bloomState = createState([[AuraType.Hydro, { decayRate: 0, gauge: 1, isImmutable: false }]]);
     const lunarBloomState = createState([[AuraType.Hydro, { decayRate: 0, gauge: 1, isImmutable: false }]]);
     applyElement(bloomState, Element.Dendro, 0.25);
-    const reactions = applyElement(lunarBloomState, Element.Dendro, 0.25, [LunarReactionType.LunarBloom]);
+    const reactions = applyElement(lunarBloomState, Element.Dendro, 0.25, {
+      lunarReactionTypes: [LunarReactionType.LunarBloom],
+    });
 
     expect(reactions).toStrictEqual([{ element: Element.Dendro, reactionType: ReactionType.LunarBloom }]);
     expect(lunarBloomState.auras).toStrictEqual(bloomState.auras);
@@ -234,6 +236,25 @@ describe(applyElement, () => {
     expect(state.auras.get(AuraType.Electro)?.gauge).toBeCloseTo(0.4);
   });
 
+  test("charges Hydro with Electro as Lunar-Charged where the party turns it Lunar, ticking nothing, and on each again", () => {
+    expect.hasAssertions();
+
+    const state = createElementalState();
+    const lunarReactionTypes = [LunarReactionType.LunarCharged];
+    applyElement(state, Element.Hydro, 1, { lunarReactionTypes });
+    const reactions = [
+      ...applyElement(state, Element.Electro, 1, { lunarReactionTypes }),
+      ...applyElement(state, Element.Hydro, 1, { lunarReactionTypes }),
+    ];
+
+    expect(reactions).toStrictEqual(
+      Array.from({ length: 2 }, () => ({ element: Element.Electro, reactionType: ReactionType.LunarCharged })),
+    );
+    expect(state.isLunarCharged).toBe(true);
+    expect(state.auras.get(AuraType.Hydro)?.gauge).toBeCloseTo(0.8);
+    expect(state.auras.get(AuraType.Electro)?.gauge).toBeCloseTo(0.8);
+  });
+
   test("lights Dendro with Pyro beside it, and only refreshes a Burning already lit", () => {
     expect.hasAssertions();
 
@@ -303,7 +324,7 @@ describe(applyElement, () => {
     expect.hasAssertions();
 
     const state = createElementalState();
-    applyElement(state, Element.Dendro, 4, [], selfAuraSeconds);
+    applyElement(state, Element.Dendro, 4, { selfAuraSeconds });
 
     expect(state.auras).toStrictEqual(new Map([[AuraType.Dendro, { decayRate, gauge: 4, isImmutable: false }]]));
   });
@@ -312,7 +333,7 @@ describe(applyElement, () => {
     expect.hasAssertions();
 
     const state = createState([[AuraType.Pyro, { decayRate: 0, gauge: 0.8, isImmutable: false }]]);
-    const reactions = applyElement(state, Element.Hydro, 2, [], 8);
+    const reactions = applyElement(state, Element.Hydro, 2, { selfAuraSeconds: 8 });
 
     expect(reactions).toStrictEqual([{ element: Element.Hydro, reactionType: ReactionType.Vaporize }]);
     expect(state.auras).toStrictEqual(

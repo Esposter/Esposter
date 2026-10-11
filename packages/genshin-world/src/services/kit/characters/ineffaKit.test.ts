@@ -8,6 +8,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createIneffaKit, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
@@ -150,5 +151,22 @@ describe(createIneffaKit, () => {
     const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
     expect(shield.health).toBeCloseTo(2.21184 * combatant.attributes.attack + 1386.6759);
     expect(shield.secondsRemaining).toBe(20);
+  });
+
+  test("her Moonsign Benediction turns Electro-Charged Lunar, with 0.7% Base DMG Bonus each 100 ATK, at most 14%", () => {
+    expect.hasAssertions();
+
+    const benediction = INEFFA_KIT.moonsignBenediction;
+    const baseDamageBonuses = [1000, 3000].map((baseAttack) =>
+      benediction?.getBaseDamageBonus?.({
+        ...createIneffaCombatant(),
+        attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: baseAttack }]),
+      }),
+    );
+
+    expect({ baseDamageBonuses, lunarReactionTypes: benediction?.lunarReactionTypes }).toStrictEqual({
+      baseDamageBonuses: [expect.closeTo(0.07), 0.14],
+      lunarReactionTypes: [LunarReactionType.LunarCharged],
+    });
   });
 });

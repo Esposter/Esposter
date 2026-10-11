@@ -19,13 +19,13 @@ import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
-import { startVerdantDewGathering } from "#src/services/party/startVerdantDewGathering";
+import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 
 // A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each priced
 // By its combatant as its buffs and the kit's own DMG Bonus against that enemy raise it, its Electro or Pyro first
 // Setting off the Dendro Cores in its area. Its element reacts, and a direct Lunar hit is priced, as the deployed team's
 // Moonsign gives. Each enemy struck drops its energy to the team, collected by the member on the field, and the
-// Strike's bubbles, heals, Crystallize shards, Dendro Cores, Verdant Dew and reactions follow, the reactions it
+// Strike's bubbles, heals, Crystallize shards, Dendro Cores, the party's Lunar answers and reactions follow, the reactions it
 // Triggered and the damage the enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it
 // Reaches, each reaction that landed with a reach reaches the enemies round its own, whose energy and reactions follow
 // In turn. It returns the strikes that struck an enemy
@@ -63,7 +63,7 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStri
       addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
       addCrystallizeShards(kitEffectState, enemy, pricedCombatant, reactions, random);
       addDendroCores(kitEffectState, enemy, pricedCombatant, reactions, random);
-      startVerdantDewGathering(party, reactions);
+      startPartyLunarReactions(party, reactions);
       for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
       healKitStriker(party, pricedCombatant, hit);
