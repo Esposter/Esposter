@@ -11,6 +11,7 @@ import {
   MIN_DUPLICATE_TOKENS,
 } from "#src/services/sweeps/duplicateCode/constants";
 import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindings";
+import { getPluginRoot } from "#src/services/sweeps/duplicateCode/getPluginRoot";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -85,5 +86,5 @@ export const readDuplicateCodeFindings = (): DuplicateCodeFinding[] => {
     duplicationA: toDuplicateCodeFragment(firstFile),
     duplicationB: toDuplicateCodeFragment(secondFile),
   }));
-  return getDuplicateCodeFindings(clones, (sourceId) => readFileSync(sourceId, "utf8"));
+  return getDuplicateCodeFindings(clones, (sourceId) => readFileSync(sourceId, "utf8"), getPluginRoot);
 };
