@@ -4,7 +4,7 @@ import { computeLocomotionClipReading } from "#src/services/genshinAssets/locomo
 import { describe, expect, test } from "vitest";
 
 describe(computeLocomotionClipReading, () => {
-  test("reads the root's distance across the ground, its rise and its speed off where it starts and stops", () => {
+  test("reads the root's distance across the ground, its rise and its speed off where it starts and stops, at the human scale", () => {
     expect.hasAssertions();
 
     const clip: ExportedLocomotionClip = {
@@ -18,13 +18,13 @@ describe(computeLocomotionClipReading, () => {
       m_Name: "",
     };
 
-    expect(computeLocomotionClipReading(clip)).toStrictEqual({
+    expect(computeLocomotionClipReading(clip, 2)).toStrictEqual({
       averageGroundSpeed: Number.NaN,
       duration: 2,
-      groundDistance: 5,
-      groundSpeed: 2.5,
+      groundDistance: 10,
+      groundSpeed: 5,
       name: "",
-      rise: 1,
+      rise: 2,
     });
   });
 });

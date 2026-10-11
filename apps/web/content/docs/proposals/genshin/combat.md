@@ -14,7 +14,7 @@ This page builds on [combat](/docs/genshin/combat) as built: auras, reactions by
 - **The Lunar and Stellar Glimmer reactions as their own formula.** Lunar-Charged, Lunar-Bloom and Lunar-Crystallize, with Stellar-Conduct and Stellar Swirl, are dealt directly by a talent or as a separate instance. Each contributor's damage is worked out alone with standard crit, then the four highest are weighted 0.6, 0.3, 0.05 and 0.05. Lunar-Charged replaces Electro-Charged while a Moonsign character is in the party, so the step that starts Electro-Charged reads the party.
 - **Self and immutable auras as a kind of aura.** Water, rain, an enemy's innate element and its elemental shields put an element on a target with no aura tax and a decay of their own, or none. An immutable aura is never consumed, but what is left of the trigger after it goes on to the auras beside it. Both enter `ElementalState` with their source's fixed gauge, and the enemies give each kind its own.
 - **The enemies' level multiplier.** Enemies and the environment trigger reactions on the wiki's second table, which parts from the characters' from level 58 up. It sits beside `CharacterLevelMultiplierMap`, and a reaction's damage takes the table of the side that triggered it.
-- **The game's limits on how often a reaction lands.** Swirl, Bloom and Shatter deal two instances to a target every half second from each source, Electro-Charged one, and Swirls of one element within a tenth of a second land once. A target keeps these timers in its state, as it keeps Crystallize's.
+- **The game's limits on how often a reaction lands.** Swirl, Superconduct, Shattered, Bloom, Hyperbloom and Burgeon deal two instances to a target every half second from each source, Overloaded and Electro-Charged one, and Burning's damage has none. A Swirl of one element, a Superconduct or an Overloaded within a tenth of a second of the last lands once, whatever its source. The enemy keeps these as internal cooldowns beside its hits', one mechanism counting a share of a gauge or of a reaction's damage.
 - **Debuffs a reaction leaves.** Superconduct takes 40% off the target's Physical resistance for 12 seconds, which the damage formula then reads.
 - **Reach, resolved by the world.** A Swirl's element spreads to every target round it but the one it triggered on, Burning's Pyro lands within a metre, and Electro-Charged arcs to one Wet target within 5 metres. A Dendro Core bursts over 5 metres, and Hyperbloom homes on the nearest enemy. A Crystallize shard lasts 15 seconds and grants the one Crystallize shield, which a new one overwrites. The rules already return what each spreads and at what gauge; the world asks which targets stand within reach and applies it to each.
 - **Energy from attacks.** A normal or charged attack's hit has a chance to give 1 energy, starting at its weapon's base and rising with each miss until it lands: a sword 10% and 5% more a miss, a bow 0% and 5%, a claymore and a catalyst 0% and 10%, a polearm 0% and 4%. Energy Recharge does not touch it. It draws on the world's seeded random source.
@@ -33,8 +33,16 @@ packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts
    - `EnemyLevelMultiplierMap.ts`: levels 1 to 100, the "Enemies and Environment" column of the wiki's [Elemental Reaction/Level Scaling](https://genshin-impact.fandom.com/wiki/Elemental_Reaction/Level_Scaling) table, read through the persona's wiki reader and written as `CharacterLevelMultiplierMap` is.
    - `getTransformativeDamage` gains a last parameter, the triggering side's level multiplier map, defaulting to `CharacterLevelMultiplierMap`, so its caller in `services/kit/strikeEnemy.ts` is unchanged.
    - Test: `getTransformativeDamage.test.ts` gains an Overloaded at level 90 priced on 1202.813736 from the enemies' table and 1446.853458 from the characters', and the two tables agreeing at level 57, where they last match.
-2. Self and immutable auras, which the enemies' slimes and elemental shields need, each source's gauge read from the wiki's Elemental Gauge Theory: Advanced Mechanics page.
-3. The limits on reaction damage, and Superconduct's shred.
+2. **Self and immutable auras**, which the enemies' slimes and elemental shields need. Shipped: both are built and as-built on the [combat](/docs/genshin/combat) page.
+   - `Aura` gains `isImmutable`: an immutable aura takes its share of a trigger but is never consumed, never decays and gives Electro-Charged's ticks nothing, and an attack of its own element leaves it as it is.
+   - `applyElement` gains a last parameter, a self aura's seconds: what is left is untaxed and decays at the source's gauge over them, or not at all at `Infinity`.
+   - Tests: the wiki's Cryo Slime and Cryo Hypostasis under Beidou's 4U of Electro, an immutable Hydro holding up Electro-Charged undrained, the Large Dendro Slime's Toxic Seeds, and a self Hydro's excess kept whole after it vaporizes.
+   - The world's enemies give each kind its innate element and its shield as the kind is added, since the Hilichurl Fighter has neither.
+3. **The limits on reaction damage, and Superconduct's shred.** Shipped: both are built and as-built on the [combat](/docs/genshin/combat) page.
+   - `InternalCooldownGroup`'s `gaugeSequence` becomes `sequence`, the share of a gauge or of a reaction's damage, and the wiki's damage sequences join the groups: `TransformativeReactionInternalCooldownGroupMap` and the tenth of a second's group for Swirl, Superconduct and Overloaded.
+   - `applyReactionInternalCooldown` counts a reaction into the enemy's `internalCooldownMap`, per source, reaction and element, after the tenth of a second's window kept whatever the source, and `strikeEnemy` deals each transformative reaction's damage at its share.
+   - A Superconduct gives its enemy a 12 second status taking 40% off its Physical RES, and the transformative reactions read the statuses' RES reductions as the hit does.
+   - Tests: a source's Swirls, Shatters, Electro-Charged and Burning through half a second, Swirls of one element from two sources within a tenth of a second and another element's apart, a second Overloaded within half a second dealing nothing, and a physical hit after a Superconduct reading 40% less Physical RES.
 4. Reach, once the enemies and the character stand in one world to measure distances between.
 5. Energy from attacks.
 6. The Lunar and Stellar Glimmer reactions, with the first character whose kit triggers them.
@@ -46,13 +54,12 @@ packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts
 
 ## Key files
 
-| File                                                                               | Role after the change                                               |
-| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/combat/ElementalState.ts`                       | Gains a target's self and immutable auras and its reaction limits   |
-| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                  | Reads immutable auras, the party's Moonsign and the reaction limits |
-| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`     | Takes the level multiplier of the side that triggered the reaction  |
-| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts` | Joined by the enemies' and the environment's table                  |
-| `packages/genshin-world/src/services/enemy/damageEnemy.ts`                         | Where a reaction's damage and its reach reach the enemies           |
+| File                                                                               | Role after the change                                              |
+| :--------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                  | Reads the party's Moonsign                                         |
+| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`     | Takes the level multiplier of the side that triggered the reaction |
+| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts` | Joined by the enemies' and the environment's table                 |
+| `packages/genshin-world/src/services/enemy/damageEnemy.ts`                         | Where a reaction's damage and its reach reach the enemies          |
 
 ## Sources
 

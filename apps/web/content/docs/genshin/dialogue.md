@@ -1,6 +1,6 @@
 ---
 title: Dialogue
-description: Genshin's dialogue as built. A talk is a graph of spoken lines and the Traveler's replies, each line's words named by the game's own text id. A pure runner advances it as a click, F or Space does, chooses a reply, and skips to the next reply or the end. The dialogue screen writes the line out in place under its speaker's name, offers the replies down the right, and carries auto-play and skip. A resident placed in a region's data names the talk F begins with them.
+description: Genshin's dialogue as built. A talk is a graph of spoken lines and the Traveler's replies, each line's words named by the game's own text id. A pure runner advances it as a click, F or Space does, chooses a reply, and skips to the next reply or the end. The dialogue screen writes the line out in place under its speaker's name and title, centres a narration on black, offers the replies down the right beside their traced marks, and carries auto-play and skip. A talk fills the player into its words, and a resident placed in a region's data names the talk F begins with them.
 ---
 
 # Dialogue
@@ -31,10 +31,14 @@ flowchart TD
 
 A `Talk` holds its lines and the id of the one it starts at. Each line has its own id, the ids of the lines that may follow it and its words' text id. There are two kinds of line:
 
-- **A spoken line** names its speaker's name by text id, which is empty for a narration, and the voice-over the game files it under, which is empty for an unvoiced line.
+- **A spoken line** names its speaker's name and title by text id, both empty for a narration and the title empty for a speaker without one, and the voice-over the game files it under, which is empty for an unvoiced line.
 - **A choice** is one of the Traveler's replies. It carries the mark the game draws beside it: a plain reply or chat, a choice that starts a quest, or one that starts a story quest. These are the names the wiki's transcripts use for the game's marks.
 
 Both have Zod schemas, so a talk that is fetched or generated is checked before it runs. The words are never in the graph. A host hands the screen the talk's text map, its words by text id in the reader's language, as [game text](/docs/genshin/game-text) does for the interface's own words.
+
+### Read from the dialog table
+
+`genshin:text quests` reads each carried quest's talks from the community dump's dialog table (`readTalk`), as the [quests](/docs/genshin/quests) page describes. A dialog the Traveler speaks (`TALK_ROLE_PLAYER`) becomes a reply. Every other dialog becomes a spoken line, its speaker named by the character table's name for the dialog's role id, and titled by the manual text map's `NPC_TITLE_<id>` for that id where the map holds one. A black screen's dialog (`TALK_ROLE_BLACK_SCREEN`, "TALK_ROLE_NEED_CLICK_BLACK_SCREEN" and their `CONSEQUENT_` forms) has a role id the character table does not hold, so it has neither, and that empty speaker is what marks it a narration: the schema keeps no field of its own for one. The titles' words are published in every language with the quests' other words.
 
 ### The runner
 
@@ -47,11 +51,12 @@ Where a talk stands is a `TalkProgress`: the id of the line on screen, empty onc
 
 ### On screen
 
-`DialogueScreen` in `genshin-interface` draws a talk's state and nothing else. It shows the speaker's name over the line, which is laid out whole with its unwritten tail held in place unseen, so the line never rewraps as it is written. The replies run down the right, with the one F would choose lit once one is. A screen reader hears the whole line once, not its characters one by one.
+`DialogueScreen` in `genshin-interface` draws a talk's state and nothing else. It shows the speaker's name over the line, their title between the two when they have one, and lays the line out whole with its unwritten tail held in place unseen, so the line never rewraps as it is written. A line with no speaker is a narration, drawn centred on a black screen. The replies run down the right, each beside its mark (`DialogueChoiceIconPathMap`, traced from the wiki's copies of the game's files), with the one F would choose lit once one is. A screen reader hears the whole line once, not its characters one by one.
 
 `DialogueTalk` in `genshin-world` runs a talk over the world. The world screen mounts it while the talk screen is open, with the talk its resident began and the words of the quests, and its end sets the world back. The talk screen hides the HUD and lets the pointer go for the replies, and holds nothing else ([screens](/docs/genshin/screens)).
 
-- **The line is written out** a character at a time, at `TALK_REVEAL_MS_PER_CHARACTER`, and is then shown whole.
+- **The player is filled into every word.** The line, each reply and the speaker's name and title pass through `fillLinePlaceholders`, the nickname being the game's own title for the Traveler, filled as the login fills it, and each word per gender the login's twin's (`LOGIN_TRAVELER_GENDER`). Both stand in until the world holds a player profile.
+- **The line is written out** a character at a time, at `TALK_REVEAL_MS_PER_CHARACTER`, counting the filled line, and is then shown whole.
 - **A click goes on, and so do F and Space.** These keys are read off the engine's own `InputActionBindingMap`, as its Interact and Jump, so they stay the game's default bindings. While replies are on offer, none is lit until the pointer passes over one or an arrow lights the first, F chooses the lit one, and the arrows move the light between them.
 - **Auto-play** holds each whole line for `TALK_AUTO_PLAY_HOLD_MS` and then goes on, stopping at replies. Its button reads the game's own "Auto" and "Playing".
 - **Skip** runs on to the next replies or to the end. Its button reads the game's own "Skip".
@@ -88,35 +93,39 @@ The reveal and auto-play timings wait on `dialogue-reveal.mkv` and `dialogue-aut
 
 ## Key files
 
-| File                                                                 | Role                                                                  |
-| :------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/dialogue/Talk.ts`                 | A talk: its lines and where it starts, with its schema                |
-| `packages/genshin-world/src/models/dialogue/TalkLine.ts`             | A line: spoken, with its speaker and voice, or one of the replies     |
-| `packages/genshin-world/src/services/dialogue/advanceTalk.ts`        | A click, F or Space: written out whole, on to the next, or the end    |
-| `packages/genshin-world/src/services/dialogue/chooseTalkLine.ts`     | A reply chosen, and the branch it leads down                          |
-| `packages/genshin-world/src/services/dialogue/skipTalk.ts`           | On to the next replies or the end                                     |
-| `packages/genshin-world/src/services/dialogue/constants.test.ts`     | The hand-written sample talk every runner suite walks                 |
-| `packages/genshin-world/src/services/dialogue/constants.ts`          | The provisional reveal and auto-play timings                          |
-| `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`      | A talk run over the world: reveal, keys, auto-play and skip           |
-| `packages/genshin-world/src/components/World/Session/Index.vue`      | Mounts the talk over the world while its screen is open               |
-| `packages/genshin-interface/src/components/DialogueScreen/Index.vue` | The speaker's name, the line written out in place, and the replies    |
-| `packages/genshin-interface/src/models/DialogueChoiceIcon.ts`        | The marks a reply is drawn beside                                     |
-| `packages/genshin-world/src/models/world/Resident.ts`                | A resident placed in a region's data, and the talk F begins with them |
+| File                                                                   | Role                                                                           |
+| :--------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/dialogue/Talk.ts`                   | A talk: its lines and where it starts, with its schema                         |
+| `packages/genshin-world/src/models/dialogue/TalkLine.ts`               | A line: spoken, with its speaker and voice, or one of the replies              |
+| `packages/genshin-world/src/services/dialogue/advanceTalk.ts`          | A click, F or Space: written out whole, on to the next, or the end             |
+| `packages/genshin-world/src/services/dialogue/chooseTalkLine.ts`       | A reply chosen, and the branch it leads down                                   |
+| `packages/genshin-world/src/services/dialogue/skipTalk.ts`             | On to the next replies or the end                                              |
+| `packages/genshin-world/src/services/dialogue/constants.test.ts`       | The hand-written sample talk every runner suite walks                          |
+| `packages/genshin-world/src/services/dialogue/constants.ts`            | The provisional reveal and auto-play timings                                   |
+| `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`        | A talk run over the world: the player filled in, reveal, keys, auto-play, skip |
+| `packages/genshin-world/src/components/World/Session/Index.vue`        | Mounts the talk over the world while its screen is open                        |
+| `packages/genshin-interface/src/components/DialogueScreen/Index.vue`   | The speaker's name and title, the line or a narration, and the replies         |
+| `packages/genshin-interface/src/models/DialogueChoiceIcon.ts`          | The marks a reply is drawn beside                                              |
+| `packages/genshin-interface/src/services/DialogueChoiceIconPathMap.ts` | Each mark's traced path                                                        |
+| `scripts/src/services/genshinText/readTalk.ts`                         | A talk read from the dialog table: replies, speakers, titles, narration        |
+| `packages/genshin-world/src/models/world/Resident.ts`                  | A resident placed in a region's data, and the talk F begins with them          |
 
 ## Notes
 
 - **The reveal is not visible in the published recording.** An English-language public recording of the dialogue choices, at 30 frames a second and 1280 by 720, shows each line whole in its first frame: two lines measured in full, the text's ink filling in one frame and not character by character. So `TALK_REVEAL_MS_PER_CHARACTER` stays provisional, and the next line is timed off a 60 frames a second recording of a line being written out, which is owed.
 - **The auto-play hold is not measured.** `TALK_AUTO_PLAY_HOLD_MS` waits on the same recording as the reveal, since no published clip found shows auto-play on.
 - **The screen's place and colour are read off one frame.** The speaker's name is gold `#ffc700`, the brightest saturated pixel of its letters. The replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080. The screen is drawn over the clean plate of its frame (Parity above), so the score covers the band's text and the pills over the game's own scene, and the band has no gradient, since the game's scene under its line is not darkened.
-- **The speaker's role comes from the talk.** A spoken line names its role by `speakerRoleTextId`, drawn under the name in a smaller gold when it is set. The dump's dialog table gives the title text id, which the generator does not read yet, so a generated talk has no role.
+- **A title is the manual text map's, not the dialog's.** The dialog table's own "talkTitleTextMapHash" resolves to no text, while the manual text map's "NPC_TITLE_1419" and "NPC_TITLE_15241" both read "Waitress, Good Hunter", the title over Sara's line in the recording. So a speaker's title is looked up by their character id there, and a character with no such key, Paimon among them, has none.
+- **Only a character's line names its speaker.** The dialog table also holds lines a gadget or the Traveler's twin speaks ("TALK_ROLE_GADGET", "TALK_ROLE_MATE_AVATAR"), whose role ids the character table does not hold either, so the reader would give such a line no speaker and the screen would draw it as a narration. None of the carried quests' talks holds one, so it waits until a carried quest's talk does.
+- **A narration's place is a best estimate.** No published recording read so far shows a black screen's line, so its place at the screen's middle is provisional, on the roadmap's manual verification list.
 - **The Confirm prompt is not drawn.** The frame shows a controller's X mark and the word Confirm bottom right. The keyboard client's key for it is the reader's call.
 - **The selected reply's look is not settled.** Both replies in the frame are the same dark pill, and the first is marked by a controller's X prompt, which the keyboard client does not show. So the replies start unlit on every line, as the frame shows them, and the screen lights a reply white only once the pointer or an arrow selects it, a look no frame shows.
 - **No voice plays.** A line carries the id of its voice-over, but nothing of the game's audio ships, so the voice-over is never played.
-- **The replies' marks are not drawn yet.** Each reply carries its mark, and its place beside the reply is kept, until the game's marks are traced into paths of our own.
+- **Two marks are silhouettes.** A trace keeps the ink's outline, so the quest's mark is one disc with no exclamation mark in it and the story quest's nested diamonds are one diamond, each drawn in the reply's own colour rather than the game's gold. Both are provisional until each inner mark is split from its outline; the plain reply's speech bubble keeps its three dots.
 
 ## Sources
 
 - [Template:DIcon](https://genshin-impact.fandom.com/wiki/Template:DIcon), Genshin Impact Wiki: the marks the game draws beside a dialogue choice, a plain reply or chat, a quest and a story quest among them.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: F as Pick Up/Interact and Space as Jump, the keys a talk goes on with.
 - [Genshin Impact dialogue choices](https://www.youtube.com/watch?v=nWBqOXWZuFg), an English-language public recording of the dialogue choices at 720 high, with controller prompts: the reply frame the screen is placed by, and the line frames the reveal was read off.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dialog table's lines, each naming the ones that follow it and its speaker's role, with the Traveler's lines offered as choices.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dialog table's lines, each naming the ones that follow it and its speaker's role, with the Traveler's lines offered as choices and a black screen's naming no speaker, and the manual text map's character titles.

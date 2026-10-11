@@ -4,6 +4,7 @@ import { worldLevelAdjustmentSaveSchema } from "#src/models/adventureRank/WorldL
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
+import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgressSave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
 import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
@@ -21,6 +22,7 @@ export const genshinSaveSchema = z
     companionshipExp: companionshipExpSaveSchema,
     crafting: craftingSaveSchema,
     inventory: inventorySaveSchema,
+    offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
     unlockedLandmarks: unlockedLandmarkSaveSchema,

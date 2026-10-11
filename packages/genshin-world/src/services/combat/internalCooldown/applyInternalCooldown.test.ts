@@ -37,6 +37,6 @@ describe(applyInternalCooldown, () => {
       applyInternalCooldown(internalCooldown, DEFAULT_INTERNAL_COOLDOWN_GROUP, 0),
     );
 
-    expect(shares).toStrictEqual([...DEFAULT_INTERNAL_COOLDOWN_GROUP.gaugeSequence, 0, 0]);
+    expect(shares).toStrictEqual([...DEFAULT_INTERNAL_COOLDOWN_GROUP.sequence, 0, 0]);
   });
 });

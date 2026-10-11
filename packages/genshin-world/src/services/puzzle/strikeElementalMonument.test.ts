@@ -37,7 +37,7 @@ describe(strikeElementalMonument, () => {
     expect.hasAssertions();
 
     const monument = createMonument(Element.Pyro, false);
-    monument.elementalState.auras.set(AuraType.Pyro, { decayRate: 1, gauge: 2 });
+    monument.elementalState.auras.set(AuraType.Pyro, { decayRate: 1, gauge: 2, isImmutable: false });
     strikeElementalMonument(monument, Element.Anemo, 1);
 
     expect(monument.isLit).toBe(true);

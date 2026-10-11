@@ -1,0 +1,141 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitField } from "#src/models/kit/KitField";
+import type { KitHit } from "#src/models/kit/KitHit";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { GANYU_CHARACTER_ID, MONA_CHARACTER_ID, SUCROSE_CHARACTER_ID } from "#src/services/character/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createSucroseKit } from "#src/services/kit/characters/sucroseKit";
+import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
+
+const SUCROSE_KIT = createSucroseKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SUCROSE_CHARACTER_ID]));
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+const createSucroseCombatant = (ascension = 0, constellationCount = 0, elementalMastery = 0): Combatant => ({
+  ascension,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementalMastery }]),
+  characterId: SUCROSE_CHARACTER_ID,
+  constellationCount,
+  element: Element.Anemo,
+  elementalResonances: [],
+  kit: SUCROSE_KIT,
+  level: 90,
+});
+
+describe(createSucroseKit, () => {
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const castEffects = (combatant: Combatant): KitEffect[] => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    SUCROSE_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    return kitEffectState.effects;
+  };
+
+  test("reads each talent multiplier from its proud skill groups", () => {
+    expect.hasAssertions();
+    const multipliers = [
+      ...SUCROSE_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
+      takeOne(SUCROSE_KIT.chargedAttack.hits).talentMultiplier,
+      SUCROSE_KIT.plungeCollision.talentMultiplier,
+      takeOne(SUCROSE_KIT.lowPlunge.hits).talentMultiplier,
+      takeOne(SUCROSE_KIT.highPlunge.hits).talentMultiplier,
+      takeOne(SUCROSE_KIT.elementalSkill.hits).talentMultiplier,
+    ];
+    const expectedMultipliers = [0.33464, 0.30616, 0.38448, 0.479176, 1.2016, 0.568288, 1.136335, 1.419344, 2.112];
+    expect(multipliers).toStrictEqual(expectedMultipliers);
+  });
+
+  test("Constellation 2 lengthens the burst's field by 2 seconds, and its Anemo tick lands from the first", () => {
+    expect.hasAssertions();
+    const findTickField = (effects: KitEffect[]): KitField => {
+      const field = effects.find((effect): effect is KitField => effect.kind === "field");
+      if (!field) throw new Error("The burst casts no field");
+      return field;
+    };
+    const baseField = findTickField(castEffects(createSucroseCombatant(0, 0)));
+    const constellationField = findTickField(castEffects(createSucroseCombatant(0, 2)));
+
+    expect(constellationField.secondsRemaining - baseField.secondsRemaining).toBeCloseTo(2);
+    expect(baseField.nextTickSeconds).toBeCloseTo(137 / 60);
+  });
+
+  test("a Swirl Sucrose triggers gives the members of the swirled element 50 Elemental Mastery for 8 seconds, and no other", () => {
+    expect.hasAssertions();
+    const sucrose = createSucroseCombatant(1);
+    const ganyu = { ...createSucroseCombatant(), characterId: GANYU_CHARACTER_ID, element: Element.Cryo };
+    const mona = { ...createSucroseCombatant(), characterId: MONA_CHARACTER_ID, element: Element.Hydro };
+    const party = createParty([SUCROSE_CHARACTER_ID, GANYU_CHARACTER_ID, MONA_CHARACTER_ID]);
+    const context = createKitEventContext(sucrose, {
+      characterIdCombatantMap: new Map([
+        [GANYU_CHARACTER_ID, ganyu],
+        [MONA_CHARACTER_ID, mona],
+        [SUCROSE_CHARACTER_ID, sucrose],
+      ]),
+      party,
+    });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    SUCROSE_KIT.onKitEvent?.(
+      {
+        enemy,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ element: Element.Cryo, reactionType: ReactionType.Swirl }],
+        striker: sucrose,
+      },
+      context,
+    );
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      {
+        amount: 50,
+        attribute: Attribute.ElementalMastery,
+        characterId: GANYU_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 8,
+        source: "sucrose-swirl",
+      },
+    ]);
+  });
+
+  test("Ascension 4 gives the rest of the team a fifth of her Elemental Mastery on each skill hit", () => {
+    expect.hasAssertions();
+    const sucrose = createSucroseCombatant(4, 0, 400);
+    const ganyu = { ...createSucroseCombatant(), characterId: GANYU_CHARACTER_ID, element: Element.Cryo };
+    const party = createParty([SUCROSE_CHARACTER_ID, GANYU_CHARACTER_ID]);
+    const context = createKitEventContext(sucrose, {
+      characterIdCombatantMap: new Map([
+        [GANYU_CHARACTER_ID, ganyu],
+        [SUCROSE_CHARACTER_ID, sucrose],
+      ]),
+      party,
+    });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const skillHit: KitHit = takeOne(SUCROSE_KIT.elementalSkill.hits);
+    SUCROSE_KIT.onKitEvent?.(
+      { enemy, hit: skillHit, isCritical: false, isDefeated: false, kind: KitEventKind.DamageTaken, striker: sucrose },
+      context,
+    );
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      {
+        amount: 80,
+        attribute: Attribute.ElementalMastery,
+        characterId: GANYU_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 8,
+        source: "sucrose-skill-burst",
+      },
+    ]);
+  });
+});

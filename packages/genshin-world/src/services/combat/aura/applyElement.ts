@@ -8,6 +8,9 @@ import { applyAura } from "#src/services/combat/aura/applyAura";
 import { applyReactionAura } from "#src/services/combat/aura/applyReactionAura";
 import { checkIsElectroCharged } from "#src/services/combat/aura/checkIsElectroCharged";
 import {
+  AURA_BASE_SECONDS,
+  AURA_SECONDS_PER_GAUGE,
+  AURA_TAX,
   CRYSTALLIZE_COOLDOWN_SECONDS,
   SWIRL_BASE_GAUGE,
   SWIRL_GAUGE_OFFSET,
@@ -21,11 +24,19 @@ import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged
 
 // An element's attack on a target at a gauge, written into its auras in place, and the reactions it triggers. It tries
 // Its reactions in the game's order, each consuming its auras by its coefficient times what is left of the trigger,
-// And each recorded once however many auras it meets. A Burning already lit is refreshed, not triggered again, and
-// Pyro and Electro meet only the Freeze over a hidden Hydro. What is left, meeting nothing more it consumes, stays as an
-// Aura, and Electro coming to lie beside Hydro starts Electro-Charged, which ticks at once. Crystallize triggers once
-// A second, however many auras it could meet
-export const applyElement = (state: ElementalState, element: Element, gauge: number): Reaction[] => {
+// And each recorded once however many auras it meets. An immutable aura takes its share of the trigger but is never
+// Consumed, so what is left goes on to the auras beside it. A Burning already lit is refreshed, not triggered again,
+// And Pyro and Electro meet only the Freeze over a hidden Hydro. What is left, meeting nothing more it consumes, stays
+// As an aura: an attack's taxed and decaying by its gauge, and a self aura, an element put on with no attack, whole
+// And lasting its source's seconds at its source's rate, never decaying where those are Infinity. Electro coming to
+// Lie beside Hydro starts Electro-Charged, which ticks at once. Crystallize triggers once a second, however many auras
+// It could meet
+export const applyElement = (
+  state: ElementalState,
+  element: Element,
+  gauge: number,
+  selfAuraSeconds?: number,
+): Reaction[] => {
   const { auras, seconds } = state;
   const steps = ElementReactionStepsMap[element];
   const wasElectroCharged = checkIsElectroCharged(auras);
@@ -70,7 +81,20 @@ export const applyElement = (state: ElementalState, element: Element, gauge: num
     steps.every(
       ({ auraTypes, coefficient }) => coefficient === 0 || !auraTypes.some((stepAuraType) => auras.has(stepAuraType)),
     );
-  if (auraType && isAuraLeft) applyAura(auras, auraType, remainingGauge);
+  if (auraType && isAuraLeft) {
+    const taxedGauge = AURA_TAX * remainingGauge;
+    applyAura(
+      auras,
+      auraType,
+      selfAuraSeconds === undefined
+        ? {
+            decayRate: taxedGauge / (AURA_SECONDS_PER_GAUGE * remainingGauge + AURA_BASE_SECONDS),
+            gauge: taxedGauge,
+            isImmutable: false,
+          }
+        : { decayRate: gauge / selfAuraSeconds, gauge: remainingGauge, isImmutable: false },
+    );
+  }
   extinguishBurning(auras);
   if (!wasElectroCharged && checkIsElectroCharged(auras)) {
     state.electroChargedSeconds = seconds;

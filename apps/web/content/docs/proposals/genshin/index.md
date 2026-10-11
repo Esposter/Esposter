@@ -77,11 +77,11 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [Party](/docs/proposals/genshin/party)                               | Party Setup's screen and Quick Setup, the next-member and game-over screens, Elemental Resonance's remains, the party kept between visits |
 | [Character screen](/docs/proposals/genshin/character-screen)         | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending                                        |
 | [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                                                                               |
-| [Combat](/docs/proposals/genshin/combat)                             | the Lunar reactions, self and immutable auras, reaction limits, reach and attack energy                                                   |
+| [Combat](/docs/proposals/genshin/combat)                             | the Lunar reactions, reach and attack energy                                                                                              |
 | [Inventory](/docs/proposals/genshin/inventory)                       | using food on the party, and the destroy mode on the bag's screen                                                                         |
 | [Load budget](/docs/proposals/genshin/load-budget)                   | each load step measured, a screen's figures at ready held to a budget, then only the first frame's needs loaded before it shows           |
 | [Wish](/docs/proposals/genshin/wish)                                 | the banners' pools, a charted course, Character Event Wish-2 and the history                                                              |
-| [Dialogue](/docs/proposals/genshin/dialogue)                         | F on a resident begins their talk, its words loaded and filled, a resident's open quests offered, and the screen measured                 |
+| [Dialogue](/docs/proposals/genshin/dialogue)                         | the reveal and auto-play timed, a resident's open quests offered beside their own talk, and the screen measured                           |
 | [Quests](/docs/proposals/genshin/quests)                             | the go-to triggers placed, the talks that offer a quest, the commissions dealt at the reset, and the quests' clues                        |
 
 ### Phase four: the game's systems

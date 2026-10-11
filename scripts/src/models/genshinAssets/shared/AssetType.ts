@@ -2,6 +2,7 @@
 export enum AssetType {
   AnimationClip = "AnimationClip",
   Animator = "Animator",
+  Avatar = "Avatar",
   Camera = "Camera",
   GameObject = "GameObject",
   Light = "Light",

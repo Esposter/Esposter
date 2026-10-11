@@ -94,6 +94,7 @@ describe(createChongyunKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
       activeCombatant: createChongyunCombatant(),
+      enemyMap: new Map(),
       kitEffectState,
       party: createParty([CHONGYUN_CHARACTER_ID]),
       tickIndex: 0,
@@ -132,12 +133,14 @@ describe(createChongyunKit, () => {
     const party = createParty([CHONGYUN_CHARACTER_ID]);
     field?.onTick({
       activeCombatant: { ...createChongyunCombatant(), weaponType: WeaponType.Catalyst },
+      enemyMap: new Map(),
       kitEffectState: catalystEffectState,
       party,
       tickIndex: 0,
     });
     field?.onTick({
       activeCombatant: createChongyunCombatant(),
+      enemyMap: new Map(),
       kitEffectState: claymoreEffectState,
       party,
       tickIndex: 0,

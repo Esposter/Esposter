@@ -3,17 +3,17 @@ import type { InternalCooldownGroup } from "#src/models/combat/InternalCooldownG
 
 import { takeOne } from "@esposter/shared";
 
-// A hit under an internal cooldown, counted into it in place, and the share of its gauge it applies. A hit once the
-// Reset interval has passed since the timer started restarts the timer and the count, and applies; any other is the
-// Next hit of the sequence, applying what the sequence holds for it
+// A hit under an internal cooldown, counted into it in place, and the share its group's sequence holds for it. A hit
+// Once the reset interval has passed since the timer started restarts the timer and the count, and takes the first
+// Share; any other is the next hit of the sequence
 export const applyInternalCooldown = (
   internalCooldown: InternalCooldown,
-  { gaugeSequence, resetIntervalSeconds }: InternalCooldownGroup,
+  { resetIntervalSeconds, sequence }: InternalCooldownGroup,
   seconds: number,
 ): number => {
   if (seconds - internalCooldown.startSeconds >= resetIntervalSeconds) {
     internalCooldown.startSeconds = seconds;
     internalCooldown.hitIndex = 0;
   } else internalCooldown.hitIndex += 1;
-  return takeOne(gaugeSequence, Math.min(internalCooldown.hitIndex, gaugeSequence.length - 1));
+  return takeOne(sequence, Math.min(internalCooldown.hitIndex, sequence.length - 1));
 };

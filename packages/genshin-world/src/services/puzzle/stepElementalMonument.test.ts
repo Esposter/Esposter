@@ -46,8 +46,8 @@ describe(stepElementalMonument, () => {
     expect.hasAssertions();
 
     const monument = createMonument(false);
-    monument.elementalState.auras.set(AuraType.Burning, { decayRate: 0, gauge: 2 });
-    monument.elementalState.auras.set(AuraType.Dendro, { decayRate: 1, gauge: 2 });
+    monument.elementalState.auras.set(AuraType.Burning, { decayRate: 0, gauge: 2, isImmutable: false });
+    monument.elementalState.auras.set(AuraType.Dendro, { decayRate: 1, gauge: 2, isImmutable: false });
     stepElementalMonument(monument, 1);
 
     expect(monument.isLit).toBe(true);

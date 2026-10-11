@@ -1,5 +1,6 @@
 import type { Aura } from "#src/models/combat/Aura";
 import type { ElementalState } from "#src/models/combat/ElementalState";
+import type { Reaction } from "#src/models/combat/Reaction";
 
 import { AuraType } from "#src/models/combat/AuraType";
 import { ReactionType } from "#src/models/combat/ReactionType";
@@ -22,7 +23,9 @@ describe(applyElement, () => {
     const reactions = applyElement(state, Element.Pyro, 2);
 
     expect(reactions).toStrictEqual([]);
-    expect(state.auras).toStrictEqual(new Map([[AuraType.Pyro, { decayRate: 1.6 / 12, gauge: 1.6 }]]));
+    expect(state.auras).toStrictEqual(
+      new Map([[AuraType.Pyro, { decayRate: 1.6 / 12, gauge: 1.6, isImmutable: false }]]),
+    );
   });
 
   test("keeps the larger gauge at the first aura's rate, so 2U Cryo over a 1U aura lasts 19 seconds", () => {
@@ -33,7 +36,7 @@ describe(applyElement, () => {
     applyElement(state, Element.Cryo, 2);
     const cryo = state.auras.get(AuraType.Cryo);
 
-    expect(cryo).toStrictEqual({ decayRate: 0.8 / 9.5, gauge: 1.6 });
+    expect(cryo).toStrictEqual({ decayRate: 0.8 / 9.5, gauge: 1.6, isImmutable: false });
     expect((cryo?.gauge ?? 0) / (cryo?.decayRate ?? 1)).toBeCloseTo(19);
   });
 
@@ -44,26 +47,28 @@ describe(applyElement, () => {
     applyElement(state, Element.Pyro, 1);
     applyElement(state, Element.Pyro, 2);
 
-    expect(state.auras).toStrictEqual(new Map([[AuraType.Pyro, { decayRate: 1.6 / 12, gauge: 1.6 }]]));
+    expect(state.auras).toStrictEqual(
+      new Map([[AuraType.Pyro, { decayRate: 1.6 / 12, gauge: 1.6, isImmutable: false }]]),
+    );
   });
 
   test("leaves 0.6U of a 1.6U Electro after 1U of Cryo superconducts it, at the Electro's rate", () => {
     expect.hasAssertions();
 
-    const state = createState([[AuraType.Electro, { decayRate: 1.6 / 12, gauge: 1.6 }]]);
+    const state = createState([[AuraType.Electro, { decayRate: 1.6 / 12, gauge: 1.6, isImmutable: false }]]);
     const reactions = applyElement(state, Element.Cryo, 1);
 
     expect(reactions).toStrictEqual([{ element: Element.Cryo, reactionType: ReactionType.Superconduct }]);
     expect(state.auras).toStrictEqual(
-      new Map([[AuraType.Electro, { decayRate: 1.6 / 12, gauge: expect.closeTo(0.6) }]]),
+      new Map([[AuraType.Electro, { decayRate: 1.6 / 12, gauge: expect.closeTo(0.6), isImmutable: false }]]),
     );
   });
 
   test("melts 2U of Pyro four times with 1U of Cryo, and 2U of Cryo once with 1U of Pyro", () => {
     expect.hasAssertions();
 
-    const pyroState = createState([[AuraType.Pyro, { decayRate: 0, gauge: 2 }]]);
-    const cryoState = createState([[AuraType.Cryo, { decayRate: 0, gauge: 2 }]]);
+    const pyroState = createState([[AuraType.Pyro, { decayRate: 0, gauge: 2, isImmutable: false }]]);
+    const cryoState = createState([[AuraType.Cryo, { decayRate: 0, gauge: 2, isImmutable: false }]]);
     const cryoMelts = Array.from({ length: 4 }, () => applyElement(pyroState, Element.Cryo, 1));
     const pyroMelt = applyElement(cryoState, Element.Pyro, 1);
 
@@ -84,14 +89,16 @@ describe(applyElement, () => {
       expect.hasAssertions();
 
       const state = createState([
-        [AuraType.Burning, { decayRate: 0, gauge: 2 }],
-        [AuraType.Dendro, { decayRate: 0, gauge: 1 }],
-        [AuraType.Pyro, { decayRate: 0, gauge: 1 }],
+        [AuraType.Burning, { decayRate: 0, gauge: 2, isImmutable: false }],
+        [AuraType.Dendro, { decayRate: 0, gauge: 1, isImmutable: false }],
+        [AuraType.Pyro, { decayRate: 0, gauge: 1, isImmutable: false }],
       ]);
       const reactions = applyElement(state, Element.Hydro, gauge);
 
       expect(reactions).toStrictEqual([{ element: Element.Hydro, reactionType: ReactionType.Vaporize }, ...bloom]);
-      expect(state.auras).toStrictEqual(new Map([[AuraType.Dendro, { decayRate: 0, gauge: 1 - 0.5 * bloom.length }]]));
+      expect(state.auras).toStrictEqual(
+        new Map([[AuraType.Dendro, { decayRate: 0, gauge: 1 - 0.5 * bloom.length, isImmutable: false }]]),
+      );
     },
   );
 
@@ -124,9 +131,9 @@ describe(applyElement, () => {
   test("crystallizes the Electro of an Electro-Charged target and not the Hydro beside it, once a second", () => {
     expect.hasAssertions();
 
-    const hydro = { decayRate: 0, gauge: 1 };
+    const hydro = { decayRate: 0, gauge: 1, isImmutable: false };
     const state = createState([
-      [AuraType.Electro, { decayRate: 0, gauge: 0.4 }],
+      [AuraType.Electro, { decayRate: 0, gauge: 0.4, isImmutable: false }],
       [AuraType.Hydro, hydro],
     ]);
     const reactions = applyElement(state, Element.Geo, 2);
@@ -143,16 +150,20 @@ describe(applyElement, () => {
     const reactions = applyElement(state, Element.Cryo, 2);
 
     expect(reactions).toStrictEqual([{ reactionType: ReactionType.Frozen }]);
-    expect(state.auras.get(AuraType.Freeze)).toStrictEqual({ decayRate: FREEZE_DECAY_RATE, gauge: 1.6 });
+    expect(state.auras.get(AuraType.Freeze)).toStrictEqual({
+      decayRate: FREEZE_DECAY_RATE,
+      gauge: 1.6,
+      isImmutable: false,
+    });
     expect(state.auras.has(AuraType.Hydro)).toBe(false);
   });
 
   test("melts only the Freeze over a Hydro with Pyro, the Hydro hidden and the Pyro left as no aura", () => {
     expect.hasAssertions();
 
-    const hydro = { decayRate: 0, gauge: 1 };
+    const hydro = { decayRate: 0, gauge: 1, isImmutable: false };
     const state = createState([
-      [AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge: 1 }],
+      [AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge: 1, isImmutable: false }],
       [AuraType.Hydro, hydro],
     ]);
     const reactions = applyElement(state, Element.Pyro, 2);
@@ -164,7 +175,7 @@ describe(applyElement, () => {
   test("shatters a Freeze with a Geo hit its internal cooldown leaves at no gauge", () => {
     expect.hasAssertions();
 
-    const state = createState([[AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge: 1.6 }]]);
+    const state = createState([[AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge: 1.6, isImmutable: false }]]);
     const reactions = applyElement(state, Element.Geo, 0);
 
     expect(reactions).toStrictEqual([{ reactionType: ReactionType.Shattered }]);
@@ -179,20 +190,20 @@ describe(applyElement, () => {
     const reactions = applyElement(state, Element.Electro, 1);
 
     expect(reactions).toStrictEqual([{ reactionType: ReactionType.Quicken }]);
-    expect(state.auras.get(AuraType.Quicken)).toStrictEqual({ decayRate: 0.8 / 10, gauge: 0.8 });
+    expect(state.auras.get(AuraType.Quicken)).toStrictEqual({ decayRate: 0.8 / 10, gauge: 0.8, isImmutable: false });
   });
 
   test("aggravates a Quicken with Electro without consuming either, the Electro left beside it", () => {
     expect.hasAssertions();
 
-    const quicken = { decayRate: 0, gauge: 1 };
+    const quicken = { decayRate: 0, gauge: 1, isImmutable: false };
     const state = createState([[AuraType.Quicken, quicken]]);
     const reactions = applyElement(state, Element.Electro, 1);
 
     expect(reactions).toStrictEqual([{ element: Element.Electro, reactionType: ReactionType.Aggravate }]);
     expect(state.auras).toStrictEqual(
       new Map([
-        [AuraType.Electro, { decayRate: 0.8 / 9.5, gauge: 0.8 }],
+        [AuraType.Electro, { decayRate: 0.8 / 9.5, gauge: 0.8, isImmutable: false }],
         [AuraType.Quicken, quicken],
       ]),
     );
@@ -221,5 +232,78 @@ describe(applyElement, () => {
     expect(reactions).toStrictEqual([{ element: Element.Pyro, reactionType: ReactionType.Burning }]);
     expect(refreshReactions).toStrictEqual([]);
     expect([...state.auras.keys()]).toStrictEqual([AuraType.Dendro, AuraType.Burning, AuraType.Pyro]);
+  });
+
+  test.each([
+    [
+      2,
+      [{ element: Element.Cryo, reactionType: ReactionType.Superconduct }, { reactionType: ReactionType.Quicken }],
+      [AuraType.Quicken, { decayRate: 1 / 11, gauge: 1, isImmutable: false }],
+    ],
+    [
+      4,
+      [{ element: Element.Cryo, reactionType: ReactionType.Superconduct }],
+      [AuraType.Dendro, { decayRate: 0, gauge: 1, isImmutable: false }],
+    ],
+  ] satisfies [number, Reaction[], [AuraType, Aura]][])(
+    "superconducts a %sU immutable Cryo with 4U of Electro, keeping it whole, and quickens the Dendro beside it with what is left",
+    (cryoGauge, reactions, aura) => {
+      expect.hasAssertions();
+
+      const cryo = { decayRate: 0, gauge: cryoGauge, isImmutable: true };
+      const state = createState([
+        [AuraType.Cryo, cryo],
+        [AuraType.Dendro, { decayRate: 0, gauge: 1, isImmutable: false }],
+      ]);
+
+      expect(applyElement(state, Element.Electro, 4)).toStrictEqual(reactions);
+      expect(state.auras).toStrictEqual(new Map([[AuraType.Cryo, cryo], aura]));
+    },
+  );
+
+  test("charges an immutable Hydro with Electro, its tick taking nothing from the Hydro", () => {
+    expect.hasAssertions();
+
+    const hydro = { decayRate: 0, gauge: 1, isImmutable: true };
+    const state = createState([[AuraType.Hydro, hydro]]);
+    const reactions = applyElement(state, Element.Electro, 1);
+
+    expect(reactions).toStrictEqual([{ element: Element.Electro, reactionType: ReactionType.ElectroCharged }]);
+    expect(state.auras.get(AuraType.Hydro)).toStrictEqual(hydro);
+    expect(state.auras.get(AuraType.Electro)?.gauge).toBeCloseTo(0.4);
+  });
+
+  test("leaves an immutable aura as it is under an attack of its own element", () => {
+    expect.hasAssertions();
+
+    const hydro = { decayRate: 0, gauge: 1, isImmutable: true };
+    const state = createState([[AuraType.Hydro, hydro]]);
+    applyElement(state, Element.Hydro, 2);
+
+    expect(state.auras).toStrictEqual(new Map([[AuraType.Hydro, hydro]]));
+  });
+
+  test.each([
+    [5, 0.8],
+    [Infinity, 0],
+  ])("lays 4U of a self aura lasting %s seconds on whole, losing %sU a second", (selfAuraSeconds, decayRate) => {
+    expect.hasAssertions();
+
+    const state = createElementalState();
+    applyElement(state, Element.Dendro, 4, selfAuraSeconds);
+
+    expect(state.auras).toStrictEqual(new Map([[AuraType.Dendro, { decayRate, gauge: 4, isImmutable: false }]]));
+  });
+
+  test("keeps what is left of a self aura after it vaporizes, untaxed and at its source's rate", () => {
+    expect.hasAssertions();
+
+    const state = createState([[AuraType.Pyro, { decayRate: 0, gauge: 0.8, isImmutable: false }]]);
+    const reactions = applyElement(state, Element.Hydro, 2, 8);
+
+    expect(reactions).toStrictEqual([{ element: Element.Hydro, reactionType: ReactionType.Vaporize }]);
+    expect(state.auras).toStrictEqual(
+      new Map([[AuraType.Hydro, { decayRate: 0.25, gauge: expect.closeTo(1.6), isImmutable: false }]]),
+    );
   });
 });

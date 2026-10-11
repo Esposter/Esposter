@@ -1,7 +1,6 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { ExcelFishPoolRow } from "#src/models/genshinAssets/fishing/ExcelFishPoolRow";
 import type { ExcelFishRodRow } from "#src/models/genshinAssets/fishing/ExcelFishRodRow";
-import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
 import type { Fish, FishingPool, FishRod } from "genshin-world";
 
@@ -10,7 +9,7 @@ import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { GameDataset } from "genshin-world";
 
-const toFish = (row: ExcelFishRow): Fish => ({
+const toFish = (row: Fish): Fish => ({
   attractRange: row.attractRange,
   biteTimeout: row.biteTimeout,
   bonusDuration: row.bonusDuration,
@@ -49,7 +48,7 @@ export const buildFishingTables = (): GameDataBuild => {
     }
     regionPools[region] = [...(regionPools[region] ?? []), toFishingPool(row, stocks)];
   }
-  const fish = readExcelTable<ExcelFishRow>("FishExcelConfigData").map((row) => toFish(row));
+  const fish = readExcelTable<Fish>("FishExcelConfigData").map((row) => toFish(row));
   const rods = readExcelTable<ExcelFishRodRow>("FishRodExcelConfigData").map((row) => toFishRod(row));
   return {
     notes: [

@@ -1,6 +1,6 @@
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { GameLanguage } from "genshin-text";
+import { GameLanguage, GameLanguageTagMap } from "genshin-text";
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
 
@@ -117,23 +117,12 @@ export const SDK_LANGUAGE_DIRECTORY: string = join(
   "resources",
   "language",
 );
-// The file each language's account kit strings are in
+// The file each language's account kit strings are in: the SDK names its files by the language tag, except the Chinese
+// Pair, which it names by region
 export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
+  ...GameLanguageTagMap,
   [GameLanguage.ChineseSimplified]: "zh-cn",
   [GameLanguage.ChineseTraditional]: "zh-tw",
-  [GameLanguage.English]: "en",
-  [GameLanguage.French]: "fr",
-  [GameLanguage.German]: "de",
-  [GameLanguage.Indonesian]: "id",
-  [GameLanguage.Italian]: "it",
-  [GameLanguage.Japanese]: "ja",
-  [GameLanguage.Korean]: "ko",
-  [GameLanguage.Portuguese]: "pt",
-  [GameLanguage.Russian]: "ru",
-  [GameLanguage.Spanish]: "es",
-  [GameLanguage.Thai]: "th",
-  [GameLanguage.Turkish]: "tr",
-  [GameLanguage.Vietnamese]: "vi",
 };
 // The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them, at its default
 // Branch: `master` is the repository's deprecated one, held at an old patch. Its directories' trees give each file's size,
@@ -153,5 +142,9 @@ export const DUMP_TABLE_NAMES: readonly string[] = [
   "GCGLevelExcelConfigData",
   "GCGWeekLevelExcelConfigData",
 ];
+// The dump's scene 3 NPC births, the open world's, fetched like the tables. Its directory and file name are split so the
+// Fetch can list the one and select the other
+export const SCENE_NPC_BORN_DIRECTORY = "BinOutput/Scene/SceneNpcBorn";
+export const SCENE_NPC_BORN_FILE_NAME = "scene3_npcborn.json";
 // How many files a fetch downloads at once, so the readable texts' thousands of small files do not open as many requests
 export const DUMP_FETCH_BATCH_SIZE = 8;

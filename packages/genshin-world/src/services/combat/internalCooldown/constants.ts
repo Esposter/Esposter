@@ -1,13 +1,36 @@
 import type { InternalCooldownGroup } from "#src/models/combat/InternalCooldownGroup";
 
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+
 // The standard internal cooldown most abilities apply their element under: restarted by a hit 2.5 seconds after it last
 // Started, and between restarts every third hit applying, for the 24 hits its sequence holds
 export const DEFAULT_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
-  gaugeSequence: Object.freeze(Array.from({ length: 24 }, (_value, index) => (index % 3 === 0 ? 1 : 0))),
   resetIntervalSeconds: 2.5,
+  sequence: Object.freeze(Array.from({ length: 24 }, (_value, index) => (index % 3 === 0 ? 1 : 0))),
 });
 // Burning's Pyro: the first hit applies and none after it, until two seconds have passed
 export const BURNING_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
-  gaugeSequence: Object.freeze([1, 0]),
   resetIntervalSeconds: 2,
+  sequence: Object.freeze([1, 0]),
 });
+// A reaction's damage on a target from one source, as the game's damage sequence limits it: Swirl, Superconduct,
+// Shattered, Bloom, Hyperbloom and Burgeon deal two instances each half second, and Overloaded and Electro-Charged one
+export const TWO_REACTIONS_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
+  resetIntervalSeconds: 0.5,
+  sequence: Object.freeze([1, 1, 0]),
+});
+export const ONE_REACTION_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
+  resetIntervalSeconds: 0.5,
+  sequence: Object.freeze([1, 0]),
+});
+// Swirls of one element, Superconducts and Overloads on a target deal damage once a tenth of a second, whatever their
+// Source
+export const SIMULTANEOUS_REACTION_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
+  resetIntervalSeconds: 0.1,
+  sequence: Object.freeze([1, 0]),
+});
+export const SIMULTANEOUS_REACTION_TYPES: readonly TransformativeReactionType[] = Object.freeze([
+  TransformativeReactionType.Overloaded,
+  TransformativeReactionType.Superconduct,
+  TransformativeReactionType.Swirl,
+]);

@@ -9,11 +9,12 @@ import {
 import { extinguishBurning } from "#src/services/combat/aura/extinguishBurning";
 
 // A target's auras decayed over some seconds, in place, each gone once it has no gauge left: a Freeze at its rate as
-// It grows, the Dendro and Quicken under a Burning at Burning's drain, and every other aura at its own rate, which for
-// A Burning is none
+// It grows, the Dendro and Quicken under a Burning at Burning's drain, an immutable aura not at all, and every other
+// Aura at its own rate, which for a Burning is none
 export const decayAuras = (auras: Map<AuraType, Aura>, deltaSeconds: number): void => {
   const isBurning = auras.has(AuraType.Burning);
   for (const [auraType, aura] of auras) {
+    if (aura.isImmutable) continue;
     if (auraType === AuraType.Freeze) {
       aura.gauge -= (aura.decayRate + (FREEZE_DECAY_ACCELERATION * deltaSeconds) / 2) * deltaSeconds;
       aura.decayRate += FREEZE_DECAY_ACCELERATION * deltaSeconds;

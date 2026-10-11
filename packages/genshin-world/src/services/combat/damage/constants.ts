@@ -14,3 +14,7 @@ export const REVERSE_AMPLIFYING_MULTIPLIER = 1.5;
 // Is (5A + 500) / (defence + 5A + 500) before any defence is reduced or ignored
 export const ATTACKER_LEVEL_DEFENSE_SCALE = 5;
 export const ATTACKER_LEVEL_DEFENSE_OFFSET = 500;
+// Superconduct takes 40% off its target's Physical RES for 12 seconds
+export const SUPERCONDUCT_PHYSICAL_RESISTANCE_REDUCTION = 0.4;
+export const SUPERCONDUCT_SECONDS = 12;
+export const SUPERCONDUCT_STATUS_ID = "superconduct";

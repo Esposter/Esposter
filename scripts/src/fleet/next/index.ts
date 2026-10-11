@@ -1,13 +1,6 @@
-import { ClaimAttempt } from "#src/models/fleet/ClaimAttempt";
-import { claimFleetEntry } from "#src/services/fleet/claimFleetEntry";
+import { claimNextFleetEntry } from "#src/services/fleet/claimNextFleetEntry";
 import { createFleetWorker } from "#src/services/fleet/createFleetWorker";
-import { checkIsFleetEntryKind, filterFleetEntries } from "#src/services/fleet/filterFleetEntries";
-import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
-import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
-import { readFleetEntries } from "#src/services/fleet/readFleetEntries";
-import { readRequiredMachineProfile } from "#src/services/fleet/readMachineProfile";
-import { readMachineSample } from "#src/services/fleet/readMachineSample";
-import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries";
+import { checkIsFleetEntryKind } from "#src/services/fleet/filterFleetEntries";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand, runMain } from "citty";
 
@@ -33,32 +26,9 @@ await runMain(
     run: async ({ args }) => {
       if (args.kind !== "" && !checkIsFleetEntryKind(args.kind))
         throw new InvalidOperationError(Operation.Read, args.kind, "--kind is queue or unit");
-      const profile = readRequiredMachineProfile();
       const worker = process.env.FLEET_WORKER || createFleetWorker();
-      const sample = await readMachineSample();
-      const load = formatMachineLoad(
-        sample.cpuPercentage,
-        sample.gpuPercentage,
-        sample.freeGigabytes,
-        process.platform,
-      );
-      const { entries, skipped } = readFleetEntries();
-      if (skipped > 0)
-        console.warn(
-          `skipped ${skipped} compute-queue line(s) with no {id}, so they cannot be taken until they have one`,
-        );
-      const candidates = selectTakeableEntries(
-        filterFleetEntries(entries, args.lane, args.kind),
-        profile,
-        readClaimedRefs(),
-        Temporal.Now.instant().epochMilliseconds,
-      );
-      for (const { id } of candidates)
-        // oxlint-disable-next-line no-await-in-loop -- a candidate is claimed only after the one before it was refused
-        if (claimFleetEntry(id, { machine: profile.id, worker }, load).attempt === ClaimAttempt.Won) {
-          console.info(`claimed ${id} as worker ${worker}`);
-          return;
-        }
+      const entry = await claimNextFleetEntry(args.lane, args.kind, worker);
+      if (entry !== undefined) console.info(`claimed ${entry.id} as worker ${worker}`);
     },
   }),
 );

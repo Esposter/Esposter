@@ -82,6 +82,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     quests[questId] = accountProgress ? mergeQuestProgress(accountProgress, guestProgress) : guestProgress;
   }
   const isSameRefillDay = account.wallet.primogemResinRefillDay === guest.wallet.primogemResinRefillDay;
+  const isFurtherFrostbearingTree = guest.offerings.frostbearingTree.level > account.offerings.frostbearingTree.level;
   return {
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
@@ -91,6 +92,11 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       learnedRecipeIds: [...new Set([...account.crafting.learnedRecipeIds, ...guest.crafting.learnedRecipeIds])],
     },
     inventory: account.inventory,
+    offerings: {
+      frostbearingTree: isFurtherFrostbearingTree
+        ? guest.offerings.frostbearingTree
+        : account.offerings.frostbearingTree,
+    },
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],

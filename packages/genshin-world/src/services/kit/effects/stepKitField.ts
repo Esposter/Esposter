@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -12,7 +13,7 @@ export const stepKitField = (
   field: KitField,
   stepSeconds: number,
   body: GroundPoint,
-  context: { activeCombatant: Combatant; kitEffectState: KitEffectState; party: Party },
+  context: { activeCombatant: Combatant; enemyMap: Map<string, Enemy>; kitEffectState: KitEffectState; party: Party },
 ): void => {
   field.nextTickSeconds -= stepSeconds;
   while (field.nextTickSeconds <= 0) {

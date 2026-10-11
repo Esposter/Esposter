@@ -5,4 +5,6 @@ export interface KitStatus {
   id: string;
   kind: "status";
   secondsRemaining: number;
+  // The count a kit keeps on the status as its hits strike, if it counts them
+  stacks?: number;
 }

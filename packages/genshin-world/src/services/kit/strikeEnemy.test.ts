@@ -187,7 +187,7 @@ describe(strikeEnemy, () => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy();
-    enemy.elementalState.auras.set(AuraType.Freeze, { decayRate: 0, gauge: 1 });
+    enemy.elementalState.auras.set(AuraType.Freeze, { decayRate: 0, gauge: 1, isImmutable: false });
     const kitHit = takeOne(TRAVELER_KIT.lowPlunge.hits, 0);
     const damage = getDamage({
       attackerLevel: LEVEL,
@@ -332,5 +332,57 @@ describe(strikeEnemy, () => {
     strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("takes Superconduct's 40% off the Physical RES a physical hit then reads", () => {
+    expect.hasAssertions();
+
+    const enemy = createCryoEnemy();
+    const electroHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Electro };
+    strikeEnemy(enemyTables, enemy, electroHit, createCombatant(), NEVER_CRITICAL);
+    const healthBeforePhysical = enemy.health;
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      defense,
+      resistance: kind.physicalResistance - 0.4,
+      stat: ATTACK,
+      talentMultiplier: TRAVELER_KIT.plungeCollision.talentMultiplier,
+    });
+
+    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+
+    expect(healthBeforePhysical - enemy.health).toBeCloseTo(damage);
+  });
+
+  test("deals a source's second Overloaded within half a second no damage", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
+    const combatant = createCombatant(Element.Electro);
+    const skillHit = takeOne(TRAVELER_KIT.elementalSkill.hits, 0);
+    const burstHit = takeOne(TRAVELER_KIT.elementalBurst.hits, 0);
+    const hitDamage = (talentMultiplier: number): number =>
+      getDamage({
+        attackerLevel: LEVEL,
+        defense,
+        resistance: kind.elementResistances[Element.Electro],
+        stat: ATTACK,
+        talentMultiplier,
+      });
+    const overloadedDamage = getTransformativeDamage(
+      ReactionType.Overloaded,
+      LEVEL,
+      0,
+      kind.elementResistances[Element.Pyro],
+    );
+
+    strikeEnemy(enemyTables, enemy, skillHit, combatant, NEVER_CRITICAL);
+    const healthBeforeBurst = enemy.health;
+    enemy.elementalState.seconds = 0.2;
+    strikeEnemy(enemyTables, enemy, burstHit, combatant, NEVER_CRITICAL);
+
+    expect(enemy.maxHealth - healthBeforeBurst).toBeCloseTo(hitDamage(skillHit.talentMultiplier) + overloadedDamage);
+    expect(healthBeforeBurst - enemy.health).toBeCloseTo(hitDamage(burstHit.talentMultiplier));
   });
 });

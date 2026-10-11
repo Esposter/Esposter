@@ -1,6 +1,6 @@
 ---
 title: Combat
-description: Genshin's combat rules as built — pure, tested functions in the world package over plain state. An element's attack is left on a target as an aura that decays, a second element triggers the reactions the game tries in its own priority, each consuming its auras by its coefficient, and Electro-Charged, Quicken, Burning and Freeze keep their coexisting auras and ticks. The damage formula, the level multiplier, the internal cooldown on applying an element, shields and energy follow the community's documented mechanics, each held to a worked example from them. The Traveler's kit prices its hits through them, and an enemy's strike on the party does too.
+description: Genshin's combat rules as built — pure, tested functions in the world package over plain state. An element's attack is left on a target as an aura that decays, a second element triggers the reactions the game tries in its own priority, each consuming its auras by its coefficient, and Electro-Charged, Quicken, Burning and Freeze keep their coexisting auras and ticks. The damage formula, the level multiplier, the internal cooldowns on applying an element and on a reaction's damage, shields and energy follow the community's documented mechanics, each held to a worked example from them. The Traveler's kit prices its hits through them, and an enemy's strike on the party does too.
 ---
 
 # Combat
@@ -38,6 +38,13 @@ Each target holds an `ElementalState`: its auras, its own clock, and when its El
 
 An attack applies a gauge of its element, in gauge units. Pyro, Hydro, Electro, Cryo and Dendro left as an aura are taxed to 0.8 of that gauge and decay evenly over 2.5 seconds a unit of the attack plus 7, so Bennett's 2U tap leaves 1.6U of Pyro for 12 seconds. Anemo and Geo leave no aura. A second attack of the same element keeps the larger gauge at the first aura's rate, except Pyro: a larger Pyro replaces the aura with its own rate.
 
+Not every aura comes from an attack.
+
+- **A self aura** is an element put on a target with no attack, as a slime's seeds or an enemy's elemental shield put one: `applyElement`'s last parameter, the seconds its source lasts. It reacts as an attack of its gauge would, but what is left of it is untaxed and decays at its source's gauge over those seconds, or not at all where they are `Infinity`, as most elemental shields' do. A Large Dendro Slime's Toxic Seeds leave 4U of Dendro losing 0.8U a second, and the Hydro Samachurl's 2U of Soothing Rain for 8 seconds keeps 1.6U after vaporizing 0.8U of Pyro, losing 0.25U a second.
+- **An immutable aura** is an enemy's innate element, set on its state with `isImmutable`. Its gauge takes its share of a trigger as any aura's does, but it is never consumed, never decays and gives Electro-Charged's ticks nothing, so what is left of the trigger goes on to the auras beside it. A Cryo Slime's 2U of Cryo takes 2U of Beidou's 4U of Electro as Superconduct, and the 2U left quicken the Dendro beside it; a Cryo Hypostasis's 4U takes all of it. An attack of its own element leaves it as it is.
+
+The Hilichurl Fighter, the one kind the world places yet, has neither: an enemy kind's innate element and its shield come with the kind.
+
 ### Reactions, in the game's priority
 
 `ElementReactionStepsMap` holds, for each applied element, the reactions it tries in the order the game tries them. Each step names the auras it reacts with and the gauge of aura each unit of the trigger consumes. A step meeting several auras consumes them together, by the larger one's gauge. What is left of the trigger after a step goes on to the next, so 2U of Hydro on a Burning target vaporizes the Burning and its Pyro, then blooms the Dendro under them with the unit left over. A reaction is recorded once per application, however many auras it meets.
@@ -70,7 +77,8 @@ Each recorded reaction carries the element its damage is dealt in, none for Shat
 
 - **Amplifying**: Vaporize and Melt multiply their hit by 2 where Hydro vaporizes or Pyro melts, and by 1.5 the other way round. Elemental mastery raises that by 2.78 × EM / (EM + 1400), plus any reaction bonus (`getAmplifyingMultiplier`).
 - **Catalyze**: Aggravate adds 1.15 and Spread 1.25 times the character's level multiplier to the hit's flat bonus, raised by 5 × EM / (EM + 1200) (`getCatalyzeBonus`).
-- **Transformative**: Overloaded, Superconduct, Electro-Charged, Swirl, Shattered, Bloom, Hyperbloom, Burgeon and Burning deal their own damage, from 0.25 to 3 times the level multiplier. That is raised by 16 × EM / (EM + 2000) and cut by resistance alone, since it ignores defence and cannot crit (`getTransformativeDamage`).
+- **Transformative**: Overloaded, Superconduct, Electro-Charged, Swirl, Shattered, Bloom, Hyperbloom, Burgeon and Burning deal their own damage, from 0.25 to 3 times the level multiplier. That is raised by 16 × EM / (EM + 2000) and cut by resistance alone, less what the enemy's statuses take off it, since it ignores defence and cannot crit (`getTransformativeDamage`). A reaction's damage on one enemy is limited by its own internal cooldown, below.
+- **Superconduct's shred**: a Superconduct gives its enemy a status taking 40% off its Physical RES for 12 seconds, so every physical hit on it until then reads the lower RES.
 
 `CharacterLevelMultiplierMap` is the wiki's level multiplier for characters at every level to 90, then 95 and 100.
 `EnemyLevelMultiplierMap` is the wiki's level multiplier for enemies and the environment, to 100. It agrees with the characters' table to level 57 and parts from it at 58, so a reaction an enemy triggers takes its own table through `getTransformativeDamage`'s last parameter.
@@ -79,7 +87,9 @@ The deployed team's [elemental resonance](/docs/genshin/party) adds to a kit hit
 
 ### Internal cooldown
 
-A hit applies its element under an internal cooldown, kept per attacker, target and tag. `applyInternalCooldown` counts a hit into one and returns the share of its gauge it applies. A hit once the reset interval has passed restarts the timer and the count and applies; any other is the next hit of the group's gauge sequence. `DEFAULT_INTERNAL_COOLDOWN_GROUP` is the standard 2.5 seconds with every third hit applying, so Yoimiya's seven arrows melt on the first, fourth and seventh. `BURNING_INTERNAL_COOLDOWN_GROUP` applies once each two seconds.
+A hit applies its element under an internal cooldown, kept per attacker, target and tag. `applyInternalCooldown` counts a hit into one and returns the share its group's sequence holds for it, of its gauge here. A hit once the reset interval has passed restarts the timer and the count and takes the first share; any other is the next hit of the group's sequence. `DEFAULT_INTERNAL_COOLDOWN_GROUP` is the standard 2.5 seconds with every third hit applying, so Yoimiya's seven arrows melt on the first, fourth and seventh. `BURNING_INTERNAL_COOLDOWN_GROUP` applies once each two seconds.
+
+A transformative reaction's damage is limited the same way, its sequence a share of the damage, kept on the enemy per source, reaction and element, so Swirls of each element count apart (`applyReactionInternalCooldown`). Swirl, Superconduct, Shattered, Bloom, Hyperbloom and Burgeon deal two instances each half second, Overloaded and Electro-Charged one, and Burning's damage has no limit (`TransformativeReactionInternalCooldownGroupMap`). A Swirl, Superconduct or Overloaded within a tenth of a second of the last of its kind to deal damage on the enemy deals none, whatever its source, so two characters swirling one element together deal one Swirl.
 
 ### Shields and energy
 
@@ -93,7 +103,7 @@ The rules hold no clock of their own past a target's state, so a caller drives t
 
 1. Each fixed step, `advanceElementalState` moves every target's state on and pushes the ticks it brings onto the caller's array, so a quiet step allocates nothing.
 2. A hit runs its element's gauge through `applyInternalCooldown` with its tag's group, a blunt hit through `applyBluntHit` first, then `applyElement` with the share it applies.
-3. Each reaction returned prices its damage through the damage functions. A Swirl's spread gauge and a Burning tick's Pyro are applied by the caller to the targets round it, and a Bloom's core is the caller's to place.
+3. Each reaction returned prices its damage through the damage functions, a transformative reaction's at the share `applyReactionInternalCooldown` leaves of it. A Swirl's spread gauge and a Burning tick's Pyro are applied by the caller to the targets round it, and a Bloom's core is the caller's to place.
 
 The enemies' `damageEnemy` takes a hit's damage and poise damage, which is where these meet the enemies.
 
@@ -108,7 +118,7 @@ flowchart TD
   GATE -->|"yes"| ACTION["The kit's action: string, charged attack, plunge, skill or burst"]
   ACTION -->|"it starts"| AIM["The body turns to the enemy its area scores highest"]
   ACTION -->|"each hitmark"| HIT["A hit lands on each enemy in its area"]
-  HIT --> STRIKE["strikeEnemy: blunt, internal cooldown, element, getDamage, damageEnemy"]
+  HIT --> STRIKE["strikeEnemy: blunt, internal cooldown, element, reactions' limits, getDamage, damageEnemy"]
   STRIKE -->|"particles"| ENERGY["gainPartyEnergy: each standing member, up to its burst's cost"]
   ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: the team's shields, then getDamage over the member's Max HP"]
   HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
@@ -125,36 +135,37 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - **A hit reaches what its cylinder holds.** Each hit's area is a cylinder centred on the body's feet. It reaches an enemy within its radius plus the capsule's, within half its fan plus the capsule's angular half width as seen from the body, and overlapping in height (`checkIsInAttackArea`). Palm Vortex's area is the wiki's, 6 metres at 100 degrees and 2 high; the plunge's collision is 1 metre all round, as the wiki gives it; the rest are provisional until the attack clips and a recording measure them.
 - **An action holds the body still.** While an action plays, the controller is given the frame's presses with no move, so the body stands where it is and only turns to its target. A jump or a dash ends the action at once, ahead of the attack-cancel frame its `seconds` gives, since the kit does not model the earlier cancels yet.
 - **The plunge strikes on its way down and as it lands.** Every 0.3 seconds while it falls, provisional, its collision hits what stands in its area, and the landing is the low or high plunge by the drop from its start.
-- **A hit goes through combat as built.** A kit's hit is priced by `getDamage` from the attacker's attributes at the talent's multiplier. Its order is blunt first, then the internal cooldown and the element, then the damage with any amplifying, catalyze or transformative bonus, and last `damageEnemy` (`strikeEnemy`). No kit computes damage of its own.
+- **A hit goes through combat as built.** A kit's hit is priced by `getDamage` from the attacker's attributes at the talent's multiplier. Its order is blunt first, then the internal cooldown and the element, then a Superconduct's shred, then the damage with any amplifying, catalyze or transformative bonus, each transformative reaction's at the share its internal cooldown deals, and last `damageEnemy` (`strikeEnemy`). No kit computes damage of its own.
 - **Each member's cooldowns run at the fixed step.** Every member of the deployed team's skill and burst cooldowns lower each step, off the field too, and stand still while a screen holds the world (`stepPartyCooldowns`).
 - **Particles reach every member standing.** Each particle a struck enemy drops takes the striker's element, and gives each standing member of the deployed team `getEnergyGain`'s energy, more to a member of that element, up to its burst's cost. A member's element is its row of the roster's, none for the Traveler (`createCombatant`). A fallen member takes none (`gainPartyEnergy`).
 - **An enemy's strike uses the same formula.** Its ATK times a provisional multiplier of 1, as physical damage through `getDamage` with the member on the field's DEF and physical resistance, its base 0%. The least overflow the team's shields leave, over the member's Max HP, is the share the member takes (`strikePartyMember`).
 
 ## Key files
 
-| File                                                                                   | Role                                                                                                                  |
-| :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                      | An element applied to a target: its reactions in order, and its aura                                                  |
-| `packages/genshin-world/src/services/combat/aura/ElementReactionStepsMap.ts`           | Each element's reactions in the game's priority, with their coefficient                                               |
-| `packages/genshin-world/src/services/combat/aura/advanceElementalState.ts`             | Decay, Electro-Charged's and Burning's ticks, at the fixed step                                                       |
-| `packages/genshin-world/src/services/combat/aura/applyReactionAura.ts`                 | What Frozen, Quicken, Burning, Shattered and Crystallize leave or take                                                |
-| `packages/genshin-world/src/services/combat/aura/constants.ts`                         | The aura tax and durations, and every reaction's documented number                                                    |
-| `packages/genshin-world/src/services/combat/damage/getDamage.ts`                       | The general damage formula                                                                                            |
-| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`         | A transformative reaction's own damage                                                                                |
-| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts`     | The level multiplier by a character's level                                                                           |
-| `packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts`         | The level multiplier by an enemy's or the environment's level                                                         |
-| `packages/genshin-world/src/services/combat/internalCooldown/applyInternalCooldown.ts` | A hit counted into its internal cooldown                                                                              |
-| `packages/genshin-world/src/services/combat/shield/absorbShieldDamage.ts`              | Damage taken on a shield                                                                                              |
-| `packages/genshin-world/src/services/combat/energy/getEnergyGain.ts`                   | Energy from a particle or an orb                                                                                      |
-| `packages/genshin-world/src/models/combat/ReactionType.ts`                             | Every reaction, merged from the amplifying, catalyze and transformative                                               |
-| `packages/genshin-world/src/services/kit/stepKit.ts`                                   | A kit's step: its action, its hits and what the presses start                                                         |
-| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                             | The world's step of the kit on the field: aim, its stance, the kit events, and its strikes through `strikeKitEnemies` |
-| `packages/genshin-world/src/services/kit/strikeEnemy.ts`                               | A kit's hit on an enemy, priced and applied by combat                                                                 |
-| `packages/genshin-world/src/services/kit/strikePartyMember.ts`                         | An enemy's strike on the member on the field                                                                          |
-| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`                        | The enemy an action turns the body to                                                                                 |
-| `packages/genshin-world/src/services/kit/checkIsInAttackArea.ts`                       | Whether a hit's cylinder reaches an enemy                                                                             |
-| `packages/genshin-world/src/services/kit/constants.ts`                                 | The Traveler's kit, the kit's timings and its areas                                                                   |
-| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                         | Particle energy, as [party](/docs/genshin/party) gives it                                                             |
+| File                                                                                           | Role                                                                                                                  |
+| :--------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                              | An element applied to a target: its reactions in order, and its aura, an attack's or a self aura's                    |
+| `packages/genshin-world/src/services/combat/aura/ElementReactionStepsMap.ts`                   | Each element's reactions in the game's priority, with their coefficient                                               |
+| `packages/genshin-world/src/services/combat/aura/advanceElementalState.ts`                     | Decay, Electro-Charged's and Burning's ticks, at the fixed step                                                       |
+| `packages/genshin-world/src/services/combat/aura/applyReactionAura.ts`                         | What Frozen, Quicken, Burning, Shattered and Crystallize leave or take                                                |
+| `packages/genshin-world/src/services/combat/aura/constants.ts`                                 | The aura tax and durations, and every reaction's documented number                                                    |
+| `packages/genshin-world/src/services/combat/damage/getDamage.ts`                               | The general damage formula                                                                                            |
+| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`                 | A transformative reaction's own damage                                                                                |
+| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts`             | The level multiplier by a character's level                                                                           |
+| `packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts`                 | The level multiplier by an enemy's or the environment's level                                                         |
+| `packages/genshin-world/src/services/combat/internalCooldown/applyInternalCooldown.ts`         | A hit counted into its internal cooldown                                                                              |
+| `packages/genshin-world/src/services/combat/internalCooldown/applyReactionInternalCooldown.ts` | A transformative reaction's damage counted into its internal cooldowns on a target                                    |
+| `packages/genshin-world/src/services/combat/shield/absorbShieldDamage.ts`                      | Damage taken on a shield                                                                                              |
+| `packages/genshin-world/src/services/combat/energy/getEnergyGain.ts`                           | Energy from a particle or an orb                                                                                      |
+| `packages/genshin-world/src/models/combat/ReactionType.ts`                                     | Every reaction, merged from the amplifying, catalyze and transformative                                               |
+| `packages/genshin-world/src/services/kit/stepKit.ts`                                           | A kit's step: its action, its hits and what the presses start                                                         |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                                     | The world's step of the kit on the field: aim, its stance, the kit events, and its strikes through `strikeKitEnemies` |
+| `packages/genshin-world/src/services/kit/strikeEnemy.ts`                                       | A kit's hit on an enemy, priced and applied by combat                                                                 |
+| `packages/genshin-world/src/services/kit/strikePartyMember.ts`                                 | An enemy's strike on the member on the field                                                                          |
+| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`                                | The enemy an action turns the body to                                                                                 |
+| `packages/genshin-world/src/services/kit/checkIsInAttackArea.ts`                               | Whether a hit's cylinder reaches an enemy                                                                             |
+| `packages/genshin-world/src/services/kit/constants.ts`                                         | The Traveler's kit, the kit's timings and its areas                                                                   |
+| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                                 | Particle energy, as [party](/docs/genshin/party) gives it                                                             |
 
 ## Notes
 
@@ -167,17 +178,18 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 ## Sources
 
 - [Elemental Gauge Theory](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory), Genshin Impact Wiki: the aura tax, the aura's duration and decay, reapplication and Pyro's exception, and each reaction's coefficient.
-- [Elemental Gauge Theory: Advanced Mechanics](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics), Genshin Impact Wiki: Swirl's gauge, Freeze's gauge and duration, the blunt hit's poise cost and Shatter, Quicken's aura, and Burning's aura, drain and refresh.
+- [Elemental Gauge Theory: Advanced Mechanics](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics), Genshin Impact Wiki: Swirl's gauge, Freeze's gauge and duration, the blunt hit's poise cost and Shatter, Quicken's aura, Burning's aura, drain and refresh, and self and immutable auras with each source's gauge.
 - [Simultaneous Reaction Priority](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Simultaneous_Reaction_Priority), Genshin Impact Wiki: the order an applied element tries its reactions in, and the scenarios with several auras.
 - [Electro-Charged](https://genshin-impact.fandom.com/wiki/Electro-Charged), Genshin Impact Wiki: its ticks, and the last tick as an aura decays out.
 - [Damage](https://genshin-impact.fandom.com/wiki/Damage), Genshin Impact Wiki: the general formula, defence, resistance, and the amplifying, catalyze and transformative formulas.
 - [Elemental Reaction: Level Scaling](https://genshin-impact.fandom.com/wiki/Elemental_Reaction/Level_Scaling), Genshin Impact Wiki: the level multiplier and the Crystallize shield by level, and each reaction's base damage at each level.
 - [Elemental Mastery](https://genshin-impact.fandom.com/wiki/Elemental_Mastery), Genshin Impact Wiki: the mastery bonus of each kind of reaction.
 - [Internal Cooldown](https://genshin-impact.fandom.com/wiki/Internal_Cooldown) and [its data](https://genshin-impact.fandom.com/wiki/Internal_Cooldown/Data), Genshin Impact Wiki: the standard rule, the tag and group, and each group's reset interval and gauge sequence.
+- [Damage Sequence](https://genshin-impact.fandom.com/wiki/Damage_Sequence), Genshin Impact Wiki: each transformative reaction's damage sequence and reset, counted per source and target and per element for Swirl, and the tenth of a second in which a Swirl, Superconduct or Overloaded deals damage once.
 - [Shield](https://genshin-impact.fandom.com/wiki/Shield) and [Crystallize](https://genshin-impact.fandom.com/wiki/Crystallize), Genshin Impact Wiki: absorption by element and shield strength, and the shard's shield and once-a-second limit.
 - [Energy](https://genshin-impact.fandom.com/wiki/Energy), Genshin Impact Wiki: particles and orbs by element, the shares off the field, and Energy Recharge.
 - [Foreign Ironwind](https://genshin-impact.fandom.com/wiki/Foreign_Ironwind), [Palm Vortex](https://genshin-impact.fandom.com/wiki/Palm_Vortex) and [Gust Surge](https://genshin-impact.fandom.com/wiki/Gust_Surge), Genshin Impact Wiki: the Traveler's multipliers, stamina, poise, tags and blunt plunges, and the Anemo skill's and burst's cooldowns and energy.
 - [Normal Attack](https://genshin-impact.fandom.com/wiki/Normal_Attack), [Charged Attack](https://genshin-impact.fandom.com/wiki/Charged_Attack) and [Plunging Attack](https://genshin-impact.fandom.com/wiki/Plunging_Attack), Genshin Impact Wiki: a string of strikes, the stamina each charged attack costs, and the low and high plunge either side of 2.4 metres.
 - [Area of Effect](https://genshin-impact.fandom.com/wiki/Area_of_Effect), [Targeting](https://genshin-impact.fandom.com/wiki/Targeting) and [Targeting/Data](https://genshin-impact.fandom.com/wiki/Targeting/Data), Genshin Impact Wiki: the hit cylinders, the targeting score and its altitude limit, and the swords' targeting zone.
 - [Exploration](https://genshin-impact.fandom.com/wiki/Exploration), Genshin Impact Wiki: no combat while climbing, gliding or swimming.
-- [Elemental Gauge Theory](https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory) and [Transformative Reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/transformative-reactions), KeqingMains Theorycrafting Library: the decay rate, Electro-Charged's ticks, Burning's tick, and the Dendro Core's lifetime and limit.
+- [Elemental Gauge Theory](https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory) and [Transformative Reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/transformative-reactions), KeqingMains Theorycrafting Library: the decay rate, Electro-Charged's ticks, Burning's tick, Superconduct's 40% Physical RES shred for 12 seconds, and the Dendro Core's lifetime and limit.

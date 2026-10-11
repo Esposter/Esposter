@@ -12,9 +12,9 @@ import { rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // A body type's locomotion clips, by the body's name in the game's clip names (`Ani_Avatar_Girl_RunCycle`), exported as
-// JSON from the blocks the asset index finds them in and each read for its root's motion. The readings are written as
-// `locomotion.json` beside the exports, outside the repository
-export const readLocomotionClips = async (body: string): Promise<LocomotionClipReading[]> => {
+// JSON from the blocks the asset index finds them in and each read for its root's motion at the body's human scale. The
+// Readings are written as `locomotion.json` beside the exports, outside the repository
+export const readLocomotionClips = async (body: string, humanScale: number): Promise<LocomotionClipReading[]> => {
   const clipPattern = `^Ani_Avatar_${body}_(${LOCOMOTION_CLIP_ACTIONS.join("|")})$`;
   const blocks = await readAssetBlocks(clipPattern);
   if (blocks.length === 0) throw new InvalidOperationError(Operation.Read, clipPattern, "in no indexed block");
@@ -22,7 +22,7 @@ export const readLocomotionClips = async (body: string): Promise<LocomotionClipR
   await rm(directory, { force: true, recursive: true });
   await exportClipBlocks(clipPattern, blocks, directory);
   const readings: LocomotionClipReading[] = (await readExportedClips<ExportedLocomotionClip>(directory)).map((clip) =>
-    computeLocomotionClipReading(clip),
+    computeLocomotionClipReading(clip, humanScale),
   );
   await writeFile(join(directory, "locomotion.json"), JSON.stringify(readings));
   return readings;

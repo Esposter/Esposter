@@ -32,7 +32,7 @@ export const applyReactionAura = (state: ElementalState, reactionType: ReactionT
     case ReactionType.Vaporize:
       return;
     case ReactionType.Burning:
-      auras.set(AuraType.Burning, { decayRate: 0, gauge: BURNING_AURA_GAUGE });
+      auras.set(AuraType.Burning, { decayRate: 0, gauge: BURNING_AURA_GAUGE, isImmutable: false });
       state.burningSeconds = seconds;
       return;
     case ReactionType.Crystallize:
@@ -42,7 +42,7 @@ export const applyReactionAura = (state: ElementalState, reactionType: ReactionT
       const gauge = FREEZE_GAUGE_PER_CONSUMED_GAUGE * consumedGauge;
       const freeze = auras.get(AuraType.Freeze);
       if (freeze) freeze.gauge = Math.max(freeze.gauge, gauge);
-      else auras.set(AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge });
+      else auras.set(AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge, isImmutable: false });
       return;
     }
     case ReactionType.Quicken: {
@@ -51,6 +51,7 @@ export const applyReactionAura = (state: ElementalState, reactionType: ReactionT
         auras.set(AuraType.Quicken, {
           decayRate: consumedGauge / (QUICKEN_SECONDS_PER_GAUGE * consumedGauge + QUICKEN_BASE_SECONDS),
           gauge: consumedGauge,
+          isImmutable: false,
         });
       return;
     }

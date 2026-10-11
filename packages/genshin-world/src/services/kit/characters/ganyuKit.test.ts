@@ -106,6 +106,7 @@ describe(createGanyuKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
       activeCombatant: createGanyuCombatant(),
+      enemyMap: new Map(),
       kitEffectState,
       party: createParty([GANYU_CHARACTER_ID]),
       tickIndex: 0,
@@ -126,6 +127,7 @@ describe(createGanyuKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
       activeCombatant: createGanyuCombatant(),
+      enemyMap: new Map(),
       kitEffectState,
       party: createParty([GANYU_CHARACTER_ID]),
       tickIndex: 0,

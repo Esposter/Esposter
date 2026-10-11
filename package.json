@@ -42,6 +42,7 @@
     "ai:coderabbit:state": "pnpm -C scripts ai:coderabbit:state",
     "ai:fleet:data": "pnpm -C scripts ai:fleet:data",
     "ai:fleet:claim": "pnpm -C scripts ai:fleet:claim",
+    "ai:fleet:fill": "pnpm -C scripts ai:fleet:fill",
     "ai:fleet:hold": "pnpm -C scripts ai:fleet:hold",
     "ai:fleet:next": "pnpm -C scripts ai:fleet:next",
     "ai:fleet:profile": "pnpm -C scripts ai:fleet:profile",

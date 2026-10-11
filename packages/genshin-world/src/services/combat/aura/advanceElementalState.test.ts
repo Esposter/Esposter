@@ -42,7 +42,7 @@ describe(advanceElementalState, () => {
   test("thaws a 1.6U Freeze after 2√12 - 4 seconds, its decay quickening as it holds", () => {
     expect.hasAssertions();
 
-    const state = createState([[AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge: 1.6 }]]);
+    const state = createState([[AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge: 1.6, isImmutable: false }]]);
     advanceElementalState(state, 2.92, []);
 
     expect(state.auras.has(AuraType.Freeze)).toBe(true);
@@ -61,8 +61,8 @@ describe(advanceElementalState, () => {
       expect.hasAssertions();
 
       const state = createState([
-        [AuraType.Electro, { decayRate: 0.1, gauge }],
-        [AuraType.Hydro, { decayRate: 0, gauge: 1 }],
+        [AuraType.Electro, { decayRate: 0.1, gauge, isImmutable: false }],
+        [AuraType.Hydro, { decayRate: 0, gauge: 1, isImmutable: false }],
       ]);
       const reactions = run(state, 10);
 
@@ -79,8 +79,8 @@ describe(advanceElementalState, () => {
     expect.hasAssertions();
 
     const state = createState([
-      [AuraType.Burning, { decayRate: 0, gauge: 2 }],
-      [AuraType.Dendro, { decayRate: 0, gauge: 4 }],
+      [AuraType.Burning, { decayRate: 0, gauge: 2, isImmutable: false }],
+      [AuraType.Dendro, { decayRate: 0, gauge: 4, isImmutable: false }],
     ]);
     const reactions: Reaction[] = [];
     advanceElementalState(state, 2.25, reactions);
@@ -98,8 +98,8 @@ describe(advanceElementalState, () => {
     expect.hasAssertions();
 
     const state = createState([
-      [AuraType.Burning, { decayRate: 0, gauge: 2 }],
-      [AuraType.Dendro, { decayRate: 0.5, gauge: 1 }],
+      [AuraType.Burning, { decayRate: 0, gauge: 2, isImmutable: false }],
+      [AuraType.Dendro, { decayRate: 0.5, gauge: 1, isImmutable: false }],
     ]);
     const reactions: Reaction[] = [];
     advanceElementalState(state, 2, reactions);
@@ -109,5 +109,19 @@ describe(advanceElementalState, () => {
     );
     expect(state.auras.has(AuraType.Burning)).toBe(false);
     expect(state.auras.has(AuraType.Dendro)).toBe(false);
+  });
+
+  test("never decays an immutable Hydro, nor drains it by the Electro-Charged it holds up", () => {
+    expect.hasAssertions();
+
+    const hydro = { decayRate: 0, gauge: 1, isImmutable: true };
+    const state = createState([[AuraType.Hydro, hydro]]);
+    applyElement(state, Element.Electro, 1);
+    const reactions = run(state, 10);
+
+    expect(reactions).toStrictEqual(
+      Array.from({ length: 5 }, () => ({ element: Element.Electro, reactionType: ReactionType.ElectroCharged })),
+    );
+    expect(state.auras).toStrictEqual(new Map([[AuraType.Hydro, hydro]]));
   });
 });

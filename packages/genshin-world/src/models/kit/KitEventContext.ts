@@ -10,6 +10,8 @@ import type { Party } from "#src/models/party/Party";
 export interface KitEventContext {
   activeCombatant: Combatant;
   body: KitBody;
+  // Every built combatant of the deployed team by its id, which a passive reads a member's element from
+  characterIdCombatantMap: Map<number, Combatant>;
   combatant: Combatant;
   enemyMap: Map<string, Enemy>;
   kitEffectState: KitEffectState;
