@@ -371,11 +371,11 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Prompt selection** — `prompt-select.mkv`, waits on [interaction](/docs/genshin/interaction).
 - [ ] **Quest screen** — `quest-open.mkv`, waits on [quests](/docs/proposals/genshin/quests).
 - [ ] **Multi-objective quest step** — `quest-multi-objective.mkv`, waits on [quests](/docs/genshin/quests).
-- [ ] **Weather turn** — `world-weather-turn.mkv`, waits on [weather](/docs/proposals/genshin/weather).
+- [x] `world-weather-turn.mkv` — **Weather turn**, found as `captures/world-weather-turn.mkv` (https://www.youtube.com/watch?v=MjM6WR-9ijs, 144–175 s), a near one: a thunderstorm over a grassy hill clearing to sun on a fixed camera with no HUD, 1280 by 720 at 29.97 frames a second, rain to about 8 s and clear from about 16 s. Read by [weather](/docs/proposals/genshin/weather).
 - [ ] **Weather schedule** — `world-weather-schedule.mkv`, waits on [weather](/docs/proposals/genshin/weather).
 - [ ] **Rain** — `world-rain.mkv`, waits on [weather](/docs/proposals/genshin/weather).
 - [ ] **Snow** — `world-snow.mkv`, waits on [weather](/docs/proposals/genshin/weather).
-- [ ] **Thunderstorm** — `world-thunderstorm.mkv`, waits on [world compute](/docs/genshin/compute/world).
+- [x] `world-thunderstorm.mkv` — **Thunderstorm**, found as `captures/world-thunderstorm.mkv` (https://www.youtube.com/watch?v=uqSKcf-vgV4, 21–72 s), a near one: Yashiori Island's perpetual storm on a fixed close shot with no HUD or music, 1080 high at 59.94 frames a second, bolts at about 3.9, 37.6 and 47.8 s and a flash every two or three seconds. Read by [world compute](/docs/genshin/compute/world).
 - [ ] **Movement** — `world-movement.mkv`, waits on [character controller](/docs/genshin/character-controller).
 - [ ] **Follow camera** — `follow-camera.mkv`, waits on [follow camera](/docs/proposals/genshin/follow-camera).
 - [ ] **Photo mode range** — `photo-mode-range.mkv`, waits on [follow camera](/docs/proposals/genshin/follow-camera).
