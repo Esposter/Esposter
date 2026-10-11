@@ -6,7 +6,7 @@ import { TerrainFeatureKindBlendMap } from "genshin-engine";
 
 // The most features of one kind a fit places, and the least share of the residual's squared error a feature must take
 // Off to be placed: the deepest stop whose features still take as much error off for what they cost a vertex to read
-// As the hills' narrowest rung does (the terrain shapes proposal's Decisions)
+// As the hills' narrowest rung does (scene derivation's "Each region's ground")
 const MAX_FEATURES = 200;
 const MIN_GAIN_SHARE = 0.001;
 

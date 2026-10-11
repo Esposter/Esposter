@@ -6,7 +6,18 @@
           "id": "brightcrown-mountains",
           "layer": "Surface",
           "name": "Brightcrown Mountains",
-          "outline": [],
+          "outline": [
+            { "x": 862, "z": -627 },
+            { "x": 990, "z": -755 },
+            { "x": 1054, "z": -1331 },
+            { "x": 1182, "z": -1331 },
+            { "x": 1182, "z": -2419 },
+            { "x": 734, "z": -2227 },
+            { "x": 478, "z": -2227 },
+            { "x": 350, "z": -2099 },
+            { "x": 222, "z": -1331 },
+            { "x": 670, "z": -1075 }
+          ],
           "subareas": [
             { "id": "brightcrown-canyon", "name": "Brightcrown Canyon" },
             { "id": "stormterrors-lair", "name": "Stormterror's Lair" }
@@ -18,7 +29,17 @@
           "id": "dragonspine",
           "layer": "Surface",
           "name": "Dragonspine",
-          "outline": [],
+          "outline": [
+            { "x": -866, "z": 141 },
+            { "x": -290, "z": -115 },
+            { "x": -290, "z": -819 },
+            { "x": -738, "z": -755 },
+            { "x": -1122, "z": -1203 },
+            { "x": -1250, "z": -1203 },
+            { "x": -1250, "z": -499 },
+            { "x": -1378, "z": -243 },
+            { "x": -866, "z": -243 }
+          ],
           "subareas": [
             { "id": "entombed-city-ancient-palace", "name": "Entombed City - Ancient Palace" },
             { "id": "entombed-city-outskirts", "name": "Entombed City - Outskirts" },
@@ -35,10 +56,14 @@
           "layer": "Surface",
           "name": "Galesong Hill",
           "outline": [
-            { "x": -260, "z": -260 },
-            { "x": 480, "z": -260 },
-            { "x": 480, "z": 300 },
-            { "x": -260, "z": 300 }
+            { "x": -866, "z": 1805 },
+            { "x": 158, "z": 1805 },
+            { "x": 158, "z": 717 },
+            { "x": -34, "z": 461 },
+            { "x": 286, "z": 77 },
+            { "x": 286, "z": -179 },
+            { "x": -354, "z": -115 },
+            { "x": -866, "z": 141 }
           ],
           "subareas": [
             { "id": "cape-oath", "name": "Cape Oath" },
@@ -55,10 +80,16 @@
           "layer": "Surface",
           "name": "Starfell Valley",
           "outline": [
-            { "x": -10, "z": -920 },
-            { "x": 790, "z": -920 },
-            { "x": 790, "z": -120 },
-            { "x": -10, "z": -120 }
+            { "x": 158, "z": 781 },
+            { "x": 1182, "z": 781 },
+            { "x": 1182, "z": -243 },
+            { "x": 1438, "z": -243 },
+            { "x": 1438, "z": -371 },
+            { "x": 798, "z": -691 },
+            { "x": 222, "z": -627 },
+            { "x": 222, "z": -179 },
+            { "x": 350, "z": -51 },
+            { "x": -34, "z": 461 }
           ],
           "subareas": [
             { "id": "cider-lake", "name": "Cider Lake" },
@@ -77,7 +108,16 @@
           "id": "windrest-peak",
           "layer": "Surface",
           "name": "Windrest Peak",
-          "outline": [],
+          "outline": [
+            { "x": 1438, "z": -243 },
+            { "x": 2206, "z": -243 },
+            { "x": 2206, "z": -1267 },
+            { "x": 1054, "z": -1331 },
+            { "x": 926, "z": -563 },
+            { "x": 1246, "z": -499 },
+            { "x": 1310, "z": -371 },
+            { "x": 1438, "z": -371 }
+          ],
           "subareas": [
             { "id": "dornman-port", "name": "Dornman Port" },
             { "id": "millhaven", "name": "Millhaven" },
@@ -90,7 +130,17 @@
           "id": "windwail-highland",
           "layer": "Surface",
           "name": "Windwail Highland",
-          "outline": [],
+          "outline": [
+            { "x": -290, "z": -115 },
+            { "x": 222, "z": -179 },
+            { "x": 222, "z": -627 },
+            { "x": 862, "z": -627 },
+            { "x": 670, "z": -1075 },
+            { "x": 350, "z": -1331 },
+            { "x": 158, "z": -1331 },
+            { "x": -226, "z": -947 },
+            { "x": -354, "z": -627 }
+          ],
           "subareas": [
             { "id": "dawn-winery", "name": "Dawn Winery" },
             { "id": "springvale", "name": "Springvale" },
@@ -109,7 +159,17 @@
           "id": "bishui-plain",
           "layer": "Surface",
           "name": "Bishui Plain",
-          "outline": [],
+          "outline": [
+            { "x": -738, "z": -755 },
+            { "x": -226, "z": -819 },
+            { "x": -226, "z": -947 },
+            { "x": 222, "z": -1331 },
+            { "x": 414, "z": -2099 },
+            { "x": 350, "z": -2227 },
+            { "x": -162, "z": -2419 },
+            { "x": -1186, "z": -1907 },
+            { "x": -1186, "z": -1203 }
+          ],
           "subareas": [
             { "id": "dihua-marsh", "name": "Dihua Marsh" },
             { "id": "qingce-village", "name": "Qingce Village" },
@@ -125,7 +185,28 @@
           "id": "chenyu-vale-southern-mountain",
           "layer": "Surface",
           "name": "Chenyu Vale: Southern Mountain",
-          "outline": [],
+          "outline": [
+            { "x": -354, "z": -2355 },
+            { "x": -34, "z": -2355 },
+            { "x": 158, "z": -2803 },
+            { "x": 158, "z": -3059 },
+            { "x": -226, "z": -3123 },
+            { "x": -226, "z": -3443 },
+            { "x": -98, "z": -3507 },
+            { "x": -98, "z": -3955 },
+            { "x": -802, "z": -4019 },
+            { "x": -290, "z": -4147 },
+            { "x": -34, "z": -4083 },
+            { "x": 286, "z": -4403 },
+            { "x": 94, "z": -4851 },
+            { "x": -866, "z": -4531 },
+            { "x": -994, "z": -4275 },
+            { "x": -930, "z": -3699 },
+            { "x": -1058, "z": -3507 },
+            { "x": -930, "z": -3059 },
+            { "x": -674, "z": -2995 },
+            { "x": -610, "z": -2675 }
+          ],
           "subareas": [
             { "id": "adeptuss-repose", "name": "Adeptus's Repose" },
             { "id": "chizhang-wall", "name": "Chizhang Wall" },
@@ -141,7 +222,21 @@
           "id": "chenyu-vale-upper-vale",
           "layer": "Surface",
           "name": "Chenyu Vale: Upper Vale",
-          "outline": [],
+          "outline": [
+            { "x": 350, "z": -2163 },
+            { "x": 1182, "z": -2419 },
+            { "x": 1182, "z": -3315 },
+            { "x": 1374, "z": -3379 },
+            { "x": 798, "z": -4211 },
+            { "x": 222, "z": -4403 },
+            { "x": -98, "z": -4083 },
+            { "x": -98, "z": -3507 },
+            { "x": -226, "z": -3443 },
+            { "x": -226, "z": -3123 },
+            { "x": 158, "z": -3059 },
+            { "x": 158, "z": -2803 },
+            { "x": -34, "z": -2355 }
+          ],
           "subareas": [
             { "id": "chenlong-cleft", "name": "Chenlong Cleft" },
             { "id": "jademouth", "name": "Jademouth" },
@@ -157,7 +252,15 @@
           "id": "lisha",
           "layer": "Surface",
           "name": "Lisha",
-          "outline": [],
+          "outline": [
+            { "x": -1954, "z": -2099 },
+            { "x": -1890, "z": -2547 },
+            { "x": -2146, "z": -2547 },
+            { "x": -2338, "z": -2675 },
+            { "x": -2658, "z": -2675 },
+            { "x": -2914, "z": -2547 },
+            { "x": -2914, "z": -2099 }
+          ],
           "subareas": [
             { "id": "dunyu-ruins", "name": "Dunyu Ruins" },
             { "id": "lingju-pass", "name": "Lingju Pass" },
@@ -170,7 +273,20 @@
           "id": "minlin",
           "layer": "Surface",
           "name": "Minlin",
-          "outline": [],
+          "outline": [
+            { "x": -1442, "z": -1907 },
+            { "x": -1058, "z": -1907 },
+            { "x": -354, "z": -2355 },
+            { "x": -610, "z": -2675 },
+            { "x": -674, "z": -2995 },
+            { "x": -930, "z": -3059 },
+            { "x": -994, "z": -3507 },
+            { "x": -1186, "z": -3507 },
+            { "x": -1698, "z": -3187 },
+            { "x": -1634, "z": -2803 },
+            { "x": -1762, "z": -2611 },
+            { "x": -1506, "z": -2355 }
+          ],
           "subareas": [
             { "id": "cuijue-slope", "name": "Cuijue Slope" },
             { "id": "huaguang-stone-forest", "name": "Huaguang Stone Forest" },
@@ -188,7 +304,12 @@
           "id": "mt-laixin",
           "layer": "Surface",
           "name": "Mt. Laixin",
-          "outline": [],
+          "outline": [
+            { "x": -802, "z": -3955 },
+            { "x": -98, "z": -3955 },
+            { "x": -98, "z": -4083 },
+            { "x": -290, "z": -4147 }
+          ],
           "subareas": [
             { "id": "carps-rest", "name": "Carp's Rest" },
             { "id": "chiwang-terrace", "name": "Chiwang Terrace" }
@@ -200,7 +321,22 @@
           "id": "qiongji-estuary",
           "layer": "Surface",
           "name": "Qiongji Estuary",
-          "outline": [],
+          "outline": [
+            { "x": -1570, "z": -243 },
+            { "x": -1378, "z": -243 },
+            { "x": -1250, "z": -499 },
+            { "x": -1186, "z": -1907 },
+            { "x": -1442, "z": -1907 },
+            { "x": -1506, "z": -2355 },
+            { "x": -1698, "z": -2483 },
+            { "x": -1698, "z": -2611 },
+            { "x": -1826, "z": -2611 },
+            { "x": -1954, "z": -2291 },
+            { "x": -1954, "z": -1715 },
+            { "x": -1698, "z": -1267 },
+            { "x": -1826, "z": -1203 },
+            { "x": -1826, "z": -947 }
+          ],
           "subareas": [
             { "id": "guili-plains", "name": "Guili Plains" },
             { "id": "luhua-pool", "name": "Luhua Pool" },
@@ -215,10 +351,14 @@
           "layer": "Surface",
           "name": "Sea of Clouds",
           "outline": [
-            { "x": -2790, "z": -1960 },
-            { "x": -1990, "z": -1960 },
-            { "x": -1990, "z": -1160 },
-            { "x": -2790, "z": -1160 }
+            { "x": -2914, "z": -243 },
+            { "x": -1570, "z": -243 },
+            { "x": -1826, "z": -947 },
+            { "x": -1826, "z": -1203 },
+            { "x": -1698, "z": -1267 },
+            { "x": -1954, "z": -1715 },
+            { "x": -1954, "z": -2099 },
+            { "x": -2914, "z": -2099 }
           ],
           "subareas": [
             { "id": "guyun-stone-forest", "name": "Guyun Stone Forest" },
@@ -232,7 +372,17 @@
           "id": "the-chasm",
           "layer": "Surface",
           "name": "The Chasm",
-          "outline": [],
+          "outline": [
+            { "x": -2914, "z": -2547 },
+            { "x": -2658, "z": -2675 },
+            { "x": -1826, "z": -2547 },
+            { "x": -1634, "z": -2803 },
+            { "x": -1698, "z": -3123 },
+            { "x": -1890, "z": -3251 },
+            { "x": -2274, "z": -3187 },
+            { "x": -2466, "z": -3443 },
+            { "x": -2914, "z": -3315 }
+          ],
           "subareas": [
             { "id": "cinnabar-cliff", "name": "Cinnabar Cliff" },
             { "id": "fuao-vale", "name": "Fuao Vale" },
@@ -290,7 +440,22 @@
           "id": "kannazuka",
           "layer": "Surface",
           "name": "Kannazuka",
-          "outline": [],
+          "outline": [
+            { "x": -5602, "z": 2765 },
+            { "x": -4962, "z": 2573 },
+            { "x": -4834, "z": 2445 },
+            { "x": -4706, "z": 1805 },
+            { "x": -5154, "z": 1805 },
+            { "x": -5538, "z": 1485 },
+            { "x": -5794, "z": 1485 },
+            { "x": -5986, "z": 1357 },
+            { "x": -5986, "z": 1805 },
+            { "x": -6370, "z": 1805 },
+            { "x": -6370, "z": 1933 },
+            { "x": -6242, "z": 1997 },
+            { "x": -6114, "z": 2317 },
+            { "x": -5986, "z": 2317 }
+          ],
           "subareas": [
             { "id": "kujou-encampment", "name": "Kujou Encampment" },
             { "id": "tatarasuna", "name": "Tatarasuna" }
@@ -303,10 +468,15 @@
           "layer": "Surface",
           "name": "Narukami Island",
           "outline": [
-            { "x": -5340, "z": 2740 },
-            { "x": -4540, "z": 2740 },
-            { "x": -4540, "z": 3540 },
-            { "x": -5340, "z": 3540 }
+            { "x": -5666, "z": 3853 },
+            { "x": -2914, "z": 3853 },
+            { "x": -2914, "z": 2829 },
+            { "x": -3938, "z": 2829 },
+            { "x": -3938, "z": 1805 },
+            { "x": -4706, "z": 1805 },
+            { "x": -4834, "z": 2445 },
+            { "x": -4962, "z": 2573 },
+            { "x": -5602, "z": 2765 }
           ],
           "subareas": [
             { "id": "amakane-island", "name": "Amakane Island" },
@@ -328,7 +498,15 @@
           "id": "seirai-island",
           "layer": "Surface",
           "name": "Seirai Island",
-          "outline": [],
+          "outline": [
+            { "x": -7010, "z": 3853 },
+            { "x": -5666, "z": 3853 },
+            { "x": -5602, "z": 2701 },
+            { "x": -5986, "z": 2317 },
+            { "x": -6114, "z": 2317 },
+            { "x": -6370, "z": 1805 },
+            { "x": -7010, "z": 1805 }
+          ],
           "subareas": [
             { "id": "seiraimaru", "name": "\"Seiraimaru\"" },
             { "id": "amakumo-peak", "name": "Amakumo Peak" },
@@ -352,7 +530,13 @@
           "id": "tsurumi-island",
           "layer": "Surface",
           "name": "Tsurumi Island",
-          "outline": [],
+          "outline": [
+            { "x": -9058, "z": 1805 },
+            { "x": -7138, "z": 1805 },
+            { "x": -7010, "z": 1677 },
+            { "x": -7010, "z": 781 },
+            { "x": -9058, "z": 781 }
+          ],
           "subareas": [
             { "id": "autake-plains", "name": "Autake Plains" },
             { "id": "chirai-shrine", "name": "Chirai Shrine" },
@@ -369,7 +553,12 @@
           "id": "watatsumi-island",
           "layer": "Surface",
           "name": "Watatsumi Island",
-          "outline": [],
+          "outline": [
+            { "x": -5986, "z": 141 },
+            { "x": -4962, "z": -51 },
+            { "x": -4962, "z": -1267 },
+            { "x": -5986, "z": -1267 }
+          ],
           "subareas": [
             { "id": "bourou-village", "name": "Bourou Village" },
             { "id": "mouun-shrine", "name": "Mouun Shrine" },
@@ -383,7 +572,15 @@
           "id": "yashiori-island",
           "layer": "Surface",
           "name": "Yashiori Island",
-          "outline": [],
+          "outline": [
+            { "x": -5154, "z": 1805 },
+            { "x": -4962, "z": 1805 },
+            { "x": -4962, "z": -51 },
+            { "x": -5986, "z": 141 },
+            { "x": -5986, "z": 1357 },
+            { "x": -5794, "z": 1485 },
+            { "x": -5538, "z": 1485 }
+          ],
           "subareas": [
             { "id": "fort-fujitou", "name": "Fort Fujitou" },
             { "id": "fort-mumei", "name": "Fort Mumei" },
@@ -406,7 +603,14 @@
           "id": "ardravi-valley",
           "layer": "Surface",
           "name": "Ardravi Valley",
-          "outline": [],
+          "outline": [
+            { "x": -3938, "z": -3315 },
+            { "x": -2914, "z": -3315 },
+            { "x": -2914, "z": -3955 },
+            { "x": -3234, "z": -4147 },
+            { "x": -3618, "z": -4083 },
+            { "x": -3938, "z": -4275 }
+          ],
           "subareas": [
             { "id": "devantaka-mountain", "name": "Devantaka Mountain" },
             { "id": "port-ormos", "name": "Port Ormos" },
@@ -419,7 +623,20 @@
           "id": "ashavan-realm",
           "layer": "Surface",
           "name": "Ashavan Realm",
-          "outline": [],
+          "outline": [
+            { "x": -2978, "z": -3955 },
+            { "x": -2786, "z": -4019 },
+            { "x": -2530, "z": -4531 },
+            { "x": -3042, "z": -4915 },
+            { "x": -3106, "z": -5363 },
+            { "x": -3298, "z": -5555 },
+            { "x": -3554, "z": -5619 },
+            { "x": -3810, "z": -4915 },
+            { "x": -3938, "z": -4915 },
+            { "x": -3938, "z": -4275 },
+            { "x": -3618, "z": -4083 },
+            { "x": -3234, "z": -4147 }
+          ],
           "subareas": [
             { "id": "apam-woods", "name": "Apam Woods" },
             { "id": "caravan-ribat", "name": "Caravan Ribat" },
@@ -435,10 +652,14 @@
           "layer": "Surface",
           "name": "Avidya Forest",
           "outline": [
-            { "x": -2710, "z": -4450 },
-            { "x": -1910, "z": -4450 },
-            { "x": -1910, "z": -3650 },
-            { "x": -2710, "z": -3650 }
+            { "x": -2274, "z": -3187 },
+            { "x": -2018, "z": -3251 },
+            { "x": -2146, "z": -3571 },
+            { "x": -2018, "z": -4339 },
+            { "x": -2530, "z": -4467 },
+            { "x": -2914, "z": -3955 },
+            { "x": -2914, "z": -3315 },
+            { "x": -2466, "z": -3443 }
           ],
           "subareas": [
             { "id": "chinvat-ravine", "name": "Chinvat Ravine" },
@@ -454,7 +675,24 @@
           "id": "desert-of-hadramaveth",
           "layer": "Surface",
           "name": "Desert of Hadramaveth",
-          "outline": [],
+          "outline": [
+            { "x": -3170, "z": -5363 },
+            { "x": -2722, "z": -5555 },
+            { "x": -2658, "z": -5683 },
+            { "x": -2402, "z": -5683 },
+            { "x": -2146, "z": -5427 },
+            { "x": -1890, "z": -5363 },
+            { "x": -1890, "z": -6387 },
+            { "x": -1762, "z": -6451 },
+            { "x": -1890, "z": -6579 },
+            { "x": -2082, "z": -7411 },
+            { "x": -3874, "z": -7411 },
+            { "x": -3874, "z": -6067 },
+            { "x": -3682, "z": -6003 },
+            { "x": -3042, "z": -6387 },
+            { "x": -3042, "z": -6067 },
+            { "x": -3362, "z": -5619 }
+          ],
           "subareas": [
             { "id": "debris-of-panjvahe", "name": "Debris of Panjvahe" },
             { "id": "dunes-of-steel", "name": "Dunes of Steel" },
@@ -475,7 +713,15 @@
           "id": "gavireh-lajavard",
           "layer": "Surface",
           "name": "Gavireh Lajavard",
-          "outline": [],
+          "outline": [
+            { "x": -1506, "z": -7283 },
+            { "x": -1250, "z": -7347 },
+            { "x": -1122, "z": -7667 },
+            { "x": -866, "z": -7731 },
+            { "x": -866, "z": -8435 },
+            { "x": -1890, "z": -8435 },
+            { "x": -1890, "z": -7411 }
+          ],
           "subareas": [
             { "id": "gate-of-zulqarnain", "name": "Gate of Zulqarnain" },
             { "id": "temir-mountains", "name": "Temir Mountains" },
@@ -488,7 +734,12 @@
           "id": "hypostyle-desert",
           "layer": "Surface",
           "name": "Hypostyle Desert",
-          "outline": [],
+          "outline": [
+            { "x": -4962, "z": -5747 },
+            { "x": -3874, "z": -6131 },
+            { "x": -3874, "z": -7411 },
+            { "x": -4962, "z": -7411 }
+          ],
           "subareas": [
             { "id": "khemenu-temple", "name": "Khemenu Temple" },
             { "id": "sobek-oasis", "name": "Sobek Oasis" },
@@ -504,7 +755,19 @@
           "id": "land-of-lower-setekh",
           "layer": "Surface",
           "name": "Land of Lower Setekh",
-          "outline": [],
+          "outline": [
+            { "x": -3938, "z": -4915 },
+            { "x": -3810, "z": -4915 },
+            { "x": -3554, "z": -5619 },
+            { "x": -3362, "z": -5555 },
+            { "x": -3042, "z": -6067 },
+            { "x": -3042, "z": -6387 },
+            { "x": -3682, "z": -6003 },
+            { "x": -3938, "z": -6131 },
+            { "x": -4962, "z": -5747 },
+            { "x": -4962, "z": -5363 },
+            { "x": -3938, "z": -5363 }
+          ],
           "subareas": [
             { "id": "aaru-village", "name": "Aaru Village" },
             { "id": "abdju-pit", "name": "Abdju Pit" },
@@ -527,7 +790,22 @@
           "id": "lokapala-jungle",
           "layer": "Surface",
           "name": "Lokapala Jungle",
-          "outline": [],
+          "outline": [
+            { "x": -1762, "z": -3123 },
+            { "x": -1378, "z": -3315 },
+            { "x": -1314, "z": -3443 },
+            { "x": -1058, "z": -3507 },
+            { "x": -930, "z": -3699 },
+            { "x": -994, "z": -4275 },
+            { "x": -866, "z": -4531 },
+            { "x": -1442, "z": -5299 },
+            { "x": -1570, "z": -5235 },
+            { "x": -1762, "z": -4467 },
+            { "x": -2018, "z": -4339 },
+            { "x": -2018, "z": -4019 },
+            { "x": -2146, "z": -3763 },
+            { "x": -2018, "z": -3251 }
+          ],
           "subareas": [
             { "id": "bayda-harbor", "name": "Bayda Harbor" },
             { "id": "chatrakam-cave", "name": "Chatrakam Cave" },
@@ -541,7 +819,18 @@
           "id": "lost-nursery",
           "layer": "Surface",
           "name": "Lost Nursery",
-          "outline": [],
+          "outline": [
+            { "x": -2594, "z": -4531 },
+            { "x": -2466, "z": -4531 },
+            { "x": -2018, "z": -5235 },
+            { "x": -2018, "z": -5427 },
+            { "x": -2146, "z": -5427 },
+            { "x": -2402, "z": -5683 },
+            { "x": -2658, "z": -5683 },
+            { "x": -2722, "z": -5555 },
+            { "x": -3106, "z": -5363 },
+            { "x": -3042, "z": -4915 }
+          ],
           "subareas": [{ "id": "old-vanarana", "name": "Old Vanarana" }],
           "subregion": "Dharma Forest",
           "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
@@ -550,7 +839,20 @@
           "id": "realm-of-farakhkert",
           "layer": "Surface",
           "name": "Realm of Farakhkert",
-          "outline": [],
+          "outline": [
+            { "x": -1762, "z": -6387 },
+            { "x": -1314, "z": -6387 },
+            { "x": -1314, "z": -7091 },
+            { "x": -1186, "z": -7091 },
+            { "x": -994, "z": -6451 },
+            { "x": -866, "z": -6387 },
+            { "x": -866, "z": -7731 },
+            { "x": -1122, "z": -7667 },
+            { "x": -1186, "z": -7411 },
+            { "x": -1378, "z": -7283 },
+            { "x": -2082, "z": -7411 },
+            { "x": -1890, "z": -6579 }
+          ],
           "subareas": [
             { "id": "asipattravana-swamp", "name": "Asipattravana Swamp" },
             { "id": "hills-of-barsom", "name": "Hills of Barsom" },
@@ -564,7 +866,15 @@
           "id": "vanarana",
           "layer": "Surface",
           "name": "Vanarana",
-          "outline": [],
+          "outline": [
+            { "x": -2274, "z": -4339 },
+            { "x": -1890, "z": -4339 },
+            { "x": -1762, "z": -4467 },
+            { "x": -1506, "z": -5363 },
+            { "x": -2018, "z": -5363 },
+            { "x": -2274, "z": -4723 },
+            { "x": -2530, "z": -4531 }
+          ],
           "subareas": [{ "id": "vanarana-subarea", "name": "Vanarana (Subarea)" }],
           "subregion": "Dharma Forest",
           "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
@@ -588,7 +898,22 @@
           "id": "belleau-region",
           "layer": "Surface",
           "name": "Belleau Region",
-          "outline": [],
+          "outline": [
+            { "x": 30, "z": -5107 },
+            { "x": 414, "z": -5363 },
+            { "x": 990, "z": -5235 },
+            { "x": 1054, "z": -5811 },
+            { "x": 926, "z": -5939 },
+            { "x": 606, "z": -5939 },
+            { "x": 542, "z": -5811 },
+            { "x": 158, "z": -5875 },
+            { "x": 94, "z": -6067 },
+            { "x": 222, "z": -6387 },
+            { "x": -802, "z": -6387 },
+            { "x": -226, "z": -5811 },
+            { "x": -98, "z": -5811 },
+            { "x": -162, "z": -5491 }
+          ],
           "subareas": [
             { "id": "poisson", "name": "Poisson" },
             { "id": "romaritime-harbor", "name": "Romaritime Harbor" },
@@ -601,7 +926,18 @@
           "id": "beryl-region",
           "layer": "Surface",
           "name": "Beryl Region",
-          "outline": [],
+          "outline": [
+            { "x": 542, "z": -5811 },
+            { "x": 606, "z": -5939 },
+            { "x": 926, "z": -5939 },
+            { "x": 990, "z": -5811 },
+            { "x": 1310, "z": -5875 },
+            { "x": 1246, "z": -6195 },
+            { "x": 1374, "z": -6259 },
+            { "x": 1374, "z": -6387 },
+            { "x": 222, "z": -6387 },
+            { "x": 94, "z": -5939 }
+          ],
           "subareas": [
             { "id": "a-lonely-place", "name": "\"A Lonely Place\"" },
             { "id": "a-very-bright-place", "name": "\"A Very Bright Place\"" },
@@ -618,10 +954,21 @@
           "layer": "Surface",
           "name": "Court of Fontaine Region",
           "outline": [
-            { "x": 1180, "z": -6180 },
-            { "x": 1980, "z": -6180 },
-            { "x": 1980, "z": -5380 },
-            { "x": 1180, "z": -5380 }
+            { "x": 1566, "z": -4659 },
+            { "x": 1822, "z": -4915 },
+            { "x": 2270, "z": -4787 },
+            { "x": 2206, "z": -5363 },
+            { "x": 2334, "z": -5491 },
+            { "x": 2334, "z": -5747 },
+            { "x": 2078, "z": -6003 },
+            { "x": 2206, "z": -6387 },
+            { "x": 1374, "z": -6387 },
+            { "x": 1374, "z": -6259 },
+            { "x": 1246, "z": -6195 },
+            { "x": 1310, "z": -5875 },
+            { "x": 1054, "z": -5811 },
+            { "x": 1054, "z": -4915 },
+            { "x": 1374, "z": -4915 }
           ],
           "subareas": [
             { "id": "annapausis", "name": "Annapausis" },
@@ -641,7 +988,20 @@
           "id": "erinnyes-forest",
           "layer": "Surface",
           "name": "Erinnyes Forest",
-          "outline": [],
+          "outline": [
+            { "x": 1374, "z": -3315 },
+            { "x": 2206, "z": -3315 },
+            { "x": 2206, "z": -4339 },
+            { "x": 2526, "z": -4339 },
+            { "x": 2270, "z": -4787 },
+            { "x": 1822, "z": -4915 },
+            { "x": 1566, "z": -4659 },
+            { "x": 1374, "z": -4915 },
+            { "x": 1118, "z": -4915 },
+            { "x": 1310, "z": -4403 },
+            { "x": 926, "z": -4211 },
+            { "x": 862, "z": -4083 }
+          ],
           "subareas": [
             { "id": "foggy-forest-path", "name": "Foggy Forest Path" },
             { "id": "loch-urania", "name": "Loch Urania" },
@@ -655,7 +1015,15 @@
           "id": "fontaine-research-institute-of-kinetic-energy-engineering-region",
           "layer": "Surface",
           "name": "Fontaine Research Institute of Kinetic Energy Engineering Region",
-          "outline": [],
+          "outline": [
+            { "x": 2526, "z": -4339 },
+            { "x": 3230, "z": -4339 },
+            { "x": 3230, "z": -5811 },
+            { "x": 2910, "z": -5811 },
+            { "x": 2334, "z": -5619 },
+            { "x": 2206, "z": -5363 },
+            { "x": 2270, "z": -4723 }
+          ],
           "subareas": [
             { "id": "central-laboratory-ruins", "name": "Central Laboratory Ruins" },
             { "id": "new-fontaine-research-institute", "name": "New Fontaine Research Institute" }
@@ -667,7 +1035,15 @@
           "id": "liffey-region",
           "layer": "Surface",
           "name": "Liffey Region",
-          "outline": [],
+          "outline": [
+            { "x": 2334, "z": -5619 },
+            { "x": 2910, "z": -5811 },
+            { "x": 3230, "z": -5811 },
+            { "x": 3230, "z": -6387 },
+            { "x": 2206, "z": -6387 },
+            { "x": 2078, "z": -6003 },
+            { "x": 2334, "z": -5747 }
+          ],
           "subareas": [
             { "id": "fortress-of-meropide", "name": "Fortress of Meropide" },
             { "id": "mont-esus-east", "name": "Mont Esus East" }
@@ -679,7 +1055,20 @@
           "id": "morte-region",
           "layer": "Surface",
           "name": "Morte Region",
-          "outline": [],
+          "outline": [
+            { "x": 798, "z": -4147 },
+            { "x": 1054, "z": -4211 },
+            { "x": 1310, "z": -4467 },
+            { "x": 1182, "z": -4851 },
+            { "x": 1054, "z": -4915 },
+            { "x": 1054, "z": -5171 },
+            { "x": 926, "z": -5299 },
+            { "x": 414, "z": -5363 },
+            { "x": 30, "z": -5107 },
+            { "x": 30, "z": -4851 },
+            { "x": 158, "z": -4787 },
+            { "x": 286, "z": -4403 }
+          ],
           "subareas": [
             { "id": "east-slopes-of-mont-automnequi", "name": "East Slopes of Mont Automnequi" },
             { "id": "fort-charybdis-ruins", "name": "Fort Charybdis Ruins" },
@@ -692,7 +1081,21 @@
           "id": "nostoi-region",
           "layer": "Surface",
           "name": "Nostoi Region",
-          "outline": [],
+          "outline": [
+            { "x": -930, "z": -4531 },
+            { "x": 30, "z": -4851 },
+            { "x": 30, "z": -5171 },
+            { "x": -162, "z": -5491 },
+            { "x": -98, "z": -5811 },
+            { "x": -226, "z": -5811 },
+            { "x": -802, "z": -6387 },
+            { "x": -866, "z": -5363 },
+            { "x": -1506, "z": -5363 },
+            { "x": -1378, "z": -5107 },
+            { "x": -1186, "z": -4979 },
+            { "x": -1186, "z": -4851 },
+            { "x": -930, "z": -4659 }
+          ],
           "subareas": [
             { "id": "faded-castle", "name": "Faded Castle" },
             { "id": "petrichor", "name": "Petrichor" }
@@ -745,7 +1148,16 @@
           "id": "atocpan",
           "layer": "Surface",
           "name": "Atocpan",
-          "outline": [],
+          "outline": [
+            { "x": -4962, "z": -10483 },
+            { "x": -4258, "z": -10611 },
+            { "x": -4194, "z": -11379 },
+            { "x": -4002, "z": -11507 },
+            { "x": -4130, "z": -12467 },
+            { "x": -5986, "z": -12531 },
+            { "x": -5986, "z": -11507 },
+            { "x": -4962, "z": -11507 }
+          ],
           "subareas": [
             { "id": "collective-of-plenty", "name": "\"Collective of Plenty\"" },
             { "id": "ancient-mountain-path", "name": "Ancient Mountain Path" },
@@ -760,7 +1172,17 @@
           "id": "basin-of-unnumbered-flames",
           "layer": "Surface",
           "name": "Basin of Unnumbered Flames",
-          "outline": [],
+          "outline": [
+            { "x": -3746, "z": -9843 },
+            { "x": -3554, "z": -10035 },
+            { "x": -2786, "z": -10035 },
+            { "x": -2850, "z": -10419 },
+            { "x": -3234, "z": -10611 },
+            { "x": -4258, "z": -10675 },
+            { "x": -4258, "z": -10355 },
+            { "x": -4130, "z": -10099 },
+            { "x": -4002, "z": -10099 }
+          ],
           "subareas": [
             { "id": "huitztli-hill", "name": "Huitztli Hill" },
             { "id": "stadium-of-the-sacred-flame", "name": "Stadium of the Sacred Flame" }
@@ -772,7 +1194,20 @@
           "id": "coatepec-mountain",
           "layer": "Surface",
           "name": "Coatepec Mountain",
-          "outline": [],
+          "outline": [
+            { "x": -4962, "z": -8435 },
+            { "x": -3682, "z": -8435 },
+            { "x": -3618, "z": -8755 },
+            { "x": -3874, "z": -9075 },
+            { "x": -3682, "z": -9587 },
+            { "x": -3746, "z": -9907 },
+            { "x": -3874, "z": -9907 },
+            { "x": -4002, "z": -10099 },
+            { "x": -4322, "z": -9715 },
+            { "x": -4450, "z": -9715 },
+            { "x": -4514, "z": -9395 },
+            { "x": -4962, "z": -9267 }
+          ],
           "subareas": [
             { "id": "scions-of-the-canopy", "name": "\"Scions of the Canopy\"" },
             { "id": "ancestral-temple", "name": "Ancestral Temple" },
@@ -786,7 +1221,12 @@
           "id": "easybreeze-holiday-resort",
           "layer": "Surface",
           "name": "Easybreeze Holiday Resort",
-          "outline": [],
+          "outline": [
+            { "x": -1890, "z": -14579 },
+            { "x": 158, "z": -14579 },
+            { "x": 158, "z": -16627 },
+            { "x": -1890, "z": -16627 }
+          ],
           "subareas": [
             { "id": "brewblossom-stores", "name": "Brewblossom Stores" },
             { "id": "castle-joquiratto", "name": "Castle Joquiratto" },
@@ -808,7 +1248,23 @@
           "id": "ochkanatlan",
           "layer": "Surface",
           "name": "Ochkanatlan",
-          "outline": [],
+          "outline": [
+            { "x": -2274, "z": -9459 },
+            { "x": -1890, "z": -9459 },
+            { "x": -1890, "z": -10483 },
+            { "x": -1122, "z": -10483 },
+            { "x": -1058, "z": -11315 },
+            { "x": -738, "z": -11763 },
+            { "x": -994, "z": -12531 },
+            { "x": -1890, "z": -12531 },
+            { "x": -1890, "z": -11507 },
+            { "x": -2850, "z": -11507 },
+            { "x": -2786, "z": -11187 },
+            { "x": -2658, "z": -11059 },
+            { "x": -2658, "z": -10739 },
+            { "x": -2850, "z": -10483 },
+            { "x": -2850, "z": -10163 }
+          ],
           "subareas": [{ "id": "legendary-tonatiuh", "name": "Legendary Tonatiuh" }],
           "subregion": "",
           "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
@@ -817,7 +1273,16 @@
           "id": "quahuacan-cliff",
           "layer": "Surface",
           "name": "Quahuacan Cliff",
-          "outline": [],
+          "outline": [
+            { "x": -2914, "z": -10419 },
+            { "x": -2658, "z": -10739 },
+            { "x": -2658, "z": -11059 },
+            { "x": -2850, "z": -11443 },
+            { "x": -3106, "z": -11443 },
+            { "x": -3106, "z": -11251 },
+            { "x": -3426, "z": -10611 },
+            { "x": -3042, "z": -10547 }
+          ],
           "subareas": [
             { "id": "flower-feather-clan", "name": "\"Flower-Feather Clan\"" },
             { "id": "malinalco-grotto", "name": "Malinalco Grotto" }
@@ -829,7 +1294,19 @@
           "id": "tequemecan-valley",
           "layer": "Surface",
           "name": "Tequemecan Valley",
-          "outline": [],
+          "outline": [
+            { "x": -3682, "z": -8435 },
+            { "x": -2914, "z": -8435 },
+            { "x": -2914, "z": -9459 },
+            { "x": -2274, "z": -9459 },
+            { "x": -2722, "z": -9907 },
+            { "x": -2722, "z": -10035 },
+            { "x": -3554, "z": -10035 },
+            { "x": -3746, "z": -9843 },
+            { "x": -3682, "z": -9523 },
+            { "x": -3874, "z": -9075 },
+            { "x": -3618, "z": -8755 }
+          ],
           "subareas": [
             { "id": "children-of-echoes", "name": "\"Children of Echoes\"" },
             { "id": "sulfurous-veins", "name": "Sulfurous Veins" },
@@ -842,7 +1319,18 @@
           "id": "tezcatepetonco-range",
           "layer": "Surface",
           "name": "Tezcatepetonco Range",
-          "outline": [],
+          "outline": [
+            { "x": -3426, "z": -10611 },
+            { "x": -3106, "z": -11251 },
+            { "x": -3106, "z": -11443 },
+            { "x": -2850, "z": -11443 },
+            { "x": -2914, "z": -12531 },
+            { "x": -4194, "z": -12531 },
+            { "x": -4002, "z": -11891 },
+            { "x": -4002, "z": -11507 },
+            { "x": -4194, "z": -11379 },
+            { "x": -4258, "z": -10675 }
+          ],
           "subareas": [
             { "id": "masters-of-the-night-wind", "name": "\"Masters of the Night-Wind\"" },
             { "id": "tecoloapan-bay", "name": "Tecoloapan Bay" }
@@ -855,10 +1343,14 @@
           "layer": "Surface",
           "name": "Toyac Springs",
           "outline": [
-            { "x": -4970, "z": -10590 },
-            { "x": -4170, "z": -10590 },
-            { "x": -4170, "z": -9790 },
-            { "x": -4970, "z": -9790 }
+            { "x": -4962, "z": -9267 },
+            { "x": -4514, "z": -9395 },
+            { "x": -4450, "z": -9715 },
+            { "x": -4322, "z": -9715 },
+            { "x": -4066, "z": -10099 },
+            { "x": -4258, "z": -10355 },
+            { "x": -4258, "z": -10611 },
+            { "x": -4962, "z": -10483 }
           ],
           "subareas": [
             { "id": "people-of-the-springs", "name": "\"People of the Springs\"" },
@@ -877,7 +1369,17 @@
           "id": "ashveil-peak",
           "layer": "Surface",
           "name": "Ashveil Peak",
-          "outline": [],
+          "outline": [
+            { "x": 4062, "z": -10483 },
+            { "x": 5278, "z": -10483 },
+            { "x": 5278, "z": -11507 },
+            { "x": 4254, "z": -11507 },
+            { "x": 4190, "z": -11699 },
+            { "x": 4062, "z": -11187 },
+            { "x": 4254, "z": -10995 },
+            { "x": 4254, "z": -10803 },
+            { "x": 4062, "z": -10611 }
+          ],
           "subareas": [
             { "id": "cliffwatch-camp", "name": "Cliffwatch Camp" },
             { "id": "kipumaki-cliff", "name": "Kipumaki Cliff" },
@@ -911,7 +1413,17 @@
           "id": "hiisi-island",
           "layer": "Surface",
           "name": "Hiisi Island",
-          "outline": [],
+          "outline": [
+            { "x": 94, "z": -11315 },
+            { "x": 478, "z": -11379 },
+            { "x": 606, "z": -11699 },
+            { "x": 798, "z": -11763 },
+            { "x": 1182, "z": -12531 },
+            { "x": -994, "z": -12531 },
+            { "x": -802, "z": -11891 },
+            { "x": -546, "z": -11827 },
+            { "x": -226, "z": -11443 }
+          ],
           "subareas": [
             { "id": "frostmoon-enclave", "name": "Frostmoon Enclave" },
             { "id": "light-bathed-platform", "name": "Light-Bathed Platform" },
@@ -925,10 +1437,18 @@
           "layer": "Surface",
           "name": "Lempo Isle",
           "outline": [
-            { "x": -650, "z": -11130 },
-            { "x": 150, "z": -11130 },
-            { "x": 150, "z": -10330 },
-            { "x": -650, "z": -10330 }
+            { "x": 158, "z": -9459 },
+            { "x": 1246, "z": -9459 },
+            { "x": 1182, "z": -10483 },
+            { "x": 798, "z": -10867 },
+            { "x": 606, "z": -10931 },
+            { "x": 478, "z": -11315 },
+            { "x": -98, "z": -11379 },
+            { "x": -546, "z": -11827 },
+            { "x": -738, "z": -11827 },
+            { "x": -1058, "z": -11315 },
+            { "x": -1122, "z": -10483 },
+            { "x": 158, "z": -10483 }
           ],
           "subareas": [
             { "id": "barrowmoss-barrens", "name": "Barrowmoss Barrens" },
@@ -975,7 +1495,19 @@
           "id": "paha-isle",
           "layer": "Surface",
           "name": "Paha Isle",
-          "outline": [],
+          "outline": [
+            { "x": 1246, "z": -9459 },
+            { "x": 2206, "z": -9459 },
+            { "x": 2206, "z": -11507 },
+            { "x": 1182, "z": -11507 },
+            { "x": 1118, "z": -12467 },
+            { "x": 798, "z": -11763 },
+            { "x": 606, "z": -11699 },
+            { "x": 414, "z": -11315 },
+            { "x": 606, "z": -10931 },
+            { "x": 798, "z": -10867 },
+            { "x": 1182, "z": -10483 }
+          ],
           "subareas": [
             { "id": "final-night-cemetery", "name": "Final Night Cemetery" },
             { "id": "kuuvahki-experimental-design-bureau", "name": "Kuuvahki Experimental Design Bureau" }
@@ -987,7 +1519,12 @@
           "id": "voidsea-outlook",
           "layer": "Surface",
           "name": "Voidsea Outlook",
-          "outline": [],
+          "outline": [
+            { "x": 3230, "z": -10483 },
+            { "x": 4062, "z": -10547 },
+            { "x": 3870, "z": -10867 },
+            { "x": 3230, "z": -10931 }
+          ],
           "subareas": [
             { "id": "dreadshade-mire", "name": "Dreadshade Mire" },
             { "id": "piramida", "name": "Piramida" }
@@ -999,7 +1536,18 @@
           "id": "wavechaser-plain",
           "layer": "Surface",
           "name": "Wavechaser Plain",
-          "outline": [],
+          "outline": [
+            { "x": 3998, "z": -10547 },
+            { "x": 4254, "z": -10803 },
+            { "x": 4190, "z": -11123 },
+            { "x": 4062, "z": -11187 },
+            { "x": 4062, "z": -11379 },
+            { "x": 4190, "z": -11443 },
+            { "x": 4254, "z": -12531 },
+            { "x": 3230, "z": -12531 },
+            { "x": 3230, "z": -10931 },
+            { "x": 3870, "z": -10867 }
+          ],
           "subareas": [
             { "id": "amsvartnir", "name": "Amsvartnir" },
             { "id": "favonius-keep", "name": "Favonius Keep" },

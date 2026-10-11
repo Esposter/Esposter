@@ -8,7 +8,7 @@ touches: ["packages/genshin-world/src/services/sumeru/**"]
 
 # Sumeru
 
-This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), re-derived by the [scene derivation](/docs/genshin/scene-derivation)'s method, each scene in its [recreation passes](/docs/proposals/genshin/recreation-passes). Sumeru is the nation of the Dendro Archon, its culture drawn from ancient India, Egypt and Persia, and the home of the Akademiya. As its people say, it is all rainforest and desert. The two halves are so different that they are two biomes with two kits, joined along a wall of cliffs.
+This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/genshin/terrain-shape-height), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), re-derived by the [scene derivation](/docs/genshin/scene-derivation)'s method, each scene in its [recreation passes](/docs/proposals/genshin/recreation-passes). Sumeru is the nation of the Dendro Archon, its culture drawn from ancient India, Egypt and Persia, and the home of the Akademiya. As its people say, it is all rainforest and desert. The two halves are so different that they are two biomes with two kits, joined along a wall of cliffs.
 
 ## Decisions
 

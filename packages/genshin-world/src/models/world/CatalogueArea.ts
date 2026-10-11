@@ -9,8 +9,9 @@ import { WeatherKind } from "genshin-engine";
 import { z } from "zod";
 
 // An area of a region as the game names it, the part of the map its Statue of The Seven lights: which map it is on,
-// Its outline, empty until the reference board draws it, its subareas, the subregion it belongs to, "" for none, and
-// The weathers it can have, as the game ties weather to an area, the first its own: the weather a visit finds it in
+// Its outline, drawn round the tiles its waypoints stand on and empty where the game files none under it, its
+// Subareas, the subregion it belongs to, "" for none, and the weathers it can have, as the game ties weather to an
+// Area, the first its own: the weather a visit finds it in
 export interface CatalogueArea {
   id: string;
   layer: WorldLayer;
