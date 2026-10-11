@@ -32,6 +32,12 @@ describe(fitTerrainResidual, () => {
     expect(Math.abs(amplitude - 2)).toBeLessThan(0.2);
   });
 
+  test("draws no residual where every sample weighs none", () => {
+    expect.hasAssertions();
+
+    expect(fitTerrainResidual(sampleResidual(64), () => 0).amplitude).toBe(0);
+  });
+
   test("fits a finer scale to a rougher residual than to a smoother one", () => {
     expect.hasAssertions();
 

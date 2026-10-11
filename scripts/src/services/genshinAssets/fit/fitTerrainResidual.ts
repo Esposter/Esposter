@@ -75,7 +75,9 @@ const sampleUnitNoise = (
 // The fine ground a residual leaves as simplex noise, each sample weighed by how much of the noise is drawn there: the
 // Scale whose weighted noise's correlation length is nearest the weighted residual's, and the amplitude that makes the
 // Weighted noise's standard deviation over the same samples the weighted residual's, so the noise matches the ground it
-// Is drawn on. Both are judged by the residual's statistics about its mean, never by its heights point for point
+// Is drawn on. Both are judged by the residual's statistics about its mean, never by its heights point for point. Where
+// Every sample weighs none, as where the ground above holds within its gate everywhere, nothing of the residual is drawn,
+// So the weighted noise has no deviation to scale and the amplitude is none
 export const fitTerrainResidual = (
   grid: TerrainResidualGrid,
   getWeight: (x: number, z: number) => number,
@@ -89,8 +91,9 @@ export const fitTerrainResidual = (
   const { noise, scale } = candidates.reduce((nearest, candidate) =>
     candidate.mismatch < nearest.mismatch ? candidate : nearest,
   );
+  const noiseDeviation = getStandardDeviation(noise.values);
   return {
-    amplitude: roundFitted(getStandardDeviation(residual.values) / getStandardDeviation(noise.values)),
+    amplitude: noiseDeviation > 0 ? roundFitted(getStandardDeviation(residual.values) / noiseDeviation) : 0,
     octaves: RESIDUAL_OCTAVES,
     scale,
     seed: RESIDUAL_SEED,
