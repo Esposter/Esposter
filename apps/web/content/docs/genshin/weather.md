@@ -84,6 +84,7 @@ The values are starting points, not the game's: each is marked provisional where
 - **Windrise stays clear.** Galesong Hill's own weather is clear, as its reference screenshots are. Moving its area's list to start at rain shows the rain over the valley, which the parity pages do not measure.
 - **An area's weather turns on a provisional schedule.** The standard chain is the game's, but the change interval is a built stand-in, and the cities and special climates' own chains are not yet read; the game's own weather data, which weathers an area turns between and at what weights, replaces each area's chain when it is read, and a recording of an area's weather changing replaces the interval ([weather](/docs/proposals/genshin/weather)).
 - **The bolt shines through the haze.** It writes no depth, so the height fog, a post pass over the depth, does not reach it, as a strike reads through the game's rain.
+- **The first minute of a recorded sky does not read a weather turn.** Its first minute (`world-weather-turn.mkv`, 1280 by 592) is a clear dusk settling into night, with a moon up by about twenty seconds, and no rain at any still. Its sky darkens from the first still and its mean luma stops falling near forty seconds, a time-of-day change rather than a weather change, so it neither confirms nor moves `WEATHER_TRANSITION_SECONDS`, which stays provisional at ten seconds until a clip of a clear-to-rain change is read.
 
 ## Sources
 
