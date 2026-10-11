@@ -44,8 +44,9 @@ export const PRECIPITATION_SETTINGS_MAP: Readonly<Record<PrecipitationKind, Prec
 };
 // Each weather's sky, fog, wetness, particles and lightning, as starting values to be fitted to the game's own weather
 // Settings. Clear keeps the region's own sky and haze; the others raise them over it. Provisional: the sandstorm's sand
-// Haze is measured off a recording of the Desert of Hadramaveth's storm, and the thunderstorm's strikes a minute are
-// Counted off a recording of one
+// Haze is measured off a recording of the Desert of Hadramaveth's storm. The thunderstorm's strikes a minute are its
+// Flashes over Yashiori Island's perpetual storm, 50 seconds on a fixed camera at 60 stills a second, scaled to a minute:
+// 23 runs of stills whose sky's darkness falls 40 or more under its median
 export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>> = {
   [WeatherKind.Clear]: { cloudCoverage: 0, fogDensity: 0, wetness: 0 },
   [WeatherKind.Cloudy]: { cloudCoverage: 0.6, fogDensity: 0, wetness: 0 },
@@ -72,7 +73,7 @@ export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>
   [WeatherKind.Thunderstorm]: {
     cloudCoverage: 1,
     fogDensity: 0.002,
-    lightningRate: 4,
+    lightningRate: 27.6,
     precipitation: { density: 1, kind: PrecipitationKind.Rain },
     wetness: 1,
   },
