@@ -135,11 +135,6 @@ const configuration: UserConfig = defineConfig({
         command: 'echo "every lint check ran"',
         dependsOn: ["lint:oxlint", "lint:eslint", "lint:workspace", "lint:unused", "lint:workflows"],
       },
-      "lint:packages": {
-        cache: false,
-        command: 'echo "every packages lint check ran"',
-        dependsOn: ["lint:packages:oxlint", "lint:packages:workspace"],
-      },
       // The fixers write the same files, so they run in order: `&&` rather than `dependsOn`, which runs in parallel
       "lint:fix": {
         cache: false,
@@ -148,6 +143,11 @@ const configuration: UserConfig = defineConfig({
       "lint:fix:packages": {
         cache: false,
         command: "vp run lint:fix:packages:oxlint && vp run lint:fix:packages:workspace",
+      },
+      "lint:packages": {
+        cache: false,
+        command: 'echo "every packages lint check ran"',
+        dependsOn: ["lint:packages:oxlint", "lint:packages:workspace"],
       },
       typecheck: {
         cache: false,
