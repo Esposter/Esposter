@@ -8,11 +8,12 @@ import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
 import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
 import { readFleetEntries } from "#src/services/fleet/readFleetEntries";
 import { readMachineHeartbeats } from "#src/services/fleet/readMachineHeartbeats";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
 // `pnpm ai:fleet:status` — every machine's last sample, every claim's holder, age and state, and every unit waiting on a
 // Blocker, fetched fresh with the pruned refs gone (the throughput skill, `references/fleet.md`)
-await runMain(
+await runCommand(
   defineCommand({
     meta: {
       description: "Print every machine's last sample, every claim's holder, age and state, and every waiting unit",

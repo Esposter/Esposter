@@ -2,6 +2,9 @@ import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
 import { PUSHING_ENVIRONMENT_VARIABLE } from "#src/queue/push/constants";
 import { runQueuePush } from "#src/queue/push/runQueuePush";
 import { pushQueue } from "#src/services/queue/pushQueue";
+import { timeCommand } from "#src/services/timing/runCommand";
+
+timeCommand("ai:queue:push");
 
 // `pnpm ai:queue:push` — the session's side of the review queue's push, whatever state the shared checkout is in
 // (the review-queue skill). The post-commit hook and a manual call both come here, so one push runs at a time

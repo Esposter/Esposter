@@ -1,9 +1,10 @@
 import { checkAnimeStudioParity } from "#src/services/genshinAssets/shared/checkAnimeStudioParity";
 import { buildAnimeStudio } from "#src/services/recreation/animeStudio/buildAnimeStudio";
 import { TOOLS_DIRECTORY } from "#src/services/recreation/animeStudio/constants";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       directory: {

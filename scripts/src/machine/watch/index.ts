@@ -1,9 +1,10 @@
 import { watchMachine } from "#src/services/machine/watchMachine";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
 // `pnpm ai:machine:watch` — the machine's state, kept running by the genshin-mods pulse mod on Windows and macOS alike
 // (the throughput skill, `references/machine-efficiency.md`)
-await runMain(
+await runCommand(
   defineCommand({
     meta: {
       description:

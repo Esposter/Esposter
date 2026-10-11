@@ -1,11 +1,12 @@
 import { ClaimAttempt } from "#src/models/fleet/ClaimAttempt";
 import { claimFleetEntryHere } from "#src/services/fleet/claimFleetEntryHere";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
 // `pnpm ai:fleet:claim <id> [--worker <id>]` — takes an entry for this worker as a claim ref on origin. Exit 0 when won,
 // Exit 1 naming the holder when a live claim of another worker keeps it (the throughput skill, `references/fleet.md`)
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       id: { description: "The entry's id", required: true, type: "positional" },

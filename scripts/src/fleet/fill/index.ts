@@ -8,7 +8,8 @@ import { getFillTarget } from "#src/services/fleet/getFillTarget";
 import { readMachineProfile } from "#src/services/fleet/readMachineProfile";
 import { startFleetHold } from "#src/services/fleet/startFleetHold";
 import { readHoldFiles } from "#src/services/resume/readHoldFiles";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 import { cpus } from "node:os";
 
 // `pnpm ai:fleet:fill [--target <n>] [--kinds unit,cpu,page]` — keeps this machine's live claims at its target: it claims
@@ -16,7 +17,7 @@ import { cpus } from "node:os";
 // Agent. A kind with nothing takeable drops out of the turn, and the command prints "nothing ready" when it claimed
 // Nothing. `--target 0` claims nothing and prints the live count. The target and kinds are the arguments, else the
 // Profile's, else the logical cores capped at twenty and every kind (the throughput skill, `references/fleet.md`)
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       kinds: {

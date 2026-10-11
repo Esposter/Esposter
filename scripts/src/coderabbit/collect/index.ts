@@ -28,15 +28,16 @@ import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput"
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { GITHUB_OUTAGE_REGEX, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
+import { runCommand } from "#src/services/timing/runCommand";
 import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { defineCommand, runMain } from "citty";
+import { defineCommand } from "citty";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // `pnpm ai:coderabbit:collect [pr] [--dry-run]` — the arguments, the tree and the job output, which the
 // Pass cannot own itself
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       pullRequest: {

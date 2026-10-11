@@ -2,11 +2,12 @@ import { filesCommand } from "#src/fleet/data/filesCommand";
 import { manifestCommand } from "#src/fleet/data/manifestCommand";
 import { createTransferCommand } from "#src/fleet/data/transferCommand";
 import { TransferDirection } from "#src/models/fleet/data/TransferDirection";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
 // `pnpm ai:fleet:data` — the game data each machine of the fleet holds, copied over ssh on the local network only
 // (the throughput skill, `references/fleet.md`, "Game data crosses the local network only")
-await runMain(
+await runCommand(
   defineCommand({
     meta: {
       description: "Copy the game data between machines of the fleet over ssh on the local network",

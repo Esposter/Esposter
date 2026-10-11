@@ -1,12 +1,13 @@
+import { runCommand } from "#src/services/timing/runCommand";
 import { MILLISECONDS_PER_DAY } from "#src/services/usage/constants";
 import { formatTranscriptRows } from "#src/services/usage/formatTranscriptRows";
 import { formatUsageTotalRows } from "#src/services/usage/formatUsageTotalRows";
 import { readUsageTally } from "#src/services/usage/readUsageTally";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { defineCommand, runMain } from "citty";
+import { defineCommand } from "citty";
 
 // `pnpm ai:usage` — where Claude Code usage went over the last days, by bucket and family, then the heaviest transcripts
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       days: {

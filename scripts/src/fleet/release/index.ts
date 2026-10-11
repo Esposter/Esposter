@@ -2,12 +2,13 @@ import { missFleetEntry } from "#src/services/fleet/missFleetEntry";
 import { readRequiredMachineProfile } from "#src/services/fleet/readMachineProfile";
 import { releaseFleetEntry } from "#src/services/fleet/releaseFleetEntry";
 import { requireFleetWorker } from "#src/services/fleet/requireFleetWorker";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
 // `pnpm ai:fleet:release <id> [--miss "<text>"] [--worker <id>]` — deletes an entry's claim, or with a miss keeps it as the
 // Holder's final word, which the stale takeover never takes. Only the worker holding the claim may release it, and only
 // Its own hold stops (the throughput skill, `references/fleet.md`)
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       id: { description: "The entry's id", required: true, type: "positional" },

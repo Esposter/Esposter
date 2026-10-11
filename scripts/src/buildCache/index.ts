@@ -1,11 +1,12 @@
 import { runTsdown } from "#src/services/buildCache/runTsdown";
 import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 import { existsSync, realpathSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 // `node --conditions=source scripts/node_modules/tsx/dist/cli.mjs scripts/src/buildCache/index.ts <package directory>`,
-// run from the workspace root, brings the package's workspace dependencies up to date, then restores its `dist` from the
+// Run from the workspace root, brings the package's workspace dependencies up to date, then restores its `dist` from the
 // Cache when its inputs are unchanged, and otherwise builds and stores it (the build skill's cache rule). No shell is in
 // This path: the dev server and the shell wrapper both start it with node.
 // The packages every other package's tsdown config reads through their `dist` are built plainly once, when missing,
@@ -20,7 +21,7 @@ for (const bootstrapPackage of ["configuration", "shared"]) {
 
 const { buildPackageCached } = await import("#src/services/buildCache/buildPackageCached");
 
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       directory: {

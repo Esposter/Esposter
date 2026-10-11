@@ -1,4 +1,4 @@
 import { genshinAssetsCommand } from "#src/services/genshinAssets/commands/genshinAssetsCommand";
-import { runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
 
-await runMain(genshinAssetsCommand);
+await runCommand(genshinAssetsCommand);

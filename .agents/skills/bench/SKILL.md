@@ -33,6 +33,7 @@ A reporter writes each bench file's results to colocated `*.bench.{json,md}` you
 - **Bench the unit, not its wrapper**, over a scaling axis, one test per scale when shape varies too (`references/what-to-bench.md`).
 - **A workload measured in seconds is still a plain bench**, with an iteration override on the comparison, never a timing script (`references/what-to-bench.md`).
 - **Never answer Vitest's export-getter warning from the code** — the factory suppresses it (`references/what-to-bench.md`).
+- **A command's cost is measured by its own run history** (`~/.esposter/timings`, the `cli` skill's timed entry), so a change that adds I/O to a command states its before and after wall times in the commit body.
 
 ## Running
 

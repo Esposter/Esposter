@@ -10,12 +10,13 @@ import { readResumeRow } from "#src/services/resume/readResumeRow";
 import { readTreeItems } from "#src/services/resume/readTreeItems";
 import { readWatcherItems } from "#src/services/resume/readWatcherItems";
 import { readWorktreeItems } from "#src/services/resume/readWorktreeItems";
+import { runCommand } from "#src/services/timing/runCommand";
 import { getResult } from "@esposter/shared";
-import { defineCommand, runMain } from "citty";
+import { defineCommand } from "citty";
 
 // `pnpm ai:resume` — what this machine still owes, one row per check, each with its action (the resuming skill). The
 // Rows that spawn git or gh start first, so the synchronous fleet reads run while they are in flight
-await runMain(
+await runCommand(
   defineCommand({
     meta: {
       description: "Print this machine's leftovers, each with its action; exits 1 when any needs one",

@@ -1,15 +1,16 @@
 import { TriageLabel } from "#src/models/triage/TriageLabel";
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { runGh } from "#src/services/shared/runGh";
+import { runCommand } from "#src/services/timing/runCommand";
 import { readIssue } from "#src/services/triage/readIssue";
 import { readTriageLabel } from "#src/services/triage/readTriageLabel";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { defineCommand, runMain } from "citty";
+import { defineCommand } from "citty";
 
 // `pnpm ai:triage:label <issue> [--dry-run]` — which of the tracker's five roles an issue is in, read off the
 // Issue and applied. One label, never a second: an issue that already carries one has been triaged, by a person
 // Or by an earlier run, and a re-read would talk over whatever they decided.
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       issue: { description: "The issue to label", required: true, type: "positional" },

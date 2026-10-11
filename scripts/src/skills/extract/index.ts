@@ -5,11 +5,12 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { extractMoves } from "#src/services/skills/extract/extractMoves";
 import { indexPages } from "#src/services/skills/extract/indexPages";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       // Read relative to where the command runs, so the spec can live in a scratchpad

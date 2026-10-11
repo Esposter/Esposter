@@ -4,11 +4,12 @@ import { rewriteCitations } from "#src/services/citations/sync/rewriteCitations"
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       // The renames are read against `HEAD` by default, which is where a `git mv` shows; a base of `HEAD~1` reads a
