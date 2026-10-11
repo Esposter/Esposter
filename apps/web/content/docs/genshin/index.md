@@ -172,6 +172,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Fishing's points fitted by region, its fish, rods and pools read from the game's tables, and its rules for a stock's day and night and refill, a draw, a lure's reaction and the reel's tension, with nothing cast or on a screen yet.
 - Hosted game data, first phase: the character profiles and book bodies published to Blob storage by a keyless publisher and read on the Profile tab and in the book reader, so the package no longer bundles their generated JSON.
 - Hosted game data, second phase: every other bundled dataset published to Blob storage and read at the world's gate, taking the `genshin-world` dist from about 20 MB to about 2 MB.
+- The load budget: each screen's load steps measured and held to a budget by `genshin:parity load`, and the world's load cut to what its first frame reads, its ready on the production build more than halved.
 
 ## Key files
 
