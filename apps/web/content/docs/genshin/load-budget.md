@@ -13,6 +13,7 @@ Each screen of the game is held to a budget for what it loads before it shows. T
 - **Time to ready.** The milliseconds from navigation start to the moment the parity page signals the screen ready, read right after that signal.
 - **Requests.** Every request the page made, from resource timing, with its transferred bytes. The game data among them is the requests under the hosted game data's base, and their bytes are the game data bytes the budget holds.
 - **Renderer and objects.** The renderer's geometries, textures and programs, and the visible objects by kind, read once at ready the way the scene bench counts them. A screen with no scene at ready draws none, so its counts are zero.
+- **A crossing.** A screen with an entry in `ScreenCrossingMap` loads with its `fromProps` and, with `--crossing`, is moved once ready to its `toProps`, then read once the load step its entry names is measured after the move: the requests and game data from the move on, the tiles that step rebuilt (its measure's `detail.tileCount`), the milliseconds from the move to that measure's end, and the main thread's time in long animation frames from the move, which the parity page observes from its start. The world's crossing is into Liyue's reach, which Windrise's start never makes, since Mondstadt lays no ground: the camera held just outside the reach on the line from the oak toward Liyue, then moved 80 m to just inside it, past the region recheck's 64 m, so Liyue's data and ground arrive and the terrain rebuilds its tiles under the ground. The terrain measures that as `terrain-refresh`, from the ground's arrival until every tile round the eye is settled over it, with the tiles it asked for again while still holding them.
 
 ## Running it
 
@@ -20,9 +21,10 @@ Each screen of the game is held to a budget for what it loads before it shows. T
 pnpm -C scripts genshin:parity load WorldScreen        # 1920 by 1080, the default
 pnpm -C scripts genshin:parity load LoginScreen 1280 720
 pnpm -C scripts genshin:parity load WorldScreen --dev  # the dev server, not a build
+pnpm -C scripts genshin:parity load WorldScreen --crossing  # then the move into Liyue's reach
 ```
 
-The command measures a production build of the parity page by default. It builds the page into the genshin-world package's `parity-build` folder through the root `vite.config.ts`'s `build:parity` task, whose cache replays the build while nothing the page reads has changed, then serves the build with Vite's preview server on a free port and loads the screen there. With `--paused` the screen loads paused, as the app loads the world under its opening, drawing only the frames it asks for, so a step that waits on a frame nothing asks for shows as a load that never readies. With `--dev` it skips the build and serves the parity page with Vite's dev server on a free port instead, so the same measures can be read on the dev server (see the decision below). The production build is the default because it is what a reader's browser loads: the dev server serves every module unbundled and transformed as it is asked for, which no reader pays. The screen is a fixture on the parity page, opened cold in a fresh browser, so its cache is empty. The command prints one meter row per figure: the value, its budget, the share used as a bar, and OVER when past it, then the measures slowest first, then the requests and the objects by kind. It exits non-zero when a figure checked here is over its budget. Time is checked only on the machine the budget names (`os.hostname()`); on any other machine the time is printed beside its row and does not fail.
+The command measures a production build of the parity page by default. It builds the page into the genshin-world package's `parity-build` folder through the root `vite.config.ts`'s `build:parity` task, whose cache replays the build while nothing the page reads has changed, then serves the build with Vite's preview server on a free port and loads the screen there. With `--paused` the screen loads paused, as the app loads the world under its opening, drawing only the frames it asks for, so a step that waits on a frame nothing asks for shows as a load that never readies. With `--dev` it skips the build and serves the parity page with Vite's dev server on a free port instead, so the same measures can be read on the dev server (see the decision below). With `--crossing` it loads the screen from its crossing's props and, once ready, moves it and prints the crossing's block after the load's: its requests, game data and tiles rebuilt against the crossing's budget, the time it took to settle and its long frames, and the measures taken after the move. A paused screen streams nothing past its ready, so `--crossing` refuses `--paused`. The production build is the default because it is what a reader's browser loads: the dev server serves every module unbundled and transformed as it is asked for, which no reader pays. The screen is a fixture on the parity page, opened cold in a fresh browser, so its cache is empty. The command prints one meter row per figure: the value, its budget, the share used as a bar, and OVER when past it, then the measures slowest first, then the requests and the objects by kind. It exits non-zero when a figure checked here is over its budget. Time is checked only on the machine the budget names (`os.hostname()`); on any other machine the time is printed beside its row and does not fail.
 
 ## Reading the Timings track
 
@@ -43,7 +45,10 @@ flowchart LR
   STEP --> READY["the screen signals ready"]
   READY --> READ["parity page reads the measures,<br/>resource timing, renderer and scene counts"]
   READ --> METER["genshin:parity load screen<br/>each figure against its budget"]
-  METER -->|a count over, a time on its machine, or a failed step| FAIL["exit non-zero"]
+  READ -->|--crossing| MOVE["setScreenProps toProps<br/>wait for the settle step's measure"]
+  MOVE --> CROSS["benchLoad from the move<br/>requests, game data, tiles rebuilt, long frames"]
+  CROSS --> METER
+  METER -->|a count over, or a time on its machine| FAIL["exit non-zero"]
   METER -->|within| PASS["meter printed"]
 ```
 
@@ -87,6 +92,9 @@ flowchart LR
 | `packages/genshin-world/src/services/loading/constants.ts`               | `LOAD_STEP_MEASURE_PREFIX`, the one prefix the measures carry      |
 | `packages/genshin-world/src/components/World/Landmarks/Index.vue`        | Times each sync of the landmark colliders as `landmark-colliders`  |
 | `packages/genshin-world/parity/benchLoad.ts`                             | The parity page's read at ready: measures, requests, scene counts  |
+| `packages/genshin-world/src/components/World/Terrain/Index.vue`          | Measures each ground's refresh as `terrain-refresh`                |
+| `scripts/src/services/genshinParity/load/ScreenCrossingMap.ts`           | Each screen's crossing: the props it loads with and moves to       |
+| `scripts/src/services/genshinParity/page/crossScreen.ts`                 | Moves a ready screen and reads its crossing once it settles        |
 | `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`         | Each screen's budget, by screen name                               |
 | `scripts/src/services/genshinParity/commands/loadCommand.ts`             | The `load` command, beside `bench`                                 |
 | `scripts/src/services/genshinParity/load/buildParityPage.ts`             | Builds the parity page for production through `build:parity`       |

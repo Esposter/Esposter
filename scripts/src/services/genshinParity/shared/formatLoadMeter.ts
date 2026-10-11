@@ -1,5 +1,8 @@
+import type { CrossingBudget } from "#src/models/genshinParity/CrossingBudget";
 import type { LoadBudget } from "#src/models/genshinParity/LoadBudget";
+import type { CrossingReading } from "#src/models/genshinParity/page/CrossingReading";
 import type { LoadReading } from "#src/models/genshinParity/page/LoadReading";
+import type { LoadBench } from "genshin-world/parity/models/LoadBench";
 
 import { LoadFigureUnit } from "#src/models/genshinParity/page/LoadFigureUnit";
 
@@ -40,12 +43,54 @@ const formatRow = ({ budget, isChecked, name, unit, value }: Figure): { isOver: 
   };
 };
 
+// The measures the load steps took, slowest first, each with the tiles it rebuilt when it rebuilt any
+const formatMeasures = ({ measures }: LoadBench): string[] =>
+  measures
+    .toSorted((firstMeasure, secondMeasure) => secondMeasure.duration - firstMeasure.duration)
+    .map(
+      ({ duration, isFailed, name, tileCount }) =>
+        `  ${name.padEnd(24)} ${duration.toFixed(1)} ms${tileCount > 0 ? `, ${tileCount} tiles rebuilt` : ""}${isFailed ? " FAILED" : ""}`,
+    );
+
+// A crossing as the meter prints it: its counts against its budget, then the time from the move to its settling and
+// The main thread's time in long frames over it, which no budget holds, and the measures taken after the move
+const formatCrossing = (
+  { bench, settledMs }: CrossingReading,
+  budget: CrossingBudget | undefined,
+): { isOver: boolean; lines: string[] } => {
+  const tileCount = bench.measures.reduce((sum, { tileCount: measureTileCount }) => sum + measureTileCount, 0);
+  const rows = [
+    { budget: budget?.requests, isChecked: true, name: "requests", unit: LoadFigureUnit.Count, value: bench.requests },
+    {
+      budget: budget?.gameDataBytes,
+      isChecked: true,
+      name: "game data",
+      unit: LoadFigureUnit.Kilobytes,
+      value: bench.gameDataBytes,
+    },
+    { budget: budget?.tileCount, isChecked: true, name: "tiles rebuilt", unit: LoadFigureUnit.Count, value: tileCount },
+  ].map((figure) => formatRow(figure));
+  return {
+    isOver: rows.some(({ isOver }) => isOver),
+    lines: [
+      "crossing, from the move to its settling:",
+      ...rows.map(({ line }) => line),
+      `${"settled".padEnd(16)}${formatFigure(settledMs, LoadFigureUnit.Milliseconds).padStart(12)}`,
+      `${"long frames".padEnd(16)}${formatFigure(bench.longFrameMs, LoadFigureUnit.Milliseconds).padStart(12)}`,
+      "",
+      "crossing measures, slowest first:",
+      ...formatMeasures(bench),
+      "",
+      `crossing requests ${bench.requests}, of which game data ${bench.gameDataRequests}; total ${formatFigure(bench.totalBytes, LoadFigureUnit.Kilobytes)}`,
+    ],
+  };
+};
+
 // A screen's load as the meter prints it: one row per figure against its budget, then the measures the load steps took,
-// Slowest first, and what the requests fetched and the scene drew. `isFailed` is whether a figure checked here is past
-// Its budget or a load step failed, either of which fails the command: a screen ready after a failed step loaded only
-// Part of itself, so its figures can sit well within budget
+// Slowest first, and what the requests fetched and the scene drew, then its crossing when one was measured. `isOver` is
+// Whether a figure checked here is past its budget, which fails the command
 export const formatLoadMeter = (
-  { bench, readyMs }: LoadReading,
+  { bench, crossing, readyMs }: LoadReading,
   budget: LoadBudget | undefined,
   machine: string,
 ): { isFailed: boolean; lines: string[] } => {
@@ -79,25 +124,22 @@ export const formatLoadMeter = (
     { budget: budget?.programs, isChecked: true, name: "programs", unit: LoadFigureUnit.Count, value: bench.programs },
   ];
   const rows = figures.map((figure) => formatRow(figure));
-  const measures = bench.measures
-    .toSorted((firstMeasure, secondMeasure) => secondMeasure.duration - firstMeasure.duration)
-    .map(
-      ({ duration, isFailed, name }) => `  ${name.padEnd(24)} ${duration.toFixed(1)} ms${isFailed ? " FAILED" : ""}`,
-    );
+  const crossingMeter = crossing ? formatCrossing(crossing, budget?.crossing) : { isOver: false, lines: [] };
   const kinds = Object.entries(bench.kindCounts)
     .toSorted(([, first], [, second]) => second - first)
     .map(([kind, count]) => `${count} ${kind}`)
     .join(", ");
   return {
-    isFailed: rows.some(({ isOver }) => isOver) || bench.measures.some(({ isFailed }) => isFailed),
+    isOver: rows.some(({ isOver }) => isOver) || crossingMeter.isOver,
     lines: [
       ...rows.map(({ line }) => line),
       "",
       "measures, slowest first:",
-      ...measures,
+      ...formatMeasures(bench),
       "",
       `requests ${bench.requests}, of which game data ${bench.gameDataRequests}; total ${formatFigure(bench.totalBytes, LoadFigureUnit.Kilobytes)}`,
       `objects by kind: ${kinds || "none"}`,
+      ...(crossing ? ["", ...crossingMeter.lines] : []),
     ],
   };
 };

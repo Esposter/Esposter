@@ -21,6 +21,7 @@ import {
   TERRAIN_WORKER_COUNT,
   TILE_SELECTION_CAPACITY,
 } from "#src/services/constants";
+import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { createFrustumSetter } from "#src/services/world/createFrustumSetter";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -104,8 +105,9 @@ const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => {
   return worker;
 });
 let requestCount = 0;
-// The worker each generating tile was asked of, so a worker's error fails only its own tiles
-const requestWorkerMap = new Map<number, Worker>();
+// The tiles asked for again while the streamer still held them, each built over a ground that arrived under it since,
+// Counted from the start of the latest refresh
+let rebuiltTileCount = 0;
 // The rings past the shadows' reach are one mesh a level, made as the level's first tile arrives: a far tile is written
 // Into its level's ring as it arrives and freed from it as it leaves, so the frame never rebuilds a ring, and the
 // Streamer holds the far tile by its key alone. Beside each ring, the tiles the view draws in it this frame
@@ -139,6 +141,7 @@ const tileStreamer = createTileStreamer<Mesh | number>({
   maxCachedCount: TILE_SELECTION_CAPACITY,
   maxPendingCount: MAX_PENDING_TILE_COUNT,
   requestTile: (key) => {
+    if (tileStreamer.has(key)) rebuiltTileCount++;
     const message: TerrainWorkerMessage = {
       kind: TerrainWorkerMessageKind.Tile,
       request: { cellsPerSide, finestTileSize, key },
@@ -151,6 +154,9 @@ const tileStreamer = createTileStreamer<Mesh | number>({
     worker.postMessage(message);
   },
 });
+// When the latest refresh began, until every tile round the eye is settled over its ground, measured then as the load
+// Step `terrain-refresh` with the tiles it rebuilt. A ground arriving while one is under way extends it
+let refreshStart: number | undefined;
 // A region's ground arrives after the tiles over it may have been built, so each worker is sent the grounds so far ahead
 // Of any tile asked of it after, and every tile held or generating is asked for again over them, each held one drawn
 // Until its replacement arrives
@@ -161,6 +167,9 @@ watch(
     // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
     for (const worker of workers) worker.postMessage(message);
     tileStreamer.refresh();
+    if (refreshStart !== undefined) return;
+    refreshStart = performance.now();
+    rebuiltTileCount = 0;
   },
 );
 // A tile that cannot be built is released, so it is asked for again or given up, and the world is not held on it
@@ -252,6 +261,8 @@ for (const worker of workers) {
 }
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
+const checkIsSelectionSettled = ({ count, keys }: TerrainSelection): boolean =>
+  keys.subarray(0, count).every((key) => tileStreamer.isSettled(key));
 // The first frame waits only on the finest tiles it wants, since the coarser rings keep streaming after ready
 const checkIsFirstFrameSettled = (key: number): boolean =>
   getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || tileStreamer.isSettled(key);
@@ -305,6 +316,13 @@ onBeforeRender(() => {
   for (const [level, ring] of ringMap) ring.draw(ringDrawnKeysMap.get(level) ?? []);
   shown.keys.set(draws.keys.subarray(0, draws.count));
   shown.count = draws.count;
+  if (refreshStart !== undefined && checkIsSelectionSettled(wanted) && checkIsSelectionSettled(surrounding)) {
+    performance.measure(`${LOAD_STEP_MEASURE_PREFIX}terrain-refresh`, {
+      detail: { tileCount: rebuiltTileCount },
+      start: refreshStart,
+    });
+    refreshStart = undefined;
+  }
   if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => checkIsFirstFrameSettled(key))) return;
   isReady = true;
   resolveTerrainReady();

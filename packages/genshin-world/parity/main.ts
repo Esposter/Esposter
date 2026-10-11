@@ -40,9 +40,9 @@ import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
 // Place of its own parts, from the layout the shooting browser serves there, claimed by the fixture's
-// `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks, or else by the fixture's own
-// Claims. A tool sets the screen's props as it runs, to play a motion at known moments, benches a scene's frames, and
-// Renders a segment of the login's music to score it
+// `witnessComponents` entry `&witnessComponent=<name>` names, or else by the fixture's own claims. A tool sets the
+// Screen's props as it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on,
+// And renders a segment of the Login's music to score it
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
@@ -59,6 +59,12 @@ window.addEventListener("unhandledrejection", ({ reason }) => {
 // A surface's statistics, reduced on the GPU for the host, which hands each array over as base64 and keeps the rest
 Reflect.set(window, "computeSurfaceStatistics", computeSurfaceStatisticsFromBase64);
 Reflect.set(window, "computeLabelSimilarity", computeLabelSimilarityFromBase64);
+// The page's long frames from its start, which the load bench reads the main thread's time held by
+const longFrames: PerformanceEntry[] = [];
+if (PerformanceObserver.supportedEntryTypes.includes("long-animation-frame"))
+  new PerformanceObserver((list) => {
+    longFrames.push(...list.getEntries());
+  }).observe({ buffered: true, type: "long-animation-frame" });
 const searchParameters = new URLSearchParams(window.location.search);
 const name = searchParameters.get("screen");
 const motion = searchParameters.get("motion");
@@ -119,6 +125,7 @@ if (screen && root) {
   app.mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
+  Reflect.set(window, "benchLoad", (since = 0) => benchLoad(sceneContext.value, longFrames, since));
   Reflect.set(window, "getSceneCamera", () => getSceneCamera(sceneContext.value));
   Reflect.set(window, "getSceneSky", () => getSceneSky(sceneContext.value));
   Reflect.set(window, "getSceneFog", () => getSceneFog(sceneContext.value));
