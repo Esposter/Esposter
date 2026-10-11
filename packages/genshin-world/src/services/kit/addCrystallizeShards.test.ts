@@ -14,8 +14,8 @@ import {
   CRYSTALLIZE_SHARD_SECONDS,
 } from "#src/services/combat/shield/constants";
 import { getCrystallizeShieldHealth } from "#src/services/combat/shield/getCrystallizeShieldHealth";
-import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { ENEMY_CAPSULE_RADIUS, ENEMY_DROP_OFFSET } from "#src/services/enemy/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";

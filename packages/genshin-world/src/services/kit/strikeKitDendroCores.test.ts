@@ -86,7 +86,7 @@ describe(strikeKitDendroCores, () => {
       createCore(1),
       { ...createStrike(Element.Electro, 1), target: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "") },
     ],
-  ])("leaves %s as it is", (_, core, strike) => {
+  ])("leaves %s as it is", (_description, core, strike) => {
     expect.hasAssertions();
 
     const { secondsRemaining } = core;

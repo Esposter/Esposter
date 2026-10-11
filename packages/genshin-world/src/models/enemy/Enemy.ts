@@ -14,11 +14,11 @@ import type { GroundPoint } from "genshin-engine";
 // Reactions keep on it, beside the ones each reaction keeps whatever its source, and the seconds since it was last hit
 export interface Enemy {
   attackCooldownSeconds: number;
-  campId: string;
-  droppedThresholdCount: number;
   // The combatant whose Pyro or Dendro last lit or fed its Burning, as its hit priced it, which the Burning ticks are
   // Priced from, none until one has
   burningCombatant?: Combatant;
+  campId: string;
+  droppedThresholdCount: number;
   // The combatant whose Electro or Hydro last left it Electro-Charged, as its hit priced it, which the ticks are priced
   // From, none until one has
   electroChargedCombatant?: Combatant;

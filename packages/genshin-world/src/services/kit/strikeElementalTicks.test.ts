@@ -112,7 +112,7 @@ describe(strikeElementalTicks, () => {
   test.each<[string, Reaction]>([
     ["an Electro-Charged tick", ELECTRO_CHARGED_TICK],
     ["a Burning tick", BURNING_TICK],
-  ])("deals nothing for %s no combatant owns, emptying the queue", (_, tick) => {
+  ])("deals nothing for %s no combatant owns, emptying the queue", (_description, tick) => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy(0);

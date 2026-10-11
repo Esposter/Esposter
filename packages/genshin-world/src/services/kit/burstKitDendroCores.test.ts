@@ -97,7 +97,7 @@ describe(burstKitDendroCores, () => {
       },
     ],
     ["stands out of the deployed team", BENCHED_CHARACTER_ID, noop],
-  ])("bursts a Bloom's core on nothing while its character %s", (_, characterId, changeParty) => {
+  ])("bursts a Bloom's core on nothing while its character %s", (_description, characterId, changeParty) => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy(1);

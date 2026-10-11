@@ -1,6 +1,6 @@
-import type { Element } from "#src/models/Element";
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
+import type { Element } from "#src/models/Element";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { Combatant } from "#src/models/kit/Combatant";

@@ -45,11 +45,10 @@ export const landReactionReach = (
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
   // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
-  const reachedEnemies = [...enemies]
-    .map((enemy) => ({
-      distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
-      enemy,
-    }))
+  const reachedEnemies = Array.from(enemies, (enemy) => ({
+    distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
+    enemy,
+  }))
     .filter(
       ({ distance, enemy }) =>
         enemy !== origin &&
@@ -57,7 +56,7 @@ export const landReactionReach = (
         distance <= radius + ENEMY_CAPSULE_RADIUS &&
         (reactionType !== TransformativeReactionType.ElectroCharged || enemy.elementalState.auras.has(AuraType.Hydro)),
     )
-    .toSorted((a, b) => a.distance - b.distance)
+    .toSorted((firstReached, secondReached) => firstReached.distance - secondReached.distance)
     .slice(0, reactionType === TransformativeReactionType.ElectroCharged ? 1 : undefined);
   for (const { enemy } of reachedEnemies) {
     const { elementalState, internalCooldownMap } = enemy;

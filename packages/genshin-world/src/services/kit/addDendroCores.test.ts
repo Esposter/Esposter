@@ -13,8 +13,8 @@ import {
   DENDRO_CORE_LIFETIME_SECONDS,
   MAX_DENDRO_CORE_COUNT,
 } from "#src/services/combat/dendroCore/constants";
-import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { ENEMY_CAPSULE_RADIUS, ENEMY_DROP_OFFSET } from "#src/services/enemy/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { addDendroCores } from "#src/services/kit/addDendroCores";

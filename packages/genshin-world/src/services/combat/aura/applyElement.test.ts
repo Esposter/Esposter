@@ -257,7 +257,7 @@ describe(applyElement, () => {
       ]);
 
       expect(applyElement(state, Element.Electro, 4)).toStrictEqual(reactions);
-      expect(state.auras).toStrictEqual(new Map([[AuraType.Cryo, cryo], aura]));
+      expect(state.auras).toStrictEqual(new Map([aura, [AuraType.Cryo, cryo]]));
     },
   );
 

@@ -1,7 +1,5 @@
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { EnemyTables } from "#src/models/enemy/EnemyTables";
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
