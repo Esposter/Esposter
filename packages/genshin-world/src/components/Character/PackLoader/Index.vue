@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { CharacterPack } from "#src/models/character/CharacterPack";
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
+import type { PickedCharacterPack } from "#src/models/character/PickedCharacterPack";
 
 import CharacterTerms from "#src/components/Character/Terms/Index.vue";
 import { readCharacterIdNamesMap } from "#src/services/character/readCharacterIdNamesMap";
-import { readCharacterPackFolder } from "#src/services/character/readCharacterPackFolder";
+import { readCharacterPackFolders } from "#src/services/character/readCharacterPackFolders";
 import { readCharacterPackZip } from "#src/services/character/readCharacterPackZip";
-import { readPickedCharacterPack } from "#src/services/character/readPickedCharacterPack";
-import { getResultAsync, noop, takeOne } from "@esposter/shared";
+import { readPickedCharacterPacks } from "#src/services/character/readPickedCharacterPacks";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
   // The character the screen shows, whom a picked release is kept for unless its names say whose it is
@@ -34,37 +35,54 @@ const isConfirmingRemoval = ref(false);
 // The key of the reader whose terms are open, so they close once the character's pack changes or goes
 const termsCharacterPackReaderKey = ref("");
 const isPending = ref(false);
-const errorMessage = ref("");
-// The release read and waiting on its terms, which nothing keeps until the player accepts them
-const characterPack = shallowRef<CharacterPack>();
-// A release the player picked, read in the page into the pack it would keep: a zip's archive, or every file of a folder.
-// Nothing of it leaves the browser; only the characters' names are fetched, from the game's published data
-const pickCharacterPack = (input: HTMLInputElement | null) => {
+// The reasons the releases picked were skipped, each naming its release
+const errorMessages = ref<string[]>([]);
+// The releases read and waiting on their terms, which nothing keeps until the player accepts them
+const characterPacks = shallowRef<CharacterPack[]>();
+// The releases the player picked, read in the page into the packs they would keep: each zip's archive, or the files of a
+// Folder, which is one release or a folder of them. Nothing of them leaves the browser; only the characters' names are
+// Fetched, from the game's published data
+const pickCharacterPacks = (input: HTMLInputElement | null) => {
   const files = [...(input?.files ?? [])];
   if (!input || files.length === 0) return;
   isChoosing.value = false;
   isPending.value = true;
-  errorMessage.value = "";
+  errorMessages.value = [];
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
   getResultAsync(async () => {
-    const pickedCharacterPack = input.webkitdirectory
-      ? readCharacterPackFolder(files)
-      : readCharacterPackZip(takeOne(files).name, new Uint8Array(await takeOne(files).arrayBuffer()));
+    const pickedCharacterPacks: PickedCharacterPack[] = input.webkitdirectory
+      ? readCharacterPackFolders(files)
+      : await Promise.all(
+          files.map(async (file) => readCharacterPackZip(file.name, new Uint8Array(await file.arrayBuffer()))),
+        );
     const characterIdNamesMap = await readCharacterIdNamesMap(gameDataBaseUrl);
-    return readPickedCharacterPack(pickedCharacterPack, characterIdNamesMap, characterId);
+    return readPickedCharacterPacks(pickedCharacterPacks, characterIdNamesMap, characterId);
   }).match(
-    (newCharacterPack) => {
+    ({ characterPacks: newCharacterPacks, failures }) => {
       isPending.value = false;
-      characterPack.value = newCharacterPack;
+      errorMessages.value = failures;
+      if (newCharacterPacks.length > 0) characterPacks.value = newCharacterPacks;
     },
     (error) => {
       console.error(error);
       isPending.value = false;
-      errorMessage.value = error.message;
+      errorMessages.value = [error.message];
     },
   );
   // A second pick of the same file is still a change
   input.value = "";
+};
+// Kept one at a time, since each keep rewrites the browser's index of the packs it keeps
+const acceptCharacterPacks = async () => {
+  const acceptedCharacterPacks = characterPacks.value ?? [];
+  characterPacks.value = undefined;
+  errorMessages.value = [];
+  for (const acceptedCharacterPack of acceptedCharacterPacks)
+    // oxlint-disable-next-line no-await-in-loop -- each keep rewrites the index the next one reads, so the keeps run in turn
+    await getResultAsync(() => keepCharacterPack(acceptedCharacterPack)).match(noop, (error) => {
+      console.error(error);
+      errorMessages.value = [...errorMessages.value, error.message];
+    });
 };
 
 // The folder's input picks a whole folder, a property every browser has but the HTML standard does not name
@@ -76,30 +94,20 @@ onMounted(() => {
 <template>
   <!-- Our own interface over the character screen, not the game's: the official model loaded from the release the player
        Downloaded, its terms shown verbatim and accepted before it is kept, and a kept model removed once confirmed -->
-  <div v-if="characterPack" class="terms" role="dialog" aria-modal="true" aria-labelledby="character-pack-terms-title">
-    <p id="character-pack-terms-title">The terms of {{ characterPack.modelName }}, as its release ships them</p>
-    <p v-if="characterPack.characterId !== characterId">Its names are another character's, so it is kept for them.</p>
-    <pre>{{ characterPack.terms }}</pre>
+  <div v-if="characterPacks" class="terms" role="dialog" aria-modal="true" aria-labelledby="character-pack-terms-title">
+    <p id="character-pack-terms-title">The terms of the models picked, as their releases ship them</p>
+    <div class="releases">
+      <template v-for="characterPack in characterPacks" :key="characterPack.packHash">
+        <p>The terms of {{ characterPack.modelName }}, as its release ships them</p>
+        <p v-if="characterPack.characterId !== characterId">
+          Its names are another character's, so it is kept for them.
+        </p>
+        <pre>{{ characterPack.terms }}</pre>
+      </template>
+    </div>
     <div class="actions">
-      <button
-        type="button"
-        @click="
-          async () => {
-            if (!characterPack) return;
-
-            const acceptedCharacterPack = characterPack;
-            characterPack = undefined;
-            errorMessage = '';
-            await getResultAsync(() => keepCharacterPack(acceptedCharacterPack)).match(noop, (error) => {
-              console.error(error);
-              errorMessage = error.message;
-            });
-          }
-        "
-      >
-        Accept the terms and keep the model
-      </button>
-      <button type="button" @click="characterPack = undefined">Cancel</button>
+      <button type="button" @click="acceptCharacterPacks()">Accept the terms and keep the models</button>
+      <button type="button" @click="characterPacks = undefined">Cancel</button>
     </div>
   </div>
   <!-- The terms bundled with the model the character is drawn from, the credit the release carries, read as it ships
@@ -118,11 +126,11 @@ onMounted(() => {
     </div>
   </div>
   <div class="loader">
-    <p v-if="isPending">Reading the release…</p>
-    <p v-else-if="errorMessage" role="alert">{{ errorMessage }}</p>
+    <p v-if="isPending">Reading the releases…</p>
+    <p v-for="errorMessage in errorMessages" :key="errorMessage" role="alert">{{ errorMessage }}</p>
     <template v-if="isChoosing">
-      <button type="button" @click="zipInput?.click()">The downloaded .zip</button>
-      <button type="button" @click="folderInput?.click()">Its extracted folder</button>
+      <button type="button" @click="zipInput?.click()">The downloaded .zips</button>
+      <button type="button" @click="folderInput?.click()">Their extracted folder</button>
       <button type="button" @click="isChoosing = false">Cancel</button>
     </template>
     <template v-else-if="isConfirmingRemoval">
@@ -152,17 +160,18 @@ onMounted(() => {
     <input
       ref="zipInput"
       accept=".zip,application/zip"
-      aria-label="The release's .zip"
+      aria-label="The releases' .zip files"
       hidden
+      multiple
       type="file"
-      @change="pickCharacterPack(zipInput)"
+      @change="pickCharacterPacks(zipInput)"
     />
     <input
       ref="folderInput"
-      aria-label="The release's extracted folder"
+      aria-label="The releases' extracted folder"
       hidden
       type="file"
-      @change="pickCharacterPack(folderInput)"
+      @change="pickCharacterPacks(folderInput)"
     />
   </div>
 </template>
@@ -219,6 +228,13 @@ button {
 .terms p {
   margin: 0;
   font-weight: 600;
+}
+
+.releases {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--unit) * 20);
+  overflow: auto;
 }
 
 .terms pre {

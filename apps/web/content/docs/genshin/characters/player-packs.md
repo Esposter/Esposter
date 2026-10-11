@@ -12,9 +12,9 @@ The layout the release is read into is the one [the characters index](/docs/gens
 ```mermaid
 flowchart TD
   OPEN["the character screen, its character drawn as its capsule"] --> PICK{"Load this character's official model"}
-  PICK -->|"the downloaded .zip"| ZIP["readCharacterPackZip: entry names decoded"]
-  PICK -->|"its extracted folder"| FOLDER["readCharacterPackFolder: each file by its path from the folder"]
-  ZIP --> READ["readPickedCharacterPack, in the page"]
+  PICK -->|"the downloaded .zips"| ZIP["readCharacterPackZip: entry names decoded, one release per zip"]
+  PICK -->|"their extracted folder"| FOLDER["readCharacterPackFolders: one release, or one per folder holding a model"]
+  ZIP --> READ["readPickedCharacterPacks: each release read in the page, a failing one skipped and named"]
   FOLDER --> READ
   NAMES["readCharacterIdNamesMap: every character's names in Chinese, English and Japanese"] --> READ
   READ --> WHO["identifyCharacterPack: by the models' or folders' names"]
@@ -30,8 +30,9 @@ flowchart TD
 
 ## Picking and reading the release
 
-- **The loader.** `CharacterPackLoader` fills the character screen's slot. Where the character it shows is drawn as its capsule, it offers to load the character's official model, from the downloaded zip or its extracted folder. Where the browser keeps a pack for the character, it offers to remove it. Where the character is drawn from a pack, the browser's or the development server's, it offers the terms bundled with the model, which `CharacterTerms` reads through the character's `CharacterPackReader` and shows verbatim, or says could not be loaded.
+- **The loader.** `CharacterPackLoader` fills the character screen's slot. Where the character it shows is drawn as its capsule, it offers to load the character's official model, from the downloaded zips or their extracted folder. Where the browser keeps a pack for the character, it offers to remove it. Where the character is drawn from a pack, the browser's or the development server's, it offers the terms bundled with the model, which `CharacterTerms` reads through the character's `CharacterPackReader` and shows verbatim, or says could not be loaded.
 - **A zip is read in the page.** `readCharacterPackZip` lists a zip's entries with fflate without inflating any, and inflates only the files a read asks for. fflate reads a name the archive leaves unflagged as UTF-8 as Latin-1, a letter a byte, so `decodeCharacterPackEntryNames` reads those names back to their bytes and decodes them together, by the rule the terms are decoded by: strictly as UTF-8, else Shift-JIS where they read as Japanese, else GBK. The releases mix names flagged as UTF-8 with Shift-JIS ones, as Ningguang's and Klee's do, or GBK ones, as Zhongli's and Tartaglia's do. Ningguang's, Klee's and Chongyun's archivers also wrote the 0x5C trail byte of "表" in "表情" as a slash, so where the names read in no encoding they are read again with the slash after each Shift-JIS lead byte restored to a backslash. The resource forks macOS's archiver adds under `__MACOSX` are passed over.
+- **Many releases in one pick.** The loader takes every zip picked at once, or a folder holding several releases, each folder holding a model being one. Every release is read into its pack, and the ones that fail are named and skipped, so one that matches no character or lacks its model never stops the rest. The terms of all the packs read are shown in one dialog, which keeps them together on acceptance, one at a time, since each keep rewrites the index the next one reads.
 - **A RAR is read from its extracted folder.** Lumine's release of 2020 ships as RAR5, which nothing in the page decodes, so the player extracts it and picks the folder, which the browser hands over with each file's path from it.
 - **Whose release it is.** `identifyCharacterPack` matches the models' own names, else the folders' names, to every character's names in the languages the releases use, as `chooseCharacterPackModel` matches a model's name. A release matching another character is kept for that character, which the terms' dialog says. One matching none, as the Traveler's "女主角" and folder "荧" match no name of hers, or several, is kept for the character it was picked for.
 - **The terms before anything is kept.** The terms are shown verbatim with the model's name, and the release is kept only once the player accepts them. Cancelling keeps nothing.
@@ -81,7 +82,8 @@ An index that cannot be read or no longer parses is logged and rebuilt from the 
 | `packages/genshin-world/src/services/character/listStoredCharacterPacks.ts`            | The packs a storage holds by its folders alone, which a lost index is rebuilt from                                                 |
 | `packages/genshin-world/src/services/character/readCharacterPackZip.ts`                | A release's zip read in the page, its entries inflated only when asked for                                                         |
 | `packages/genshin-world/src/services/character/decodeCharacterPackEntryNames.ts`       | A zip's entry names decoded as the release wrote them                                                                              |
-| `packages/genshin-world/src/services/character/readCharacterPackFolder.ts`             | An extracted release's folder, each file by its path from it                                                                       |
+| `packages/genshin-world/src/services/character/readCharacterPackFolders.ts`            | An extracted folder read as one release, or one per folder of a folder of releases                                                 |
+| `packages/genshin-world/src/services/character/readPickedCharacterPacks.ts`            | Every release picked read into its pack, a failing one named and skipped                                                           |
 | `packages/genshin-world/src/services/character/readPickedCharacterPack.ts`             | A picked release read into the pack layout, hashed, with its terms as text                                                         |
 | `packages/genshin-world/src/services/character/identifyCharacterPack.ts`               | The character a release is of, by its models' and folders' names                                                                   |
 | `packages/genshin-world/src/services/character/readCharacterIdNamesMap.ts`             | Every character's names in the languages the releases use                                                                          |
