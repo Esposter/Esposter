@@ -1,12 +1,11 @@
 import { pgTable } from "#src/pgTable";
-import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { roomsInMessage } from "#src/schema/message/roomsInMessage";
+import { roomUserColumns } from "#src/schema/message/roomUserColumns";
 import { INVITE_ID_LENGTH, INVITE_ID_REGEX } from "#src/services/message/invite/constants";
 import { createExactLengthCheckSql } from "#src/services/shared/createExactLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { sql } from "drizzle-orm";
-import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { check, integer, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const invitesInMessage = pgTable(
@@ -17,12 +16,7 @@ export const invitesInMessage = pgTable(
     id: text().primaryKey(),
     // 0 = unlimited uses — the numeric empty sentinel, stored as-is so it propagates end-to-end
     maxUses: integer().notNull().default(0),
-    roomId: uuid()
-      .notNull()
-      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    userId: text()
-      .notNull()
-      .references(() => usersInAuth.id, { onDelete: "cascade" }),
+    ...roomUserColumns,
     uses: integer().notNull().default(0),
   },
   {

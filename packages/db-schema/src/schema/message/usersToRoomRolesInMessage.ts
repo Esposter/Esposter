@@ -1,10 +1,9 @@
 import { pgTable } from "#src/pgTable";
-import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
-import { roomsInMessage } from "#src/schema/message/roomsInMessage";
+import { roomUserColumns } from "#src/schema/message/roomUserColumns";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
-import { foreignKey, index, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { foreignKey, index, primaryKey, uuid } from "drizzle-orm/pg-core";
 
 export const usersToRoomRolesInMessage = pgTable(
   "usersToRoomRoles",
@@ -12,12 +11,7 @@ export const usersToRoomRolesInMessage = pgTable(
     roleId: uuid()
       .notNull()
       .references(() => roomRolesInMessage.id, { onDelete: "cascade" }),
-    roomId: uuid()
-      .notNull()
-      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    userId: text()
-      .notNull()
-      .references(() => usersInAuth.id, { onDelete: "cascade" }),
+    ...roomUserColumns,
   },
   {
     extraConfig: ({ roleId, roomId, userId }) => [
