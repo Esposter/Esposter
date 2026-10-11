@@ -16,7 +16,7 @@ Gaming's kit is one module, `createGamingKit`, avatar 10000092: four strikes, a 
 
 ## Decisions
 
-- **The charged attack is provisional.** gcsim gives Gaming no charged attack, as its charge is not implemented, so the charged attack takes Ayato's measured claymore charge's frames and reach, and the table's index 5 and 6 for its multiplier and stamina, as a best estimate until a recording of the attack settles them.
+- **The charged attack is provisional.** gcsim gives Gaming no charged attack, as its charge is not implemented, so the charged attack takes Ayato's measured claymore charge's frames and reach, the strike landing at 24 frames of a 55-frame animation, and the table's index 5 (113.09% of ATK) and 6 (40 stamina) for its multiplier and stamina, as a best estimate until a recording of the attack settles them.
 - **Bestial Ascent strikes nothing of its own.** gcsim's skill has no hit: its damage is the special plunge that follows it, which is not built, so the skill's animation and cooldown are the kit's and its hits are none.
 - **The burst's strike is one circle of radius 5 round the body**, at 60 frames, as gcsim queues it. The burst's status, its Man Chai and its heal are not built, so the burst's cooldown and energy cost are the whole of its state.
 

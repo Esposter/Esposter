@@ -11,7 +11,7 @@ The visual suite holds approved screens to their own last images. It says nothin
 
 ## Decisions
 
-- **The screens' images are approved by eye, each untracked until then.** The screen passes wrote them, each a screen's current build and not its target, as the `Index.win32.png` in its component's folder, approved with `test:visual -u`: `packages/genshin-interface/src/components/CharacterMenu`, `packages/genshin-interface/src/components/InventoryScreen` (with `Index-materials.win32.png` beside it), `packages/genshin-world/src/components/Character/Screen`, `packages/genshin-world/src/components/Inventory/Screen`, `packages/genshin-world/src/components/Menu/Exit`, `Menu/Paimon` and `Menu/Settings`, and `packages/genshin-world/src/components/Menu/WorldLevelDialog` (with `Index-lowered.win32.png` beside it).
+- **The screens' images the passes wrote wait on their compare.** The screen passes wrote them, each a screen's current build and not its target, as the `Index.win32.png` in its component's folder, written by `genshin:parity approve` once its compare clears the bar, which runs the suite's `-u` for that screen alone: `packages/genshin-interface/src/components/CharacterMenu`, `packages/genshin-interface/src/components/InventoryScreen` (with `Index-materials.win32.png` beside it), `packages/genshin-world/src/components/Character/Screen`, `packages/genshin-world/src/components/Inventory/Screen`, `packages/genshin-world/src/components/Menu/Exit`, `Menu/Paimon` and `Menu/Settings`, and `packages/genshin-world/src/components/Menu/WorldLevelDialog` (with `Index-lowered.win32.png` beside it).
 
 ## Key files
 

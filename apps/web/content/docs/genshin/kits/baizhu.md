@@ -9,6 +9,10 @@ Baizhu's kit is one module, `createBaizhuKit`, on avatar 10000082: four strikes,
 
 Not built yet: Universal Diagnosis's bounces to the next nearby enemy and its heal at the chain's end, which need a hit that picks each bounce's target; the Seamless Shield's heals on each recast and on its removal, which the recast field's tick and the shield's `EffectExpired` can give the active character through `changeKitMemberHealth`; his first constellation's extra charge of the skill, and Constellations 2 to 6; and his Ascension passives, which read the active character's HP and the reactions the team deals.
 
+## Decisions
+
+- **Baizhu's plunges take Bennett's timings and poise.** His gcsim folder has no plunge file, so his collision, low and high plunge land at Bennett's frames (30, 36 and 38 frames for the collision and the hits, 100 and 150 poise) with his own multipliers, as `baizhuKit.ts` writes them; his animation showing otherwise would move them.
+
 ## Key files
 
 | File                                                              | Role                                                                                                                                                |

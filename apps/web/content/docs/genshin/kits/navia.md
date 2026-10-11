@@ -24,6 +24,7 @@ Navia's kit is one module, `createNaviaKit`, on avatar 10000091: four strikes, a
 
 - **Crystal Shrapnel is a status on Navia that her burst's hits gain and her shot spends.** The cannon's ticks are one summon with every shot placed at its tick, since the framework's field ticks on one fixed interval and gcsim's ticks alternate between 42 and 48 frames. Each shot consumes the Shrapnel at its start, as gcsim spends it at the shot's firing.
 - **The Crystal Shrapnel lasts the 300 seconds the skill table gives**, and a gain restarts it.
+- **Navia's charged attack is provisional.** gcsim gives her none, so `naviaKit.ts` takes Razor's charge timing: two hits at half a second and a second with the table's index 4 and 5, ending at 1.2 seconds, in a circle of 2.5 metres round her, her first strike's reach. A recording's hitmarks, length or reach would replace them.
 
 ## Key files
 
