@@ -1,15 +1,10 @@
-import type { BaseAgentEvent } from "#src/models/event/BaseAgentEvent";
-import type { MessageUuid } from "#src/models/event/MessageUuid";
-import type { ParentToolUseId } from "#src/models/event/ParentToolUseId";
+import type { BaseMessageAgentEvent } from "#src/models/event/BaseMessageAgentEvent";
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
-import { createBaseAgentEventSchema } from "#src/models/event/BaseAgentEvent";
-import { messageUuidSchema } from "#src/models/event/MessageUuid";
-import { parentToolUseIdSchema } from "#src/models/event/ParentToolUseId";
+import { createBaseMessageAgentEventSchema } from "#src/models/event/BaseMessageAgentEvent";
 import { z } from "zod";
 
-export interface AssistantMessageEvent
-  extends BaseAgentEvent<AgentEventType.AssistantMessage>, MessageUuid, ParentToolUseId {
+export interface AssistantMessageEvent extends BaseMessageAgentEvent<AgentEventType.AssistantMessage> {
   text: string;
 }
 
@@ -20,9 +15,6 @@ export const assistantMessageEventSchema: z.ZodObject<{
   parentToolUseId: z.ZodString;
   text: z.ZodString;
   type: z.ZodLiteral<AgentEventType.AssistantMessage>;
-}> = z.object({
-  ...createBaseAgentEventSchema(z.literal(AgentEventType.AssistantMessage)).shape,
-  ...messageUuidSchema.shape,
-  ...parentToolUseIdSchema.shape,
+}> = createBaseMessageAgentEventSchema(z.literal(AgentEventType.AssistantMessage)).extend({
   text: z.string(),
 }) satisfies z.ZodType<AssistantMessageEvent>;

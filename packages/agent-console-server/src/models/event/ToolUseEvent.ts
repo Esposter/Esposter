@@ -1,14 +1,10 @@
-import type { BaseAgentEvent } from "#src/models/event/BaseAgentEvent";
-import type { MessageUuid } from "#src/models/event/MessageUuid";
-import type { ParentToolUseId } from "#src/models/event/ParentToolUseId";
+import type { BaseMessageAgentEvent } from "#src/models/event/BaseMessageAgentEvent";
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
-import { createBaseAgentEventSchema } from "#src/models/event/BaseAgentEvent";
-import { messageUuidSchema } from "#src/models/event/MessageUuid";
-import { parentToolUseIdSchema } from "#src/models/event/ParentToolUseId";
+import { createBaseMessageAgentEventSchema } from "#src/models/event/BaseMessageAgentEvent";
 import { z } from "zod";
 
-export interface ToolUseEvent extends BaseAgentEvent<AgentEventType.ToolUse>, MessageUuid, ParentToolUseId {
+export interface ToolUseEvent extends BaseMessageAgentEvent<AgentEventType.ToolUse> {
   input: Record<string, unknown>;
   name: string;
   toolUseId: string;
@@ -23,10 +19,7 @@ export const toolUseEventSchema: z.ZodObject<{
   parentToolUseId: z.ZodString;
   toolUseId: z.ZodString;
   type: z.ZodLiteral<AgentEventType.ToolUse>;
-}> = z.object({
-  ...createBaseAgentEventSchema(z.literal(AgentEventType.ToolUse)).shape,
-  ...messageUuidSchema.shape,
-  ...parentToolUseIdSchema.shape,
+}> = createBaseMessageAgentEventSchema(z.literal(AgentEventType.ToolUse)).extend({
   input: z.record(z.string(), z.unknown()),
   name: z.string().min(1),
   toolUseId: z.string().min(1),
