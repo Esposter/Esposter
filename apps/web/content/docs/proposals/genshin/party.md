@@ -1,6 +1,6 @@
 ---
 title: Party
-description: Proposal — what is left of the game's party once its state, its switching, its falls and the HUD's list of it are built. Party Setup on L as a screen with its Quick Setup; the player's choice of the next member and the game over screen after a fall; the Elemental Resonance effects that wait on affliction durations, a reaction particle, and the Moondrift and Lunar-Bloom clauses; and the party kept between visits.
+description: Proposal — what is left of the game's party: Party Setup on L as a screen with its Quick Setup, the player's choice of the next member and the game over screen after a fall, the Elemental Resonance effects that wait on affliction durations, a reaction particle, and the Moondrift and Lunar-Bloom clauses, and the party kept between visits.
 model: claude-opus-5-5
 needs: [media-engine]
 touches:
@@ -12,15 +12,11 @@ touches:
 
 # Party
 
-This page builds on the [party](/docs/genshin/party) as built: the teams, the deployed one and the member on the field, switched by `1` to `4` past the one second cooldown and never to a character who is down. It also builds on the [HUD](/docs/genshin/hud), whose portraits down the right show the deployed team, and on [combat](/docs/genshin/combat), whose damage makes a character fall.
+This page builds on the [party](/docs/genshin/party) as built: the teams, their rules, the deployed one and the member on the field, switched by `1` to `4` and `Left Alt` with them, and the Elemental Resonance effects built so far. It also builds on the [HUD](/docs/genshin/hud), whose portraits down the right show the deployed team, and on [combat](/docs/genshin/combat), whose damage makes a character fall.
 
 ## Decisions
 
 - **Party Setup is a screen of its own on `L`.** It shows the deployed team, slot by slot, over the region's background, and arrows at its edges step between the teams. Configure Team lists every team with its name, members and elements, and adds or disbands one; Quick Setup picks members in order. The [screens](/docs/genshin/screens)' placeholder holds its shortcut until then.
-- **Teams as the game keeps them.** The four default teams, Party 1 to 4, are renamed but never disbanded. A team added is named "Team Standing By" until renamed, at most fifteen are kept, and the deployed team is never disbanded. Disbanding a team before the deployed one keeps the deployed team deployed. Built as rules in `addPartyTeam`, `disbandPartyTeam` and `renamePartyTeam`.
-- **The name of an added team is provisional.** "Team Standing By" is an English constant for now: the game's own words come from their text id in the decoded client ([game text](/docs/genshin/game-text)), and no text id for it is in the generated text yet.
-- **A burst on a switch uses the burst once the member is on the field.** `Left Alt` with a member's number switches to it and uses its Elemental Burst, as the game's controls bind it, and a switch refused (a cooldown, a fallen member, an empty slot) uses none. The chord takes the press over from the plain number key, while `Left Alt` alone still shows the cursor. Built in the character's fixed step, which reads the press.
-- **Elemental Resonance needs a full team.** Two members of one element in a full team give that element's resonance, as the game's Team Bonus lists them; `getElementalResonances` gives the list in the game's element order. The effects that change a stat, a hit, a reaction, a skill or the stamina spent are built, as the [party](/docs/genshin/party) page describes; the rest are listed under Elemental Resonance's effects in the scope.
 - **The choice of the next member and the game over screen.** The game plays the fall, lets nobody switch until it ends, then asks the player for the next member; once every member is down, the game over screen offers a revive at the nearest teleport waypoint with 35% HP. Until these screens are built, the world brings the next standing member in slot order onto the field and revives a fallen team at the nearest statue on its own, as the [party](/docs/genshin/party) page describes.
 - **The party is kept between visits**, as the game keeps it on its server: the teams, the deployed one, the member on the field and who is down, beside the player's characters. It is a slice of the world's [save](/docs/genshin/save-data), added as every slice after the wallet is, [latest shape only](/docs/architecture/persisted-data-latest-shape-only), and a new player's save holds the new player's party. The save is kept by the account as well as in the browser, so the party is too.
 - **Party Setup's layout is the 4.0 screen, read off a public clip.** The current Party Setup, its region's background behind four standing members, is shown at 1080p and 60 frames a second in a public clip ([NEW PARTY SETUP SCREEN](https://www.youtube.com/watch?v=greLeGJE-Jg), 57 seconds). The screen is built from that clip's frames; the build does not wait for a recording, which measures it again later.
@@ -46,7 +42,12 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **Party Setup's screen, built from its clip's frames.** Its 57-second clip (`greLeGJE-Jg`, `--from 0 --to 57 --name party-setup`) is cut and framed the way [the cooking screen](cooking.md) is, then `genshin:parity frames` over it at one a second; the builder looks through them and keeps, through `genshin:parity frame <capture> --at <s> --name party-setup`, one showing the deployed team at rest with its name, arrows and buttons in view. Build `PartySetupScreen` in `genshin-interface` (`components/PartySetupScreen/Index.vue` and `Index.fixture.ts`): the team's name, the arrows stepping between teams, four slots each naming its member with level and element mark (an empty slot's plus), and the Deploy, Configure Team and Quick Setup buttons, placed off that frame and worded by text id where `GameTextKey` holds the word, the rest an English constant marked provisional as "Team Standing By" is. Its world wrapper `components/Party/Screen/Index.vue` holds the `Party` and emits the team stepped to and the deploy through `deployPartyTeam`'s rules, and `components/World/Session/Index.vue` fills `MenuScreen`'s `ScreenKind.PartySetup` slot with it, as it fills the Wish slot, in place of `Menu/Placeholder`. The members stand as 2D name plates in this slice; their models follow the character screen's in a later one. A reference for the frame goes in `ParityReferenceMap`, its compare is queued for the user's eyes, and the standing members' models and Configure Team and Quick Setup's screens follow over the same rules.
+```text
+packages/genshin-interface/src/components/PartySetupScreen/Index.vue
+packages/genshin-world/src/components/Party/Screen/Index.vue
+```
+
+1. **Party Setup's screen, built from its clip's frames.** Its 57-second clip (`greLeGJE-Jg`, `--from 0 --to 57 --name party-setup`) is cut and framed the way [the cooking screen](cooking.md) is, then `genshin:parity frames` over it at one a second; the builder looks through them and keeps, through `genshin:parity frame <capture> --at <s> --name party-setup`, one showing the deployed team at rest with its name, arrows and buttons in view. Build `PartySetupScreen` in `genshin-interface` (`components/PartySetupScreen/Index.vue` and `Index.fixture.ts`): the team's name, the arrows stepping between teams, four slots each naming its member with level and element mark (an empty slot's plus), and the Deploy, Configure Team and Quick Setup buttons, placed off that frame and worded by text id where `GameTextKey` holds the word. The added team's name, "Team Standing By", is an English constant marked provisional until the decoded text holds its text id. Its world wrapper `components/Party/Screen/Index.vue` holds the `Party` and emits the team stepped to and the deploy through `deployPartyTeam`'s rules, and `components/World/Session/Index.vue` fills `MenuScreen`'s `ScreenKind.PartySetup` slot with it, as it fills the Wish slot, in place of `Menu/Placeholder`. The members stand as 2D name plates in this slice; their models follow the character screen's in a later one. A reference for the frame goes in `ParityReferenceMap`, its compare is queued for the user's eyes, and the standing members' models and Configure Team and Quick Setup's screens follow over the same rules.
 2. **The choice of the next member and the game over screen**, in place of the automatic next member and the statue's revive.
 3. **Elemental Resonance's effects that need a mechanism not built yet**, each one the party's or the combat's to add when the mechanism lands:
    - The affliction durations: Fervent Flames' Cryo, Soothing Water's Pyro, High Voltage's Hydro and Shattering Ice's Electro, each affecting the party member for 40% less time. The party members hold no elemental state and enemies' strikes apply none to them, so there is no duration to shorten. An aura's decay rate is set in `applyAura` with no party context, so the resonances must reach `applyElement` first.
@@ -57,7 +58,7 @@ flowchart TD
 
 ## Key files
 
-| File                                                                     | Role after the change                                |
+| File                                                                     | Role                                                 |
 | :----------------------------------------------------------------------- | :--------------------------------------------------- |
 | `packages/genshin-world/src/models/party/Party.ts`                       | The state Party Setup edits and the HUD reads        |
 | `packages/genshin-world/src/services/party/addPartyTeam.ts`              | The team rules Configure Team's add goes through     |
@@ -69,5 +70,4 @@ flowchart TD
 
 - [Party](https://genshin-impact.fandom.com/wiki/Party), Genshin Impact Wiki: Party Setup, Configure Team and Quick Setup, the four default teams, "Team Standing By", fifteen teams at most, the deployed team never disbanded, and the region's background.
 - [Fallen Character](https://genshin-impact.fandom.com/wiki/Fallen_Character), Genshin Impact Wiki: the fall, nobody switching during it, the game over and the revive at the nearest waypoint with 35% HP.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: `Left Alt` with a member's number for a switch and a burst.
 - [Team Bonus](https://genshin-impact.fandom.com/wiki/Team_Bonus), Genshin Impact Wiki: each affliction duration, High Voltage's particle and its cooldown, and the Moondrift and Lunar-Bloom clauses.
