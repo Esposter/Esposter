@@ -48,6 +48,14 @@ describe(formatProducerStaleness, () => {
     );
   });
 
+  test("names the recent window for a clean stamp whose commit is not on the branch, even with no commits in it", () => {
+    expect.hasAssertions();
+
+    expect(formatProducerStaleness(label, { commits: [], isApproximate: true, stamp })).toBe(
+      `a: written at 1234567; 0 commits to its producer in the last ${PRODUCER_STALE_WINDOW_DAYS} days, since that commit is not on this branch`,
+    );
+  });
+
   test("counts the commits past the listed five", () => {
     expect.hasAssertions();
 
