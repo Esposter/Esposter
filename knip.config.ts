@@ -57,7 +57,7 @@ const knipConfiguration: KnipConfig = {
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
     scripts: {
       // The shell wrapper starts the slot gate by its path, so nothing imports it
-      entry: ["src/oxlint/**/*.ts", "src/runInSlot/index.ts"],
+      entry: ["src/oxlint/**/*.ts"],
       // Loaded by path through createRequire, which knip cannot follow
       ignoreDependencies: ["@wasm-audio-decoders/ogg-vorbis", "jscpd"],
     },
