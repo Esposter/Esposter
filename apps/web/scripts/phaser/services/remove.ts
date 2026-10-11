@@ -1,7 +1,7 @@
 import { PHASER_ROOT_DIRECTORY } from "@@/scripts/phaser/constants";
-import { remove as baseRemove } from "fs-extra";
+import { rm } from "node:fs/promises";
 
-export const remove = (directory?: Parameters<typeof baseRemove>[0]) => {
+export const remove = (directory?: string) => {
   const path = directory ? `/${directory}` : "";
-  return baseRemove(`${PHASER_ROOT_DIRECTORY}${path}`);
+  return rm(`${PHASER_ROOT_DIRECTORY}${path}`, { force: true, recursive: true });
 };
