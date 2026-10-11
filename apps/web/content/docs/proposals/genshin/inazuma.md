@@ -4,6 +4,7 @@ description: Proposal — Inazuma, the Electro archipelago of eternity. Islands 
 model: claude-opus-5-5
 needs: [game-exports, parity-page]
 touches: ["packages/genshin-world/src/services/inazuma/**"]
+waiting: "the genshin-landmark-closure unit and its asset-map change on the PC: the shrine is landmark-tier, matched pose by pose on its meshes, and the torii is fitted in the capital's Shape pass (inazuma-shape) at the camera those landmarks solve; the Enkanomiya ruin also waits on a reference of Enkanomiya (the checklist's Dainichi Mikoshi from its plaza) and Enkanomiya's exports, neither held yet"
 ---
 
 # Inazuma
@@ -66,7 +67,7 @@ Ritou's harbour, Inazuma City's main street, Tenshukaku from the plaza, the Gran
 
 **Still to build, in order:**
 
-1. **The shrine, torii and Enkanomiya ruin generators**, in `packages/genshin-world/src/services/inazuma/`, each fitted against its exports when the passes reach its shape.
+1. **The shrine, torii and Enkanomiya ruin generators**, in `packages/genshin-world/src/services/inazuma/`, each fitted against its exports when the passes reach its shape. The torii's pass is the capital's Shape pass (`inazuma-shape` on the [compute queue](/docs/genshin/compute/inazuma)): the capital's witness places 32 torii (`Area_Dq_Build_*_Niaoju_01`) in its Buildings family. The shrine is matched on its own meshes once the landmark closure names them, and the ruin has no reference or exports of its own yet, so its passes are queued once Enkanomiya's reference is held.
 
 ## Sources
 
