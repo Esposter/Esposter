@@ -96,3 +96,4 @@ The values are starting points, not the game's: each is marked provisional where
 
 - [Weather](https://genshin-impact.fandom.com/wiki/Weather), Genshin Impact Wiki: weather tied to areas with only the current location's drawn, regular weather changing over time, no rain in cities or deserts, snow on Dragonspine, fog on Tsurumi Island, the perpetual thunderstorm of Yashiori Island, and sandstorms in the Desert of Hadramaveth.
 - [Lightning](https://genshin-impact.fandom.com/wiki/Lightning), Genshin Impact Wiki: lightning striking the land during thunderstorms.
+- `world-sandstorm.mkv` — a sandstorm in the Desert of Hadramaveth, the camera still, 20 seconds at most; the haze's colour and the sand's streaks are matched to it. Found 2026-10-11: the wiki's `File:Desert of Hadramaveth.png` and https://www.youtube.com/watch?v=k_FKK0qcYHw at 0–40 s (`captures/yt-k_FKK0qcYHw-0-40.mp4`).

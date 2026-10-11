@@ -75,3 +75,10 @@ packages/
 
 - [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: stoves and campfires, the special dishes, and eating a dish's effects. Unreachable from this build, so its claims wait on this page's References sought.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dish item rows and the passives' tables the remaining parts are read from.
+
+## Reference
+
+- `cooking-zones.mkv` — a dish cooked by hand twice, the indicator stopped in the orange zone once and in the yellow once, of each of two dishes whose zone parameters differ (one reading `0.63,0.4` and one reading `0.4,0.35`), 60 seconds at most; the bar's zones, the indicator's speed and the share of the regular zone the orange one takes are read from it, to replace `DELICIOUS_ZONE_SHARE` and the reading in `readCookingZones` ([cooking](/docs/genshin/cooking)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `cooking-special-dish.mkv` — a dish cooked with a character who names a special dish in its specialties, each quality cooked in turn until the special dish is seen, 2 minutes at most; it confirms which quality each chance in the cook bonus table belongs to, since the chances are matched to the results in the table's order ([cooking](/docs/genshin/cooking)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `processing-queue.mkv` — a processing queued for three units at once, the bag counted before and after queueing and the units followed until the last is collected, 3 minutes at most; it shows whether the units run one after another at the table's seconds each and whether the ingredients leave the bag when queued ([cooking](/docs/genshin/cooking)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `campfire-elements.mkv` — a campfire lit by Pyro, then struck by Hydro, then lit again and left in rain, 60 seconds at most; it confirms which elements and which weather put a campfire out, as the built rules state ([cooking](/docs/genshin/cooking)). On the wiki and YouTube, none found (searched 2026-10-11).

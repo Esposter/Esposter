@@ -42,3 +42,9 @@ The [HUD](/docs/genshin/hud) is built with its pieces and their looks, each but 
 ## Sources
 
 - [Paimon Menu](https://genshin-impact.fandom.com/wiki/Paimon_Menu), Genshin Impact Wiki, for the top-left Paimon button, which opens the menu as Escape does.
+
+## Reference
+
+- `world-hud.mkv` — standing still in the open world, the whole HUD on screen, then the minimap turning as the view turns. On the wiki and YouTube, none found (searched 2026-10-11).
+- `world-hud-hidden.mkv` — the same standing shot as `world-hud.mkv`, the backslash pressed to hide the HUD and pressed again to show it, so the bare scene scores the HUD alone; the composite compare of the HUD draws over a recording that already shows its HUD. On the wiki and YouTube, none found (searched 2026-10-11).
+- `world-stamina.mkv` — a sprint until the stamina meter appears beside the character, then resting until it refills and fades out, the meter in view throughout, 30 seconds at most; its drain, arc and colours are read off a public climb already (`hud-stamina-climb`), so this clip answers the refill, the flash's pace and the fade. On the wiki and YouTube, none found (searched 2026-10-11).

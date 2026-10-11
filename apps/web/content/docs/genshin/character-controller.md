@@ -166,3 +166,7 @@ Every speed, height and threshold is a body type's, since how far a character sp
 - [Octree](https://threejs.org/docs/#examples/en/math/Octree), three.js: the capsule and sphere tests against one triangle the landmark collider runs.
 - [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: the state drawn blended between the last two steps by the accumulator's remainder.
 - [KinematicCharacterController](https://rapier.rs/javascript3d/classes/KinematicCharacterController.html), Rapier: a kinematic controller that hits and slides against obstacles, confirming that the movement the game needs is queries and sliding rather than a rigid-body solve; weighed and not taken.
+
+## Reference
+
+- `world-movement.mkv` — run, sprint, a jump, a glide off a height, a climb, a swim, the stamina meter in view. Partly found 2026-10-11: https://www.youtube.com/watch?v=kyXg-Hx3Xlo (`captures/yt-kyXg-Hx3Xlo-glide-compare.mp4`) times a glide against a sprint along one street, and https://www.bilibili.com/video/av251752644 (`captures/bili-av251752644-stamina.mp4`) times or counts every action's stamina against a full pool; the run, the jump and the fall are the body's own clips' ([character controller](/docs/genshin/character-controller)); still sought: a glide off a known height over a known distance, a plunge, a step and a slope walked, and a body treading still water with the meter in view.

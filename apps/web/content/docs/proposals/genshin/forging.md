@@ -42,3 +42,8 @@ The [forging](/docs/genshin/forging) page holds the recipes, queues, orders, dai
 ## Sources
 
 - [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the blacksmith's screen. The screen's layout waits on a measure of the recording: a public clip of the Wagner forge, [Have an item forged at Wagner](https://www.youtube.com/watch?v=AVnbm8fESr0), 81 seconds, is kept under the captures as `yt-AVnbm8fESr0` and is the layout's reference until the owed `forge-order-queue.mkv` lands.
+
+## Reference
+
+- `forge-order-queue.mkv` — a Normal Enhancement Ore order of three queued at a blacksmith with the bag counted before and after, each unit followed to collection, 3 minutes at most; it shows whether the units take turns at three seconds each, whether a second order starts in a second queue at Adventure Rank five, and whether a result waits in its queue when the bag is full ([forging](/docs/genshin/forging)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `forge-refusal.mkv` — a Mystic Enhancement Ore ordered on a day its points are already near the cap, from an account whose day holds them, 15 seconds at most; it shows the words the refusal gives, which key they match, and whether the order is refused at its start or the points are counted as its units are collected ([forging](/docs/genshin/forging)). On the wiki and YouTube, none found (searched 2026-10-11).

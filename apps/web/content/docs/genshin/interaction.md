@@ -93,3 +93,10 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: Pick Up and Interact on F, X on an Xbox controller and Square on a PlayStation one.
 - [Faster item pick up](https://gamestegy.com/post/genshin-impact/322/faster-item-pick-up), GameStegy: a player's tip that the scroll wheel and F work together on the prompts.
+
+## Reference
+
+- `interaction-reach.mkv` — a slow walk of about ten metres onto one gathering point beside Windrise's statue, with the view held behind the character, under 15 seconds; the reach is the body's distance to the point when its prompt first shows, solved on Windrise's fitted layout ([interaction](/docs/genshin/interaction)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `prompt-kinds.mkv` — a chest, a notice to read, a waypoint and a resident with a talk, each in reach one at a time, their rows' icons in view at 1080 high, 30 seconds at most. On the wiki and YouTube, none found (searched 2026-10-11).
+- `pickup-scroll.mkv` — a pile of at least eight dropped items, the list opened and F held until all are taken, the list in view throughout, under 15 seconds. Its stills give the window size (the most rows drawn while the pile holds more) and the held F's pick-up interval, read by `genshin:parity frames` at 60 a second. Partly found 2026-10-11: the held F's interval is read off `captures/world-pickup.mkv`, a published PC tips clip, but its piles hold three things at most; still sought: a pile of more things than the list shows, for the window's rows.
+- `prompt-select.mkv` — the selection moved one row by the wheel, the rows and the F cap in view at 1080 high and 60 frames a second, 2 seconds at most. On the wiki and YouTube, none found (searched 2026-10-11).

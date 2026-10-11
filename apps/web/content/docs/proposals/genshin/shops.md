@@ -63,3 +63,7 @@ The rule over Paimon's Bargains' Fates and the Mondstadt grocery's goods is buil
 - [Souvenir Shop](https://genshin-impact.fandom.com/wiki/Souvenir_Shop), Genshin Impact Wiki: Sigils for materials, blueprints and Mora, no restock, and the region's offering at its last level since 2.0.
 - [General Goods](https://genshin-impact.fandom.com/wiki/General_Goods), Genshin Impact Wiki: Blanche, the Mondstadt general goods vendor.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the shop, goods, rotation and sheet tables.
+
+## Reference
+
+- `shop-paimons-bargains.mkv` — Paimon's Bargains opened from the Paimon menu, its two Fates for Masterless Starglitter and Stardust shown with their prices and limits, 30 seconds at most; the names of items 221 and 222 are read from those prices, and the pairing [Shops](/docs/genshin/shops) settles from the table is confirmed or corrected by them. Partly found 2026-10-11: https://www.youtube.com/watch?v=-nip9Dz-aNM at 0–34 s (`captures/yt--nip9Dz-aNM-shop-paimons-bargains.mp4`); still sought: the item names 221 and 222 and the purchase limits are not legible; the clip is from the 2022 build, not the current one.

@@ -71,3 +71,9 @@ packages/genshin-world/src/services/wildlife/
 
 - [Wildlife](https://genshin-impact.fandom.com/wiki/Wildlife), Genshin Impact Wiki: fleeing when approached, boars' charge, Sumeru's that fight back and Chenyu Vale's that vanish, pets, item drops and material sources gone in smoke, fish struck or picked, weapon passives triggered but not artifact sets', and spawning near the player.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the capture table, whose drops the build does not yet read.
+
+## Reference
+
+- `wildlife-flee-white-pigeon.mkv` — a White Pigeon in Windrise's area approached from about ten metres until it runs, the flight followed to where it stands idle, 15 seconds at most; its escape radius, escape time and flight speed are read from it, to replace the provisional constants in `packages/genshin-world/src/services/wildlife/constants.ts`. On the wiki and YouTube, none found (searched 2026-10-11).
+- `wildlife-flee-squirrel.mkv` — the same flight from a Squirrel in Windrise's area, 15 seconds at most, read into the same constants. On the wiki and YouTube, none found (searched 2026-10-11).
+- `wildlife-flee-crimson-fox.mkv` — the same flight from a Crimson Fox in Windrise's area, 15 seconds at most, read into the same constants. On the wiki and YouTube, none found (searched 2026-10-11).

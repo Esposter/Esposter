@@ -81,3 +81,8 @@ flowchart TD
 | `packages/genshin-world/src/services/login/scene/constants.ts`         | The camera's eye and rest, the glide, the haze, the light and the shadows |
 | `packages/genshin-world/src/services/login/readLoginData.ts`           | Every fitted part, read from the hosted game data                         |
 | `packages/genshin-world/src/components/Login/Scene/Light.reference.ts` | The reference the scene's light is judged against                         |
+
+## Reference
+
+- `login-dawn.mkv` to `login-night.mkv` — the title at each hour on the current build, the camera at rest. `login-dawn.mkv` partly found 2026-10-11: https://www.youtube.com/watch?v=D-iWDjSOL-s at 0–30 s (`captures/yt-D-iWDjSOL-s-login-dawn.mp4`); still sought: no title text visible in the window; the build and client are not stated on the video; the source is 720p30; `login-day.mkv` partly found 2026-10-11: https://www.youtube.com/watch?v=TVYVfIQ-XO4 at 0–30 s (`captures/yt-TVYVfIQ-XO4-login-day.mp4`); still sought: the camera is not at rest, so the title at rest is not shown; the client and build are not stated; `login-dusk.mkv` partly found 2026-10-11: https://www.youtube.com/watch?v=mMf727q-0w0 at 0–30 s (`captures/yt-mMf727q-0w0-login-dusk.mp4`); still sought: the camera is not at rest; the title at rest is not shown; `login-night.mkv` found 2026-10-11: the wiki's `File:Moon - Title screen - Night.png`.
+- `login-door-rest.mkv` — the door at rest on the current build. Partly found 2026-10-11: https://www.youtube.com/watch?v=D-iWDjSOL-s at 0–30 s (`captures/yt-D-iWDjSOL-s-login-dawn.mp4`); still sought: the build is not stated and the source is 720p30.

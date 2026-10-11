@@ -60,3 +60,7 @@ flowchart TD
 - [Adventure Rank](https://genshin-impact.fandom.com/wiki/Adventure_Rank), Genshin Impact Wiki: rewards from Katheryne at each rank, and the systems each rank opens.
 - [Original Resin](https://genshin-impact.fandom.com/wiki/Original_Resin), Genshin Impact Wiki: five Adventure EXP for each resin spent.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `RewardExcelConfigData`, the table the ranks' rewards are read from.
+
+## Reference
+
+- `enemy-level-world-level-1.mkv` to `enemy-level-world-level-9.mkv` — a Hilichurl of the Windrise camp, its name plate's level read at World Level 1, 5 and 9 in turn, each clip with the camp in reach and the World Level set on the Profile. The camp is level 2 at World Level 0, so the provisional rule reads 10, 53 and 84 ([Adventure Rank](/docs/genshin/adventure-rank)). `enemy-level-world-level-1.mkv` searched 2026-10-11 on the wiki and YouTube, none found; `enemy-level-world-level-5.mkv` searched 2026-10-11 on the wiki and YouTube, none found; `enemy-level-world-level-9.mkv` searched 2026-10-11 on the wiki and YouTube, none found.

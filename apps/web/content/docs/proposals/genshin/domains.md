@@ -79,3 +79,7 @@ scripts/src/services/genshinAssets/domains/
 
 - [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: entrances acting as waypoints, Blessing, Forgery and Mastery and the ranks or quests that open them, three days a week each with Sunday common, one-time domains, and the Petrified Tree claimed with resin. Not yet read: the wiki refused the fetch.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dungeon, dungeon entry and daily dungeon tables, the last with its weekday fields scrambled.
+
+## Reference
+
+- `domain-entry.mkv` — standing at a domain's entrance and pressing F to enter, the fade into its scene, then the fade back out when the domain is left, 30 seconds at most. The fade's durations are measured from it, as the teleport's are. Partly found 2026-10-11: https://www.youtube.com/watch?v=V7SVLH8V5RE; still sought: the fade-out when the domain is left, not clipped; the candidate was found from its title only and its timestamps are not verified.

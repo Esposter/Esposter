@@ -57,3 +57,7 @@ flowchart TD
 
 - [Area](https://genshin-impact.fandom.com/wiki/Area), Genshin Impact Wiki: the areas of each region and their subregions, and each area lit on the map by its Statue of The Seven.
 - [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: Enkanomiya and the Chasm's underground mines unlocked as maps of their own, which is where the layers come from.
+
+## Reference
+
+- `world-map.mkv` — the map opened on M over the character's own area, the zoom slider pressed in and out to its ends, a waypoint chosen on the map and Teleport pressed on the panel it opens, 30 seconds at most. Partly found 2026-10-11: https://www.youtube.com/watch?v=gN1IURjDuWo at 0–30 s (`captures/yt-gN1IURjDuWo-world-map.mp4`); still sought: a waypoint chosen on the map and Teleport pressed on the panel it opens; the zoom slider ends are only shown as the map zooms.

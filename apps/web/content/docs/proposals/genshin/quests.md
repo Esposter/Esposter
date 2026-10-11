@@ -50,3 +50,7 @@ These need the English PC client at 1080 high, published screenshots and recordi
 - [Quest](https://genshin-impact.fandom.com/wiki/Quest), Genshin Impact Wiki: the kinds of quest, and navigation's beam.
 - [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: four commissions a day at the reset, from the areas reached, in the preferred region the handbook sets.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: V for quest navigation, and held V for the step's objective.
+
+## Reference
+
+- `quest-open.mkv` — J pressed in the open world, the quest screen opening, a Q step to the next tab, then J closing it, 60 frames a second; the open, close and tab timings are read off it. Partly found 2026-10-11: the wiki's `File:Quest Screen.png`; still sought: the still shows the screen's layout only; the open, close and tab timings are read off motion, which the still cannot give. The 1080p file is from the 2026 wiki revision.

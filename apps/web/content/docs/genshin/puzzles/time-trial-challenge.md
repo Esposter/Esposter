@@ -25,3 +25,7 @@ stateDiagram-v2
 | `packages/genshin-world/src/services/puzzle/startTimeTrialChallenge.ts` | Starts an idle challenge's clock from its marker                        |
 | `packages/genshin-world/src/services/puzzle/strikeTimeTrialTarget.ts`   | Counts a target done, solving the challenge on its last                 |
 | `packages/genshin-world/src/services/puzzle/stepTimeTrialChallenge.ts`  | Runs a challenge's clock on the fixed step, failing it when it runs out |
+
+## Sources
+
+- `time-trial-limit.mkv` — a Time Trial Challenge started at its marker and filmed to its end, with its clock in view, 3 minutes at most; the limit the clock is set to is read from it, since the wiki gives none for each challenge. Found 2026-10-11: https://www.youtube.com/watch?v=B_l5b_KXt-o at 0–55 s (`captures/yt-B_l5b_KXt-o-time-trial-limit.mp4`).

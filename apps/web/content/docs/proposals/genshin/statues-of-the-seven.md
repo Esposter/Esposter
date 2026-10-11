@@ -78,3 +78,8 @@ packages/genshin-world/src/models/statue/StatueProgressSave.ts
 - [Statue of The Seven](https://genshin-impact.fandom.com/wiki/Statue_of_The_Seven), Genshin Impact Wiki: filling in the map, reviving and healing, the Traveler's element, the region's shared levels and their rewards by region, and the Restorative Power pool.
 - [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: Oculi offered to their statue, one and Adventure EXP each, never respawning, and the minimap's mark with its sound.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the statues' rows, their Oculi, rewards and stamina actions.
+
+## Reference
+
+- `statue-resonance.mkv` — F pressed at Windrise's Statue of The Seven from standing still, then the map on M opened, 10 seconds at most; the resonating light's length and how long it holds the player are measured from it, and the statue's area's first frame on the map. On the wiki and YouTube, none found (searched 2026-10-11).
+- `statue-blessing.mkv` — F pressed at a resonated Statue of The Seven, the Statue's Blessing screen opened, its auto-recover threshold turned through each of its steps, then one party member clicked to heal, 30 seconds at most; the threshold's steps and the Restorative Power shown before and after a click are read off it, and the screen's entry from the statue's F. On the wiki and YouTube, none found (searched 2026-10-11).

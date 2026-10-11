@@ -61,3 +61,10 @@ packages/genshin-world/src/data/character/interfaceRects.json
 - [Character Menu](https://genshin-impact.fandom.com/wiki/Character/Menu), Genshin Impact Wiki: the list, the element's mark and background, Details, Level Up and Ascend.
 - [Character](https://genshin-impact.fandom.com/wiki/Character), Genshin Impact Wiki: the ascension phases, their caps and Adventure Ranks, and levels 95 and 100 with Masterless Stella Fortuna.
 - [Traveler](https://genshin-impact.fandom.com/wiki/Traveler), Genshin Impact Wiki: the Traveler's quest bonuses and their bonus per element resonated with.
+
+## Reference
+
+- `menu-character.mkv` — 30 seconds at most, the character screen at 60 frames a second: the character strip scrolled past its first portrait, a portrait pressed, a tab hovered and pressed, and the way back. Its five tabs in turn, Attributes to Talents, are already in `session-2.mp4` from about 154 seconds (the open tab's pill sliding at 157 to 159 seconds), so the clip does not repeat them; Profile is not in that recording, and `character-profile.png` below holds it. `menu-character.mkv` searched 2026-10-11 on the wiki and YouTube, none found; `character-profile.png` searched 2026-10-11 on the wiki and YouTube, none found.
+- `character-profile.png` — the Profile tab on the English PC client at 21:9, the frame the Attributes reference is cut from (`session-2.mp4` at 154 seconds), its tab column and panel in view and the red alert on Profile if it is lit, a still of the settled tab.
+- `character-details.mkv` — Xilonen's Attributes tab with Details pressed, the advanced and elemental lists in view, then Details pressed again, 20 seconds at most at 60 frames a second, on the 21:9 frame's client. Its open motion and the list's layout are owed; nothing published shows it. On the wiki and YouTube, none found (searched 2026-10-11).
+- `character-attributes-1080.png` — the Attributes tab on the English PC client at 1080 high, the chosen character's panel and the portraits in view, to check the panel's place at 16:9 against the 21:9 frame it is measured from. On the wiki and YouTube, none found (searched 2026-10-11).

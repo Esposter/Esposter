@@ -65,3 +65,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 - [Genius Invokation TCG](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG), Genshin Impact Wiki: the unlock at rank 32 and the tutorial quest, duels against characters and NPCs, unrewarded duels with friends, character and action cards, and the Card Shop and Lucky Coins.
 - [Come Try Genius Invokation TCG!](https://genshin-impact.fandom.com/wiki/Come_Try_Genius_Invokation_TCG!), Genshin Impact Wiki: the tutorial's duels, the tutorial deck and the characters its quest gives.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the GCG card, character, skill, cost and deck tables, and the GCG configs.
+
+## Reference
+
+- `gcg-swirl-spread.mkv` — a duel's Swirl on a team whose other characters hold an aura, 15 seconds at most; whether its spread applies the aura's element and reacts is read from it, where the engine settles it as damage only ([Genius Invokation TCG](/docs/genshin/genius-invokation)). On the wiki and YouTube, none found (searched 2026-10-11).

@@ -69,3 +69,7 @@ flowchart TD
 
 - [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki: gadgets as the bag's sixth tab, the quick-use slot, cooldowns that run while paused, gadgets crafted or forged from their instructions, and the quick swap of four.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the widget config with each gadget's kind, cooldowns and ranges, and the widget tables.
+
+## Reference
+
+- `gadget-cooldown-pause.mkv` — a Treasure Compass or another gadget used, then the menu held open until its cooldown would have ended and closed, and the gadget used again at once, 45 seconds at most; it shows whether the cooldown counts on through the menu, as the wiki states and the [gadgets](/docs/genshin/gadgets) page keeps it. On the wiki and YouTube, none found (searched 2026-10-11).

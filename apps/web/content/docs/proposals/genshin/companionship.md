@@ -55,3 +55,8 @@ flowchart LR
 - [Friendship Level](https://genshin-impact.fandom.com/wiki/Friendship_Level), Genshin Impact Wiki: what each level from 1 to 10 opens, stories and voice-overs also waiting on quests, and no EXP past 10.
 - [Companionship EXP](https://genshin-impact.fandom.com/wiki/Companionship_EXP), Genshin Impact Wiki: the commissions' and random events' amounts, which their pages take.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dialogue and NPC tables the Serenitea Pot lines are looked up in.
+
+## Reference
+
+- `companionship-claim-boss.mkv` — a normal boss's claim and then a weekly boss's, each at its Trounce Blossom with the Companionship EXP the claim shows, 30 seconds at most; the EXP each kind gives every deployed member is measured from them, and `BlossomCompanionshipExpMap` (`packages/genshin-world/src/services/originalResin/BlossomCompanionshipExpMap.ts`) holds the two at 30 and 55 provisionally until then. On the wiki and YouTube, none found (searched 2026-10-11).
+- `companionship-claim-domain.mkv` — a domain's claim and then a ley line outcrop's, each with the Companionship EXP the claim shows, 30 seconds at most; the EXP each kind gives every deployed member is measured from them, and the same map holds the two at 15 and 10 provisionally until then. On the wiki and YouTube, none found (searched 2026-10-11).

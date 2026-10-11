@@ -172,96 +172,97 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [x] `wish-ten.mkv` — **Ten wish**, found as `captures/yt-gFmdG_0s5L0-wish-ten.mp4` (https://www.youtube.com/watch?v=gFmdG_0s5L0, 0–76 s), a near one: the English PC client at 1080p and 60 frames a second in 2022. Read by [wish](/docs/genshin/wish).
 - [x] `menu-settings.mkv` — **Settings screen**, found as `captures/yt-5EmJX_RyuY8-menu-settings.mp4` (https://www.youtube.com/watch?v=5EmJX_RyuY8, 0–220 s), a near one: the English PC client at 1080p and 60 frames a second. Read by [settings](/docs/genshin/compute/settings).
 - [x] `ore-strike.mkv` — **Ore strike**, found as `captures/yt-VlRNdhoeXTk-ore-strike.mp4` (https://www.youtube.com/watch?v=VlRNdhoeXTk, 0–170 s), a near one: the English PC client at 1080p and 60 frames a second, with a face camera from 170 s. A montage cut between strikes, so which counts it settles is [gathering](/docs/genshin/gathering)'s.
-- [ ] **Sealed chest freed** — `chest-seal-pyro.mkv`, waits on [chests](/docs/proposals/genshin/chests): a sealed chest in Dendro vines or ice freed by Pyro, and one sealed in rock struck by a blunt attack, each from standing in reach, with each seal and how long freeing takes.
-- [ ] **Buried chest dug** — `chest-dig.mkv`, waits on [chests](/docs/proposals/genshin/chests): a buried chest dug with the Dig prompt in view and a scale in the frame, so the prompt's reach can be measured.
-- [ ] **Camp locks a chest** — `chest-camp-lock.mkv`, waits on [chests](/docs/proposals/genshin/chests): a chest beside an enemy camp locked while the camp lives and opened once it is cleared, showing the reach the lock applies within.
-- [ ] **Boss claim Companionship EXP** — `companionship-claim-boss.mkv`, waits on [companionship](/docs/proposals/genshin/companionship): a normal boss's claim and then a weekly boss's, each at its Trounce Blossom, with the EXP each claim shows.
-- [ ] **Domain claim Companionship EXP** — `companionship-claim-domain.mkv`, waits on [companionship](/docs/proposals/genshin/companionship): a domain's claim and then a ley line outcrop's, each with the Companionship EXP the claim shows.
-- [ ] **Fourth commission bonus** — `commission-bonus.mkv`, waits on [commissions](/docs/proposals/genshin/commissions): the fourth commission of a day claimed at Katheryne's branch with the bonus panel shown, and whether the Adventure Treasure Pack is paid.
-- [ ] **Timed monument** — `monument-timed.mkv`, waits on [puzzles](/docs/proposals/genshin/puzzles): a timed Elemental Monument struck with its element from a few metres, then filmed until it goes out, showing how long it stays lit after its last strike.
-- [ ] **Seelie route** — `seelie-led-home.mkv`, waits on [puzzles](/docs/proposals/genshin/puzzles): a Seelie followed from its rest to its court in full, then one left unfollowed until it returns to its start, showing the walk time and the time before it returns.
-- [ ] **Mondstadt monuments** — `monument-mondstadt-pillars.mkv`, waits on [puzzles](/docs/proposals/genshin/puzzles): each monument near Windrise struck once with each element, showing which element lights each and which stay lit.
-- [ ] **Login title at each hour** — `login-dawn.mkv`, `login-day.mkv`, `login-dusk.mkv`, `login-night.mkv`, waits on [login screen](/docs/genshin/login-screen): the title at dawn, day, dusk and night with the camera at rest, on a named build and client.
-- [ ] **Login door at rest** — `login-door-rest.mkv`, waits on [login screen](/docs/genshin/login-screen): the door at rest on the current build.
-- [ ] **Shop Paimon's Bargains** — `shop-paimons-bargains.mkv`, waits on [shops](/docs/proposals/genshin/shops): its two Fates for Masterless Starglitter and Stardust with their prices and limits legible, confirming the item names 221 and 222.
-- [ ] **Japanese and Korean launch** — `opening-japanese.mkv`, `opening-korean.mkv`, waits on [localized opening](/docs/proposals/genshin/localized-opening): launch to the title with the game's language set to Japanese, then to Korean.
-- [ ] **World HUD** — `world-hud.mkv`, waits on [HUD](/docs/proposals/genshin/hud): standing still in the open world with the whole HUD on screen, then the minimap turning as the view turns.
-- [ ] **Map top bar** — `map-top-bar.mkv`, waits on [original resin](/docs/proposals/genshin/original-resin): the map on M opened from standing still, its top bar with the Original Resin counter in view, showing the counter's place and type.
-- [ ] **Statue resonance** — `statue-resonance.mkv`, waits on [statues of the Seven](/docs/proposals/genshin/statues-of-the-seven): F at Windrise's statue from standing still, then the map opened, showing the resonating light's length, how long it holds the player, and the area's first frame on the map.
-- [ ] **Statue's Blessing** — `statue-blessing.mkv`, waits on [statues of the Seven](/docs/proposals/genshin/statues-of-the-seven): F at a resonated statue, the Blessing screen's auto-recover threshold turned through its steps, then one party member clicked, showing the Restorative Power before and after.
-- [ ] **Anemoculus on the minimap** — `oculus-minimap.mkv`, waits on [minimap](/docs/genshin/minimap): walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, showing the distance the mark shows at and the moment its sound starts.
-- [ ] **HUD hidden** — `world-hud-hidden.mkv`, waits on [HUD](/docs/proposals/genshin/hud): the shot of `world-hud.mkv` with the backslash pressed to hide the HUD and again to show it, so the bare scene scores the HUD alone.
-- [ ] **Elemental Sight** — `elemental-sight.mkv`, waits on [elemental sight](/docs/proposals/genshin/elemental-sight): Sight turned on with the middle mouse button, its range spreading, walked away from until it ends, then turned on again standing still, showing the reach, the colours and whether the camera resets.
-- [ ] **Stamina refill** — `world-stamina.mkv`, waits on [HUD](/docs/proposals/genshin/hud): a sprint until the stamina meter appears, then resting until it refills and fades out, showing the refill, the flash's pace and the fade.
-- [ ] **Skill and burst energy** — `world-skill-burst.mkv`, waits on [combat](/docs/proposals/genshin/combat): the Traveler's skill pressed with its cooldown counted down, then burst energy filling until the burst glows, with both buttons in view.
-- [ ] **Bennett's Charge Levels** — `bennett-charge-levels.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits): Passion Overload held from the press through each Charge Level and released, showing the seconds held to reach Charge Level 1 and Charge Level 2.
-- [ ] **Lisa's Violet Arc hold** — `lisa-violet-arc-hold.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits): Violet Arc held from the press until released, showing the seconds it takes to charge in full.
-- [ ] **Razor's Claw and Thunder** — `razor-claw-and-thunder.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits): Claw and Thunder held until its hold plays, then the charged attack held through its spin and final slash, showing the seconds held to reach the hold and the charged attack's length and hitmarks.
-- [ ] **Venti's Skyward Sonnet hold** — `venti-skyward-sonnet.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits): Skyward Sonnet held from the press until its hold plays, showing the seconds held to reach it.
-- [ ] **Domain entry fade** — `domain-entry.mkv`, waits on [domains](/docs/proposals/genshin/domains): F pressed at a domain's entrance, the fade into its scene, then the fade back out when the domain is left.
-- [ ] **World map** — `world-map.mkv`, waits on [world map](/docs/genshin/world-map): the map opened on M over the character's own area, the zoom slider pressed to both ends, then a waypoint chosen and Teleport pressed on the panel it opens.
-- [ ] **Abyss chamber clock** — `spiral-abyss-chamber.mkv`, waits on [spiral abyss](/docs/proposals/genshin/spiral-abyss): a floor one chamber cleared with the clock in view, the time left and the stars shown at the clear, with the clock legible at full size.
-- [ ] **Abyss floor five halves** — `spiral-abyss-two-halves.mkv`, waits on [spiral abyss](/docs/proposals/genshin/spiral-abyss): a floor five chamber's first half cleared with the clock in view, then the second half through to the clear, showing whether the clock carries over.
-- [ ] **Interaction reach** — `interaction-reach.mkv`, waits on [interaction](/docs/genshin/interaction): a slow walk of about ten metres onto a gathering point beside Windrise's statue with the view held behind, showing the body's distance to the point when its prompt first shows.
-- [ ] **Prompt kinds** — `prompt-kinds.mkv`, waits on [interaction](/docs/genshin/interaction): a chest, a notice, a waypoint and a resident, each in reach one at a time, with their rows' icons in view at 1080 high.
-- [ ] **Pickup list** — `pickup-scroll.mkv`, waits on [interaction](/docs/genshin/interaction): a pile of at least eight drops, the list opened and F held until all are taken, with the list in view throughout.
+- [ ] **Sealed chest freed** — `chest-seal-pyro.mkv`, waits on [chests](/docs/proposals/genshin/chests).
+- [ ] **Buried chest dug** — `chest-dig.mkv`, waits on [chests](/docs/proposals/genshin/chests).
+- [ ] **Camp locks a chest** — `chest-camp-lock.mkv`, waits on [chests](/docs/proposals/genshin/chests).
+- [ ] **Boss claim Companionship EXP** — `companionship-claim-boss.mkv`, waits on [companionship](/docs/proposals/genshin/companionship).
+- [ ] **Domain claim Companionship EXP** — `companionship-claim-domain.mkv`, waits on [companionship](/docs/proposals/genshin/companionship).
+- [ ] **Fourth commission bonus** — `commission-bonus.mkv`, waits on [commissions](/docs/proposals/genshin/commissions).
+- [ ] **Timed monument** — `monument-timed.mkv`, waits on [puzzles](/docs/proposals/genshin/puzzles).
+- [ ] **Seelie route** — `seelie-led-home.mkv`, waits on [puzzles](/docs/proposals/genshin/puzzles).
+- [ ] **Mondstadt monuments** — `monument-mondstadt-pillars.mkv`, waits on [puzzles](/docs/proposals/genshin/puzzles).
+- [ ] **Login title at each hour** — `login-dawn.mkv`, `login-day.mkv`, `login-dusk.mkv`, `login-night.mkv`, waits on [login screen](/docs/genshin/login-screen).
+- [ ] **Login door at rest** — `login-door-rest.mkv`, waits on [login screen](/docs/genshin/login-screen).
+- [ ] **Shop Paimon's Bargains** — `shop-paimons-bargains.mkv`, waits on [shops](/docs/proposals/genshin/shops).
+- [x] `opening-japanese.mkv` — **Japanese opening**, found as `captures/yt-57d2PwbOdr0-opening-japanese.mp4`, read by [login](/docs/genshin/compute/login).
+- [ ] `opening-korean.mkv` — **Korean launch to the title**, waits on [localized opening](/docs/proposals/genshin/localized-opening).
+- [ ] **World HUD** — `world-hud.mkv`, waits on [HUD](/docs/proposals/genshin/hud).
+- [ ] **Map top bar** — `map-top-bar.mkv`, waits on [original resin](/docs/proposals/genshin/original-resin).
+- [ ] **Statue resonance** — `statue-resonance.mkv`, waits on [statues of the Seven](/docs/proposals/genshin/statues-of-the-seven).
+- [ ] **Statue's Blessing** — `statue-blessing.mkv`, waits on [statues of the Seven](/docs/proposals/genshin/statues-of-the-seven).
+- [ ] **Anemoculus on the minimap** — `oculus-minimap.mkv`, waits on [minimap](/docs/genshin/minimap).
+- [ ] **HUD hidden** — `world-hud-hidden.mkv`, waits on [HUD](/docs/proposals/genshin/hud).
+- [ ] **Elemental Sight** — `elemental-sight.mkv`, waits on [elemental sight](/docs/proposals/genshin/elemental-sight).
+- [ ] **Stamina refill** — `world-stamina.mkv`, waits on [HUD](/docs/proposals/genshin/hud). The climb it reads, `captures/yt-hRR2yoP3uY0-world-stamina.mp4`, is not in `captures` yet, so the stamina meter's scoring waits on it.
+- [ ] **Skill and burst energy** — `world-skill-burst.mkv`, waits on [combat](/docs/proposals/genshin/combat).
+- [ ] **Bennett's Charge Levels** — `bennett-charge-levels.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits).
+- [ ] **Lisa's Violet Arc hold** — `lisa-violet-arc-hold.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits).
+- [ ] **Razor's Claw and Thunder** — `razor-claw-and-thunder.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits).
+- [ ] **Venti's Skyward Sonnet hold** — `venti-skyward-sonnet.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits).
+- [ ] **Domain entry fade** — `domain-entry.mkv`, waits on [domains](/docs/proposals/genshin/domains).
+- [ ] **World map** — `world-map.mkv`, waits on [world map](/docs/genshin/world-map).
+- [ ] **Abyss chamber clock** — `spiral-abyss-chamber.mkv`, waits on [spiral abyss](/docs/proposals/genshin/spiral-abyss).
+- [ ] **Abyss floor five halves** — `spiral-abyss-two-halves.mkv`, waits on [spiral abyss](/docs/proposals/genshin/spiral-abyss).
+- [ ] **Interaction reach** — `interaction-reach.mkv`, waits on [interaction](/docs/genshin/interaction).
+- [ ] **Prompt kinds** — `prompt-kinds.mkv`, waits on [interaction](/docs/genshin/interaction).
+- [ ] **Pickup list** — `pickup-scroll.mkv`, waits on [interaction](/docs/genshin/interaction).
 - [x] `prompt-scroll.mkv` — **Prompt scroll**, found as `captures/yt-UBNImta_dWs-prompt-scroll.mp4` (https://www.youtube.com/watch?v=UBNImta_dWs, 0–25 s), a near one: the 2020 build, with the wheel not run back up. Read by [interaction](/docs/genshin/compute/interaction).
-- [ ] **Prompt selection** — `prompt-select.mkv`, waits on [interaction](/docs/genshin/interaction): the selection moved one row by the wheel with the rows and the F cap in view at 1080 high and 60 frames a second.
-- [ ] **Quest screen** — `quest-open.mkv`, waits on [quests](/docs/proposals/genshin/quests): J pressed in the open world, a Q step to the next tab, then J closing it at 60 frames a second, showing the open, close and tab timings.
-- [ ] **Multi-objective quest step** — `quest-multi-objective.mkv`, waits on [quests](/docs/genshin/quests): a quest step finishing on two objectives, with the quest screen's step line and the HUD tracker each showing both with its own counter, so the tracker's layout for several objectives is read off the game rather than invented.
+- [ ] **Prompt selection** — `prompt-select.mkv`, waits on [interaction](/docs/genshin/interaction).
+- [ ] **Quest screen** — `quest-open.mkv`, waits on [quests](/docs/proposals/genshin/quests).
+- [ ] **Multi-objective quest step** — `quest-multi-objective.mkv`, waits on [quests](/docs/genshin/quests).
 - [x] `world-weather-turn.mkv` — **Weather turn**, found as `captures/world-weather-turn.mkv` (https://www.youtube.com/watch?v=MjM6WR-9ijs, 144–175 s), a near one: a thunderstorm over a grassy hill clearing to sun on a fixed camera with no HUD, 1280 by 720 at 29.97 frames a second, rain to about 8 s and clear from about 16 s. Read by [weather](/docs/proposals/genshin/weather).
-- [ ] **Weather schedule** — `world-weather-schedule.mkv`, waits on [weather](/docs/proposals/genshin/weather): an open-world area with several weathers, its clock in view, held ten minutes at 1080 high, showing each change and how long each holds.
-- [ ] **Rain** — `world-rain.mkv`, waits on [weather](/docs/proposals/genshin/weather): rain on the open world with the camera still, showing the particles' and splashes' density, streak and ring.
-- [ ] **Snow** — `world-snow.mkv`, waits on [weather](/docs/proposals/genshin/weather): snow on Dragonspine or Snezhnaya with the camera still, showing the flakes' density, drift and size.
+- [ ] **Weather schedule** — `world-weather-schedule.mkv`, waits on [weather](/docs/proposals/genshin/weather).
+- [ ] **Rain** — `world-rain.mkv`, waits on [weather](/docs/proposals/genshin/weather).
+- [ ] **Snow** — `world-snow.mkv`, waits on [weather](/docs/proposals/genshin/weather).
 - [x] `world-thunderstorm.mkv` — **Thunderstorm**, found as `captures/world-thunderstorm.mkv` (https://www.youtube.com/watch?v=uqSKcf-vgV4, 21–72 s), a near one: Yashiori Island's perpetual storm on a fixed close shot with no HUD or music, 1080 high at 59.94 frames a second, bolts at about 3.9, 37.6 and 47.8 s and a flash every two or three seconds. Read by [world compute](/docs/genshin/compute/world).
-- [ ] **Movement** — `world-movement.mkv`, waits on [character controller](/docs/genshin/character-controller): run, sprint, a jump, a glide off a height, a climb, a swim and the stamina meter in view, showing a glide off a known height over a known distance, a plunge, a step and a slope, and a body treading still water.
-- [ ] **Follow camera** — `follow-camera.mkv`, waits on [follow camera](/docs/proposals/genshin/follow-camera): the reset held on a flat horizon, the wheel stepped one notch at a time to each end, the camera tilted from level to straight down and back, and the character walked into a wall, at 60 frames a second.
-- [ ] **Photo mode range** — `photo-mode-range.mkv`, waits on [follow camera](/docs/proposals/genshin/follow-camera): photo mode opened over a spot the camera has just framed, each slider and the zoom moved to both ends.
-- [ ] **Dialogue auto-skip** — `dialogue-auto-skip.mkv`, waits on [dialogue](/docs/genshin/dialogue): a talk with auto-play through three lines, then Skip pressed, with the Auto and Skip buttons in view and a voiceless line held whole under auto-play.
-- [ ] **Camp wake** — `world-camp.mkv`, waits on [enemies](/docs/genshin/enemies): walking up to a Hilichurl camp until it wakes, then backing away until it returns home.
-- [ ] **Traveler's attacks** — `world-attacks.mkv`, waits on [combat](/docs/proposals/genshin/combat): the normal string, a charged attack, a low and a high plunge, then E and then Q, each on a Hilichurl at 60 frames a second, showing each hitmark's second.
-- [ ] **Quit prompt** — `menu-quit-prompt.mkv`, waits on [menu quit prompt](/docs/proposals/genshin/menu-quit-prompt) (compute `paimon-quit-prompt`): Quit Game pressed in the side bar, the exit prompt's three buttons each hovered once, at a scale the still lacks.
-- [ ] **Paimon menu, current build** — `menu-paimon-current.png`, waits on [Paimon menu](/docs/proposals/genshin/menu-paimon): the Paimon menu on the current build at 1080 high with no screen open.
-- [ ] **Character screen** — `menu-character.mkv`, waits on [character screen](/docs/proposals/genshin/character-screen): the character strip scrolled past its first portrait, a portrait pressed, a tab hovered and pressed, and the way back, at 60 frames a second.
-- [ ] **Profile tab** — `character-profile.png`, waits on [character screen](/docs/proposals/genshin/character-screen): the Profile tab on the English PC client at 21:9, its tab column and panel in view and the red alert on Profile if lit.
-- [ ] **Mobile touch controls** — `mobile-touch.png`, waits on [touch controls](/docs/genshin/touch-controls): the mobile client's play screen with its touch controls.
-- [ ] **Bag open and close** — `bag-open-close.mkv`, waits on [inventory](/docs/proposals/genshin/inventory): B pressed in the world to open the bag on its weapons tab and pressed again to close it, at 1080p and 60 frames a second.
-- [ ] **Bag tabs** — `bag-tabs.mkv`, waits on [inventory](/docs/proposals/genshin/inventory): the nine tabs clicked in order, a second held on each, with the hover and press of each in view.
-- [ ] **Bag sort** — `bag-sort.mkv`, waits on [inventory](/docs/proposals/genshin/inventory): the sort switched from Quality to Level and back, the order arrow pressed both ways, the list reordering as it goes.
-- [ ] **Bag scroll** — `bag-scroll.mkv`, waits on [inventory](/docs/proposals/genshin/inventory): the weapons grid scrolled from its first row to its last with the wheel, then back to the top.
-- [ ] **Bag select** — `bag-select.mkv`, waits on [inventory](/docs/proposals/genshin/inventory): three entries clicked in turn, the detail panel's change in view with each.
-- [ ] **Standard Wish banner** — `wish-standard.png`, waits on [wish](/docs/proposals/genshin/wish): the Standard Wish banner screen at 1080 high on the English PC client, with no pull under way.
-- [ ] **Adventurer Handbook** — `handbook-open-close.mkv`, waits on [Adventurer Handbook](/docs/genshin/adventurer-handbook): F1 opening over the blurred scene, a tab clicked with its hover in view, then F1 closing it, showing the open and close timings and the blur.
-- [ ] **Bag sort dropdown open** — `bag-sort-open.png`, waits on [inventory](/docs/proposals/genshin/inventory): the weapons tab's sort dropdown opened on Quality at 1080 high, its list in view.
-- [ ] **Attributes Details** — `character-details.mkv`, waits on [character screen](/docs/proposals/genshin/character-screen): Xilonen's Attributes tab with Details pressed, the advanced and elemental lists in view, then pressed again, at 60 frames a second on the 21:9 client.
-- [ ] **Weapon levelling** — `weapon-levelling.mkv`, waits on [weapon enhancement](/docs/proposals/genshin/weapon-enhancement): a three-star weapon at level 1 fed one Enhancement Ore, with the Mora its change costs, then a capped weapon fed ores past its cap with the ores returned.
-- [ ] **Attributes at 1080 high** — `character-attributes-1080.png`, waits on [character screen](/docs/proposals/genshin/character-screen): the Attributes tab on the English PC client at 1080 high, the panel and the portraits in view, to check its place at 16:9 against the 21:9 frame.
-- [ ] **Camp enemy level by World Level** — `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv`, waits on [Adventure Rank](/docs/proposals/genshin/adventure-rank): a Hilichurl of the Windrise camp's name plate read at World Level 1, 5 and 9 in turn, against the provisional 10, 53 and 84.
-- [ ] **Liyue outcrops by rank** — `liyue-outcrop-rank.mkv`, waits on [ley line outcrops](/docs/proposals/genshin/ley-line-outcrops): the map on M in Liyue at Adventure Rank 8 and again at 18, with no statue activated in the second, showing whether a blossom is offered at each.
-- [ ] **Ley line claim** — `ley-line-claim.mkv`, waits on [ley line outcrops](/docs/proposals/genshin/ley-line-outcrops): a blossom claimed with resin at a World Level, the reward window in view, then the map after the claim, showing the rewards by World Level and the outcrop's move.
-- [ ] **Exploration percentage steps** — `exploration-steps.mkv`, waits on [exploration progress](/docs/proposals/genshin/exploration-progress) (compute `map-galesong-hill`): the English map zoomed out to Galesong Hill's percentage, then the percentage read before and after a chest, a camp, a puzzle, an Anemoculus and a picked ingredient.
-- [ ] **Swirl spread** — `gcg-swirl-spread.mkv`, waits on [Genius Invokation](/docs/proposals/genshin/genius-invokation): a Swirl on a team whose other characters hold an aura, showing whether its spread applies the aura's element and reacts.
-- [ ] **Wildlife flight, White Pigeon** — `wildlife-flee-white-pigeon.mkv`, waits on [wildlife](/docs/proposals/genshin/wildlife): a White Pigeon in Windrise's area approached from about ten metres until it runs, the flight followed to where it stands idle, showing its escape radius, escape time and flight speed.
-- [ ] **Wildlife flight, Squirrel** — `wildlife-flee-squirrel.mkv`, waits on [wildlife](/docs/proposals/genshin/wildlife): the same flight from a Squirrel in Windrise's area, read into the same constants.
-- [ ] **Wildlife flight, Crimson Fox** — `wildlife-flee-crimson-fox.mkv`, waits on [wildlife](/docs/proposals/genshin/wildlife): the same flight from a Crimson Fox in Windrise's area, read into the same constants.
-- [ ] **Gadget cooldown through the menu** — `gadget-cooldown-pause.mkv`, waits on [gadgets](/docs/proposals/genshin/gadgets): a Treasure Compass or another gadget used, the menu held open past its cooldown's end and closed, then the gadget used again at once.
-- [ ] **Gathering pick** — `gather-pick.mkv`, waits on [gathering](/docs/proposals/genshin/gathering): a cooking ingredient and a local specialty picked with F from standing in reach, the point gone after each pick and the bag's count rising by one.
-- [ ] **Fish reel** — `fishing-reel.mkv`, waits on [fishing](/docs/proposals/genshin/fishing): a fish struck and reeled from its bite to its catch or the line's break, the tension bar in view, showing how far tension rises and falls a second, how long the line may lie out of its zone, and how the zone travels.
-- [ ] **Fishing point pools** — `fishing-point-pool.mkv`, waits on [fishing](/docs/proposals/genshin/fishing): three fishing points of one region each cast from in the day and at night, each catch's fish named, showing which pool a point draws from.
-- [ ] **Cooking zones** — `cooking-zones.mkv`, waits on [cooking](/docs/proposals/genshin/cooking): two dishes whose zone parameters differ each cooked by hand, the indicator stopped in the orange zone once and the yellow once, showing the bar's zones, the indicator's speed and the orange zone's share of the regular one.
-- [ ] **Special dish quality** — `cooking-special-dish.mkv`, waits on [cooking](/docs/proposals/genshin/cooking): a dish cooked with a character who names a special dish, each quality cooked in turn until the special dish is seen, showing which quality each chance in the cook bonus table belongs to.
-- [ ] **Processing queue** — `processing-queue.mkv`, waits on [cooking](/docs/proposals/genshin/cooking): a processing queued for three units at once, the bag counted before and after, each unit followed to collection, showing whether the units run one after another and whether ingredients leave the bag when queued.
-- [ ] **Campfire elements** — `campfire-elements.mkv`, waits on [cooking](/docs/proposals/genshin/cooking): a campfire lit by Pyro, then struck by Hydro, then lit again and left in rain, showing which element and which weather put it out.
-- [ ] **Forge order queue** — `forge-order-queue.mkv`, waits on [forging](/docs/proposals/genshin/forging): a Normal Enhancement Ore order of three queued with the bag counted before and after, each unit followed to collection, showing whether units run one after another and whether a result waits when the bag is full.
-- [ ] **Forge refusal** — `forge-refusal.mkv`, waits on [forging](/docs/proposals/genshin/forging): a Mystic Enhancement Ore ordered on a day its points are near the cap, showing the words the refusal gives, and whether the order is refused at its start or counted as its units are collected.
-- [ ] **Achievements screen** — `achievements-screen.mkv`, waits on [achievements](/docs/proposals/genshin/achievements): the screen opened from the Paimon menu on a category with a finished achievement and one with none, showing the tabs' places, the rows' layout, the Primogem glyph and the hidden row's "?".
-- [ ] **Realm stores fill** — `realm-store-start.png`, `realm-store-hour.png`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot): two stills an hour of real time apart of one realm's Realm Currency and Realm Bounty stores, with Adeptal Energy rank and Trust Rank beside them.
-- [ ] **Trust queues** — `trust-queues.mkv`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot): Tubby's making at two Trust Ranks with a furnishing started in each queue, showing whether each rank holds one queue more than the rank below.
-- [ ] **Realm load** — `realm-load.png`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot): one realm area's load traffic light at a few placements, with its load figure visible.
-- [ ] **Archive screen** — `archive-screen.mkv`, waits on [Archive](/docs/proposals/genshin/archive): the Archive opened from the Paimon menu on the English PC client, a section's tab and one open entry in view, showing the screen's places and the sections' look.
-- [ ] **Book reader** — `book-reader.mkv`, waits on [Archive](/docs/proposals/genshin/archive): a book opened from the Archive's Books tab with its title and one page of text in view, showing the reader's places, sizes and colours.
-- [ ] **Japanese launch** — `japanese-launch.mkv`, waits on [localized opening](/docs/proposals/genshin/localized-opening): the Japanese PC client launched with its language set to Japanese, from the first frame of its window through its publisher splash, title splash, health notice and door stage.
-- [ ] **Korean launch** — `korean-launch.mkv`, waits on [localized opening](/docs/proposals/genshin/localized-opening): the Korean PC client launched with its language set to Korean, from the first frame of its window through its publisher splash, title splash, health notice and door stage.
+- [ ] **Movement** — `world-movement.mkv`, waits on [character controller](/docs/genshin/character-controller).
+- [ ] **Follow camera** — `follow-camera.mkv`, waits on [follow camera](/docs/proposals/genshin/follow-camera).
+- [ ] **Photo mode range** — `photo-mode-range.mkv`, waits on [follow camera](/docs/proposals/genshin/follow-camera).
+- [ ] **Dialogue auto-skip** — `dialogue-auto-skip.mkv`, waits on [dialogue](/docs/genshin/dialogue).
+- [ ] **Camp wake** — `world-camp.mkv`, waits on [enemies](/docs/genshin/enemies).
+- [ ] **Traveler's attacks** — `world-attacks.mkv`, waits on [combat](/docs/proposals/genshin/combat).
+- [ ] **Quit prompt** — `menu-quit-prompt.mkv`, waits on [menu quit prompt](/docs/proposals/genshin/menu-quit-prompt).
+- [ ] **Paimon menu, current build** — `menu-paimon-current.png`, waits on [Paimon menu](/docs/proposals/genshin/menu-paimon).
+- [ ] **Character screen** — `menu-character.mkv`, waits on [character screen](/docs/proposals/genshin/character-screen).
+- [ ] **Profile tab** — `character-profile.png`, waits on [character screen](/docs/proposals/genshin/character-screen).
+- [ ] **Mobile touch controls** — `mobile-touch.png`, waits on [touch controls](/docs/genshin/touch-controls).
+- [ ] **Bag open and close** — `bag-open-close.mkv`, waits on [inventory](/docs/proposals/genshin/inventory).
+- [ ] **Bag tabs** — `bag-tabs.mkv`, waits on [inventory](/docs/proposals/genshin/inventory).
+- [ ] **Bag sort** — `bag-sort.mkv`, waits on [inventory](/docs/proposals/genshin/inventory).
+- [ ] **Bag scroll** — `bag-scroll.mkv`, waits on [inventory](/docs/proposals/genshin/inventory).
+- [ ] **Bag select** — `bag-select.mkv`, waits on [inventory](/docs/proposals/genshin/inventory).
+- [ ] **Standard Wish banner** — `wish-standard.png`, waits on [wish](/docs/proposals/genshin/wish).
+- [ ] **Adventurer Handbook** — `handbook-open-close.mkv`, waits on [Adventurer Handbook](/docs/genshin/adventurer-handbook).
+- [ ] **Bag sort dropdown open** — `bag-sort-open.png`, waits on [inventory](/docs/proposals/genshin/inventory).
+- [ ] **Attributes Details** — `character-details.mkv`, waits on [character screen](/docs/proposals/genshin/character-screen).
+- [ ] **Weapon levelling** — `weapon-levelling.mkv`, waits on [weapon enhancement](/docs/proposals/genshin/weapon-enhancement).
+- [ ] **Attributes at 1080 high** — `character-attributes-1080.png`, waits on [character screen](/docs/proposals/genshin/character-screen).
+- [ ] **Camp enemy level by World Level** — `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv`, waits on [Adventure Rank](/docs/proposals/genshin/adventure-rank).
+- [ ] **Liyue outcrops by rank** — `liyue-outcrop-rank.mkv`, waits on [ley line outcrops](/docs/proposals/genshin/ley-line-outcrops).
+- [ ] **Ley line claim** — `ley-line-claim.mkv`, waits on [ley line outcrops](/docs/proposals/genshin/ley-line-outcrops).
+- [ ] **Exploration percentage steps** — `exploration-steps.mkv`, waits on [exploration progress](/docs/proposals/genshin/exploration-progress).
+- [ ] **Swirl spread** — `gcg-swirl-spread.mkv`, waits on [Genius Invokation](/docs/proposals/genshin/genius-invokation).
+- [ ] **Wildlife flight, White Pigeon** — `wildlife-flee-white-pigeon.mkv`, waits on [wildlife](/docs/proposals/genshin/wildlife).
+- [ ] **Wildlife flight, Squirrel** — `wildlife-flee-squirrel.mkv`, waits on [wildlife](/docs/proposals/genshin/wildlife).
+- [ ] **Wildlife flight, Crimson Fox** — `wildlife-flee-crimson-fox.mkv`, waits on [wildlife](/docs/proposals/genshin/wildlife).
+- [ ] **Gadget cooldown through the menu** — `gadget-cooldown-pause.mkv`, waits on [gadgets](/docs/proposals/genshin/gadgets).
+- [ ] **Gathering pick** — `gather-pick.mkv`, waits on [gathering](/docs/proposals/genshin/gathering).
+- [ ] **Fish reel** — `fishing-reel.mkv`, waits on [fishing](/docs/proposals/genshin/fishing).
+- [ ] **Fishing point pools** — `fishing-point-pool.mkv`, waits on [fishing](/docs/proposals/genshin/fishing).
+- [ ] **Cooking zones** — `cooking-zones.mkv`, waits on [cooking](/docs/proposals/genshin/cooking).
+- [ ] **Special dish quality** — `cooking-special-dish.mkv`, waits on [cooking](/docs/proposals/genshin/cooking).
+- [ ] **Processing queue** — `processing-queue.mkv`, waits on [cooking](/docs/proposals/genshin/cooking).
+- [ ] **Campfire elements** — `campfire-elements.mkv`, waits on [cooking](/docs/proposals/genshin/cooking).
+- [ ] **Forge order queue** — `forge-order-queue.mkv`, waits on [forging](/docs/proposals/genshin/forging).
+- [ ] **Forge refusal** — `forge-refusal.mkv`, waits on [forging](/docs/proposals/genshin/forging).
+- [ ] **Achievements screen** — `achievements-screen.mkv`, waits on [achievements](/docs/proposals/genshin/achievements).
+- [ ] **Realm stores fill** — `realm-store-start.png`, `realm-store-hour.png`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot).
+- [ ] **Trust queues** — `trust-queues.mkv`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot).
+- [ ] **Realm load** — `realm-load.png`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot).
+- [ ] **Archive screen** — `archive-screen.mkv`, waits on [Archive](/docs/proposals/genshin/archive).
+- [ ] **Book reader** — `book-reader.mkv`, waits on [Archive](/docs/proposals/genshin/archive).
+- [ ] **Japanese launch** — `japanese-launch.mkv`, waits on [localized opening](/docs/proposals/genshin/localized-opening).
+- [ ] **Korean launch** — `korean-launch.mkv`, waits on [localized opening](/docs/proposals/genshin/localized-opening).
 
 ## Opening
 
@@ -299,7 +300,6 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Windrise re-derived from the game's own data.** [Windrise derivation](/docs/proposals/genshin/windrise-derivation) needs every object the tile streams at its place, the dais and pedestals named, then each stand-in ranked and rebuilt, and each hour's light and haze calibrated over them.
 - [ ] **Windrise's ground detail, and every region's ground layers.** Every surface's detail is drawn at its own texture's metres per texel; [ground detail](/docs/proposals/genshin/ground-detail) needs the Ground's structure read with its layers, then each layer's own texture's detail at its repeat, and each other region's layers once its base maps are exported.
 - [ ] **Each region's render pass, in build order.** [Recreation passes](/docs/proposals/genshin/recreation-passes) runs each region's compare and rank over its references once they are named in `ParityReferenceMap`, Inazuma's first.
-- [ ] **Region palettes, sampled from the game's own building textures.** [Region buildings](/docs/genshin/region-buildings) needs each kit material's diffuse textures found and fitted to a palette per region.
 - [ ] **The Change World Level prompt.** [Adventure rank](/docs/proposals/genshin/adventure-rank) needs the prompt's layout, measured from `world-level-dialog-2024.mkv`, its Confirm state and its text ids from the dump.
 - [ ] **Map: the zoom slider, the teleport panel and the region tag.** [Exploring](/docs/proposals/genshin/exploring) needs the map to zoom and pan, the teleport panel's reference (`world-map.mkv`), and the region tag's text.
 - [ ] **Each region's ground held to its shape pass, then frozen.** [Scene derivation](/docs/genshin/scene-derivation) needs each fitted ground's outline and depth, drawn at each reference's camera, judged against the exports' within the reference's noise, and a test freezing the fitted parameters' error once the gate and that measure both hold.
@@ -307,10 +307,10 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Region palettes: the colours the sampling leaves out.** [Region buildings](/docs/genshin/region-buildings) needs Mondstadt's and Inazuma's plaster, Fontaine's gold and iron, Mondstadt's roofs and Snezhnaya's buildings sampled from textures their extractions hold.
 - [ ] **Lempo Isle's and Everfrozen Earth's outlines, the game's own.** [Capitals compute](/docs/genshin/compute/capitals) holds the item, until the dump has their polygons.
 - [ ] **The world's provisional looks, each by its measure.** [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) and the pages it names need the great oak's fit, the tree impostor's turn, the flowers' statistics, the weather looks and a river bend's foam, each by its own reference.
-- [ ] **God rays and bloom, priced by a recording.** [Rendering style](/docs/genshin/rendering-style) needs a recording of Windrise's shafts to set the god rays' density, and the bloom threshold set from the game's lifted frames.
+- [ ] **God rays and bloom, priced by a recording.** [Windrise compute](/docs/genshin/compute/windrise) needs a recording of Windrise's shafts to set the god rays' density, and the bloom threshold set from the game's lifted frames.
 - [ ] **References: the world's HUD and a teleport.** [HUD](/docs/proposals/genshin/hud) needs the HUD recording, a teleport between two waypoints of one area, and every HUD piece's place and look off them.
-- [ ] **The touch controls, measured.** [Touch controls](/docs/genshin/touch-controls) needs a recording of the mobile client's stick, drag turn and jump button.
-- [ ] **Enemies' measures and places.** [Enemies](/docs/genshin/enemies) needs the AI's timings and speeds read off the Hilichurl's clips, and its aggro range and leash off a recording.
+- [ ] **The touch controls, measured.** [World compute](/docs/genshin/compute/world) needs a recording of the mobile client's stick, drag turn and jump button.
+- [ ] **Enemies' measures and places.** [World compute](/docs/genshin/compute/world) needs the AI's timings and speeds read off the Hilichurl's clips, and its aggro range and leash off a recording.
 - [ ] **References: the camera behind the character.** [Follow camera](/docs/proposals/genshin/follow-camera) needs the zoom notch, the ease back out and the reset's elevation read off a recording of the English PC client.
 - [ ] **Photo mode: its range solved off the camera's sliders at their ends.** [Follow camera](/docs/proposals/genshin/follow-camera) needs the photo mode's pitch limits and distances solved from recordings with the sliders at their ends.
 - [ ] **Characters' motion and scale.** [Characters](/docs/proposals/genshin/characters) needs each character's motion fitted to its own locomotion clips and its scale read from its model's height in the exports.
