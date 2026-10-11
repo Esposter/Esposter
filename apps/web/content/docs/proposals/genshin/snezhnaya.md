@@ -47,8 +47,6 @@ Snezhnograd's main street, the Zapolyarny Palace, The Korolevskiy Theater, Centr
 | :-------------------------------------------------------- | :------------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise of the tundra and the peaks |
 
-The industrial and capital kits and the Kresnik's Torch are built, as [its as-built page](/docs/genshin/snezhnaya) describes.
-
 **Still to build, in order:**
 
 1. **Snezhnograd, its torches and its birches**, once the `snezhnaya-capital` re-extraction finds the city in the game's data.
