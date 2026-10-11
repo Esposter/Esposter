@@ -214,7 +214,6 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Albedo](/docs/genshin/kits/albedo)                 | Solar Isotoma, Transient Blossoms and the Fatal Blossoms             |
 | [Aloy](/docs/genshin/kits/aloy)                     | Freeze Bomb and Rushing Ice                                          |
 | [Amber](/docs/genshin/kits/amber)                   | Explosive Puppet's Baron Bunny and Fiery Rain                        |
-| [Baizhu](/docs/genshin/kits/baizhu)                 | Universal Diagnosis and Holistic Revivification's seamless shield    |
 | [Barbara](/docs/genshin/kits/barbara)               | Let the Show Begin♪ droplets, Melody Loop and Shining Miracle♪       |
 | [Beidou](/docs/genshin/kits/beidou)                 | Tidecaller's shield and the Thunderbeast's Targe                     |
 | [Bennett](/docs/genshin/kits/bennett)               | Passion Overload's Charge Levels and Fantastic Voyage's field        |
