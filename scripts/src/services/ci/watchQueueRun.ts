@@ -6,6 +6,7 @@ import {
   RUN_CREATION_ATTEMPTS,
   RUN_CREATION_WAIT,
   RUN_WATCH_INTERVAL_SECONDS,
+  UNSETTLED_CONCLUSIONS,
 } from "#src/services/ci/constants";
 import { getErrorLines } from "#src/services/ci/getErrorLines";
 import { selectRunToWatch } from "#src/services/ci/selectRunToWatch";
@@ -60,24 +61,38 @@ const readBranchRuns = async (): Promise<CiRun[]> =>
     ]),
   );
 
-// Waits for the CI run that covers `ai/queue`'s tip and prints its verdict, with each failed job's error lines. Returns
-// Whether the run passed, so the command exits non-zero on a red and the session that pushed is woken by it
+// Waits for the run until it completes, `--exit-status` left off so the watch ends whatever the conclusion, then reads it
+const readCompletedRun = async (runId: string): Promise<{ conclusion: string; jobs: CiJob[] }> => {
+  await runToolAsync("gh", ["run", "watch", runId, "--interval", String(RUN_WATCH_INTERVAL_SECONDS)]);
+  return parseMachineJson<{ conclusion: string; jobs: CiJob[] }>(
+    await runToolAsync("gh", ["run", "view", runId, "--json", "conclusion,jobs"]),
+  );
+};
+
+// Waits for the CI run that covers `ai/queue`'s tip and prints its verdict, with each failed job's error lines. A run
+// Superseded while it was watched carries no verdict, so the newer run after it, which builds on the tip too, is
+// Watched in its place. Returns whether the verdict is a pass, so a red exits non-zero and wakes the session that pushed
 export const watchQueueRun = async (): Promise<boolean> => {
   await runToolAsync("git", ["fetch", "-q", "origin", QUEUE_BRANCH]);
   const sha = (await runToolAsync("git", ["rev-parse", `origin/${QUEUE_BRANCH}`])).trim();
-  const run = selectRunToWatch(await readCommitRun(sha), await readBranchRuns());
-  if (!run) {
-    console.log(`No CI run covers ${sha} yet`);
+  let run = selectRunToWatch(await readCommitRun(sha), await readBranchRuns());
+  let completedRun: undefined | { conclusion: string; jobs: CiJob[] };
+  while (run) {
+    // oxlint-disable-next-line no-await-in-loop -- each run is watched only once the one before it was superseded
+    completedRun = await readCompletedRun(String(run.databaseId));
+    if (!UNSETTLED_CONCLUSIONS.includes(completedRun.conclusion)) break;
+
+    console.log(`CI run ${run.databaseId} was ${completedRun.conclusion}, so the run after it is watched`);
+    // oxlint-disable-next-line no-await-in-loop -- the runs after this one are read only once it was superseded
+    run = selectRunToWatch({ ...run, conclusion: completedRun.conclusion }, await readBranchRuns());
+  }
+  if (!run || !completedRun) {
+    console.log(`No CI run with a verdict covers ${sha} yet`);
     return false;
   }
 
-  const runId = String(run.databaseId);
-  // Without `--exit-status` the watch ends when the run completes, whatever its conclusion, which is read below
-  await runToolAsync("gh", ["run", "watch", runId, "--interval", String(RUN_WATCH_INTERVAL_SECONDS)]);
-  const { conclusion, jobs } = parseMachineJson<{ conclusion: string; jobs: CiJob[] }>(
-    await runToolAsync("gh", ["run", "view", runId, "--json", "conclusion,jobs"]),
-  );
-  console.log(`CI run ${runId} for ${sha.slice(0, 10)}: ${conclusion}`);
+  const { conclusion, jobs } = completedRun;
+  console.log(`CI run ${run.databaseId} for ${sha.slice(0, 10)}: ${conclusion}`);
   const failedJobs = jobs.filter((job) => job.conclusion === "failure");
   const failedLogs = await Promise.all(
     failedJobs.map(({ databaseId }) =>
