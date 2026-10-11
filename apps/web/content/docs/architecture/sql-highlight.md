@@ -30,7 +30,7 @@ flowchart TD
 
 ## Colours
 
-The colour map is a constant in `highlightSql.ts`, the one place the colours live. It follows the code viewer's token mapping in `uiHighlightSpecs`, which replaced the One Dark theme, so a query reads the same in the log as it does in the app's editors: keywords in the accent, strings in success, names in info, numbers and parameters in warning, and comments muted. The palette uses only the sixteen named ANSI colours `styleText` accepts, so the terminal's theme chooses the shades.
+The colour map is a constant in `highlightSql.ts`, the one place the colours live. It follows the code viewer's token mapping in `uiHighlightSpecs`, which replaced the One Dark theme, so a query reads the same in the log as in the app's editors, each token kind in the colour [the design language](/docs/architecture/design-language) gives highlighted code, with a parameter coloured as a number. The palette uses only the sixteen named ANSI colours `styleText` accepts, so the terminal's theme chooses the shades.
 
 | Token kind                  | Style                         |
 | :-------------------------- | :---------------------------- |

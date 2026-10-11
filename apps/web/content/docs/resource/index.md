@@ -76,6 +76,9 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Resource file assets](/docs/resource/resource-file-assets) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
 - [Storage quotas](/docs/resource/storage-quotas) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite blocks](/docs/resource/webpage-survey-invite-blocks) — published surveys as drag-in invite buttons in both GrapesJS editors
+- [Webpage plugin: countdown](/docs/resource/webpage-plugin-countdown) — the countdown block, our own plugin in place of `grapesjs-component-countdown`
+- [Webpage plugin: custom code](/docs/resource/webpage-plugin-custom-code) — the custom code block, our own plugin in place of `grapesjs-custom-code`
+- [Webpage plugin: forms](/docs/resource/webpage-plugin-forms) — the form components, our own plugin in place of `grapesjs-plugin-forms`
 - [Webpage plugin: basic blocks](/docs/resource/webpage-plugin-blocks-basic) — the webpage editor's layout and content blocks, our own plugin in place of `grapesjs-blocks-basic`
 
 Open work is in the [roadmap](/docs/resource/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/resource/deferred) (with revisit triggers) and [rejected](/docs/resource/rejected). The grid editor keeps its own roadmap, deferred and rejected pages beside it, under [sheet editor](/docs/resource/sheet).

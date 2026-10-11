@@ -81,6 +81,8 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Polyfills](/docs/architecture/polyfills)                                                 | A global a supported browser lacks — a deferred head script ahead of the bundle, one per global, each with its retirement                                                          |
 | [Section navigation](/docs/architecture/section-navigation)                               | One scrollspy for every sidebar that tracks scrolled content, plus the rail that follows it                                                                                        |
 | [Third-party document adapters](/docs/architecture/third-party-document-adapters)         | A library holding the live document is handed a replacement — otherwise it writes the old one back                                                                                 |
+| [Semver ranges](/docs/architecture/semver-ranges)                                         | The outdated report's range matching, our own over node-semver's fixtures                                                                                                          |
+| [SQL highlighting](/docs/architecture/sql-highlight)                                      | `highlightSql`, the dev query log's colours, replacing `sql-highlight`                                                                                                             |
 
 Cross-cutting standards we decided against are recorded in [rejected](/docs/architecture/rejected) — check it before proposing a new one. Ones we chose not to build yet, each with a revisit trigger, are in [deferred](/docs/architecture/deferred).
 

@@ -10,3 +10,7 @@ description: The utilities in @esposter/shared that replaced a dependency, and w
 - [Profanity check](/docs/shared/profanity) — an English word list and a whole-word matcher, replacing `@2toad/profanity`.
 - [Typed event emitter](/docs/shared/typed-event-emitter) — the app's game event bus, replacing `eventemitter3`.
 - [Deep equality](/docs/shared/deep-equal) — `checkIsDeepEqual`, which replaced `fast-deep-equal`.
+- [dedent](/docs/shared/dedent) — the template tag that strips a template's indentation, replacing `dedent`.
+- [IndexedDB](/docs/shared/indexed-db) — the typed IndexedDB wrapper, replacing `idb`.
+- [Media types](/docs/shared/mime-types) — the extension and media type lookup over `mime-db`, replacing `mime-types`.
+- [HTML sanitiser](/docs/shared/sanitize-html) — `sanitizeHtml` over parse5, replacing `sanitize-html`.
