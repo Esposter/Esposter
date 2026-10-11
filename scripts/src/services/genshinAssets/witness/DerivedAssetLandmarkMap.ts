@@ -12,12 +12,38 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // Single-mesh props
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.Hud]: {},
-  // Inazuma City's eleven landmarks (ParityReferenceMap's inazuma-city-location: the keep's eaves and ledge, the
-  // Platform's corners, a house's base and roof and the pavilion's eaves) name no mesh, so all eleven are dropped: the
-  // Extraction draws railings, roof trims and props within 600 metres of the capital, its largest a wharf platform 7.5
-  // Metres long, and the keep's and the houses' meshes its layout dumps name (Area_Dq_Build_MS_TsgHouse_02_Lod0,
-  // Area_Dq_Build_MS_CityHouse_04_Lod0) no OBJ exports, since its city blob roots only single-mesh props
-  [DerivedAssetComponent.Inazuma]: {},
+  // Inazuma City's four keep landmarks named: the top tier's eaves and the ledge under them, the silhouette edges of
+  // Area_Dq_Build_MS_Tsg_03_Lod0 (the keep's tallest mesh, its top at 176.5 metres) and Area_Dq_Build_MS_Tsg_02_Lod0
+  // (its second tier), each the one standing nearest the keep at (-5260, 150, 3320). The platform's corners, the
+  // Pavilion's eaves and the houses' base and roof are dropped: no mesh near the capital is matched to them with
+  // Confidence, and the house at the keep's base (Area_Dq_Build_MS_TsgHouse_07_Lod0) is a guess not read off the image.
+  // The pose could not run here (no parity page on localhost:3011), so these four are unmeasured
+  [DerivedAssetComponent.Inazuma]: {
+    keepEaveLeft: {
+      isEdge: true,
+      mesh: "Area_Dq_Build_MS_Tsg_03_Lod0",
+      near: [-5269.3, 160.95, 3314.84],
+      share: [0, 1, 0.5],
+    },
+    keepEaveRight: {
+      isEdge: true,
+      mesh: "Area_Dq_Build_MS_Tsg_03_Lod0",
+      near: [-5269.3, 160.95, 3314.84],
+      share: [1, 1, 0.5],
+    },
+    keepLedgeLeft: {
+      isEdge: true,
+      mesh: "Area_Dq_Build_MS_Tsg_02_Lod0",
+      near: [-5264.48, 139.57, 3320.95],
+      share: [0, 1, 0.5],
+    },
+    keepLedgeRight: {
+      isEdge: true,
+      mesh: "Area_Dq_Build_MS_Tsg_02_Lod0",
+      near: [-5264.48, 139.57, 3320.95],
+      share: [1, 1, 0.5],
+    },
+  },
   // Liyue Harbor's six landmarks (ParityReferenceMap's liyue-harbor-location: the gate's and the tower's plinths) name
   // No mesh, so all six are dropped: the extraction holds nothing rigid within 140 metres of the harbour's anchor, its
   // Nearest floor plate (Plot_05, 1.7 metres across) 142 metres off and its pillars 218 metres; its layout dumps name
