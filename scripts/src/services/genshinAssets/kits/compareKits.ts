@@ -55,6 +55,11 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
   const gapLines: string[] = [];
   let gapCount = 0;
   for (const { gcsimFolder, name, notes, overlayName, publishedRecord, sourceCandidateMap, tables } of inputs) {
+    // A kit yet to be published has no record for its overlay to reproduce, so its first publish seeds nothing
+    if (publishedRecord === undefined) {
+      failureLines.push(`  ${name}: has no published kit to compare`);
+      continue;
+    }
     const { gapPaths, overlayFailures } = getResult(() =>
       buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName)),
     ).match(

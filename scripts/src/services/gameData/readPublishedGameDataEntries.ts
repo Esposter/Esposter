@@ -1,4 +1,4 @@
-import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
+import { readPublishedGameDataIndex } from "#src/services/gameData/readPublishedGameDataIndex";
 import { readPublishedGameDataObject } from "#src/services/gameData/readPublishedGameDataObject";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -12,11 +12,7 @@ export const readPublishedGameDataEntries = async <T>(
   indexKey: string,
   ids?: readonly string[],
 ): Promise<Map<string, T>> => {
-  const { indexes } = await readGameDataLock();
-  const indexHash = indexes[indexKey];
-  if (indexHash === undefined)
-    throw new InvalidOperationError(Operation.Read, indexKey, "is not in the game data lock");
-  const entryHashMap = await readPublishedGameDataObject<Record<string, string>>(indexHash);
+  const entryHashMap = await readPublishedGameDataIndex(indexKey);
   const entryIds = ids ?? Object.keys(entryHashMap);
   const entryMap = new Map<string, T>();
   for (let start = 0; start < entryIds.length; start += ENTRY_CONCURRENCY)

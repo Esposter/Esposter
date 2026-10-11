@@ -4,6 +4,7 @@ import type { KitRecord } from "genshin-world";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { readPublishedGameDataEntries } from "#src/services/gameData/readPublishedGameDataEntries";
+import { readPublishedGameDataIndex } from "#src/services/gameData/readPublishedGameDataIndex";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { GCSIM_PLUNGE_FALLBACK_FOLDER, GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsimFolder";
@@ -28,27 +29,39 @@ const GcsimExpectedPathConstantMap: Record<string, string> = {
   "skill.animationFrames": "skillFrames",
 };
 
-// What the builder reads for every character with a published kit, or the named ones: the record published for it, and
-// The candidates gcsim's tag, the wiki and the tables give its record. gcsim's tag is read from its clone and the wiki's
-// Answers from their cache, each fetched first where it is absent
+// What the builder reads for every character with a published kit, the named ones alone, or both where every published
+// Kit is read beside them, as a publish reads them: the record published for each, if one is, and the candidates gcsim's
+// Tag, the wiki and the tables give its record. gcsim's tag is read from its clone and the wiki's answers from their
+// Cache, each fetched first where it is absent
 export const readKitInputs = async ({
   characterIds,
   gcsimDirectory,
+  isEveryPublishedKitRead = false,
   wikiCacheDirectory,
 }: {
   characterIds?: readonly number[];
   gcsimDirectory: string;
+  isEveryPublishedKitRead?: boolean;
   wikiCacheDirectory: string;
 }): Promise<KitInput[]> => {
   const tagCharacterMap = readGcsimTagCharacters(gcsimDirectory);
   const plungeFallback = tagCharacterMap.get(GCSIM_PLUNGE_FALLBACK_FOLDER);
   if (plungeFallback === undefined)
     throw new InvalidOperationError(Operation.Read, GCSIM_PLUNGE_FALLBACK_FOLDER, `has no folder at ${GCSIM_TAG}`);
-  const publishedRecordMap = await readPublishedGameDataEntries<KitRecord>(GameDataset.Kits, characterIds?.map(String));
-  const tablesMap = await readKitTables(Array.from(publishedRecordMap.keys(), Number));
+  const publishedIds = new Set(Object.keys(await readPublishedGameDataIndex(GameDataset.Kits)));
+  const ids =
+    characterIds === undefined
+      ? [...publishedIds]
+      : [...new Set([...(isEveryPublishedKitRead ? publishedIds : []), ...characterIds.map(String)])];
+  const publishedRecordMap = await readPublishedGameDataEntries<KitRecord>(
+    GameDataset.Kits,
+    ids.filter((id) => publishedIds.has(id)),
+  );
+  const tablesMap = await readKitTables(ids.map(Number));
   const inputs: KitInput[] = [];
-  for (const [id, publishedRecord] of publishedRecordMap) {
+  for (const id of ids) {
     const characterId = Number(id);
+    const publishedRecord = publishedRecordMap.get(id);
     const tables = tablesMap.get(characterId);
     if (tables === undefined) throw new InvalidOperationError(Operation.Read, String(characterId), "has no tables");
     const notes: string[] = [];
@@ -77,7 +90,7 @@ export const readKitInputs = async ({
       name: tables.name,
       notes,
       overlayName: toKebabCase(tables.name),
-      publishedRecord,
+      ...(publishedRecord && { publishedRecord }),
       sourceCandidateMap,
       tables,
     });

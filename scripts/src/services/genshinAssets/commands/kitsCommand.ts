@@ -25,7 +25,7 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
     },
     only: {
       description:
-        "Comma-separated avatar ids: the kits --compare reads, every published kit's by default, or the kits a publish may change",
+        "Comma-separated avatar ids: the kits --compare reads, every published kit's by default, or the kits a publish may change or add",
       type: "string",
     },
     "wiki-cache": {
@@ -51,8 +51,14 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
       for (const line of await compareKits(inputs)) console.log(line);
       return;
     }
-    // The publish replaces the whole `kits` index, so it builds every kit, and only the named ones may change
-    const inputs = await readKitInputs({ gcsimDirectory: args.gcsim, wikiCacheDirectory: args["wiki-cache"] });
+    // The publish replaces the whole `kits` index, so it builds every published kit and the named ones, a named kit yet to
+    // Be published among them, and only the named ones may change
+    const inputs = await readKitInputs({
+      characterIds,
+      gcsimDirectory: args.gcsim,
+      isEveryPublishedKitRead: true,
+      wikiCacheDirectory: args["wiki-cache"],
+    });
     console.log(
       await publishGameDataStep({
         isDryRun: args["dry-run"],

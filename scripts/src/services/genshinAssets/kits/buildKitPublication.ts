@@ -9,27 +9,26 @@ import { GameDataset } from "genshin-world";
 
 // Every kit's record and sources from its sources and committed overlay, as the entries of the `kits` and `kitSources`
 // Indexes by avatar id. A record must reproduce its published values exactly unless its kit is one the publish means to
-// Change, so a kit whose overlay or sources moved unasked fails the publish, naming the paths that differ. The kits are
-// The published ones, so a kit meant to change that none of them is fails it too: a kit's first publish is not built
+// Change, so a kit whose overlay or sources moved unasked fails the publish, naming the paths that differ. A kit with no
+// Published record is one the publish means to add, so it must be named among the changed ones too
 export const buildKitPublication = (
   inputs: readonly KitInput[],
   changedCharacterIds: readonly number[] = [],
 ): GameDataPublication => {
-  const inputCharacterIds = new Set(inputs.map(({ characterId }) => characterId));
-  const unpublishedCharacterIds = changedCharacterIds.filter((characterId) => !inputCharacterIds.has(characterId));
-  if (unpublishedCharacterIds.length > 0)
-    throw new InvalidOperationError(Operation.Create, unpublishedCharacterIds.join(", "), "has no published kit");
   const kits: Record<string, unknown> = {};
   const kitSources: Record<string, unknown> = {};
   const failures: string[] = [];
   for (const { characterId, name, overlayName, publishedRecord, sourceCandidateMap } of inputs) {
     const { record, sources } = buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName));
-    const mismatchedPaths = changedCharacterIds.includes(characterId)
-      ? []
-      : getMismatchedKitPaths(record, publishedRecord);
-    if (mismatchedPaths.length > 0) failures.push(`${name}: ${mismatchedPaths.join(", ")}`);
     kits[String(characterId)] = record;
     kitSources[String(characterId)] = sources;
+    if (changedCharacterIds.includes(characterId)) continue;
+    if (publishedRecord === undefined) {
+      failures.push(`${name}: has no published kit`);
+      continue;
+    }
+    const mismatchedPaths = getMismatchedKitPaths(record, publishedRecord);
+    if (mismatchedPaths.length > 0) failures.push(`${name}: ${mismatchedPaths.join(", ")}`);
   }
   if (failures.length > 0)
     throw new InvalidOperationError(
