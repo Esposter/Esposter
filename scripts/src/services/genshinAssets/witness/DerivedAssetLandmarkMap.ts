@@ -102,14 +102,46 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
   // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Snezhnaya]: {},
-  // Sumeru City's four spire landmarks named (ParityReferenceMap's sumeru-city-location: the terrace spire's base, tip
-  // And wings): the slender Area_Xm_Build_XKC_Shendian_04_Lod0 at the plateau's top (its tip 190.8 to 216.5 metres) for
-  // The tip and wings, and Area_Xm_Build_XKC_Shendian_03_Lod0 under it for the base's left edge, all standing at
-  // (-2253, 191, -4144). The harbour minaret's collar, dome and finial are dropped: the extraction's round towers near
-  // The harbour are walls and pillars (Area_Common_Build_Matou_03_Lod0 and the ruin walls) with no dome among them, so
-  // None is matched to the reference's minaret with confidence. The pose could not run here (no parity page on
-  // Localhost:3011), so these four are unmeasured
+  // Sumeru City's nine landmarks named (ParityReferenceMap's sumeru-city-location: the terrace spire's base, tip and
+  // Wings, and the harbour minaret's collar, dome and finial). The spire is the slender
+  // Area_Xm_Build_XKC_Shendian_04_Lod0 at the plateau's top (its tip 190.8 to 216.5 metres) for the tip and wings, and
+  // Area_Xm_Build_XKC_Shendian_03_Lod0 under it for the base's left edge, all standing at (-2253, 191, -4144). The
+  // Minaret is Area_Xm_Build_XKC_Talou_01_Lod0, the one tower among the harbour's piers, whose profile is the
+  // Reference's: an octagonal plinth to 14 metres of its 40, its top ledge the collar, a shaft, then an onion dome
+  // Widest at 34 metres and a finial to its top. The collar and the dome stand 74 and 47 pixels across in the
+  // Reference, 1.57 to one, and the plinth's 11.9 metres and the dome's 7.5 are 1.59. The pose has not run (no parity
+  // Page on localhost:3011), so these nine are unmeasured
   [DerivedAssetComponent.Sumeru]: {
+    minaretCollarLeft: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Talou_01_Lod0",
+      near: [-2399.59, 9.73, -4101.32],
+      share: [0, 0.35, 0.5],
+    },
+    minaretCollarRight: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Talou_01_Lod0",
+      near: [-2399.59, 9.73, -4101.32],
+      share: [1, 0.35, 0.5],
+    },
+    minaretDomeLeft: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Talou_01_Lod0",
+      near: [-2399.59, 9.73, -4101.32],
+      share: [0, 0.85, 0.5],
+    },
+    minaretDomeRight: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Talou_01_Lod0",
+      near: [-2399.59, 9.73, -4101.32],
+      share: [1, 0.85, 0.5],
+    },
+    minaretFinial: {
+      isInterior: true,
+      mesh: "Area_Xm_Build_XKC_Talou_01_Lod0",
+      near: [-2399.59, 9.73, -4101.32],
+      share: [0.5, 1, 0.5],
+    },
     spireBaseLeft: {
       isEdge: true,
       mesh: "Area_Xm_Build_XKC_Shendian_03_Lod0",
