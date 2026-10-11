@@ -4,7 +4,7 @@ import type { NuxtConfig } from "nuxt/schema";
 // Package's bundled into one small sheet
 export const css: NuxtConfig["css"] = [
   "@/assets/css/layers.css",
-  "@/assets/css/globals.scss",
+  "@/assets/css/globals.css",
   "genshin-interface/style.css",
   "genshin-world/style.css",
 ];

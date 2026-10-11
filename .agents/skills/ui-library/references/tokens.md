@@ -4,7 +4,7 @@ Read when adding a colour pair, a style token or a theme, or when anything selec
 
 - **A new pair that fails the palette test is re-picked**, never exempted from it.
 - **Only `NuxtTheme` selects a theme**: it hands the reader's style and theme mode to `useSelectUiTheme`, whose one watcher selects the pair. A region in another mode or style is a `UiThemeScope`; the style a component draws in is `useUiStyle`'s, never the store's.
-- **A drawing value is a style token.** A radius — a control's or a container's — an edge width, a surface's fill or shadow, a hover treatment, a face, a type size, the heading colour or the scrim is a `UiStyleToken` with a value in every column of `UiStyleMap` (`apps/web/configuration/`), read as its `--ui-<token>` custom property. A rule or a library component reads the token and never writes one style's value; nothing a style holds is a padding, a gap or a height, which stay in the layout tier in `globals.scss`.
+- **A drawing value is a style token.** A radius — a control's or a container's — an edge width, a surface's fill or shadow, a hover treatment, a face, a type size, the heading colour or the scrim is a `UiStyleToken` with a value in every column of `UiStyleMap` (`apps/web/configuration/`), read as its `--ui-<token>` custom property. A rule or a library component reads the token and never writes one style's value; nothing a style holds is a padding, a gap or a height, which stay in the layout tier in `globals.css`.
 
 ## Lengths and motion
 

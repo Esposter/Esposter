@@ -35,7 +35,7 @@ Unpublishing already sweeps a publication's asset clones, and the storage quota 
 | `apps/web/app/components/Resource/Note/EditorMenuBar.vue`       | the Image button                                            |
 | `apps/web/app/components/Resource/Note/View.vue`                | passes the Note-only `img` allowance to the sanitizer       |
 | `packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts` | takes the extra allowance without widening the composer's   |
-| `apps/web/app/assets/css/globals.scss`                          | the image rule in the rich-text typography                  |
+| `apps/web/app/assets/css/globals.css`                           | the image rule in the rich-text typography                  |
 | `apps/web/package.json`                                         | gains `@tiptap/extension-image` from the catalog            |
 | `pnpm-workspace.yaml`                                           | the catalog entry for `@tiptap/extension-image`             |
 

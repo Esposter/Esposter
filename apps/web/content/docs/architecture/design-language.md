@@ -11,7 +11,7 @@ Every interface in the app is drawn from one set of tokens through one set of ru
 flowchart TD
   P[UiPaletteMap: colours per style and mode] --> TP[Vuetify 0's theme plugin: one theme per style and mode]
   S[UiStyleMap: drawing per style] -->|at config time| SR[One rule per style on its data-ui-style value]
-  L[The layout tier in globals.scss: the step, the dock, motion] --> R
+  L[The layout tier in globals.css: the step, the dock, motion] --> R
   TP --> H[The first response: token stylesheet, data-theme, colour scheme]
   H --> R[The surface, type and shortcut rules in uno.config.ts]
   SR --> R
@@ -104,7 +104,7 @@ A style is only worth having if switching it can never move or break anything, s
 
 ## The layout tier
 
-Everything sits on one step, `--ui-step`, a quarter rem: the width of voxel's frame edge, called a voxel. Padding, gaps, the focus ring's offset and every control's height are whole numbers of steps — one control height of eight steps that a button, a field and a select's trigger share, so a row of them lines up — and a component never states a length the grid cannot express. The step, the dock's breadth (`--dock-size`) and the motion timings sit in `globals.scss` on the root, the same in every style.
+Everything sits on one step, `--ui-step`, a quarter rem: the width of voxel's frame edge, called a voxel. Padding, gaps, the focus ring's offset and every control's height are whole numbers of steps — one control height of eight steps that a button, a field and a select's trigger share, so a row of them lines up — and a component never states a length the grid cannot express. The step, the dock's breadth (`--dock-size`) and the motion timings sit in `globals.css` on the root, the same in every style.
 
 ## Surfaces
 
@@ -139,7 +139,7 @@ Four sizes, each a style token: the body, a section heading, a page title and a 
 - **A page's root wears `ui-body`**, so everything under it that sets no type of its own reads it, and each heading wears one of the other three. Voxel's heading is in the accent as well as larger, so hierarchy survives a reader who scales the text.
 - **One weight in voxel.** The face has one, and its heading weight says so, so a heading element's own bold is never synthesised over it.
 - **The body, headings and code each have a face token**, so the readable-text setting swaps all three and no component knows about it: the body and headings for the system's sans-serif face, and code for the system's monospace, so it still lines up. No text keeps the pixel face under it, whichever token it reads.
-- **Readable text is a cookie, as the theme is**, not a row of the reader's settings: the first response renders the choice with no flash of the other face, and a reader who is signed out, as most docs readers are, has it too. The root carries an attribute while it is on, and one rule in `globals.scss` swaps the voxel style's faces under it, on the root and on every voxel scope. It is off by default, and toggled from the dock's style menu and the palette, which read one list and offer it only while voxel is selected; its cookie stays, so switching back restores it.
+- **Readable text is a cookie, as the theme is**, not a row of the reader's settings: the first response renders the choice with no flash of the other face, and a reader who is signed out, as most docs readers are, has it too. The root carries an attribute while it is on, and one rule in `globals.css` swaps the voxel style's faces under it, on the root and on every voxel scope. It is off by default, and toggled from the dock's style menu and the palette, which read one list and offer it only while voxel is selected; its cookie stays, so switching back restores it.
 - **Loaded on every page.** Every style's faces are global families of the fonts module (`configuration/fonts.ts`), since the module's scan finds the faces a stylesheet names and not one named through a custom property.
 
 ## State
@@ -160,13 +160,13 @@ Vuetify 0 marks state on the element as attributes — selected, disabled, open,
 
 Every timing is eased, never stepped: one decelerating curve, so a change starts moving at once and settles into place. Motion says where something came from rather than decorating what is done often.
 
-- **A duration is a whole number of units**, as a length is of steps. `--ui-motion-short`, `--ui-motion-medium` and `--ui-motion-long` in `globals.scss` are each a duration and `--ui-motion-easing`, Material's emphasised curve, so a transition names one token. Anything leaving takes a size shorter than it took arriving, as Material's motion has it.
+- **A duration is a whole number of units**, as a length is of steps. `--ui-motion-short`, `--ui-motion-medium` and `--ui-motion-long` in `globals.css` are each a duration and `--ui-motion-easing`, Material's emphasised curve, so a transition names one token. Anything leaving takes a size shorter than it took arriving, as Material's motion has it.
 - **Never stepped.** Stepping a transition a frame at a time to read as pixel art makes a tooltip or a dialog arrive in two to four visible jumps, which read as dropped frames and make each one feel slow, so the pixel look lives in the shapes and never in the timing. Voxel's skeleton band is the one stepped loop, since an eased shimmer is what it avoids; standard eases it, as its own look does.
 - **Reduced motion is one line.** Under the preference the unit takes no time, so every timing that reads it is instant and nothing is restated per component. The status page keeps a rule of its own, since its blocks' stagger would still hold them back.
 - **A dialog drops into place**, eight steps from above, its scrim fading in with it, and rises back out. The library's dialog is the browser's, so it moves between its open and closed states from `@starting-style`, and stays in the top layer until it has gone through `allow-discrete` on `display` and `overlay`. `--ui-dialog-from` is where it comes from: a sheet rises from the bottom on a narrow screen and steps in from the right on a wide one.
 - **A panel steps out of what opened it**: `UiPopover` from its trigger, and from the dock's edge on the dock, which sets `--ui-popover-from` by breakpoint as it sets where a tooltip opens. **A tooltip** pops out of what it names in the short timing. **A toast** steps in from the edge of its corner, and only moves on arriving: each source takes its own toast away, so a leaving toast would need every source behind one transition group, while its arrival is `@starting-style`, which every toast gets whoever mounts it.
 - **Nothing moves on a menu, a select, suggestions or the context menu.** They are opened constantly, and suggestions redraw on every keystroke, so motion would only slow each pick down. Nothing loops but a spinner, a skeleton's band and the working line.
-- **A default a utility must override is inherited, never set on the element.** `globals.scss` is unlayered, so a custom property it sets on a class beats every UnoCSS utility, which sits in a layer. `--ui-dialog-from` and `--ui-popover-from` are set on the root instead, and a sheet or the dock sets its own on itself, which wins over an inherited value.
+- **A default a utility must override is inherited, never set on the element.** `globals.css` is unlayered, so a custom property it sets on a class beats every UnoCSS utility, which sits in a layer. `--ui-dialog-from` and `--ui-popover-from` are set on the root instead, and a sheet or the dock sets its own on itself, which wins over an inherited value.
 
 ## The document chrome
 
@@ -234,7 +234,7 @@ The theme-mode store holds the reader's mode — system, light or dark — as a 
 | `apps/web/app/components/Ui/ThemeScope.vue`             | A region drawn in another mode or style                                                   |
 | `apps/web/uno.config.ts`                                | One theme colour per token; each style's rule; the surfaces, type rules and shortcuts     |
 | `apps/web/uno.config.test.ts`                           | The resolved rules and style rules, snapshotted                                           |
-| `apps/web/app/assets/css/globals.scss`                  | The document chrome, the layout tier's tokens, the dialogs' drop, the chart tokens, print |
+| `apps/web/app/assets/css/globals.css`                   | The document chrome, the layout tier's tokens, the dialogs' drop, the chart tokens, print |
 | `apps/web/app/assets/css/layers.css`                    | Declares the chrome's layer first                                                         |
 | `apps/web/configuration/fonts.ts`                       | Every style's faces as global font families                                               |
 | `apps/web/app/templates.test.ts`                        | Refuses a style branch, a hand-drawn edge or voxel's face outside the library             |

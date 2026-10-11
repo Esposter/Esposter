@@ -1,9 +1,9 @@
 :root {
   --avatar-width: 2.5rem;
-  // ApexCharts' chart-wide tokens, which it reads off each chart's element as it renders: labels and axes in the muted
-  // Ink, grid lines in the divider, the panel under them, and the series in the accent and the four status colours, so
-  // A chart follows the style and the mode. Colour is never all that tells a series apart: each also takes a marker
-  // Shape of its own (`StyledApexChart`). What the chart declares on its own elements is set there, beside it
+  /* ApexCharts' chart-wide tokens, which it reads off each chart's element as it renders: labels and axes in the muted */
+  /* Ink, grid lines in the divider, the panel under them, and the series in the accent and the four status colours, so */
+  /* A chart follows the style and the mode. Colour is never all that tells a series apart: each also takes a marker */
+  /* Shape of its own (`StyledApexChart`). What the chart declares on its own elements is set there, beside it */
   --apx-accent: var(--ui-accent);
   --apx-fore: var(--ui-muted);
   --apx-grid: var(--ui-divider);
@@ -13,49 +13,49 @@
   --apx-series-3: var(--ui-success);
   --apx-series-4: var(--ui-warning);
   --apx-series-5: var(--ui-error);
-  // The layout tier, the same in every design style: the step every length of the UI library is a whole number of,
-  // The dock, and motion. What a style draws with (its faces, sizes, edges and shadows) is `UiStyleMap`'s
+  /* The layout tier, the same in every design style: the step every length of the UI library is a whole number of, */
+  /* The dock, and motion. What a style draws with (its faces, sizes, edges and shadows) is `UiStyleMap`'s */
   --ui-step: 0.25rem;
-  // The dock's breadth: a rail's width on a wide screen, a bar's height on a narrow one
+  /* The dock's breadth: a rail's width on a wide screen, a bar's height on a narrow one */
   --dock-size: calc(var(--ui-step) * 14);
-  // Where the dock takes room from the page, set on the app root by breakpoint and zero on a page with no dock
+  /* Where the dock takes room from the page, set on the app root by breakpoint and zero on a page with no dock */
   --dock-inset-block-end: 0rem;
   --dock-inset-inline-start: 0rem;
-  // Motion, eased rather than stepped: a duration is a whole number of units on one decelerating curve, so a change
-  // Moves at once and settles into place. Short for a small thing popping out of what it hangs off, medium for a
-  // Panel and for anything leaving, long for a dialog or a toast arriving
+  /* Motion, eased rather than stepped: a duration is a whole number of units on one decelerating curve, so a change */
+  /* Moves at once and settles into place. Short for a small thing popping out of what it hangs off, medium for a */
+  /* Panel and for anything leaving, long for a dialog or a toast arriving */
   --ui-motion-unit: 50ms;
   --ui-motion-easing: cubic-bezier(0.2, 0, 0, 1);
   --ui-motion-short: calc(var(--ui-motion-unit) * 3) var(--ui-motion-easing);
   --ui-motion-medium: calc(var(--ui-motion-unit) * 4) var(--ui-motion-easing);
   --ui-motion-long: calc(var(--ui-motion-unit) * 6) var(--ui-motion-easing);
-  // Where a dialog arrives from: eight steps above, unless it sets its own, as a sheet does from its side
+  /* Where a dialog arrives from: eight steps above, unless it sets its own, as a sheet does from its side */
   --ui-dialog-from: translateY(calc(var(--ui-step) * -8));
-  // Where a panel steps out from: down from its trigger, unless a region sets its own, as the dock does from its edge
+  /* Where a panel steps out from: down from its trigger, unless a region sets its own, as the dock does from its edge */
   --ui-popover-from: translateY(calc(var(--ui-step) * -4));
 }
-// Held still under reduced motion: every timing takes no time, so whatever moved is simply there or gone
+/* Held still under reduced motion: every timing takes no time, so whatever moved is simply there or gone */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --ui-motion-unit: 0s;
   }
 }
-// The readable-text setting: all of voxel's text in the system's own faces, code in its monospace so it still lines
-// Up. Every face token is swapped, so no text keeps the pixel face whichever token it reads. Unlayered, so it wins
-// Over the style's rule, and on every voxel scope under the root as well as the root, since each scope declares the
-// Style's faces again
+/* The readable-text setting: all of voxel's text in the system's own faces, code in its monospace so it still lines */
+/* Up. Every face token is swapped, so no text keeps the pixel face whichever token it reads. Unlayered, so it wins */
+/* Over the style's rule, and on every voxel scope under the root as well as the root, since each scope declares the */
+/* Style's faces again */
 [data-readable-text][data-ui-style="voxel"],
 [data-readable-text] [data-ui-style="voxel"] {
   --ui-font-body: system-ui, sans-serif;
   --ui-font-heading: system-ui, sans-serif;
   --ui-font-mono: ui-monospace, monospace;
 }
-// The document's own chrome in the UI library's tokens, reaching every page. It sits in the first layer, ahead of the
-// Reset, so a component that paints its own focus or selection still wins. The inherited colours are declared
-// Again on every theme scope, since an inherited value is resolved where it is declared: a region scoped to another
-// Theme would otherwise draw its scrollbars, caret and fields in the document's. A field is a translucent layer of the
-// Text colour, so it is the same step off whatever surface it sits in — the page, a frame or a lifted panel — and no
-// Surface sets a tone of its own for what it holds
+/* The document's own chrome in the UI library's tokens, reaching every page. It sits in the first layer, ahead of the */
+/* Reset, so a component that paints its own focus or selection still wins. The inherited colours are declared */
+/* Again on every theme scope, since an inherited value is resolved where it is declared: a region scoped to another */
+/* Theme would otherwise draw its scrollbars, caret and fields in the document's. A field is a translucent layer of the */
+/* Text colour, so it is the same step off whatever surface it sits in — the page, a frame or a lifted panel — and no */
+/* Surface sets a tone of its own for what it holds */
 @layer ui-chrome {
   :root,
   [data-theme] {
@@ -66,7 +66,7 @@
     scrollbar-width: thin;
   }
 
-  // The page's own ground and ink, and the face its text is set in until a region sets its own
+  /* The page's own ground and ink, and the face its text is set in until a region sets its own */
   body {
     background-color: var(--ui-background);
     color: var(--ui-text);
@@ -84,20 +84,20 @@
     outline-offset: var(--ui-step);
   }
 }
-// Maintain height for line breaks as tiptap editor inserts empty <p> tag for newlines
+/* Maintain height for line breaks as tiptap editor inserts empty <p> tag for newlines */
 p:empty::before {
   content: "";
   display: inline-block;
 }
-// Where a dragged row will land, in every reorderable list, table and sidebar: a line in the accent over the faded row,
-// Drawn inset so a table row, which takes no border of its own, shows it too
+/* Where a dragged row will land, in every reorderable list, table and sidebar: a line in the accent over the faded row, */
+/* Drawn inset so a table row, which takes no border of its own, shows it too */
 .reorder-ghost {
   box-shadow: inset 0 calc(var(--ui-border-width) * 2) 0 0 var(--ui-accent);
   opacity: 0.5;
 }
 
-// Whoever is speaking glows in the accent, easing in and out with their voice. The glow itself is the caller's own
-// box-shadow, since an avatar's ring sits outside its edge and a tile's inside
+/* Whoever is speaking glows in the accent, easing in and out with their voice. The glow itself is the caller's own */
+/* box-shadow, since an avatar's ring sits outside its edge and a tile's inside */
 .ui-speaking {
   opacity: 0;
   transition: opacity var(--ui-motion-short);
@@ -107,7 +107,7 @@ p:empty::before {
   opacity: 1;
 }
 
-// A bar that settles into place as it first shows, rising from the offset its own --ui-enter-offset names
+/* A bar that settles into place as it first shows, rising from the offset its own --ui-enter-offset names */
 .ui-bar-enter {
   transition:
     opacity var(--ui-motion-medium),
@@ -121,9 +121,9 @@ p:empty::before {
   }
 }
 
-// Rich text (tiptap) output, themed from outside in the library's tokens: the list padding and markers and the heading
-// Sizes the reset takes away, links in the link colour, code in the mono face whatever the body reads in, and a quote
-// Behind a rule in the edge colour
+/* Rich text (tiptap) output, themed from outside in the library's tokens: the list padding and markers and the heading */
+/* Sizes the reset takes away, links in the link colour, code in the mono face whatever the body reads in, and a quote */
+/* Behind a rule in the edge colour */
 .rich-text-content {
   ul,
   ol {
@@ -157,9 +157,9 @@ p:empty::before {
     padding-left: calc(var(--ui-step) * 3);
     box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-border);
   }
-  // A task list trades the marker for its checkbox beside the text, the same in the editor and the published render,
-  // And a ticked task reads as done — muted and struck through, its own lines only so its open sub-tasks stay legible.
-  // Every rule is on the list's own items, since a task can hold a bullet list whose items are not tasks
+  /* A task list trades the marker for its checkbox beside the text, the same in the editor and the published render, */
+  /* And a ticked task reads as done — muted and struck through, its own lines only so its open sub-tasks stay legible. */
+  /* Every rule is on the list's own items, since a task can hold a bullet list whose items are not tasks */
   ul[data-type="taskList"] {
     padding: 0;
     list-style: none;
@@ -184,8 +184,8 @@ p:empty::before {
       text-decoration: line-through;
     }
   }
-  // A custom emoji is inline text, not a picture in a paragraph: it follows the line's own size the way a
-  // Unicode glyph does, so a message that mixes the two lines up whatever the reader's density setting is
+  /* A custom emoji is inline text, not a picture in a paragraph: it follows the line's own size the way a */
+  /* Unicode glyph does, so a message that mixes the two lines up whatever the reader's density setting is */
   .custom-emoji {
     display: inline-block;
     width: 1.375em;
@@ -194,14 +194,14 @@ p:empty::before {
     vertical-align: text-bottom;
   }
 }
-// A dialog's scrim, in the style's drawing of it: the native dialog's backdrop, which no template can scope a style to
+/* A dialog's scrim, in the style's drawing of it: the native dialog's backdrop, which no template can scope a style to */
 dialog.ui-dialog::backdrop {
   background: var(--ui-scrim);
   opacity: 0.85;
 }
-// A dialog drops into place as the status page's blocks do: from eight steps above, its scrim fading in with it, and
-// It rises back out a size quicker. The dialog is the browser's, so it moves between its open and closed states, kept
-// In the top layer until it has gone
+/* A dialog drops into place as the status page's blocks do: from eight steps above, its scrim fading in with it, and */
+/* It rises back out a size quicker. The dialog is the browser's, so it moves between its open and closed states, kept */
+/* In the top layer until it has gone */
 dialog.ui-dialog,
 dialog.ui-dialog::backdrop {
   opacity: 0;
@@ -244,11 +244,11 @@ dialog.ui-dialog[open]::backdrop {
     transform: var(--ui-dialog-from);
   }
 }
-// Printed, a page is a document: dark text on white in the body face, with no dock, no scrim, no shadow and no
-// Surface's fill, which paper would take as ink. The tokens are set again, rather than every surface restyled, so
-// Whatever reads them prints the same way, and every scope that declares them is reached. A link's address follows it,
-// Since paper cannot be clicked — but not a link drawn as a button, a card, a row or a tab, which is a control rather
-// Than a reference
+/* Printed, a page is a document: dark text on white in the body face, with no dock, no scrim, no shadow and no */
+/* Surface's fill, which paper would take as ink. The tokens are set again, rather than every surface restyled, so */
+/* Whatever reads them prints the same way, and every scope that declares them is reached. A link's address follows it, */
+/* Since paper cannot be clicked — but not a link drawn as a button, a card, a row or a tab, which is a control rather */
+/* Than a reference */
 @media print {
   :root,
   [data-theme],
