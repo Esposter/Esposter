@@ -54,7 +54,7 @@ The list is scored against the English PC client at 1080 high in its pickup: a p
 - Three rows of 59 on a 72 pitch, the stack centred on the screen's middle, its cap's left edge 139 right of the centre.
 - The cap 40 wide and 33 high, its pointer 8 by 15 at 45 from the cap's left, the pill 290 wide from 60 past the cap's left, its name's cap height 22 in a face of 31 with letter-spacing to the game's line width, the icon 34 across at 12 inside the pill.
 
-The scores, mean difference and FLIP: the first build 8.27% and 0.2813, and with the name's place, its width and the icon's inset 6.88% and 0.2645 over the old backdrop, which is 9.23% and 0.3833 over the clean plate. The two-percent bar is not met. What is left:
+Scored over the clean plate, the list gives a mean difference of 6.88% and a FLIP of 0.2645, with its name's place, its width and the icon's inset set. The two-percent bar is not met. What is left:
 
 - **The item icons.** Three icons of 34 across are the game's own item art, which nothing ships, so a disc stands in. They are the largest term in the difference grid.
 - **The pill's fill and rim.** The plate fills the game's pill from its surroundings, so the fill and the rim are scored against the scene where the game's pill was, and the rim sits a pixel off.

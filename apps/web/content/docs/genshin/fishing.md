@@ -18,7 +18,7 @@ flowchart LR
   W --> R["Rules: stock by hour, refill, draw, lure, reel"]
 ```
 
-The reel is the one state machine built so far, its phase a `FishingPhase` the screen will read:
+The reel is the one state machine built, its phase a `FishingPhase` the screen will read:
 
 ```mermaid
 stateDiagram-v2
