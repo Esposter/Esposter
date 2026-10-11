@@ -1,5 +1,6 @@
-// A state a button is drawn in under the pointer. Rest, selected and disabled are what it shows, and keyboard focus is
-// Drawn as a hover
+// A state a button is drawn in under the pointer: hovered, or pressed. Rest, selected and disabled are what it shows,
+// And keyboard focus is drawn as a hover
 export enum InteractionState {
   Hover = "Hover",
+  Pressed = "Pressed",
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameButtonKind } from "#src/models/GameButtonKind";
 
-import { GAME_CREAM, GAME_GOLD, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { GAME_CREAM, GAME_GOLD, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
 
 interface Props {
   // The game's button template it is drawn as, which decides its look in each state
@@ -20,7 +20,7 @@ defineExpose({ focus: () => button.value?.focus() });
 
 <template>
   <!-- One of the game's buttons, placed by its parent, in its kind's look for each state: at rest, hovered (or focused
-       From the keyboard, which the game draws as a hover) and disabled. The look is the button's own, and its content
+       From the keyboard, which the game draws as a hover), pressed and disabled. The look is the button's own, and its content
        Takes the colour it sets -->
   <button ref="button" class="game-button" :data-kind="kind" type="button">
     <slot />
@@ -41,7 +41,7 @@ defineExpose({ focus: () => button.value?.focus() });
 }
 
 /* Each state is reached over its own crossfade: the duration is the state's being entered, so a hover fades in over
-   The hover's and out over the rest's */
+   The hover's and out over the rest's, and a press shows at once */
 .game-button {
   --state-duration: v-bind(restDuration);
   transition: color var(--state-duration);
@@ -51,10 +51,16 @@ defineExpose({ focus: () => button.value?.focus() });
   --state-duration: v-bind(hoverDuration);
 }
 
+.game-button:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+}
+
 /* The side bar's icon, gold at rest. Hovered, a translucent navy disc 65 units across lights behind it, centred on its
    Ink, and the icon turns cream and grows by 1.12, its ink's area fitted at rest and hovered: the current English PC
-   Client's settings gear at 1080 high (`yt-5EmJX_RyuY8-menu-settings` at 9.8 and 10.5 seconds). The disc's colour is
-   Fitted over two side bars' greens, the same recording's and a 2024 one's (`yt-kIDee7nyD0w-menu-quit-prompt`) */
+   Client's settings gear at 1080 high (`yt-5EmJX_RyuY8-menu-settings` at 9.8 and 10.5 seconds). Pressed, the disc
+   Turns cream and the icon ink, falling back to its resting size, the press's smaller click: the same gear held at 10.65
+   Seconds, its ink's area 1.01 of its rest's. The disc's colour is fitted over two side bars' greens, the same
+   Recording's and a 2024 one's (`yt-kIDee7nyD0w-menu-quit-prompt`) */
 .game-button[data-kind="Disc"] {
   isolation: isolate;
   color: v-bind(GAME_GOLD);
@@ -91,21 +97,34 @@ defineExpose({ focus: () => button.value?.focus() });
   scale: 1.12;
 }
 
+.game-button[data-kind="Disc"]:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  color: v-bind(GAME_INK);
+}
+
+.game-button[data-kind="Disc"]:enabled:is(:active, [data-interaction-state="Pressed"] *)::before {
+  background-color: v-bind(GAME_CREAM);
+}
+
+.game-button[data-kind="Disc"]:enabled:is(:active, [data-interaction-state="Pressed"] *) > :slotted(*) {
+  scale: 1;
+}
+
 /* An unbuilt screen's button, which the game never has, is drawn faded and answers nothing */
 .game-button[data-kind="Disc"]:disabled {
   opacity: 0.4;
 }
 
-/* The lit icon's name, in a translucent dark slate box 31 units high, centred on the icon and starting 49.5 units right
-   Of its centre, 5 past the side bar's edge, its words 17 units to their caps: the same frame's "Settings" */
+/* The lit icon's name, in a dark slate box 31 units high, centred on the icon and starting 49.5 units right of its
+   Centre, 5 past the side bar's edge, its words 17 units to their caps: the same recording's "Settings", read once it
+   Has settled at 10.5 seconds, where the box reads the same over the panel's cream and over a tile */
 .tip {
   position: absolute;
   top: 50%;
   left: calc(50% + var(--unit) * 49.5);
   padding: 0 calc(var(--unit) * 9);
   border-radius: calc(var(--unit) * 3);
-  background: rgb(55 57 79 / 0.7);
-  color: #d8dbe5;
+  background: #4d5063;
+  color: #e6eaf0;
   font-size: calc(var(--unit) * 24);
   font-weight: 600;
   line-height: calc(var(--unit) * 31);
@@ -116,7 +135,7 @@ defineExpose({ focus: () => button.value?.focus() });
   translate: 0 -50%;
 }
 
-.game-button:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *) > .tip {
+.game-button:enabled:is(:hover, :focus-visible, :active, [data-interaction-state] *) > .tip {
   opacity: 1;
 }
 

@@ -13,4 +13,5 @@ export const props = {
 export const variants = {
   disabled: { checkIsBuilt: () => false },
   hover: { interactionState: InteractionState.Hover },
+  pressed: { interactionState: InteractionState.Pressed },
 };

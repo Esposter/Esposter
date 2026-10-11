@@ -35,16 +35,19 @@ Every button the game draws is a `GameButton`, whose `kind` is the game's button
 flowchart TD
   B[A GameButton] --> D{Disabled?}
   D -->|yes| X[Its kind's disabled look]
-  D -->|no| H{"Under the pointer, focused from the keyboard, or its screen's interactionState is Hover?"}
+  D -->|no| P{"Held down, or its screen's interactionState is Pressed?"}
+  P -->|yes| K[Pressed: shown at once]
+  P -->|no| H{"Under the pointer, focused from the keyboard, or its screen's interactionState is Hover?"}
   H -->|yes| L[Hover: entered over INTERACTION_HOVER_MS]
   H -->|no| R[Rest: entered over INTERACTION_REST_MS]
 ```
 
-- **A state is entered over its own crossfade.** The game's button controllers (block 07356235, read from its animators' transitions into each state) fade into a hover over 0.05 seconds and back to rest over 0.1, which `INTERACTION_HOVER_MS` and `INTERACTION_REST_MS` hold: each is the duration of the state being entered, so a hover fades in and out at the game's two speeds.
+- **A state is entered over its own crossfade.** The game's button controllers (block 07356235, read from its animators' transitions into each state) fade into a hover over 0.05 seconds and back to rest over 0.1, and into a press at once, which `INTERACTION_HOVER_MS` and `INTERACTION_REST_MS` hold: each is the duration of the state being entered, so a hover fades in and out at the game's two speeds.
 - **The colours are the game's own.** `GAME_CREAM`, `GAME_INK` and `GAME_GOLD` are its button clips' colours, the cream a lit icon turns, the ink a cream pill's words are and the gold the side bar's icons rest in.
 - **Keyboard focus is drawn as a hover.** The game has no keyboard focus of its own to copy, so `:focus-visible` takes the hover's look. A `Plain` button, which the game draws the same in every state, is ringed in white instead, so focus still shows.
-- **A screen forces a state for its fixture.** `GameScreen`'s `interactionState` draws every button on it, and on any screen drawn inside it, in that state in place of the pointer's, so a fixture's `hover` variant is shot without a pointer. The visual suite of this package hands a component fixture's `interactionState` to the stage's `GameScreen`; a screen in `genshin-world` whose root is a `GameScreen` takes it from its fixture's props as its own.
-- **A Disc is the Paimon menu's side bar.** At rest its icon is gold. Hovered, a translucent navy disc 65 units across lights behind it and the icon turns cream and grows by 1.12, its name shown in a dark slate box past the side bar's edge; all measured off the English PC client's settings gear at 1080 high, the disc's colour fitted over two recordings' side bars.
+- **A screen forces a state for its fixture.** `GameScreen`'s `interactionState` draws every button on it, and on any screen drawn inside it, in that state in place of the pointer's, so a fixture's `hover` and `pressed` variants are shot without a pointer. The visual suite of this package hands a component fixture's `interactionState` to the stage's `GameScreen`; a screen in `genshin-world` whose root is a `GameScreen` takes it from its fixture's props as its own.
+- **A Disc is the Paimon menu's side bar.** At rest its icon is gold. Hovered, a translucent navy disc 65 units across lights behind it and the icon turns cream and grows by 1.12, its name shown in a dark slate box past the side bar's edge. Pressed, the disc turns cream and the icon ink, and the icon falls back to its resting size, the smaller click a press gives; all measured off the English PC client's settings gear at 1080 high, the disc's colour fitted over two recordings' side bars.
+- **A press resizes only what the game's own resizes.** The side bar's icon is the one built that does; the game's core pill and list templates hold their size, and the event screens' buttons, which grow by 1.02 hovered and settle at 0.98 pressed in most of their controllers, wait on those screens.
 - **The game draws some buttons the same in every state.** The profile card's info icon is one: its disc reads the same from the pointer's arrival to the click that opens its dialog, so it is a `Plain` button. Back is drawn the same way, provisionally, since no recording shows it under the pointer.
 - **A button for a screen not built yet is disabled.** The game has no such button, so a Disc is drawn faded and answers nothing.
 
@@ -65,6 +68,6 @@ flowchart TD
 - [Tutorial System Show Cursor](https://genshin-impact.fandom.com/wiki/File:Tutorial_System_Show_Cursor.png), Genshin Impact Wiki: the pointer.
 - [GENSHIN IMPACT | CELESTIA DOOR | LOADING SCREEN](https://www.youtube.com/watch?v=rBnfA4pXw6U): the 1080 high, 60 frame recording of the English client's login screen, which every size and colour here is measured from.
 - Block 07356235, the English PC client's interface block: its button controllers' transitions into each state, and its button clips' colours, read with AnimeStudio and fitted, nothing of it kept.
-- [The Settings screen from the side bar](https://www.youtube.com/watch?v=5EmJX_RyuY8) (`captures/yt-5EmJX_RyuY8-menu-settings.mp4`), the English PC client in 2024 at 1080 high and 60 frames a second: the side bar's settings gear at rest at 9.8 seconds and hovered at 10.5.
+- [The Settings screen from the side bar](https://www.youtube.com/watch?v=5EmJX_RyuY8) (`captures/yt-5EmJX_RyuY8-menu-settings.mp4`), the English PC client in 2024 at 1080 high and 60 frames a second: the side bar's settings gear at rest at 9.8 seconds, hovered at 10.5 and held down at 10.65.
 - [Quitting from the Paimon menu](https://www.youtube.com/watch?v=kIDee7nyD0w) (`captures/yt-kIDee7nyD0w-menu-quit-prompt.mp4`), the English PC client in 2024 at 1080 high: the side bar hovered over another green, against which the disc's colour is fitted.
 - `captures/world-level-dialog-2024.mkv`, the English PC client at 1080 high and 60 frames a second: the info icon from the pointer's arrival to its click, unchanged.
