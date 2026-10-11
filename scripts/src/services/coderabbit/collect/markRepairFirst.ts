@@ -13,7 +13,8 @@ import { readNewestCommitComments } from "#src/services/coderabbit/collect/readN
 export const markRepairFirst = ({ mainSha, signature, viewerLogin }: RepairFirstInput): void => {
   const marker = getMarker(REPAIR_FIRST_MARKER, signature);
   const sinceMs = Date.now() - REPAIR_FIRST_SPAN_MS;
-  if (getMarkedAtMs(readNewestCommitComments(), viewerLogin, marker).some((markedAtMs) => markedAtMs > sinceMs)) return;
+  if (getMarkedAtMs(readNewestCommitComments(sinceMs), viewerLogin, marker).some((markedAtMs) => markedAtMs > sinceMs))
+    return;
 
   const note = `The repair of ${signature.text} is owed at this red ${MAIN_BRANCH} head and the run's budget cannot hold it, so the next run starts with it, ahead of the walk`;
   console.info(note);
