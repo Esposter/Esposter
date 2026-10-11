@@ -94,6 +94,7 @@ describe(createChongyunKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
       characterIdCombatantMap: new Map(),
+      characterIdCombatantMap: new Map(),
       activeCombatant: createChongyunCombatant(),
       enemyMap: new Map(),
       kitEffectState,
@@ -134,6 +135,7 @@ describe(createChongyunKit, () => {
     const party = createParty([CHONGYUN_CHARACTER_ID]);
     field?.onTick({
       characterIdCombatantMap: new Map(),
+      characterIdCombatantMap: new Map(),
       activeCombatant: { ...createChongyunCombatant(), weaponType: WeaponType.Catalyst },
       enemyMap: new Map(),
       kitEffectState: catalystEffectState,
@@ -141,6 +143,7 @@ describe(createChongyunKit, () => {
       tickIndex: 0,
     });
     field?.onTick({
+      characterIdCombatantMap: new Map(),
       characterIdCombatantMap: new Map(),
       activeCombatant: createChongyunCombatant(),
       enemyMap: new Map(),
