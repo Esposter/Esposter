@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -19,16 +20,17 @@ import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
 export const stepKitEffects = (
   kitEffectState: KitEffectState,
   stepSeconds: number,
-  context: { activeCombatant: Combatant; body: GroundPoint; party: Party },
+  context: { activeCombatant: Combatant; body: GroundPoint; enemyMap?: Map<string, Enemy>; party: Party },
   expiredEffects: KitEffect[] = [],
 ): KitStrike[] => {
-  const { activeCombatant, body, party } = context;
+  const { activeCombatant, body, enemyMap = new Map<string, Enemy>(), party } = context;
   for (const effect of kitEffectState.effects) {
     effect.secondsRemaining -= stepSeconds;
     if (effect.kind === "stance") effect.elapsedSeconds += stepSeconds;
   }
   for (const effect of kitEffectState.effects)
-    if (effect.kind === "field") stepKitField(effect, stepSeconds, body, { activeCombatant, kitEffectState, party });
+    if (effect.kind === "field")
+      stepKitField(effect, stepSeconds, body, { activeCombatant, enemyMap, kitEffectState, party });
   const strikes = kitEffectState.effects.flatMap((effect) => {
     if (effect.kind === "summon") return stepKitSummon(effect, stepSeconds, body);
     if (effect.kind === "taunt") return stepKitTaunt(effect);

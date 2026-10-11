@@ -41,15 +41,16 @@ describe(emitKitEvent, () => {
       kind: KitEventKind.CharacterSwapped,
       previousCharacterId: 0,
     };
-    emitKitEvent(
-      event,
-      new Map([
-        [0, createCombatant(0)],
-        [TRAVELER_CHARACTER_ID, deployedCombatant],
-      ]),
-      context,
-    );
+    const characterIdCombatantMap = new Map([
+      [0, createCombatant(0)],
+      [TRAVELER_CHARACTER_ID, deployedCombatant],
+    ]);
+    emitKitEvent(event, characterIdCombatantMap, context);
 
-    expect(onKitEvent).toHaveBeenCalledExactlyOnceWith(event, { ...context, combatant: deployedCombatant });
+    expect(onKitEvent).toHaveBeenCalledExactlyOnceWith(event, {
+      ...context,
+      characterIdCombatantMap,
+      combatant: deployedCombatant,
+    });
   });
 });

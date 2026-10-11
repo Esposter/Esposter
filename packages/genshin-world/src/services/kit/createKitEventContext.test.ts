@@ -12,6 +12,7 @@ export const createKitEventContext = (
 ): KitEventContext => ({
   activeCombatant: combatant,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+  characterIdCombatantMap: new Map([[combatant.characterId, combatant]]),
   combatant,
   enemyMap: new Map(),
   kitEffectState: { effects: [] },

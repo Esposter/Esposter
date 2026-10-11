@@ -12,6 +12,6 @@ export const emitKitEvent = (
   const { party } = context;
   for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? []) {
     const combatant = characterIdCombatantMap.get(characterId);
-    combatant?.kit.onKitEvent?.(event, { ...context, combatant });
+    combatant?.kit.onKitEvent?.(event, { ...context, characterIdCombatantMap, combatant });
   }
 };

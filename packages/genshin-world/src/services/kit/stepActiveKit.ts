@@ -72,7 +72,7 @@ export const stepActiveKit = (
   const summonStrikes = stepKitEffects(
     kitEffectState,
     stepSeconds,
-    { activeCombatant: combatant, body: kitBody.position, party },
+    { activeCombatant: combatant, body: kitBody.position, enemyMap, party },
     expiredEffects,
   );
   for (const effect of expiredEffects) emit({ effect, kind: KitEventKind.EffectExpired });
