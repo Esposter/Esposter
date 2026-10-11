@@ -33,7 +33,7 @@ flowchart LR
 ## The reference
 
 - **The reference is a public frame.** The board is judged against a frame at 407 seconds of the English PC client's tavern duel, cut from its 400-second segment (`gcg-yt-tvboQ_ZWO_I-400-410.mp4`). The board draws that frame's HP, dice, phase and turn, but not its characters, art or ornaments, which are the game's and are never drawn here. Its compare score is the snapshot's row in `ParityReferenceMap.snapshot.md`: a mean difference of 13.97% (tone 9.63%, shape 0.470, FLIP 0.4658), the remainder being the game's own art, ornate frame and profile plates, which the board does not draw or ship. The reference `gcg-duel-board` names the frame.
-- **The board's layout is judged by the user's eye, and the visual suite holds no image of it until approved.** Its compare is recorded in `ParityReferenceMap.snapshot.md`; what remains is the game's ornate frame and profile plates, which the board neither draws nor ships. `Index.<platform>.png` is approved with `test:visual -u` once the layout is accepted.
+- **The board's layout is judged by the user's eye, and the visual suite holds no image of it until approved.** Its compare is recorded in `ParityReferenceMap.snapshot.md`; what remains is the game's ornate frame and profile plates, which the board neither draws nor ships. `Index.<platform>.png` is approved by `genshin:parity approve` once the layout is accepted.
 
 ## Key files
 
