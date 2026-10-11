@@ -7,7 +7,7 @@ description: Sumeru's region: its base ground, renderers, landmarks, camera, sha
 
 ## Queue
 
-- [ ] `[cpu]` {sumeru-region-base} needs game-exports — **Sumeru: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit sumeru --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/sumeru.json` (its centre is `sumeru-city`'s position) and `packages/genshin-world/src/data/catalogue.json` (the outline of `avidya-forest`). Writes `sumeru/base-ground.json` under `packages/genshin-world/src/data/`. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
+- [ ] `[cpu]` {sumeru-region-base} needs game-exports — **Sumeru: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit sumeru --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/sumeru.json` (its centre is `sumeru-city`'s position) and `packages/genshin-world/src/data/catalogue.json` (the outline of `avidya-forest`). Writes the hosted key `ground/sumeru`, a key scope, after which the region's authored ground file is deleted, since `genshin:data authored` refuses a ground file whose region a fit has drawn. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
 
 ## Waiting
 

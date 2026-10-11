@@ -7,7 +7,7 @@ description: Nod-Krai's region: its base ground, renderers, landmarks, camera, s
 
 ## Queue
 
-- [ ] `[cpu]` {nod-krai-region-base} needs game-exports — **Nod-Krai: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit nod-krai --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/nod-krai.json` (its centre is `nasha-town`'s position) and `packages/genshin-world/src/data/catalogue.json` (the outline of `lempo-isle`). Writes `nod-krai/base-ground.json` under `packages/genshin-world/src/data/`. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
+- [ ] `[cpu]` {nod-krai-region-base} needs game-exports — **Nod-Krai: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit nod-krai --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/nod-krai.json` (its centre is `nasha-town`'s position) and `packages/genshin-world/src/data/catalogue.json` (the outline of `lempo-isle`). Writes the hosted key `ground/nod-krai`, a key scope, after which the region's authored ground file is deleted, since `genshin:data authored` refuses a ground file whose region a fit has drawn. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
 
 ## Waiting
 

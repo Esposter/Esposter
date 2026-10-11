@@ -7,7 +7,7 @@ description: Natlan's region: its base ground, renderers, landmarks, camera, sha
 
 ## Queue
 
-- [ ] `[cpu]` {natlan-region-base} needs game-exports — **Natlan: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit natlan --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/natlan.json` (its centre is `people-of-the-springs`' position) and `packages/genshin-world/src/data/catalogue.json` (the outline of `toyac-springs`). Writes `natlan/base-ground.json` under `packages/genshin-world/src/data/`. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
+- [ ] `[cpu]` {natlan-region-base} needs game-exports — **Natlan: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit natlan --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/natlan.json` (its centre is `people-of-the-springs`' position) and `packages/genshin-world/src/data/catalogue.json` (the outline of `toyac-springs`). Writes the hosted key `ground/natlan`, a key scope, after which the region's authored ground file is deleted, since `genshin:data authored` refuses a ground file whose region a fit has drawn. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
 
 ## Waiting
 
