@@ -38,8 +38,11 @@ export const acquireProcessLock = (lockPath: string): boolean => {
     (value) => value,
     () => false,
   );
-  // A failed link is a lock taken meanwhile, which stands
-  if (!isJudgedLock) getResult(() => linkSync(stalePath, lockPath)).match(noop, noop);
+  // A failed link is a lock taken meanwhile, which stands, so the holder of the lock moved aside no longer holds it
+  if (!isJudgedLock)
+    getResult(() => linkSync(stalePath, lockPath)).match(noop, (error) => {
+      console.error(`${lockPath} was taken while it was moved aside, so its holder lost it: ${error.message}`);
+    });
   rmSync(stalePath, { force: true });
   return isJudgedLock && tryCreateLock(lockPath);
 };

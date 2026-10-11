@@ -67,7 +67,9 @@ describe(runQueuePush, () => {
 
     const push = vi.fn<() => Promise<QueuePushOutcome>>().mockRejectedValue(new Error("push failed"));
 
-    await expect(runQueuePush(push, lockPath, pendingPath)).rejects.toThrow("push failed");
+    await expect(runQueuePush(push, lockPath, pendingPath)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: push failed]`,
+    );
     expect(acquireProcessLock(lockPath)).toBe(true);
   });
 
