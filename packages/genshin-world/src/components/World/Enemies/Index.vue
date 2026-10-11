@@ -34,20 +34,12 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { stepEnemy } from "#src/services/enemy/stepEnemy";
 import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
+import { composeHeadingMatrix } from "#src/services/world/composeHeadingMatrix";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { useLoop } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import { createFixedStepLoop, createToonMaterial } from "genshin-engine";
-import {
-  CapsuleGeometry,
-  Color,
-  InstancedMesh,
-  Matrix4,
-  MeshBasicMaterial,
-  Quaternion,
-  SphereGeometry,
-  Vector3,
-} from "three";
+import { CapsuleGeometry, Color, InstancedMesh, Matrix4, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
 
 interface Props {
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
@@ -178,9 +170,6 @@ const color = new Color();
 const sightColor = new Color();
 const matrix = new Matrix4();
 const point = new Vector3();
-const rotation = new Quaternion();
-const scale = new Vector3(1, 1, 1);
-const up = new Vector3(0, 1, 0);
 // The tint is written for every instance up front, so the material is built reading it
 for (let index = 0; index < ENEMY_CAPACITY; index += 1) {
   enemyMesh.setColorAt(index, color);
@@ -194,7 +183,7 @@ onBeforeRender(({ delta }) => {
   for (const { elementalState, enemyKindId, heading, hitSeconds, position, state } of enemyMap.values()) {
     if (count === ENEMY_CAPACITY) break;
     point.set(position.x, getGroundHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT / 2, position.z);
-    enemyMesh.setMatrixAt(count, matrix.compose(point, rotation.setFromAxisAngle(up, heading), scale));
+    enemyMesh.setMatrixAt(count, composeHeadingMatrix(matrix, point, heading));
     enemyMesh.setColorAt(
       count,
       color.setHex(hitSeconds < ENEMY_HIT_TINT_SECONDS ? HIT_TINT_COLOR : EnemyStateColorMap[state]),
