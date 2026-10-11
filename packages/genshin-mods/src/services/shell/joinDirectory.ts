@@ -13,5 +13,5 @@ export const joinDirectory = (base: string, next: string): string => {
     else if (segment !== "..") segments.push(segment);
     else if (segments.length > 0 && segments.at(-1) !== "..") segments.pop();
     else if (root === "") segments.push(segment);
-  return `${root.replace("\\", "/")}${segments.join("/")}`;
+  return `${root.replaceAll("\\", "/")}${segments.join("/")}`;
 };
