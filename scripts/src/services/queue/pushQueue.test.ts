@@ -1,5 +1,6 @@
 import type { SessionRun } from "#src/models/coderabbit/collect/SessionRun";
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
+import type { writeLastPush as baseWriteLastPush } from "#src/services/queue/writeLastPush";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
@@ -17,11 +18,18 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { runSession } = vi.hoisted(() => ({ runSession: vi.fn<typeof baseRunSession>() }));
+const { runSession, writeLastPush } = vi.hoisted(() => ({
+  runSession: vi.fn<typeof baseRunSession>(),
+  writeLastPush: vi.fn<typeof baseWriteLastPush>(),
+}));
 
 // The carry step's session is a headless Claude Code run, which no test starts
 vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
   runSession: runSession as unknown as typeof baseRunSession,
+}));
+// The record of a push goes to the user's home folder, which no test writes
+vi.mock(import("#src/services/queue/writeLastPush"), () => ({
+  writeLastPush: writeLastPush as unknown as typeof baseWriteLastPush,
 }));
 
 // The session settles a stopped pick as its prompt asks: the conflicted path takes the merged content, and the pick
@@ -64,6 +72,7 @@ git -C ../clone commit --quiet --message ${path}`);
 
   beforeEach(() => {
     runSession.mockReset();
+    writeLastPush.mockReset();
   });
 
   afterEach(() => {
@@ -94,6 +103,16 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(readSha("HEAD~1")).toBe(readSha(remoteQueueRef));
     expect(runGit(["log", "--format=%s", "-1"], getCwd())).toBe("landed\n");
     expect(readFileSync(join(getCwd(), ".gitignore"), "utf8")).toBe("a");
+  });
+
+  test("records the sha and the commit count of a push ahead of the remote", async () => {
+    expect.hasAssertions();
+
+    publish(QUEUE_BRANCH, readSha("HEAD"));
+    const local = commitFile("b", "b");
+
+    await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Pushed);
+    expect(writeLastPush).toHaveBeenCalledExactlyOnceWith(local, 1);
   });
 
   test("carries a commit that landed while a push ahead of the remote ran", async () => {

@@ -1,5 +1,6 @@
 import type { MachineHeartbeat } from "#src/models/fleet/MachineHeartbeat";
 
+import { lastPushSchema } from "#src/models/queue/LastPush";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
 
@@ -15,6 +16,7 @@ const checkIsHeartbeat = (value: unknown): value is MachineHeartbeat =>
   "freeMemory" in value &&
   typeof value.freeMemory === "number" &&
   (!("gpu" in value) || typeof value.gpu === "number") &&
+  (!("lastPush" in value) || lastPushSchema.safeParse(value.lastPush).success) &&
   (!("platform" in value) || typeof value.platform === "string");
 
 // The heartbeat a machine's commit carries, or undefined for a commit that is not one
