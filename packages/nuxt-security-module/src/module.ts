@@ -13,6 +13,7 @@ import { getRouteRulesTemplate } from "#src/services/getRouteRulesTemplate";
 import { getStaticResourceHeaders } from "#src/services/getStaticResourceHeaders";
 import { getTypeTemplate } from "#src/services/getTypeTemplate";
 import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
+import { parseModuleOptions } from "#src/services/parseModuleOptions";
 import {
   addServerHandler,
   addNitroPlugin,
@@ -39,9 +40,8 @@ const SRI_PLUGIN_FILENAME = `#${MODULE_NAME}/sri-plugin.mjs`;
 const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Partial<ModuleOptions>>({
   meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "security", name: MODULE_NAME },
   setup(userOptions, nuxt) {
-    const options = mergeModuleOptions(
-      getDefaultModuleOptions(nuxt.options.dev, nuxt.options.devServer.url),
-      userOptions,
+    const options = parseModuleOptions(
+      mergeModuleOptions(getDefaultModuleOptions(nuxt.options.dev, nuxt.options.devServer.url), userOptions),
     );
     if (!options.enabled) return;
 
