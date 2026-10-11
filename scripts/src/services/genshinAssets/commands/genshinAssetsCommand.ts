@@ -57,8 +57,6 @@ import { transPointsCommand } from "#src/services/genshinAssets/commands/transPo
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
 import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
-import { GENSHIN_LUA_53 } from "#src/services/genshinAssets/lua/GENSHIN_LUA_53";
-import { createLuaDialectCommand } from "#src/services/recreation/commands/luaDialectCommand";
 import { defineCommand } from "citty";
 
 // The derived assets' tool, one subcommand a step (apps/web/content/docs/genshin/derived-assets.md)
@@ -103,7 +101,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     residents: residentsCommand,
     "scene-npc-born": sceneNpcBornCommand,
     "scene-scripts": sceneScriptsCommand,
-    "lua-dialect": createLuaDialectCommand(GENSHIN_LUA_53),
     oculi: oculiCommand,
     crafting: craftingCommand,
     cooking: cookingCommand,
