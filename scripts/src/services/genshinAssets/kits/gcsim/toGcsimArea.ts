@@ -4,7 +4,10 @@ import type { AttackArea } from "genshin-world";
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
-import { createBoxReach, createCircleReach, createFanReach, createTargetedHitArea } from "genshin-world";
+import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
+import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
+import { createFanReach } from "#src/services/genshinAssets/kits/gcsim/createFanReach";
+import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 
 // A gcsim hitbox as the area a kit prices it at, by the shared rules and the cause each carries: a box round the body
 // As the circle to its far corner, a circle round the body as its offset plus its radius, a fan as its angle and that
