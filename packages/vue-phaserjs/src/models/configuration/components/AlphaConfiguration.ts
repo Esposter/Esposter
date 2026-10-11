@@ -1,4 +1,5 @@
-import type { ExcludeFunctionProperties } from "@esposter/shared";
+import type { FunctionLike } from "@esposter/shared";
+import type { ConditionalExcept } from "type-fest";
 import type { GameObjects } from "phaser";
 
-export interface AlphaConfiguration extends ExcludeFunctionProperties<GameObjects.Components.Alpha> {}
+export interface AlphaConfiguration extends ConditionalExcept<GameObjects.Components.Alpha, FunctionLike> {}
