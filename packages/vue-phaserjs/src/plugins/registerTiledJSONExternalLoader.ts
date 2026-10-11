@@ -1,4 +1,4 @@
-import type { TupleSlice } from "@esposter/shared";
+import type { ArrayTail } from "type-fest";
 
 import { TiledJSONExternalFile } from "#src/models/plugins/TiledJSONExternalFile";
 import { TILEMAP_TILED_JSON_EXTERNAL_KEY } from "#src/services/shared/constants";
@@ -11,9 +11,8 @@ export const registerTiledJSONExternalLoader = () => {
     TILEMAP_TILED_JSON_EXTERNAL_KEY,
     function (
       this: Loader.LoaderPlugin,
-      ...[key, tilemapURL, path, baseURL, tilemapXhrSettings, tilesetXhrSettings]: TupleSlice<
-        ConstructorParameters<typeof TiledJSONExternalFile>,
-        1
+      ...[key, tilemapURL, path, baseURL, tilemapXhrSettings, tilesetXhrSettings]: ArrayTail<
+        ConstructorParameters<typeof TiledJSONExternalFile>
       >
     ) {
       //  Supports an Object file definition in the key argument
