@@ -1,4 +1,4 @@
-import type { SpokenTalkLine } from "genshin-world";
+import type { ChoiceTalkLine, SpokenTalkLine } from "genshin-world";
 
 import { skipWordlessTalkLines } from "#src/services/genshinText/skipWordlessTalkLines";
 import { choiceTalkLineSchema, TalkLineKind } from "genshin-world";
@@ -54,7 +54,7 @@ describe(skipWordlessTalkLines, () => {
           kind: TalkLineKind.Choice,
           nextLineIds: [],
           textId: WORDLESS_TEXT_ID,
-        } as const,
+        } satisfies ChoiceTalkLine,
       ],
     ],
     [
