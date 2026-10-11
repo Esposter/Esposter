@@ -1,7 +1,10 @@
 import { PackageKind } from "#src/models/package/PackageKind";
 
-// A nuxt-module is erasable-only, which is what lets Node strip its types when Nuxt reads the module's source directly
+// A nuxt-module extends the shared Nuxt module base, which is erasable-only: Nuxt reads the module's source directly, and
+// Node strips its types only when nothing in it needs transforming
 export const getTsconfig = (kind: PackageKind): Record<string, unknown> => ({
-  ...(kind === PackageKind.NuxtModule ? { compilerOptions: { erasableSyntaxOnly: true } } : {}),
-  extends: "../configuration/tsconfig.node.json",
+  extends:
+    kind === PackageKind.NuxtModule
+      ? "../configuration/tsconfig.nuxt-module.json"
+      : "../configuration/tsconfig.node.json",
 });

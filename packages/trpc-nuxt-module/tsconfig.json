@@ -1,4 +1,1 @@
-{
-  "compilerOptions": { "erasableSyntaxOnly": true, "lib": ["ESNext", "dom", "dom.iterable"] },
-  "extends": "../configuration/tsconfig.node.json"
-}
+{ "extends": "../configuration/tsconfig.nuxt-module.json" }

@@ -143,10 +143,9 @@ describe(createPackage, () => {
     const modules = readRepositoryLines(root, APP_MODULES_FILE);
 
     expect(
-      parseMachineJson<{ compilerOptions: object }>(
-        readFileSync(join(root, "packages/demo-nuxt-module/tsconfig.json"), "utf8"),
-      ).compilerOptions,
-    ).toStrictEqual({ erasableSyntaxOnly: true });
+      parseMachineJson<{ extends: string }>(readFileSync(join(root, "packages/demo-nuxt-module/tsconfig.json"), "utf8"))
+        .extends,
+    ).toBe("../configuration/tsconfig.nuxt-module.json");
     expect(modules).toContain('const DEMO_NUXT_MODULE_MODULE_PATH = "../../packages/demo-nuxt-module/src/module.ts";');
     expect(modules).toContain("  DEMO_NUXT_MODULE_MODULE_PATH,");
   });
