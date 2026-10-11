@@ -54,6 +54,9 @@ flowchart TD
 - **Read from the wiki:** each hit's gauge, internal cooldown tag and group, and each skill's particles, per character, each citing its page.
 - **Still to find:** a source for each strike's, the charged attack's and the plunge collision's poise damage. gcsim's Anemo attack file has none.
 - **Measured:** when each hit lands in its action (its hitmark) and when the next action may cancel it. The extracted Traveler attack clips carry no events, so the hitmarks come off the References sought list's `world-attacks.mkv` and `world-skill-burst.mkv`. The least height a plunge starts from is what the wiki does not give, so it waits on `world-attacks.mkv` too. Until then each is a provisional constant with its character's module.
+- **Wanderer's normal attack.** gcsim sets its hitmarks and frames in `init()` (`attackReleaseNormal`, `attackFramesNormal`), which the builder does not evaluate, so the strikes have no source for their hitmarks, frames or element.
+- **Mualani's charged attack.** gcsim's hitmark is `shortChargeHitmark` plus a windup that depends on the state the charge starts from, which the builder does not read, so the charge has no hitmark source or element.
+- **Klee's normal attacks.** Her record holds zero hits per strike, where gcsim's `attackHitmarks` gives three, so her normal attacks deal nothing until the overlay's count is read against them.
 
 ## What this does not propose
 
