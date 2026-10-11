@@ -92,6 +92,12 @@ flowchart TD
 
 While the opening line offers a quest talk or a duel, auto-play and Skip stop there, as at any line offering replies. A click, F or Space waits there only for the talk's own replies, so a standing talk whose opening line has none goes on past the offers to its next line.
 
+- **A black screen's narration sits at the screen's middle, with no speaker or title.** A line whose dialog names no speaker (`TALK_ROLE_BLACK_SCREEN` and its forms) is drawn at the middle, a best estimate no published frame has shown yet.
+- **A quest reply's mark is traced as one disc, and a story quest's as one diamond.** Both are drawn in the reply's colour; the game's mark inside its gold ring, split from its outline, would replace them.
+- **A resident's quest-title reply opens a quest talk ahead of their own replies.** Each quest talk is offered on the standing talk's opening line, named by its quest's title, a best estimate no published source shows.
+- **The PC client writes at the PlayStation's rate.** `TALK_REVEAL_MS_PER_CHARACTER` is 30 milliseconds, from a public PlayStation recording writing a character every 1.8 frames at 60 frames a second, a space taking no time.
+- **Auto-play's hold for a whole line is a best estimate.** `TALK_AUTO_PLAY_HOLD_MS` is about a second and a half, as no published clip shows a line with no voice-over under auto-play.
+
 ## Parity
 
 Registered, not yet within the bar. Five references are cut from the English PC client's dialogue in `yt-nWBqOXWZuFg.mp4` (1280 by 720) and shot as `DialogueTalk`, which takes a `startProgress` naming the line the talk is held on, so each state is the reference's own props rather than the reveal's clock. Sara's line with the Traveler's two replies is scored three ways, the speaker, the line and the replies, at 19 seconds. Sara's line with no replies is at 23 seconds, and Paimon's line at 29 seconds.

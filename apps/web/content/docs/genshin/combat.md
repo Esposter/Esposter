@@ -161,6 +161,9 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - **Each member's cooldowns run at the fixed step.** Every member of the deployed team's skill and burst cooldowns lower each step, off the field too, and stand still while a screen holds the world (`stepPartyCooldowns`).
 - **Particles reach every member standing.** Each particle a struck enemy drops takes the striker's element, and gives each standing member of the deployed team `getEnergyGain`'s energy, more to a member of that element, up to its burst's cost. A member's element is its row of the roster's, none for the Traveler (`createCombatant`). A fallen member takes none (`gainPartyEnergy`).
 - **An enemy's strike uses the same formula.** Its ATK times a provisional multiplier of 1, as physical damage through `getDamage` with the member on the field's DEF and physical resistance, its base 0%. The least overflow the team's shields leave, over the member's Max HP, is the share the member takes (`strikePartyMember`).
+- **A normal attack rolls energy once per hit, not once per enemy it strikes.** gcsim rolls for each enemy after a fifth of a second's pause, its own guess; a sword's swing through a group should show no more energy than through one enemy.
+- **A Dendro Core is struck where an enemy's capsule on the core's ground point would be reached.** No source gives the size a hit finds a core at, so `strikeKitDendroCores` reaches a core as it reaches that capsule.
+- **A Crystallize shard flies in from within 2 metres.** `CRYSTALLIZE_SHARD_PICKUP_RADIUS` is gcsim's 2-metre radius, as no source gives the reach the game draws a shard from.
 
 ## Key files
 

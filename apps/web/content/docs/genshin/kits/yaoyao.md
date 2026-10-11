@@ -9,6 +9,11 @@ Yaoyao's kit is one module, `createYaoyaoKit`, on avatar 10000077: four strikes 
 
 Her skill throws a Yuegui that flings White Jade Radishes at enemies, each healing the active character when it lands near them, and her burst throws three more Yuegui. Those radishes and their healing are not built: a summon's hits pick their enemy once, at its cast, where gcsim picks one within 8 metres of the Yuegui at each throw, and the healing needs the radish's landing point to reach the active character. The hook is a summon whose target is chosen again at each hit, with the healing a summon's hit can give the team. Her passives and constellations are not built either. Her plunge timings are provisional.
 
+## Decisions
+
+- **Yaoyao's fourth strike reaches 2.7 metres ahead of the body.** gcsim's code gives the strike a circle of radius 2.2 at an offset of 0.5, which the kit prices as 2.7; its config's 1.5 offset would reach 3.7.
+- **Yaoyao's plunges land 0.4 seconds after they start.** her plunges take Ganyu's reaches and landing, as gcsim gives her plunges none.
+
 ## Key files
 
 | File                                                              | Role                                                                                                                              |

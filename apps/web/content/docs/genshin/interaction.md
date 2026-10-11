@@ -46,6 +46,8 @@ flowchart TD
 - **A resident is a talk in reach.** Every resident of the regions in reach whose talk the world holds is a `Talk` row, named from the world's names. A resident whose talk is not held is a row for the first quest talk open to them, and one with neither is neither drawn nor offered a prompt, since F on it would have no talk to open.
 - **A locked statue is an activation in reach.** Each Statue of The Seven whose landmark is not yet unlocked is an `Activate` row named by its statue, and F on it unlocks it; an unlocked statue has no row ([map unlocking](/docs/genshin/map-unlocking)).
 - **The stand-ins.** `World/Interactables` draws each drop as a small sphere and each resident as the locomotion capsule every body stands in as until its own is measured, one instanced mesh per kind rewritten only when the list changes. A witness render draws none.
+- **The held F repeats every 0.45 seconds.** The interval is read off three pick-ups 27 frames apart in `captures/world-pickup.mkv` from 38.5 to 39.6 seconds; a held F rather than a tap there would confirm it.
+- **The list shows five rows, and reach is 2.5 metres.** Both are best estimates no published source shows: a pile of more than five things shows five rows, and a thing's prompt first shows about two and a half metres from the body.
 
 ## Parity
 

@@ -10,6 +10,7 @@ Yanfei's kit is one module, `createYanfeiKit`, on avatar 10000048: three strikes
 ## Decisions
 
 - **Yanfei's seals are four statuses, one a slot, and her charged attack reads them as it starts.** A kit status of one id restarts rather than stacks, so each seal has its own slot id and a gain restarts the held slots together. The charged attack's hit is cast as a summon at her body as the seals are spent, as Ganyu's Bloom is, so its circle is priced round the body at the charge's radius plus the targeting area.
+- **Yanfei's charged attack lands at 63 frames from a standing start.** gcsim adds a 16-frame windup to a start from a run, which the kit does not read, so every start lands at 63 frames.
 
 ## Key files
 

@@ -25,6 +25,7 @@ flowchart TD
 - **Kresnik's Torch is two geometries for two materials.** The stone is a faceted lathe stack of a stepped plinth, a tapering shaft and a cup brazier, and the flame is a lathe of its silhouette standing in the cup at the brazier's rim, 2.15 metres up.
 - **Region data holds the capital.** `src/data/regions/snezhnaya.json` holds Snezhnograd's hall, and Everfrozen Earth's outline is a provisional square round it, so a camera that comes within reach fetches it and draws the hall.
 - **The witness claims Everfrozen Earth's export by its ground alone.** The [parity](/docs/genshin/parity) inventory claims the terrain tiles as the one family, since the export holds no house of Snezhnograd's for the capital kit to stand in for, and every other mesh as not drawn yet, one entry a kind: common buildings, props, rocks, stage planes and effects.
+- **The flakes in the wiki's Snezhnaya frame may be falling snow.** `File:Snezhnaya.png` shows a few faint flakes; if they are the snowfall `world-snow.mkv` measures the density of, the snow is the falling snow, and if a detail of the sky, it is not.
 
 ## Key files
 
