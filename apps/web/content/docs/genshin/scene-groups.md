@@ -1,6 +1,6 @@
 ---
 title: Scene groups
-description: The open world's scene group record, `sceneGroups/scene3`, each group's NPCs, viewpoints and quest triggers by group id beside the scene's building points, every member and place naming the source that filled it, and what only the client's group scripts hold left out.
+description: The open world's scene group record, `sceneGroups/scene3`, each group's NPCs, viewpoints and quest triggers by group id beside the scene's building points, every member and place naming the source that filled it, and what only the server's group scripts hold left out.
 ---
 
 # Scene groups
@@ -58,11 +58,11 @@ An NPC birth's own `configId` is the NPC's id, so it becomes the member's object
 
 ## What the record leaves out
 
-Every field below is held only by the group scripts. A unit needing one keeps its stand-in until the client's scripts are read, and nothing here guesses it from a nearby source.
+Every field below is held only by the group scripts, which are the server's and never in the client ([game data formats](/docs/genshin/game-data-formats)), so the record never fills them and nothing here guesses one from a nearby source. A unit needing one takes it from the next source on its own page: the official map's points for camps, puzzles, chests and outcrops, the quests' own location guides for a go-to, and the wiki for the keepers and the residents' hours, each an estimate marked provisional where no source gives it.
 
 - **A camp's monsters and their levels.** No member is a monster, so the [enemies](/docs/genshin/enemies) keep Mondstadt's stand-in camp.
 - **A puzzle's mechanisms and a chest's gadget.** The only gadgets are the viewpoints.
-- **A trigger's region.** A trigger member names its group but has no place, so a carried quest's go-to step still does not move ([quests](/docs/genshin/quests)).
+- **A trigger's region.** A trigger member names its group but has no place. A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's `scene3_dummy_points.lua` holds ([quests](/docs/genshin/quests)).
 - **The suites that move a resident by the hour.** The births give each NPC one spot, so no resident has a night spot.
 - **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth, so the record places their services' building points but not them.
 
