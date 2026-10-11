@@ -1,4 +1,4 @@
-import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { carryCommit } from "#src/services/queue/carryCommit";
 import { mergeWorkingCopy } from "#src/services/queue/mergeWorkingCopy";

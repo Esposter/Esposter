@@ -1,7 +1,7 @@
 import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInput";
 
 import { ReplayOutcome } from "#src/models/coderabbit/collect/ReplayOutcome";
-import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { DEVELOP_BRANCH, QUEUE_BRANCH, REVIEW_FIXES_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { pushQueueRewrite } from "#src/services/coderabbit/collect/pushQueueRewrite";
 import { replayOwed } from "#src/services/coderabbit/collect/replayOwed";

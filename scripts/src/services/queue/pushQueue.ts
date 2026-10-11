@@ -1,5 +1,5 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
-import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { carryReplayCommit } from "#src/services/queue/carryReplayCommit";
 import { checkIsRetried } from "#src/services/queue/checkIsRetried";

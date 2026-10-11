@@ -1,4 +1,5 @@
 import { PRODUCER_STALE_WINDOW_DAYS, SHORT_SHA_LENGTH } from "#src/services/producerStamp/constants";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 
@@ -15,12 +16,6 @@ const checkIsKnown = (commit: string): boolean =>
     () => false,
   );
 
-const checkIsAncestor = (commit: string): boolean =>
-  getResult(() => runGit(["merge-base", "--is-ancestor", commit, "HEAD"])).match(
-    () => true,
-    () => false,
-  );
-
 const listRecentCommits = (commit: string, producerPaths: string[]): string[] => [
   `${commit.slice(0, SHORT_SHA_LENGTH)} is not on this branch; listing recent changes`,
   ...readCommitLines(["HEAD", `--since=${PRODUCER_STALE_WINDOW_DAYS} days ago`, "--", ...producerPaths]),
@@ -31,7 +26,7 @@ const listRecentCommits = (commit: string, producerPaths: string[]): string[] =>
 // Ones above that match. One git does not know at all lists the window's commits, first saying so
 export const listProducerCommits = (commit: string, producerPaths: string[]): string[] => {
   if (!checkIsKnown(commit)) return listRecentCommits(commit, producerPaths);
-  if (checkIsAncestor(commit)) return readCommitLines([`${commit}..HEAD`, "--", ...producerPaths]);
+  if (checkIsAncestor(commit, "HEAD")) return readCommitLines([`${commit}..HEAD`, "--", ...producerPaths]);
   const subject = runGit(["log", "-1", "--format=%s", commit]).trim();
   const lines = readCommitLines(["HEAD", "--", ...producerPaths]);
   const subjectIndex = lines.findIndex((line) => getLineSubject(line) === subject);
