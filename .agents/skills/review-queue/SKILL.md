@@ -18,6 +18,7 @@ Every agent works on **one permanent branch, `ai/queue`**, from its own git work
 - **Merging `main` or `develop` into `ai/queue`.** A merge is never linearised away — a rebase onto `origin/develop` is a no-op once `origin/develop` is an ancestor — and it blinds the porter: `git cherry` matches patch ids against the commits upstream has and the queue lacks, which a queue containing upstream leaves empty, so every already-ported commit reads as owed and the first one conflicts. The queue catches up by `git pull --rebase` only.
 - **Rebasing `ai/queue` onto `origin/develop` or `origin/ai/review-fixes` by hand.** The collector rewrites the queue onto that tree itself after every window, with its own Claude resolving what conflicts (`apps/web/content/docs/infra/review-collector/collection-cycle.md`, "Sync"). A hand rebase races that rewrite — two rewrites of one ref, and a `--force-with-lease` whose lease is the fetched ref overwrites the collector's copy with nothing reporting it. There is no exception: `main` and `develop` have no writer outside the collector, whose repair answers a red `main`, so no hand repair leaves the queue measured from a stale merge base.
 - **Syncing by reset — `git reset --hard origin/ai/queue`, and a reset followed by cherry-picking what `git cherry` calls owed, stay rejected.** `git cherry` matches patch ids, and the collector's conflict resolution changes a ported commit's patch id while keeping its subject, so the list cannot tell a commit the remote already carries from one it lacks. The reset throws the local history away on that guess. The rebase keeps it: each conflict stops on one commit with both sides in view, and the agent that made the commit settles it (`references/pull-conflicts.md`).
+- **A worktree created detached** (`git worktree add --detach`). A detached pull has no fork point and replays the whole rewritten queue (`references/pull-conflicts.md`).
 - **Holding a window until its checks go green.** The review is the gate, never CI — a red check at that point is a snapshot, a lint rule or a bundle, and it lands as a commit in a later window (`apps/web/content/docs/infra/review-collector/index.md`).
 - **Merging a window's pull request by hand, or holding it for its findings.** The collector merges the bottom window the moment its one review completes, whatever the review found — held only while Claude Code is out of session, since nothing could then drain them; the findings are the next window's, fixed on `ai/review-fixes` and read by that window's own full review. A person's one lever is closing a window without merging, which pauses the collector (`apps/web/content/docs/infra/review-collector/index.md`).
 - **Landing a collector change over several pushes while its workflow runs.** Every run checks out the `ai/queue` head, so a queue push is a deploy, and a change pushed in parts runs half-landed — run 37952229125 spent a $5.92 session and then threw on the mismatch, pushing nothing it paid for. A collector change is made with the workflow disabled and lands in one push (`references/running-by-hand.md`).
@@ -30,7 +31,7 @@ Every ref has one writer, and the session's is `ai/queue` alone — its linear h
 
 An agent's commits never go through the main checkout. Each agent:
 
-1. **Sets up a worktree on the queue.** `git worktree add ~/Esposter/wt/<name> origin/ai/queue` (detached), then in it installs and builds only the packages it will touch, never the whole workspace (`.agents/skills/throughput/references/fleet.md` owns the commands and why). A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
+1. **Sets up a worktree on a branch of its own, cut from the queue.** `git worktree add -b <name> ~/Esposter/wt/<name> origin/ai/queue`, the local branch named after the worktree and never pushed under its own name: it only gives the pull a fork point. A worktree already detached takes `git switch -c <name>` once (`references/pull-conflicts.md`). Then in it the agent installs and builds only the packages it will touch, never the whole workspace (`.agents/skills/throughput/references/fleet.md` owns the commands and why). A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
 2. **Commits each coherent unit in the worktree, by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit, so every cut the collector makes is green on its own.
 3. **Lands the commits:**
 
@@ -40,13 +41,13 @@ for attempt in 1 2 3 4; do git pull --rebase origin ai/queue && git push origin 
 
 A rebase conflict stops the loop on the commit it stopped on. The agent resolves it, since it knows its change, runs `git rebase --continue`, and pushes. Only a rejected push retries: at about ten pushes an hour the first one often races the collector or another agent.
 
-4. **Removes the worktree** once its commits have landed: `.agents/skills/throughput/scripts/remove-worktree.sh`.
+4. **Removes the worktree** once its commits have landed: `.agents/skills/throughput/scripts/remove-worktree.sh`, which deletes its branch with it.
 
 **Worktrees live on the drive of the pnpm store.** `~/Esposter` is on that drive, so pnpm hard-links from the store instead of copying: a filtered worktree measured 0.31 GB beyond the store.
 
 **The main checkout is not edited by agents.** It only fast-forwards with `git pull --rebase`, which with no local commits is a fast-forward. Never `reset`, cherry-pick or stash in it.
 
-**The collector's rewrite is caught up by the pull.** After each window it ports, the collector rewrites `origin/ai/queue` onto the tree the next window builds on. `git pull --rebase` then replays the agent's local commits the new base does not already carry, skipping by patch-id the ones ported unchanged, and a ported commit the collector changed comes back as a conflict the agent settles.
+**The collector's rewrite is caught up by the pull.** After each window it ports, the collector rewrites `origin/ai/queue` onto the tree the next window builds on. `git pull --rebase` on the worktree's branch then replays only the agent's commits never yet on `origin/ai/queue`, from the branch's fork point, so a conflict is only ever one with the agent's own change (`references/pull-conflicts.md`).
 
 **Never `git stash`, `git add -A`, or a bare `--force-with-lease`.** Commits are pushed plain.
 
@@ -62,7 +63,7 @@ Nothing is owed by the session; a red `main` is the collector's repair, and a me
 
 ## Deep Dives
 
-- `references/pull-conflicts.md` — when `git pull --rebase` stops on a conflict.
+- `references/pull-conflicts.md` — when `git pull --rebase` stops on a conflict, or replays commits that are not the agent's.
 - `references/answering-findings.md` — when the session fixes a CodeRabbit finding itself.
 - `references/held-commits.md` — when the collector opens an issue for parked commits, deferred findings or a red `main` past its repairs, or a collector run is red.
 - `references/after-a-release.md` — when a release has merged, `main` is red, or a merge got into the queue.

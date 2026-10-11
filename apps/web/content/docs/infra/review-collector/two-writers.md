@@ -35,11 +35,11 @@ sequenceDiagram
   C->>Q: rewrite the queue onto develop, lease on the sha it read
   Note over C: ported commits drop, the rest re-parent, a conflict is resolved here
   S->>S: git pull --rebase, then git push, once the collector has moved the remote
-  Note over S: the session's own commits replay onto the queue, a conflict settled by the agent that made the commit
+  Note over S: only the session's unlanded commits replay, from its branch's fork point, a conflict settled by the agent that made the commit
   S->>Q: git push origin HEAD:ai/queue
 ```
 
-A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and the window branches and clears the gates from the remote on every run; the session's side of the loop — a unit committed by pathspec in the agent's own worktree, landed by `git pull --rebase origin ai/queue` and then `git push origin HEAD:ai/queue`, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`). The pull replays the session's commits onto the rewritten queue, and git skips those the collector already ported by patch-id; a commit the collector ported with a changed patch comes back as a conflict, which the agent that made the commit settles in its own rebase before the push. A push the remote refuses as stale is retried after a fresh pull, and the push carries no lease.
+A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and the window branches and clears the gates from the remote on every run; the session's side of the loop — a unit committed by pathspec in the agent's own worktree, on a local branch named after it, landed by `git pull --rebase origin ai/queue` and then `git push origin HEAD:ai/queue`, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`). On a branch, the pull rebases from the fork point, the newest commit of `origin/ai/queue`'s reflog that the branch contains; every worktree shares that reflog, which holds each push the agent made. So only the session's commits never yet on the queue replay onto the rewritten one, however the collector changed the ones it already ported, and a conflict is only ever the agent's own change meeting the queue's, settled in its own rebase before the push. Git computes a fork point only for a checked-out branch, which is why each agent's worktree is one. A push the remote refuses as stale is retried after a fresh pull, and the push carries no lease.
 
 ## Enforced by rulesets
 
@@ -47,7 +47,7 @@ The writers above are one GitHub account acting as the Admin repository role, an
 
 ## Parallel work
 
-Worktree agents executing specs commit on their own branches and hand the result to the main session, which merges it into its local `ai/queue` and publishes it. There is one writer of `ai/queue` per machine, and the lease handles two machines. A worktree agent never pushes `ai/queue` itself.
+Every agent, on any machine, works in a worktree of its own on a local branch named after it, and lands its own commits by the pull and the plain push above; no checkout is shared between agents. Two agents racing to push are ordered by the push the remote refuses as stale, retried after a fresh pull, and the lease keeps the collector's rewrite from overwriting either.
 
 ## Key files
 

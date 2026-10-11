@@ -34,7 +34,7 @@ export const parkCommits = ({ cause, cwd, isDryRun, shas, viewerLogin }: ParkCom
     "",
     ...commits.map(({ branch, sha, subject }) => `- ${sha} ${subject}, held on \`${branch}\``),
     "",
-    `The collector tries the re-land itself as \`${MAIN_BRANCH}\` moves, up to its attempts, and closes this issue once every commit is back. To re-land them by hand, on \`${QUEUE_BRANCH}\`:`,
+    `The collector tries the re-land itself as \`${MAIN_BRANCH}\` moves, up to its attempts, and closes this issue once every commit is back. To re-land them by hand, in a worktree on a branch of its own cut from \`origin/${QUEUE_BRANCH}\` (the \`review-queue\` skill's loop):`,
     "",
     "1. `git fetch origin`",
     '2. For each held branch above, in order: `git cherry-pick --no-commit origin/<branch>`, settle what the cause names by splitting it under the cap or resolving the conflict, then commit each part under a message of its own, `git commit -m "<subject>"` — never the message the pick prepares, nor `-x`: either can carry a "(cherry picked from commit …)" line naming a sha the held branch carries, and a commit naming one is owed nowhere until that branch is deleted',

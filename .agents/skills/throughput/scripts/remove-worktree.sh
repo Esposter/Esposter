@@ -3,8 +3,10 @@
 # junction into the main checkout's node_modules, emptying that install. On Windows every junction under the worktree
 # is unlinked first, its target never walked; elsewhere an install links with symlinks, which git removes as links, so
 # there is nothing to unlink. A tracked symlink such as `.claude` is git's and stays. The removal keeps git's refusal
-# for a dirty worktree. Usage: bash .agents/skills/throughput/scripts/remove-worktree.sh <path>
+# for a dirty worktree, and the worktree's branch is deleted only once the worktree is gone.
+# Usage: bash .agents/skills/throughput/scripts/remove-worktree.sh <path>
 set -euo pipefail
+BRANCH="$(git -C "$1" symbolic-ref --quiet --short HEAD || true)"
 case "$OSTYPE" in
   msys* | cygwin*)
     WORKTREE="$(cd "$1" && pwd -W)"
@@ -18,3 +20,12 @@ case "$OSTYPE" in
 esac
 git worktree remove "$1"
 git worktree prune
+# A branch whose tip `origin/ai/queue` once held has landed, even after the collector's rewrite gave its commits new
+# shas and `-d` would refuse it as unmerged; any other is left to `-d`, which refuses one holding unlanded commits
+if [ -n "$BRANCH" ]; then
+  if [ "$(git merge-base --fork-point origin/ai/queue "$BRANCH" || true)" = "$(git rev-parse "$BRANCH")" ]; then
+    git branch -D "$BRANCH"
+  else
+    git branch -d "$BRANCH"
+  fi
+fi
