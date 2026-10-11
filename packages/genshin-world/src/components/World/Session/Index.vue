@@ -655,6 +655,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :interface-rects="hudInterfaceRects"
       :is-touch
       :landmarks="unlockedLandmarks"
+      :max-stamina="STAMINA_MAX"
       :member="hudMember"
       :name-text-map="nameText"
       :party

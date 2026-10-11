@@ -64,6 +64,7 @@ export const props = {
   interfaceRects: await readHudInterfaceRects(GAME_DATA_LOCAL_BASE_URL),
   isTouch: true,
   landmarks: [],
+  maxStamina: STAMINA_MAX,
   // Venti's figures as the frame shows them: his skill off cooldown, and his burst, which costs 60 Energy, filled to
   // 0.236 of its disc's height (21 of its 89 pixels)
   member: {

@@ -10,6 +10,8 @@ export const ACTION_BUTTON_BACKGROUND = "rgb(0 27 61 / 0.16)";
 // Fill is still yellow at a sixth of the arc and at an eighth (the clip's 32.75 and 32.83 seconds) and red from the next
 // Frame on, as the pool empties
 export const STAMINA_METER_LOW_SHARE = 0.125;
+// The stamina each section of the meter holds, the arc cut at each multiple of it short of the pool
+export const STAMINA_METER_SECTION = 100;
 
 // Provisional: Paimon's mark on the HUD button, traced by `genshin:parity trace` from the English PC client's world HUD
 // (the 90 pixel box at 100, 10), its path in that box's own pixels, the measure of its place still to come

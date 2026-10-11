@@ -2,7 +2,7 @@
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { GameText } from "genshin-text";
 
-import { STAMINA_METER_LOW_SHARE } from "#src/services/hud/constants";
+import { STAMINA_METER_LOW_SHARE, STAMINA_METER_SECTION } from "#src/services/hud/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -10,10 +10,19 @@ interface Props {
   frame: HudFrame;
   // The game's words in the reader's language
   gameText: GameText;
+  // The party's stamina pool, the meter's whole arc
   maxStamina: number;
 }
 
 const { frame, gameText, maxStamina } = defineProps<Props>();
+// Each cut between the pool's sections as the angle of the arc it stands at, the arc running from its foot at 27.1
+// Degrees below its centre to its head at 27.1 above
+const sectionAngles = computed(() =>
+  Array.from(
+    { length: Math.ceil(maxStamina / STAMINA_METER_SECTION) - 1 },
+    (_value, index) => 27.1 - (54.2 * (index + 1) * STAMINA_METER_SECTION) / maxStamina,
+  ),
+);
 </script>
 
 <template>
@@ -32,6 +41,16 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
   >
     <svg viewBox="89 -52 20 104" aria-hidden="true">
       <path class="track" d="M 93 47.6 A 104.5 104.5 0 0 0 93 -47.6" />
+      <line
+        v-for="angle of sectionAngles"
+        :key="angle"
+        class="section"
+        x1="101"
+        x2="108"
+        y1="0"
+        y2="0"
+        :transform="`rotate(${angle})`"
+      />
       <path
         class="fill"
         d="M 93 47.6 A 104.5 104.5 0 0 0 93 -47.6"
@@ -75,6 +94,13 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
    The fill the yellow of its core's 144 pixels on the same frame */
 .track {
   stroke: rgb(86 8 0 / 0.55);
+}
+
+/* The cuts between the sections a white at a quarter across the track, under the fill, as the climb shows them on the
+   Track at 0.464 and 0.936 of a pool of about 214 at 30 seconds and the fill unbroken across the first at 22 */
+.section {
+  stroke: rgb(255 255 255 / 0.25);
+  stroke-width: 1.5;
 }
 
 .fill {

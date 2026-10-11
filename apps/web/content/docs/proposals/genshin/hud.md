@@ -1,6 +1,6 @@
 ---
 title: HUD
-description: Proposal — what the heads-up display still lacks past its built pieces and looks: the quest tracker's rect, the stamina meter's section ticks, and the shares and re-measures the roadmap holds for manual verification.
+description: Proposal — what the heads-up display still lacks past its built pieces and looks: the quest tracker's rect, Paimon's mark's place and fill, and the shares and re-measures the roadmap holds for manual verification.
 model: claude-opus-5-5
 needs: [game-install, game-exports]
 touches:
@@ -21,13 +21,12 @@ The [HUD](/docs/genshin/hud) is built with its pieces and their looks, each but 
 
 ## Scope and order
 
-**Today:** the HUD's block is exported and fitted, every piece but the quest tracker stands in its fitted rect, the tracker's line names the navigated objective's distance and whether it stands higher or lower, every playable character's skill and burst icons are traced onto the buttons from hosted game data, and each piece's look is built from the recordings it is measured on, as the [as-built page](/docs/genshin/hud) records.
+**Today:** the HUD's block is exported and fitted, every piece but the quest tracker stands in its fitted rect, the tracker's line names the navigated objective's distance and whether it stands higher or lower, every playable character's skill and burst icons are traced onto the buttons from hosted game data, the stamina meter is cut at each 100 of the pool, and each piece's look is built from the recordings it is measured on, as the [as-built page](/docs/genshin/hud) records.
 
 **This adds, in order:**
 
-1. **The stamina meter's section ticks**, a line about 2 wide at each 100 of the pool, which wait on a pool past 100 that nothing raises yet.
-2. **The re-measure of the composite**: `world-hud-hidden.mkv` re-measures the composite later and gates nothing.
-3. **Paimon's mark's place and fill**, provisional until measured, since its ink is the whole head as the trace splits it.
+1. **The re-measure of the composite**: `world-hud-hidden.mkv` re-measures the composite later and gates nothing.
+2. **Paimon's mark's place and fill**, provisional until measured, since its ink is the whole head as the trace splits it.
 
 ## What this does not propose
 

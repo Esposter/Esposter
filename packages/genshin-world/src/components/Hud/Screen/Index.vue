@@ -25,7 +25,6 @@ import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import HudTouch from "#src/components/Hud/Touch/Index.vue";
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
-import { STAMINA_MAX } from "genshin-engine";
 import { GameRect, GameScreen } from "genshin-interface";
 
 interface Props {
@@ -47,6 +46,8 @@ interface Props {
   // And the touch layout's action buttons are drawn
   isTouch: boolean;
   landmarks: Landmark[];
+  // The party's stamina pool, which the meter's arc holds whole
+  maxStamina: number;
   // The field member's HP, level and cooldowns, hidden until the character on the field is known
   member?: HudMember;
   // The names the deployed team's text ids cite in the reader's language, which stay blank until they load
@@ -81,6 +82,7 @@ const {
   interfaceRects,
   isTouch,
   landmarks,
+  maxStamina,
   member,
   nameTextMap,
   party,
@@ -152,7 +154,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
     </GameRect>
     <!-- The stamina meter stands on the screen itself rather than in its rect of the tree, which sits at the screen's
          Middle, since the recordings show it beside the character wherever the character stands -->
-    <HudStamina :frame :game-text :max-stamina="STAMINA_MAX" />
+    <HudStamina :frame :game-text :max-stamina />
     <slot name="prompts" />
   </GameScreen>
 </template>
