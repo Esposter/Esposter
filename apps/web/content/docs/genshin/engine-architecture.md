@@ -41,7 +41,7 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
   A module is added by the proposal that first needs it, never ahead of it as an empty folder: `input`, `simulation`, `camera` and `collision` with the [free camera](/docs/genshin/free-camera), `locomotion` with the [character controller](/docs/genshin/character-controller), and per-instance culling with [trees and scatter](/docs/proposals/genshin/trees-and-scatter).
 
 - **State flows one way.** Modules expose read-only state and commands. The light state and the wind are uniforms that materials read, so the hour and the wind move the whole world by writing a few values. Region data flows from the world package into the terrain worker, the vegetation and the kits. No module imports a sibling's internals, and a dependency that points back up the frame's order is a design error.
-- **Every generator is pure and seeded.** Tile heights, grass and kit geometry are pure functions of region data, a tile key and a seed, returning typed arrays. They run the same in a worker, a test or a bench, and the same spot always generates the same world.
+- **Every generator is pure and seeded.** Tile heights, grass and kit geometry are pure functions of region data, a tile key and a seed, returning typed arrays. They run the same in a worker, a test or a bench, and the same spot always generates the same world. The ones the terrain worker runs are also the engine's second entry, `genshin-engine/terrainWorker`, so a worker loads them and three's math without the renderer the package's own entry reaches.
 
 ## How a frame runs
 
@@ -97,6 +97,7 @@ flowchart LR
 | File                                                            | Role                                                           |
 | :-------------------------------------------------------------- | :------------------------------------------------------------- |
 | `packages/genshin-engine/src/index.ts`                          | The package's entry, which the world imports every module from |
+| `packages/genshin-engine/src/terrainWorker.ts`                  | The terrain worker's entry: the generators it runs alone       |
 | `packages/genshin-engine/src/renderer/createGenshinRenderer.ts` | The renderer every scene draws through                         |
 | `packages/genshin-engine/src/streaming/createTileStreamer.ts`   | The tile streamer, run the same over a worker pool or a test   |
 | `packages/genshin-world/src/workers/terrainTile.worker.ts`      | The worker the ground's tiles are generated in                 |

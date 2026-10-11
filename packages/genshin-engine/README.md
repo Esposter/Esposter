@@ -67,6 +67,8 @@ const { renderPipeline } = createPostPipeline({
 renderer.setAnimationLoop(() => renderPipeline.render());
 ```
 
+A web worker generating the ground imports its generators from the `genshin-engine/terrainWorker` subpath instead, `computeTerrainTile` and the height, paint and scatter functions it runs over, which reach three's math and none of the renderer, so the worker starts without loading it.
+
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/genshin-engine.html) to level up. The engine's design, from the order a frame runs in to each module's job, is its [architecture page](https://esposter.com/docs/genshin/engine-architecture), and the look it draws is its [rendering style](https://esposter.com/docs/genshin/rendering-style).

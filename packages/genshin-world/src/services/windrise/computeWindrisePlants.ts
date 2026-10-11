@@ -15,7 +15,7 @@ import {
   getTerrainTileColumn,
   getTerrainTileRow,
   GroundLayer,
-} from "genshin-engine";
+} from "genshin-engine/terrainWorker";
 import { Color, MathUtils, Matrix4, Quaternion, Vector3 } from "three";
 
 // How far either side of a point its slope is read across, in metres

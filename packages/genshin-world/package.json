@@ -93,6 +93,7 @@
     "@types/node": "catalog:",
     "@types/three": "catalog:",
     "@webgpu/types": "catalog:",
+    "rolldown": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
     "vite": "catalog:",

@@ -14,7 +14,7 @@ import {
   createGroundLayerWeights,
   createGroundPaintColor,
   getTerrainTileLevel,
-} from "genshin-engine";
+} from "genshin-engine/terrainWorker";
 
 // What the tiles are computed with, which the world's first message to the worker loads
 let context: TerrainWorkerContext | undefined;

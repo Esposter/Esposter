@@ -39,11 +39,16 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./terrainWorker": {
+      "source": "./src/terrainWorker.ts",
+      "default": "./dist/terrainWorker.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./terrainWorker": "./dist/terrainWorker.js",
       "./package.json": "./package.json"
     },
     "access": "public"
