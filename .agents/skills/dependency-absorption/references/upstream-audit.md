@@ -21,7 +21,7 @@ The test is written against the replacement, then pointed at the upstream export
 
 ## Evidence per verdict
 
-- **In scope — defect.** A reproduction against the upstream package: a test in the new package's suite that fails on the upstream code and passes on ours. Its title names the issue (`#43 reads FormData mutation input`), which is what lets the Upstream table point at it.
+- **In scope — defect.** A reproduction against the upstream package: a test in the new package's suite that fails on the upstream code and passes on ours. Its title names the issue (`#43 reads FormData mutation input`), which is what lets the Upstream table point at it. An absorption auditing two trackers — a wrapper and the engine it bundles — prefixes each issue with its repository in lower case (`sortablejs#1482 …`), since a title starts lower case (`vitest/prefer-lowercase-title`).
 - **In scope — feature.** The test that exercises it. Implemented whether or not our app calls it.
 - **Out of scope.** The owning dependency, named, with the line of its source or its issue that proves the behaviour is there. When the constraint reaches us, the page that owns our side records it — measured where it can be, with a test pinning the measurement so the reason cannot go stale unnoticed.
 - **False positive.** Which kind — usage question, documentation gap, duplicate, fixed by a later upstream release — and the link that shows it: the answering comment, the duplicate issue, the release.
