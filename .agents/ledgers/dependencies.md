@@ -142,7 +142,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `grapesjs-mjml`                         | —     | Keep — engine     | the MJML compiler's integration                                                                        |
 | `grapesjs-parser-postcss`               | —     | Keep — engine     | the PostCSS parser's integration                                                                       |
 | `grapesjs-plugin-export`                | —     | Keep — engine     | the exporter (the admission doc's large plugins)                                                       |
-| `grapesjs-plugin-forms`                 | —     | Absorb — own code | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
 | `grapesjs-preset-webpage`               | —     | Keep — engine     | the webpage preset (the admission doc's large plugins)                                                 |
 | `grapesjs-style-bg`                     | —     | Absorb — own code | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
 | `grapesjs-tabs`                         | —     | Absorb — own code | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |

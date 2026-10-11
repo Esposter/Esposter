@@ -557,9 +557,6 @@ catalogs:
     grapesjs-plugin-export:
       specifier: ^1.0.12
       version: 1.0.12
-    grapesjs-plugin-forms:
-      specifier: ^2.0.6
-      version: 2.0.6
     grapesjs-preset-webpage:
       specifier: ^1.0.3
       version: 1.0.3
@@ -1197,9 +1194,6 @@ importers:
       grapesjs-plugin-export:
         specifier: 'catalog:'
         version: 1.0.12
-      grapesjs-plugin-forms:
-        specifier: 'catalog:'
-        version: 2.0.6
       grapesjs-preset-webpage:
         specifier: 'catalog:'
         version: 1.0.3
@@ -10857,9 +10851,6 @@ packages:
 
   grapesjs-plugin-export@1.0.12:
     resolution: {integrity: sha512-q5rn1dwUYqPwDVnL9dhMxInk2SXWbrJ7OUUjFYk2LGJoT1laN3TZSDlDn/DVp9pCQd7fyHDgLdy8mvaVVmSh6g==}
-
-  grapesjs-plugin-forms@2.0.6:
-    resolution: {integrity: sha512-4rDob01NLiJWas5JW1FCpQc/4R4oS4wc/qr7pQwjGUiDzHNPKZLix10FqUKEv7hnzPmBaR2ejBL87sMwz11Tlw==}
 
   grapesjs-preset-webpage@1.0.3:
     resolution: {integrity: sha512-C0VOKLAdhv0j1f81c6F2uk3JpJvxgXl5DeHUtDa5qGf/HZzaCmQxsvd8Re3Oh5Cah4uUCqoi9uB5FYx3hLND2w==}
@@ -24745,8 +24736,6 @@ snapshots:
   grapesjs-plugin-export@1.0.12:
     dependencies:
       '@types/file-saver': 2.0.7
-
-  grapesjs-plugin-forms@2.0.6: {}
 
   grapesjs-preset-webpage@1.0.3: {}
 
