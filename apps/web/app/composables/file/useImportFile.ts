@@ -1,9 +1,9 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
 import { getFilePickerTypes } from "@/services/file/getFilePickerTypes";
+import { showOpenFilePicker } from "@/services/file/showOpenFilePicker";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, noop, takeOne } from "@esposter/shared";
-import { showOpenFilePicker } from "show-open-file-picker";
 
 export const useImportFile = () => (mimeType: MimeType, accept: string, onSelect: (file: File) => Promise<void>) =>
   getResultAsync(async () => {

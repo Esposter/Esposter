@@ -776,9 +776,6 @@ catalogs:
     sharp:
       specifier: ^0.35.5
       version: 0.35.5
-    show-open-file-picker:
-      specifier: ^0.4.0
-      version: 0.4.0
     sql-highlight:
       specifier: ^6.1.0
       version: 6.1.0
@@ -1398,9 +1395,6 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
-      show-open-file-picker:
-        specifier: 'catalog:'
-        version: 0.4.0
       superjson:
         specifier: 'catalog:'
         version: 2.2.6
@@ -14099,9 +14093,6 @@ packages:
   shiki@4.5.0:
     resolution: {integrity: sha512-OcRW72ngQvc+MSVWBRIovC/BTW589iUE/Vxav7VeM4RcY9MUjqB+IR6ILG1k9nuW6LiG/nct9uma4/MBtnZbmQ==}
     engines: {node: '>=20'}
-
-  show-open-file-picker@0.4.0:
-    resolution: {integrity: sha512-To0PwbPwZOJWTkl19PwCl//Dk912xoEohCJ4Gac001MyhqoR2xSJsRh9+37Aq7u6pNvTslg0Kx9TzhkZVxRUaA==}
 
   side-channel-list@1.0.1:
     resolution: {integrity: sha512-mjn/0bi/oUURjc5Xl7IaWi/OJJJumuoJFQJfDDyO46+hBWsfaVM65TBHq2eoZBhzl9EchxOijpkbRC8SVBQU0w==}
@@ -29209,8 +29200,6 @@ snapshots:
       '@shikijs/types': 4.5.0
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.5
-
-  show-open-file-picker@0.4.0: {}
 
   side-channel-list@1.0.1:
     dependencies:
