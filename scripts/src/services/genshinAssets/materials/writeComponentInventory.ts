@@ -17,6 +17,9 @@ import sharp from "sharp";
 const CHANNEL_NAMES = ["R", "G", "B", "A"];
 const readNames = (directory: string): Promise<string[]> =>
   existsSync(directory) ? readdir(directory) : Promise.resolve([]);
+// A component with no world of its own has no terrain tiles to read layers off
+const readWorldTerrainSplats = async (component: DerivedAssetComponent): ReturnType<typeof readTerrainSplats> =>
+  (await readWorldOptions(component)) ? readTerrainSplats(component) : [];
 // Everything a component's export holds, as a Markdown report beside it: each material's shader, texture slots and
 // Values, each texture's size and what each channel spans, each mesh's vertices and the materials its renderers draw it
 // With, each terrain tile's splat layers with the share of its cells each paints, and each shader the `shaders` step
@@ -27,7 +30,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
   const [materials, { gameObjectDrawingMap }, terrainSplats] = await Promise.all([
     readComponentMaterials(component),
     readSceneLayout(directory.layout),
-    readWorldOptions(component).then((world) => (world ? readTerrainSplats(component) : [])),
+    readWorldTerrainSplats(component),
   ]);
   const referencedIds = new Set([
     ...materials.flatMap(({ shaderPathId, textures }) => [
