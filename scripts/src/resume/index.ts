@@ -46,7 +46,8 @@ await runCommand(
         collector,
       ]);
       for (const line of formatResumeRows(rows)) console.info(line);
-      if (rows.some(({ items }) => items.some(({ action }) => action !== ""))) process.exitCode = 1;
+      if (rows.some(({ error, items }) => error !== "" || items.some(({ action }) => action !== "")))
+        process.exitCode = 1;
     },
   }),
 );
