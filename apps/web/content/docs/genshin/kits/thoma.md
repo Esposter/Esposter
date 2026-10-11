@@ -19,4 +19,4 @@ Thoma's kit is one module, `createThomaKit`, on avatar 10000050: four strikes, a
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/thoma), MIT: Thoma's strikes' hitmarks, reaches and cancel frames, the charged attack's frames, Blazing Blessing's hit, animation and shield, and Crimson Ooyoroi's initial hit and animation.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/thoma), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's frames, Blazing Blessing's hit, animation and shield, and Crimson Ooyoroi's initial hit and animation.

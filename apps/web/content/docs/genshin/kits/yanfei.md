@@ -19,4 +19,4 @@ Yanfei's kit is one module, `createYanfeiKit`, on avatar 10000048: three strikes
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yanfei), MIT: Yanfei's strikes' hitmarks and cancel frames, the charged attack's animation, hit and radii by seal count, the plunges' and collision's circles, Signed Edict's hit and cooldown, Done Deal's hit, seals and bonus, Ascension 1's Pyro DMG Bonus, and Constellations 1 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yanfei), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's animation, hit and radii by seal count, the plunges' and collision's circles, Signed Edict's hit and cooldown, Done Deal's hit, seals and bonus, Ascension 1's Pyro DMG Bonus, and Constellations 1 and 6.

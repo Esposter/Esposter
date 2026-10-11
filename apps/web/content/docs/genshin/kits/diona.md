@@ -19,4 +19,4 @@ Diona's kit is one module, `createDionaKit`, avatar 10000039: five strikes, a ch
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/diona), MIT: Diona's strikes' hitmarks and cancel frames, Icy Paws' hitmarks, travel and paw count, its shield's duration and cooldown, Signature Mix's frames, ticks and field, and her constellations' shield and energy.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/diona), MIT: the kit's hitmarks, cancel frames and areas, Icy Paws' hitmarks, travel and paw count, its shield's duration and cooldown, Signature Mix's frames, ticks and field, and her constellations' shield and energy.

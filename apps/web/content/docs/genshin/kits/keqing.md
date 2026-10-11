@@ -19,4 +19,4 @@ Keqing's kit is one module, `createKeqingKit`, on avatar 10000042: five strikes,
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/keqing), MIT: Keqing's strikes' hitmarks and cancel frames, Stellar Restoration and its recast's frames and circles, Starward Sword's hitmarks and circle, and the burst's cooldown and energy cost.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/keqing), MIT: the kit's hitmarks, cancel frames and areas, Stellar Restoration and its recast's frames and circles, Starward Sword's hitmarks and circle, and the burst's cooldown and energy cost.

@@ -16,7 +16,7 @@ Chongyun's kit is one module, `createChongyunKit`, avatar 10000036: four strikes
 
 ## Provisional constants
 
-- **Chongyun's charged attack is provisional.** gcsim marks its spinning and final slashes not implemented, so they land at half a second and a second and the attack ends at 1.2 seconds, as Beidou's do.
+- **Chongyun's charged attack is provisional.** gcsim marks its spinning and final slashes not implemented, so they are priced at half a second and a second, with the attack ending at 1.2 seconds.
 - **Ice Unleashed's blades reach what the fourth strike reaches, and the fourth Cloud-Parting Star blade the other blades' 5 metres**, both provisional, as gcsim's circles on the primary target hold no area here.
 
 ## Key files
