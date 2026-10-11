@@ -97,3 +97,5 @@ export const BYTE = 255;
 export const D65_WHITE: Vector = [0.950428545, 1, 1.088900371];
 // A pinned tool's archive runs to a hundred-odd megabytes, so its download is bounded by minutes rather than seconds
 export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
+// The npm lockfile beside a manifest, which `npm install` writes and whose root entry repeats the manifest's `engines`
+export const PACKAGE_LOCK_JSON_FILENAME = "package-lock.json";

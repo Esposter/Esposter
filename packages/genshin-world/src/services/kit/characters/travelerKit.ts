@@ -5,6 +5,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // The Traveler's Anemo form's proud skill groups, read at its talent level. The attacks' group is the female form's, 731,
@@ -25,10 +26,6 @@ const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI
 // Provisional: the low and high plunges' reach, read off a recording until the plunge clips measure it
 const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1.5 });
 const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 2.5 });
-// The wiki's targeting reach for a sword's attacks, 5 metres and 6 high, and for Palm Vortex, 15 metres and 10 high
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-// Provisional: the burst's and the plunges' targeting reach, taken as the skill's and a sword's until the wiki gives them
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) traveler/common/anemo attack.go, 60 fps frames, for the hitmarks and seconds. The file
 // Gives no poise, so each strike's poise is provisional until a source gives it
@@ -50,7 +47,7 @@ const createNormalAttack = (
       },
     ],
     seconds,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   });
 
 // The Traveler's first kit, at talent level 1, as the wiki's Lumine's Foreign Ironwind gives it: five strikes, a charged
@@ -79,7 +76,7 @@ export const createTravelerKit = (talentMultiplierMap: TalentMultiplierMap): Kit
       },
     ],
     seconds: 58 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   chargedAttackStamina: 20,
   // Measured: gcsim v2.47.2 (MIT) traveler/common/anemo burst.go, 60 fps frames,
@@ -132,7 +129,7 @@ export const createTravelerKit = (talentMultiplierMap: TalentMultiplierMap): Kit
       },
     ],
     seconds: 0.4,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   lowPlunge: {
     hits: [
@@ -145,7 +142,7 @@ export const createTravelerKit = (talentMultiplierMap: TalentMultiplierMap): Kit
       },
     ],
     seconds: 0.4,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   normalAttacks: [
     createNormalAttack(

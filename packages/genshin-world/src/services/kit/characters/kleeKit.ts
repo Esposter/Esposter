@@ -12,7 +12,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -27,9 +27,6 @@ const KLEE_ATTACK_GROUP_ID = 2931;
 const KLEE_SKILL_GROUP_ID = 2932;
 const KLEE_BURST_GROUP_ID = 2939;
 
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 // Measured: gcsim v2.47.2 (MIT) klee/charge.go, skill.go and burst.go. The charged attack's bomb is a circle on the primary
 // Target of radius 3, a bounce one of 4, a mine one of 2 and a spark one of 1.5
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/klee/skill.go

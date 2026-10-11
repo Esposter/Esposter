@@ -11,6 +11,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -58,8 +59,6 @@ const DAWN_TICK_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, heigh
 const DAWN_EXPLOSION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 7, radius: 9.4 });
 // The wiki's targeting reach for a sword's attacks, 5 metres and 6 high, and provisional for the skill and burst, as
 // The Traveler's are, until the wiki gives them
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) diluc/attack.go strikes' hitmarks and cancel frames at 60 fps, the cancel frame giving
 // The action's seconds. Each strike's poise is the wiki's Tempered Sword advanced properties, and each is blunt
@@ -82,7 +81,7 @@ const createNormalAttack = (
     },
   ],
   seconds,
-  targetingArea: SWORD_TARGETING_AREA,
+  targetingArea: STRIKE_TARGETING_AREA,
 });
 
 // Provisional: gcsim does not model the charged attack and the wiki's table gives no frames for it, so its two slashes
@@ -185,7 +184,7 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     seconds: 1.2,
     // Measured: the table's stamina a second for the charge, 40, drained while the charge plays, as the wiki gives it
     staminaPerSecond: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   // The charge needs no stamina to start and spends none at once, since its stamina is drained as it plays
   chargedAttackStamina: 0,
@@ -295,7 +294,7 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     seconds: 81 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   lowPlunge: {
     hits: [
@@ -308,7 +307,7 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     seconds: 78 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   normalAttacks: [
     createNormalAttack(

@@ -1,5 +1,12 @@
+import type { AttackArea } from "#src/models/kit/AttackArea";
+
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { LocomotionState } from "genshin-engine";
+
+// The reach a kit's strikes, and a sword's attacks, target within: 5 metres and 6 high, the wiki's targeting reach
+export const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
+// The reach a kit's skill, burst and plunges target within: 15 metres and 10 high, the wiki's
+export const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // The states a kit's normal attacks, charged attack and plunge landings start and continue on, on the ground
 export const ON_FOOT_LOCOMOTION_STATES: readonly LocomotionState[] = [

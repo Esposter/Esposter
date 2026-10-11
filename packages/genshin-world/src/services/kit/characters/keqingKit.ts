@@ -7,6 +7,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -47,18 +48,15 @@ const SKILL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2
 // Hits reach
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/burst.go
 const BURST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 8 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the other kits' are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) keqing/attack.go, each strike's hitmarks and animation at 60 fps. The fourth strike is two
 // Hits, at 11 and 21 frames, both of its talent index
 const KEQING_STRIKES = [
-  { animationFrames: 19, hitmarkFrames: [10], index: 0, hitArea: FIRST_STRIKE_HIT_AREA },
-  { animationFrames: 24, hitmarkFrames: [10], index: 1, hitArea: SECOND_STRIKE_HIT_AREA },
-  { animationFrames: 36, hitmarkFrames: [14], index: 2, hitArea: THIRD_STRIKE_HIT_AREA },
-  { animationFrames: 58, hitmarkFrames: [11, 21], index: 3, hitArea: FOURTH_STRIKE_HIT_AREA },
-  { animationFrames: 66, hitmarkFrames: [22], index: 4, hitArea: FIFTH_STRIKE_HIT_AREA },
+  { animationFrames: 19, hitArea: FIRST_STRIKE_HIT_AREA, hitmarkFrames: [10], index: 0 },
+  { animationFrames: 24, hitArea: SECOND_STRIKE_HIT_AREA, hitmarkFrames: [10], index: 1 },
+  { animationFrames: 36, hitArea: THIRD_STRIKE_HIT_AREA, hitmarkFrames: [14], index: 2 },
+  { animationFrames: 58, hitArea: FOURTH_STRIKE_HIT_AREA, hitmarkFrames: [11, 21], index: 3 },
+  { animationFrames: 66, hitArea: FIFTH_STRIKE_HIT_AREA, hitmarkFrames: [22], index: 4 },
 ];
 
 // Measured: gcsim v2.47.2 (MIT) keqing/skill.go, Stellar Restoration's hit at 25 frames with an animation of 37, and the

@@ -9,6 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -42,9 +43,6 @@ const BREASTPLATE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/noelle/burst.go
 const SWEEPING_TIME_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 6.5 });
 const SWEEPING_TIME_SKILL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 4 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) noelle/burst.go, the buffs last 900 frames from an 80-frame start, which is the table's
 // Duration of 15 seconds and that start
@@ -80,7 +78,7 @@ const createNormalAttack = (
 ): KitAction => ({
   hits: [{ convertedPoiseDamage, healParty, hitArea, hitmarkSeconds, isBlunt: true, poiseDamage, talentMultiplier }],
   seconds,
-  targetingArea: SWORD_TARGETING_AREA,
+  targetingArea: STRIKE_TARGETING_AREA,
 });
 
 // Breastplate's heal on a hit of Noelle's attacks and her press while the shield stands: a 50% roll whose heal is 21.28%
@@ -135,7 +133,7 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         },
       ],
       seconds: 144 / 60,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, NOELLE_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
     // Measured: gcsim v2.47.2 (MIT) noelle/burst.go, the burst's slash at 24 frames, the skill at 65 and the cancel at 121.
@@ -233,7 +231,7 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         },
       ],
       seconds: 82 / 60,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     lowPlunge: {
       hits: [
@@ -246,7 +244,7 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         },
       ],
       seconds: 80 / 60,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks: [
       createNormalAttack(

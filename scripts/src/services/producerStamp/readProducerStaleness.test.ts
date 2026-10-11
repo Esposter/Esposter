@@ -24,7 +24,7 @@ describe(readProducerStaleness, () => {
   test("reads no stamp and no commits from an output that has none", async () => {
     expect.hasAssertions();
 
-    expect(await readProducerStaleness(directory)).toStrictEqual({ commits: [] });
+    expect(await readProducerStaleness(directory)).toStrictEqual({ commits: [], isApproximate: false });
   });
 
   test("lists no commits for an output stamped at HEAD", async () => {
@@ -39,7 +39,7 @@ describe(readProducerStaleness, () => {
     expect(commits).toStrictEqual([]);
   });
 
-  test("says so first when the stamp's commit is one git does not know", async () => {
+  test("reads the recent window as an approximation when the stamp's commit is one git does not know", async () => {
     expect.hasAssertions();
 
     writeJsonFile(join(directory, PRODUCER_STAMP_NAME), {
@@ -48,8 +48,8 @@ describe(readProducerStaleness, () => {
       producerPaths: [producerPath],
     });
 
-    const { commits } = await readProducerStaleness(directory);
+    const { isApproximate } = await readProducerStaleness(directory);
 
-    expect(commits[0]).toBe("0000000 is not on this branch; listing recent changes");
+    expect(isApproximate).toBe(true);
   });
 });

@@ -15,7 +15,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -62,9 +62,6 @@ const RAIN_SWORDS_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 // Provisional: gcsim v2.47.2 (MIT) xingqiu/burst.go drops each sword as a circle of radius 0.5 on the primary target, which
 // An area does not hold, so a sword reaches the 5 metres an attack targets within, as Ayaka's charged attack does
 const SWORD_RAIN_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) xingqiu/attack.go, each strike's hitmarks and the animation that ends it at 60 fps, with
 // The attack group's index of each hit. Each hit's poise is the wiki's Guhua Style advanced properties

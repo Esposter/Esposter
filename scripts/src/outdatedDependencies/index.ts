@@ -8,7 +8,6 @@ import { getEngineEntries } from "#src/services/outdatedDependencies/manifest/ge
 import { getManifestDependencies } from "#src/services/outdatedDependencies/manifest/getManifestDependencies";
 import { getPackageManagerEntries } from "#src/services/outdatedDependencies/manifest/getPackageManagerEntries";
 import { getUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/manifest/getUncatalogedManifestDependencies";
-import { readManifestFiles } from "#src/services/outdatedDependencies/manifest/readManifestFiles";
 import { readNpmProjects } from "#src/services/outdatedDependencies/npm/readNpmProjects";
 import { getRegularOutdatedDependencies } from "#src/services/outdatedDependencies/pnpm/getRegularOutdatedDependencies";
 import { omitDependents } from "#src/services/outdatedDependencies/pnpm/omitDependents";
@@ -36,6 +35,7 @@ import {
   RENOVATE_CONFIGURATION_FILE,
   REPOSITORY_ROOT,
 } from "#src/services/shared/constants";
+import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
 import { WORKSPACE_FILE } from "@esposter/configuration";

@@ -10,7 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
+import { MELEE_WEAPON_TYPES, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -58,9 +58,6 @@ const CHARGE_SECOND_HIT_AREA: AttackArea = Object.freeze({
   radius: Math.hypot(1.5, 1.5),
 });
 const CHARGE_EXPLOSION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 4.5 });
-// Provisional: the reach the targeting reads for the skill and burst, as the Traveler's are, until the wiki gives them
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the field's first tick at 34 frames and then every second to its end,
 // Its heal below 70% and its ATK bonus above it, of the character's HP, and the buffs of 126 frames
@@ -123,7 +120,7 @@ const createNormalAttack = (
     { hitArea, hitmarkSeconds, internalCooldownTag: InternalCooldownTag.NormalAttack, poiseDamage, talentMultiplier },
   ],
   seconds,
-  targetingArea: SWORD_TARGETING_AREA,
+  targetingArea: STRIKE_TARGETING_AREA,
 });
 
 // Passion Overload's Level 1 and Level 2 hold's hits, at their talent multipliers, each Charge Level hit dealing 1U of Pyro
@@ -275,7 +272,7 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       },
     ],
     seconds: 55 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   // The wiki's Strike of Fortune stamina, which its paramList row gives as well
   chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),
@@ -354,7 +351,7 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       },
     ],
     seconds: 68 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   lowPlunge: {
     hits: [
@@ -367,7 +364,7 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       },
     ],
     seconds: 67 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   normalAttacks: [
     createNormalAttack(

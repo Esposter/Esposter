@@ -11,6 +11,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -50,9 +51,6 @@ const GALE_BLADE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, heig
 // They are priced round the field, every enemy within it, as the wiki's Dandelion Breeze notes give them
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jean/burst.go
 const DANDELION_BREEZE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 6 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) jean/burst.go, the field from 40 frames to 600 frames past them, its activation heal and
 // First entering damage at 40, its regeneration every 60 frames from 100 to its end, and its exiting damage at its end.
@@ -105,7 +103,7 @@ const createNormalAttack = (
     },
   ],
   seconds: frames / 60,
-  targetingArea: SWORD_TARGETING_AREA,
+  targetingArea: STRIKE_TARGETING_AREA,
 });
 
 // The Dandelion Field's tick, written for Jean as she cast it, with its heals in HP. Tick 0 is its activation, which heals
@@ -213,7 +211,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         },
       ],
       seconds: 57 / 60,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, JEAN_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
     // Measured: gcsim v2.47.2 (MIT) jean/burst.go, the blast at 55 frames and the animation's 90. The wiki's Dandelion
@@ -298,7 +296,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         },
       ],
       seconds: 0.4,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     lowPlunge: {
       hits: [
@@ -311,7 +309,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         },
       ],
       seconds: 0.4,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
     // The collision's poise is the wiki's 25, and it applies no gauge of its own, 0U, as the wiki's table gives

@@ -4,10 +4,10 @@ import type { AchievementCategory } from "#src/models/achievement/AchievementCat
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { GameText } from "genshin-text";
 
+import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAchievementFinished";
 import { QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
 import { useEventListener } from "@vueuse/core";
-import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -51,121 +51,60 @@ useEventListener("keydown", (event) => {
        Achievements are finished, and the selected category's achievements on the right, each with its words, its count
        When it has one, and its Primogems. A hidden achievement reads "?" until it is finished. Not yet built: the category
        Icons, the Primogem glyph, the namecard a finished category pays, and the look the English client draws -->
-  <GameScreen class="achievement-screen">
-    <p class="header-title">{{ gameText[GameTextKey.Achievements] }}</p>
-    <span class="key previous">Q</span>
-    <span class="key next">E</span>
-    <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
-    <div class="categories" role="tablist" aria-orientation="vertical">
-      <button
-        v-for="category of categories"
-        :key="category.id"
-        class="category"
-        :aria-selected="category.id === selectedCategoryId"
-        role="tab"
-        type="button"
-        @click="selectedCategoryId = category.id"
-      >
-        <span class="name">{{ textMap[category.nameTextId] }}</span>
-        <span class="count"
-          >{{ finishedCount(category.id) }}/{{ categoryAchievementsMap.get(category.id)?.length ?? 0 }}</span
+  <MenuListScreen :game-text :title="gameText[GameTextKey.Achievements]" @close="emit('close')">
+    <template #list>
+      <div class="list" role="tablist" aria-orientation="vertical">
+        <button
+          v-for="category of categories"
+          :key="category.id"
+          class="category"
+          :aria-selected="category.id === selectedCategoryId"
+          role="tab"
+          type="button"
+          @click="selectedCategoryId = category.id"
         >
-      </button>
-    </div>
-    <div
-      v-if="selectedCategory"
-      class="achievements"
-      role="tabpanel"
-      :aria-label="textMap[selectedCategory.nameTextId]"
-    >
-      <div
-        v-for="achievement of selectedAchievements"
-        :key="achievement.id"
-        class="achievement"
-        :data-finished="checkIsAchievementFinished(achievement.id, progressMap) || undefined"
-      >
-        <p class="title">{{ checkIsRevealed(achievement) ? textMap[achievement.titleTextId] : "?" }}</p>
-        <p v-if="checkIsRevealed(achievement)" class="description">{{ textMap[achievement.descriptionTextId] }}</p>
-        <p class="reward">
-          <span v-if="achievement.progress > 1">
-            {{ progressMap.get(achievement.id)?.count ?? 0 }}/{{ achievement.progress }}
-          </span>
-          <span>{{ achievement.primogems }} {{ gameText[GameTextKey.Primogem] }}</span>
-        </p>
+          <span class="name">{{ textMap[category.nameTextId] }}</span>
+          <span class="count"
+            >{{ finishedCount(category.id) }}/{{ categoryAchievementsMap.get(category.id)?.length ?? 0 }}</span
+          >
+        </button>
       </div>
-    </div>
-  </GameScreen>
+    </template>
+    <template #detail>
+      <div
+        v-if="selectedCategory"
+        class="achievements"
+        role="tabpanel"
+        :aria-label="textMap[selectedCategory.nameTextId]"
+      >
+        <div
+          v-for="achievement of selectedAchievements"
+          :key="achievement.id"
+          class="achievement"
+          :data-finished="checkIsAchievementFinished(achievement.id, progressMap) || undefined"
+        >
+          <p class="title">{{ checkIsRevealed(achievement) ? textMap[achievement.titleTextId] : "?" }}</p>
+          <p v-if="checkIsRevealed(achievement)" class="description">{{ textMap[achievement.descriptionTextId] }}</p>
+          <p class="reward">
+            <span v-if="achievement.progress > 1">
+              {{ progressMap.get(achievement.id)?.count ?? 0 }}/{{ achievement.progress }}
+            </span>
+            <span>{{ achievement.primogems }} {{ gameText[GameTextKey.Primogem] }}</span>
+          </p>
+        </div>
+      </div>
+    </template>
+  </MenuListScreen>
 </template>
 
 <style scoped>
-.achievement-screen {
-  color: #fff;
-}
-
-.header-title,
 .category,
-.close,
 .title {
   margin: 0;
   border: none;
   cursor: inherit;
   font: inherit;
   font-weight: 600;
-}
-
-.header-title {
-  position: absolute;
-  top: 0;
-  left: calc(var(--unit) * 144);
-  height: calc(var(--unit) * 95);
-  color: #d7c28f;
-  font-size: calc(var(--unit) * 24);
-  line-height: calc(var(--unit) * 95);
-}
-
-.key {
-  position: absolute;
-  top: calc(var(--unit) * 33);
-  display: grid;
-  width: calc(var(--unit) * 32);
-  height: calc(var(--unit) * 28);
-  background: #ece5d8;
-  color: #000;
-  font-size: calc(var(--unit) * 20);
-  place-items: center;
-}
-
-.key.previous {
-  left: calc(var(--unit) * 675);
-}
-
-.key.next {
-  left: calc(var(--unit) * 1213);
-}
-
-.close {
-  position: absolute;
-  top: calc(var(--unit) * 19);
-  right: calc(var(--unit) * 50);
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  border-radius: calc(var(--unit) * 6);
-  background: rgb(236 229 216 / 0.85);
-  color: #3b4255;
-  font-size: calc(var(--unit) * 40);
-  line-height: 1;
-}
-
-.categories {
-  position: absolute;
-  top: calc(var(--unit) * 105);
-  bottom: calc(var(--unit) * 125);
-  left: calc(var(--unit) * 150);
-  display: flex;
-  width: calc(var(--unit) * 666);
-  flex-direction: column;
-  overflow-y: auto;
-  scrollbar-width: none;
 }
 
 .category {

@@ -10,6 +10,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
@@ -26,10 +27,6 @@ import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 const ALBEDO_ATTACK_GROUP_ID = 3831;
 const ALBEDO_SKILL_GROUP_ID = 3832;
 const ALBEDO_BURST_GROUP_ID = 3839;
-
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the other kits' are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Provisional: gcsim gives Albedo's strikes, charged attack and plunges no poise, so these stand in until a source gives them
 const STRIKE_POISE_DAMAGE = 0;

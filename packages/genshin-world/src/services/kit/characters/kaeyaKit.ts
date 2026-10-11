@@ -7,6 +7,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -40,9 +41,6 @@ const FROSTGNAW_HIT_AREA = createBoxReach(-0.2, 4, 8);
 // Measured: gcsim v2.47.2 (MIT) kaeya/burst.go, each icicle is a circle of radius 4 round Kaeya
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/burst.go
 const ICICLE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 4 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) kaeya/burst.go, the icicles run from 53 frames for 534 frames. Three start 40 frames apart
 // And each comes round every 120 frames, so the ticks fall on these thirteen frames
@@ -60,7 +58,7 @@ const createNormalAttack = (
 ): KitAction => ({
   hits: [{ hitArea, hitmarkSeconds, poiseDamage, talentMultiplier }],
   seconds,
-  targetingArea: SWORD_TARGETING_AREA,
+  targetingArea: STRIKE_TARGETING_AREA,
 });
 
 // Glacial Waltz's icicles: each a Cryo hit of 1U under an Elemental Burst internal cooldown, the wiki's 25 poise
@@ -99,7 +97,7 @@ export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     seconds: 55 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, KAEYA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),
   // Measured: gcsim v2.47.2 (MIT) kaeya/burst.go, the cancel frame at 78 and the cooldown of 20 seconds. Glacial Waltz's
@@ -146,7 +144,7 @@ export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     seconds: 77 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   lowPlunge: {
     hits: [
@@ -159,7 +157,7 @@ export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     seconds: 74 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   normalAttacks: [
     createNormalAttack(

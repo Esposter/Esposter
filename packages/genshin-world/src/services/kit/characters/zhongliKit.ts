@@ -16,7 +16,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element, Elements } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
@@ -35,9 +35,6 @@ const ZHONGLI_ATTACK_GROUP_ID = 3031;
 const ZHONGLI_SKILL_GROUP_ID = 3032;
 const ZHONGLI_BURST_GROUP_ID = 3039;
 
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 // Measured: gcsim v2.47.2 (MIT) zhongli/charge.go, the thrust a circle of radius 0.8 on the primary target
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/zhongli/charge.go
 const CHARGED_ATTACK_HIT_AREA = createTargetedHitArea(STRIKE_TARGETING_AREA, 0.8);

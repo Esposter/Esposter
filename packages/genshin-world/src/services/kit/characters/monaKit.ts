@@ -12,7 +12,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -61,9 +61,6 @@ const A4_HYDRO_BONUS_OF_ENERGY_RECHARGE = 0.2;
 // Measured: gcsim v2.47.2 (MIT) mona/burst.go, the bubble's circle of radius 10
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/burst.go
 const BUBBLE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 10 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) mona/skill.go, the phantom's first tick at 86 frames and then every 59 frames, four
 // Ticks in all, and its explosion at 243 frames after the first tick, 329 frames in. The phantom lasts until the explosion
@@ -92,7 +89,7 @@ const createNormalAttack = (
     },
   ],
   seconds,
-  targetingArea: SWORD_TARGETING_AREA,
+  targetingArea: STRIKE_TARGETING_AREA,
 });
 
 // Ascension 1's phantom's explosion: a single Hydro hit at the phantom's end, at half of Mirror Reflection's explosion.
@@ -204,7 +201,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       },
     ],
     seconds: 113 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
   // Measured: gcsim v2.47.2 (MIT) mona/burst.go, the bubble at 107 frames and its cancel frame at 127. The wiki's
@@ -256,7 +253,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       },
     ],
     seconds: 0.4,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   lowPlunge: {
     hits: [
@@ -270,7 +267,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       },
     ],
     seconds: 0.4,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   normalAttacks: [
     createNormalAttack(

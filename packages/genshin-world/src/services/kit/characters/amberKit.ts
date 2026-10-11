@@ -10,7 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -38,9 +38,6 @@ const BUNNY_EXPLOSION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI,
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/burst.go
 const FIERY_RAIN_RADIUS = 2;
 const FIERY_RAIN_ASCENSION_RADIUS_MULTIPLIER = 1.3;
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) amber/aimed.go, the fully charged shot at 86 frames, cancelling at 96
 const FULL_AIM_HITMARK_FRAMES = 86;
@@ -76,7 +73,7 @@ const createArrow = (
     },
   ],
   seconds,
-  targetingArea: SWORD_TARGETING_AREA,
+  targetingArea: STRIKE_TARGETING_AREA,
 });
 
 // Ascension 1, Every Arrow Finds Its Target, adds 10% CRIT Rate to Fiery Rain, priced by the combatant that cast it
@@ -130,7 +127,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     ],
     isAimed: true,
     seconds: FULL_AIM_SECONDS,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   // A bow's aimed shot costs no stamina, as the wiki's Sharpshooter gives it
   chargedAttackStamina: 0,
@@ -191,7 +188,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     seconds: 0.4,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   lowPlunge: {
     hits: [
@@ -203,7 +200,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     seconds: 0.4,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   normalAttacks: [
     createArrow(talentMultiplierMap, 0, 14 / 60, 12.9, 26 / 60),

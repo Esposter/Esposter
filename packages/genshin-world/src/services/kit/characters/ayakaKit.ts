@@ -6,6 +6,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -48,9 +49,6 @@ const FROSTFLAKE_CUT_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, 
 const FROSTFLAKE_BLOOM_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 const SMALL_FROSTFLAKE_CUT_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.3 + 1.5 });
 const SMALL_FROSTFLAKE_BLOOM_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) ayaka/burst.go, the storm's nineteen cuts every 15 frames from 104 frames and its bloom
 // 300 frames after the first cut
@@ -144,7 +142,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, AYAKA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),
       })),
       seconds: 71 / 60,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, AYAKA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
     // Measured: gcsim v2.47.2 (MIT) ayaka/burst.go, the animation's 125 frames. Soumetsu's storms are summons, standing
@@ -189,7 +187,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         },
       ],
       seconds: 74 / 60,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     lowPlunge: {
       hits: [
@@ -202,7 +200,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         },
       ],
       seconds: 73 / 60,
-      targetingArea: SWORD_TARGETING_AREA,
+      targetingArea: STRIKE_TARGETING_AREA,
     },
     // Measured: gcsim v2.47.2 (MIT) ayaka/attack.go, each strike's hitmarks and the animation that ends it at 60 fps
     normalAttacks: [
@@ -216,7 +214,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           ),
         ],
         seconds: 22 / 60,
-        targetingArea: SWORD_TARGETING_AREA,
+        targetingArea: STRIKE_TARGETING_AREA,
       },
       {
         hits: [
@@ -228,7 +226,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           ),
         ],
         seconds: 20 / 60,
-        targetingArea: SWORD_TARGETING_AREA,
+        targetingArea: STRIKE_TARGETING_AREA,
       },
       {
         hits: [
@@ -240,7 +238,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           ),
         ],
         seconds: 32 / 60,
-        targetingArea: SWORD_TARGETING_AREA,
+        targetingArea: STRIKE_TARGETING_AREA,
       },
       {
         hits: [8, 15, 22].map((hitmarkFrames) =>
@@ -252,7 +250,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           ),
         ),
         seconds: 23 / 60,
-        targetingArea: SWORD_TARGETING_AREA,
+        targetingArea: STRIKE_TARGETING_AREA,
       },
       {
         hits: [
@@ -264,7 +262,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           ),
         ],
         seconds: 66 / 60,
-        targetingArea: SWORD_TARGETING_AREA,
+        targetingArea: STRIKE_TARGETING_AREA,
       },
     ],
     onSprint: ({ combatant, kitEffectState }) =>

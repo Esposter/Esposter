@@ -14,7 +14,7 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -31,10 +31,6 @@ import { healPartyMember } from "#src/services/party/healPartyMember";
 const FISCHL_ATTACK_GROUP_ID = 3131;
 const FISCHL_SKILL_GROUP_ID = 3132;
 const FISCHL_BURST_GROUP_ID = 3139;
-
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the other kits' are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) fischl/attack.go, each arrow's hitmark and the frame its action cancels at. The arrow lands
 // At the primary target through a box a metre long, so it is priced as a circle of a metre round the body, as Amber's are

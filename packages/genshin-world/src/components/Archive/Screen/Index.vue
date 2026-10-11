@@ -4,12 +4,12 @@ import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { GameText } from "genshin-text";
 
+import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArchiveSectionGameTextKeyMap } from "#src/services/archive/ArchiveSectionGameTextKeyMap";
 import { ArchiveSectionOrder } from "#src/services/archive/ArchiveSectionOrder";
 import { QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
 import { useEventListener } from "@vueuse/core";
-import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -53,113 +53,52 @@ useEventListener("keydown", (event) => {
   <!-- The game's Archive, which the Paimon menu opens once its quest is done: its seven sections down the left, each with
        How many of its entries are opened, and the selected section's entries on the right, each a name or a "?" until it
        Opens. Not yet built: the entries' pictures, their descriptions and the look the English client draws -->
-  <GameScreen class="archive-screen">
-    <p class="header-title">{{ gameText[GameTextKey.Archive] }}</p>
-    <span class="key previous">Q</span>
-    <span class="key next">E</span>
-    <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
-    <div class="sections" role="tablist" aria-orientation="vertical">
-      <button
-        v-for="section of sections"
-        :key="section"
-        class="section"
-        :aria-selected="section === selectedSection"
-        role="tab"
-        type="button"
-        @click="selectedSection = section"
-      >
-        <span class="name">{{ gameText[ArchiveSectionGameTextKeyMap[section]] }}</span>
-        <span class="count">{{ openedCount(section) }}/{{ sectionEntriesMap[section].length }}</span>
-      </button>
-    </div>
-    <div class="entries" role="tabpanel" :aria-label="gameText[ArchiveSectionGameTextKeyMap[selectedSection]]">
-      <component
-        :is="checkIsEntryReadable(entry.id) ? 'button' : 'p'"
-        v-for="entry of selectedEntries"
-        :key="entry.id"
-        class="entry"
-        :type="checkIsEntryReadable(entry.id) ? 'button' : undefined"
-        :data-opened="checkIsEntryOpened(entry.id) || undefined"
-        @click="checkIsEntryReadable(entry.id) && emit('readBook', entry.id)"
-      >
-        {{ checkIsEntryOpened(entry.id) ? textMap[entry.nameTextId] : "?" }}
-        <span v-if="selectedSection === ArchiveSection.LivingBeings && checkIsEntryOpened(entry.id)" class="kills"
-          >×{{ killsMap.get(entry.id) ?? 0 }}</span
+  <MenuListScreen :game-text :title="gameText[GameTextKey.Archive]" @close="emit('close')">
+    <template #list>
+      <div class="list" role="tablist" aria-orientation="vertical">
+        <button
+          v-for="section of sections"
+          :key="section"
+          class="section"
+          :aria-selected="section === selectedSection"
+          role="tab"
+          type="button"
+          @click="selectedSection = section"
         >
-      </component>
-    </div>
-  </GameScreen>
+          <span class="name">{{ gameText[ArchiveSectionGameTextKeyMap[section]] }}</span>
+          <span class="count">{{ openedCount(section) }}/{{ sectionEntriesMap[section].length }}</span>
+        </button>
+      </div>
+    </template>
+    <template #detail>
+      <div class="entries" role="tabpanel" :aria-label="gameText[ArchiveSectionGameTextKeyMap[selectedSection]]">
+        <component
+          :is="checkIsEntryReadable(entry.id) ? 'button' : 'p'"
+          v-for="entry of selectedEntries"
+          :key="entry.id"
+          class="entry"
+          :type="checkIsEntryReadable(entry.id) ? 'button' : undefined"
+          :data-opened="checkIsEntryOpened(entry.id) || undefined"
+          @click="checkIsEntryReadable(entry.id) && emit('readBook', entry.id)"
+        >
+          {{ checkIsEntryOpened(entry.id) ? textMap[entry.nameTextId] : "?" }}
+          <span v-if="selectedSection === ArchiveSection.LivingBeings && checkIsEntryOpened(entry.id)" class="kills"
+            >×{{ killsMap.get(entry.id) ?? 0 }}</span
+          >
+        </component>
+      </div>
+    </template>
+  </MenuListScreen>
 </template>
 
 <style scoped>
-.archive-screen {
-  color: #fff;
-}
-
-.header-title,
 .section,
-.close,
 .entry {
   margin: 0;
   border: none;
   cursor: inherit;
   font: inherit;
   font-weight: 600;
-}
-
-.header-title {
-  position: absolute;
-  top: 0;
-  left: calc(var(--unit) * 144);
-  height: calc(var(--unit) * 95);
-  color: #d7c28f;
-  font-size: calc(var(--unit) * 24);
-  line-height: calc(var(--unit) * 95);
-}
-
-.key {
-  position: absolute;
-  top: calc(var(--unit) * 33);
-  display: grid;
-  width: calc(var(--unit) * 32);
-  height: calc(var(--unit) * 28);
-  background: #ece5d8;
-  color: #000;
-  font-size: calc(var(--unit) * 20);
-  place-items: center;
-}
-
-.key.previous {
-  left: calc(var(--unit) * 675);
-}
-
-.key.next {
-  left: calc(var(--unit) * 1213);
-}
-
-.close {
-  position: absolute;
-  top: calc(var(--unit) * 19);
-  right: calc(var(--unit) * 50);
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  border-radius: calc(var(--unit) * 6);
-  background: rgb(236 229 216 / 0.85);
-  color: #3b4255;
-  font-size: calc(var(--unit) * 40);
-  line-height: 1;
-}
-
-.sections {
-  position: absolute;
-  top: calc(var(--unit) * 105);
-  bottom: calc(var(--unit) * 125);
-  left: calc(var(--unit) * 150);
-  display: flex;
-  width: calc(var(--unit) * 666);
-  flex-direction: column;
-  overflow-y: auto;
-  scrollbar-width: none;
 }
 
 .section {
