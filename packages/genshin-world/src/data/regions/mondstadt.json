@@ -76,6 +76,13 @@
       "talkId": "1012004"
     },
     {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -294.74, "z": -148.24 }, "rotation": 0 },
+      "id": "30048",
+      "nameTextId": "948516309",
+      "talkId": "63004801"
+    },
+    {
       "areaId": "starfell-valley",
       "day": { "position": { "x": 131.41, "z": -392.65 }, "rotation": 0.91 },
       "id": "30234",
@@ -297,21 +304,28 @@
       "day": { "position": { "x": -443.18, "z": -247.12 }, "rotation": 0 },
       "id": "20209",
       "nameTextId": "1943146837",
-      "talkId": "2007303"
+      "talkId": "2007391"
     },
     {
       "areaId": "galesong-hill",
       "day": { "position": { "x": -532.11, "z": -209.78 }, "rotation": 0 },
       "id": "20210",
       "nameTextId": "2165625205",
-      "talkId": "2007304"
+      "talkId": "2007392"
     },
     {
       "areaId": "galesong-hill",
       "day": { "position": { "x": -573.79, "z": -144.51 }, "rotation": -1.5606 },
       "id": "20211",
       "nameTextId": "2629079533",
-      "talkId": "2007305"
+      "talkId": "2007393"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -688.91, "z": -470.66 }, "rotation": 0 },
+      "id": "11004",
+      "nameTextId": "2763181101",
+      "talkId": "61021601"
     },
     {
       "areaId": "galesong-hill",
@@ -409,7 +423,7 @@
       "day": { "position": { "x": 412.26, "z": -345.73 }, "rotation": 2.0944 },
       "id": "30112",
       "nameTextId": "230810904",
-      "talkId": "7050201"
+      "talkId": "7051001"
     },
     {
       "areaId": "starfell-valley",
@@ -452,6 +466,13 @@
       "id": "1247",
       "nameTextId": "1052668133",
       "talkId": "34702"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 377.27, "z": -377.57 }, "rotation": 1.142 },
+      "id": "10256",
+      "nameTextId": "1387903181",
+      "talkId": "61025601"
     },
     {
       "areaId": "starfell-valley",
@@ -654,14 +675,14 @@
       "day": { "position": { "x": 313.03, "z": 459.46 }, "rotation": 2.1526 },
       "id": "20127",
       "nameTextId": "1930040781",
-      "talkId": "7101210"
+      "talkId": "7101261"
     },
     {
       "areaId": "galesong-hill",
       "day": { "position": { "x": 737.24, "z": 1106.23 }, "rotation": 0 },
       "id": "20089",
       "nameTextId": "2008457645",
-      "talkId": "7101201"
+      "talkId": "7101225"
     },
     {
       "areaId": "starfell-valley",

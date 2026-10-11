@@ -13,12 +13,12 @@ export interface ResidentJoin {
 
 // Each NPC placed in a region as a resident of it, at the place of its first birth record there, which is its day spot,
 // Its night spot unset since the game's records give no second place to tell the day's from the night's. Its name and
-// Its talk are the game's: the talk is the lowest-numbered one the NPC speaks, and an NPC with no name or no talk is
-// Left out, since the schema takes neither empty
+// The talk F begins with it are the game's, and an NPC with no name or no talk is left out, since the schema takes
+// Neither empty
 export const joinResidents = (
   placements: readonly ResidentPlacement[],
   nameTextIdMap: ReadonlyMap<number, string>,
-  talkIdMap: ReadonlyMap<number, readonly number[]>,
+  talkIdMap: ReadonlyMap<number, number>,
   getAreaId: (region: string, position: GroundPoint) => string,
 ): ResidentJoin => {
   const join: ResidentJoin = { noName: 0, noTalk: 0, regions: new Map(), repeated: 0 };
@@ -35,7 +35,7 @@ export const joinResidents = (
       join.noName++;
       continue;
     }
-    const [talkId] = talkIdMap.get(npcId) ?? [];
+    const talkId = talkIdMap.get(npcId);
     if (talkId === undefined) {
       join.noTalk++;
       continue;

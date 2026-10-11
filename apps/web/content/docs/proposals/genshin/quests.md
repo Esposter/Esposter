@@ -8,7 +8,7 @@ touches: ["packages/genshin-world/src/components/Quest/Screen/**"]
 
 # Quests
 
-The quest model and its pure progression, the quest screen J opens, the beam over a navigated objective, the Adventurer Handbook's tabs, the reader that writes the carried quests from the community's dump, and the world's side are built: the carried Archon quests start from the prologue's first, a talk's end, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished quest reaches the achievements and the Travel Log. See [quests](/docs/genshin/quests), [achievements](/docs/genshin/achievements) and [archive](/docs/genshin/archive). What remains is what the world still does not hand the quests: the places the go-to steps stand at, the quests the talks offer, and the commissions. It builds on [dialogue](/docs/proposals/genshin/dialogue), whose talks a quest's talk-to steps end on.
+The quest model and its pure progression, the quest screen J opens, the beam over a navigated objective, the Adventurer Handbook's tabs, the reader that writes the carried quests from the community's dump, and the world's side are built: the carried Archon quests start from the prologue's first, a talk's end, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished quest reaches the achievements and the Travel Log. See [quests](/docs/genshin/quests), [achievements](/docs/genshin/achievements) and [archive](/docs/genshin/archive). What remains is what the world still does not hand the quests: the places the go-to steps stand at, the quests the talks offer, and the commissions. It builds on [dialogue](/docs/genshin/dialogue), whose talks a quest's talk-to steps end on.
 
 ## Decisions
 

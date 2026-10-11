@@ -19,6 +19,8 @@ import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegio
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { NPC_PATH } from "#src/services/genshinText/constants";
+import { mapNpcStandingTalkIds } from "#src/services/genshinText/mapNpcStandingTalkIds";
+import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { residentSchema } from "genshin-world";
@@ -33,7 +35,9 @@ type RegionDataFile = Record<string, unknown> & {
 
 // Every NPC the open world places, joined to the game's name and talk and written into the residents of each region the
 // Official map fitted to the scene. A region the fit matched no statue or waypoint in is left out, since its places
-// Cannot be trusted. The report counts each region's residents, the ones with a night spot and what was left out
+// Cannot be trusted. The talk F begins with an NPC is its standing talk where the talk table gives it one, else the
+// Lowest-numbered talk it speaks in. The report counts each region's residents, the ones with a night spot and what was
+// Left out
 export const writeResidents = async (): Promise<string> => {
   const [origin, { points, regions, transform }] = await Promise.all([
     readWorldOrigin(DerivedAssetComponent.Windrise),
@@ -59,7 +63,8 @@ export const writeResidents = async (): Promise<string> => {
   const nameTextIdMap = new Map(
     npcs.flatMap(({ id, nameTextMapHash }) => (nameTextMapHash === 0 ? [] : [[id, String(nameTextMapHash)] as const])),
   );
-  const talkIdMap = mapSpeakerTalkIds(await readDialogSpeakers());
+  const [speakers, talkConfigs] = await Promise.all([readDialogSpeakers(), readTalkConfigs()]);
+  const talkIdMap = new Map([...mapSpeakerTalkIds(speakers), ...mapNpcStandingTalkIds(talkConfigs)]);
   const landmarksMap = new Map(regionFiles.map(({ data, region }) => [region, data.landmarks] as const));
   const residentJoin = joinResidents(placements, nameTextIdMap, talkIdMap, (region, position) =>
     findNearestLandmarkAreaId(region, landmarksMap.get(region) ?? [], position),

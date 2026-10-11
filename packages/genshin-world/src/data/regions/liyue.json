@@ -78,6 +78,55 @@
     },
     {
       "areaId": "sea-of-clouds",
+      "day": { "position": { "x": -5.52, "z": -2850.94 }, "rotation": 0.7995 },
+      "id": "2284",
+      "nameTextId": "797729880",
+      "talkId": "6228401"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": -316.36, "z": -2750.23 }, "rotation": -0.2863 },
+      "id": "2239",
+      "nameTextId": "3390375016",
+      "talkId": "6223901"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": -304.39, "z": -2767.38 }, "rotation": 0 },
+      "id": "2243",
+      "nameTextId": "3057881320",
+      "talkId": "6224301"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": -277.3, "z": -2754.54 }, "rotation": 0 },
+      "id": "2242",
+      "nameTextId": "2774916600",
+      "talkId": "6224201"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": 108.42, "z": -2873.32 }, "rotation": 2.5376 },
+      "id": "2326",
+      "nameTextId": "2467430840",
+      "talkId": "6232601"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": -77.02, "z": -2860.91 }, "rotation": -2.3539 },
+      "id": "2237",
+      "nameTextId": "3039678792",
+      "talkId": "6223701"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": 408.97, "z": -3592.7 }, "rotation": -1.6143 },
+      "id": "2327",
+      "nameTextId": "2757549184",
+      "talkId": "6232701"
+    },
+    {
+      "areaId": "sea-of-clouds",
       "day": { "position": { "x": -747.23, "z": -2837.23 }, "rotation": 0 },
       "id": "10305",
       "nameTextId": "861248581",
@@ -116,14 +165,14 @@
       "day": { "position": { "x": -434.35, "z": -1598.47 }, "rotation": -2.3507 },
       "id": "30049",
       "nameTextId": "2978303277",
-      "talkId": "7165201"
+      "talkId": "7165296"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -436.67, "z": -1596.88 }, "rotation": 0.8311 },
       "id": "30050",
       "nameTextId": "1332856861",
-      "talkId": "7165201"
+      "talkId": "7165292"
     },
     {
       "areaId": "sea-of-clouds",
@@ -172,28 +221,28 @@
       "day": { "position": { "x": -152.51, "z": -1951.61 }, "rotation": -1.2791 },
       "id": "2308",
       "nameTextId": "1970166925",
-      "talkId": "2102166"
+      "talkId": "6230801"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -12.83, "z": -1980.84 }, "rotation": -0.1298 },
       "id": "2303",
       "nameTextId": "1289870349",
-      "talkId": "2102155"
+      "talkId": "6230301"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -98.58, "z": -1941.23 }, "rotation": -1.349 },
       "id": "2309",
       "nameTextId": "1458092237",
-      "talkId": "2101801"
+      "talkId": "6230901"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -169.06, "z": -1886.43 }, "rotation": -2.596 },
       "id": "2304",
       "nameTextId": "3549627669",
-      "talkId": "4112606"
+      "talkId": "6230401"
     },
     {
       "areaId": "sea-of-clouds",
@@ -312,7 +361,7 @@
       "day": { "position": { "x": -1732.51, "z": -2677.56 }, "rotation": 0 },
       "id": "20114",
       "nameTextId": "2602791373",
-      "talkId": "34763"
+      "talkId": "7101101"
     },
     {
       "areaId": "sea-of-clouds",
@@ -1068,21 +1117,21 @@
       "day": { "position": { "x": -2372.57, "z": -1626.28 }, "rotation": 1.7961 },
       "id": "30044",
       "nameTextId": "3874180493",
-      "talkId": "4140101"
+      "talkId": "4140102"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -2413.44, "z": -1574.25 }, "rotation": -0.2731 },
       "id": "30066",
       "nameTextId": "1171702885",
-      "talkId": "7266401"
+      "talkId": "7266403"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -435.19, "z": -1598.29 }, "rotation": -1.571 },
       "id": "30084",
       "nameTextId": "3934453957",
-      "talkId": "7267001"
+      "talkId": "7267004"
     },
     {
       "areaId": "sea-of-clouds",
@@ -1166,7 +1215,7 @@
       "day": { "position": { "x": -2363.99, "z": -1597.65 }, "rotation": 2.5957 },
       "id": "30085",
       "nameTextId": "407001501",
-      "talkId": "4004001"
+      "talkId": "4004002"
     },
     {
       "areaId": "sea-of-clouds",
@@ -1307,6 +1356,13 @@
       "id": "30305",
       "nameTextId": "2252271008",
       "talkId": "7151705"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": -2542.18, "z": -1534.59 }, "rotation": 0 },
+      "id": "10216",
+      "nameTextId": "2425794653",
+      "talkId": "61021601"
     },
     {
       "areaId": "sea-of-clouds",
@@ -1485,17 +1541,45 @@
     },
     {
       "areaId": "sea-of-clouds",
+      "day": { "position": { "x": 182.81, "z": -3026.69 }, "rotation": 0 },
+      "id": "2319",
+      "nameTextId": "89831556",
+      "talkId": "6231901"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": 287.65, "z": -2810.29 }, "rotation": 0 },
+      "id": "2285",
+      "nameTextId": "2085900448",
+      "talkId": "6228501"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": 734.61, "z": -3521.06 }, "rotation": 1.9362 },
+      "id": "2236",
+      "nameTextId": "3244245344",
+      "talkId": "7111701"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": -39.11, "z": -3432.43 }, "rotation": 0 },
+      "id": "2286",
+      "nameTextId": "3133331616",
+      "talkId": "6228601"
+    },
+    {
+      "areaId": "sea-of-clouds",
       "day": { "position": { "x": -2374.39, "z": -1631.3 }, "rotation": -2.1859 },
       "id": "2093",
       "nameTextId": "320749973",
-      "talkId": "102501"
+      "talkId": "6209301"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -2384.51, "z": -1608.53 }, "rotation": 0.7964 },
       "id": "2004",
       "nameTextId": "2676202965",
-      "talkId": "4000105"
+      "talkId": "7200403"
     },
     {
       "areaId": "sea-of-clouds",
@@ -1509,21 +1593,21 @@
       "day": { "position": { "x": -2395.66, "z": -1596.65 }, "rotation": 0.7922 },
       "id": "2029",
       "nameTextId": "4264804413",
-      "talkId": "620902"
+      "talkId": "7202903"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -2462.45, "z": -1625.03 }, "rotation": -1.4526 },
       "id": "2056",
       "nameTextId": "188937405",
-      "talkId": "1908008"
+      "talkId": "6205601"
     },
     {
       "areaId": "sea-of-clouds",
       "day": { "position": { "x": -2428.83, "z": -1557.14 }, "rotation": -1.6572 },
       "id": "2026",
       "nameTextId": "3230300181",
-      "talkId": "2230117"
+      "talkId": "6202607"
     },
     {
       "areaId": "sea-of-clouds",

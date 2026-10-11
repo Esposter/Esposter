@@ -367,7 +367,7 @@
       "day": { "position": { "x": -5993.32, "z": -99.65 }, "rotation": -1.188 },
       "id": "20314",
       "nameTextId": "2897173517",
-      "talkId": "7214801"
+      "talkId": "7214802"
     },
     {
       "areaId": "narukami-island",
@@ -381,28 +381,28 @@
       "day": { "position": { "x": -5651.78, "z": -949.81 }, "rotation": 2.1365 },
       "id": "20311",
       "nameTextId": "3692715309",
-      "talkId": "7214501"
+      "talkId": "7214502"
     },
     {
       "areaId": "narukami-island",
       "day": { "position": { "x": -5358.35, "z": -468.72 }, "rotation": -2.698 },
       "id": "20313",
       "nameTextId": "325155205",
-      "talkId": "7214701"
+      "talkId": "7214702"
     },
     {
       "areaId": "narukami-island",
       "day": { "position": { "x": -5436.09, "z": -722.27 }, "rotation": 3.1176 },
       "id": "20312",
       "nameTextId": "3830149213",
-      "talkId": "7214601"
+      "talkId": "7214602"
     },
     {
       "areaId": "narukami-island",
       "day": { "position": { "x": -5710.7, "z": -222.8 }, "rotation": 0 },
       "id": "20422",
       "nameTextId": "1432116509",
-      "talkId": "7214904"
+      "talkId": "7214905"
     },
     {
       "areaId": "narukami-island",
@@ -437,7 +437,7 @@
       "day": { "position": { "x": -5487.88, "z": 970.03 }, "rotation": -0.4447 },
       "id": "20248",
       "nameTextId": "1726339109",
-      "talkId": "7212904"
+      "talkId": "7213005"
     },
     {
       "areaId": "narukami-island",
@@ -605,7 +605,7 @@
       "day": { "position": { "x": -5960.09, "z": 1039 }, "rotation": -2.8812 },
       "id": "20240",
       "nameTextId": "923034901",
-      "talkId": "7214001"
+      "talkId": "7219727"
     },
     {
       "areaId": "narukami-island",
@@ -770,6 +770,20 @@
     },
     {
       "areaId": "narukami-island",
+      "day": { "position": { "x": -5258.8, "z": 3329.14 }, "rotation": 0 },
+      "id": "20420",
+      "nameTextId": "3482236325",
+      "talkId": "34820"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5150.62, "z": 3286.22 }, "rotation": 0 },
+      "id": "20421",
+      "nameTextId": "3565771989",
+      "talkId": "34821"
+    },
+    {
+      "areaId": "narukami-island",
       "day": { "position": { "x": -4664.29, "z": 2829.28 }, "rotation": 0.177 },
       "id": "20232",
       "nameTextId": "2525482437",
@@ -924,6 +938,13 @@
     },
     {
       "areaId": "narukami-island",
+      "day": { "position": { "x": -4900.64, "z": 3135.96 }, "rotation": 0 },
+      "id": "30158",
+      "nameTextId": "3583166504",
+      "talkId": "7268204"
+    },
+    {
+      "areaId": "narukami-island",
       "day": { "position": { "x": -4687.67, "z": 3310.05 }, "rotation": 0.3455 },
       "id": "12941",
       "nameTextId": "2095246424",
@@ -1064,6 +1085,13 @@
     },
     {
       "areaId": "narukami-island",
+      "day": { "position": { "x": -4983.24, "z": 3166.92 }, "rotation": 0 },
+      "id": "3225",
+      "nameTextId": "55786525",
+      "talkId": "60322501"
+    },
+    {
+      "areaId": "narukami-island",
       "day": { "position": { "x": -4892.66, "z": 3094.97 }, "rotation": 0 },
       "id": "12133",
       "nameTextId": "3661046869",
@@ -1130,14 +1158,14 @@
       "day": { "position": { "x": -8205.07, "z": 1427.12 }, "rotation": 0 },
       "id": "20512",
       "nameTextId": "1309370669",
-      "talkId": "6801002"
+      "talkId": "6801703"
     },
     {
       "areaId": "narukami-island",
       "day": { "position": { "x": -7890.1, "z": 1269.26 }, "rotation": 0 },
       "id": "20497",
       "nameTextId": "2724359445",
-      "talkId": "6801001"
+      "talkId": "6801702"
     }
   ]
 }

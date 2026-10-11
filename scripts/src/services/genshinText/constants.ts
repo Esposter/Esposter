@@ -19,6 +19,9 @@ export const FETTERS_PATH: string = join(EXCEL_DIRECTORY, "FettersExcelConfigDat
 // Quest's steps under its id
 export const MAIN_QUEST_PATH: string = join(EXCEL_DIRECTORY, "MainQuestExcelConfigData.json");
 export const DIALOG_PATH: string = join(EXCEL_DIRECTORY, "DialogExcelConfigData.json");
+// The talk table, every talk with the characters it is begun on and what it waits on, which the dump splits into
+// Numbered parts
+export const TALK_CONFIG_TABLE_NAME = "TalkExcelConfigData";
 export const NPC_PATH: string = join(EXCEL_DIRECTORY, "NpcExcelConfigData.json");
 export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "BinOutput", "Quest");
 // The install's text chunks sit under this folder, each a MiHoYoBinData named by the path it is built from, and each
@@ -77,6 +80,7 @@ export const TEXT_GAME_DATASETS: readonly string[] = [
   GameDataset.GcgText,
   GameDataset.NameText,
   GameDataset.QuestText,
+  GameDataset.StandingTalkText,
 ];
 // How many published records a read of the names fetches at once: all of them together overrun the fetch's own timeout
 export const PUBLISHED_READ_BATCH_SIZE = 8;
@@ -131,7 +135,8 @@ export const ANIME_GAME_DATA_BRANCH = "main";
 // oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
 export const ANIME_GAME_DATA_URL: string = `https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/${ANIME_GAME_DATA_BRANCH}`;
 export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/DimbreathBot/AnimeGameData/git/trees";
-// The tables a reader names, which the dump's `ExcelBinOutput/` may lack
+// The tables a reader names, which the dump's `ExcelBinOutput/` may lack, each fetched whole or in as many numbered parts
+// As the repository splits it into
 export const DUMP_TABLE_NAMES: readonly string[] = [
   "DocumentExcelConfigData",
   "FetterCharacterCardExcelConfigData",
@@ -141,6 +146,7 @@ export const DUMP_TABLE_NAMES: readonly string[] = [
   "GCGGameExcelConfigData",
   "GCGLevelExcelConfigData",
   "GCGWeekLevelExcelConfigData",
+  TALK_CONFIG_TABLE_NAME,
 ];
 // The dump's scene 3 NPC births, the open world's, fetched like the tables. Its directory and file name are split so the
 // Fetch can list the one and select the other

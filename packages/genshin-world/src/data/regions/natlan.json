@@ -23,5 +23,209 @@
       "rotation": 0
     }
   ],
-  "residents": []
+  "residents": [
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -3748.05, "z": -10361.6 }, "rotation": -1.5122 },
+      "id": "6000",
+      "nameTextId": "2573868320",
+      "talkId": "60600001"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -4818.09, "z": -9577.39 }, "rotation": 0 },
+      "id": "6259",
+      "nameTextId": "1861923840",
+      "talkId": "7510427"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2182.18, "z": -10305.13 }, "rotation": -0.6002 },
+      "id": "6402",
+      "nameTextId": "3963262344",
+      "talkId": "7516102"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2500.95, "z": -10436.92 }, "rotation": -1.6507 },
+      "id": "6403",
+      "nameTextId": "1871930728",
+      "talkId": "7516103"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2080.94, "z": -11382.63 }, "rotation": 0 },
+      "id": "6368",
+      "nameTextId": "514389064",
+      "talkId": "7516210"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2078.04, "z": -11382.22 }, "rotation": 0 },
+      "id": "6369",
+      "nameTextId": "3253273600",
+      "talkId": "7516211"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1980.65, "z": -11321.18 }, "rotation": 1.0006 },
+      "id": "6370",
+      "nameTextId": "3722826760",
+      "talkId": "7516212"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1977.42, "z": -11299.51 }, "rotation": 0 },
+      "id": "6371",
+      "nameTextId": "1421092872",
+      "talkId": "7516213"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1989.24, "z": -11386.77 }, "rotation": 0 },
+      "id": "6372",
+      "nameTextId": "772929848",
+      "talkId": "7516214"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2295.79, "z": -11137.55 }, "rotation": 0 },
+      "id": "6359",
+      "nameTextId": "2038219032",
+      "talkId": "7516201"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2269.29, "z": -11155.7 }, "rotation": 0 },
+      "id": "6360",
+      "nameTextId": "156973232",
+      "talkId": "7516202"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2272.77, "z": -11153.05 }, "rotation": 0 },
+      "id": "6361",
+      "nameTextId": "1454028112",
+      "talkId": "7516203"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2299.96, "z": -11149.24 }, "rotation": 0 },
+      "id": "6362",
+      "nameTextId": "80901312",
+      "talkId": "7516204"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2034.86, "z": -11295.06 }, "rotation": 0 },
+      "id": "6363",
+      "nameTextId": "2575005080",
+      "talkId": "7516205"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2098.65, "z": -11289.11 }, "rotation": 0 },
+      "id": "6364",
+      "nameTextId": "3027433784",
+      "talkId": "7516206"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1994.91, "z": -11363.5 }, "rotation": 0 },
+      "id": "6365",
+      "nameTextId": "1529603168",
+      "talkId": "7516207"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2001.01, "z": -11290.25 }, "rotation": 0 },
+      "id": "6366",
+      "nameTextId": "3817301064",
+      "talkId": "7516208"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2058.75, "z": -11301.59 }, "rotation": 0 },
+      "id": "6367",
+      "nameTextId": "1120403512",
+      "talkId": "7516209"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2092.18, "z": -11119.16 }, "rotation": 2.7324 },
+      "id": "6401",
+      "nameTextId": "4055721416",
+      "talkId": "7516101"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1988.01, "z": -11383.43 }, "rotation": 2.2458 },
+      "id": "6376",
+      "nameTextId": "2087303608",
+      "talkId": "7516216"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2271.43, "z": -11571.14 }, "rotation": -1.6507 },
+      "id": "6404",
+      "nameTextId": "3076548944",
+      "talkId": "7516104"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -2101.92, "z": -11624.72 }, "rotation": -2.8815 },
+      "id": "6405",
+      "nameTextId": "1843805264",
+      "talkId": "7516105"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1185.37, "z": -12082.95 }, "rotation": 0 },
+      "id": "6377",
+      "nameTextId": "3412691360",
+      "talkId": "7516217"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1710.69, "z": -10942.46 }, "rotation": 1.9197 },
+      "id": "6299",
+      "nameTextId": "2292574536",
+      "talkId": "7512611"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1670.07, "z": -10948.38 }, "rotation": 0 },
+      "id": "6225",
+      "nameTextId": "738417960",
+      "talkId": "7512602"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1724.64, "z": -10895.06 }, "rotation": 0 },
+      "id": "6226",
+      "nameTextId": "1974905128",
+      "talkId": "7512603"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1686.98, "z": -10902.68 }, "rotation": 0 },
+      "id": "6298",
+      "nameTextId": "1015602296",
+      "talkId": "7512604"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1625.51, "z": -10960.16 }, "rotation": 0 },
+      "id": "6224",
+      "nameTextId": "2688108792",
+      "talkId": "7512601"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -1664.3, "z": -11345.25 }, "rotation": 2.9464 },
+      "id": "6406",
+      "nameTextId": "2544308640",
+      "talkId": "7516106"
+    }
+  ]
 }

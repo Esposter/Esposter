@@ -40,6 +40,7 @@ export const TALK: Talk = {
     },
     { icon: DialogueChoiceIcon.Talk, id: "5", kind: TalkLineKind.Choice, nextLineIds: [], textId: "textId" },
   ],
+  npcIds: [],
   startLineId: "0",
 };
 

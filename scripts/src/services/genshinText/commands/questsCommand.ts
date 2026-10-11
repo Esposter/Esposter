@@ -14,7 +14,7 @@ export const questsCommand: SubCommandsDef[string] = defineCommand({
     name: "quests",
   },
   run: async ({ args }) => {
-    const { notes, objects } = buildQuests();
+    const { notes, objects } = await buildQuests();
     for (const note of notes) console.log(note);
     console.log(
       await publishGameDataStep({

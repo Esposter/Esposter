@@ -6,6 +6,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameLanguage } from "genshin-text";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEvents";
@@ -53,10 +54,18 @@ export const useWorldQuests = ({
   const trackerQuest = computed(
     () => questsInProgress.value.find(({ id }) => id === trackedQuestId.value) ?? questsInProgress.value[0],
   );
+  // A talk is had with the first character the game begins it on, so the beam rises over them, and over the talk's own
+  // Id for a talk begun on no one
   const questTargetId = computed(() => {
     if (!trackedQuestId.value || !trackerQuest.value) return "";
-    const { id, steps } = trackerQuest.value;
-    return steps[questProgressMap.value.get(id)?.stepIndex ?? 0]?.objectives[0]?.targetId ?? "";
+    const { id, steps, talks } = trackerQuest.value;
+    const objective = steps[questProgressMap.value.get(id)?.stepIndex ?? 0]?.objectives[0];
+    if (!objective) return "";
+    const talkNpcId =
+      objective.kind === QuestObjectiveKind.TalkTo
+        ? talks.find((talk) => talk.id === objective.targetId)?.npcIds[0]
+        : undefined;
+    return talkNpcId ?? objective.targetId;
   });
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readQuests(gameDataBaseUrl)).match(

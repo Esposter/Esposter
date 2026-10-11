@@ -60,11 +60,11 @@ A quest's progress is the step it is on, which equals the number of steps once i
 
 ### Navigation
 
-`findQuestTargetPosition` finds where an objective's target stands among the regions in reach: the resident or landmark it names, or the resident whose talk it names. `QuestBeam` raises a column of light over that spot once the camera is 50 metres or more away, the distance at which the wiki says the game's beam appears. The beam reaches from under the lowest ground to over the highest peak, so it rises out of the ground wherever it stands with no height read for it. The world raises it over the first objective of the navigated quest's current step, in the floating origin's group, and V or a press on the [HUD](/docs/genshin/hud)'s tracker navigates to the quest the tracker shows.
+`findQuestTargetPosition` finds where an objective's target stands among the regions in reach: the resident or landmark it names, or the resident whose talk it names. A talk-to objective names the first character its talk is begun on, so its beam rises over that resident whatever talk F begins with them. `QuestBeam` raises a column of light over that spot once the camera is 50 metres or more away, the distance at which the wiki says the game's beam appears. The beam reaches from under the lowest ground to over the highest peak, so it rises out of the ground wherever it stands with no height read for it. The world raises it over the first objective of the navigated quest's current step, in the floating origin's group, and V or a press on the [HUD](/docs/genshin/hud)'s tracker navigates to the quest the tracker shows.
 
 ### The quests' content
 
-`QuestId` is the inventory of quests the world carries, the prologue's first two to begin with. `pnpm -C scripts genshin:text quests` publishes each one to the game data: its kind, title and description from the quest table, and its shown steps from its binary output. It also publishes the talks those steps end on, from the dialog table with each speaker named from the character table and titled from the manual text map, and every word they show in every language. Each quest is checked against the world's own schema before it is published.
+`QuestId` is the inventory of quests the world carries, the prologue's first two to begin with. `pnpm -C scripts genshin:text quests` publishes each one to the game data: its kind, title and description from the quest table, and its shown steps from its binary output. It also publishes the talks those steps end on, from the dialog table with each speaker named from the character table and titled from the manual text map, each with the characters the talk table begins it on, and every word they show in every language. A resident's standing talk offers each open talk-to step's talk begun on them as a reply ([dialogue](/docs/genshin/dialogue)). Each quest is checked against the world's own schema before it is published.
 
 The dump scrambles the binary output's field names each patch, so the reader finds each field by its shape, as [game data formats](/docs/genshin/game-data-formats) describes. A step with no words is the game's own bookkeeping and is left out. A shown step whose conditions ask nothing the Traveler does, such as a cutscene played, is left out and noted.
 
@@ -84,6 +84,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | `packages/genshin-world/src/services/quest/readQuests.ts`              | The carried quests fetched by their keys and checked against the schema |
 | `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`  | The Travel Log entries of the finished main quests opened               |
 | `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts` | Where a navigated objective's target stands                             |
+| `packages/genshin-world/src/composables/useWorldQuests.ts`             | The quests in progress, and the navigated objective's target            |
 | `packages/genshin-world/src/services/quest/QuestKindCategoryMap.ts`    | Each kind's list on the quest screen                                    |
 | `packages/genshin-world/src/services/quest/constants.ts`               | The screen's tab order and keys, and the beam's distance and look       |
 | `packages/genshin-world/src/components/Quest/Screen/Index.vue`         | The quest screen J opens                                                |
@@ -91,7 +92,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | `packages/genshin-world/src/models/quest/QuestId.ts`                   | The quests the world carries, the reader's inventory                    |
 | `scripts/src/services/genshinText/buildQuests.ts`                      | The builder: every inventoried quest, its talks and words, published    |
 | `scripts/src/services/genshinText/readQuestSteps.ts`                   | A quest's shown steps read off its scrambled binary output by shape     |
-| `scripts/src/services/genshinText/readTalk.ts`                         | A talk read off the dialog table                                        |
+| `scripts/src/services/genshinText/readTalk.ts`                         | A talk read off the dialog and talk tables                              |
 
 ## Notes
 

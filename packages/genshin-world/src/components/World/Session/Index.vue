@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
-import type { Talk } from "#src/models/dialogue/Talk";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
@@ -308,16 +307,19 @@ const {
   storeCharacterPack,
 } = useCharacterPacks({ characterPackBaseUrl, getActiveCharacterId: () => getActiveCharacterId(party) });
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
-// The talks a resident begins and the talk the world runs, held by id, with the duel a resident offers from each talk
-const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap } = useWorldTalks({
-  getGroundHeight,
-  getResidents: () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents),
-  getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
-  questsInProgress,
-  questTextMap,
-  // No resident holds a standing talk yet, so no standing talk is merged in
-  standingTalkMap: new Map<string, Talk>(),
-});
+// The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
+// Standing talk offers and the duel a resident offers from each talk
+const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
+  useWorldTalks({
+    gameDataBaseUrl,
+    getGroundHeight,
+    getResidents: () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents),
+    getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
+    language,
+    questProgressMap,
+    questsInProgress,
+    questTextMap,
+  });
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
 const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unlockedLandmarkIds, unlockedLandmarks } =
   useWorldMap({
@@ -374,6 +376,11 @@ const interactables = computed<Interactable[]>(() => {
   return [...pickUpInteractables.value, ...residentInteractables.value, ...frostbearingTrees, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
+// A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
+const beginTalk = (talkId: string) => {
+  talk.value = talkMap.value.get(talkId);
+  talkDuelGameId.value = undefined;
+};
 // A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
 const endTalk = () => {
   if (talk.value) events.emit("questEvent", { kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
@@ -738,10 +745,13 @@ defineExpose({ jumpTo, readCameraPosition });
     </MenuScreen>
     <DialogueTalk
       v-if="screenKind === ScreenKind.Dialogue && talk"
+      :key="talk.id"
       :game-text
       :is-duel-offered="talkDuelGameId !== undefined"
+      :offers="talkOffers"
       :talk
-      :text-map="questTextMap"
+      :text-map="talkTextMap"
+      @begin="(talkId) => beginTalk(talkId)"
       @duel="
         gcgGameId = talkDuelGameId;
         screenKind = ScreenKind.GcgDuel;

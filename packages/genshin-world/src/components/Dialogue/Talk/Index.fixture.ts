@@ -53,6 +53,7 @@ const TALK: Talk = {
       voiceId: "",
     },
   ],
+  npcIds: [],
   startLineId: "ah-finally",
 };
 

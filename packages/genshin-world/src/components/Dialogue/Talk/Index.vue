@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import type { Talk } from "#src/models/dialogue/Talk";
+import type { TalkOffer } from "#src/models/dialogue/TalkOffer";
 import type { TalkProgress } from "#src/models/dialogue/TalkProgress";
 import type { GameText } from "genshin-text";
 
 import { TalkLineKind } from "#src/models/dialogue/TalkLineKind";
 import { advanceTalk } from "#src/services/dialogue/advanceTalk";
 import { chooseTalkLine } from "#src/services/dialogue/chooseTalkLine";
-import { DIALOGUE_DUEL_CHOICE_ID, TALK_AUTO_PLAY_HOLD_MS } from "#src/services/dialogue/constants";
+import {
+  DIALOGUE_DUEL_CHOICE_ID,
+  DIALOGUE_OFFER_CHOICE_ID_PREFIX,
+  TALK_AUTO_PLAY_HOLD_MS,
+} from "#src/services/dialogue/constants";
 import { getTalkChoices } from "#src/services/dialogue/getTalkChoices";
 import { getTalkLine } from "#src/services/dialogue/getTalkLine";
 import { getTalkRevealedLength } from "#src/services/dialogue/getTalkRevealedLength";
@@ -23,6 +28,8 @@ interface Props {
   gameText: GameText;
   // Whether the resident offers a duel of the card game with the reply it opens with, once that opening line is whole
   isDuelOffered?: boolean;
+  // The quest talks the opening line offers as replies once it is whole, each with its quest's mark
+  offers?: TalkOffer[];
   // Where the talk is held when it opens, on any of its lines and written out whole or not; its first line unwritten
   // When absent. The parity page holds a state the reference shows this way, the reveal's clock not running
   startProgress?: TalkProgress;
@@ -31,8 +38,8 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { gameText, isDuelOffered, startProgress, talk, textMap } = defineProps<Props>();
-const emit = defineEmits<{ duel: []; end: [] }>();
+const { gameText, isDuelOffered, offers = [], startProgress, talk, textMap } = defineProps<Props>();
+const emit = defineEmits<{ begin: [talkId: string]; duel: []; end: [] }>();
 const progress = ref<TalkProgress>(startProgress ?? { isRevealed: false, lineId: talk.startLineId });
 const isAutoPlaying = ref(false);
 // The reply lit, -1 for none: as the game does, a reply is lit only by the pointer over it or the arrows
@@ -49,7 +56,9 @@ const lineLength = computed(() => [...lineText.value].length);
 const revealedLength = computed(() =>
   progress.value.isRevealed ? lineLength.value : getTalkRevealedLength(lineText.value, elapsedMs.value),
 );
-// A duel offered is one more reply on the opening line, after the talk's own, and choosing it leaves the talk for the duel
+// The opening line offers the quest talks ahead of the talk's own replies and a duel after them, and choosing either
+// Leaves the talk, for the quest's talk or the duel. Provisional: the offers' place ahead of the talk's own replies
+// Waits on a recording of a resident offering a quest beside their chat
 const choices = computed(() => {
   if (!progress.value.isRevealed) return [];
   const talkChoices = getTalkChoices(talk, progress.value.lineId).map(({ icon, id, textId }) => ({
@@ -57,12 +66,18 @@ const choices = computed(() => {
     id,
     text: fillLine(textMap[textId] ?? ""),
   }));
-  return isDuelOffered && progress.value.lineId === talk.startLineId
-    ? [
-        ...talkChoices,
-        { icon: DialogueChoiceIcon.Talk, id: DIALOGUE_DUEL_CHOICE_ID, text: gameText[GameTextKey.GcgChallenge] },
-      ]
-    : talkChoices;
+  if (progress.value.lineId !== talk.startLineId) return talkChoices;
+  return [
+    ...offers.map(({ icon, talkId, textId }) => ({
+      icon,
+      id: `${DIALOGUE_OFFER_CHOICE_ID_PREFIX}${talkId}`,
+      text: fillLine(textMap[textId] ?? ""),
+    })),
+    ...talkChoices,
+    ...(isDuelOffered
+      ? [{ icon: DialogueChoiceIcon.Talk, id: DIALOGUE_DUEL_CHOICE_ID, text: gameText[GameTextKey.GcgChallenge] }]
+      : []),
+  ];
 });
 const setProgress = (newProgress: TalkProgress) => {
   if (newProgress.lineId !== progress.value.lineId) selectedChoiceIndex.value = -1;
@@ -71,9 +86,22 @@ const setProgress = (newProgress: TalkProgress) => {
   progress.value = newProgress;
   if (!newProgress.lineId) emit("end");
 };
-const choose = (choiceLineId: string) => {
-  if (choiceLineId === DIALOGUE_DUEL_CHOICE_ID) emit("duel");
-  else setProgress(chooseTalkLine(talk, progress.value, choiceLineId));
+// A click, F or Space goes on only while no reply waits on screen, the opening line's offers and duel among them
+const goOn = () => {
+  if (choices.value.length === 0) setProgress(advanceTalk(talk, progress.value));
+};
+// Skip stops at the opening line written out whole while it offers a quest talk or a duel, as at any line asking for a
+// Reply, so a skip never passes them by
+const skip = () => {
+  if (progress.value.lineId === talk.startLineId && (offers.length > 0 || isDuelOffered))
+    setProgress({ ...progress.value, isRevealed: true });
+  else setProgress(skipTalk(talk, progress.value));
+};
+const choose = (choiceId: string) => {
+  if (choiceId === DIALOGUE_DUEL_CHOICE_ID) emit("duel");
+  else if (choiceId.startsWith(DIALOGUE_OFFER_CHOICE_ID_PREFIX))
+    emit("begin", choiceId.slice(DIALOGUE_OFFER_CHOICE_ID_PREFIX.length));
+  else setProgress(chooseTalkLine(talk, progress.value, choiceId));
 };
 
 useRafFn(({ delta }) => {
@@ -93,15 +121,15 @@ useEventListener("keydown", (event) => {
     const step = event.code === "ArrowDown" ? 1 : -1;
     selectedChoiceIndex.value = Math.max(Math.min(selectedChoiceIndex.value + step, choices.value.length - 1), 0);
   } else if (choice && checkIsActionKey(InputAction.Interact, event.code)) choose(choice.id);
-  else if (checkIsActionKey(InputAction.Interact, event.code) || checkIsActionKey(InputAction.Jump, event.code))
-    setProgress(advanceTalk(talk, progress.value));
+  else if (checkIsActionKey(InputAction.Interact, event.code) || checkIsActionKey(InputAction.Jump, event.code)) goOn();
 });
 </script>
 
 <template>
   <!-- A talk run over the world: the line written out a character at a time, a click, F or Space going on, the
-       Replies chosen by a click or by F on the one lit, auto-play holding each whole line before going on until
-       Replies are on offer, and skip running on to the next replies or the end -->
+       Replies chosen by a click or by F on the one lit, the opening line's quest talks and duel among them, auto-play
+       Holding each whole line before going on until replies are on offer, and skip running on to the next replies or
+       The end -->
   <GameScreen class="dialogue-talk">
     <DialogueScreen
       :choices
@@ -112,13 +140,13 @@ useEventListener("keydown", (event) => {
         talkLine?.kind === TalkLineKind.Spoken ? fillLine(textMap[talkLine.speakerTextId] ?? '') : travelerName
       "
       :speaker-role="talkLine?.kind === TalkLineKind.Spoken ? fillLine(textMap[talkLine.speakerRoleTextId] ?? '') : ''"
-      @advance="setProgress(advanceTalk(talk, progress))"
-      @choose="(choiceLineId) => choose(choiceLineId)"
+      @advance="goOn()"
+      @choose="(choiceId) => choose(choiceId)"
     />
     <button class="auto" :aria-pressed="isAutoPlaying" type="button" @click="isAutoPlaying = !isAutoPlaying">
       {{ gameText[isAutoPlaying ? GameTextKey.DialogueAutoPlaying : GameTextKey.DialogueAuto] }}
     </button>
-    <button class="skip" type="button" @click="setProgress(skipTalk(talk, progress))">
+    <button class="skip" type="button" @click="skip()">
       {{ gameText[GameTextKey.Skip] }}
     </button>
   </GameScreen>

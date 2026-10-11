@@ -1,3 +1,5 @@
+import type { DumpedDialog } from "#src/models/genshinText/DumpedDialog";
+
 import { readTalk } from "#src/services/genshinText/readTalk";
 import { choiceTalkLineSchema, TalkLineKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -5,19 +7,26 @@ import { describe, expect, test } from "vitest";
 describe(readTalk, () => {
   const TALK_ID = 1;
   const NPC_ID = "0";
+  const NPC_TABLES = {
+    npcNameTextIdMap: new Map([[NPC_ID, "0"]]),
+    npcTitleTextIdMap: new Map([[NPC_ID, "1"]]),
+    talkConfigMap: new Map(),
+  };
+  const createTalkTables = (dialogs: { dialog: DumpedDialog; id: number }[]) => ({
+    ...NPC_TABLES,
+    talkDialogsMap: new Map([[TALK_ID, dialogs]]),
+  });
 
   test("reads a talk's dialogs as lines, the Traveler's as replies", () => {
     expect.hasAssertions();
 
-    const talk = readTalk(
-      TALK_ID,
-      [
+    const talk = readTalk(TALK_ID, {
+      ...createTalkTables([
         { dialog: { nextDialogs: [101], talkContentTextMapHash: 0, talkRole: { type: "TALK_ROLE_PLAYER" } }, id: 100 },
         { dialog: { nextDialogs: [-1], talkContentTextMapHash: 0, talkRole: { id: NPC_ID } }, id: 101 },
-      ],
-      new Map([[NPC_ID, "0"]]),
-      new Map([[NPC_ID, "1"]]),
-    );
+      ]),
+      talkConfigMap: new Map([[TALK_ID, { beginCond: [], id: TALK_ID, npcId: [Number(NPC_ID)] }]]),
+    });
 
     expect(talk).toStrictEqual({
       id: String(TALK_ID),
@@ -39,6 +48,7 @@ describe(readTalk, () => {
           voiceId: "",
         },
       ],
+      npcIds: [NPC_ID],
       startLineId: "100",
     });
   });
@@ -48,12 +58,10 @@ describe(readTalk, () => {
 
     const talk = readTalk(
       TALK_ID,
-      [
+      createTalkTables([
         { dialog: { nextDialogs: [], talkContentTextMapHash: 0 }, id: 101 },
         { dialog: { nextDialogs: [], talkContentTextMapHash: 0 }, id: 100 },
-      ],
-      new Map(),
-      new Map(),
+      ]),
     );
 
     expect(talk.lines.map(({ nextLineIds }) => nextLineIds)).toStrictEqual([["101"], []]);
@@ -64,14 +72,12 @@ describe(readTalk, () => {
 
     const talk = readTalk(
       TALK_ID,
-      [
+      createTalkTables([
         {
           dialog: { nextDialogs: [], talkContentTextMapHash: 0, talkRole: { id: "", type: "TALK_ROLE_BLACK_SCREEN" } },
           id: 100,
         },
-      ],
-      new Map([[NPC_ID, "0"]]),
-      new Map([[NPC_ID, "1"]]),
+      ]),
     );
 
     expect(talk.lines).toStrictEqual([

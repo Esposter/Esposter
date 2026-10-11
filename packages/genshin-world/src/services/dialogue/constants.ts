@@ -7,3 +7,6 @@ export const TALK_AUTO_PLAY_HOLD_MS = 1500;
 // The reply a resident's talk offers a duel of the card game with, which no talk line holds: choosing it leaves the talk
 // For the duel instead of going on down a branch
 export const DIALOGUE_DUEL_CHOICE_ID = "duel";
+// What a reply offering a quest talk is named by ahead of the talk's id, so it never shares a name with a talk's own line,
+// Whose ids are the game's dialog numbers: choosing it leaves the resident's talk for the quest's
+export const DIALOGUE_OFFER_CHOICE_ID_PREFIX = "offer-";

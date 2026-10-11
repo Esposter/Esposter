@@ -30,7 +30,7 @@ flowchart TD
 
 ## Where the residents come from
 
-`pnpm -C scripts genshin:assets residents` writes the residents of each region the official map fitted to the scene into its region data, from the scene's NPC birth records. Each record is placed in the region of the nearest mapped point, carried into the region's own axes round Windrise's oak, and filed under the area of the nearest landmark. The NPC's name is the text id of its row in the game's NPC table, and its talk is the lowest-numbered talk the dialog table has it speak in. An NPC with no talk is left out, since the schema needs one.
+`pnpm -C scripts genshin:assets residents` writes the residents of each region the official map fitted to the scene into its region data, from the scene's NPC birth records. Each record is placed in the region of the nearest mapped point, carried into the region's own axes round Windrise's oak, and filed under the area of the nearest landmark. The NPC's name is the text id of its row in the game's NPC table. Its talk is its standing talk where the talk table gives it one, the talk F begins on it whatever the quests hold ([dialogue](/docs/genshin/dialogue)), and otherwise the lowest-numbered talk the dialog table has it speak in. An NPC with neither is left out, since the schema needs a talk.
 
 ```mermaid
 flowchart TD

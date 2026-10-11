@@ -2,7 +2,7 @@ import { mapSpeakerTalkIds } from "#src/services/genshinAssets/residents/mapSpea
 import { describe, expect, test } from "vitest";
 
 describe(mapSpeakerTalkIds, () => {
-  test("lists each speaker's talks once, in ascending order", () => {
+  test("gives each speaker the lowest-numbered talk they speak in", () => {
     expect.hasAssertions();
 
     expect(
@@ -14,8 +14,8 @@ describe(mapSpeakerTalkIds, () => {
       ]),
     ).toStrictEqual(
       new Map([
-        [1002, [10, 30]],
-        [1005, [20]],
+        [1002, 10],
+        [1005, 20],
       ]),
     );
   });

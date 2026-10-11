@@ -189,10 +189,17 @@
     },
     {
       "areaId": "avidya-forest",
+      "day": { "position": { "x": -2318, "z": -4015.74 }, "rotation": 0 },
+      "id": "4378",
+      "nameTextId": "2961652920",
+      "talkId": "60437801"
+    },
+    {
+      "areaId": "avidya-forest",
       "day": { "position": { "x": -2282.62, "z": -3716.65 }, "rotation": 0 },
       "id": "30226",
       "nameTextId": "1438818304",
-      "talkId": "7350901"
+      "talkId": "7365102"
     },
     {
       "areaId": "avidya-forest",
@@ -612,7 +619,21 @@
       "day": { "position": { "x": -3884.36, "z": -5358.78 }, "rotation": 0 },
       "id": "4394",
       "nameTextId": "637584536",
-      "talkId": "7322051"
+      "talkId": "7319314"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3882.66, "z": -5357.88 }, "rotation": 0 },
+      "id": "4392",
+      "nameTextId": "1323596808",
+      "talkId": "7319312"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3881.54, "z": -5361.09 }, "rotation": 0 },
+      "id": "4393",
+      "nameTextId": "3403613680",
+      "talkId": "7319313"
     },
     {
       "areaId": "avidya-forest",
@@ -668,7 +689,7 @@
       "day": { "position": { "x": -1710.01, "z": -4116.83 }, "rotation": 2.9933 },
       "id": "20765",
       "nameTextId": "1877494024",
-      "talkId": "7305709"
+      "talkId": "7311708"
     },
     {
       "areaId": "avidya-forest",
@@ -700,17 +721,24 @@
     },
     {
       "areaId": "avidya-forest",
+      "day": { "position": { "x": -1538.66, "z": -3524.86 }, "rotation": 0 },
+      "id": "20766",
+      "nameTextId": "839562560",
+      "talkId": "7311707"
+    },
+    {
+      "areaId": "avidya-forest",
       "day": { "position": { "x": -1768.51, "z": -3745.31 }, "rotation": 0 },
       "id": "20770",
       "nameTextId": "1840683352",
-      "talkId": "7306702"
+      "talkId": "7311706"
     },
     {
       "areaId": "avidya-forest",
       "day": { "position": { "x": -2012.13, "z": -4298.3 }, "rotation": 2.8426 },
       "id": "20769",
       "nameTextId": "338954608",
-      "talkId": "7307610"
+      "talkId": "7311701"
     },
     {
       "areaId": "avidya-forest",
@@ -724,7 +752,7 @@
       "day": { "position": { "x": -1783.06, "z": -4195.13 }, "rotation": -1.6484 },
       "id": "12856",
       "nameTextId": "2234673240",
-      "talkId": "4008112"
+      "talkId": "4008416"
     },
     {
       "areaId": "avidya-forest",
