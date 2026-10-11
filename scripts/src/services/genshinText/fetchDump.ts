@@ -32,12 +32,11 @@ const listRemoteDirectory = async (directory: string): Promise<DumpFile[]> => {
   );
 };
 
-// The dump's own files a fetch may add: the readable texts of every language's folder, the tables a reader names and the
-// Scene's NPC births, each at its path under the dump's folder
+// The dump's own files a fetch may add: the readable texts of every language's folder, the tables a reader names, whole or
+// In their numbered parts, and the scene's NPC births, each at its path under the dump's folder
 const listDumpFiles = async (): Promise<DumpFile[]> => {
-  const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) =>
-    DUMP_TABLE_NAMES.some((tableName) => path === `ExcelBinOutput/${tableName}.json`),
-  );
+  const tableRegex = new RegExp(String.raw`^ExcelBinOutput/(?:${DUMP_TABLE_NAMES.join("|")})(?:_\d+)?\.json$`, "u");
+  const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) => tableRegex.test(path));
   const readableFiles = await Promise.all(
     Object.values(GameLanguageCodeMap).map((code) => listRemoteDirectory(`Readable/${code}`)),
   );

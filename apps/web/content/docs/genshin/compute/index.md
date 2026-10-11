@@ -29,6 +29,6 @@ The fleet reads every page here except this one, and an id that two pages share 
 | [Snezhnaya](/docs/genshin/compute/snezhnaya)     | Snezhnaya's region, from its base ground to its frame score                             |
 | [Sumeru](/docs/genshin/compute/sumeru)           | Sumeru's region, from its base ground to its frame score                                |
 | [Text](/docs/genshin/compute/text)               | every language's text map, decoded from the install                                     |
-| [Windrise](/docs/genshin/compute/windrise)       | the first scene: the oak, the hills, the surface and the sun                            |
+| [Windrise](/docs/genshin/compute/windrise)       | the first scene: the oak, the surface and the sun                                       |
 | [Wish](/docs/genshin/compute/wish)               | the single pull and the ten results, frame by frame                                     |
 | [World](/docs/genshin/compute/world)             | teleports, weather, thunderstorms, lightning, the ores and the scripted props           |

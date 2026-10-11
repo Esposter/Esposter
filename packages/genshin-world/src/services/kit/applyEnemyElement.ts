@@ -2,20 +2,22 @@ import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 
+import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { checkIsElectroCharged } from "#src/services/combat/aura/checkIsElectroCharged";
 
 // A combatant's element applied to an enemy at a gauge, written in place, and the reactions it triggered. An Electro or
-// Hydro that lands and leaves the enemy Electro-Charged makes its combatant the one the ticks are priced from, as each
-// Application that charges or recharges a target takes Electro-Charged over in the game
+// Hydro that lands and leaves the enemy Electro-Charged makes its combatant the one those ticks are priced from, and a
+// Pyro or Dendro that lands and leaves it Burning the one Burning's are, as gcsim moves each to every application that
+// Starts or feeds it
 export const applyEnemyElement = (enemy: Enemy, element: Element, gauge: number, combatant: Combatant): Reaction[] => {
+  const { auras } = enemy.elementalState;
   const reactions = applyElement(enemy.elementalState, element, gauge);
-  if (
-    gauge > 0 &&
-    (element === Element.Electro || element === Element.Hydro) &&
-    checkIsElectroCharged(enemy.elementalState.auras)
-  )
+  if (gauge <= 0) return reactions;
+  if ((element === Element.Electro || element === Element.Hydro) && checkIsElectroCharged(auras))
     enemy.electroChargedCombatant = combatant;
+  else if ((element === Element.Pyro || element === Element.Dendro) && auras.has(AuraType.Burning))
+    enemy.burningCombatant = combatant;
   return reactions;
 };

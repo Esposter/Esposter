@@ -13,10 +13,15 @@ How an absorption is run. Whether a package should be absorbed at all — the th
 - **Porting a shape an engine has deprecated, for parity.** Parity is with the engines' current surface, and the replacement carries no debt the upstream package kept for its older users (`apps/web/content/docs/architecture/dependency-admission.md`, "The standard an absorption meets").
 - **Recording the triage in the commit body alone.** The next reader arrives from a stranded upstream link in our code or a search, not from `git log`; the verdicts live on the package's docs page (`references/package-shape.md`).
 - **Skipping the closed issues.** A closed issue is where a fix the replacement must keep, or a workaround our code still carries, is explained (`references/upstream-audit.md`).
+- **Porting the upstream's code.** A port carries its structure, its dead branches and its per-request costs into our tree. The replacement is rewritten from the ground up against the upstream's behaviour and its audit.
 
 ## Rules
 
 - **The upstream audit runs before any code is written** — every issue, open and closed, read with its comments (`references/upstream-audit.md`).
+- **The replacement is a rewrite from the ground up, never a port.**
+  - It is designed from the surface's behaviour on the current engines, in our conventions, and sheds whatever only served the upstream's older users or its own internals.
+  - It lands every in-scope defect fix, and every feature or pull request the audit judges worth having. A feature that is over-engineering or out of scope keeps its verdict and is not built.
+  - Each fix and feature carries its regression test.
 - **Every verdict carries its evidence**: a reproduction for a defect, a test for a feature, the named owner for out of scope, the answering link for a false positive (`references/upstream-audit.md`).
 - **An in-scope defect's regression test fails against the upstream package first**, and names the issue in its title (`references/upstream-audit.md`).
 - **An issue split across the adapter and a neighbour gets both verdicts** — the adapter's part fixed, the neighbour's part out of scope with our constraint written on the page owning our side.

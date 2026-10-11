@@ -24,6 +24,7 @@ describe(computeLocomotionState, () => {
     glideSinkSpeed: 1,
     gravity: 1,
     jumpHeight: 1,
+    maxFallSpeed: 1,
     maxWalkableSlope: 1,
     plungeSpeed: 1,
     runSpeed: 1,

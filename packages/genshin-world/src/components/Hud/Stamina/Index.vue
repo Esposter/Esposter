@@ -18,7 +18,7 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
 
 <template>
   <!-- The party's stamina, an arc round the character's right wherever it stands on the screen, filled from its foot:
-       Shown while the pool is spent or refilling, faded out once it is full, and flashing once it runs low. The arc is
+       Shown while the pool is spent or refilling, faded out once it is full, and pulsing red once it runs low. The arc is
        Drawn round the pivot itself, its view's origin, so it rings the character as the game's does -->
   <div
     class="stamina-meter"
@@ -45,8 +45,8 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
 <style scoped>
 /* The arc as `hud-stamina-climb` shows it on the English PC client at 1080 high, its centreline fitted to a circle of
    Radius 104.5 from 27.1 degrees above its centre to 27.1 below, 7 wide, its view's origin that circle's centre, which
-   Falls on the character. Provisional: that centre being the pivot, the flash and the fade, read off a recording of the
-   Meter refilling until it fades */
+   Falls on the character. It fades in over 100 ms and out over 200 ms, as the same recording shows it appear at 1.9
+   Seconds and fade, evenly, at 7.7. Provisional: that centre being the pivot */
 .stamina-meter {
   position: absolute;
   top: 0;
@@ -54,7 +54,7 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
   width: calc(var(--unit) * 20);
   height: calc(var(--unit) * 104);
   opacity: 0;
-  transition: opacity 300ms ease-out;
+  transition: opacity 200ms linear;
   translate: calc(var(--pivot-x) * 100cqw + var(--unit) * 89) calc(var(--pivot-y) * 100cqh - var(--unit) * 52);
 }
 
@@ -81,14 +81,32 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
   stroke: #eec20b;
 }
 
+/* Run low, the fill refills red and the track pulses a red #a8362a, glowing toward the character, every two thirds of a
+   Second, as the same recording shows the meter from the pool running out at 33 seconds: the pulse at its height at
+   33.27 and 33.93 and at its trough at 33.6. Provisional: the share it starts pulsing under, the glow's spread and the
+   Fill's red, the frames showing it only from empty */
 .low .fill {
-  animation: flash 400ms ease-in-out infinite alternate;
   stroke: #ff5a4f;
 }
 
-@keyframes flash {
+.low svg {
+  overflow: visible;
+  animation: glow 333ms ease-in-out infinite alternate;
+}
+
+.low .track {
+  animation: pulse 333ms ease-in-out infinite alternate;
+}
+
+@keyframes glow {
   to {
-    opacity: 0.3;
+    filter: drop-shadow(calc(var(--unit) * -6) 0 calc(var(--unit) * 8) rgb(255 60 50 / 0.8));
+  }
+}
+
+@keyframes pulse {
+  to {
+    stroke: #a8362a;
   }
 }
 </style>

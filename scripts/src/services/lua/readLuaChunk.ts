@@ -1,3 +1,4 @@
+import type { LuaDialect } from "#src/models/lua/LuaDialect";
 import type { LuaFunction } from "#src/models/lua/LuaFunction";
 
 import { LuaByteReader } from "#src/models/lua/LuaByteReader";
@@ -6,9 +7,9 @@ import { readLuaFunction } from "#src/services/lua/readLuaFunction";
 import { readLuaHeader } from "#src/services/lua/readLuaHeader";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Reads a Lua 5.3 binary chunk, from its signature to the end of its main function, the length word already stripped
-export const readLuaChunk = (bytes: Uint8Array): LuaFunction => {
-  const reader = new LuaByteReader(bytes);
+// Reads a binary chunk in a dialect, from its signature to the end of its main function, the length word already stripped
+export const readLuaChunk = (bytes: Uint8Array, dialect: LuaDialect): LuaFunction => {
+  const reader = new LuaByteReader(bytes, dialect);
   readLuaHeader(reader);
   // The main closure's upvalue count, which the chunk's own function already describes
   reader.readByte();

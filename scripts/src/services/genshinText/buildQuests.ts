@@ -1,35 +1,25 @@
-import type { DumpedDialog } from "#src/models/genshinText/DumpedDialog";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
-import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { Quest } from "genshin-world";
 
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
-import {
-  DIALOG_PATH,
-  MAIN_QUEST_PATH,
-  NPC_PATH,
-  QUEST_BINARY_DIRECTORY,
-  SCRAMBLED_KEY_REGEX,
-} from "#src/services/genshinText/constants";
+import { MAIN_QUEST_PATH, QUEST_BINARY_DIRECTORY } from "#src/services/genshinText/constants";
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
-import { readManualTextMap } from "#src/services/genshinText/readManualTextMap";
+import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readTalk } from "#src/services/genshinText/readTalk";
+import { readTalkTables } from "#src/services/genshinText/readTalkTables";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";
-import { GameDataset, QuestIds, QuestObjectiveKind, questSchema, TalkLineKind } from "genshin-world";
+import { GameDataset, QuestIds, QuestObjectiveKind, questSchema } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// The manual text map's key for a character's title, the key's prefix before the character's id
-const NPC_TITLE_PREFIX = "NPC_TITLE_";
-
 // Every quest `QuestId` names, published: its kind, title and description from the quest table, its shown steps from its
-// Binary output, the talks its steps end on from the dialog table, and every word they show, a language missing a word
-// Taking English's and saying so. Each quest is checked against the world's own schema before it is published
-export const buildQuests = (): { notes: string[]; objects: Record<string, unknown> } => {
+// Binary output, the talks its steps end on from the dialog and talk tables, and every word they show, a language missing
+// A word taking English's and saying so. Each quest is checked against the world's own schema before it is published
+export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<string, unknown> }> => {
   const notes: string[] = [];
   const englishTextMap = readTextMap(GameLanguage.English);
   const mainQuestMap = new Map(
@@ -38,24 +28,7 @@ export const buildQuests = (): { notes: string[]; objects: Record<string, unknow
       mainQuest,
     ]),
   );
-  const dialogRows = parseMachineJson<(DumpedDialog & Record<string, unknown>)[]>(readFileSync(DIALOG_PATH, "utf8"));
-  const idKey = Object.keys(dialogRows[0] ?? {}).find((key) => SCRAMBLED_KEY_REGEX.test(key));
-  if (!idKey) throw new InvalidOperationError(Operation.Read, DIALOG_PATH, "has no scrambled id field");
-  const talkDialogsMap = Map.groupBy(
-    dialogRows.map((dialog) => ({ dialog, id: Number(dialog[idKey]) })),
-    ({ id }) => Math.floor(id / 100),
-  );
-  const npcNameTextIdMap = new Map(
-    parseMachineJson<DumpedNpc[]>(readFileSync(NPC_PATH, "utf8")).map(({ id, nameTextMapHash }) => [
-      String(id),
-      String(nameTextMapHash),
-    ]),
-  );
-  const npcTitleTextIdMap = new Map(
-    [...readManualTextMap()]
-      .filter(([textMapId]) => textMapId.startsWith(NPC_TITLE_PREFIX))
-      .map(([textMapId, hash]) => [textMapId.slice(NPC_TITLE_PREFIX.length), hash]),
-  );
+  const talkTables = await readTalkTables();
   const quests: Quest[] = QuestIds.map((questId) => {
     const mainQuest = mainQuestMap.get(Number(questId));
     if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_PATH, `has no quest ${questId}`);
@@ -78,9 +51,7 @@ export const buildQuests = (): { notes: string[]; objects: Record<string, unknow
       id: questId,
       kind: questKind,
       steps,
-      talks: Array.from(talkIds, (talkId) =>
-        readTalk(talkId, talkDialogsMap.get(talkId) ?? [], npcNameTextIdMap, npcTitleTextIdMap),
-      ),
+      talks: Array.from(talkIds, (talkId) => readTalk(talkId, talkTables)),
       titleTextId: String(mainQuest.titleTextMapHash),
     });
   });
@@ -89,11 +60,7 @@ export const buildQuests = (): { notes: string[]; objects: Record<string, unknow
       descriptionTextId,
       titleTextId,
       ...steps.map(({ textId }) => textId),
-      ...talks.flatMap(({ lines }) =>
-        lines.flatMap((line) =>
-          line.kind === TalkLineKind.Spoken ? [line.textId, line.speakerTextId, line.speakerRoleTextId] : [line.textId],
-        ),
-      ),
+      ...talks.flatMap((talk) => getTalkTextIds(talk)),
     ]),
   );
   textIds.delete("");

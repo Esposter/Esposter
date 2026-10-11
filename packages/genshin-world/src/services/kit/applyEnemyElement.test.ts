@@ -27,20 +27,25 @@ describe(applyEnemyElement, () => {
     level: 90,
   };
 
-  test.each<[Element, Element, boolean]>([
-    [Element.Hydro, Element.Electro, true],
-    [Element.Electro, Element.Hydro, true],
-    [Element.Hydro, Element.Pyro, false],
+  test.each<[Element, Element, boolean, boolean]>([
+    [Element.Hydro, Element.Electro, true, false],
+    [Element.Electro, Element.Hydro, true, false],
+    [Element.Dendro, Element.Pyro, false, true],
+    [Element.Pyro, Element.Dendro, false, true],
+    [Element.Hydro, Element.Pyro, false, false],
   ])(
-    "on a %s enemy, makes the combatant whose %s lands the one Electro-Charged is priced from: %s",
-    (aura, element, isCharged) => {
+    "on a %s enemy, makes the combatant whose %s lands the one Electro-Charged is priced from: %s, and Burning: %s",
+    (aura, element, isCharged, isBurning) => {
       expect.hasAssertions();
 
       const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
       applyElement(enemy.elementalState, aura, 1);
       applyEnemyElement(enemy, element, 1, combatant);
 
-      expect(enemy.electroChargedCombatant).toStrictEqual(isCharged ? combatant : undefined);
+      expect([enemy.electroChargedCombatant, enemy.burningCombatant]).toStrictEqual([
+        isCharged ? combatant : undefined,
+        isBurning ? combatant : undefined,
+      ]);
     },
   );
 });

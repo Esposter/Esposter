@@ -1,6 +1,7 @@
 // One model type's movement, in metres, seconds and radians: its capsule, its speeds on the ground, on a wall, in the air
-// And in water, how high it jumps and how fast it falls, what it walks up and over, how deep it wades, how high it must
-// Be to open its glider or plunge, and how long its dash, its climb's jump and its drowning last
+// And in water, how high it jumps, how fast it falls and the speed its fall tops out at, what it walks up and over, how
+// Deep it wades, how high it must be to open its glider or plunge, and how long its dash, its climb's jump and its
+// Drowning last
 export interface Locomotion {
   capsuleHeight: number;
   capsuleRadius: number;
@@ -15,6 +16,7 @@ export interface Locomotion {
   glideSinkSpeed: number;
   gravity: number;
   jumpHeight: number;
+  maxFallSpeed: number;
   maxWalkableSlope: number;
   plungeSpeed: number;
   runSpeed: number;

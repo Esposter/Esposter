@@ -26,6 +26,7 @@ describe(createCharacterController, () => {
     glideSinkSpeed: 1,
     gravity: 10,
     jumpHeight: 1,
+    maxFallSpeed: 5,
     maxWalkableSlope: 1,
     plungeSpeed: 1,
     runSpeed: 6,
@@ -84,6 +85,26 @@ describe(createCharacterController, () => {
 
     expect(apex).toBeCloseTo(LOCOMOTION.jumpHeight, 1);
     expect(characterController.phase.state).toBe(LocomotionState.Idle);
+  });
+
+  test("falls no faster than its fall's top speed", () => {
+    expect.hasAssertions();
+
+    const characterController = createCharacterController({
+      ground: createGroundQuery(() => 0, DRY_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      position: new Vector3(0, 100, 0),
+      staminaMaximum: STAMINA_MAX,
+    });
+    let previousHeight = characterController.position.y;
+    // Long enough that gravity alone would fall twice the top speed
+    for (let stepIndex = 0; stepIndex < 60; stepIndex++) {
+      previousHeight = characterController.position.y;
+      characterController.step(STILL_INPUT, 0, LOCOMOTION, STEP_SECONDS);
+    }
+
+    expect(characterController.phase.state).toBe(LocomotionState.Fall);
+    expect((previousHeight - characterController.position.y) / STEP_SECONDS).toBeCloseTo(LOCOMOTION.maxFallSpeed, 9);
   });
 
   test("floats in deep water at its wading depth", () => {

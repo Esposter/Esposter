@@ -19,7 +19,7 @@ describe(joinResidents, () => {
           [1002, "101"],
           [1005, "102"],
         ]),
-        new Map([[1002, [7, 8]]]),
+        new Map([[1002, 7]]),
         getAreaId,
       ),
     ).toStrictEqual({
@@ -42,7 +42,7 @@ describe(joinResidents, () => {
       joinResidents(
         [{ npcId: 1002, position: { x: 1, z: 2 }, region: "mondstadt", rotation: 0 }],
         new Map([[1002, ""]]),
-        new Map([[1002, [7]]]),
+        new Map([[1002, 7]]),
         getAreaId,
       ),
     ).toStrictEqual({ noName: 1, noTalk: 0, regions: new Map(), repeated: 0 });

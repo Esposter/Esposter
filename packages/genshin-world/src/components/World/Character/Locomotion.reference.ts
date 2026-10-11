@@ -64,9 +64,29 @@ export const locomotionTopic: ReferenceTopic = {
       result:
         "The short female body in metres at its human scale of 0.691: the walk 0.99 m/s, the run 4.8 and the sprint 6.43; the dash 7.24 m/s over 1.28 s, 1.2% under the average its clip records, the widest gap of any body's; the climb 0.78 m/s up, its ClimbU 0.52 m over a 0.67 s clip where every other body's is a second; the climb jump 3.01 m up over 1.08 s; the swim 1.8 m/s and its dash 3.6 over a 0.53 s clip; drowning 3 s. Its glide's FlyNormal holds its root still and its jump's root falls 10.8 m over its 1.08 s, so both stay read off recordings",
     },
+    {
+      method:
+        "Each body's Jump, JumpForRunL and SwimJumpDrop clips exported by AnimeStudio as JSON, their ACL tracks decoded by ACL's own decompressor with the clip's database passed as its streamer (the database's bulk data, after its 88-byte header), and the root's MotionT curve read at the body's human scale",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The jump's root does move the body: it rises to an apex and falls back through its take-off height, then on through the clip's end, which is where the earlier read's 11 m fall came from. The medium female's apex is 1.09 m at 0.25 s, back at its take-off height at 0.48 s; the medium male's 1.15 m and 0.48 s, the tall female's 1.28 and 0.51, the tall male's 1.22 and 0.45, the short female's 1.07 and 0.45. Its rise and its fall each differ by up to a fifth from one parabola, so the gravity taken is the one returning the body at the clip's time: 37.5, 39.8, 40, 48.5 and 42.9 m/s². Its fall then settles at 21 m/s for the medium female, 20.9 for the medium male, 21.3 for the tall female and 18 for the tall male and the short female, the speed the fall tops out at; SwimJumpDrop falls at a steady 20 to 23. A run's jump peaks within 0.15 m of the standing one's. AnimeStudio's own decode passes no streamer, so its export reads a clip's scalar tracks, the root's among them, as noise",
+    },
+    {
+      method:
+        "The community dump's ConfigAvatar files of twenty characters compared field by field, and each body's avatar's T-pose composed down its human skeleton to its head bone",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Two obfuscated fields under GKHILJFNBBO alone differ by character, both a height: INEGOFOEJIA reads Ayaka 1.56, Mika 1.62, Jean 1.73, Neuvillette 1.86 and Sigewinne 1.34 (Klee 1.27, Diluc 1.85), each standing 0.26 to 0.34 m over its avatar's head bone (1.29, 1.31, 1.47, 1.57 and 1.0 m), a head's height, so it is the character's height, and each body's capsule stands as tall as its avatar's character. No field gives a collider's radius by body",
+    },
+    {
+      method:
+        "A published clip timing a glide, a glide with the Red Feather Fan and the tall male's sprint along one Mondstadt street, from its fountain to its gate (YouTube kyXg-Hx3Xlo, `captures/yt-kyXg-Hx3Xlo-glide-compare.mp4`), its on-screen timer read in seconds and frames at 60 a second",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The sprint covers the street in 11.9 s, the glide in 15.0 s and the fan's glide in 13.7 s; the glide lands about 10.5 s in and the fan's about 13, each running the rest, and the glides start off a height the sprint does not. So a glide is slower than a sprint, but the clip gives no distance to measure it by: the forward speed is taken as 6 m/s, the tall male's dash and sprint over the glide's time, a best estimate",
+    },
   ],
   openQuestions: [
-    "The jump's height and the fall's gravity, the glide's forward speed and its sink, the plunge's speed, the step, the steepest walkable slope, the wading depth, the glider's height and the slide down ground too steep to stand on, which no clip holds and a recording's motion pass reads",
-    "The capsule each body type collides with, read from its character's collider in the exports",
+    "The glide's forward speed and its sink, the glider's height, the plunge's speed, the step, the steepest walkable slope, the capsule's radius, the wading depth's share of the body's height and the slide down ground too steep to stand on, which no clip or field holds, each a best estimate on the roadmap's Manual verification list until a recording's motion pass reads it",
   ],
 };

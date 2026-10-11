@@ -4,6 +4,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { AuraType } from "#src/models/combat/AuraType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -31,6 +32,11 @@ describe(strikeElementalTicks, () => {
     element: Element.Electro,
     reactionType: TransformativeReactionType.ElectroCharged,
   };
+  const BURNING_TICK: Reaction = {
+    element: Element.Pyro,
+    reactionType: TransformativeReactionType.Burning,
+    spreadGauge: 1,
+  };
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),
@@ -40,11 +46,12 @@ describe(strikeElementalTicks, () => {
     kit: TRAVELER_KIT,
     level: LEVEL,
   };
+  const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
   const tickDamage = getTransformativeDamage(
     TransformativeReactionType.ElectroCharged,
     LEVEL,
     0,
-    getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId).elementResistances[Element.Electro],
+    kind.elementResistances[Element.Electro],
   );
 
   const createSturdyEnemy = (x: number): Enemy => ({
@@ -79,14 +86,36 @@ describe(strikeElementalTicks, () => {
     expect(charged.elementalReactions).toStrictEqual([]);
   });
 
-  test.each<[string, Combatant | undefined, Reaction]>([
-    ["an Electro-Charged tick no combatant charged", undefined, ELECTRO_CHARGED_TICK],
-    ["a Burning tick", combatant, { element: Element.Pyro, reactionType: TransformativeReactionType.Burning }],
-  ])("deals nothing for %s, emptying the queue", (_, electroChargedCombatant, tick) => {
+  test("deals a Burning tick from the combatant that lit it, its Pyro reaching an enemy within a metre and no farther", () => {
+    expect.hasAssertions();
+
+    const burning = createSturdyEnemy(0);
+    const near = createSturdyEnemy(1.4);
+    const far = createSturdyEnemy(1.5);
+    const burningDamage = getTransformativeDamage(
+      TransformativeReactionType.Burning,
+      LEVEL,
+      0,
+      kind.elementResistances[Element.Pyro],
+    );
+    burning.burningCombatant = combatant;
+    burning.elementalReactions.push(BURNING_TICK);
+
+    strikeElementalTicks(createContext([burning, near, far]));
+
+    expect(burning.maxHealth - burning.health).toBeCloseTo(burningDamage);
+    expect(near.maxHealth - near.health).toBeCloseTo(burningDamage);
+    expect(near.elementalState.auras.has(AuraType.Pyro)).toBe(true);
+    expect([far.health, far.elementalState.auras.size]).toStrictEqual([STURDY_HEALTH, 0]);
+  });
+
+  test.each<[string, Reaction]>([
+    ["an Electro-Charged tick", ELECTRO_CHARGED_TICK],
+    ["a Burning tick", BURNING_TICK],
+  ])("deals nothing for %s no combatant owns, emptying the queue", (_, tick) => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy(0);
-    enemy.electroChargedCombatant = electroChargedCombatant;
     enemy.elementalReactions.push(tick);
 
     strikeElementalTicks(createContext([enemy]));

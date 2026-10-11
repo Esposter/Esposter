@@ -1,6 +1,5 @@
 import type { LuaDataMachine } from "#src/models/lua/LuaDataMachine";
 
-import { LuaOpcode } from "#src/models/lua/LuaOpcode";
 import { LUA_CHUNK_NAME, LUA_FIELDS_PER_FLUSH } from "#src/services/lua/constants";
 import { decodeLuaInstruction } from "#src/services/lua/decodeLuaInstruction";
 import { readLuaExtraArgument } from "#src/services/lua/readLuaExtraArgument";
@@ -22,7 +21,7 @@ export const setLuaListEntries = (machine: LuaDataMachine, programCounter: numbe
     );
   // A block of zero names its block in the extra argument that follows
   const hasExtraArgument = c === 0;
-  const block = hasExtraArgument ? readLuaExtraArgument(machine.luaFunction, programCounter).ax : c;
+  const block = hasExtraArgument ? readLuaExtraArgument(machine, programCounter).ax : c;
   const offset = (block - 1) * LUA_FIELDS_PER_FLUSH;
   const table = readLuaTable(machine, a);
   for (let index = 1; index <= b; index++) writeLuaTableEntry(table, offset + index, machine.registers[a + index]);

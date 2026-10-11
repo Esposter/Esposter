@@ -1,8 +1,8 @@
 import { describe } from "vitest";
 
 // Lua 5.3's header written out byte by byte: the signature, version 0x53, format 0, the data check bytes, the sizes of
-// an instruction (4), a lua_Integer and a lua_Number (8 each), then 0x5678 as a lua_Integer and 370.5 as a lua_Number
-export const LUA_HEADER_BYTES = Uint8Array.of(
+// An int (4), a size_t (8), an instruction (4), a lua_Integer and a lua_Number (8 each), then 0x5678 as a lua_Integer and 370.5 as a lua_Number
+export const LUA_HEADER_BYTES: Uint8Array = Uint8Array.of(
   0x1b,
   0x4c,
   0x75,
@@ -15,6 +15,8 @@ export const LUA_HEADER_BYTES = Uint8Array.of(
   0x0a,
   0x1a,
   0x0a,
+  0x04,
+  0x08,
   0x04,
   0x08,
   0x08,
@@ -38,80 +40,102 @@ export const LUA_HEADER_BYTES = Uint8Array.of(
 
 // The chunk of `points = { a = { pos = { x = 1.5, y = -2 } } }`, assembled by hand: three NEWTABLEs, a LOADK, four
 // SETTABLEs, a SETTABUP into _ENV and a RETURN, over seven constants and one upvalue, _ENV
-export const POINTS_CHUNK = Uint8Array.of(
+export const POINTS_CHUNK: Uint8Array = Uint8Array.of(
   ...LUA_HEADER_BYTES,
-  0x01, // the main closure's upvalue count
-  0x00, // source, absent
+  // The main closure's upvalue count
+  0x01,
+  // Source, absent
   0x00,
   0x00,
   0x00,
-  0x00, // line defined
+  0x00,
+  // Line defined
   0x00,
   0x00,
   0x00,
-  0x00, // last line defined
-  0x00, // parameters
-  0x01, // vararg
-  0x04, // maximum stack size
+  0x00,
+  // Last line defined
+  0x00,
+  // Parameters
+  0x00,
+  // Vararg
+  0x01,
+  // Maximum stack size
+  0x04,
   0x0a,
   0x00,
   0x00,
-  0x00, // ten instructions
+  // Ten instructions
+  0x00,
   0x0b,
   0x40,
   0x00,
-  0x00, // NEWTABLE R0, hash size 1
+  // NEWTABLE R0, hash size 1
+  0x00,
   0x4b,
   0x40,
   0x00,
-  0x00, // NEWTABLE R1, hash size 1
+  // NEWTABLE R1, hash size 1
+  0x00,
   0x8b,
   0x80,
   0x00,
-  0x00, // NEWTABLE R2, hash size 2
+  // NEWTABLE R2, hash size 2
+  0x00,
   0xc1,
   0xc0,
   0x00,
-  0x00, // LOADK R3 K3 (1.5)
+  // LOADK R3 K3 (1.5)
+  0x00,
   0x8a,
   0xc0,
   0x00,
-  0x81, // SETTABLE R2 K2 ("x") R3
+  // SETTABLE R2 K2 ("x") R3
+  0x81,
   0x8a,
   0x40,
   0x41,
-  0x82, // SETTABLE R2 K4 ("y") K5 (-2)
+  // SETTABLE R2 K4 ("y") K5 (-2)
+  0x82,
   0x4a,
   0x80,
   0x80,
-  0x80, // SETTABLE R1 K1 ("pos") R2
+  // SETTABLE R1 K1 ("pos") R2
+  0x80,
   0x0a,
   0x40,
   0x00,
-  0x80, // SETTABLE R0 K0 ("a") R1
+  // SETTABLE R0 K0 ("a") R1
+  0x80,
   0x08,
   0x00,
   0x00,
-  0x83, // SETTABUP _ENV K6 ("points") R0
+  // SETTABUP _ENV K6 ("points") R0
+  0x83,
   0x26,
   0x00,
   0x80,
-  0x00, // RETURN R0 1
+  // RETURN R0 1
+  0x00,
   0x07,
   0x00,
   0x00,
-  0x00, // seven constants
+  // Seven constants
+  0x00,
   0x04,
   0x02,
-  0x61, // "a"
+  // "a"
+  0x61,
   0x04,
   0x04,
   0x70,
   0x6f,
-  0x73, // "pos"
+  // "pos"
+  0x73,
   0x04,
   0x02,
-  0x78, // "x"
+  // "x"
+  0x78,
   0x03,
   0x00,
   0x00,
@@ -120,10 +144,12 @@ export const POINTS_CHUNK = Uint8Array.of(
   0x00,
   0x00,
   0xf8,
-  0x3f, // 1.5
+  // 1.5
+  0x3f,
   0x04,
   0x02,
-  0x79, // "y"
+  // "y"
+  0x79,
   0x13,
   0xfe,
   0xff,
@@ -132,7 +158,8 @@ export const POINTS_CHUNK = Uint8Array.of(
   0xff,
   0xff,
   0xff,
-  0xff, // -2
+  // -2
+  0xff,
   0x04,
   0x07,
   0x70,
@@ -140,24 +167,25 @@ export const POINTS_CHUNK = Uint8Array.of(
   0x69,
   0x6e,
   0x74,
-  0x73, // "points"
+  // "points"
+  0x73,
   0x01,
   0x00,
   0x00,
-  0x00, // one upvalue
+  // One upvalue
+  0x00,
   0x01,
-  0x00, // in the stack, register 0
+  // In the stack, register 0
   0x00,
   0x00,
   0x00,
-  0x00, // no nested functions
+  0x00,
+  // No nested functions
+  0x00,
   0x0a,
   0x00,
   0x00,
-  0x00, // line information for ten instructions
-  0x01,
-  0x00,
-  0x00,
+  // Line information for ten instructions
   0x00,
   0x01,
   0x00,
@@ -195,81 +223,259 @@ export const POINTS_CHUNK = Uint8Array.of(
   0x00,
   0x00,
   0x00,
-  0x00,
-  0x00,
-  0x00,
-  0x00, // no local variables
   0x01,
   0x00,
   0x00,
-  0x00, // one upvalue name
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  // No local variables
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  // One upvalue name
+  0x00,
   0x05,
   0x5f,
   0x45,
   0x4e,
-  0x56, // "_ENV"
+  // "_ENV"
+  0x56,
 );
 
 // A chunk whose one instruction is CALL R0 with no arguments and no results, then a RETURN
-export const CALL_CHUNK = Uint8Array.of(
+export const CALL_CHUNK: Uint8Array = Uint8Array.of(
   ...LUA_HEADER_BYTES,
-  0x01, // the main closure's upvalue count
-  0x00, // source, absent
+  // The main closure's upvalue count
+  0x01,
+  // Source, absent
   0x00,
   0x00,
   0x00,
-  0x00, // line defined
+  0x00,
+  // Line defined
   0x00,
   0x00,
   0x00,
-  0x00, // last line defined
-  0x00, // parameters
-  0x00, // vararg
-  0x02, // maximum stack size
+  0x00,
+  // Last line defined
+  0x00,
+  // Parameters
+  0x00,
+  // Vararg
+  0x00,
+  // Maximum stack size
+  0x02,
   0x02,
   0x00,
   0x00,
-  0x00, // two instructions
+  // Two instructions
+  0x00,
   0x24,
   0x40,
   0x80,
-  0x00, // CALL R0 1 1
+  // CALL R0 1 1
+  0x00,
   0x26,
   0x00,
   0x80,
-  0x00, // RETURN R0 1
+  // RETURN R0 1
   0x00,
   0x00,
   0x00,
-  0x00, // no constants
+  0x00,
+  // No constants
   0x00,
   0x00,
   0x00,
-  0x00, // no upvalues
+  0x00,
+  // No upvalues
   0x00,
   0x00,
   0x00,
-  0x00, // no nested functions
+  0x00,
+  // No nested functions
+  0x00,
   0x02,
   0x00,
   0x00,
-  0x00, // line information for two instructions
-  0x01,
-  0x00,
-  0x00,
+  // Line information for two instructions
   0x00,
   0x01,
   0x00,
   0x00,
   0x00,
+  0x01,
   0x00,
   0x00,
   0x00,
-  0x00, // no local variables
   0x00,
   0x00,
   0x00,
-  0x00, // no upvalue names
+  // No local variables
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  // No upvalue names
+  0x00,
 );
 
 describe.todo("constants");
+
+// The genshin dialect's header: format byte 1, the four size fields (int 4, Instruction 4, lua_Integer 8, lua_Number 8)
+// With no size_t, then 0x5678 and 370.5 as in Lua 5.3
+export const GENSHIN_HEADER_BYTES: Uint8Array = Uint8Array.of(
+  0x1b,
+  0x4c,
+  0x75,
+  0x61,
+  0x53,
+  0x01,
+  0x19,
+  0x93,
+  0x0d,
+  0x0a,
+  0x1a,
+  0x0a,
+  0x04,
+  0x04,
+  0x08,
+  0x08,
+  0x78,
+  0x56,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x28,
+  0x77,
+  0x40,
+);
+
+// The chunk of `points = { a = 2.5 }` in the genshin dialect, assembled by hand: NEWTABLE R0 (dialect 43), LOADK R1 K0
+// (22), SETTABLE R0 K1 R1 (31), SETTABUP _ENV K2 R0 (34) and RETURN R0 1 (25), over three constants and one upvalue
+export const GENSHIN_CHUNK: Uint8Array = Uint8Array.of(
+  ...GENSHIN_HEADER_BYTES,
+  // The main closure's upvalue count
+  0x01,
+  // Source, absent
+  0x00,
+  // Line defined
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  // Last line defined
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  // Parameters
+  0x00,
+  // Vararg
+  0x01,
+  // Maximum stack size
+  0x04,
+  // Five instructions
+  0x05,
+  0x00,
+  0x00,
+  0x00,
+  // NEWTABLE R0 0 0
+  0x2b,
+  0x00,
+  0x00,
+  0x00,
+  // LOADK R1 K0
+  0x56,
+  0x00,
+  0x00,
+  0x00,
+  // SETTABLE R0 K1 R1
+  0x1f,
+  0x40,
+  0x80,
+  0x80,
+  // SETTABUP _ENV K2 R0
+  0x22,
+  0x00,
+  0x00,
+  0x81,
+  // RETURN R0 1
+  0x19,
+  0x00,
+  0x80,
+  0x00,
+  // Three constants
+  0x03,
+  0x00,
+  0x00,
+  0x00,
+  // 2.5
+  0x03,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x04,
+  0x40,
+  // "a"
+  0x04,
+  0x02,
+  0x61,
+  // "points"
+  0x04,
+  0x07,
+  0x70,
+  0x6f,
+  0x69,
+  0x6e,
+  0x74,
+  0x73,
+  // One upvalue
+  0x01,
+  0x00,
+  0x00,
+  0x00,
+  // In the stack, register 0
+  0x01,
+  0x00,
+  // No nested functions
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  // No line information
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  // No local variables
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  // One upvalue name
+  0x01,
+  0x00,
+  0x00,
+  0x00,
+  // "_ENV"
+  0x05,
+  0x5f,
+  0x45,
+  0x4e,
+  0x56,
+);

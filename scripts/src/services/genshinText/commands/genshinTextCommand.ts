@@ -6,6 +6,7 @@ import { findCommand } from "#src/services/genshinText/commands/findCommand";
 import { gcgTextCommand } from "#src/services/genshinText/commands/gcgTextCommand";
 import { namesCommand } from "#src/services/genshinText/commands/namesCommand";
 import { questsCommand } from "#src/services/genshinText/commands/questsCommand";
+import { standingTalksCommand } from "#src/services/genshinText/commands/standingTalksCommand";
 import { writeCommand } from "#src/services/genshinText/commands/writeCommand";
 import { defineCommand } from "citty";
 
@@ -13,7 +14,7 @@ import { defineCommand } from "citty";
 export const genshinTextCommand: CommandDef = defineCommand({
   meta: {
     description:
-      "Find the game's own strings and write the ones referenced, the world's quests, its tables' names and the card game's words, in every language",
+      "Find the game's own strings and write the ones referenced, the world's quests, the residents' standing talks, its tables' names and the card game's words, in every language",
     name: "genshin:text",
   },
   subCommands: {
@@ -23,6 +24,7 @@ export const genshinTextCommand: CommandDef = defineCommand({
     gcg: gcgTextCommand,
     names: namesCommand,
     quests: questsCommand,
+    "standing-talks": standingTalksCommand,
     write: writeCommand,
   },
 });

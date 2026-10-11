@@ -5,10 +5,12 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // A conversation as the game holds it: a graph of lines from the one it starts at, where a line followed by the
-// Traveler's replies offers them as choices and each reply leads on down its own branch
+// Traveler's replies offers them as choices and each reply leads on down its own branch, and the characters the game
+// Begins it on by their id, none for a talk begun on no one
 export interface Talk {
   id: string;
   lines: TalkLine[];
+  npcIds: string[];
   startLineId: string;
 }
 
@@ -17,6 +19,7 @@ export const talkSchema = z
   .object({
     id: z.string().min(1),
     lines: createUniqueArraySchema(talkLineSchema, "id"),
+    npcIds: z.array(z.string().min(1)),
     startLineId: z.string().min(1),
   })
   .refine(({ lines, startLineId }) => {

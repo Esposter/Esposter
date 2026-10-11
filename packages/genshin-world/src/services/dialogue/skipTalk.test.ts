@@ -34,6 +34,7 @@ describe(skipTalk, () => {
           voiceId: "voiceId",
         },
       ],
+      npcIds: [],
       startLineId: "0",
     };
 

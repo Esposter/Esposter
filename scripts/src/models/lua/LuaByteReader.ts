@@ -1,17 +1,23 @@
+import type { LuaDialect } from "#src/models/lua/LuaDialect";
+
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Reads a binary chunk's little-endian fields in order, failing loudly on a read past its end
 export class LuaByteReader {
+  readonly dialect: LuaDialect;
+
   get isAtEnd(): boolean {
     return this.#offset === this.#bytes.byteLength;
   }
+
   readonly #bytes: Uint8Array;
   #offset = 0;
 
   readonly #view: DataView;
 
-  constructor(bytes: Uint8Array) {
+  constructor(bytes: Uint8Array, dialect: LuaDialect) {
     this.#bytes = bytes;
+    this.dialect = dialect;
     this.#view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   }
 

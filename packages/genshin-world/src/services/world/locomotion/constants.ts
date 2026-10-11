@@ -1,30 +1,29 @@
 import type { Locomotion } from "genshin-engine";
 
-// The movement every body type moves by until its own is measured, in metres, seconds and radians. Provisional: the
-// Speeds, the dash and the climb's, the swim's and drowning's motion read off each body type's locomotion clips by
-// `genshin:assets locomotion`, and the jump, the fall, the glide, the plunge, the capsule, the step, the slope, the
-// Wading depth and the glider's height off recordings (`apps/web/content/docs/genshin/character-controller.md`)
-export const PROVISIONAL_LOCOMOTION: Locomotion = {
+// The movement no body type's clips or data hold, which every type shares, in metres, metres a second and radians. Each
+// Is a best estimate, provisional until a recording measures it, and asked of the user on the roadmap's Manual
+// Verification list (`apps/web/content/docs/genshin/character-controller.md`): the glide's forward speed and its sink,
+// The height the glider opens at, the plunge's speed, the capsule's radius, the step and the steepest slope still
+// Walkable. The glide's speed is set under the sprint's, as a published clip times a glide along one Mondstadt street
+// At 15.0 seconds against a tall male's sprint at 11.9, with no distance to measure either by. The capsule's height is
+// What a resident's stand-in stands as, every body type taking its own
+export const PROVISIONAL_LOCOMOTION: Pick<
+  Locomotion,
+  | "capsuleHeight"
+  | "capsuleRadius"
+  | "glideForwardSpeed"
+  | "glideMinHeight"
+  | "glideSinkSpeed"
+  | "maxWalkableSlope"
+  | "plungeSpeed"
+  | "stepHeight"
+> = {
   capsuleHeight: 1.6,
   capsuleRadius: 0.3,
-  climbJumpHeight: 2.5,
-  climbJumpSeconds: 0.6,
-  climbSpeed: 1.6,
-  dashSeconds: 0.3,
-  dashSpeed: 12,
-  drownSeconds: 3,
-  glideForwardSpeed: 8,
+  glideForwardSpeed: 6,
   glideMinHeight: 3,
   glideSinkSpeed: 2.5,
-  gravity: 22,
-  jumpHeight: 1.4,
   maxWalkableSlope: 0.87,
   plungeSpeed: 30,
-  runSpeed: 5,
-  sprintSpeed: 7.5,
   stepHeight: 0.4,
-  swimDashSpeed: 4.5,
-  swimDepth: 1.1,
-  swimSpeed: 2.5,
-  walkSpeed: 2,
 };

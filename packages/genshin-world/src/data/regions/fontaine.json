@@ -12,5 +12,90 @@
       "rotation": 0
     }
   ],
-  "residents": []
+  "residents": [
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 2111.19, "z": -6235.58 }, "rotation": 0 },
+      "id": "21235",
+      "nameTextId": "2413736248",
+      "talkId": "7400013"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 1737.6, "z": -5746.29 }, "rotation": 0 },
+      "id": "5025",
+      "nameTextId": "1966564640",
+      "talkId": "60502501"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 286.7, "z": -6077.92 }, "rotation": 0 },
+      "id": "21188",
+      "nameTextId": "1966720400",
+      "talkId": "7410101"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 752.25, "z": -4919.15 }, "rotation": 0.7035 },
+      "id": "21379",
+      "nameTextId": "24733048",
+      "talkId": "7421103"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 2429.55, "z": -5991.25 }, "rotation": -2.8545 },
+      "id": "5296",
+      "nameTextId": "3264076176",
+      "talkId": "7406050"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 2376.22, "z": -5658.44 }, "rotation": -1.0995 },
+      "id": "21181",
+      "nameTextId": "1572139464",
+      "talkId": "7411903"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 3031.8, "z": -5670.01 }, "rotation": -2.0535 },
+      "id": "21268",
+      "nameTextId": "3487678512",
+      "talkId": "7412602"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 2619.8, "z": -5652.45 }, "rotation": 0 },
+      "id": "5246",
+      "nameTextId": "4253405208",
+      "talkId": "7401412"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 2494.86, "z": -5102.55 }, "rotation": -2.7341 },
+      "id": "21134",
+      "nameTextId": "3269256432",
+      "talkId": "7408119"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 2476.38, "z": -5206.75 }, "rotation": -2.8018 },
+      "id": "21309",
+      "nameTextId": "3469497640",
+      "talkId": "7411904"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 2471.03, "z": -5217.14 }, "rotation": -1.9933 },
+      "id": "21310",
+      "nameTextId": "596375648",
+      "talkId": "7411905"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 2482.97, "z": -5216.21 }, "rotation": 2.1474 },
+      "id": "21311",
+      "nameTextId": "4162607224",
+      "talkId": "7411906"
+    }
+  ]
 }

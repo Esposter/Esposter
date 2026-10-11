@@ -36,10 +36,10 @@ const getSpeed = (state: LocomotionState, locomotion: Locomotion): number => {
 };
 // A kinematic capsule moved by its states in fixed steps, in the frame the ground and the landmarks are read in. A step
 // Reads what the world says of the body, moves to its next state, spends or refills stamina, then moves: on the ground
-// It follows the terrain up and down a step and stops at a rise too steep to walk, in the air it falls under gravity,
-// On a wall it moves along the wall's plane, held to the terrain's surface or pressed into a landmark's, and in water it
-// Floats at its wading depth. The capsule is then pushed out of the landmarks, which stand it on a floor or hold it
-// Against a wall. A drowned body comes back where its stamina was last full, refilled
+// It follows the terrain up and down a step and stops at a rise too steep to walk, in the air it falls under gravity up
+// To its fall's top speed, on a wall it moves along the wall's plane, held to the terrain's surface or pressed into a
+// Landmark's, and in water it floats at its wading depth. The capsule is then pushed out of the landmarks, which stand
+// It on a floor or hold it against a wall. A drowned body comes back where its stamina was last full, refilled
 export const createCharacterController = ({
   getStaminaConsumptionMultiplier,
   ground,
@@ -137,7 +137,7 @@ export const createCharacterController = ({
     } else if (AIR_LOCOMOTION_STATES.includes(state))
       velocity.set(
         moveDirection.x * airSpeed,
-        velocity.y - locomotion.gravity * stepSeconds,
+        Math.max(velocity.y - locomotion.gravity * stepSeconds, -locomotion.maxFallSpeed),
         moveDirection.z * airSpeed,
       );
     else if (state === LocomotionState.Plunge) velocity.set(0, -locomotion.plungeSpeed, 0);

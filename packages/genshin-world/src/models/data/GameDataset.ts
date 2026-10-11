@@ -41,6 +41,8 @@ export enum GameDataset {
   Shops = "shops",
   SpiralAbyss = "spiralAbyss",
   Splash = "splash",
+  StandingTalks = "standingTalks",
+  StandingTalkText = "standingTalkText",
   Stats = "stats",
   StatueLevels = "statueLevels",
   TalentLabels = "talentLabels",

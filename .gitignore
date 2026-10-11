@@ -12,6 +12,9 @@ node_modules
 **/src/components/index.ts
 **/public/docs
 
+# The production build of genshin-world's parity page, which `genshin:parity load` builds and serves
+/packages/genshin-world/parity-build
+
 # Nuxt
 .output
 .data
