@@ -1,0 +1,186 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitField } from "#src/models/kit/KitField";
+import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitStatus } from "#src/models/kit/KitStatus";
+import type { KitSummon } from "#src/models/kit/KitSummon";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ALHAITHAM_CHARACTER_ID, createAlhaithamKit } from "#src/services/kit/characters/alhaithamKit";
+import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
+
+const ALHAITHAM_KIT = createAlhaithamKit(
+  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ALHAITHAM_CHARACTER_ID]),
+);
+const ELEMENTAL_MASTERY = 1000;
+const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+const party = createParty([ALHAITHAM_CHARACTER_ID]);
+
+const createAlhaithamCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
+  ascension,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY }]),
+  characterId: ALHAITHAM_CHARACTER_ID,
+  constellationCount,
+  elementalResonances: [],
+  kit: ALHAITHAM_KIT,
+  level: 90,
+  weaponType: WeaponType.Sword,
+});
+
+// The effects an action's start adds to the team's, which its owner holds
+const castAction = (action: KitAction, combatant = createAlhaithamCombatant()): KitEffectState => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+  return kitEffectState;
+};
+
+// The Mirrors a character holds, as the status the kit keeps them in
+const readMirrors = (kitEffectState: KitEffectState): number =>
+  kitEffectState.effects.find(
+    (effect): effect is KitStatus => effect.kind === "status" && effect.id === "alhaitham-mirrors",
+  )?.stacks ?? 0;
+
+// Ticks the field of a delayed effect, one that makes its Mirrors once its delay has passed
+const tickField = (kitEffectState: KitEffectState, delayFrames: number, combatant: Combatant): void => {
+  const field = kitEffectState.effects.find(
+    (effect): effect is KitField => effect.kind === "field" && Math.round(effect.nextTickSeconds * 60) === delayFrames,
+  );
+  field?.onTick({
+    activeCombatant: combatant,
+    characterIdCombatantMap: new Map(),
+    enemyMap: new Map(),
+    kitEffectState,
+    party,
+    tickIndex: 0,
+  });
+};
+
+// The hit of a normal attack's first strike, which a Projection Attack triggers from
+const getFirstStrikeHit = (): KitHit => takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits);
+
+describe(createAlhaithamKit, () => {
+  test("reads his strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {
+    expect.hasAssertions();
+    const multipliers = [
+      ...ALHAITHAM_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
+      ...ALHAITHAM_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
+      ALHAITHAM_KIT.plungeCollision.talentMultiplier,
+      takeOne(ALHAITHAM_KIT.lowPlunge.hits).talentMultiplier,
+      takeOne(ALHAITHAM_KIT.highPlunge.hits).talentMultiplier,
+    ];
+    expect(multipliers).toStrictEqual([
+      0.495257, 0.507495, 0.341785, 0.341785, 0.667678, 0.838509, 0.55255, 0.55255, 0.639324, 1.278377, 1.596762,
+    ]);
+  });
+
+  test("the charged attack costs 20 stamina, and his burst costs 70 energy and cools for 18 seconds", () => {
+    expect.hasAssertions();
+    expect({
+      burstCooldownSeconds: ALHAITHAM_KIT.burstCooldownSeconds,
+      burstEnergyCost: ALHAITHAM_KIT.burstEnergyCost,
+      chargedAttackStamina: ALHAITHAM_KIT.chargedAttackStamina,
+      skillCooldownSeconds: ALHAITHAM_KIT.skillCooldownSeconds,
+    }).toStrictEqual({
+      burstCooldownSeconds: 18,
+      burstEnergyCost: 70,
+      chargedAttackStamina: 20,
+      skillCooldownSeconds: 18,
+    });
+  });
+
+  test("the tap makes two Mirrors when he holds none, 15 frames after the cast, with the Dendro infusion they carry", () => {
+    expect.hasAssertions();
+    const combatant = createAlhaithamCombatant();
+    const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
+    const before = readMirrors(kitEffectState);
+    tickField(kitEffectState, 15, combatant);
+
+    expect({
+      before,
+      after: readMirrors(kitEffectState),
+      infusions: kitEffectState.effects.filter((effect) => effect.kind === "infusion").map(({ element }) => element),
+    }).toStrictEqual({ before: 0, after: 2, infusions: ["Grass"] });
+  });
+
+  test("the hold is taken from half a second, and it strikes at 28 frames", () => {
+    expect.hasAssertions();
+    const [hold] = ALHAITHAM_KIT.elementalSkillHolds ?? [];
+    expect({
+      hitmarkFrames: Math.round(takeOne(hold?.action.hits ?? []).hitmarkSeconds * 60),
+      minimumHeldSeconds: hold?.minimumHeldSeconds,
+    }).toStrictEqual({ hitmarkFrames: 28, minimumHeldSeconds: 0.5 });
+  });
+
+  test("a Projection Attack strikes once per Mirror from its normal attack, then waits 1.6 seconds", () => {
+    expect.hasAssertions();
+    const combatant = createAlhaithamCombatant();
+    const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
+    tickField(kitEffectState, 15, combatant);
+    const hit = getFirstStrikeHit();
+    const strike = { body: kitBody, combatant, kitEffectState, party };
+    hit.onStrike?.(strike);
+    hit.onStrike?.(strike);
+    const summons = kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+
+    expect(summons.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)))).toStrictEqual([
+      [28, 37],
+    ]);
+  });
+
+  test("his burst strikes four hits plus two per Mirror, then makes the Mirrors it did not use after 184 frames", () => {
+    expect.hasAssertions();
+    const combatant = createAlhaithamCombatant();
+    const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
+    tickField(kitEffectState, 15, combatant);
+    const mirrorsBeforeBurst = readMirrors(kitEffectState);
+    ALHAITHAM_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    const burstSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+    expect({
+      burstHits: burstSummon?.hits.length,
+      mirrorsAfterBurst: readMirrors(kitEffectState),
+      mirrorsBeforeBurst,
+      regenFrames: kitEffectState.effects
+        .filter((effect): effect is KitField => effect.kind === "field" && effect.id === "alhaitham-mirror-regen")
+        .map(({ nextTickSeconds }) => Math.round(nextTickSeconds * 60)),
+    }).toStrictEqual({ burstHits: 8, mirrorsAfterBurst: 0, mirrorsBeforeBurst: 2, regenFrames: [184] });
+  });
+
+  test("leaving the field clears his Mirrors and their Dendro infusion", () => {
+    expect.hasAssertions();
+    const combatant = createAlhaithamCombatant();
+    const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
+    tickField(kitEffectState, 15, combatant);
+    ALHAITHAM_KIT.onKitEvent?.(
+      {
+        characterId: KUKI_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: ALHAITHAM_CHARACTER_ID,
+      },
+      {
+        activeCombatant: combatant,
+        body: kitBody,
+        characterIdCombatantMap: new Map(),
+        combatant,
+        enemyMap: new Map(),
+        kitEffectState,
+        party,
+        random: () => 0,
+      },
+    );
+
+    expect({
+      infusionSeconds: kitEffectState.effects.find((effect) => effect.kind === "infusion")?.secondsRemaining,
+      mirrors: readMirrors(kitEffectState),
+    }).toStrictEqual({ infusionSeconds: 0, mirrors: 0 });
+  });
+});
