@@ -187,6 +187,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Are Sayu's charged attack and plunges right?** gcsim gives her neither, as its charged attack's hitbox is unimplemented, so her two charged hits are read from the table's charged slots at half a second and a second, with 40 flat stamina, and her plunges land at half a second on the reaches the other kits' use: yes if a recording of them matches, no if not.
 - **Do Kokomi's plunges land at half a second?** gcsim gives her plunges no timing, so they land at half a second on the reaches the other kits use: yes if a recording of her plunge lands at that point, no if it lands elsewhere.
 - **Do the Raiden Shogun's strikes, charged attacks, skill, coordinated attack, burst and collision deal no poise?** Provisional, as gcsim gives them none, so the kit sets each at 0: yes if a recording of them against a poised enemy shows none staggering it, no if one does, with the poise a source states, which the kit then takes.
+- **Does Masatsu Zetsugi's hit deal 2 units of Geo gauge?** `ittoKit.ts` gives the skill's gauge as 2U, as the other Geo skills read, since gcsim's Itto file gives none: yes if a recording of the hit shows a Geo gauge of 2U, no if it is 1U.
 
 ## References sought
 

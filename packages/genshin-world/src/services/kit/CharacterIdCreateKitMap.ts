@@ -15,6 +15,7 @@ import {
   FISCHL_CHARACTER_ID,
   GANYU_CHARACTER_ID,
   HU_TAO_CHARACTER_ID,
+  ITTO_CHARACTER_ID,
   JEAN_CHARACTER_ID,
   KAEYA_CHARACTER_ID,
   KAZUHA_CHARACTER_ID,
@@ -54,6 +55,7 @@ import { createEulaKit } from "#src/services/kit/characters/eulaKit";
 import { createFischlKit } from "#src/services/kit/characters/fischlKit";
 import { createGanyuKit } from "#src/services/kit/characters/ganyuKit";
 import { createHuTaoKit } from "#src/services/kit/characters/huTaoKit";
+import { createIttoKit } from "#src/services/kit/characters/ittoKit";
 import { createJeanKit } from "#src/services/kit/characters/jeanKit";
 import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
 import { createKazuhaKit } from "#src/services/kit/characters/kazuhaKit";
@@ -96,6 +98,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [FISCHL_CHARACTER_ID]: createFischlKit,
   [GANYU_CHARACTER_ID]: createGanyuKit,
   [HU_TAO_CHARACTER_ID]: createHuTaoKit,
+  [ITTO_CHARACTER_ID]: createIttoKit,
   [JEAN_CHARACTER_ID]: createJeanKit,
   [KAEYA_CHARACTER_ID]: createKaeyaKit,
   [KAZUHA_CHARACTER_ID]: createKazuhaKit,
