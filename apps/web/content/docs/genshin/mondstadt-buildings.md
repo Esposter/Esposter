@@ -18,7 +18,7 @@ flowchart TD
   RF --> OUT
 ```
 
-The house is what stands in for Mondstadt City's own buildings when the [parity](/docs/genshin/parity) inventory claims the city's export: its buildings family is the meshes named by the region's code, `Area_MdBuild_` and `Area_Mdbuild_` both, beside its terrain tiles as its ground, and every other mesh of the export is claimed as not drawn yet, one entry a kind.
+The house is what stands in for Mondstadt City's own buildings when the [parity](/docs/genshin/parity) inventory claims the city's export: its buildings family is the meshes named by the region's code, `Area_MdBuild_` and `Area_Mdbuild_` both, with its terrain tiles as its ground. The export's other meshes are claimed undrawn by kind (`MondstadtUndrawnMeshRegexMap`).
 
 ## Parameters
 
