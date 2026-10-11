@@ -1,0 +1,33 @@
+---
+title: Varka
+description: Varka's kit as built: his five strikes, charged attack, plunges, Anemo skill and Anemo burst's two hits, with his Four Winds state and passives left waiting on their hooks.
+---
+
+# Varka
+
+Varka's kit is its record and one behaviour module, `createVarkaKitBehaviour`, avatar 10000128: five normal attacks, a charged attack of two hits, a collision and two plunges, his skill's hit, and the burst's two hits. Every skill and burst hit is Anemo, the burst's by gcsim's default, and his strikes are physical.
+
+His skill and burst are read from proud skill groups as their talent multipliers, and his cooldowns, energy cost and charged stamina are read from the table: 16 seconds, 15 seconds, 60 energy and 50 stamina.
+
+gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with the table data in gcsim's Varka data file.
+
+## Decisions
+
+- **The burst's hits are Anemo.** gcsim makes the first hit the element of his conversion, which is Anemo while no Four Winds conversion stands, and the second Anemo. The record holds each as Anemo, the default it gives.
+- **The skill and burst areas are the circles gcsim gives round his body.** The skill is a circle of 5 metres, and the burst is the circle of 7 metres offset 2 metres ahead, priced at 9 metres as the area holds no offset. Their hitboxes are not named as gcsim's press names are, so each is recorded by hand as `Unclassified`.
+
+## Not built
+
+- **Four Winds waits on the conversion hook.** A second press converts his skill into Four Winds, and the burst's first hit takes the element it converts to. The kit keeps no record of the conversion, so each hit is its Anemo hit alone.
+- **His passives wait on their hooks.** Each one reads his Four Winds or the party's Elemental Resonance, so none is built.
+
+## Key files
+
+| File                                                             | Role                                                                                     |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/varkaKit.ts` | `createVarkaKitBehaviour`, Varka's module, built on his record and with no behaviour yet |
+| `packages/genshin-world/src/data/kits/varka.json`                | Varka's overlay: the areas and elements gcsim's hitboxes do not give by name             |
+
+## Sources
+
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/varka), MIT: his strikes' hitmarks and cancels, the charged attack, the skill, the burst and their elements, and his table data file.

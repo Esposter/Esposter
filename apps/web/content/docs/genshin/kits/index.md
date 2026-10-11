@@ -426,6 +426,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                                         |
 | [Navia](/docs/genshin/kits/navia)                   | Rosula Shardshot and As the Sunlit Sky's Singing Salute                           |
 | [Neuvillette](/docs/genshin/kits/neuvillette)       | Hydro strikes, his skill and his burst                                            |
+| [Nicole](/docs/genshin/kits/nicole)                 | Three strikes, the charged attack, and the skill's and burst's hits               |
 | [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi                           |
 | [Ningguang](/docs/genshin/kits/ningguang)           | Star Jades, Jade Screen and Starshatter                                           |
 | [Noelle](/docs/genshin/kits/noelle)                 | Breastplate and Sweeping Time                                                     |
@@ -445,6 +446,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Tighnari](/docs/genshin/kits/tighnari)             | Vijnana-Phala Mine and Tanglevine Shaft with its secondary                        |
 | [Traveler](/docs/genshin/kits/traveler)             | The Anemo form's attacks, Palm Vortex and Gust Surge                              |
 | [Varesa](/docs/genshin/kits/varesa)                 | Three strikes, Rush's press and Flying Kick, outside her blessing                 |
+| [Varka](/docs/genshin/kits/varka)                   | Five strikes, the charged attack, and the skill and burst's Anemo hits            |
 | [Venti](/docs/genshin/kits/venti)                   | Skyward Sonnet, Wind Domain and Stormeye                                          |
 | [Wanderer](/docs/genshin/kits/wanderer)             | Hanega: Song of the Wind and Kyougen: Five Ceremonial Plays                       |
 | [Wriothesley](/docs/genshin/kits/wriothesley)       | Darkgold Wolfbite and Icefang Rush                                                |
