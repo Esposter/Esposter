@@ -1,12 +1,11 @@
 import type { Middleware } from "nitro/h3";
 
-import { defineMiddleware } from "nitro";
-import { getCookie, HTTPError, setCookie } from "nitro/h3";
-
 import { CSRF_TOKEN_BYTE_LENGTH, CSRF_UNSAFE_METHODS } from "#src/runtime/constants";
 import { checkIsCsrfTokenValid } from "#src/runtime/services/checkIsCsrfTokenValid";
 import { generateRandomToken } from "#src/runtime/services/generateRandomToken";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
+import { defineMiddleware } from "nitro";
+import { getCookie, HTTPError, setCookie } from "nitro/h3";
 
 // The double submit cookie of the OWASP CSRF Prevention Cheat Sheet.
 // A safe request is given a random token in a cookie. A state-changing request is refused with `403`
