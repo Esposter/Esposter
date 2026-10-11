@@ -4,6 +4,7 @@ import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
 
 import { summarizeCpuWindow } from "#src/services/genshinParity/shared/summarizeCpuWindow";
+import { summarizeSceneKinds } from "#src/services/genshinParity/shared/summarizeSceneKinds";
 import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 
 // A frame is slow past this many milliseconds, the same line the stall summary counts by
@@ -132,7 +133,8 @@ const describeFrame = (
 // The GPU calls behind each stall: the cold orbit's slowest frame, then every frame past 50 ms in the other states. A frame's
 // Gap runs from its start to the next frame's, and the calls it made are the ones its animation frame ran. Each state first
 // Reads its own calls by cause, every call started between its first and its last frame, then, where the adapter has
-// Timestamp queries, the GPU's own time on the passes encoded in those frames
+// Timestamp queries, the GPU's own time on the passes encoded in those frames; then each kind of the scene's objects
+// Priced on each pass, where the run hid them in turn
 export const summarizeGpuTrace = (trace: GpuTrace, states: TracedState[]): string[] => {
   const frameIndexOf = new Map(trace.times.map((time, index) => [time, index]));
   const lines: string[] = trace.passes ? [] : ["the adapter has no timestamp queries, so no pass is timed on the GPU"];
@@ -168,6 +170,7 @@ export const summarizeGpuTrace = (trace: GpuTrace, states: TracedState[]): strin
     lines.push(`${name}: ${stalled.length} frame(s) traced`);
     for (const { gapMs, time } of stalled) lines.push(...describeFrame(time, gapMs, trace, frameIndexOf, offsetMs));
   }
+  if (trace.kinds && trace.passes) lines.push(...summarizeSceneKinds(trace.passes, trace.times, trace.kinds));
 
   return lines;
 };

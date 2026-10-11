@@ -10,6 +10,7 @@ import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
 import type { BrowserContext, Page } from "playwright";
 
 import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { measureSceneKinds } from "#src/services/genshinParity/shared/measureSceneKinds";
 import { summarizeGpuTrace } from "#src/services/genshinParity/shared/summarizeGpuTrace";
 import { summarizeStallState } from "#src/services/genshinParity/shared/summarizeStallState";
 import { TRACE_GPU_PASSES_SCRIPT } from "#src/services/genshinParity/shared/traceGpuPassesScript";
@@ -21,7 +22,7 @@ import { join } from "node:path";
 import { chromium } from "playwright";
 
 interface DevtoolsMessage {
-  data: { renderer: { instance?: StallRenderer; value?: { instance?: StallRenderer } } };
+  data: { renderer: { instance?: StallRenderer; value?: { instance?: StallRenderer } }; scene?: { value?: unknown } };
   type: string;
 }
 
@@ -40,6 +41,7 @@ declare global {
     __hasGpuTimestamps?: boolean;
     __hooked: boolean;
     __renderer?: StallRenderer;
+    __scene?: unknown;
     __traceTimes?: number[];
     __TRES__DEVTOOLS__?: { subscribers: Set<(message: DevtoolsMessage) => void> };
   }
@@ -75,7 +77,8 @@ const RECORD_FRAMES_SCRIPT = `
   });
 `;
 
-// Hands the renderer over as soon as the devtools messenger publishes its context, before the first frame it draws
+// Hands the renderer and the scene over as soon as the devtools messenger publishes its context, before the first frame
+// It draws
 const hookRenderer = () => {
   window.__hooked = false;
   window.__TRES__DEVTOOLS__?.subscribers.add((message) => {
@@ -85,6 +88,7 @@ const hookRenderer = () => {
     if (!renderer) return;
     window.__hooked = true;
     window.__renderer = renderer;
+    window.__scene = message.data.scene?.value;
   });
 };
 
@@ -181,7 +185,8 @@ const startCpuProfile = async (context: BrowserContext, page: Page) => {
 // Each GPU call the page makes is recorded too, with each node material three builds and each program it adds once the
 // Renderer is handed over, and each pass timed on the GPU where the adapter has timestamp queries, read at full
 // Precision through the browser's developer features, and the slow frames are named by the calls they made and the
-// GPU's time on the frames before them
+// GPU's time on the frames before them. Once the walk has ended, the camera still, each kind of the scene's objects is
+// Hidden in turn, which the passes' times price each kind by
 export const measureStalls = async ({ height, scale, screen, trace, width }: StallOptions): Promise<string> => {
   const browser = await chromium.launch({
     args: [
@@ -220,6 +225,7 @@ export const measureStalls = async ({ height, scale, screen, trace, width }: Sta
     const cpu = trace ? await startCpuProfile(context, page) : undefined;
     const measuredStates = await measureStates(page);
     const cpuCapture = cpu ? await cpu.stop() : undefined;
+    const kinds = trace ? await measureSceneKinds(page) : undefined;
     const tracedGpu: GpuTrace | undefined = trace
       ? {
           ...(await page.evaluate(() => ({
@@ -228,6 +234,7 @@ export const measureStalls = async ({ height, scale, screen, trace, width }: Sta
             times: window.__traceTimes ?? [],
           }))),
           cpu: cpuCapture,
+          kinds,
         }
       : undefined;
     return { gpuTrace: tracedGpu, loadMs: loadEnd - loadStart, measured: measuredStates };
