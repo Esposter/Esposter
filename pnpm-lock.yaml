@@ -647,12 +647,6 @@ catalogs:
     howler:
       specifier: ^2.2.4
       version: 2.2.4
-    html-element-attributes:
-      specifier: ^3.5.0
-      version: 3.5.0
-    html-tag-names:
-      specifier: ^2.1.0
-      version: 2.1.0
     idb:
       specifier: ^8.0.4
       version: 8.0.4
@@ -1799,12 +1793,6 @@ importers:
       eslint-plugin-vuejs-accessibility:
         specifier: 'catalog:'
         version: 2.6.2(eslint@10.12.0(jiti@2.7.0)(supports-color@8.1.1))(globals@17.13.0)(supports-color@8.1.1)
-      html-element-attributes:
-        specifier: 'catalog:'
-        version: 3.5.0
-      html-tag-names:
-        specifier: 'catalog:'
-        version: 2.1.0
       playwright:
         specifier: 'catalog:'
         version: 1.64.0
@@ -11395,17 +11383,11 @@ packages:
   howler@2.2.4:
     resolution: {integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==}
 
-  html-element-attributes@3.5.0:
-    resolution: {integrity: sha512-rU2BFhp0kQla9sqPBI46C+zbP6PFOtD7z6XNAJ6as+cGecCDXLx0W3aIs6XdPLmBBG/Fy1meRi/n65Exofz4Qw==}
-
   html-entities@1.4.0:
     resolution: {integrity: sha512-8nxjcBcd8wovbeKx7h3wTji4e6+rhaVuPNpMqwWgnHh+N9ToqsCs6XztWRBPQ+UtzsoMAdKZtUENoVzU/EMtZA==}
 
   html-entities@2.6.0:
     resolution: {integrity: sha512-kig+rMn/QOVRvr7c86gQ8lWXq+Hkv6CbAH1hLu+RG338StTpE8Z0b44SDVaqVu7HGKf27frdmUYEs9hTUX/cLQ==}
-
-  html-tag-names@2.1.0:
-    resolution: {integrity: sha512-+NhBUNvS5Ig8g8LO1DBpyapuGsu+FLcpLwmMADCntvU9IUa30++WV3GmuBHZm8Y9cHdIson/uvbQ/6jVL63XZw==}
 
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
@@ -25572,13 +25554,9 @@ snapshots:
 
   howler@2.2.4: {}
 
-  html-element-attributes@3.5.0: {}
-
   html-entities@1.4.0: {}
 
   html-entities@2.6.0: {}
-
-  html-tag-names@2.1.0: {}
 
   html-void-elements@3.0.0: {}
 
