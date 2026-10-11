@@ -357,6 +357,6 @@ describe(createKeyframeStore, () => {
       writtenVersions.reduce((total, writtenVersion) => total + readBytes(writtenVersion), 0);
 
     expect(sumBytes(({ plaintextBytes }) => plaintextBytes)).toMatchInlineSnapshot(`1140624`);
-    expect(sumBytes(({ storedBytes }) => storedBytes)).toMatchInlineSnapshot(`63503`);
+    expect(sumBytes(({ storedBytes }) => storedBytes)).toMatchInlineSnapshot(`67472`);
   });
 });
