@@ -12,7 +12,7 @@ The quest model and its pure progression, the quest screen J opens, the beam ove
 
 ## Decisions
 
-- **The carried quests are chunks of the bundle, loaded on demand.** The reader's quest files and words are imported as their own chunks by `QuestLoaderMap` and `QuestTextLoaderMap`, one line a carried quest, rather than served from a base URL as region data is. A quest is small enough to ship with the world, and the typed map makes a quest carried without its loader fail to typecheck.
+- **The carried quests are hosted records, read on demand.** Each carried quest's table is its own `quests/<id>` record and its words one `questText/<Language>` record a language, read from the hosted game data by `QuestLoaderMap` and `QuestTextLoaderMap`, one line a carried quest or a language ([hosted game data](/docs/genshin/hosted-game-data)). A page downloads only the language it shows, and the typed map makes a quest carried without its loader fail to typecheck.
 - **The Archon quests run from the prologue's first.** `startQuests` starts the first Archon quest not finished once the ones before it are. The carried quests are listed in the order the prologue plays them, Wanderer's Trail before Bird's Eye View.
 - **Every doing the world records is an event.** The [quests](/docs/genshin/quests) page sets out which doing is which event, and each event is handed to every quest in progress. A collect counts one pick up, whatever the bag had room for.
 - **A quest's finish reaches the watchers as the achievements expect.** Each step passed on is a `QuestFinished` under the step's id, and a quest its last step finishes is a `ParentQuestFinished` under the quest's id. A finished main quest opens its Travel Log entry, by the entry's quest.
