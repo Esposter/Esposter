@@ -42,6 +42,23 @@ export const security: NuxtConfig["security"] = {
         // Desmos
         "blob:",
       ],
+      // Setting a fetch directive replaces its `default-src` fallback, so `'self'` is listed here for the app's own
+      // tRPC and Nitro routes
+      "connect-src": [
+        "'self'",
+        // Azure Blob: the upload's SAS PUTs and the reads of the game data the world fetches
+        process.env.AZURE_CONTAINER_BASE_URL,
+        // LiveKit: the signalling socket, and the HTTPS form of its host that its region lookup fetches
+        process.env.LIVEKIT_URL,
+        process.env.LIVEKIT_URL?.replace(/^wss:/u, "https:"),
+        // Azure Web PubSub: the WebSocket its client access URL names
+        "wss://*.webpubsub.azure.com",
+        // `@livekit/track-processors`: the wasm its segmenter fetches, and the segmenter model
+        "https://cdn.jsdelivr.net",
+        "https://storage.googleapis.com",
+      ],
+      // Audio and video messages play from Azure Blob, and an uploaded file's preview plays from its `blob:` URL
+      "media-src": ["'self'", process.env.AZURE_CONTAINER_BASE_URL, "blob:"],
     },
     permissionsPolicy: {
       // `livekit-client`
