@@ -82,6 +82,10 @@ export const ZHONGLI_CHARACTER_ID = 10_000_030;
 export const QIQI_CHARACTER_ID = 10_000_035;
 export const CHONGYUN_CHARACTER_ID = 10_000_036;
 export const TARTAGLIA_CHARACTER_ID = 10_000_033;
+export const GANYU_CHARACTER_ID = 10_000_037;
+export const ALBEDO_CHARACTER_ID = 10_000_038;
+export const DIONA_CHARACTER_ID = 10_000_039;
+export const KEQING_CHARACTER_ID = 10_000_042;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],

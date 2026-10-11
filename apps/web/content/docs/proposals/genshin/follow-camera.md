@@ -9,7 +9,7 @@ touches:
     "packages/genshin-world/src/components/World/Character/**",
     "packages/genshin-world/src/components/Menu/Settings/**",
   ]
-waiting: "the user's recordings on the roadmap's Recordings owed list, follow-camera.mkv and photo-mode-range.mkv; and the Settings Controls tab, which waits on the interface export"
+waiting: "the Settings Controls tab, which waits on the interface export"
 ---
 
 # Follow camera
@@ -44,7 +44,7 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **The recording.** `follow-camera.mkv` on the roadmap's Recordings owed list, each of the four readings above kept in the character's reference and written over its provisional constant. Photo mode's sliders and zoom at their ends, `photo-mode-range.mkv`, solve its range.
+1. **The recording.** `follow-camera.mkv` on the roadmap's References sought list, each of the four readings above kept in the character's reference and written over its provisional constant. Photo mode's sliders and zoom at their ends, `photo-mode-range.mkv`, solve its range.
 2. **The settings' rows on the Settings screen**, and the slope's pitch, once the [menu screens](/docs/proposals/genshin/menu-screens) build its Controls tab. The defaults the camera starts at are read off that tab's export, which replaces `FOLLOW_CAMERA_DEFAULT_SETTINGS`' provisional values.
 
 The camera is approved by its own measure: at each reading of the recording, the eye's distance and its ease match the camera's within the reading's noise.

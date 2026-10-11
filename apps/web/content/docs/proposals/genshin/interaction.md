@@ -3,7 +3,6 @@ title: Interaction
 description: Proposal — the held F's interval, the prompt list's window and the reach, each read off a recording of the game. The prompts over the world, the drops and residents in reach, F, the wheel and a held F's repeat are built, and the three numbers are provisional until the recording measures them.
 model: claude-opus-5-5
 needs: [game-exports, parity-page]
-waiting: "interaction-reach.mkv, a walk up to a Windrise gathering point, owed on the Recordings owed list (the user); the window's rows and the held F's interval wait on pickup-scroll.mkv, owed on the roadmap's Recordings owed list"
 ---
 
 # Interaction
@@ -24,7 +23,7 @@ This page builds on [interaction](/docs/genshin/interaction), whose prompts, dro
 
 ## What this does not propose
 
-- **The prompt list's open look.** Its rows, cap, pill and place are built against the pickup at 1080 high ([interaction](/docs/genshin/interaction#parity)). What stays open is the item icons (the game's art, which nothing ships), the kinds' icons, the selection's move and the pill's right end, each waiting on a recording the [roadmap](/docs/genshin/roadmap) lists as owed.
+- **The prompt list's open look.** Its rows, cap, pill and place are built against the pickup at 1080 high ([interaction](/docs/genshin/interaction#parity)). What stays open is the item icons (the game's art, which nothing ships), the kinds' icons, the selection's move and the pill's right end, each provisional while the [roadmap](/docs/genshin/roadmap) lists its reference as sought.
 - **What each interaction opens.** A chest's loot, a dialogue's content and a book's pages each belong to the page that adds that content.
 
 ## Key files

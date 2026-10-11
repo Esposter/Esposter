@@ -94,7 +94,7 @@ export const LORE_MOMENT_LOCALE = "en-AU";
 // What the data package answers in unasked, and what our own words are written in
 export const DEFAULT_LANGUAGE: GameLanguage = GameLanguage.English;
 // The source of the clip a voice is cloned from, and of the stems every dub files a character's clips under
-const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
+export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
 export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=`;
 // The imageinfo query, which answers a file title with the file's URL in one call

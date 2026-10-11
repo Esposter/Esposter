@@ -54,7 +54,7 @@ The game has no tooltip on the World Level: the info icon beside it on the profi
 
 ## Enemies at a World Level
 
-A camp's enemy stands at its camp level under World Level 0. From World Level 1 it stands at that World Level's monster level, which `WorldLevelExcelConfigData` gives from 26 at World Level 1 to 100 at World Level 9, plus its camp level less `SPAWN_LEVEL_REFERENCE` (`computeSpawnLevel`). A camp at level 1 therefore stands at 9 at World Level 1. The reference is provisional: the wiki's enemy level ranges put each World Level's lowest enemy 14 to 17 under its monster level, which a camp at level 1 or 2 gives, and the enemies' name plates at World Levels 1, 5 and 9 measure it on the Recordings owed list. Changing the World Level clears the camps and spawns them anew, so every enemy stands at the level the new World Level sets.
+A camp's enemy stands at its camp level under World Level 0. From World Level 1 it stands at that World Level's monster level, which `WorldLevelExcelConfigData` gives from 26 at World Level 1 to 100 at World Level 9, plus its camp level less `SPAWN_LEVEL_REFERENCE` (`computeSpawnLevel`). A camp at level 1 therefore stands at 9 at World Level 1. The reference is provisional: the wiki's enemy level ranges put each World Level's lowest enemy 14 to 17 under its monster level, which a camp at level 1 or 2 gives, and the enemies' name plates at World Levels 1, 5 and 9 measure it on the References sought list. Changing the World Level clears the camps and spawns them anew, so every enemy stands at the level the new World Level sets.
 
 ## Notes
 

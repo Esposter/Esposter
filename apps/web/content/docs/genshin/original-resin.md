@@ -45,7 +45,7 @@ flowchart TD
 - **Condensed Resin's claim is not wired.** Its spend is ready, but no offer is shown until a blossom is placed. Its crafting from 60 is the [crafting](/docs/genshin/crafting) bench's.
 - **The dialogs.** The refill and claim dialogs, and the top bar's plus for refilling, are unbuilt. The top bar shows the count only.
 
-The top bar's place and type are provisional until a recording measures them. The line is on the [roadmap](/docs/genshin/roadmap)'s Recordings owed list.
+The top bar's place and type are provisional until a recording measures them. The line is on the [roadmap](/docs/genshin/roadmap)'s References sought list.
 
 ## Key files
 

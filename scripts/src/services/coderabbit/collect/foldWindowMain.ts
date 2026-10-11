@@ -4,7 +4,7 @@ import type { FoldWindowInput } from "#src/models/coderabbit/collect/FoldWindowI
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
-import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { ATTEMPT_RETRY_DELAY_SECONDS, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { getWindowFileCap } from "#src/services/coderabbit/collect/getWindowFileCap";

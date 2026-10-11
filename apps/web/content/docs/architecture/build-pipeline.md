@@ -95,7 +95,7 @@ Because a `#` specifier resolves the same way no matter who is compiling, every 
 
 A tool that opts into the `source` condition — the tsconfig base, the shared Vitest configuration, and the Nuxt and Nitro tsconfigs the app generates — resolves TypeScript source, so no rebuild stands between an edit and a sibling's tests seeing it and a fresh clone typechecks without building anything. Everything else, Node's own loader above all, falls through to `dist`; npm never sees a source arm at all.
 
-Three consequences shape the rest of the pipeline. **The `default` arm is load-bearing**, because two things hand a package straight to Node's loader, which cannot read TypeScript source, and the workarounds cost more than the feature. **The app opts in for types and for nothing that runs**, so its bundles and its own Vitest project stay on the `dist` side — which is what `watch:packages` is still for, and why the app's dev server starts the same watchers itself. And **a build that vendors a sibling vendors its source**, which is why `isolatedDeclarations` is off in a package that vendors one of the packages that cannot satisfy it. Each is argued in full, with what breaks and where it surfaces, in `.agents/skills/build/references/source-exports.md`.
+Three consequences shape the rest of the pipeline. **The `default` arm is load-bearing**, because two things hand a package straight to Node's loader, which cannot read TypeScript source, and the workarounds cost more than the feature. **The app opts in for types and for nothing that runs**, so its bundles and its own Vitest project stay on the `dist` side — which is why `nuxt dev` brings each package it loads up to date through the build cache at start, so an edit reaches the page on the next start. And **a build that vendors a sibling vendors its source**, which is why `isolatedDeclarations` is off in a package that vendors one of the packages that cannot satisfy it. Each is argued in full, with what breaks and where it surfaces, in `.agents/skills/build/references/source-exports.md`.
 
 ## The output directory is wiped on every build
 
@@ -129,11 +129,12 @@ The declaration build seeds its program from the entry files and follows imports
 
 ## Key files
 
-| File                                                   | Role                                            |
-| ------------------------------------------------------ | ----------------------------------------------- |
-| `packages/configuration/src/getTsdownConfiguration.ts` | The base every config composes onto             |
-| `packages/configuration/src/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns |
-| `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from |
-| `packages/configuration/tsconfig.base.json`            | Root of the preset chain                        |
-| `packages/configuration/tsconfig.build.base.json`      | The excludes of the Vue declaration program     |
-| `packages/configuration/src/generateExports.ts`        | Writes the barrels                              |
+| File                                                   | Role                                                     |
+| ------------------------------------------------------ | -------------------------------------------------------- |
+| `packages/configuration/src/getTsdownConfiguration.ts` | The base every config composes onto                      |
+| `packages/configuration/src/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns          |
+| `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from          |
+| `packages/configuration/tsconfig.base.json`            | Root of the preset chain                                 |
+| `packages/configuration/tsconfig.build.base.json`      | The excludes of the Vue declaration program              |
+| `packages/configuration/src/generateExports.ts`        | Writes the barrels                                       |
+| `apps/web/modules/buildPackages.ts`                    | Brings the app's packages up to date at `nuxt dev` start |

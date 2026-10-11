@@ -80,6 +80,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [Combat](/docs/proposals/genshin/combat)                             | the Lunar reactions, self and immutable auras, reaction limits, reach and attack energy                                                   |
 | [Interaction](/docs/proposals/genshin/interaction)                   | the reach, the window's rows and a held F's interval, measured off a recording                                                            |
 | [Inventory](/docs/proposals/genshin/inventory)                       | using food on the party, and the destroy mode on the bag's screen                                                                         |
+| [Load budget](/docs/proposals/genshin/load-budget)                   | each load step measured, a screen's figures at ready held to a budget, then only the first frame's needs loaded before it shows           |
 | [Wish](/docs/proposals/genshin/wish)                                 | the banners' pools, a charted course, Character Event Wish-2 and the history                                                              |
 | [Dialogue](/docs/proposals/genshin/dialogue)                         | F on a resident begins their talk, its words loaded and filled, a resident's open quests offered, and the screen measured                 |
 | [Quests](/docs/proposals/genshin/quests)                             | the go-to triggers placed, the talks that offer a quest, the commissions dealt at the reset, and the quests' clues                        |

@@ -1,3 +1,4 @@
+import { MAX_TILE_ATTEMPTS } from "#src/streaming/constants";
 import { createTileStreamer } from "#src/streaming/createTileStreamer";
 import { createTerrainSelection } from "#src/terrain/createTerrainSelection";
 import { getTerrainTileKey } from "#src/terrain/getTerrainTileKey";
@@ -121,5 +122,54 @@ describe(createTileStreamer, () => {
       disposed: [[0]],
       hasCoarse: true,
     });
+  });
+
+  test("frees the slot of a failed tile so the next wanted tile is requested", () => {
+    expect.hasAssertions();
+
+    const requestTile = vi.fn<(key: number) => void>();
+    const tileStreamer = createTileStreamer({
+      disposeTile: vi.fn<(tile: number) => void>(),
+      maxCachedCount: 1,
+      maxPendingCount: 1,
+      requestTile,
+    });
+    const wanted = createTerrainSelection(2);
+    wanted.keys.set([fineKey, otherFineKey]);
+    wanted.count = 2;
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+    tileStreamer.fail(fineKey);
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+
+    expect({ calls: requestTile.mock.calls, pending: tileStreamer.pendingKeys() }).toStrictEqual({
+      calls: [[fineKey], [fineKey]],
+      pending: [fineKey],
+    });
+  });
+
+  test("gives up a tile failed MAX_TILE_ATTEMPTS times, which then counts as settled", () => {
+    expect.hasAssertions();
+
+    const requestTile = vi.fn<(key: number) => void>();
+    const tileStreamer = createTileStreamer({
+      disposeTile: vi.fn<(tile: number) => void>(),
+      maxCachedCount: 1,
+      maxPendingCount: 1,
+      requestTile,
+    });
+    const wanted = createTerrainSelection(1);
+    wanted.keys.set([fineKey]);
+    wanted.count = 1;
+    const givenUp = Array.from({ length: MAX_TILE_ATTEMPTS }, () => {
+      tileStreamer.update(wanted, emptySelection, emptySelection);
+      return tileStreamer.fail(fineKey);
+    });
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+
+    expect({
+      givenUp,
+      isSettled: tileStreamer.isSettled(fineKey),
+      requestCount: requestTile.mock.calls.length,
+    }).toStrictEqual({ givenUp: [false, false, true], isSettled: true, requestCount: MAX_TILE_ATTEMPTS });
   });
 });

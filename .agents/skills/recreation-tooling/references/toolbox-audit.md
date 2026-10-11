@@ -26,3 +26,5 @@ An unknown split across kinds (a light whose colour is in a script's bytes but w
 ## Where a tool lives
 
 A tool is a command of the domain's tooling with its own test, never a scratch script: a scratch solve is lost with its session, and the unknown returns with the next scene. What it reads and writes follows the domain's rules for its sources (the `genshin-parity` skill's for the game's files).
+
+A recreation of software rather than a game, such as a web app's or a desktop app's interface, starts its audit from REA (https://github.com/morluto/rea). It is an MCP server whose static tools read a target at rest: a JavaScript bundle's module graph, a recorded HAR, an Electron ASAR, a .NET assembly, PE resources. Only those static tools apply where the target may not be run or attached to. It decodes no game asset format, and no IL2CPP, so a game's data stays with the domain's own extractors.

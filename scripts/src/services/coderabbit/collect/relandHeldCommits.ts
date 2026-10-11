@@ -2,7 +2,7 @@ import type { RelandInput } from "#src/models/coderabbit/collect/RelandInput";
 import type { RelandResult } from "#src/models/coderabbit/collect/RelandResult";
 
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
-import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,

@@ -9,8 +9,14 @@ import { getReserveSummary } from "./getReserveSummary";
 
 describe(getReserveRefusal, () => {
   const resetsAt = new Date(0).toISOString();
-  const maintenance: ReserveWindow = { isWindDown: false, name: "five-hour", percentage: 80, resetsAt };
-  const windDown: ReserveWindow = { isWindDown: true, name: "weekly", percentage: 90, resetsAt };
+  const maintenance: ReserveWindow = {
+    isAheadOfPace: false,
+    isWindDown: false,
+    name: "five-hour",
+    percentage: 80,
+    resetsAt,
+  };
+  const windDown: ReserveWindow = { isAheadOfPace: false, isWindDown: true, name: "weekly", percentage: 90, resetsAt };
 
   test.each([
     ["a haiku agent in maintenance", "Agent", { model: "haiku" }, maintenance, false],

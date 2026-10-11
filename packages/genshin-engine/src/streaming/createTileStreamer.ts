@@ -2,6 +2,7 @@ import type { TileStreamer } from "#src/models/streaming/TileStreamer";
 import type { TileStreamerOptions } from "#src/models/streaming/TileStreamerOptions";
 import type { TerrainSelection } from "#src/models/terrain/TerrainSelection";
 
+import { MAX_TILE_ATTEMPTS } from "#src/streaming/constants";
 import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";
 
 interface CachedTile<TTile> {
@@ -23,6 +24,9 @@ export const createTileStreamer = <TTile>({
   const cachedTileMap = new Map<number, CachedTile<TTile>>();
   // Each generating tile's key, to the last frame that wanted it
   const pendingWantedFrameMap = new Map<number, number>();
+  // Each key's failures so far, and the keys given up for the session once they reach MAX_TILE_ATTEMPTS
+  const failedAttemptMap = new Map<number, number>();
+  const givenUpKeySet = new Set<number>();
   let frame = 0;
   let isDisposed = false;
 
@@ -42,15 +46,29 @@ export const createTileStreamer = <TTile>({
     }
   };
 
+  const checkIsSettled = (key: number): boolean => cachedTileMap.has(key) || givenUpKeySet.has(key);
+
   return {
     dispose: () => {
       isDisposed = true;
       for (const { tile } of cachedTileMap.values()) disposeTile(tile);
       cachedTileMap.clear();
       pendingWantedFrameMap.clear();
+      failedAttemptMap.clear();
+      givenUpKeySet.clear();
+    },
+    fail: (key) => {
+      pendingWantedFrameMap.delete(key);
+      const attempts = (failedAttemptMap.get(key) ?? 0) + 1;
+      failedAttemptMap.set(key, attempts);
+      if (attempts < MAX_TILE_ATTEMPTS) return false;
+      givenUpKeySet.add(key);
+      return true;
     },
     get: (key) => cachedTileMap.get(key)?.tile,
     has: (key) => cachedTileMap.has(key),
+    isSettled: checkIsSettled,
+    pendingKeys: () => [...pendingWantedFrameMap.keys()],
     receive: (key, tile) => {
       const lastWantedFrame = pendingWantedFrameMap.get(key) ?? frame;
       pendingWantedFrameMap.delete(key);
@@ -77,13 +95,12 @@ export const createTileStreamer = <TTile>({
         let coarsestLevel = 0;
         for (let index = 0; index < count; index++) {
           const key = keys[index] ?? 0;
-          if (!cachedTileMap.has(key)) coarsestLevel = Math.max(coarsestLevel, getTerrainTileLevel(key));
+          if (!checkIsSettled(key)) coarsestLevel = Math.max(coarsestLevel, getTerrainTileLevel(key));
         }
         for (let level = coarsestLevel; level >= 0 && pendingWantedFrameMap.size < maxPendingCount; level--)
           for (let index = 0; index < count && pendingWantedFrameMap.size < maxPendingCount; index++) {
             const key = keys[index] ?? 0;
-            if (getTerrainTileLevel(key) !== level || cachedTileMap.has(key) || pendingWantedFrameMap.has(key))
-              continue;
+            if (getTerrainTileLevel(key) !== level || checkIsSettled(key) || pendingWantedFrameMap.has(key)) continue;
             pendingWantedFrameMap.set(key, frame);
             requestTile(key);
           }

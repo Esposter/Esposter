@@ -75,4 +75,4 @@ The quality weights the table gives each dish are all the Delicious weight in th
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `CookRecipeExcelConfigData`, `CookBonusExcelConfigData` and `CompoundExcelConfigData`, the tables the slices are written from, and `MaterialExcelConfigData`, whose food qualities and instruction uses are read.
-- [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: the zones, proficiency, Auto Cook, special dishes, and stoves and campfires, the rules the proposal settles against. The page was not reachable from this build, so the claims it backs wait on the recordings owed.
+- [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: the zones, proficiency, Auto Cook, special dishes, and stoves and campfires, the rules the proposal settles against. The page was not reachable from this build, so the claims it backs wait on the References sought.

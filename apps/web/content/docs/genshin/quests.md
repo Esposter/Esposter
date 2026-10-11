@@ -70,7 +70,7 @@ The dump scrambles the binary output's field names each patch, so the reader fin
 
 ## Parity
 
-The quest screen is scored whole-frame against `quest-screen`, the English client's quest screen at 1920 by 1080: a mean difference of 55.84% and a FLIP of 0.8998. The wiki's screenshot draws the blurred scene and its own text under the screen, so the whole-frame score counts a double print rather than a placement. The blur behind J is provisional until `quest-open.mkv` lands on the roadmap's Recordings owed list.
+The quest screen is scored whole-frame against `quest-screen`, the English client's quest screen at 1920 by 1080: a mean difference of 55.84% and a FLIP of 0.8998. The wiki's screenshot draws the blurred scene and its own text under the screen, so the whole-frame score counts a double print rather than a placement. The blur behind J is provisional until `quest-open.mkv` lands on the roadmap's References sought list.
 
 ## Key files
 
@@ -100,7 +100,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 - **Quests are read from the hosted game data, not the bundle.** Each carried quest and its words are fetched by their keys (`quests/<id>` and `questText/<language>`) through `QuestLoaderMap` and `QuestTextLoaderMap`, which a new carried quest adds a line to, from the base URL the world is given.
 - **A step keeps one objective.** A step that finishes on any of several places lists each as a condition, so the reader keeps the first condition that asks something. A step asking for two things at once would lose the second.
 - **The beam's look is provisional.** Its radius and colour wait on a recording of the English client navigating to an objective.
-- **The quest screen is laid out, not yet likeness.** Its header, tabs, list, details and navigation button sit at the English client's 1080-high places, measured off the wiki's screenshot. Its five tab glyphs stand in as diamonds until traced, its header reads the game's "Quests" where the client reads "In Progress" (that text is not in the English the package carries), and its quest distances, kind and place marks, rewards row, Quest Overview button and UID are not built. The client draws the world blurred behind the screen; the parity page has no world to draw, so its frame scores 55.84% mean and 0.8998 FLIP, most of it that blur, and the screen's open, close and tab animations are not yet timed (the roadmap's Recordings owed).
+- **The quest screen is laid out, not yet likeness.** Its header, tabs, list, details and navigation button sit at the English client's 1080-high places, measured off the wiki's screenshot. Its five tab glyphs stand in as diamonds until traced, its header reads the game's "Quests" where the client reads "In Progress" (that text is not in the English the package carries), and its quest distances, kind and place marks, rewards row, Quest Overview button and UID are not built. The client draws the world blurred behind the screen; the parity page has no world to draw, so its frame scores 55.84% mean and 0.8998 FLIP, most of it that blur, and the screen's open, close and tab animations are not yet timed (the roadmap's References sought).
 
 ## Sources
 

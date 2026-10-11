@@ -12,15 +12,19 @@ const { baseGround, groundLayers, regionGrounds, surfaces, water } = await readW
 
 describe("terrainTile.worker", () => {
   const addEventListener =
-    vi.fn<(type: string, listener: (event: MessageEvent<TerrainWorkerMessage>) => void) => void>();
+    vi.fn<(type: string, listener: (event: MessageEvent<TerrainWorkerMessage>) => Promise<void> | void) => void>();
   const postMessage = vi.fn<(message: PlantedTerrainTile, options: StructuredSerializeOptions) => void>();
   const tileMessage: TerrainWorkerMessage = {
     kind: TerrainWorkerMessageKind.Tile,
     request: { cellsPerSide: 1, finestTileSize: 1, key: getTerrainTileKey(0, 0, 0) },
   };
-  const receive = (message: TerrainWorkerMessage): void => {
+  const loadMessage: TerrainWorkerMessage = {
+    ground: { baseGround, groundLayers, regionGrounds, surfaces, waterLevel: water.level },
+    kind: TerrainWorkerMessageKind.Load,
+  };
+  const receive = async (message: TerrainWorkerMessage): Promise<void> => {
     assert.exists(addEventListener.mock.lastCall);
-    addEventListener.mock.lastCall[1](new MessageEvent("message", { data: message }));
+    await addEventListener.mock.lastCall[1](new MessageEvent("message", { data: message }));
   };
 
   beforeEach(async () => {
@@ -34,25 +38,25 @@ describe("terrainTile.worker", () => {
     vi.unstubAllGlobals();
   });
 
-  test("refuses a tile asked for before its ground is loaded", () => {
+  test("answers a tile asked for before its ground is loaded once the ground arrives", async () => {
     expect.hasAssertions();
 
-    expect(() => {
-      receive(tileMessage);
-    }).toThrowErrorMatchingInlineSnapshot(
-      `[Error: A terrain tile was asked for before the worker's ground was loaded]`,
-    );
+    await receive(tileMessage);
+    const postedBeforeLoad = postMessage.mock.calls.length;
+    await receive(loadMessage);
+
+    expect({ postedAfterLoad: postMessage.mock.calls.length, postedBeforeLoad }).toStrictEqual({
+      postedAfterLoad: 1,
+      postedBeforeLoad: 0,
+    });
   });
 
-  test("computes a tile's heights over the ground it was loaded with", () => {
+  test("computes a tile's heights over the ground it was loaded with", async () => {
     expect.hasAssertions();
 
     const getGroundHeight = createWorldHeight(baseGround, regionGrounds);
-    receive({
-      ground: { baseGround, groundLayers, regionGrounds, surfaces, waterLevel: water.level },
-      kind: TerrainWorkerMessageKind.Load,
-    });
-    receive(tileMessage);
+    await receive(loadMessage);
+    await receive(tileMessage);
 
     assert.exists(postMessage.mock.lastCall);
     expect(postMessage.mock.lastCall[0].positions).toStrictEqual(

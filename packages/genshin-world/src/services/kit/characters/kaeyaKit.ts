@@ -7,6 +7,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -25,8 +26,6 @@ const KAEYA_BURST_GROUP_ID = 1539;
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/attack.go
 const createCircleReach = (offset: number, radius: number): AttackArea =>
   Object.freeze({ angle: 2 * Math.PI, height: 2, radius: offset + radius });
-const createBoxReach = (offset: number, width: number, length: number): AttackArea =>
-  Object.freeze({ angle: 2 * Math.PI, height: 2, radius: Math.hypot(offset + length, width / 2) });
 const FIRST_STRIKE_HIT_AREA = createCircleReach(0.8, 1.7);
 const SECOND_STRIKE_HIT_AREA = createCircleReach(1.2, 1.5);
 const THIRD_STRIKE_HIT_AREA = createBoxReach(-0.2, 1, 2.6);

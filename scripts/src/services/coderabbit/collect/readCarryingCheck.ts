@@ -1,6 +1,6 @@
 import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
 
-import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { checkIsVerdict } from "#src/services/coderabbit/collect/checkIsVerdict";
 import { CI_COMPLETED_STATUS } from "#src/services/coderabbit/collect/constants";
 import { readCommitCheck } from "#src/services/coderabbit/collect/readCommitCheck";

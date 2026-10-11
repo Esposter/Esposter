@@ -5,7 +5,6 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -20,6 +19,7 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -171,16 +171,6 @@ const OZ_SUMMON_ID = "fischl-oz";
 const checkIsElectroReaction = ({ element, reactionType }: Reaction): boolean =>
   ELECTRO_REACTION_TYPES.has(reactionType) ||
   ((reactionType === ReactionType.Swirl || reactionType === ReactionType.Crystallize) && element === Element.Electro);
-
-// Fischl's Oz once it has spawned, while it stands
-const findStandingOz = (effects: readonly KitEffect[], characterId: number): KitSummon | undefined =>
-  effects.find(
-    (effect): effect is KitSummon =>
-      effect.kind === "summon" &&
-      effect.id === OZ_SUMMON_ID &&
-      effect.combatant.characterId === characterId &&
-      effect.elapsedSeconds >= (effect.spawnSeconds ?? 0),
-  );
 
 // A normal attack is one arrow, Physical, with its hitmark and its cancel, as gcsim gives each of the five
 const createArrow = (
@@ -386,7 +376,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           checkHasKitStatus(effects, activeCharacterId, THUNDERING_RETRIBUTION_COOLDOWN_STATUS_ID)
         )
           return;
-        const oz = findStandingOz(effects, characterId);
+        const oz = findStandingKitSummon(effects, OZ_SUMMON_ID, characterId);
         if (!oz) return;
         addKitEffect(kitEffectState, {
           characterId: activeCharacterId,
@@ -401,7 +391,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           ]),
         );
       } else if (event.kind === KitEventKind.NormalAttackLanded) {
-        const oz = findStandingOz(effects, characterId);
+        const oz = findStandingKitSummon(effects, OZ_SUMMON_ID, characterId);
         const [normalAttackHit] = event.action.hits;
         if (oz && normalAttackHit && constellationCount >= EVERNIGHT_RAVEN_CONSTELLATION)
           addKitEffect(

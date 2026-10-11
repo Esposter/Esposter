@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
+import type { TerrainWorkerFailure } from "#src/models/world/TerrainWorkerFailure";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
 import type {
@@ -14,10 +15,12 @@ import type { DataTexture } from "three";
 
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
 import { MAX_PENDING_TILE_COUNT, TERRAIN_WORKER_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
+import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import {
   checkTerrainTileCasts,
   computeTerrainIndices,
+  MAX_TILE_ATTEMPTS,
   createFlowerMaterial,
   createFlowerTileGeometry,
   createTerrainMaterial,
@@ -107,12 +110,15 @@ const getRing = (level: number): TerrainRing => {
   tileGroup.add(ring.mesh);
   return ring;
 };
+const disposeTileMesh = (mesh: Mesh) => {
+  mesh.geometry.dispose();
+  for (const child of mesh.children) if (child instanceof Mesh) child.geometry.dispose();
+};
 const tileStreamer = createTileStreamer<Mesh | number>({
   disposeTile: (tile) => {
     if (tile instanceof Mesh) {
       tileGroup.remove(tile);
-      tile.geometry.dispose();
-      for (const child of tile.children) if (child instanceof Mesh) child.geometry.dispose();
+      disposeTileMesh(tile);
       return;
     }
     ringMap.get(getTerrainTileLevel(tile))?.remove(tile);
@@ -128,8 +134,12 @@ const tileStreamer = createTileStreamer<Mesh | number>({
     requestCount++;
   },
 });
-const receiveTile = async (event: MessageEvent<PlantedTerrainTile>) => {
-  const terrainTile = event.data;
+// A tile that cannot be built is released, so it is asked for again or given up, and the world is not held on it
+const failTile = (key: number) => {
+  if (tileStreamer.fail(key))
+    console.error(`Terrain tile ${key} failed ${MAX_TILE_ATTEMPTS} times, so it is given up and drawn without`);
+};
+const receiveTile = async (terrainTile: PlantedTerrainTile) => {
   const { key, plantColors, plantMatrices } = terrainTile;
   if (!checkIsNear(key)) {
     getRing(getTerrainTileLevel(key)).add(terrainTile);
@@ -156,15 +166,42 @@ const receiveTile = async (event: MessageEvent<PlantedTerrainTile>) => {
   // Then it is held hidden and handed to the streamer, which shows it from the next frame that draws it
   const activeCamera = camera.value;
   const activeScene = scene.value;
-  if (activeCamera && activeScene) await renderer.compileAsync(mesh, activeCamera, activeScene);
+  if (activeCamera && activeScene) {
+    const isCompiled = await getResultAsync(async () => {
+      await renderer.compileAsync(mesh, activeCamera, activeScene);
+    }).match(
+      () => true,
+      (error) => {
+        console.error(`Terrain tile ${key} failed to compile`, error);
+        disposeTileMesh(mesh);
+        failTile(key);
+        return false;
+      },
+    );
+    if (!isCompiled) return;
+  }
   mesh.visible = false;
   tileGroup.add(mesh);
   tileStreamer.receive(key, mesh);
 };
-for (const worker of workers)
-  worker.addEventListener("message", (event) => {
-    receiveTile(event);
-  });
+const receiveWorkerMessage = (event: MessageEvent<PlantedTerrainTile | TerrainWorkerFailure>) => {
+  const { data } = event;
+  if ("kind" in data) {
+    failTile(data.key);
+    return;
+  }
+  receiveTile(data);
+};
+// A worker that errors, or cannot read a message, has lost the tiles it was asked for, so each pending tile is failed
+const failPendingTiles = (event: Event) => {
+  console.error("A terrain worker failed", event);
+  for (const key of tileStreamer.pendingKeys()) failTile(key);
+};
+for (const worker of workers) {
+  worker.addEventListener("message", receiveWorkerMessage);
+  worker.addEventListener("error", failPendingTiles);
+  worker.addEventListener("messageerror", failPendingTiles);
+}
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
 const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
@@ -186,7 +223,7 @@ let isReady = false;
 // Floating origin. The camera's matrices are brought up to date first, since this runs before the frame's render does
 // It and runs while a paused canvas renders nothing. The eye the ground morphs by is written here too, so every pass of
 // The frame draws the ground the view selected. The terrain is ready the first frame every tile its view wants has
-// Arrived
+// Arrived or been given up
 onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera) return;
@@ -219,7 +256,7 @@ onBeforeRender(() => {
   for (const [level, ring] of ringMap) ring.draw(ringDrawnKeysMap.get(level) ?? []);
   shown.keys.set(draws.keys.subarray(0, draws.count));
   shown.count = draws.count;
-  if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => tileStreamer.has(key))) return;
+  if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => tileStreamer.isSettled(key))) return;
   isReady = true;
   emit("ready");
 });

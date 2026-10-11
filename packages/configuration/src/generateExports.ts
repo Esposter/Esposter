@@ -11,7 +11,7 @@ const COMPONENTS_DIRECTORY = "components";
 const BARREL_FILE = "index.ts";
 // Every line is `export *`, so two modules exporting one name are an ambiguity TypeScript reports (TS2308) in the
 // Package's own typecheck and in every consumer resolving its source — never a name quietly left out of the barrel.
-// An unchanged barrel is never rewritten: under `watch:packages` a sibling vendoring this source reads it mid-write,
+// An unchanged barrel is never rewritten: a sibling vendoring this source, built at the same time, reads it mid-write,
 // Resolves nothing and reports the package as an import its `onlyImport` gate rejects
 const writeBarrel = (directory: string, specifiers: string[], toLine: (specifier: string) => string): void => {
   const path = join(directory, BARREL_FILE);

@@ -6,6 +6,7 @@ import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedOb
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { EXTRACT_PRODUCER_PATHS } from "#src/services/genshinAssets/blocks/constants";
 import { walkAssetClosure } from "#src/services/genshinAssets/blocks/walkAssetClosure";
 import {
   CAB_MAP_PATH,
@@ -30,6 +31,7 @@ import { deriveCapitalWorld } from "#src/services/genshinAssets/world/deriveCapi
 import { exportWorld } from "#src/services/genshinAssets/world/exportWorld";
 import { extractWorld } from "#src/services/genshinAssets/world/extractWorld";
 import { getWorldRoots } from "#src/services/genshinAssets/world/getWorldRoots";
+import { writeProducerStamp } from "#src/services/producerStamp/writeProducerStamp";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
@@ -172,6 +174,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   // A set-by-hand world is exported here; a derived one was exported by its derivation, which read the placements from it
   if (options.world) await exportWorld(options.world, directory.world);
   const worldLines = world ? await extractWorld(world, directory) : [];
+  await writeProducerStamp(directory.root, EXTRACT_PRODUCER_PATHS);
   const unresolved = [...closure.unresolved, ...drawn.unresolved, ...sharedNames, ...sampled.unresolved];
   return [
     `${closure.objects.length} objects reached from ${roots.length} roots, ${drawn.assets.length} meshes and materials, ${sampled.assets.length} textures`,

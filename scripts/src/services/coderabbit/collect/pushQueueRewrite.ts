@@ -1,6 +1,6 @@
 import type { QueueRewriteInput } from "#src/models/coderabbit/collect/QueueRewriteInput";
 
-import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { QUEUE_BRANCH, SYNC_PUSH_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
 import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
 import { pickSkippingStops } from "#src/services/coderabbit/collect/pickSkippingStops";

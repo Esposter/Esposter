@@ -8,9 +8,14 @@ export const CLOCK_TICK_MS: number = Temporal.Duration.from({ minutes: 1 }).tota
 export const USAGE_WARNING_PERCENTAGE = 80;
 // The usage lines each window's two tiers start at: the maintenance tier, then the wind-down
 export const FIVE_HOUR_MAINTENANCE_PERCENTAGE = 80;
-export const FIVE_HOUR_WIND_DOWN_PERCENTAGE = 95;
+export const FIVE_HOUR_WIND_DOWN_PERCENTAGE = 90;
 export const WEEKLY_MAINTENANCE_PERCENTAGE = 80;
 export const WEEKLY_WIND_DOWN_PERCENTAGE = 90;
+// A window under this share is never read for its pace, since an early reading projects wildly
+export const PACE_FLOOR_PERCENTAGE = 50;
+// Each window's length, which its reset time is counted back from
+export const FIVE_HOUR_WINDOW_MS: number = Temporal.Duration.from({ hours: 5 }).total("milliseconds");
+export const WEEKLY_WINDOW_MS: number = Temporal.Duration.from({ hours: 168 }).total("milliseconds");
 // The only model an agent may launch on under a reserve, the one cleanup and a settled compute runner need
 export const RESERVE_AGENT_MODEL = "haiku";
 // What a refusal tells the session to do instead, after the reserve's summary

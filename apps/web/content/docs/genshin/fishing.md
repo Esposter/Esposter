@@ -50,7 +50,7 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 
 ## Provisional
 
-- **The reel's tension rate and its allowance** (`REEL_TENSION_RATE`, `REEL_LOST_OUT_OF_ZONE_SECONDS`) are not in the tables. A recording of the minigame sets them, listed on the [roadmap](/docs/genshin/roadmap)'s Recordings owed list.
+- **The reel's tension rate and its allowance** (`REEL_TENSION_RATE`, `REEL_LOST_OUT_OF_ZONE_SECONDS`) are not in the tables. A recording of the minigame sets them, listed on the [roadmap](/docs/genshin/roadmap)'s References sought list.
 
 ## Key files
 

@@ -17,6 +17,9 @@ import { Element, Elements } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { createBoxReach } from "#src/services/kit/createBoxReach";
+import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -35,13 +38,6 @@ const ZHONGLI_BURST_GROUP_ID = 3039;
 // Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
 const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
 const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
-// Measured: gcsim v2.47.2 (MIT) zhongli/attack.go. A circle centred ahead of the body is priced as its offset plus its
-// Radius at gcsim's fan angle, and a box spawned on its near edge ahead of the body as the circle to its far corner
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/zhongli/attack.go
-const createFanReach = (degrees: number, radius: number): AttackArea =>
-  Object.freeze({ angle: (degrees * Math.PI) / 180, height: 2, radius });
-const createBoxReach = (offset: number, width: number, length: number): AttackArea =>
-  Object.freeze({ angle: 2 * Math.PI, height: 2, radius: Math.hypot(offset + length, width / 2) });
 // Measured: gcsim v2.47.2 (MIT) zhongli/charge.go, the thrust a circle of radius 0.8 on the primary target
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/zhongli/charge.go
 const CHARGED_ATTACK_HIT_AREA = createTargetedHitArea(STRIKE_TARGETING_AREA, 0.8);
@@ -141,14 +137,6 @@ const createDominanceOfEarthBonus =
 // The most Stone Steles that may stand at once
 const getMaxSteleCount = ({ constellationCount }: Combatant): number =>
   constellationCount >= ROCK_THE_BACKBONE_OF_EARTH_CONSTELLATION ? ROCK_THE_BACKBONE_OF_EARTH_STELE_COUNT : STELE_COUNT;
-
-// A body the given metres ahead of another at its facing: ahead lies at the bearing -sin and -cos of the facing, as the
-// Facing angle of the kit's targeting reads it
-const createAheadBody = ({ facing, height, position }: KitBody, metres: number): KitBody => ({
-  facing,
-  height,
-  position: { x: position.x - Math.sin(facing) * metres, z: position.z - Math.cos(facing) * metres },
-});
 
 // Zhongli's first kit, at talent level 1: six strikes, the fifth of four hits, a charged attack, a collision and two
 // Plunges, Dominus Lapidis' press and its hold with their Stone Steles and the hold's Jade Shield, and Planet Befall's

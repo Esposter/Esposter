@@ -1,7 +1,7 @@
 import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 
 import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPullRequestState";
-import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 
 // A folded window's head reaches `main` by a push, which GitHub records as a merge only once it has processed it; the
 // Head's branch is deleted straight after, and a deletion processed first closes the pull request instead. A closed
