@@ -34,6 +34,10 @@
       "source": "./src/runtime/nitro/plugins/nonce.ts",
       "default": "./dist/runtime/nitro/plugins/nonce.js"
     },
+    "./runtime/nitro/plugins/page.fixture": {
+      "source": "./src/runtime/nitro/plugins/page.fixture.ts",
+      "default": "./dist/runtime/nitro/plugins/page.fixture.js"
+    },
     "./runtime/nitro/plugins/routeRules": {
       "source": "./src/runtime/nitro/plugins/routeRules.ts",
       "default": "./dist/runtime/nitro/plugins/routeRules.js"
@@ -82,6 +86,7 @@
       "./runtime/constants": "./dist/runtime/constants.js",
       "./runtime/nitro/plugins/hidePoweredBy": "./dist/runtime/nitro/plugins/hidePoweredBy.js",
       "./runtime/nitro/plugins/nonce": "./dist/runtime/nitro/plugins/nonce.js",
+      "./runtime/nitro/plugins/page.fixture": "./dist/runtime/nitro/plugins/page.fixture.js",
       "./runtime/nitro/plugins/routeRules": "./dist/runtime/nitro/plugins/routeRules.js",
       "./runtime/nitro/plugins/securityHeaders": "./dist/runtime/nitro/plugins/securityHeaders.js",
       "./runtime/nitro/plugins/ssgHashes": "./dist/runtime/nitro/plugins/ssgHashes.js",
