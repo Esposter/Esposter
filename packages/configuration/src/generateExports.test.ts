@@ -1,6 +1,6 @@
 import { generateExports } from "#src/generateExports";
 import { getComponentName } from "#src/getComponentName";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -34,6 +34,17 @@ describe(generateExports, () => {
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(
       `export * from "./${TEST_FILENAME}/${TEST_FILENAME}.ts";\n`,
     );
+  });
+
+  // A package that stops generating a barrel keeps no stale one: an earlier build's would still be typechecked
+  test("removes the barrels an earlier answer wrote and this one does not", () => {
+    expect.hasAssertions();
+
+    writeFileSync(join(sourceDirectory, TEST_FILENAME, `${TEST_FILENAME}.ts`), `export const a = 0;`);
+    generateExports(packageDirectory, "typescript");
+    generateExports(packageDirectory, "none");
+
+    expect(existsSync(join(sourceDirectory, "index.ts"))).toBe(false);
   });
 
   // A module under a lazy directory is loaded by its own `import()`, so a barrel line for it would load it with the entry
