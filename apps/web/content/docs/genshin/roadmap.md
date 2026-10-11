@@ -101,6 +101,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does Alhaitham's Universality hold begin at half a second of holding?** Provisional, as gcsim takes the hold as a parameter and gives no threshold for it: yes if a press held past half a second is his hold in the game, no if the hold begins at another length.
 - **Does each of Alhaitham's two-Mirror Projection Attacks land on the same frames, rather than its left or right set at random?** gcsim picks one of two hitmark sets at random for each of his one- and two-Mirror projections, one or two frames apart, and the kit takes the left set: yes if the game's projection lands on one set each time, no if it lands on either at random.
 - **Does Dehya's plunge collision deal poise?** gcsim gives her collision no poise, so it deals none, as a provisional 0: yes if the game's collision deals poise, with the amount the recording gives it, no if it deals none.
+- **Is Freminet's charged attack at 42 frames, in a circle of radius 2.4 round the target, for 40 stamina?** gcsim gives Freminet no charged attack ("action charge not implemented"), so `freminetKit.ts` takes the fourth strike's hitmark, animation and reach, the table's attack multiplier at index 4 and its stamina at index 6, all provisional: yes if a recording of his charged attack shows the same timing, reach and stamina, no if it differs, with the frames, reach or stamina the recording gives instead.
 
 ## References sought
 
