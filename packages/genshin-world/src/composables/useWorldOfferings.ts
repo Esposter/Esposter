@@ -8,12 +8,14 @@ import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { getResultAsync } from "@esposter/shared";
 
-// The Frostbearing Tree's offering: every offering item the bag holds is offered to it at once, its levels reached and
-// Their rewards paid in, and the held count and level it keeps are the progress the save holds. Its levels are read from
-// The game's table as an offer is made rather than with the world, and the bag is read once they have arrived, so an
-// Offer made while another's levels are still arriving offers the bag that one left
+// The Frostbearing Tree's offering: every offering item the bag holds is offered to it at once, its levels reached, their
+// Adventure EXP gained at the Adventure Rank and their other rewards paid in, and the held count and level it keeps are
+// The progress the save holds. Its levels are read from the game's table as an offer is made rather than with the world,
+// And the bag is read once they have arrived, so an offer made while another's levels are still arriving offers the bag
+// That one left
 export const useWorldOfferings = ({
   frostbearingTreeProgress,
+  gainWorldAdventureExp,
   gameDataBaseUrl,
   inventory,
   materialDataMap,
@@ -23,6 +25,7 @@ export const useWorldOfferings = ({
   wallet,
 }: {
   frostbearingTreeProgress: ShallowRef<OfferingProgressSave>;
+  gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
   inventory: Ref<Inventory>;
   materialDataMap: ReadonlyMap<number, MaterialData>;
@@ -45,6 +48,7 @@ export const useWorldOfferings = ({
         );
         setInventory(offer.inventory);
         setWallet(offer.wallet);
+        gainWorldAdventureExp(offer.adventureExp);
         frostbearingTreeProgress.value = { heldCount: offer.progress.heldCount, level: offer.progress.level };
       },
       (error) => {

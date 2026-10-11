@@ -137,17 +137,6 @@ const {
   wallet,
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
-// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to
-const { offerFrostbearingTree } = useWorldOfferings({
-  frostbearingTreeProgress,
-  gameDataBaseUrl,
-  inventory,
-  materialDataMap,
-  nameText,
-  setInventory,
-  setWallet,
-  wallet,
-});
 // A destroy's bag and wallet are applied together, since what it returns may be currency
 const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
   setInventory(nextInventory);
@@ -184,6 +173,18 @@ const {
   getWorldNow,
   savedAdventureExp: savedState.adventureExp,
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
+  setWallet,
+  wallet,
+});
+// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to
+const { offerFrostbearingTree } = useWorldOfferings({
+  frostbearingTreeProgress,
+  gainWorldAdventureExp,
+  gameDataBaseUrl,
+  inventory,
+  materialDataMap,
+  nameText,
+  setInventory,
   setWallet,
   wallet,
 });
@@ -337,8 +338,8 @@ const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unl
     unlockedLandmarkIds: savedState.unlockedLandmarkIds,
     wallet,
   });
-// The Reputation, the Companionship EXP, the Frostbearing Tree's offerings and the Traveler's name no source changes yet,
-// So they are carried as they were saved
+// The Reputation, the Companionship EXP and the Traveler's name no source changes yet, so they are carried as they were
+// Saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
   getSaveState: () => ({

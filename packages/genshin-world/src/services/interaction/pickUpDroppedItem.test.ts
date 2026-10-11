@@ -3,7 +3,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { GameLanguage } from "genshin-text";
@@ -27,6 +27,24 @@ describe(pickUpDroppedItem, () => {
         materialDataMap,
       ),
     ).toStrictEqual({ inventory: EMPTY_INVENTORY, overflow: 0, wallet: { ...EMPTY_WALLET, [Currency.Mora]: 5 } });
+  });
+
+  test("takes any other currency into the wallet by its currency", () => {
+    expect.hasAssertions();
+
+    expect(
+      pickUpDroppedItem(
+        { count: 1, itemId: CurrencyItemIdMap[Currency.AcquaintFate] },
+        EMPTY_INVENTORY,
+        EMPTY_WALLET,
+        englishNameText,
+        materialDataMap,
+      ),
+    ).toStrictEqual({
+      inventory: EMPTY_INVENTORY,
+      overflow: 0,
+      wallet: { ...EMPTY_WALLET, [Currency.AcquaintFate]: 1 },
+    });
   });
 
   test("takes a material into the bag as its definition", () => {

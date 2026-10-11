@@ -18,7 +18,7 @@ const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 const levels = await readFrostbearingTreeLevels(GAME_DATA_LOCAL_BASE_URL);
 
 describe(useWorldOfferings, () => {
-  test("offers the bag as it stands once the tree's levels arrive", async () => {
+  test("offers the bag as it stands once the tree's levels arrive, and gains the levels' Adventure EXP", async () => {
     expect.hasAssertions();
 
     const offeringLevel = levels.find(({ itemCount }) => itemCount > 0);
@@ -27,8 +27,12 @@ describe(useWorldOfferings, () => {
     const inventory = ref<Inventory>({ items: [], nextId: 0 });
     const wallet = ref(EMPTY_WALLET);
     const frostbearingTreeProgress = shallowRef<OfferingProgressSave>({ heldCount: 0, level: 1 });
+    const gainedAdventureExps: number[] = [];
     const { offerFrostbearingTree } = useWorldOfferings({
       frostbearingTreeProgress,
+      gainWorldAdventureExp: (amount) => {
+        gainedAdventureExps.push(amount);
+      },
       gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
       inventory,
       materialDataMap,
@@ -42,8 +46,9 @@ describe(useWorldOfferings, () => {
       wallet,
     });
     const offer = offerFrostbearingTree();
-    inventory.value = { items: [{ definition, id: 0, quantity: 1 }], nextId: 1 };
+    inventory.value = { items: [{ definition, id: 0, quantity: offeringLevel.itemCount }], nextId: 1 };
     const {
+      adventureExp,
       inventory: offeredInventory,
       progress,
       wallet: paidWallet,
@@ -58,6 +63,7 @@ describe(useWorldOfferings, () => {
 
     expect(inventory.value).toStrictEqual(offeredInventory);
     expect(wallet.value).toStrictEqual(paidWallet);
+    expect(gainedAdventureExps).toStrictEqual([adventureExp]);
     expect(frostbearingTreeProgress.value).toStrictEqual({ heldCount: progress.heldCount, level: progress.level });
   });
 });

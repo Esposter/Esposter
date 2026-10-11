@@ -4,13 +4,13 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
-import { Currency } from "#src/models/inventory/Currency";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 
-// What a pick up takes: Mora into the wallet, which has no room to run out of, and any other item into the bag as its
-// Definition has it, the bag's room deciding how much of it goes in. What the bag has no room for is left over
+// What a pick up takes: a currency into the wallet by the currency its item is filed under, since the wallet has no room
+// To run out of, and any other item into the bag as its definition has it, the bag's room deciding how much of it goes
+// In. What the bag has no room for is left over
 export const pickUpDroppedItem = (
   { count, itemId }: DroppedItem,
   inventory: Inventory,
@@ -18,8 +18,9 @@ export const pickUpDroppedItem = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): DroppedItemPickUp => {
-  if (itemId === MORA_ITEM_ID)
-    return { inventory, overflow: 0, wallet: { ...wallet, [Currency.Mora]: wallet[Currency.Mora] + count } };
+  const currency = getWalletCurrency(itemId);
+  if (currency !== undefined)
+    return { inventory, overflow: 0, wallet: { ...wallet, [currency]: wallet[currency] + count } };
   const definition = getItemDefinition(itemId, names, materialDataMap);
   return { ...addInventoryItem(inventory, definition, count), wallet };
 };
