@@ -1,9 +1,9 @@
 import { TMXMapParsed } from "#src/models/tmx/parsed/TMXMapParsed";
 
 export class TMXParsed {
-  map: TMXMapParsed = new TMXMapParsed();
+  map: TMXMapParsed;
 
-  constructor(map?: TMXMapParsed) {
-    if (map) this.map = map;
+  constructor(map: TMXMapParsed = new TMXMapParsed()) {
+    this.map = map;
   }
 }

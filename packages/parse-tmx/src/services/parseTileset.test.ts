@@ -1,44 +1,40 @@
-import type { TMXImageNode } from "#src/models/tmx/node/TMXImageNode";
-import type { TMXTileNode } from "#src/models/tmx/node/TMXTileNode";
-import type { TMXTilesetNode } from "#src/models/tmx/node/TMXTilesetNode";
-
-import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
 import { parseTileset } from "#src/services/parseTileset";
-import { assertNode } from "#src/test/assertNode.test";
-import { createEmbeddedTilesetShared } from "#src/test/createEmbeddedTilesetShared.test";
-import { createExternalTilesetShared } from "#src/test/createExternalTilesetShared.test";
-import { createImageShared } from "#src/test/createImageShared.test";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const throwError = (error: Error): never => {
+  throw error;
+};
+
 describe(parseTileset, () => {
-  const id = 0;
-  const image = assertNode<TMXImageNode>({ "#name": TMXNodeType.Image, $: createImageShared(), $$: undefined });
-
-  test("clones an external tileset", () => {
+  test("parses a tileset file as an embedded tileset with its image and tiles", () => {
     expect.hasAssertions();
 
-    const external = createExternalTilesetShared();
-
-    expect(parseTileset(assertNode<TMXTilesetNode>({ $: external, $$: undefined }))).toStrictEqual(external);
-  });
-
-  test("parses an embedded tileset's image and tiles", () => {
-    expect.hasAssertions();
-
-    const tile = [assertNode<TMXTileNode>({ $: { id }, $$: [] })];
-    const tileset = parseTileset(assertNode<TMXTilesetNode>({ $: createEmbeddedTilesetShared(), $$: [image], tile }));
-
-    expect(tileset).toStrictEqual({ ...createEmbeddedTilesetShared(), image: createImageShared(), tiles: [{ id }] });
-  });
-
-  test("fails to parse an embedded tileset without an image", () => {
-    expect.hasAssertions();
-
-    expect(() =>
-      parseTileset(assertNode<TMXTilesetNode>({ $: createEmbeddedTilesetShared(), $$: [] })),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, parseTileset.name, createEmbeddedTilesetShared().name).message}]`,
+    const tileset = parseTileset(
+      `<?xml version="1.0"?><tileset name="tiles" tilewidth="16" tileheight="16" tilecount="4" columns="2"><image source="tiles.png" width="32" height="32"/><tile id="0" type="ground"/></tileset>`,
     );
+
+    expect(tileset.match((parsedTileset) => parsedTileset, throwError)).toStrictEqual({
+      columns: 2,
+      firstgid: 0,
+      image: { height: 32, source: "tiles.png", width: 32 },
+      name: "tiles",
+      tilecount: 4,
+      tileheight: 16,
+      tiles: [{ id: 0, type: "ground" }],
+      tilewidth: 16,
+    });
+  });
+
+  test("refuses a document whose root is not a tileset", () => {
+    expect.hasAssertions();
+
+    parseTileset("<map/>").match(noop, (error) => {
+      expect(() => {
+        throw error;
+      }).toThrowErrorMatchingInlineSnapshot(
+        `[InvalidOperationError: Invalid operation: Read, name: parseTileset, has no embedded tileset root element]`,
+      );
+    });
   });
 });

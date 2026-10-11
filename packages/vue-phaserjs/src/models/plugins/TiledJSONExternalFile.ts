@@ -1,11 +1,11 @@
 /* oxlint-disable no-param-reassign -- Phaser file-plugin base contract reassigns loader params */
 import type { TilemapFile } from "#src/models/plugins/TilemapFile";
-import type { TMXEmbeddedTilesetNode, TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
+import type { TMXExternalTilesetParsed } from "parse-tmx";
 import type { Types } from "phaser";
 
 import { TilesetFile } from "#src/models/plugins/TilesetFile";
 import { checkIsPlainObject, ID_SEPARATOR, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
-import { parseTileset, parseXmlString } from "parse-tmx";
+import { parseTileset } from "parse-tmx";
 import { Loader, Tilemaps, Utils } from "phaser";
 
 const GetFastValue = Utils.Objects.GetFastValue;
@@ -44,14 +44,13 @@ export class TiledJSONExternalFile extends MultiFile {
     this.config.tilesetXhrSettings = tilesetXhrSettings;
   }
 
-  async addToCache() {
+  addToCache() {
     if (!this.isReadyToProcess()) return;
 
     const [tilemapFile, ...tilesetFiles] = this.files;
     if (!(tilemapFile.type === "json" && Object.hasOwn(tilemapFile.data, "tilesets"))) return;
-    // Capture everything we need from `this` and the files before the first await.
-    // Phaser doesn't await addToCache(), so its synchronous lifecycle runs between awaits: a call to
-    // `pendingDestroy()` nulls tilemapFile.data, and loader cleanup nulls this.loader.
+    // Every tileset is read here synchronously, so Phaser's lifecycle cannot run partway through: a call to
+    // `pendingDestroy()` nulls tilemapFile.data, and loader cleanup nulls this.loader, and both are read before either.
     const tilemapData = tilemapFile.data;
     const tilemapKey = tilemapFile.key;
     const loader = this.loader;
@@ -60,24 +59,26 @@ export class TiledJSONExternalFile extends MultiFile {
     // But Phaser may call addToCache again for each tileset file completing).
     this.complete = true;
 
-    // Each tileset lands at its own index, so the parses overlap
-    await Promise.all(
-      tilesetFiles.map(async (tilesetFile) => {
-        const responseText = tilesetFile.xhrLoader?.responseText;
-        // Phaser types `url` as `object | string`, so the key is what reliably names the failing tileset
-        if (!responseText) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.key);
+    // Each tileset lands at its own index
+    for (const tilesetFile of tilesetFiles) {
+      const responseText = tilesetFile.xhrLoader?.responseText;
+      // Phaser types `url` as `object | string`, so the key is what reliably names the failing tileset
+      if (!responseText) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.key);
 
-        const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(responseText);
-        const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
-        const index = tilesetFile.tilesetIndex;
-        Object.assign(tilemapData.tilesets[index], tilesetData, {
-          imageheight: tilesetData.image.height,
-          imagewidth: tilesetData.image.width,
-          // Avoid throwing in tilemap creator
-          source: undefined,
-        });
-      }),
-    );
+      const tilesetData = parseTileset(responseText).match(
+        (parsedTileset) => parsedTileset,
+        (error) => {
+          throw error;
+        },
+      );
+      const index = tilesetFile.tilesetIndex;
+      Object.assign(tilemapData.tilesets[index], tilesetData, {
+        imageheight: tilesetData.image?.height,
+        imagewidth: tilesetData.image?.width,
+        // Avoid throwing in tilemap creator
+        source: undefined,
+      });
+    }
 
     loader.cacheManager.tilemap.add(tilemapKey, { data: tilemapData, format: Tilemaps.Formats.TILED_JSON });
 

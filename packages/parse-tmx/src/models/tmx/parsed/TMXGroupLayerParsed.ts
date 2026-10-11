@@ -3,6 +3,6 @@ import type { TMXPropertiesParsed } from "#src/models/tmx/parsed/TMXPropertiesPa
 import type { TMXGroupLayerShared } from "#src/models/tmx/shared/TMXGroupLayerShared";
 
 export interface TMXGroupLayerParsed extends TMXGroupLayerShared {
-  layers: TMXLayerParsed[];
+  layers: (TMXGroupLayerParsed | TMXLayerParsed)[];
   properties?: TMXPropertiesParsed;
 }

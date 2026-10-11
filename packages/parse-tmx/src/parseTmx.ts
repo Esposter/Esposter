@@ -1,65 +1,20 @@
-import type { TMX } from "#src/models/tmx/node/TMX";
-import type { TMXExportNode } from "#src/models/tmx/node/TMXExportNode";
-import type { TMXGroupLayerNode } from "#src/models/tmx/node/TMXGroupLayerNode";
-import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
-import type { TMXPropertyNode } from "#src/models/tmx/node/TMXPropertyNode";
-import type { TMXTilesetNode } from "#src/models/tmx/node/TMXTilesetNode";
+import type { ResultAsync } from "neverthrow";
 
-import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
-import { TMXMapParsed } from "#src/models/tmx/parsed/TMXMapParsed";
 import { TMXParsed } from "#src/models/tmx/parsed/TMXParsed";
-import { parseNode } from "#src/services/parseNode";
-import { parseProperties } from "#src/services/parseProperties";
-import { parseTileset } from "#src/services/parseTileset";
-import { parseXmlString } from "#src/services/parseXmlString";
-import { exhaustiveGuard } from "@esposter/shared";
+import { TMXTagName } from "#src/models/tmx/TMXTagName";
+import { assignTileData } from "#src/services/assignTileData";
+import { readTmxDocument } from "#src/services/readTmxDocument";
+import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
 // Matches phaser's tmx => json tilemap export transformation, and additionally supports external tilesets.
-export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsed> => {
-  const {
-    map: { $, $$ },
-  } = await parseXmlString<TMX>(xmlString);
-  const map = new TMXMapParsed($);
-  const tileCount = map.width * map.height;
+export const parseTmx = (xmlString: string, translateFlips = false): ResultAsync<TMXParsed, Error> =>
+  getResult(() => readTmxDocument(xmlString)).asyncAndThen((document) =>
+    getResultAsync(async () => {
+      const root = document.root;
+      if (root?.tag !== TMXTagName.Map)
+        throw new InvalidOperationError(Operation.Read, parseTmx.name, "has no map root element");
 
-  for (const node of $$) {
-    const tmxNodeType = node["#name"];
-    switch (tmxNodeType) {
-      case TMXNodeType.Data:
-        break;
-      case TMXNodeType.EditorSettings:
-        if (!node.$$) break;
-        map.editorsettings = Object.fromEntries(
-          (node.$$ as TMXExportNode[]).map((exportNode) => [exportNode["#name"], exportNode.$]),
-        );
-        break;
-      case TMXNodeType.Export:
-      case TMXNodeType.Image:
-      case TMXNodeType.Object:
-      case TMXNodeType.Property:
-        break;
-      case TMXNodeType.Group:
-      case TMXNodeType.ImageLayer:
-      case TMXNodeType.Layer:
-      case TMXNodeType.Objectgroup: {
-        // oxlint-disable-next-line no-await-in-loop -- Order is the contract: layers keep the document order the walk meets them in
-        const layer = await parseNode(node as TMXGroupLayerNode | TMXLayerNode, tileCount, translateFlips);
-        map.layers.push(layer);
-        break;
-      }
-      case TMXNodeType.Properties:
-        if (!node.$$) break;
-        // The walk hands the map's properties over as the node's children rather than as the wrapped
-        // Element list every other caller holds
-        map.properties = parseProperties([{ property: node.$$ as TMXPropertyNode[] }]);
-        break;
-      case TMXNodeType.Tileset:
-        map.tilesets.push(parseTileset(node as TMXTilesetNode));
-        break;
-      default:
-        exhaustiveGuard(tmxNodeType);
-    }
-  }
-
-  return new TMXParsed(map);
-};
+      await assignTileData(document.context.pending, translateFlips);
+      return new TMXParsed(root.target);
+    }),
+  );

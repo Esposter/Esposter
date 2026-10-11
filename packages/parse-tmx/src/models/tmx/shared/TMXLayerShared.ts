@@ -1,17 +1,11 @@
-export interface TMXLayerShared {
-  height: number;
-  id: number;
+import type { TMXGroupLayerShared } from "#src/models/tmx/shared/TMXGroupLayerShared";
+
+export interface TMXLayerShared extends TMXGroupLayerShared {
+  color?: string;
+  draworder?: string;
+  height?: number;
   locked?: number;
-  name: string;
-  offsetx?: number;
-  offsety?: number;
-  opacity?: number;
-  parallaxx?: number;
-  parallaxy?: number;
-  tintcolor?: string;
-  type: string;
-  visible?: number;
-  width: number;
+  width?: number;
   x?: number;
   y?: number;
 }

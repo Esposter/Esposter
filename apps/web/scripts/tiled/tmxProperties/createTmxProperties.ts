@@ -16,8 +16,14 @@ export const createTmxProperties = async () => {
   const tilemaps = await Promise.all(
     TilemapKeys.map(async (key) => ({
       key,
-      map: (await parseTmx(await readFile(`${WORLD_ROOT_DIRECTORY}/${getTilemapDirectory(key)}/index.tmx`, "utf8")))
-        .map,
+      map: (
+        await parseTmx(await readFile(`${WORLD_ROOT_DIRECTORY}/${getTilemapDirectory(key)}/index.tmx`, "utf8"))
+      ).match(
+        (tmxParsed) => tmxParsed.map,
+        (error) => {
+          throw error;
+        },
+      ),
     })),
   );
   for (const {
