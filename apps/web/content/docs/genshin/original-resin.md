@@ -25,12 +25,12 @@ flowchart TD
 
 - **One every eight minutes, to 200.** `regenerateOriginalResin` adds a point for each eight minutes since the moment the resin last changed, up to 200. It moves that moment on by the points it gives, so the time to the next point keeps its place. At 200 regeneration stops and the moment is now, so a spend that takes the resin below 200 starts the next point from there.
 - **A refill passes the cap, to 2,000.** `refillOriginalResin` reads the regeneration to now, then adds to the count, filling to 2,000. Above 200 the resin does not regenerate.
-- **Primogem refills, six a game day.** Each restores 60 at 50, 100, 100, 150, 200 and 200 Primogems, the world's own and never sold. `refillOriginalResinWithPrimogems` refuses a refill short of its price, at the 2,000 cap, or once the day's six are used. The game's day starts at 04:00 in UTC+8, the game's server time, so the count restarts at that hour and not at midnight.
-- **A claim's price by its kind.** `computeBlossomClaimResin` prices one claim at a ley line or a domain at 20, a normal boss at 40, and a weekly boss at 30 for each of its first three claims in the week and 60 after them.
+- **Primogem refills, six a game day.** Each restores 60 at its price in `services/originalResin/constants.ts`, paid in the world's own Primogems, which are never sold. `refillOriginalResinWithPrimogems` refuses a refill short of its price, at the 2,000 cap, or once the day's six are used. The game's day starts at 04:00 in UTC+8, the game's server time, so the count restarts at that hour and not at midnight.
+- **A claim's price by its kind.** `computeBlossomClaimResin` prices a claim by its blossom kind, and a weekly boss's by how many claims it has had that week.
 - **A claim's offers.** `computeBlossomClaimOffers` lists how a blossom's claim is paid: one claim at its price; at a ley line or a domain also two claims at twice the price, and a Condensed Resin for three claims. A boss offers its one claim only.
 - **Condensed Resin's claim.** `spendCondensedResin` takes one Condensed Resin out of the bag for a ley line's or a domain's three claims, and refuses a boss. It spends no Original Resin, so it gives no Adventure EXP.
 - **Five Adventure EXP a point.** `claimOriginalResin` spends the resin, then gives five Adventure EXP a point through `gainAdventureExp`, so the EXP past rank 60 is paid into the wallet as Mora. A claim the resin does not cover returns undefined and spends nothing.
-- **Settled calls.** A new player holds the full 200. The resin's rarity is 3, the game's material table's `rankLevel`. Its name is the game's own text, `GameTextKey.OriginalResin`. Both the starting amount and the 04:00 reset are settled from the game's own design rather than checked against the wiki, which was not reachable when they were settled.
+- **Settled calls.** A new player holds the full 200. The resin's rarity is 3, the game's material table's `rankLevel`. Its name is the game's own text, `GameTextKey.OriginalResin`. Both the starting amount and the 04:00 reset are settled from the game's own design rather than checked against the wiki.
 
 ## Data
 
@@ -72,7 +72,6 @@ The top bar's place and type are provisional until a recording measures them. Th
 ## Notes
 
 - **The map reads its count once.** The count is taken when the map opens, so it holds still while the map is up, which is the moment a player reads it.
-- **The rate and the cap are the game's public figures.** They are constants, not measures. Only the top bar's place and type are measured, and they wait on the recording.
 - **A claim's Companionship EXP is a rule of its own.** The claim gives no Companionship EXP itself; a blossom's amount goes to the deployed team through the [companionship](/docs/genshin/companionship) grant, its amounts provisional until recorded.
 
 ## Sources

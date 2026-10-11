@@ -49,30 +49,30 @@ The quality weights the table gives each dish are all the Delicious weight in th
 
 ## Key files
 
-| File                                                                   | Role                                                                            |
-| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/cooking/buildCookingRecipes.ts`    | The dishes record built from the cook recipe table, for publishing              |
-| `scripts/src/services/genshinAssets/cooking/toCookingRecipe.ts`        | One dish row as a recipe, its results' qualities read off their item rows       |
-| `scripts/src/services/genshinAssets/cooking/buildProcessingRecipes.ts` | The processings record built from the compound table, for publishing            |
-| `packages/genshin-world/src/services/cooking/cookRecipeByHand.ts`      | A dish cooked by hand: its quality, a proficiency, the dish into the bag        |
-| `packages/genshin-world/src/services/cooking/autoCookRecipe.ts`        | Auto Cook's batch of up to 99 Delicious dishes, made whole or refused           |
-| `packages/genshin-world/src/services/cooking/pickDishItemId.ts`        | A character's special dish in place of a result, at its chance                  |
-| `packages/genshin-world/src/services/cooking/getCookingQuality.ts`     | The quality of a stop on the zones                                              |
-| `packages/genshin-world/src/services/cooking/startProcessing.ts`       | Units queued with their ingredients taken, the queue's size held                |
-| `packages/genshin-world/src/services/cooking/collectProcessing.ts`     | The units done by a moment taken into the bag, the rest queued                  |
-| `packages/genshin-world/src/services/cooking/applyCampfireElement.ts`  | Pyro lights a campfire, the elements that put it out do                         |
-| `packages/genshin-world/src/services/cooking/applyCampfireWeather.ts`  | Rain puts a campfire in the open out                                            |
-| `packages/genshin-world/src/services/cooking/readCookingRecipes.ts`    | The dishes, a few hundred of them, fetched by their `cooking/recipes` key       |
-| `packages/genshin-world/src/services/cooking/readProcessingRecipes.ts` | The processings, about sixty of them, fetched by their `cooking/processing` key |
+| File                                                                   | Role                                                                      |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `scripts/src/services/genshinAssets/cooking/buildCookingRecipes.ts`    | The dishes record built from the cook recipe table, for publishing        |
+| `scripts/src/services/genshinAssets/cooking/toCookingRecipe.ts`        | One dish row as a recipe, its results' qualities read off their item rows |
+| `scripts/src/services/genshinAssets/cooking/buildProcessingRecipes.ts` | The processings record built from the compound table, for publishing      |
+| `packages/genshin-world/src/services/cooking/cookRecipeByHand.ts`      | A dish cooked by hand: its quality, a proficiency, the dish into the bag  |
+| `packages/genshin-world/src/services/cooking/autoCookRecipe.ts`        | Auto Cook's batch of up to 99 Delicious dishes, made whole or refused     |
+| `packages/genshin-world/src/services/cooking/pickDishItemId.ts`        | A character's special dish in place of a result, at its chance            |
+| `packages/genshin-world/src/services/cooking/getCookingQuality.ts`     | The quality of a stop on the zones                                        |
+| `packages/genshin-world/src/services/cooking/startProcessing.ts`       | Units queued with their ingredients taken, the queue's size held          |
+| `packages/genshin-world/src/services/cooking/collectProcessing.ts`     | The units done by a moment taken into the bag, the rest queued            |
+| `packages/genshin-world/src/services/cooking/applyCampfireElement.ts`  | Pyro lights a campfire, the elements that put it out do                   |
+| `packages/genshin-world/src/services/cooking/applyCampfireWeather.ts`  | Rain puts a campfire in the open out                                      |
+| `packages/genshin-world/src/services/cooking/readCookingRecipes.ts`    | The dishes, fetched by their `cooking/recipes` key                        |
+| `packages/genshin-world/src/services/cooking/readProcessingRecipes.ts` | The processings, fetched by their `cooking/processing` key                |
 
 ## Notes
 
 - **The zones are provisional.** `readCookingZones` reads a recipe's zone parameters as the centre and the width of the regular zone along the bar, and the delicious zone takes a provisional share of that width. Which parameter lays out which zone, and the indicator's speed, are measured off a recording of the cooking screen, owed on the roadmap.
-- **The special dish's order is read, not confirmed.** The chances are matched to the qualities in the order the table lists the results, the order its food qualities confirm. No public source was reachable from this build to check it, so a recording owed on the roadmap confirms it.
+- **The special dish's order is read, not confirmed.** The chances are matched to the qualities in the order the table lists the results, the order its food qualities confirm. No public source confirms it yet, so a recording owed on the roadmap does.
 - **Most processings are closed.** Most are not known from the start, and the table names no instruction that teaches them, all of them in one group. They stay closed until that source is read.
 - **Nothing is placed or on a screen.** The stove and the cooking screen are not built, as with the [crafting](/docs/genshin/crafting) bench, and nothing is eaten: a dish's heal and bonus wait on the [inventory](/docs/proposals/genshin/inventory)'s using and the character kits.
 
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `CookRecipeExcelConfigData`, `CookBonusExcelConfigData` and `CompoundExcelConfigData`, the tables the slices are written from, and `MaterialExcelConfigData`, whose food qualities and instruction uses are read.
-- [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: the zones, proficiency, Auto Cook, special dishes, and stoves and campfires, the rules the proposal settles against. The page was not reachable from this build, so the claims it backs wait on the References sought.
+- [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: the zones, proficiency, Auto Cook, special dishes, and stoves and campfires, the rules the proposal settles against. The claims it backs wait on the References sought.

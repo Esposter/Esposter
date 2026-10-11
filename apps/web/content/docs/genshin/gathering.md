@@ -5,7 +5,7 @@ description: The plants and specialties the official map marks, placed by the fi
 
 # Gathering
 
-The plants and specialties of the open world are the gathering points the [proposal](/docs/proposals/genshin/gathering) describes: a point stands where the official map marks its item, and F picks it into the bag. This page is the first build of that proposal, covering the points of the two categories that are picked, Local Specialties and Inventory / Materials. The ores are published beside them: the same builder places each ore the map marks under Ores, and the world keeps those points out of the pick ups, since an ore is struck until it breaks. The ores are struck by the character's hits until they break, as the ores' rules below give. Mining outcrops and investigation spots wait in the proposal.
+The plants and specialties of the open world are the gathering points the [proposal](/docs/proposals/genshin/gathering) describes: a point stands where the official map marks its item, and F picks it into the bag. This page is the first build of that proposal, covering the points of the two categories that are picked, Local Specialties and Inventory / Materials. The ores are published beside them: the same builder places each ore the map marks under Ores, and the world keeps those points out of the pick ups, since an ore is struck until it breaks. Mining outcrops and investigation spots wait in the proposal.
 
 ## How it works
 
@@ -27,7 +27,7 @@ flowchart TD
 
 ## Reading the tables
 
-The slices and the items are published by `pnpm -C scripts genshin:assets gathering` to the gathering dataset of the [hosted game data](/docs/genshin/hosted-game-data). It reads three tables from the game text dump, the gather table and the material table in `ExcelBinOutput/` and the English text map, and the official map's label tree and fitted points from the references folder. The gather table, which the dump lacked, is fetched from the community's AnimeGameData repository into the dump and never committed.
+The slices and the items are published by `pnpm -C scripts genshin:assets gathering` to the gathering dataset of the [hosted game data](/docs/genshin/hosted-game-data). It reads three tables from the game text dump, the gather table and the material table in `ExcelBinOutput/` and the English text map, and the official map's label tree and fitted points from the references folder. The gather table is fetched from the community's AnimeGameData repository into the dump and never committed.
 
 - **A row is picked off the ground.** A gather row counts when it sits on the ground and saves its pick. The rows that save nothing belong to other pages, such as fishing, animals and events, and are not points here.
 - **An item is named as its label.** The item's English name is matched to the label of the same name the official map files under Local Specialties, Inventory / Materials or Ores. A Magical Crystal Chunk is left out, since a mining outcrop draws it, and so are a Scarlet Quartz, a Rainbowdrop Crystal and an Electro Crystal (shattered from a Tourmaline by Pyro), which have no poise requirement on the wiki's Mineral page. Special Items, which holds the Oculi, is left to the statues' page.
@@ -75,7 +75,7 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 ## Notes
 
 - **Four cooking ingredients and one specialty are left out.** Apple, Starshroom, Bulle Fruit and Candlecap Mushroom are typed as a notice-restoring material the world's material type does not name yet, and Rukkhashava Mushrooms has its map label in the singular. Each is one line to add when its type or name lands.
-- **The stand-ins are the drops' stand-ins, and they cap at 64.** The world draws each PickUp row as a sphere up to the stand-in capacity, in list order, so most of Mondstadt's roughly two thousand points are not drawn yet. Prompts still come from every standing point in reach. A distance cull of the stand-ins is the open part.
+- **The stand-ins are the drops' stand-ins, and they cap at 64.** The world draws each PickUp row as a sphere up to the stand-in capacity, in list order, so most of Mondstadt's points are not drawn yet. Prompts still come from every standing point in reach. A distance cull of the stand-ins is the open part.
 - **The respawns are the wiki's, not measured.** The 46 hours is the wiki's figure, and the midnight is the wiki's reading of the daily spawn. Both wait on a recording of a point picked and watched (see the [roadmap](/docs/genshin/roadmap)).
 
 ## Sources

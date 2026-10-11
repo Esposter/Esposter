@@ -27,13 +27,7 @@ flowchart TD
 
 ## Opening
 
-`openChest` opens one chest. It rolls the kind's Primogems and Mora within their ranges into the wallet and keeps the chest as opened, so a second opening pays nothing. The ranges are the wiki's chest reward table, one range per tier, not banded by Adventure Rank, since the table lists no bands.
-
-| Kind      | Primogems | Mora         |
-| :-------- | :-------- | :----------- |
-| Common    | 0 to 2    | 257 to 996   |
-| Exquisite | 2 to 5    | 756 to 1,367 |
-| Precious  | 5 to 10   | 1,433        |
+`openChest` opens one chest. It rolls the kind's Primogems and Mora within their ranges into the wallet and keeps the chest as opened, so a second opening pays nothing. The ranges are the wiki's chest reward table, one range per tier, not banded by Adventure Rank, since the table lists no bands. `ChestKindRewardMap` holds them.
 
 A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unstated, and Remarkable, whose blueprints are not built, and the buried and sealed places, which the map gives no tier. Each roll is uniform within its range, a provisional draw until a recording of openings reads its spread. Opening also pours out what the wiki lists for the tier, as provisional pools: one weapon picked from the one-star weapons Common and Exquisite chests name, and the Character EXP materials by star with their counts (Wanderer's Advice, Adventurer's Experience, Hero's Wit). The artifacts are not rolled yet, since an artifact needs its slot and rarity, and the pour-out is not yet placed in the world. The high zone-level areas (Dragonspine, the Stormbearer Mountains, Guyun Stone Forest, Lisha and the Chasm) give more Primogems than the default, which the places cannot yet tell, since they name no area.
 

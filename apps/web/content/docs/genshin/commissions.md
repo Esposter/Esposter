@@ -43,7 +43,7 @@ A claim returns the items drawn, Mora and the Adventure EXP and Companionship EX
 
 ## Katheryne's bonus
 
-The fourth claim of the day also draws Katheryne's bonus, for the band the rank the player holds at that moment falls in. The bonus is the game's score preview for each band, read from its level table. At every band it gives 20 Primogems and 500 Adventure EXP, and its Mora and Companionship EXP rise with the band, to 13,175 Mora and 100 Companionship EXP at the top band.
+The fourth claim of the day also draws Katheryne's bonus, for the band the rank the player holds at that moment falls in. The bonus is the game's score preview for each band, read from its level table. Its Primogems and Adventure EXP are the same in every band, and its Mora and Companionship EXP rise with the band.
 
 The Adventure Treasure Pack the wiki lists is not paid. The preview names its item at a count of zero in every band, so the reader leaves it out. Whether the game gives it on the bonus is a recording still owed on the [roadmap](/docs/genshin/roadmap).
 
@@ -51,7 +51,7 @@ The Adventure Treasure Pack the wiki lists is not paid. The preview names its it
 
 `pnpm -C scripts genshin:assets commissions` builds Mondstadt's daily tasks from the game text dump outside the repository and publishes them to the hosted game data as `commissions/mondstadt`. The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that is not the game's twelve bands. `readMondstadtCommissions` fetches the slice by its key from the hosted game data and checks it against its schema as it arrives.
 
-The dump at its revision lacked the three daily task tables, which the [game data formats](/docs/genshin/game-data-formats) page covers, and nothing from them is committed.
+The three daily task tables are fetched rather than read from the dump, as the [game data formats](/docs/genshin/game-data-formats) page covers, and nothing from them is committed.
 
 ## Not built yet
 
@@ -83,4 +83,4 @@ The dump at its revision lacked the three daily task tables, which the [game dat
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `DailyTaskExcelConfigData`, `DailyTaskRewardExcelConfigData` and `DailyTaskLevelExcelConfigData`, the tasks, their reward tiers and the Adventure Rank bands, with `RewardPreviewExcelConfigData` for each reward's items.
-- [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the four commissions a day, the unlock at Adventure Rank 12, and the bonus's items the dump's preview is checked against. The page could not be read when this page was written, so its figures are the dump's.
+- [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the four commissions a day, the unlock at Adventure Rank 12, and the bonus's items the dump's preview is checked against. Its figures are the dump's.

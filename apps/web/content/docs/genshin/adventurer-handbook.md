@@ -13,7 +13,7 @@ The game's Adventurer Handbook tracks a player's progress: the experience chapte
 
 ## Parity
 
-The book is scored whole-frame against `handbook-experience`, the wiki's screenshot of the English client's Experience tab at 3130 by 1730. The screen is still the placeholder book it was built as, so these are its baseline scores, unchanged by the pass: a mean difference of 18.12% and a FLIP of 0.5150. What remains is the Experience page's rows, its investigation panel and rewards, none built yet, and the book's painted paper and item icons, which the repository does not ship. The tab column and close button are the parts a placement pass can move. Their score waits on a masked comparison over several rectangles, which `compare` does not take yet.
+The book is scored whole-frame against `handbook-experience`, the wiki's screenshot of the English client's Experience tab at 3130 by 1730. The screen is still the placeholder book it was built as, so its score stays far from the frame. What remains is the Experience page's rows, its investigation panel and rewards, none built yet, and the book's painted paper and item icons, which the repository does not ship. The tab column and close button are the parts a placement pass can move. Their score waits on a masked comparison over several rectangles, which `compare` does not take yet.
 
 ## Key files
 

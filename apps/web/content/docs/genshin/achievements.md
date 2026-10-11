@@ -27,13 +27,13 @@ flowchart TD
 
 ### The table
 
-`pnpm -C scripts genshin:assets achievements` reads the game's achievement table and its category table from the dump, and publishes two records to the game data, `achievements/achievements` and `achievements/categories`, and writes the count of the achievements it keeps into the world's data folder, which the save's achievement slice is bounded by ([save data](/docs/genshin/save-data)). A disused achievement, one the game no longer offers, is left out; the rest are kept whole, with every trigger, since the screen lists all of a category and a category's end waits on every one of its achievements. Each row is validated against the world's schema before it is published. The records are published compact, the achievements one at about half a megabyte, and the world fetches them by their keys the first time the screen opens.
+`pnpm -C scripts genshin:assets achievements` reads the game's achievement table and its category table from the dump, and publishes two records to the game data, `achievements/achievements` and `achievements/categories`, and writes the count of the achievements it keeps into the world's data folder, which the save's achievement slice is bounded by ([save data](/docs/genshin/save-data)). A disused achievement is left out; the rest are kept whole, with every trigger, since the screen lists all of a category and a category's end waits on every one of its achievements. Each row is validated against the world's schema before it is published. The records are published compact, and the world fetches them by their keys the first time the screen opens.
 
 An achievement keeps its id, its category, its order there, its trigger type and the ids that trigger names, its count, the tier before it, whether it is hidden until it is done, its Primogems and its two text ids. A category keeps its name's text id, its order, and the namecard item its completion pays, which is zero for a category with no end.
 
 ### The words
 
-The same run publishes every title and description of a kept achievement, and every category's name, in the fifteen languages, one record a language under `achievementText`, keyed by the same text ids, as the [names](/docs/genshin/game-text) and the [quests](/docs/genshin/quests) are. A language missing a text takes English's and says so. Each language record runs to a couple of hundred kilobytes, and the screen fetches only the language it shows.
+The same run publishes every title and description of a kept achievement, and every category's name, in the fifteen languages, one record a language under `achievementText`, keyed by the same text ids, as the [names](/docs/genshin/game-text) and the [quests](/docs/genshin/quests) are. A language missing a text takes English's and says so. The screen fetches only the language it shows.
 
 ### Counting a doing
 

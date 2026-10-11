@@ -20,7 +20,7 @@ stateDiagram-v2
 ## Decisions
 
 - **Sent for an offered length.** `sendExpedition` takes a character to a place for one of its durations, 4, 8, 12 or 20 hours. It refuses the Traveler, a character who is down, a character already away, a place that is closed, and a send past the limit. Expeditions open at Adventure Rank 14, the rank the wiki gives, which is also the lowest place's rank.
-- **Two at first, one more at 26, 31 and 36.** `computeExpeditionLimit` starts at two and adds each rank's `expeditionLimitAdd` from the player level table once the rank is reached, so the limit is two to rank 25, three from 26, four from 31 and five from 36.
+- **Two at first, one more at 26, 31 and 36.** `computeExpeditionLimit` starts at two and adds each rank's `expeditionLimitAdd` from the player level table once the rank is reached.
 - **A place opens by its conditions.** `checkIsExpeditionPlaceOpen` needs the place's Adventure Rank reached, its statue resonated with where it names one, and its quest finished where it names one. The statue is named by its scene point: `computeUnlockedStatuePointIds` maps each unlocked landmark to its point through `LandmarkIdStatuePointIdMap`, which holds Windrise's statue as point 4, the only statue the region data holds.
 - **Returned from the moment it left.** `checkIsExpeditionReturned` moves the moment a send left on by its hours, so an expedition returns once its hours have passed, whether or not its screen is open, as the game's timer does. It returns at exactly that moment, not a nanosecond before.
 - **The reward is the place's preview.** A duration's reward is its reward preview's items, each with a count drawn from its least to its most by the caller's random source, as the wish pull takes its source. The game's reward ids for expeditions, 205010100 and its kin, are in no table the dump holds, so the preview is read as the reward. Mora (item 202) goes to the wallet, every other item to the bag.
@@ -31,7 +31,7 @@ stateDiagram-v2
 
 ## Data
 
-- **Read from the game's tables:** `ExpeditionDataExcelConfigData` for each place's nation, its rank and statue and quest conditions, and its durations and reward previews; `RewardPreviewExcelConfigData` for the items and their counts; and `PlayerLevelExcelConfigData` for each rank's `expeditionLimitAdd`. The three expedition tables and the reward preview table are fetched from the community's dump into the game's text directory, which the dump lacked, and not committed.
+- **Read from the game's tables:** `ExpeditionDataExcelConfigData` for each place's nation, its rank and statue and quest conditions, and its durations and reward previews; `RewardPreviewExcelConfigData` for the items and their counts; and `PlayerLevelExcelConfigData` for each rank's `expeditionLimitAdd`. The three expedition tables and the reward preview table are fetched from the community's dump into the game's text directory and not committed.
 - **Published by** `pnpm -C scripts genshin:assets expeditions`, which publishes Mondstadt's places as the record `expeditions/mondstadt` and the limit's ranks as `expeditions/limits` to the hosted game data. `pnpm -C scripts genshin:assets items` writes the expedition materials into the items data beside the drops'.
 - **Not read by this page:** "ExpeditionPathExcelConfigData" names the Adventurers' Guild's expedition missions, each with its team's elements, and "ExpeditionBonusExcelConfigData" gives a chance of a bonus by the sent character's level. Neither is a place to send a character, and neither's effect is in the tables read.
 
@@ -66,4 +66,4 @@ stateDiagram-v2
 ## Sources
 
 - [Expedition](https://genshin-impact.fandom.com/wiki/Expedition), Genshin Impact Wiki: the unlock at rank 14 through Katheryne, any character but the Traveler for 4, 8, 12 or 20 hours, still usable while away, places opened by their statues, the timer running offline, recall forfeiting the reward, and two at once rising with rank.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the expedition tables, the reward previews and the player level table's expedition limit.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the expedition tables, the reward previews and the player level table's expedition limit.
