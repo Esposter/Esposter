@@ -9,10 +9,13 @@ import { getResult, noop } from "@esposter/shared";
 // Before anything is pushed, so the skip loses nothing. The first stop `parkStop` declines is left open, mid-pick, for
 // The caller's resolver. Whether the sequence ran to its end is the answer; every turn lands or skips a commit, so the
 // Replay's own length bounds it.
+// A sequence left open with no pick in progress is git refusing the next pick over a dirty path it touches. No commit
+// Names that stop, so there is nothing to park or resolve: it is left open for the caller to name.
 export const skipStops = (cwd: string, turnCount: number, parkStop: (stoppedSha: string) => boolean): boolean => {
   for (let turn = 0; turn < turnCount; turn++) {
     if (resolveLockfileConflicts(cwd, turnCount)) return true;
-    else if (!parkStop(readSha("CHERRY_PICK_HEAD", cwd) ?? "")) return false;
+    const stoppedSha = readSha("CHERRY_PICK_HEAD", cwd);
+    if (stoppedSha === undefined || !parkStop(stoppedSha)) return false;
     // `--skip` exits non-zero on the next stop as readily as on a failure, so the loop asks the sequencer instead
     getResult(() => runGit(["cherry-pick", "--skip"], cwd)).match(noop, (error) => {
       console.error(error);
