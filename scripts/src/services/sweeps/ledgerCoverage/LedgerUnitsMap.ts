@@ -1,7 +1,10 @@
+import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
+import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
+import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNames";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 // The ledgers whose units are the tree's own entries rather than a pass's choice of directories, each with the
@@ -9,6 +12,11 @@ import { join } from "node:path";
 // Filesystem rather than `git ls-files`, so the workspace test that holds a ledger to its listing runs inside
 // Virrun's overlay, which carries the files and not the repository.
 export const LedgerUnitsMap: Record<string, () => string[]> = {
+  dependencies: () =>
+    parseWorkspaceEntries(
+      DependencyGroup.Catalog,
+      getSection(DependencyGroup.Catalog, readFileSync(join(REPOSITORY_ROOT, "pnpm-workspace.yaml"), "utf8")),
+    ).map(({ packageName }) => `\`${packageName}\``),
   "docs/skills": () => {
     const skillsDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY);
     const vendoredSkillNames = readVendoredSkillNames();
