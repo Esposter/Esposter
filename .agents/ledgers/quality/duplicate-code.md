@@ -13,7 +13,7 @@ Where a finding's home looked missing, it is settled:
 - **Claude mods:** a pure helper is shared through a relative import inside the plugin. Only a function calling `$`, or making an atom, stays in its register file, as the engine requires.
 - **Styles:** they are shared through a shared component or stylesheet, and the visual suites stay unchanged. A style edit is never landed through a `-u`.
 - **Measured data:** a clone made only of numeric literal rows is data, not code. The finder skips it.
-- **Across Claude plugins:** a clone whose two sides sit in two different plugins (a package with `.claude-plugin/plugin.json`) is not a finding, since each plugin installs standalone with no build and cannot share a file.
+- **Across Claude plugins:** a clone whose two sides sit in two different plugins (a package with a `.claude-plugin` folder) is not a finding, since each plugin installs standalone with no build and cannot share a file.
 - **Engine-bound register code:** a clone of two `register*.ts` files under a plugin's `src/services` is not a finding, since the engine keeps each `$` call and atom in its own register file. A pure helper in any other file stays a finding.
 - **Declarations and component preamble:** a clone made only of imports, interface and type bodies, `defineProps`, `defineEmits` and `defineModel` calls, or bare composable bindings is each file's own list of what it holds, not logic. The finder skips it.
 - **Enum-keyed record rows:** a clone made only of the rows of a `Record` keyed by an enum is data a table holds. The finder skips it.
