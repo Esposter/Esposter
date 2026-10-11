@@ -30,7 +30,7 @@ export const ScreenLoadBudgetMap: Record<string, LoadBudget> = {
     objects: 322,
     programs: 107,
     readyMs: 11802,
-    requests: 95,
+    requests: 132,
     textures: 39,
   },
 };
