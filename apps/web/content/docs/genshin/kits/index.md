@@ -260,6 +260,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Heizou](/docs/genshin/kits/heizou)                 | Heartstopper Strike, Vacuum Slugger and Windmuster Iris              |
 | [Hu Tao](/docs/genshin/kits/hu-tao)                 | Her string, charged attack and Guide to Afterlife's Paramita stance  |
 | [Iansan](/docs/genshin/kits/iansan)                 | Three strikes, the charged attack and Thunderbolt Rush               |
+| [Ifa](/docs/genshin/kits/ifa)                       | Three strikes, the charged attack and her plunges                    |
 | [Itto](/docs/genshin/kits/itto)                     | Masatsu Zetsugi, Ushi and the Arataki Kesagiri                       |
 | [Jean](/docs/genshin/kits/jean)                     | Gale Blade and Dandelion Breeze's field                              |
 | [Kaeya](/docs/genshin/kits/kaeya)                   | Frostgnaw and Glacial Waltz's icicles                                |
