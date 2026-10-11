@@ -3,11 +3,14 @@ import { getWorkerTimers } from "@/services/shared/getWorkerTimers";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/shared/createWorkerTimers"), () => ({
-  createWorkerTimers: vi.fn<() => object>(() => ({})),
+  createWorkerTimers: vi.fn<typeof createWorkerTimers>(() => ({
+    clearInterval: vi.fn<ReturnType<typeof createWorkerTimers>["clearInterval"]>(),
+    clearTimeout: vi.fn<ReturnType<typeof createWorkerTimers>["clearTimeout"]>(),
+    setInterval: vi.fn<ReturnType<typeof createWorkerTimers>["setInterval"]>(),
+    setTimeout: vi.fn<ReturnType<typeof createWorkerTimers>["setTimeout"]>(),
+  })),
 }));
-vi.mock(import("@/workers/shared/timer.worker?worker"), () => ({
-  default: class TimerWorkerStub extends EventTarget {},
-}));
+vi.mock(import("@/workers/shared/timer.worker?worker"), () => ({ default: vi.fn<() => Worker>() }));
 
 describe(getWorkerTimers, () => {
   test("makes its worker on first use, once, and hands the same timers to every caller", () => {

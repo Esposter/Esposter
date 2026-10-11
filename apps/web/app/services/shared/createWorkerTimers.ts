@@ -4,13 +4,13 @@ import type { TimerResponse } from "@/models/shared/TimerResponse";
 import { TimerMethod } from "@/models/shared/TimerMethod";
 
 interface PendingTimer {
-  callback: (...args: unknown[]) => void;
+  callback: () => void;
   isInterval: boolean;
 }
 
 // The page side of the timer worker: ids start at 1 as the spec requires, a call to clear an id that is not pending
 // Does nothing as the spec does, and a timeout is forgotten as it fires
-export const createWorkerTimers = (worker: Worker) => {
+export const createWorkerTimers = (worker: Pick<Worker, "addEventListener" | "postMessage">) => {
   const pendingTimers = new Map<number, PendingTimer>();
   let lastId = 0;
 
@@ -27,15 +27,10 @@ export const createWorkerTimers = (worker: Worker) => {
     worker.postMessage(request);
   };
 
-  const schedule = (
-    method: TimerMethod.SetInterval | TimerMethod.SetTimeout,
-    callback: (...args: unknown[]) => void,
-    delayMs = 0,
-    args: unknown[] = [],
-  ) => {
+  const schedule = (method: TimerMethod.SetInterval | TimerMethod.SetTimeout, callback: () => void, delayMs = 0) => {
     lastId += 1;
     const id = lastId;
-    pendingTimers.set(id, { callback: () => callback(...args), isInterval: method === TimerMethod.SetInterval });
+    pendingTimers.set(id, { callback, isInterval: method === TimerMethod.SetInterval });
     post({ delayMs, id, method } satisfies TimerRequest);
     return id;
   };
@@ -53,9 +48,21 @@ export const createWorkerTimers = (worker: Worker) => {
     clearTimeout: (id: number) => {
       clear(TimerMethod.ClearTimeout, id);
     },
-    setInterval: (callback: (...args: unknown[]) => void, delayMs?: number, ...args: unknown[]) =>
-      schedule(TimerMethod.SetInterval, callback, delayMs, args),
-    setTimeout: (callback: (...args: unknown[]) => void, delayMs?: number, ...args: unknown[]) =>
-      schedule(TimerMethod.SetTimeout, callback, delayMs, args),
+    setInterval: <TArgs extends unknown[]>(callback: (...args: TArgs) => void, delayMs?: number, ...args: TArgs) =>
+      schedule(
+        TimerMethod.SetInterval,
+        () => {
+          callback(...args);
+        },
+        delayMs,
+      ),
+    setTimeout: <TArgs extends unknown[]>(callback: (...args: TArgs) => void, delayMs?: number, ...args: TArgs) =>
+      schedule(
+        TimerMethod.SetTimeout,
+        () => {
+          callback(...args);
+        },
+        delayMs,
+      ),
   };
 };

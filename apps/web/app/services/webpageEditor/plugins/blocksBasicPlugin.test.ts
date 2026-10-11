@@ -1,4 +1,6 @@
 // @vitest-environment happy-dom
+import type { Block } from "grapesjs";
+
 import { blocksBasicPlugin } from "@/services/webpageEditor/plugins/blocksBasicPlugin";
 import grapesJS, { usePlugin } from "grapesjs";
 import { describe, expect, test } from "vitest";
@@ -13,7 +15,7 @@ describe(blocksBasicPlugin, () => {
     const editor = createEditor();
     const blocks = editor.Blocks.getAll();
 
-    expect(blocks.map((block) => block.getId())).toStrictEqual([
+    expect(blocks.map((block: Block) => block.getId())).toStrictEqual([
       "column1",
       "column2",
       "column3",
@@ -24,7 +26,7 @@ describe(blocksBasicPlugin, () => {
       "video",
       "map",
     ]);
-    expect(blocks.map((block) => block.getCategoryLabel())).toStrictEqual(blocks.map(() => "Basic"));
+    expect(blocks.map((block: Block) => block.getCategoryLabel())).toStrictEqual(blocks.map(() => "Basic"));
   });
 
   test("#52 video block carries no default src, so dropping it requests no file", () => {
