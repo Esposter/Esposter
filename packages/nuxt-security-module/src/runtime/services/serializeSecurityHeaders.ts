@@ -8,13 +8,17 @@ import { serializeContentSecurityPolicy } from "#src/runtime/services/serializeC
 import { serializePermissionsPolicy } from "#src/runtime/services/serializePermissionsPolicy";
 import { serializeStrictTransportSecurity } from "#src/runtime/services/serializeStrictTransportSecurity";
 
+const checkIsSecurityHeaderKey = (key: string): key is keyof SecurityHeaders =>
+  Object.hasOwn(SECURITY_HEADER_NAMES, key);
+
 // The response header and value of every header that is set.
 // A header that is `false` or unset is left out entirely, so `false` never reaches the wire as an empty header
 export const serializeSecurityHeaders = (headers: SecurityHeaders): Record<string, string> =>
   Object.fromEntries(
-    Object.entries(SECURITY_HEADER_NAMES).flatMap(([key, name]) => {
+    Object.keys(headers).flatMap((key) => {
+      if (!checkIsSecurityHeaderKey(key)) return [];
       const value = headers[key];
-      return value === false || value === undefined ? [] : [[name, serializeValue(key, value)]];
+      return value === false || value === undefined ? [] : [[SECURITY_HEADER_NAMES[key], serializeValue(key, value)]];
     }),
   );
 
