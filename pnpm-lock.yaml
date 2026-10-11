@@ -164,9 +164,6 @@ settings:
 
 catalogs:
   default:
-    '@2toad/profanity':
-      specifier: ^3.3.0
-      version: 3.3.0
     '@anthropic-ai/claude-agent-sdk':
       specifier: ^0.3.296
       version: 0.3.296
@@ -1068,9 +1065,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@2toad/profanity':
-        specifier: 'catalog:'
-        version: 3.3.0
       '@azure/data-tables':
         specifier: 'catalog:'
         version: 13.3.2(supports-color@8.1.1)
@@ -2706,10 +2700,6 @@ importers:
         version: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/browser-playwright@5.0.3)(@vitest/browser-preview@5.0.3)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(happy-dom@20.14.6)(msw@3.0.3(@types/node@26.6.5)(supports-color@8.1.1)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
 packages:
-
-  '@2toad/profanity@3.3.0':
-    resolution: {integrity: sha512-hBptHbB6Regs5AgtHiLr/WfgHRh6ZGdA9EexOWU14n2eNjQekvK9/gg18iFUYvL2WrNb4X3Ci0bzgzJXhzmpNQ==}
-    engines: {node: '>=12'}
 
   '@alloc/quick-lru@5.3.0':
     resolution: {integrity: sha512-U4+70Pc5ZS9osnCBCE5Jha/ciHM+Yp+CNMNC/7HvYbNRk1Ldd+f7qO65W5qfhu/TCv+/ozljlXXe9Nj8419DMA==}
@@ -15692,8 +15682,6 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
-
-  '@2toad/profanity@3.3.0': {}
 
   '@alloc/quick-lru@5.3.0': {}
 

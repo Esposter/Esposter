@@ -1,6 +1,6 @@
 import type { ProcedureBuilder } from "@trpc/server/unstable-core-do-not-import";
 
-import { profanity } from "@2toad/profanity";
+import { checkContainsProfanity } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const addProfanityFilterMiddleware = <
@@ -22,7 +22,7 @@ export const addProfanityFilterMiddleware = <
       if (value === null || value === undefined || value === "") continue;
       else if (typeof value !== "string")
         throw new TRPCError({ code: "BAD_REQUEST", message: `${key} must be a string.` });
-      else if (profanity.exists(value))
+      else if (checkContainsProfanity(value))
         throw new TRPCError({ code: "BAD_REQUEST", message: `${key} contains profanity.` });
     }
     return next();

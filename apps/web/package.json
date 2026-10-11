@@ -64,7 +64,6 @@
     "zstd:gen": "tsx --tsconfig tsconfig.root.json scripts/zstd/index.ts"
   },
   "dependencies": {
-    "@2toad/profanity": "catalog:",
     "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/search-documents": "catalog:",

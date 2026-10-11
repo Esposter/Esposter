@@ -1,6 +1,6 @@
 import type { UiRule } from "@/models/ui/UiRule";
 
-import { profanity } from "@2toad/profanity";
+import { checkContainsProfanity } from "@esposter/shared";
 
 // Every rule a field takes, each worded the same way so a field mixing them reads as one form: "You must enter a
 // Minimum of {n} characters" beside "You must enter a value of at least {n}". An empty field passes every rule but
@@ -9,7 +9,7 @@ export const UiRules = {
   isNotProfanity:
     (message = "This field cannot contain profanity"): UiRule =>
     (value) =>
-      !profanity.exists(value) || message,
+      !checkContainsProfanity(value) || message,
   maxLength:
     (maximum: number, message = `You must enter a maximum of ${maximum} characters`): UiRule =>
     (value) =>
