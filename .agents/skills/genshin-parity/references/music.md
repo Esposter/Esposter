@@ -1,6 +1,6 @@
 # Music
 
-Read when recreating a piece of the game's music, or when changing the fit, the player or the listening score. How it works and why is `apps/web/content/docs/genshin/music.md`. This page is the order a new piece takes and the rules each step keeps; the music is half of a screen's audio pass, its sound effects the other (`references/sound.md`).
+Read when recreating a piece of the game's music, or when changing the fit, the player or the listening score. How it works and why is `apps/web/content/docs/genshin/music/index.md`. This page is the order a new piece takes and the rules each step keeps; the music is half of a screen's audio pass, its sound effects the other (`references/sound.md`).
 
 ## A new piece, in order
 
