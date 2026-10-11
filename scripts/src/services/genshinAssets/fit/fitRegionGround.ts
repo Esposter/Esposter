@@ -26,7 +26,7 @@ import { computeMean } from "#src/services/recreation/statistics/computeMean";
 import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResidualFade } from "genshin-engine";
-import { GameDataset } from "genshin-world";
+import { GameDataset, regionGroundSchema } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -190,6 +190,10 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
       ).values.filter(Number.isFinite);
       return `${roundFitted(compute([...values]))}${unit} within ${within}`;
     }).join(", ");
+  const ground = { ...hills, features, ...computeGroundBounds(heightGrid.values), residual };
+  // The reader parses the ground against its schema, which refuses a value JSON cannot hold, such as a NaN written out as
+  // Null, so a ground the reader would refuse throws here, before anything is published
+  regionGroundSchema.parse(ground);
   const getShareReport = (checkIsCounted: (weight: number) => boolean): string =>
     `${roundFitted((100 * fade.weights.filter(checkIsCounted).length) / fade.weights.length)}%`;
   return {
@@ -215,8 +219,6 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
         .join(", ")}`,
       `ground: the residual's power by octave against the faded leftover's, as the change over its scale, ${octaveScales.map((scale) => `${roundFitted(computeLagDifference(drawnResidual, scale))} against ${roundFitted(computeLagDifference(fadedRemainder, scale))} metres at ${scale}`).join(", ")}`,
     ],
-    objects: {
-      [`${GameDataset.Ground}/${region}`]: { ...hills, features, ...computeGroundBounds(heightGrid.values), residual },
-    },
+    objects: { [`${GameDataset.Ground}/${region}`]: ground },
   };
 };
