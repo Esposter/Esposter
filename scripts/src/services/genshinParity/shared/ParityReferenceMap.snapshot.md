@@ -37,6 +37,7 @@ committed.
 | `inventory-food` | `InventoryScreen` | 3.44% | 0.873 | 2.31% | 0.1928 |
 | `inventory-weapons` | `InventoryScreen` | 16.34% | 0.523 | 12.38% | 0.4942 |
 | `liyue-harbor-location` | `WorldScreen` | 29.33% | 0.303 | 24.45% | 0.8094 |
+| `reputation-screen` | `ReputationScreen` | 6.13% | 0.380 | 5.39% | 0.2658 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
 | `login-dawn-title` | `LoginScreen` | 10.30% | 0.479 | 7.30% | 0.4135 |
 | `login-day-title` | `LoginScreen` | 12.93% | 0.333 | 9.86% | 0.4689 |
