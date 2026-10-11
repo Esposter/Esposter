@@ -2,7 +2,7 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { WeaponTypeAttackEnergyChanceMap } from "#src/services/combat/energy/WeaponTypeAttackEnergyChanceMap";
 import { describe, expect, test } from "vitest";
 
-describe("WeaponTypeAttackEnergyChanceMap", () => {
+describe("weaponTypeAttackEnergyChanceMap", () => {
   test.each<[WeaponType, number]>([
     [WeaponType.Sword, 4.52],
     [WeaponType.Bow, 6.29],

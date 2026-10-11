@@ -1,9 +1,9 @@
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { WorldLevelAdjustment } from "#src/models/adventureRank/WorldLevelAdjustment";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
-import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { WishPity } from "#src/models/wish/WishPity";

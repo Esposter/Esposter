@@ -2,8 +2,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
+import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 
 const NORTHERN_SMOKED_CHICKEN_ID = 333_004;
 
