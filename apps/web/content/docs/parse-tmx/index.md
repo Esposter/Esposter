@@ -47,7 +47,7 @@ flowchart TD
 
 ## Upstream
 
-Every issue of the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser) repository, open and closed, read with its comments and given one verdict by the [dependency admission triage](/docs/architecture/dependency-admission). The repository has three issues, and its pull requests are dependency updates, which the catalog owns.
+Every issue of the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser) repository, open and closed, graded by the [dependency admission triage](/docs/architecture/dependency-admission). The repository has three issues, and its pull requests are dependency updates, which the catalog owns.
 
 | Upstream                                                                                | Verdict            | Proof                                                                                                                                                      |
 | --------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |

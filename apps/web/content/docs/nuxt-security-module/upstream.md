@@ -5,7 +5,7 @@ description: Every issue and pull request on Baroshem/nuxt-security, open and cl
 
 # nuxt-security upstream audit
 
-This is the audit [nuxt-security-module](/docs/nuxt-security-module) owes before its code: every issue and pull request on [Baroshem/nuxt-security](https://github.com/Baroshem/nuxt-security), open and closed, read with its comments, and given one verdict from the [dependency admission](/docs/architecture/dependency-admission) triage. The verdicts are the audit's record. Each defect's regression test lands with the code in the next phase, named after its issue, and must fail against the upstream package before it passes against ours.
+This is the audit [nuxt-security-module](/docs/nuxt-security-module) owes before its code: every issue and pull request on [Baroshem/nuxt-security](https://github.com/Baroshem/nuxt-security), open and closed, and graded by the [dependency admission](/docs/architecture/dependency-admission) triage. The verdicts are the audit's record. Each defect's regression test lands with the code in the next phase, named after its issue, and must fail against the upstream package before it passes against ours.
 
 ## How it was read
 
