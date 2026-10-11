@@ -4,6 +4,7 @@ import type { z } from "zod";
 
 import MessageRightSideBarSearchInput from "@/components/Message/RightSideBar/Search/Input.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
+import { CREATED_AT_DESCENDING_SORT_ITEM, DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { FilterType } from "@esposter/db-schema";
@@ -82,7 +83,14 @@ describe("messageRightSideBarSearchInput", () => {
     await isSearchHistoryCreated;
     await flushPromises();
 
-    expect(searchMessages).toHaveBeenCalledExactlyOnceWith({ filters: [], offset: undefined, query, roomId });
+    expect(searchMessages).toHaveBeenCalledExactlyOnceWith({
+      filters: [],
+      limit: DEFAULT_READ_LIMIT,
+      offset: 0,
+      query,
+      roomId,
+      sortBy: [CREATED_AT_DESCENDING_SORT_ITEM],
+    });
   });
 
   // The colon is what converts, so the chip is added mid-typing and Enter has nothing left to search on
@@ -108,9 +116,11 @@ describe("messageRightSideBarSearchInput", () => {
     expect(selectedFilters.value).toStrictEqual([]);
     expect(searchMessages).toHaveBeenCalledExactlyOnceWith({
       filters: [],
-      offset: undefined,
+      limit: DEFAULT_READ_LIMIT,
+      offset: 0,
       query: colonQuery,
       roomId,
+      sortBy: [CREATED_AT_DESCENDING_SORT_ITEM],
     });
   });
 });
