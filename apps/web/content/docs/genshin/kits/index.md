@@ -353,116 +353,117 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 
 ## Characters
 
-| Page                                                | Covers                                                                            |
-| :-------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| [Aino](/docs/genshin/kits/aino)                     | Three strikes, a provisional charged attack, Musecatcher and Cool Your Jets Ducky |
-| [Albedo](/docs/genshin/kits/albedo)                 | Solar Isotoma, Transient Blossoms and the Fatal Blossoms                          |
-| [Alhaitham](/docs/genshin/kits/alhaitham)           | Universality's tap and hold, Particular Field and Projection Attacks              |
-| [Aloy](/docs/genshin/kits/aloy)                     | Freeze Bomb and Rushing Ice                                                       |
-| [Amber](/docs/genshin/kits/amber)                   | Explosive Puppet's Baron Bunny and Fiery Rain                                     |
-| [Arlecchino](/docs/genshin/kits/arlecchino)         | Invitation to a Beheading and All Is Ash's Spike and Cleave                       |
-| [Baizhu](/docs/genshin/kits/baizhu)                 | Universal Diagnosis and Holistic Revivification's seamless shield                 |
-| [Barbara](/docs/genshin/kits/barbara)               | Let the Show Begin♪ droplets, Melody Loop and Shining Miracle♪                    |
-| [Beidou](/docs/genshin/kits/beidou)                 | Tidecaller's shield and the Thunderbeast's Targe                                  |
-| [Bennett](/docs/genshin/kits/bennett)               | Passion Overload's Charge Levels and Fantastic Voyage's field                     |
-| [Candace](/docs/genshin/kits/candace)               | Heron's Sanctum's shields and Wagtail's Tide's Prayer                             |
-| [Charlotte](/docs/genshin/kits/charlotte)           | Framing's press, its Snappy Silhouette marks, Still Photo and Kamera              |
-| [Chasca](/docs/genshin/kits/chasca)                 | Four strikes, the charged Aimed Shot and Galesplitting's first hit                |
-| [Chevreuse](/docs/genshin/kits/chevreuse)           | Rapid Interdiction Fire's hold and Ring of Bursting Grenades                      |
-| [Chiori](/docs/genshin/kits/chiori)                 | Fluttering Hasode's Tamoto doll and Hiyoku: Twin Blades                           |
-| [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                                        |
-| [Citlali](/docs/genshin/kits/citlali)               | Three strikes, the charged attack and Ice Storm                                   |
-| [Clorinde](/docs/genshin/kits/clorinde)             | Five strikes, the charged attack and Last Lightfall                               |
-| [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap                            |
-| [Columbina](/docs/genshin/kits/columbina)           | Three strikes, the charged attack, and the skill's press and DoT field            |
-| [Cyno](/docs/genshin/kits/cyno)                     | Chasmic Soulfarer and Pactsworn Pathclearer's Mortuary Rite                       |
-| [Dahlia](/docs/genshin/kits/dahlia)                 | Four strikes, charged attack, Immersive Ordinance, Radiant Psalter                |
-| [Dehya](/docs/genshin/kits/dehya)                   | Molten Inferno and Incineration Drive                                             |
-| [Diluc](/docs/genshin/kits/diluc)                   | Searing Onslaught and Dawn                                                        |
-| [Diona](/docs/genshin/kits/diona)                   | Icy Paws and Signature Mix's field                                                |
-| [Dori](/docs/genshin/kits/dori)                     | Alcazarzaray's Exactitude's Connector field and Troubleshooter Shot               |
-| [Durin](/docs/genshin/kits/durin)                   | Tap E's window, Confirmation of Purity and Denial of Darkness, and both Dragons   |
-| [Emilie](/docs/genshin/kits/emilie)                 | Four strikes, Lumidouce Case's summon hit and Spiritbreath Thorn                  |
-| [Escoffier](/docs/genshin/kits/escoffier)           | Three strikes, Low-Temperature Cooking and Scoring Cuts                           |
-| [Eula](/docs/genshin/kits/eula)                     | Grimheart stacks, Icewhirls and Glacial Illumination                              |
-| [Faruzan](/docs/genshin/kits/faruzan)               | Wind Realm of Nasamjnin and the Dazzling Polyhedron                               |
-| [Fischl](/docs/genshin/kits/fischl)                 | Oz, Midnight Phantasmagoria and Thundering Retribution                            |
-| [Flins](/docs/genshin/kits/flins)                   | Manifest Flame's press and Cometh the Night's initial and final hits              |
-| [Freminet](/docs/genshin/kits/freminet)             | Pressurized Floe's Upward Thrust and Shadowhunter's Ambush                        |
-| [Furina](/docs/genshin/kits/furina)                 | Salon Solitaire's members and Singer, Fanfare and the Arkhe hits                  |
-| [Gaming](/docs/genshin/kits/gaming)                 | Stellar Rend, Bestial Ascent and Suanni's Gilded Dance                            |
-| [Ganyu](/docs/genshin/kits/ganyu)                   | Frostflake Arrow, Ice Lotus and Celestial Shower                                  |
-| [Gorou](/docs/genshin/kits/gorou)                   | General's War Banner and Crystal Collapse                                         |
-| [Heizou](/docs/genshin/kits/heizou)                 | Heartstopper Strike, Vacuum Slugger and Windmuster Iris                           |
-| [Hu Tao](/docs/genshin/kits/hu-tao)                 | Her string, charged attack and Guide to Afterlife's Paramita stance               |
-| [Iansan](/docs/genshin/kits/iansan)                 | Three strikes, the charged attack and Thunderbolt Rush                            |
-| [Ifa](/docs/genshin/kits/ifa)                       | Three strikes, the charged attack and her plunges                                 |
-| [Ineffa](/docs/genshin/kits/ineffa)                 | Four strikes, charged attack, Cleaning Mode, Cyclonic Exterminator                |
-| [Itto](/docs/genshin/kits/itto)                     | Masatsu Zetsugi, Ushi and the Arataki Kesagiri                                    |
-| [Jahoda](/docs/genshin/kits/jahoda)                 | Three strikes, the charged shot and Savvy Strategy's pursuit                      |
-| [Jean](/docs/genshin/kits/jean)                     | Gale Blade and Dandelion Breeze's field                                           |
-| [Kaeya](/docs/genshin/kits/kaeya)                   | Frostgnaw and Glacial Waltz's icicles                                             |
-| [Kamisato Ayaka](/docs/genshin/kits/kamisato-ayaka) | Soumetsu's storms and Senho's infusion                                            |
-| [Kamisato Ayato](/docs/genshin/kits/kamisato-ayato) | Kyouka's Soukai Kanka stance and Suiyuu's field                                   |
-| [Kaveh](/docs/genshin/kits/kaveh)                   | Artistic Ingenuity and Painted Dome                                               |
-| [Kazuha](/docs/genshin/kits/kazuha)                 | Chihayaburu and Kazuha Slash's Autumn Whirlwind                                   |
-| [Keqing](/docs/genshin/kits/keqing)                 | Stellar Restoration and Starward Sword                                            |
-| [Kinich](/docs/genshin/kits/kinich)                 | Three strikes, charged attack and the burst's first hit                           |
-| [Kirara](/docs/genshin/kits/kirara)                 | Tail-Flicking Flying Kick's shield and Secret Art: Surprise Dispatch              |
-| [Klee](/docs/genshin/kits/klee)                     | Jumpy Dumpty, Sparks 'n' Splash and Sparkly Explosion                             |
-| [Kokomi](/docs/genshin/kits/kokomi)                 | Bake-Kurage and Nereid's Ascension                                                |
-| [Kujou Sara](/docs/genshin/kits/kujou-sara)         | The Cover and its Ambush                                                          |
-| [Kuki](/docs/genshin/kits/kuki)                     | Grass Ring of Sanctification                                                      |
-| [Lan Yan](/docs/genshin/kits/lan-yan)               | Four strikes, the charged attack and Lustrous Moonrise                            |
-| [Lauma](/docs/genshin/kits/lauma)                   | Three strikes, the charged attack and Hymn of Hunting                             |
-| [Layla](/docs/genshin/kits/layla)                   | Nights of Formal Focus and Starlight Slug                                         |
-| [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                                     |
-| [Lynette](/docs/genshin/kits/lynette)               | Enigmatic Feint and the Bogglecat Box of Magic Trick                              |
-| [Lyney](/docs/genshin/kits/lyney)                   | Bewildering Lights and the Prop Arrow's Grin-Malkin Hat                           |
-| [Mavuika](/docs/genshin/kits/mavuika)               | Four strikes, the charged attack and her plunges                                  |
-| [Mika](/docs/genshin/kits/mika)                     | Starfrost Swirl and Skyfeather Song                                               |
-| [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                                  |
-| [Mualani](/docs/genshin/kits/mualani)               | Three strikes, the charged attack and Boomsharka-laka                             |
-| [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                                         |
-| [Navia](/docs/genshin/kits/navia)                   | Rosula Shardshot and As the Sunlit Sky's Singing Salute                           |
-| [Neuvillette](/docs/genshin/kits/neuvillette)       | Hydro strikes, his skill and his burst                                            |
-| [Nicole](/docs/genshin/kits/nicole)                 | Three strikes, the charged attack, and the skill's and burst's hits               |
-| [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi                           |
-| [Ningguang](/docs/genshin/kits/ningguang)           | Star Jades, Jade Screen and Starshatter                                           |
-| [Noelle](/docs/genshin/kits/noelle)                 | Breastplate and Sweeping Time                                                     |
-| [Ororon](/docs/genshin/kits/ororon)                 | Three strikes, Aimed Shot, Spirit Orb and Dark Voices' Echo                       |
-| [Qiqi](/docs/genshin/kits/qiqi)                     | Herald of Frost and Fortune-Preserving Talisman                                   |
-| [Raiden Shogun](/docs/genshin/kits/raiden-shogun)   | The Eye and Musou Isshin                                                          |
-| [Razor](/docs/genshin/kits/razor)                   | Electro Sigils, the Wolf Within and Lightning Fang                                |
-| [Rosaria](/docs/genshin/kits/rosaria)               | Ravaging Confession and Rites of Termination                                      |
-| [Sayu](/docs/genshin/kits/sayu)                     | Fuufuu Windwheel and Muji-Muji Daruma                                             |
-| [Sethos](/docs/genshin/kits/sethos)                 | Fully-charged Aimed Shot and Ancient Rite: Thunderous Roar of Sand                |
-| [Shenhe](/docs/genshin/kits/shenhe)                 | Spring Spirit Summoning and Divine Maiden's Deliverance                           |
-| [Sigewinne](/docs/genshin/kits/sigewinne)           | Bolstering Bubblebalm's bubbles and Super Saturated Syringing                     |
-| [Skirk](/docs/genshin/kits/skirk)                   | Seven-Phase Flash, its strikes and charged attack, and her plunges                |
-| [Sucrose](/docs/genshin/kits/sucrose)               | Astable Anemohypostasis Creation-6308 and Forbidden Creation                      |
-| [Tartaglia](/docs/genshin/kits/tartaglia)           | The Ranged and Melee Stances and Riptide                                          |
-| [Thoma](/docs/genshin/kits/thoma)                   | Blazing Blessing and Crimson Ooyoroi's Fiery Collapse                             |
-| [Tighnari](/docs/genshin/kits/tighnari)             | Vijnana-Phala Mine and Tanglevine Shaft with its secondary                        |
-| [Traveler](/docs/genshin/kits/traveler)             | The Anemo form's attacks, Palm Vortex and Gust Surge                              |
-| [Varesa](/docs/genshin/kits/varesa)                 | Three strikes, Rush's press and Flying Kick, outside her blessing                 |
-| [Varka](/docs/genshin/kits/varka)                   | Five strikes, the charged attack, and the skill and burst's Anemo hits            |
-| [Venti](/docs/genshin/kits/venti)                   | Skyward Sonnet, Wind Domain and Stormeye                                          |
-| [Wanderer](/docs/genshin/kits/wanderer)             | Hanega: Song of the Wind and Kyougen: Five Ceremonial Plays                       |
-| [Wriothesley](/docs/genshin/kits/wriothesley)       | Darkgold Wolfbite and Icefang Rush                                                |
-| [Xiangling](/docs/genshin/kits/xiangling)           | Guoba, Pyronado and Oil Meets Fire                                                |
-| [Xianyun](/docs/genshin/kits/xianyun)               | Stars Gather at Dusk, with four strikes and Skyladder's first press               |
-| [Xiao](/docs/genshin/kits/xiao)                     | Lemniscatic Wind Cycling and Bane of All Evil                                     |
-| [Xilonen](/docs/genshin/kits/xilonen)               | Three strikes, the charged attack and Yohual's Scratch                            |
-| [Xingqiu](/docs/genshin/kits/xingqiu)               | Fatal Rainscreen and Raincutter                                                   |
-| [Xinyan](/docs/genshin/kits/xinyan)                 | Sweeping Fervor and Riff Revolution                                               |
-| [Yae Miko](/docs/genshin/kits/yae-miko)             | Sesshou Sakura totems and Great Secret Art: Tenko Kenshin                         |
-| [Yanfei](/docs/genshin/kits/yanfei)                 | Scarlet Seals, Signed Edict and Done Deal                                         |
-| [Yaoyao](/docs/genshin/kits/yaoyao)                 | Yuegui radishes and Moonjade Descent                                              |
-| [Yelan](/docs/genshin/kits/yelan)                   | Lingering Lifeline and Depth-Clarion Dice                                         |
-| [Yoimiya](/docs/genshin/kits/yoimiya)               | Niwabi Fire-Dance's Blazing Arrows and Aurous Blaze                               |
-| [Yumemizuki Mizuki](/docs/genshin/kits/mizuki)      | Three strikes, the charged attack and Aisa Utamakura Pilgrimage                   |
-| [Yun Jin](/docs/genshin/kits/yun-jin)               | Opening Flourish and Cliffbreaker's Banner                                        |
-| [Zhongli](/docs/genshin/kits/zhongli)               | Stone Steles, Jade Shield and Planet Befall                                       |
+| Page                                                | Covers                                                                                   |
+| :-------------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| [Aino](/docs/genshin/kits/aino)                     | Three strikes, a provisional charged attack, Musecatcher and Cool Your Jets Ducky        |
+| [Albedo](/docs/genshin/kits/albedo)                 | Solar Isotoma, Transient Blossoms and the Fatal Blossoms                                 |
+| [Alhaitham](/docs/genshin/kits/alhaitham)           | Universality's tap and hold, Particular Field and Projection Attacks                     |
+| [Aloy](/docs/genshin/kits/aloy)                     | Freeze Bomb and Rushing Ice                                                              |
+| [Amber](/docs/genshin/kits/amber)                   | Explosive Puppet's Baron Bunny and Fiery Rain                                            |
+| [Arlecchino](/docs/genshin/kits/arlecchino)         | Invitation to a Beheading and All Is Ash's Spike and Cleave                              |
+| [Baizhu](/docs/genshin/kits/baizhu)                 | Universal Diagnosis and Holistic Revivification's seamless shield                        |
+| [Barbara](/docs/genshin/kits/barbara)               | Let the Show Begin♪ droplets, Melody Loop and Shining Miracle♪                           |
+| [Beidou](/docs/genshin/kits/beidou)                 | Tidecaller's shield and the Thunderbeast's Targe                                         |
+| [Bennett](/docs/genshin/kits/bennett)               | Passion Overload's Charge Levels and Fantastic Voyage's field                            |
+| [Candace](/docs/genshin/kits/candace)               | Heron's Sanctum's shields and Wagtail's Tide's Prayer                                    |
+| [Charlotte](/docs/genshin/kits/charlotte)           | Framing's press, its Snappy Silhouette marks, Still Photo and Kamera                     |
+| [Chasca](/docs/genshin/kits/chasca)                 | Four strikes, the charged Aimed Shot and Galesplitting's first hit                       |
+| [Chevreuse](/docs/genshin/kits/chevreuse)           | Rapid Interdiction Fire's hold and Ring of Bursting Grenades                             |
+| [Chiori](/docs/genshin/kits/chiori)                 | Fluttering Hasode's Tamoto doll and Hiyoku: Twin Blades                                  |
+| [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                                               |
+| [Citlali](/docs/genshin/kits/citlali)               | Three strikes, the charged attack and Ice Storm                                          |
+| [Clorinde](/docs/genshin/kits/clorinde)             | Five strikes, the charged attack and Last Lightfall                                      |
+| [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap                                   |
+| [Columbina](/docs/genshin/kits/columbina)           | Three strikes, the charged attack, and the skill's press and DoT field                   |
+| [Cyno](/docs/genshin/kits/cyno)                     | Chasmic Soulfarer and Pactsworn Pathclearer's Mortuary Rite                              |
+| [Dahlia](/docs/genshin/kits/dahlia)                 | Four strikes, charged attack, Immersive Ordinance, Radiant Psalter                       |
+| [Dehya](/docs/genshin/kits/dehya)                   | Molten Inferno and Incineration Drive                                                    |
+| [Diluc](/docs/genshin/kits/diluc)                   | Searing Onslaught and Dawn                                                               |
+| [Diona](/docs/genshin/kits/diona)                   | Icy Paws and Signature Mix's field                                                       |
+| [Dori](/docs/genshin/kits/dori)                     | Alcazarzaray's Exactitude's Connector field and Troubleshooter Shot                      |
+| [Durin](/docs/genshin/kits/durin)                   | Tap E's window, Confirmation of Purity and Denial of Darkness, and both Dragons          |
+| [Emilie](/docs/genshin/kits/emilie)                 | Four strikes, Lumidouce Case's summon hit and Spiritbreath Thorn                         |
+| [Escoffier](/docs/genshin/kits/escoffier)           | Three strikes, Low-Temperature Cooking and Scoring Cuts                                  |
+| [Eula](/docs/genshin/kits/eula)                     | Grimheart stacks, Icewhirls and Glacial Illumination                                     |
+| [Faruzan](/docs/genshin/kits/faruzan)               | Wind Realm of Nasamjnin and the Dazzling Polyhedron                                      |
+| [Fischl](/docs/genshin/kits/fischl)                 | Oz, Midnight Phantasmagoria and Thundering Retribution                                   |
+| [Flins](/docs/genshin/kits/flins)                   | Manifest Flame's press and Cometh the Night's initial and final hits                     |
+| [Freminet](/docs/genshin/kits/freminet)             | Pressurized Floe's Upward Thrust and Shadowhunter's Ambush                               |
+| [Furina](/docs/genshin/kits/furina)                 | Salon Solitaire's members and Singer, Fanfare and the Arkhe hits                         |
+| [Gaming](/docs/genshin/kits/gaming)                 | Stellar Rend, Bestial Ascent and Suanni's Gilded Dance                                   |
+| [Ganyu](/docs/genshin/kits/ganyu)                   | Frostflake Arrow, Ice Lotus and Celestial Shower                                         |
+| [Gorou](/docs/genshin/kits/gorou)                   | General's War Banner and Crystal Collapse                                                |
+| [Heizou](/docs/genshin/kits/heizou)                 | Heartstopper Strike, Vacuum Slugger and Windmuster Iris                                  |
+| [Hu Tao](/docs/genshin/kits/hu-tao)                 | Her string, charged attack and Guide to Afterlife's Paramita stance                      |
+| [Iansan](/docs/genshin/kits/iansan)                 | Three strikes, the charged attack and Thunderbolt Rush                                   |
+| [Ifa](/docs/genshin/kits/ifa)                       | Three strikes, the charged attack and her plunges                                        |
+| [Ineffa](/docs/genshin/kits/ineffa)                 | Four strikes, charged attack, Cleaning Mode, Cyclonic Exterminator                       |
+| [Itto](/docs/genshin/kits/itto)                     | Masatsu Zetsugi, Ushi and the Arataki Kesagiri                                           |
+| [Jahoda](/docs/genshin/kits/jahoda)                 | Three strikes, the charged shot and Savvy Strategy's pursuit                             |
+| [Jean](/docs/genshin/kits/jean)                     | Gale Blade and Dandelion Breeze's field                                                  |
+| [Kaeya](/docs/genshin/kits/kaeya)                   | Frostgnaw and Glacial Waltz's icicles                                                    |
+| [Kamisato Ayaka](/docs/genshin/kits/kamisato-ayaka) | Soumetsu's storms and Senho's infusion                                                   |
+| [Kamisato Ayato](/docs/genshin/kits/kamisato-ayato) | Kyouka's Soukai Kanka stance and Suiyuu's field                                          |
+| [Kaveh](/docs/genshin/kits/kaveh)                   | Artistic Ingenuity and Painted Dome                                                      |
+| [Kazuha](/docs/genshin/kits/kazuha)                 | Chihayaburu and Kazuha Slash's Autumn Whirlwind                                          |
+| [Keqing](/docs/genshin/kits/keqing)                 | Stellar Restoration and Starward Sword                                                   |
+| [Kinich](/docs/genshin/kits/kinich)                 | Three strikes, charged attack and the burst's first hit                                  |
+| [Kirara](/docs/genshin/kits/kirara)                 | Tail-Flicking Flying Kick's shield and Secret Art: Surprise Dispatch                     |
+| [Klee](/docs/genshin/kits/klee)                     | Jumpy Dumpty, Sparks 'n' Splash and Sparkly Explosion                                    |
+| [Kokomi](/docs/genshin/kits/kokomi)                 | Bake-Kurage and Nereid's Ascension                                                       |
+| [Kujou Sara](/docs/genshin/kits/kujou-sara)         | The Cover and its Ambush                                                                 |
+| [Kuki](/docs/genshin/kits/kuki)                     | Grass Ring of Sanctification                                                             |
+| [Lan Yan](/docs/genshin/kits/lan-yan)               | Four strikes, the charged attack and Lustrous Moonrise                                   |
+| [Lauma](/docs/genshin/kits/lauma)                   | Three strikes, the charged attack and Hymn of Hunting                                    |
+| [Layla](/docs/genshin/kits/layla)                   | Nights of Formal Focus and Starlight Slug                                                |
+| [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                                            |
+| [Lynette](/docs/genshin/kits/lynette)               | Enigmatic Feint and the Bogglecat Box of Magic Trick                                     |
+| [Lyney](/docs/genshin/kits/lyney)                   | Bewildering Lights and the Prop Arrow's Grin-Malkin Hat                                  |
+| [Mavuika](/docs/genshin/kits/mavuika)               | Four strikes, the charged attack and her plunges                                         |
+| [Mika](/docs/genshin/kits/mika)                     | Starfrost Swirl and Skyfeather Song                                                      |
+| [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                                         |
+| [Mualani](/docs/genshin/kits/mualani)               | Three strikes, the charged attack and Boomsharka-laka                                    |
+| [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                                                |
+| [Navia](/docs/genshin/kits/navia)                   | Rosula Shardshot and As the Sunlit Sky's Singing Salute                                  |
+| [Neuvillette](/docs/genshin/kits/neuvillette)       | Hydro strikes, his skill and his burst                                                   |
+| [Nicole](/docs/genshin/kits/nicole)                 | Three strikes, the charged attack, and the skill's and burst's hits                      |
+| [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi                                  |
+| [Ningguang](/docs/genshin/kits/ningguang)           | Star Jades, Jade Screen and Starshatter                                                  |
+| [Noelle](/docs/genshin/kits/noelle)                 | Breastplate and Sweeping Time                                                            |
+| [Ororon](/docs/genshin/kits/ororon)                 | Three strikes, Aimed Shot, Spirit Orb and Dark Voices' Echo                              |
+| [Prune](/docs/genshin/kits/prune)                   | Her normal attacks, charged attack, Ring-A-Ding-Ding's press and the burst's initial hit |
+| [Qiqi](/docs/genshin/kits/qiqi)                     | Herald of Frost and Fortune-Preserving Talisman                                          |
+| [Raiden Shogun](/docs/genshin/kits/raiden-shogun)   | The Eye and Musou Isshin                                                                 |
+| [Razor](/docs/genshin/kits/razor)                   | Electro Sigils, the Wolf Within and Lightning Fang                                       |
+| [Rosaria](/docs/genshin/kits/rosaria)               | Ravaging Confession and Rites of Termination                                             |
+| [Sayu](/docs/genshin/kits/sayu)                     | Fuufuu Windwheel and Muji-Muji Daruma                                                    |
+| [Sethos](/docs/genshin/kits/sethos)                 | Fully-charged Aimed Shot and Ancient Rite: Thunderous Roar of Sand                       |
+| [Shenhe](/docs/genshin/kits/shenhe)                 | Spring Spirit Summoning and Divine Maiden's Deliverance                                  |
+| [Sigewinne](/docs/genshin/kits/sigewinne)           | Bolstering Bubblebalm's bubbles and Super Saturated Syringing                            |
+| [Skirk](/docs/genshin/kits/skirk)                   | Seven-Phase Flash, its strikes and charged attack, and her plunges                       |
+| [Sucrose](/docs/genshin/kits/sucrose)               | Astable Anemohypostasis Creation-6308 and Forbidden Creation                             |
+| [Tartaglia](/docs/genshin/kits/tartaglia)           | The Ranged and Melee Stances and Riptide                                                 |
+| [Thoma](/docs/genshin/kits/thoma)                   | Blazing Blessing and Crimson Ooyoroi's Fiery Collapse                                    |
+| [Tighnari](/docs/genshin/kits/tighnari)             | Vijnana-Phala Mine and Tanglevine Shaft with its secondary                               |
+| [Traveler](/docs/genshin/kits/traveler)             | The Anemo form's attacks, Palm Vortex and Gust Surge                                     |
+| [Varesa](/docs/genshin/kits/varesa)                 | Three strikes, Rush's press and Flying Kick, outside her blessing                        |
+| [Varka](/docs/genshin/kits/varka)                   | Five strikes, the charged attack, and the skill and burst's Anemo hits                   |
+| [Venti](/docs/genshin/kits/venti)                   | Skyward Sonnet, Wind Domain and Stormeye                                                 |
+| [Wanderer](/docs/genshin/kits/wanderer)             | Hanega: Song of the Wind and Kyougen: Five Ceremonial Plays                              |
+| [Wriothesley](/docs/genshin/kits/wriothesley)       | Darkgold Wolfbite and Icefang Rush                                                       |
+| [Xiangling](/docs/genshin/kits/xiangling)           | Guoba, Pyronado and Oil Meets Fire                                                       |
+| [Xianyun](/docs/genshin/kits/xianyun)               | Stars Gather at Dusk, with four strikes and Skyladder's first press                      |
+| [Xiao](/docs/genshin/kits/xiao)                     | Lemniscatic Wind Cycling and Bane of All Evil                                            |
+| [Xilonen](/docs/genshin/kits/xilonen)               | Three strikes, the charged attack and Yohual's Scratch                                   |
+| [Xingqiu](/docs/genshin/kits/xingqiu)               | Fatal Rainscreen and Raincutter                                                          |
+| [Xinyan](/docs/genshin/kits/xinyan)                 | Sweeping Fervor and Riff Revolution                                                      |
+| [Yae Miko](/docs/genshin/kits/yae-miko)             | Sesshou Sakura totems and Great Secret Art: Tenko Kenshin                                |
+| [Yanfei](/docs/genshin/kits/yanfei)                 | Scarlet Seals, Signed Edict and Done Deal                                                |
+| [Yaoyao](/docs/genshin/kits/yaoyao)                 | Yuegui radishes and Moonjade Descent                                                     |
+| [Yelan](/docs/genshin/kits/yelan)                   | Lingering Lifeline and Depth-Clarion Dice                                                |
+| [Yoimiya](/docs/genshin/kits/yoimiya)               | Niwabi Fire-Dance's Blazing Arrows and Aurous Blaze                                      |
+| [Yumemizuki Mizuki](/docs/genshin/kits/mizuki)      | Three strikes, the charged attack and Aisa Utamakura Pilgrimage                          |
+| [Yun Jin](/docs/genshin/kits/yun-jin)               | Opening Flourish and Cliffbreaker's Banner                                               |
+| [Zhongli](/docs/genshin/kits/zhongli)               | Stone Steles, Jade Shield and Planet Befall                                              |
 
 - [Fearnaught](https://genshin-impact.fandom.com/wiki/Fearnaught), [I Got Your Back](https://genshin-impact.fandom.com/wiki/I_Got_Your_Back) and [To Be Cleaned](https://genshin-impact.fandom.com/wiki/To_Be_Cleaned), Genshin Impact Wiki: Bennett's A4, and Noelle's C1 and C4, as the kit gates them.
