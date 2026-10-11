@@ -111,6 +111,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does Mika's Rimestar Flare hold release at half a second?** gcsim's hold is a boolean with no threshold, so the flare takes the half second the other holds take: yes if the game's hold for Starfrost Swirl releases at half a second, no if the threshold is another length.
 - **Does Kaveh's charged attack strike once as it starts and again at its end, each in a circle of radius 2 round him?** gcsim gives him no charged attack, so `kavehKit.ts` takes the table's spin and final-hit shape, as Dori's has it, with the final hit at the table's maximum duration: yes if a recording shows that pattern, no if it strikes some other way.
 - **Does Kaveh's plunge collision deal poise?** gcsim gives his collision no poise, so it deals none, as a provisional 0: yes if the game's collision deals poise, with the amount the recording gives it, no if it deals none.
+- **Does Candace's charged hold release at half a second of holding?** Provisional, as gcsim takes the hold as a parameter and gives no threshold for it, so `candaceKit.ts` takes the framework's half second: yes if a press held past half a second is her charged hold in the game, no if the hold begins at another length.
 
 ## References sought
 
