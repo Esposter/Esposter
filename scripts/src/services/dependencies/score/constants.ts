@@ -66,20 +66,16 @@ export const SHIM_LINE_WINDOW = 3;
 // The reasons a Keep verdict keeps a package whose type workarounds absorbing it would fix at the root
 export const SHIM_EXEMPT_REASONS: string[] = ["engine", "SDK", "framework", "tooling"];
 
-// The app whose client bundle a package's cost is measured in, and the folders of it that ship to the browser. A
-// Workspace package is client when one of these, or another client package, imports it.
+// The app whose client bundle the report is read from, against the repository root
 export const APP_DIRECTORY = "apps/web";
-export const CLIENT_DIRECTORIES: string[] = [`${APP_DIRECTORY}/app`, `${APP_DIRECTORY}/shared`];
-// The files a test, benchmark or type test is, whose imports never reach the bundle
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
-export const TEST_FILE_REGEX: RegExp = /\.(?:test|test-d|bench|typebench)\.[cm]?[jt]sx?$/u;
-// The packages a Nuxt module is named by, which the app loads from its configuration rather than from its source
-export const NUXT_MODULE_PREFIXES: string[] = ["@nuxt/", "nuxt-"];
-export const NUXT_PACKAGE_NAME = "nuxt";
-// How many packages are bundled at once, each its own rolldown build
-export const BUNDLE_CONCURRENCY = 4;
-// The folder a bundle's temporary entry is written into: under the `node_modules` of the file that imports the package,
-// So the entry resolves the package exactly as that file does, and git ignores it
-export const BUNDLE_ENTRY_DIRECTORY_NAME = ".bundle-cost";
 // How many of the largest bundle costs the report ends on
 export const TOP_BUNDLE_COUNT = 25;
+// The package the app's own code is attributed to in the client bundle report, and the report `nuxt analyze` writes
+// Beside the app's build output, which the bundle column reads
+export const APP_PACKAGE_NAME = "@esposter/web";
+export const CLIENT_BUNDLE_REPORT_PATH = ".nuxt/analyze/client.json";
+// The reason a catalog package the client build does not contain is given, in place of its bundle bytes
+export const NOT_IN_CLIENT_SKIP_REASON = "not in client";
+// A module id's query, such as the hash Vite appends, which is no part of the file's own path
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
+export const QUERY_REGEX: RegExp = /\?.*$/u;

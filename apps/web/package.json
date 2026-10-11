@@ -216,6 +216,7 @@
     "nuxt": "catalog:",
     "nuxt-security-module": "workspace:*",
     "remark-emoji": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
     "trpc-msw": "workspace:*",
     "tsx": "catalog:",
     "type-fest": "catalog:",

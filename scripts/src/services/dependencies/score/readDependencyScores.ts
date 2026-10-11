@@ -6,19 +6,20 @@ import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared
 
 import { ScoreSort } from "#src/models/dependencies/score/ScoreSort";
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
-import { LEDGER_PATH, UNJUDGED_VERDICT } from "#src/services/dependencies/score/constants";
+import { LEDGER_PATH, NOT_IN_CLIENT_SKIP_REASON, UNJUDGED_VERDICT } from "#src/services/dependencies/score/constants";
 import { countDependencyLines } from "#src/services/dependencies/score/countDependencyLines";
 import { countModuleGraphLines } from "#src/services/dependencies/score/countModuleGraphLines";
 import { countRecentReleases } from "#src/services/dependencies/score/countRecentReleases";
 import { findInstalledPackage } from "#src/services/dependencies/score/findInstalledPackage";
-import { getClientDirectories, getWorkspacePackages } from "#src/services/dependencies/score/getClientDirectories";
+import { getClientBundleBytes } from "#src/services/dependencies/score/getClientBundleBytes";
 import { getDisagreements } from "#src/services/dependencies/score/getDisagreements";
 import { getFormatPoints } from "#src/services/dependencies/score/getFormatPoints";
 import { getPackageFormat } from "#src/services/dependencies/score/getPackageFormat";
 import { getSelfContainmentPoints } from "#src/services/dependencies/score/getSelfContainmentPoints";
 import { getSizePoints } from "#src/services/dependencies/score/getSizePoints";
 import { getStabilityPoints } from "#src/services/dependencies/score/getStabilityPoints";
-import { readBundleCosts } from "#src/services/dependencies/score/readBundleCosts";
+import { readClientBundleReport } from "#src/services/dependencies/score/readClientBundleReport";
+import { getWorkspacePackages } from "#src/services/dependencies/score/getWorkspacePackages";
 import { readImportingFiles } from "#src/services/dependencies/score/readImportingFiles";
 import { readInstallCosts } from "#src/services/dependencies/score/readInstallCosts";
 import { readLedgerVerdicts } from "#src/services/dependencies/score/readLedgerVerdicts";
@@ -85,13 +86,8 @@ export const readDependencyScores = async (sort: ScoreSort): Promise<DependencyS
     if (installed !== undefined) packageNameInstalledMap.set(packageName, installed);
   }
   const packageNames = catalogEntries.map(({ packageName }) => packageName);
-  const clientDirectories = getClientDirectories(getWorkspacePackages(manifestFiles), packageNameImportersMap);
-  const packageNameBundleCostMap = await readBundleCosts(
-    packageNames,
-    packageNameInstalledMap,
-    packageNameImportersMap,
-    clientDirectories,
-  );
+  const { ageMilliseconds, report } = readClientBundleReport();
+  const packageNameBundleBytesMap = getClientBundleBytes(report, getWorkspacePackages(manifestFiles));
   const packageNameInstallCostMap = readInstallCosts(packageNameInstalledMap);
 
   const { errors, packuments } = await readPackuments(packageNames);
@@ -112,12 +108,11 @@ export const readDependencyScores = async (sort: ScoreSort): Promise<DependencyS
     const selfContainmentPoints = installed === undefined ? 0 : getSelfContainmentPoints(selfContainmentCount);
     const stabilityPoints = packument === undefined ? 0 : getStabilityPoints(releaseCount);
     const importers = packageNameImportersMap.get(packageName);
-    const bundleCost = packageNameBundleCostMap.get(packageName);
     const installCost = packageNameInstallCostMap.get(packageName);
 
     scores.push({
-      bundleBytes: bundleCost?.bytes ?? 0,
-      bundleSkipReason: bundleCost?.skipReason ?? "",
+      bundleBytes: packageNameBundleBytesMap.get(packageName) ?? 0,
+      bundleSkipReason: packageNameBundleBytesMap.has(packageName) ? "" : NOT_IN_CLIENT_SKIP_REASON,
       dependencyLines: installed === undefined ? 0 : countDependencyLines(packageName, installed),
       formatPoints,
       importerCount: importers?.size ?? 0,
@@ -143,6 +138,7 @@ export const readDependencyScores = async (sort: ScoreSort): Promise<DependencyS
       left.packageName.localeCompare(right.packageName),
   );
   return {
+    bundleReportAgeMilliseconds: ageMilliseconds,
     disagreements: getDisagreements(sortedScores),
     errors: errors.toSorted((left, right) => left.packageName.localeCompare(right.packageName)),
     scores: sortedScores,

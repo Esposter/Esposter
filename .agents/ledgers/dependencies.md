@@ -191,6 +191,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `read-excel-file`                       | —     | Keep — spec       | the spreadsheet format                                                                                 |
 | `remark-emoji`                          | —     | Keep — hold       | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
 | `rolldown`                              | —     | Keep — tooling    | the bundler under tsdown and Vite                                                                      |
+| `rollup-plugin-visualizer`              | —     | Keep — tooling    | the analyzer `nuxt analyze` reads the client bundle through                                            |
 | `rou3`                                  | —     | Keep — free       | h3's own router, reused by nuxt-security-module                                                        |
 | `rxjs`                                  | —     | Keep — free       | grid-engine's own observables                                                                          |
 | `sax`                                   | —     | Keep — spec       | the XML tokenizer under parse-tmx's reader                                                             |

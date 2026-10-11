@@ -113,7 +113,6 @@
     "keyframe-store": "workspace:*",
     "pitch-transcription": "workspace:*",
     "playwright": "catalog:",
-    "rolldown": "catalog:",
     "sharp": "catalog:",
     "three": "catalog:",
     "tsx": "catalog:",
