@@ -67,7 +67,7 @@ defineExpose({ element });
     v-model:is-open="isOpen"
     :is-clearable="Boolean(isClearable && modelValue)"
     :is-empty="!modelValue"
-    :is-label-hidden="isLabelHidden"
+    :is-label-hidden
     :label
     :placeholder
     @clear="modelValue = undefined as TModel"
