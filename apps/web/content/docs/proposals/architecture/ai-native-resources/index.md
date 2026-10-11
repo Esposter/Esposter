@@ -8,7 +8,7 @@ model: claude-opus-5-5
 
 Every resource editor in Esposter is built for a person's pointer and keyboard. An agent reaches the app through one MCP endpoint ([agent access](/docs/architecture/agent-access)), and generic tools there find, describe, read and patch every type's document ([agent content tools](/docs/architecture/agent-content-tools)). The rest of what a person does is still closed to it: an agent's save strands the owner's open editor behind a refresh, and creating, publishing, linking or rolling back a resource has no tool. An editor only a person can drive is closed to the agents that now do much of the owner's work, and adding tools one editor at a time is how the endpoint once came to reach a single type.
 
-This proposal wires the agent surface once, at the resource layer. A resource type already declares everything an agent needs in its `ResourceDefinitionMap` entry: a content schema that validates every save, the capabilities that gate its lifecycle, and the one content door every write goes through. Generic procedures on the cross-type `resource` router read that declaration off the row they are handed, so a type is agent-reachable because it is in the map, and a type added next year is reachable the day it exists — as the content tools already are.
+This proposal wires the agent surface once, at the resource layer. A resource type already declares everything an agent needs in its `ResourceDefinitionMap` entry: a content schema that validates every save, the capabilities that gate its lifecycle, and the one content door every write goes through. Generic procedures on the cross-type `resource` router read that declaration off the row they are handed, so a type is agent-reachable because it is in the map, as the content tools already are.
 
 ## Sub-pages
 
@@ -36,7 +36,7 @@ A type earns an operation of its own only where a patch fits badly ([typed comma
 
 **Neither a capability nor generated per-type tools.** A capability is opt-in by the [resources](/docs/architecture/resource) admission rule, and this must hold for every type, so there is nothing to declare: the content schema it reads exists for every type already. Generated per-type procedures would multiply the tool list by the number of types and embed each content schema in a tool's input. The id already names the type, so one tool serves all of them. Per-type tools are what reached a single type. The [write-once](/docs/architecture/write-once) test decides it: the mechanism's input already exists uniformly, so the mechanism is written once, from the first case.
 
-**One registration fits MCP's tool shape.** A tool's input schema must be a JSON Schema whose root is an object, and every generic tool's input is a small object naming an id. The content schema never appears in an input schema at all; it is the answer of the describe tool, read as data. So the bridge serves each generic tool once, and the tool list stays the same length as types are added, which matters because every tool's schema is context an agent pays for on every turn.
+**One registration fits MCP's tool shape.** A tool's input schema must be a JSON Schema whose root is an object, and every generic tool's input is a small object naming an id. The content schema never appears in an input schema at all; it is the answer of the describe tool, read as data. So the bridge serves each generic tool once, and no type lengthens the tool list, which matters because every tool's schema is context an agent pays for on every turn.
 
 ```mermaid
 flowchart TD
