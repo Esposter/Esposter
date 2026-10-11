@@ -223,9 +223,6 @@
     "tsx": "catalog:",
     "type-fest": "catalog:",
     "unocss": "catalog:",
-    "vite": "catalog:",
-    "vitest": "catalog:",
-    "vue-tsc": "catalog:",
-    "xss": "catalog:"
+    "vite": "catalog:"
   }
 }

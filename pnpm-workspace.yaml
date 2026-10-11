@@ -278,7 +278,6 @@ catalog:
   web-push: ^3.6.7
   write-excel-file: ^4.1.1
   ws: ^8.22.0
-  xss: ^1.0.15
   zod: ^4.6.5
 catalogMode: strict
 
