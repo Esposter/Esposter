@@ -67,6 +67,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 
 - **Does Kuki's burst strike twelve times while her HP is at 50% or less, and seven at more?** gcsim casts seven hits at her full HP and twelve at half or less, every 17 frames from 50. The kit builds the seven: yes if the game gives the twelve at half HP, no if it gives seven at every HP.
 - **Are Kuki's plunges' reaches 1, 3 and 5 metres, with poise 10, 50 and 100?** gcsim gives Kuki no plunge file, so the kit takes the generic plunges' reaches and poise: yes if the game's plunges match them, no if they differ.
+- **Does Kamisato Art: Kyouka's water illusion explode 35 frames after the cast?** gcsim takes the illusion's least delay of 35 frames, which a player's parameter may only raise, so `ayatoKit.ts` takes it: yes if a recording of the explosion lands about 0.58 seconds after the cast, no if it lands at another time.
 
 ## References sought
 

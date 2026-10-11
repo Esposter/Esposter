@@ -6,6 +6,7 @@ import {
   ALOY_CHARACTER_ID,
   AMBER_CHARACTER_ID,
   AYAKA_CHARACTER_ID,
+  AYATO_CHARACTER_ID,
   BARBARA_CHARACTER_ID,
   BEIDOU_CHARACTER_ID,
   BENNETT_CHARACTER_ID,
@@ -57,6 +58,7 @@ import { createAlbedoKit } from "#src/services/kit/characters/albedoKit";
 import { createAloyKit } from "#src/services/kit/characters/aloyKit";
 import { createAmberKit } from "#src/services/kit/characters/amberKit";
 import { createAyakaKit } from "#src/services/kit/characters/ayakaKit";
+import { createAyatoKit } from "#src/services/kit/characters/ayatoKit";
 import { createBarbaraKit } from "#src/services/kit/characters/barbaraKit";
 import { createBeidouKit } from "#src/services/kit/characters/beidouKit";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
@@ -111,6 +113,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [ALOY_CHARACTER_ID]: createAloyKit,
   [AMBER_CHARACTER_ID]: createAmberKit,
   [AYAKA_CHARACTER_ID]: createAyakaKit,
+  [AYATO_CHARACTER_ID]: createAyatoKit,
   [BARBARA_CHARACTER_ID]: createBarbaraKit,
   [BEIDOU_CHARACTER_ID]: createBeidouKit,
   [BENNETT_CHARACTER_ID]: createBennettKit,
