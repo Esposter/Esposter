@@ -7,7 +7,6 @@ import { development } from "./configuration/development.ts";
 import { devtools } from "./configuration/devtools.ts";
 import { experimental } from "./configuration/experimental.ts";
 import { fonts } from "./configuration/fonts.ts";
-import { future } from "./configuration/future.ts";
 import { hooks } from "./configuration/hooks.ts";
 import { ignore } from "./configuration/ignore.ts";
 import { image } from "./configuration/image.ts";
@@ -35,7 +34,6 @@ export default defineNuxtConfig({
   devtools,
   experimental,
   fonts,
-  future,
   hooks,
   ignore,
   image,
