@@ -247,13 +247,12 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Chasca](/docs/genshin/kits/chasca)                 | Four strikes, the charged Aimed Shot and Galesplitting's first hit                |
 | [Chevreuse](/docs/genshin/kits/chevreuse)           | Rapid Interdiction Fire's hold and Ring of Bursting Grenades                      |
 | [Chiori](/docs/genshin/kits/chiori)                 | Fluttering Hasode's Tamoto doll and Hiyoku: Twin Blades                           |
-| [Skirk](/docs/genshin/kits/skirk)                   | Seven-Phase Flash, its strikes and charged attack, and her plunges                |
-| [Sigewinne](/docs/genshin/kits/sigewinne)           | Bolstering Bubblebalm's bubbles and Super Saturated Syringing                     |
 | [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                                        |
 | [Citlali](/docs/genshin/kits/citlali)               | Three strikes, the charged attack and Ice Storm                                   |
 | [Clorinde](/docs/genshin/kits/clorinde)             | Five strikes, the charged attack and Last Lightfall                               |
 | [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap                            |
 | [Cyno](/docs/genshin/kits/cyno)                     | Chasmic Soulfarer and Pactsworn Pathclearer's Mortuary Rite                       |
+| [Dahlia](/docs/genshin/kits/dahlia)                 | Four strikes, charged attack, Immersive Ordinance, Radiant Psalter                |
 | [Dehya](/docs/genshin/kits/dehya)                   | Molten Inferno and Incineration Drive                                             |
 | [Diluc](/docs/genshin/kits/diluc)                   | Searing Onslaught and Dawn                                                        |
 | [Diona](/docs/genshin/kits/diona)                   | Icy Paws and Signature Mix's field                                                |
@@ -268,13 +267,13 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Freminet](/docs/genshin/kits/freminet)             | Pressurized Floe's Upward Thrust and Shadowhunter's Ambush                        |
 | [Gaming](/docs/genshin/kits/gaming)                 | Stellar Rend, Bestial Ascent and Suanni's Gilded Dance                            |
 | [Ganyu](/docs/genshin/kits/ganyu)                   | Frostflake Arrow, Ice Lotus and Celestial Shower                                  |
-| [Jahoda](/docs/genshin/kits/jahoda)                 | Three strikes, the charged shot and Savvy Strategy's pursuit                      |
 | [Gorou](/docs/genshin/kits/gorou)                   | General's War Banner and Crystal Collapse                                         |
 | [Heizou](/docs/genshin/kits/heizou)                 | Heartstopper Strike, Vacuum Slugger and Windmuster Iris                           |
 | [Hu Tao](/docs/genshin/kits/hu-tao)                 | Her string, charged attack and Guide to Afterlife's Paramita stance               |
 | [Iansan](/docs/genshin/kits/iansan)                 | Three strikes, the charged attack and Thunderbolt Rush                            |
 | [Ifa](/docs/genshin/kits/ifa)                       | Three strikes, the charged attack and her plunges                                 |
 | [Itto](/docs/genshin/kits/itto)                     | Masatsu Zetsugi, Ushi and the Arataki Kesagiri                                    |
+| [Jahoda](/docs/genshin/kits/jahoda)                 | Three strikes, the charged shot and Savvy Strategy's pursuit                      |
 | [Jean](/docs/genshin/kits/jean)                     | Gale Blade and Dandelion Breeze's field                                           |
 | [Kaeya](/docs/genshin/kits/kaeya)                   | Frostgnaw and Glacial Waltz's icicles                                             |
 | [Kamisato Ayaka](/docs/genshin/kits/kamisato-ayaka) | Soumetsu's storms and Senho's infusion                                            |
@@ -294,14 +293,14 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                                     |
 | [Lynette](/docs/genshin/kits/lynette)               | Enigmatic Feint and the Bogglecat Box of Magic Trick                              |
 | [Lyney](/docs/genshin/kits/lyney)                   | Bewildering Lights and the Prop Arrow's Grin-Malkin Hat                           |
-| [Mika](/docs/genshin/kits/mika)                     | Starfrost Swirl and Skyfeather Song                                               |
 | [Mavuika](/docs/genshin/kits/mavuika)               | Four strikes, the charged attack and her plunges                                  |
+| [Mika](/docs/genshin/kits/mika)                     | Starfrost Swirl and Skyfeather Song                                               |
 | [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                                  |
 | [Mualani](/docs/genshin/kits/mualani)               | Three strikes, the charged attack and Boomsharka-laka                             |
 | [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                                         |
 | [Navia](/docs/genshin/kits/navia)                   | Rosula Shardshot and As the Sunlit Sky's Singing Salute                           |
-| [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi                           |
 | [Neuvillette](/docs/genshin/kits/neuvillette)       | Hydro strikes, O Tears, I Shall Repay and O Tides, I Have Returned                |
+| [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi                           |
 | [Ningguang](/docs/genshin/kits/ningguang)           | Star Jades, Jade Screen and Starshatter                                           |
 | [Noelle](/docs/genshin/kits/noelle)                 | Breastplate and Sweeping Time                                                     |
 | [Ororon](/docs/genshin/kits/ororon)                 | Three strikes, Aimed Shot, Spirit Orb and Dark Voices' Echo                       |
@@ -312,6 +311,8 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Sayu](/docs/genshin/kits/sayu)                     | Fuufuu Windwheel and Muji-Muji Daruma                                             |
 | [Sethos](/docs/genshin/kits/sethos)                 | Fully-charged Aimed Shot and Ancient Rite: Thunderous Roar of Sand                |
 | [Shenhe](/docs/genshin/kits/shenhe)                 | Spring Spirit Summoning and Divine Maiden's Deliverance                           |
+| [Sigewinne](/docs/genshin/kits/sigewinne)           | Bolstering Bubblebalm's bubbles and Super Saturated Syringing                     |
+| [Skirk](/docs/genshin/kits/skirk)                   | Seven-Phase Flash, its strikes and charged attack, and her plunges                |
 | [Sucrose](/docs/genshin/kits/sucrose)               | Astable Anemohypostasis Creation-6308 and Forbidden Creation                      |
 | [Tartaglia](/docs/genshin/kits/tartaglia)           | The Ranged and Melee Stances and Riptide                                          |
 | [Thoma](/docs/genshin/kits/thoma)                   | Blazing Blessing and Crimson Ooyoroi's Fiery Collapse                             |
