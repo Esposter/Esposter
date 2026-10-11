@@ -10,3 +10,6 @@ export const SUPERSESSION_CACHE_PATH: string = join(
   `.${SITE_NAME.toLowerCase()}`,
   "supersession-cache.json",
 );
+// How old a read may be and still be trusted. A version-keyed verdict left standing would never report an archived
+// Repository, which seldom publishes again, so a read past this age is asked again
+export const SUPERSESSION_CACHE_MAX_AGE: Temporal.Duration = Temporal.Duration.from({ days: 7 });
