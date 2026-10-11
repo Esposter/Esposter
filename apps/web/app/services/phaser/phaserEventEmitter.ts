@@ -1,5 +1,5 @@
 import type { PhaserEvents } from "@/models/phaser/PhaserEvents";
 
-import { EventEmitter } from "eventemitter3";
+import { TypedEventEmitter } from "@esposter/shared";
 
-export const phaserEventEmitter = new EventEmitter<PhaserEvents>();
+export const phaserEventEmitter = new TypedEventEmitter<PhaserEvents>();
