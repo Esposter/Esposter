@@ -8,7 +8,7 @@ import {
   BUILD_STAMP_FILE,
 } from "#src/services/buildCache/constants";
 import { pruneBuildCache } from "#src/services/buildCache/pruneBuildCache";
-import { readGeneratedBarrelPaths } from "#src/services/buildCache/readGeneratedBarrelPaths";
+import { readGeneratedSourcePaths } from "#src/services/buildCache/readGeneratedSourcePaths";
 import { readPackageName } from "#src/services/buildCache/readPackageName";
 import { readWorkspaceDependencyDirectories } from "#src/services/buildCache/readWorkspaceDependencyDirectories";
 import { restoreBuildOutput, restoreGeneratedPaths } from "#src/services/buildCache/restoreBuildOutput";
@@ -73,7 +73,7 @@ export const buildPackageCached = (
     if (build.status !== 0)
       throw new InvalidOperationError(Operation.Create, packageDirectory, `its build exited with ${build.status}`);
 
-    storeBuildOutput(packageDirectory, keyDirectory, readGeneratedBarrelPaths(packageDirectory));
+    storeBuildOutput(packageDirectory, keyDirectory, readGeneratedSourcePaths(packageDirectory));
     pruneBuildCache(join(BUILD_CACHE_DIRECTORY, name));
   }
 
