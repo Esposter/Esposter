@@ -19,8 +19,9 @@ const checkIsBloomCore = (effect: KitEffect): effect is KitDendroCore =>
   effect.kind === "dendroCore" && effect.reactionType === TransformativeReactionType.Bloom;
 
 // The Dendro Cores the Blooms a combatant triggered on an enemy leave, added to the team's effects: each drops out from
-// The enemy's edge, stands half a second on and bursts as Bloom six seconds after that, priced from the combatant.
-// Every core past the newest five bursts as the newest stands
+// The enemy's edge, stands half a second on and bursts as Bloom six seconds after that, priced from the combatant. A
+// Lunar-Bloom leaves the same core, whose burst is a Bloom's and no Lunar damage. Every core past the newest five bursts
+// As the newest stands
 export const addDendroCores = (
   kitEffectState: KitEffectState,
   { position }: Enemy,
@@ -29,7 +30,7 @@ export const addDendroCores = (
   random: () => number,
 ): void => {
   for (const { reactionType } of reactions) {
-    if (reactionType !== ReactionType.Bloom) continue;
+    if (reactionType !== ReactionType.Bloom && reactionType !== ReactionType.LunarBloom) continue;
     addKitEffect(kitEffectState, {
       characterId,
       kind: "dendroCore",

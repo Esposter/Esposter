@@ -1,3 +1,4 @@
+import type { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -29,14 +30,16 @@ import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 // Triggers there amplifies or adds to, as the reactions it triggers deal their own. A Burning tick applies its Pyro to
 // Each under that enemy's own Burning internal cooldown and deals each its damage. Electro-Charged arcs to the nearest
 // Wet enemy alone, dealing it its damage and applying nothing, and a Dendro Core's burst, Burgeon and Hyperbloom deal
-// Each theirs. The damage on each is limited by the source's internal cooldown there. It returns what each enemy
-// Reached took, the reactions it triggered there reaching further in turn
+// Each theirs. The damage on each is limited by the source's internal cooldown there. What an element applied there
+// Triggers reacts as the party's Moonsign turns it Lunar. It returns what each enemy reached took, the reactions it
+// Triggered there reaching further in turn
 export const landReactionReach = (
   { enemyKindMap }: EnemyTables,
   origin: Pick<Enemy, "position">,
   enemies: Iterable<Enemy>,
   { element, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
+  lunarReactionTypes: readonly LunarReactionType[] = [],
 ): Map<Enemy, EnemyStrikeResult> => {
   const enemyStrikeResultMap = new Map<Enemy, EnemyStrikeResult>();
   const radius = TransformativeReactionReachRadiusMap[reactionType];
@@ -63,7 +66,9 @@ export const landReactionReach = (
     const gauge =
       reactionType === TransformativeReactionType.Burning ? applyBurningInternalCooldown(elementalState) : spreadGauge;
     const reactions =
-      element === undefined || gauge === undefined ? [] : applyEnemyElement(enemy, element, gauge, combatant);
+      element === undefined || gauge === undefined
+        ? []
+        : applyEnemyElement(enemy, element, gauge, combatant, lunarReactionTypes);
     if (reactionType === TransformativeReactionType.Superconduct) addSuperconductStatus(enemy);
     const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
     const { additiveBaseDamageBonus, amplifyingMultiplier, reachingReactions, transformativeDamage } =

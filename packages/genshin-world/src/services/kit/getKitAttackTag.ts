@@ -4,6 +4,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 
 const getStanceAttackTag = (stance: KitStance, hit: KitHit): AttackTag | undefined => {
   if (stance.actions.normalAttacks.some(({ hits }) => hits.includes(hit))) return stance.attackTags.normalAttacks;
@@ -28,12 +29,5 @@ export const getKitAttackTag = (kit: Kit, hit: KitHit, effects: readonly KitEffe
     return AttackTag.PlungingAttack;
   const burstActions = [kit.elementalBurst, ...(kit.elementalBurstVariant ? [kit.elementalBurstVariant.action] : [])];
   if (burstActions.some(({ hits }) => hits.includes(hit))) return AttackTag.ElementalBurst;
-  const skillActions = [
-    kit.elementalSkill,
-    ...(kit.elementalSkillChain?.followUps ?? []),
-    ...(kit.elementalSkillHolds ?? []).flatMap(({ action, variant }) =>
-      variant ? [action, variant.action] : [action],
-    ),
-  ];
-  return skillActions.some(({ hits }) => hits.includes(hit)) ? AttackTag.ElementalSkill : undefined;
+  return getKitSkillActions(kit).some(({ hits }) => hits.includes(hit)) ? AttackTag.ElementalSkill : undefined;
 };

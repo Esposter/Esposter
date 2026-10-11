@@ -26,3 +26,11 @@ export const DAMAGE_BONUS_ATTRIBUTES: readonly Attribute[] = Object.freeze([
   ...Object.values(ElementDamageBonusAttributeMap),
   Attribute.PhysicalDamageBonus,
 ]);
+// Elemental mastery raises Lunar damage by 6 × mastery / (mastery + 2000), as the Damage page of the Genshin Impact Wiki
+// And gcsim's (MIT) pkg/core/combat/reaction.go give it
+// Https://genshin-impact.fandom.com/wiki/Damage#Lunar_and_Stellar_Glimmer_Reactions
+export const LUNAR_ELEMENTAL_MASTERY_CURVE: ElementalMasteryCurve = Object.freeze({ offset: 2000, scale: 6 });
+// A Lunar reaction's own hit sums its contributors' damage, the largest first, each weighted by its place here, and is a
+// CRIT hit where the largest was, as gcsim (MIT) pkg/reactable/lunarcharged.go weighs them
+// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcharged.go
+export const LUNAR_CONTRIBUTION_WEIGHTS: readonly number[] = [0.6, 0.3, 0.05, 0.05];

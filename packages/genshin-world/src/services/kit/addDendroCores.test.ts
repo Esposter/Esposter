@@ -62,6 +62,17 @@ describe(addDendroCores, () => {
     ]);
   });
 
+  test("leaves a Lunar-Bloom the same core as a Bloom, bursting as Bloom", () => {
+    expect.hasAssertions();
+
+    const bloomState: KitEffectState = { effects: [] };
+    const lunarBloomState: KitEffectState = { effects: [] };
+    addDendroCores(bloomState, enemy, combatant, [bloom], () => 0);
+    addDendroCores(lunarBloomState, enemy, combatant, [{ reactionType: ReactionType.LunarBloom }], () => 0);
+
+    expect(lunarBloomState.effects).toStrictEqual(bloomState.effects);
+  });
+
   test("bursts every core past the newest five as the newest stands", () => {
     expect.hasAssertions();
 

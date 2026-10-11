@@ -58,3 +58,18 @@ export const PARTY_MEMBER_BURST_INPUT_ACTIONS: readonly InputAction[] = [
 export const REVIVE_HEALTH_SHARE = 0.35;
 // The share of its Max HP every member of the team loses when the one on the field drowns
 export const DROWN_HEALTH_SHARE_LOSS = 0.1;
+// The Moonsign characters a deployed team holds for its Moonsign to rise from Nascent Gleam to Ascendant Gleam
+export const ASCENDANT_GLEAM_MOONSIGN_COUNT = 2;
+// Ascendant Gleam, lit by a skill or burst of a character outside the Moonsign, gives every party member a reaction
+// Bonus to its Lunar damage for 20 seconds, at most 36%, as gcsim (MIT) pkg/simulation/setup.go gives it
+// Https://github.com/genshinsim/gcsim/blob/main/pkg/simulation/setup.go
+export const ASCENDANT_GLEAM_SECONDS = 20;
+export const ASCENDANT_GLEAM_MAXIMUM_REACTION_BONUS = 0.36;
+// The id of the status Ascendant Gleam stands as on the character that lit it, which the next one to light it replaces
+export const ASCENDANT_GLEAM_STATUS_ID = "ascendantGleam";
+// The Verdant Dew a party holds at most. A Lunar-Bloom lets Dew gather for 149 frames after it, and one Dew gathers in
+// 146 frames of that, as gcsim (MIT) pkg/core/player/verdantdew.go counts them
+// Https://github.com/genshinsim/gcsim/blob/main/pkg/core/player/verdantdew.go
+export const VERDANT_DEW_MAXIMUM_COUNT = 3;
+export const VERDANT_DEW_GATHERING_SECONDS = 149 / 60;
+export const VERDANT_DEW_GATHER_SECONDS = 146 / 60;

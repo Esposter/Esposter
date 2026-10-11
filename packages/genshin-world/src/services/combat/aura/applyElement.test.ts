@@ -3,6 +3,7 @@ import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { Reaction } from "#src/models/combat/Reaction";
 
 import { AuraType } from "#src/models/combat/AuraType";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { applyElement } from "#src/services/combat/aura/applyElement";
@@ -140,6 +141,18 @@ describe(applyElement, () => {
 
     expect(reactions).toStrictEqual([{ element: Element.Electro, reactionType: ReactionType.Crystallize }]);
     expect(state.auras).toStrictEqual(new Map([[AuraType.Hydro, hydro]]));
+  });
+
+  test("blooms Hydro with Dendro as Lunar-Bloom where the party turns Bloom Lunar, consuming as Bloom does", () => {
+    expect.hasAssertions();
+
+    const bloomState = createState([[AuraType.Hydro, { decayRate: 0, gauge: 1, isImmutable: false }]]);
+    const lunarBloomState = createState([[AuraType.Hydro, { decayRate: 0, gauge: 1, isImmutable: false }]]);
+    applyElement(bloomState, Element.Dendro, 0.25);
+    const reactions = applyElement(lunarBloomState, Element.Dendro, 0.25, [LunarReactionType.LunarBloom]);
+
+    expect(reactions).toStrictEqual([{ element: Element.Dendro, reactionType: ReactionType.LunarBloom }]);
+    expect(lunarBloomState.auras).toStrictEqual(bloomState.auras);
   });
 
   test("freezes a target with twice the gauge it consumed", () => {
@@ -290,7 +303,7 @@ describe(applyElement, () => {
     expect.hasAssertions();
 
     const state = createElementalState();
-    applyElement(state, Element.Dendro, 4, selfAuraSeconds);
+    applyElement(state, Element.Dendro, 4, [], selfAuraSeconds);
 
     expect(state.auras).toStrictEqual(new Map([[AuraType.Dendro, { decayRate, gauge: 4, isImmutable: false }]]));
   });
@@ -299,7 +312,7 @@ describe(applyElement, () => {
     expect.hasAssertions();
 
     const state = createState([[AuraType.Pyro, { decayRate: 0, gauge: 0.8, isImmutable: false }]]);
-    const reactions = applyElement(state, Element.Hydro, 2, 8);
+    const reactions = applyElement(state, Element.Hydro, 2, [], 8);
 
     expect(reactions).toStrictEqual([{ element: Element.Hydro, reactionType: ReactionType.Vaporize }]);
     expect(state.auras).toStrictEqual(

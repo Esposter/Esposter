@@ -4,6 +4,7 @@ import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { EnemyStrikeResult } from "#src/models/kit/EnemyStrikeResult";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { PartyMoonsign } from "#src/models/party/PartyMoonsign";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
@@ -20,6 +21,7 @@ import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
+import { getDirectLunarDamage } from "#src/services/kit/getDirectLunarDamage";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
@@ -29,14 +31,17 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
 // Is applied at the gauge its internal cooldown leaves of it. The hit's damage takes its own additive base DMG Bonus
 // And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it
-// Through damageEnemy, against the enemy's RES as its statuses leave it. It returns the energy the hit dropped, whether
-// It was a CRIT hit, the reactions it triggered and those of them that landed and reach round the enemy
+// Through damageEnemy, against the enemy's RES as its statuses leave it. Its element reacts as the party's Moonsign turns
+// Its reactions Lunar, and a direct Lunar hit is priced by the Lunar formula from the Moonsign's bonuses instead. It
+// Returns the energy the hit dropped, whether it was a CRIT hit, the reactions it triggered and those of them that landed
+// And reach round the enemy
 export const strikeEnemy = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
   kitHit: KitHit,
   combatant: Combatant,
   random: () => number,
+  moonsign?: PartyMoonsign,
 ): EnemyStrikeResult => {
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
@@ -62,7 +67,7 @@ export const strikeEnemy = (
         InternalCooldownTagGroupMap[internalCooldownTag] ?? DEFAULT_INTERNAL_COOLDOWN_GROUP,
         elementalState.seconds,
       );
-    reactions.push(...applyEnemyElement(enemy, element, gauge * share, combatant));
+    reactions.push(...applyEnemyElement(enemy, element, gauge * share, combatant, moonsign?.lunarReactionTypes));
   }
 
   const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
@@ -73,24 +78,27 @@ export const strikeEnemy = (
   const isCritical =
     random() <
     attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
-  const damage = getDamage({
-    additiveBaseDamageBonus: additiveBaseDamageBonus + (kitHit.additiveBaseDamageBonus?.(combatant) ?? 0),
-    amplifyingMultiplier,
-    attackerLevel: combatant.level,
-    criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
-    // A hit's own DMG Bonus and an enemy's statuses' DMG taken add to the bonus each hit on it reads
-    damageBonus:
-      attributeTotalMap[
-        element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
-      ] +
-      (kitHit.damageBonus ?? 0) +
-      enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
-    defense,
-    isCritical,
-    resistance: getEnemyResistance(kind, enemy, element),
-    stat: attack,
-    talentMultiplier,
-  });
+  const resistance = getEnemyResistance(kind, enemy, element);
+  const damage = kitHit.lunarHit
+    ? getDirectLunarDamage(kitHit, kitHit.lunarHit, talentMultiplier, combatant, moonsign, resistance, isCritical)
+    : getDamage({
+        additiveBaseDamageBonus: additiveBaseDamageBonus + (kitHit.additiveBaseDamageBonus?.(combatant) ?? 0),
+        amplifyingMultiplier,
+        attackerLevel: combatant.level,
+        criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
+        // A hit's own DMG Bonus and an enemy's statuses' DMG taken add to the bonus each hit on it reads
+        damageBonus:
+          attributeTotalMap[
+            element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
+          ] +
+          (kitHit.damageBonus ?? 0) +
+          enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
+        defense,
+        isCritical,
+        resistance,
+        stat: attack,
+        talentMultiplier,
+      });
   return {
     energyDrops: damageEnemy(enemy, { damage: damage + transformativeDamage, poiseDamage }),
     isCritical,
