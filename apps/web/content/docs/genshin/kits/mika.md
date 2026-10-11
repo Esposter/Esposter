@@ -13,8 +13,8 @@ Gcsim gives Mika's plunges no file, so they take the shared plunge reach and lan
 
 ## Key files
 
-| File                                                           | Role                                                                                                                                               |
-| :------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| File                                                            | Role                                                                                                                                                       |
+| :-------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/characters/mikaKit.ts` | `createMikaKit`, Mika's kit with his strikes, charged attack, plunges, Starfrost Swirl's press and held Rimestar Flare, and Skyfeather Song's initial heal |
 
 ## Sources

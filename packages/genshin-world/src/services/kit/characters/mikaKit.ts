@@ -35,7 +35,10 @@ const MIKA_BURST_GROUP_ID = 8039;
 // Measured: gcsim (MIT) mika/attack.go, each strike's hitmarks and the frames its action cancels at to walk. Each strike's
 // Reach is its box or fan, offset as gcsim places it ahead of the body. gcsim gives Mika's strikes no poise, so each deals none
 // Https://github.com/genshinsim/gcsim/tree/main/internal/characters/mika
-const NORMAL_ATTACKS: { cancelFrames: number; hits: { hitArea: KitHit["hitArea"]; hitmarkFrames: number; index: number }[] }[] = [
+const NORMAL_ATTACKS: {
+  cancelFrames: number;
+  hits: { hitArea: KitHit["hitArea"]; hitmarkFrames: number; index: number }[];
+}[] = [
   { cancelFrames: 35, hits: [{ hitArea: createBoxReach(0, 1.8, 2.5), hitmarkFrames: 20, index: 0 }] },
   { cancelFrames: 28, hits: [{ hitArea: createFanReach(360, 0.2 + 1.6), hitmarkFrames: 14, index: 1 }] },
   { cancelFrames: 41, hits: [{ hitArea: createBoxReach(0.5, 2.5, 2.5), hitmarkFrames: 16, index: 2 }] },
@@ -160,11 +163,7 @@ export const createMikaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
-    elementalSkill: {
-      hits: [skillPressHit],
-      seconds: SKILL_PRESS_FRAMES / 60,
-      targetingArea: SKILL_TARGETING_AREA,
-    },
+    elementalSkill: { hits: [skillPressHit], seconds: SKILL_PRESS_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
     elementalSkillHolds: [
       {
         action: {
@@ -187,24 +186,14 @@ export const createMikaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     ],
     highPlunge: {
       hits: [
-        {
-          hitArea: PLUNGE_HIT_AREAS.high,
-          hitmarkSeconds: 0,
-          poiseDamage: 0,
-          talentMultiplier: attackMultiplier(10),
-        },
+        { hitArea: PLUNGE_HIT_AREAS.high, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: attackMultiplier(10) },
       ],
       seconds: PLUNGE_SECONDS,
       targetingArea: STRIKE_TARGETING_AREA,
     },
     lowPlunge: {
       hits: [
-        {
-          hitArea: PLUNGE_HIT_AREAS.low,
-          hitmarkSeconds: 0,
-          poiseDamage: 0,
-          talentMultiplier: attackMultiplier(9),
-        },
+        { hitArea: PLUNGE_HIT_AREAS.low, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: attackMultiplier(9) },
       ],
       seconds: PLUNGE_SECONDS,
       targetingArea: STRIKE_TARGETING_AREA,
