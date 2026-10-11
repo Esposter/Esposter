@@ -11,6 +11,7 @@ import {
   INTERACTION_PRESS_MS,
   INTERACTION_REST_MS,
 } from "#src/services/constants";
+import { useTemplateRef } from "vue";
 
 interface Props {
   // The game's button template it is drawn as, which decides its look in each state
