@@ -271,6 +271,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Razor](/docs/genshin/kits/razor)                   | Electro Sigils, the Wolf Within and Lightning Fang                   |
 | [Rosaria](/docs/genshin/kits/rosaria)               | Ravaging Confession and Rites of Termination                         |
 | [Sayu](/docs/genshin/kits/sayu)                     | Fuufuu Windwheel and Muji-Muji Daruma                                |
+| [Sethos](/docs/genshin/kits/sethos)                 | Fully-charged Aimed Shot and Ancient Rite: Thunderous Roar of Sand   |
 | [Shenhe](/docs/genshin/kits/shenhe)                 | Spring Spirit Summoning and Divine Maiden's Deliverance              |
 | [Sucrose](/docs/genshin/kits/sucrose)               | Astable Anemohypostasis Creation-6308 and Forbidden Creation         |
 | [Tartaglia](/docs/genshin/kits/tartaglia)           | The Ranged and Melee Stances and Riptide                             |

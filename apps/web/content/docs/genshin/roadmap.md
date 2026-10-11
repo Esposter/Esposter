@@ -121,6 +121,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does Chiori's high plunge deal 150 poise?** gcsim has no high plunge of its own, so `chioriKit.ts` lands it with the low plunge's 41 frames at the 150 poise gcsim gives Arlecchino's, provisional: yes if a recording of the high plunge lands and deals that poise, with the frames and amount it shows instead.
 - **Does Chevreuse's press held past half a second become her hold?** gcsim takes the hold as a parameter and gives no threshold, so `chevreuseKit.ts` takes Zhongli's half second: yes if a press held past it is her hold in the game, no if the hold begins at another length.
 - **Do Chevreuse's plunges deal poise, and land as their action starts?** gcsim gives her no plunge file and no plunge poise, so `chevreuseKit.ts` takes the shared plunge reach with 0 poise and its hit at 0 seconds: yes if a recording of her plunges shows a landing at once with the reach and poise the kit has, no if the recording shows otherwise, with the frames and poise it gives.
+- **Do Sethos's plunges deal poise, and land as their action starts?** gcsim gives him no plunge file and no plunge poise, so `sethosKit.ts` takes the shared plunge reach with 0 poise and its hit at 0 seconds: yes if a recording of his plunges shows a landing at once with the reach and poise the kit has, no if the recording shows otherwise, with the frames and poise it gives.
 
 ## References sought
 
