@@ -46,7 +46,12 @@ describe("amber kit", () => {
     const party = createParty([AMBER_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    AMBER_KIT.elementalSkill.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+    AMBER_KIT.elementalSkill.onStart?.({
+      body: { facing: 0, height: 0, position: body },
+      combatant,
+      kitEffectState,
+      party,
+    });
 
     // Landing and the eight seconds after it leave the bunny standing until its timer runs out
     expect(stepKitEffects(kitEffectState, 8, { activeCombatant: combatant, body, party })).toStrictEqual([]);
@@ -61,7 +66,12 @@ describe("amber kit", () => {
     const party = createParty([AMBER_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    AMBER_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+    AMBER_KIT.elementalBurst.onStart?.({
+      body: { facing: 0, height: 0, position: body },
+      combatant,
+      kitEffectState,
+      party,
+    });
 
     const arrows = stepKitEffects(kitEffectState, 4, { activeCombatant: combatant, body, party });
     expect(arrows).toHaveLength(18);

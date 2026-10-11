@@ -21,6 +21,7 @@ import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -50,7 +51,12 @@ describe(createTartagliaKit, () => {
   // The team's effects once the skill's press has changed into the Melee Stance, and the kit that stance plays
   const enterMeleeStance = (combatant: Combatant): { kitEffectState: KitEffectState; stance?: KitStance } => {
     const kitEffectState: KitEffectState = { effects: [] };
-    TARTAGLIA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+    TARTAGLIA_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([TARTAGLIA_CHARACTER_ID]),
+    });
     return {
       kitEffectState,
       stance: kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance"),
@@ -79,6 +85,7 @@ describe(createTartagliaKit, () => {
       body: kitBody,
       combatant: createTartagliaCombatant(),
       kitEffectState: rangedBurstEffectState,
+      party: createParty([TARTAGLIA_CHARACTER_ID]),
     });
     const multipliers = [
       ...TARTAGLIA_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
@@ -110,7 +117,12 @@ describe(createTartagliaKit, () => {
 
     expect(stance?.secondsRemaining).toBe(30);
 
-    meleeKit.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+    meleeKit.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([TARTAGLIA_CHARACTER_ID]),
+    });
 
     expect(stance?.secondsRemaining).toBe(0);
   });
@@ -141,7 +153,12 @@ describe(createTartagliaKit, () => {
     const { kitEffectState, stance } = enterMeleeStance(combatant);
     const context = createKitEventContext(combatant, { kitEffectState });
     getPartyMember(context.party, TARTAGLIA_CHARACTER_ID).skillCooldownSeconds = 1;
-    meleeKit.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    meleeKit.elementalBurst.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([TARTAGLIA_CHARACTER_ID]),
+    });
     TARTAGLIA_KIT.onKitEvent?.(
       {
         characterId: TRAVELER_CHARACTER_ID,
@@ -254,6 +271,7 @@ describe(createTartagliaKit, () => {
       body: kitBody,
       combatant,
       kitEffectState: context.kitEffectState,
+      party: createParty([TARTAGLIA_CHARACTER_ID]),
       target,
     });
     const flashOfHavoc = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");

@@ -48,7 +48,7 @@ describe(createChongyunKit, () => {
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createChongyunCombatant()): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState });
+    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([CHONGYUN_CHARACTER_ID]) });
     return kitEffectState.effects;
   };
   const castField = (combatant = createChongyunCombatant()): KitField | undefined =>
@@ -93,6 +93,7 @@ describe(createChongyunKit, () => {
     );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
+      characterIdCombatantMap: new Map(),
       activeCombatant: createChongyunCombatant(),
       enemyMap: new Map(),
       kitEffectState,
@@ -132,6 +133,7 @@ describe(createChongyunKit, () => {
     const claymoreEffectState: KitEffectState = { effects: [] };
     const party = createParty([CHONGYUN_CHARACTER_ID]);
     field?.onTick({
+      characterIdCombatantMap: new Map(),
       activeCombatant: { ...createChongyunCombatant(), weaponType: WeaponType.Catalyst },
       enemyMap: new Map(),
       kitEffectState: catalystEffectState,
@@ -139,6 +141,7 @@ describe(createChongyunKit, () => {
       tickIndex: 0,
     });
     field?.onTick({
+      characterIdCombatantMap: new Map(),
       activeCombatant: createChongyunCombatant(),
       enemyMap: new Map(),
       kitEffectState: claymoreEffectState,
@@ -161,7 +164,12 @@ describe(createChongyunKit, () => {
   test("a swap brings the field's infusion on the character that comes on while it stands", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
-    CHONGYUN_KIT.elementalSkill.onStart?.({ body: kitBody, combatant: createChongyunCombatant(), kitEffectState });
+    CHONGYUN_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant: createChongyunCombatant(),
+      kitEffectState,
+      party: createParty([CHONGYUN_CHARACTER_ID]),
+    });
     CHONGYUN_KIT.onKitEvent?.(
       {
         characterId: TRAVELER_CHARACTER_ID,
@@ -180,9 +188,19 @@ describe(createChongyunKit, () => {
     expect.hasAssertions();
     const combatant = createChongyunCombatant(4);
     const kitEffectState: KitEffectState = { effects: [] };
-    CHONGYUN_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+    CHONGYUN_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([CHONGYUN_CHARACTER_ID]),
+    });
     const [field] = kitEffectState.effects;
-    CHONGYUN_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+    CHONGYUN_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([CHONGYUN_CHARACTER_ID]),
+    });
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), position: { x: 0, z: -5 } };
     if (field)
       CHONGYUN_KIT.onKitEvent?.(
@@ -220,7 +238,12 @@ describe(createChongyunKit, () => {
     expect.hasAssertions();
     const combatant = createChongyunCombatant(0, 2);
     const kitEffectState: KitEffectState = { effects: [] };
-    CHONGYUN_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+    CHONGYUN_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([CHONGYUN_CHARACTER_ID]),
+    });
     const partyMember = { ...createPartyMember(), energy: 40 };
     stepKit(
       createKitState(),
@@ -238,7 +261,7 @@ describe(createChongyunKit, () => {
       createStamina(STAMINA_MAX),
       0.1,
       [],
-      { body: kitBody, combatant, kitEffectState },
+      { body: kitBody, combatant, kitEffectState, party: createParty([CHONGYUN_CHARACTER_ID]) },
     );
 
     expect(partyMember.burstCooldownSeconds).toBeCloseTo(12 * 0.85);

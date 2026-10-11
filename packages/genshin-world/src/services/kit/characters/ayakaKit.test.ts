@@ -55,7 +55,12 @@ describe(createAyakaKit, () => {
       const combatant = createAyakaCombatant(constellationCount);
       const body = { x: 0, z: 0 };
       const kitEffectState: KitEffectState = { effects: [] };
-      AYAKA_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+      AYAKA_KIT.elementalBurst.onStart?.({
+        body: { facing: 0, height: 0, position: body },
+        combatant,
+        kitEffectState,
+        party: createParty([AYAKA_CHARACTER_ID]),
+      });
       const strikes = stepKitEffects(kitEffectState, 7, {
         activeCombatant: combatant,
         body,
@@ -77,7 +82,12 @@ describe(createAyakaKit, () => {
     expect.hasAssertions();
     const combatant = createAyakaCombatant(0);
     const kitEffectState: KitEffectState = { effects: [] };
-    const context = { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant, kitEffectState };
+    const context = {
+      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      combatant,
+      kitEffectState,
+      party: createParty([AYAKA_CHARACTER_ID]),
+    };
     const kitState = createKitState();
     AYAKA_KIT.onSprint?.(context, kitState);
     stepKitEffects(kitEffectState, 1, {

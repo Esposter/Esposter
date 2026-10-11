@@ -60,7 +60,12 @@ describe("lisa kit", () => {
     const party = createParty([LISA_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    LISA_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+    LISA_KIT.elementalBurst.onStart?.({
+      body: { facing: 0, height: 0, position: body },
+      combatant,
+      kitEffectState,
+      party,
+    });
 
     const discharges = stepKitEffects(kitEffectState, 17, { activeCombatant: combatant, body, party });
     expect(discharges).toHaveLength(30);
@@ -102,6 +107,7 @@ describe("lisa kit", () => {
       body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
       combatant: createLisaCombatant(),
       kitEffectState: { effects: [] },
+      party: createParty([LISA_CHARACTER_ID]),
     };
     const idleInput: KitInput = {
       height: 0,

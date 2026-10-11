@@ -9,6 +9,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { KEQING_CHARACTER_ID } from "#src/services/character/constants";
 import { createKeqingKit } from "#src/services/kit/characters/keqingKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const KEQING_KIT = createKeqingKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KEQING_CHARACTER_ID]));
@@ -35,6 +36,7 @@ describe(createKeqingKit, () => {
       body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
       combatant: createKeqingCombatant(),
       kitEffectState,
+      party: createParty([KEQING_CHARACTER_ID]),
     });
 
     expect(kitEffectState.effects).toStrictEqual([

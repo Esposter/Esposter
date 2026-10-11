@@ -84,6 +84,7 @@ export const stepKit = (
     const isSkillOrBurst =
       action === kit.elementalSkill ||
       action === kit.elementalBurst ||
+      action === kit.elementalBurstVariant?.action ||
       kit.elementalSkillChain?.followUps.includes(action) === true ||
       kit.elementalSkillHolds?.some((hold) => hold.action === action || hold.variant?.action === action) === true;
     const isAllowed =

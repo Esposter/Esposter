@@ -10,6 +10,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { DIONA_CHARACTER_ID } from "#src/services/character/constants";
 import { createDionaKit } from "#src/services/kit/characters/dionaKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const DIONA_KIT = createDionaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DIONA_CHARACTER_ID]));
@@ -30,7 +31,7 @@ describe(createDionaKit, () => {
   // The shield an action's start sets on the team
   const castShield = (action: KitAction, combatant = createDionaCombatant()): KitShield => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState });
+    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([DIONA_CHARACTER_ID]) });
     const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
     if (!shield) throw new Error("Icy Paws sets no shield");
     return shield;

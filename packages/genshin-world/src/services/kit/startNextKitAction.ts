@@ -49,7 +49,10 @@ export const startNextKitAction = (
     partyMember.energy = 0;
     partyMember.burstCooldownSeconds =
       kit.burstCooldownSeconds * getKitFieldCooldownMultiplier(context.kitEffectState.effects, context.body.position);
-    return startKitAction(kitState, kit.elementalBurst, landedHits);
+    const burstAction = kit.elementalBurstVariant?.checkIsActive(context)
+      ? kit.elementalBurstVariant.action
+      : kit.elementalBurst;
+    return startKitAction(kitState, burstAction, landedHits);
   }
 
   // A press inside a skill chain's window plays its follow-up whatever the cooldown, which the chain's first press set

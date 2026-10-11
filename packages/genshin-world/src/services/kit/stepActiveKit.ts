@@ -76,7 +76,7 @@ export const stepActiveKit = (
   const summonStrikes = stepKitEffects(
     kitEffectState,
     stepSeconds,
-    { activeCombatant: combatant, body: kitBody.position, enemyMap, party },
+    { activeCombatant: combatant, body: kitBody.position, characterIdCombatantMap, enemyMap, party },
     expiredEffects,
   );
   for (const effect of expiredEffects) emit({ effect, kind: KitEventKind.EffectExpired });
@@ -94,7 +94,7 @@ export const stepActiveKit = (
     characterController.stamina,
     stepSeconds,
     landedHits,
-    { body: kitBody, combatant, kitEffectState },
+    { body: kitBody, combatant, kitEffectState, party },
   );
   // The ores are struck by the hits as the kit gives them, and each hit's kind of attack is read, before an infusion
   // Copies them
@@ -118,8 +118,8 @@ export const stepActiveKit = (
     }
   }
 
-  action?.onStart?.({ body: kitBody, combatant, kitEffectState, target });
-  if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState });
+  action?.onStart?.({ body: kitBody, combatant, kitEffectState, party, target });
+  if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState, party });
   for (const oreHit of landedOreHits) strikeOre(kitBody, oreHit);
   for (const normalAttack of kit.normalAttacks) {
     const [firstHit] = normalAttack.hits;

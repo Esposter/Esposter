@@ -49,7 +49,12 @@ describe("kaeya kit", () => {
     const party = createParty([KAEYA_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    KAEYA_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+    KAEYA_KIT.elementalBurst.onStart?.({
+      body: { facing: 0, height: 0, position: body },
+      combatant,
+      kitEffectState,
+      party,
+    });
 
     const icicles = stepKitEffects(kitEffectState, 9, { activeCombatant: combatant, body, party });
     expect(icicles).toHaveLength(13);

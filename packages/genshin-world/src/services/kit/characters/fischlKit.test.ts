@@ -52,13 +52,18 @@ describe(createFischlKit, () => {
   // The summons an action's start casts, as the kit's effects hold them
   const castSummons = (action: KitAction, combatant = createFischlCombatant()): KitSummon[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState });
+    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([FISCHL_CHARACTER_ID]) });
     return kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
   };
   // The team's effects with the skill's Oz standing, spawned
   const castStandingOz = (combatant: Combatant): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };
-    FISCHL_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+    FISCHL_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([FISCHL_CHARACTER_ID]),
+    });
     for (const effect of kitEffectState.effects) if (effect.kind === "summon") effect.elapsedSeconds = 1;
     return kitEffectState;
   };
@@ -110,7 +115,12 @@ describe(createFischlKit, () => {
     const combatant = createFischlCombatant();
     const kitEffectState = castStandingOz(combatant);
     const [skillOz] = kitEffectState.effects;
-    FISCHL_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    FISCHL_KIT.elementalBurst.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([FISCHL_CHARACTER_ID]),
+    });
 
     expect(skillOz?.secondsRemaining).toBe(0);
     expect(kitEffectState.effects).toHaveLength(2);
@@ -176,7 +186,12 @@ describe(createFischlKit, () => {
     expect.hasAssertions();
     const combatant = createFischlCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    FISCHL_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    FISCHL_KIT.elementalBurst.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([FISCHL_CHARACTER_ID]),
+    });
     FISCHL_KIT.onKitEvent?.(
       {
         characterId: TRAVELER_CHARACTER_ID,
@@ -198,7 +213,7 @@ describe(createFischlKit, () => {
     const party = createParty([FISCHL_CHARACTER_ID]);
     getPartyMember(party, FISCHL_CHARACTER_ID).healthShare = 0.5;
     const kitEffectState: KitEffectState = { effects: [] };
-    FISCHL_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    FISCHL_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
     const strikes = stepKitEffects(kitEffectState, 114 / 60, {
       activeCombatant: combatant,
       body: kitBody.position,

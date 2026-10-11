@@ -68,7 +68,12 @@ describe("mona kit", () => {
     const party = createParty([MONA_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    MONA_KIT.elementalSkill.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+    MONA_KIT.elementalSkill.onStart?.({
+      body: { facing: 0, height: 0, position: body },
+      combatant,
+      kitEffectState,
+      party,
+    });
 
     // A single step past the explosion at 329 frames lands every hit of the summon, and the summon then ends
     const strikes = stepKitEffects(kitEffectState, 6, { activeCombatant: combatant, body, party });
@@ -103,7 +108,7 @@ describe("mona kit", () => {
     const sprintFor = (ascension: number) => {
       const combatant = { ...createMonaCombatant(), ascension };
       const kitEffectState: KitEffectState = { effects: [] };
-      const context: KitStepContext = { body, combatant, kitEffectState };
+      const context: KitStepContext = { body, combatant, kitEffectState, party: createParty([MONA_CHARACTER_ID]) };
       const kitState = createKitState();
       const partyMember = createPartyMember();
       const stamina = createStamina(STAMINA_MAX);

@@ -44,7 +44,8 @@ const stepEffects = (
 
 // Strikes an enemy with each strike, as the world does for an enemy within its area
 const landStrikes = (strikes: KitStrike[], kitEffectState: KitEffectState): void => {
-  for (const { body, combatant, hit } of strikes) hit.onStrike?.({ body, combatant, kitEffectState });
+  for (const { body, combatant, hit } of strikes)
+    hit.onStrike?.({ body, combatant, kitEffectState, party: createParty([NINGGUANG_CHARACTER_ID]) });
 };
 
 describe(createNingguangKit, () => {
@@ -58,7 +59,7 @@ describe(createNingguangKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     // The multipliers of the hits an action's start casts, as they land on an enemy over the 3 seconds after it
     const landStartedHits = (action: KitAction): number[] => {
-      action.onStart?.({ body: kitBody, combatant, kitEffectState });
+      action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([NINGGUANG_CHARACTER_ID]) });
       const strikes = stepEffects(kitEffectState, 3, context);
       landStrikes(strikes, kitEffectState);
       return strikes.map(({ hit }) => hit.talentMultiplier);
@@ -85,7 +86,7 @@ describe(createNingguangKit, () => {
     const party = createParty([NINGGUANG_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const context = { activeCombatant: combatant, body, party };
     const kitEffectState: KitEffectState = { effects: [] };
-    const start = { body: kitBody, combatant, kitEffectState };
+    const start = { body: kitBody, combatant, kitEffectState, party: party };
     // The Star Jades a charged attack fires, past its own gem
     const fireStarJades = (): number => {
       NINGGUANG_KIT.chargedAttack.onStart?.(start);
@@ -108,7 +109,7 @@ describe(createNingguangKit, () => {
     const combatant = createNingguangCombatant(1, 0);
     const context = { activeCombatant: combatant, body, party: createParty([NINGGUANG_CHARACTER_ID]) };
     const kitEffectState: KitEffectState = { effects: [] };
-    const start = { body: kitBody, combatant, kitEffectState };
+    const start = { body: kitBody, combatant, kitEffectState, party: createParty([NINGGUANG_CHARACTER_ID]) };
     takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);
     const missedStrikes = stepEffects(kitEffectState, 1, context);
     const missedMultiplier = NINGGUANG_KIT.getChargedAttackStaminaMultiplier?.(start);
@@ -130,7 +131,7 @@ describe(createNingguangKit, () => {
       const combatant = createNingguangCombatant(ascension, 0);
       const context = { activeCombatant: combatant, body, party: createParty([NINGGUANG_CHARACTER_ID]) };
       const kitEffectState: KitEffectState = { effects: [] };
-      const start = { body: kitBody, combatant, kitEffectState };
+      const start = { body: kitBody, combatant, kitEffectState, party: createParty([NINGGUANG_CHARACTER_ID]) };
       const emptyMultiplier = NINGGUANG_KIT.getChargedAttackStaminaMultiplier?.(start);
       takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);
       landStrikes(stepEffects(kitEffectState, 1, context), kitEffectState);
@@ -146,9 +147,19 @@ describe(createNingguangKit, () => {
     const burstingCombatant: Combatant = { ...castingCombatant, level: 80 };
     const context = { activeCombatant: castingCombatant, body, party: createParty([NINGGUANG_CHARACTER_ID]) };
     const kitEffectState: KitEffectState = { effects: [] };
-    NINGGUANG_KIT.elementalSkill.onStart?.({ body: kitBody, combatant: castingCombatant, kitEffectState });
+    NINGGUANG_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant: castingCombatant,
+      kitEffectState,
+      party: createParty([NINGGUANG_CHARACTER_ID]),
+    });
     stepEffects(kitEffectState, 1, context);
-    NINGGUANG_KIT.elementalBurst.onStart?.({ body: kitBody, combatant: burstingCombatant, kitEffectState });
+    NINGGUANG_KIT.elementalBurst.onStart?.({
+      body: kitBody,
+      combatant: burstingCombatant,
+      kitEffectState,
+      party: createParty([NINGGUANG_CHARACTER_ID]),
+    });
     const levels = stepEffects(kitEffectState, 3, context).map(({ combatant }) => combatant.level);
 
     expect(levels).toStrictEqual([80, 80, 80, 80, 80, 80, 90, 90, 90, 90, 90, 90]);
@@ -171,7 +182,7 @@ describe(createNingguangKit, () => {
       const cast = (waitSeconds: number): number => {
         stepEffects(kitEffectState, waitSeconds, context);
         partyMember.skillCooldownSeconds = NINGGUANG_KIT.skillCooldownSeconds;
-        NINGGUANG_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+        NINGGUANG_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
         stepEffects(kitEffectState, 1, context);
         return partyMember.skillCooldownSeconds;
       };
@@ -186,7 +197,7 @@ describe(createNingguangKit, () => {
     const combatant = createNingguangCombatant(0, 6);
     const context = { activeCombatant: combatant, body, party: createParty([NINGGUANG_CHARACTER_ID]) };
     const kitEffectState: KitEffectState = { effects: [] };
-    const start = { body: kitBody, combatant, kitEffectState };
+    const start = { body: kitBody, combatant, kitEffectState, party: createParty([NINGGUANG_CHARACTER_ID]) };
     NINGGUANG_KIT.elementalBurst.onStart?.(start);
     stepEffects(kitEffectState, 3, context);
     takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);

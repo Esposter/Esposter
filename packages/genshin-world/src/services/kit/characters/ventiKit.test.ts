@@ -35,8 +35,8 @@ describe(createVentiKit, () => {
     const combatant = createVentiCombatant(0, 0);
     const party = createParty([VENTI_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    VENTI_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
-    VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    VENTI_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
     // The press's Wind Domain lands at 51 frames and the Stormeye's first tick at 106, the next falling past 2 seconds
     const summonStrikes = stepKitEffects(kitEffectState, 2, { activeCombatant: combatant, body, party });
     const multipliers = [
@@ -68,7 +68,7 @@ describe(createVentiKit, () => {
       const partyMember = getPartyMember(party, VENTI_CHARACTER_ID);
       const kitEffectState: KitEffectState = { effects: [] };
       const context = { activeCombatant: combatant, body, party };
-      VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+      VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
       const ticks = stepKitEffects(kitEffectState, 9.5, context);
 
       expect(partyMember.energy).toBe(0);
@@ -93,7 +93,7 @@ describe(createVentiKit, () => {
       const combatant = createVentiCombatant(0, constellationCount);
       const party = createParty([VENTI_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      VENTI_KIT.chargedAttack.onStart?.({ body: kitBody, combatant, kitEffectState });
+      VENTI_KIT.chargedAttack.onStart?.({ body: kitBody, combatant, kitEffectState, party });
       const arrows = stepKitEffects(kitEffectState, 2, { activeCombatant: combatant, body, party });
 
       expect(arrows.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual(
@@ -139,8 +139,8 @@ describe(createVentiKit, () => {
       const combatant = createVentiCombatant(0, constellationCount);
       const party = createParty([VENTI_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      VENTI_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
-      VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+      VENTI_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
       const strikes = stepKitEffects(kitEffectState, 2, { activeCombatant: combatant, body, party });
 
       expect(strikes.map(({ hit }) => hit.enemyStatus?.(combatant))).toStrictEqual([skillStatus, burstStatus]);

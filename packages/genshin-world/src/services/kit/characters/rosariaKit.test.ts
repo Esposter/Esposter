@@ -9,6 +9,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ROSARIA_CHARACTER_ID } from "#src/services/character/constants";
 import { createRosariaKit } from "#src/services/kit/characters/rosariaKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const ROSARIA_KIT = createRosariaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ROSARIA_CHARACTER_ID]));
@@ -30,6 +31,7 @@ const getFieldSeconds = (constellationCount: number): number => {
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
     combatant: createRosariaCombatant(constellationCount),
     kitEffectState,
+    party: createParty([ROSARIA_CHARACTER_ID]),
   });
   const field = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
   if (!field) throw new Error("Rites of Termination placed no field");

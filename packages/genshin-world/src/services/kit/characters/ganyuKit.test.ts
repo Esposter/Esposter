@@ -35,7 +35,7 @@ describe(createGanyuKit, () => {
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createGanyuCombatant()): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState });
+    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([GANYU_CHARACTER_ID]) });
     return kitEffectState.effects;
   };
   const castSummon = (action: KitAction): KitSummon | undefined =>
@@ -75,6 +75,7 @@ describe(createGanyuKit, () => {
         body: kitBody,
         combatant: createGanyuCombatant(ascension),
         kitEffectState,
+        party: createParty([GANYU_CHARACTER_ID]),
       });
 
     strike(0);
@@ -105,6 +106,7 @@ describe(createGanyuKit, () => {
     const field = castEffects(GANYU_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
+      characterIdCombatantMap: new Map(),
       activeCombatant: createGanyuCombatant(),
       enemyMap: new Map(),
       kitEffectState,
@@ -126,6 +128,7 @@ describe(createGanyuKit, () => {
     );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
+      characterIdCombatantMap: new Map(),
       activeCombatant: createGanyuCombatant(),
       enemyMap: new Map(),
       kitEffectState,

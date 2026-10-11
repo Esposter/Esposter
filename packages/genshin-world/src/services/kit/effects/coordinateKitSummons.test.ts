@@ -7,6 +7,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
@@ -38,7 +39,12 @@ describe(coordinateKitSummons, () => {
         },
       ],
     };
-    const context = { body: { facing: 0, height: 0, position: { x: 3, z: 4 } }, combatant, kitEffectState };
+    const context = {
+      body: { facing: 0, height: 0, position: { x: 3, z: 4 } },
+      combatant,
+      kitEffectState,
+      party: createParty([TRAVELER_CHARACTER_ID]),
+    };
     coordinateKitSummons(TRAVELER_KIT.elementalSkill, context);
     coordinateKitSummons(TRAVELER_KIT.chargedAttack, context);
     coordinateKitSummons(takeOne(TRAVELER_KIT.normalAttacks, 1), context);

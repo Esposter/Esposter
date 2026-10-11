@@ -37,7 +37,7 @@ describe(createKleeKit, () => {
     // The multipliers of the hits the summons an action's start casts land
     const readCastMultipliers = (action: KitAction): number[] => {
       const kitEffectState: KitEffectState = { effects: [] };
-      action.onStart?.({ body: kitBody, combatant, kitEffectState });
+      action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([KLEE_CHARACTER_ID]) });
       return kitEffectState.effects.flatMap((effect) =>
         effect.kind === "summon" ? effect.hits.map(({ talentMultiplier }) => talentMultiplier) : [],
       );
@@ -75,7 +75,12 @@ describe(createKleeKit, () => {
       };
       const offFieldContext = { ...context, activeCombatant: travelerCombatant };
       const kitEffectState: KitEffectState = { effects: [] };
-      KLEE_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+      KLEE_KIT.elementalBurst.onStart?.({
+        body: kitBody,
+        combatant,
+        kitEffectState,
+        party: createParty([KLEE_CHARACTER_ID]),
+      });
       const onFieldStrikes = stepKitEffects(kitEffectState, 4.5, context);
       const offFieldStrikes = [
         ...stepKitEffects(kitEffectState, 1, offFieldContext),
@@ -102,7 +107,12 @@ describe(createKleeKit, () => {
         party: createParty([KLEE_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
       };
       const kitEffectState: KitEffectState = { effects: [] };
-      KLEE_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+      KLEE_KIT.elementalBurst.onStart?.({
+        body: kitBody,
+        combatant,
+        kitEffectState,
+        party: createParty([KLEE_CHARACTER_ID]),
+      });
       stepKitEffects(kitEffectState, 1 / 60, context);
 
       expect(kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual(

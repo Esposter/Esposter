@@ -48,7 +48,12 @@ describe(createQiqiKit, () => {
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant: createQiqiCombatant(), kitEffectState });
+    action.onStart?.({
+      body: kitBody,
+      combatant: createQiqiCombatant(),
+      kitEffectState,
+      party: createParty([QIQI_CHARACTER_ID]),
+    });
     return kitEffectState.effects;
   };
   const castHerald = (): { field?: KitField; summon?: KitSummon } => {
@@ -216,7 +221,12 @@ describe(createQiqiKit, () => {
     const combatant = createQiqiCombatant(0, 1);
     const context = createKitEventContext(combatant);
     const kitEffectState: KitEffectState = { effects: [] };
-    QIQI_KIT.elementalSkill.onStart?.({ body: context.body, combatant, kitEffectState });
+    QIQI_KIT.elementalSkill.onStart?.({
+      body: context.body,
+      combatant,
+      kitEffectState,
+      party: createParty([QIQI_CHARACTER_ID]),
+    });
     const herald = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     QIQI_KIT.onKitEvent?.(
       {
@@ -273,6 +283,7 @@ describe(createQiqiKit, () => {
         body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
         combatant,
         kitEffectState,
+        party,
       });
       stepKitEffects(kitEffectState, 0.1, { activeCombatant: combatant, body: { x: 0, z: 0 }, party });
     };
