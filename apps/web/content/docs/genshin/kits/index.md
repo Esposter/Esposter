@@ -242,6 +242,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Chasca](/docs/genshin/kits/chasca)                 | Four strikes, the charged Aimed Shot and Galesplitting's first hit   |
 | [Chevreuse](/docs/genshin/kits/chevreuse)           | Rapid Interdiction Fire's hold and Ring of Bursting Grenades         |
 | [Chiori](/docs/genshin/kits/chiori)                 | Fluttering Hasode's Tamoto doll and Hiyoku: Twin Blades              |
+| [Skirk](/docs/genshin/kits/skirk)                   | Seven-Phase Flash, its strikes and charged attack, and her plunges   |
 | [Sigewinne](/docs/genshin/kits/sigewinne)           | Bolstering Bubblebalm's bubbles and Super Saturated Syringing        |
 | [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                           |
 | [Citlali](/docs/genshin/kits/citlali)               | Three strikes, the charged attack and Ice Storm                      |
