@@ -36,4 +36,22 @@ describe(createTerrainShapeHeight, () => {
     expect(getShapeHeight(5, 9)).toBe(getHeight(5, 9));
     expect(getShapeHeight(50, 50)).toBeCloseTo(getHeight(50, 50) + getResidualHeight(50, 50));
   });
+
+  test("draws a ground laid over another as it is drawn alone where its hills stand, and the base under it past them", () => {
+    expect.hasAssertions();
+
+    const residual = { amplitude: 2, octaves: 2, scale: 8, seed: 3 };
+    const overlay: TerrainShape = {
+      base: 5,
+      hills: [
+        { height: 3, width: 10, x: 100, z: 0 },
+        { height: 2, width: 10, x: 140, z: 0 },
+      ],
+      residual,
+    };
+    const getHeight = createTerrainShapeHeight({ base: 1, hills: [] }, overlay);
+
+    expect(getHeight(120, 0)).toBeCloseTo(createTerrainShapeHeight(overlay)(120, 0));
+    expect(getHeight(1000, 0)).toBeCloseTo(1 + createResidualHeight(residual)(1000, 0));
+  });
 });
