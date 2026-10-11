@@ -40,7 +40,7 @@ export const writeParityPasses = async (
 ): Promise<void> => {
   const text = existsSync(PARITY_PASSES_PATH) ? await readFile(PARITY_PASSES_PATH, "utf8") : "";
   // Each section by the component its heading names
-  const componentSectionMap = new Map(
+  const componentSectionMap = new Map<string, string>(
     text
       .split(`\n${SECTION_PREFIX}`)
       .slice(1)
