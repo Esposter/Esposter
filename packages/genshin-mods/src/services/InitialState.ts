@@ -12,6 +12,8 @@ export const InitialState: PluginState["genshin-mods"] = {
   lastCacheRequestAt: 0,
   lastIdleWakeMs: 0,
   lastPrompt: "",
+  lastQueueSyncMs: 0,
+  lastQueueSyncToastMs: 0,
   lookupStreak: 0,
   now: 0,
   reserveWindow: { isAheadOfPace: false, isWindDown: false, name: "", percentage: 0, resetsAt: "" },

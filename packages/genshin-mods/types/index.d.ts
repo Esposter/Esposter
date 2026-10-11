@@ -51,6 +51,8 @@ declare module "claude-code" {
       lastCacheRequestAt: number;
       lastIdleWakeMs: number;
       lastPrompt: string;
+      lastQueueSyncMs: number;
+      lastQueueSyncToastMs: number;
       lookupStreak: number;
       now: number;
       reserveWindow: ReserveWindow;

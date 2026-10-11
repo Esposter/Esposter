@@ -8,6 +8,7 @@ import {
   CACHE_WARNING_MS,
   CLOCK_TICK_MS,
   IDLE_WAKE_PROMPT,
+  QUEUE_SYNC_TOAST_MILLISECONDS,
   RESERVE_SECTION_ID,
   VEIL_SECTION_ID,
   VEIL_SYSTEM_SECTION,
@@ -18,6 +19,7 @@ import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
 import { checkIsIdle } from "./pulse/checkIsIdle";
 import { getIdleMinutes } from "./pulse/getIdleMinutes";
 import { getPulseWake } from "./pulse/getPulseWake";
+import { getQueueSyncDue } from "./pulse/getQueueSyncDue";
 import { parseMachinePulse } from "./pulse/parseMachinePulse";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
 import { getReserveSummary } from "./resin/getReserveSummary";
@@ -38,6 +40,14 @@ const lastIdleWakeMsAtom = atom(
   InitialState.lastIdleWakeMs,
 );
 const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as const, InitialState.lastPrompt);
+const lastQueueSyncMsAtom = atom(
+  { key: "lastQueueSyncMs", plugin: "genshin-mods" } as const,
+  InitialState.lastQueueSyncMs,
+);
+const lastQueueSyncToastMsAtom = atom(
+  { key: "lastQueueSyncToastMs", plugin: "genshin-mods" } as const,
+  InitialState.lastQueueSyncToastMs,
+);
 const lastCacheRequestAtAtom = atom(
   { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
   InitialState.lastCacheRequestAt,
@@ -104,6 +114,23 @@ const pulseMachine = async ($: EngineInterface) => {
   await $.prompt.submit({ text: IDLE_WAKE_PROMPT });
 };
 
+// Pushes the queue on the pulse's tick once each sync interval, outside a turn, under the pulse's own switch. A sync shows
+// Nothing unless it fails, and a failure's toast carries the sync's last line, at most once each toast interval
+const syncQueue = async ($: EngineInterface) => {
+  if (!(await read($, enabledModsAtom)).pulse) return;
+
+  const nowMs = await $.clock.now();
+  if (!getQueueSyncDue(await read($, lastQueueSyncMsAtom), nowMs, isTurnRunning)) return;
+
+  await update($, lastQueueSyncMsAtom, () => nowMs);
+  const output = await $.process.run(["node", `${$.plugin.root}/scripts/queueSync.mjs`, await $.session.cwd()]);
+  const lastToastMs = await read($, lastQueueSyncToastMsAtom);
+  if (output.exitCode === 0 || nowMs - lastToastMs < QUEUE_SYNC_TOAST_MILLISECONDS) return;
+
+  await update($, lastQueueSyncToastMsAtom, () => nowMs);
+  $.ui.toast(`The queue push failed: ${output.stdout.trim()}`);
+};
+
 const closeCommission = async ($: EngineInterface) => {
   await update($, commissionAtom, () => InitialState.commission);
   await update($, isCommissionExpandedAtom, () => InitialState.isCommissionExpanded);
@@ -136,6 +163,8 @@ export const registerLifecycle = (on: On): void => {
       tick($);
       // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a run that exits non-zero returns with nothing to show
       pulseMachine($);
+      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a failed sync is toasted by the run rather than rejected
+      syncQueue($);
     });
     // oxlint-disable-next-line typescript/no-floating-promises -- The session start takes no promise, and a run that exits non-zero returns with nothing to show
     pulseMachine($);
