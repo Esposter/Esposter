@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Agent console
 
-The [agent console](/docs/infra/claude-interface/agent-console) is one page of the app that works every Claude Code session on a machine in place of the terminal, from its [console overlay](/docs/infra/claude-interface/agent-console/console-overlay) at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). This proposal is what comes after it. It is judged by the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
+The [agent console](/docs/infra/claude-interface/agent-console) is one page of the app that works every Claude Code session it starts on a machine in place of the terminal, from its [console overlay](/docs/infra/claude-interface/agent-console/console-overlay) at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). This proposal is what comes after it. It is judged by the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
 
 ## Decisions
 

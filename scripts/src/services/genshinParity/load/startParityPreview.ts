@@ -58,9 +58,12 @@ export const startParityPreview = async (): Promise<ParityPreview> => {
     const timeout = setTimeout(() => {
       fail(new InvalidOperationError(Operation.Create, origin, "its preview did not announce its address in time"));
     }, PARITY_PREVIEW_TIMEOUT_MS);
+    let output = "";
     preview.stdout.on("data", (chunk: Buffer) => {
-      // Vite colours the address, its port between escape codes, so they are stripped before it is looked for
-      if (!chunk.toString().replaceAll(ANSI_ESCAPE_REGEX, "").includes(origin)) return;
+      // The address can be split across chunks, so it is looked for in all the output so far. Vite colours it, its port
+      // Between escape codes, so they are stripped before it is looked for
+      output += chunk.toString();
+      if (!output.replaceAll(ANSI_ESCAPE_REGEX, "").includes(origin)) return;
       clearTimeout(timeout);
       resolve();
     });

@@ -13,4 +13,16 @@ describe(getGithubRepository, () => {
 
     expect(getGithubRepository("https://gitlab.com/unjs/radix3")).toBe("");
   });
+
+  test("returns nothing for a host that only ends in github.com", () => {
+    expect.hasAssertions();
+
+    expect(getGithubRepository("https://notgithub.com/unjs/radix3")).toBe("");
+  });
+
+  test("reads owner and repo from an SSH URL", () => {
+    expect.hasAssertions();
+
+    expect(getGithubRepository("git@github.com:unjs/radix3.git")).toBe("unjs/radix3");
+  });
 });
