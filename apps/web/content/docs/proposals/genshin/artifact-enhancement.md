@@ -7,7 +7,7 @@ touches: ["packages/genshin-world/src/services/artifact/**"]
 
 # Artifact enhancement
 
-Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhancement): a drop's main and minor affixes by the wiki's weights, the Artifact EXP and its Mora, the every-fourth-level affixes, and the fodder and lock rules. A set's bonus that waits on combat is a module of its set's answering the kits' events, and Instructor's, which answers a reaction triggered, The Exile's and Traveling Doctor's, which answer a burst used, and Berserker's, which reads its wearer's HP as its hits are priced, are built. What is left is the other sets the world carries, whose bonuses rest on a hook the [character kits](/docs/proposals/genshin/character-kits) do not provide yet, and so wait on them.
+Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhancement): a drop's main and minor affixes by the wiki's weights, the Artifact EXP and its Mora, the every-fourth-level affixes, and the fodder and lock rules. A set's bonus that waits on combat is a module of its set's answering the kits' events, and Instructor's, which answers a reaction triggered, The Exile's and Traveling Doctor's, which answer a burst used, and Berserker's, which reads its wearer's HP as its hits are priced, are built. What is left is Adventurer's and Lucky Dog's, whose bonuses answer a world action no route carries to the kits yet.
 
 ## Decisions
 
@@ -20,8 +20,7 @@ Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhan
 
 **Still to build, in order:**
 
-1. **Each other carried set's bonus as a module**, written as an entry of `ArtifactSetIdCreateModuleMap` once the [character kits](/docs/proposals/genshin/character-kits), the unit the other machine holds, provide the hook it rests on:
-   - Adventurer's four-piece, a heal over seconds as a chest opens, and Lucky Dog's, a flat heal as Mora is picked up, wait on those world actions reaching a kit, which only sprinting does today.
+1. **Adventurer's and Lucky Dog's four-pieces as modules**, each an entry of `ArtifactSetIdCreateModuleMap`, their numbers already published with their sets: Adventurer's 6% of its wearer's Max HP each second for 5 seconds as a chest opens, and Lucky Dog's 300 HP as Mora is picked up. Both wait on a world action reaching the kits as a kit event. Sprinting reaches a kit as input its step reads, which a pickup is not: picking up Mora is `pickUpWorldDrop` in `useWorldPickups`, an interaction outside the step on the field, so it needs a world event queued for that step to send to the kits. Adventurer also waits on the [chests](/docs/proposals/genshin/chests) unit's first step, which opens a chest in the world, as `openChest` is called nowhere yet.
 
 ## Data and measures
 
