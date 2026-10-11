@@ -121,7 +121,6 @@ catalog:
   "@types/fs-extra": ^11.0.4
   "@types/howler": ^2.2.13
   "@types/js-beautify": ^1.14.3
-  "@types/mime-types": ^3.0.1
   "@types/node": ^26.6.5
   "@types/sanitize-html": ^2.16.2
   "@types/sax": ^1.2.7
@@ -219,7 +218,7 @@ catalog:
   marked: ^18.1.0
   mathjs: ^15.2.0
   mermaid: ^12.1.0
-  mime-types: ^3.0.2
+  mime-db: ^1.54.0
   minisearch: ^7.2.0
   # @TODO: no upstream issue — `@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, its own
   # Dependency, which Nitro 3 resolves from the app rather than from Nuxt (nuxt/nuxt)

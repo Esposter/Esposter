@@ -35,4 +35,4 @@ When a map transforms another (e.g. omitting a key), derive it rather than resta
 
 ## MIME types belong in the map, not in a runtime lookup
 
-Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfigurationMap`) rather than calling `mime-types` `lookup` at runtime — `mime-types` uses Node.js `path.extname`, unavailable in the browser. Access `mimeType` through the configuration map at the call site.
+Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfigurationMap`) rather than calling `lookup` from `@esposter/shared` at runtime — its first call reads the whole `mime-db` dataset (about 200 KB) into the bundle that makes it. Access `mimeType` through the configuration map at the call site.

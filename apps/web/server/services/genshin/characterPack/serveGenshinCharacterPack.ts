@@ -2,6 +2,7 @@ import { CHARACTER_ID_REGEX } from "#server/services/genshin/characterPack/const
 import { listCharacterPackFiles } from "#server/services/genshin/characterPack/listCharacterPackFiles";
 import { listCharacterPackIds } from "#server/services/genshin/characterPack/listCharacterPackIds";
 import { readCharacterPackModelPath } from "#server/services/genshin/characterPack/readCharacterPackModelPath";
+import { contentType } from "@esposter/shared";
 import {
   CHARACTER_MODEL_PATH,
   CHARACTER_PACK_INDEX_PATH,
@@ -10,7 +11,6 @@ import {
   decodeCharacterTerms,
   resolveCharacterPackTextures,
 } from "genshin-world/characterPack";
-import { contentType } from "mime-types";
 import { statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { extname, join } from "node:path";

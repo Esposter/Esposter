@@ -55,6 +55,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "mime-db": "catalog:",
     "neverthrow": "catalog:",
     "node-html-parser": "catalog:",
     "sanitize-html": "catalog:"

@@ -67,14 +67,12 @@
     "@esposter/shared": "workspace:*",
     "link-preview-js": "catalog:",
     "linkifyjs": "catalog:",
-    "mime-types": "catalog:",
     "node-html-parser": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@esposter/shared-node": "workspace:*",
-    "@types/mime-types": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
     "vitest": "catalog:"
