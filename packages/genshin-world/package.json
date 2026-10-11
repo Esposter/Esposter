@@ -69,6 +69,7 @@
     "access": "public"
   },
   "scripts": {
+    "bench": "vitest bench --run",
     "build": "tsdown",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -86,6 +87,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@fontsource/signika": "catalog:",
     "@tsdown/css": "catalog:",
     "@types/node": "catalog:",
