@@ -4,10 +4,12 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKleeKitBehaviour, KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -74,6 +76,17 @@ describe(createKleeKitBehaviour, () => {
       const offFieldContext = { ...context, activeCombatant: travelerCombatant };
       KLEE_KIT.elementalBurst.onStart?.(context);
       const onFieldStrikes = stepKitTestEffects(4.5, context);
+      // The swap to the Traveler ends what Klee's leaving ends, and her kit hears it, as stepActiveKit does on a swap
+      endKitSwapEffects(kitEffectState.effects, KLEE_CHARACTER_ID);
+      KLEE_KIT.onKitEvent?.(
+        {
+          characterId: TRAVELER_CHARACTER_ID,
+          kind: KitEventKind.CharacterSwapped,
+          previousCharacterId: KLEE_CHARACTER_ID,
+        },
+        offFieldContext,
+        combatant,
+      );
       const offFieldStrikes = [...stepKitTestEffects(1, offFieldContext), ...stepKitTestEffects(1, offFieldContext)];
 
       expect(onFieldStrikes).toHaveLength(3);

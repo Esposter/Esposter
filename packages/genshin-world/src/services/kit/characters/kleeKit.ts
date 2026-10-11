@@ -4,10 +4,10 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
-import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 
 // Sparkly Explosion, from four constellations, goes off as Klee leaves the field while Sparks 'n' Splash stands, as the
@@ -21,6 +21,7 @@ const BLAZING_DELIGHT_CONSTELLATION = 6;
 const BLAZING_DELIGHT_PYRO_DAMAGE_BONUS = 0.1;
 const BLAZING_DELIGHT_SECONDS = 25;
 const BLAZING_DELIGHT_SOURCE = "Blazing Delight";
+const SPARKS_ID = "klee-sparks";
 
 export const KLEE_CHARACTER_ID = 10_000_029;
 
@@ -43,29 +44,16 @@ export const createKleeKitBehaviour = ({
   // Sparkly Explosion lands a frame past Klee's leaving, so the step that casts it lands it
   const sparklyExplosion = readHit("sparklyExplosion");
 
-  // Sparks 'n' Splash's sparks land from a summon that follows the body on the field, and a field ticking every step ends
-  // Them once another character is on the field, as gcsim ends the burst on a swap. From four constellations that end
-  // Sets off Sparkly Explosion where Klee left, priced as she cast the burst, and from six a task runs once and gives
-  // Each member of the deployed team Blazing Delight's bonus
+  // Sparks 'n' Splash's sparks land from a summon that follows the body on the field, which her leaving the field ends, as
+  // Gcsim ends the burst on a swap, and from six constellations a task runs once and gives each member of the deployed
+  // Team Blazing Delight's bonus
   const castSparksNSplash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { characterId, constellationCount } = combatant;
-    const centre = { x: body.position.x, z: body.position.z };
-    const sparks = castKitSummon(kitEffectState, body, combatant, sparkHits, {
+    castKitSummon(kitEffectState, body, combatant, sparkHits, {
+      id: SPARKS_ID,
+      isEndedOnSwap: true,
       isFollowing: true,
       secondsRemaining: burstSeconds,
-    });
-    const exit = castKitField(kitEffectState, characterId, centre, {
-      nextTickSeconds: 0,
-      onTick: ({ activeCombatant, kitEffectState: tickKitEffectState }) => {
-        if (activeCombatant.characterId === characterId || !tickKitEffectState.effects.includes(sparks)) return;
-        tickKitEffectState.effects = tickKitEffectState.effects.filter(
-          (effect) => effect !== sparks && effect !== exit,
-        );
-        if (constellationCount >= SPARKLY_EXPLOSION_CONSTELLATION)
-          castKitSummon(tickKitEffectState, sparks.body, combatant, [sparklyExplosion]);
-      },
-      secondsRemaining: burstSeconds,
-      tickIntervalSeconds: FIXED_STEP_SECONDS,
     });
     if (constellationCount < BLAZING_DELIGHT_CONSTELLATION) return;
     scheduleKitTask(kitEffectState, characterId, 0, ({ kitEffectState: tickKitEffectState, party }) => {
@@ -88,6 +76,18 @@ export const createKleeKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitSummon(kitEffectState, body, combatant, [bomb]),
     })),
+    // From four constellations her leaving the field while her sparks stand, which the swap has just ended, sets off
+    // Sparkly Explosion where they stood, priced as she cast the burst
+    onKitEvent: (event, { kitEffectState }, { characterId, constellationCount }) => {
+      if (
+        event.kind !== KitEventKind.CharacterSwapped ||
+        event.previousCharacterId !== characterId ||
+        constellationCount < SPARKLY_EXPLOSION_CONSTELLATION
+      )
+        return;
+      const sparks = findStandingKitSummon(kitEffectState.effects, SPARKS_ID, characterId);
+      if (sparks) castKitSummon(kitEffectState, sparks.body, sparks.combatant, [sparklyExplosion]);
+    },
     // The bounces and mines land from a summon cast where Klee stands as the skill starts
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>

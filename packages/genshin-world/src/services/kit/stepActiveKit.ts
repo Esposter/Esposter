@@ -9,6 +9,7 @@ import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
+import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { infuseKitHit } from "#src/services/kit/effects/infuseKitHit";
@@ -66,9 +67,7 @@ export const stepActiveKit = (
   const { fieldCharacterId } = kitEffectState;
   kitEffectState.fieldCharacterId = characterId;
   if (fieldCharacterId !== undefined && fieldCharacterId !== characterId) {
-    for (const effect of kitEffectState.effects)
-      if ("isEndedOnSwap" in effect && effect.isEndedOnSwap && effect.characterId === fieldCharacterId)
-        effect.secondsRemaining = 0;
+    endKitSwapEffects(kitEffectState.effects, fieldCharacterId);
     emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId }, context);
   }
   sendKitOutbox(context);
