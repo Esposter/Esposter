@@ -17,8 +17,8 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Navia's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -255,8 +255,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         shrapnel.stacks = keptShrapnel;
         if (keptShrapnel === 0) shrapnel.secondsRemaining = 0;
       }
-      if (checkIsKitStatusActive(kitEffectState.effects, characterId, ARKHE_ICD_STATUS_ID)) return;
-      addKitStatus(kitEffectState, characterId, { id: ARKHE_ICD_STATUS_ID, secondsRemaining: arkheIcdSeconds });
+      if (!startKitCooldown(kitEffectState, characterId, ARKHE_ICD_STATUS_ID, arkheIcdSeconds)) return;
       castKitSummon(kitEffectState, createAheadBody(body, SURGING_BLADE_AHEAD_METRES), combatant, [
         {
           element: Element.Geo,
@@ -285,11 +284,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // A cannon hit gains a Crystal Shrapnel, at most once each cooldown of the burst's shrapnel group
   const onCannonStrike = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {
     const { characterId } = combatant;
-    if (checkIsKitStatusActive(kitEffectState.effects, characterId, BURST_SHRAPNEL_ICD_STATUS_ID)) return;
-    addKitStatus(kitEffectState, characterId, {
-      id: BURST_SHRAPNEL_ICD_STATUS_ID,
-      secondsRemaining: burstShrapnelIcdSeconds,
-    });
+    if (!startKitCooldown(kitEffectState, characterId, BURST_SHRAPNEL_ICD_STATUS_ID, burstShrapnelIcdSeconds)) return;
     const stacks = countShrapnel(kitEffectState, characterId);
     if (stacks < SHRAPNEL_MAX)
       addKitStatus(kitEffectState, characterId, {
