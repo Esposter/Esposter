@@ -1,0 +1,92 @@
+import type { CiRun } from "#src/models/ci/CiRun";
+
+import {
+  BRANCH_RUN_LIMIT,
+  CI_RUN_FIELDS,
+  RUN_CREATION_ATTEMPTS,
+  RUN_CREATION_WAIT,
+  RUN_WATCH_INTERVAL_SECONDS,
+} from "#src/services/ci/constants";
+import { getErrorLines } from "#src/services/ci/getErrorLines";
+import { selectRunToWatch } from "#src/services/ci/selectRunToWatch";
+import { CI_WORKFLOW_FILE, QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { runToolAsync } from "#src/services/resume/runToolAsync";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { setTimeout as sleep } from "node:timers/promises";
+
+interface CiJob {
+  conclusion: string;
+  databaseId: number;
+  name: string;
+}
+
+// Found by its commit, never by `--branch` with `--workflow`: GitHub's per-workflow branch filter answers with weeks-old
+// Runs for `ai/queue` (the `running-checks` skill, "Watching the push's run")
+const readCommitRun = async (sha: string): Promise<CiRun | undefined> => {
+  for (let attempt = 0; attempt < RUN_CREATION_ATTEMPTS; attempt++) {
+    const [run] = parseMachineJson<CiRun[]>(
+      // oxlint-disable-next-line no-await-in-loop -- each read waits for the one before it to find no run yet
+      await runToolAsync("gh", [
+        "run",
+        "list",
+        "--commit",
+        sha,
+        "--workflow",
+        CI_WORKFLOW_FILE,
+        "--limit",
+        "1",
+        "--json",
+        CI_RUN_FIELDS,
+      ]),
+    );
+    if (run) return run;
+    // oxlint-disable-next-line no-await-in-loop -- the run is created after the push, with no event to wait on
+    await sleep(RUN_CREATION_WAIT.total("milliseconds"));
+  }
+  return undefined;
+};
+
+const readBranchRuns = async (): Promise<CiRun[]> =>
+  parseMachineJson<CiRun[]>(
+    await runToolAsync("gh", [
+      "run",
+      "list",
+      "--branch",
+      QUEUE_BRANCH,
+      "--limit",
+      String(BRANCH_RUN_LIMIT),
+      "--json",
+      CI_RUN_FIELDS,
+    ]),
+  );
+
+// Waits for the CI run that covers `ai/queue`'s tip and prints its verdict, with each failed job's error lines. Returns
+// Whether the run passed, so the command exits non-zero on a red and the session that pushed is woken by it
+export const watchQueueRun = async (): Promise<boolean> => {
+  await runToolAsync("git", ["fetch", "-q", "origin", QUEUE_BRANCH]);
+  const sha = (await runToolAsync("git", ["rev-parse", `origin/${QUEUE_BRANCH}`])).trim();
+  const run = selectRunToWatch(await readCommitRun(sha), await readBranchRuns());
+  if (!run) {
+    console.log(`No CI run covers ${sha} yet`);
+    return false;
+  }
+
+  const runId = String(run.databaseId);
+  // Without `--exit-status` the watch ends when the run completes, whatever its conclusion, which is read below
+  await runToolAsync("gh", ["run", "watch", runId, "--interval", String(RUN_WATCH_INTERVAL_SECONDS)]);
+  const { conclusion, jobs } = parseMachineJson<{ conclusion: string; jobs: CiJob[] }>(
+    await runToolAsync("gh", ["run", "view", runId, "--json", "conclusion,jobs"]),
+  );
+  console.log(`CI run ${runId} for ${sha.slice(0, 10)}: ${conclusion}`);
+  const failedJobs = jobs.filter((job) => job.conclusion === "failure");
+  const failedLogs = await Promise.all(
+    failedJobs.map(({ databaseId }) =>
+      runToolAsync("gh", ["run", "view", "--job", String(databaseId), "--log-failed"]),
+    ),
+  );
+  for (const [index, { name }] of failedJobs.entries()) {
+    console.log(`\n✖ ${name}`);
+    for (const line of getErrorLines(failedLogs[index] ?? "")) console.log(`  ${line}`);
+  }
+  return conclusion === "success";
+};

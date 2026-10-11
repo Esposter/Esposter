@@ -1,4 +1,5 @@
 import { getBasicAuthCredentials } from "#src/runtime/services/getBasicAuthCredentials";
+import * as fc from "fast-check";
 import { describe, expect, test } from "vitest";
 
 describe(getBasicAuthCredentials, () => {
@@ -43,6 +44,18 @@ describe(getBasicAuthCredentials, () => {
       name: "user",
       pass: "pa",
     });
+  });
+
+  test("no header value throws, so a client cannot turn a malformed one into a 500", () => {
+    expect.hasAssertions();
+
+    // Base64-shaped values with any padding reach the decoder, which is the step that can throw
+    const headerValue = fc.oneof(fc.string(), fc.stringMatching(/^[d+/A-Za-z]{0,12}={0,3}$/u));
+    fc.assert(
+      fc.property(headerValue, (value) => {
+        expect(() => getBasicAuthCredentials(`Basic ${value}`)).not.toThrow();
+      }),
+    );
   });
 
   test("another scheme is refused", () => {
