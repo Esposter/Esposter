@@ -2505,6 +2505,9 @@ importers:
       playwright:
         specifier: 'catalog:'
         version: 1.64.0
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.2.13
       sharp:
         specifier: 'catalog:'
         version: 0.35.5(@types/node@26.6.5)

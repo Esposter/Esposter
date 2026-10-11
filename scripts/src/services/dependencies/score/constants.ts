@@ -53,8 +53,9 @@ export const TYPES_SCOPE = "@types/";
 // Where a package's own dependencies sit: beside its realpath, under pnpm's store layout
 export const NODE_MODULES_DIRECTORY = "node_modules";
 
-// One `git grep` finds every import of a package in the tracked source, matching `from "<name>"` and `import("<name>"`
-export const IMPORT_GREP_PATTERN: string = String.raw`(from|import\()\s*"[^"]+"`;
+// One `git grep` finds every import of a package in the tracked source, matching `from "<name>"`, `import("<name>"` and a
+// Side-effect `import "<name>"` opening its line
+export const IMPORT_GREP_PATTERN: string = String.raw`(from|import\(|^\s*import)\s*"[^"]+"`;
 export const IMPORT_GREP_PATHSPECS: string[] = ["*.ts", "*.vue", "*.mjs", "*.js"];
 
 // The type workarounds a package forces on us, one `git grep` finding each of the three: a module declared over it, a
@@ -64,3 +65,21 @@ export const TYPE_SHIM_PATTERN = `@ts-expect-error|as unknown as|declare module 
 export const SHIM_LINE_WINDOW = 3;
 // The reasons a Keep verdict keeps a package whose type workarounds absorbing it would fix at the root
 export const SHIM_EXEMPT_REASONS: string[] = ["engine", "SDK", "framework", "tooling"];
+
+// The app whose client bundle a package's cost is measured in, and the folders of it that ship to the browser. A
+// Workspace package is client when one of these, or another client package, imports it.
+export const APP_DIRECTORY = "apps/web";
+export const CLIENT_DIRECTORIES: string[] = [`${APP_DIRECTORY}/app`, `${APP_DIRECTORY}/shared`];
+// The files a test, benchmark or type test is, whose imports never reach the bundle
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
+export const TEST_FILE_REGEX: RegExp = /\.(?:test|test-d|bench|typebench)\.[cm]?[jt]sx?$/u;
+// The packages a Nuxt module is named by, which the app loads from its configuration rather than from its source
+export const NUXT_MODULE_PREFIXES: string[] = ["@nuxt/", "nuxt-"];
+export const NUXT_PACKAGE_NAME = "nuxt";
+// How many packages are bundled at once, each its own rolldown build
+export const BUNDLE_CONCURRENCY = 4;
+// The folder a bundle's temporary entry is written into: under the `node_modules` of the file that imports the package,
+// So the entry resolves the package exactly as that file does, and git ignores it
+export const BUNDLE_ENTRY_DIRECTORY_NAME = ".bundle-cost";
+// How many of the largest bundle costs the report ends on
+export const TOP_BUNDLE_COUNT = 25;

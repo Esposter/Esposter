@@ -5,6 +5,7 @@ export interface InstalledManifest {
   main?: string;
   module?: string;
   name?: string;
+  peerDependencies?: Record<string, string>;
   type?: string;
   types?: string;
   typings?: string;
