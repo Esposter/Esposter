@@ -64,6 +64,7 @@
     "ai:usage": "tsx src/usage/index.ts",
     "ai:voice-match": "node src/voiceMatch/index.ts",
     "bench": "vitest bench --run",
+    "bench:types": "tsx src/benchTypes/index.ts",
     "crossOS": "node src/crossOS/index.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",

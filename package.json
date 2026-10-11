@@ -70,6 +70,7 @@
     "ai:voice-match": "pnpm -C scripts ai:voice-match",
     "bench": "pnpm -r --workspace-concurrency=1 --if-present bench",
     "bench:ci": "vitest bench --run",
+    "bench:types": "pnpm -C scripts bench:types",
     "build": "pnpm --filter \"@esposter/web...\" build",
     "build:docs": "typedoc",
     "coverage": "vitest run --coverage",
