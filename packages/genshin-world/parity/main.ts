@@ -117,7 +117,6 @@ if (screen && root) {
   app.mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
-  Reflect.set(window, "benchLoad", () => benchLoad(sceneContext.value));
   Reflect.set(window, "getSceneCamera", () => getSceneCamera(sceneContext.value));
   Reflect.set(window, "getSceneSky", () => getSceneSky(sceneContext.value));
   Reflect.set(window, "getSceneFog", () => getSceneFog(sceneContext.value));
@@ -171,6 +170,9 @@ if (screen && root) {
   if (motion === "entry") holdAnimations();
   await window.document.fonts.ready;
   await ready;
+  // The load is read the moment the screen is ready, before the tool reading it has waited on the network to idle, so
+  // Neither its time nor its requests count what the page fetches after
+  Reflect.set(window, "loadReading", { bench: benchLoad(sceneContext.value), readyMs: performance.now() });
   if (motion === "props" && screen.motionProps) {
     await Promise.all(window.document.getAnimations().map(({ finished }) => finished));
     // A style flush now records the entry's end as the state the motion transitions from; without one the browser folds

@@ -41,13 +41,14 @@ const formatRow = ({ budget, isChecked, name, unit, value }: Figure): { isOver: 
 };
 
 // A screen's load as the meter prints it: one row per figure against its budget, then the measures the load steps took,
-// Slowest first, and what the requests fetched and the scene drew. `isOver` is whether a figure checked here is past
-// Its budget, which fails the command
+// Slowest first, and what the requests fetched and the scene drew. `isFailed` is whether a figure checked here is past
+// Its budget or a load step failed, either of which fails the command: a screen ready after a failed step loaded only
+// Part of itself, so its figures can sit well within budget
 export const formatLoadMeter = (
   { bench, readyMs }: LoadReading,
   budget: LoadBudget | undefined,
   machine: string,
-): { isOver: boolean; lines: string[] } => {
+): { isFailed: boolean; lines: string[] } => {
   const isTimeChecked = budget?.machine === machine;
   const objects = Object.values(bench.kindCounts).reduce((sum, count) => sum + count, 0);
   const figures: Figure[] = [
@@ -88,7 +89,7 @@ export const formatLoadMeter = (
     .map(([kind, count]) => `${count} ${kind}`)
     .join(", ");
   return {
-    isOver: rows.some(({ isOver }) => isOver),
+    isFailed: rows.some(({ isOver }) => isOver) || bench.measures.some(({ isFailed }) => isFailed),
     lines: [
       ...rows.map(({ line }) => line),
       "",

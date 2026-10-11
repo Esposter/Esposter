@@ -19,8 +19,8 @@ export const loadCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const reading = await loadScreen({ height: Number(args.height), screen: args.screen, width: Number(args.width) });
-    const { isOver, lines } = formatLoadMeter(reading, ScreenLoadBudgetMap[args.screen], hostname());
+    const { isFailed, lines } = formatLoadMeter(reading, ScreenLoadBudgetMap[args.screen], hostname());
     for (const line of lines) console.log(line);
-    if (isOver) process.exitCode = 1;
+    if (isFailed) process.exitCode = 1;
   },
 });
