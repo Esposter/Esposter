@@ -11,12 +11,12 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKukiKit } from "#src/services/kit/characters/kukiKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const KUKI_KIT = createKukiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KUKI_CHARACTER_ID]));
 

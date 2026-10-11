@@ -8,9 +8,9 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { YANFEI_CHARACTER_ID } from "#src/services/kit/characters/yanfeiKit";
 import { createYanfeiKit } from "#src/services/kit/characters/yanfeiKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const YANFEI_KIT = createYanfeiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YANFEI_CHARACTER_ID]));
 

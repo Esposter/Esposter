@@ -106,8 +106,8 @@ describe(createGanyuKit, () => {
     const field = castEffects(GANYU_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
-      characterIdCombatantMap: new Map(),
       activeCombatant: createGanyuCombatant(),
+      characterIdCombatantMap: new Map(),
       enemyMap: new Map(),
       kitEffectState,
       party: createParty([GANYU_CHARACTER_ID]),
@@ -128,8 +128,8 @@ describe(createGanyuKit, () => {
     );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
-      characterIdCombatantMap: new Map(),
       activeCombatant: createGanyuCombatant(),
+      characterIdCombatantMap: new Map(),
       enemyMap: new Map(),
       kitEffectState,
       party: createParty([GANYU_CHARACTER_ID]),

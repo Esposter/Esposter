@@ -218,13 +218,6 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: attackMultiplier(13),
-    getChargedAttackStaminaMultiplier: ({ combatant, kitEffectState }) => {
-      const reduction =
-        combatant.constellationCount >= CHARGED_ATTACK_STAMINA_CONSTELLATION
-          ? CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION
-          : CHARGED_ATTACK_STAMINA_REDUCTION;
-      return 1 - reduction * countSeals(kitEffectState, combatant.characterId);
-    },
     // Done Deal's hit gives the full seals, and its seconds add one each second while it stands, on a field the whole
     // Battlefield holds, as gcsim's tick runs wherever Yanfei is
     elementalBurst: {
@@ -252,6 +245,13 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: SKILL_TARGETING_AREA,
     },
     elementalSkill: { hits: [skillHit], seconds: SKILL_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
+    getChargedAttackStaminaMultiplier: ({ combatant, kitEffectState }) => {
+      const reduction =
+        combatant.constellationCount >= CHARGED_ATTACK_STAMINA_CONSTELLATION
+          ? CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION
+          : CHARGED_ATTACK_STAMINA_REDUCTION;
+      return 1 - reduction * countSeals(kitEffectState, combatant.characterId);
+    },
     highPlunge: {
       hits: [
         {

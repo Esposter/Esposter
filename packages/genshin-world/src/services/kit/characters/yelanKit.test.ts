@@ -11,11 +11,11 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
 import { createYelanKit } from "#src/services/kit/characters/yelanKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const YELAN_KIT = createYelanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YELAN_CHARACTER_ID]));
 

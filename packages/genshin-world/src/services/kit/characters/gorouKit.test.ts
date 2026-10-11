@@ -72,9 +72,9 @@ describe(createGorouKit, () => {
     banner?.onTick({
       activeCombatant: combatant,
       characterIdCombatantMap: new Map([
-        [GOROU_CHARACTER_ID, combatant],
         [1, createGorouCombatant(1)],
         [2, createGorouCombatant(2)],
+        [GOROU_CHARACTER_ID, combatant],
       ]),
       enemyMap: new Map(),
       kitEffectState,

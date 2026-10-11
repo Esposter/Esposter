@@ -11,10 +11,10 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { noop, takeOne } from "@esposter/shared";
 import {

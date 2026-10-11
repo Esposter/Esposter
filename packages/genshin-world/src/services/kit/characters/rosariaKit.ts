@@ -8,8 +8,8 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 

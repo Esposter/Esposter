@@ -28,9 +28,9 @@ import { imaginariumCommand } from "#src/services/genshinAssets/commands/imagina
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
-import { luaDialectCommand } from "#src/services/genshinAssets/commands/luaDialectCommand";
 import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineCommand";
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
+import { luaDialectCommand } from "#src/services/genshinAssets/commands/luaDialectCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";

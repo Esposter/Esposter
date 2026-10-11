@@ -8,9 +8,9 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
 import { createKleeKit } from "#src/services/kit/characters/kleeKit";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
