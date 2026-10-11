@@ -1,11 +1,12 @@
 import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatarRow";
 import type { ExcelAvatarTalentRow } from "#src/models/genshinAssets/stats/ExcelAvatarTalentRow";
 import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSkillDepotRow";
-import type { ExcelSkillRow } from "#src/models/genshinAssets/stats/ExcelSkillRow";
 import type { CharacterConstellationKit, Constellation, ConstellationDepot } from "genshin-world";
 
 import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
+import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { readTalentActions } from "#src/services/genshinAssets/stats/readTalentActions";
 import { toConstellationRaise } from "#src/services/genshinAssets/stats/toConstellationRaise";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
@@ -24,10 +25,8 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
   const talentMap = new Map(
     readExcelTable<ExcelAvatarTalentRow>("AvatarTalentExcelConfigData").map((row) => [row.talentId, row]),
   );
-  const skillDepotMap = new Map(
-    readExcelTable<ExcelSkillDepotRow>("AvatarSkillDepotExcelConfigData").map((row) => [row.id, row]),
-  );
-  const skillMap = new Map(readExcelTable<ExcelSkillRow>("AvatarSkillExcelConfigData").map((row) => [row.id, row]));
+  const skillDepotMap = readSkillDepotMap();
+  const skillMap = readSkillMap();
   const actionMap = readTalentActions();
   const englishText = readTextMap(GameLanguage.English);
   const getText = (hash: number): string => englishText.get(String(hash)) ?? "";

@@ -14,6 +14,8 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import { toGameObjectComponentsMap } from "#src/services/genshinAssets/shared/toGameObjectComponentsMap";
+import { toGameObjectTransformIdMap } from "#src/services/genshinAssets/shared/toGameObjectTransformIdMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -77,19 +79,8 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
       parseMachineJson<DumpedGameObject>(await readFile(join(gameObjectDirectory, name), "utf8"), reviveSourcePathId),
     ),
   );
-  const gameObjectTransformIdMap = new Map(
-    gameObjects.flatMap(({ m_Components, m_Transform }) => {
-      const [transform] = m_Components;
-      return transform ? [[m_Transform.m_GameObject.m_PathID, transform.m_PathID] as const] : [];
-    }),
-  );
-  const gameObjectComponentsMap = new Map(
-    gameObjects.map(({ m_Components, m_Transform }) => [
-      m_Transform.m_GameObject.m_PathID,
-      // A component the dump leaves unnamed (a CanvasRenderer) says nothing a layout needs
-      m_Components.slice(1).flatMap(({ Name }) => (Name ? [Name] : [])),
-    ]),
-  );
+  const gameObjectTransformIdMap = toGameObjectTransformIdMap(gameObjects);
+  const gameObjectComponentsMap = toGameObjectComponentsMap(gameObjects);
   const tree = composeInterfaceTree(rects, gameObjectTransformIdMap, gameObjectComponentsMap, interfaceOptions.root);
   if (!tree) throw new InvalidOperationError(Operation.Read, interfaceOptions.root, `not in ${block}`);
   writeJsonFile(join(directory, "interface.json"), tree);

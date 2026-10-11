@@ -2,29 +2,20 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
+import { readRegionLandmarkSources } from "#src/services/genshinAssets/shared/readRegionLandmarkSources";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
-import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
-import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { readWorldPlacements } from "#src/services/genshinAssets/world/readWorldPlacements";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 // A region data file's landmarks the world places, each stood where its prefab's first place stands and turned as it
 // Turns, round the world's origin. Its height over the ground is the export root's height less our ground's at its spot,
 // So the landmark's root stands where the game's does and no hand offset sets it. Every other field is the region's own.
 // A landmark the world names that the file lacks, or a prefab placed nowhere, is an error. Returns the file's path
 export const fitRegionLandmarks = async (component: DerivedAssetComponent, regionFile: string): Promise<string> => {
-  const regionLandmarks = (await readWorldOptions(component))?.regionLandmarks ?? [];
-  const [placements, origin, regionJson, getWorldHeight] = await Promise.all([
-    readWorldPlacements(component),
-    readWorldOrigin(component),
-    readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
-    readWorldGroundHeight(),
-  ]);
+  const { getWorldHeight, origin, placements, regionJson, regionLandmarks } = await readRegionLandmarkSources(
+    component,
+    regionFile,
+  );
   const [, originY] = origin;
   // The world package's region data, whose fields beyond each landmark's id are carried through as the file holds them
   const regionData = parseMachineJson<{ landmarks: { id: string }[] }>(regionJson);
