@@ -1,13 +1,6 @@
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import {
-  GAME_TEXT_DIRECTORY,
-  SCENE_NPC_BORN_DIRECTORY,
-  SCENE_NPC_BORN_FILE_NAME,
-} from "#src/services/genshinText/constants";
 import { join } from "node:path";
 
-// The open world's NPC birth records, every NPC the scene places and where, as the community's dump holds them
-export const NPC_BORN_PATH: string = join(GAME_TEXT_DIRECTORY, SCENE_NPC_BORN_DIRECTORY, SCENE_NPC_BORN_FILE_NAME);
 // The region data files the residents are written into, one per region, beside its landmarks and camps
 export const REGION_DATA_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "regions");
 // A placed NPC is a resident of the region of the nearest mapped point, when that point lies within this many game units

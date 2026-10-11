@@ -22,6 +22,8 @@ export const DIALOG_PATH: string = join(EXCEL_DIRECTORY, "DialogExcelConfigData.
 // The talk table, every talk with the characters it is begun on and what it waits on, which the dump splits into
 // Numbered parts
 export const TALK_CONFIG_TABLE_NAME = "TalkExcelConfigData";
+// The trigger table, each trigger a quest fires by its id with the scene and the group that hold it
+export const TRIGGER_TABLE_NAME = "TriggerExcelConfigData";
 export const NPC_PATH: string = join(EXCEL_DIRECTORY, "NpcExcelConfigData.json");
 export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "BinOutput", "Quest");
 // The install's text chunks sit under this folder, each a MiHoYoBinData named by the path it is built from, and each
@@ -147,6 +149,7 @@ export const DUMP_TABLE_NAMES: readonly string[] = [
   "GCGLevelExcelConfigData",
   "GCGWeekLevelExcelConfigData",
   TALK_CONFIG_TABLE_NAME,
+  TRIGGER_TABLE_NAME,
 ];
 // The dump's scene 3 NPC births, the open world's, fetched like the tables. Its directory and file name are split so the
 // Fetch can list the one and select the other

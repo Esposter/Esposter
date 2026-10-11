@@ -1,8 +1,8 @@
 import type { ExcelExpeditionDataRow } from "#src/models/genshinAssets/expeditions/ExcelExpeditionDataRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 
-import { EXPEDITION_SCENE_ID } from "#src/services/genshinAssets/expeditions/constants";
 import { toExpeditionPlaceRow } from "#src/services/genshinAssets/expeditions/toExpeditionPlaceRow";
+import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { describe, expect, test } from "vitest";
 
 describe(toExpeditionPlaceRow, () => {
@@ -28,7 +28,7 @@ describe(toExpeditionPlaceRow, () => {
   const row: ExcelExpeditionDataRow = {
     CHMIGIHPMFH: [
       { CIMKGJIONHO: RANK_LEVEL, PCPMLMPDAFH: 0, type: "EXP_OPEN_COND_LEVEL" },
-      { CIMKGJIONHO: STATUE_POINT_ID, PCPMLMPDAFH: EXPEDITION_SCENE_ID, type: "EXP_OPEN_COND_POINT" },
+      { CIMKGJIONHO: STATUE_POINT_ID, PCPMLMPDAFH: OPEN_WORLD_SCENE_ID, type: "EXP_OPEN_COND_POINT" },
       { CIMKGJIONHO: 0, PCPMLMPDAFH: 0, type: "EXP_OPEN_COND_LEVEL" },
     ],
     cityId: 1,

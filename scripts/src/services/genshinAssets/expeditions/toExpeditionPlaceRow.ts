@@ -6,9 +6,9 @@ import {
   EXPEDITION_POINT_CONDITION,
   EXPEDITION_QUEST_CONDITION,
   EXPEDITION_RANK_CONDITION,
-  EXPEDITION_SCENE_ID,
 } from "#src/services/genshinAssets/expeditions/constants";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
+import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One place as the world reads it. Its Adventure Rank is the highest rank condition it names, its statue a point of the
@@ -25,7 +25,7 @@ export const toExpeditionPlaceRow = (
   for (const condition of row.CHMIGIHPMFH)
     if (condition.type === EXPEDITION_RANK_CONDITION) rankLevel = Math.max(rankLevel, condition.CIMKGJIONHO);
     else if (condition.type === EXPEDITION_POINT_CONDITION) {
-      if (condition.PCPMLMPDAFH !== EXPEDITION_SCENE_ID)
+      if (condition.PCPMLMPDAFH !== OPEN_WORLD_SCENE_ID)
         throw new InvalidOperationError(
           Operation.Read,
           String(row.id),

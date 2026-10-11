@@ -11,6 +11,11 @@ export const INTERACTIVE_MAP_DIRECTORY: string = join(REFERENCES_DIRECTORY, "int
 export const INTERACTIVE_MAP_TREE_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "label-tree.json");
 export const INTERACTIVE_MAP_POINTS_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "points.json");
 export const INTERACTIVE_MAP_FIT_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "fit.json");
+// The map's Viewpoint label, whose points the list gives with no name: each point's info carries the text its contributors
+// Wrote on it, which names the viewpoint, so the infos are read one point at a time, a batch of them at once
+export const INTERACTIVE_MAP_VIEWPOINT_LABEL_ID = 85;
+export const INTERACTIVE_MAP_VIEWPOINTS_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "viewpoints.json");
+export const INTERACTIVE_MAP_INFO_BATCH_SIZE = 8;
 // The map's labels of the two kinds a fit is solved on, the Statue of The Seven and the Teleport Waypoint, which the
 // Scene's transport points place as well
 export const INTERACTIVE_MAP_STATUE_LABEL_ID = 2;

@@ -1,8 +1,9 @@
 import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { GroundPoint } from "genshin-engine";
-import type { Resident } from "genshin-world";
+import type { Resident, SceneGroupPlace, SceneGroups } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import {
@@ -14,16 +15,16 @@ import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents
 import { joinResidents } from "#src/services/genshinAssets/residents/joinResidents";
 import { mapSpeakerTalkIds } from "#src/services/genshinAssets/residents/mapSpeakerTalkIds";
 import { readDialogSpeakers } from "#src/services/genshinAssets/residents/readDialogSpeakers";
-import { readNpcBornRecords } from "#src/services/genshinAssets/residents/readNpcBornRecords";
 import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegionMapPoints";
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
+import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { NPC_PATH } from "#src/services/genshinText/constants";
 import { mapNpcStandingTalkIds } from "#src/services/genshinText/mapNpcStandingTalkIds";
 import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
-import { residentSchema } from "genshin-world";
+import { residentSchema, SceneGroupMemberKind } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -33,8 +34,8 @@ type RegionDataFile = Record<string, unknown> & {
   residents?: Resident[];
 };
 
-// Every NPC the open world places, joined to the game's name and talk and written into the residents of each region the
-// Official map fitted to the scene. A region the fit matched no statue or waypoint in is left out, since its places
+// Every NPC the scene group record places, in its groups' order, joined to the game's name and talk and written into the
+// Residents of each region the official map fitted to the scene. A region the fit matched no statue or waypoint in is left out, since its places
 // Cannot be trusted. The talk F begins with an NPC is its standing talk where the talk table gives it one, else the
 // Lowest-numbered talk it speaks in. The report counts each region's residents, the ones with a night spot and what was
 // Left out
@@ -53,11 +54,15 @@ export const writeResidents = async (): Promise<string> => {
   const regionMapPoints = toRegionMapPoints(points, transform).filter(({ region }) =>
     fittedRegions.some((fitted) => fitted.region === region),
   );
-  const births = await readNpcBornRecords();
-  const placements = births.flatMap((record) => {
-    const { _pos } = record;
-    const region = classifyPlacementRegion({ x: _pos.x, z: _pos.z }, regionMapPoints, RESIDENT_REGION_MAX_DISTANCE);
-    return region === undefined ? [] : [toResidentPlace(record, region, origin)];
+  const { groups } = await readPublishedGameData<SceneGroups>(SCENE_GROUPS_KEY);
+  const npcPlaces = Object.values(groups).flatMap((members) =>
+    members.flatMap(({ kind, objectId, place }): [number, SceneGroupPlace][] =>
+      kind === SceneGroupMemberKind.Npc && place ? [[objectId, place]] : [],
+    ),
+  );
+  const placements = npcPlaces.flatMap(([npcId, place]) => {
+    const region = classifyPlacementRegion(place.position, regionMapPoints, RESIDENT_REGION_MAX_DISTANCE);
+    return region === undefined ? [] : [toResidentPlace(npcId, place, region, origin)];
   });
   const npcs = parseMachineJson<DumpedNpc[]>(await readFile(NPC_PATH, "utf8"));
   const nameTextIdMap = new Map(
@@ -83,6 +88,6 @@ export const writeResidents = async (): Promise<string> => {
   });
   return [
     ...reports,
-    `${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${births.length - placements.length} of ${births.length} birth records in no fitted region`,
+    `${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
   ].join("\n");
 };

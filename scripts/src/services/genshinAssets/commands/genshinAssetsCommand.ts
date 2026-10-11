@@ -45,6 +45,7 @@ import { puzzlesCommand } from "#src/services/genshinAssets/commands/puzzlesComm
 import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
 import { reputationCommand } from "#src/services/genshinAssets/commands/reputationCommand";
 import { residentsCommand } from "#src/services/genshinAssets/commands/residentsCommand";
+import { sceneGroupsCommand } from "#src/services/genshinAssets/commands/sceneGroupsCommand";
 import { sceneNpcBornCommand } from "#src/services/genshinAssets/commands/sceneNpcBornCommand";
 import { sceneScriptsCommand } from "#src/services/genshinAssets/commands/sceneScriptsCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
@@ -101,6 +102,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     outcrops: leyLineCommand,
     chests: chestsCommand,
     residents: residentsCommand,
+    "scene-groups": sceneGroupsCommand,
     "scene-npc-born": sceneNpcBornCommand,
     "scene-scripts": sceneScriptsCommand,
     oculi: oculiCommand,

@@ -1,0 +1,28 @@
+import type { SceneBuildingPoint } from "genshin-world";
+
+import { SCENE_BUILDING_NAME_FIELD, SCENE_BUILDING_POINT } from "#src/services/genshinAssets/sceneGroups/constants";
+import { readScenePointsOfKind } from "#src/services/genshinAssets/world/readScenePointsOfKind";
+import { SceneGroupSource } from "genshin-world";
+
+// Every building point of the scene by its point id, the service it marks and its place as the scene's points give them.
+// A point naming no service or holding no place is left out
+export const readSceneBuildingPoints = async (): Promise<Record<string, SceneBuildingPoint>> => {
+  const points = await readScenePointsOfKind(SCENE_BUILDING_POINT);
+  return Object.fromEntries(
+    points.flatMap(([id, point]): [string, SceneBuildingPoint][] => {
+      const name = point[SCENE_BUILDING_NAME_FIELD];
+      const position = point[SCENE_BUILDING_POINT.position];
+      const rotation = point[SCENE_BUILDING_POINT.rotation];
+      if (typeof name !== "string" || name === "" || typeof position !== "object") return [];
+      const { _x = 0, _y = 0, _z = 0 } = position;
+      // A turn the dump leaves out is none, as it leaves out a vector's zero fields
+      const { _y: rotationY = 0 } = typeof rotation === "object" ? rotation : {};
+      return [
+        [
+          id,
+          { name, place: { height: _y, position: { x: _x, z: _z }, rotationY, source: SceneGroupSource.ScenePoints } },
+        ],
+      ];
+    }),
+  );
+};

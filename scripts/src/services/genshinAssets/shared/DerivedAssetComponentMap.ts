@@ -1,6 +1,7 @@
 import type { DerivedAssetComponentOptions } from "#src/models/genshinAssets/shared/DerivedAssetComponentOptions";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
 
 // Each component's roots, which `extract` follows every pointer from, and the assets no pointer from them reaches by
 // The name the game gives them, which the asset index turns into the blocks holding them. The login screen's roots are
@@ -79,8 +80,8 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
       origin: { block: "00/16170614.blk", name: "Stages_Unique_CyTree01_Lod1", pathId: "6733514611168788700" },
       points: [
         {
-          category: "NNGAFPEMOML",
-          file: "BinOutput/Scene/Point/scene3_point.json",
+          category: SCENE_POINT_CATEGORY,
+          file: SCENE_POINT_FILE,
           id: "4",
           position: "NPCCBOFKBCO",
           prefab: { block: "00/04803507.blk", name: "SceneObj_NPC_Goddess", pathId: "1660930449232041872" },

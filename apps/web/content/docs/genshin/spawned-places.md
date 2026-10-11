@@ -24,7 +24,7 @@ flowchart TD
 
 ## The read
 
-`pnpm -C scripts genshin:assets points` fetches the map's label tree and its point list from the map's public API, and writes both as the API gives them to `interactive-map/` under the references folder, where every other reference is kept. Each point carries its label, its place in the map's own coordinates, its area and its layer, the layer being zero for the ground and above. The point list runs to tens of megabytes, and nothing from it is committed.
+`pnpm -C scripts genshin:assets points` fetches the map's label tree and its point list from the map's public API, and writes both as the API gives them to `interactive-map/` under the references folder, where every other reference is kept. It also reads each Viewpoint point's info, a few points a request, into `viewpoints.json` there, whose text the [scene group record](/docs/genshin/scene-groups) places the viewpoints by. Each point carries its label, its place in the map's own coordinates, its area and its layer, the layer being zero for the ground and above. The point list runs to tens of megabytes, and nothing from it is committed.
 
 ## The fit
 
@@ -57,18 +57,18 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 
 ## Key files
 
-| File                                                                   | Role                                                                      |
-| :--------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/points/readInteractiveMap.ts`      | Fetches the map's label tree and point list into the references folder    |
-| `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`          | Fits the map to the scene, gates the fit on its bar and writes the report |
-| `scripts/src/services/genshinAssets/points/matchSimilarity.ts`         | Matches one similarity from every start and refines each                  |
-| `scripts/src/services/genshinAssets/points/solveSimilarity.ts`         | Solves the least-squares similarity over a set of pairs                   |
-| `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts` | Reads the scene's transport points, shared with the region capitals' fit  |
-| `scripts/src/services/genshinAssets/points/InteractiveMapRegionMap.ts` | Each region's map area and Oculus kind, with the wiki's count             |
-| `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`        | Builds each region's Oculi slice from the points and the fit              |
-| `scripts/src/services/genshinAssets/oculi/OculusKindLabelIdMap.ts`     | Each Oculus kind's label on the official map                              |
-| `packages/genshin-world/src/models/oculus/OculusPlace.ts`              | A placed Oculus: its id, kind and ground position                         |
-| `scripts/src/services/genshinAssets/points/constants.ts`               | The API, the references paths, the bar and the match's passes             |
+| File                                                                   | Role                                                                       |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/points/readInteractiveMap.ts`      | Fetches the map's label tree, point list and Viewpoint infos as references |
+| `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`          | Fits the map to the scene, gates the fit on its bar and writes the report  |
+| `scripts/src/services/genshinAssets/points/matchSimilarity.ts`         | Matches one similarity from every start and refines each                   |
+| `scripts/src/services/genshinAssets/points/solveSimilarity.ts`         | Solves the least-squares similarity over a set of pairs                    |
+| `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts` | Reads the scene's transport points, shared with the region capitals' fit   |
+| `scripts/src/services/genshinAssets/points/InteractiveMapRegionMap.ts` | Each region's map area and Oculus kind, with the wiki's count              |
+| `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`        | Builds each region's Oculi slice from the points and the fit               |
+| `scripts/src/services/genshinAssets/oculi/OculusKindLabelIdMap.ts`     | Each Oculus kind's label on the official map                               |
+| `packages/genshin-world/src/models/oculus/OculusPlace.ts`              | A placed Oculus: its id, kind and ground position                          |
+| `scripts/src/services/genshinAssets/points/constants.ts`               | The API, the references paths, the bar and the match's passes              |
 
 ## Sources
 

@@ -3,11 +3,10 @@ import type { DumpedSceneNpcBorn } from "#src/models/genshinAssets/sceneNpcBorn/
 import type { DumpedSceneNpcBornFile } from "#src/models/genshinAssets/sceneNpcBorn/DumpedSceneNpcBornFile";
 import type { SceneNpcBorn } from "genshin-world";
 
-import { NPC_BORN_PATH } from "#src/services/genshinAssets/residents/constants";
-import { SCENE_NPC_BORN_SCENE_ID } from "#src/services/genshinAssets/sceneNpcBorn/constants";
+import { NPC_BORN_PATH, SCENE_NPC_BORN_KEY } from "#src/services/genshinAssets/sceneNpcBorn/constants";
+import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset, sceneNpcBornSchema } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { z } from "zod";
 
@@ -29,19 +28,19 @@ const toSceneNpcBorn = ({
   suiteIds: suiteIdList,
 });
 
-// The scene 3 NPC births as one record of the scene NPC births dataset. The file is read from the dump the residents read,
-// So the two agree on every birth, and the births are checked against the reader's schema, since the dump's types are not
+// The open world's NPC births as one record of the scene NPC births dataset, the record the scene group record reads its
+// NPCs from
 export const buildSceneNpcBorns = (): GameDataBuild => {
   const { bornPosList, sceneId } = parseMachineJson<DumpedSceneNpcBornFile>(readFileSync(NPC_BORN_PATH, "utf8"));
-  if (sceneId !== SCENE_NPC_BORN_SCENE_ID)
+  if (sceneId !== OPEN_WORLD_SCENE_ID)
     throw new InvalidOperationError(
       Operation.Read,
       NPC_BORN_PATH,
-      `is scene ${sceneId}, not scene ${SCENE_NPC_BORN_SCENE_ID}`,
+      `is scene ${sceneId}, not scene ${OPEN_WORLD_SCENE_ID}`,
     );
   const births = z.array(sceneNpcBornSchema).parse(bornPosList.map((born) => toSceneNpcBorn(born)));
   return {
-    notes: [`${births.length} NPC births in scene ${SCENE_NPC_BORN_SCENE_ID}`],
-    objects: { [`${GameDataset.SceneNpcBorn}/scene${SCENE_NPC_BORN_SCENE_ID}`]: births },
+    notes: [`${births.length} NPC births in scene ${OPEN_WORLD_SCENE_ID}`],
+    objects: { [SCENE_NPC_BORN_KEY]: births },
   };
 };

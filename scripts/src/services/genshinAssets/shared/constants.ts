@@ -283,6 +283,12 @@ export const CATALOGUE_FILE = "catalogue.json";
 // Names Windrise
 export const WORLD_AREAS_PATH: string = join(EXCEL_DIRECTORY, "WorldAreaConfigData.json");
 export const SCENE_POINT_AREA_FIELD = "HDMEDFBJMPK";
+// The open world's scene, whose groups, points, NPC births and transport points the world is placed from
+export const OPEN_WORLD_SCENE_ID = 3;
+// The open world's scene point file in the community's dump, relative to its folder, and the category its points are
+// Filed under, as that dump obfuscates it
+export const SCENE_POINT_FILE = "BinOutput/Scene/Point/scene3_point.json";
+export const SCENE_POINT_CATEGORY = "NNGAFPEMOML";
 // Where `genshin:parity instruments` writes the recordings the login's music plays, rewritten whole, which the world
 // Package serves from its `LOGIN_MUSIC_RECORDING_DIRECTORY`
 export const LOGIN_MUSIC_RECORDING_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "login", "recordings");

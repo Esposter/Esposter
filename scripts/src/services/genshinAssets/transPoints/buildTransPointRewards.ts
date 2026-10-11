@@ -1,8 +1,8 @@
 import type { ExcelCurrencyRewardRow } from "#src/models/genshinAssets/transPoints/ExcelCurrencyRewardRow";
 import type { ExcelTransPointRewardRow } from "#src/models/genshinAssets/transPoints/ExcelTransPointRewardRow";
 
+import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/transPoints/constants";
 import { toTransPointRewardRow } from "#src/services/genshinAssets/transPoints/toTransPointRewardRow";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";

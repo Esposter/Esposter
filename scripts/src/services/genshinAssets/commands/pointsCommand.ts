@@ -5,7 +5,8 @@ import { defineCommand } from "citty";
 
 export const pointsCommand: SubCommandsDef[string] = defineCommand({
   meta: {
-    description: "Read the official Teyvat Interactive Map's label tree and point list into the references folder",
+    description:
+      "Read the official Teyvat Interactive Map's label tree, its point list and its viewpoints' infos into the references folder",
     name: "points",
   },
   run: async () => {
