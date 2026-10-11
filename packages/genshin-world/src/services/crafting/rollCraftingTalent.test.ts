@@ -1,8 +1,10 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 
 import { CraftingRecipeKind } from "#src/models/crafting/CraftingRecipeKind";
-import { SUCROSE_CHARACTER_ID, XINGQIU_CHARACTER_ID, YAE_MIKO_CHARACTER_ID } from "#src/services/character/constants";
 import { rollCraftingTalent } from "#src/services/crafting/rollCraftingTalent";
+import { SUCROSE_CHARACTER_ID } from "#src/services/kit/characters/sucroseKit";
+import { XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
+import { YAE_MIKO_CHARACTER_ID } from "#src/services/kit/characters/yaeMikoKit";
 import { describe, expect, test } from "vitest";
 
 const drawsOf = (draws: number[]) => {
