@@ -4,6 +4,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
@@ -194,6 +195,14 @@ export const createWandererKit = (talentMultiplierMap: TalentMultiplierMap): Kit
           elementalBurst: createBurst(burstMultiplier(0), WINDFAVORED_BURST_FRAMES),
           elementalSkill,
           normalAttacks: windfavoredNormalAttacks,
+        },
+        // The Windfavored strikes and charged attack are Normal and Charged Attack DMG, gcsim's AttackTagNormal in
+        // In wanderer/attack.go's WindfavoredAttack and AttackTagExtra in wanderer/charge.go's WindfavoredChargeAttack
+        attackTags: {
+          chargedAttack: AttackTag.ChargedAttack,
+          elementalBurst: AttackTag.ElementalBurst,
+          elementalSkill: AttackTag.ElementalSkill,
+          normalAttacks: AttackTag.NormalAttack,
         },
         characterId: combatant.characterId,
         elapsedSeconds: 0,

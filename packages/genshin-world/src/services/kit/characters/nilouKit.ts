@@ -9,6 +9,7 @@ import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
@@ -230,6 +231,14 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       elementalBurst,
       elementalSkill,
       normalAttacks: normalAttacksOfStance,
+    },
+    // The sword dance's steps and Luminous Illusion, and the Whirling Steps, are Elemental Skill DMG, gcsim's AttackTagElementalArt
+    // In nilou/skill.go's SwordDance and WhirlingSteps
+    attackTags: {
+      chargedAttack: AttackTag.ChargedAttack,
+      elementalBurst: AttackTag.ElementalBurst,
+      elementalSkill: AttackTag.ElementalSkill,
+      normalAttacks: AttackTag.ElementalSkill,
     },
     characterId,
     elapsedSeconds: 0,

@@ -8,6 +8,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
@@ -211,8 +212,16 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalSkill: { hits: [], seconds: SKILL_ANIMATION_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
     normalAttacks: paramitaNormalAttacks,
   };
+  // The Paramita strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal in
+  // In hutao/attack.go's ppAttack and AttackTagExtra in hutao/charge.go's ppChargeAttack
   const createParamitaStance = (characterId: number): KitStance => ({
     actions: paramitaActions,
+    attackTags: {
+      chargedAttack: AttackTag.ChargedAttack,
+      elementalBurst: AttackTag.ElementalBurst,
+      elementalSkill: AttackTag.ElementalSkill,
+      normalAttacks: AttackTag.NormalAttack,
+    },
     characterId,
     elapsedSeconds: 0,
     kind: "stance",

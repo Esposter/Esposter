@@ -184,6 +184,12 @@ describe(stepActiveKit, () => {
       effects: [
         {
           actions: { ...TRAVELER_KIT, normalAttacks: [stanceAttack] },
+          attackTags: {
+            chargedAttack: AttackTag.ChargedAttack,
+            elementalBurst: AttackTag.ElementalBurst,
+            elementalSkill: AttackTag.ElementalSkill,
+            normalAttacks: AttackTag.NormalAttack,
+          },
           characterId: TRAVELER_CHARACTER_ID,
           elapsedSeconds: 0,
           kind: "stance",
