@@ -12,9 +12,9 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Kokomi's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
 // Attack at 3 and its flat stamina at 4, and the plunges' collision, low and high at 5, 6 and 7. The skill group holds
@@ -161,11 +161,12 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const centre = createAheadBody(body, SKILL_CENTRE_METRES).position;
         castKitField(kitEffectState, combatant.characterId, centre, {
           nextTickSeconds: SKILL_FIRST_TICK_FRAMES / 60,
-          onTick: ({ activeCombatant, party }) =>
-            healPartyMember(
-              party,
-              activeCombatant.characterId,
-              (skillTalentMultiplier(0) * maxHealth + skillTalentMultiplier(1)) / activeCombatant.attributes.maxHealth,
+          onTick: (tick) =>
+            changeKitMemberHealth(
+              tick,
+              combatant,
+              tick.activeCombatant.characterId,
+              skillTalentMultiplier(0) * maxHealth + skillTalentMultiplier(1),
             ),
           radius: SKILL_RADIUS,
           secondsRemaining: SKILL_DURATION_SECONDS,

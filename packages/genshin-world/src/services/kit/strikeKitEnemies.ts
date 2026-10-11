@@ -70,17 +70,9 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       startPartyLunarReactions(party, reactions);
       for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
-      healKitStriker(party, pricedCombatant, hit);
+      healKitStriker(context, combatant, pricedCombatant, hit);
       hit.onStrike?.(context, strike);
-      if (!isPartyHealed)
-        isPartyHealed = healKitParty(
-          party,
-          characterIdCombatantMap,
-          kitEffectState.effects,
-          pricedCombatant,
-          hit,
-          random,
-        );
+      if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, hit);
       if (reactions.length > 0)
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
       emitKitEvent(

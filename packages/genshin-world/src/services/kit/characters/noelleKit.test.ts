@@ -112,14 +112,13 @@ describe("noelle kit", () => {
     expect.hasAssertions();
     const combatant = createNoelleCombatant();
     const context = createKitTestContext(combatant);
-    const { characterIdCombatantMap, kitEffectState, party } = context;
-    const partyMember = getPartyMember(party, NOELLE_CHARACTER_ID);
+    const partyMember = getPartyMember(context.party, NOELLE_CHARACTER_ID);
     partyMember.healthShare = 0.5;
     const hit = takeOne(NOELLE_KIT.elementalSkill.hits);
     NOELLE_KIT.elementalSkill.onStart?.(context);
 
-    expect(healKitParty(party, characterIdCombatantMap, kitEffectState.effects, combatant, hit, () => 0.6)).toBe(false);
-    expect(healKitParty(party, characterIdCombatantMap, kitEffectState.effects, combatant, hit, () => 0.4)).toBe(true);
+    expect(healKitParty({ ...context, random: () => 0.6 }, combatant, combatant, hit)).toBe(false);
+    expect(healKitParty({ ...context, random: () => 0.4 }, combatant, combatant, hit)).toBe(true);
     expect(partyMember.healthShare).toBeCloseTo(
       0.5 + (0.2128 * combatant.attributes.defense + 102.71802) / combatant.attributes.maxHealth,
       5,

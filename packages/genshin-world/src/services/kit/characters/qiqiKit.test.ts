@@ -170,7 +170,14 @@ describe(createQiqiKit, () => {
           kind: KitEventKind.DamageTaken,
           striker: travelerCombatant,
         },
-        createKitTestContext(combatant, { activeCombatant, party }),
+        createKitTestContext(combatant, {
+          activeCombatant,
+          characterIdCombatantMap: new Map([
+            [QIQI_CHARACTER_ID, combatant],
+            [TRAVELER_CHARACTER_ID, travelerCombatant],
+          ]),
+          party,
+        }),
         combatant,
       );
     takeDamage(combatant);

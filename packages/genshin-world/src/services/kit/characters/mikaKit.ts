@@ -14,9 +14,9 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Mika's proud skill groups, read at his talent level. The attack group holds his strikes' hits at 0 to 5, with the fourth
 // Strike's two at 3 and 4 and the fifth at 5, the charged attack at 6 and its stamina at 7, and the plunges' collision, low
@@ -115,16 +115,19 @@ export const createMikaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   };
 
   // Its initial heal lands on the active character as its animation's 51st frame, and the field that carries it ticks once
-  // Then, healing by its flat part plus its share of the healer's Max HP, which Mika's Healing Bonus is not read into
+  // Then, healing by its flat part plus its share of the healer's Max HP
   const createInitialHealField = (body: KitBody, combatant: Combatant): KitField => {
     const flatHeal = burstMultiplier(0);
     const maxHealthShare = burstMultiplier(1);
     return createKitField(combatant.characterId, body.position, {
       nextTickSeconds: INITIAL_HEAL_FRAMES / 60,
-      onTick: ({ activeCombatant, party }) => {
-        const heal = flatHeal + maxHealthShare * combatant.attributes.maxHealth;
-        healPartyMember(party, activeCombatant.characterId, heal / activeCombatant.attributes.maxHealth);
-      },
+      onTick: (tick) =>
+        changeKitMemberHealth(
+          tick,
+          combatant,
+          tick.activeCombatant.characterId,
+          flatHeal + maxHealthShare * combatant.attributes.maxHealth,
+        ),
       secondsRemaining: 1,
       tickIntervalSeconds: 1,
     });

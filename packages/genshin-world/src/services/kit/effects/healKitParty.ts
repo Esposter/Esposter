@@ -1,40 +1,40 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { Party } from "#src/models/party/Party";
 
-import { healPartyMember } from "#src/services/party/healPartyMember";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 
 // Rolls a hit's party heal, if the hit has one and its striker's character holds a shield it cast, never a Crystallize
-// Shield, or the heal is unshielded, and on a pass heals each member of the party by the flat HP plus the striker's ATK,
-// DEF and Max HP shares, each as a share of that member's own Max HP. It returns whether it healed, so a hit with several
-// Enemies rolls until one heal passes
+// Shield, or the heal is unshielded, and on a pass heals each member of the deployed team by the flat HP plus the
+// Striker's ATK, DEF and Max HP shares as it is priced. It returns whether it healed, so a hit with several Enemies rolls
+// Until one heal passes
 export const healKitParty = (
-  party: Party,
-  characterIdCombatantMap: Map<number, Combatant>,
-  effects: readonly KitEffect[],
-  striker: Combatant,
+  context: KitContext,
+  combatant: Combatant,
+  pricedCombatant: Combatant,
   kitHit: KitHit,
-  random: () => number,
 ): boolean => {
   const { healParty } = kitHit;
   if (!healParty) return false;
+  const {
+    kitEffectState: { effects },
+    party,
+    random,
+  } = context;
   const isShielded = effects.some(
     (effect) =>
       effect.kind === "shield" &&
       !effect.isCrystallize &&
-      effect.characterId === striker.characterId &&
+      effect.characterId === pricedCombatant.characterId &&
       effect.secondsRemaining > 0,
   );
-  if ((!healParty.isUnshielded && !isShielded) || random() >= healParty.chance(striker, effects)) return false;
+  if ((!healParty.isUnshielded && !isShielded) || random() >= healParty.chance(pricedCombatant, effects)) return false;
   const healedHp =
     healParty.flatHealth +
-    healParty.defenseShare * striker.attributes.defense +
-    (healParty.attackShare ?? 0) * striker.attributes.attack +
-    (healParty.maxHealthShare ?? 0) * striker.attributes.maxHealth;
-  for (const characterId of party.characterIdMemberMap.keys()) {
-    const member = characterIdCombatantMap.get(characterId);
-    if (member) healPartyMember(party, characterId, healedHp / member.attributes.maxHealth, striker.characterId);
-  }
+    healParty.defenseShare * pricedCombatant.attributes.defense +
+    (healParty.attackShare ?? 0) * pricedCombatant.attributes.attack +
+    (healParty.maxHealthShare ?? 0) * pricedCombatant.attributes.maxHealth;
+  for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
+    changeKitMemberHealth(context, combatant, characterId, healedHp);
   return true;
 };

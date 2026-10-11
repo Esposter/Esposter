@@ -112,9 +112,9 @@ describe(createJeanKit, () => {
     getPartyMember(party, JEAN_CHARACTER_ID).healthShare = 0.5;
     const strike = takeOne(takeOne(JEAN_KIT.normalAttacks).hits);
 
-    expect(healKitParty(party, new Map([[JEAN_CHARACTER_ID, combatant]]), [], combatant, strike, () => 0.4)).toBe(
-      isHealed,
-    );
+    expect(
+      healKitParty(createKitTestContext(combatant, { party, random: () => 0.4 }), combatant, combatant, strike),
+    ).toBe(isHealed);
   });
 
   test.each([

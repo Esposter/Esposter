@@ -5,6 +5,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createNoelleKit, NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
@@ -40,7 +41,7 @@ describe(healKitParty, () => {
     level: 90,
   });
 
-  test("heals each party member by the flat HP and DEF share, each over its own Max HP, on a passing roll under a shield", () => {
+  test("heals each member of the deployed team by the flat HP and DEF share, each over its own Max HP, on a passing roll under a shield", () => {
     expect.hasAssertions();
     const noelle = createCombatant(NOELLE_CHARACTER_ID, 10_000);
     const member = createCombatant(MEMBER_ID, 20_000);
@@ -49,15 +50,17 @@ describe(healKitParty, () => {
     const healParty = { chance: () => 0.5, defenseShare: 0.2128, flatHealth: 102.7 };
 
     const isHealed = healKitParty(
-      party,
-      new Map([
-        [MEMBER_ID, member],
-        [NOELLE_CHARACTER_ID, noelle],
-      ]),
-      [SHIELD],
+      createKitTestContext(noelle, {
+        characterIdCombatantMap: new Map([
+          [MEMBER_ID, member],
+          [NOELLE_CHARACTER_ID, noelle],
+        ]),
+        kitEffectState: { effects: [SHIELD] },
+        party,
+      }),
+      noelle,
       noelle,
       { ...NOELLE_HIT, healParty },
-      () => 0,
     );
 
     const healedHp = healParty.flatHealth + healParty.defenseShare * noelle.attributes.defense;
@@ -73,12 +76,20 @@ describe(healKitParty, () => {
     expect.hasAssertions();
     const noelle = createCombatant(NOELLE_CHARACTER_ID, 10_000);
     const party = createParty([NOELLE_CHARACTER_ID]);
-    const combatants = new Map([[NOELLE_CHARACTER_ID, noelle]]);
     const hit = { ...NOELLE_HIT, healParty: { chance: () => 0.5, defenseShare: 0.2128, flatHealth: 102.7 } };
+    const createContext = (effects: KitEffect[], random = () => 0) =>
+      createKitTestContext(noelle, { kitEffectState: { effects }, party, random });
 
-    expect(healKitParty(party, combatants, [], noelle, hit, () => 0)).toBe(false);
-    expect(healKitParty(party, combatants, [{ ...SHIELD, isCrystallize: true }], noelle, hit, () => 0)).toBe(false);
-    expect(healKitParty(party, combatants, [SHIELD], noelle, hit, () => 0.9)).toBe(false);
+    expect(healKitParty(createContext([]), noelle, noelle, hit)).toBe(false);
+    expect(healKitParty(createContext([{ ...SHIELD, isCrystallize: true }]), noelle, noelle, hit)).toBe(false);
+    expect(
+      healKitParty(
+        createContext([SHIELD], () => 0.9),
+        noelle,
+        noelle,
+        hit,
+      ),
+    ).toBe(false);
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).healthShare).toBe(1);
   });
 
@@ -101,14 +112,10 @@ describe(healKitParty, () => {
       isUnshielded: true as const,
     };
 
-    const isHealed = healKitParty(
-      party,
-      new Map([[NOELLE_CHARACTER_ID, striker]]),
-      [],
-      striker,
-      { ...NOELLE_HIT, healParty },
-      () => 0,
-    );
+    const isHealed = healKitParty(createKitTestContext(striker, { party }), striker, striker, {
+      ...NOELLE_HIT,
+      healParty,
+    });
 
     expect(isHealed).toBe(true);
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).healthShare).toBeCloseTo(

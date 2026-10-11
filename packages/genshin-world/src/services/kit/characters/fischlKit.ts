@@ -20,11 +20,11 @@ import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Fischl's proud skill groups, read at her talent level. The attack group holds the five arrows at 0 to 4, the aimed shot
 // At 5 and the fully charged aimed shot at 6, and the plunges' collision, low and high at 7, 8 and 9, the layout the
@@ -293,8 +293,13 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         if (combatant.constellationCount < HER_PILGRIMAGE_OF_BLEAK_CONSTELLATION) return;
         castKitSummon(kitEffectState, body, combatant, [HER_PILGRIMAGE_OF_BLEAK_HIT]);
         const healSeconds = (BURST_OZ_SPAWN_FRAMES + 1) / 60;
-        scheduleKitTask(kitEffectState, combatant.characterId, healSeconds, ({ party }) =>
-          healPartyMember(party, combatant.characterId, HER_PILGRIMAGE_OF_BLEAK_HEALTH_SHARE),
+        scheduleKitTask(kitEffectState, combatant.characterId, healSeconds, (tick) =>
+          changeKitMemberHealth(
+            tick,
+            combatant,
+            combatant.characterId,
+            HER_PILGRIMAGE_OF_BLEAK_HEALTH_SHARE * combatant.attributes.maxHealth,
+          ),
         );
       },
       seconds: BURST_FRAMES / 60,

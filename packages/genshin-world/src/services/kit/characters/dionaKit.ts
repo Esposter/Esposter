@@ -14,10 +14,10 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Diona's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the charged
 // Attack's aimed shot at 7, and the plunges' collision, low and high at 8, 9 and 10. The skill group holds Icy Paws' paw
@@ -195,12 +195,12 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         const field = createKitField(combatant.characterId, body.position, {
           id: SIGNATURE_MIX_FIELD_ID,
           nextTickSeconds: SIGNATURE_MIX_HITMARK_FRAMES / 60 + SIGNATURE_MIX_TICK_SECONDS,
-          onTick: ({ activeCombatant, party }) =>
-            healPartyMember(
-              party,
-              activeCombatant.characterId,
-              (burstTalentMultiplier(2) * combatant.attributes.maxHealth + burstTalentMultiplier(3)) /
-                activeCombatant.attributes.maxHealth,
+          onTick: (tick) =>
+            changeKitMemberHealth(
+              tick,
+              combatant,
+              tick.activeCombatant.characterId,
+              burstTalentMultiplier(2) * combatant.attributes.maxHealth + burstTalentMultiplier(3),
             ),
           radius: SIGNATURE_MIX_FIELD_RADIUS,
           secondsRemaining: signatureMixSeconds,

@@ -19,11 +19,11 @@ import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 import { takeOne } from "@esposter/shared";
 
 // Xingqiu's proud skill groups, read at his talent level. The attack group holds the five strikes' hits at 0 to 6, the
@@ -205,21 +205,16 @@ const standRainSwords = (
   if (combatant.ascension < HYDROPATHIC_ASCENSION) return;
   const swordCount = RAIN_SWORD_COUNT + (combatant.constellationCount >= THE_SCENT_REMAINED_CONSTELLATION ? 1 : 0);
   const heal = swordCount * HYDROPATHIC_MAX_HEALTH_SHARE * combatant.attributes.maxHealth;
-  scheduleKitTask(
-    kitEffectState,
-    combatant.characterId,
-    seconds,
-    ({ activeCombatant, kitEffectState: tickKitEffectState, party }) => {
-      // Lengthened Rain Swords still stand past this tick, and heal at their own end instead
-      if (
-        tickKitEffectState.effects.some(
-          (effect) => checkIsRainSwords(effect, combatant.characterId) && effect.secondsRemaining > 0,
-        )
+  scheduleKitTask(kitEffectState, combatant.characterId, seconds, (tick) => {
+    // Lengthened Rain Swords still stand past this tick, and heal at their own end instead
+    if (
+      tick.kitEffectState.effects.some(
+        (effect) => checkIsRainSwords(effect, combatant.characterId) && effect.secondsRemaining > 0,
       )
-        return;
-      healPartyMember(party, activeCombatant.characterId, heal / activeCombatant.attributes.maxHealth);
-    },
-  );
+    )
+      return;
+    changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, heal);
+  });
 };
 
 export const XINGQIU_CHARACTER_ID = 10_000_025;

@@ -17,9 +17,9 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Barbara's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the
 // Charged attack at 4 and its stamina at 5, and the plunges' collision, low and high at 6, 7 and 8. The skill group
@@ -114,8 +114,9 @@ const createNormalAttack = (
 // Two constellations, for the loop's seconds
 const createMelodyLoopTick =
   (owner: Combatant, regenerationHeal: number, loopSeconds: number) =>
-  ({ activeCombatant, kitEffectState, party }: KitContext, tickIndex: number): void => {
-    healPartyMember(party, activeCombatant.characterId, regenerationHeal / activeCombatant.attributes.maxHealth);
+  (context: KitContext, tickIndex: number): void => {
+    const { activeCombatant, kitEffectState, party } = context;
+    changeKitMemberHealth(context, owner, activeCombatant.characterId, regenerationHeal);
     if (tickIndex > 0 || owner.constellationCount < VITALITY_BURST_CONSTELLATION) return;
     for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
       if (characterId !== owner.characterId)
@@ -147,7 +148,7 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   const burstHealthShare = getTalentMultiplier(talentMultiplierMap, BARBARA_BURST_GROUP_ID, TALENT_START_LEVEL, 0);
   const burstFlatHeal = getTalentMultiplier(talentMultiplierMap, BARBARA_BURST_GROUP_ID, TALENT_START_LEVEL, 1);
   // The Melody Loop's heal on a hit, a share of Barbara's Max HP plus flat HP, rolled certain while the loop stands and
-  // Never otherwise, with no shield needed. It does not read Healing Bonus, as Bennett's and Jean's heals do not
+  // Never otherwise, with no shield needed
   const createMelodyLoopHeal = (healFactor: number): KitPartyHeal => ({
     chance: (striker, effects) => (checkIsMelodyLoopLive(striker, effects) ? 1 : 0),
     defenseShare: 0,
@@ -195,12 +196,8 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       hits: [],
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const burstHeal = burstFlatHeal + burstHealthShare * combatant.attributes.maxHealth;
-        scheduleKitTask(
-          kitEffectState,
-          combatant.characterId,
-          SHINING_MIRACLE_HEAL_FRAMES / 60,
-          ({ activeCombatant, party }) =>
-            healPartyMember(party, activeCombatant.characterId, burstHeal / activeCombatant.attributes.maxHealth),
+        scheduleKitTask(kitEffectState, combatant.characterId, SHINING_MIRACLE_HEAL_FRAMES / 60, (tick) =>
+          changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, burstHeal),
         );
       },
       seconds: 195 / 60,

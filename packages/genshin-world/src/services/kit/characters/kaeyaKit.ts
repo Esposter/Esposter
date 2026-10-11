@@ -119,8 +119,7 @@ export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       {
         element: Element.Cryo,
         gauge: 2,
-        // Measured: gcsim v2.47.2 (MIT) kaeya/skill.go, A1: each enemy Frostgnaw hits heals Kaeya by 15% of his ATK. The
-        // Heal is not scaled by Healing Bonus, as the other heals are not
+        // Measured: gcsim v2.47.2 (MIT) kaeya/skill.go, A1: each enemy Frostgnaw hits heals Kaeya by 15% of his ATK
         // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/skill.go
         healAttackShare: (combatant) => (combatant.ascension >= 1 ? 0.15 : 0),
         hitArea: FROSTGNAW_HIT_AREA,
