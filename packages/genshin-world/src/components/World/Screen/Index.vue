@@ -4,7 +4,6 @@ import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 
 import WorldSession from "#src/components/World/Session/Index.vue";
-import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -12,6 +11,9 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { measureLoadStep } from "#src/services/loading/measureLoadStep";
+import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
+import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
 import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
@@ -41,6 +43,8 @@ getResultAsync(() =>
       measureLoadStep("windrise-data", readWindriseData(props.gameDataBaseUrl)),
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
+      measureLoadStep("frostbearing-tree-levels", readFrostbearingTreeLevels(props.gameDataBaseUrl)),
+      measureLoadStep("frostbearing-tree-places", readMondstadtFrostbearingTreePlaces(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -55,11 +59,15 @@ getResultAsync(() =>
     windriseData,
     catalogue,
     wildlifePlaces,
+    frostbearingTreeLevels,
+    frostbearingTreePlaces,
   ]) => {
     tables.value = {
       adventureRankTables,
       catalogue,
       enemyTables,
+      frostbearingTreeLevels,
+      frostbearingTreePlaces,
       hudInterfaceRects,
       materialDataMap,
       nameText,

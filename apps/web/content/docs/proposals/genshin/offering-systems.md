@@ -1,6 +1,6 @@
 ---
 title: Offering systems
-description: Proposal — the regions' offering systems on one rule. A sacred tree, a fountain or a shrine takes every offering item of its kind the bag holds at once, rises a level for each threshold reached and gives that level's reward once. The rule, the bag's offer, the Frostbearing Tree's levels, its place in Mondstadt, its items and its name are built, on the Offering systems page; its landmark and offer on F, and each region's offerings, are what is left.
+description: Proposal — the regions' offering systems on one rule. A sacred tree, a fountain or a shrine takes every offering item of its kind the bag holds at once, rises a level for each threshold reached and gives that level's reward once. The rule, the bag's offer, the Frostbearing Tree's levels, its place in Mondstadt, its items, its name, its stand-in in Dragonspine, its F offer and its save are built, on the Offering systems page; its landmark, and each region's offerings, are what is left.
 model: claude-haiku-5-5
 needs: [game-exports]
 touches:
@@ -32,10 +32,9 @@ Beside the Statues of The Seven, many areas keep an offering of their own: the F
 
 **Built:** the rule, `offerItems`, shared with the statues; the bag's offer, `offerBagItems`, which takes the items out of the bag and pays the rewards in; the Frostbearing Tree's levels, read from the game's table; its place in Mondstadt, written from the official map; its items, which the items step publishes with their names and `buildItems`'s test asserts; and its prompt name, `GameTextKey.FrostbearingTree`, in every language, on the [Offering systems](/docs/genshin/offering-systems) page.
 
-**This still adds, in order:**
+**This still adds:**
 
-1. **The tree in Dragonspine**, Mondstadt's: a stand-in drawn on the ground at its place in the `frostbearingTreePlaces/mondstadt` record, an `Activate` row named by `GameTextKey.FrostbearingTree` while it is in reach, F on it offering through `offerBagItems`, and its held count kept in the save.
-2. **Each region's offerings**, with its region.
+1. **Each region's offerings**, with its region.
 
 ## Data and measures
 

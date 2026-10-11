@@ -7,6 +7,7 @@ import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
+import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
@@ -19,6 +20,7 @@ import CharacterModel from "#src/components/Character/Model/Index.vue";
 import QuestBeam from "#src/components/Quest/Beam/Index.vue";
 import WorldCharacterPlaceholder from "#src/components/World/CharacterPlaceholder/Index.vue";
 import WorldEnemies from "#src/components/World/Enemies/Index.vue";
+import WorldFrostbearingTree from "#src/components/World/FrostbearingTree/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
@@ -39,6 +41,7 @@ import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
+import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -75,7 +78,6 @@ import {
 import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
-import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { createTreeSpeciesOptionsMap } from "#src/services/world/createTreeSpeciesOptionsMap";
 import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop } from "@tresjs/core";
@@ -118,6 +120,8 @@ interface Props {
   enemyMap: Map<string, Enemy>;
   // The game's enemy tables, which the camps spawn their enemies from
   enemyTables: EnemyTables;
+  // The Frostbearing Trees the official map marks, each stood in at its place
+  frostbearingTreePlaces: FrostbearingTreePlace[];
   // The world's ground at a point in its own coordinates, which everything placed in the world stands on
   getGroundHeight: (x: number, z: number) => number;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
@@ -159,6 +163,7 @@ const {
   elementalSight,
   enemyMap,
   enemyTables,
+  frostbearingTreePlaces,
   getGroundHeight,
   heldMinutes,
   interactables,
@@ -478,6 +483,14 @@ onUnmounted(() => {
       :places="wildlifePlaces"
       :ramp-texture
       :target="characterBody?.position"
+    />
+    <!-- The Frostbearing Trees are stood in as well, which a witness render draws none of -->
+    <WorldFrostbearingTree
+      v-if="!witness"
+      :get-ground-height
+      :light-uniforms
+      :places="frostbearingTreePlaces"
+      :ramp-texture
     />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />

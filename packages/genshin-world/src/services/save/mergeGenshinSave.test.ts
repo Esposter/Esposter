@@ -194,6 +194,19 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(EMPTY_GENSHIN_SAVE, guest).travelerName).toBe(GUEST_TRAVELER_NAME);
   });
 
+  test("keeps the Frostbearing Tree's progress of the copy that has reached the further level", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      offerings: { frostbearingTree: { heldCount: 4, level: ACCOUNT_LEVEL } },
+    };
+    const guest = { ...EMPTY_GENSHIN_SAVE, offerings: { frostbearingTree: { heldCount: 9, level: GUEST_LEVEL } } };
+
+    expect(mergeGenshinSave(account, guest).offerings).toStrictEqual({
+      frostbearingTree: { heldCount: 9, level: GUEST_LEVEL },
+    });
+  });
+
   test("keeps the counters of the kind of wish the copy that has made more wishes of it holds, whole", () => {
     expect.hasAssertions();
     const account = {

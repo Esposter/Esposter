@@ -2,6 +2,7 @@ import type { AchievementProgress } from "#src/models/achievement/AchievementPro
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
@@ -20,7 +21,13 @@ export const useWorldSave = ({
   events: WorldEvents;
   savedState: Pick<
     GenshinSaveState,
-    "achievementProgressMap" | "craftedCountMap" | "craftingProgress" | "inventory" | "wallet" | "wishPityMap"
+    | "achievementProgressMap"
+    | "craftedCountMap"
+    | "craftingProgress"
+    | "frostbearingTreeProgress"
+    | "inventory"
+    | "wallet"
+    | "wishPityMap"
   >;
 }) => {
   const inventory = ref<Inventory>(savedState.inventory);
@@ -31,8 +38,9 @@ export const useWorldSave = ({
   );
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
+  const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
   watch(
-    [inventory, wallet, wishPityMap, achievementProgressMap, craftedCountMap, craftingProgress],
+    [inventory, wallet, wishPityMap, achievementProgressMap, craftedCountMap, craftingProgress, frostbearingTreeProgress],
     () => {
       emitGrant();
     },
@@ -50,6 +58,7 @@ export const useWorldSave = ({
     achievementProgressMap,
     craftedCountMap,
     craftingProgress,
+    frostbearingTreeProgress,
     inventory,
     setInventory,
     setWallet,
