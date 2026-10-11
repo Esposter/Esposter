@@ -218,7 +218,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's stamina meter at 1080 high, from a public tutorial's climb at 48 seconds (this clip's 30),
   // Three tenths of it left in yellow under its drained track, on the white rock clear of the character. The meter is
   // Drawn round the pivot, so the frame's pivot is the circle its arc was fitted to (978.3, 501.3), and only the meter's
-  // Looks are scored, the rest of that player's HUD left out of the region
+  // Looks are scored, the rest of that player's HUD left out of the region. The capture is not in captures yet, so this scoring
+  // Waits on the sought clip `world-stamina.mkv` (the roadmap's References sought)
   "hud-stamina-climb": {
     capture: "yt-hRR2yoP3uY0-world-stamina.mp4",
     isBackdrop: true,
