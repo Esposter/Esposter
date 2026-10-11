@@ -16,6 +16,7 @@ describe(readTalk, () => {
         { dialog: { nextDialogs: [-1], talkContentTextMapHash: 0, talkRole: { id: NPC_ID } }, id: 101 },
       ],
       new Map([[NPC_ID, "0"]]),
+      new Map([[NPC_ID, "1"]]),
     );
 
     expect(talk).toStrictEqual({
@@ -32,7 +33,7 @@ describe(readTalk, () => {
           id: "101",
           kind: TalkLineKind.Spoken,
           nextLineIds: [],
-          speakerRoleTextId: "",
+          speakerRoleTextId: "1",
           speakerTextId: "0",
           textId: "0",
           voiceId: "",
@@ -52,8 +53,37 @@ describe(readTalk, () => {
         { dialog: { nextDialogs: [], talkContentTextMapHash: 0 }, id: 100 },
       ],
       new Map(),
+      new Map(),
     );
 
     expect(talk.lines.map(({ nextLineIds }) => nextLineIds)).toStrictEqual([["101"], []]);
+  });
+
+  test("reads a black screen's narration with no speaker or role", () => {
+    expect.hasAssertions();
+
+    const talk = readTalk(
+      TALK_ID,
+      [
+        {
+          dialog: { nextDialogs: [], talkContentTextMapHash: 0, talkRole: { id: "", type: "TALK_ROLE_BLACK_SCREEN" } },
+          id: 100,
+        },
+      ],
+      new Map([[NPC_ID, "0"]]),
+      new Map([[NPC_ID, "1"]]),
+    );
+
+    expect(talk.lines).toStrictEqual([
+      {
+        id: "100",
+        kind: TalkLineKind.Spoken,
+        nextLineIds: [],
+        speakerRoleTextId: "",
+        speakerTextId: "",
+        textId: "0",
+        voiceId: "",
+      },
+    ]);
   });
 });
