@@ -81,7 +81,7 @@ export const readRegionPalettes = async (
     landmarks.flatMap((landmark) => (landmark.kind === LandmarkKind.Building ? [landmark.building.kit] : [])),
   );
   const kitPalettes = await Promise.all(
-    [...buildingKits].map((buildingKit) => BuildingKitPaletteReaderMap[buildingKit](gameDataBaseUrl)),
+    Array.from(buildingKits, (buildingKit) => BuildingKitPaletteReaderMap[buildingKit](gameDataBaseUrl)),
   );
   const regionPalettes: Partial<RegionPaletteMap> = {};
   for (const kitPalette of kitPalettes) Object.assign(regionPalettes, kitPalette);
