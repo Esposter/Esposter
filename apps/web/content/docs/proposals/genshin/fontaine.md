@@ -3,15 +3,7 @@ title: Fontaine
 description: Proposal — Fontaine, the Hydro nation of justice, on a raised continental plate that ends in a vast waterfall. A Belle Époque capital of mansard roofs, clock towers and aqueducts, canals and aquabus lines, research institutes of brass machinery, and a whole second world under the water. The underwater Sea of Bygone Eras is a layer of its own.
 model: claude-opus-5-5
 needs: [game-exports, parity-page]
-touches:
-  [
-    "packages/genshin-world/src/models/fontaine/**",
-    "packages/genshin-world/src/services/fontaine/**",
-    "packages/genshin-world/src/components/World/Screen/Index.fixture.ts",
-    "packages/genshin-world/parity/main.ts",
-    "packages/genshin-world/parity/models/ScreenFixture.ts",
-    "scripts/src/services/genshinParity/shared/openParityPage.ts",
-  ]
+touches: ["packages/genshin-world/src/services/fontaine/**"]
 ---
 
 # Fontaine
@@ -77,12 +69,7 @@ packages/genshin-world/src/services/fontaine/   ← aqueduct, clock tower and ma
 
 **Still to build, in order:**
 
-1. **The Court of Fontaine's witness claims**, for the roadmap's `fontaine-every-renderer`, as [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions shape a capital's claims.
-   - `models/fontaine/FontainePartFamily.ts` (`Ground`, `Buildings`) and `services/fontaine/FontainePartFamilyMeshRegexMap.ts`: `/^BigWorldTerrain_/u` for `Ground`, and for `Buildings` `/^Area_Fd_Build_/u`, Fontaine's code in the game's mesh names.
-   - `services/fontaine/FontaineUndrawnMeshRegexMap.ts` over `~/Esposter/genshin-parity/extracted/fontaine/`: `props` `/^Area_(?:Fd|Common)_Prop_/u`, `plants` `/^Area_Xm_Lvy_/u`, `effects` `/^Eff_/u` and `stagePlanes` `/^Stages_Plane_/u`. The export now holds the city's architecture, and about a fifth of its mesh names match none of these entries yet: its lights, its own ivy (`Area_Fd_Lvy_`), rocks, grass and decals, which the map takes entries for.
-   - The fixture's `witnessComponents` takes `fontaine` with the two maps.
-   - Proof: `pnpm -C scripts genshin:parity passes fontaine --pass Inventory` counts 0 renderers unclaimed.
-2. **The aqueduct, clock tower and machinery generators**, each fitted against its exports when the passes reach its shape.
+1. **The aqueduct, clock tower and machinery generators**, each fitted against its exports when the passes reach its shape.
 
 ## Sources
 
