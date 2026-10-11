@@ -15,8 +15,10 @@ vi.mock(import("@/services/shared/getWorkerTimers"), () => ({
     },
     // Through `window` rather than `globalThis`, whose node-typed overload returns a Timeout where the worker's
     // Timers hand back the number their own clearInterval takes
-    setInterval: (callback: () => void, intervalMs?: number) => window.setInterval(callback, intervalMs),
-    setTimeout: (callback: () => void, delayMs?: number) => window.setTimeout(callback, delayMs),
+    setInterval: <TArgs extends unknown[]>(callback: (...args: TArgs) => void, intervalMs?: number, ...args: TArgs) =>
+      window.setInterval(callback, intervalMs, ...args),
+    setTimeout: <TArgs extends unknown[]>(callback: (...args: TArgs) => void, delayMs?: number, ...args: TArgs) =>
+      window.setTimeout(callback, delayMs, ...args),
   }),
 }));
 

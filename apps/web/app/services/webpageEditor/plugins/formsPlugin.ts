@@ -122,8 +122,8 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
           {
             name: "method",
             options: [
-              { name: "GET", value: "get" },
-              { name: "POST", value: "post" },
+              { id: "get", label: "GET" },
+              { id: "post", label: "POST" },
             ],
             type: "select",
           },
@@ -133,10 +133,10 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
     },
 
     view: {
-      events: {
+      events: () => ({
         // The submit of the form might redirect the user from the editor, so the default is always prevented
         submit: (event: Event) => event.preventDefault(),
-      },
+      }),
     },
   });
 
@@ -157,7 +157,7 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
           PLACEHOLDER_TRAIT,
           {
             name: "type",
-            options: [{ value: "text" }, { value: "email" }, { value: "password" }, { value: "number" }],
+            options: [{ id: "text" }, { id: "email" }, { id: "password" }, { id: "number" }],
             type: "select",
           },
           REQUIRED_TRAIT,
@@ -205,7 +205,7 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
       },
     },
 
-    view: { events: { mousedown: checkIfInPreview } },
+    view: { events: () => ({ mousedown: checkIfInPreview }) },
   });
 
   editor.Components.addType(CHECKBOX_TYPE, {
@@ -221,7 +221,7 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
     },
 
     view: {
-      events: { click: checkIfInPreview },
+      events: () => ({ click: checkIfInPreview }),
 
       handleChecked() {
         if ("checked" in this.el) this.el.checked = Boolean(this.model.get("attributes")?.checked);
@@ -252,7 +252,7 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
         traits: [
           // Changing the text rebuilds the children only on change, so typing does not blur the trait's input
           { changeProp: true, name: "text" },
-          { name: "type", options: [{ value: "button" }, { value: "submit" }, { value: "reset" }], type: "select" },
+          { name: "type", options: [{ id: "button" }, { id: "submit" }, { id: "reset" }], type: "select" },
         ],
       },
 
@@ -273,7 +273,7 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
       },
     },
 
-    view: { events: { click: checkIfInPreview } },
+    view: { events: () => ({ click: checkIfInPreview }) },
   });
 
   editor.Components.addType(LABEL_TYPE, {
