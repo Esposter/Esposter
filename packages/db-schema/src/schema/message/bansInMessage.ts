@@ -1,8 +1,8 @@
 import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { roomsInMessage } from "#src/schema/message/roomsInMessage";
-import { primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { roomUserColumns } from "#src/schema/message/roomUserColumns";
+import { primaryKey, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const bansInMessage = pgTable(
@@ -10,12 +10,7 @@ export const bansInMessage = pgTable(
   {
     // The audit record outlives the moderator's account: their row going nulls this rather than taking the ban
     bannedByUserId: text().references(() => usersInAuth.id, { onDelete: "set null" }),
-    roomId: uuid()
-      .notNull()
-      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    userId: text()
-      .notNull()
-      .references(() => usersInAuth.id, { onDelete: "cascade" }),
+    ...roomUserColumns,
   },
   { extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [roomId, userId] })], schema: messageSchema },
 );
