@@ -22,9 +22,10 @@ const endKitEffect = (effect: KitEffect, { body }: KitContext): KitStrike | unde
 // Bubbles and shields that end explode. A field's tick reads the world's combat state, and an effect a tick adds starts
 // At its full seconds and is stepped by the last walk. A summon its kit or a swap ended before the step lands nothing in
 // It, as gcsim's ticks check that their summon still stands: Durin's Dragon recast over (durin/burst.go:111), Yae Miko's
-// Totems destroyed (yaemiko/kitsune.go:55) and Klee's sparks on a swap (klee/burst.go:59, 131), at v2.47.2 (MIT). The last walk also drops the effects that have run out from the
-// List in place. The step's lists start here: the strikes the summons land and the explosions go into the context's
-// Strikes, and the effects that ran out into its expired effects
+// Totems destroyed (yaemiko/kitsune.go:55) and Klee's sparks on a swap (klee/burst.go:59, 131), at v2.47.2 (MIT). The
+// Last walk also drops the effects that have run out from the list in place. The step's lists start here: the strikes
+// The summons land and the explosions go into the context's strikes, and the effects that ran out into its expired
+// Effects
 export const stepKitEffects = (stepSeconds: number, context: KitContext): void => {
   const { body, expiredEffects, kitEffectState, strikes } = context;
   strikes.length = 0;
