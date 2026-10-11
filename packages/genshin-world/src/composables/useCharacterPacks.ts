@@ -1,21 +1,31 @@
+import type { AccountCharacterPack } from "#src/models/character/AccountCharacterPack";
 import type { CharacterPack } from "#src/models/character/CharacterPack";
 import type { CharacterPackStore } from "#src/models/character/CharacterPackStore";
 import type { StoredCharacterPack } from "#src/models/character/StoredCharacterPack";
 
 import { useCharacterPackIds } from "#src/composables/useCharacterPackIds";
+import { cacheAccountCharacterPack } from "#src/services/character/cacheAccountCharacterPack";
 import { chooseCharacterPackReader } from "#src/services/character/chooseCharacterPackReader";
 import { openCharacterPackStore } from "#src/services/character/openCharacterPackStore";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
+import { watchImmediate } from "@vueuse/core";
 
 // The characters' packs the world draws from: the ones the browser keeps, which a player loads and removes on the
-// Character screen, ahead of the host's. A change to the kept packs that fails leaves them as they were, so a character
-// Keeps whatever it was drawn with: a removal's failure is logged, and a keep's rejects for the loader to show
+// Character screen, then the player's account's, and the host's. A change to the kept packs that fails leaves them as
+// They were, so a character keeps whatever it was drawn with: a removal's failure is logged, and a keep's rejects for the
+// Loader to show
 export const useCharacterPacks = ({
+  accountFileBaseUrl,
   characterPackBaseUrl,
+  getAccountCharacterPacks,
   getActiveCharacterId,
 }: {
+  // Where the player's account serves its files, given while the player is signed in
+  accountFileBaseUrl?: string;
   // Where the host serves the characters' packs, none in a production build
   characterPackBaseUrl?: string;
+  // The player's account's packs, empty while the player is signed out or the account's are still listing
+  getAccountCharacterPacks: () => readonly AccountCharacterPack[];
   // The character on the field, whose pack the world draws on the controller's body
   getActiveCharacterId: () => number;
 }) => {
@@ -23,10 +33,12 @@ export const useCharacterPacks = ({
   const characterPackStorePromise = openCharacterPackStore();
   const characterPackStore = shallowRef<CharacterPackStore>();
   const characterIdPackHashMap = shallowRef<ReadonlyMap<number, string>>(new Map());
+  const isStoredIndexRead = ref(false);
   const setStoredCharacterPacks = (storedCharacterPacks: StoredCharacterPack[]) => {
     characterIdPackHashMap.value = new Map(
       storedCharacterPacks.map(({ characterId, packHash }) => [characterId, packHash]),
     );
+    isStoredIndexRead.value = true;
   };
   const changeStoredCharacterPacks = async (change: (store: CharacterPackStore) => Promise<StoredCharacterPack[]>) => {
     setStoredCharacterPacks(await change(await characterPackStorePromise));
@@ -42,6 +54,8 @@ export const useCharacterPacks = ({
   });
   const getCharacterPackReader = (characterId: number) =>
     chooseCharacterPackReader(characterId, {
+      accountCharacterPacks: getAccountCharacterPacks(),
+      accountFileBaseUrl,
       characterIdPackHashMap: characterIdPackHashMap.value,
       characterPackBaseUrl,
       characterPackStore: characterPackStore.value,
@@ -50,6 +64,32 @@ export const useCharacterPacks = ({
   // One reader for the character on the field, kept while its source stays, so the scene re-reads its model only as the
   // Character or its pack changes
   const activeCharacterPackReader = computed(() => getCharacterPackReader(getActiveCharacterId()));
+  // The account's copy of the character on the field, when the browser keeps no copy of the same hash, is kept in the
+  // Browser on its first read, once: the next load draws it from there. A copy that fails to keep is tried again when
+  // The field's character next changes
+  const cachedAccountCharacterPackKeys = new Set<string>();
+  const uncachedActiveAccountCharacterPack = computed(() => {
+    const characterId = getActiveCharacterId();
+    return getAccountCharacterPacks().find(
+      (accountCharacterPack) =>
+        accountCharacterPack.characterId === characterId &&
+        characterIdPackHashMap.value.get(characterId) !== accountCharacterPack.packHash,
+    );
+  });
+  watchImmediate([uncachedActiveAccountCharacterPack, isStoredIndexRead], ([accountCharacterPack, isIndexRead]) => {
+    if (!accountCharacterPack || !accountFileBaseUrl || !isIndexRead) return;
+    const key = [accountCharacterPack.characterId, accountCharacterPack.packHash].join(ID_SEPARATOR);
+    if (cachedAccountCharacterPackKeys.has(key)) return;
+    cachedAccountCharacterPackKeys.add(key);
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
+    getResultAsync(async () => {
+      const characterPack = await cacheAccountCharacterPack(accountFileBaseUrl, accountCharacterPack);
+      return changeStoredCharacterPacks((store) => store.put(characterPack));
+    }).match(noop, (error) => {
+      cachedAccountCharacterPackKeys.delete(key);
+      console.error(error);
+    });
+  });
   return {
     activeCharacterPackReader,
     characterIdPackHashMap,

@@ -85,19 +85,8 @@ export const createCharacterPackStore = (storage: CharacterPackStorage): Charact
         await storage.remove(getPackPath(replacedCharacterPack));
       return index;
     },
-    readFile: async (storedCharacterPack, path) => {
-      const blob = await storage.read([
-        ...getPackPath(storedCharacterPack),
-        ...getCharacterPackFilePath(path).split("/"),
-      ]);
-      if (blob === undefined)
-        throw new InvalidOperationError(
-          Operation.Read,
-          path,
-          `is no file of character ${storedCharacterPack.characterId}'s kept pack`,
-        );
-      return blob;
-    },
+    readFile: (storedCharacterPack, path) =>
+      storage.read([...getPackPath(storedCharacterPack), ...getCharacterPackFilePath(path).split("/")]),
     readIndex,
     remove: async (characterId) => {
       const storedCharacterPacks = await readIndex();

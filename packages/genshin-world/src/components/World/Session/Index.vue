@@ -82,6 +82,8 @@ import { unref } from "vue";
 interface Props extends WorldScreenProps, WorldTables {}
 
 const {
+  accountCharacterPacks,
+  accountFileBaseUrl,
   adventureRankTables,
   cameraPose,
   catalogue,
@@ -326,7 +328,12 @@ const {
   getCharacterPackReader,
   removeCharacterPack,
   storeCharacterPack,
-} = useCharacterPacks({ characterPackBaseUrl, getActiveCharacterId: () => getActiveCharacterId(party) });
+} = useCharacterPacks({
+  accountFileBaseUrl,
+  characterPackBaseUrl,
+  getAccountCharacterPacks: () => accountCharacterPacks ?? [],
+  getActiveCharacterId: () => getActiveCharacterId(party),
+});
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =

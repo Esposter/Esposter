@@ -26,6 +26,7 @@ describe(chooseCharacterPackReader, () => {
       terms: "",
     });
     const characterPackReader = chooseCharacterPackReader(characterId, {
+      accountCharacterPacks: [],
       characterIdPackHashMap: new Map([[characterId, packHash]]),
       characterPackBaseUrl,
       characterPackStore,
@@ -37,11 +38,28 @@ describe(chooseCharacterPackReader, () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  test("reads the account's copy, by the hash of each file, ahead of the host's where the browser keeps none", async () => {
+    expect.hasAssertions();
+
+    const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response());
+    const characterPackReader = chooseCharacterPackReader(characterId, {
+      accountCharacterPacks: [{ characterId, files: [{ path, sha256: packHash }], modelName: "", packHash }],
+      accountFileBaseUrl: "c",
+      characterIdPackHashMap: new Map(),
+      characterPackBaseUrl,
+      hostCharacterPackIds: new Set([characterId]),
+    });
+    await characterPackReader?.readFile(path);
+
+    expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([`c/${packHash}`]);
+  });
+
   test("reads the host's pack where the browser keeps none", async () => {
     expect.hasAssertions();
 
     const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response());
     const characterPackReader = chooseCharacterPackReader(characterId, {
+      accountCharacterPacks: [],
       characterIdPackHashMap: new Map(),
       characterPackBaseUrl,
       characterPackStore: createCharacterPackStore(createMemoryCharacterPackStorage()),
@@ -56,6 +74,7 @@ describe(chooseCharacterPackReader, () => {
     expect.hasAssertions();
     expect(
       chooseCharacterPackReader(characterId, {
+        accountCharacterPacks: [],
         characterIdPackHashMap: new Map(),
         characterPackBaseUrl,
         hostCharacterPackIds: new Set(),

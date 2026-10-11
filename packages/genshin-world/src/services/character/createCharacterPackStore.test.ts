@@ -55,9 +55,7 @@ describe(createCharacterPackStore, () => {
     const index = await store.put(createCharacterPack(nextPackHash));
 
     expect(index).toStrictEqual([{ characterId, packHash: nextPackHash }]);
-    await expect(store.readFile({ characterId, packHash }, path)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: a/b, is no file of character 1's kept pack]`,
-    );
+    await expect(store.readFile({ characterId, packHash }, path)).resolves.toBeUndefined();
   });
 
   test("removes the files of a pack it could not write whole, leaving the index, and says the storage is full", async () => {
@@ -75,9 +73,7 @@ describe(createCharacterPackStore, () => {
       `[InvalidOperationError: Invalid operation: Create, name: , was not kept, as the browser's storage is full]`,
     );
     await expect(store.readIndex()).resolves.toStrictEqual([]);
-    await expect(store.readFile({ characterId, packHash }, path)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: a/b, is no file of character 1's kept pack]`,
-    );
+    await expect(store.readFile({ characterId, packHash }, path)).resolves.toBeUndefined();
     expect(consoleErrorSpy).toHaveBeenCalledExactlyOnceWith(storageError);
   });
 
@@ -128,8 +124,6 @@ describe(createCharacterPackStore, () => {
     const index = await store.remove(characterId);
 
     expect(index).toStrictEqual([]);
-    await expect(store.readFile({ characterId, packHash }, path)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: a/b, is no file of character 1's kept pack]`,
-    );
+    await expect(store.readFile({ characterId, packHash }, path)).resolves.toBeUndefined();
   });
 });
