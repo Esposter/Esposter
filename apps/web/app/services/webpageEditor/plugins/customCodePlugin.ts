@@ -122,7 +122,7 @@ export const customCodePlugin: Plugin = (editor: Editor) => {
     },
 
     view: {
-      events: { dblclick: "onActive" },
+      events: () => ({ dblclick: "onActive" }),
 
       init() {
         this.listenTo(this.model.components(), "add remove reset", this.onComponentsChange);

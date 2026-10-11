@@ -6,7 +6,7 @@ import { TimerMethod } from "@/models/shared/TimerMethod";
 // Timers scheduled here keep their pace while the tab is backgrounded, where the browser throttles the page's own
 // Timers. The worker holds only the native handles, so the page owns the ids and the callbacks and a fired timer is
 // Reported back by its id
-const handles = new Map<number, number>();
+const handles = new Map<number, ReturnType<typeof setInterval>>();
 
 const reportFire = (id: number) => {
   // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a dedicated worker's postMessage takes a transfer list, not a target origin

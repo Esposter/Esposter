@@ -1,15 +1,17 @@
 import { createWorkerTimers } from "@/services/shared/createWorkerTimers";
 import { getWorkerTimers } from "@/services/shared/getWorkerTimers";
+import { noop } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/shared/createWorkerTimers"), () => ({
-  createWorkerTimers: vi.fn<typeof createWorkerTimers>(() => ({
-    clearInterval: vi.fn<ReturnType<typeof createWorkerTimers>["clearInterval"]>(),
-    clearTimeout: vi.fn<ReturnType<typeof createWorkerTimers>["clearTimeout"]>(),
-    setInterval: vi.fn<ReturnType<typeof createWorkerTimers>["setInterval"]>(),
-    setTimeout: vi.fn<ReturnType<typeof createWorkerTimers>["setTimeout"]>(),
-  })),
-}));
+// The real timers over a target that takes nothing, so the test counts how often they are made
+vi.mock(import("@/services/shared/createWorkerTimers"), async (importOriginal) => {
+  const { createWorkerTimers: createRealWorkerTimers } = await importOriginal();
+  return {
+    createWorkerTimers: vi.fn<typeof createWorkerTimers>(() =>
+      createRealWorkerTimers({ addEventListener: noop, postMessage: noop }),
+    ),
+  };
+});
 vi.mock(import("@/workers/shared/timer.worker?worker"), () => ({ default: vi.fn<() => Worker>() }));
 
 describe(getWorkerTimers, () => {

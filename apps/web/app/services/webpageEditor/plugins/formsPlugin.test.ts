@@ -1,5 +1,8 @@
 // @vitest-environment happy-dom
+import type { Block, Component, Trait } from "grapesjs";
+
 import { formsPlugin } from "@/services/webpageEditor/plugins/formsPlugin";
+import { takeOne } from "@esposter/shared";
 import grapesJS, { usePlugin } from "grapesjs";
 import { describe, expect, test } from "vitest";
 
@@ -18,8 +21,8 @@ describe(formsPlugin, () => {
     const editor = createEditor();
     const blocks = editor.Blocks.getAll();
 
-    expect(blocks.map((block) => block.getId())).toStrictEqual(DEFAULT_BLOCK_IDS);
-    expect(blocks.map((block) => block.getCategoryLabel())).toStrictEqual(DEFAULT_BLOCK_IDS.map(() => "Forms"));
+    expect(blocks.map((block: Block) => block.getId())).toStrictEqual(DEFAULT_BLOCK_IDS);
+    expect(blocks.map((block: Block) => block.getCategoryLabel())).toStrictEqual(DEFAULT_BLOCK_IDS.map(() => "Forms"));
   });
 
   test("blocks: [] registers no blocks, the app's call", () => {
@@ -27,7 +30,7 @@ describe(formsPlugin, () => {
 
     const editor = createEditor({ blocks: [] });
 
-    expect(editor.Blocks.getAll().map((block) => block.getId())).toStrictEqual([]);
+    expect(editor.Blocks.getAll().map((block: Block) => block.getId())).toStrictEqual([]);
   });
 
   test("#12 a blocks list keeps only the listed blocks", () => {
@@ -35,7 +38,7 @@ describe(formsPlugin, () => {
 
     const editor = createEditor({ blocks: [INPUT_TYPE, "button"] });
 
-    expect(editor.Blocks.getAll().map((block) => block.getId())).toStrictEqual([INPUT_TYPE, "button"]);
+    expect(editor.Blocks.getAll().map((block: Block) => block.getId())).toStrictEqual([INPUT_TYPE, "button"]);
   });
 
   test("category and block options reach every registered block", () => {
@@ -48,14 +51,14 @@ describe(formsPlugin, () => {
     });
 
     expect(editor.Blocks.get(INPUT_TYPE)?.get("label")).toBe("Text field");
-    expect(editor.Blocks.getAll().map((block) => block.getCategoryLabel())).toStrictEqual(["Extra", "Extra"]);
+    expect(editor.Blocks.getAll().map((block: Block) => block.getCategoryLabel())).toStrictEqual(["Extra", "Extra"]);
   });
 
   test("#4 a form with no method attribute shows GET in its method trait", () => {
     expect.hasAssertions();
 
     const editor = createEditor();
-    const form = editor.Components.addComponent({ type: FORM_TYPE });
+    const form = takeOne([editor.Components.addComponent({ type: FORM_TYPE })].flat());
 
     expect(form.getTrait("method")?.getValue()).toBe("get");
   });
@@ -81,13 +84,10 @@ describe(formsPlugin, () => {
     expect.hasAssertions();
 
     const editor = createEditor();
-    const select = editor.Components.addComponent({ type: "select" });
+    const select = takeOne([editor.Components.addComponent({ type: "select" })].flat());
     const optionsTrait = editor.TraitManager.getType(SELECT_OPTIONS_TRAIT);
-    const optionsText: string | undefined = Reflect.apply(
-      optionsTrait.prototype.getInputEl,
-      { target: select },
-      [],
-    )?.value;
+    const optionsInput: unknown = Reflect.apply(optionsTrait.prototype.getInputEl, { target: select }, []);
+    const optionsText = optionsInput instanceof HTMLTextAreaElement ? optionsInput.value : undefined;
 
     expect(optionsText).toBe("opt1::Option 1\nopt2::Option 2");
   });
@@ -96,7 +96,7 @@ describe(formsPlugin, () => {
     expect.hasAssertions();
 
     const editor = createEditor();
-    const select = editor.Components.addComponent({ type: "select" });
+    const select = takeOne([editor.Components.addComponent({ type: "select" })].flat());
     const optionsTrait = editor.TraitManager.getType(SELECT_OPTIONS_TRAIT);
 
     Reflect.apply(
@@ -108,7 +108,10 @@ describe(formsPlugin, () => {
     expect(
       select
         .components()
-        .map((option) => [option.getAttributes().value, option.components().map((text) => text.get("content"))]),
+        .map((option: Component) => [
+          option.getAttributes().value,
+          option.components().map((text: Component) => text.get("content")),
+        ]),
     ).toStrictEqual([
       ["a", ["Apple::Red"]],
       ["b", ["b"]],
@@ -119,9 +122,9 @@ describe(formsPlugin, () => {
     expect.hasAssertions();
 
     const editor = createEditor();
-    const input = editor.Components.addComponent({ type: INPUT_TYPE });
+    const input = takeOne([editor.Components.addComponent({ type: INPUT_TYPE })].flat());
 
-    expect(input.getTraits().map((trait) => trait.getName())).toStrictEqual([
+    expect(input.getTraits().map((trait: Trait) => trait.getName())).toStrictEqual([
       "id",
       "name",
       "placeholder",
