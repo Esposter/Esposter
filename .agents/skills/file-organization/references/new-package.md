@@ -1,72 +1,8 @@
 # Creating a new workspace package
 
-Read when adding a package under `packages/`, a member that is only run, or a `bin` entrypoint.
+A package is created by `pnpm ai:package:new <name> [--kind library|nuxt-module|plugin] [--description "..."] [--register]`.
+It writes the manifest, the configs, the README, the docs section and every inventory row the workspace suites check.
+Each invariant it satisfies is held by the suite that reads it, named in `scripts/src/services/package/new/`.
 
-New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
-
-1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`, `"sideEffects": false` if it genuinely has none (the build generates `exports`). Standard scripts: `build` (bare `tsdown` — the shared factory generates the barrel from a `build:prepare` hook), `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (the `testing` skill, `references/bundle-size.md`). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
-2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
-3. **`tsdown.config.ts`** — call the matching factory from `@esposter/configuration`: `getTsdownConfigurationNode()` (server-only), `getTsdownConfiguration()` (platform-neutral), or `getTsdownConfigurationVue()`. They are functions, not constants, and are composed with `mergeConfig` rather than a spread (the `build` skill, `references/shared-configs.md`).
-4. **`eslint.config.js`** — a one-line re-export of the shared config (`index.typescript.js` for TS-only, `index.vue.js` for the app, whose UnoCSS reads an attribute as a utility, and `index.vueScopedStyles.js` for every Vue package, which carries no utility CSS: UnoCSS's rules off, and `scoped-styles/no-unknown-attribute` reporting an attribute the HTML standard does not define on a native element), never a symlink (`references/symlinks.md`):
-   ```js
-   export { default } from "@esposter/configuration/eslint/index.typescript.js";
-   ```
-   No per-package `oxlint.config.ts` — oxlint runs once from the repo root against the single root `oxlint.config.ts`.
-5. **`src/index.ts`** — generated, never written by hand or committed; `pnpm build` writes it from the package's source files.
-6. **Run plain `pnpm i`** from repo root to link the package. Follow `apps/web/content/docs/architecture/monorepo-tooling.md` for install safety.
-7. **Run `pnpm build`** in the new package to produce `dist/`.
-
-## A package that is a Nuxt module
-
-Its entry, runtime directory, registration in the app and tests follow the steps above and then the
-`build` skill (`references/nuxt-module-packages.md`).
-
-## A member that is only run
-
-`scripts` at the repository root is the other shape: tooling the repo runs, which nothing imports, publishes or
-bundles. It skips everything above that exists for a consumer — `types`, `files`, `sideEffects`, `exports`, the
-tsdown config, the generated barrel, and `pnpm build` — and keeps the manifest, the
-`#src/*` map, the tsconfig, the ESLint re-export, a Vitest config from the shared factory, and its own `bench`,
-`lint`, `lint:fix`, `typecheck` and `test`. Its entrypoints are scripts of its own (`tsx src/<tool>/index.ts`)
-that the root names with `pnpm -C <directory> <script>`, so the root manifest holds no path into it.
-
-A member outside `apps/` and `packages/` also needs its directory added to `packages:` in
-`pnpm-workspace.yaml` — that file is what the tooling reads to find the members, so the entry is the whole
-registration: the Vitest projects, the dependency graph, the outdated-dependency report and the workspace
-invariants all pick it up from there.
-
-## A member that is also a Claude Code plugin
-
-`packages/genshin-persona` is the only-run shape with more constraints, every one forced by the tool that
-installs it: a remote install copies the plugin root and runs a frozen `npm ci --ignore-scripts` there, and every
-hook and command is a bare `node <path>` the tool runs (`apps/web/content/docs/infra/claude-interface/persona-plugin/index.md`).
-
-- **Every dependency is a plain semver range and there are no devDependencies** — `tsx` included, which the
-  entries need at runtime. npm reads neither `catalog:`
-  nor `workspace:`, so a manifest carrying one fails the remote install outright. Vitest, TypeScript and
-  `@esposter/configuration` are found one directory walk up, in the root's `node_modules`, because the package's
-  own holds only its runtime dependency. The npm lockfile beside the manifest is generated from a **clean copy
-  of the manifest alone** (`npm install --package-lock-only` in a scratch directory), never in place: run in the
-  workspace it records pnpm's store links as the packages, and the remote `npm ci` cannot resolve them. That
-  lockfile is also how the outdated-dependency report finds the manifest — beside a `package-lock.json`, plain
-  ranges are the `npm` group checked against it, not an uncataloged violation — which is what reaches the
-  runtime manifest under the plugin that no workspace glob lists.
-- **The `#src/*` specifier drops its extension** (`#src/services/x`, never `#src/services/x.ts`): the manifest's
-  map appends `.ts`, and node resolves the map literally.
-- **Its TypeScript is the repo's**: an `enum` where the rest of the repo declares one, never a frozen object bent
-  to suit node's stripper, because its entries run under `tsx`
-  (the `package-scripts` skill, `references/typescript-scripts.md`).
-  `Temporal` is the plugin's date layer, and the plugin's own `engines.node` is the floor it needs: `>=` the
-  root's `.node-version`, moved with it by `pnpm update:node` and never edited by hand
-  (`apps/web/content/docs/infra/claude-interface/persona-plugin/index.md`).
-- It is excluded from `typedoc.config.js` like the configuration package: it has no barrel to document.
-
-## Bin entrypoints — no shebang
-
-Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`src/cli.ts`). pnpm generates the bin shim that invokes `node` for the target, so the shebang is dead weight. Only add one if a file is genuinely meant to be executed directly (`chmod +x ./file`), which workspace bins are not.
-
-A `bin` field points at a committed one-line `bin/*.js` that imports the built entry, never at `dist` itself: pnpm refuses to link a shim whose target is missing at install time, and `dist` is gitignored, so a fresh clone would install with no shim at all. Don't guard that import. A bin is reachable before `build:packages` has run, and Node's own `ERR_MODULE_NOT_FOUND` already names the missing `dist` file and the wrapper that imported it — a hand-written check buys the exact build command and costs the same lines in every wrapper, which cannot share them because they run before there is anything importable to share.
-
-## Externals and dependency fields
-
-Which manifest field a dependency goes in, and what that makes the build do with it, is the `build` skill's (`references/dependency-placement.md`).
+What the generator cannot decide is the package's purpose: write its `--description`, then the prose of its docs page
+(`apps/web/content/docs/<name>/index.md`) by hand. Then run plain `pnpm i` from the repository root to link it.
