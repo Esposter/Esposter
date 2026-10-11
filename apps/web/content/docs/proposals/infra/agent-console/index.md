@@ -1,12 +1,12 @@
 ---
 title: Agent console
-description: Proposal — what the agent console still has to build past the host, the Agent SDK driver, the console overlay and terminal parity, which have shipped. The console stays open to others through extension tiers. Next come a Genshin theme dressing the world from the persona plugin, views that draw the repository's tooling as places, and a terminal-mirror driver for sessions a terminal already holds.
+description: Proposal — what the agent console still has to build past its host, its Agent SDK driver and terminal parity. The console stays open to others through extension tiers. Next come a Genshin theme dressing the world from the persona plugin, views that draw the repository's tooling as places, and a terminal-mirror driver for sessions a terminal already holds.
 model: claude-opus-5-5
 ---
 
 # Agent console
 
-The [agent console](/docs/infra/claude-interface/agent-console) has shipped its first two phases: the `agent-console-server` host, the Claude Agent SDK driver, the default theme, and a full-screen world under its [console overlay](/docs/infra/claude-interface/agent-console/console-overlay) at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). One page of the app now works every Claude Code session on a machine in place of the terminal. This proposal is what comes after those phases. It is judged by the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
+The [agent console](/docs/infra/claude-interface/agent-console) is one page of the app that works every Claude Code session on a machine in place of the terminal, from its [console overlay](/docs/infra/claude-interface/agent-console/console-overlay) at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). This proposal is what comes after it. It is judged by the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
 
 ## Decisions
 
@@ -28,13 +28,13 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 flowchart LR
   subgraph Browser
     W[Genshin world and panels] --> T{Theme}
-    T -->|default — shipped| N[Notifications]
+    T -->|default| N[Notifications]
     T -->|Genshin| G[Palette, scene, avatar, voice]
     W --> V[Views: harbour]
     W --> X[Side pane: app routes, MCP Apps]
   end
-  subgraph Host[agent-console-server — shipped]
-    D{Driver} -->|Agent SDK — shipped| C[Claude Code session]
+  subgraph Host[agent-console-server]
+    D{Driver} -->|Agent SDK| C[Claude Code session]
     D -->|terminal mirror| M[A terminal's own session]
   end
   W <-->|contracts| D
@@ -72,7 +72,7 @@ sequenceDiagram
 | [Effort level](/docs/proposals/infra/agent-console/effort-level)                           | an effort select beside the model select, showing the level the session is at |
 | [Session titles](/docs/proposals/infra/agent-console/session-titles)                       | renaming a session by its title, saved in its own transcript                  |
 | [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)       | attaching to a session a terminal runs, through its transcript and a channel  |
-| [Extensions](/docs/proposals/infra/agent-console/extensions)                               | how other tooling joins — MCP Apps and first-party views, app routes shipped  |
+| [Extensions](/docs/proposals/infra/agent-console/extensions)                               | how other tooling joins — MCP Apps and first-party views                      |
 | [Themes](/docs/proposals/infra/agent-console/themes)                                       | the parts a theme adds past the default, and the Genshin theme                |
 | [Wish banner](/docs/proposals/infra/agent-console/wish-banner)                             | Genshin theme — the session's character arriving through a wish               |
 | [Element ambience](/docs/proposals/infra/agent-console/element-ambience)                   | Genshin theme — a backdrop in the element, moved by the spoken line           |
@@ -81,7 +81,7 @@ sequenceDiagram
 
 ## Scope and order
 
-1. **One day's work in the console alone**, now that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) has no gap left, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison). Connecting comes first, since it is the first thing every reader does: the [host installer](/docs/infra/claude-interface/agent-console/host-installer), [session windows](/docs/infra/claude-interface/agent-console/session-windows), [device pairing](/docs/infra/claude-interface/agent-console/device-pairing) and [remote connections](/docs/infra/claude-interface/agent-console/remote-connections) to a machine of the reader's own have shipped, and [Anthropic-hosted sessions](/docs/proposals/infra/agent-console/anthropic-hosted-sessions) come later. The Code tab's lean core then closes the returns that comparison already predicts: the [shell pane](/docs/infra/claude-interface/agent-console/shell-pane) and the [diff comments](/docs/infra/claude-interface/agent-console/diff-comments) have shipped, and [repository files](/docs/proposals/infra/agent-console/repository-files) and [side chat](/docs/proposals/infra/agent-console/side-chat) come next, with [effort level](/docs/proposals/infra/agent-console/effort-level) and [session titles](/docs/proposals/infra/agent-console/session-titles) as small changes to the composer and the sessions tab.
+1. **One day's work in the console alone**, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison) and closed where it recurs. [Anthropic-hosted sessions](/docs/proposals/infra/agent-console/anthropic-hosted-sessions) come after the connecting pages of the [console](/docs/infra/claude-interface/agent-console). The Code tab's lean core closes the returns the comparison predicts: [repository files](/docs/proposals/infra/agent-console/repository-files) and [side chat](/docs/proposals/infra/agent-console/side-chat) come next, with [effort level](/docs/proposals/infra/agent-console/effort-level) and [session titles](/docs/proposals/infra/agent-console/session-titles) as small changes to the composer and the sessions tab.
 2. **The Genshin theme**: persona, voice, wish banner, then the ambience, all inside the world.
 3. **Views**: the collector harbour.
 4. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.

@@ -1,22 +1,21 @@
 ---
 title: Extensions
-description: Proposal — how external tooling joins the agent console with the least code on either side, through the MCP Apps standard the console hosts, and a first-party view only when a tool needs the scene. Any page of the app already opens in the console's side pane, which has shipped.
+description: Proposal — how external tooling joins the agent console with the least code on either side, through the MCP Apps standard the console hosts, and a first-party view only when a tool needs the scene.
 model: claude-opus-5-5
 ---
 
 # Extensions
 
-Opening tooling inside the [agent console](/docs/infra/claude-interface/agent-console) adds more again. The rule for how is **the least code on either side**: a tool should not have to know the console exists, and the console should not have to know any tool. Three tiers meet that, cheapest first, and a tool uses the first that fits.
+Opening tooling inside the [agent console](/docs/infra/claude-interface/agent-console) adds more again. The rule for how is **the least code on either side**: a tool should not have to know the console exists, and the console should not have to know any tool. Three tiers meet that, cheapest first, and a tool uses the first that fits. The first is already built, so this page covers the other two.
 
-The first tier has shipped: any page of the app opens in the console's [side pane](/docs/infra/claude-interface/agent-console/side-pane), and the [resource explorer](/docs/resource/explorer) joins with no change. What is left is the tier for tooling outside the app and the tier for first-party panels that need the scene.
+Any page of the app opens in the console's [side pane](/docs/infra/claude-interface/agent-console/side-pane), and the [resource explorer](/docs/resource/explorer) joins with no change. What follows is the tier for tooling outside the app and the tier for first-party panels that need the scene.
 
-## The three tiers
+## The two tiers
 
-| Tier       | What joins                             | Code on the tool's side              | Code in the console | State                                                                              |
-| :--------- | :------------------------------------- | :----------------------------------- | :------------------ | :--------------------------------------------------------------------------------- |
-| App routes | any page of the Esposter app           | none                                 | none per page       | shipped, see the [side pane](/docs/infra/claude-interface/agent-console/side-pane) |
-| MCP Apps   | any tool, anywhere, with a UI          | the tool's own MCP server and its UI | none per tool       | proposed below                                                                     |
-| Views      | first-party panels that need the scene | a Vue component in the app           | one registry entry  | proposed below                                                                     |
+| Tier     | What joins                             | Code on the tool's side              | Code in the console |
+| :------- | :------------------------------------- | :----------------------------------- | :------------------ |
+| MCP Apps | any tool, anywhere, with a UI          | the tool's own MCP server and its UI | none per tool       |
+| Views    | first-party panels that need the scene | a Vue component in the app           | one registry entry  |
 
 ## How a tool picks its tier
 
@@ -67,9 +66,8 @@ A view is an entry in `AgentConsoleViewMap`: a name, an icon, a lazily loaded co
 
 ## Scope and order
 
-1. **The side pane and the embed flag.** Shipped.
-2. **The MCP Apps host.** After the SDK driver is proven, since it rides on the driver's tool results.
-3. **The view registry**, with the first view that needs it — the collector harbour, which builds it.
+1. **The MCP Apps host.** After the SDK driver is proven, since it rides on the driver's tool results.
+2. **The view registry**, with the first view that needs it — the collector harbour, which builds it.
 
 ```text
 apps/web/app/components/AgentConsole/Pane/
