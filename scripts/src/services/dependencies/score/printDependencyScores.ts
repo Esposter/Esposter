@@ -1,13 +1,15 @@
 import type { DependencyScoreReport } from "#src/models/dependencies/score/DependencyScoreReport";
 import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 
+import { formatBytes } from "#src/services/dependencies/score/formatBytes";
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";
 
 const YES = "yes";
 
-// One row per catalog entry, highest score first: the candidates to absorb lead. The disagreements are listed under the table
-// As rows to re-judge, and an entry no workspace installed is named, since its installed dimensions score nothing.
+// One row per catalog entry, in the order the report sorts them: highest score first, or largest bundle first. The
+// Disagreements are listed under the table as rows to re-judge, and an entry no workspace installed is named, since its
+// Installed dimensions score nothing.
 export const printDependencyScores = (
   { disagreements, errors, scores, unresolvedPackageNames }: DependencyScoreReport,
   color: ColorPalette,
@@ -26,6 +28,8 @@ export const printDependencyScores = (
       "Manifests",
       "Shims",
       "Deprecated",
+      "Bundle",
+      "Install",
       "Verdict",
     ],
     scores.map((score) => [
@@ -41,6 +45,8 @@ export const printDependencyScores = (
       String(score.manifestCount),
       String(score.shimCount),
       score.isDeprecated ? YES : "",
+      score.bundleSkipReason === "" ? formatBytes(score.bundleBytes) : score.bundleSkipReason,
+      score.installBytes === 0 ? "" : `${formatBytes(score.installBytes)}${score.isInstallShared ? " shared" : ""}`,
       score.verdict,
     ]),
     color,

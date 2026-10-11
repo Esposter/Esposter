@@ -4,10 +4,14 @@ import { getDisagreements } from "#src/services/dependencies/score/getDisagreeme
 import { describe, expect, test } from "vitest";
 
 const createScore = (packageName: string, verdict: string, total: number, shimCount = 0): DependencyScore => ({
+  bundleBytes: 0,
+  bundleSkipReason: "",
   dependencyLines: 0,
   formatPoints: 0,
   importerCount: 0,
+  installBytes: 0,
   isDeprecated: false,
+  isInstallShared: false,
   manifestCount: 0,
   packageName,
   releaseCount: 0,

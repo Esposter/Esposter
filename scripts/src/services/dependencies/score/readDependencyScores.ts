@@ -4,19 +4,23 @@ import type { InstalledPackage } from "#src/models/dependencies/score/InstalledP
 import type { Packument } from "#src/models/dependencies/score/Packument";
 import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared/RegistryCheckError";
 
+import { ScoreSort } from "#src/models/dependencies/score/ScoreSort";
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { LEDGER_PATH, UNJUDGED_VERDICT } from "#src/services/dependencies/score/constants";
 import { countDependencyLines } from "#src/services/dependencies/score/countDependencyLines";
 import { countModuleGraphLines } from "#src/services/dependencies/score/countModuleGraphLines";
 import { countRecentReleases } from "#src/services/dependencies/score/countRecentReleases";
 import { findInstalledPackage } from "#src/services/dependencies/score/findInstalledPackage";
+import { getClientDirectories, getWorkspacePackages } from "#src/services/dependencies/score/getClientDirectories";
 import { getDisagreements } from "#src/services/dependencies/score/getDisagreements";
 import { getFormatPoints } from "#src/services/dependencies/score/getFormatPoints";
 import { getPackageFormat } from "#src/services/dependencies/score/getPackageFormat";
 import { getSelfContainmentPoints } from "#src/services/dependencies/score/getSelfContainmentPoints";
 import { getSizePoints } from "#src/services/dependencies/score/getSizePoints";
 import { getStabilityPoints } from "#src/services/dependencies/score/getStabilityPoints";
+import { readBundleCosts } from "#src/services/dependencies/score/readBundleCosts";
 import { readImportingFiles } from "#src/services/dependencies/score/readImportingFiles";
+import { readInstallCosts } from "#src/services/dependencies/score/readInstallCosts";
 import { readLedgerVerdicts } from "#src/services/dependencies/score/readLedgerVerdicts";
 import { readTypeShims } from "#src/services/dependencies/score/readTypeShims";
 import { getManifestDependencies } from "#src/services/outdatedDependencies/manifest/getManifestDependencies";
@@ -58,28 +62,45 @@ const readPackuments = async (
   return { errors, packuments };
 };
 
-// Every catalog entry's score, read from the catalog, the ledger, each installed copy, the registry and the tracked source
-export const readDependencyScores = async (): Promise<DependencyScoreReport> => {
+// Every catalog entry's score, read from the catalog, the ledger, each installed copy, the registry, the tracked source
+// And the app's client bundle, sorted by the score or by the bundle cost the sort names
+export const readDependencyScores = async (sort: ScoreSort): Promise<DependencyScoreReport> => {
   const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILE), "utf8");
   const catalogEntries = parseWorkspaceEntries(
     DependencyGroup.Catalog,
     getSection(DependencyGroup.Catalog, workspaceYaml),
   );
   const packageNameVerdictMap = readLedgerVerdicts(readFileSync(resolve(REPOSITORY_ROOT, LEDGER_PATH), "utf8"));
+  const manifestFiles = readManifestFiles(REPOSITORY_ROOT);
   const packageNameManifestPathsMap = new Map<string, Set<string>>();
-  for (const { manifestPath, packageName } of getManifestDependencies(readManifestFiles(REPOSITORY_ROOT)))
+  for (const { manifestPath, packageName } of getManifestDependencies(manifestFiles))
     getOrCreate(packageNameManifestPathsMap, packageName, () => new Set<string>()).add(manifestPath);
   const packageNameImportersMap = readImportingFiles();
   const packageNameShimCountMap = readTypeShims();
   const today = Temporal.Now.plainDateISO();
 
-  const { errors, packuments } = await readPackuments(catalogEntries.map(({ packageName }) => packageName));
+  const packageNameInstalledMap = new Map<string, InstalledPackage>();
+  for (const { packageName } of catalogEntries) {
+    const installed = findInstalledPackage(packageName, [...(packageNameManifestPathsMap.get(packageName) ?? [])]);
+    if (installed !== undefined) packageNameInstalledMap.set(packageName, installed);
+  }
+  const packageNames = catalogEntries.map(({ packageName }) => packageName);
+  const clientDirectories = getClientDirectories(getWorkspacePackages(manifestFiles), packageNameImportersMap);
+  const packageNameBundleCostMap = await readBundleCosts(
+    packageNames,
+    packageNameInstalledMap,
+    packageNameImportersMap,
+    clientDirectories,
+  );
+  const packageNameInstallCostMap = readInstallCosts(packageNameInstalledMap);
+
+  const { errors, packuments } = await readPackuments(packageNames);
   const scores: DependencyScore[] = [];
   const unresolvedPackageNames: string[] = [];
 
   for (const { packageName } of catalogEntries) {
     const manifestPaths = [...(packageNameManifestPathsMap.get(packageName) ?? [])];
-    const installed: InstalledPackage | undefined = findInstalledPackage(packageName, manifestPaths);
+    const installed = packageNameInstalledMap.get(packageName);
     const packument = packuments.get(packageName);
     if (installed === undefined) unresolvedPackageNames.push(packageName);
 
@@ -91,12 +112,18 @@ export const readDependencyScores = async (): Promise<DependencyScoreReport> => 
     const selfContainmentPoints = installed === undefined ? 0 : getSelfContainmentPoints(selfContainmentCount);
     const stabilityPoints = packument === undefined ? 0 : getStabilityPoints(releaseCount);
     const importers = packageNameImportersMap.get(packageName);
+    const bundleCost = packageNameBundleCostMap.get(packageName);
+    const installCost = packageNameInstallCostMap.get(packageName);
 
     scores.push({
+      bundleBytes: bundleCost?.bytes ?? 0,
+      bundleSkipReason: bundleCost?.skipReason ?? "",
       dependencyLines: installed === undefined ? 0 : countDependencyLines(packageName, installed),
       formatPoints,
       importerCount: importers?.size ?? 0,
+      installBytes: installCost?.bytes ?? 0,
       isDeprecated: packument !== undefined && checkIsLatestDeprecated(packument),
+      isInstallShared: installCost?.isShared ?? false,
       manifestCount: manifestPaths.length,
       packageName,
       releaseCount,
@@ -111,7 +138,9 @@ export const readDependencyScores = async (): Promise<DependencyScoreReport> => 
   }
 
   const sortedScores = scores.toSorted(
-    (left, right) => right.total - left.total || left.packageName.localeCompare(right.packageName),
+    (left, right) =>
+      (sort === ScoreSort.Bundle ? right.bundleBytes - left.bundleBytes : right.total - left.total) ||
+      left.packageName.localeCompare(right.packageName),
   );
   return {
     disagreements: getDisagreements(sortedScores),
