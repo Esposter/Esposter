@@ -19,7 +19,7 @@ const windowInteractables = computed(() =>
 </script>
 
 <template>
-  <!-- The window of the prompts beside the character, its cap's left edge 139 units right of the screen's centre and its
+  <!-- The window of the prompts beside the character, its cap's left edge 138 units right of the screen's centre and its
        rows centred on the screen's middle. A full-screen layer that lets the pointer through to the world, as the HUD
        it is drawn in does; it is also a screen root of its own, so the parity page draws it with a unit -->
   <GameScreen class="prompt-list">
@@ -34,11 +34,11 @@ const windowInteractables = computed(() =>
   pointer-events: none;
 }
 
-/* The prompt list's place, measured off the English PC client's pickup at 1080 high: its cap 139 units right of the
+/* The prompt list's place, measured off the English PC client's pickup at 1080 high: its cap 138 units right of the
    centre, its rows' middle on the middle of the screen */
 .prompts {
   position: absolute;
-  left: calc(50% + var(--unit) * 139);
+  left: calc(50% + var(--unit) * 138);
   top: 50%;
   transform: translateY(-50%);
 }

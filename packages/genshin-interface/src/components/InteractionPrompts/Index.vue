@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { InteractionPrompt } from "#src/models/InteractionPrompt";
 
-import { INTERACTION_KEY_LABEL } from "#src/services/constants";
+import { INTERACTION_HOVER_MS, INTERACTION_KEY_LABEL } from "#src/services/constants";
 
 interface Props {
   // The rows the list's window shows, nearest first
@@ -11,13 +11,14 @@ interface Props {
 }
 
 const { prompts, selectedId } = defineProps<Props>();
+const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
 </script>
 
 <template>
   <!-- The prompts beside the character: a row for each thing in reach, its kind's icon before its name in a pill, and the
        Key's cap before the row F acts on, with the pointer that leads from it into the pill. Measured off the English
-       PC client's three-row pickup at 1080 high: each row 59 high on a 72 pitch, the cap 40 wide and 33 high, the icon
-       34 across, the name's cap height 22 -->
+       PC client's three-row pickup at 1080 high: each pill 63 high on a 72 pitch, its left edge 59 past the cap's, the
+       cap 40 wide and 33 high, the icon 34 across -->
   <ul class="interaction-prompts">
     <li
       v-for="{ id, kind, name } of prompts"
@@ -36,14 +37,14 @@ const { prompts, selectedId } = defineProps<Props>();
 </template>
 
 <style scoped>
-/* Provisional: the pill's right end and its fill, which the recording's scene shows through and does not measure, and
-   the icon, which stands in for the item's own art until its kind's icon is drawn */
+/* Provisional: the icon, which stands in for the item's own art until its kind's icon is drawn */
 .interaction-prompts {
+  --pill-fill: #2a333f;
   display: flex;
   margin: 0;
   padding: 0;
   flex-direction: column;
-  gap: calc(var(--unit) * 13);
+  gap: calc(var(--unit) * 9);
   color: #fff;
   font-size: calc(var(--unit) * 31);
   font-weight: 600;
@@ -52,9 +53,9 @@ const { prompts, selectedId } = defineProps<Props>();
 
 .prompt {
   display: grid;
-  grid-template-columns: calc(var(--unit) * 60) calc(var(--unit) * 290);
+  grid-template-columns: calc(var(--unit) * 59) calc(var(--unit) * 318);
   align-items: center;
-  height: calc(var(--unit) * 59);
+  height: calc(var(--unit) * 63);
 }
 
 .key {
@@ -74,32 +75,62 @@ const { prompts, selectedId } = defineProps<Props>();
   background: #fff;
 }
 
-/* The pointer from the cap into the pill: a white triangle 8 by 15 at 45 units from the cap's left edge */
-.prompt[aria-current="true"] .key::after {
+/* The pointer from the cap into the pill: a white triangle 10.5 by 19 at 44.5 units from the cap's left edge, on every
+   Row and shown on the selected one. A move of the selection is read off the English client's scrolled pickup at 60
+   Frames a second: the cap jumps rows within a frame, while the pointer and the selected rim cross-fade from the old
+   Row to the new over three, the 0.05 seconds the game's controllers fade into a state over */
+.key::after {
   position: absolute;
-  top: calc(var(--unit) * 7.5);
-  left: calc(var(--unit) * 45);
-  border-width: calc(var(--unit) * 7.5) 0 calc(var(--unit) * 7.5) calc(var(--unit) * 8);
+  top: calc(var(--unit) * 7);
+  left: calc(var(--unit) * 44.5);
+  border-width: calc(var(--unit) * 9.5) 0 calc(var(--unit) * 9.5) calc(var(--unit) * 10.5);
   border-style: solid;
   border-color: transparent transparent transparent #ececec;
   content: "";
+  opacity: 0;
+  transition: opacity v-bind(selectionDuration) linear;
+}
+
+.prompt[aria-current="true"] .key::after {
+  opacity: 1;
 }
 
 .pill {
   display: flex;
-  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
   height: 100%;
   padding-left: calc(var(--unit) * 12);
-  border: calc(var(--unit) * 1) solid rgb(255 255 255 / 0.45);
-  border-radius: calc(var(--unit) * 30);
-  background: rgb(18 24 34 / 0.6);
   align-items: center;
-  gap: calc(var(--unit) * 17);
+  gap: calc(var(--unit) * 19);
   white-space: nowrap;
 }
 
+/* The pill's ground, measured off the English client's pickup over plain grass at 1080 high: slate rounded at the left,
+   With a light rim 2 units thick 2.5 inside its edge, opaque for 78 units and fading out evenly to nothing at its end,
+   So it has no right end of its own. The selected row's rim is brighter */
+.pill::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: calc(var(--unit) * 31.5) 0 0 calc(var(--unit) * 31.5);
+  background: var(--pill-fill);
+  box-shadow:
+    inset 0 0 0 calc(var(--unit) * 2.5) var(--pill-fill),
+    inset 0 0 0 calc(var(--unit) * 4.5) rgb(255 255 255 / 0.24);
+  content: "";
+  mask-image: linear-gradient(to right, #000 calc(var(--unit) * 78), transparent);
+  transition: box-shadow v-bind(selectionDuration) linear;
+}
+
+.prompt[aria-current="true"] .pill::before {
+  box-shadow:
+    inset 0 0 0 calc(var(--unit) * 2.5) var(--pill-fill),
+    inset 0 0 0 calc(var(--unit) * 4.5) rgb(255 255 255 / 0.41);
+}
+
 .name {
-  margin-bottom: calc(var(--unit) * 4);
+  margin-bottom: calc(var(--unit) * 2);
   letter-spacing: calc(var(--unit) * 0.9);
 }
 
