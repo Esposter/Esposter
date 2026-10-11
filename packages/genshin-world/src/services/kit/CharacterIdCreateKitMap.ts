@@ -27,6 +27,7 @@ import {
   KLEE_CHARACTER_ID,
   KOKOMI_CHARACTER_ID,
   KUJOU_SARA_CHARACTER_ID,
+  KUKI_CHARACTER_ID,
   LISA_CHARACTER_ID,
   MONA_CHARACTER_ID,
   NINGGUANG_CHARACTER_ID,
@@ -75,6 +76,7 @@ import { createKiraraKit } from "#src/services/kit/characters/kiraraKit";
 import { createKujouSaraKit } from "#src/services/kit/characters/kujouSaraKit";
 import { createKleeKit } from "#src/services/kit/characters/kleeKit";
 import { createKokomiKit } from "#src/services/kit/characters/kokomiKit";
+import { createKukiKit } from "#src/services/kit/characters/kukiKit";
 import { createLisaKit } from "#src/services/kit/characters/lisaKit";
 import { createMonaKit } from "#src/services/kit/characters/monaKit";
 import { createNingguangKit } from "#src/services/kit/characters/ningguangKit";
@@ -126,6 +128,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [KLEE_CHARACTER_ID]: createKleeKit,
   [KOKOMI_CHARACTER_ID]: createKokomiKit,
   [KUJOU_SARA_CHARACTER_ID]: createKujouSaraKit,
+  [KUKI_CHARACTER_ID]: createKukiKit,
   [LISA_CHARACTER_ID]: createLisaKit,
   [MONA_CHARACTER_ID]: createMonaKit,
   [NINGGUANG_CHARACTER_ID]: createNingguangKit,

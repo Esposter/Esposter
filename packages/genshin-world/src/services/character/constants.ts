@@ -106,6 +106,7 @@ export const ALOY_CHARACTER_ID = 10_000_062;
 export const ITTO_CHARACTER_ID = 10_000_057;
 export const HEIZOU_CHARACTER_ID = 10_000_059;
 export const YAE_MIKO_CHARACTER_ID = 10_000_058;
+export const KUKI_CHARACTER_ID = 10_000_065;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],

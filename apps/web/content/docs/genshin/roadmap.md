@@ -55,6 +55,9 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does a Chillwater Bomblet that strikes two enemies add one coil stack rather than two?** `aloyKit.ts` counts each enemy a bomblet strikes, where gcsim counts a bomblet once for all of them: yes if a recording shows one coil stack for one bomblet across two enemies, no if it shows two.
 - **Do Freeze Bomb and each Chillwater Bomblet give 1U of Cryo gauge?** Provisional, as gcsim gives the skill no gauge, so `aloyKit.ts` reads 1U as Ganyu's Cryo hits do: yes if a recording shows 1U from each, no if it shows another amount.
 
+- **Does Kuki's burst strike twelve times while her HP is at 50% or less, and seven at more?** gcsim casts seven hits at her full HP and twelve at half or less, every 17 frames from 50. The kit builds the seven: yes if the game gives the twelve at half HP, no if it gives seven at every HP.
+- **Are Kuki's plunges' reaches 1, 3 and 5 metres, with poise 10, 50 and 100?** gcsim gives Kuki no plunge file, so the kit takes the generic plunges' reaches and poise: yes if the game's plunges match them, no if they differ.
+
 ## References sought
 
 Clips and stills a value needs, which agents find in published material in the order [parity](/docs/genshin/parity) sets out (Search before recording); the user records none of them. A found one is ticked with its source and the file it was saved as under `captures`, which the work reading it takes in place of the line's own name. Until then its value ships as a provisional estimate and the queue item reading it sits under Waiting; a line searched without a find keeps the date and the queries tried. A found clip is checked against its line's settings (the English PC client at 1080p and 60 frames a second unless it says otherwise), and a near one is taken with its difference noted.
