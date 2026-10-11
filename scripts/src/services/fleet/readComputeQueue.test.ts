@@ -15,6 +15,7 @@ describe(readComputeQueue, () => {
   beforeAll(() => {
     directory = mkdtempSync(join(tmpdir(), "compute-queue-"));
   });
+
   afterAll(() => {
     rmSync(directory, { force: true, recursive: true });
   });

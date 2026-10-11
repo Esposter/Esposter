@@ -17,6 +17,6 @@ defineSlots<{ default: (props: { descriptionId: string }) => VNode }>();
       <span>{{ title }}</span>
       <span :id="descriptionId" text-sm text-muted>{{ description }}</span>
     </div>
-    <slot :description-id="descriptionId" />
+    <slot :description-id />
   </div>
 </template>

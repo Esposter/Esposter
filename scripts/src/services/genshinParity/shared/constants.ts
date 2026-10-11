@@ -75,6 +75,19 @@ export const PARITY_PAGE_ROOT: string = `http://localhost:${process.env.GENSHIN_
 // The page a screen is shot on, by its query
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const PARITY_PAGE_URL: string = `${PARITY_PAGE_ROOT}?screen=`;
+// The world package, whose parity page a load run builds for production and serves beside the dev server
+export const GENSHIN_WORLD_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world");
+// The production build of the parity page: a folder inside that package, which git ignores, and the key it was built under
+export const PARITY_BUILD_DIRECTORY_NAME = "parity-build";
+export const PARITY_BUILD_DIRECTORY: string = join(GENSHIN_WORLD_DIRECTORY, PARITY_BUILD_DIRECTORY_NAME);
+export const PARITY_BUILD_KEY_FILE_NAME = ".build-key";
+// The config the build and its preview read, relative to the package
+export const PARITY_CONFIG_PATH = "parity/vite.config.ts";
+// Vite's own entry, run by node from the world package's install, so neither a shell nor a package manager stands between
+// The tool and the build
+export const VITE_BIN_PATH: string = join(GENSHIN_WORLD_DIRECTORY, "node_modules", "vite", "bin", "vite.js");
+// How long a preview server may take to announce the address it serves
+export const PARITY_PREVIEW_TIMEOUT_MS = 60_000;
 // The browser keeps this many resource timings, so a page with more requests than that drops the rest from its load bench; the
 // Parity page raises it before its first request
 export const RESOURCE_TIMING_BUFFER_SIZE = 4096;
@@ -239,3 +252,6 @@ export const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 // Of the game's loudest
 export const SOUND_SCORE_HOP_LENGTH = 240;
 export const SOUND_SCORE_RANGE_DECIBELS = 40;
+// A terminal's colour and style codes, which Vite wraps the address it prints in
+// oxlint-disable-next-line typescript/no-inferrable-types, no-control-regex -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer, and the escape is the control character itself
+export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;

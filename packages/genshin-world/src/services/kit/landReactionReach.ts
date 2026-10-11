@@ -56,7 +56,7 @@ export const landReactionReach = (
         distance <= radius + ENEMY_CAPSULE_RADIUS &&
         (reactionType !== TransformativeReactionType.ElectroCharged || enemy.elementalState.auras.has(AuraType.Hydro)),
     )
-    .toSorted((firstReached, secondReached) => firstReached.distance - secondReached.distance)
+    .toSorted((firstReachedEnemy, secondReachedEnemy) => firstReachedEnemy.distance - secondReachedEnemy.distance)
     .slice(0, reactionType === TransformativeReactionType.ElectroCharged ? 1 : undefined);
   for (const { enemy } of reachedEnemies) {
     const { elementalState, internalCooldownMap } = enemy;

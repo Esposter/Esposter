@@ -8,7 +8,7 @@ export const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math
 // The reach a kit's skill, burst and plunges target within: 15 metres and 10 high, the wiki's
 export const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 // The plunges a kit without a gcsim plunge file of its own borrows, as gcsim v2.47.2 (MIT) bennett/plunge.go gives them:
-// the collision a circle of radius 1 round the body, the low plunge's 3 and the high's 5
+// The collision a circle of radius 1 round the body, the low plunge's 3 and the high's 5
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go
 export const PLUNGE_HIT_AREAS = Object.freeze({
   collision: Object.freeze<AttackArea>({ angle: 2 * Math.PI, height: 2, radius: 1 }),

@@ -5,7 +5,7 @@ description: An artifact rolled, enhanced and locked as the game does it: a drop
 
 # Artifact enhancement
 
-An artifact's attributes were already summed by [character attributes](/docs/genshin/character-attributes): its main affix at its rarity and level, its minor affixes and its set's unconditional bonuses. This page is how an artifact comes to have them, and what a set's bonus that waits on combat does. A drop is rolled by the game's pools, an enhancement feeds it EXP and Mora, and a lock keeps a piece from being fed away. A bonus that waits on combat, such as a four-piece effect a reaction sets off, is a module of its set's answering the [character kits](/docs/genshin/character-kits)' events. Instructor's is built; the other sets the world carries in its chests' pools wait on the kits for what their bonuses rest on, as the [proposal](/docs/proposals/genshin/artifact-enhancement) lists.
+An artifact's attributes were already summed by [character attributes](/docs/genshin/character-attributes): its main affix at its rarity and level, its minor affixes and its set's unconditional bonuses. This page is how an artifact comes to have them, and what a set's bonus that waits on combat does. A drop is rolled by the game's pools, an enhancement feeds it EXP and Mora, and a lock keeps a piece from being fed away. A bonus that waits on combat, such as a four-piece effect a reaction sets off, is a module of its set's answering the [character kits](/docs/genshin/kits)' events. Instructor's is built; the other sets the world carries in its chests' pools wait on the kits for what their bonuses rest on, as the [proposal](/docs/proposals/genshin/artifact-enhancement) lists.
 
 ## How it works
 

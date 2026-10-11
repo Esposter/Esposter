@@ -19,7 +19,7 @@ import {
 // What the tiles are computed with, which the world's first message to the worker loads
 let context: TerrainWorkerContext | undefined;
 // Tiles asked for before the ground loads, answered in the order they came once it does
-const queuedRequests: TerrainTileRequest[] = [];
+let queuedRequests: TerrainTileRequest[] = [];
 // Builds a tile's heights and its plants over the ground
 const buildPlantedTerrainTile = (
   request: TerrainTileRequest,
@@ -80,7 +80,9 @@ self.addEventListener("message", async (event: MessageEvent<TerrainWorkerMessage
     };
     context = loadedContext;
     // Each tile's build runs as it is called and posts in the order they were, so the queue is answered in order
-    await Promise.all(queuedRequests.splice(0).map((request) => answerTile(request, loadedContext)));
+    const pendingRequests = queuedRequests;
+    queuedRequests = [];
+    await Promise.all(pendingRequests.map((request) => answerTile(request, loadedContext)));
     return;
   }
   if (!context) {

@@ -4,15 +4,15 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { EnemyDropFamilyDropTableMap, GameDataset } from "genshin-world";
 import { readFile } from "node:fs/promises";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock("#src/services/gameData/readPublishedGameData", () => ({
-  readPublishedGameData: vi.fn<(key: string) => Promise<unknown>>(),
+vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
+  readPublishedGameData: vi.fn<(...args: unknown[]) => Promise<never>>(),
 }));
-vi.mock("#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces", () => ({
+vi.mock(import("#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces"), () => ({
   readMondstadtExpeditionPlaces: vi.fn<() => never[]>(() => []),
 }));
-vi.mock("node:fs/promises", () => ({ readFile: vi.fn<(path: string, encoding: string) => Promise<string>>() }));
+vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
 
 const TREE_ITEM_ID = 107010;
 const TREE_REWARD_ITEM_ID = 2000;
@@ -57,17 +57,24 @@ describe(buildItems, () => {
       materials.map(({ itemId }) => ({ ...materialRows[0], id: itemId, nameTextMapHash: itemId })),
     );
     vi.mocked(readFile).mockResolvedValue(JSON.stringify([...materialRows, ...dropItemRows]));
-    vi.mocked(readPublishedGameData).mockImplementation(async (key) => {
-      if (key === "offerings/frostbearingTree")
-        return [
-          { itemCount: 0, itemId: TREE_ITEM_ID, level: 1, rewards: [{ itemCount: 1, itemId: ADVENTURE_EXP_ID }] },
-          { itemCount: 10, itemId: TREE_ITEM_ID, level: 2, rewards: [{ itemCount: 5, itemId: TREE_REWARD_ITEM_ID }] },
-        ];
-      return [];
-    });
+    vi.mocked(readPublishedGameData).mockImplementation((key) =>
+      Promise.resolve(
+        key === "offerings/frostbearingTree"
+          ? [
+              { itemCount: 0, itemId: TREE_ITEM_ID, level: 1, rewards: [{ itemCount: 1, itemId: ADVENTURE_EXP_ID }] },
+              {
+                itemCount: 10,
+                itemId: TREE_ITEM_ID,
+                level: 2,
+                rewards: [{ itemCount: 5, itemId: TREE_REWARD_ITEM_ID }],
+              },
+            ]
+          : [],
+      ),
+    );
   });
 
-  it("publishes every item the Frostbearing Tree takes or pays, less the wallet's", async () => {
+  test("publishes every item the Frostbearing Tree takes or pays, less the wallet's", async () => {
     expect.hasAssertions();
 
     const built = await buildItems();

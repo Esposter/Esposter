@@ -7,7 +7,7 @@ const METER_CELLS = 20;
 const BYTES_PER_KILOBYTE = 1024;
 
 interface Figure {
-  budget: number | undefined;
+  budget?: number;
   // Whether the figure is checked here: a count always is, a time only on the machine its budget names
   isChecked: boolean;
   name: string;
@@ -80,7 +80,7 @@ export const formatLoadMeter = (
   ];
   const rows = figures.map((figure) => formatRow(figure));
   const measures = bench.measures
-    .toSorted((first, second) => second.duration - first.duration)
+    .toSorted((firstMeasure, secondMeasure) => secondMeasure.duration - firstMeasure.duration)
     .map(
       ({ duration, isFailed, name }) => `  ${name.padEnd(24)} ${duration.toFixed(1)} ms${isFailed ? " FAILED" : ""}`,
     );

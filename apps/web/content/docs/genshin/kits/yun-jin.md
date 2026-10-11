@@ -1,0 +1,18 @@
+---
+title: Yun Jin
+description: Yun Jin's kit as built, with Opening Flourish's tap and its two charge levels with their shields, and Cliffbreaker's Banner's initial hit, and what is left to build.
+---
+
+# Yun Jin
+
+Yun Jin's kit is one module, `createYunjinKit`, on avatar 10000064: five strikes, a charged attack, a collision and two plunges, and Opening Flourish's tap and its two charge levels, each with a shield of a share of her Max HP and a flat share, and Cliffbreaker's Banner's initial hit. Her multipliers are read from proud skill groups 6431, 6432 and 6439; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. The tap and both charges scale with her DEF, which the kit prices as their flat base damage, and each shield lasts until its hit, as gcsim expires it. Cliffbreaker's Banner's DMG Increase on the party's normal attacks is not built, as a kit prices a hit from its striker alone and it scales with the striker's DEF while the banner stands. Her passives and constellations are not built. Her poise and the charge levels' thresholds are provisional.
+
+## Key files
+
+| File                                                              | Role                                                                                                                                                                               |
+| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/yunjinKit.ts` | `createYunjinKit`, Yun Jin's kit with Opening Flourish's tap and charge levels and their shields, Cliffbreaker's Banner's initial hit, and her strikes, charged attack and plunges |
+
+## Sources
+
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yunjin), MIT: Yun Jin's strikes' hitmarks, reaches and cancel frames, the charged attack's circle and frames, Opening Flourish's hitmarks, circles, shields and animations, Cliffbreaker's Banner's circle, poise and frames, and the shield's expiry at its hit.

@@ -52,10 +52,9 @@ export const extractComponentClips = async (component: DerivedAssetComponent): P
     ? composeSceneTree(sceneLayout.objects, sceneLayout.gameObjectDrawingMap).flatMap((top) => collectScenePaths(top))
     : [];
   const resolveName = createClipNameResolver([...interfacePaths, ...scenePaths]);
-  const clips: DecodedClip[] = (await readExportedClips<ExportedAnimationClip>(directory)).map((clip) => ({
-    name: clip.m_Name,
-    ...decodeAnimationClip(clip, CLIP_SAMPLE_RATE, resolveName),
-  }));
+  const clips: DecodedClip[] = (await readExportedClips<ExportedAnimationClip>(directory)).map((clip) =>
+    Object.assign(decodeAnimationClip(clip, CLIP_SAMPLE_RATE, resolveName), { name: clip.m_Name }),
+  );
   await writeFile(join(directory, "clips.json"), JSON.stringify(clips));
   return clips;
 };

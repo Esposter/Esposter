@@ -4,6 +4,7 @@ import { skipWordlessTalkLines } from "#src/services/genshinText/skipWordlessTal
 import { choiceTalkLineSchema, TalkLineKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
+// A spoken line with no speaker, its words the given text id
 const createSpokenLine = (id: string, nextLineIds: string[], textId = "1"): SpokenTalkLine => ({
   id,
   kind: TalkLineKind.Spoken,
@@ -17,6 +18,13 @@ const createSpokenLine = (id: string, nextLineIds: string[], textId = "1"): Spok
 describe(skipWordlessTalkLines, () => {
   const WORDLESS_TEXT_ID = "0";
   const checkHasWords = (textId: string) => textId !== WORDLESS_TEXT_ID;
+  const WORDLESS_REPLY: ChoiceTalkLine = {
+    icon: choiceTalkLineSchema.shape.icon.enum.Talk,
+    id: "1",
+    kind: TalkLineKind.Choice,
+    nextLineIds: [],
+    textId: WORDLESS_TEXT_ID,
+  };
 
   test("goes on past a wordless line, the talk starting at the first line with words", () => {
     expect.hasAssertions();
@@ -45,19 +53,7 @@ describe(skipWordlessTalkLines, () => {
   });
 
   test.each([
-    [
-      "a wordless reply",
-      [
-        createSpokenLine("0", ["1"]),
-        {
-          icon: choiceTalkLineSchema.shape.icon.enum.Talk,
-          id: "1",
-          kind: TalkLineKind.Choice,
-          nextLineIds: [],
-          textId: WORDLESS_TEXT_ID,
-        } satisfies ChoiceTalkLine,
-      ],
-    ],
+    ["a wordless reply", [createSpokenLine("0", ["1"]), WORDLESS_REPLY]],
     [
       "a wordless line that branches",
       [createSpokenLine("0", ["1", "2"], WORDLESS_TEXT_ID), createSpokenLine("1", []), createSpokenLine("2", [])],

@@ -6,7 +6,7 @@ import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFitt
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 
 // The official map's points of the labels given, fitted and placed in their regions round the Windrise origin, each
-// point as its kind and under the id prefix given
+// Point as its kind and under the id prefix given
 export const placeFittedMapPoints = async <Kind>(
   labelIdKindMap: ReadonlyMap<number, Kind>,
   idPrefix: string,

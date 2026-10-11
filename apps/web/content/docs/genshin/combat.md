@@ -133,9 +133,9 @@ flowchart TD
   ACTION -->|"it starts"| AIM["The body turns to the enemy its area scores highest"]
   ACTION -->|"each hitmark"| HIT["A hit lands on each enemy in its area"]
   HIT --> STRIKE["strikeEnemy: blunt, internal cooldown, element, reactions' limits, getDamage, damageEnemy"]
-  STRIKE -->|"an Overloaded, Superconduct, Swirl or Electro-Charged that lands"| REACH["landReactionReach: the other enemies within 1, 3 or 5 metres, or Electro-Charged's nearest Wet one"]
+  STRIKE -->|"an Overloaded, Superconduct, Swirl or Electro-Charged that lands"| REACH["landReactionReach: the enemies round it"]
   REACH -->|"a reaction its Swirl triggers that reaches"| REACH
-  TICKS["strikeElementalTicks: the enemies' Electro-Charged and Burning ticks, from the combatant that owns each"] -->|"an arc or a Burning tick's Pyro"| REACH
+  TICKS["strikeElementalTicks: each enemy's ticks"] -->|"an arc or a Burning tick's Pyro"| REACH
   STRIKE -->|"a Bloom"| CORE["addDendroCores: a Dendro Core by the enemy"]
   HIT -->|"its Electro or Pyro on a standing core"| CORE
   CORE -->|"its seconds run out: burstKitDendroCores"| REACH

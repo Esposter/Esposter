@@ -8,7 +8,7 @@ import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgra
 import { pluralize } from "#shared/util/text/pluralize";
 
 // Each fingers upgrade multiplies the gain from the Thousand Fingers by its own value, so its description and effect are
-// written once from that value
+// Written once from that value
 const getFingersMultiplier = (
   value: number,
 ): Pick<Except<Upgrade<CursorUpgradeId>, "id">, "description" | "effects"> => ({

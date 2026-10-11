@@ -112,7 +112,7 @@ onMounted(async () => {
           <UiIcon v-else :meaning="UiIconMeaning.Upload" />
         </button>
       </UiTooltip>
-      <HiddenFileInput
+      <UiHiddenFileInput
         ref="fileInput"
         accept="image/*"
         @select="
