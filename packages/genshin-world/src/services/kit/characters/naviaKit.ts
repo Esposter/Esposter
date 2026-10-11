@@ -3,10 +3,8 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -17,7 +15,9 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Navia's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -118,14 +118,6 @@ const CONSTELLATION_4_GEO_RESISTANCE_REDUCTION = 0.2;
 const CONSTELLATION_4_SECONDS = 8;
 const CONSTELLATION_4_STATUS_ID = "navia-c4-shred";
 
-// Whether a character carries a status of an id among the team's effects
-const findKitStatus = (effects: readonly KitEffect[], characterId: number, id: string): KitStatus | undefined =>
-  effects.find(
-    (effect): effect is KitStatus => effect.kind === "status" && effect.characterId === characterId && effect.id === id,
-  );
-// Whether an internal cooldown of an id still runs on the character's status
-const checkIsCooldownActive = (effects: readonly KitEffect[], characterId: number, id: string): boolean =>
-  (findKitStatus(effects, characterId, id)?.secondsRemaining ?? 0) > 0;
 const countShrapnel = (kitEffectState: KitEffectState, characterId: number): number =>
   findKitStatus(kitEffectState.effects, characterId, SHRAPNEL_STATUS_ID)?.stacks ?? 0;
 
@@ -263,7 +255,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         shrapnel.stacks = keptShrapnel;
         if (keptShrapnel === 0) shrapnel.secondsRemaining = 0;
       }
-      if (checkIsCooldownActive(kitEffectState.effects, characterId, ARKHE_ICD_STATUS_ID)) return;
+      if (checkIsKitStatusActive(kitEffectState.effects, characterId, ARKHE_ICD_STATUS_ID)) return;
       addKitEffect(kitEffectState, {
         characterId,
         id: ARKHE_ICD_STATUS_ID,
@@ -301,7 +293,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // A cannon hit gains a Crystal Shrapnel, at most once each cooldown of the burst's shrapnel group
   const onCannonStrike = ({ combatant, kitEffectState }: KitStepContext): void => {
     const { characterId } = combatant;
-    if (checkIsCooldownActive(kitEffectState.effects, characterId, BURST_SHRAPNEL_ICD_STATUS_ID)) return;
+    if (checkIsKitStatusActive(kitEffectState.effects, characterId, BURST_SHRAPNEL_ICD_STATUS_ID)) return;
     addKitEffect(kitEffectState, {
       characterId,
       id: BURST_SHRAPNEL_ICD_STATUS_ID,

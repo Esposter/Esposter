@@ -1,5 +1,8 @@
 import type { ElementalMasteryCurve } from "#src/models/combat/ElementalMasteryCurve";
 
+import { Attribute } from "#src/models/character/Attribute";
+import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
+
 // How elemental mastery raises each kind of reaction: an amplifying reaction's multiplier, a transformative reaction's
 // Damage, the catalyze bonus, and a Crystallize shield's health
 export const AMPLIFYING_ELEMENTAL_MASTERY_CURVE: ElementalMasteryCurve = Object.freeze({ offset: 1400, scale: 2.78 });
@@ -18,3 +21,8 @@ export const ATTACKER_LEVEL_DEFENSE_OFFSET = 500;
 export const SUPERCONDUCT_PHYSICAL_RESISTANCE_REDUCTION = 0.4;
 export const SUPERCONDUCT_SECONDS = 12;
 export const SUPERCONDUCT_STATUS_ID = "superconduct";
+// Every attribute a hit's DMG Bonus is read from, each element's and the Physical one, which a bonus to all DMG raises
+export const DAMAGE_BONUS_ATTRIBUTES: readonly Attribute[] = Object.freeze([
+  ...Object.values(ElementDamageBonusAttributeMap),
+  Attribute.PhysicalDamageBonus,
+]);

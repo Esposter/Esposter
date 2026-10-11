@@ -10,7 +10,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -26,6 +25,7 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -282,11 +282,7 @@ const createStrikeAction = (
   targetingArea: STRIKE_TARGETING_AREA,
 });
 
-// Whether a character carries a status of an id among the team's effects, and the status itself
-const findKitStatus = (effects: readonly KitEffect[], characterId: number, id: string): KitStatus | undefined =>
-  effects.find(
-    (effect): effect is KitStatus => effect.kind === "status" && effect.characterId === characterId && effect.id === id,
-  );
+// The stance a character holds, and the Judication field it holds
 const findStance = (effects: readonly KitEffect[], characterId: number): KitStance | undefined =>
   effects.find((effect): effect is KitStance => effect.kind === "stance" && effect.characterId === characterId);
 const findJudicationField = (effects: readonly KitEffect[], characterId: number): KitField | undefined =>
