@@ -1,6 +1,6 @@
 import { registerHooks } from "node:module";
 
-// The app compiles the Options API out (`future.compatibilityVersion: 5`), and every test must run the same Vue. Node
+// The app compiles the Options API out (Nuxt 5's default), and every test must run the same Vue. Node
 // Resolves `vue` to its CommonJS build, which has the Options API compiled in whatever the flag says, so an Options API
 // Component passes a test and throws in the app. `getVueTestConfiguration` loads this into every worker before
 // Anything imports Vue, and it sends every Vue runtime entry, imported or required, bare or already resolved, to
