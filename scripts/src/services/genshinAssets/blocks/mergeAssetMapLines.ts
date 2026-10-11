@@ -75,8 +75,8 @@ const tagShardLines = async function* (
 // A JSON string's characters as they stand between its quotes, so a path is found however the file escapes it
 const toEscaped = (path: string): string => JSON.stringify(path).slice(1, -1);
 
-// The source of an entry's line with its shard's root swapped for the installed blocks'. A source outside the root is refused:
-// The index reads every source relative to the installed blocks, so a stray one would index as another block
+// The source of an entry's line with its shard's root swapped for the installed blocks'. A source outside the root is
+// Refused: the index reads every source relative to the installed blocks, so a stray one would index as another block
 const rebaseSource = (line: string, from: string, to: string, root: string): string => {
   const start = line.indexOf(SOURCE_PREFIX) + SOURCE_PREFIX.length;
   const end = start + from.length;

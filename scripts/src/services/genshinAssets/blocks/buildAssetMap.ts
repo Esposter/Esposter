@@ -40,8 +40,9 @@ const mapShard = async (files: BlockFile[], index: number): Promise<void> => {
 };
 
 // Maps every asset in the blocks the game loads by name, type and block, which a patch or a hotfix changes and so is
-// Rebuilt once each. The blocks are linked as the game loads them (`linkInstalledBlocks`), then cut into `shardCount` shards of consecutive files of about equal bytes, each mapped by its own AnimeStudio run at
-// Once, then merged into the one CAB map and asset map a single run would have written, and the index is written from it
+// Rebuilt once each. The blocks are linked as the game loads them (`linkInstalledBlocks`), then cut into `shardCount`
+// Shards of consecutive files of about equal bytes, each mapped by its own AnimeStudio run at once, then merged into the
+// One CAB map and asset map a single run would have written, and the index is written from it
 export const buildAssetMap = async (shardCount: number = getPerformanceCoreCount()): Promise<void> => {
   const shards = partitionBlockFiles(await linkInstalledBlocks(), shardCount);
   const indices = shards.map((_shard, index) => index);
