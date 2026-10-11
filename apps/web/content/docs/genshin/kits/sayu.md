@@ -10,7 +10,7 @@ Sayu's kit is one module, `createSayuKit`, on avatar 10000053: four strikes, a c
 ## Decisions
 
 - **Sayu's roll is one hold level for each whole second held.** The hold a release plays is the last level whose seconds it reaches, so each level carries its own ticks, kick, animation and cooldown. gcsim's roll takes its frames exactly, so a release part way through a second plays the level below it.
-- **Sayu's short hold begins at half a second.** No table or wiki page gives a hold's seconds, so it starts at Venti's half second, as Kazuha's hold does.
+- **Sayu's short hold begins at half a second.** No table or wiki page gives a hold's seconds, so it starts at Venti's 0.5 seconds, as Kazuha's hold does.
 - **Sayu's charged attack and plunges are read from the table.** gcsim gives the charged attack no hitbox, so its two hits take the table's charged slots at half a second and a second, with 40 flat stamina; her plunges land at half a second.
 
 ## Key files

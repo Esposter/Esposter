@@ -9,8 +9,8 @@ Shenhe's kit is one module, `createShenheKit`, on avatar 10000063: five strikes,
 
 ## Decisions
 
-- **Shenhe's strikes, charged attack, plunges and Spring Spirit Summoning's press and hold deal 0 poise.** Provisional, as gcsim gives none; her plunges reuse the other kits' stand-ins.
-- **Spring Spirit Summoning's hold begins at half a second.** Provisional: gcsim reads the hold from the input alone, as it does for Eula and Diona.
+- **Shenhe's strikes, charged attack, plunges and Spring Spirit Summoning's press and hold deal 0 poise.** Provisional, as gcsim gives none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
+- **Spring Spirit Summoning's hold begins at 0.5 seconds.** Provisional: gcsim reads the hold from the input alone, as it does for Eula and Diona.
 - **Divine Maiden's Deliverance's RES Decrease holds between its DoT ticks.** `shenheKit.ts` holds the decrease for one 117-frame tick interval from each tick, where gcsim refreshes it every 18 frames.
 
 ## Key files

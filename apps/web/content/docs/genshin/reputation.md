@@ -36,7 +36,7 @@ flowchart TD
 - **The discount's shops are the function's text, not yet ids.** Which shops a discount covers is named in the function's text, and the shops' own ids are not joined yet. The discount is the [shops](/docs/genshin/shops) page's to apply once it has a screen.
 - **The reward page.** The `ReputationScreen` lists each level of the nation with its achieved mark and its item count, as the public clip's reward page does (its icons are slots until the items' own names are read). The picked level's name and requirement, and each feature's unlock line, stay empty: the hosted data names no item or feature in words yet. It is shown on the parity page through its fixture, and the comparison is queued on the roadmap.
 - **Not built.** The keeper placed in region data and the screen opened from her talk, requests run as world quests, a bounty's trail and its spawned target, the nation's exploration percentage the thresholds are checked against, the discount applied to a shop's price, the reward page's sources tabs, and Natlan's tribes and supply notices. The [proposal](/docs/proposals/genshin/reputation) keeps them.
-- **The reward page's rows, marks and sizes are provisional.** They are read off `references/reputation-screen/18s.png`, the 18-second frame of the public reward-guide clip, and stand until the page matches that frame beside it.
+- **The reward page's rows, marks and sizes are provisional.** They are read off `references/reputation-screen/18s.png`, the 18-second frame of the public reward-guide clip (`captures/yt-1SqmdXbIhLs-reputation-guide.mp4`), and stand until the page matches that frame beside it.
 
 ## Key files
 

@@ -9,7 +9,7 @@ Kirara's kit is one module, `createKiraraKit`, on avatar 10000061: four strikes,
 
 ## Decisions
 
-- **Kirara's strikes, charged attack, skill and burst are priced at 0 poise.** Provisional: `kiraraKit.ts` sets each at 0, gcsim giving none; her plunges reuse the other kits' stand-ins.
+- **Kirara's strikes, charged attack, skill and burst are priced at 0 poise.** Provisional: `kiraraKit.ts` sets each at 0, gcsim giving none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
 
 ## Key files
 
