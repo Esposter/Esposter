@@ -68,26 +68,26 @@ flowchart TD
 
 ## Key files
 
-| File                                                                     | Role                                                                                            |
-| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gcg/buildGcgStandardRule.ts`         | Builds the standard rule's record from the dump's rule and reaction tables                      |
-| `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`            | The rule row, with each listed reaction joined to its element pair                              |
-| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts`         | Fetches the rule by its key and checks it against its schema                                    |
-| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`               | Opens a duel between two decks                                                                  |
-| `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`              | A side's preparation, and the first roll once both have prepared                                |
-| `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`               | A side's one reroll, and the action phase once both have rolled                                 |
-| `packages/genshin-world/src/services/gcg/useGcgSkill.ts`                 | A skill paid in dice and energy, then the turn passes                                           |
-| `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`              | A hit's Frozen, reaction, shield and piercing, and its defeats                                  |
-| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`          | The round's end, and the end phase once both sides declare                                      |
-| `packages/genshin-world/src/services/gcg/endGcgRound.ts`                 | The end phase: Frozen lapses, the draws, and the next round or the concession                   |
-| `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`          | A switch for one die of any face, less where the field reduces it                               |
-| `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`                  | Tuning a die by a discarded card, as a fast action                                              |
-| `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts`         | The free replacement a defeated active owes                                                     |
-| `packages/genshin-world/src/services/gcg/payGcgCost.ts`                  | The dice a cost takes from the dice chosen, Omni standing in                                    |
-| `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`          | The reaction an element pair makes under a rule                                                 |
-| `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`             | The roll-phase hooks of each side's field                                                       |
-| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`           | The action-phase hooks, then the spent cards taken off                                          |
-| `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`              | The end-phase hooks, the rounds aged, then the spent cards taken off                            |
+| File                                                             | Role                                                                          |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gcg/buildGcgStandardRule.ts` | Builds the standard rule's record from the dump's rule and reaction tables    |
+| `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`    | The rule row, with each listed reaction joined to its element pair            |
+| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts` | Fetches the rule by its key and checks it against its schema                  |
+| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`       | Opens a duel between two decks                                                |
+| `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`      | A side's preparation, and the first roll once both have prepared              |
+| `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`       | A side's one reroll, and the action phase once both have rolled               |
+| `packages/genshin-world/src/services/gcg/useGcgSkill.ts`         | A skill paid in dice and energy, then the turn passes                         |
+| `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`      | A hit's Frozen, reaction, shield and piercing, and its defeats                |
+| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`  | The round's end, and the end phase once both sides declare                    |
+| `packages/genshin-world/src/services/gcg/endGcgRound.ts`         | The end phase: Frozen lapses, the draws, and the next round or the concession |
+| `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`  | A switch for one die of any face, less where the field reduces it             |
+| `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`          | Tuning a die by a discarded card, as a fast action                            |
+| `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts` | The free replacement a defeated active owes                                   |
+| `packages/genshin-world/src/services/gcg/payGcgCost.ts`          | The dice a cost takes from the dice chosen, Omni standing in                  |
+| `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`  | The reaction an element pair makes under a rule                               |
+| `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`     | The roll-phase hooks of each side's field                                     |
+| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`   | The action-phase hooks, then the spent cards taken off                        |
+| `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`      | The end-phase hooks, the rounds aged, then the spent cards taken off          |
 
 ## Sources
 

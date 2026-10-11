@@ -50,16 +50,16 @@ Noise covers every frequency, and no note in a piece sounds alone, so no note's 
 
 ## Key files
 
-| File                                                                      | Role                                                              |
-| :------------------------------------------------------------------------ | :---------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/shared/readMusicSourceNotes.ts`       | A source's notes, its readings cached                             |
-| `scripts/src/services/genshinAssets/shared/splitVoicesByRegister.ts`      | The registers' natural breaks                                     |
-| `scripts/src/services/genshinAssets/shared/fitMusicVoices.ts`             | A source's voices by register, each one's instrument fitted twice |
-| `scripts/src/services/genshinAssets/shared/fitInstrument.ts`              | A voice's instrument measured at its clear notes                  |
-| `scripts/src/services/genshinAssets/shared/fitVoiceNoises.ts`             | Every voice's noise in each noise-like band, solved at once       |
-| `scripts/src/services/recreation/signal/computeSpectralPeak.ts`           | A partial's frequency and height between two bins                 |
-| `scripts/src/services/genshinParity/commands/notesCommand.ts`             | Every note the game's sound does not hold, dropped                |
-| `scripts/src/services/genshinParity/music/computeNoteSupport.ts`          | How far the game stands over our render at a note's fundamental   |
+| File                                                                 | Role                                                              |
+| :------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/shared/readMusicSourceNotes.ts`  | A source's notes, its readings cached                             |
+| `scripts/src/services/genshinAssets/shared/splitVoicesByRegister.ts` | The registers' natural breaks                                     |
+| `scripts/src/services/genshinAssets/shared/fitMusicVoices.ts`        | A source's voices by register, each one's instrument fitted twice |
+| `scripts/src/services/genshinAssets/shared/fitInstrument.ts`         | A voice's instrument measured at its clear notes                  |
+| `scripts/src/services/genshinAssets/shared/fitVoiceNoises.ts`        | Every voice's noise in each noise-like band, solved at once       |
+| `scripts/src/services/recreation/signal/computeSpectralPeak.ts`      | A partial's frequency and height between two bins                 |
+| `scripts/src/services/genshinParity/commands/notesCommand.ts`        | Every note the game's sound does not hold, dropped                |
+| `scripts/src/services/genshinParity/music/computeNoteSupport.ts`     | How far the game stands over our render at a note's fundamental   |
 
 ## Sources
 

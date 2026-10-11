@@ -23,10 +23,10 @@ The player plays each segment's notes through a gain of their own. That gain ram
 
 ## Key files
 
-| File                                                                   | Role                                                                    |
-| :--------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `scripts/src/services/genshinParity/music/fitMusicExpression.ts`       | Each window's one gain over every band, fitted to the game's            |
-| `scripts/src/services/genshinParity/commands/expressionCommand.ts`     | Each segment's expression refitted against our render, published        |
+| File                                                               | Role                                                             |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------- |
+| `scripts/src/services/genshinParity/music/fitMusicExpression.ts`   | Each window's one gain over every band, fitted to the game's     |
+| `scripts/src/services/genshinParity/commands/expressionCommand.ts` | Each segment's expression refitted against our render, published |
 
 ## Sources
 

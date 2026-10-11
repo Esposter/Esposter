@@ -61,26 +61,26 @@ A duel's enemy card group is its deck's id, and the built decks are these.
 
 ## Key files
 
-| File                                                                          | Role                                                                                                   |
-| :---------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gcg/buildGcgDeck.ts`                      | Builds one deck's record from the dump's deck, character, skill, card and cost tables                   |
-| `scripts/src/services/genshinAssets/gcg/toGcgDeck.ts`                         | The slice's rows: costs, kinds and text ids from the dump's plain fields                                |
-| `scripts/src/services/genshinText/buildGcgText.ts`                            | The names and descriptions the slices name, one record per language                                     |
-| `packages/genshin-world/src/services/gcg/GcgDeckLoaderMap.ts`                 | Each opponent deck's slice by its deck id, fetched by its key                                           |
-| `packages/genshin-world/src/services/gcg/readGcgDeck.ts`                      | Reads a deck's slice by its id and checks it against its schema                                         |
-| `packages/genshin-world/src/services/gcg/GcgTextLoaderMap.ts`                 | Each language's card game words by text id, fetched by their key                                        |
-| `packages/genshin-world/src/services/gcg/playGcgCard.ts`                      | A card played from a hand: placed by its kind, paid, then its module plays                              |
-| `packages/genshin-world/src/services/gcg/runGcgSkillUse.ts`                   | A skill's effect run for its active character, then its field's on-use hooks and its passives' hooks    |
-| `packages/genshin-world/src/services/gcg/dealGcgSkillDamage.ts`               | A skill's damage with the field's bonuses and doublings, then dealt                                     |
-| `packages/genshin-world/src/services/gcg/payGcgSubjectCost.ts`                | A skill's or card's costs, reduced by the field, paid from the dice chosen                              |
-| `packages/genshin-world/src/services/gcg/findGcgAdjacentCharacterIndex.ts`    | The standing character one step away, forward or back, round the side                                   |
-| `packages/genshin-world/src/services/gcg/effects/createGcgTalentCard.ts`      | A talent card equipped to its character while she is active, with its skill used at once                |
-| `packages/genshin-world/src/services/gcg/effects/createGcgWeaponCard.ts`      | A weapon card that only its kind of character may equip, and that adds one DMG                          |
-| `packages/genshin-world/src/services/gcg/effects/summonGcgOceanicMimics.ts`   | The Oceanic Mimics summoned by the kind fewest on the field                                             |
-| `packages/genshin-world/src/services/gcg/effects/checkIsGcgFoodEatable.ts`    | Whether a character may eat a food, one a round                                                         |
-| `packages/genshin-world/src/services/gcg/cards/gcgCardIdModuleMap.ts`         | Every card's module by its id                                                                           |
-| `packages/genshin-world/src/services/gcg/cards/gcgEffectNameSkillModuleMap.ts` | Every character's script by its effect name                                                            |
-| `packages/genshin-world/src/services/gcg/cards/`                              | One module per card and per character script, each from its text and its wiki page                     |
+| File                                                                           | Role                                                                                                 |
+| :----------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gcg/buildGcgDeck.ts`                       | Builds one deck's record from the dump's deck, character, skill, card and cost tables                |
+| `scripts/src/services/genshinAssets/gcg/toGcgDeck.ts`                          | The slice's rows: costs, kinds and text ids from the dump's plain fields                             |
+| `scripts/src/services/genshinText/buildGcgText.ts`                             | The names and descriptions the slices name, one record per language                                  |
+| `packages/genshin-world/src/services/gcg/GcgDeckLoaderMap.ts`                  | Each opponent deck's slice by its deck id, fetched by its key                                        |
+| `packages/genshin-world/src/services/gcg/readGcgDeck.ts`                       | Reads a deck's slice by its id and checks it against its schema                                      |
+| `packages/genshin-world/src/services/gcg/GcgTextLoaderMap.ts`                  | Each language's card game words by text id, fetched by their key                                     |
+| `packages/genshin-world/src/services/gcg/playGcgCard.ts`                       | A card played from a hand: placed by its kind, paid, then its module plays                           |
+| `packages/genshin-world/src/services/gcg/runGcgSkillUse.ts`                    | A skill's effect run for its active character, then its field's on-use hooks and its passives' hooks |
+| `packages/genshin-world/src/services/gcg/dealGcgSkillDamage.ts`                | A skill's damage with the field's bonuses and doublings, then dealt                                  |
+| `packages/genshin-world/src/services/gcg/payGcgSubjectCost.ts`                 | A skill's or card's costs, reduced by the field, paid from the dice chosen                           |
+| `packages/genshin-world/src/services/gcg/findGcgAdjacentCharacterIndex.ts`     | The standing character one step away, forward or back, round the side                                |
+| `packages/genshin-world/src/services/gcg/effects/createGcgTalentCard.ts`       | A talent card equipped to its character while she is active, with its skill used at once             |
+| `packages/genshin-world/src/services/gcg/effects/createGcgWeaponCard.ts`       | A weapon card that only its kind of character may equip, and that adds one DMG                       |
+| `packages/genshin-world/src/services/gcg/effects/summonGcgOceanicMimics.ts`    | The Oceanic Mimics summoned by the kind fewest on the field                                          |
+| `packages/genshin-world/src/services/gcg/effects/checkIsGcgFoodEatable.ts`     | Whether a character may eat a food, one a round                                                      |
+| `packages/genshin-world/src/services/gcg/cards/gcgCardIdModuleMap.ts`          | Every card's module by its id                                                                        |
+| `packages/genshin-world/src/services/gcg/cards/gcgEffectNameSkillModuleMap.ts` | Every character's script by its effect name                                                          |
+| `packages/genshin-world/src/services/gcg/cards/`                               | One module per card and per character script, each from its text and its wiki page                   |
 
 ## Sources
 

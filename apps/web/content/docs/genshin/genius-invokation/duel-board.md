@@ -37,21 +37,21 @@ flowchart LR
 
 ## Key files
 
-| File                                                                          | Role                                                                                                   |
-| :---------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gcg/buildGcgGames.ts`                     | Builds the games map from the dump's game table                                                         |
-| `scripts/src/services/genshinAssets/gcg/toGcgGames.ts`                        | Each game as a duel plays it, the placeholder deck where the game names an unbuilt one                  |
-| `packages/genshin-world/src/services/gcg/readGcgGame.ts`                      | A duel's game from the games record, by its game id in the game table                                   |
-| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`                    | Opens a duel between two decks                                                                          |
-| `packages/genshin-world/src/services/gcg/advanceGcgOpponent.ts`               | Runs a side through its preparation, reroll, replacement or turn, until the duel waits on the other side |
-| `packages/genshin-world/src/services/gcg/takeGcgScriptedAction.ts`            | The greedy policy a side takes its turn by: the first card, then the first skill, then the round's end  |
-| `packages/genshin-world/src/models/world/Resident.ts`                         | A resident's optional duel, by the game it duels with                                                   |
-| `packages/genshin-world/src/services/dialogue/constants.ts`                   | The reply a talk offers a duel with                                                                     |
-| `packages/genshin-world/src/services/dialogue/mergeTalks.ts`                  | The talk sources merged by id, a shared id held by the earlier source                                   |
-| `packages/genshin-world/src/components/Gcg/Screen/Index.vue`                  | The duel board: the events it emits and the props it takes, the duel as the engine holds it            |
-| `packages/genshin-world/src/components/Gcg/Session/Index.vue`                 | The duel's host: loads its game's decks and words, plays each player event, then the opponent           |
-| `packages/genshin-world/src/components/Gcg/Screen/Index.fixture.ts`           | The board in the frame's state: its HP, dice and turn, with the tutorial and placeholder decks          |
-| `packages/genshin-world/src/components/Gcg/Screen/Index.reference.ts`         | The public frame the board is judged against, and what was found reading it                             |
+| File                                                                  | Role                                                                                                     |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gcg/buildGcgGames.ts`             | Builds the games map from the dump's game table                                                          |
+| `scripts/src/services/genshinAssets/gcg/toGcgGames.ts`                | Each game as a duel plays it, the placeholder deck where the game names an unbuilt one                   |
+| `packages/genshin-world/src/services/gcg/readGcgGame.ts`              | A duel's game from the games record, by its game id in the game table                                    |
+| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`            | Opens a duel between two decks                                                                           |
+| `packages/genshin-world/src/services/gcg/advanceGcgOpponent.ts`       | Runs a side through its preparation, reroll, replacement or turn, until the duel waits on the other side |
+| `packages/genshin-world/src/services/gcg/takeGcgScriptedAction.ts`    | The greedy policy a side takes its turn by: the first card, then the first skill, then the round's end   |
+| `packages/genshin-world/src/models/world/Resident.ts`                 | A resident's optional duel, by the game it duels with                                                    |
+| `packages/genshin-world/src/services/dialogue/constants.ts`           | The reply a talk offers a duel with                                                                      |
+| `packages/genshin-world/src/services/dialogue/mergeTalks.ts`          | The talk sources merged by id, a shared id held by the earlier source                                    |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.vue`          | The duel board: the events it emits and the props it takes, the duel as the engine holds it              |
+| `packages/genshin-world/src/components/Gcg/Session/Index.vue`         | The duel's host: loads its game's decks and words, plays each player event, then the opponent            |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.fixture.ts`   | The board in the frame's state: its HP, dice and turn, with the tutorial and placeholder decks           |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.reference.ts` | The public frame the board is judged against, and what was found reading it                              |
 
 ## Sources
 

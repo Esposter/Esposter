@@ -64,12 +64,12 @@ The order, and the rules each step keeps, are the `genshin-parity` skill's `refe
 
 ## Key files
 
-| File                                                                 | Role                                                              |
-| :------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/music/extractComponentPlaylist.ts` | A component's playlist resolved from the banks, sources decoded   |
-| `scripts/src/services/genshinAssets/music/readGameMixVolumes.ts`     | Each segment's volume in the game's mix, from the banks           |
-| `scripts/src/services/genshinAssets/fit/fitLoginMusic.ts`            | The login's notes, voices and instruments                         |
-| `packages/genshin-world/src/components/Login/Music/Index.vue`        | Where the login's music plays                                     |
+| File                                                                   | Role                                                            |
+| :--------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/music/extractComponentPlaylist.ts` | A component's playlist resolved from the banks, sources decoded |
+| `scripts/src/services/genshinAssets/music/readGameMixVolumes.ts`       | Each segment's volume in the game's mix, from the banks         |
+| `scripts/src/services/genshinAssets/fit/fitLoginMusic.ts`              | The login's notes, voices and instruments                       |
+| `packages/genshin-world/src/components/Login/Music/Index.vue`          | Where the login's music plays                                   |
 
 ## Sources
 
