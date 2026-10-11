@@ -1,0 +1,33 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/kit/stepActiveKit.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 45.52100840000003,
+              "name": "today's path",
+              "p99": 47.09208968000003,
+              "rme": 3.6969924911212146,
+              "sampleCount": 5
+            }
+          ],
+          "fullName": "stepActiveKit > a minute of the proof party, idle"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 53.85897460000003,
+              "name": "today's path",
+              "p99": 56.12770768,
+              "rme": 3.4530558873421873,
+              "sampleCount": 5
+            }
+          ],
+          "fullName": "stepActiveKit > a minute of the proof party, in combat"
+        }
+      ]
+    }
+  ]
+}
