@@ -58,14 +58,13 @@
     "mime-db": "catalog:",
     "neverthrow": "catalog:",
     "node-html-parser": "catalog:",
-    "sanitize-html": "catalog:"
+    "parse5": "catalog:"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@azure/data-tables": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
-    "@types/sanitize-html": "catalog:",
     "happy-dom": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
