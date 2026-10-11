@@ -1,11 +1,11 @@
 ---
 title: Artifact enhancement
-description: An artifact rolled, enhanced and locked as the game does it: a drop's main and minor affixes drawn by the game's pools and the wiki's weights, Artifact EXP fed from materials and fodder at a Mora a point with its chance of double or five times, a minor affix added or raised at every fourth level, and the locks that keep a fodder safe. A set's bonus that waits on combat is a module of its set's answering the kits' events, Instructor's four-piece the first.
+description: An artifact rolled, enhanced and locked as the game does it: a drop's main and minor affixes drawn by the game's pools and the wiki's weights, Artifact EXP fed from materials and fodder at a Mora a point with its chance of double or five times, a minor affix added or raised at every fourth level, and the locks that keep a fodder safe. A set's bonus that waits on combat is a module of its set's answering the kits' events, Instructor's and The Exile's four-pieces built.
 ---
 
 # Artifact enhancement
 
-An artifact's attributes are summed by [character attributes](/docs/genshin/character-attributes): its main affix at its rarity and level, its minor affixes and its set's unconditional bonuses. This page is how an artifact comes to have them, and what a set's bonus that waits on combat does. A drop is rolled by the game's pools, an enhancement feeds it EXP and Mora, and a lock keeps a piece from being fed away. A bonus that waits on combat, such as a four-piece effect a reaction sets off, is a module of its set's answering the [character kits](/docs/genshin/kits)' events. Instructor's is built; the other sets the world carries in its chests' pools wait on the kits for what their bonuses rest on, as the [proposal](/docs/proposals/genshin/artifact-enhancement) lists.
+An artifact's attributes are summed by [character attributes](/docs/genshin/character-attributes): its main affix at its rarity and level, its minor affixes and its set's unconditional bonuses. This page is how an artifact comes to have them, and what a set's bonus that waits on combat does. A drop is rolled by the game's pools, an enhancement feeds it EXP and Mora, and a lock keeps a piece from being fed away. A bonus that waits on combat, such as a four-piece effect a reaction sets off, is a module of its set's answering the [character kits](/docs/genshin/kits)' events. Instructor's and The Exile's are built; the other sets the world carries in its chests' pools wait on the kits for what their bonuses rest on, as the [proposal](/docs/proposals/genshin/artifact-enhancement) lists.
 
 ## How it works
 
@@ -50,6 +50,7 @@ flowchart TD
 - **A combatant's kit carries its sets' modules.** `createCombatant` builds each character's kit through `getArtifactSetKit`. Each set the character wears that `ArtifactSetIdCreateModuleMap` names, and each of its bonuses the worn pieces reach whose numbers the set table fills, becomes a module built from that bonus. The kit answers each event first and each module after it, and a character whose sets build none keeps its kit as it is.
 - **A module reads its numbers from the set table.** Each bonus carries its affix's numbers as `params`, in the table's order, so a module reads its seconds and amounts from the row rather than restating them.
 - **Instructor's four-piece gives the team Elemental Mastery on a reaction.** A reaction its wearer triggers while on the field gives every member of the deployed team the bonus's Elemental Mastery for its seconds, as a buff another restarts rather than stacks. A reaction its wearer's summon triggers once the wearer has left the field gives none, as the wiki notes.
+- **The Exile's four-piece regenerates the others' energy after a burst.** A burst its wearer uses sets a field with no edge that ticks every 2 seconds for the bonus's 6 seconds, the first tick 2 seconds on, as the wiki's gameplay notes give it, and each tick gives every other member of the deployed team the bonus's 2 energy, flat and unraised by Energy Recharge. A burst while the field still ticks, the wearer's or another wearer's, starts no second one, as gcsim (MIT) `exile.go` rejects it.
 
 ## Where the tables come from
 
@@ -81,6 +82,7 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 | `packages/genshin-world/src/services/artifact/ArtifactSetIdCreateModuleMap.ts`   | Each set with a module, by its id                                 |
 | `packages/genshin-world/src/services/artifact/getArtifactSetKit.ts`              | A character's kit with its sets' modules answering after it       |
 | `packages/genshin-world/src/services/artifact/sets/createInstructorSetModule.ts` | Instructor's four-piece                                           |
+| `packages/genshin-world/src/services/artifact/sets/createExileSetModule.ts`      | The Exile's four-piece                                            |
 | `packages/genshin-world/src/services/shared/drawWeightedValue.ts`                | One draw in proportion to weights, from a seeded random source    |
 | `scripts/src/services/genshinAssets/stats/getArtifactRarityDatas.ts`             | Writes the rarity tables from the reliquary, level and affix rows |
 | `scripts/src/services/genshinAssets/stats/getArtifactMainAffixPools.ts`          | Writes the main affix pools                                       |
@@ -99,5 +101,7 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 - [Artifact](https://genshin-impact.fandom.com/wiki/Artifact), Genshin Impact Wiki: a main affix and up to four minor affixes, enhancing with Artifact EXP and Mora, and the next tier every fourth level.
 - [Artifact: Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution), Genshin Impact Wiki: each slot's main affix chances and the minor affixes' weights, the pool without the main affix and those drawn, and values drawn evenly.
 - [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP), Genshin Impact Wiki: a Mora a point, a fodder's base plus 80% of its own, and the bonus of two or five times.
+- [gcsim](https://github.com/genshinsim/gcsim) (MIT), `internal/artifacts/exile/exile.go`: The Exile's three ticks of energy for every member but the wearer, and its rejection of a second burst while any member still ticks.
 - [Instructor](https://genshin-impact.fandom.com/wiki/Instructor), Genshin Impact Wiki: the four-piece bonus, and its gameplay notes that the wearer triggers the reaction on the field and that the bonus refreshes rather than stacks.
+- [The Exile](https://genshin-impact.fandom.com/wiki/The_Exile), Genshin Impact Wiki: the four-piece bonus, and its gameplay notes that Energy Recharge does not raise it and that it ticks three times every 2 seconds, the first 2 seconds on.
 - [Loot System: Artifact Drop Distribution](https://genshin-impact.fandom.com/wiki/Loot_System/Artifact_Drop_Distribution), Genshin Impact Wiki: how many minor affixes a drop starts with, by its source and rarity.
