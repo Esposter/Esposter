@@ -59,10 +59,10 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 ## Sync
 
-- **A machine's own checkout** runs `git pull --rebase` before each entry and before each push. It pushes through `pnpm ai:queue:push` after each coherent chunk, never once at the end of a long entry. With many machines a push loses its race routinely, and the script retries with jittered backoff.
-- **A shared checkout**, the one a machine's agents all edit, is always dirty, so it never pulls. Its session pushes after every agent report, by the `review-queue` skill's replay.
-- **A checkout syncs on the events that move `ai/queue`, never on a timer**, the `review-queue` skill's push rule. Each push records itself, and each machine's heartbeat carries that record, so the `pushed` column of `pnpm ai:fleet:status` is how a machine sees another's progress, with no message needed.
-- **A replay merges text, not meaning.** A change to a shared signature is typechecked once more after the rebase onto origin, right before its push, so callers another machine added meanwhile are migrated too. On 2026-10-09, `getTalentMultiplier` gained a parameter on the PC while the MacBook added seven kits calling it the old way. Both replays were clean, and 12 test files broke.
+- **A machine's main checkout** only fast-forwards with `git pull --rebase` before each entry, and an agent never edits it. Each agent lands its own commits from its worktree with the `review-queue` skill's loop. With many machines a push loses its race routinely, so the loop retries a rejected push.
+- **Each agent's worktree** is its own checkout, set up and removed by the agent (the `review-queue` skill's loop), so no checkout is ever shared between agents.
+- **A checkout syncs on the events that move `ai/queue`, never on a timer**, the `review-queue` skill's push rule. Each machine's heartbeat carries the last commit its git identity landed on the queue, read off git, so the `pushed` column of `pnpm ai:fleet:status` is how a machine sees another's progress, with no message needed.
+- **A rebase merges text, not meaning.** A change to a shared signature is typechecked once more after the rebase onto origin, right before its push, so callers another machine added meanwhile are migrated too. On 2026-10-09, `getTalentMultiplier` gained a parameter on the PC while the MacBook added seven kits calling it the old way. Both rebases were clean, and 12 test files broke.
 - **The `git` skill's rules hold on every machine**, the queue's own included (the `review-queue` skill).
 
 ## Game data stays on the machines that hold it

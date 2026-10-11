@@ -66,9 +66,9 @@ An entry is taken when the machine has its needs, its area is lent, it is not wa
 
 ## Load is read, not reported
 
-A machine's watcher pushes `refs/machines/<id>` every ten minutes: a parentless commit carrying the machine's latest sample of CPU, GPU, free memory and platform, and the last push the machine made to `ai/queue`. The coordinator's status command fetches every claim and heartbeat and prints each machine's last sample, what it last pushed and each claim's holder and age. It reads a fixed number of refs regardless of how many machines there are, which is what keeps its cost flat as the fleet grows.
+A machine's watcher pushes `refs/machines/<id>` every ten minutes: a parentless commit carrying the machine's latest sample of CPU, GPU, free memory and platform, and the last commit the machine landed on `ai/queue`, as its sha and author date, read from git rather than kept in a file. The coordinator's status command fetches every claim and heartbeat and prints each machine's last sample, what it last landed and each claim's holder and age. It reads a fixed number of refs regardless of how many machines there are, which is what keeps its cost flat as the fleet grows.
 
-A checkout pushes on each commit to `ai/queue` and at each turn's end, the events [no polling](/docs/architecture/no-polling) names as the trigger. Each push records itself in its machine's heartbeat, so one machine sees another's progress from the heartbeat, with no message.
+An agent lands its commits on `ai/queue` with its own loop, the explicit action [no polling](/docs/architecture/no-polling) names as the trigger. The landed commit shows in its machine's heartbeat, so one machine sees another's progress from the heartbeat, with no message.
 
 ## Game data is never shared through a service
 
@@ -76,21 +76,21 @@ No export or recording is ever committed, published or sent to a hosted service.
 
 ## Key files
 
-| File                                                  | Role                                                                                                      |
-| :---------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `scripts/src/fleet/profile/index.ts`                  | Writes the machine's profile from what it detects, keeping the id and areas the user set                  |
-| `scripts/src/fleet/claim/index.ts`                    | Claims an entry as a ref on origin, exit 0 when won and exit 1 naming the holder                          |
-| `scripts/src/fleet/hold/index.ts`                     | Claims an entry, then renews the claim every ten minutes until it is released                             |
-| `scripts/src/fleet/release/index.ts`                  | Deletes an entry's claim, or with a miss keeps it as the holder's final word                              |
-| `scripts/src/fleet/next/index.ts`                     | Claims the first entry this worker may take and prints its id and worker                                  |
-| `scripts/src/fleet/status/index.ts`                   | Fetches every claim and heartbeat and prints the machines and the claims                                  |
-| `scripts/src/fleet/data/index.ts`                     | The `ai:fleet:data` command: manifest, files, pull and push over ssh                                      |
-| `scripts/src/services/fleet/selectTakeableEntries.ts` | Selects the entries a machine may take from its profile and the live claims                               |
-| `scripts/src/services/fleet/claimFleetEntry.ts`       | Wins a claim with a plain push, adopts its own, or takes over a stale one with an explicit lease          |
-| `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and tells a refusal by a held ref from a network failure    |
-| `scripts/src/services/fleet/parseComputeQueue.ts`     | Reads one compute page's open items, with their ids, needs and written paths, under its queue heading     |
-| `scripts/src/services/fleet/readComputeQueue.ts`      | Reads every compute page, and throws on an id two pages share                                             |
-| `scripts/src/services/fleet/readQueueFiles.ts`        | Reads a folder's files off origin's `ai/queue` in one `git cat-file --batch`, never off the checkout      |
-| `scripts/src/services/machine/watchMachine.ts`        | Samples the machine each minute and pushes its heartbeat every ten minutes                                |
-| `scripts/src/services/queue/pushQueue.ts`             | Pushes `ai/queue`, retrying a refused push with exponential backoff and full jitter, up to eight attempts |
-| `apps/web/content/docs/genshin/compute/`              | The compute queue's pages, whose items the fleet takes                                                    |
+| File                                                  | Role                                                                                                     |
+| :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| `scripts/src/fleet/profile/index.ts`                  | Writes the machine's profile from what it detects, keeping the id and areas the user set                 |
+| `scripts/src/fleet/claim/index.ts`                    | Claims an entry as a ref on origin, exit 0 when won and exit 1 naming the holder                         |
+| `scripts/src/fleet/hold/index.ts`                     | Claims an entry, then renews the claim every ten minutes until it is released                            |
+| `scripts/src/fleet/release/index.ts`                  | Deletes an entry's claim, or with a miss keeps it as the holder's final word                             |
+| `scripts/src/fleet/next/index.ts`                     | Claims the first entry this worker may take and prints its id and worker                                 |
+| `scripts/src/fleet/status/index.ts`                   | Fetches every claim and heartbeat and prints the machines and the claims                                 |
+| `scripts/src/fleet/data/index.ts`                     | The `ai:fleet:data` command: manifest, files, pull and push over ssh                                     |
+| `scripts/src/services/fleet/selectTakeableEntries.ts` | Selects the entries a machine may take from its profile and the live claims                              |
+| `scripts/src/services/fleet/claimFleetEntry.ts`       | Wins a claim with a plain push, adopts its own, or takes over a stale one with an explicit lease         |
+| `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and tells a refusal by a held ref from a network failure   |
+| `scripts/src/services/fleet/parseComputeQueue.ts`     | Reads one compute page's open items, with their ids, needs and written paths, under its queue heading    |
+| `scripts/src/services/fleet/readComputeQueue.ts`      | Reads every compute page, and throws on an id two pages share                                            |
+| `scripts/src/services/fleet/readQueueFiles.ts`        | Reads a folder's files off origin's `ai/queue` in one `git cat-file --batch`, never off the checkout     |
+| `scripts/src/services/machine/readLastPush.ts`        | Reads the last commit this machine's git identity landed on origin/ai/queue, which its heartbeat carries |
+| `scripts/src/services/machine/watchMachine.ts`        | Samples the machine each minute and pushes its heartbeat every ten minutes                               |
+| `apps/web/content/docs/genshin/compute/`              | The compute queue's pages, whose items the fleet takes                                                   |
