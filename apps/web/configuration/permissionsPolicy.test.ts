@@ -40,7 +40,9 @@ describe("permissionsPolicy", () => {
 
     const isCalled = sources.some((source) => callRegex.test(source));
     const permissionsPolicy = security?.headers ? security.headers.permissionsPolicy || undefined : undefined;
+    // A feature's value is its origin list, or `false` to deny it outright
+    const origins = permissionsPolicy?.[feature];
 
-    expect(!isCalled || (permissionsPolicy?.[feature]?.includes("self") ?? false)).toBe(true);
+    expect(!isCalled || (Array.isArray(origins) && origins.includes("self"))).toBe(true);
   });
 });
