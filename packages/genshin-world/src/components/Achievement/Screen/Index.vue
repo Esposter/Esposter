@@ -5,6 +5,8 @@ import type { AchievementProgress } from "#src/models/achievement/AchievementPro
 import type { GameText } from "genshin-text";
 
 import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
+import MenuListScreenDetail from "#src/components/Menu/ListScreen/Detail/Index.vue";
+import MenuListScreenTab from "#src/components/Menu/ListScreen/Tab/Index.vue";
 import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAchievementFinished";
 import { QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
 import { useEventListener } from "@vueuse/core";
@@ -54,29 +56,21 @@ useEventListener("keydown", (event) => {
   <MenuListScreen :game-text :title="gameText[GameTextKey.Achievements]" @close="emit('close')">
     <template #list>
       <div class="list" role="tablist" aria-orientation="vertical">
-        <button
+        <MenuListScreenTab
           v-for="category of categories"
           :key="category.id"
-          class="category"
           :aria-selected="category.id === selectedCategoryId"
-          role="tab"
-          type="button"
           @click="selectedCategoryId = category.id"
         >
           <span class="name">{{ textMap[category.nameTextId] }}</span>
           <span class="count"
             >{{ finishedCount(category.id) }}/{{ categoryAchievementsMap.get(category.id)?.length ?? 0 }}</span
           >
-        </button>
+        </MenuListScreenTab>
       </div>
     </template>
     <template #detail>
-      <div
-        v-if="selectedCategory"
-        class="achievements"
-        role="tabpanel"
-        :aria-label="textMap[selectedCategory.nameTextId]"
-      >
+      <MenuListScreenDetail v-if="selectedCategory" :aria-label="textMap[selectedCategory.nameTextId]">
         <div
           v-for="achievement of selectedAchievements"
           :key="achievement.id"
@@ -92,47 +86,18 @@ useEventListener("keydown", (event) => {
             <span>{{ achievement.primogems }} {{ gameText[GameTextKey.Primogem] }}</span>
           </p>
         </div>
-      </div>
+      </MenuListScreenDetail>
     </template>
   </MenuListScreen>
 </template>
 
 <style scoped>
-.category,
 .title {
   margin: 0;
   border: none;
   cursor: inherit;
   font: inherit;
   font-weight: 600;
-}
-
-.category {
-  display: flex;
-  height: calc(var(--unit) * 76);
-  margin-bottom: calc(var(--unit) * 13);
-  padding: calc(var(--unit) * 14) calc(var(--unit) * 30) 0;
-  background: rgb(40 50 70 / 0.72);
-  color: inherit;
-  font-size: calc(var(--unit) * 24);
-  justify-content: space-between;
-  text-align: start;
-}
-
-.category[aria-selected="true"] {
-  outline: calc(var(--unit) * 2) solid #d3bc8e;
-}
-
-.achievements {
-  position: absolute;
-  top: calc(var(--unit) * 105);
-  bottom: calc(var(--unit) * 125);
-  left: calc(var(--unit) * 877);
-  display: flex;
-  width: calc(var(--unit) * 899);
-  flex-direction: column;
-  overflow-y: auto;
-  scrollbar-width: none;
 }
 
 .achievement {

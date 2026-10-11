@@ -5,6 +5,8 @@ import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { GameText } from "genshin-text";
 
 import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
+import MenuListScreenDetail from "#src/components/Menu/ListScreen/Detail/Index.vue";
+import MenuListScreenTab from "#src/components/Menu/ListScreen/Tab/Index.vue";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArchiveSectionGameTextKeyMap } from "#src/services/archive/ArchiveSectionGameTextKeyMap";
 import { ArchiveSectionOrder } from "#src/services/archive/ArchiveSectionOrder";
@@ -56,22 +58,19 @@ useEventListener("keydown", (event) => {
   <MenuListScreen :game-text :title="gameText[GameTextKey.Archive]" @close="emit('close')">
     <template #list>
       <div class="list" role="tablist" aria-orientation="vertical">
-        <button
+        <MenuListScreenTab
           v-for="section of sections"
           :key="section"
-          class="section"
           :aria-selected="section === selectedSection"
-          role="tab"
-          type="button"
           @click="selectedSection = section"
         >
           <span class="name">{{ gameText[ArchiveSectionGameTextKeyMap[section]] }}</span>
           <span class="count">{{ openedCount(section) }}/{{ sectionEntriesMap[section].length }}</span>
-        </button>
+        </MenuListScreenTab>
       </div>
     </template>
     <template #detail>
-      <div class="entries" role="tabpanel" :aria-label="gameText[ArchiveSectionGameTextKeyMap[selectedSection]]">
+      <MenuListScreenDetail :aria-label="gameText[ArchiveSectionGameTextKeyMap[selectedSection]]">
         <component
           :is="checkIsEntryReadable(entry.id) ? 'button' : 'p'"
           v-for="entry of selectedEntries"
@@ -86,47 +85,18 @@ useEventListener("keydown", (event) => {
             >×{{ killsMap.get(entry.id) ?? 0 }}</span
           >
         </component>
-      </div>
+      </MenuListScreenDetail>
     </template>
   </MenuListScreen>
 </template>
 
 <style scoped>
-.section,
 .entry {
   margin: 0;
   border: none;
   cursor: inherit;
   font: inherit;
   font-weight: 600;
-}
-
-.section {
-  display: flex;
-  height: calc(var(--unit) * 76);
-  margin-bottom: calc(var(--unit) * 13);
-  padding: calc(var(--unit) * 14) calc(var(--unit) * 30) 0;
-  background: rgb(40 50 70 / 0.72);
-  color: inherit;
-  font-size: calc(var(--unit) * 24);
-  justify-content: space-between;
-  text-align: start;
-}
-
-.section[aria-selected="true"] {
-  outline: calc(var(--unit) * 2) solid #d3bc8e;
-}
-
-.entries {
-  position: absolute;
-  top: calc(var(--unit) * 105);
-  bottom: calc(var(--unit) * 125);
-  left: calc(var(--unit) * 877);
-  display: flex;
-  width: calc(var(--unit) * 899);
-  flex-direction: column;
-  overflow-y: auto;
-  scrollbar-width: none;
 }
 
 .entry {
