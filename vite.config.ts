@@ -1,6 +1,6 @@
 import type { UserConfig } from "vite-plus";
 
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { defineConfig } from "vite-plus";
 
 import oxfmtConfiguration from "./oxfmt.config.ts";
@@ -58,11 +58,11 @@ interface PackageManifest {
 // That package as the working directory, while the tasks' patterns and `cwd` below stay relative to the root package
 const readPackageBuildManifests = () =>
   readdirSync(new URL(`${PACKAGES_DIRECTORY}/`, import.meta.url)).flatMap((directory) => {
-    // The root config cannot import `@esposter/shared`, whose `dist` is one of the builds this file orders, and no
-    // Manifest carries a Date
-    const manifest: PackageManifest = JSON.parse(
-      readFileSync(new URL(`${PACKAGES_DIRECTORY}/${directory}/package.json`, import.meta.url), "utf8"),
-    );
+    const manifestUrl = new URL(`${PACKAGES_DIRECTORY}/${directory}/package.json`, import.meta.url);
+    // A folder with no manifest is no package: a deleted package's restored build output, or a checkout's leftovers
+    if (!existsSync(manifestUrl)) return [];
+    // oxlint-disable-next-line no-restricted-properties -- the root config cannot import `@esposter/shared`, whose `dist` is one of the builds this file orders, and no manifest carries a Date to revive
+    const manifest: PackageManifest = JSON.parse(readFileSync(manifestUrl, "utf8"));
     return manifest.scripts?.build ? [{ directory, manifest }] : [];
   });
 
