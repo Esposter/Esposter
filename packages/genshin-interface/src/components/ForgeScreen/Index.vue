@@ -2,6 +2,7 @@
 import type { ForgeQueueCell } from "#src/models/ForgeQueueCell";
 import type { ForgeRecipeCell } from "#src/models/ForgeRecipeCell";
 
+import TwoColumnScreen from "#src/components/TwoColumnScreen/Index.vue";
 import { ForgeQueueState } from "#src/models/ForgeQueueState";
 import { ForgeTab } from "#src/models/ForgeTab";
 
@@ -59,7 +60,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
        left with the chosen one's amount and cost beside them, or the queues each holding an order that forges over real
        time and is obtained when it is done. Provisional: every place, size and colour here waits on the forge screen's
        passes against the public clip of the Wagner forge (references/forge-screen) and the owed order-queue recording -->
-  <div class="forge-screen">
+  <TwoColumnScreen>
     <header class="head">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
       <div class="tabs">
@@ -117,20 +118,10 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         </button>
       </li>
     </ul>
-  </div>
+  </TwoColumnScreen>
 </template>
 
 <style scoped>
-.forge-screen {
-  position: relative;
-  display: grid;
-  width: 100%;
-  height: 100%;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-  color: #ece5d8;
-}
-
 .head,
 .queues {
   grid-column: 1 / -1;
