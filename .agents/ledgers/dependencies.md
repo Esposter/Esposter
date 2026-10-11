@@ -231,5 +231,4 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `web-push`                              | —     | Keep — security     | push encryption, on the stop list                                                                      |
 | `write-excel-file`                      | —     | Keep — spec         | the spreadsheet format                                                                                 |
 | `ws`                                    | —     | Keep — engine       | the agent console's WebSocket server                                                                   |
-| `xss`                                   | —     | Replace — installed | `sanitizeHtml` in @esposter/shared: only a test imports it, comparing two sanitisers                   |
 | `zod`                                   | —     | Keep — framework    | the schema library                                                                                     |
