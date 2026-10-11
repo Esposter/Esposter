@@ -37,6 +37,7 @@ import {
   RAZOR_CHARACTER_ID,
   ROSARIA_CHARACTER_ID,
   SAYU_CHARACTER_ID,
+  SHENHE_CHARACTER_ID,
   SUCROSE_CHARACTER_ID,
   TARTAGLIA_CHARACTER_ID,
   THOMA_CHARACTER_ID,
@@ -86,6 +87,7 @@ import { createRaidenKit } from "#src/services/kit/characters/raidenKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
 import { createRosariaKit } from "#src/services/kit/characters/rosariaKit";
 import { createSayuKit } from "#src/services/kit/characters/sayuKit";
+import { createShenheKit } from "#src/services/kit/characters/shenheKit";
 import { createSucroseKit } from "#src/services/kit/characters/sucroseKit";
 import { createTartagliaKit } from "#src/services/kit/characters/tartagliaKit";
 import { createThomaKit } from "#src/services/kit/characters/thomaKit";
@@ -138,6 +140,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [RAZOR_CHARACTER_ID]: createRazorKit,
   [ROSARIA_CHARACTER_ID]: createRosariaKit,
   [SAYU_CHARACTER_ID]: createSayuKit,
+  [SHENHE_CHARACTER_ID]: createShenheKit,
   [SUCROSE_CHARACTER_ID]: createSucroseKit,
   [TARTAGLIA_CHARACTER_ID]: createTartagliaKit,
   [THOMA_CHARACTER_ID]: createThomaKit,
