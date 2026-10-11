@@ -183,7 +183,6 @@ catalog:
   fflate: ^0.8.3
   fs-extra: ^11.4.1
   grapesjs: ^0.23.6
-  grapesjs-component-countdown: ^1.0.2
   grapesjs-custom-code: ^1.0.2
   grapesjs-mjml: ^1.0.8
   grapesjs-parser-postcss: ^1.0.3
