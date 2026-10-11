@@ -34,8 +34,6 @@ stateDiagram-v2
 
 ## Scope and order
 
-**Built:** the fleeing birds and beasts of Mondstadt, stood at their fitted places and running from the character in Windrise's scene ([as-built page](/docs/genshin/wildlife)).
-
 **Still to come, in order:**
 
 ```text

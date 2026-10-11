@@ -41,8 +41,6 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** Tubby's making, the Trust Rank, Adeptal Energy and the realm's stores, as the [Serenitea Pot](/docs/genshin/serenitea-pot) page describes.
-
 **Still to build, in order:**
 
 1. **Companions invited.** `models/home/HomeProgress.ts` gains `companionIds`, the characters living in the realm. A new `services/home/inviteHomeCompanion.ts` adds one, refusing the Traveler (`TRAVELER_CHARACTER_ID`), a character the player does not own, one already living there, and one past the `npcCount` of the Trust Rank `computeHomeTrustRank` reads from the progress's Trust EXP; `services/home/dismissHomeCompanion.ts` takes one out. Test: `inviteHomeCompanion.test.ts` (a rank-one realm takes one companion and refuses a second, the Traveler is refused, and a character already living there is refused).

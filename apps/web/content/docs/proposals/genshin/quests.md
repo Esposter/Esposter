@@ -1,6 +1,6 @@
 ---
 title: Quests
-description: Proposal — what remains of Genshin's quests once the carried Archon quests start and the world's doings advance them: the quest screen measured against the wiki's still, the go-to triggers placed in region data, the world and story quests started by the talks that offer them, and the clues the quests leave for companionship and Elemental Sight. The quest model, its progression, its save, the quest screen, the navigation beam, the HUD's tracker and V, the handbook's tabs, the reader, the start and finish of the Archon quests, and the achievements and Travel Log they reach are built, as the quests page describes.
+description: Proposal — what remains of Genshin's quests: the quest screen measured against the wiki's still, the go-to triggers placed in region data, the world and story quests started by the talks that offer them, and the clues the quests leave for companionship and Elemental Sight.
 model: claude-opus-5-5
 needs: [parity-page]
 touches: ["packages/genshin-world/src/components/Quest/Screen/**"]
@@ -8,21 +8,13 @@ touches: ["packages/genshin-world/src/components/Quest/Screen/**"]
 
 # Quests
 
-The quest model and its pure progression, the quest screen J opens, the beam over a navigated objective, the Adventurer Handbook's tabs, the reader that writes the carried quests from the community's dump, and the world's side are built: the carried Archon quests start from the prologue's first, a talk's end, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished quest reaches the achievements and the Travel Log. See [quests](/docs/genshin/quests), [achievements](/docs/genshin/achievements) and [archive](/docs/genshin/archive). What remains is what the world still does not hand the quests: the places the go-to steps stand at, the quests the talks offer, and the commissions. It builds on [dialogue](/docs/genshin/dialogue), whose talks a quest's talk-to steps end on.
+The [quests](/docs/genshin/quests) page holds the quest model, its progression, the quest screen, the navigation beam, the reader that writes the carried quests from the community's dump, the start and finish of the Archon quests, and the achievements and Travel Log they reach. It builds on [dialogue](/docs/genshin/dialogue), whose talks a quest's talk-to steps end on. What remains is what the world still does not hand the quests: the places the go-to steps stand at and the quests the talks offer.
 
 ## Decisions
 
-- **The carried quests are hosted records, read on demand.** Each carried quest's table is its own `quests/<id>` record and its words one `questText/<Language>` record a language, read from the hosted game data by `QuestLoaderMap` and `QuestTextLoaderMap`, one line a carried quest or a language ([hosted game data](/docs/genshin/hosted-game-data)). A page downloads only the language it shows, and the typed map makes a quest carried without its loader fail to typecheck.
-- **The Archon quests run from the prologue's first.** `startQuests` starts the first Archon quest not finished once the ones before it are. The carried quests are listed in the order the prologue plays them, Wanderer's Trail before Bird's Eye View.
-- **Every doing the world records is an event.** The [quests](/docs/genshin/quests) page sets out which doing is which event, and each event is handed to every quest in progress. A collect counts one pick up, whatever the bag had room for.
-- **A quest's finish reaches the watchers as the achievements expect.** Each step passed on is a `QuestFinished` under the step's id, and a quest its last step finishes is a `ParentQuestFinished` under the quest's id. A finished main quest opens its Travel Log entry, by the entry's quest.
-- **Progress is kept in the save.** Each carried quest's progress is a slice of the world's [save](/docs/genshin/save-data), kept in localStorage when signed out and merged by the further step, which is built.
 - **A go-to's place is its trigger's region in the scene groups.** A go-to step's condition is `QUEST_CONTENT_TRIGGER_FIRE` with a trigger id (`1053` for Wanderer's Trail's first step, read from `BinOutput/Quest/351.json`). AnimeGameData's `TriggerExcelConfigData` names each id's scene, group and trigger name, and the group's script places the trigger's region, so a trigger is placed only from the scene group export, never by hand.
-- **A carried quest is a record of the hosted game data.** Carrying a world or story quest publishes its own record under `quests` and its words in every language under `questText`, which `QuestLoaderMap` and `QuestTextLoaderMap` fetch by key, so a carried quest adds nothing to `genshin-world`'s bundle.
 - **A place's trigger is placed in region data.** A go-to objective names the trigger the game fires, so a region's data places each trigger the carried quests name, and reaching it is the go-to event. Navigation then finds it as it finds a resident.
 - **A quest a talk offers starts from that talk.** A world or story quest starts when the talk that offers it ends, the offering talk read from the quest table.
-- **The daily commissions are four a day, dealt at the reset.** As the wiki describes them, they are drawn from the pool of the areas the player has reached, with the preferred region the handbook sets.
-- **The quest and dialogue text is the install's own.** A quest's words and a talk's are decoded from the installed game at the same patch as every other export, so a line, its id and its quest cannot drift apart. The community dump's half-empty English text then stops mattering.
 
 ## What is left
 
