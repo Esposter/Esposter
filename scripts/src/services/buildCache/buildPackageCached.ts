@@ -11,6 +11,7 @@ import { readGeneratedSourcePaths } from "#src/services/buildCache/readGenerated
 import { readPackageName } from "#src/services/buildCache/readPackageName";
 import { readWorkspaceDependencyDirectories } from "#src/services/buildCache/readWorkspaceDependencyDirectories";
 import { restoreBuildOutput, restoreGeneratedPaths } from "#src/services/buildCache/restoreBuildOutput";
+import { runInSlot } from "#src/services/buildCache/runInSlot";
 import { runTsdown } from "#src/services/buildCache/runTsdown";
 import { storeBuildOutput } from "#src/services/buildCache/storeBuildOutput";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -23,7 +24,7 @@ const TSDOWN_CONFIGURATION_REGEX = /^tsdown\.config\.[cm]?[jt]s$/u;
 // Brings one workspace package to its key, after bringing up to date every workspace package it links, so a fresh
 // Worktree's leaf builds its whole chain. A dist stamped with the key is left alone while the key's entry is still cached
 // To write its barrels back from; otherwise a hit restores the cached output, and a miss builds it in a slot and stores
-// It. Either way the dist ends stamped.
+// It, waiting for a slot first. Either way the dist ends stamped.
 // A package two dependency paths reach is brought up to date once per request, its outcome kept by its directory
 export const buildPackageCached = (
   packageDirectory: string,
@@ -64,7 +65,8 @@ export const buildPackageCached = (
   else {
     // A stale `dist` left by an earlier commit would be stored with this build's output, so the build starts from none
     rmSync(outputDirectory, { force: true, recursive: true });
-    const buildStatus = runTsdown(packageDirectory, BUILD_CACHE_TSDOWN_FLAGS);
+    // A miss builds in a machine-wide slot, as the shell gate's runs do, so builds never stack their memory
+    const buildStatus = runInSlot(() => runTsdown(packageDirectory, BUILD_CACHE_TSDOWN_FLAGS));
     if (buildStatus !== 0)
       throw new InvalidOperationError(Operation.Create, packageDirectory, `its build exited with ${buildStatus}`);
 
