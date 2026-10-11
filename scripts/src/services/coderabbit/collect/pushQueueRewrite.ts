@@ -1,6 +1,5 @@
 import type { QueueRewriteInput } from "#src/models/coderabbit/collect/QueueRewriteInput";
 
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { QUEUE_BRANCH, SYNC_PUSH_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
 import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
@@ -8,6 +7,7 @@ import { pickSkippingStops } from "#src/services/coderabbit/collect/pickSkipping
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
