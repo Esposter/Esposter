@@ -24,6 +24,8 @@ import {
   NOELLE_CHARACTER_ID,
   QIQI_CHARACTER_ID,
   RAZOR_CHARACTER_ID,
+  ROSARIA_CHARACTER_ID,
+  SUCROSE_CHARACTER_ID,
   TARTAGLIA_CHARACTER_ID,
   THOMA_CHARACTER_ID,
   VENTI_CHARACTER_ID,
@@ -56,6 +58,8 @@ import { createNingguangKit } from "#src/services/kit/characters/ningguangKit";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { createQiqiKit } from "#src/services/kit/characters/qiqiKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
+import { createRosariaKit } from "#src/services/kit/characters/rosariaKit";
+import { createSucroseKit } from "#src/services/kit/characters/sucroseKit";
 import { createTartagliaKit } from "#src/services/kit/characters/tartagliaKit";
 import { createThomaKit } from "#src/services/kit/characters/thomaKit";
 import { createVentiKit } from "#src/services/kit/characters/ventiKit";
@@ -91,6 +95,8 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [NOELLE_CHARACTER_ID]: createNoelleKit,
   [QIQI_CHARACTER_ID]: createQiqiKit,
   [RAZOR_CHARACTER_ID]: createRazorKit,
+  [ROSARIA_CHARACTER_ID]: createRosariaKit,
+  [SUCROSE_CHARACTER_ID]: createSucroseKit,
   [TARTAGLIA_CHARACTER_ID]: createTartagliaKit,
   [THOMA_CHARACTER_ID]: createThomaKit,
   [VENTI_CHARACTER_ID]: createVentiKit,
