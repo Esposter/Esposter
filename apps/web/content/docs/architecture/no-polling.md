@@ -13,7 +13,7 @@ Every wait must be one of:
 - **An event or callback** — emitters (`messageEventEmitter`), tRPC subscriptions, Web PubSub, watchers. The producer tells the consumer; the consumer never asks.
 - **A scheduled delivery** — work that must happen _at a time_ is enqueued for that time (Service Bus scheduled messages, EventGrid) rather than discovered by a consumer loop asking "anything yet?".
 
-Periodic _work_ on a fixed cadence is not polling: the clicker game tick, the autosave interval, and animation timers run **because time passed**, not to check whether something else finished. The test is the purpose of the timer — "do the thing every N seconds" is scheduling; "check every N seconds whether the thing happened" is polling and gets rewritten around the signal that already exists.
+Periodic _work_ on a fixed cadence is not polling: the clicker game tick, the autosave interval, and animation timers run **because time passed**, not to check whether something else finished. A managed service's own schedule is the service's, not a timer this repo runs; replacing it with push indexing on write is a separate decision. The test is the purpose of the timer — "do the thing every N seconds" is scheduling; "check every N seconds whether the thing happened" is polling and gets rewritten around the signal that already exists.
 
 A sync on a timer is polling even when the period is minutes: a timer that asks whether the remote moved is the same check as one that asks whether a test flipped. The queue sync is driven by the events that move the remote instead:
 
