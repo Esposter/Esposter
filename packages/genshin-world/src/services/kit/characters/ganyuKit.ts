@@ -4,7 +4,6 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
@@ -16,6 +15,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Ganyu's proud skill groups, read at her talent level. The attack group holds the six strikes at 0 to 5, the aimed shot at
@@ -200,10 +200,7 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalBurst: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
-        const field: KitField = {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        const field = createKitField(combatant.characterId, position, {
           nextTickSeconds: CELESTIAL_SHOWER_START_FRAMES / 60,
           onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => {
             if (combatant.ascension >= HARMONY_ASCENSION)
@@ -222,9 +219,8 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             getTalentMultiplier(talentMultiplierMap, GANYU_BURST_GROUP_ID, TALENT_START_LEVEL, 1) +
             CELESTIAL_SHOWER_START_FRAMES / 60 +
             0.1,
-          tickIndex: 0,
           tickIntervalSeconds: CELESTIAL_SHOWER_TICK_INTERVAL_FRAMES / 60,
-        };
+        });
         addKitEffect(kitEffectState, field);
       },
       seconds: CELESTIAL_SHOWER_FRAMES / 60,

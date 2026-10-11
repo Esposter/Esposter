@@ -15,16 +15,12 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/getImpetuousWindsSkillCooldownMultiplier";
@@ -345,18 +341,9 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           [flashOfHavocHit],
         );
         const energySeconds = FLASH_OF_HAVOC_ENERGY_FRAMES / 60;
-        addKitEffect(kitEffectState, {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
-          nextTickSeconds: energySeconds,
-          onTick: ({ party }) => gainPartyMemberEnergy(party, combatant, burstTalentMultiplier(3)),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          // The field lives a tenth of a second past its tick, so the step that runs it still has it
-          secondsRemaining: energySeconds + 0.1,
-          tickIndex: 0,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-        });
+        scheduleKitTask(kitEffectState, combatant.characterId, energySeconds, ({ party }) =>
+          gainPartyMemberEnergy(party, combatant, burstTalentMultiplier(3)),
+        );
       },
       seconds: FLASH_OF_HAVOC_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

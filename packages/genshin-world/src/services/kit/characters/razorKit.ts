@@ -15,10 +15,12 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -173,36 +175,28 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       secondsRemaining: sigilSeconds,
       source: ELECTRO_SIGIL_SOURCE,
     });
-  // Clears Razor's Electro Sigils at a hitmark, each giving him its energy up to what his burst costs, through a field
-  // With no edge that ticks once there, on the step the hitmark falls in
-  const createElectroSigilClear = (owner: Combatant, centre: GroundPoint, hitmarkFrames: number): KitField => ({
-    centre,
-    characterId: owner.characterId,
-    kind: "field",
-    nextTickSeconds: hitmarkFrames / 60,
-    onTick: ({ kitEffectState, party }) => {
-      const sigilCount = getElectroSigilCount(owner.characterId, kitEffectState.effects);
-      if (sigilCount === 0) return;
-      const partyMember = getPartyMember(party, owner.characterId);
-      partyMember.energy = Math.min(owner.kit.burstEnergyCost, partyMember.energy + sigilEnergy * sigilCount);
-      kitEffectState.effects = kitEffectState.effects.filter(
-        (effect) => !checkIsRazorBuff(effect, owner.characterId, ELECTRO_SIGIL_SOURCE),
-      );
-    },
-    radius: UNBOUNDED_FIELD_RADIUS,
-    // The field lives a tenth of a second past its tick, so the step that runs it still has it
-    secondsRemaining: hitmarkFrames / 60 + 0.1,
-    tickIndex: 0,
-    tickIntervalSeconds: Number.POSITIVE_INFINITY,
-  });
+  // Clears Razor's Electro Sigils at a hitmark, each giving him its energy up to what his burst costs, on the step the
+  // Hitmark falls in
+  const scheduleElectroSigilClear = (kitEffectState: KitEffectState, owner: Combatant, hitmarkFrames: number): void =>
+    scheduleKitTask(
+      kitEffectState,
+      owner.characterId,
+      hitmarkFrames / 60,
+      ({ kitEffectState: tickEffectState, party }) => {
+        const sigilCount = getElectroSigilCount(owner.characterId, tickEffectState.effects);
+        if (sigilCount === 0) return;
+        const partyMember = getPartyMember(party, owner.characterId);
+        partyMember.energy = Math.min(owner.kit.burstEnergyCost, partyMember.energy + sigilEnergy * sigilCount);
+        tickEffectState.effects = tickEffectState.effects.filter(
+          (effect) => !checkIsRazorBuff(effect, owner.characterId, ELECTRO_SIGIL_SOURCE),
+        );
+      },
+    );
   // Lightning Fang's Wolf Within, from the burst's hit for its seconds while Razor stays on the field. Its first tick, at
   // The hit, resets his skill's cooldown from Ascension 1 and gives him the Electro RES bonus that marks it standing, and
   // A tick on every step after ends both once he has left the field
   const createWolfWithin = (owner: Combatant, centre: GroundPoint): KitField => {
-    const wolfWithin: KitField = {
-      centre,
-      characterId: owner.characterId,
-      kind: "field",
+    const wolfWithin = createKitField(owner.characterId, centre, {
       nextTickSeconds: LIGHTNING_FANG_HITMARK_FRAMES / 60,
       onTick: ({ activeCombatant, kitEffectState, party }, tickIndex) => {
         if (activeCombatant.characterId !== owner.characterId) {
@@ -222,11 +216,9 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           source: LIGHTNING_FANG_SOURCE,
         });
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: LIGHTNING_FANG_HITMARK_FRAMES / 60 + wolfWithinSeconds,
-      tickIndex: 0,
       tickIntervalSeconds: FIXED_STEP_SECONDS,
-    };
+    });
     return wolfWithin;
   };
   // Lupus Fulguris's lightning beside each strike, reaching what the strike reaches, since an area cannot hold the 1.5
@@ -354,7 +346,7 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       ],
       onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) => {
         const centre = { x: position.x, z: position.z };
-        addKitEffect(kitEffectState, createElectroSigilClear(combatant, centre, LIGHTNING_FANG_SIGIL_CLEAR_FRAMES));
+        scheduleElectroSigilClear(kitEffectState, combatant, LIGHTNING_FANG_SIGIL_CLEAR_FRAMES);
         addKitEffect(kitEffectState, createWolfWithin(combatant, centre));
       },
       seconds: 74 / 60,
@@ -394,11 +386,8 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
               talentMultiplier: getTalentMultiplier(talentMultiplierMap, RAZOR_SKILL_GROUP_ID, TALENT_START_LEVEL, 1),
             },
           ],
-          onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) =>
-            addKitEffect(
-              kitEffectState,
-              createElectroSigilClear(combatant, { x: position.x, z: position.z }, HOLD_HITMARK_FRAMES),
-            ),
+          onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+            scheduleElectroSigilClear(kitEffectState, combatant, HOLD_HITMARK_FRAMES),
           seconds: 103 / 60,
           targetingArea: SKILL_TARGETING_AREA,
         },

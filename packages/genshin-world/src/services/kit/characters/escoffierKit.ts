@@ -15,6 +15,7 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -125,34 +126,28 @@ export const ESCOFFIER_CHARACTER_ID = 10_000_112;
 export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   // Scoring Cuts' heal is one tick of a field, which the burst sets going and which heals the active character from the
   // Caster's ATK, a flat amount and a share of it
-  const createScoringCutsHealField = (body: KitBody, combatant: Combatant): KitField => ({
-    centre: { x: body.position.x, z: body.position.z },
-    characterId: combatant.characterId,
-    id: BURST_HEAL_FIELD_ID,
-    kind: "field",
-    nextTickSeconds: BURST_HEAL_FRAMES / 60,
-    onTick: ({ activeCombatant, party }) =>
-      healPartyMember(
-        party,
-        activeCombatant.characterId,
-        (burstMultiplier(BURST_HEAL_FLAT_INDEX) +
-          burstMultiplier(BURST_HEAL_PER_ATTACK_INDEX) * combatant.attributes.attack) /
-          activeCombatant.attributes.maxHealth,
-      ),
-    radius: BURST_HIT_AREA.radius,
-    secondsRemaining: BURST_HEAL_FRAMES / 60 + 0.5,
-    tickIndex: 0,
-    // A second past the one tick, so no second tick falls within the field
-    tickIntervalSeconds: 1,
-  });
+  const createScoringCutsHealField = (body: KitBody, combatant: Combatant): KitField =>
+    createKitField(combatant.characterId, body.position, {
+      id: BURST_HEAL_FIELD_ID,
+      nextTickSeconds: BURST_HEAL_FRAMES / 60,
+      onTick: ({ activeCombatant, party }) =>
+        healPartyMember(
+          party,
+          activeCombatant.characterId,
+          (burstMultiplier(BURST_HEAL_FLAT_INDEX) +
+            burstMultiplier(BURST_HEAL_PER_ATTACK_INDEX) * combatant.attributes.attack) /
+            activeCombatant.attributes.maxHealth,
+        ),
+      radius: BURST_HIT_AREA.radius,
+      secondsRemaining: BURST_HEAL_FRAMES / 60 + 0.5,
+      // A second past the one tick, so no second tick falls within the field
+      tickIntervalSeconds: 1,
+    });
   // Rehab Diet heals the active character nine times from the caster's ATK, which the burst starts on Ascension 1
   const createRehabDietField = (body: KitBody, combatant: Combatant): KitField => {
     const lastTickSeconds = (REHAB_DIET_FIRST_TICK_FRAMES + REHAB_DIET_INTERVAL_FRAMES * (REHAB_DIET_COUNT - 1)) / 60;
-    return {
-      centre: { x: body.position.x, z: body.position.z },
-      characterId: combatant.characterId,
+    return createKitField(combatant.characterId, body.position, {
       id: REHAB_DIET_FIELD_ID,
-      kind: "field",
       nextTickSeconds: REHAB_DIET_FIRST_TICK_FRAMES / 60,
       onTick: ({ activeCombatant, party }) =>
         healPartyMember(
@@ -162,9 +157,8 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         ),
       radius: BURST_HIT_AREA.radius,
       secondsRemaining: lastTickSeconds + 0.5,
-      tickIndex: 0,
       tickIntervalSeconds: REHAB_DIET_INTERVAL_FRAMES / 60,
-    };
+    });
   };
   const attackMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, ESCOFFIER_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);

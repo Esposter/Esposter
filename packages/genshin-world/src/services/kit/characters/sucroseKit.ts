@@ -2,7 +2,6 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -12,13 +11,14 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -203,25 +203,17 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         const secondsRemaining = durationSeconds + BURST_LAST_TICK_MARGIN_FRAMES / 60 + FIELD_LINGER_SECONDS;
         let absorbedElement: Element | undefined;
         const centre = { x: centreBody.position.x, z: centreBody.position.z };
-        const tickField: KitField = {
-          centre,
-          characterId: combatant.characterId,
-          kind: "field",
+        const tickField = createKitField(combatant.characterId, centre, {
           nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickState }) => {
             castKitSummon(tickState, centreBody, combatant, [burstTickHit]);
             if (absorbedElement !== undefined)
               castKitSummon(tickState, centreBody, combatant, [createAbsorbedHit(absorbedElement)]);
           },
-          radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining,
-          tickIndex: 0,
           tickIntervalSeconds: BURST_TICK_INTERVAL_FRAMES / 60,
-        };
-        const absorbField: KitField = {
-          centre,
-          characterId: combatant.characterId,
-          kind: "field",
+        });
+        const absorbField = createKitField(combatant.characterId, centre, {
           nextTickSeconds: ABSORB_CHECK_FIRST_FRAMES / 60,
           onTick: ({ enemyMap, kitEffectState: tickState, party }) => {
             if (absorbedElement !== undefined) return;
@@ -239,11 +231,9 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
                 source: ABSORBED_ELEMENT_SOURCE,
               });
           },
-          radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining,
-          tickIndex: 0,
           tickIntervalSeconds: ABSORB_CHECK_INTERVAL_FRAMES / 60,
-        };
+        });
         addKitEffect(kitEffectState, tickField);
         addKitEffect(kitEffectState, absorbField);
       },

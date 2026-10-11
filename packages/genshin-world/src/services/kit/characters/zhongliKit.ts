@@ -8,7 +8,6 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -17,7 +16,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element, Elements } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
@@ -25,7 +24,9 @@ import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Zhongli's proud skill groups, read at his talent level. The attack group holds the six strikes at 0 to 5, each of the
@@ -246,10 +247,7 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       isFollowing: true,
       secondsRemaining: shieldSeconds,
     });
-    const end: KitField = {
-      centre: { x: body.position.x, z: body.position.z },
-      characterId,
-      kind: "field",
+    const end = createKitField(characterId, body.position, {
       nextTickSeconds: 0,
       onTick: ({ kitEffectState: tickKitEffectState }) => {
         if (shield.secondsRemaining > 0 && tickKitEffectState.effects.includes(shield)) return;
@@ -257,17 +255,14 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           (effect) => effect !== resistanceCut && effect !== end,
         );
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: shieldSeconds,
-      tickIndex: 0,
       tickIntervalSeconds: FIXED_STEP_SECONDS,
-    };
+    });
     addKitEffect(kitEffectState, shield);
     addKitEffect(kitEffectState, resistanceCut);
     addKitEffect(kitEffectState, end);
   };
-  // A hold casts a Stone Stele unless the most stand, and its Jade Shield at its hitmark, through a field with no edge
-  // That ticks once then
+  // A hold casts a Stone Stele unless the most stand, and its Jade Shield at its hitmark, through a task run then
   const castHold = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { facing, height, position } = body;
     const steles = kitEffectState.effects.filter((effect) => checkIsStele(effect, combatant.characterId));
@@ -275,19 +270,13 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       castKitSummon(kitEffectState, createAheadBody(body, STELE_OFFSET), combatant, holdSteleHits, {
         secondsRemaining: (HOLD_HITMARK_FRAMES + STELE_FRAMES) / 60,
       });
-    addKitEffect(kitEffectState, {
-      centre: { x: position.x, z: position.z },
-      characterId: combatant.characterId,
-      kind: "field",
-      nextTickSeconds: HOLD_HITMARK_FRAMES / 60,
-      onTick: ({ kitEffectState: tickKitEffectState }) =>
+    scheduleKitTask(
+      kitEffectState,
+      combatant.characterId,
+      HOLD_HITMARK_FRAMES / 60,
+      ({ kitEffectState: tickKitEffectState }) =>
         castJadeShield(tickKitEffectState, { facing, height, position }, combatant),
-      radius: UNBOUNDED_FIELD_RADIUS,
-      // The field lives a tenth of a second past its tick, so the step that runs it still has it
-      secondsRemaining: HOLD_HITMARK_FRAMES / 60 + 0.1,
-      tickIndex: 0,
-      tickIntervalSeconds: Number.POSITIVE_INFINITY,
-    });
+    );
   };
   // The wiki's Planet Befall gives the meteor 4U of Geo with no internal cooldown, 500 poise and blunt. It lands from a
   // Summon cast 5 metres ahead of Zhongli, wider from four constellations, and from two the burst casts a Jade Shield

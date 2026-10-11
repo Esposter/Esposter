@@ -14,10 +14,11 @@ import type { Party } from "#src/models/party/Party";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -204,22 +205,18 @@ export const createFaruzanKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
 
   // The Dazzling Polyhedron's field is placed where the burst is cast, and its gadgets are placed from that cast's body. Its ticks
   // Are the Whirlwind Pulses, each cast from the gadget its count cycles to, and it lasts the ticker's start plus its frames
-  const createDazzlingPolyhedron = (castBody: KitBody, combatant: Combatant): KitField => ({
-    centre: { x: castBody.position.x, z: castBody.position.z },
-    characterId: combatant.characterId,
-    kind: "field",
-    nextTickSeconds: (BURST_TICKER_START_FRAMES + BURST_FIRST_PULSE_FRAMES) / 60,
-    onTick: ({ kitEffectState, party }, tickIndex) => {
-      addPrayerfulWindsGift(kitEffectState, party);
-      const gadgetOffset = WHIRLWIND_GADGET_OFFSETS[tickIndex % WHIRLWIND_GADGET_OFFSETS.length];
-      if (gadgetOffset)
-        addKitEffect(kitEffectState, createWhirlwindPulse(createOffsetBody(castBody, gadgetOffset), combatant));
-    },
-    radius: UNBOUNDED_FIELD_RADIUS,
-    secondsRemaining: (BURST_TICKER_START_FRAMES + BURST_FIELD_FRAMES) / 60 + 0.1,
-    tickIndex: 0,
-    tickIntervalSeconds: WHIRLWIND_PULSE_INTERVAL_FRAMES / 60,
-  });
+  const createDazzlingPolyhedron = (castBody: KitBody, combatant: Combatant): KitField =>
+    createKitField(combatant.characterId, castBody.position, {
+      nextTickSeconds: (BURST_TICKER_START_FRAMES + BURST_FIRST_PULSE_FRAMES) / 60,
+      onTick: ({ kitEffectState, party }, tickIndex) => {
+        addPrayerfulWindsGift(kitEffectState, party);
+        const gadgetOffset = WHIRLWIND_GADGET_OFFSETS[tickIndex % WHIRLWIND_GADGET_OFFSETS.length];
+        if (gadgetOffset)
+          addKitEffect(kitEffectState, createWhirlwindPulse(createOffsetBody(castBody, gadgetOffset), combatant));
+      },
+      secondsRemaining: (BURST_TICKER_START_FRAMES + BURST_FIELD_FRAMES) / 60 + 0.1,
+      tickIntervalSeconds: WHIRLWIND_PULSE_INTERVAL_FRAMES / 60,
+    });
 
   const createPlunge = (radius: number, poiseDamage: number, index: number): KitAction => ({
     hits: [

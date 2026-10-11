@@ -20,7 +20,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
@@ -30,8 +30,9 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
-import { createDelayedKitField } from "#src/services/kit/effects/createDelayedKitField";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -250,29 +251,28 @@ const gainConstellation4Energy = ({ kitEffectState, party }: KitContext, combata
 // Has run out
 const createEndlessWaltzField = (combatant: Combatant, { x, z }: GroundPoint): KitField => {
   const { characterId } = combatant;
-  const field: KitField = {
-    centre: { x, z },
+  const field = createKitField(
     characterId,
-    id: ENDLESS_WALTZ_FIELD_ID,
-    kind: "field",
-    nextTickSeconds: ENDLESS_WALTZ_INTERVAL_SECONDS,
-    onTick: (tick) => {
-      if (field.secondsRemaining <= 0) return;
-      if (!checkIsKitStatusActive(tick.kitEffectState.effects, characterId, ENDLESS_WALTZ_STATUS_ID)) {
-        field.secondsRemaining = 0;
-        return;
-      }
-      for (const memberId of getDeployedCharacterIds(tick.party)) {
-        const member = tick.characterIdCombatantMap.get(memberId);
-        if (member)
-          changeKitMemberHealth(tick, combatant, memberId, ENDLESS_WALTZ_HEALTH_SHARE * member.attributes.maxHealth);
-      }
+    { x, z },
+    {
+      id: ENDLESS_WALTZ_FIELD_ID,
+      nextTickSeconds: ENDLESS_WALTZ_INTERVAL_SECONDS,
+      onTick: (tick) => {
+        if (field.secondsRemaining <= 0) return;
+        if (!checkIsKitStatusActive(tick.kitEffectState.effects, characterId, ENDLESS_WALTZ_STATUS_ID)) {
+          field.secondsRemaining = 0;
+          return;
+        }
+        for (const memberId of getDeployedCharacterIds(tick.party)) {
+          const member = tick.characterIdCombatantMap.get(memberId);
+          if (member)
+            changeKitMemberHealth(tick, combatant, memberId, ENDLESS_WALTZ_HEALTH_SHARE * member.attributes.maxHealth);
+        }
+      },
+      secondsRemaining: Number.POSITIVE_INFINITY,
+      tickIntervalSeconds: ENDLESS_WALTZ_INTERVAL_SECONDS,
     },
-    radius: UNBOUNDED_FIELD_RADIUS,
-    secondsRemaining: Number.POSITIVE_INFINITY,
-    tickIndex: 0,
-    tickIntervalSeconds: ENDLESS_WALTZ_INTERVAL_SECONDS,
-  };
+  );
   return field;
 };
 
@@ -388,21 +388,20 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     delayFrames: number,
     secondsRemaining: number,
   ): KitField => {
-    const field: KitField = {
-      centre: { x, z },
-      characterId: combatant.characterId,
-      id: SALON_MEMBER_FIELD_ID,
-      isFollowing: true,
-      kind: "field",
-      nextTickSeconds: (delayFrames + salonMember.initialTickFrames) / 60,
-      onTick: (tick) => {
-        if (field.secondsRemaining > 0) attackWithSalonMember(tick, combatant, salonMember, field.centre);
+    const field = createKitField(
+      combatant.characterId,
+      { x, z },
+      {
+        id: SALON_MEMBER_FIELD_ID,
+        isFollowing: true,
+        nextTickSeconds: (delayFrames + salonMember.initialTickFrames) / 60,
+        onTick: (tick) => {
+          if (field.secondsRemaining > 0) attackWithSalonMember(tick, combatant, salonMember, field.centre);
+        },
+        secondsRemaining,
+        tickIntervalSeconds: salonMember.intervalFrames / 60,
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
-      secondsRemaining,
-      tickIndex: 0,
-      tickIntervalSeconds: salonMember.intervalFrames / 60,
-    };
+    );
     return field;
   };
 
@@ -412,28 +411,27 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     delayFrames: number,
     secondsRemaining: number,
   ): KitField => {
-    const field: KitField = {
-      centre: { x, z },
-      characterId: combatant.characterId,
-      id: SINGER_FIELD_ID,
-      isFollowing: true,
-      kind: "field",
-      nextTickSeconds: (delayFrames + SINGER_INITIAL_TICK_FRAMES) / 60,
-      onTick: (tick) => {
-        if (field.secondsRemaining <= 0) return;
-        changeKitMemberHealth(
-          tick,
-          combatant,
-          tick.activeCombatant.characterId,
-          skillMultiplier(9) + skillMultiplier(8) * combatant.attributes.maxHealth,
-        );
-        gainConstellation4Energy(tick, combatant);
+    const field = createKitField(
+      combatant.characterId,
+      { x, z },
+      {
+        id: SINGER_FIELD_ID,
+        isFollowing: true,
+        nextTickSeconds: (delayFrames + SINGER_INITIAL_TICK_FRAMES) / 60,
+        onTick: (tick) => {
+          if (field.secondsRemaining <= 0) return;
+          changeKitMemberHealth(
+            tick,
+            combatant,
+            tick.activeCombatant.characterId,
+            skillMultiplier(9) + skillMultiplier(8) * combatant.attributes.maxHealth,
+          );
+          gainConstellation4Energy(tick, combatant);
+        },
+        secondsRemaining,
+        tickIntervalSeconds: Math.round(SINGER_INTERVAL_FRAMES * (1 - getSingerIntervalCut(combatant))) / 60,
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
-      secondsRemaining,
-      tickIndex: 0,
-      tickIntervalSeconds: Math.round(SINGER_INTERVAL_FRAMES * (1 - getSingerIntervalCut(combatant))) / 60,
-    };
+    );
     return field;
   };
 
@@ -504,7 +502,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         });
   };
   // A change to a member's HP while the Fanfare lasts gives Fanfare by the share changed, after the debounce's delay
-  const gainFanfare = ({ body, kitEffectState }: KitContext, combatant: Combatant, healthShare: number): void => {
+  const gainFanfare = ({ kitEffectState }: KitContext, combatant: Combatant, healthShare: number): void => {
     const { characterId, constellationCount } = combatant;
     if (healthShare === 0 || !checkIsKitStatusActive(kitEffectState.effects, characterId, FANFARE_STATUS_ID)) return;
     const fanfare =
@@ -514,25 +512,19 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     let delaySeconds = FANFARE_GAIN_DELAY_FRAMES / 60;
     if (debounce && debounce.secondsRemaining > 0) delaySeconds = debounce.secondsRemaining;
     else
-      addKitEffect(
-        kitEffectState,
-        createDelayedKitField(characterId, body.position, FANFARE_DEBOUNCE_START_FRAMES / 60, (tick) =>
-          addKitEffect(tick.kitEffectState, {
-            characterId,
-            id: FANFARE_DEBOUNCE_STATUS_ID,
-            kind: "status",
-            secondsRemaining: FANFARE_DEBOUNCE_FRAMES / 60,
-          }),
-        ),
+      scheduleKitTask(kitEffectState, characterId, FANFARE_DEBOUNCE_START_FRAMES / 60, (tick) =>
+        addKitEffect(tick.kitEffectState, {
+          characterId,
+          id: FANFARE_DEBOUNCE_STATUS_ID,
+          kind: "status",
+          secondsRemaining: FANFARE_DEBOUNCE_FRAMES / 60,
+        }),
       );
-    addKitEffect(
-      kitEffectState,
-      createDelayedKitField(characterId, body.position, delaySeconds, (tick) => {
-        const fanfareStatus = findKitStatus(tick.kitEffectState.effects, characterId, FANFARE_STATUS_ID);
-        if (fanfareStatus && fanfareStatus.secondsRemaining > 0)
-          setFanfare(tick.kitEffectState, tick.party, combatant, fanfareStatus, (fanfareStatus.stacks ?? 0) + fanfare);
-      }),
-    );
+    scheduleKitTask(kitEffectState, characterId, delaySeconds, (tick) => {
+      const fanfareStatus = findKitStatus(tick.kitEffectState.effects, characterId, FANFARE_STATUS_ID);
+      if (fanfareStatus && fanfareStatus.secondsRemaining > 0)
+        setFanfare(tick.kitEffectState, tick.party, combatant, fanfareStatus, (fanfareStatus.stacks ?? 0) + fanfare);
+    });
   };
 
   const normalAttacks = NORMAL_ATTACKS.map(({ cancelFrames, hitArea, hitmarkFrames }, index): KitAction => ({
@@ -561,11 +553,8 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       },
     ],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(
-        kitEffectState,
-        createDelayedKitField(combatant.characterId, body.position, ARKHE_SWITCH_FRAMES / 60, (tick) =>
-          switchArkhe(tick.kitEffectState, combatant, body.position),
-        ),
+      scheduleKitTask(kitEffectState, combatant.characterId, ARKHE_SWITCH_FRAMES / 60, (tick) =>
+        switchArkhe(tick.kitEffectState, combatant, body.position),
       ),
     seconds: CHARGED_ATTACK_FRAMES / 60,
     targetingArea: STRIKE_TARGETING_AREA,
@@ -632,7 +621,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         talentMultiplier: 0,
       },
     ],
-    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       const { characterId, constellationCount } = combatant;
       for (const effect of kitEffectState.effects)
         if (
@@ -640,26 +629,23 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           (effect.kind === "buff" && effect.source === FANFARE_BUFF_SOURCE)
         )
           effect.secondsRemaining = 0;
-      addKitEffect(
-        kitEffectState,
-        createDelayedKitField(characterId, body.position, FANFARE_START_FRAMES / 60, (tick) => {
-          const fanfareStatus: KitStatus = {
-            characterId,
-            id: FANFARE_STATUS_ID,
-            kind: "status",
-            secondsRemaining: FANFARE_SECONDS,
-            stacks: 0,
-          };
-          addKitEffect(tick.kitEffectState, fanfareStatus);
-          setFanfare(
-            tick.kitEffectState,
-            tick.party,
-            combatant,
-            fanfareStatus,
-            constellationCount >= CONSTELLATION_1 ? CONSTELLATION_1_FANFARE_START : 0,
-          );
-        }),
-      );
+      scheduleKitTask(kitEffectState, characterId, FANFARE_START_FRAMES / 60, (tick) => {
+        const fanfareStatus: KitStatus = {
+          characterId,
+          id: FANFARE_STATUS_ID,
+          kind: "status",
+          secondsRemaining: FANFARE_SECONDS,
+          stacks: 0,
+        };
+        addKitEffect(tick.kitEffectState, fanfareStatus);
+        setFanfare(
+          tick.kitEffectState,
+          tick.party,
+          combatant,
+          fanfareStatus,
+          constellationCount >= CONSTELLATION_1 ? CONSTELLATION_1_FANFARE_START : 0,
+        );
+      });
     },
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

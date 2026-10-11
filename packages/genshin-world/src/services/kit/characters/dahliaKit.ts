@@ -5,15 +5,10 @@ import type { KitAction } from "#src/models/kit/KitAction";
 
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  SUMMON_LINGER_SECONDS,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Dahlia's proud skill groups, read at her talent level. The attack group holds her four strikes at 0 to 4, the charged
@@ -145,27 +140,18 @@ export const createDahliaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: burstMultiplier(0),
         },
       ],
-      // Radiant Psalter's shield comes SHIELD_FRAMES in and holds the Favonian Favor's seconds. It is a field that ticks once,
-      // Since a shield is placed when its tick falls, and the shield then reads the caster's Max HP as it stands then
-      onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) =>
-        addKitEffect(kitEffectState, {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
-          nextTickSeconds: SHIELD_FRAMES / 60,
-          onTick: ({ kitEffectState: tickState }) =>
-            addKitEffect(tickState, {
-              characterId: combatant.characterId,
-              element: Element.Hydro,
-              health: burstShieldShare * combatant.attributes.maxHealth + burstShieldFlat,
-              kind: "shield",
-              secondsRemaining: favonianFavorSeconds,
-            }),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          secondsRemaining: SHIELD_FRAMES / 60 + SUMMON_LINGER_SECONDS,
-          tickIndex: 0,
-          tickIntervalSeconds: 1,
-        }),
+      // Radiant Psalter's shield comes SHIELD_FRAMES in and holds the Favonian Favor's seconds. It is a task, since a shield
+      // Is placed when the task runs, and the shield then reads the caster's Max HP as it stands then
+      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+        scheduleKitTask(kitEffectState, combatant.characterId, SHIELD_FRAMES / 60, ({ kitEffectState: tickState }) =>
+          addKitEffect(tickState, {
+            characterId: combatant.characterId,
+            element: Element.Hydro,
+            health: burstShieldShare * combatant.attributes.maxHealth + burstShieldFlat,
+            kind: "shield",
+            secondsRemaining: favonianFavorSeconds,
+          }),
+        ),
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },

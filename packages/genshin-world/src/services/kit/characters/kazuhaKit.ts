@@ -2,17 +2,17 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -222,10 +222,7 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const { activeCombatant: combatant, body, kitEffectState } = context;
         const whirlwind = createKitSummon(body, combatant, tickHits);
         let isAbsorbed = false;
-        const absorbField: KitField = {
-          centre: { x: whirlwind.body.position.x, z: whirlwind.body.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        const absorbField = createKitField(combatant.characterId, whirlwind.body.position, {
           nextTickSeconds: ABSORB_CHECK_FIRST_FRAMES / 60,
           onTick: ({ enemyMap }) => {
             if (isAbsorbed) return;
@@ -240,13 +237,11 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
                 : [hit],
             );
           },
-          radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining:
             (ABSORB_CHECK_FIRST_FRAMES + ABSORB_CHECK_INTERVAL_FRAMES * (ABSORB_CHECK_COUNT - 1)) / 60 +
             ABSORB_FIELD_LINGER_SECONDS,
-          tickIndex: 0,
           tickIntervalSeconds: ABSORB_CHECK_INTERVAL_FRAMES / 60,
-        };
+        });
         addKitEffect(kitEffectState, whirlwind);
         addKitEffect(kitEffectState, absorbField);
       },

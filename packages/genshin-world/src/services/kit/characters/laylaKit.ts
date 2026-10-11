@@ -14,6 +14,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Layla's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
@@ -160,19 +161,15 @@ export const createLaylaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // The field holds the body's place as the burst starts, and each tick strikes from that place
   const createBurstField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => {
     const centre = { x: position.x, z: position.z };
-    return {
-      centre,
-      characterId: combatant.characterId,
-      kind: "field",
+    return createKitField(combatant.characterId, centre, {
       nextTickSeconds: BURST_START_FRAMES / 60,
       onTick: ({ kitEffectState }) =>
         castKitSummon(kitEffectState, { facing, height, position: centre }, combatant, [createBurstStrike(combatant)]),
       radius: BURST_AREA_RADIUS,
       // The field's last tick falls on the frame gcsim's loop leaves out, so it ends a frame before that
       secondsRemaining: (BURST_DURATION_FRAMES - 1) / 60,
-      tickIndex: 0,
       tickIntervalSeconds: BURST_TICK_INTERVAL_FRAMES / 60,
-    };
+    });
   };
 
   const elementalBurst: KitAction = {

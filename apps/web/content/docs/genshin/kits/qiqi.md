@@ -14,7 +14,7 @@ Qiqi's kit is one module, `createQiqiKit`, on avatar 10000035: five strikes, a c
 - **A Glimpse into Arcanum keeps a longer Talisman.** A Talisman with 6 seconds or more left is not replaced and spends no cooldown, as gcsim's check does.
 - **Frozen to the Bone reads Cryo or a Freeze on the enemy**, as gcsim's aura check does.
 - **Herald of Frost's initial damage shares the swipes' internal cooldown.** The wiki tags it Elemental Skill New, which has no `InternalCooldownTag` member here.
-- **Rite of Resurrection revives on the step after the burst starts**, through a field that ticks once, and its 15-minute interval is a status a drown or a jump clears with the rest of the team's effects.
+- **Rite of Resurrection revives on the step after the burst starts**, through a task, and its 15-minute interval is a status a drown or a jump clears with the rest of the team's effects.
 
 ## Key files
 

@@ -342,6 +342,7 @@ flowchart TD
 **Between 6 and 7, the primitives.** Each pair lands as a whole-tree commit of its own, only where it absorbs a repetition the tree still holds, and the finder's count is read before and after it.
 
 - `castKitSummon` and `createPeriodicKitHits`. Landed. A summon is cast in one call, its id, its kind and its seconds named beside its hits rather than spread over a summon, and 23 `Array.from` builders are one call each, the hitmark's frames still summed before they are divided, so no hitmark moves by a bit. The finder held at 73: what they absorb sits under its window.
+- `castKitField` and `scheduleKitTask`. Landed. A field is cast in one call that copies its centre and leaves its radius unbounded unless named, and every one-tick field that lingered a tenth past its tick, `createDelayedKitField` among them, is a task with no centre of its own; the finder fell from 73 to 71.
 
 7. **`buildKit` and `readCharacterKits`, each module reading its record.** The frames, areas and talent indices leave the modules, and the reach helpers (`createBoxReach`, `createCircleReach`, `createFanReach`, `createTargetedHitArea`) go as builder rules. The kits index's framework sections are rewritten for the record.
 8. **The loader map on `lazyDirectories`.** Landed, over its ceiling. `CharacterIdCreateKitMap` is a map of `import()` calls, the barrel leaves the kit modules out, and `readCharacterKits` reads a member's module and multipliers together, at the gate and as the team changes.

@@ -6,13 +6,14 @@ import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -233,18 +234,9 @@ export const createSayuKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const atk = combatant.attributes.attack;
         const initialHeal = burstInitialHealFlat + atk * burstInitialHealAttackShare;
-        addKitEffect(kitEffectState, {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
-          nextTickSeconds: 0,
-          onTick: ({ activeCombatant, party }) =>
-            healPartyMember(party, activeCombatant.characterId, initialHeal / activeCombatant.attributes.maxHealth),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          secondsRemaining: 0.1,
-          tickIndex: 0,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-        });
+        scheduleKitTask(kitEffectState, combatant.characterId, 0, ({ activeCombatant, party }) =>
+          healPartyMember(party, activeCombatant.characterId, initialHeal / activeCombatant.attributes.maxHealth),
+        );
         const tickHits = createPeriodicKitHits(
           {
             element: Element.Anemo,
@@ -259,10 +251,7 @@ export const createSayuKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         );
         castKitSummon(kitEffectState, body, combatant, tickHits);
         const ahead = createAheadBody(body, BURST_FIELD_CENTRE_METRES);
-        addKitEffect(kitEffectState, {
-          centre: { x: ahead.position.x, z: ahead.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        castKitField(kitEffectState, combatant.characterId, ahead.position, {
           nextTickSeconds: BURST_TICK_FIRST_FRAMES / 60,
           onTick: ({ activeCombatant, party }) => {
             if (getPartyMember(party, activeCombatant.characterId).healthShare > BURST_HEAL_HP_SHARE) return;
@@ -271,7 +260,6 @@ export const createSayuKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           },
           radius: BURST_FIELD_RADIUS,
           secondsRemaining: (BURST_TICK_FIRST_FRAMES + BURST_TICK_INTERVAL_FRAMES * BURST_TICK_COUNT) / 60,
-          tickIndex: 0,
           tickIntervalSeconds: BURST_TICK_INTERVAL_FRAMES / 60,
         });
       },

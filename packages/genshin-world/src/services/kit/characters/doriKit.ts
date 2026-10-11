@@ -2,7 +2,6 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -12,6 +11,7 @@ import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Dori's proud skill groups, read at her talent level. The attack group holds her three strikes at 0, 1 and 2, the second
@@ -158,19 +158,15 @@ export const createDoriKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         // The connector ticks in the circle five metres ahead of the body, where the burst was cast, and each tick strikes
         // From that spot whatever the body does after
         const spot = createAheadBody(body, CONNECTOR_AHEAD_METRES);
-        const field: KitField = {
-          centre: { x: spot.position.x, z: spot.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        const field = createKitField(combatant.characterId, spot.position, {
           nextTickSeconds: CONNECTOR_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickEffectState }) => {
             castKitSummon(tickEffectState, spot, combatant, [connectorHit]);
           },
           radius: CONNECTOR_FIELD_RADIUS,
           secondsRemaining: (CONNECTOR_LAST_TICK_FRAMES + 1) / 60,
-          tickIndex: 0,
           tickIntervalSeconds: CONNECTOR_TICK_INTERVAL_FRAMES / 60,
-        };
+        });
         addKitEffect(kitEffectState, field);
       },
       seconds: BURST_FRAMES / 60,

@@ -6,7 +6,6 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStrike } from "#src/models/kit/KitStrike";
@@ -21,6 +20,7 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -244,19 +244,15 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           });
         const tickSeconds =
           (combatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_TICK_FRAMES : SOUNDWAVE_TICK_FRAMES) / 60;
-        const field: KitField = {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        const field = createKitField(combatant.characterId, position, {
           nextTickSeconds: tickSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {
             castKitSummon(tickEffectState, { facing, height, position }, combatant, [soundwaveHit]);
           },
           radius: FIELD_RADIUS,
           secondsRemaining: getTalentMultiplier(talentMultiplierMap, ORORON_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
-          tickIndex: 0,
           tickIntervalSeconds: tickSeconds,
-        };
+        });
         addKitEffect(kitEffectState, field);
       },
       seconds: BURST_FRAMES / 60,

@@ -13,7 +13,7 @@ Fischl's kit is one module, `createFischlKit`, avatar 10000031: five arrows, a f
 - **One Oz stands at a time.** A press or a burst ends the Oz standing as it casts its own, as the wiki's burst resets his duration, and Oz stands from its spawn frame (`spawnSeconds`) for what reads whether it is on the field.
 - **Thundering Retribution strikes the enemy that reacted.** gcsim lands it at the primary target, a circle of 0.5 metres, and the wiki's targeting of the enemy nearest the character is not built. Its half-second interval is kept on the character on the field, as gcsim keeps it. It is dealt as Elemental Skill DMG, gcsim's tag for it, so Yoimiya's Aurous Blaze explodes on it.
 - **Gaze of the Deep and Evernight Raven reach what the attack they join reaches.** Each lands from the body with that hit's area, so Gaze of the Deep strikes along with Fischl's own arrow and Evernight Raven along with whoever is on the field.
-- **Her Pilgrimage of Bleak heals a frame after the full Oz's spawn, swap or not.** A field ticks once 114 frames into the burst; gcsim heals after whichever spawn comes, and the wiki confirms the heal on a swap.
+- **Her Pilgrimage of Bleak heals a frame after the full Oz's spawn, swap or not.** A task runs 114 frames into the burst; gcsim heals after whichever spawn comes, and the wiki confirms the heal on a swap.
 - **The swap's Oz spawns a frame after the swap**, its first attack 63 frames later, gcsim's frames with no swap delay of its own.
 
 ## Key files

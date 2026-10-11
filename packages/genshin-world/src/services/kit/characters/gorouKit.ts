@@ -13,13 +13,14 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -145,33 +146,25 @@ export const createGorouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   const createWarBanner = (body: KitBody, combatant: Combatant): KitField => {
     const { position } = createAheadBody(body, SKILL_OFFSET_METRES);
-    return {
-      centre: { x: position.x, z: position.z },
-      characterId: combatant.characterId,
+    return createKitField(combatant.characterId, position, {
       id: WAR_BANNER_ID,
-      kind: "field",
       nextTickSeconds: (SKILL_HITMARK_FRAMES + BANNER_FIRST_TICK_FRAMES) / 60,
       onTick: addFieldBuffs,
       radius: BANNER_RADIUS,
       secondsRemaining: SKILL_HITMARK_FRAMES / 60 + bannerSeconds,
-      tickIndex: 0,
       tickIntervalSeconds: BANNER_TICK_FRAMES / 60,
-    };
+    });
   };
 
-  const createJuugaField = (body: KitBody, combatant: Combatant): KitField => ({
-    centre: { x: body.position.x, z: body.position.z },
-    characterId: combatant.characterId,
-    id: JUUGA_ID,
-    isFollowing: true,
-    kind: "field",
-    nextTickSeconds: (BURST_HITMARK_FRAMES + BANNER_FIRST_TICK_FRAMES) / 60,
-    onTick: addFieldBuffs,
-    radius: UNBOUNDED_FIELD_RADIUS,
-    secondsRemaining: BURST_HITMARK_FRAMES / 60 + juugaSeconds,
-    tickIndex: 0,
-    tickIntervalSeconds: BANNER_TICK_FRAMES / 60,
-  });
+  const createJuugaField = (body: KitBody, combatant: Combatant): KitField =>
+    createKitField(combatant.characterId, body.position, {
+      id: JUUGA_ID,
+      isFollowing: true,
+      nextTickSeconds: (BURST_HITMARK_FRAMES + BANNER_FIRST_TICK_FRAMES) / 60,
+      onTick: addFieldBuffs,
+      secondsRemaining: BURST_HITMARK_FRAMES / 60 + juugaSeconds,
+      tickIntervalSeconds: BANNER_TICK_FRAMES / 60,
+    });
 
   // Crystal Collapse ticks for as long as the field lasts, so the summon that follows the body holds every tick, set out at
   // The cast

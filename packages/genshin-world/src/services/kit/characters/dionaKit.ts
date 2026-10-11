@@ -3,7 +3,6 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitShield } from "#src/models/kit/KitShield";
 
@@ -15,6 +14,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -192,11 +192,8 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         },
       ],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        const field: KitField = {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId: combatant.characterId,
+        const field = createKitField(combatant.characterId, body.position, {
           id: SIGNATURE_MIX_FIELD_ID,
-          kind: "field",
           nextTickSeconds: SIGNATURE_MIX_HITMARK_FRAMES / 60 + SIGNATURE_MIX_TICK_SECONDS,
           onTick: ({ activeCombatant, party }) =>
             healPartyMember(
@@ -207,9 +204,8 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             ),
           radius: SIGNATURE_MIX_FIELD_RADIUS,
           secondsRemaining: signatureMixSeconds,
-          tickIndex: 0,
           tickIntervalSeconds: SIGNATURE_MIX_TICK_SECONDS,
-        };
+        });
         addKitEffect(kitEffectState, field);
         castKitSummon(kitEffectState, body, combatant, signatureMixTickHits, { secondsRemaining: signatureMixSeconds });
       },

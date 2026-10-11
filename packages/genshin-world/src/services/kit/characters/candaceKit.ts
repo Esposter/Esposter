@@ -14,18 +14,14 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  MELEE_WEAPON_TYPES,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { MELEE_WEAPON_TYPES, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
@@ -335,16 +331,11 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       // A recast burst ends the Prayer it finds standing, as gcsim restarts its status
       const standingPrayer = findPrayerField(kitEffectState.effects, characterId);
       if (standingPrayer) standingPrayer.secondsRemaining = 0;
-      addKitEffect(kitEffectState, {
-        centre: { x: body.position.x, z: body.position.z },
-        characterId,
+      castKitField(kitEffectState, characterId, body.position, {
         id: PRAYER_FIELD_ID,
-        kind: "field",
         nextTickSeconds: BURST_HITMARK_FRAMES / 60,
         onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => infuse(tickEffectState, activeCombatant),
-        radius: UNBOUNDED_FIELD_RADIUS,
         secondsRemaining: prayerSeconds,
-        tickIndex: 0,
         tickIntervalSeconds: PRAYER_TICK_FRAMES / 60,
       });
       addKitEffect(kitEffectState, {

@@ -3,7 +3,6 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInfusion } from "#src/models/kit/KitInfusion";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -13,11 +12,12 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -261,10 +261,7 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       secondsRemaining: baneOfAllEvilFrames / 60,
     };
     const baneOfAllEvilEffects: KitEffect[] = [infusion];
-    const exit: KitField = {
-      centre,
-      characterId,
-      kind: "field",
+    const exit = createKitField(characterId, centre, {
       nextTickSeconds: 0,
       onTick: ({ activeCombatant, kitEffectState: tickKitEffectState }) => {
         if (activeCombatant.characterId === characterId) return;
@@ -274,50 +271,40 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
             !(effect.kind === "buff" && effect.characterId === characterId && effect.source === TAMER_OF_DEMONS_SOURCE),
         );
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: infusion.secondsRemaining,
-      tickIndex: 0,
       tickIntervalSeconds: FIXED_STEP_SECONDS,
-    };
-    const drain: KitField = {
-      centre,
-      characterId,
-      kind: "field",
+    });
+    const drain = createKitField(characterId, centre, {
       nextTickSeconds: DRAIN_FIRST_TICK_FRAMES / 60,
       onTick: ({ kitEffectState: tickKitEffectState, party }) => {
         if (!tickKitEffectState.effects.includes(infusion)) return;
         damagePartyMember(party, characterId, getPartyMember(party, characterId).healthShare * drainShare, characterId);
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
       // The field lives a tenth of a second past its last drain, so the step that runs it still has it
       secondsRemaining: lastDrainFrames / 60 + 0.1,
-      tickIndex: 0,
       tickIntervalSeconds: DRAIN_INTERVAL_FRAMES / 60,
-    };
+    });
     baneOfAllEvilEffects.push(exit, drain);
     if (combatant.ascension >= TAMER_OF_DEMONS_ASCENSION)
-      baneOfAllEvilEffects.push({
-        centre,
-        characterId,
-        kind: "field",
-        nextTickSeconds: 0,
-        onTick: ({ kitEffectState: tickKitEffectState }, tickIndex) => {
-          if (!tickKitEffectState.effects.includes(infusion)) return;
-          addKitEffect(tickKitEffectState, {
-            amount: TAMER_OF_DEMONS_DAMAGE_BONUS * (tickIndex + 1),
-            attribute: Attribute.AnemoDamageBonus,
-            characterId,
-            kind: "buff",
-            secondsRemaining: infusion.secondsRemaining,
-            source: TAMER_OF_DEMONS_SOURCE,
-          });
-        },
-        radius: UNBOUNDED_FIELD_RADIUS,
-        // The field lives a tenth of a second past its last tick, so the step that runs it still has it
-        secondsRemaining: TAMER_OF_DEMONS_INTERVAL_SECONDS * (TAMER_OF_DEMONS_MAX_STACKS - 1) + 0.1,
-        tickIndex: 0,
-        tickIntervalSeconds: TAMER_OF_DEMONS_INTERVAL_SECONDS,
-      });
+      baneOfAllEvilEffects.push(
+        createKitField(characterId, centre, {
+          nextTickSeconds: 0,
+          onTick: ({ kitEffectState: tickKitEffectState }, tickIndex) => {
+            if (!tickKitEffectState.effects.includes(infusion)) return;
+            addKitEffect(tickKitEffectState, {
+              amount: TAMER_OF_DEMONS_DAMAGE_BONUS * (tickIndex + 1),
+              attribute: Attribute.AnemoDamageBonus,
+              characterId,
+              kind: "buff",
+              secondsRemaining: infusion.secondsRemaining,
+              source: TAMER_OF_DEMONS_SOURCE,
+            });
+          },
+          // The field lives a tenth of a second past its last tick, so the step that runs it still has it
+          secondsRemaining: TAMER_OF_DEMONS_INTERVAL_SECONDS * (TAMER_OF_DEMONS_MAX_STACKS - 1) + 0.1,
+          tickIntervalSeconds: TAMER_OF_DEMONS_INTERVAL_SECONDS,
+        }),
+      );
     for (const effect of baneOfAllEvilEffects) addKitEffect(kitEffectState, effect);
   };
   return {

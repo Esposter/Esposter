@@ -13,11 +13,13 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Xiangling's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the third
@@ -163,10 +165,7 @@ const CONDENSED_PYRONADO_SOURCE = "Condensed Pyronado";
 // Guoba's chili pepper, left where Guoba disappears for its seconds, which the body on the field picks up by standing
 // Within its reach: the character on the field gains its ATK, as a flat share of its base ATK, and the pepper is gone
 const createChiliPepper = (owner: Combatant, centre: GroundPoint): KitField => {
-  const chiliPepper: KitField = {
-    centre,
-    characterId: owner.characterId,
-    kind: "field",
+  const chiliPepper = createKitField(owner.characterId, centre, {
     nextTickSeconds: GUOBA_FRAMES / 60,
     onTick: ({ activeCombatant, kitEffectState }) => {
       addKitEffect(kitEffectState, {
@@ -181,9 +180,8 @@ const createChiliPepper = (owner: Combatant, centre: GroundPoint): KitField => {
     },
     radius: CHILI_PEPPER_PICKUP_RADIUS,
     secondsRemaining: GUOBA_FRAMES / 60 + CHILI_PEPPER_SECONDS,
-    tickIndex: 0,
     tickIntervalSeconds: FIXED_STEP_SECONDS,
-  };
+  });
   return chiliPepper;
 };
 
@@ -285,7 +283,7 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, XIANGLING_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
     // The wiki's Pyronado gives the swings 1U of Pyro under the Elemental Burst internal cooldown and 30 poise. The
     // Pyronado is a summon that follows the body on the field, whoever it is, for its seconds, which Slowbake lengthens
-    // From four constellations. From six, a field with no edge ticks once as the Pyronado starts, giving every member of
+    // From four constellations. From six, a task runs as the Pyronado starts, giving every member of
     // The team Condensed Pyronado's Pyro DMG Bonus for its seconds
     elementalBurst: {
       hits: SWING_HITMARK_FRAMES.map((hitmarkFrames, index): KitHit => ({
@@ -308,12 +306,11 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           { isFollowing: true, secondsRemaining: PYRONADO_START_FRAMES / 60 + seconds },
         );
         if (combatant.constellationCount < CONDENSED_PYRONADO_CONSTELLATION) return;
-        addKitEffect(kitEffectState, {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
-          nextTickSeconds: PYRONADO_START_FRAMES / 60,
-          onTick: ({ kitEffectState: tickKitEffectState, party }) => {
+        scheduleKitTask(
+          kitEffectState,
+          combatant.characterId,
+          PYRONADO_START_FRAMES / 60,
+          ({ kitEffectState: tickKitEffectState, party }) => {
             for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
               addKitEffect(tickKitEffectState, {
                 amount: CONDENSED_PYRONADO_PYRO_DAMAGE_BONUS,
@@ -324,12 +321,7 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
                 source: CONDENSED_PYRONADO_SOURCE,
               });
           },
-          radius: UNBOUNDED_FIELD_RADIUS,
-          // The field lives a tenth of a second past its tick, so the step that runs it still has it
-          secondsRemaining: PYRONADO_START_FRAMES / 60 + 0.1,
-          tickIndex: 0,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-        });
+        );
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

@@ -16,6 +16,7 @@ import {
   STRIKE_TARGETING_AREA,
 } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -291,17 +292,13 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       },
     ],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(kitEffectState, {
-        centre: { x: body.position.x, z: body.position.z },
-        characterId: combatant.characterId,
-        kind: "field",
+      castKitField(kitEffectState, combatant.characterId, body.position, {
         nextTickSeconds: BENNETT_FIELD_FIRST_TICK_SECONDS,
         onTick: createFieldTick(talentMultiplierMap, combatant),
         radius: BENNETT_FIELD_RADIUS,
         secondsRemaining:
           getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 4) +
           BENNETT_BURST_START_SECONDS,
-        tickIndex: 0,
         tickIntervalSeconds: BENNETT_FIELD_TICK_INTERVAL_SECONDS,
       }),
     seconds: 53 / 60,

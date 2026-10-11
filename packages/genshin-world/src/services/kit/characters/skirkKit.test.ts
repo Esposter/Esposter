@@ -83,7 +83,7 @@ describe(createSkirkKit, () => {
     });
   });
 
-  test("seven-phase Flash's press lands no hit and enters its state 19 frames on, through a field that ticks once", () => {
+  test("seven-phase Flash's press lands no hit and enters its state 19 frames on, through a task", () => {
     expect.hasAssertions();
     const kitEffectState = castAction(SKIRK_KIT.elementalSkill);
     const field = findField(kitEffectState);

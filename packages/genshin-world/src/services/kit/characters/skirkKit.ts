@@ -3,27 +3,19 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  SUMMON_LINGER_SECONDS,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Skirk's proud skill groups, read at her talent level. The attack group holds her five strikes at 0 to 5, the charged attack's
@@ -120,23 +112,6 @@ const createPlunge = (hitArea: AttackArea, poiseDamage: number, talentMultiplier
   targetingArea: STRIKE_TARGETING_AREA,
 });
 
-const createDelayedField = (
-  body: KitBody,
-  characterId: number,
-  delaySeconds: number,
-  onTick: KitField["onTick"],
-): KitField => ({
-  centre: { x: body.position.x, z: body.position.z },
-  characterId,
-  kind: "field",
-  nextTickSeconds: delaySeconds,
-  onTick,
-  radius: UNBOUNDED_FIELD_RADIUS,
-  secondsRemaining: delaySeconds + SUMMON_LINGER_SECONDS,
-  tickIndex: 0,
-  tickIntervalSeconds: 1,
-});
-
 export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, SKIRK_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -227,15 +202,12 @@ export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       SEVEN_PHASE_FLASH_FRAMES / 60,
     );
 
-  // The Seven-Phase Flash's press lands no hit: its state is entered on the field 19 frames on, through a field that ticks once
+  // The Seven-Phase Flash's press lands no hit: its state is entered on the field 19 frames on, through a task
   const elementalSkill: KitAction = {
     hits: [],
-    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(
-        kitEffectState,
-        createDelayedField(body, combatant.characterId, SKILL_DELAY_FRAMES / 60, ({ kitEffectState: tickState }) =>
-          enterSevenPhaseFlash(tickState, combatant, elementalSkill),
-        ),
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      scheduleKitTask(kitEffectState, combatant.characterId, SKILL_DELAY_FRAMES / 60, ({ kitEffectState: tickState }) =>
+        enterSevenPhaseFlash(tickState, combatant, elementalSkill),
       ),
     seconds: SKILL_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
