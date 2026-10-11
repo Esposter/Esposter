@@ -19,6 +19,8 @@ describe(buildItems, () => {
 
   const TREE_REWARD_ITEM_ID = 2000;
 
+  const REPUTATION_REWARD_ITEM_ID = 140004;
+
   const ADVENTURE_EXP_ID = 102;
 
   const materialRows = [
@@ -52,6 +54,16 @@ describe(buildItems, () => {
       rankLevel: 3,
       stackLimit: 99,
     },
+    {
+      foodQuality: "",
+      id: REPUTATION_REWARD_ITEM_ID,
+      itemUse: [],
+      materialType: "MATERIAL_FLYCLOAK",
+      nameTextMapHash: 4,
+      rank: 1,
+      rankLevel: 4,
+      stackLimit: 1,
+    },
   ] satisfies MaterialRow[];
 
   beforeEach(() => {
@@ -59,21 +71,30 @@ describe(buildItems, () => {
       materials.map(({ itemId }) => ({ ...materialRows[0], id: itemId, nameTextMapHash: itemId })),
     );
     vi.mocked(readFile).mockResolvedValue(JSON.stringify([...materialRows, ...dropItemRows]));
-    vi.mocked(readPublishedGameData).mockImplementation((key) =>
-      Promise.resolve(
-        key === "offerings/frostbearingTree"
-          ? [
-              { itemCount: 0, itemId: TREE_ITEM_ID, level: 1, rewards: [{ itemCount: 1, itemId: ADVENTURE_EXP_ID }] },
-              {
-                itemCount: 10,
-                itemId: TREE_ITEM_ID,
-                level: 2,
-                rewards: [{ itemCount: 5, itemId: TREE_REWARD_ITEM_ID }],
-              },
-            ]
-          : [],
-      ),
-    );
+    vi.mocked(readPublishedGameData).mockImplementation((key) => {
+      if (key === "offerings/frostbearingTree")
+        return Promise.resolve([
+          { itemCount: 0, itemId: TREE_ITEM_ID, level: 1, rewards: [{ itemCount: 1, itemId: ADVENTURE_EXP_ID }] },
+          { itemCount: 10, itemId: TREE_ITEM_ID, level: 2, rewards: [{ itemCount: 5, itemId: TREE_REWARD_ITEM_ID }] },
+        ]);
+      if (key === "reputation/mondstadt")
+        return Promise.resolve({
+          bounties: [],
+          explores: [],
+          levels: [
+            {
+              functionIds: [],
+              goodsIds: [],
+              level: 8,
+              nextLevelExp: 0,
+              requestGroupId: 1,
+              reward: { exp: 0, items: [{ count: 1, id: REPUTATION_REWARD_ITEM_ID }] },
+            },
+          ],
+          requests: [],
+        });
+      return Promise.resolve([]);
+    });
   });
 
   test("publishes every item the Frostbearing Tree takes or pays, less the wallet's", async () => {
@@ -85,5 +106,15 @@ describe(buildItems, () => {
 
     expect(ids.map(({ id }) => id)).toStrictEqual(expect.arrayContaining([TREE_ITEM_ID, TREE_REWARD_ITEM_ID]));
     expect(ids.map(({ id }) => id)).not.toContain(ADVENTURE_EXP_ID);
+  });
+
+  test("publishes every item a Reputation level pays", async () => {
+    expect.hasAssertions();
+
+    const built = await buildItems();
+
+    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(ids.map(({ id }) => id)).toContain(REPUTATION_REWARD_ITEM_ID);
   });
 });
