@@ -105,7 +105,8 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
     },
   });
 
-  const checkIfInPreview = (event: Event) => {
+  // A view's handler is typed by what it calls, as Backbone hands it its own wrapped event rather than the DOM one
+  const checkIfInPreview = (event: Pick<Event, "preventDefault">) => {
     if (!editor.Commands.isActive("preview")) event.preventDefault();
   };
 
@@ -135,7 +136,9 @@ export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options)
     view: {
       events: () => ({
         // The submit of the form might redirect the user from the editor, so the default is always prevented
-        submit: (event: Event) => event.preventDefault(),
+        submit: (event: Pick<Event, "preventDefault">) => {
+          event.preventDefault();
+        },
       }),
     },
   });
