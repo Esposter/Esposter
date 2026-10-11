@@ -82,6 +82,8 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
   - Does a body on ground too steep to stand on slide down it at about 4 metres a second?
   - Does a body treading still water spend stamina a stroke at a time, as a swimming one does?
 
+- **Are Nahida's plunges' hits at the frames and with the poise of Bennett's?** Her gcsim folder has no plunge file, so her collision, low and high plunge take Bennett's timings and poise (36 and 38 frames for the low and high hits, 100 and 150 poise) with her own multipliers, as `nahidaKit.ts` writes them: yes if her plunge lands the same, no if her animation shows otherwise.
+
 ## References sought
 
 Clips and stills a value needs, which agents find in published material in the order [parity](/docs/genshin/parity) sets out (Search before recording); the user records none of them. A found one is ticked with its source and the file it was saved as under `captures`, which the work reading it takes in place of the line's own name. Until then its value ships as a provisional estimate and the queue item reading it sits under Waiting; a line searched without a find keeps the date and the queries tried. A found clip is checked against its line's settings (the English PC client at 1080p and 60 frames a second unless it says otherwise), and a near one is taken with its difference noted.
