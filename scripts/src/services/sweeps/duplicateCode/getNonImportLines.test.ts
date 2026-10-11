@@ -25,4 +25,10 @@ describe(getNonImportLines, () => {
 
     expect(getNonImportLines(`import a from "a.json" with { type: "json" };\nb`)).toStrictEqual(new Set([2]));
   });
+
+  test("closes an import declaration whose import attributes span several lines", () => {
+    expect.hasAssertions();
+
+    expect(getNonImportLines(`import a from "a.json" with {\n  type: "json",\n};\nb`)).toStrictEqual(new Set([4]));
+  });
 });
