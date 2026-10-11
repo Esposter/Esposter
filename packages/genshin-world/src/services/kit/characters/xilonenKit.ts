@@ -1,5 +1,5 @@
-import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";

@@ -159,10 +159,10 @@ describe(createNilouKit, () => {
     const illusion = takeOne(sword.slice(2));
 
     expect({
+      firstStrike: getBonus(takeOne(sword.slice(0, 1)), 1),
       illusion: getBonus(illusion, 1),
       illusionAtConstellation0: getBonus(illusion, 0),
-      firstStrike: getBonus(takeOne(sword.slice(0, 1)), 1),
-    }).toStrictEqual({ illusion: 0.65, illusionAtConstellation0: 0, firstStrike: 0 });
+    }).toStrictEqual({ firstStrike: 0, illusion: 0.65, illusionAtConstellation0: 0 });
   });
 
   test("constellation 6 gives CRIT Rate and CRIT DMG for each 1,000 Max HP, capped at 30% and 60%", () => {

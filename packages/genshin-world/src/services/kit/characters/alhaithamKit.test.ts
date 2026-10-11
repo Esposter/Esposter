@@ -105,10 +105,10 @@ describe(createAlhaithamKit, () => {
     tickField(kitEffectState, 15, combatant);
 
     expect({
-      before,
       after: readMirrors(kitEffectState),
+      before,
       infusions: kitEffectState.effects.filter((effect) => effect.kind === "infusion").map(({ element }) => element),
-    }).toStrictEqual({ before: 0, after: 2, infusions: ["Grass"] });
+    }).toStrictEqual({ after: 2, before: 0, infusions: ["Grass"] });
   });
 
   test("the hold is taken from half a second, and it strikes at 28 frames", () => {

@@ -2,16 +2,16 @@ import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { PaletteColour } from "#src/models/genshinAssets/palette/PaletteColour";
 import type { PaletteRegion } from "#src/models/genshinAssets/palette/PaletteRegion";
 
-import { GameDataset } from "genshin-world";
-import { readdir } from "node:fs/promises";
-import { join } from "node:path";
-import { PaletteFamilyMap } from "#src/services/genshinAssets/palette/PaletteFamilyMap";
 import { computeDominantColour } from "#src/services/genshinAssets/palette/computeDominantColour";
 import { matchFamilyTextures } from "#src/services/genshinAssets/palette/matchFamilyTextures";
+import { PaletteFamilyMap } from "#src/services/genshinAssets/palette/PaletteFamilyMap";
 import { readFamilyTexels } from "#src/services/genshinAssets/palette/readFamilyTexels";
 import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { BYTE } from "#src/services/shared/constants";
 import { toSrgb } from "#src/services/shared/toSrgb";
+import { GameDataset } from "genshin-world";
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
 
 // Each kit field's colour sampled from the diffuse textures of the families that feed it, the region's palette as one record
 // Under its own key. Each colour is printed with its families, texel count and spread, the evidence it is kept on

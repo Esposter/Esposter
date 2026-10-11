@@ -1,5 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createClorindeKit, CLORINDE_CHARACTER_ID } from "#src/services/kit/characters/clorindeKit";
+import { CLORINDE_CHARACTER_ID, createClorindeKit } from "#src/services/kit/characters/clorindeKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 

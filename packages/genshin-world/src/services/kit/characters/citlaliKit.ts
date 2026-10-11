@@ -4,8 +4,8 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Citlali's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged

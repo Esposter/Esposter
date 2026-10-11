@@ -7,11 +7,11 @@ import { ENEMY_AGGRO_RANGE } from "#src/services/enemy/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

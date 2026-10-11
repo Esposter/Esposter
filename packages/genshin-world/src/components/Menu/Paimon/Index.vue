@@ -95,7 +95,13 @@ onBeforeUnmount(() => {
   >
     <div class="menu" :inert="isWorldLevelDialogOpen">
       <div class="side-bar" />
-      <button ref="backButton" class="back" :aria-label="gameText[GameTextKey.Back]" type="button" @click="closeMenu" />
+      <button
+        ref="backButton"
+        class="back"
+        :aria-label="gameText[GameTextKey.Back]"
+        type="button"
+        @click="closeMenu()"
+      />
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
       <template v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR" :key="screenKind">
         <button

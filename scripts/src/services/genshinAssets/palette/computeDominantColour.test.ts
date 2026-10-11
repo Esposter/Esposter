@@ -1,7 +1,6 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { computeDominantColour } from "#src/services/genshinAssets/palette/computeDominantColour";
-
 import { describe, expect, test } from "vitest";
 
 describe(computeDominantColour, () => {

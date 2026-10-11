@@ -3,13 +3,13 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);

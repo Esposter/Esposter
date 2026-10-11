@@ -177,8 +177,8 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const paramitaChargedAttack: KitAction = {
     hits: [
       {
-        hitArea: CHARGED_HIT_AREA,
         enemyStatus: createBloodBlossomStatus,
+        hitArea: CHARGED_HIT_AREA,
         hitmarkSeconds: PARAMITA_CHARGED_HITMARK_FRAMES / 60,
         poiseDamage: NO_POISE_DAMAGE,
         talentMultiplier: attackTalentMultiplier(7),

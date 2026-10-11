@@ -358,7 +358,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       targetingArea: STRIKE_TARGETING_AREA,
     };
   };
-  const kesagiris = Array.from({ length: SUPERSTRENGTH_MAX_STACKS }, (_, index) => createKesagiri(index + 1));
+  const kesagiris = Array.from({ length: SUPERSTRENGTH_MAX_STACKS }, (_value, index) => createKesagiri(index + 1));
   // Itto's stance while he holds stacks, whose charged attack is the Arataki Kesagiri for them at no stamina, held
   // Until a charged attack starts it
   const addKesagiriStance = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>

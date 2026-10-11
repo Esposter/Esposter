@@ -6,12 +6,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { CHARLOTTE_CHARACTER_ID, createCharlotteKit } from "#src/services/kit/characters/charlotteKit";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { CHARLOTTE_CHARACTER_ID, createCharlotteKit } from "#src/services/kit/characters/charlotteKit";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 

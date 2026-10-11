@@ -9,12 +9,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { FARUZAN_CHARACTER_ID, createFaruzanKit } from "#src/services/kit/characters/faruzanKit";
+import { createFaruzanKit, FARUZAN_CHARACTER_ID } from "#src/services/kit/characters/faruzanKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const FARUZAN_KIT = createFaruzanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FARUZAN_CHARACTER_ID]));
 

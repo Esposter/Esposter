@@ -5,9 +5,9 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Mavuika's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -26,8 +26,8 @@ const BURST_COOLDOWN_INDEX = 7;
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/mavuika/attack.go
 const NORMAL_ATTACK_FRAMES: readonly {
   cancelFrames: number;
-  hitmarkFrames: number[];
   hitArea: AttackArea;
+  hitmarkFrames: number[];
   poiseDamage: number;
 }[] = [
   { cancelFrames: 40, hitArea: createCircleReach(0.5, 2.2), hitmarkFrames: [21], poiseDamage: 107 },

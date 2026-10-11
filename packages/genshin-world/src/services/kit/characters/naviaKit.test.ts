@@ -155,10 +155,10 @@ describe(createNaviaKit, () => {
     startAction(NAVIA_KIT.elementalSkill, kitEffectState);
 
     expect({
-      bladeFrames: Math.round(takeOne(blade.hits).hitmarkSeconds * 60),
       bladeCount,
       bladeCountAfterCooldown: countSummons(kitEffectState),
-    }).toStrictEqual({ bladeFrames: 75, bladeCount: 1, bladeCountAfterCooldown: 2 });
+      bladeFrames: Math.round(takeOne(blade.hits).hitmarkSeconds * 60),
+    }).toStrictEqual({ bladeCount: 1, bladeCountAfterCooldown: 2, bladeFrames: 75 });
   });
 
   test("constellation 4 cuts geo RES by 20% for eight seconds on what a burst hits, and nothing before it", () => {

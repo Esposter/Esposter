@@ -171,12 +171,12 @@ const C4_STATUS_ID = "cyno-c4";
 const C4_STACKS_MAX = 5;
 const C4_ENERGY = 3;
 const C4_REACTION_TYPES: ReadonlySet<ReactionType> = new Set([
+  ReactionType.Aggravate,
   ReactionType.ElectroCharged,
-  ReactionType.Superconduct,
+  ReactionType.Hyperbloom,
   ReactionType.Overloaded,
   ReactionType.Quicken,
-  ReactionType.Aggravate,
-  ReactionType.Hyperbloom,
+  ReactionType.Superconduct,
 ]);
 const C6_STATUS_ID = "cyno-c6";
 const C6_ICD_STATUS_ID = "cyno-c6-icd";

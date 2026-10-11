@@ -67,8 +67,8 @@ describe(createChioriKit, () => {
 
     expect(
       CHIORI_KIT.normalAttacks.map(({ hits, seconds }) => ({
-        hitmarks: hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
         frames: Math.round(seconds * 60),
+        hitmarks: hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
       })),
     ).toStrictEqual([
       { frames: 22, hitmarks: [17] },

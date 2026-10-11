@@ -100,11 +100,11 @@ const SEAL_PYRO_BONUS_ASCENSION = 1;
 const SEAL_PYRO_BONUS_PER_SEAL = 0.05;
 const SEAL_PYRO_BONUS_SECONDS = 6;
 
-const isSealStatus = (effect: KitEffect, characterId: number): boolean =>
+const checkIsSealStatus = (effect: KitEffect, characterId: number): boolean =>
   effect.kind === "status" && effect.characterId === characterId && SEAL_STATUS_IDS.includes(effect.id);
 
 const countSeals = (kitEffectState: KitEffectState, characterId: number): number =>
-  kitEffectState.effects.filter((effect) => isSealStatus(effect, characterId)).length;
+  kitEffectState.effects.filter((effect) => checkIsSealStatus(effect, characterId)).length;
 
 const getMaximumSeals = (combatant: Combatant): number =>
   combatant.constellationCount >= MAX_SEALS_CONSTELLATION ? MAX_SEALS_WITH_CONSTELLATION : MAX_SEALS;
@@ -120,7 +120,7 @@ const gainSeals = (kitEffectState: KitEffectState, combatant: Combatant, gained:
   setSeals(kitEffectState, combatant.characterId, count);
 };
 
-const isDoneDealActive = (kitEffectState: KitEffectState, characterId: number): boolean =>
+const checkIsDoneDealActive = (kitEffectState: KitEffectState, characterId: number): boolean =>
   kitEffectState.effects.some(
     (effect) => effect.kind === "status" && effect.characterId === characterId && effect.id === DONE_DEAL_STATUS_ID,
   );
@@ -197,7 +197,7 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             source: "yanfei-a1",
           });
         const hit: KitHit = {
-          ...(isDoneDealActive(kitEffectState, combatant.characterId) ? { damageBonus: burstMultiplier(1) } : {}),
+          ...(checkIsDoneDealActive(kitEffectState, combatant.characterId) ? { damageBonus: burstMultiplier(1) } : {}),
           element: Element.Pyro,
           gauge: 1,
           hitArea: createTargetedHitArea(
@@ -211,20 +211,13 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         };
         addKitEffect(kitEffectState, createKitSummon(body, combatant, [hit]));
         kitEffectState.effects = kitEffectState.effects.filter(
-          (effect) => !isSealStatus(effect, combatant.characterId),
+          (effect) => !checkIsSealStatus(effect, combatant.characterId),
         );
       },
       seconds: CHARGED_ATTACK_FRAMES / 60,
       targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: attackMultiplier(13),
-    getChargedAttackStaminaMultiplier: ({ combatant, kitEffectState }) => {
-      const reduction =
-        combatant.constellationCount >= CHARGED_ATTACK_STAMINA_CONSTELLATION
-          ? CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION
-          : CHARGED_ATTACK_STAMINA_REDUCTION;
-      return 1 - reduction * countSeals(kitEffectState, combatant.characterId);
-    },
     // Done Deal's hit gives the full seals, and its seconds add one each second while it stands, on a field the whole
     // Battlefield holds, as gcsim's tick runs wherever Yanfei is
     elementalBurst: {
@@ -252,6 +245,13 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: SKILL_TARGETING_AREA,
     },
     elementalSkill: { hits: [skillHit], seconds: SKILL_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
+    getChargedAttackStaminaMultiplier: ({ combatant, kitEffectState }) => {
+      const reduction =
+        combatant.constellationCount >= CHARGED_ATTACK_STAMINA_CONSTELLATION
+          ? CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION
+          : CHARGED_ATTACK_STAMINA_REDUCTION;
+      return 1 - reduction * countSeals(kitEffectState, combatant.characterId);
+    },
     highPlunge: {
       hits: [
         {

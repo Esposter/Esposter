@@ -2,7 +2,6 @@ import type { SceneBench } from "#parity/models/SceneBench";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
 import { countSceneKinds } from "#parity/countSceneKinds";
-
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A scene's cost over the frames it draws: the time between each frame and the last, and from its renderer's own count

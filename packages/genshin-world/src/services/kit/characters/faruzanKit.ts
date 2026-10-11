@@ -74,7 +74,7 @@ const WHIRLWIND_PULSE_RADIUS = 6;
 // Measured: gcsim (MIT, main) faruzan/burst.go, the three gadgets' places, offset from the body at the cast as gcsim's
 // CalcOffsetPoint places them: the top right, the top left, then the bottom middle, cycled through by each Pulse
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/faruzan/burst.go
-const WHIRLWIND_GADGET_OFFSETS: readonly { lateral: number; forward: number }[] = [
+const WHIRLWIND_GADGET_OFFSETS: readonly { forward: number; lateral: number }[] = [
   { forward: 10.5, lateral: 5.19 },
   { forward: 10.5, lateral: -5.19 },
   { forward: 1.5, lateral: 0 },
@@ -246,7 +246,7 @@ export const createFaruzanKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [burstHit],
-      onStart: ({ body, kitEffectState, party, combatant }) => {
+      onStart: ({ body, combatant, kitEffectState, party }) => {
         addKitEffect(kitEffectState, createDazzlingPolyhedron(body, combatant));
         addPrayerfulWindsGift(kitEffectState, party);
       },

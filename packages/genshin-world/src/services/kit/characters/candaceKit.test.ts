@@ -8,8 +8,8 @@ import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
@@ -139,10 +139,10 @@ describe(createCandaceKit, () => {
 
     expect({
       cooldownSeconds: hold?.cooldownSeconds,
+      hitmarkSeconds: takeOne(hold?.action.hits ?? []).hitmarkSeconds,
       minimumHeldSeconds: hold?.minimumHeldSeconds,
       shieldSeconds: shield?.secondsRemaining,
-      hitmarkSeconds: takeOne(hold?.action.hits ?? []).hitmarkSeconds,
-    }).toStrictEqual({ cooldownSeconds: 9, minimumHeldSeconds: 0.5, shieldSeconds: 91 / 60, hitmarkSeconds: 91 / 60 });
+    }).toStrictEqual({ cooldownSeconds: 9, hitmarkSeconds: 91 / 60, minimumHeldSeconds: 0.5, shieldSeconds: 91 / 60 });
   });
 
   test("the Prayer of the Crimson Crown stands 9 seconds from its 33-frame hitmark, and 3 seconds longer from Constellation 1", () => {
@@ -185,12 +185,12 @@ describe(createCandaceKit, () => {
     const wave = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect({
-      waves: countSummons(kitEffectState),
-      waveShare: takeOne(wave?.hits ?? []).additiveBaseDamageBonus?.(combatant),
       infusedCharacterIds: kitEffectState.effects
         .filter((effect): effect is KitInfusion => effect.kind === "infusion")
         .map(({ characterId }) => characterId),
-    }).toStrictEqual({ waves: 3, waveShare: MAX_HEALTH * 0.066104, infusedCharacterIds: [KUKI_CHARACTER_ID] });
+      waves: countSummons(kitEffectState),
+      waveShare: takeOne(wave?.hits ?? []).additiveBaseDamageBonus?.(combatant),
+    }).toStrictEqual({ infusedCharacterIds: [KUKI_CHARACTER_ID], waves: 3, waveShare: MAX_HEALTH * 0.066104 });
   });
 
   test("constellation 6 sets off a wave on a party member's elemental normal attack, once every 2.3 seconds", () => {

@@ -35,11 +35,11 @@ const EULA_BURST_GROUP_ID = 5139;
 // The fans and the box are priced round the body, as the other kits price their fans, their offsets left out
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/eula/attack.go
 const NORMAL_ATTACKS = [
-  { cancelFrames: 34, hitmarkFrames: [30], index: 0, poiseDamage: 101.2, hitArea: createFanReach(270, 2) },
-  { cancelFrames: 36, hitmarkFrames: [19], index: 1, poiseDamage: 105.8, hitArea: createFanReach(270, 2) },
-  { cancelFrames: 56, hitmarkFrames: [25, 42], index: 2, poiseDamage: 65.55, hitArea: createFanReach(360, 2) },
-  { cancelFrames: 44, hitmarkFrames: [17], index: 3, poiseDamage: 129.95, hitArea: createFanReach(270, 2) },
-  { cancelFrames: 105, hitmarkFrames: [29, 56], index: 4, poiseDamage: 68.21, hitArea: createBoxReach(0, 2, 3) },
+  { cancelFrames: 34, hitArea: createFanReach(270, 2), hitmarkFrames: [30], index: 0, poiseDamage: 101.2 },
+  { cancelFrames: 36, hitArea: createFanReach(270, 2), hitmarkFrames: [19], index: 1, poiseDamage: 105.8 },
+  { cancelFrames: 56, hitArea: createFanReach(360, 2), hitmarkFrames: [25, 42], index: 2, poiseDamage: 65.55 },
+  { cancelFrames: 44, hitArea: createFanReach(270, 2), hitmarkFrames: [17], index: 3, poiseDamage: 129.95 },
+  { cancelFrames: 105, hitArea: createBoxReach(0, 2, 3), hitmarkFrames: [29, 56], index: 4, poiseDamage: 68.21 },
 ];
 
 // Provisional: gcsim leaves Eula's charged attack not implemented, so its two hits' reach is the circles of radius 3 and
@@ -126,7 +126,7 @@ const LIGHTFALL_STACK_ICD_SECONDS = 0.1;
 const LIGHTFALL_STACK_ICD_ID = "eula-lightfall-stack-icd";
 const LIGHTFALL_MAX_STACKS = 30;
 const getLightfallStackId = (index: number): string => `eula-lightfall-stack-${index}`;
-const LIGHTFALL_STACK_IDS = Array.from({ length: LIGHTFALL_MAX_STACKS }, (_, index) => getLightfallStackId(index));
+const LIGHTFALL_STACK_IDS = Array.from({ length: LIGHTFALL_MAX_STACKS }, (_value, index) => getLightfallStackId(index));
 const LIGHTFALL_SUMMON_ID = "eula-lightfall";
 // Constellation 6 starts the Sword with this many stacks, with its extra stack from each of Eula's strikes a random roll that
 // This kit leaves out
