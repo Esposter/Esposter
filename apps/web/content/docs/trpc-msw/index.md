@@ -41,7 +41,7 @@ flowchart TD
 
 ## Upstream
 
-Every `msw-trpc` issue and pull request, with its verdict. The four verdicts and what each owes are the [triage](/docs/architecture/dependency-admission) on the dependency admission page; a defect's proof is the named test in `packages/trpc-msw/src/createTRPCMsw.test.ts` or the type test in `src/models/TRPCMswRouterRecord.test-d.ts`.
+Every `msw-trpc` issue and pull request, with its verdict, graded by the [triage](/docs/architecture/dependency-admission). The proofs are in `packages/trpc-msw/src/createTRPCMsw.test.ts` and the type test `src/models/TRPCMswRouterRecord.test-d.ts`.
 
 | Upstream                                                                                                                                                                                                                                | Verdict            | Proof                                                                                                                                                                                                                                                                                                          |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
