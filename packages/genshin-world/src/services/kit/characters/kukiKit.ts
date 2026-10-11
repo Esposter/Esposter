@@ -10,7 +10,6 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import {
   SKILL_TARGETING_AREA,
   STRIKE_TARGETING_AREA,
@@ -19,6 +18,7 @@ import {
 } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -103,6 +103,9 @@ const BURST_CONSTELLATION_HIT_RADIUS = 6;
 
 export const KUKI_CHARACTER_ID = 10_000_065;
 
+const getElementalMastery = ({ attributes }: Combatant): number =>
+  attributes.attributeTotalMap[Attribute.ElementalMastery];
+
 // Kuki's first kit, at talent level 1: four strikes, a charged attack of two slashes, a collision and two plunges, Grass
 // Ring of Sanctification with its ring and the ring's Ascension 4 bonuses, and Gyoei Narukami Kariyama Rite's seven hits.
 // Constellations 1 and 2 are built. Her Ascension 1 healing bonus, and Constellations 4 and 6, are not, as each reads her HP
@@ -113,9 +116,6 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     getTalentMultiplier(talentMultiplierMap, KUKI_SKILL_GROUP_ID, TALENT_START_LEVEL, index);
   const burstTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, KUKI_BURST_GROUP_ID, TALENT_START_LEVEL, index);
-  const getElementalMastery = ({ attributes }: Combatant): number =>
-    attributes.attributeTotalMap[Attribute.ElementalMastery];
-
   const normalAttacks: KitAction[] = NORMAL_ATTACKS.map(
     ({ cancelFrames, hitArea, hitmarkFrames }, index): KitAction => ({
       hits: [
@@ -202,7 +202,7 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         const radius =
           combatant.constellationCount >= BURST_CONSTELLATION ? BURST_CONSTELLATION_HIT_RADIUS : BURST_HIT_RADIUS;
         const hits: KitHit[] = Array.from({ length: BURST_HIT_COUNT }, (_hit, index) => ({
-          additiveBaseDamageBonus: (striker: Combatant) => burstTalentMultiplier(0) * striker.attributes.maxHealth,
+          additiveBaseDamageBonus: createMaxHealthScaledBonus(burstTalentMultiplier(0)),
           element: Element.Electro,
           gauge: 1,
           hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, radius),
