@@ -14,7 +14,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -53,9 +53,6 @@ const CONVERTED_HIGH_PLUNGE_HIT_AREA = createFanReach(360, 6);
 // Area does not hold, so it reaches the 5 metres an attack targets within, as Xingqiu's sword rain does
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xiao/skill.go
 const DASH_HIT_AREA = createFanReach(360, 5);
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) xiao/attack.go, each strike's hitmarks and the animation that ends it at 60 fps, with the
 // Attack group's index of each hit and its reach and converted reach. Each hit's poise is the wiki's Whirlwind Thrust

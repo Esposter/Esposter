@@ -11,6 +11,7 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -25,10 +26,6 @@ import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 const GANYU_ATTACK_GROUP_ID = 3731;
 const GANYU_SKILL_GROUP_ID = 3732;
 const GANYU_BURST_GROUP_ID = 3739;
-
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the other kits' are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) ganyu/attack.go, each strike's hitmark and the frame its action cancels at, its arrow
 // Travelling 10 frames to its target, which lands it at the hitmark plus the travel. Each arrow lands on the primary target

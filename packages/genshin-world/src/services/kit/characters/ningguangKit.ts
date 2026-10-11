@@ -13,7 +13,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -29,9 +29,6 @@ const NINGGUANG_ATTACK_GROUP_ID = 2731;
 const NINGGUANG_SKILL_GROUP_ID = 2732;
 const NINGGUANG_BURST_GROUP_ID = 2739;
 
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 // Measured: gcsim v2.47.2 (MIT) ningguang/attack.go, charge.go and burst.go. Each gem is a circle on the primary target, of
 // Radius 0.5 for a strike's gem, a Star Jade and a Starshatter gem, 3.5 for a strike's gem from Piercing Fragments and 1.5
 // For the charged attack's

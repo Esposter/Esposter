@@ -8,6 +8,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -52,9 +53,6 @@ const HOLD_MAXIMUM_HELD_SECONDS = 4;
 // Measured: gcsim v2.47.2 (MIT) lisa/burst.go, Lightning Rose's activation and each discharge reach a circle of radius 7
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/burst.go
 const LIGHTNING_ROSE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 7 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the Traveler's are
-const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) lisa/burst.go, the discharges begin at 119 frames and come every 30, for 15 seconds
 // From the first. The last of them lands at 989 frames, so the rose stands for 15 seconds past its first discharge
@@ -83,7 +81,7 @@ const createStrike = (
     },
   ],
   seconds,
-  targetingArea: SWORD_TARGETING_AREA,
+  targetingArea: STRIKE_TARGETING_AREA,
 });
 
 // The discharges of Lightning Rose: each Electro under an Elemental Burst internal cooldown, the wiki's 1U and 10 poise
@@ -144,7 +142,7 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       },
     ],
     seconds: 79 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, LISA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
   // Measured: gcsim v2.47.2 (MIT) lisa/burst.go, the activation at 56 frames and the cancel at 88. The activation deals no
@@ -199,7 +197,7 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       },
     ],
     seconds: 68 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   lowPlunge: {
     hits: [
@@ -213,7 +211,7 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       },
     ],
     seconds: 67 / 60,
-    targetingArea: SWORD_TARGETING_AREA,
+    targetingArea: STRIKE_TARGETING_AREA,
   },
   normalAttacks: [
     // Measured: gcsim v2.47.2 (MIT) lisa/attack.go, the strikes' hitmarks at 26, 18, 17 and 31 frames, and the cancels

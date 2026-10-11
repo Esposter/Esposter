@@ -16,7 +16,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
-import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -34,10 +34,6 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 const TARTAGLIA_ATTACK_GROUP_ID = 3331;
 const TARTAGLIA_SKILL_GROUP_ID = 3332;
 const TARTAGLIA_BURST_GROUP_ID = 3339;
-
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the other kits' are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) tartaglia/attack.go, each arrow's hitmark and animation, and the wiki's Cutting Torrent
 // Advanced properties, each arrow's poise. An arrow lands at the primary target through a box a metre long, so it is

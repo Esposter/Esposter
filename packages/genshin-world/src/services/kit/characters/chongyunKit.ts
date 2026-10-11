@@ -13,7 +13,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
+import { MELEE_WEAPON_TYPES, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -62,9 +62,6 @@ const FIELD_OFFSET_METRES = 1.5;
 // Provisional: gcsim v2.47.2 (MIT) chongyun/burst.go drops each blade as a circle of radius 3.5 on the primary target, which
 // An area does not hold, so a blade reaches the 5 metres an attack targets within, as Xingqiu's sword rain does
 const BURST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
-// Provisional: the reach the targeting reads for the strikes, the skill and the burst, as the other kits' are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) chongyun/attack.go, each strike's hitmark, animation and poise at 60 fps. Each strike is
 // Blunt, and each is physical

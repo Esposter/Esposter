@@ -10,6 +10,7 @@ import type { KitShield } from "#src/models/kit/KitShield";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -44,9 +45,6 @@ const SIGNATURE_MIX_FIELD_RADIUS = 7;
 // Provisional: gcsim v2.47.2 (MIT) diona/burst.go drops the initial hit on the primary target, which an area does not
 // Hold, so it reaches the 5 metres an attack targets within, as Xingqiu's sword rain does
 const SIGNATURE_MIX_INITIAL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
-// Provisional: the reach the targeting reads for the strikes and the skill and burst, as the other kits' are
-const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
-const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) diona/attack.go, each strike's hitmark and animation at 60 fps, where the animation is the
 // Frames gcsim cancels each strike at. Each strike is physical
