@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
 import type { TreeImpostor } from "#src/models/world/TreeImpostor";
 import type { TreeLandmark } from "#src/models/world/TreeLandmark";
 import type { TreeSpecies } from "#src/models/world/TreeSpecies";
-import type { LightUniforms, ToonNodeMaterial } from "genshin-engine";
+import type { LightUniforms, ToonNodeMaterial, TreeOptions } from "genshin-engine";
 import type { DataTexture } from "three";
 
+import { OAK_BARK_PART, OAK_LEAF_PART } from "#src/services/windrise/constants";
+import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
 import { createTreeImpostor } from "#src/services/world/createTreeImpostor";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
-import { TreeSpeciesOptionsMap } from "#src/services/world/TreeSpeciesOptionsMap";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import { createTreeGeometry, IMPOSTOR_CROSSFADE_SHARE, IMPOSTOR_SWITCH_HEIGHTS, setObjectFade } from "genshin-engine";
 import { Group, MathUtils, Mesh, Vector3 } from "three";
@@ -15,23 +16,39 @@ import { Group, MathUtils, Mesh, Vector3 } from "three";
 interface Props {
   // The bark and the leaves every tree draws in, each mesh masked by its own fade
   barkMaterial: ToonNodeMaterial;
+  // The world's ground at a point in its own coordinates, which the tree stands on
+  getGroundHeight: (x: number, z: number) => number;
   landmark: TreeLandmark;
   leafMaterial: ToonNodeMaterial;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
+  // The families' surfaces, the oak's painting the impostor the tree bakes
+  surfaces: WindriseSurfaces;
   // Each species' impostor, baked by the first tree of the species to draw and drawn by every tree of it
   treeImpostorMap: Map<TreeSpecies, TreeImpostor>;
+  // Each species as the tree kit's parameters, which the tree is grown by
+  treeSpeciesOptionsMap: Record<TreeSpecies, TreeOptions>;
 }
 
-const { barkMaterial, landmark, leafMaterial, lightUniforms, rampTexture, treeImpostorMap } = defineProps<Props>();
+const {
+  barkMaterial,
+  getGroundHeight,
+  landmark,
+  leafMaterial,
+  lightUniforms,
+  rampTexture,
+  surfaces,
+  treeImpostorMap,
+  treeSpeciesOptionsMap,
+} = defineProps<Props>();
 const { camera, renderer } = useTres();
 const { onBeforeRender } = useLoop();
 const { heightOffset, position, rotation, species } = landmark;
-const { branchGeometry, leafGeometry } = createTreeGeometry(TreeSpeciesOptionsMap[species]);
+const { branchGeometry, leafGeometry } = createTreeGeometry(treeSpeciesOptionsMap[species]);
 const branchMesh = new Mesh(branchGeometry, barkMaterial);
 const leafMesh = new Mesh(leafGeometry, leafMaterial);
 const treeGroup = new Group();
-treeGroup.position.set(position.x, getWorldHeight(position.x, position.z) + heightOffset, position.z);
+treeGroup.position.set(position.x, getGroundHeight(position.x, position.z) + heightOffset, position.z);
 treeGroup.rotation.y = rotation;
 for (const mesh of [branchMesh, leafMesh]) {
   mesh.castShadow = true;
@@ -51,7 +68,15 @@ onBeforeRender(() => {
   if (!impostorMesh) {
     const treeImpostor =
       treeImpostorMap.get(species) ??
-      createTreeImpostor(renderer, branchGeometry, leafGeometry, lightUniforms, rampTexture);
+      createTreeImpostor(
+        renderer,
+        branchGeometry,
+        leafGeometry,
+        getWindrisePartColor(surfaces.Oak, OAK_BARK_PART),
+        getWindrisePartColor(surfaces.Oak, OAK_LEAF_PART),
+        lightUniforms,
+        rampTexture,
+      );
     treeImpostorMap.set(species, treeImpostor);
     impostorHeight = treeImpostor.impostor.height;
     impostorMesh = new Mesh(treeImpostor.geometry, treeImpostor.material);

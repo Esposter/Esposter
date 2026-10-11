@@ -32,6 +32,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       baseSha: developSha,
       cwd: getCwd(),
       developSha,
+      fileCap: REVIEW_FILE_CAP,
       fixShas: [fixSha],
       queueSha: takeOne(queueShas, 1),
     });
@@ -50,7 +51,14 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     commitFiles(overflowPaths, "");
     claimExpress();
     const queueSha = commitFile(filePath, "");
-    const port = portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fixShas: [], queueSha });
+    const port = portWindow({
+      baseSha: developSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: REVIEW_FILE_CAP,
+      fixShas: [],
+      queueSha,
+    });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [queueSha] });
   });
@@ -64,7 +72,14 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     commitFile(filePath, "");
     const claimedSha = claimExpress();
     const queueSha = commitFile(filePath, " ");
-    const port = portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fixShas: [], queueSha });
+    const port = portWindow({
+      baseSha: developSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: REVIEW_FILE_CAP,
+      fixShas: [],
+      queueSha,
+    });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [claimedSha, queueSha] });
   });
@@ -78,22 +93,39 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     commitFile(filePath, "");
     const heldSha = deleteFile(filePath);
     const queueSha = commitFile(nestedPath, "");
-    const port = portWindow({ baseSha: rootSha, cwd: getCwd(), developSha, fixShas: [], queueSha });
+    const port = portWindow({
+      baseSha: rootSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: REVIEW_FILE_CAP,
+      fixShas: [],
+      queueSha,
+    });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha, queueShas: [] });
     expect(readSha("HEAD")).toBe(developSha);
   });
 
-  test("holds the first queue commit that overflows the cap and undoes its pick", () => {
+  // A window re-cut after the bot kept skipping it is cut to less than the bot's own cap, and the fixes still ride whole
+  // Over it: they are measured against the bot's cap, so the window is the fixes alone
+  test("holds at the cap it is given and undoes the pick, the fixes riding past it whole", () => {
     expect.hasAssertions();
 
     const developSha = readSha("HEAD");
-    const queueShas = [commitFile(filePath, "")];
-    const heldSha = commitFiles(overflowPaths, "");
-    const port = portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fixShas: [], queueSha: heldSha });
+    const fixSha = commitFiles([filePath, nestedPath], "");
+    switchTo(developSha);
+    const heldSha = commitFile(`${nestedPath}.ts`, "");
+    const port = portWindow({
+      baseSha: developSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: 1,
+      fixShas: [fixSha],
+      queueSha: heldSha,
+    });
 
-    expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha, queueShas });
-    expect(readSha("HEAD")).not.toBe(heldSha);
+    expect(port).toStrictEqual({ fileCount: 2, fixCount: 1, heldSha, queueShas: [] });
+    expect(runGit(["log", "--format=%s", `${developSha}..HEAD`], getCwd())).toBe(`${filePath} ${nestedPath}\n`);
   });
 
   // A queue rebased onto the fixes carries them as ancestors: measured against the tree the fixes built, it owes
@@ -104,7 +136,14 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = readSha("HEAD");
     const fixSha = commitFile(filePath, "");
     const queueSha = commitFile(nestedPath, "");
-    const port = portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fixShas: [fixSha], queueSha });
+    const port = portWindow({
+      baseSha: developSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: REVIEW_FILE_CAP,
+      fixShas: [fixSha],
+      queueSha,
+    });
 
     expect(port).toStrictEqual({ fileCount: 2, fixCount: 1, heldSha: undefined, queueShas: [queueSha] });
   });
@@ -116,7 +155,14 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const fixShas = [commitFile(filePath, ""), commitFile(filePath, " ")];
     switchTo(developSha);
     const queueSha = commitFile(filePath, " ");
-    const port = portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fixShas, queueSha });
+    const port = portWindow({
+      baseSha: developSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: REVIEW_FILE_CAP,
+      fixShas,
+      queueSha,
+    });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 2, heldSha: undefined, queueShas: [] });
   });
@@ -128,7 +174,14 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const fixSha = commitFiles(overflowPaths, "");
 
     expect(() =>
-      portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fixShas: [fixSha], queueSha: developSha }),
+      portWindow({
+        baseSha: developSha,
+        cwd: getCwd(),
+        developSha,
+        fileCap: REVIEW_FILE_CAP,
+        fixShas: [fixSha],
+        queueSha: developSha,
+      }),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the fixes alone overflow the cap of 150 files from the window's base]`,
     );

@@ -1,8 +1,8 @@
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { CatalogueArea } from "#src/models/world/CatalogueArea";
 import type { Vector3 } from "three";
 
 import { AREA_WEATHER_CHANGE_SECONDS, REGION_RECHECK_DISTANCE } from "#src/services/constants";
-import { catalogue } from "#src/services/world/catalogue";
 import { takeOne } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { computeOutlineDistance, WeatherKind } from "genshin-engine";
@@ -11,7 +11,7 @@ import { computeOutlineDistance, WeatherKind } from "genshin-engine";
 // Player stands, and clear where no drawn outline holds the camera. It is rechecked only once the camera has moved a
 // Stretch, as region data's reach is. An area with several weathers turns to the next of them in turn each
 // AREA_WEATHER_CHANGE_SECONDS, and a special climate with one holds it
-export const useAreaWeather = (origin: Vector3) => {
+export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
   const areaWeather = shallowRef(WeatherKind.Clear);

@@ -9,7 +9,6 @@ import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcom
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { replayOwed } from "#src/services/coderabbit/collect/replayOwed";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The fixes branch follows develop as the queue follows the fixes: a drain builds on the develop it read, and
 // Develop can move before the fixes port — the return stroke, a fold, a repair, a revert — so the fixes are
@@ -35,14 +34,9 @@ export const syncFixes = async ({
     targetSha: developSha,
     viewerLogin,
   });
-  // Nothing may port ahead of fixes still owed, so a conflict past its cap holds everything behind it for a person
-  if (replayOutcome === ReplayOutcome.Exhausted)
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
-      `${REVIEW_FIXES_BRANCH} conflicts with ${DEVELOP_BRANCH} past the attempt cap, so a person rebases it (the conflicting fix's commit comments say which)`,
-    );
-  else if (replayOutcome === ReplayOutcome.Aborted)
+  // A fix whose conflict failed past the cap is parked by the replay rather than holding every fix behind it, and its
+  // Finding reads as open again, since no owed commit answers it any more
+  if (replayOutcome === ReplayOutcome.Aborted)
     return {
       outcome: {
         kind: CycleOutcomeKind.Idle,

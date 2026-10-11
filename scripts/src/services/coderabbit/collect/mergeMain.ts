@@ -57,8 +57,7 @@ export const mergeMain = async ({ collectorSha, cwd, viewerLogin }: MergeMainInp
   if (attempts >= SESSION_ATTEMPT_CAP) return abort(`its conflicts failed the resolver ${attempts} times`);
 
   const prompt = getFoldPrompt({ conflictedPaths, mainSha });
-  const { isEnded, isStarted } = await runSession({ cwd, model: SessionRoleModelMap[SessionRole.Fold], prompt });
-  if (!isStarted) return abort("the resolver could not start, and no attempt is counted");
+  const { isEnded } = await runSession({ cwd, model: SessionRoleModelMap[SessionRole.Fold], prompt });
   // What proves the fold is the merge committed over a clean tree with `main` now an ancestor; the session's
   // Word proves nothing. Anything else counts the attempt on `main`'s head and ends the run (`AttemptFailedError`).
   if (!isEnded || checkIsSequencing(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsAncestor(main, "HEAD", cwd)) {

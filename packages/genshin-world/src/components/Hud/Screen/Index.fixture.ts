@@ -5,6 +5,7 @@ import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { createParty } from "#src/services/party/createParty";
+import { readCatalogue } from "#src/services/world/readCatalogue";
 import { createInput, STAMINA_MAX } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
@@ -27,6 +28,7 @@ const ALBEDO_QUEST_ID = "albedo";
 export const isBackdrop = true;
 export const props = {
   camera: { x: 0, yaw: 0, z: 0 },
+  catalogue: await readCatalogue(GAME_DATA_LOCAL_BASE_URL),
   characterDataMap,
   frame: { pivotX: 0.5, pivotY: 0.5, seconds: 0, stamina: STAMINA_MAX },
   gameText: ENGLISH_GAME_TEXT,

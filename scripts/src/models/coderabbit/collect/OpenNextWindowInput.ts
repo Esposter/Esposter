@@ -7,9 +7,9 @@ export interface OpenNextWindowInput {
   drainedPullRequests: number[];
   // The express lane's claimed commits still waiting on `main`, which an idle cut says rather than reads as synced
   expressHeldCount: number;
+  // The file cap the window is cut to (`PortInput`)
+  fileCap: number;
   isDryRun: boolean;
-  // Whether no window has opened yet this run: the first cut is the one that owes a hold its notice and its failure
-  isFirstWindow: boolean;
   // The open window pull requests, bottom up
   openPullRequests: WindowPullRequest[];
   viewerLogin: string;

@@ -7,18 +7,19 @@ import type { ComputedRef, Ref } from "vue";
 
 import { mergeTalks } from "#src/services/dialogue/mergeTalks";
 import { getStandingTalks } from "#src/services/resident/getStandingTalks";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { InteractionKind } from "genshin-interface";
 
 // The talks a resident begins and the talk the world runs, held by id: the quests in progress hold theirs, and a resident
 // Whose duel names a game holds the standing talk written for it. A quest's talk wins a shared id
 export const useWorldTalks = ({
+  getGroundHeight,
   getResidents,
   getResidentSpot,
   questsInProgress,
   questTextMap,
   standingTalkMap,
 }: {
+  getGroundHeight: (x: number, z: number) => number;
   getResidents: () => Resident[];
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
   questsInProgress: ComputedRef<Quest[]>;
@@ -49,7 +50,7 @@ export const useWorldTalks = ({
           id: talkId,
           kind: InteractionKind.Talk,
           name: questTextMap.value[nameTextId] ?? "",
-          position: { x, y: getWorldHeight(x, z), z },
+          position: { x, y: getGroundHeight(x, z), z },
         },
       ];
     }),

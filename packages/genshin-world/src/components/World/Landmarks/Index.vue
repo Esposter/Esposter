@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { WindriseStatue } from "#src/models/windrise/WindriseStatue";
+import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { TreeImpostor } from "#src/models/world/TreeImpostor";
 import type { TreeSpecies } from "#src/models/world/TreeSpecies";
-import type { LandmarkCollider, LightUniforms, WindUniforms } from "genshin-engine";
+import type { LandmarkCollider, LightUniforms, TreeOptions, WindUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import WorldLandmarkBuilding from "#src/components/World/Landmark/Building/Index.vue";
@@ -10,11 +12,15 @@ import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
-import { BARK_COLOR, BARK_DETAIL, LEAF_COLOR, LEAF_DETAIL } from "#src/services/windrise/constants";
+import { OAK_BARK_PART, OAK_LEAF_PART } from "#src/services/windrise/constants";
+import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
+import { getWindrisePartDetail } from "#src/services/windrise/getWindrisePartDetail";
 import { createDitherFadeNode, createLeafMaterial, createObjectFadeNode, createToonMaterial } from "genshin-engine";
 import { Group } from "three";
 
 interface Props {
+  // The world's ground at a point in its own coordinates, which each landmark stands on
+  getGroundHeight: (x: number, z: number) => number;
   // The kinds a witness render draws in place of ours, which stay mounted, unseen
   hiddenKinds?: LandmarkKind[];
   // The witness family each kind's landmarks stand for, marked on their groups so a witness render draws ours of it
@@ -24,16 +30,26 @@ interface Props {
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
   regionDataMap: ReadonlyMap<string, RegionData>;
+  // The statue every Statue of The Seven is drawn as
+  statue: WindriseStatue;
+  // The families' surfaces, the oak's painting the trees and the statue's the statues
+  surfaces: WindriseSurfaces;
+  // Each species as the tree kit's parameters, which a tree is grown by
+  treeSpeciesOptionsMap: Record<TreeSpecies, TreeOptions>;
   windUniforms: WindUniforms;
 }
 
 const {
+  getGroundHeight,
   hiddenKinds = [],
   kindFamilyMap = {},
   landmarkCollider,
   lightUniforms,
   rampTexture,
   regionDataMap,
+  statue,
+  surfaces,
+  treeSpeciesOptionsMap,
   windUniforms,
 } = defineProps<Props>();
 // Every landmark of every region in reach, built by its kind's kit, so a region's landmarks appear as its data
@@ -47,10 +63,20 @@ const landmarksGroup = new Group();
 // From the rest: a building's or a statue's part its surface, a tree's mesh how far its impostor has faded in over it
 const partMaterial = createToonMaterial({ isObjectSurface: true, lightUniforms, rampTexture });
 const treeMeshMask = createDitherFadeNode(createObjectFadeNode()).not();
-const barkMaterial = createToonMaterial({ color: BARK_COLOR, detail: BARK_DETAIL, lightUniforms, rampTexture });
+const barkMaterial = createToonMaterial({
+  color: getWindrisePartColor(surfaces.Oak, OAK_BARK_PART),
+  detail: getWindrisePartDetail(surfaces.Oak, OAK_BARK_PART),
+  lightUniforms,
+  rampTexture,
+});
 barkMaterial.maskNode = treeMeshMask;
 const leafMaterial = createLeafMaterial(
-  { color: LEAF_COLOR, detail: LEAF_DETAIL, lightUniforms, rampTexture },
+  {
+    color: getWindrisePartColor(surfaces.Oak, OAK_LEAF_PART),
+    detail: getWindrisePartDetail(surfaces.Oak, OAK_LEAF_PART),
+    lightUniforms,
+    rampTexture,
+  },
   windUniforms,
 );
 leafMaterial.maskNode = treeMeshMask;
@@ -86,14 +112,29 @@ onUnmounted(() => {
       <WorldLandmarkTree
         v-if="landmark.kind === LandmarkKind.Tree"
         :bark-material
+        :get-ground-height
         :landmark
         :leaf-material
         :light-uniforms
         :ramp-texture
+        :surfaces
         :tree-impostor-map
+        :tree-species-options-map
       />
-      <WorldLandmarkStatue v-else-if="landmark.kind === LandmarkKind.StatueOfTheSeven" :landmark :part-material />
-      <WorldLandmarkBuilding v-else-if="landmark.kind === LandmarkKind.Building" :landmark :part-material />
+      <WorldLandmarkStatue
+        v-else-if="landmark.kind === LandmarkKind.StatueOfTheSeven"
+        :get-ground-height
+        :landmark
+        :part-material
+        :statue
+        :surfaces
+      />
+      <WorldLandmarkBuilding
+        v-else-if="landmark.kind === LandmarkKind.Building"
+        :get-ground-height
+        :landmark
+        :part-material
+      />
     </TresGroup>
   </primitive>
 </template>

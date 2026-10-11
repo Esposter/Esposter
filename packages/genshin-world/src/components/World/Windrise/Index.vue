@@ -7,6 +7,10 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
+import type { WindriseData } from "#src/models/windrise/WindriseData";
+import type { Catalogue } from "#src/models/world/Catalogue";
+import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
@@ -31,9 +35,6 @@ import { useRegionData } from "#src/composables/useRegionData";
 import { useResidentSpots } from "#src/composables/useResidentSpots";
 import { useSky } from "#src/composables/useSky";
 import { useSunShadow } from "#src/composables/useSunShadow";
-import water from "#src/data/windrise/water.json";
-import mondstadtWildlife from "#src/generated/wildlife/mondstadt.json";
-import { wildlifePlaceSchema } from "#src/models/wildlife/WildlifePlace";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
@@ -50,8 +51,6 @@ import {
   GRASS_BLADE_WIDTH,
   MIDDLE_GRASS_RING,
   NEAR_GRASS_RING,
-  PAVING_COLOR,
-  PAVING_DETAIL,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
   SUN_DISTANCE,
@@ -72,11 +71,11 @@ import {
   WINDRISE_RAMP_OPTIONS,
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
-  WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
 import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
+import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
+import { createTreeSpeciesOptionsMap } from "#src/services/world/createTreeSpeciesOptionsMap";
 import { useLoop } from "@tresjs/core";
 import { whenever } from "@vueuse/core";
 import {
@@ -96,9 +95,11 @@ import {
   QualityTierSettingsMap,
 } from "genshin-engine";
 import { HemisphereLight, Scene } from "three";
-import { z } from "zod";
 
 interface Props {
+  // The regions and their areas, whose outlines bring a region's data within reach and set the weather the camera
+  // Stands in
+  catalogue: Catalogue;
   // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
   // Among everything in the world
   characterBody?: Object3D;
@@ -117,6 +118,8 @@ interface Props {
   enemyMap: Map<string, Enemy>;
   // The game's enemy tables, which the camps spawn their enemies from
   enemyTables: EnemyTables;
+  // The world's ground at a point in its own coordinates, which everything placed in the world stands on
+  getGroundHeight: (x: number, z: number) => number;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
@@ -136,6 +139,11 @@ interface Props {
   questTargetId: string;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
+  // The Mondstadt animals the official map marks, each stood at its place
+  wildlifePlaces: WildlifePlace[];
+  // Windrise's records: its ground and the regions' grounds, its surfaces, its oak, plants, paving and statue, and its
+  // Water
+  windriseData: WindriseData;
   // The World Level the camps spawn at, from the player's Adventure EXP and quests
   worldLevel: number;
   // The game's world level table, which raises the camps' levels under a World Level
@@ -143,6 +151,7 @@ interface Props {
 }
 
 const {
+  catalogue,
   characterBody,
   characterId,
   characterLocomotion,
@@ -151,6 +160,7 @@ const {
   elementalSight,
   enemyMap,
   enemyTables,
+  getGroundHeight,
   heldMinutes,
   interactables,
   isHeld,
@@ -161,6 +171,8 @@ const {
   qualityTier,
   questTargetId,
   regionDataBaseUrl,
+  wildlifePlaces,
+  windriseData,
   worldLevel,
   worldLevelRows,
 } = defineProps<Props>();
@@ -182,9 +194,27 @@ const hiddenLandmarkKinds = computed(() => [
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
+const { baseGround, groundLayers, oak, paving, plants, regionGrounds, statue, surfaces, water } = windriseData;
+// The ground's quadtree, which the terrain streams and the grass reads, and the records each terrain worker computes
+// Its tiles over
+const terrainOptions = createWindriseTerrainOptions(baseGround);
+const terrainWorkerGround: TerrainWorkerGround = {
+  baseGround,
+  groundLayers,
+  regionGrounds,
+  surfaces,
+  waterLevel: water.level,
+};
+// The trees the landmarks grow and the plants' impostor is baked from
+const treeSpeciesOptionsMap = createTreeSpeciesOptionsMap(oak);
 // The paving stones round the statue, cut from the stone the statue is made of
-const pavingGeometry = createWindrisePavingGeometry();
-const pavingMaterial = createToonMaterial({ color: PAVING_COLOR, detail: PAVING_DETAIL, lightUniforms, rampTexture });
+const pavingGeometry = createWindrisePavingGeometry(paving);
+const pavingMaterial = createToonMaterial({
+  color: surfaces.Paving.color,
+  detail: surfaces.Paving.detail,
+  lightUniforms,
+  rampTexture,
+});
 
 const windUniforms = createWindUniforms();
 windUniforms.direction.value.copy(WIND_DIRECTION);
@@ -198,13 +228,11 @@ const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar
 // Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
 const hemisphere = new HemisphereLight();
 const worldOffset = useFloatingOrigin(origin);
-const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl);
+const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl, catalogue);
 const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
-// The Mondstadt animals the official map marks, read from their generated slice and checked as the world's own data
-const wildlifePlaces = z.array(wildlifePlaceSchema).parse(mondstadtWildlife);
 // The sight's mask: the drops, the residents and the enemies, drawn in the colours the sight lights them, which the post
 // Chain reads where its reach is. Its spread and strength are read off the screen's sight each frame, and none is drawn
 // While no screen gives one. Its stand-ins are placed in the world's own coordinates, so the scene is offset by the floating
@@ -263,7 +291,7 @@ watch(
   },
 );
 // Where the residents stand at the clock's minute, which the quest's target and the world's prompts read
-const { residentSpots } = useResidentSpots(regionDataMap, gameClock, origin);
+const { residentSpots } = useResidentSpots(regionDataMap, gameClock, origin, getGroundHeight);
 const questTargetPosition = computed(() =>
   questTargetId ? findQuestTargetPosition(regionDataMap, residentSpots.value, questTargetId) : undefined,
 );
@@ -277,7 +305,7 @@ const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 // Splashes stand on
 const groundCapture = createGroundCapture(GRASS_CAPTURE_SIZE, GRASS_CAPTURE_RESOLUTION);
 // The weather of the area the camera stands in, which Windrise's is clear in, as its reference screenshots are
-const areaWeather = useAreaWeather(origin);
+const areaWeather = useAreaWeather(origin, catalogue);
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 // No god rays and no bloom: neither is measured off a reference of Windrise, and drawn as they stand they veil the
 // Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
@@ -356,7 +384,8 @@ onUnmounted(() => {
           :origin
           :ramp-texture
           :shadow-reach="SHADOW_MAX_FAR"
-          :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+          :terrain-options
+          :terrain-worker-ground
           :water-uniforms
           :wind-uniforms
           @ready="isTerrainSettled = true"
@@ -372,7 +401,7 @@ onUnmounted(() => {
         :ramp-texture
         :rings="[NEAR_GRASS_RING, MIDDLE_GRASS_RING]"
         :terrain-draws
-        :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+        :terrain-options
         :water-uniforms
         :wind-uniforms
       />
@@ -389,7 +418,7 @@ onUnmounted(() => {
       :base-cloud-coverage
       :base-fog-density
       :fog-uniforms
-      :get-ground-height="getWorldHeight"
+      :get-ground-height
       :ground-capture
       :hemisphere
       :light-uniforms
@@ -401,12 +430,16 @@ onUnmounted(() => {
     />
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <WorldLandmarks
+      :get-ground-height
       :hidden-kinds="hiddenLandmarkKinds"
       :kind-family-map="LandmarkKindWindrisePartFamilyMap"
       :landmark-collider
       :light-uniforms
       :ramp-texture
       :region-data-map
+      :statue
+      :surfaces
+      :tree-species-options-map
       :wind-uniforms
     />
     <!-- The plants the game places round the oak, instanced once per prefab, drawn as the grass family alone where the witness does not -->
@@ -414,7 +447,7 @@ onUnmounted(() => {
       :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Grass)"
       :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Grass }"
     >
-      <WorldPlants :light-uniforms :ramp-texture />
+      <WorldPlants :get-ground-height :light-uniforms :plants :ramp-texture :surfaces :tree-species-options-map />
     </TresGroup>
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies
@@ -422,6 +455,7 @@ onUnmounted(() => {
       :kit-effect-state
       :enemy-map
       :enemy-tables
+      :get-ground-height
       :is-held
       :light-uniforms
       :ramp-texture
@@ -436,6 +470,7 @@ onUnmounted(() => {
     <!-- The animals run from the character where the references show none, so a witness render draws none of them -->
     <WorldWildlife
       v-if="!witness"
+      :get-ground-height
       :is-held
       :light-uniforms
       :places="wildlifePlaces"

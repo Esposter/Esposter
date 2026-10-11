@@ -1,17 +1,19 @@
 <script setup lang="ts">
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { GameText } from "genshin-text";
 
-import { catalogue } from "#src/services/world/catalogue";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
+  // The regions and their areas, which group the jumps and name each one
+  catalogue: Catalogue;
   // The game's words in the reader's language
   gameText: GameText;
   landmarks: Landmark[];
 }
 
-const { gameText, landmarks } = defineProps<Props>();
+const { catalogue, gameText, landmarks } = defineProps<Props>();
 const emit = defineEmits<{ jump: [landmark: Landmark] }>();
 // Every region with somewhere to jump to, in the catalogue's order, each landmark named by its area
 const regionJumps = computed(() =>
