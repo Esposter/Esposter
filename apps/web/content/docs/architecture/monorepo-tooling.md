@@ -1,6 +1,6 @@
 ---
 title: Monorepo tooling
-description: pnpm workspace orchestration, virrun as an opt-in sandbox, publishing, installs, and CI job shape under vp's traced task cache.
+description: pnpm workspace orchestration, virrun as an opt-in sandbox, publishing, installs, CI job shape under vp's traced task cache, and the lint over the workflows.
 ---
 
 # Monorepo Tooling
@@ -175,6 +175,14 @@ Declare job permissions explicitly and narrowly:
 - Release jobs: `contents: write`.
 - PR-commenting previews: minimum scopes for OIDC, repo reads, and PR comments.
 
+## Workflow lint
+
+`pnpm lint:workflows` runs actionlint over `.github/workflows` as a leaf of the root `lint` task, so the Lint check of every push reads each workflow GitHub would run, and the collector's repair verifies a red `main` against it as it does the other leaves. A workflow GitHub cannot parse fails its run at startup with no job at all, which for the [review collector](/docs/infra/review-collector/runner) means no cycle and no guard to wake the next: the push that carried the break is where it turns red.
+
+- **The maintained fork, from npm.** Upstream actionlint stopped releasing before GitHub's `concurrency.queue` key and the `ubuntu-26.04` runner, both in use here, so its verdict on this tree is red over valid files. The fork that carries both publishes to npm as `@kjanat/actionlint`, its binary one optional dependency per platform with provenance, so it is a catalog entry the lockfile pins and Renovate bumps like every other linter, the same build in CI as on a laptop, with no download step or action of its own.
+- **Its own checks only.** ShellCheck and pyflakes are off on the command line: actionlint runs each only when the host has it on `PATH`, so a script a runner image's ShellCheck rejects would pass on a laptop without one, and one check would give two verdicts.
+- **Cached with the rest of `lint`.** Under `vp run`, an edit to a workflow missed on a macOS host. The Linux build was not probed: it is a statically linked Go binary as tsgolint is, which the Linux probe in the [Vite+](/docs/architecture/vite-plus) standard saw, and knip in the same task reads the workflows as well.
+
 ## Local verification
 
 Locally a change runs only the tests of what it touched. The pre-commit hook only formats what is staged and re-stages it (`.githooks/pre-commit`), and runs no check: the typecheck, lint, format check and whole suite are CI's on every push. The post-commit hook resets the index entry a commit by pathspec leaves behind (`.githooks/post-commit`): such a commit runs the pre-commit hook against a temporary index, so the formatting reaches the commit while the shared index keeps each file's unformatted copy. A red that reaches `main` is the collector's [repair](/docs/infra/review-collector/repair).
@@ -202,3 +210,8 @@ git ls-remote --tags --sort='v:refname' https://github.com/<owner>/<repo>.git 'v
 Ignore broad aliases (`v6`) and pre-release tags. For annotated tags `git ls-remote` prints both `refs/tags/<version>` and `refs/tags/<version>^{}` — pin the `^{}` (dereferenced) SHA.
 
 Use normal zipped artifacts unless there is a measured need for direct artifact uploads. If artifact uploads use `archive: false`, use `actions/download-artifact` v8 or newer so direct/non-zipped artifacts are handled correctly.
+
+## Sources
+
+- [rhysd (the author) inactive. Any active forks?](https://github.com/rhysd/actionlint/issues/719), actionlint — upstream's last release and last commit both in the spring, and the fork named there as the one moving forward.
+- [Add support for `ubuntu-26.04`](https://github.com/rhysd/actionlint/issues/682) and [Actionlint does not know about `queue:` key for concurrency](https://github.com/rhysd/actionlint/issues/657), actionlint — both still open upstream.

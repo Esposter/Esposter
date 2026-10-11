@@ -25,7 +25,7 @@ Time and effort are the limit, so every resource the session holds works at once
 
 ## The usage reserve
 
-The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So each usage window keeps some of its end for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod reads the five-hour and the weekly window against their tiers, and puts the reserve into the session's system prompt naming the window and its reset time. The lines are `FIVE_HOUR_MAINTENANCE_PERCENTAGE`, `FIVE_HOUR_WIND_DOWN_PERCENTAGE` and `WEEKLY_WIND_DOWN_PERCENTAGE` in the mod's `constants.ts`: the five-hour window's maintenance tier starts at 90% used and its wind-down at 97%, and the weekly window has no maintenance tier and winds down at 90%. Where both windows have crossed a line, the stricter state wins, so wind-down beats maintenance.
+The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So each usage window keeps some of its end for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod reads both windows against their lines, and puts the reserve into the session's system prompt naming the window and its reset time. The mod's page, `apps/web/content/docs/infra/claude-interface/genshin-mods/resin.md`, owns the lines' names and values, so the tiers below name only what the session does at each one. Where both windows have crossed a line, the stricter state wins, so wind-down beats maintenance.
 
 ### Maintenance
 

@@ -1,4 +1,3 @@
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
@@ -26,7 +25,7 @@ await runMain(
 
       console.info(
         getFeedbackReport({
-          issueComments: readEntries<GitHubEntry>(`issues/${pullRequest}/comments`),
+          issueComments: readEntries(`issues/${pullRequest}/comments`),
           isThreadListed: true,
           review,
           threads: readUnresolvedThreads(pullRequest),

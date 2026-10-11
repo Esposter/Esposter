@@ -1,14 +1,26 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
+import { AuraType } from "#src/models/combat/AuraType";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Chongyun's proud skill groups, read at his talent level. The attack group holds the four strikes at 0 to 3, the charged
 // Attack's cyclic and final slashes at 4 and 5 and its stamina a second at 6, and the plunges' collision, low and high at
@@ -78,6 +90,56 @@ const BURST_ANIMATION_FRAMES = 79;
 const BURST_HITMARK_FRAMES = [50, 59, 67];
 const BURST_POISE_DAMAGE = 100;
 
+// Steady Breathing, from Ascension 1: a sword, claymore or polearm wielder the field infuses has its Normal ATK SPD
+// Raised by 8% for as long as the infusion holds, as gcsim v2.47.2 (MIT) chongyun/skill.go gives it with the infusion
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/skill.go
+const STEADY_BREATHING_ASCENSION = 1;
+const STEADY_BREATHING_NORMAL_ATTACK_SPEED_BONUS = 0.08;
+// Rimechaser Blade, from Ascension 4: as the field disappears a blade strikes the enemy nearest its centre within it, or
+// Its centre, for 100% of Layered Frost's damage, cutting the Cryo RES of the enemies it hits by 10% for 8 seconds.
+// Measured: gcsim v2.47.2 (MIT) chongyun/asc.go, the blade's circle of radius 3.5 striking 655 frames after the press,
+// And the wiki's 1U, blunt, with 100 poise and no internal cooldown
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/asc.go
+// https://genshin-impact.fandom.com/wiki/Rimechaser_Blade
+const RIMECHASER_BLADE_ASCENSION = 4;
+const RIMECHASER_BLADE_FRAMES = 655;
+const RIMECHASER_BLADE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3.5 });
+const RIMECHASER_BLADE_POISE_DAMAGE = 100;
+const RIMECHASER_BLADE_STATUS_ID = "chongyun-rimechaser-blade";
+const RIMECHASER_BLADE_CRYO_RESISTANCE_REDUCTION = 0.1;
+const RIMECHASER_BLADE_STATUS_SECONDS = 8;
+// Ice Unleashed, from one constellation: the fourth strike releases 3 ice blades, each 50% of Chongyun's ATK as Cryo,
+// Five frames apart. Measured: gcsim v2.47.2 (MIT) chongyun/attack.go, and the wiki's 1U and 36 poise with no internal
+// Cooldown. Provisional: gcsim's blades strike a circle of radius 1 that an area does not hold, so each reaches what the
+// Fourth strike reaches. https://genshin-impact.fandom.com/wiki/Ice_Unleashed
+const ICE_UNLEASHED_CONSTELLATION = 1;
+const ICE_UNLEASHED_BLADE_COUNT = 3;
+const ICE_UNLEASHED_INTERVAL_FRAMES = 5;
+const ICE_UNLEASHED_POISE_DAMAGE = 36;
+const ICE_UNLEASHED_TALENT_MULTIPLIER = 0.5;
+// Atmospheric Revolution, from two constellations: a skill or burst cast inside the field has its cooldown cut by 15%
+const ATMOSPHERIC_REVOLUTION_CONSTELLATION = 2;
+const ATMOSPHERIC_REVOLUTION_COOLDOWN_MULTIPLIER = 0.85;
+// Frozen Skies, from four constellations: Chongyun's hits on an enemy with Cryo on it while he is on the field give him
+// 1 energy, at most once every 2 seconds, as the game's text gives it where gcsim gives 2
+// https://genshin-impact.fandom.com/wiki/Frozen_Skies
+const FROZEN_SKIES_CONSTELLATION = 4;
+const FROZEN_SKIES_ENERGY = 1;
+const FROZEN_SKIES_COOLDOWN_STATUS_ID = "chongyun-frozen-skies-cooldown";
+const FROZEN_SKIES_COOLDOWN_SECONDS = 2;
+// Rally of Four Blades, from six constellations: Cloud-Parting Star deals 15% more DMG to an enemy with a lower share of
+// Its Max HP left than Chongyun, and calls a fourth blade at 77 frames, measured: gcsim v2.47.2 (MIT) chongyun/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/burst.go
+const RALLY_OF_FOUR_BLADES_CONSTELLATION = 6;
+const RALLY_OF_FOUR_BLADES_DAMAGE_BONUS = 0.15;
+const RALLY_OF_FOUR_BLADES_HITMARK_FRAMES = 77;
+
+const FROST_FIELD_ID = "chongyun-frost-field";
+
+// Whether an effect is Layered Frost's field
+const checkIsFrostField = (effect: KitEffect): effect is KitField =>
+  effect.kind === "field" && effect.id === FROST_FIELD_ID;
+
 // Provisional: gcsim has the charged attack's spinning and final slashes marked not yet implemented, so they land at half a
 // Second and a second, as Beidou's and Razor's do, and the charged attack ends at a second and a fifth. The wiki's
 // Advanced properties give the cyclic slash 60 poise and the final 120, both blunt
@@ -99,10 +161,10 @@ const HIGH_PLUNGE_POISE_DAMAGE = 200;
 const PLUNGE_COLLISION_POISE_DAMAGE = 35;
 
 // Chongyun's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Spirit Blade:
-// Chonghua's Layered Frost with its field that infuses the active character, and Spirit Blade: Cloud-Parting Star. Its
-// Multipliers are read from his proud skill groups. Rimechaser Blade (A4), Steady Breathing (A1), the swap infusion and
-// The constellations wait for events the kit does not see: a field's end, a swap and the attack speed of its characters.
-// The charged attack's stamina is drained a second for as long as it plays, as Beidou's is
+// Chonghua's Layered Frost with its field that infuses the active character, and the character a swap brings on while it
+// Stands, a press replacing the field standing, and Spirit Blade: Cloud-Parting Star. Rimechaser Blade, Ice Unleashed
+// And Frozen Skies answer the kit's events. Its multipliers are read from his proud skill groups. The charged attack's
+// Stamina is drained a second for as long as it plays, as Beidou's is
 export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, CHONGYUN_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -129,8 +191,9 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
     }),
   );
 
-  // Layered Frost's field infuses the active character with Cryo each second while it stands in the field, for the infusion's
-  // Seconds, and its hit lands at its hitmark with 2U of Cryo and 150 poise
+  // Layered Frost's field infuses the active character with Cryo each second while it stands in the field, a sword,
+  // Claymore or polearm wielder alone, for the infusion's seconds, and its hit lands at its hitmark with 2U of Cryo and
+  // 150 poise
   const infusionSeconds = skillTalentMultiplier(1);
   const skillHit: KitHit = {
     element: Element.Cryo,
@@ -140,7 +203,59 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
     poiseDamage: SKILL_HIT_POISE_DAMAGE,
     talentMultiplier: skillTalentMultiplier(0),
   };
-
+  const fieldSeconds = skillTalentMultiplier(3) + SKILL_HITMARK_FRAMES / 60 + FIELD_TICK_MARGIN_SECONDS;
+  const rimechaserBladeHit: KitHit = {
+    element: Element.Cryo,
+    enemyStatus: () => ({
+      damageTakenBonus: 0,
+      id: RIMECHASER_BLADE_STATUS_ID,
+      resistanceReduction: { [Element.Cryo]: RIMECHASER_BLADE_CRYO_RESISTANCE_REDUCTION },
+      secondsRemaining: RIMECHASER_BLADE_STATUS_SECONDS,
+    }),
+    gauge: 1,
+    hitArea: RIMECHASER_BLADE_HIT_AREA,
+    hitmarkSeconds: Math.max(1 / 60, RIMECHASER_BLADE_FRAMES / 60 - fieldSeconds),
+    isBlunt: true,
+    poiseDamage: RIMECHASER_BLADE_POISE_DAMAGE,
+    talentMultiplier: skillTalentMultiplier(0),
+  };
+  const iceUnleashedHits: KitHit[] = Array.from({ length: ICE_UNLEASHED_BLADE_COUNT }, (_blade, index) => ({
+    element: Element.Cryo,
+    gauge: 1,
+    hitArea: FOURTH_STRIKE_HIT_AREA,
+    hitmarkSeconds: (index * ICE_UNLEASHED_INTERVAL_FRAMES + 1) / 60,
+    poiseDamage: ICE_UNLEASHED_POISE_DAMAGE,
+    talentMultiplier: ICE_UNLEASHED_TALENT_MULTIPLIER,
+  }));
+  // Cloud-Parting Star's blades, each 1U of Cryo with no internal cooldown: three from the cast, and a fourth from six
+  // Constellations
+  const createBurstBlade = (hitmarkFrames: number): KitHit => ({
+    element: Element.Cryo,
+    gauge: 1,
+    hitArea: BURST_HIT_AREA,
+    hitmarkSeconds: hitmarkFrames / 60,
+    poiseDamage: BURST_POISE_DAMAGE,
+    talentMultiplier: burstTalentMultiplier(0),
+  });
+  const burstBladeHits = BURST_HITMARK_FRAMES.map((hitmarkFrames) => createBurstBlade(hitmarkFrames));
+  const rallyOfFourBladesHit = createBurstBlade(RALLY_OF_FOUR_BLADES_HITMARK_FRAMES);
+  // The field's infusion on a character, with Steady Breathing's Normal ATK SPD from Ascension 1
+  const infuse = (
+    kitEffectState: KitEffectState,
+    { ascension }: Combatant,
+    { characterId, weaponType }: Combatant,
+  ): void => {
+    if (weaponType === undefined || !MELEE_WEAPON_TYPES.has(weaponType)) return;
+    addKitEffect(kitEffectState, {
+      characterId,
+      element: Element.Cryo,
+      kind: "infusion",
+      ...(ascension >= STEADY_BREATHING_ASCENSION && {
+        normalAttackSpeedBonus: STEADY_BREATHING_NORMAL_ATTACK_SPEED_BONUS,
+      }),
+      secondsRemaining: infusionSeconds,
+    });
+  };
   return {
     burstCooldownSeconds: burstTalentMultiplier(1),
     burstEnergyCost: burstTalentMultiplier(2),
@@ -168,41 +283,37 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
       targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: 0,
-    // Cloud-Parting Star's three blades, each 1U of Cryo, from the cast, with no internal cooldown
     elementalBurst: {
-      hits: BURST_HITMARK_FRAMES.map((hitmarkFrames): KitHit => ({
-        element: Element.Cryo,
-        gauge: 1,
-        hitArea: BURST_HIT_AREA,
-        hitmarkSeconds: hitmarkFrames / 60,
-        poiseDamage: BURST_POISE_DAMAGE,
-        talentMultiplier: burstTalentMultiplier(0),
-      })),
+      hits: burstBladeHits,
+      onStart: ({ body, combatant, kitEffectState }) => {
+        if (combatant.constellationCount >= RALLY_OF_FOUR_BLADES_CONSTELLATION)
+          addKitEffect(kitEffectState, createKitSummon(body, combatant, [rallyOfFourBladesHit]));
+      },
       seconds: BURST_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
     elementalSkill: {
       hits: [skillHit],
       onStart: ({ body, combatant, kitEffectState }) => {
-        // The field is placed as the press's hit is, a metre and a half ahead of the body
-        const fieldCentre = {
-          x: body.position.x - Math.sin(body.facing) * FIELD_OFFSET_METRES,
-          z: body.position.z - Math.cos(body.facing) * FIELD_OFFSET_METRES,
-        };
+        // A press ends the field standing, which disappears on the next step, and places its own as the press's hit is, a
+        // Metre and a half ahead of the body
+        for (const effect of kitEffectState.effects) if (checkIsFrostField(effect)) effect.secondsRemaining = 0;
         addKitEffect(kitEffectState, {
-          centre: fieldCentre,
+          centre: {
+            x: body.position.x - Math.sin(body.facing) * FIELD_OFFSET_METRES,
+            z: body.position.z - Math.cos(body.facing) * FIELD_OFFSET_METRES,
+          },
           characterId: combatant.characterId,
+          ...(combatant.constellationCount >= ATMOSPHERIC_REVOLUTION_CONSTELLATION && {
+            cooldownMultiplier: ATMOSPHERIC_REVOLUTION_COOLDOWN_MULTIPLIER,
+          }),
+          id: FROST_FIELD_ID,
           kind: "field",
           nextTickSeconds: SKILL_HITMARK_FRAMES / 60,
           onTick: ({ activeCombatant, kitEffectState: tickEffectState }) =>
-            addKitEffect(tickEffectState, {
-              characterId: activeCombatant.characterId,
-              element: Element.Cryo,
-              kind: "infusion",
-              secondsRemaining: infusionSeconds,
-            }),
+            infuse(tickEffectState, combatant, activeCombatant),
           radius: FIELD_RADIUS,
-          secondsRemaining: skillTalentMultiplier(3) + SKILL_HITMARK_FRAMES / 60 + FIELD_TICK_MARGIN_SECONDS,
+          secondsRemaining: fieldSeconds,
           tickIndex: 0,
           tickIntervalSeconds: FIELD_TICK_SECONDS,
         });
@@ -210,6 +321,12 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
       seconds: SKILL_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
+    getStrikeDamageBonus: ({ combatant, hit }, enemy, party) =>
+      combatant.constellationCount >= RALLY_OF_FOUR_BLADES_CONSTELLATION &&
+      (burstBladeHits.includes(hit) || hit === rallyOfFourBladesHit) &&
+      enemy.health / enemy.maxHealth < getPartyMember(party, combatant.characterId).healthShare
+        ? RALLY_OF_FOUR_BLADES_DAMAGE_BONUS
+        : 0,
     highPlunge: {
       hits: [
         {
@@ -237,6 +354,54 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
+    // A swap brings the field's infusion on whoever comes on while it stands, its end strikes Rimechaser Blade from
+    // Ascension 4, and the fourth strike's ice blades and the energy on a Cryo enemy come from one and four constellations
+    onKitEvent: (event, { activeCombatant, body, combatant, enemyMap, kitEffectState, party }) => {
+      const { ascension, characterId, constellationCount } = combatant;
+      if (event.kind === KitEventKind.CharacterSwapped) {
+        if (kitEffectState.effects.some((effect) => checkIsFrostField(effect)))
+          infuse(kitEffectState, combatant, activeCombatant);
+      } else if (event.kind === KitEventKind.EffectExpired) {
+        const { effect } = event;
+        if (!checkIsFrostField(effect) || effect.characterId !== characterId || ascension < RIMECHASER_BLADE_ASCENSION)
+          return;
+        const { centre, radius } = effect;
+        const enemy = selectAttackTarget(
+          { angle: 2 * Math.PI, height: Number.POSITIVE_INFINITY, radius },
+          { facing: 0, height: 0, position: centre },
+          enemyMap.values(),
+        );
+        addKitEffect(
+          kitEffectState,
+          createKitSummon({ facing: 0, height: 0, position: enemy?.position ?? centre }, combatant, [
+            rimechaserBladeHit,
+          ]),
+        );
+      } else if (event.kind === KitEventKind.NormalAttackLanded) {
+        if (
+          activeCombatant.characterId === characterId &&
+          constellationCount >= ICE_UNLEASHED_CONSTELLATION &&
+          event.action === normalAttacks.at(-1)
+        )
+          addKitEffect(kitEffectState, createKitSummon(body, combatant, iceUnleashedHits));
+      } else if (event.kind === KitEventKind.DamageTaken) {
+        if (
+          constellationCount < FROZEN_SKIES_CONSTELLATION ||
+          event.striker.characterId !== characterId ||
+          activeCombatant.characterId !== characterId ||
+          !event.enemy.elementalState.auras.has(AuraType.Cryo) ||
+          checkHasKitStatus(kitEffectState.effects, characterId, FROZEN_SKIES_COOLDOWN_STATUS_ID)
+        )
+          return;
+        gainPartyMemberEnergy(party, combatant, FROZEN_SKIES_ENERGY);
+        addKitEffect(kitEffectState, {
+          characterId,
+          id: FROZEN_SKIES_COOLDOWN_STATUS_ID,
+          kind: "status",
+          secondsRemaining: FROZEN_SKIES_COOLDOWN_SECONDS,
+        });
+      }
+    },
     plungeCollision: {
       hitArea: PLUNGE_COLLISION_HIT_AREA,
       hitmarkSeconds: 0,

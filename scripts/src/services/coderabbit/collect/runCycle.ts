@@ -1,7 +1,6 @@
 import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
 import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
@@ -106,8 +105,7 @@ export const runCycle = async ({
   // Newest window, so that is the one whose comments are read
   const newestWindow = getNewestWindowPullRequest(windowHistory);
   const sessionLimitResetMs =
-    newestWindow &&
-    readSessionLimitResetMs(readEntries<GitHubEntry>(`issues/${newestWindow.number}/comments`), viewerLogin);
+    newestWindow && readSessionLimitResetMs(readEntries(`issues/${newestWindow.number}/comments`), viewerLogin);
   if (sessionLimitResetMs !== undefined && sessionLimitResetMs > Date.now())
     return getOutcome(
       CycleOutcomeKind.Idle,

@@ -12,7 +12,7 @@ import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { getPartyMember } from "#src/services/party/getPartyMember";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 // Venti's proud skill groups, read at his talent level. The attack group holds the six shots at 0 to 5, the first and
 // Fourth each loosing two arrows at their one value, the aimed shot at 6 and the fully charged aimed shot at 7, and the
@@ -212,10 +212,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           characterId: combatant.characterId,
           kind: "field",
           nextTickSeconds: passiveSeconds,
-          onTick: ({ party }) => {
-            const partyMember = getPartyMember(party, combatant.characterId);
-            partyMember.energy = Math.min(combatant.kit.burstEnergyCost, partyMember.energy + STORMEYE_PASSIVE_ENERGY);
-          },
+          onTick: ({ party }) => gainPartyMemberEnergy(party, combatant, STORMEYE_PASSIVE_ENERGY),
           radius: UNBOUNDED_FIELD_RADIUS,
           // The field lives a tenth of a second past its tick, so the step that runs it still has it
           secondsRemaining: passiveSeconds + 0.1,

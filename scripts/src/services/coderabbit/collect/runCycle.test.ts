@@ -1,4 +1,5 @@
 import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
+import type { CodeScanningAlert } from "#src/models/coderabbit/collect/CodeScanningAlert";
 import type { CommitCommentsPage } from "#src/models/coderabbit/collect/CommitCommentsPage";
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
 import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
@@ -25,6 +26,7 @@ import {
   CI_COMPLETED_STATUS,
   CI_FAILURE_CONCLUSION,
   CI_SUCCESS_CONCLUSION,
+  CODEQL_WORKFLOW_FILE,
   COMPLETED_DESCRIPTION,
   CYCLE_BUDGET_MS,
   DEVELOP_BRANCH,
@@ -35,6 +37,7 @@ import {
   MAIN_BRANCH,
   MAIN_CHECK_WORKFLOW_FILES,
   MOVED_BRANCH_RETRY_DELAY_SECONDS,
+  OPENED_WINDOW_READ_DELAY_SECONDS,
   PASS_BUCKET,
   PENDING_BUCKET,
   PENDING_CHECK_WAIT_MS,
@@ -160,7 +163,10 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // Has run on any commit, and no branch's runs are listed
   const [ciWorkflowFile = ""] = MAIN_CHECK_WORKFLOW_FILES;
   // What the red run failed on, and the signature its repairs are counted under
-  const redRunJobs: RunJobsView = { jobs: [{ conclusion: CI_FAILURE_CONCLUSION, name: "" }], workflowName: "" };
+  const redRunJobs: RunJobsView = {
+    jobs: [{ conclusion: CI_FAILURE_CONCLUSION, databaseId: 0, name: "" }],
+    workflowName: "",
+  };
   const signature = getFailureSignature(
     redRunJobs.workflowName,
     redRunJobs.jobs.map(({ name }) => name),
@@ -492,7 +498,10 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       )
         return JSON.stringify([queueRun]);
       else if (args[0] === "run" && args[1] === "view" && args[2] === queueRun.databaseId.toString())
-        return JSON.stringify({ jobs: [{ conclusion, name: "" }], workflowName: "" } satisfies RunJobsView);
+        return JSON.stringify({
+          jobs: [{ conclusion, databaseId: 0, name: "" }],
+          workflowName: "",
+        } satisfies RunJobsView);
       else return answerRest?.(args) ?? "";
     });
     return queueRun;
@@ -689,10 +698,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { mainSha, verdictSha } = publishGap();
     answerGh([], [], [], [], [redRun]);
     answerQueueRun(verdictSha, CI_SUCCESS_CONCLUSION);
-    const [, codeQlWorkflowFile = ""] = MAIN_CHECK_WORKFLOW_FILES;
     const answerRest = runGh.getMockImplementation();
     runGh.mockImplementation((args) =>
-      args[0] === "run" && args[1] === "list" && args.includes(codeQlWorkflowFile)
+      args[0] === "run" && args[1] === "list" && args.includes(CODEQL_WORKFLOW_FILE)
         ? JSON.stringify([{ ...redRun, databaseId: 2, workflowDatabaseId: 1 }])
         : (answerRest?.(args) ?? ""),
     );
@@ -709,6 +717,64 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [verdictSha])}`,
       `body=${getMarker(REPAIR_FAILED_MARKER, signature, [collectorSha])}`,
     ]);
+  });
+
+  // CodeQL's red alone, over a main head carrying the file its one open alert is in, and a queue one commit past it —
+  // A window still owed, which the pass opens. The run took the least time a wake can be told from its buffer by
+  const publishCodeQlRed = (queueSha: string): void => {
+    publish(DEVELOP_BRANCH, queueSha);
+    publish(QUEUE_BRANCH, queueSha);
+    answerGh([]);
+    const answerRest = runGh.getMockImplementation();
+    runGh.mockImplementation((args) => {
+      if (args[0] === "run" && args[1] === "list" && args.includes(CODEQL_WORKFLOW_FILE))
+        return JSON.stringify([{ ...redRun, updatedAt: Temporal.Instant.fromEpochMilliseconds(1).toString() }]);
+      else if (args[1]?.startsWith("repos/{owner}/{repo}/code-scanning/alerts?"))
+        return JSON.stringify([
+          [{ most_recent_instance: { location: { path: TEST_FILENAME } } } satisfies CodeScanningAlert],
+        ]);
+      else return answerRest?.(args) ?? "";
+    });
+  };
+
+  // CodeQL scans main alone, so no queue run judges its red: an alert in a file the queue's head has already deleted is
+  // A transit gap the windows heal, held with the wake its own run's span states, and no session is spent on it
+  test("holds a CodeQL red whose alerts are all in files the queue changes, spending no session", async () => {
+    expect.hasAssertions();
+
+    publish(MAIN_BRANCH, commitFile(TEST_FILENAME, ""));
+    const queueSha = deleteFile(TEST_FILENAME);
+    publishCodeQlRed(queueSha);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: getRetriggerDelaySeconds(1 + RETRIGGER_BUFFER_MS),
+      targetSha: queueSha,
+    });
+    expect(runSession).not.toHaveBeenCalled();
+    expect(spawnPnpm).not.toHaveBeenCalled();
+  });
+
+  // An alert in a file the queue leaves as main has it is main's own, whatever else the queue carries
+  test("repairs a CodeQL red with an alert in a file the queue leaves unchanged", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(MAIN_BRANCH, commitFile(TEST_FILENAME, ""));
+    publishCodeQlRed(commitFile(`${TEST_FILENAME}.ts`, ""));
+    spawnPnpm.mockReturnValue(greenSpawn);
+    runSession.mockImplementation(() => {
+      commitFile(`${TEST_FILENAME}.ts`, "");
+      runGit(
+        ["commit", "--quiet", "--amend", "--no-edit", "--trailer", getRepairTrailer(mainSha, collectorSha)],
+        getCwd(),
+      );
+      return Promise.resolve({ isEnded: true });
+    });
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(runSession).toHaveBeenCalledTimes(1);
   });
 
   // Each part of an attempt runs on its own clock, so an install that ran out the regenerators' clock and a session
@@ -1047,8 +1113,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there
   // Is nothing a size floor could wait for. The queue sits on develop's head, so the window is a fast-forward to
-  // The queue's own sha.
-  test("pushes a single owed commit and opens the first window over it", async () => {
+  // The queue's own sha. One opening is under the hourly ceiling and no walk follows it, so the run wakes itself for
+  // The review, which a bot posting nothing would otherwise leave unread
+  test("pushes a single owed commit, opens the first window over it and wakes once its review is due", async () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -1059,7 +1126,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -1079,7 +1146,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: developSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
@@ -1142,7 +1209,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(recutWindow.number + 1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: firstSha,
     });
   });
@@ -1168,7 +1235,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(recutWindow.number + 1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: readSha(`origin/${DEVELOP_BRANCH}`),
     });
   });
@@ -1193,7 +1260,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -1266,7 +1333,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: developSha,
     });
   });
@@ -1290,7 +1357,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
   });
@@ -1378,7 +1445,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1, getWindowBranch(pullRequest)),
-      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     // The body lists the window's commits, which the test does not restate: the flags around it are what is asserted
@@ -1410,7 +1477,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -1434,7 +1501,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha,
     });
     expect(runGit(["log", "--format=%s", `${developSha}..${targetSha}`], getCwd())).toBe(`${TEST_FILENAME}
@@ -1462,7 +1529,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -1811,7 +1878,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: developSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);

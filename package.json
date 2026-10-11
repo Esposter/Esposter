@@ -85,6 +85,7 @@
     "lint:packages:oxlint": "vp lint --debug=timings --format=default --disable-nested-config packages",
     "lint:packages:workspace": "pnpm -r --filter \"./packages/*\" --parallel lint",
     "lint:unused": "knip",
+    "lint:workflows": "actionlint -shellcheck= -pyflakes=",
     "lint:workspace": "pnpm -r --parallel lint",
     "outdated:dependencies": "pnpm -C scripts outdated:dependencies",
     "prepare": "git config core.hooksPath .githooks || true",
@@ -103,6 +104,7 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
+    "@kjanat/actionlint": "catalog:",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
     "@types/node": "catalog:",

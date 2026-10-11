@@ -15,8 +15,10 @@ import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTria
 import { computeGroundLayerColours } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
+import { tintTexture } from "#src/services/genshinAssets/fit/tintTexture";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import {
+  MAIN_COLOUR_PROPERTY,
   TERRAIN_BASE_MAP_SUFFIX,
   TERRAIN_TILE_REGEX,
   TERRAIN_TILE_SIZE,
@@ -124,11 +126,11 @@ const withPartDetails = (
   );
 // Each family's surface as its export's textures paint it, returned as the colour and palette `computeSurfaceTones`
 // Reads off the samples its meshes give, and each part's apart as `computePartSurfaces` reads them. A family's meshes
-// Are its placed meshes, each drawn with its submeshes' diffuse textures, and its terrain tiles, each drawn with its base
-// Map and read only where its faces stand within the terrain radius of the world's origin, the ground beyond which the
-// Screen never shows. Every face is read where it stands in the world and weighted by its area there. Writes no file: the
-// Caller writes what this returns. A family listed in `layeredFamilies` also returns each layer's mean colour, its base
-// Map texels classed to the nearest of the layer tones
+// Are its placed meshes, each drawn with its submeshes' diffuse textures under their materials' tints as the witness
+// Draws them, and its terrain tiles, each drawn with its base map and read only where its faces stand within the terrain
+// Radius of the world's origin, the ground beyond which the screen never shows. Every face is read where it stands in
+// The world and weighted by its area there. Writes no file: the caller writes what this returns. A family listed in
+// `layeredFamilies` also returns each layer's mean colour, its base map texels classed to the nearest of the layer tones
 export const fitSurfaceColours = async <Family extends string>(
   component: DerivedAssetComponent,
   meshRegexMap: Record<Family, RegExp>,
@@ -152,26 +154,32 @@ export const fitSurfaceColours = async <Family extends string>(
       ...materialValues.flatMap((material) => Object.values(material.textures).map(({ pathId }) => pathId)),
     ]),
   );
-  // The exported diffuse texture a placed material draws with, if it was exported
-  const getDiffusePath = (materialPathId: string): string | undefined =>
-    toDiffusePath(textureDirectory, materialMap.get(pathIdNameMap.get(materialPathId) ?? ""), pathIdNameMap);
   const textures = new Map<string, Promise<Texture>>();
   const getTexture = (path: string): Promise<Texture> => {
     const texture = textures.get(path) ?? readTexture(path);
     textures.set(path, texture);
     return texture;
   };
+  // The exported diffuse texture a placed material draws with, if it was exported, tinted by the material's main colour
+  // As the witness draws it, so a family reads the colour its exports show rather than its texture's own
+  const materialDiffuses = new Map<string, Promise<Texture | undefined>>();
+  const readDiffuse = async (materialPathId: string): Promise<Texture | undefined> => {
+    const material = materialMap.get(pathIdNameMap.get(materialPathId) ?? "");
+    const path = toDiffusePath(textureDirectory, material, pathIdNameMap);
+    if (path === undefined) return undefined;
+    const [red = 1, green = 1, blue = 1] = material?.colors[MAIN_COLOUR_PROPERTY] ?? [];
+    return tintTexture(await getTexture(path), [red, green, blue]);
+  };
+  const getDiffuse = (materialPathId: string): Promise<Texture | undefined> => {
+    const diffuse = materialDiffuses.get(materialPathId) ?? readDiffuse(materialPathId);
+    materialDiffuses.set(materialPathId, diffuse);
+    return diffuse;
+  };
   // A placed mesh is one part, named by its mesh, since a material can span parts: the statue's stone levels all draw one
   // Material, and its gold dish sits in it
   const readPlacementSurface = async (placement: AssetPlacement): Promise<ReadSurface> => {
     const mesh = await readObjMesh(join(meshDirectory, `${placement.mesh}${OBJ_EXTENSION}`));
-    const diffuses = await Promise.all(
-      placement.materials.map(async (materialPathId) => {
-        const path = getDiffusePath(materialPathId);
-        const texture = path === undefined ? undefined : await getTexture(path);
-        return texture;
-      }),
-    );
+    const diffuses = await Promise.all(placement.materials.map((materialPathId) => getDiffuse(materialPathId)));
     return readSurface(mesh, toWorldVertices(mesh.vertices, placement), diffuses, placement.mesh);
   };
   // A terrain tile is never placed: its vertices are local to its column and row, which are its offset in the world

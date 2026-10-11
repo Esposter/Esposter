@@ -20,7 +20,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
-import { WindrisePartFamily, WindrisePartFamilyMeshRegexMap } from "genshin-world";
+import { WindrisePartFamily, WindrisePartFamilyMeshRegexMap, windriseSurfacesSchema } from "genshin-world";
 
 // Windrise's parts fitted as our own generators' parameters, each a record under `windrise/`: its ground as hills, its
 // Oak's canopy as clusters and its trunk's taper read off the export, its statue as stacks fitted piece by piece to its
@@ -42,6 +42,7 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<GameData
       paving: async () => ({ notes: [], objects: { "windrise/paving": await fitWindrisePaving() } }),
       plants: async () => ({ notes: [], objects: { "windrise/plants": await fitWindrisePlants() } }),
       statue: fitWindriseStatue,
+      // The surfaces record holds the families its reader parses: the grass has no mesh in the exports to read
       surfaces: async () => ({
         notes: [],
         objects: {
@@ -53,7 +54,9 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<GameData
           ),
           "windrise/surfaces": await fitSurfaceColours(
             DerivedAssetComponent.Windrise,
-            WindrisePartFamilyMeshRegexMap,
+            Object.fromEntries(
+              windriseSurfacesSchema.keyof().options.map((family) => [family, WindrisePartFamilyMeshRegexMap[family]]),
+            ),
             GROUND_RADIUS,
             [WindrisePartFamily.Ground],
           ),

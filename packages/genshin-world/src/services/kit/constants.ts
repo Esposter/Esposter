@@ -1,3 +1,4 @@
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { LocomotionState } from "genshin-engine";
 
 // The states a kit's normal attacks, charged attack and plunge landings start and continue on, on the ground
@@ -36,3 +37,10 @@ export const SUMMON_LINGER_SECONDS = 0.1;
 // A field's radius when it holds every body, as a field that rings the character on the field wherever it moves, or one
 // That only runs its ticks on a schedule, does
 export const UNBOUNDED_FIELD_RADIUS = Number.POSITIVE_INFINITY;
+// The weapons a melee infusion converts the attacks of, a sword's, a claymore's or a polearm's, while a bow or a catalyst
+// Wielder keeps its own, as gcsim v2.47.2 (MIT) gives Fantastic Voyage's and Layered Frost's infusions
+export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
+  WeaponType.Claymore,
+  WeaponType.Polearm,
+  WeaponType.Sword,
+]);

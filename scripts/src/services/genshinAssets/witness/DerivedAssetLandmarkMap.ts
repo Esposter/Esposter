@@ -5,12 +5,18 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // Each component's landmarks by name, the points of its parts `pose` solves a reference's camera from where the
 // Reference names the pixels it sees them at
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
-  // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the
+  // Bridge's springs and the drum tower's roof) name no mesh, so all six are dropped: the extraction draws market
+  // Stalls, railings and vines within 600 metres of the capital, no arch, bridge or tower, and the Court's buildings its
+  // Layout dumps name (Area_Fd_Build_FDC_Chengqiang_B_01_Lod0) no OBJ exports, since its city blob roots only
+  // Single-mesh props
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.Hud]: {},
-  // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
-  // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
-  // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
+  // Inazuma City's eleven landmarks (ParityReferenceMap's inazuma-city-location: the keep's eaves and ledge, the
+  // Platform's corners, a house's base and roof and the pavilion's eaves) name no mesh, so all eleven are dropped: the
+  // Extraction draws railings, roof trims and props within 600 metres of the capital, its largest a wharf platform 7.5
+  // Metres long, and the keep's and the houses' meshes its layout dumps name (Area_Dq_Build_MS_TsgHouse_02_Lod0,
+  // Area_Dq_Build_MS_CityHouse_04_Lod0) no OBJ exports, since its city blob roots only single-mesh props
   [DerivedAssetComponent.Inazuma]: {},
   // Liyue Harbor's six landmarks (ParityReferenceMap's liyue-harbor-location: the gate's and the tower's plinths) name
   // No mesh, so all six are dropped: the extraction holds nothing rigid within 140 metres of the harbour's anchor, its
@@ -60,13 +66,21 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // Hall, a terrace stair and the walkway post) name no mesh, all seven dropped: the extraction draws the capital
   // As water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Natlan]: {},
-  // Nasha Town's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  // Nasha Town's seven landmarks (ParityReferenceMap's nasha-town-location: the central tower's plinth, ledge struts,
+  // Collar and column edges) name no mesh, so all seven are dropped: the extraction draws floor plates, flat walls,
+  // Pipes, railings and festival props within 600 metres of the capital, no round stack or plinth, and the town's
+  // Buildings its layout dumps name (Area_Ndkl_Build_NXZ_House_01_Lod0) no OBJ exports, since its city blob roots only
+  // Single-mesh props
   [DerivedAssetComponent.NodKrai]: {},
   // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
   // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Snezhnaya]: {},
-  // Sumeru City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given
+  // Sumeru City's nine landmarks (ParityReferenceMap's sumeru-city-location: the harbour minaret's collar, dome and
+  // Finial and the terrace spire's base, wings and tip) name no mesh, so all nine are dropped: the extraction draws
+  // Vines, wharf boards, banners and two house trims 3.4 metres tall within 600 metres of the capital, and the houses'
+  // Meshes its layout dumps name (Area_Xm_Build_XKC_Comp_House_01_Lod0) no OBJ exports, since its city blob roots only
+  // Single-mesh props
   [DerivedAssetComponent.Sumeru]: {},
   // Rigid architecture only, never decoration: the statue's own meshes. Points on the statue's axis, which a round part
   // Holds from any heading: the centre of its dish and the top of its figure; the two ends of the dish's brim, the face
