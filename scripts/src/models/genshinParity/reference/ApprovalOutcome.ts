@@ -3,6 +3,6 @@ export enum ApprovalOutcome {
   Approved = "approved",
   CompareFailed = "compare failed",
   NoReference = "no reference",
-  OverBar = "over the bar",
   NotWholeScreen = "not the whole screen",
+  OverBar = "over the bar",
 }

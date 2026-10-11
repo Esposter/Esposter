@@ -4,8 +4,8 @@ import type { AchievementCategory } from "#src/models/achievement/AchievementCat
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { GameText } from "genshin-text";
 
-import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import MenuListScreenDetail from "#src/components/Menu/ListScreen/Detail/Index.vue";
+import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import MenuListScreenTab from "#src/components/Menu/ListScreen/Tab/Index.vue";
 import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAchievementFinished";
 import { QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";

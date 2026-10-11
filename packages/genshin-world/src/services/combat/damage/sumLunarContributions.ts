@@ -4,5 +4,5 @@ import { LUNAR_CONTRIBUTION_WEIGHTS } from "#src/services/combat/damage/constant
 // The largest first, each weighted by its place, and a fifth contributor or more adding nothing
 export const sumLunarContributions = (damages: readonly number[]): number =>
   damages
-    .toSorted((first, second) => second - first)
+    .toSorted((firstDamage, secondDamage) => secondDamage - firstDamage)
     .reduce((total, damage, index) => total + damage * (LUNAR_CONTRIBUTION_WEIGHTS[index] ?? 0), 0);

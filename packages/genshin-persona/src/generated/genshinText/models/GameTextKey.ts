@@ -176,13 +176,6 @@ export enum GameTextKey {
   GlazeLily = "4012901404",
   GlowingHornshroom = "1496527260",
   Grainfruit = "1334780260",
-  // The Adventurer Handbook's tabs
-  HandbookCommissions = "UI_ADVENTURE_CARD_EVENT_TITLE",
-  HandbookDomains = "UI_ADVENTURE_CARD_DUNGEON_TITLE",
-  HandbookEmbattle = "UI_ADVENTURE_INVESTIGATION_CHARASCEND",
-  HandbookEnemies = "UI_ADVENTURE_INVESTIGATION_MONSTER_PAGE",
-  HandbookExperience = "UI_ADVENTURE_TRAVELS",
-  HandbookGuide = "UI_TEXT_QUEST_GUIDE_BOOKMARK",
   // The Adventurer Handbook's Experience page: its chapter, its progress panel and its commissions, by the game's text ids
   HandbookChapterNine = "1920411039",
   HandbookCommissionAscendCharactersPhase5 = "1556198782",
@@ -190,6 +183,13 @@ export enum GameTextKey {
   HandbookCommissionEnhanceArtifactsLv20 = "4221402286",
   HandbookCommissionEnhanceWeaponLv80 = "2116885982",
   HandbookCommissionLevelUpCharacterLv80 = "4111548534",
+  // The Adventurer Handbook's tabs
+  HandbookCommissions = "UI_ADVENTURE_CARD_EVENT_TITLE",
+  HandbookDomains = "UI_ADVENTURE_CARD_DUNGEON_TITLE",
+  HandbookEmbattle = "UI_ADVENTURE_INVESTIGATION_CHARASCEND",
+  HandbookEnemies = "UI_ADVENTURE_INVESTIGATION_MONSTER_PAGE",
+  HandbookExperience = "UI_ADVENTURE_TRAVELS",
+  HandbookGuide = "UI_TEXT_QUEST_GUIDE_BOOKMARK",
   HandbookInvestigationProgress = "UI_ADVENTURE_INVESTIGATION_PROGRESS",
   HandbookRewards = "UI_ADVENTURE_INVESTIGATION_REWARD",
   HandbookRewardsClaimed = "UI_ADVENTURE_INVESTIGATION_REWARD_COLLECTION",

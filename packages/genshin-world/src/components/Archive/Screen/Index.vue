@@ -4,8 +4,8 @@ import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { GameText } from "genshin-text";
 
-import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import MenuListScreenDetail from "#src/components/Menu/ListScreen/Detail/Index.vue";
+import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import MenuListScreenTab from "#src/components/Menu/ListScreen/Tab/Index.vue";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArchiveSectionGameTextKeyMap } from "#src/services/archive/ArchiveSectionGameTextKeyMap";

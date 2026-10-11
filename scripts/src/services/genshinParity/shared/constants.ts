@@ -1,4 +1,5 @@
 import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
+
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
