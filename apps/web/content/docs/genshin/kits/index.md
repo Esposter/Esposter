@@ -214,11 +214,13 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Albedo](/docs/genshin/kits/albedo)                 | Solar Isotoma, Transient Blossoms and the Fatal Blossoms             |
 | [Aloy](/docs/genshin/kits/aloy)                     | Freeze Bomb and Rushing Ice                                          |
 | [Amber](/docs/genshin/kits/amber)                   | Explosive Puppet's Baron Bunny and Fiery Rain                        |
+| [Baizhu](/docs/genshin/kits/baizhu)                 | Universal Diagnosis and Holistic Revivification's seamless shield    |
 | [Barbara](/docs/genshin/kits/barbara)               | Let the Show Begin♪ droplets, Melody Loop and Shining Miracle♪       |
 | [Beidou](/docs/genshin/kits/beidou)                 | Tidecaller's shield and the Thunderbeast's Targe                     |
 | [Bennett](/docs/genshin/kits/bennett)               | Passion Overload's Charge Levels and Fantastic Voyage's field        |
 | [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                           |
 | [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap               |
+| [Dehya](/docs/genshin/kits/dehya)                   | Molten Inferno and Incineration Drive                                |
 | [Diluc](/docs/genshin/kits/diluc)                   | Searing Onslaught and Dawn                                           |
 | [Diona](/docs/genshin/kits/diona)                   | Icy Paws and Signature Mix's field                                   |
 | [Dori](/docs/genshin/kits/dori)                     | Alcazarzaray's Exactitude's Connector field and Troubleshooter Shot  |
