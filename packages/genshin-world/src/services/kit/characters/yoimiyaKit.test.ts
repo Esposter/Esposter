@@ -1,18 +1,30 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
-import { createYoimiyaKit } from "#src/services/kit/characters/yoimiyaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { describe, expect, test } from "vitest";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createYoimiyaKit, YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
+import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
 import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 const YOIMIYA_KIT = createYoimiyaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YOIMIYA_CHARACTER_ID]));
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const OTHER_CHARACTER_ID = 10_000_003;
 
 const createYoimiyaCombatant = (): Combatant => ({
   ascension: 0,
@@ -25,15 +37,86 @@ const createYoimiyaCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
+// The damage an enemy took from a hit a combatant dealt as a kind of attack, if it was dealt as one
+const createDamageTakenEvent = (enemy: Enemy, hit: KitHit, striker: Combatant, attackTag?: AttackTag): KitEvent => ({
+  attackTag,
+  enemy,
+  hit,
+  isCritical: false,
+  isDefeated: false,
+  kind: KitEventKind.DamageTaken,
+  striker,
+});
+
 describe(createYoimiyaKit, () => {
-  test("niwabi Fire-Dance infuses Yoimiya with Pyro as it starts, for the table's seconds", () => {
+  test("niwabi Fire-Dance is a stance for the table's seconds whose strikes deal Pyro at the skill's multiplier", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
 
     YOIMIYA_KIT.elementalSkill.onStart?.(createKitStepContext(createYoimiyaCombatant(), { kitEffectState }));
+    const { normalAttacks } = getStancedKit(YOIMIYA_KIT, kitEffectState.effects, YOIMIYA_CHARACTER_ID);
 
-    expect(kitEffectState.effects).toStrictEqual([
-      { characterId: YOIMIYA_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 10 },
+    expect(kitEffectState.effects.map(({ kind, secondsRemaining }) => [kind, secondsRemaining])).toStrictEqual([
+      ["stance", 10],
+    ]);
+    expect(normalAttacks.flatMap(({ hits }) => hits.map(({ element, gauge }) => `${element} ${gauge}`))).toStrictEqual(
+      YOIMIYA_KIT.normalAttacks.flatMap(({ hits }) => hits.map(() => `${Element.Pyro} 1`)),
+    );
+    expect(normalAttacks.map(({ hits }) => takeOne(hits).talentMultiplier)).toStrictEqual(
+      YOIMIYA_KIT.normalAttacks.map(({ hits }) => takeOne(hits).talentMultiplier * 1.37909),
+    );
+  });
+
+  test("niwabi Fire-Dance ends as she leaves the field", () => {
+    expect.hasAssertions();
+    const combatant = createYoimiyaCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    YOIMIYA_KIT.elementalSkill.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+
+    YOIMIYA_KIT.onKitEvent?.(
+      {
+        characterId: OTHER_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: YOIMIYA_CHARACTER_ID,
+      },
+      createKitEventContext(combatant, { kitEffectState }),
+    );
+
+    expect(kitEffectState.effects.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([0]);
+  });
+
+  test("the burst marks the first enemy it strikes with Aurous Blaze, which another member's hit sets off once a cooldown", () => {
+    expect.hasAssertions();
+    const combatant = createYoimiyaCombatant();
+    const other: Combatant = { ...combatant, characterId: OTHER_CHARACTER_ID };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitEventContext(combatant, { kitEffectState });
+    const marked = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const unmarked = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const burstHit = takeOne(YOIMIYA_KIT.elementalBurst.hits);
+    YOIMIYA_KIT.elementalBurst.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    for (const enemy of [marked, unmarked])
+      YOIMIYA_KIT.onKitEvent?.(createDamageTakenEvent(enemy, burstHit, combatant, AttackTag.ElementalBurst), context);
+
+    expect(
+      [marked, unmarked].map(({ statuses }) => statuses.map(({ id, secondsRemaining }) => [id, secondsRemaining])),
+    ).toStrictEqual([[["yoimiya-aurous-blaze", 10]], []]);
+
+    const strike = takeOne(takeOne(YOIMIYA_KIT.normalAttacks).hits);
+    for (const striker of [combatant, other, other])
+      YOIMIYA_KIT.onKitEvent?.(createDamageTakenEvent(marked, strike, striker, AttackTag.NormalAttack), context);
+    YOIMIYA_KIT.onKitEvent?.(createDamageTakenEvent(unmarked, strike, other, AttackTag.NormalAttack), context);
+
+    expect(
+      kitEffectState.effects.flatMap((effect) =>
+        effect.kind === "summon"
+          ? effect.hits.map(({ hitmarkSeconds, talentMultiplier }) => [hitmarkSeconds, talentMultiplier])
+          : [],
+      ),
+    ).toStrictEqual([[1 / 60, 1.22]]);
+    expect(marked.statuses.map(({ id, secondsRemaining }) => [id, secondsRemaining])).toStrictEqual([
+      ["yoimiya-aurous-blaze", 10],
+      ["yoimiya-aurous-blaze-cooldown", 2],
     ]);
   });
 });
