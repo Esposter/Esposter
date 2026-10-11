@@ -29,7 +29,7 @@ flowchart TD
 Two properties fall out of the shape rather than out of discipline:
 
 - **Recipient resolution happens once, at delivery.** A publisher never asks who will receive what it publishes, so it never pays for that query and can never disagree with the delivery about the answer.
-- **A reply raises one event, not two.** A thread's followers widen the message's recipient set instead of being a second notification that the first has to be de-duplicated against. The `excludedUserIds` handshake the two-event shape needed is gone with it.
+- **A reply raises one event.** A thread's followers widen the message's recipient set rather than becoming a second notification that the first has to be de-duplicated against, so no `excludedUserIds` handshake is needed between two events.
 
 ## The envelope
 
