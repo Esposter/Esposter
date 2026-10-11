@@ -8,6 +8,7 @@ import {
   CACHE_WARNING_MS,
   IDLE_WAKE_PROMPT,
   MACHINE_WATCHER_SCRIPT,
+  QUEUE_SYNC_TIMEOUT_MILLISECONDS,
   QUEUE_SYNC_TOAST_MILLISECONDS,
   RESERVE_SECTION_ID,
   VEIL_SECTION_ID,
@@ -109,17 +110,28 @@ const watchPulse = async ($: EngineInterface) => {
 
 // Pushes the queue at a turn's end, under the pulse's own switch. The push takes its own lock, so a turn ending while one
 // Runs only queues one more. A sync shows nothing unless it fails, and a failure's toast carries the sync's last line, at
-// Most once each toast interval
+// Most once each toast interval. The run is settled rather than awaited, since it rejects when node cannot start or the
+// Push outlasts its timeout, and that failure is toasted the same way
 const syncQueue = async ($: EngineInterface) => {
   if (!(await read($, enabledModsAtom)).pulse) return;
 
-  const output = await $.process.run(["node", `${$.plugin.root}/scripts/queueSync.mjs`, await $.session.cwd()]);
+  const [outcome] = await Promise.allSettled([
+    $.process.run(["node", `${$.plugin.root}/scripts/queueSync.mjs`, await $.session.cwd()], {
+      timeoutMs: QUEUE_SYNC_TIMEOUT_MILLISECONDS,
+    }),
+  ]);
   const nowMs = await $.clock.now();
   const lastToastMs = await read($, lastQueueSyncToastMsAtom);
-  if (output.exitCode === 0 || nowMs - lastToastMs < QUEUE_SYNC_TOAST_MILLISECONDS) return;
+  if (
+    (outcome.status === "fulfilled" && outcome.value.exitCode === 0) ||
+    nowMs - lastToastMs < QUEUE_SYNC_TOAST_MILLISECONDS
+  )
+    return;
 
   await update($, lastQueueSyncToastMsAtom, () => nowMs);
-  $.ui.toast(`The queue push failed: ${output.stdout.trim()}`);
+  $.ui.toast(
+    `The queue push failed: ${outcome.status === "fulfilled" ? outcome.value.stdout.trim() : String(outcome.reason)}`,
+  );
 };
 
 const closeCommission = async ($: EngineInterface) => {
@@ -219,7 +231,7 @@ export const registerLifecycle = (on: On): void => {
     await update($, nowAtom, () => now);
     // The queue is pushed once the turn has ended, off its own dispatch, so the push never holds the turn
     $.clock.after(0, () => {
-      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a failed sync is toasted by the run rather than rejected
+      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a failed sync is toasted by the run, which settles every outcome rather than rejecting
       syncQueue($);
     });
     await armCacheWarning($);

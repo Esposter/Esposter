@@ -23,7 +23,7 @@ The session also runs `pnpm ai:fleet:fill` before anything else when an agent re
 
 Each turn's end runs `packages/genshin-mods/scripts/queueSync.mjs` with the session's directory, once the turn has returned, so the push never holds the turn. The script runs `pnpm ai:queue:push` in the repository, and does nothing outside it. The push itself holds the lock: a turn ending while a push runs only marks one more pass, so a sync never starts a second push beside a running one.
 
-A sync is silent when it succeeds. When it exits non-zero, one toast carries the last line of its output, and a further failure is not toasted until an hour has passed. The pulse switch covers the sync as it covers the watcher, so `/pulse off` stops both. The push records itself in `~/.esposter/queue/last-push.json`, which each machine's heartbeat carries.
+A sync is silent when it succeeds. When it exits non-zero, one toast carries the last line of its output; when it cannot start or outlasts its ten-minute timeout, the toast carries the engine's reason instead. A further failure is not toasted until an hour has passed. The pulse switch covers the sync as it covers the watcher, so `/pulse off` stops both. The push records itself in `~/.esposter/queue/last-push.json`, which each machine's heartbeat carries.
 
 The push is triggered by a commit as well: the repository's `post-commit` hook starts `pnpm ai:queue:push` detached when a commit lands on `ai/queue`, its output appended to `~/.esposter/queue/sync.log`. The hook is the one trigger a session needs, and a turn's end is the second, so a session never pushes by hand except to retry.
 
