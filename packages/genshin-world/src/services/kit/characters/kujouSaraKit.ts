@@ -22,6 +22,7 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 
@@ -190,10 +191,7 @@ export const createKujouSaraKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       // A fully charged shot under the Cover from Ascension 1 drops the crowfeather and spends the Cover
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.ascension < 1) return;
-        const cover = kitEffectState.effects.find(
-          (effect): effect is KitStatus =>
-            effect.kind === "status" && effect.id === COVER_ID && effect.characterId === combatant.characterId,
-        );
+        const cover = findKitStatus(kitEffectState.effects, combatant.characterId, COVER_ID);
         if (cover === undefined || cover.secondsRemaining <= 0) return;
         cover.secondsRemaining = 0;
         addKitEffect(kitEffectState, createAmbushSummon(body, combatant));
