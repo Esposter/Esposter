@@ -72,6 +72,27 @@ describe(createTRPCEventHandler, () => {
     ]);
   });
 
+  test("#215 answers a mutation whose body a middleware read first", async () => {
+    expect.hasAssertions();
+
+    const readFirstApp = new H3()
+      .use(async (event) => {
+        await event.req.clone().text();
+      })
+      .all(`${DEFAULT_ENDPOINT}/**`, createTRPCEventHandler({ createContext, router }));
+    const client = createTRPCClient<typeof router>({
+      links: [
+        httpLink({
+          fetch: (input, init) => Promise.resolve(readFirstApp.request(input, init)),
+          transformer: superjson,
+          url: DEFAULT_ENDPOINT,
+        }),
+      ],
+    });
+
+    await expect(client.write.mutate("a")).resolves.toBe("a");
+  });
+
   test("#221 answers under an app base url", async () => {
     expect.hasAssertions();
 
