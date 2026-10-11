@@ -195,6 +195,8 @@
   "NPC_EXPNAME_12911": "Paimon",
   "ONLINE_DUNGEON_GUEST_IS_READY": "พร้อมแล้ว",
   "PROP_MAX_STAMINA": "พลังกายสูงสุด",
+  "QUEST_MARK_DOWN": "ต่ำ",
+  "QUEST_MARK_UP": "สูง",
   "REPUTATION_CITY_REWARD": "รางวัลชื่อเสียง {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0}x{1}",
   "SORT_BY_LEVEL": "เลเวล",

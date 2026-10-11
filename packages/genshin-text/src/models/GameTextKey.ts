@@ -322,6 +322,9 @@ export enum GameTextKey {
   // Provisional: how far a quest in the quest screen's list stands, "{0}m". The text map holds no line of the quest
   // Screen's own for it, so this is the minigame's "{0}m", the same words in English
   QuestDistance = "UI_ACTIVITY_LOLIGOLF_DISTANCE",
+  // The quest tracker's word before the navigated objective's distance, where it stands well below or above the character
+  QuestMarkDown = "QUEST_MARK_DOWN",
+  QuestMarkUp = "QUEST_MARK_UP",
   // The same button on any other quest
   QuestNavigate = "TASK_TRACK_ENSURE",
   // The quest screen's button opening the overview of every quest

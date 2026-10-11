@@ -8,6 +8,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { createParty } from "#src/services/party/createParty";
+import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { createInput, STAMINA_MAX } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
@@ -18,7 +19,8 @@ const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_
 // Letterboxed, so cropped to the game's screen and scored over the part clear of its subtitles. Its touch layout is drawn,
 // As the recording plays on a phone. Mona, Klee and the Traveler, named Tabibito by its player, are the party's rows it
 // Shows, and Venti, a bow's wielder, is on the field at Lv. 90 with 17286 of 17400 HP. Its stamina stands full, so no
-// Meter shows, and the quest tracked is the one the recording shows: its title, with its altitude line not built yet
+// Meter shows, and the quest tracked is the one the recording shows: its title, and its objective 1540m off and higher,
+// At the least height the line names, its own height unread
 const PARTY_CHARACTER_IDS = [10000041, 10000029, 10000007];
 const FIELD_MEMBER_INDEX = 2;
 const characterDataMap = new Map(
@@ -58,6 +60,7 @@ export const props = {
   },
   nameTextMap: englishNameText,
   party,
+  questMark: { distance: 1540, height: QUEST_MARK_MIN_HEIGHT },
   questProgress: { objectiveCounts: [], stepIndex: 0 },
   questTextMap: { albedo: "Look for Albedo", albedoStep: "" },
   trackedQuest: {

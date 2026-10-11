@@ -6,6 +6,7 @@ import type { HudMember } from "#src/models/hud/HudMember";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Party } from "#src/models/party/Party";
 import type { Quest } from "#src/models/quest/Quest";
+import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -48,6 +49,9 @@ interface Props {
   // The names the deployed team's text ids cite in the reader's language, which stay blank until they load
   nameTextMap?: Readonly<Record<string, string>>;
   party: Party;
+  // Where the navigated objective stands from the character, none while no quest is navigated to or no region in reach
+  // Places its objective
+  questMark?: QuestMark;
   // The tracked quest's progress, none for a quest just started
   questProgress?: QuestProgress;
   // The quests' own words in the reader's language, by the game's text id
@@ -76,6 +80,7 @@ const {
   member,
   nameTextMap,
   party,
+  questMark,
   questProgress,
   questTextMap,
   trackedQuest,
@@ -111,7 +116,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
         </GameRect>
       </GameRect>
       <div v-if="trackedQuest" class="quest">
-        <HudQuest :input :quest="trackedQuest" :quest-progress :text-map="questTextMap" />
+        <HudQuest :game-text :input :mark="questMark" :quest="trackedQuest" :quest-progress :text-map="questTextMap" />
       </div>
       <GameRect
         v-if="characterDataMap"

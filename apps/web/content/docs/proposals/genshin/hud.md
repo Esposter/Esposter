@@ -1,6 +1,6 @@
 ---
 title: HUD
-description: Proposal — what the heads-up display still lacks past its built pieces and looks: the quest tracker's altitude line and its rect, the other characters' skill and burst icons, the stamina meter's section ticks, and the shares and re-measures the roadmap holds for manual verification.
+description: Proposal — what the heads-up display still lacks past its built pieces and looks: the quest tracker's rect, the other characters' skill and burst icons, the stamina meter's section ticks, and the shares and re-measures the roadmap holds for manual verification.
 model: claude-opus-5-5
 needs: [game-install, game-exports]
 touches:
@@ -17,21 +17,19 @@ The [HUD](/docs/genshin/hud) is built with its pieces and their looks, each but 
 ## Decisions
 
 - **The quest tracker has no rect, so it stays provisionally placed** until the game's tree gives it one. It is the one piece the fitted layout does not place.
-- **Its altitude line waits on a height.** The tracker's "Higher 1540m" reads the navigated objective's height, which no region data carries until a height is extracted and published by the Mac.
 - **The other characters' icons are hosted data.** Each pair of skill and burst icons is some 13 KB of paths, so the roster's icons come from hosted game data rather than committed source.
 - **The judgements the roadmap holds stay there.** The stamina flash's share under an eighth, the uncharged burst in the keys' layout and the gold decided against for the burst fill wait on the roadmap's manual verification, and this page does not restate them.
 
 ## Scope and order
 
-**Today:** the HUD's block is exported and fitted, every piece but the quest tracker stands in its fitted rect, and each piece's look is built from the recordings it is measured on, as the [as-built page](/docs/genshin/hud) records.
+**Today:** the HUD's block is exported and fitted, every piece but the quest tracker stands in its fitted rect, the tracker's line names the navigated objective's distance and whether it stands higher or lower, and each piece's look is built from the recordings it is measured on, as the [as-built page](/docs/genshin/hud) records.
 
 **This adds, in order:**
 
-1. **The quest tracker's altitude line**, once a region's height is published and the navigated objective's height reads from it.
-2. **The other characters' skill and burst icons**, from the hosted game data, each pair traced onto its disc as Venti's and Chongyun's are.
-3. **The stamina meter's section ticks**, a line about 2 wide at each 100 of the pool, which wait on a pool past 100 that nothing raises yet.
-4. **The re-measure of the composite**: `world-hud-hidden.mkv` re-measures the composite later and gates nothing.
-5. **Paimon's mark's place and fill**, provisional until measured, since its ink is the whole head as the trace splits it.
+1. **The other characters' skill and burst icons**, from the hosted game data, each pair traced onto its disc as Venti's and Chongyun's are.
+2. **The stamina meter's section ticks**, a line about 2 wide at each 100 of the pool, which wait on a pool past 100 that nothing raises yet.
+3. **The re-measure of the composite**: `world-hud-hidden.mkv` re-measures the composite later and gates nothing.
+4. **Paimon's mark's place and fill**, provisional until measured, since its ink is the whole head as the trace splits it.
 
 ## What this does not propose
 

@@ -195,6 +195,8 @@
   "NPC_EXPNAME_12911": "Paimon",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Déjà prêt",
   "PROP_MAX_STAMINA": "Endurance max",
+  "QUEST_MARK_DOWN": "En bas",
+  "QUEST_MARK_UP": "En haut",
   "REPUTATION_CITY_REWARD": "Récompenses de réputation - {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} ×{1}",
   "SORT_BY_LEVEL": "Niveau",

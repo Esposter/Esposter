@@ -4,6 +4,7 @@ import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
@@ -437,6 +438,20 @@ const questDistanceMap = computed(() => {
   }
   return distanceMap;
 });
+// Where the navigated objective stands from the character, which the tracker's line under its title reads: its distance
+// Across the ground, as the quest screen lists it, and its ground's height over the character's ground point, both read
+// Off the world's one ground. None while no quest is navigated to or no region in reach places its objective
+const questMark = computed<QuestMark | undefined>(() => {
+  if (!windrise.value || !questTargetId.value) return undefined;
+  const { regionDataMap, residentSpots } = windrise.value;
+  const position = findQuestTargetPosition(regionDataMap, residentSpots, questTargetId.value);
+  if (!position) return undefined;
+  const { x, z } = mapCamera.value;
+  return {
+    distance: Math.hypot(position.x - x, position.z - z),
+    height: getGroundHeight(position.x, position.z) - getGroundHeight(x, z),
+  };
+});
 // Where the camera stands in world metres, which its host reads to know where a player is
 const readCameraPosition = (): Vector3 => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
@@ -621,6 +636,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :member="hudMember"
       :name-text-map="nameText"
       :party
+      :quest-mark
       :quest-progress="trackerQuest && questProgressMap.get(trackerQuest.id)"
       :quest-text-map
       :tracked-quest="trackerQuest"
