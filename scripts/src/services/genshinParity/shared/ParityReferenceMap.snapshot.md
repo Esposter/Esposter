@@ -36,6 +36,7 @@ committed.
 | `hud-world-keys` | `HudScreen` | 4.22% | 0.928 | 3.30% | 0.2454 |
 | `hud-world-pickup` | `HudScreen` | 9.96% | 0.385 | 9.09% | 0.4268 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 8.93% | 0.848 | 5.11% | 0.3793 |
+| `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 7.98% | 0.895 | 3.36% | 0.3158 |
 | `inventory-food` | `InventoryScreen` | 3.44% | 0.873 | 2.31% | 0.1928 |
 | `inventory-weapons` | `InventoryScreen` | 16.34% | 0.523 | 12.38% | 0.4942 |
 | `liyue-harbor-location` | `WorldScreen` | 29.33% | 0.303 | 24.45% | 0.8094 |

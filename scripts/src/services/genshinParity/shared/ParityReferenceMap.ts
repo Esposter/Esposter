@@ -318,6 +318,36 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "InteractionPromptList",
     seconds: 9,
   },
+  // The English PC client's pickup at 1080 high over plain grass, three Jueyun Chili rows with the third selected, from a
+  // Public recording at 23 seconds, within the half second the selection rests on that row before the pickup. The pills'
+  // Right ends fade out over the grass clear of the scene, where `interaction-prompts-pickup`'s run onto a rock. Its
+  // Plate fills the cap and each pill from the grass around it, so the grass between them stays the frame's own and only
+  // The list's pieces can differ
+  "interaction-prompts-jueyun-chili": {
+    capture: "yt-UBNImta_dWs-prompt-scroll.mp4",
+    isBackdrop: true,
+    plate: [
+      { height: 38, width: 58, x: 1096, y: 592 },
+      { height: 68, width: 341, x: 1154, y: 433 },
+      { height: 68, width: 341, x: 1154, y: 505 },
+      { height: 68, width: 341, x: 1154, y: 577 },
+    ],
+    props: {
+      interactionPrompts: {
+        interactables: ["0", "1", "2"].map((id) => ({
+          id,
+          kind: "PickUp",
+          name: "Jueyun Chili",
+          position: { x: 0, y: 0, z: 0 },
+        })),
+        selectedId: "2",
+        windowStart: 0,
+      },
+    },
+    region: { height: 220, width: 400, x: 1095, y: 430 },
+    screen: "InteractionPromptList",
+    seconds: 23,
+  },
   // The food tab of the bag, from the same account tour's recording of the English PC client 58 seconds in: the foot's
   // Primogems and Mora where the sort's dropdown stands on an equipment tab, drawn behind the bag so only its foot can differ
   "inventory-food": {
