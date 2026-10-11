@@ -1,6 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { poseArg } from "#src/services/genshinParity/commands/poseArg";
+import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { labelWitnessParts } from "#src/services/genshinParity/witness/labelWitnessParts";
@@ -11,16 +12,8 @@ export const partsCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
     family: { description: "The family whose parts to number", required: true, type: "string" },
-    witness: {
-      description: "The component whose exports the witness draws",
-      required: true,
-      options: Object.values(DerivedAssetComponent),
-      type: "enum",
-    },
-    pose: {
-      description: `A pose in place of the reference's, as ${CAMERA_POSE_AXES.join(",")} (metres, then degrees)`,
-      type: "string",
-    },
+    witness: witnessArg,
+    pose: poseArg,
   },
   meta: {
     description:

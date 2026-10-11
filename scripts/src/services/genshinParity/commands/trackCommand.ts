@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
 import { trackCamera } from "#src/services/genshinParity/witness/trackCamera";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
@@ -31,12 +31,7 @@ export const trackCommand: SubCommandsDef[string] = defineCommand({
       required: true,
       type: "string",
     },
-    witness: {
-      description: "The component whose exports the witness draws",
-      required: true,
-      options: Object.values(DerivedAssetComponent),
-      type: "enum",
-    },
+    witness: witnessArg,
   },
   meta: {
     description:

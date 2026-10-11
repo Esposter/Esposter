@@ -1,7 +1,7 @@
 import type { Vector } from "#src/models/shared/Vector";
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { solveReferenceShadows } from "#src/services/genshinParity/witness/solveReferenceShadows";
 import { defineCommand } from "citty";
 import { MathUtils, Vector3 } from "three";
@@ -12,12 +12,7 @@ const formatDirection = (direction: Readonly<Vector>): string =>
 export const shadowsCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
-    witness: {
-      description: "The component whose exports the witness draws",
-      required: true,
-      options: Object.values(DerivedAssetComponent),
-      type: "enum",
-    },
+    witness: witnessArg,
   },
   meta: {
     description:

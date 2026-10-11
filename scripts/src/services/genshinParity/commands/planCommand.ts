@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { PLANS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { readWitnessPlan } from "#src/services/genshinParity/witness/readWitnessPlan";
 import { BYTE } from "#src/services/shared/constants";
@@ -23,12 +23,7 @@ export const planCommand: SubCommandsDef[string] = defineCommand({
     },
     resolution: { default: "100", description: "Pixels a metre", type: "string" },
     size: { description: "The rectangle's size, as x,z in metres", required: true, type: "string" },
-    witness: {
-      description: "The component whose exports the witness draws",
-      required: true,
-      options: Object.values(DerivedAssetComponent),
-      type: "enum",
-    },
+    witness: witnessArg,
   },
   meta: {
     description:

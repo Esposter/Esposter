@@ -1,10 +1,10 @@
 import type { SubCommandsDef } from "citty";
 import type { StoneLight } from "genshin-engine";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { publishGameDataRecord } from "#src/services/gameData/publishGameDataRecord";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { STONE_LIGHT_KEY } from "#src/services/genshinParity/witness/constants";
 import { solveReferenceHaze } from "#src/services/genshinParity/witness/solveReferenceHaze";
@@ -43,12 +43,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
         "Solve against the exports as the scene draws them under its own light rather than the reference, which should hand that light back if the solve models the renderer",
       type: "boolean",
     },
-    witness: {
-      description: "The component whose exports the witness draws",
-      options: Object.values(DerivedAssetComponent),
-      required: true,
-      type: "enum",
-    },
+    witness: witnessArg,
     write: {
       default: false,
       description: `Publish the solved light into the world's ${STONE_LIGHT_KEY} record under the reference's time of day`,
