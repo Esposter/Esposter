@@ -46,6 +46,7 @@ import {
   XIAO_CHARACTER_ID,
   XINGQIU_CHARACTER_ID,
   YELAN_CHARACTER_ID,
+  YUNJIN_CHARACTER_ID,
   YOIMIYA_CHARACTER_ID,
   YANFEI_CHARACTER_ID,
   XINYAN_CHARACTER_ID,
@@ -96,6 +97,7 @@ import { createXianglingKit } from "#src/services/kit/characters/xianglingKit";
 import { createXiaoKit } from "#src/services/kit/characters/xiaoKit";
 import { createXingqiuKit } from "#src/services/kit/characters/xingqiuKit";
 import { createYelanKit } from "#src/services/kit/characters/yelanKit";
+import { createYunjinKit } from "#src/services/kit/characters/yunjinKit";
 import { createYoimiyaKit } from "#src/services/kit/characters/yoimiyaKit";
 import { createYanfeiKit } from "#src/services/kit/characters/yanfeiKit";
 import { createXinyanKit } from "#src/services/kit/characters/xinyanKit";
@@ -151,6 +153,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [YELAN_CHARACTER_ID]: createYelanKit,
   [YANFEI_CHARACTER_ID]: createYanfeiKit,
   [YOIMIYA_CHARACTER_ID]: createYoimiyaKit,
+  [YUNJIN_CHARACTER_ID]: createYunjinKit,
   [XINYAN_CHARACTER_ID]: createXinyanKit,
   [YAE_MIKO_CHARACTER_ID]: createYaeMikoKit,
   [ZHONGLI_CHARACTER_ID]: createZhongliKit,
