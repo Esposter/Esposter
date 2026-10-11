@@ -10,12 +10,13 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -167,19 +168,15 @@ export const createYelanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   // The burst's field waves an Exquisite Throw each second from its first second after the hit, for the burst's seconds
   // From the hit, and it rings the body wherever it moves, as the field's ticks do not depend on where the body stands
-  const createDepthClarionDiceField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => ({
-    centre: { x: position.x, z: position.z },
-    characterId: combatant.characterId,
-    id: DEPTH_CLARION_DICE_ID,
-    kind: "field",
-    nextTickSeconds: BURST_HITMARK_FRAMES / 60 + EXQUISITE_THROW_WAVE_SECONDS,
-    onTick: ({ kitEffectState }) =>
-      addKitEffect(kitEffectState, createExquisiteThrowSummon({ facing, height, position }, combatant)),
-    radius: UNBOUNDED_FIELD_RADIUS,
-    secondsRemaining: BURST_HITMARK_FRAMES / 60 + burstTalentMultiplier(2) + 0.1,
-    tickIndex: 0,
-    tickIntervalSeconds: EXQUISITE_THROW_WAVE_SECONDS,
-  });
+  const createDepthClarionDiceField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField =>
+    createKitField(combatant.characterId, position, {
+      id: DEPTH_CLARION_DICE_ID,
+      nextTickSeconds: BURST_HITMARK_FRAMES / 60 + EXQUISITE_THROW_WAVE_SECONDS,
+      onTick: ({ kitEffectState }) =>
+        addKitEffect(kitEffectState, createExquisiteThrowSummon({ facing, height, position }, combatant)),
+      secondsRemaining: BURST_HITMARK_FRAMES / 60 + burstTalentMultiplier(2) + 0.1,
+      tickIntervalSeconds: EXQUISITE_THROW_WAVE_SECONDS,
+    });
 
   const createPlunge = (radius: number, poiseDamage: number, index: number): KitAction => ({
     hits: [

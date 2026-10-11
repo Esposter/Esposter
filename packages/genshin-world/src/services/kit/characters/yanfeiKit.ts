@@ -9,10 +9,11 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -229,15 +230,10 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           kind: "status",
           secondsRemaining: BURST_SECONDS,
         });
-        addKitEffect(kitEffectState, {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        castKitField(kitEffectState, combatant.characterId, body.position, {
           nextTickSeconds: BURST_SEAL_INTERVAL_SECONDS,
           onTick: ({ kitEffectState: tickEffectState }) => gainSeals(tickEffectState, combatant, 1),
-          radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining: BURST_SECONDS,
-          tickIndex: 0,
           tickIntervalSeconds: BURST_SEAL_INTERVAL_SECONDS,
         });
       },

@@ -45,7 +45,7 @@ const castSummon = (action: KitAction): KitSummon | undefined =>
 const ringSeconds = (constellationCount: number): number =>
   castEffects(KUKI_KIT.elementalSkill, createKukiCombatant(0, constellationCount))
     .filter((effect): effect is KitField => effect.kind === "field")
-    .find((field) => field.tickIntervalSeconds > 1)?.secondsRemaining ?? 0;
+    .find((field) => Number.isFinite(field.tickIntervalSeconds))?.secondsRemaining ?? 0;
 
 describe(createKukiKit, () => {
   test("reads the strikes', charged slashes' and plunges' multipliers from her proud skill groups", () => {
@@ -97,7 +97,7 @@ describe(createKukiKit, () => {
     expect.hasAssertions();
     const ring = castEffects(KUKI_KIT.elementalSkill)
       .filter((effect): effect is KitField => effect.kind === "field")
-      .find((field) => field.tickIntervalSeconds > 1);
+      .find((field) => Number.isFinite(field.tickIntervalSeconds));
     const context = createKitTestContext(createKukiCombatant());
     getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare = 0.5;
     ring?.onTick(context, 0);
@@ -112,7 +112,8 @@ describe(createKukiKit, () => {
   test("the cast drains 30% of her health share, and no further than 20%", () => {
     expect.hasAssertions();
     const drain = castEffects(KUKI_KIT.elementalSkill).find(
-      (effect): effect is KitField => effect.kind === "field" && effect.tickIntervalSeconds === 1,
+      (effect): effect is KitField =>
+        effect.kind === "field" && effect.tickIntervalSeconds === Number.POSITIVE_INFINITY,
     );
     const drainTo = (healthShare: number): number => {
       const context = createKitTestContext(createKukiCombatant());

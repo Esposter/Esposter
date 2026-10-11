@@ -9,12 +9,13 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Lynette's proud skill groups, read at her talent level. The attack group holds the strikes at 0, 1, 4 and the third strike's
@@ -164,17 +165,12 @@ export const createLynetteKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
 
   const createBogglecatField = (body: KitBody, combatant: Combatant): KitField => {
     const box = createAheadBody(body, BOGGLECAT_BOX_OFFSET_METRES);
-    return {
-      centre: { x: box.position.x, z: box.position.z },
-      characterId: combatant.characterId,
-      kind: "field",
+    return createKitField(combatant.characterId, box.position, {
       nextTickSeconds: BOGGLECAT_FIRST_TICK_FRAMES / 60,
       onTick: createBogglecatTick(combatant, box),
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: BOGGLECAT_BOX_DURATION_FRAMES / 60,
-      tickIndex: 0,
       tickIntervalSeconds: BOGGLECAT_TICK_INTERVAL_FRAMES / 60,
-    };
+    });
   };
 
   const elementalBurst: KitAction = {

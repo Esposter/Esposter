@@ -14,6 +14,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -228,10 +229,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         },
       ],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
-        addKitEffect(kitEffectState, {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: DANDELION_FIELD_START_FRAMES / 60,
           onTick: createFieldTick(
             combatant,
@@ -240,7 +238,6 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           ),
           radius: DANDELION_BREEZE_HIT_AREA.radius,
           secondsRemaining: DANDELION_FIELD_SECONDS,
-          tickIndex: 0,
           tickIntervalSeconds: DANDELION_FIELD_TICK_INTERVAL_SECONDS,
         });
         castKitSummon(kitEffectState, { facing, height, position }, combatant, fieldDamageHits, {

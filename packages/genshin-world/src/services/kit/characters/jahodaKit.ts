@@ -6,20 +6,15 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -157,12 +152,9 @@ export const createJahodaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   }: KitContext): void => {
     const { characterId } = combatant;
     const pursuitSeconds = (SKILL_WINDUP_FRAMES + PURSUIT_FRAMES) / 60;
-    const pursuit: KitField = {
-      centre: { x: position.x, z: position.z },
-      characterId,
+    const pursuit = createKitField(characterId, position, {
       id: PURSUIT_FIELD_ID,
       isFollowing: true,
-      kind: "field",
       nextTickSeconds: (SKILL_WINDUP_FRAMES + FIRST_FILL_FRAMES) / 60,
       onTick: ({ enemyMap, kitEffectState: tickState }) => {
         const absorbed = findAbsorbedElement(
@@ -194,9 +186,8 @@ export const createJahodaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       },
       radius: 5,
       secondsRemaining: pursuitSeconds,
-      tickIndex: 0,
       tickIntervalSeconds: FILL_INTERVAL_FRAMES / 60,
-    };
+    });
     addKitEffect(kitEffectState, pursuit);
     addKitEffect(kitEffectState, {
       characterId,
@@ -206,19 +197,14 @@ export const createJahodaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       stacks: 0,
     });
     // The drain timer ticks once, when the pursuit's frames run out, on no circle, so it drains wherever the body stands
-    const drainTimer: KitField = {
-      centre: { x: position.x, z: position.z },
-      characterId,
+    const drainTimer = createKitField(characterId, position, {
       id: DRAIN_FIELD_ID,
-      kind: "field",
       nextTickSeconds: pursuitSeconds,
       onTick: ({ kitEffectState: tickState }) =>
         drainFlask(tickState, { facing, height, position }, combatant, FILLED_PRESS_HIT_FRAMES),
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: pursuitSeconds + PURSUIT_TICK_EXTRA_SECONDS,
-      tickIndex: 0,
       tickIntervalSeconds: pursuitSeconds,
-    };
+    });
     addKitEffect(kitEffectState, drainTimer);
   };
 

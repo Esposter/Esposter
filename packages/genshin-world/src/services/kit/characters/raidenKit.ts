@@ -15,7 +15,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -23,6 +23,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -94,7 +95,7 @@ const SKILL_HITMARK_FRAMES = 51;
 const SKILL_HIT_AREA = createFanReach(360, 5);
 const EYE_DELAY_FRAMES = 66;
 const EYE_STATUS_ID = "raiden-eye";
-const EYE_PENDING_FIELD_ID = "raiden-eye-pending";
+const EYE_PENDING_TASK_ID = "raiden-eye-pending";
 const COORDINATED_ATTACK_HITMARK_FRAMES = 5;
 const COORDINATED_ATTACK_HIT_AREA = createFanReach(360, 4);
 const COORDINATED_ATTACK_ICD_SECONDS = 0.9;
@@ -185,11 +186,11 @@ const gainResolve = (kitEffectState: KitEffectState, characterId: number, stacks
     ),
   });
 
-// Whether she holds the Eye, or her skill's field is about to give it
+// Whether she holds the Eye, or her skill's task is about to give it
 const checkHasEye = (effects: readonly KitEffect[], characterId: number): boolean =>
   checkHasKitStatus(effects, characterId, EYE_STATUS_ID) ||
   effects.some(
-    (effect) => effect.kind === "field" && effect.characterId === characterId && effect.id === EYE_PENDING_FIELD_ID,
+    (effect) => effect.kind === "field" && effect.characterId === characterId && effect.id === EYE_PENDING_TASK_ID,
   );
 
 // Ascension 4's Electro DMG Bonus, which a hit reads as it is priced, from her Energy Recharge past 100%
@@ -348,19 +349,17 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
-    // The skill's hit lands from a summon at the body, and the Eye reaches every member of the deployed team from a field
-    // Whose one tick gives it
+    // The skill's hit lands from a summon at the body, and the Eye reaches every member of the deployed team from a task
+    // That gives it as it runs
     elementalSkill: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitSummon(kitEffectState, body, combatant, [skillHit]);
-        addKitEffect(kitEffectState, {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId: combatant.characterId,
-          id: EYE_PENDING_FIELD_ID,
-          kind: "field",
-          nextTickSeconds: EYE_DELAY_FRAMES / 60,
-          onTick: ({ kitEffectState: tickEffectState, party }) => {
+        scheduleKitTask(
+          kitEffectState,
+          combatant.characterId,
+          EYE_DELAY_FRAMES / 60,
+          ({ kitEffectState: tickEffectState, party }) => {
             for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
               addKitEffect(tickEffectState, {
                 characterId,
@@ -369,12 +368,8 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
                 secondsRemaining: eyeSeconds,
               });
           },
-          radius: UNBOUNDED_FIELD_RADIUS,
-          // The field lives a tenth of a second past its tick, so the step that runs it still has it
-          secondsRemaining: EYE_DELAY_FRAMES / 60 + 0.1,
-          tickIndex: 0,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-        });
+          { id: EYE_PENDING_TASK_ID },
+        );
       },
       seconds: SKILL_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

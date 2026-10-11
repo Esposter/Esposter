@@ -10,16 +10,12 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Columbina's proud skill groups, read at her talent level. The attack group holds her three strikes at 0 to 2, the charged
@@ -95,20 +91,15 @@ export const createColumbinaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
 
   // The DoT's field follows her body, and each tick deals its hit round the field's centre, priced by her as she cast it
   const createSkillField = ({ body, combatant }: { body: KitBody; combatant: Combatant }): KitField => {
-    const field: KitField = {
-      centre: { x: body.position.x, z: body.position.z },
-      characterId: combatant.characterId,
+    const field = createKitField(combatant.characterId, body.position, {
       id: COLUMBINA_SKILL_FIELD_ID,
       isFollowing: true,
-      kind: "field",
       nextTickSeconds: (SKILL_HITMARK_FRAMES + SKILL_DOT_INTERVAL_FRAMES) / 60,
       onTick: ({ kitEffectState }) =>
         castKitSummon(kitEffectState, { facing: 0, height: 0, position: field.centre }, combatant, [skillDotHit]),
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: skillDurationSeconds,
-      tickIndex: 0,
       tickIntervalSeconds: SKILL_DOT_INTERVAL_FRAMES / 60,
-    };
+    });
     return field;
   };
 

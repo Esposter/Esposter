@@ -9,16 +9,12 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -123,20 +119,15 @@ export const createMikaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   const createInitialHealField = (body: KitBody, combatant: Combatant): KitField => {
     const flatHeal = burstMultiplier(0);
     const maxHealthShare = burstMultiplier(1);
-    return {
-      centre: { x: body.position.x, z: body.position.z },
-      characterId: combatant.characterId,
-      kind: "field",
+    return createKitField(combatant.characterId, body.position, {
       nextTickSeconds: INITIAL_HEAL_FRAMES / 60,
       onTick: ({ activeCombatant, party }) => {
         const heal = flatHeal + maxHealthShare * combatant.attributes.maxHealth;
         healPartyMember(party, activeCombatant.characterId, heal / activeCombatant.attributes.maxHealth);
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: 1,
-      tickIndex: 0,
       tickIntervalSeconds: 1,
-    };
+    });
   };
 
   return {

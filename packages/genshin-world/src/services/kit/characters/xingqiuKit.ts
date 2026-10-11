@@ -15,16 +15,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -209,12 +205,11 @@ const standRainSwords = (
   if (combatant.ascension < HYDROPATHIC_ASCENSION) return;
   const swordCount = RAIN_SWORD_COUNT + (combatant.constellationCount >= THE_SCENT_REMAINED_CONSTELLATION ? 1 : 0);
   const heal = swordCount * HYDROPATHIC_MAX_HEALTH_SHARE * combatant.attributes.maxHealth;
-  addKitEffect(kitEffectState, {
-    centre: { x: position.x, z: position.z },
-    characterId: combatant.characterId,
-    kind: "field",
-    nextTickSeconds: seconds,
-    onTick: ({ activeCombatant, kitEffectState: tickKitEffectState, party }) => {
+  scheduleKitTask(
+    kitEffectState,
+    combatant.characterId,
+    seconds,
+    ({ activeCombatant, kitEffectState: tickKitEffectState, party }) => {
       // Lengthened Rain Swords still stand past this tick, and heal at their own end instead
       if (
         tickKitEffectState.effects.some(
@@ -224,12 +219,7 @@ const standRainSwords = (
         return;
       healPartyMember(party, activeCombatant.characterId, heal / activeCombatant.attributes.maxHealth);
     },
-    radius: UNBOUNDED_FIELD_RADIUS,
-    // The field lives a tenth of a second past its tick, so the step that runs it still has it
-    secondsRemaining: seconds + 0.1,
-    tickIndex: 0,
-    tickIntervalSeconds: Number.POSITIVE_INFINITY,
-  });
+  );
 };
 
 export const XINGQIU_CHARACTER_ID = 10_000_025;
@@ -290,7 +280,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // A wave of swords cast where the character on the field stands as it starts a normal attack, priced by Xingqiu, unless
   // A wave was cast within the second. Each wave stands until Raincutter ends, so the next counts the waves before it to
   // Find its swords. From six constellations, a wave of five swords gives Xingqiu his energy up to his burst's cost as it
-  // Lands, through a field with no edge that ticks once then
+  // Lands, through a task run then
   const castSwordRain = (
     raincutter: KitSummon,
     { body: { facing, height, position }, kitEffectState }: KitContext,
@@ -311,18 +301,9 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       { secondsRemaining: Math.max(raincutter.secondsRemaining, swordHit.hitmarkSeconds + 0.1) },
     );
     if (swordCount < HENCE_CALL_THEM_MY_OWN_VERSES_SWORD_COUNT) return;
-    addKitEffect(kitEffectState, {
-      centre: { x: position.x, z: position.z },
-      characterId: combatant.characterId,
-      kind: "field",
-      nextTickSeconds: swordHit.hitmarkSeconds,
-      onTick: ({ party }) => gainPartyMemberEnergy(party, combatant, HENCE_CALL_THEM_MY_OWN_VERSES_ENERGY),
-      radius: UNBOUNDED_FIELD_RADIUS,
-      // The field lives a tenth of a second past its tick, so the step that runs it still has it
-      secondsRemaining: swordHit.hitmarkSeconds + 0.1,
-      tickIndex: 0,
-      tickIntervalSeconds: Number.POSITIVE_INFINITY,
-    });
+    scheduleKitTask(kitEffectState, combatant.characterId, swordHit.hitmarkSeconds, ({ party }) =>
+      gainPartyMemberEnergy(party, combatant, HENCE_CALL_THEM_MY_OWN_VERSES_ENERGY),
+    );
   };
   return {
     burstCooldownSeconds: getTalentMultiplier(talentMultiplierMap, XINGQIU_BURST_GROUP_ID, TALENT_START_LEVEL, 2),

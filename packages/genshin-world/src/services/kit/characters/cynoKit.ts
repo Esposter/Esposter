@@ -17,13 +17,14 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -421,26 +422,22 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
 
   // Judication is a field round the body, which the burst's stance lets run for its seconds, each tick giving Endseer while the
   // Stance holds
-  const createJudicationField = (body: KitBody, characterId: number): KitField => ({
-    centre: { x: body.position.x, z: body.position.z },
-    characterId,
-    id: JUDICATION_FIELD_ID,
-    kind: "field",
-    nextTickSeconds: JUDICATION_FIRST_FRAMES / 60,
-    onTick: ({ kitEffectState }) => {
-      if (!findKitStance(kitEffectState.effects, characterId)) return;
-      addKitEffect(kitEffectState, {
-        characterId,
-        id: ENDSEER_STATUS_ID,
-        kind: "status",
-        secondsRemaining: ENDSEER_FRAMES / 60,
-      });
-    },
-    radius: UNBOUNDED_FIELD_RADIUS,
-    secondsRemaining: burstSeconds,
-    tickIndex: 0,
-    tickIntervalSeconds: JUDICATION_INTERVAL_FRAMES / 60,
-  });
+  const createJudicationField = (body: KitBody, characterId: number): KitField =>
+    createKitField(characterId, body.position, {
+      id: JUDICATION_FIELD_ID,
+      nextTickSeconds: JUDICATION_FIRST_FRAMES / 60,
+      onTick: ({ kitEffectState }) => {
+        if (!findKitStance(kitEffectState.effects, characterId)) return;
+        addKitEffect(kitEffectState, {
+          characterId,
+          id: ENDSEER_STATUS_ID,
+          kind: "status",
+          secondsRemaining: ENDSEER_FRAMES / 60,
+        });
+      },
+      secondsRemaining: burstSeconds,
+      tickIntervalSeconds: JUDICATION_INTERVAL_FRAMES / 60,
+    });
 
   const elementalBurst: KitAction = {
     hits: [],

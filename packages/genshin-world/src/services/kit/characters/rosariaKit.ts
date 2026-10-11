@@ -2,7 +2,6 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Element } from "#src/models/Element";
@@ -11,6 +10,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Rosaria's proud skill groups, read at her talent level. The attack group holds the strikes at 0 to 5, the first of N3 and
@@ -172,11 +172,8 @@ export const createRosariaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     elementalBurst: {
       hits: [ritesSlashHit, ritesLanceHit],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
-        const field: KitField = {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
+        const field = createKitField(combatant.characterId, position, {
           id: RITES_FIELD_ID,
-          kind: "field",
           nextTickSeconds: RITES_LANCE_HITMARK_FRAMES / 60 + RITES_TICK_INTERVAL_SECONDS,
           onTick: ({ kitEffectState: tickEffectState }) =>
             castKitSummon(tickEffectState, { facing, height, position }, combatant, [ritesTickHit]),
@@ -185,9 +182,8 @@ export const createRosariaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
             burstTalentMultiplier(3) +
             RITES_FIELD_MARGIN_SECONDS +
             (combatant.constellationCount >= RITES_CONSTELLATION ? RITES_CONSTELLATION_SECONDS : 0),
-          tickIndex: 0,
           tickIntervalSeconds: RITES_TICK_INTERVAL_SECONDS,
-        };
+        });
         addKitEffect(kitEffectState, field);
       },
       seconds: RITES_ANIMATION_FRAMES / 60,

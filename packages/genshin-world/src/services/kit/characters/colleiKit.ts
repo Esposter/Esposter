@@ -2,7 +2,6 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -11,6 +10,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Collei's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the fully
@@ -146,19 +146,15 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         // The leap's field ticks from the kitty's first leap at 68 frames, every 30 frames while its status lasts, and each
         // Tick's hit is cast where the kitty was cast, so it lands from there whatever the body does after
-        const field: KitField = {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        const field = createKitField(combatant.characterId, position, {
           nextTickSeconds: LEAP_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickEffectState }) => {
             castKitSummon(tickEffectState, { facing, height, position }, combatant, [leapHit]);
           },
           radius: LEAP_HIT_AREA.radius,
           secondsRemaining: EXPLOSION_HITMARK_FRAMES / 60 + TRUMP_CARD_KITTY_SECONDS,
-          tickIndex: 0,
           tickIntervalSeconds: LEAP_TICK_INTERVAL_FRAMES / 60,
-        };
+        });
         addKitEffect(kitEffectState, field);
       },
       seconds: TRUMP_CARD_KITTY_FRAMES / 60,

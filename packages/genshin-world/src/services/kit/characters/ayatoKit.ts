@@ -12,21 +12,18 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  SUMMON_LINGER_SECONDS,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Ayato's proud skill groups, read at his talent level. The attack group holds the five strikes at 0 to 4, the fourth
@@ -243,19 +240,15 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     talentMultiplier: burstMultiplier(0),
   };
   const createBurstField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => {
-    const burstField: KitField = {
-      centre: { x: position.x, z: position.z },
-      characterId: combatant.characterId,
+    const burstField = createKitField(combatant.characterId, position, {
       isFollowing: true,
-      kind: "field",
       nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
       onTick: ({ kitEffectState }) =>
         castKitSummon(kitEffectState, { facing, height, position: burstField.centre }, combatant, [burstHit]),
       radius: BURST_AREA_RADIUS,
       secondsRemaining: BURST_FIRST_TICK_FRAMES / 60 + burstSeconds,
-      tickIndex: 0,
       tickIntervalSeconds: BURST_TICK_INTERVAL_FRAMES / 60,
-    };
+    });
     return burstField;
   };
 
@@ -278,7 +271,7 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: skillMultiplier(5),
       },
     ],
-    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       const { characterId } = combatant;
       if (combatant.ascension >= ASCENSION_1) {
         addKitEffect(kitEffectState, {
@@ -289,24 +282,15 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           stacks: ASCENSION_1_CAST_STACKS,
         });
         // The water illusion's explosion sets the stacks to the most, as it lands at the illusion delay
-        addKitEffect(kitEffectState, {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId,
-          kind: "field",
-          nextTickSeconds: ILLUSION_DELAY_FRAMES / 60,
-          onTick: ({ kitEffectState: effectState }) =>
-            addKitEffect(effectState, {
-              characterId,
-              id: NAMISEN_STATUS_ID,
-              kind: "status",
-              secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
-              stacks: getNamisenStacksMax(combatant),
-            }),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          secondsRemaining: ILLUSION_DELAY_FRAMES / 60 + SUMMON_LINGER_SECONDS,
-          tickIndex: 0,
-          tickIntervalSeconds: 1,
-        });
+        scheduleKitTask(kitEffectState, characterId, ILLUSION_DELAY_FRAMES / 60, ({ kitEffectState: effectState }) =>
+          addKitEffect(effectState, {
+            characterId,
+            id: NAMISEN_STATUS_ID,
+            kind: "status",
+            secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
+            stacks: getNamisenStacksMax(combatant),
+          }),
+        );
       }
       if (combatant.constellationCount >= CONSTELLATION_6)
         addKitEffect(kitEffectState, {

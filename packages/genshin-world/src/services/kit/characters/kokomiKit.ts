@@ -10,7 +10,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -159,10 +159,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const { maxHealth } = combatant.attributes;
         castKitSummon(kitEffectState, body, combatant, tickHits, { secondsRemaining: SKILL_DURATION_SECONDS });
         const centre = createAheadBody(body, SKILL_CENTRE_METRES).position;
-        addKitEffect(kitEffectState, {
-          centre: { x: centre.x, z: centre.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        castKitField(kitEffectState, combatant.characterId, centre, {
           nextTickSeconds: SKILL_FIRST_TICK_FRAMES / 60,
           onTick: ({ activeCombatant, party }) =>
             healPartyMember(
@@ -172,7 +169,6 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             ),
           radius: SKILL_RADIUS,
           secondsRemaining: SKILL_DURATION_SECONDS,
-          tickIndex: 0,
           tickIntervalSeconds: SKILL_TICK_INTERVAL_FRAMES / 60,
         });
       },

@@ -18,11 +18,13 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -262,15 +264,10 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Herald of Frost is cast where Qiqi stands: its swipes follow her, and its regeneration ticks from the press
   const castHerald = (body: KitBody, combatant: Combatant, kitEffectState: KitEffectState): void => {
     castKitSummon(kitEffectState, body, combatant, heraldHits, { isFollowing: true, secondsRemaining: skillSeconds });
-    addKitEffect(kitEffectState, {
-      centre: { x: body.position.x, z: body.position.z },
-      characterId: combatant.characterId,
-      kind: "field",
+    castKitField(kitEffectState, combatant.characterId, body.position, {
       nextTickSeconds: HERALD_HITMARK_FRAMES / 60,
       onTick: createRegenerationTick(combatant),
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: skillSeconds,
-      tickIndex: 0,
       tickIntervalSeconds: REGENERATION_TICK_SECONDS,
     });
   };
@@ -315,7 +312,7 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, QIQI_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
         },
       ],
-      onStart: ({ activeCombatant: { characterId, constellationCount }, body, kitEffectState }) => {
+      onStart: ({ activeCombatant: { characterId, constellationCount }, kitEffectState }) => {
         if (
           constellationCount < RITE_OF_RESURRECTION_CONSTELLATION ||
           checkHasKitStatus(kitEffectState.effects, characterId, RITE_OF_RESURRECTION_COOLDOWN_STATUS_ID)
@@ -327,18 +324,9 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           kind: "status",
           secondsRemaining: RITE_OF_RESURRECTION_COOLDOWN_SECONDS,
         });
-        addKitEffect(kitEffectState, {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId,
-          kind: "field",
-          nextTickSeconds: 0,
-          onTick: ({ party }) => reviveParty(party, RITE_OF_RESURRECTION_HEALTH_SHARE),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          // The field lives a tenth of a second past its tick, so the step that runs it still has it
-          secondsRemaining: 0.1,
-          tickIndex: 0,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-        });
+        scheduleKitTask(kitEffectState, characterId, 0, ({ party }) =>
+          reviveParty(party, RITE_OF_RESURRECTION_HEALTH_SHARE),
+        );
       },
       seconds: BURST_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

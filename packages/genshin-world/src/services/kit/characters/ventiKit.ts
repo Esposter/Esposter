@@ -8,15 +8,10 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -197,7 +192,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     // A bow's aimed shot costs no stamina, as the wiki's Divine Marksmanship gives it
     chargedAttackStamina: 0,
     // The Stormeye is a summon cast 5 metres ahead of where Venti faces, landing its ticks from there. From Ascension 4, a
-    // Field with no edge ticks once as the Stormeye's seconds end, giving Venti his energy up to what his burst costs
+    // Task runs as the Stormeye's seconds end, giving Venti his energy up to what his burst costs
     elementalBurst: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
@@ -209,18 +204,9 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         castKitSummon(kitEffectState, { facing, height, position: stormeyePosition }, combatant, stormeyeHits);
         if (combatant.ascension < STORMEYE_PASSIVE_ASCENSION) return;
         const passiveSeconds = STORMEYE_START_FRAMES / 60 + stormeyeSeconds;
-        addKitEffect(kitEffectState, {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
-          nextTickSeconds: passiveSeconds,
-          onTick: ({ party }) => gainPartyMemberEnergy(party, combatant, STORMEYE_PASSIVE_ENERGY),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          // The field lives a tenth of a second past its tick, so the step that runs it still has it
-          secondsRemaining: passiveSeconds + 0.1,
-          tickIndex: 0,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-        });
+        scheduleKitTask(kitEffectState, combatant.characterId, passiveSeconds, ({ party }) =>
+          gainPartyMemberEnergy(party, combatant, STORMEYE_PASSIVE_ENERGY),
+        );
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

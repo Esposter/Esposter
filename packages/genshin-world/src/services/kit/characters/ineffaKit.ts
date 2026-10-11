@@ -10,19 +10,14 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  SUMMON_LINGER_SECONDS,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Ineffa's proud skill groups, read at her talent level. The attack group holds her four strikes at 0 to 4, the charged
@@ -207,15 +202,14 @@ export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: skillMultiplier(SKILL_INDEX_DAMAGE),
         },
       ],
-      // The shield is a field that places it once, 4 frames in, and reads the caster's ATK as it stands then. Its element is
+      // The shield is placed by a task 4 frames in, and reads the caster's ATK as it stands then. Its element is
       // Electro, and it lasts the seconds gcsim gives it from its placement
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        addKitEffect(kitEffectState, {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
-          nextTickSeconds: SKILL_SHIELD_FRAMES / 60,
-          onTick: ({ kitEffectState: tickState }) =>
+        scheduleKitTask(
+          kitEffectState,
+          combatant.characterId,
+          SKILL_SHIELD_FRAMES / 60,
+          ({ kitEffectState: tickState }) =>
             addKitEffect(tickState, {
               characterId: combatant.characterId,
               element: Element.Electro,
@@ -225,11 +219,7 @@ export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
               kind: "shield",
               secondsRemaining: shieldSeconds,
             }),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          secondsRemaining: SKILL_SHIELD_FRAMES / 60 + SUMMON_LINGER_SECONDS,
-          tickIndex: 0,
-          tickIntervalSeconds: 1,
-        });
+        );
         summonBirgitta(kitEffectState, body, combatant, SKILL_BIRGITTA_SPAWN_FRAMES);
       },
       seconds: SKILL_FRAMES / 60,

@@ -3,7 +3,6 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -16,6 +15,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -195,10 +195,7 @@ export const createShenheKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       // The field is cast ahead of the body and its DoT and buff are summoned there, so it stands where gcsim places it
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const centreBody = createAheadBody(body, BURST_OFFSET_METRES);
-        const field: KitField = {
-          centre: { x: centreBody.position.x, z: centreBody.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        const field = createKitField(combatant.characterId, centreBody.position, {
           nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
           onTick: ({ activeCombatant, kitEffectState: tickEffectState }, tickIndex) => {
             if (combatant.ascension >= BURST_ASCENSION)
@@ -217,9 +214,8 @@ export const createShenheKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           },
           radius: BURST_FIELD_RADIUS,
           secondsRemaining: burstDurationSeconds + BURST_START_FRAMES / 60 + 0.1,
-          tickIndex: 0,
           tickIntervalSeconds: fieldTickIntervalSeconds,
-        };
+        });
         addKitEffect(kitEffectState, field);
       },
       seconds: BURST_ANIMATION_FRAMES / 60,

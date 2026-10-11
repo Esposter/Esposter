@@ -17,16 +17,17 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createDelayedKitField } from "#src/services/kit/effects/createDelayedKitField";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -133,7 +134,7 @@ const CONSTELLATION_6_SECONDS = 6;
 const HELD_UNTIL_SWAP_SECONDS = Number.POSITIVE_INFINITY;
 const MIRROR_STATUS_ID = "alhaitham-mirrors";
 const MIRROR_DECAY_FIELD_ID = "alhaitham-mirror-decay";
-const MIRROR_REGEN_FIELD_ID = "alhaitham-mirror-regen";
+const MIRROR_REGEN_TASK_ID = "alhaitham-mirror-regen";
 const PROJECTION_ICD_STATUS_ID = "alhaitham-projection-icd";
 const ASCENSION_1_ICD_STATUS_ID = "alhaitham-a1-icd";
 const CONSTELLATION_2_CURSOR_STATUS_ID = "alhaitham-c2-cursor";
@@ -202,19 +203,14 @@ const startMirrorDecay = (kitEffectState: KitEffectState, body: KitBody, combata
     field.secondsRemaining = HELD_UNTIL_SWAP_SECONDS;
     return;
   }
-  addKitEffect(kitEffectState, {
-    centre: { x: body.position.x, z: body.position.z },
-    characterId,
+  castKitField(kitEffectState, characterId, body.position, {
     id: MIRROR_DECAY_FIELD_ID,
-    kind: "field",
     nextTickSeconds: MIRROR_DECAY_FRAMES / 60,
     onTick: ({ kitEffectState: effectState }) => {
       const count = getMirrorCount(effectState.effects, characterId);
       setMirrorCount(effectState, characterId, count > 1 ? count - 1 : 0);
     },
-    radius: UNBOUNDED_FIELD_RADIUS,
     secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
-    tickIndex: 0,
     tickIntervalSeconds: MIRROR_DECAY_FRAMES / 60,
   });
 };
@@ -422,15 +418,12 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       },
     ],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(
-        kitEffectState,
-        createDelayedKitField(combatant.characterId, body.position, mirrorFrames / 60, (tick) =>
-          gainMirrors(
-            tick.kitEffectState,
-            body,
-            combatant,
-            getSkillMirrorGain(tick.kitEffectState.effects, combatant.characterId),
-          ),
+      scheduleKitTask(kitEffectState, combatant.characterId, mirrorFrames / 60, (tick) =>
+        gainMirrors(
+          tick.kitEffectState,
+          body,
+          combatant,
+          getSkillMirrorGain(tick.kitEffectState.effects, combatant.characterId),
         ),
       ),
     seconds: animationFrames / 60,
@@ -478,8 +471,11 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       // Constellation 6 makes three Mirrors whatever the burst consumed, and the rest are made 184 frames on
       const generated = constellationCount >= CONSTELLATION_6 ? MIRRORS_MAX : MIRRORS_MAX - consumed;
       if (generated <= 0) return;
-      addKitEffect(kitEffectState, {
-        ...createDelayedKitField(characterId, body.position, BURST_MIRROR_REGEN_FRAMES / 60, (tick) => {
+      scheduleKitTask(
+        kitEffectState,
+        characterId,
+        BURST_MIRROR_REGEN_FRAMES / 60,
+        (tick) => {
           gainMirrors(tick.kitEffectState, body, combatant, generated);
           if (constellationCount >= CONSTELLATION_4)
             addKitEffect(tick.kitEffectState, {
@@ -490,9 +486,9 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
               secondsRemaining: CONSTELLATION_4_SECONDS,
               source: CONSTELLATION_4_GAIN_SOURCE,
             });
-        }),
-        id: MIRROR_REGEN_FIELD_ID,
-      });
+        },
+        { id: MIRROR_REGEN_TASK_ID },
+      );
     },
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
@@ -588,7 +584,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
       setMirrorCount(kitEffectState, combatant.characterId, 0);
       for (const effect of kitEffectState.effects)
-        if (effect.kind === "field" && effect.id === MIRROR_REGEN_FIELD_ID) effect.secondsRemaining = 0;
+        if (effect.kind === "field" && effect.id === MIRROR_REGEN_TASK_ID) effect.secondsRemaining = 0;
     },
     plungeCollision: {
       hitArea: PLUNGE_COLLISION_HIT_AREA,

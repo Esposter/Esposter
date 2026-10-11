@@ -13,15 +13,11 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -114,40 +110,38 @@ const checkIsShockEffect = (effect: KitEffect, characterId: number): boolean =>
 // A Star Jade: a field with no edge, standing until a charged attack fires it, which ticks on every step and ends itself
 // Once its character has left the field, as gcsim clears the jades on a swap
 const createStarJade = (characterId: number, { x, z }: GroundPoint): KitField => {
-  const starJade: KitField = {
-    centre: { x, z },
+  const starJade = createKitField(
     characterId,
-    kind: "field",
-    nextTickSeconds: 0,
-    onTick: ({ activeCombatant }) => {
-      if (activeCombatant.characterId !== characterId) starJade.secondsRemaining = 0;
+    { x, z },
+    {
+      nextTickSeconds: 0,
+      onTick: ({ activeCombatant }) => {
+        if (activeCombatant.characterId !== characterId) starJade.secondsRemaining = 0;
+      },
+      secondsRemaining: Number.POSITIVE_INFINITY,
+      tickIntervalSeconds: FIXED_STEP_SECONDS,
     },
-    radius: UNBOUNDED_FIELD_RADIUS,
-    secondsRemaining: Number.POSITIVE_INFINITY,
-    tickIndex: 0,
-    tickIntervalSeconds: FIXED_STEP_SECONDS,
-  };
+  );
   return starJade;
 };
 
 // Shock Effect: a field with no edge that ticks once as the screen shatters and resets the skill's cooldown if it runs,
 // Then stands its 6 seconds. With no cooldown running it resets nothing and ends there, as gcsim marks no reset then
 const createShockEffect = (characterId: number, { x, z }: GroundPoint): KitField => {
-  const shockEffect: KitField = {
-    centre: { x, z },
+  const shockEffect = createKitField(
     characterId,
-    kind: "field",
-    nextTickSeconds: 0,
-    onTick: ({ party }) => {
-      const partyMember = getPartyMember(party, characterId);
-      if (partyMember.skillCooldownSeconds > 0) partyMember.skillCooldownSeconds = 0;
-      else shockEffect.secondsRemaining = 0;
+    { x, z },
+    {
+      nextTickSeconds: 0,
+      onTick: ({ party }) => {
+        const partyMember = getPartyMember(party, characterId);
+        if (partyMember.skillCooldownSeconds > 0) partyMember.skillCooldownSeconds = 0;
+        else shockEffect.secondsRemaining = 0;
+      },
+      secondsRemaining: SHOCK_EFFECT_SECONDS,
+      tickIntervalSeconds: Number.POSITIVE_INFINITY,
     },
-    radius: UNBOUNDED_FIELD_RADIUS,
-    secondsRemaining: SHOCK_EFFECT_SECONDS,
-    tickIndex: 0,
-    tickIntervalSeconds: Number.POSITIVE_INFINITY,
-  };
+  );
   return shockEffect;
 };
 

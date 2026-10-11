@@ -10,12 +10,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  SUMMON_LINGER_SECONDS,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
@@ -23,6 +18,8 @@ import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -163,10 +160,7 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     const ringSeconds =
       getTalentMultiplier(talentMultiplierMap, KUKI_SKILL_GROUP_ID, TALENT_START_LEVEL, 5) +
       (combatant.constellationCount >= RING_CONSTELLATION ? RING_CONSTELLATION_SECONDS : 0);
-    return {
-      centre: { x: position.x, z: position.z },
-      characterId: combatant.characterId,
-      kind: "field",
+    return createKitField(combatant.characterId, position, {
       nextTickSeconds: (RING_START_FRAMES + RING_TICK_INTERVAL_FRAMES) / 60,
       onTick: ({ activeCombatant, kitEffectState, party }) => {
         const ascensionHealing =
@@ -181,11 +175,9 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         );
         castKitSummon(kitEffectState, { facing, height, position }, combatant, [ringTickHit]);
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: RING_START_FRAMES / 60 + ringSeconds + SUMMON_LINGER_SECONDS,
-      tickIndex: 0,
       tickIntervalSeconds: RING_TICK_INTERVAL_FRAMES / 60,
-    };
+    });
   };
 
   return {
@@ -235,27 +227,15 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       ],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId } = combatant;
-        // The cast's drain runs once, on the field's first tick, as the interval is past the field's life
-        const drain: KitField = {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId,
-          kind: "field",
-          nextTickSeconds: 0,
-          onTick: ({ party }) => {
-            const { healthShare } = getPartyMember(party, characterId);
-            if (healthShare <= HP_DRAIN_FLOOR_SHARE) return;
-            damagePartyMember(
-              party,
-              characterId,
-              Math.min(healthShare * HP_DRAIN_SHARE, healthShare - HP_DRAIN_FLOOR_SHARE),
-            );
-          },
-          radius: UNBOUNDED_FIELD_RADIUS,
-          secondsRemaining: SUMMON_LINGER_SECONDS,
-          tickIndex: 0,
-          tickIntervalSeconds: 1,
-        };
-        addKitEffect(kitEffectState, drain);
+        scheduleKitTask(kitEffectState, characterId, 0, ({ party }) => {
+          const { healthShare } = getPartyMember(party, characterId);
+          if (healthShare <= HP_DRAIN_FLOOR_SHARE) return;
+          damagePartyMember(
+            party,
+            characterId,
+            Math.min(healthShare * HP_DRAIN_SHARE, healthShare - HP_DRAIN_FLOOR_SHARE),
+          );
+        });
         addKitEffect(kitEffectState, createRing(body, combatant));
       },
       seconds: SKILL_FRAMES / 60,

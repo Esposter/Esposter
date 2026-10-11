@@ -3,7 +3,6 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
-import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
@@ -12,11 +11,13 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Klee's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
@@ -176,8 +177,8 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   };
   // Sparks 'n' Splash's sparks land from a summon that follows the body on the field, and a field ticking every step ends
   // Them once another character is on the field, as gcsim ends the burst on a swap. From four constellations that end
-  // Sets off Sparkly Explosion where Klee left, priced as she cast the burst, and from six a field with no edge ticks once
-  // And gives each member of the deployed team Blazing Delight's bonus
+  // Sets off Sparkly Explosion where Klee left, priced as she cast the burst, and from six a task runs once and gives
+  // Each member of the deployed team Blazing Delight's bonus
   const castSparksNSplash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { characterId, constellationCount } = combatant;
     const centre = { x: body.position.x, z: body.position.z };
@@ -185,10 +186,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       isFollowing: true,
       secondsRemaining: burstSeconds,
     });
-    const exit: KitField = {
-      centre,
-      characterId,
-      kind: "field",
+    const exit = createKitField(characterId, centre, {
       nextTickSeconds: 0,
       onTick: ({ activeCombatant, kitEffectState: tickKitEffectState }) => {
         if (activeCombatant.characterId === characterId || !tickKitEffectState.effects.includes(sparks)) return;
@@ -198,35 +196,22 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         if (constellationCount >= SPARKLY_EXPLOSION_CONSTELLATION)
           castKitSummon(tickKitEffectState, sparks.body, combatant, [sparklyExplosion]);
       },
-      radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: burstSeconds,
-      tickIndex: 0,
       tickIntervalSeconds: FIXED_STEP_SECONDS,
-    };
+    });
     addKitEffect(kitEffectState, sparks);
     addKitEffect(kitEffectState, exit);
     if (constellationCount < BLAZING_DELIGHT_CONSTELLATION) return;
-    addKitEffect(kitEffectState, {
-      centre,
-      characterId,
-      kind: "field",
-      nextTickSeconds: 0,
-      onTick: ({ kitEffectState: tickKitEffectState, party }) => {
-        for (const memberCharacterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-          addKitEffect(tickKitEffectState, {
-            amount: BLAZING_DELIGHT_PYRO_DAMAGE_BONUS,
-            attribute: Attribute.PyroDamageBonus,
-            characterId: memberCharacterId,
-            kind: "buff",
-            secondsRemaining: BLAZING_DELIGHT_SECONDS,
-            source: BLAZING_DELIGHT_SOURCE,
-          });
-      },
-      radius: UNBOUNDED_FIELD_RADIUS,
-      // The field lives a tenth of a second past its tick, so the step that runs it still has it
-      secondsRemaining: 0.1,
-      tickIndex: 0,
-      tickIntervalSeconds: Number.POSITIVE_INFINITY,
+    scheduleKitTask(kitEffectState, characterId, 0, ({ kitEffectState: tickKitEffectState, party }) => {
+      for (const memberCharacterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
+        addKitEffect(tickKitEffectState, {
+          amount: BLAZING_DELIGHT_PYRO_DAMAGE_BONUS,
+          attribute: Attribute.PyroDamageBonus,
+          characterId: memberCharacterId,
+          kind: "buff",
+          secondsRemaining: BLAZING_DELIGHT_SECONDS,
+          source: BLAZING_DELIGHT_SOURCE,
+        });
     });
   };
   return {

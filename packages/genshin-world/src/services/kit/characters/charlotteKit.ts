@@ -10,16 +10,17 @@ import type { Party } from "#src/models/party/Party";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createDelayedKitField } from "#src/services/kit/effects/createDelayedKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -183,19 +184,16 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         talentMultiplier: attackMultiplier(8),
       };
       const thornBody: KitBody = { facing: 0, height: 0, position: { x: position.x, z: position.z } };
-      addKitEffect(
-        kitEffectState,
-        createDelayedKitField(characterId, position, THORN_HITMARK_SECONDS, ({ kitEffectState: effectState }) => {
-          if (checkHasKitStatus(effectState.effects, characterId, THORN_COOLDOWN_STATUS_ID)) return;
-          addKitEffect(effectState, {
-            characterId,
-            id: THORN_COOLDOWN_STATUS_ID,
-            kind: "status",
-            secondsRemaining: attackMultiplier(9),
-          });
-          castKitSummon(effectState, thornBody, combatant, [thornHit]);
-        }),
-      );
+      scheduleKitTask(kitEffectState, characterId, THORN_HITMARK_SECONDS, ({ kitEffectState: effectState }) => {
+        if (checkHasKitStatus(effectState.effects, characterId, THORN_COOLDOWN_STATUS_ID)) return;
+        addKitEffect(effectState, {
+          characterId,
+          id: THORN_COOLDOWN_STATUS_ID,
+          kind: "status",
+          secondsRemaining: attackMultiplier(9),
+        });
+        castKitSummon(effectState, thornBody, combatant, [thornHit]);
+      });
     },
     seconds: CHARGED_ATTACK_FRAMES / 60,
     targetingArea: STRIKE_TARGETING_AREA,
@@ -270,31 +268,25 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       const { characterId } = combatant;
       const castCentre = createAheadBody(body, BURST_OFFSET_METRES).position;
       castKitSummon(kitEffectState, body, combatant, kameraHits);
-      addKitEffect(
-        kitEffectState,
-        // The cast heal reaches the whole party wherever it stands, whatever the burst strikes
-        createDelayedKitField(characterId, body.position, BURST_HITMARK_FRAMES / 60, ({ characterIdCombatantMap }) =>
-          healTeam(party, characterIdCombatantMap, combatant, burstMultiplier(1), burstMultiplier(0)),
-        ),
+      // The cast heal reaches the whole party wherever it stands, whatever the burst strikes
+      scheduleKitTask(kitEffectState, characterId, BURST_HITMARK_FRAMES / 60, ({ characterIdCombatantMap }) =>
+        healTeam(party, characterIdCombatantMap, combatant, burstMultiplier(1), burstMultiplier(0)),
       );
+      // Each Kamera tick heals the character on the field while it stands in the circle the burst was cast at
       for (const frames of KAMERA_TICK_FRAMES)
-        addKitEffect(
-          kitEffectState,
-          // Each Kamera tick heals the character on the field while it stands in the circle the burst was cast at
-          createDelayedKitField(
-            characterId,
-            castCentre,
-            frames / 60,
-            ({ activeCombatant, party: tickParty }) =>
-              healPartyMember(
-                tickParty,
-                activeCombatant.characterId,
-                (burstMultiplier(4) + burstMultiplier(3) * combatant.attributes.attack) /
-                  activeCombatant.attributes.maxHealth,
-              ),
-            BURST_HEAL_RADIUS,
-          ),
-        );
+        castKitField(kitEffectState, characterId, castCentre, {
+          nextTickSeconds: frames / 60,
+          onTick: ({ activeCombatant, party: tickParty }) =>
+            healPartyMember(
+              tickParty,
+              activeCombatant.characterId,
+              (burstMultiplier(4) + burstMultiplier(3) * combatant.attributes.attack) /
+                activeCombatant.attributes.maxHealth,
+            ),
+          radius: BURST_HEAL_RADIUS,
+          secondsRemaining: frames / 60 + SUMMON_LINGER_SECONDS,
+          tickIntervalSeconds: 1,
+        });
     },
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

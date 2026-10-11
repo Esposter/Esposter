@@ -10,15 +10,11 @@ import type { KitShield } from "#src/models/kit/KitShield";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Baizhu's proud skill groups, read at his talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -151,17 +147,13 @@ export const createBaizhuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   });
 
   // The field recasts the shield at each refresh, from wherever the body stands, so its radius reaches every body
-  const createRefreshField = (body: KitBody, combatant: Combatant): KitField => ({
-    centre: { x: body.position.x, z: body.position.z },
-    characterId: combatant.characterId,
-    kind: "field",
-    nextTickSeconds: BURST_FIRST_REFRESH_FRAMES / 60,
-    onTick: ({ kitEffectState }) => addKitEffect(kitEffectState, createShield(combatant, BURST_SHIELD_FRAMES / 60)),
-    radius: UNBOUNDED_FIELD_RADIUS,
-    secondsRemaining: (BURST_LAST_REFRESH_FRAMES + 1) / 60,
-    tickIndex: 0,
-    tickIntervalSeconds: BURST_REFRESH_INTERVAL_FRAMES / 60,
-  });
+  const createRefreshField = (body: KitBody, combatant: Combatant): KitField =>
+    createKitField(combatant.characterId, body.position, {
+      nextTickSeconds: BURST_FIRST_REFRESH_FRAMES / 60,
+      onTick: ({ kitEffectState }) => addKitEffect(kitEffectState, createShield(combatant, BURST_SHIELD_FRAMES / 60)),
+      secondsRemaining: (BURST_LAST_REFRESH_FRAMES + 1) / 60,
+      tickIntervalSeconds: BURST_REFRESH_INTERVAL_FRAMES / 60,
+    });
 
   const elementalBurst: KitAction = {
     hits: [],

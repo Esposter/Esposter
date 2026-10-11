@@ -12,10 +12,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -190,24 +192,18 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     },
     chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, BARBARA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
     // Measured: gcsim v2.47.2 (MIT) barbara/burst.go, the animation's 195 frames. Shining Miracle♪ deals no damage: its
-    // Heal is a field cast where Barbara stands, ticking once, priced by her as she stood then
+    // Heal is a task run at its hitmark, priced by her as she stood at the cast
     elementalBurst: {
       hits: [],
-      onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const burstHeal = burstFlatHeal + burstHealthShare * combatant.attributes.maxHealth;
-        addKitEffect(kitEffectState, {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
-          nextTickSeconds: SHINING_MIRACLE_HEAL_FRAMES / 60,
-          onTick: ({ activeCombatant, party }) =>
+        scheduleKitTask(
+          kitEffectState,
+          combatant.characterId,
+          SHINING_MIRACLE_HEAL_FRAMES / 60,
+          ({ activeCombatant, party }) =>
             healPartyMember(party, activeCombatant.characterId, burstHeal / activeCombatant.attributes.maxHealth),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          // The field lives a tenth of a second past its heal, so the step that runs the heal still has it
-          secondsRemaining: SHINING_MIRACLE_HEAL_FRAMES / 60 + 0.1,
-          tickIndex: 0,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-        });
+        );
       },
       seconds: 195 / 60,
       targetingArea: SKILL_TARGETING_AREA,
@@ -218,19 +214,14 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       hits: [],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         castKitSummon(kitEffectState, { facing, height, position }, combatant, dropletHits);
-        addKitEffect(kitEffectState, {
-          centre: { x: position.x, z: position.z },
-          characterId: combatant.characterId,
-          kind: "field",
+        castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: MELODY_LOOP_START_FRAMES / 60,
           onTick: createMelodyLoopTick(
             combatant,
             regenerationFlatHeal + regenerationHealthShare * combatant.attributes.maxHealth,
             melodyLoopSeconds,
           ),
-          radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining: MELODY_LOOP_START_FRAMES / 60 + melodyLoopSeconds,
-          tickIndex: 0,
           tickIntervalSeconds: MELODY_LOOP_TICK_INTERVAL_SECONDS,
         });
       },

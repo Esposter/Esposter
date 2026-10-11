@@ -15,18 +15,14 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  PLUNGE_HIT_AREAS,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -297,18 +293,9 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         if (combatant.constellationCount < HER_PILGRIMAGE_OF_BLEAK_CONSTELLATION) return;
         castKitSummon(kitEffectState, body, combatant, [HER_PILGRIMAGE_OF_BLEAK_HIT]);
         const healSeconds = (BURST_OZ_SPAWN_FRAMES + 1) / 60;
-        addKitEffect(kitEffectState, {
-          centre: { x: body.position.x, z: body.position.z },
-          characterId: combatant.characterId,
-          kind: "field",
-          nextTickSeconds: healSeconds,
-          onTick: ({ party }) => healPartyMember(party, combatant.characterId, HER_PILGRIMAGE_OF_BLEAK_HEALTH_SHARE),
-          radius: UNBOUNDED_FIELD_RADIUS,
-          // The field lives a tenth of a second past its tick, so the step that runs it still has it
-          secondsRemaining: healSeconds + 0.1,
-          tickIndex: 0,
-          tickIntervalSeconds: Number.POSITIVE_INFINITY,
-        });
+        scheduleKitTask(kitEffectState, combatant.characterId, healSeconds, ({ party }) =>
+          healPartyMember(party, combatant.characterId, HER_PILGRIMAGE_OF_BLEAK_HEALTH_SHARE),
+        );
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

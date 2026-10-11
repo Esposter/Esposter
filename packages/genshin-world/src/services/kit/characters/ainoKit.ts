@@ -16,6 +16,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Aino's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
@@ -174,19 +175,15 @@ export const createAinoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
 
   // The burst's field follows the body and drops a Water Ball every interval, from the first tick to its last
   const createBurstField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => {
-    const burstField: KitField = {
-      centre: { x: position.x, z: position.z },
-      characterId: combatant.characterId,
+    const burstField = createKitField(combatant.characterId, position, {
       isFollowing: true,
-      kind: "field",
       nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
       onTick: ({ kitEffectState }) =>
         castKitSummon(kitEffectState, { facing, height, position: burstField.centre }, combatant, [burstHit]),
       radius: BURST_AREA_RADIUS,
       secondsRemaining: BURST_FIRST_TICK_FRAMES / 60 + BURST_SECONDS,
-      tickIndex: 0,
       tickIntervalSeconds: BURST_TICK_INTERVAL_FRAMES / 60,
-    };
+    });
     return burstField;
   };
 

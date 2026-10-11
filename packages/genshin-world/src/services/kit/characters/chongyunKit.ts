@@ -17,6 +17,7 @@ import { MELEE_WEAPON_TYPES, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from 
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -303,25 +304,26 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
         // A press ends the field standing, which disappears on the next step, and places its own as the press's hit is, a
         // Metre and a half ahead of the body
         for (const effect of kitEffectState.effects) if (checkIsFrostField(effect)) effect.secondsRemaining = 0;
-        addKitEffect(kitEffectState, {
-          centre: {
+        castKitField(
+          kitEffectState,
+          combatant.characterId,
+          {
             x: body.position.x - Math.sin(body.facing) * FIELD_OFFSET_METRES,
             z: body.position.z - Math.cos(body.facing) * FIELD_OFFSET_METRES,
           },
-          characterId: combatant.characterId,
-          ...(combatant.constellationCount >= ATMOSPHERIC_REVOLUTION_CONSTELLATION && {
-            cooldownMultiplier: ATMOSPHERIC_REVOLUTION_COOLDOWN_MULTIPLIER,
-          }),
-          id: FROST_FIELD_ID,
-          kind: "field",
-          nextTickSeconds: SKILL_HITMARK_FRAMES / 60,
-          onTick: ({ activeCombatant, kitEffectState: tickEffectState }) =>
-            infuse(tickEffectState, combatant, activeCombatant),
-          radius: FIELD_RADIUS,
-          secondsRemaining: fieldSeconds,
-          tickIndex: 0,
-          tickIntervalSeconds: FIELD_TICK_SECONDS,
-        });
+          {
+            ...(combatant.constellationCount >= ATMOSPHERIC_REVOLUTION_CONSTELLATION && {
+              cooldownMultiplier: ATMOSPHERIC_REVOLUTION_COOLDOWN_MULTIPLIER,
+            }),
+            id: FROST_FIELD_ID,
+            nextTickSeconds: SKILL_HITMARK_FRAMES / 60,
+            onTick: ({ activeCombatant, kitEffectState: tickEffectState }) =>
+              infuse(tickEffectState, combatant, activeCombatant),
+            radius: FIELD_RADIUS,
+            secondsRemaining: fieldSeconds,
+            tickIntervalSeconds: FIELD_TICK_SECONDS,
+          },
+        );
       },
       seconds: SKILL_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

@@ -18,7 +18,7 @@ The framework holds no Benison stacks and no attack-speed buff for the party, so
 
 ## Decisions
 
-- **The shield is a field's tick.** gcsim places Radiant Psalter's shield 31 frames in, so the burst places a field whose one tick lands then; the shield reads her Max HP at that tick, as the table's share of Max HP plus a flat HP. It lasts the 12 seconds Favonian Favor holds, from its placement.
+- **The shield is a task's.** gcsim places Radiant Psalter's shield 31 frames in, so the burst sets a task that runs then; the shield reads her Max HP as it runs, as the table's share of Max HP plus a flat HP. It lasts the 12 seconds Favonian Favor holds, from its placement.
 - **The hold's threshold is provisional.** gcsim takes Immersive Ordinance's hold as its own variant but gives no threshold for it, so the kit uses the 0.5 seconds the other holds use. The roadmap's manual verification has the question.
 - **The plunges are borrowed.** Dahlia has no gcsim plunge file, so her three plunges are priced like the ones in [how a kit is read](/docs/genshin/kits#how-a-kit-is-read), with the 150, 100 and 25 poise Mizuki's plunges are given. The roadmap's manual verification has the question.
 - **Normal attacks and the charged attack have no poise.** gcsim gives her normal attacks and charged attack none, so the kit stands both at 0.
