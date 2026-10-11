@@ -127,6 +127,26 @@ const configuration: UserConfig = defineConfig({
         command: 'echo "every package built"',
         dependsOn: packageBuildTasks.map(([taskName]) => taskName),
       },
+      // The parity page's production build, which `genshin:parity load` measures, cached as a package's is: a load run
+      // Replays it while nothing the page reads has moved. The world package is built first, as the page imports it
+      "build:parity": {
+        cache: {
+          input: [
+            { auto: true },
+            ...PNPM_STATE_PATTERNS,
+            // A package build's rewritten files, the auto-imports declaration among them, and the build's own output
+            ...[...PACKAGE_REWRITTEN_PATTERNS, "parity-build/**"].map((pattern) => ({
+              base: "workspace" as const,
+              pattern: `!${PACKAGES_DIRECTORY}/genshin-world/${pattern}`,
+            })),
+          ],
+          output: [{ auto: true }, ...PNPM_STATE_PATTERNS],
+        },
+        command:
+          "pnpm exec vite build --config parity/vite.config.ts --mode production --outDir parity-build --emptyOutDir",
+        cwd: `${PACKAGES_DIRECTORY}/genshin-world`,
+        dependsOn: [getBuildTaskName("genshin-world")],
+      },
       // The aggregates over their leaves, which are package.json scripts. `dependsOn` runs every leaf even after one
       // Fails, where `&&` stops at the first, so a red check never hides the rest. The leaves are uncached, so an
       // Aggregate with no inputs of its own would replay a verdict no check produced: each runs every time
