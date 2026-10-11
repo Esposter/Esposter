@@ -1,5 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import type { KitStance } from "#src/models/kit/KitStance";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { BENNETT_CHARACTER_ID, createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
@@ -22,14 +23,40 @@ describe(getKitAttackTag, () => {
   ])("reads %s off the action a hit belongs to", (attackTag, hit) => {
     expect.hasAssertions();
 
-    expect(getKitAttackTag(TRAVELER_KIT, hit)).toBe(attackTag);
+    expect(getKitAttackTag(TRAVELER_KIT, hit, [])).toBe(attackTag);
   });
 
   test("reads a skill hold's hit as the skill's, and a hit no action holds as none", () => {
     expect.hasAssertions();
     const holdHit = takeOne(takeOne(BENNETT_KIT.elementalSkillHolds ?? []).action.hits);
 
-    expect(getKitAttackTag(BENNETT_KIT, holdHit)).toBe(AttackTag.ElementalSkill);
-    expect(getKitAttackTag(BENNETT_KIT, { ...holdHit })).toBeUndefined();
+    expect(getKitAttackTag(BENNETT_KIT, holdHit, [])).toBe(AttackTag.ElementalSkill);
+    expect(getKitAttackTag(BENNETT_KIT, { ...holdHit }, [])).toBeUndefined();
+  });
+
+  test("reads a stance's hit as the stance's damage type, whatever list of the kit it sits in", () => {
+    expect.hasAssertions();
+    const normalAttackHit = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
+    const stance: KitStance = {
+      actions: {
+        chargedAttack: TRAVELER_KIT.chargedAttack,
+        chargedAttackStamina: 0,
+        elementalBurst: TRAVELER_KIT.elementalBurst,
+        elementalSkill: TRAVELER_KIT.elementalSkill,
+        normalAttacks: TRAVELER_KIT.normalAttacks,
+      },
+      attackTags: {
+        chargedAttack: AttackTag.ChargedAttack,
+        elementalBurst: AttackTag.ElementalBurst,
+        elementalSkill: AttackTag.ElementalSkill,
+        normalAttacks: AttackTag.ElementalSkill,
+      },
+      characterId: TRAVELER_CHARACTER_ID,
+      elapsedSeconds: 0,
+      kind: "stance",
+      secondsRemaining: 1,
+    };
+
+    expect(getKitAttackTag(TRAVELER_KIT, normalAttackHit, [stance])).toBe(AttackTag.ElementalSkill);
   });
 });

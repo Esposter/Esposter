@@ -382,6 +382,14 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       onStart: ({ combatant, kitEffectState }) =>
         addKitEffect(kitEffectState, {
           actions: meleeStanceActions,
+          // The Melee Stance's strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
+          // In tartaglia/attack.go's meleeAttack and AttackTagExtra in tartaglia/charge.go's ChargeAttack
+          attackTags: {
+            chargedAttack: AttackTag.ChargedAttack,
+            elementalBurst: AttackTag.ElementalBurst,
+            elementalSkill: AttackTag.ElementalSkill,
+            normalAttacks: AttackTag.NormalAttack,
+          },
           characterId: combatant.characterId,
           elapsedSeconds: 0,
           kind: "stance",

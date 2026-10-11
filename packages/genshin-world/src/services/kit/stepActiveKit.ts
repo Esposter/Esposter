@@ -105,7 +105,7 @@ export const stepActiveKit = (
   // Copies them
   const stepHits = landedHits.slice(landedStart);
   const landedOreHits = stepHits.length > 0 ? readOreHits(combatant, stepHits) : [];
-  const attackTags = landedHits.map((hit) => getKitAttackTag(kit, hit));
+  const attackTags = landedHits.map((hit) => getKitAttackTag(kit, hit, kitEffectState.effects));
   if (infusion !== undefined) infuseKitHits(kit, infusion, landedHits, landedStart);
   // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
   // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is

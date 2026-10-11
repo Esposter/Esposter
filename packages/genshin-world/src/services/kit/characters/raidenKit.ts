@@ -10,6 +10,7 @@ import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -341,6 +342,14 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             ...createMusouIsshinActions(stacks, damageBonus),
             elementalBurst: kit.elementalBurst,
             elementalSkill: kit.elementalSkill,
+          },
+          // The Musou Isshin strikes and charged attack are Elemental Burst DMG, gcsim's AttackTagElementalBurst in
+          // In raiden/attack.go's swordAttack and raiden/charge.go's swordCharge
+          attackTags: {
+            chargedAttack: AttackTag.ElementalBurst,
+            elementalBurst: AttackTag.ElementalBurst,
+            elementalSkill: AttackTag.ElementalSkill,
+            normalAttacks: AttackTag.ElementalBurst,
           },
           characterId,
           elapsedSeconds: 0,

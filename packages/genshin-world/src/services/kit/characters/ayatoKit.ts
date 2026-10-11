@@ -339,6 +339,13 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             targetingArea: STRIKE_TARGETING_AREA,
           })),
         },
+        // The Shunsuiken strikes are Normal Attack DMG, gcsim's AttackTagNormal in ayato/attack.go's SoukaiKanka
+        attackTags: {
+          chargedAttack: AttackTag.ChargedAttack,
+          elementalBurst: AttackTag.ElementalBurst,
+          elementalSkill: AttackTag.ElementalSkill,
+          normalAttacks: AttackTag.NormalAttack,
+        },
         characterId,
         elapsedSeconds: 0,
         kind: "stance",
