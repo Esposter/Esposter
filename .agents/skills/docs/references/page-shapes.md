@@ -77,6 +77,8 @@ One page per idea (kebab-case slug named after the idea); each folder carries an
 
 Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`).
 
+The Genshin roadmap's `## Manual verification` list is one line an item (question, a link to the page that holds its source, the one fact to judge it by), its detail a decision on that page; the `manualVerification` block in `apps/web/content/docs/index.test.ts` enforces it, since a hundred paragraph-long questions cannot be read as a batch.
+
 ## Lifecycle map
 
 | State                     | Location                     | Action                                                                                   |
