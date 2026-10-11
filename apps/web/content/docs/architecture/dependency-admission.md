@@ -190,6 +190,8 @@ The recurring half of this work is already automated and should stay that way. `
 
 So the follow-through from any decision here is an `allowed` entry carrying the reason, or nothing at all. A package we consciously keep against the enforcer's advice belongs on that list; a package we absorb disappears from it. Neither is a docs edit.
 
+The catalog's own standing check is `scripts/src/workspace/deprecatedPackages.test.ts`, which fails on a direct dependency npm has deprecated, and `supersededPackages.test.ts`, which fails on a predecessor the superseded map names. Both run offline in the workspace suite.
+
 ## Key files
 
 | File                                              | Role                                                                      |
