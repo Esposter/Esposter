@@ -249,6 +249,72 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   white-space: nowrap;
 }
 
+.detail {
+  position: absolute;
+  inset: 0;
+}
+
+.recipe-title {
+  position: absolute;
+  top: calc(var(--unit) * 113);
+  left: calc(var(--unit) * 1020);
+  width: calc(var(--unit) * 570);
+  margin: 0;
+  font-size: calc(var(--unit) * 28);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 36);
+  text-align: center;
+}
+
+.amount {
+  position: absolute;
+  top: calc(var(--unit) * 666);
+  left: calc(var(--unit) * 1120);
+  width: calc(var(--unit) * 365);
+  height: calc(var(--unit) * 14);
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: inherit;
+}
+
+.amount::-webkit-slider-runnable-track {
+  height: calc(var(--unit) * 4);
+  background: #2d4159;
+}
+
+.amount::-webkit-slider-thumb {
+  width: calc(var(--unit) * 14);
+  height: calc(var(--unit) * 14);
+  margin-top: calc(var(--unit) * -5);
+  border-radius: calc(var(--unit) * 2);
+  background: #fff7ea;
+  transform: rotate(45deg);
+  appearance: none;
+}
+
+.crafted {
+  position: absolute;
+  top: calc(var(--unit) * 622);
+  left: calc(var(--unit) * 1020);
+  width: calc(var(--unit) * 570);
+  margin: 0;
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 26);
+  text-align: center;
+}
+
+.required {
+  position: absolute;
+  top: calc(var(--unit) * 700);
+  left: calc(var(--unit) * 1020);
+  width: calc(var(--unit) * 570);
+  margin: 0;
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 26);
+  text-align: center;
+}
+
 .tab-name {
   position: absolute;
   width: 1px;
