@@ -264,6 +264,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Lyney](/docs/genshin/kits/lyney)                   | Bewildering Lights and the Prop Arrow's Grin-Malkin Hat              |
 | [Mika](/docs/genshin/kits/mika)                     | Starfrost Swirl and Skyfeather Song                                  |
 | [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                     |
+| [Mualani](/docs/genshin/kits/mualani)               | Three strikes, the charged attack and Boomsharka-laka                |
 | [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                            |
 | [Navia](/docs/genshin/kits/navia)                   | Rosula Shardshot and As the Sunlit Sky's Singing Salute              |
 | [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi              |
