@@ -182,6 +182,16 @@ export enum GameTextKey {
   HandbookEnemies = "UI_ADVENTURE_INVESTIGATION_MONSTER_PAGE",
   HandbookExperience = "UI_ADVENTURE_TRAVELS",
   HandbookGuide = "UI_TEXT_QUEST_GUIDE_BOOKMARK",
+  // The Adventurer Handbook's Experience page: its chapter, its progress panel and its commissions, by the game's text ids
+  HandbookChapterNine = "1920411039",
+  HandbookCommissionAscendCharactersPhase5 = "1556198782",
+  HandbookCommissionAscendWeaponsPhase5 = "239841718",
+  HandbookCommissionEnhanceArtifactsLv20 = "4221402286",
+  HandbookCommissionEnhanceWeaponLv80 = "2116885982",
+  HandbookCommissionLevelUpCharacterLv80 = "4111548534",
+  HandbookInvestigationProgress = "UI_ADVENTURE_INVESTIGATION_PROGRESS",
+  HandbookRewards = "UI_ADVENTURE_INVESTIGATION_REWARD",
+  HandbookRewardsClaimed = "UI_ADVENTURE_INVESTIGATION_REWARD_COLLECTION",
   HarraFruit = "2960336068",
   // The HUD's HP bars, named for a screen reader
   Health = "FIGHT_PROP_CUR_HP",
