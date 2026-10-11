@@ -1,6 +1,6 @@
 import { pgTable } from "#src/pgTable";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
-import { resourceUserColumns } from "#src/schema/resource/resourceUserColumns";
+import { createResourceUserColumns } from "#src/schema/resource/resourceUserColumns";
 import { index, primaryKey, timestamp } from "drizzle-orm/pg-core";
 
 // A row exists iff the user has opened the resource, and holds when they last did. Server-side rather than
@@ -11,7 +11,7 @@ import { index, primaryKey, timestamp } from "drizzle-orm/pg-core";
 // So the table stays bounded by what exists rather than growing with traffic.
 export const resourceAccessesInResource = pgTable(
   "resourceAccesses",
-  { accessedAt: timestamp().notNull().defaultNow(), ...resourceUserColumns },
+  { accessedAt: timestamp().notNull().defaultNow(), ...createResourceUserColumns() },
   {
     extraConfig: ({ accessedAt, resourceId, userId }) => [
       primaryKey({ columns: [userId, resourceId] }),

@@ -1,4 +1,4 @@
-import type { metadataSchema } from "#src/metadataSchema";
+import type { createMetadataSchema } from "#src/metadataSchema";
 import type {
   AnyPgColumnBuilder,
   PgBuildColumns,
@@ -17,7 +17,7 @@ export interface PgTable {
       schema?: PgSchema<TSchema>;
     },
   ): PgTableWithColumns<{
-    columns: PgBuildColumns<TTableName, TColumnsMap & typeof metadataSchema>;
+    columns: PgBuildColumns<TTableName, TColumnsMap & ReturnType<typeof createMetadataSchema>>;
     dialect: "pg";
     name: TTableName;
     schema: TSchema;
@@ -27,7 +27,7 @@ export interface PgTable {
     columns: TColumnsMap,
     config?: { extraConfig?: (self: PgBuildExtraConfigColumns<TColumnsMap>) => PgTableExtraConfigValue[] },
   ): PgTableWithColumns<{
-    columns: PgBuildColumns<TTableName, TColumnsMap & typeof metadataSchema>;
+    columns: PgBuildColumns<TTableName, TColumnsMap & ReturnType<typeof createMetadataSchema>>;
     dialect: "pg";
     name: TTableName;
     schema: undefined;

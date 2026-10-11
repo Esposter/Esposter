@@ -6,7 +6,7 @@ import type {
   PgTableExtraConfigValue,
 } from "drizzle-orm/pg-core";
 
-import { metadataSchema } from "#src/metadataSchema";
+import { createMetadataSchema } from "#src/metadataSchema";
 import { camelCase } from "drizzle-orm/pg-core";
 
 export const pgTable: PgTable = <
@@ -24,9 +24,17 @@ export const pgTable: PgTable = <
     schema?: PgSchema<TSchema>;
   } = {},
 ) => {
-  const columnsWithMetadata = { ...metadataSchema, ...columns };
+  const columnsWithMetadata = { ...createMetadataSchema(), ...columns };
   return (
-    schema?.table<TTableName, TColumnsMap & typeof metadataSchema>(name, columnsWithMetadata, extraConfig) ??
-    camelCase.table<TTableName, TColumnsMap & typeof metadataSchema>(name, columnsWithMetadata, extraConfig)
+    schema?.table<TTableName, TColumnsMap & ReturnType<typeof createMetadataSchema>>(
+      name,
+      columnsWithMetadata,
+      extraConfig,
+    ) ??
+    camelCase.table<TTableName, TColumnsMap & ReturnType<typeof createMetadataSchema>>(
+      name,
+      columnsWithMetadata,
+      extraConfig,
+    )
   );
 };

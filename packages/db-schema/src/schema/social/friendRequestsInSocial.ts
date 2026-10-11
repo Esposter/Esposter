@@ -1,6 +1,6 @@
 import { pgTable } from "#src/pgTable";
 import { socialSchema } from "#src/schema/social/socialSchema";
-import { senderReceiverColumns } from "#src/schema/social/senderReceiverColumns";
+import { createSenderReceiverColumns } from "#src/schema/social/senderReceiverColumns";
 import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
 import { check, index, text } from "drizzle-orm/pg-core";
 
@@ -10,7 +10,7 @@ export const friendRequestsInSocial = pgTable(
     // Natural key — getFriendshipId(senderId, receiverId).
     // Conflicts on insert act as idempotency: if A already sent to B, a second send is a no-op.
     id: text().primaryKey(),
-    ...senderReceiverColumns,
+    ...createSenderReceiverColumns(),
   },
   {
     extraConfig: ({ receiverId, senderId }) => [

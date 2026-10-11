@@ -3,7 +3,7 @@ import type { Filter } from "#src/models/message/filter/Filter";
 import { filterSchema } from "#src/models/message/filter/Filter";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { roomUserColumns } from "#src/schema/message/roomUserColumns";
+import { createRoomUserColumns } from "#src/schema/message/roomUserColumns";
 import { MESSAGE_MAX_LENGTH } from "#src/services/message/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { MAX_READ_LIMIT } from "@esposter/shared";
@@ -16,7 +16,7 @@ export const searchHistoriesInMessage = pgTable(
     filters: jsonb().notNull().$type<Filter[]>().default([]),
     id: uuid().primaryKey().defaultRandom(),
     query: text().notNull().default(""),
-    ...roomUserColumns,
+    ...createRoomUserColumns(),
   },
   {
     extraConfig: ({ query }) => [
