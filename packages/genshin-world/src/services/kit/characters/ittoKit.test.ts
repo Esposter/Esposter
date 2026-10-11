@@ -13,7 +13,8 @@ import { createKitEventContext } from "#src/services/kit/createKitEventContext.t
 import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { describe, expect, test } from "vitest";
+import { takeOne } from "@esposter/shared";
+import { assert, describe, expect, test } from "vitest";
 
 const ITTO_KIT = createIttoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ITTO_CHARACTER_ID]));
 
@@ -134,6 +135,25 @@ describe(createIttoKit, () => {
       );
 
     expect(readSuperstrengthStacks(kitEffectState)).toBe(2);
+  });
+
+  test("the skill's Ushi gives a stack as it takes an enemy's strike, at most once in 2 seconds", () => {
+    expect.hasAssertions();
+    const combatant = createIttoCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    ITTO_KIT.elementalSkill.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    const ushi = takeOne(kitEffectState.effects);
+    assert(ushi.kind === "taunt");
+    const context = createKitEventContext(combatant, { kitEffectState });
+    for (let index = 0; index < 2; index++)
+      ITTO_KIT.onKitEvent?.({ damage: 1, kind: KitEventKind.TauntDamaged, taunt: ushi }, context);
+
+    expect(readSuperstrengthStacks(kitEffectState)).toBe(1);
+    expect(
+      kitEffectState.effects.flatMap((effect) =>
+        effect.kind === "status" && effect.id === "itto-ushi-damaged-cooldown" ? [effect.secondsRemaining] : [],
+      ),
+    ).toStrictEqual([2]);
   });
 
   test("the strikes, the Saichimonji Slash, the plunges and Masatsu Zetsugi read their table indexes at talent level 1", () => {

@@ -17,6 +17,7 @@ import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
 import { infuseKitStrike } from "#src/services/kit/effects/infuseKitStrike";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { takeKitTauntDamages } from "#src/services/kit/effects/takeKitTauntDamages";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
@@ -30,14 +31,14 @@ import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // One fixed step of the kit of the character on the field, after its body has stepped, written in place: a swap since
-// The last step, the team's effects that run out, the statuses on the enemies that fall due and a burst that starts are
-// Sent to the deployed team's kits, the Crystallize shards in reach of the body are picked up, the ticks the enemies'
-// Elements brought since are struck and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses
-// As its stance, if it holds one, plays them, an action that starts turns the body to the enemy it targets, or to the
-// Camera's aim for an aimed shot, and every hit the step lands strikes the ores, the Dendro Cores and the enemies in its
-// Area, a normal or charged attack's that struck an enemy rolling for its energy, and the changes to the members' HP are
-// Sent last. A character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until
-// They arrive
+// The last step, the strikes the team's taunts took since, the team's effects that run out, the statuses on the enemies
+// That fall due and a burst that starts are sent to the deployed team's kits, the Crystallize shards in reach of the
+// Body are picked up, the ticks the enemies' elements brought since are struck and the Dendro Cores whose seconds ran
+// Out burst, the kit plays the step's presses as its stance, if it holds one, plays them, an action that starts turns
+// The body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands strikes the
+// Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy rolling for its
+// Energy, and the changes to the members' HP are sent last. A character whose combatant is not built yet, its talent
+// Multipliers still in flight, plays nothing until they arrive
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -76,6 +77,7 @@ export const stepActiveKit = (
   kitEffectState.fieldCharacterId = characterId;
   if (fieldCharacterId !== undefined && fieldCharacterId !== characterId)
     emit({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId });
+  for (const event of takeKitTauntDamages(kitEffectState.effects)) emit(event);
   const expiredEffects: KitEffect[] = [];
   const summonStrikes = stepKitEffects(
     kitEffectState,
