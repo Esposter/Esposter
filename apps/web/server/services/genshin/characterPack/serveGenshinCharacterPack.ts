@@ -9,7 +9,7 @@ import {
   chooseCharacterTermsFile,
   decodeCharacterTerms,
   resolveCharacterPackTextures,
-} from "genshin-world";
+} from "genshin-world/characterPack";
 import { contentType } from "mime-types";
 import { statSync } from "node:fs";
 import { readFile } from "node:fs/promises";

@@ -10,6 +10,7 @@ const getThread = (commentId: number): ReviewThread => ({
   lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
   lastBody: "",
   path: "path",
+  replyAuthorLogins: [],
 });
 
 const getCommentOrder = (prompt: string) =>

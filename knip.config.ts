@@ -9,7 +9,8 @@ const knipConfiguration: KnipConfig = {
     "apps/functions": { entry: ["src/**/*.ts"] },
     "apps/infra": { entry: ["src/**/*.ts"] },
     "apps/web": {
-      entry: ["app/App.vue", "app/components/**/*.vue", "content.config.ts"],
+      // A development route is registered by its path from a module under `nuxt dev` alone, so nothing imports it
+      entry: ["app/App.vue", "app/components/**/*.vue", "content.config.ts", "server/development/*.ts"],
       ignore: ["public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",

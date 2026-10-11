@@ -40,7 +40,7 @@ describe(getGateDecision, () => {
     expect(kind).toBe(GateDecisionKind.Proceed);
   });
 
-  test("fails on a skipped incremental pass when commits landed after the full review", () => {
+  test("reads a skipped incremental pass as a skip when commits landed after the full review", () => {
     expect.hasAssertions();
 
     const { kind } = getGateDecision(
@@ -49,14 +49,14 @@ describe(getGateDecision, () => {
       olderSha,
     );
 
-    expect(kind).toBe(GateDecisionKind.Fail);
+    expect(kind).toBe(GateDecisionKind.Skipped);
   });
 
-  test("fails when the pull request carries no check", () => {
+  test("reads a pull request carrying no check as missing", () => {
     expect.hasAssertions();
 
     const { kind } = getGateDecision(undefined, headSha, headSha);
 
-    expect(kind).toBe(GateDecisionKind.Fail);
+    expect(kind).toBe(GateDecisionKind.Missing);
   });
 });

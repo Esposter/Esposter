@@ -68,23 +68,23 @@ Every score is the listening score against the game's own sound, read against th
 
 ## Key files
 
-| File                                                                     | Role                                                                  |
-| :----------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `packages/genshin-engine/src/models/audio/MusicRecording.ts`             | A recording as the sampler plays it: its file, key centre, tune, gain |
-| `packages/genshin-engine/src/audio/scheduleMusicRecording.ts`            | One note's recording played over its synthesized note                 |
-| `packages/genshin-engine/src/audio/selectMusicSample.ts`                 | The recording a note plays, in the sampler and the solve alike        |
-| `packages/genshin-engine/src/audio/getMusicRecordingRate.ts`             | How fast a recording is read to sound a pitch                         |
-| `packages/genshin-world/src/services/login/music/loadMusicRecordings.ts` | A piece's recordings fetched and decoded once, by file                |
-| `packages/genshin-world/src/components/Login/Music/Index.vue`            | The login's music, started once its recordings are decoded            |
-| `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`         | Each voice's recording and level over the synthesizer, pitch heard    |
-| `scripts/src/services/genshinAssets/music/writeLayeredRecordings.ts`     | The winning layering written into the data, its recordings encoded    |
-| `scripts/src/services/genshinAssets/music/selectShippedRecordings.ts`    | Only the regions the shipped notes play, each cut where it stops      |
-| `scripts/src/services/genshinParity/music/scoreShapedMusic.ts`           | A mix scored under an expression fitted to it                         |
-| `scripts/src/services/genshinAssets/music/parseSfz.ts`                   | A mapping's regions                                                   |
-| `scripts/src/services/genshinAssets/music/computeVoicePitchReference.ts` | What a voice's render is scored against for pitch                     |
-| `scripts/src/services/genshinParity/commands/instrumentsCommand.ts`      | The solve's report, and what it ships                                 |
-| `scripts/src/services/genshinParity/commands/solosCommand.ts`            | Every instrument alone through each voice, scored for pitch           |
-| `packages/genshin-world/src/data/login/music.json`                       | The login's notes, each voice's instrument and its recordings         |
+| File                                                                     | Role                                                                                    |
+| :----------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/models/audio/MusicRecording.ts`             | A recording as the sampler plays it: its file, key centre, tune, gain                   |
+| `packages/genshin-engine/src/audio/scheduleMusicRecording.ts`            | One note's recording played over its synthesized note                                   |
+| `packages/genshin-engine/src/audio/selectMusicSample.ts`                 | The recording a note plays, in the sampler and the solve alike                          |
+| `packages/genshin-engine/src/audio/getMusicRecordingRate.ts`             | How fast a recording is read to sound a pitch                                           |
+| `packages/genshin-world/src/services/login/music/loadMusicRecordings.ts` | A piece's recordings fetched and decoded once, by file                                  |
+| `packages/genshin-world/src/components/Login/Music/Index.vue`            | The login's music, started once its recordings are decoded                              |
+| `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`         | Each voice's recording and level over the synthesizer, pitch heard                      |
+| `scripts/src/services/genshinAssets/music/writeLayeredRecordings.ts`     | The winning layering written into the data, its recordings encoded                      |
+| `scripts/src/services/genshinAssets/music/selectShippedRecordings.ts`    | Only the regions the shipped notes play, each cut where it stops                        |
+| `scripts/src/services/genshinParity/music/scoreShapedMusic.ts`           | A mix scored under an expression fitted to it                                           |
+| `scripts/src/services/genshinAssets/music/parseSfz.ts`                   | A mapping's regions                                                                     |
+| `scripts/src/services/genshinAssets/music/computeVoicePitchReference.ts` | What a voice's render is scored against for pitch                                       |
+| `scripts/src/services/genshinParity/commands/instrumentsCommand.ts`      | The solve's report, and what it ships                                                   |
+| `scripts/src/services/genshinParity/commands/solosCommand.ts`            | Every instrument alone through each voice, scored for pitch                             |
+| `packages/genshin-world/src/models/login/LoginMusic.ts`                  | The login's `login/music` record: its notes, each voice's instrument and its recordings |
 
 ## Sources
 

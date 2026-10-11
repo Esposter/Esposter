@@ -11,17 +11,17 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 
 // A release gets one review, so its status is the whole answer: nothing is pushed to `develop` while the pull
-// Request is open, and the flip to completed arrives as its own status event. No check at all is a person's
-// Problem, where a pending one resolves itself. A skipped incremental pass is the bot declining to review again, so
-// The full review it already completed stands when it read the head; commits that landed after it do not. Any other
-// Finished state is the bot running no review — a skip for the plan's file limit or its credits, a failed review —
-// Whose wording carries its own counts, so it is matched by elimination and the review is asked for once.
+// Request is open, and the flip to completed arrives as its own status event. No check at all is told apart from a
+// Pending one, which resolves itself. A skipped incremental pass is the bot declining to review again, so the full
+// Review it already completed stands when it read the head; commits that landed after it are a review the bot did not
+// Run, asked for as a skip is. Any other finished state is the bot running no review — a skip for the plan's file
+// Limit or its credits, a failed review — whose wording carries its own counts, so it is matched by elimination.
 export const getGateDecision = (
   checkStatus: CheckStatus | undefined,
   headSha: string,
   reviewedSha: string,
 ): GateDecision => {
-  if (!checkStatus) return { kind: GateDecisionKind.Fail, reason: "no CodeRabbit check on the pull request" };
+  if (!checkStatus) return { kind: GateDecisionKind.Missing, reason: "no CodeRabbit check on the pull request" };
   else if (!checkIsSlotFree(checkStatus)) return { kind: GateDecisionKind.Exit, reason: "the review is running" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === COMPLETED_DESCRIPTION)
     return { kind: GateDecisionKind.Proceed, reason: "the review is complete" };
@@ -32,7 +32,7 @@ export const getGateDecision = (
         reason: "the full review covers the head; the incremental pass was declined",
       };
     return {
-      kind: GateDecisionKind.Fail,
+      kind: GateDecisionKind.Skipped,
       reason: "commits landed after its review, and the bot declined an incremental review of them",
     };
   } else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === RATE_LIMITED_DESCRIPTION)

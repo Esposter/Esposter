@@ -3,7 +3,9 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
+import { SessionUnstartedError } from "#src/models/coderabbit/collect/SessionUnstartedError";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
+import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   COLLECTOR_SOURCE_PATH,
@@ -81,17 +83,24 @@ await runMain(
         // Forced: a pass that failed mid-sequence leaves what it was holding, and a plain checkout refuses over it —
         // Which would strand the runner on a tree its post step reads. Quiet: a window the port built and did not push
         // Is a detached commit this checkout leaves behind, and git's warning about it reads as lost work when the next
-        // Run rebuilds it from the same refs.
+        // Run rebuilds it from the same refs. A throw from inside a replay ends the pass with its cherry-pick still open,
+        // So whatever git holds open is aborted before the checkout goes back
         process.on("exit", () => {
+          getResult(() => {
+            abortSequencing(REPOSITORY_ROOT);
+          }).match(noop, console.error);
           getResult(() => runGit(["checkout", "--force", "--quiet", startRef])).match(noop, console.error);
         });
       }
 
-      // A counted attempt that failed, or GitHub answering a server error, ends the run idle and wakes the next
-      // One rather than red: the retry is owed and automatic, and red is kept for what only a person can restart
-      // (docs: Infra/review-collector). A limit Claude Code hit is marked on the newest release with the instant it
-      // Lifts, which every run reads to hold the merge and the port until then, and the run wakes the cycle at that
-      // Instant: the sessions that push the queue draw on the same account, so no push may come to wake it
+      // A counted attempt that failed, a session that never started, or GitHub answering a server error, ends the run
+      // Idle and wakes the next one rather than red: the retry is owed and automatic, and red is kept for what only a
+      // Person can restart (docs: Infra/review-collector). The session that never started is the one path every step
+      // Launching one takes — sync, reshape, fold, drain, repair, the merge probe and any later step — so none of them
+      // Branches on it: nobody made an attempt, and the launch waits out the outage's delay. A limit Claude Code hit is
+      // Marked on the newest release with the instant it lifts, which every run reads to hold the merge and the port
+      // Until then, and the run wakes the cycle at that instant: the sessions that push the queue draw on the same
+      // Account, so no push may come to wake it
       const { kind, reason, retriggerDelaySeconds, targetSha } = await getResultAsync(() =>
         runCycle({ collectorSha, cwd, isDryRun, pullRequest }),
       ).match(
@@ -111,7 +120,13 @@ await runMain(
               reason: error.message,
               retriggerDelaySeconds: getRetriggerDelaySeconds(error.limitResetAtMs - Date.now() + RETRIGGER_BUFFER_MS),
             };
-          } else if (GITHUB_OUTAGE_REGEX.test(error.message))
+          } else if (error instanceof SessionUnstartedError)
+            return {
+              kind: CycleOutcomeKind.Idle,
+              reason: error.message,
+              retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
+            };
+          else if (GITHUB_OUTAGE_REGEX.test(error.message))
             return {
               kind: CycleOutcomeKind.Idle,
               reason: error.message,

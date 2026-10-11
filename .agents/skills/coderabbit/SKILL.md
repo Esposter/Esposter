@@ -32,7 +32,7 @@ The cap is one constant, `REVIEW_FILE_CAP`, and never a number written anywhere 
 
 **"Fix the CodeRabbit comments" means every finding the run produced**, at every severity and in every place the run put one — nobody has to list the categories, and a request naming one of them is not scoped to it. Severity and delivery channel are different axes: a minor arrives as an inline thread as readily as a major, and it is the channel, never the severity, that decides whether a fetch finds it.
 
-**Every finding gets a reply** — the verdict first, then the evidence, rejected ones included — posted after the fix commits are pushed, and nothing is accepted unverified (`references/answering-findings.md`).
+**Every finding gets one reply** — the verdict first, then the evidence, rejected ones included — posted after the fix commits are pushed, and nothing is accepted unverified; the bot's answer to it is a new finding only when it asks for a change again (`references/answering-findings.md`).
 
 ## Deep Dives
 

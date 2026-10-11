@@ -3,7 +3,11 @@ import type { runSession as baseRunSession } from "#src/services/coderabbit/coll
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
-import { QUEUE_BRANCH, SessionRoleModelMap } from "#src/services/coderabbit/collect/constants";
+import {
+  CARRY_SESSION_TIMEOUT_MS,
+  QUEUE_BRANCH,
+  SessionRoleModelMap,
+} from "#src/services/coderabbit/collect/constants";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { getCarryPrompt } from "#src/services/queue/getCarryPrompt";
 import { pushQueue } from "#src/services/queue/pushQueue";
@@ -11,7 +15,7 @@ import { runGit } from "#src/services/shared/runGit";
 import { takeOne } from "@esposter/shared";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { runSession } = vi.hoisted(() => ({ runSession: vi.fn<typeof baseRunSession>() }));
 
@@ -26,7 +30,7 @@ const settlePick = (cwd: string, path: string, content: string): Promise<Session
   writeFileSync(join(cwd, path), content);
   runGit(["add", path], cwd);
   runGit(["-c", "core.editor=true", "cherry-pick", "--continue"], cwd);
-  return Promise.resolve({ isEnded: true, isStarted: true });
+  return Promise.resolve({ isEnded: true });
 };
 
 describe(pushQueue, () => {
@@ -60,6 +64,10 @@ git -C ../clone commit --quiet --message ${path}`);
 
   beforeEach(() => {
     runSession.mockReset();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   test("pushes over another session's work mid-edit, syncing the branch and keeping that work", async () => {
@@ -187,6 +195,8 @@ git -C ../clone commit --quiet --message ${path}`);
   test("settles a replayed commit that conflicts through one session, then pushes it", async () => {
     expect.hasAssertions();
 
+    const controller = new AbortController();
+    const timeout = vi.spyOn(AbortSignal, "timeout").mockReturnValue(controller.signal);
     const local = setupConflict(["a", "c"]);
     runSession.mockImplementation(({ cwd }) => settlePick(cwd, "a", "a\nb"));
 
@@ -200,7 +210,9 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(options).toStrictEqual({
       model: SessionRoleModelMap[SessionRole.Carry],
       prompt: getCarryPrompt(local, ["a"]),
+      signal: controller.signal,
     });
+    expect(timeout).toHaveBeenCalledExactlyOnceWith(CARRY_SESSION_TIMEOUT_MS);
     expect(readRemoteSubjects().slice(0, 2)).toStrictEqual(["a c", "a"]);
     expect(runGit(["show", `${remoteQueueRef}:a`], getCwd())).toBe("a\nb");
     expect(readSha("HEAD")).toBe(readSha(remoteQueueRef));
@@ -226,7 +238,7 @@ git -C ../clone commit --quiet --message ${path}`);
 
     const local = setupConflict(["a", "c"]);
     const remote = readSha(remoteQueueRef);
-    runSession.mockResolvedValue({ isEnded: false, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: false });
 
     await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Waiting);
 
@@ -243,7 +255,7 @@ git -C ../clone commit --quiet --message ${path}`);
 
     const local = setupConflict(["a", "c"]);
     const remote = readSha(remoteQueueRef);
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
 
     await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Waiting);
 

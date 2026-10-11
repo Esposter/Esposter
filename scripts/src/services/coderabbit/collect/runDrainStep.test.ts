@@ -44,7 +44,14 @@ describe(runDrainStep, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     updated_at: "",
     user: { login: CODERABBIT_REST_LOGIN },
   };
-  const thread = { body: "", commentId, lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN, lastBody: "", path: TEST_FILENAME };
+  const thread = {
+    body: "",
+    commentId,
+    lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
+    lastBody: "",
+    path: TEST_FILENAME,
+    replyAuthorLogins: [],
+  };
 
   test("does not drain a thread the queue already answers", async () => {
     expect.hasAssertions();

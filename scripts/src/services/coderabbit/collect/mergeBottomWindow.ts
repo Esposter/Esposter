@@ -7,7 +7,6 @@ import { checkIsWindowBranch } from "#src/services/coderabbit/collect/checkIsWin
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   MAIN_BRANCH,
-  OUTAGE_RETRY_DELAY_SECONDS,
   SESSION_PROBE_PROMPT,
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
@@ -49,21 +48,12 @@ export const mergeBottomWindow = async ({
 }: MergeBottomWindowInput): Promise<WindowMergeStep> => {
   const { headRefName, number } = window;
   if (!isDryRun) {
-    const { isEnded, isStarted } = await runSession({
+    const { isEnded } = await runSession({
       cwd,
       model: SessionRoleModelMap[SessionRole.Drain],
       prompt: SESSION_PROBE_PROMPT,
     });
-    if (!isStarted)
-      return {
-        outcome: {
-          kind: CycleOutcomeKind.Idle,
-          reason: "no session could start — the window waits for one that can drain its findings",
-        },
-        retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
-        reviewFixesSha,
-      };
-    else if (!isEnded)
+    if (!isEnded)
       return {
         outcome: {
           kind: CycleOutcomeKind.Idle,
@@ -79,8 +69,9 @@ export const mergeBottomWindow = async ({
     throw new InvalidOperationError(Operation.Read, "coderabbit", `${headRefName} is missing on the remote`);
   const { mainSha } = readBranchShas(cwd);
   // A window `main` conflicts with is folded and the fold pushed, which GitHub reads as the window merged
-  const fold = await foldWindowMain({ collectorSha, cwd, headSha, isDryRun, mainSha, viewerLogin });
-  if (fold?.kind === CycleOutcomeKind.Idle) return { outcome: fold, reviewFixesSha };
+  const fold = await foldWindowMain({ collectorSha, cwd, headSha, isDryRun, mainSha, viewerLogin, window });
+  if (fold?.kind === CycleOutcomeKind.Idle)
+    return { outcome: fold, retriggerDelaySeconds: fold.retriggerDelaySeconds, reviewFixesSha };
   else if (fold === undefined) mergeWindowPullRequest({ headSha, isDryRun, pullRequest: number });
 
   // A failed retarget leaves the window above stranded on this branch, which the next run retargets before it reads the
@@ -105,13 +96,7 @@ export const mergeBottomWindow = async ({
   });
   // A retarget that did not land holds the walk once the drain has run: the window above is still on this branch, which
   // The next run retargets before it reads the stack, so nothing is merged or cut over it first
-  if (drain.outcome)
-    return {
-      outcome: drain.outcome,
-      retriggerDelaySeconds: drain.outcome.retriggerDelaySeconds,
-      reviewFixesSha: drain.reviewFixesSha,
-    };
-  else if (next && !isRetargeted)
+  if (next && !isRetargeted)
     return {
       outcome: {
         kind: CycleOutcomeKind.Idle,

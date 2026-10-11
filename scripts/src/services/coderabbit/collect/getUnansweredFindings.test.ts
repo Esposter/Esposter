@@ -13,6 +13,7 @@ describe(getUnansweredFindings, () => {
     lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
     lastBody: "",
     path: "",
+    replyAuthorLogins: [],
   };
   const baseInput = { commits: [], isBodyRejected: false, openThreads: [thread], rejectedIds: [], reviewId };
 

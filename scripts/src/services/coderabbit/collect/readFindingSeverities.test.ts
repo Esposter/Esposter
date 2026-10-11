@@ -17,6 +17,7 @@ const getThread = (commentId: number): ReviewThread => ({
   lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
   lastBody: "",
   path: "path",
+  replyAuthorLogins: [],
 });
 
 describe(readFindingSeverities, () => {
