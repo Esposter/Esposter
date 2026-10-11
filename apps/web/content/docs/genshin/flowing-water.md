@@ -5,7 +5,7 @@ description: Genshin's rivers and waterfalls in the anime style, built on the st
 
 # Flowing water
 
-The [water](/docs/genshin/water) is one still surface at each region's level, and a river is not: it runs one way and falls with its valley. The water's material now takes a flow, and two shapes take it further, a river's ribbon along its course and a waterfall's sheet down a cliff. Still water has no flow, so the sea and lakes draw exactly as before.
+The [water](/docs/genshin/water) is one still surface at each region's level, and a river is not: it runs one way and falls with its valley. The water's material takes a flow, and two shapes take it further, a river's ribbon along its course and a waterfall's sheet down a cliff. Still water has a flow of zero, so the sea and lakes draw with no flow.
 
 ## How it works
 

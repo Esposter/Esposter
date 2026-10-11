@@ -25,7 +25,7 @@ flowchart TD
 
 ## The kinds
 
-`WildlifeKind` names three: `CrimsonFox`, `Squirrel` and `WhitePigeon`. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label. The archive files each as an animal or aviary monster, which the capture table's rows and the monster rows hold for the parts still to come.
+`WildlifeKind` names three: `CrimsonFox`, `Squirrel` and `WhitePigeon`. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label. The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
 
 ## The flight
 
