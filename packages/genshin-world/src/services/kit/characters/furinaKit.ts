@@ -39,6 +39,7 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Furina's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -204,7 +205,6 @@ const CONSTELLATION_4_COOLDOWN_STATUS_ID = "furina-c4-cooldown";
 
 type SalonMember = (typeof SALON_MEMBERS)[number];
 
-const getDeployedCharacterIds = (party: Party): number[] => party.teams[party.deployedTeamIndex]?.characterIds ?? [];
 // Ascension 4's Salon DMG Bonus and the share it cuts off the Singer's interval, from her Max HP
 const getSalonDamageBonus = ({ ascension, attributes }: Combatant): number =>
   ascension < ASCENSION_4

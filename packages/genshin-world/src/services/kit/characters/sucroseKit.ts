@@ -23,6 +23,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Sucrose's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
 // Attack at 4 and its stamina at 5, and the plunges' collision, low and high at 6, 7 and 8. The skill group holds
@@ -244,7 +245,7 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     lowPlunge: plungeAction(LOW_PLUNGE_HIT_AREA, LOW_PLUNGE_POISE_DAMAGE, 7),
     normalAttacks: NORMAL_ATTACK_STRIKES.map((strike, index) => createNormalAttack(strike, index)),
     onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
-      const members = party.teams[party.deployedTeamIndex]?.characterIds ?? [];
+      const members = getDeployedCharacterIds(party);
       if (event.kind === KitEventKind.ReactionTriggered) {
         if (combatant.ascension < SWIRL_ASCENSION || event.striker.characterId !== combatant.characterId) return;
         for (const reaction of event.reactions) {

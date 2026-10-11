@@ -3,6 +3,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Rolls a hit's party heal, if the hit has one and its striker's character holds a shield it cast, never a Crystallize
 // Shield, or the heal is unshielded, and on a pass heals each member of the deployed team by the flat HP plus the
@@ -34,7 +35,7 @@ export const healKitParty = (
     healParty.defenseShare * pricedCombatant.attributes.defense +
     (healParty.attackShare ?? 0) * pricedCombatant.attributes.attack +
     (healParty.maxHealthShare ?? 0) * pricedCombatant.attributes.maxHealth;
-  for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
+  for (const characterId of getDeployedCharacterIds(party))
     changeKitMemberHealth(context, combatant, characterId, healedHp);
   return true;
 };

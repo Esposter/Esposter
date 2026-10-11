@@ -20,6 +20,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Barbara's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the
 // Charged attack at 4 and its stamina at 5, and the plunges' collision, low and high at 6, 7 and 8. The skill group
@@ -118,7 +119,7 @@ const createMelodyLoopTick =
     const { activeCombatant, kitEffectState, party } = context;
     changeKitMemberHealth(context, owner, activeCombatant.characterId, regenerationHeal);
     if (tickIndex > 0 || owner.constellationCount < VITALITY_BURST_CONSTELLATION) return;
-    for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
+    for (const characterId of getDeployedCharacterIds(party))
       if (characterId !== owner.characterId)
         buffKitMember(kitEffectState, characterId, {
           amount: VITALITY_BURST_HYDRO_DAMAGE_BONUS,

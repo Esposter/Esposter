@@ -23,6 +23,7 @@ import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Charlotte's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
 // Attack at 3 and its flat stamina at 4, the plunges' collision, low and high at 5, 6 and 7, and Spiritbreath Thorn's
@@ -111,7 +112,7 @@ const createSnappyMark = (): EnemyStatus => ({
 
 const healTeam = (context: KitContext, caster: Combatant, flatHealth: number, attackShare: number): void => {
   const healedHealth = flatHealth + attackShare * caster.attributes.attack;
-  for (const characterId of context.party.teams[context.party.deployedTeamIndex]?.characterIds ?? [])
+  for (const characterId of getDeployedCharacterIds(context.party))
     changeKitMemberHealth(context, caster, characterId, healedHealth);
 };
 

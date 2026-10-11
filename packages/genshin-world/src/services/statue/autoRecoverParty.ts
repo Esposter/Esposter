@@ -1,6 +1,7 @@
 import type { Party } from "#src/models/party/Party";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
 
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 
@@ -15,7 +16,7 @@ export const autoRecoverParty = (
 ): RestorativePower => {
   reviveParty(party);
   let amount = power.amount;
-  for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? []) {
+  for (const characterId of getDeployedCharacterIds(party)) {
     const partyMember = getPartyMember(party, characterId);
     const maxHealth = getMaxHealth(characterId);
     const healthGain = Math.min(Math.max(0, thresholdHealthShare - partyMember.healthShare) * maxHealth, amount);

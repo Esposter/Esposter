@@ -11,6 +11,7 @@ import { ENEMY_CAPSULE_RADIUS } from "#src/services/enemy/constants";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // The standing enemy nearest a point within a radius of it, measured to the enemy's edge, if one stands there
 const selectNearestEnemy = ({ x, z }: GroundPoint, enemies: Iterable<Enemy>, radius: number): Enemy | undefined => {
@@ -38,8 +39,7 @@ export const burstKitDendroCores = (expiredEffects: readonly KitEffect[], contex
     if (
       !combatant ||
       (reactionType === TransformativeReactionType.Bloom &&
-        (!party.teams[party.deployedTeamIndex]?.characterIds.includes(characterId) ||
-          checkIsCharacterDown(party, characterId)))
+        (!getDeployedCharacterIds(party).includes(characterId) || checkIsCharacterDown(party, characterId)))
     )
       continue;
     const target =

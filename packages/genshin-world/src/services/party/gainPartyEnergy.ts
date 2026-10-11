@@ -8,6 +8,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { getEnergyGain } from "#src/services/combat/energy/getEnergyGain";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // An enemy's drop of energy, written into each standing member of the deployed team: the drop's count of what each one
@@ -20,7 +21,7 @@ export const gainPartyEnergy = (
   dropElement: Element | undefined,
   characterIdCombatantMap: Map<number, Combatant>,
 ): void => {
-  const characterIds = party.teams[party.deployedTeamIndex]?.characterIds ?? [];
+  const characterIds = getDeployedCharacterIds(party);
   const activeCharacterId = getActiveCharacterId(party);
   for (const characterId of characterIds) {
     if (checkIsCharacterDown(party, characterId)) continue;

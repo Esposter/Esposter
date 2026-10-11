@@ -5,6 +5,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
 const EXILE_FIELD_ID = "exile";
@@ -33,7 +34,7 @@ export const createExileSetModule = ({ params }: ArtifactSetBonus): ArtifactSetM
         kind: "field",
         nextTickSeconds: EXILE_TICK_INTERVAL_SECONDS,
         onTick: ({ characterIdCombatantMap, party }) => {
-          for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? []) {
+          for (const characterId of getDeployedCharacterIds(party)) {
             const member = characterIdCombatantMap.get(characterId);
             if (member && characterId !== combatant.characterId) gainPartyMemberEnergy(party, member, energy);
           }

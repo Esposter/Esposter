@@ -7,6 +7,7 @@ import type { Input } from "genshin-engine";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { PARTY_MEMBER_INPUT_ACTIONS, PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/services/party/constants";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 
@@ -49,7 +50,7 @@ const pressMemberKey = (index: number) => {
        and its slot's number. The member on the field is marked, a member who is down greyed, and after a switch every
        other row darkens by the share of the cooldown left -->
   <ol class="party">
-    <li v-for="(characterId, index) of party.teams[party.deployedTeamIndex]?.characterIds ?? []" :key="characterId">
+    <li v-for="(characterId, index) of getDeployedCharacterIds(party)" :key="characterId">
       <button
         class="member"
         :class="{ active: index === party.activeIndex, down: checkIsCharacterDown(party, characterId) }"

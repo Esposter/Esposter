@@ -30,6 +30,7 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // The Raiden Shogun's proud skill groups, read at her talent level, each index matched to its level-1 value in the dm file
@@ -341,7 +342,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           combatant.characterId,
           EYE_DELAY_FRAMES / 60,
           ({ kitEffectState: tickEffectState, party }) => {
-            for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
+            for (const characterId of getDeployedCharacterIds(party))
               addKitStatus(tickEffectState, characterId, { id: EYE_STATUS_ID, secondsRemaining: eyeSeconds });
           },
           { id: EYE_PENDING_TASK_ID },
@@ -421,7 +422,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         return;
       }
 
-      const memberIds = party.teams[party.deployedTeamIndex]?.characterIds ?? [];
+      const memberIds = getDeployedCharacterIds(party);
       const otherMemberIds = memberIds.filter((memberId) => memberId !== characterId);
       if (event.kind === KitEventKind.EffectExpired) {
         const { effect } = event;
