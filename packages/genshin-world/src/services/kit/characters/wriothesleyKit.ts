@@ -4,6 +4,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
+import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
@@ -85,6 +86,7 @@ export const createWriothesleyKit = (talentMultiplierMap: TalentMultiplierMap): 
 
   const normalAttacks: KitAction[] = NORMAL_ATTACKS.map(({ cancelFrames, hits }) => ({
     hits: hits.map(({ hitmarkFrames, talentIndex }): KitHit => ({
+      element: Element.Cryo,
       hitArea: createTargetedHitArea(STRIKE_TARGETING_AREA, STRIKE_HIT_RADIUS),
       hitmarkSeconds: hitmarkFrames / 60,
       internalCooldownTag: InternalCooldownTag.NormalAttack,
@@ -101,6 +103,7 @@ export const createWriothesleyKit = (talentMultiplierMap: TalentMultiplierMap): 
     chargedAttack: {
       hits: [
         {
+          element: Element.Cryo,
           hitArea: CHARGED_ATTACK_HIT_AREA,
           hitmarkSeconds: CHARGED_ATTACK_HITMARK_FRAMES / 60,
           isBlunt: true,
@@ -114,6 +117,7 @@ export const createWriothesleyKit = (talentMultiplierMap: TalentMultiplierMap): 
     chargedAttackStamina: attackMultiplier(7),
     elementalBurst: {
       hits: BURST_HITMARK_FRAMES.map((frames): KitHit => ({
+        element: Element.Cryo,
         hitArea: BURST_HIT_AREA,
         hitmarkSeconds: frames / 60,
         poiseDamage: 0,
@@ -126,6 +130,7 @@ export const createWriothesleyKit = (talentMultiplierMap: TalentMultiplierMap): 
     highPlunge: {
       hits: [
         {
+          element: Element.Cryo,
           hitArea: HIGH_PLUNGE_HIT_AREA,
           hitmarkSeconds: HIGH_PLUNGE_HITMARK_FRAMES / 60,
           isBlunt: true,
@@ -139,6 +144,7 @@ export const createWriothesleyKit = (talentMultiplierMap: TalentMultiplierMap): 
     lowPlunge: {
       hits: [
         {
+          element: Element.Cryo,
           hitArea: PLUNGE_HIT_AREAS.low,
           hitmarkSeconds: LOW_PLUNGE_HITMARK_FRAMES / 60,
           isBlunt: true,
@@ -151,6 +157,7 @@ export const createWriothesleyKit = (talentMultiplierMap: TalentMultiplierMap): 
     },
     normalAttacks,
     plungeCollision: {
+      element: Element.Cryo,
       hitArea: PLUNGE_COLLISION_HIT_AREA,
       hitmarkSeconds: PLUNGE_COLLISION_HITMARK_FRAMES / 60,
       poiseDamage: 0,
