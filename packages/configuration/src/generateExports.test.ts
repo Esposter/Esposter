@@ -36,6 +36,19 @@ describe(generateExports, () => {
     );
   });
 
+  // A module under a lazy directory is loaded by its own `import()`, so a barrel line for it would load it with the entry
+  test("leaves the modules of a lazy directory out of the barrel and keeps the others", () => {
+    expect.hasAssertions();
+
+    const lazyDirectory = join(sourceDirectory, TEST_FILENAME, "lazy");
+    mkdirSync(lazyDirectory, { recursive: true });
+    writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.ts`), `export type A = 0;`);
+    writeFileSync(join(lazyDirectory, `${TEST_FILENAME}.ts`), `export type B = 0;`);
+    generateExports(packageDirectory, "typescript", [`${TEST_FILENAME}/lazy`]);
+
+    expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(`export * from "./${TEST_FILENAME}.ts";\n`);
+  });
+
   // A sibling's watcher vendoring this source reads the barrel while it is being written, so an unchanged one is left
   test("leaves an unchanged barrel unwritten", () => {
     expect.hasAssertions();

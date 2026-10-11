@@ -39,7 +39,9 @@ const generateComponentBarrel = (sourceDirectory: string): void => {
   );
 };
 
-const generateSourceBarrel = (sourceDirectory: string): void => {
+// A module under a lazy directory is left out so the entry does not load it: the package reaches it through an `import()`
+// Of its own, which a barrel line would undo by statically importing the module into the entry.
+const generateSourceBarrel = (sourceDirectory: string, lazyDirectories: string[]): void => {
   const specifiers = globSync("**/*.ts", { cwd: sourceDirectory })
     .map((path) => path.replaceAll("\\", "/"))
     .filter(
@@ -47,6 +49,7 @@ const generateSourceBarrel = (sourceDirectory: string): void => {
         path !== BARREL_FILE &&
         !path.endsWith(".d.ts") &&
         !NON_SOURCE_SUFFIXES.some((suffix) => path.endsWith(suffix)) &&
+        !lazyDirectories.some((directory) => path.startsWith(`${directory}/`)) &&
         checkHasExport(join(sourceDirectory, path)),
     );
   // Each module keeps its `.ts` extension, which a bundler takes as it is and which node's own resolution — the one the
@@ -55,13 +58,15 @@ const generateSourceBarrel = (sourceDirectory: string): void => {
 };
 // In order: the Vue answer writes the component barrel first, because the source barrel then lists it like any other
 // Module
-const BarrelGeneratorsMap: Record<ExportsGeneration, ((sourceDirectory: string) => void)[]> = {
-  none: [],
-  typescript: [generateSourceBarrel],
-  vue: [generateComponentBarrel, generateSourceBarrel],
-};
-// Writes the barrels into `src` under the package directory tsdown resolved, from the build's `build:prepare` hook
-export const generateExports = (packageDirectory: string, exportsGeneration: ExportsGeneration): void => {
+const BarrelGeneratorsMap: Record<ExportsGeneration, ((sourceDirectory: string, lazyDirectories: string[]) => void)[]> =
+  { none: [], typescript: [generateSourceBarrel], vue: [generateComponentBarrel, generateSourceBarrel] };
+// Writes the barrels into `src` under the package directory tsdown resolved, from the build's `build:prepare` hook.
+// `lazyDirectories` are `src`-relative directories the package loads on demand, and the source barrel leaves them out.
+export const generateExports = (
+  packageDirectory: string,
+  exportsGeneration: ExportsGeneration,
+  lazyDirectories: string[] = [],
+): void => {
   const sourceDirectory = join(packageDirectory, SOURCE_DIRECTORY_NAME);
-  for (const generateBarrel of BarrelGeneratorsMap[exportsGeneration]) generateBarrel(sourceDirectory);
+  for (const generateBarrel of BarrelGeneratorsMap[exportsGeneration]) generateBarrel(sourceDirectory, lazyDirectories);
 };
