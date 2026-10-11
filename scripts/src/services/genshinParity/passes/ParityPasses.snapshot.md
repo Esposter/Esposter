@@ -4,6 +4,12 @@ Each component's last `pnpm -C scripts genshin:parity passes <component>`, which
 pass in order up to the first whose gate fails or that has no measure yet, which is the next work. A pass run alone
 (`--pass`) rewrites only its own rows. Commit it with the change that moved it, as a bench's report is committed.
 
+## fontaine
+
+| Pass | Reading | Value | Gate | Unit | Held |
+| :--- | :------ | ----: | ---: | :--- | :--- |
+| Inventory | renderers unclaimed | 0 | 0 | renderers | yes |
+
 ## liyue
 
 | Pass | Reading | Value | Gate | Unit | Held |

@@ -7,8 +7,6 @@ description: Fontaine's region: its base ground, renderers, landmarks, camera, s
 
 ## Queue
 
-- [ ] `[page]` {fontaine-every-renderer} needs game-exports, parity-page — **Fontaine: every renderer claimed.** `pnpm -C scripts genshin:parity passes fontaine --pass Inventory`. Reads the witness and the `WorldScreen` fixture's `witnessComponents.fontaine` claims: the families (`packages/genshin-world/src/services/fontaine/FontainePartFamilyMeshRegexMap.ts`) and what is not drawn yet (`packages/genshin-world/src/services/fontaine/FontaineUndrawnMeshRegexMap.ts`), which claim each renderer of the capital's witness once when run over its names offline. Writes the fontaine section of `ParityPasses.snapshot.md`. Bar: renderers unclaimed 0.
-
 ## Waiting
 
 - [ ] `[cpu]` {fontaine-landmarks-meshes} needs game-exports — **Fontaine: the landmarks' meshes named from the extraction.** Reads `~/Esposter/genshin-parity/extracted/fontaine/` and the landmarks of `court-of-fontaine-location` in `ParityReferenceMap` (their pixels), read off the extracted meshes' names and positions near each landmark, and written as the fontaine entries of `DerivedAssetLandmarkMap` (each a `mesh` and its `share`). Waits on the Court's own buildings being named and rooted: the layout dumps name its clock tower "Area_Fd_Build_FDC_Zhonglou_01" and 35 pieces of "Area_Fd_Build_FDC_POI_Zongzhan_" that no OBJ exports, the export holds no arch or bridge near the Court, and its 85-metre towers ("Area_Fd_Build_FDC_Talou_A_01_Lod0") stand on several instances that no pose yet tells apart. Until then `DerivedAssetLandmarkMap[fontaine]` stays empty.
