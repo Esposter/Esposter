@@ -14,7 +14,7 @@
 | CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; CodeQL on `main`  |
 | Bundle & Performance | 9 / 10  | Vite auto-splits; per-package size snapshots; app bundle ungated              |
 
-A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security, Drizzle) over custom solutions. Primary remaining drag is the pre-release framework line the app runs on ahead of its release, beside the ORM's release candidate.
+A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security-module, Drizzle) over custom solutions. Primary remaining drag is the pre-release framework line the app runs on ahead of its release, beside the ORM's release candidate.
 
 ---
 
@@ -40,7 +40,7 @@ Several hundred test files, concentrated in `app` and `virrun` but present in ev
 
 ## Security — 8 / 10
 
-Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle parameterized queries prevent SQL injection. Tiered rate limiting via `RateLimiterDrizzleNonAtomic` — NonAtomic is deliberate, as rate limiting is not a hard security boundary here; `nuxt-security`'s own `rateLimiter` is disabled in favour of these app-level limiters.
+Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle parameterized queries prevent SQL injection. Tiered rate limiting via `RateLimiterDrizzleNonAtomic` — NonAtomic is deliberate, as rate limiting is not a hard security boundary here; `nuxt-security-module`'s own `rateLimiter` is disabled in favour of these app-level limiters.
 
 **Accepted trade-offs:**
 

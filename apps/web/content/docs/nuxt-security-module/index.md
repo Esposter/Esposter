@@ -5,7 +5,7 @@ description: The Nuxt security module the repo is absorbing in place of nuxt-sec
 
 # nuxt-security-module
 
-`packages/nuxt-security-module` is the replacement for [nuxt-security](https://github.com/Baroshem/nuxt-security), the Nuxt module that sets security headers, a nonce-based Content Security Policy, CORS, basic auth, a rate limiter, an XSS validator and a request size limiter. The absorption is in progress: our app still runs the upstream package, pinned at `2.6.0` with a patch, and this section is the record the absorption is built against.
+`packages/nuxt-security-module` is the replacement for [nuxt-security](https://github.com/Baroshem/nuxt-security), the Nuxt module that sets security headers, a nonce-based Content Security Policy, CORS, basic auth, a rate limiter, an XSS validator and a request size limiter. The app runs this package in place of the upstream, whose catalog entry, patch and two workarounds are removed. This section is the record the package was built against.
 
 The decision to absorb it, and the rule a security-shaped absorption meets, are recorded in [dependency admission](/docs/architecture/dependency-admission).
 
@@ -16,7 +16,7 @@ The decision to absorb it, and the rule a security-shaped absorption meets, are 
 
 ## Status
 
-The package builds the headers, the nonce Content Security Policy, subresource integrity, the prerender policy, the header and CORS handlers, the allowed methods, basic auth, the request size limit, a rate limiter behind a store interface, CSRF by the double submit cookie, the route rules' `security` key and strict mode, and the `removeLoggers` option, which sets the bundler's `dropConsole`. Its module options are validated by one Zod schema per option group, so a bad option stops the build with its path. Each part has unit tests, and each in-scope audit defect that this code fixes has a regression test titled with its issue number. The package typechecks, lints and builds. Its Nitro plugins and middleware are typed and built but not yet run inside a Nuxt app, so the app still runs the upstream package.
+The package builds the headers, the nonce Content Security Policy, subresource integrity, the prerender policy, the header and CORS handlers, the allowed methods, basic auth, the request size limit, a rate limiter behind a store interface, CSRF by the double submit cookie, the route rules' `security` key and strict mode, and the `removeLoggers` option, which sets the bundler's `dropConsole`. Its module options are validated by one Zod schema per option group, so a bad option stops the build with its path. Each part has unit tests, and each in-scope audit defect that this code fixes has a regression test titled with its issue number. The package typechecks, lints and builds. Its Nitro plugins and middleware run inside the app, which registers the package in place of the upstream. The rendered headers, the nonce and the integrity attributes are still to be checked in a browser.
 
 Decided not to build, with the reason on the [upstream audit](/docs/nuxt-security-module/upstream#decisions-not-built):
 
@@ -29,4 +29,3 @@ Not built yet, in order:
 3. Write the prerendered headers file for static hosts. The `ssg.nitroHeaders` and `ssg.exportToPresets` options are read but not yet acted on.
 4. Verify the SRI behaviour on preload links (#655) and on entry import maps (#657) against a built app. Both are kept as they are until then.
 5. Build the FEATURE rows the audit judges worth having, each with a test named for its number.
-6. Swap the app's dependency onto the package, then remove the upstream catalog entry and the two workarounds it holds: the rate limiter's storage mounted with `rateLimiter: false`, and the prerender hook that reads Nitro 2's build-time storage. Those workarounds are `@TODO` markers in `pnpm-workspace.yaml`.

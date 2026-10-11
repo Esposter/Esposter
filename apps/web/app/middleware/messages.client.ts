@@ -1,6 +1,6 @@
 import { RoutePath } from "@esposter/shared";
 
-// https://github.com/Baroshem/nuxt-security/issues/527
+// The messages route's CSP is set on each full page load, never on a client-side navigation, so crossing the boundary reloads
 export default defineNuxtRouteMiddleware((to, from) => {
   if (to.path === from.path) return;
 

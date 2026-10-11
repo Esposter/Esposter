@@ -131,4 +131,4 @@ Never ported: **`ofetch` options on the links** (its fetch options and header pi
 - [useRequestEvent](https://nuxt.com/docs/api/composables/use-request-event) (Nuxt) — the event whose `fetch` is the server-rendering transport.
 - [WebSocket](https://nitro.build/guide/websocket) (Nitro) — `defineWebSocketHandler` and the `features.websocket` flag the module sets.
 - [Fetch adapter](https://trpc.io/docs/server/adapters/fetch) and [WebSockets](https://trpc.io/docs/server/websockets) (tRPC) — the two handlers the module wraps.
-- [nuxt-security XSS validator](https://nuxt-security.vercel.app/middleware/xss-validator) — the filter whose semantics keep it off.
+- [nuxt-security XSS validator](https://nuxt-security.vercel.app/middleware/xss-validator) — the filter whose semantics keep it off, and the module that does not build one ([upstream audit](/docs/nuxt-security-module/upstream#decisions-not-built)).
