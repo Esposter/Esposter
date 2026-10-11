@@ -23,7 +23,7 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
        Own icon before the title and its own tabs, if it has any, along the band beside them -->
   <GameScreen class="list-screen">
     <slot name="icon" />
-    <ScreenHeader :game-text="gameText" :title="title" @close="emit('close')" />
+    <ScreenHeader :game-text :title @close="emit('close')" />
     <slot name="tabs" />
     <span class="key previous">Q</span>
     <span class="key next">E</span>

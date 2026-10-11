@@ -75,9 +75,9 @@ describe(createFurinaKit, () => {
     const combatant = createFurinaCombatant();
     const party = createParty([FURINA_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    FURINA_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState, party });
+    FURINA_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
     stepFrames(60, kitEffectState, party, [combatant]);
-    FURINA_KIT.chargedAttack.onStart?.({ body, combatant, kitEffectState, party });
+    FURINA_KIT.chargedAttack.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
     stepFrames(30, kitEffectState, party, [combatant]);
     const beforeSwitch = getFieldIds(kitEffectState).filter(Boolean);
     stepFrames(10, kitEffectState, party, [combatant]);
@@ -94,7 +94,7 @@ describe(createFurinaKit, () => {
     const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID, LOW_TEAMMATE_CHARACTER_ID]);
     getPartyMember(party, LOW_TEAMMATE_CHARACTER_ID).healthShare = 0.4;
     const kitEffectState: KitEffectState = { effects: [] };
-    FURINA_KIT.elementalSkill.onStart?.({ body, combatant: furina, kitEffectState, party });
+    FURINA_KIT.elementalSkill.onStart?.({ body, combatant: furina, kitEffectState, party, random: () => 0 });
     // Mademoiselle Crabaletta attacks first, 18 frames for the bubble and 71.6 for its first tick
     stepFrames(90, kitEffectState, party, [furina, teammate, lowTeammate], [createEnemyAt(3)]);
     const attack = kitEffectState.effects.find(
@@ -116,7 +116,7 @@ describe(createFurinaKit, () => {
     const combatant = createFurinaCombatant();
     const party = createParty([FURINA_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    FURINA_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState, party });
+    FURINA_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
     stepFrames(300, kitEffectState, party, [combatant], [createEnemyAt(100)]);
 
     expect(party.healthChanges).toStrictEqual([]);
@@ -144,7 +144,7 @@ describe(createFurinaKit, () => {
     };
     const readFanfare = (): number | undefined =>
       findKitStatus(kitEffectState.effects, FURINA_CHARACTER_ID, "furina-fanfare")?.stacks;
-    FURINA_KIT.elementalBurst.onStart?.({ body, combatant: furina, kitEffectState, party });
+    FURINA_KIT.elementalBurst.onStart?.({ body, combatant: furina, kitEffectState, party, random: () => 0 });
     stepFrames(100, kitEffectState, party, [furina, teammate]);
     FURINA_KIT.onKitEvent?.(drain, context);
     stepFrames(10, kitEffectState, party, [furina, teammate]);
@@ -201,14 +201,14 @@ describe(createFurinaKit, () => {
     const party = createParty([FURINA_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const strike = (): void =>
-      FURINA_KIT.normalAttacks[0]?.hits[0]?.onStrike?.({ body, combatant, kitEffectState, party });
+      FURINA_KIT.normalAttacks[0]?.hits[0]?.onStrike?.({ body, combatant, kitEffectState, party, random: () => 0 });
     const countArkheHits = (): number =>
       kitEffectState.effects.filter((effect) => effect.kind === "summon" && effect.attackTag === AttackTag.NormalAttack)
         .length;
     strike();
     strike();
     const inOusia = countArkheHits();
-    FURINA_KIT.chargedAttack.onStart?.({ body, combatant, kitEffectState, party });
+    FURINA_KIT.chargedAttack.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
     stepFrames(40, kitEffectState, party, [combatant]);
     strike();
 

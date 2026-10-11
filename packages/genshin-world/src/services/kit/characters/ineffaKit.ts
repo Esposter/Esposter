@@ -117,7 +117,7 @@ export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   // Birgitta is cast at the start of the action and appears on the field at her spawn frame. Her discharges count from her
   // Cast, each landing the gcsim frames after her spawn, on the schedule gcsim gives her
   const createBirgittaHits = (spawnFrames: number): KitHit[] =>
-    Array.from({ length: BIRGITTA_DISCHARGE_COUNT }, (_, index) => ({
+    Array.from({ length: BIRGITTA_DISCHARGE_COUNT }, (_value, index) => ({
       hitArea: BIRGITTA_HIT_AREA,
       hitmarkSeconds: (spawnFrames + BIRGITTA_FIRST_DISCHARGE_FRAMES + index * BIRGITTA_DISCHARGE_INTERVAL_FRAMES) / 60,
       poiseDamage: 0,

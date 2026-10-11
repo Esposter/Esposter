@@ -36,7 +36,13 @@ const createSkirkCombatant = (): Combatant => ({
 // The effects an action's start adds to the team's, which its owner holds
 const castAction = (action: KitAction, combatant = createSkirkCombatant()): KitEffectState => {
   const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([SKIRK_CHARACTER_ID]) });
+  action.onStart?.({
+    body: kitBody,
+    combatant,
+    kitEffectState,
+    party: createParty([SKIRK_CHARACTER_ID]),
+    random: () => 0,
+  });
   return kitEffectState;
 };
 
