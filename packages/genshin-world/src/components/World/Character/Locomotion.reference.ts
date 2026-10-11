@@ -52,6 +52,12 @@ export const locomotionTopic: ReferenceTopic = {
       result:
         "The tall female body in metres at its human scale of 1.061: the walk 1.24 m/s, the run 5.68 and the sprint 7.17; the dash 7.89 m/s over 1.4 s, within 0.4% of the average its clip records; the climb 0.84 m/s up; the climb jump 3.3 m up over 1.08 s; the swim 1.95 m/s over a 1.67 s cycle and its dash 3.9; drowning 3 s. Its glide's FlyNormal holds its root still and its jump's root falls 11.7 m, so both stay read off recordings",
     },
+    {
+      method: "`pnpm -C scripts genshin:assets locomotion Male`: the same read at the tall male body's human scale",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The tall male body in metres at its human scale of 1.115: the walk 1.2 m/s, the run 5.74 over a 0.77 s cycle and the sprint 7.5 over 0.53 s; the dash 9.47 m/s over 1.18 s, within 0.5% of the average its clip records; the climb 0.94 m/s up; the climb jump 3.72 m up over 1.08 s; the swim 1.38 m/s and its dash 3.9; drowning 3 s. Its glide's FlyNormal holds its root still and its jump's root falls 11.7 m, so both stay read off recordings",
+    },
   ],
   openQuestions: [
     "The jump's height and the fall's gravity, the glide's forward speed and its sink, the plunge's speed, the step, the steepest walkable slope, the wading depth, the glider's height and the slide down ground too steep to stand on, which no clip holds and a recording's motion pass reads",
