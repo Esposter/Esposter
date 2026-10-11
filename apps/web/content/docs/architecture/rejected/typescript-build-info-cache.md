@@ -5,7 +5,7 @@ description: Rejected — restoring *.tsbuildinfo across CI runs to make the typ
 
 # TypeScript build info cache
 
-Restoring each package's `*.tsbuildinfo` would make the typecheck job incremental. Measured locally, that takes the packages from most of two minutes to seconds and roughly halves the app's pass — a real saving in the currency [CI proposals are judged in](/docs/architecture/monorepo-tooling), and it is still refused.
+Restoring each package's `*.tsbuildinfo` would make the typecheck job incremental. Measured locally, that takes the packages from minutes to seconds and roughly halves the app's pass — a real saving in the currency [CI proposals are judged in](/docs/architecture/monorepo-tooling), and it is still refused.
 
 ## Why not
 
