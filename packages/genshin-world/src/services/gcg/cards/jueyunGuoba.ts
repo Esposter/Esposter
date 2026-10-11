@@ -2,8 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
-import { takeOne } from "@esposter/shared";
+import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
 
 const JUEYUN_GUOBA_ID = 333_001;
 
@@ -18,9 +17,5 @@ export const jueyunGuoba: GcgCardModule = {
     zoneCard.usages = 0;
     return { ...damage, value: damage.value + 1 };
   },
-  play: ({ duel, sideIndex }, targetIndex) => {
-    const side = takeOne(duel.sides, sideIndex);
-    const character = targetIndex === undefined ? undefined : side.characters.at(targetIndex);
-    character?.statuses.push(createGcgZoneCard(JUEYUN_GUOBA_ID, jueyunGuoba));
-  },
+  play: (context, targetIndex) => addGcgZoneCardToCharacter(context, targetIndex, JUEYUN_GUOBA_ID, jueyunGuoba),
 };
