@@ -18,12 +18,14 @@ import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas"
 import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readRefusedPaths } from "#src/services/coderabbit/collect/readRefusedPaths";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { restoreResolutions } from "#src/services/coderabbit/collect/restoreResolutions";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { saveResolutions } from "#src/services/coderabbit/collect/saveResolutions";
 import { skipStops } from "#src/services/coderabbit/collect/skipStops";
+import { withoutHooksAsync } from "#src/services/coderabbit/collect/withoutHooks";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, noop } from "@esposter/shared";
 
@@ -37,6 +39,15 @@ import { getResult, noop } from "@esposter/shared";
 // Of a parked commit, which its held branch takes out of the owed set first (`readCherryShas`).
 const checkIsCarried = (sourceSha: string, cwd: string): boolean =>
   readCherryShas(readHeadSha(cwd), sourceSha, cwd).length === 0;
+// A pick git refused leaves the sequence open with nothing in progress, so no conflict can be resolved; it is named by
+// the paths git refused over rather than read as a conflict the resolver left unresolved
+const throwIfRefused = (cwd: string): void => {
+  const refusedPaths = readRefusedPaths(cwd);
+  if (refusedPaths.length > 0)
+    throw new AttemptFailedError(
+      `git refused the next pick over ${refusedPaths.join(", ")}, which differ from HEAD with no pick in progress`,
+    );
+};
 // Whether the sequence has moved past a stopped commit and carries it: run to its end over a clean tree, or stopped on
 // A later commit — whose conflict leaves the tree dirty, and is the next session's
 const checkIsPast = (stoppedSha: string, cwd: string): boolean => {
@@ -54,7 +65,7 @@ const checkIsPast = (stoppedSha: string, cwd: string): boolean => {
 // Commit. A session per conflict rather than one for the whole sequence: a replay of hundreds of owed commits meets
 // Dozens of conflicts, which no one session's deadline holds, and its failure would be counted on the first conflict
 // Whichever one it died on — parking a commit whose resolution had landed.
-export const replayOwed = async ({
+const replayCommits = async ({
   branch,
   collectorSha,
   cwd,
@@ -110,6 +121,7 @@ export const replayOwed = async ({
     // A pick git refused before it started leaves no sequence open, so the stop reads as a run to its end. Only the
     // Carry check says it landed, and a replay that did not carry what it owed falls through to name the state
     if (isReplayed && checkIsCarried(sourceSha, cwd)) return ReplayOutcome.Replayed;
+    throwIfRefused(cwd);
 
     const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
     const conflictedPaths = readUnmergedPaths(cwd);
@@ -120,6 +132,7 @@ export const replayOwed = async ({
     // A clean exit says the session ended, never how it ended; what proves the resolution is the sequence moved past
     // The commit and carrying it. Anything else ends the run as a drain does, with the attempt counted on the commit
     if (!isEnded || !checkIsPast(conflictSha, cwd)) {
+      throwIfRefused(cwd);
       recordFailure(`resolve the conflict ${conflictSha} brings to ${targetBranch}`);
       throw new AttemptFailedError(
         `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
@@ -141,3 +154,7 @@ export const replayOwed = async ({
       }).match(noop, console.error);
   }
 };
+
+// The replay's own git and the sessions it hands a conflict to run with the repository's hooks off, so each commit
+// lands as it was picked (`withoutHooks`)
+export const replayOwed = (input: ReplayInput): Promise<ReplayOutcome> => withoutHooksAsync(() => replayCommits(input));

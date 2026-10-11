@@ -363,6 +363,34 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).not.toHaveBeenCalled();
   });
 
+  // A formatter stands in for the repository's pre-commit hook: it rewrites every staged file, so the commit a
+  // `--continue` makes differs from the pick it settles. The commit after the conflict is then refused for a dirty index
+  test("replays past a conflict with the repository's hooks off, so the commit it settles and the ones after it land as written", async () => {
+    expect.hasAssertions();
+
+    const { developSha, queueSha: conflictedSha } = setupConflict();
+    switchTo(conflictedSha);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
+    writeFileSync(
+      join(getCwd(), ".git", "hooks", "pre-commit"),
+      `#!/bin/sh
+for path in $(git diff --cached --name-only); do printf 'formatted\\n' >> "$path"; git add -- "$path"; done
+`,
+      { mode: 0o755 },
+    );
+    vi.stubEnv("GIT_EDITOR", "true");
+    runSession.mockImplementation(() => {
+      resolveConflict();
+      return Promise.resolve({ isEnded: true });
+    });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath, filePath]);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+    expect(runSession).toHaveBeenCalledOnce();
+  });
+
   test("aborts a conflict on a dry run and leaves the queue where it was", async () => {
     expect.hasAssertions();
 

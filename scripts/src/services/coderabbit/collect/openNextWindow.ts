@@ -24,6 +24,7 @@ import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindow
 import { replyPullRequestAnswers } from "#src/services/coderabbit/collect/replyPullRequestAnswers";
 import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
+import { withoutHooks } from "#src/services/coderabbit/collect/withoutHooks";
 import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
@@ -76,7 +77,7 @@ export const openNextWindow = async ({
     viewerLogin,
   });
   if (syncedQueueSha === undefined) return { isWindowOpened: false, outcome: getMovedOutcome(QUEUE_BRANCH) };
-  const port = portWindow({ baseSha, cwd, developSha, fileCap, fixShas, queueSha: syncedQueueSha });
+  const port = withoutHooks(() => portWindow({ baseSha, cwd, developSha, fileCap, fixShas, queueSha: syncedQueueSha }));
   // What `develop` carries above the window below — a window a dying run pushed and never opened — is owed too
   const pendingCommitCount = Number(runGit(["rev-list", "--count", `${baseSha}..${developSha}`], cwd).trim());
   console.info(
