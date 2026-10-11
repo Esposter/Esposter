@@ -30,7 +30,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 
 ## One pass
 
-Behaviour-preserving only, one unit per commit with a `Ledger: <ledger> | <unit>` trailer, a clean unit's trailer riding the next commit, and the checks once when the sitting goes out — the loop and every rule inside it are `references/one-pass.md`.
+Behaviour-preserving only (a unit correcting toward the reference or spec is named in its commit body), one unit per commit with a `Ledger: <ledger> | <unit>` trailer, a clean unit's trailer riding the next commit, and the checks once when the sitting goes out — the loop and every rule inside it are `references/one-pass.md`.
 
 ## The ledger file — `references/ledger-files.md`
 
