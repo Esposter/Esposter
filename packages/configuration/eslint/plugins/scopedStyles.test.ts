@@ -21,6 +21,8 @@ describe("scopedStyles", () => {
     // An attribute of another element is none of this one's
     { name: "otherElementsAttribute", template: `<div href="a" />`, violations: 1 },
     { name: "globalAttribute", template: `<div class="a" hidden />`, violations: 0 },
+    // The shadow-part globals are the standard's own, on every element (upstream issue 12)
+    { name: "shadowPartGlobalAttributes", template: `<div part="a" exportparts="b" />`, violations: 0 },
     { name: "elementsOwnAttribute", template: `<canvas width="1" />`, violations: 0 },
     { name: "ariaAttribute", template: `<div role="status" aria-live="polite" />`, violations: 0 },
     { name: "dataAttribute", template: `<div data-a="a" />`, violations: 0 },
