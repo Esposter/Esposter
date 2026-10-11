@@ -93,7 +93,8 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, COLLEI_ATTACK_GROUP_ID, TALENT_START_LEVEL, index),
       },
     ],
-    seconds: cancelFrames / 60,
+    // The action runs until its arrow lands, which a hit past the cancel does not wait for otherwise
+    seconds: Math.max(cancelFrames, hitmarkFrames + ARROW_TRAVEL_FRAMES) / 60,
     targetingArea: STRIKE_TARGETING_AREA,
   });
   const fullyChargedArrowHit: KitHit = {
@@ -164,7 +165,15 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       seconds: TRUMP_CARD_KITTY_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
-    elementalSkill: { hits: floralBrushHits, seconds: FLORAL_BRUSH_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
+    elementalSkill: {
+      // The second hit lands 138 frames in, past the animation, so it is cast with the skill as a summon at the body
+      hits: floralBrushHits.slice(0, 1),
+      onStart: ({ body, combatant, kitEffectState }) => {
+        addKitEffect(kitEffectState, createKitSummon(body, combatant, floralBrushHits.slice(1)));
+      },
+      seconds: FLORAL_BRUSH_FRAMES / 60,
+      targetingArea: SKILL_TARGETING_AREA,
+    },
     highPlunge: {
       hits: [
         {
