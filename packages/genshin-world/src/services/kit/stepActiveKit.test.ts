@@ -193,13 +193,16 @@ describe(stepActiveKit, () => {
       const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, kit)], {
         effects: [{ characterId: TRAVELER_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 1 }],
       });
+      // A landing's action or its kind of attack and element, the one its event carries
       const readLandings = () =>
-        onKitEvent.mock.calls.flatMap(([event]) => {
-          if (event.kind === KitEventKind.NormalAttackLanded) return [{ action: event.action, kind: event.kind }];
-          if (event.kind === KitEventKind.DamageTaken)
-            return [{ attackTag: event.attackTag, element: event.hit.element, kind: event.kind }];
-          return [];
-        });
+        onKitEvent.mock.calls.flatMap(
+          ([event]): { action?: KitAction; attackTag?: AttackTag; element?: Element; kind: KitEventKind }[] => {
+            if (event.kind === KitEventKind.NormalAttackLanded) return [{ action: event.action, kind: event.kind }];
+            if (event.kind === KitEventKind.DamageTaken)
+              return [{ attackTag: event.attackTag, element: event.hit.element, kind: event.kind }];
+            return [];
+          },
+        );
       const kitState = createKitState();
       stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context);
       stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
