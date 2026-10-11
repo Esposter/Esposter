@@ -2,6 +2,7 @@
 title: Collector harbour
 description: Proposal — the review collector drawn on the console as a harbour, the queue, develop and main as a river's reaches, each owed commit a boat, the express lane a canal and a held commit a boat stuck at a lock, so the collector's state is readable at a glance.
 model: claude-opus-5-5
+waiting: "the console's view registry, the extensions unit's Views tier, which the declared command runs from and the picture is the first view on"
 ---
 
 # Collector harbour

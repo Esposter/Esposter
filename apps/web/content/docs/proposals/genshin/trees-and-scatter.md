@@ -42,9 +42,9 @@ flowchart TD
 
 **This adds:**
 
-1. **Every placed plant's species**, from the layout pass, each fitted to its export. The oak's species closes first: its outline is still short of its floor, and the roadmap's `windrise-oak-shape` row holds it open.
-2. **Instancing and GPU culling**
-3. **The trail**
+1. **Instancing and GPU culling**, over the placed stand-ins: each prefab's stand-in is one instanced draw until its species lands, so the culling pass has its consumers before any species is fitted.
+2. **The trail**
+3. **Every placed plant's species**, from the layout pass, each fitted to its export. The oak's species closes first: its outline is still short of its floor, and the roadmap's `windrise-oak-shape` row holds it open, so this step comes last and waits on that row alone.
 
 ## Deferred compute
 

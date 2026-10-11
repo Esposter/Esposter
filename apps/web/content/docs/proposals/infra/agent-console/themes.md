@@ -41,8 +41,8 @@ flowchart TD
 ## Scope and order
 
 1. **The palette**, the first part a theme sets past its reactions. It is read off the character's element, and two seams stand between it and the console today, so the first build settles them before a line of the palette is written:
-   - **The element is not in the session context.** The persona's context carries the card's name on its last line (`Character: <name>`, from `getSessionStartOutput`), and the element only in the headline's prose, which no theme may parse. The first build adds the element as a line of its own beside the name line, read by the Genshin theme the way the avatar is.
-   - **The console's scope takes one style and one mode.** `UiThemeScope` lets each scope pick a `UiStyle` (`uiStyle`), but it provides only `getUiTheme(style, mode)`, the tokens of that style, so a palette derived from an element needs a token set the scope can take. The choice belongs to the ui-library and is open.
+   - **The element is not in the session context.** The persona's context carries the card's name on its last line (`Character: <name>`, from `getSessionStartOutput`), and the element only in the headline's prose, which no theme may parse. The first build adds `Element: <element>` as a line of its own under the name line, read by the Genshin theme the way the avatar is.
+   - **The console's scope takes one style and one mode.** `UiThemeScope` lets each scope pick a `UiStyle` (`uiStyle`), but it provides only `getUiTheme(style, mode)`, the theme of that style. The palette does not become a style: the scope takes the style's theme as it does now and a palette of token overrides beside it, set as the tokens' own CSS custom properties on the scope's root, so an element recolours the accents inside the console and nothing outside it, and no feature names a design style.
 2. **The voice**, from the resident synthesizer, once the palette has shipped and the console has a line source.
 3. **The scene and reactions**: the wish banner, then the element ambience, then spatial chat as an option. Each one is built as its own sub-spec.
 
