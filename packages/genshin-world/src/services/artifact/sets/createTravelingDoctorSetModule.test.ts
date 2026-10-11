@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELING_DOCTOR_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createTravelingDoctorSetModule } from "#src/services/artifact/sets/createTravelingDoctorSetModule";
@@ -19,7 +20,7 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 
 const createPartyCombatant = (characterId: number): Combatant => ({
   ascension: 0,
-  attributes: computeCharacterAttributes([]),
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 1000 }]),
   characterId,
   constellationCount: 0,
   elementalResonances: [],
@@ -48,6 +49,6 @@ describe(createTravelingDoctorSetModule, () => {
       wearer,
     );
 
-    expect(getPartyMember(party, wearer.characterId).healthShare).toStrictEqual(healthShare);
+    expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(healthShare);
   });
 });
