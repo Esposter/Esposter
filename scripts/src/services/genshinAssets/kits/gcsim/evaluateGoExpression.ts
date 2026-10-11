@@ -14,7 +14,7 @@ const applyOperator = (operator: string, left: number, right: number): number | 
   else if (operator === "/")
     return Number.isInteger(left) && Number.isInteger(right) ? Math.trunc(left / right) : left / right;
   else if (operator === "%") return left % right;
-  return undefined;
+  else return undefined;
 };
 
 // A Go expression's value as gcsim's action files compute their hitmarks and frames: numbers and their sums, slices,
@@ -44,7 +44,7 @@ export const evaluateGoExpression = (
         return typeof first === "number" ? { animationFrames: first } : undefined;
       else if (CONVERSION_CALLEES.has(expression.callee) && parameters.length === 1) return first;
       else if (expression.callee === "make") return [];
-      return undefined;
+      else return undefined;
     }
     case GoExpressionKind.Composite: {
       const elements = expression.elements.map((element) => evaluate(element));
@@ -64,8 +64,8 @@ export const evaluateGoExpression = (
       return undefined;
     case GoExpressionKind.Unary: {
       const operand = evaluate(expression.operand);
-      if (typeof operand !== "number") return undefined;
-      return expression.operator === "-" ? -operand : operand;
+      if (typeof operand === "number") return expression.operator === "-" ? -operand : operand;
+      else return undefined;
     }
     default:
       return exhaustiveGuard(expression);

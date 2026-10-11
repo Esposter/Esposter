@@ -3,10 +3,10 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
+import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 
 const BinaryOperatorPrecedenceMap: Partial<Record<string, number>> = { "%": 2, "*": 2, "+": 1, "-": 1, "/": 2 };
-const OPENING_BRACKETS = new Set(["(", "[", "{"]);
-const CLOSING_BRACKETS = new Set([")", "]", "}"]);
 const UNKNOWN_EXPRESSION: GoExpression = Object.freeze({ kind: GoExpressionKind.Unknown });
 
 // One Go expression read from its first token: the literals, integer sums, calls, indexes and composite literals
@@ -19,28 +19,14 @@ export const parseGoExpression = (
 ): { end: number; expression: GoExpression } => {
   let position = start;
   const peek = () => tokens[position];
-  const isPunctuation = (text: string) => {
-    const token = peek();
-    return token?.kind === GoTokenKind.Punctuation && token.text === text;
-  };
+  const checkIsPunctuation = (text: string) => checkIsGoPunctuation(peek(), text);
   const skipNewlines = () => {
     while (peek()?.kind === GoTokenKind.Newline) position++;
-  };
-  // Skips a bracketed run whose opening bracket is at the position, nested brackets and all
-  const skipBalanced = () => {
-    let depth = 0;
-    do {
-      const token = peek();
-      if (token === undefined) return;
-      if (token.kind === GoTokenKind.Punctuation && OPENING_BRACKETS.has(token.text)) depth++;
-      else if (token.kind === GoTokenKind.Punctuation && CLOSING_BRACKETS.has(token.text)) depth--;
-      position++;
-    } while (depth > 0);
   };
   const readQualifiedName = (): string => {
     let name = peek()?.text ?? "";
     position++;
-    while (isPunctuation(".") && tokens[position + 1]?.kind === GoTokenKind.Identifier) {
+    while (checkIsPunctuation(".") && tokens[position + 1]?.kind === GoTokenKind.Identifier) {
       name += `.${tokens[position + 1]?.text ?? ""}`;
       position += 2;
     }
@@ -52,15 +38,14 @@ export const parseGoExpression = (
     position++;
     const elements: GoExpression[] = [];
     skipNewlines();
-    while (peek() !== undefined && !isPunctuation("}")) {
-      if (tokens[position + 1]?.kind === GoTokenKind.Punctuation && tokens[position + 1]?.text === ":") {
-        position = bodyStart;
-        skipBalanced();
+    while (peek() !== undefined && !checkIsPunctuation("}")) {
+      if (checkIsGoPunctuation(tokens[position + 1], ":")) {
+        position = skipGoBrackets(tokens, bodyStart);
         return UNKNOWN_EXPRESSION;
       }
       elements.push(readBinary(0));
       skipNewlines();
-      if (isPunctuation(",")) position++;
+      if (checkIsPunctuation(",")) position++;
       skipNewlines();
     }
     position++;
@@ -70,7 +55,7 @@ export const parseGoExpression = (
     skipNewlines();
     const token = peek();
     if (token === undefined) return UNKNOWN_EXPRESSION;
-    if (token.kind === GoTokenKind.Number) {
+    else if (token.kind === GoTokenKind.Number) {
       position++;
       return { kind: GoExpressionKind.Number, value: Number(token.text.replaceAll("_", "")) };
     } else if (token.kind === GoTokenKind.String) {
@@ -78,44 +63,46 @@ export const parseGoExpression = (
       return { kind: GoExpressionKind.String, value: token.text.slice(1, -1) };
     } else if (token.kind === GoTokenKind.Identifier) {
       if (token.text === "func") {
-        while (peek() !== undefined && !isPunctuation("{")) position++;
-        skipBalanced();
+        while (peek() !== undefined && !checkIsPunctuation("{")) position++;
+        position = skipGoBrackets(tokens, position);
         return UNKNOWN_EXPRESSION;
       }
       const name = readQualifiedName();
-      if (!isPunctuation("{")) return { kind: GoExpressionKind.Identifier, name };
+      if (!checkIsPunctuation("{")) return { kind: GoExpressionKind.Identifier, name };
       // A typed composite, a struct's literal such as `info.Point{Y: 1}`, which no value read here is
-      skipBalanced();
+      position = skipGoBrackets(tokens, position);
       return UNKNOWN_EXPRESSION;
-    } else if (isPunctuation("(")) {
+    } else if (checkIsPunctuation("(")) {
       position++;
       const expression = readBinary(0);
       skipNewlines();
       position++;
       return expression;
-    } else if (isPunctuation("-") || isPunctuation("+")) {
+    } else if (checkIsPunctuation("-") || checkIsPunctuation("+")) {
       position++;
       return { kind: GoExpressionKind.Unary, operand: readPostfix(), operator: token.text };
-    } else if (isPunctuation("[")) {
+    } else if (checkIsPunctuation("[")) {
       // A slice or array type, `[]int` or `[][]float64`, then its composite literal
-      while (isPunctuation("[")) skipBalanced();
-      while (peek()?.kind === GoTokenKind.Identifier || isPunctuation(".") || isPunctuation("*")) position++;
-      return isPunctuation("{") ? readCompositeBody() : UNKNOWN_EXPRESSION;
-    } else if (isPunctuation("{")) return readCompositeBody();
-    position++;
-    return UNKNOWN_EXPRESSION;
+      while (checkIsPunctuation("[")) position = skipGoBrackets(tokens, position);
+      while (peek()?.kind === GoTokenKind.Identifier || checkIsPunctuation(".") || checkIsPunctuation("*")) position++;
+      return checkIsPunctuation("{") ? readCompositeBody() : UNKNOWN_EXPRESSION;
+    } else if (checkIsPunctuation("{")) return readCompositeBody();
+    else {
+      position++;
+      return UNKNOWN_EXPRESSION;
+    }
   };
   const readPostfix = (): GoExpression => {
     let expression = readPrimary();
     for (;;)
-      if (isPunctuation("(")) {
+      if (checkIsPunctuation("(")) {
         position++;
         const parameters: GoExpression[] = [];
         skipNewlines();
-        while (peek() !== undefined && !isPunctuation(")")) {
+        while (peek() !== undefined && !checkIsPunctuation(")")) {
           parameters.push(readBinary(0));
           skipNewlines();
-          if (isPunctuation(",")) position++;
+          if (checkIsPunctuation(",")) position++;
           skipNewlines();
         }
         position++;
@@ -123,20 +110,19 @@ export const parseGoExpression = (
           expression.kind === GoExpressionKind.Identifier
             ? { callee: expression.name, kind: GoExpressionKind.Call, parameters }
             : UNKNOWN_EXPRESSION;
-      } else if (isPunctuation("[")) {
+      } else if (checkIsPunctuation("[")) {
         const indexStart = position;
         position++;
         const index = readBinary(0);
         skipNewlines();
-        if (isPunctuation("]")) {
+        if (checkIsPunctuation("]")) {
           position++;
           expression = { index, kind: GoExpressionKind.Index, target: expression };
         } else {
-          position = indexStart;
-          skipBalanced();
+          position = skipGoBrackets(tokens, indexStart);
           expression = UNKNOWN_EXPRESSION;
         }
-      } else if (isPunctuation(".") && tokens[position + 1]?.kind === GoTokenKind.Identifier) {
+      } else if (checkIsPunctuation(".") && tokens[position + 1]?.kind === GoTokenKind.Identifier) {
         position += 2;
         expression = UNKNOWN_EXPRESSION;
       } else return expression;

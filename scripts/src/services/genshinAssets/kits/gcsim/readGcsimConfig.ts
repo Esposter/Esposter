@@ -1,10 +1,10 @@
 import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
 import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimTalentLeaf } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentLeaf";
-import type { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import type { GcsimTalentVariable } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentVariable";
 
 import { gcsimHitboxSchema } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
+import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { parseGcsimYaml } from "#src/services/genshinAssets/kits/gcsim/parseGcsimYaml";
 import { z } from "zod";
 
@@ -19,8 +19,6 @@ const configSchema = z.object({
   talents: z.array(z.record(z.string(), z.unknown())).default([]),
 });
 
-const escape = (text: string): string => text.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
-
 // The leaves of a talent variable's value, a reference or a list nesting more, each with its place in the nesting.
 // A value naming no talent's table, a passive's `a1#0`, has none
 const readTalentLeaves = (value: unknown, path: number[]): GcsimTalentLeaf[] => {
@@ -30,7 +28,11 @@ const readTalentLeaves = (value: unknown, path: number[]): GcsimTalentLeaf[] => 
   return [
     {
       path,
-      reference: { label: groups.label, selector: Number(groups.selector ?? 0), type: groups.type as GcsimTalentType },
+      reference: {
+        label: groups.label,
+        selector: Number(groups.selector ?? 0),
+        type: z.enum(GcsimTalentType).parse(groups.type),
+      },
     },
   ];
 };
@@ -52,7 +54,7 @@ export const readGcsimConfig = (yaml: string): GcsimConfig => {
   const talentVariables: GcsimTalentVariable[] = talents.flatMap((talent) =>
     Object.entries(talent).map(([name, value]) => ({
       leaves: readTalentLeaves(value, []),
-      line: findLine(new RegExp(`^\\s*-?\\s*${escape(name)}:`, "u")),
+      line: findLine(new RegExp(`^\\s*-?\\s*${RegExp.escape(name)}:`, "u")),
       name,
     })),
   );
@@ -66,7 +68,7 @@ export const readGcsimConfig = (yaml: string): GcsimConfig => {
           ...(box !== undefined && { box }),
           center,
           ...(fan_angle !== undefined && { fanAngle: fan_angle }),
-          line: findLine(new RegExp(`^\\s*-\\s*name:\\s*["']?${escape(String(hitboxName))}["']?\\s*$`, "u")),
+          line: findLine(new RegExp(`^\\s*-\\s*name:\\s*["']?${RegExp.escape(String(hitboxName))}["']?\\s*$`, "u")),
           name: hitboxName,
           ...(offset !== undefined && { offset }),
           ...(radius !== undefined && { radius }),
