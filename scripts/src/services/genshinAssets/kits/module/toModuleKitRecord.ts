@@ -5,6 +5,7 @@ import type { Element, KitHoldRecord, TalentMultiplierMap } from "genshin-world"
 
 import { createKitRecordConverter } from "#src/services/genshinAssets/kits/module/createKitRecordConverter";
 import { toKitModuleBags } from "#src/services/genshinAssets/kits/module/toKitModuleBags";
+import { toKitStanceActionsRecord } from "#src/services/genshinAssets/kits/module/toKitStanceActionsRecord";
 import { KitPlunge } from "genshin-world";
 import { basename } from "node:path";
 
@@ -25,13 +26,7 @@ export const toModuleKitRecord = (
   const { toAction, toHit, toParameter } = converter;
   const toOptionalParameter = (value: number | undefined, encodedValue: number | undefined) =>
     value === undefined ? undefined : toParameter(value, encodedValue);
-  const mainRecord = {
-    burst: toAction(kit.elementalBurst, encodedKit.elementalBurst),
-    chargedAttack: toAction(kit.chargedAttack, encodedKit.chargedAttack),
-    chargedAttackStamina: toParameter(kit.chargedAttackStamina, encodedKit.chargedAttackStamina),
-    normalAttacks: kit.normalAttacks.map((action, index) => toAction(action, encodedKit.normalAttacks[index])),
-    skill: toAction(kit.elementalSkill, encodedKit.elementalSkill),
-  };
+  const mainRecord = toKitStanceActionsRecord(converter, kit, encodedKit);
   const { bags, unreadSites } = toKitModuleBags(analysis, build, encodedBuild, converter, mainRecord);
   const skillCharges = toOptionalParameter(kit.elementalSkillCharges, encodedKit.elementalSkillCharges);
   const skillMaximumHeldSeconds = toOptionalParameter(

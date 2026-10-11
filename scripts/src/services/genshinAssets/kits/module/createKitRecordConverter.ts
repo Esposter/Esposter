@@ -158,11 +158,14 @@ export const createKitRecordConverter = (
     }),
     ...(action.targetingArea && { targeting: toTargeting(action.targetingArea) }),
   });
-  const toAction = (action: KitAction, encodedAction: KitAction | undefined): KitActionRecord => ({
-    ...toActionFields(action, encodedAction),
-    animationFrames: toFrames(action.seconds),
-    hits: action.hits.map((hit, index) => toHit(hit, encodedAction?.hits[index])),
-    targeting: toTargeting(action.targetingArea),
-  });
+  const toAction = (action: KitAction, encodedAction: KitAction | undefined): KitActionRecord => {
+    const actionFields = toActionFields(action, encodedAction);
+    return {
+      ...actionFields,
+      animationFrames: toFrames(action.seconds),
+      hits: actionFields.hits ?? [],
+      targeting: toTargeting(action.targetingArea),
+    };
+  };
   return { toAction, toActionFields, toArea, toFrames, toHit, toHitFields, toParameter };
 };

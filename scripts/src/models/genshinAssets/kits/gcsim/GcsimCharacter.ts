@@ -12,7 +12,7 @@ export interface GcsimCharacter {
   config: GcsimConfig;
   configFile: string;
   constantMap: Map<string, GoConstant>;
-  fileNames: string[];
+  filePaths: string[];
   folder: string;
   talentFile: string;
   talentParameterMap: Map<string, GcsimTalentParameter>;

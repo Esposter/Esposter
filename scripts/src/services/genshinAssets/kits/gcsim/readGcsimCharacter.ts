@@ -21,7 +21,7 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
       const name = posix.basename(path);
       return name.endsWith(".go") && !name.endsWith("_test.go") && !name.startsWith(TALENT_FILE_PREFIX);
     })
-    .map(([name, source]) => ({ name, source }));
+    .map(([path, source]) => ({ path, source }));
   const constantMap = selectGcsimGenderConstants(goSources, evaluateGoConstants(goSources));
   const [talentFile = "", talentSource = ""] =
     [...fileMap].find(([path]) => posix.basename(path).startsWith(TALENT_FILE_PREFIX) && path.endsWith(".go")) ?? [];
@@ -32,7 +32,7 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
     config: readGcsimConfig(configSource),
     configFile,
     constantMap,
-    fileNames: [...fileMap.keys()],
+    filePaths: [...fileMap.keys()],
     folder,
     talentFile,
     talentParameterMap: readGcsimTalentParameters(talentSource),

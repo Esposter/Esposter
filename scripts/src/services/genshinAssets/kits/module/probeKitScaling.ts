@@ -33,7 +33,7 @@ export const probeKitScaling = (
   characterId: number,
   getValue: (combatant: Combatant) => number,
 ): KitScaling | undefined => {
-  const readValue = (gateIndex: number, attribute?: Attribute, stat = 0) => {
+  const getStrikerValue = (gate: (typeof PROBE_GATES)[number], attribute?: Attribute, stat = 0) => {
     const attributeTotalMap = Object.fromEntries(Attributes.map((key) => [key, 0]));
     const attributes = { attack: 0, attributeTotalMap, defense: 0, maxHealth: 0 };
     if (attribute !== undefined) {
@@ -41,16 +41,15 @@ export const probeKitScaling = (
       const field = ScalingAttributeFieldMap[attribute];
       if (field !== undefined) attributes[field] = stat;
     }
-    const gate = PROBE_GATES[gateIndex] ?? PROBE_GATES[0];
     return getResult(() =>
       getValue({ ...gate, attributes, characterId, elementalResonances: [], kit, level: PROBE_LEVEL }),
     ).unwrapOr(Number.NaN);
   };
-  const scalings = PROBE_GATES.map((_gate, gateIndex) => {
-    if (readValue(gateIndex) !== 0) return undefined;
+  const scalings = PROBE_GATES.map((gate) => {
+    if (getStrikerValue(gate) !== 0) return undefined;
     const shareEntries = SCALING_ATTRIBUTES.flatMap((attribute) => {
-      const share = readValue(gateIndex, attribute, 1);
-      return share === 0 ? [] : [{ attribute, isLinear: readValue(gateIndex, attribute, 2) === share * 2, share }];
+      const share = getStrikerValue(gate, attribute, 1);
+      return share === 0 ? [] : [{ attribute, isLinear: getStrikerValue(gate, attribute, 2) === share * 2, share }];
     });
     const [shareEntry] = shareEntries;
     return shareEntries.length === 1 && shareEntry?.isLinear

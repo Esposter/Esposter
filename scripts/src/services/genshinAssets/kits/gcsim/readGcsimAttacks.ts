@@ -48,7 +48,7 @@ export const readGcsimAttacks = (
   constantMap: ReadonlyMap<string, GoConstant>,
 ): GcsimAttack[] => {
   const resolveName = (name: string) => constantMap.get(name)?.value;
-  return sources.flatMap(({ name: file, source }) => {
+  return sources.flatMap(({ path: file, source }) => {
     const tokens = tokenizeGo(source);
     const aliasMap = readAliases(tokens);
     const resolveAlias = (name: string | undefined): string | undefined => {

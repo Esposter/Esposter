@@ -10,7 +10,7 @@ const TRAVEL_USE_REGEX = /\b(?<name>\w+)(?:\[[^\]]*\])*\s*\+\s*travel\b/gu;
 // `attackHitmarks` that travel. A constant two functions give different travels keeps the first
 export const readGcsimTravels = (sources: readonly GoSource[]): Map<string, GcsimTravel> => {
   const travelMap = new Map<string, GcsimTravel>();
-  for (const { name: file, source } of sources) {
+  for (const { path: file, source } of sources) {
     const starts = Array.from(source.matchAll(FUNCTION_START_REGEX), ({ index }) => index);
     for (const [startIndex, start] of starts.entries()) {
       const body = source.slice(start, starts[startIndex + 1] ?? source.length);

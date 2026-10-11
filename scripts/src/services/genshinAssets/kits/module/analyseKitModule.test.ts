@@ -1,6 +1,7 @@
 import { analyseKitModule } from "#src/services/genshinAssets/kits/module/analyseKitModule";
+import { createKitModuleProgram } from "#src/services/genshinAssets/kits/module/createKitModuleProgram";
+import { createSampleKit } from "#src/services/genshinAssets/kits/module/fixtures/sampleKit";
 import { join } from "node:path";
-import ts from "typescript";
 import { describe, expect, test } from "vitest";
 
 describe(analyseKitModule, () => {
@@ -9,17 +10,11 @@ describe(analyseKitModule, () => {
   test("reads each value a behaviour reads from outside itself as a site, a derived binding's reads beside it", () => {
     expect.hasAssertions();
 
-    const configurationPath = join(import.meta.dirname, "../../../../../tsconfig.json");
-    const configuration = ts.getParsedCommandLineOfConfigFile(
-      configurationPath,
-      {},
-      { ...ts.sys, onUnRecoverableConfigFileDiagnostic: () => undefined },
-    );
-    const program = ts.createProgram([FIXTURE_FILE], { ...configuration?.options, noEmit: true });
+    const program = createKitModuleProgram([FIXTURE_FILE]);
     const { createName, sites } = analyseKitModule(program, FIXTURE_FILE);
     const siteNameMap = new Map(sites.map(({ id, name }) => [id, name]));
 
-    expect(createName).toBe("createSampleKit");
+    expect(createName).toBe(createSampleKit.name);
     expect(
       sites.map(({ captureKind, derivedSiteId, expressionText, fieldKey, kind, name, parameters }) => ({
         captureKind,
