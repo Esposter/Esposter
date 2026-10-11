@@ -20,8 +20,8 @@ import { getResult } from "@esposter/shared";
 import { cpus } from "node:os";
 import { setTimeout as sleep } from "node:timers/promises";
 
-// Watches the machine for the session, one reading a minute, printing a line only when the state changes or an idle or
-// Tight state's reminder falls due. It runs under Monitor, so each printed line wakes the session (the throughput skill)
+// Watches the machine, one reading a minute, printing a line only when the state changes or an idle or tight state's
+// Reminder falls due, and writing each reading to the state file the genshin-mods pulse reads (the throughput skill)
 export const watchMachine = async (): Promise<void> => {
   const cpuAverages: number[] = [];
   let previousTotals: CpuTotals = getCpuTotals(cpus());
