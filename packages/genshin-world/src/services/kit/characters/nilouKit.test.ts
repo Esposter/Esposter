@@ -39,7 +39,13 @@ const createNilouCombatant = (constellationCount = 0): Combatant => ({
 // The effects an action's start adds to the team's, which its owner holds
 const castAction = (action: KitAction, combatant = createNilouCombatant()): KitEffectState => {
   const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([NILOU_CHARACTER_ID]) });
+  action.onStart?.({
+    body: kitBody,
+    combatant,
+    kitEffectState,
+    party: createParty([NILOU_CHARACTER_ID]),
+    random: () => 0,
+  });
   return kitEffectState;
 };
 
@@ -121,7 +127,7 @@ describe(createNilouKit, () => {
     const party = createParty([NILOU_CHARACTER_ID]);
     const kitEffectState = castAction(NILOU_KIT.elementalSkill, combatant);
     const thirdStep = takeOne((findStance(kitEffectState)?.actions.normalAttacks ?? []).slice(2));
-    thirdStep.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    thirdStep.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     const endField = findField(kitEffectState);
     endField?.onTick({
       activeCombatant: combatant,
@@ -186,6 +192,7 @@ describe(createNilouKit, () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
     NILOU_KIT.onKitEvent?.(
       { characterId: KUKI_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: NILOU_CHARACTER_ID },

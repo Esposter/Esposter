@@ -41,6 +41,7 @@ const readFirstFieldTick = (
     combatant,
     kitEffectState,
     party,
+    random: () => 0,
   });
   stepKitEffects(kitEffectState, 34 / 60, {
     activeCombatant: { ...combatant, characterId: fieldCharacterId, weaponType: fieldWeaponType },
@@ -93,6 +94,7 @@ describe("bennett kit", () => {
       combatant: { ...createBennettCombatant(), ascension },
       kitEffectState: { effects },
       party: createParty([BENNETT_CHARACTER_ID]),
+      random: () => 0,
     };
     for (let step = 0; step < Math.round(heldSeconds / 0.1); step++)
       stepKit(
@@ -143,6 +145,7 @@ describe("bennett kit", () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
 
     // The first tick, at 34 frames, gives the ATK bonus of 56% of Bennett's base ATK, and no heal

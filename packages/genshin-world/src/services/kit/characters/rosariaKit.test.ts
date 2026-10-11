@@ -31,6 +31,7 @@ const getFieldSeconds = (constellationCount: number): number => {
     combatant: createRosariaCombatant(constellationCount),
     kitEffectState,
     party: createParty([ROSARIA_CHARACTER_ID]),
+    random: () => 0,
   });
   const field = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
   if (!field) throw new Error("Rites of Termination placed no field");

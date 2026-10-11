@@ -39,9 +39,16 @@ describe(createXinyanKit, () => {
       combatant,
       kitEffectState,
       party: createParty([XINYAN_CHARACTER_ID]),
+      random: () => 0,
     });
     for (let strike = 0; strike < strikeCount; strike++)
-      skillHit.onStrike?.({ body: kitBody, combatant, kitEffectState, party: createParty([XINYAN_CHARACTER_ID]) });
+      skillHit.onStrike?.({
+        body: kitBody,
+        combatant,
+        kitEffectState,
+        party: createParty([XINYAN_CHARACTER_ID]),
+        random: () => 0,
+      });
     return kitEffectState;
   };
 
@@ -53,6 +60,7 @@ describe(createXinyanKit, () => {
       combatant,
       kitEffectState,
       party: createParty([XINYAN_CHARACTER_ID]),
+      random: () => 0,
     });
     return kitEffectState.effects.find((effect: KitEffect): effect is KitSummon => effect.kind === "summon");
   };

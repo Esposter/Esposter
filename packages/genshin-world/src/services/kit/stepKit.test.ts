@@ -62,6 +62,7 @@ describe(stepKit, () => {
           combatant: TRAVELER_COMBATANT,
           kitEffectState: { effects: [] },
           party: createParty([TRAVELER_CHARACTER_ID]),
+          random: () => 0,
         },
       );
     };
@@ -142,6 +143,7 @@ describe(stepKit, () => {
       combatant: TRAVELER_COMBATANT,
       kitEffectState: { effects: [] },
       party: createParty([TRAVELER_CHARACTER_ID]),
+      random: () => 0,
     };
     const step = (input: Partial<KitInput>) =>
       stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
@@ -185,6 +187,7 @@ describe(stepKit, () => {
         combatant: { ...TRAVELER_COMBATANT, elementalResonances: [Element.Anemo] },
         kitEffectState: { effects: [] },
         party: createParty([TRAVELER_CHARACTER_ID]),
+        random: () => 0,
       },
     );
 
@@ -213,6 +216,7 @@ describe(stepKit, () => {
           combatant: TRAVELER_COMBATANT,
           kitEffectState: { effects: [] },
           party: createParty([TRAVELER_CHARACTER_ID]),
+          random: () => 0,
         },
       );
     const actions = [press(), press(), press()];
@@ -315,6 +319,7 @@ describe(stepKit, () => {
             combatant: TRAVELER_COMBATANT,
             kitEffectState,
             party: createParty([TRAVELER_CHARACTER_ID]),
+            random: () => 0,
           },
         );
       };

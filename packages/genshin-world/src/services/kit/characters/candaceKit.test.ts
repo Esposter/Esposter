@@ -46,7 +46,13 @@ const createCandaceCombatant = (constellationCount = 0): Combatant =>
 // The effects an action's start adds to the team's, which its owner holds
 const castAction = (action: KitAction, combatant = createCandaceCombatant()): KitEffectState => {
   const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([CANDACE_CHARACTER_ID]) });
+  action.onStart?.({
+    body: kitBody,
+    combatant,
+    kitEffectState,
+    party: createParty([CANDACE_CHARACTER_ID]),
+    random: () => 0,
+  });
   return kitEffectState;
 };
 

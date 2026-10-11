@@ -37,6 +37,7 @@ describe(createColleiKit, () => {
       combatant: createColleiCombatant(),
       kitEffectState,
       party: createParty([COLLEI_CHARACTER_ID]),
+      random: () => 0,
     });
     return kitEffectState.effects;
   };

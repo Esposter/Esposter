@@ -48,7 +48,13 @@ describe(createHuTaoKit, () => {
     const combatant = createHuTaoCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
 
-    HU_TAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party: createHuTaoParty(1) });
+    HU_TAO_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createHuTaoParty(1),
+      random: () => 0,
+    });
 
     const buff = kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff");
     if (!buff) throw new Error("Guide to Afterlife gave no ATK buff");
@@ -69,6 +75,7 @@ describe(createHuTaoKit, () => {
       combatant: createHuTaoCombatant(),
       kitEffectState: { effects: [] },
       party,
+      random: () => 0,
     });
 
     expect(getPartyMember(party, HU_TAO_CHARACTER_ID).healthShare).toBeCloseTo(0.7);
@@ -80,7 +87,13 @@ describe(createHuTaoKit, () => {
     // At 1.2 HP, 30% of her HP would leave her under 1 HP, so the cost stops at 1
     const party = createHuTaoParty(1.2 / combatant.attributes.maxHealth);
 
-    HU_TAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState: { effects: [] }, party });
+    HU_TAO_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState: { effects: [] },
+      party,
+      random: () => 0,
+    });
 
     const { healthShare } = getPartyMember(party, HU_TAO_CHARACTER_ID);
     expect(healthShare * combatant.attributes.maxHealth).toBeCloseTo(1);
@@ -99,6 +112,7 @@ describe(createHuTaoKit, () => {
         combatant,
         kitEffectState: { effects: [] },
         party: createHuTaoParty(healthShare),
+        random: () => 0,
       }),
     ).toBe(isActive);
   });
@@ -107,7 +121,13 @@ describe(createHuTaoKit, () => {
     expect.hasAssertions();
     const combatant = createHuTaoCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    HU_TAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party: createHuTaoParty(1) });
+    HU_TAO_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createHuTaoParty(1),
+      random: () => 0,
+    });
     const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
     const bloodBlossom = stance?.actions.chargedAttack.hits[0]?.enemyStatus?.(combatant);
     if (!bloodBlossom) throw new Error("the Paramita's charged attack gave no Blood Blossom");

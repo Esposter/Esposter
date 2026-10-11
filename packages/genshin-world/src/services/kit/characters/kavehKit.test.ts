@@ -34,6 +34,7 @@ const castBurst = (): KitEffectState => {
     combatant: createKavehCombatant(),
     kitEffectState,
     party: createParty([KAVEH_CHARACTER_ID]),
+    random: () => 0,
   });
   return kitEffectState;
 };

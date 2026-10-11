@@ -42,7 +42,7 @@ describe(createKujouSaraKit, () => {
     combatant = createSaraCombatant(),
     kitEffectState: KitEffectState = { effects: [] },
   ): KitEffect[] => {
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    action.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     return kitEffectState.effects;
   };
 
@@ -101,6 +101,7 @@ describe(createKujouSaraKit, () => {
       combatant: createSaraCombatant(),
       kitEffectState,
       party,
+      random: () => 0,
     });
     const atkBonus = kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff");
 

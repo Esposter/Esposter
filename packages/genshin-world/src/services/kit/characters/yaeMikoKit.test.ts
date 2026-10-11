@@ -42,6 +42,7 @@ describe(createYaeMikoKit, () => {
       combatant,
       kitEffectState,
       party: createParty([YAE_MIKO_CHARACTER_ID]),
+      random: () => 0,
     });
     return kitEffectState.effects;
   };
@@ -52,6 +53,7 @@ describe(createYaeMikoKit, () => {
       combatant,
       kitEffectState,
       party: createParty([YAE_MIKO_CHARACTER_ID]),
+      random: () => 0,
     });
     return kitEffectState.effects;
   };

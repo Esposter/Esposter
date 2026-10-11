@@ -52,7 +52,13 @@ describe(createAlbedoKit, () => {
     combatant = createAlbedoCombatant(),
   ): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([ALBEDO_CHARACTER_ID]),
+      random: () => 0,
+    });
     return kitEffectState.effects;
   };
   // The Solar Isotoma as the press casts it, and as it stands once its hit has landed

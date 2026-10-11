@@ -37,7 +37,13 @@ const createAyatoCombatant = (ascension = 0, constellationCount = 0): Combatant 
 // The effects an action's start adds to the team's, which its owner holds
 const castAction = (action: KitAction, combatant = createAyatoCombatant()): KitEffectState => {
   const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([AYATO_CHARACTER_ID]) });
+  action.onStart?.({
+    body: kitBody,
+    combatant,
+    kitEffectState,
+    party: createParty([AYATO_CHARACTER_ID]),
+    random: () => 0,
+  });
   return kitEffectState;
 };
 
@@ -55,7 +61,13 @@ const stacksAfterStrikes = (constellationCount: number): number => {
   const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
   const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
   for (let strike = 0; strike < 6; strike++)
-    shunsuikenHit.onStrike?.({ body: kitBody, combatant, kitEffectState, party: createParty([AYATO_CHARACTER_ID]) });
+    shunsuikenHit.onStrike?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([AYATO_CHARACTER_ID]),
+      random: () => 0,
+    });
   return readStacks(shunsuikenHit, combatant);
 };
 
@@ -110,7 +122,7 @@ describe(createAyatoKit, () => {
     const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
     const stacks = [0, 1, 2].map(() => {
       const stacksBefore = readStacks(shunsuikenHit, combatant);
-      shunsuikenHit.onStrike?.({ body: kitBody, combatant, kitEffectState, party });
+      shunsuikenHit.onStrike?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       return stacksBefore;
     });
 
@@ -159,6 +171,7 @@ describe(createAyatoKit, () => {
       combatant,
       kitEffectState,
       party: createParty([AYATO_CHARACTER_ID]),
+      random: () => 0,
     });
     const extraStrikes = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
@@ -200,7 +213,13 @@ describe(createAyatoKit, () => {
     const combatant = createAyatoCombatant();
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
     const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
-    shunsuikenHit.onStrike?.({ body: kitBody, combatant, kitEffectState, party: createParty([AYATO_CHARACTER_ID]) });
+    shunsuikenHit.onStrike?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([AYATO_CHARACTER_ID]),
+      random: () => 0,
+    });
     AYATO_KIT.onKitEvent?.(
       { characterId: KUKI_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: AYATO_CHARACTER_ID },
       {

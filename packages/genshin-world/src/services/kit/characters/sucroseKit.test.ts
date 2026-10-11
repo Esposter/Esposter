@@ -51,6 +51,7 @@ describe(createSucroseKit, () => {
       combatant,
       kitEffectState,
       party: createParty([SUCROSE_CHARACTER_ID]),
+      random: () => 0,
     });
     return kitEffectState.effects;
   };

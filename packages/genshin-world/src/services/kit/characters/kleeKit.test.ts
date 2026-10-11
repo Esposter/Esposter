@@ -37,7 +37,13 @@ describe(createKleeKit, () => {
     // The multipliers of the hits the summons an action's start casts land
     const readCastMultipliers = (action: KitAction): number[] => {
       const kitEffectState: KitEffectState = { effects: [] };
-      action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([KLEE_CHARACTER_ID]) });
+      action.onStart?.({
+        body: kitBody,
+        combatant,
+        kitEffectState,
+        party: createParty([KLEE_CHARACTER_ID]),
+        random: () => 0,
+      });
       return kitEffectState.effects.flatMap((effect) =>
         effect.kind === "summon" ? effect.hits.map(({ talentMultiplier }) => talentMultiplier) : [],
       );
@@ -80,6 +86,7 @@ describe(createKleeKit, () => {
         combatant,
         kitEffectState,
         party: createParty([KLEE_CHARACTER_ID]),
+        random: () => 0,
       });
       const onFieldStrikes = stepKitEffects(kitEffectState, 4.5, context);
       const offFieldStrikes = [
@@ -112,6 +119,7 @@ describe(createKleeKit, () => {
         combatant,
         kitEffectState,
         party: createParty([KLEE_CHARACTER_ID]),
+        random: () => 0,
       });
       stepKitEffects(kitEffectState, 1 / 60, context);
 

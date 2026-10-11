@@ -53,7 +53,13 @@ describe(createFischlKit, () => {
   // The summons an action's start casts, as the kit's effects hold them
   const castSummons = (action: KitAction, combatant = createFischlCombatant()): KitSummon[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([FISCHL_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([FISCHL_CHARACTER_ID]),
+      random: () => 0,
+    });
     return kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
   };
   // The team's effects with the skill's Oz standing, spawned
@@ -64,6 +70,7 @@ describe(createFischlKit, () => {
       combatant,
       kitEffectState,
       party: createParty([FISCHL_CHARACTER_ID]),
+      random: () => 0,
     });
     for (const effect of kitEffectState.effects) if (effect.kind === "summon") effect.elapsedSeconds = 1;
     return kitEffectState;
@@ -121,6 +128,7 @@ describe(createFischlKit, () => {
       combatant,
       kitEffectState,
       party: createParty([FISCHL_CHARACTER_ID]),
+      random: () => 0,
     });
 
     expect(skillOz?.secondsRemaining).toBe(0);
@@ -197,6 +205,7 @@ describe(createFischlKit, () => {
       combatant,
       kitEffectState,
       party: createParty([FISCHL_CHARACTER_ID]),
+      random: () => 0,
     });
     FISCHL_KIT.onKitEvent?.(
       {
@@ -219,7 +228,7 @@ describe(createFischlKit, () => {
     const party = createParty([FISCHL_CHARACTER_ID]);
     getPartyMember(party, FISCHL_CHARACTER_ID).healthShare = 0.5;
     const kitEffectState: KitEffectState = { effects: [] };
-    FISCHL_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    FISCHL_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     const strikes = stepKitEffects(kitEffectState, 114 / 60, {
       activeCombatant: combatant,
       body: kitBody.position,

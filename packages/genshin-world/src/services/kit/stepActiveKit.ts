@@ -101,7 +101,7 @@ export const stepActiveKit = (
     characterController.stamina,
     stepSeconds,
     landedHits,
-    { body: kitBody, combatant, kitEffectState, party },
+    { body: kitBody, combatant, kitEffectState, party, random },
   );
   // The ores are struck by the hits as the kit gives them, and each hit's kind of attack is read, before an infusion
   // Copies them
@@ -128,8 +128,8 @@ export const stepActiveKit = (
   // A burst is sent to the team's kits as it starts, ahead of its own start, as gcsim announces a burst before it plays
   if (action && (action === kit.elementalBurst || action === kit.elementalBurstVariant?.action))
     emit({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed });
-  action?.onStart?.({ body: kitBody, combatant, kitEffectState, party, target });
-  if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState, party });
+  action?.onStart?.({ body: kitBody, combatant, kitEffectState, party, random, target });
+  if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState, party, random });
   for (const oreHit of landedOreHits) strikeOre(kitBody, oreHit);
   // A normal attack's first hit lands in the attack's seconds or, past them, from the summon its end queued it on
   const landedFirstHits = new Set([...stepHits, ...summonStrikes.map(({ hit }) => hit)]);

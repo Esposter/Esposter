@@ -44,6 +44,7 @@ describe(coordinateKitSummons, () => {
       combatant,
       kitEffectState,
       party: createParty([TRAVELER_CHARACTER_ID]),
+      random: () => 0,
     };
     coordinateKitSummons(TRAVELER_KIT.elementalSkill, context);
     coordinateKitSummons(TRAVELER_KIT.chargedAttack, context);

@@ -53,6 +53,7 @@ describe(createQiqiKit, () => {
       combatant: createQiqiCombatant(),
       kitEffectState,
       party: createParty([QIQI_CHARACTER_ID]),
+      random: () => 0,
     });
     return kitEffectState.effects;
   };
@@ -226,6 +227,7 @@ describe(createQiqiKit, () => {
       combatant,
       kitEffectState,
       party: createParty([QIQI_CHARACTER_ID]),
+      random: () => 0,
     });
     const herald = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     QIQI_KIT.onKitEvent?.(
@@ -284,6 +286,7 @@ describe(createQiqiKit, () => {
         combatant,
         kitEffectState,
         party,
+        random: () => 0,
       });
       stepKitEffects(kitEffectState, 0.1, { activeCombatant: combatant, body: { x: 0, z: 0 }, party });
     };

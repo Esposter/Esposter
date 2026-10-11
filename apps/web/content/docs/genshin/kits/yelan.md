@@ -5,7 +5,7 @@ description: Yelan's kit as built, with Lingering Lifeline and Depth-Clarion Dic
 
 # Yelan
 
-Yelan's kit is one module, `createYelanKit`, on avatar 10000060: four strikes, a fully charged shot with its arrow, a collision and two plunges, Lingering Lifeline's hit, and Depth-Clarion Dice's field, which waves an Exquisite Throw each second and throws one on each Lingering Lifeline hit while it stands. Her multipliers are read from proud skill groups 6031, 6032 and 6039, and the Lifeline's cooldown, and the burst's cooldown and energy cost, from the same groups; each hit's share of her Max HP is priced as flat damage on the caster's Max HP. Breakthrough Barb is not built, as the 34% roll that gives it on each Lifeline hit is a random draw a kit does not take, and her passives and constellations are not built either. The poise, the plunges' seconds and the wave's phase are provisional.
+Yelan's kit is one module, `createYelanKit`, on avatar 10000060: four strikes, a fully charged shot with its arrow, a collision and two plunges, Lingering Lifeline's hit, and Depth-Clarion Dice's field, which waves an Exquisite Throw each second and throws one on each Lingering Lifeline hit while it stands. Her multipliers are read from proud skill groups 6031, 6032 and 6039, and the Lifeline's cooldown, and the burst's cooldown and energy cost, from the same groups; each hit's share of her Max HP is priced as flat damage on the caster's Max HP. Breakthrough Barb, the 34% roll each Lifeline hit takes for it, is not built, and her passives and constellations are not built either. The poise, the plunges' seconds and the wave's phase are provisional.
 
 ## Decisions
 

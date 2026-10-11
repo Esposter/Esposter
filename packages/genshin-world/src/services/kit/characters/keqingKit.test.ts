@@ -36,6 +36,7 @@ describe(createKeqingKit, () => {
       combatant: createKeqingCombatant(),
       kitEffectState,
       party: createParty([KEQING_CHARACTER_ID]),
+      random: () => 0,
     });
 
     expect(kitEffectState.effects).toStrictEqual([

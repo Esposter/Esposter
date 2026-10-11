@@ -4,13 +4,17 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
+import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { takeOne } from "@esposter/shared";
 
 // Kinich's proud skill groups, read at his talent level. The attack group holds his three strikes at 0 to 2, the charged
 // Attack at 3 and its stamina at 4, and the plunges' collision, low and high at 5, 6 and 7. The skill group holds Loop
@@ -58,14 +62,41 @@ const SKILL_FRAMES = 42;
 const BURST_HITMARK_FRAMES = 161;
 const BURST_FRAMES = 126;
 const BURST_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 4);
+// Measured: gcsim (MIT) kinich/burst.go, the Ajaw's Dragon Breath: six lasers, the first 253 frames after the burst is cast
+// And each next 145 or 150 frames on, the two drawn evenly, each a box of 1 by 10 metres on the primary target, priced as the
+// Circle to its far corner, of 1U Dendro under the burst's internal cooldown and no poise
+const DRAGON_BREATH_FIRST_HITMARK_FRAMES = 253;
+const DRAGON_BREATH_INTERVAL_FRAMES = [145, 150];
+const DRAGON_BREATH_COUNT = 6;
+const DRAGON_BREATH_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, Math.hypot(0.5, 5));
 
 // Kinich's first kit, at talent level 1: his three strikes, a charged attack, a collision and two plunges, and the burst's
-// Hit. His multipliers are read from his proud skill groups
+// Hit with the Ajaw's lasers. His multipliers are read from his proud skill groups
 export const createKinichKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, KINICH_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
   const burstMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, KINICH_BURST_GROUP_ID, TALENT_START_LEVEL, index);
+  // The Ajaw's lasers, each landing the interval drawn for it after the one before
+  const createDragonBreathHits = (random: () => number): KitHit[] => {
+    let hitmarkFrames = DRAGON_BREATH_FIRST_HITMARK_FRAMES;
+    return Array.from({ length: DRAGON_BREATH_COUNT }, (_value, index): KitHit => {
+      if (index > 0)
+        hitmarkFrames += takeOne(
+          DRAGON_BREATH_INTERVAL_FRAMES,
+          Math.floor(random() * DRAGON_BREATH_INTERVAL_FRAMES.length),
+        );
+      return {
+        element: Element.Dendro,
+        gauge: 1,
+        hitArea: DRAGON_BREATH_HIT_AREA,
+        hitmarkSeconds: hitmarkFrames / 60,
+        internalCooldownTag: InternalCooldownTag.ElementalBurst,
+        poiseDamage: 0,
+        talentMultiplier: burstMultiplier(1),
+      };
+    });
+  };
   const normalAttacks = NORMAL_ATTACKS.map(
     ({ frames, groupIndex, hitArea, hitmarkFrames, poiseDamage }): KitAction => ({
       hits: [
@@ -105,8 +136,8 @@ export const createKinichKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: attackMultiplier(4),
-    // Not built: the Ajaw's Dragon Breath, seven lasers whose hitmarks fall 145 or 150 frames apart by a random draw, which
-    // A kit's start and hits cannot read yet: the hook is the world's seeded random source, which gainKitAttackEnergy takes
+    // The burst calls the Ajaw as it is cast, a summon at the body whose lasers' intervals are drawn from the world's seeded
+    // Random source then, as gcsim draws each as the laser before it fires
     elementalBurst: {
       hits: [
         {
@@ -119,6 +150,11 @@ export const createKinichKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: burstMultiplier(0),
         },
       ],
+      onStart: ({ body, combatant, kitEffectState, random }) =>
+        addKitEffect(kitEffectState, {
+          ...createKitSummon(body, combatant, createDragonBreathHits(random)),
+          attackTag: AttackTag.ElementalBurst,
+        }),
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },

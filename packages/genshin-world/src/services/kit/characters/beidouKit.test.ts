@@ -36,8 +36,8 @@ describe(createBeidouKit, () => {
     const combatant = createBeidouCombatant(0);
     const party = createParty([BEIDOU_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    BEIDOU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
-    takeOne(BEIDOU_KIT.normalAttacks).onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    BEIDOU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    takeOne(BEIDOU_KIT.normalAttacks).onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     const discharges = stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body, party });
     const multipliers = [
       ...BEIDOU_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
@@ -62,7 +62,7 @@ describe(createBeidouKit, () => {
     const combatant = createBeidouCombatant(0);
     const party = createParty([BEIDOU_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    BEIDOU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    BEIDOU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
 
     expect(kitEffectState.effects).toStrictEqual([
       {
@@ -86,15 +86,21 @@ describe(createBeidouKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = { activeCombatant: combatant, body, party };
     const firstStrike = takeOne(BEIDOU_KIT.normalAttacks);
-    BEIDOU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
-    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party });
-    takeOne(BEIDOU_KIT.normalAttacks, 1).onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    BEIDOU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    takeOne(BEIDOU_KIT.normalAttacks, 1).onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party,
+      random: () => 0,
+    });
     const strikeDischarges = stepKitEffects(kitEffectState, 2, context);
-    BEIDOU_KIT.chargedAttack.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    BEIDOU_KIT.chargedAttack.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     const chargedAttackDischarges = stepKitEffects(kitEffectState, 2, context);
     // The Targe's 15 seconds run out, so a strike after them discharges nothing
     stepKitEffects(kitEffectState, 11, context);
-    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
 
     expect(strikeDischarges.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual([
       [Element.Electro, 0.96],
@@ -116,7 +122,7 @@ describe(createBeidouKit, () => {
       const party = createParty([BEIDOU_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
       const movedBody = { x: 3, z: 4 };
-      BEIDOU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      BEIDOU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       const ticks = stepKitEffects(kitEffectState, 15, { activeCombatant: combatant, body: movedBody, party });
 
       expect(ticks.map(({ body: { position }, hit }) => [position, hit.enemyStatus?.(combatant)])).toStrictEqual(

@@ -34,11 +34,23 @@ const createNaviaCombatant = (constellationCount = 0): Combatant => ({
 
 // The effects an action's start adds to the team's, given the team's effects it starts on
 const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
-  action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([NAVIA_CHARACTER_ID]) });
+  action.onStart?.({
+    body: kitBody,
+    combatant,
+    kitEffectState,
+    party: createParty([NAVIA_CHARACTER_ID]),
+    random: () => 0,
+  });
 
 // A hit landing on one enemy from the team's effects
 const strikeHit = (hit: KitHit, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
-  hit.onStrike?.({ body: kitBody, combatant, kitEffectState, party: createParty([NAVIA_CHARACTER_ID]) });
+  hit.onStrike?.({
+    body: kitBody,
+    combatant,
+    kitEffectState,
+    party: createParty([NAVIA_CHARACTER_ID]),
+    random: () => 0,
+  });
 
 const getStatus = (kitEffectState: KitEffectState, id: string): KitStatus | undefined =>
   kitEffectState.effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === id);

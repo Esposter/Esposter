@@ -48,7 +48,13 @@ describe(createChongyunKit, () => {
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createChongyunCombatant()): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([CHONGYUN_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([CHONGYUN_CHARACTER_ID]),
+      random: () => 0,
+    });
     return kitEffectState.effects;
   };
   const castField = (combatant = createChongyunCombatant()): KitField | undefined =>
@@ -169,6 +175,7 @@ describe(createChongyunKit, () => {
       combatant: createChongyunCombatant(),
       kitEffectState,
       party: createParty([CHONGYUN_CHARACTER_ID]),
+      random: () => 0,
     });
     CHONGYUN_KIT.onKitEvent?.(
       {
@@ -193,6 +200,7 @@ describe(createChongyunKit, () => {
       combatant,
       kitEffectState,
       party: createParty([CHONGYUN_CHARACTER_ID]),
+      random: () => 0,
     });
     const [field] = kitEffectState.effects;
     CHONGYUN_KIT.elementalSkill.onStart?.({
@@ -200,6 +208,7 @@ describe(createChongyunKit, () => {
       combatant,
       kitEffectState,
       party: createParty([CHONGYUN_CHARACTER_ID]),
+      random: () => 0,
     });
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), position: { x: 0, z: -5 } };
     if (field)
@@ -243,6 +252,7 @@ describe(createChongyunKit, () => {
       combatant,
       kitEffectState,
       party: createParty([CHONGYUN_CHARACTER_ID]),
+      random: () => 0,
     });
     const partyMember = { ...createPartyMember(), energy: 40 };
     stepKit(
@@ -261,7 +271,7 @@ describe(createChongyunKit, () => {
       createStamina(STAMINA_MAX),
       0.1,
       [],
-      { body: kitBody, combatant, kitEffectState, party: createParty([CHONGYUN_CHARACTER_ID]) },
+      { body: kitBody, combatant, kitEffectState, party: createParty([CHONGYUN_CHARACTER_ID]), random: () => 0 },
     );
 
     expect(partyMember.burstCooldownSeconds).toBeCloseTo(12 * 0.85);

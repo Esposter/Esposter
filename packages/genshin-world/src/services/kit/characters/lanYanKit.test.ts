@@ -72,6 +72,7 @@ describe(createLanYanKit, () => {
         combatant: createLanYanCombatant(constellationCount),
         kitEffectState,
         party,
+        random: () => 0,
       });
       return kitEffectState.effects;
     };

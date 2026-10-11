@@ -45,7 +45,13 @@ const createCynoCombatant = (overrides: Partial<Combatant> = {}): Combatant => (
 // The effects an action's start adds to the team's, which its owner holds
 const castAction = (action: KitAction, combatant = createCynoCombatant()): KitEffectState => {
   const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([CYNO_CHARACTER_ID]) });
+  action.onStart?.({
+    body: kitBody,
+    combatant,
+    kitEffectState,
+    party: createParty([CYNO_CHARACTER_ID]),
+    random: () => 0,
+  });
   return kitEffectState;
 };
 
@@ -111,7 +117,13 @@ describe(createCynoKit, () => {
     const stanceSeconds = findStance(kitEffectState)?.secondsRemaining ?? 0;
     const mortuaryRite = findStance(kitEffectState)?.actions.elementalSkill;
     for (let cast = 0; cast < 3; cast++)
-      mortuaryRite?.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([CYNO_CHARACTER_ID]) });
+      mortuaryRite?.onStart?.({
+        body: kitBody,
+        combatant,
+        kitEffectState,
+        party: createParty([CYNO_CHARACTER_ID]),
+        random: () => 0,
+      });
 
     expect({
       cooldownMultiplier: CYNO_KIT.getSkillCooldownMultiplier?.({
@@ -119,6 +131,7 @@ describe(createCynoKit, () => {
         combatant,
         kitEffectState,
         party: createParty([CYNO_CHARACTER_ID]),
+        random: () => 0,
       }),
       extensionSeconds: roundToThousandth((findStance(kitEffectState)?.secondsRemaining ?? 0) - stanceSeconds),
     }).toStrictEqual({ cooldownMultiplier: 0.4, extensionSeconds: 8 });
@@ -134,6 +147,7 @@ describe(createCynoKit, () => {
         combatant,
         kitEffectState: { effects: [] },
         party: createParty([CYNO_CHARACTER_ID]),
+        random: () => 0,
       }),
     ).toBe(1);
   });
@@ -172,7 +186,13 @@ describe(createCynoKit, () => {
     const combatant = createCynoCombatant({ constellationCount: 2 });
     const kitEffectState: KitEffectState = { effects: [] };
     const hit = takeOne(takeOne(CYNO_KIT.normalAttacks).hits);
-    const context = { body: kitBody, combatant, kitEffectState, party: createParty([CYNO_CHARACTER_ID]) };
+    const context = {
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([CYNO_CHARACTER_ID]),
+      random: () => 0,
+    };
     hit.onStrike?.(context);
     hit.onStrike?.(context);
     const bonus = kitEffectState.effects.find((effect) => effect.kind === "buff");

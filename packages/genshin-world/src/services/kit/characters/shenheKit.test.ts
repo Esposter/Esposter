@@ -37,6 +37,7 @@ describe(createShenheKit, () => {
       combatant,
       kitEffectState,
       party: createParty([SHENHE_CHARACTER_ID]),
+      random: () => 0,
     });
     return takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
   };

@@ -45,7 +45,7 @@ describe(createCharlotteKit, () => {
     const party = createParty([CHARLOTTE_CHARACTER_ID]);
     const target = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const kitEffectState: KitEffectState = { effects: [] };
-    const context: KitStepContext = { body, combatant, kitEffectState, party };
+    const context: KitStepContext = { body, combatant, kitEffectState, party, random: () => 0 };
     const castCharged = (): void => CHARLOTTE_KIT.chargedAttack.onStart?.({ ...context, target });
     const stepThorn = (stepSeconds: number): number =>
       stepKitEffects(kitEffectState, stepSeconds, {
@@ -75,6 +75,7 @@ describe(createCharlotteKit, () => {
       combatant,
       kitEffectState: { effects: [] },
       party: createParty([CHARLOTTE_CHARACTER_ID]),
+      random: () => 0,
     });
     const marks = Array.from({ length: 6 }, () => press?.(combatant) !== undefined);
 
@@ -89,7 +90,7 @@ describe(createCharlotteKit, () => {
     if (!member) throw new Error("Charlotte is not in her party");
     member.healthShare = 0.5;
     const kitEffectState: KitEffectState = { effects: [] };
-    CHARLOTTE_KIT.elementalBurst.onStart?.({ body, combatant, kitEffectState, party });
+    CHARLOTTE_KIT.elementalBurst.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
     const characterIdCombatantMap = new Map([[CHARLOTTE_CHARACTER_ID, combatant]]);
     const stepBurst = (stepSeconds: number): void => {
       stepKitEffects(kitEffectState, stepSeconds, {

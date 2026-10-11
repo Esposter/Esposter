@@ -53,6 +53,7 @@ describe("kaeya kit", () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
 
     const icicles = stepKitEffects(kitEffectState, 9, { activeCombatant: combatant, body, party });
