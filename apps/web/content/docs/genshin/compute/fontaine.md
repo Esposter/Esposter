@@ -7,7 +7,7 @@ description: Fontaine's region: its base ground, renderers, landmarks, camera, s
 
 ## Queue
 
-- [ ] `[cpu]` {fontaine-region-base} needs game-exports — **Fontaine: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit fontaine --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/fontaine.json` (its centre is `court-of-fontaine`'s position) and `packages/genshin-world/src/data/catalogue.json` (the outline of `court-of-fontaine-region`). Writes `fontaine/base-ground.json` under `packages/genshin-world/src/data/`. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
+- [ ] `[cpu]` {fontaine-region-base} needs game-exports — **Fontaine: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit fontaine --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/fontaine.json` (its centre is `court-of-fontaine`'s position) and `packages/genshin-world/src/data/catalogue.json` (the outline of `court-of-fontaine-region`). Writes the hosted key `ground/fontaine`, a key scope, after which the region's authored ground file is deleted, since `genshin:data authored` refuses a ground file whose region a fit has drawn. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
 
 ## Waiting
 
