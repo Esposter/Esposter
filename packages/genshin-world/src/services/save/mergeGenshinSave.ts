@@ -57,7 +57,8 @@ const checkIsLaterWorldLevelAdjustment = (
 // Wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's and never mixed.
 // The Reputation keeps the further. The bag and the wallet are the account's copy, except that a Primogem refill count
 // From the same game day takes the larger, as a count of refills within a day only grows. The World Level adjustment is
-// The copy changed later, since the one change of it the player made last is the one they still stand by
+// The copy changed later, since the one change of it the player made last is the one they still stand by. The Traveler's
+// Name is the account's, or the guest's while the account has chosen none
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -99,6 +100,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     },
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
+    travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],
     wallet: {
       ...account.wallet,

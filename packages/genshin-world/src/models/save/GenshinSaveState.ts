@@ -11,8 +11,9 @@ import type { BannerKind } from "genshin-interface/save";
 
 // The systems a save holds as the world reads them: the bag, the wallet, each carried quest's progress by its id, the ids
 // Of the landmarks resonated with, each achievement's progress by its id, the Adventure EXP, Mondstadt's Reputation, each
-// Character's Companionship EXP by its id, each kind of wish's counters, and the bench's learned recipes and each
-// Recipe's crafted count by its id, the Frostbearing Tree's offering progress, and the World Level adjustment. The save's slices convert to and from these
+// Character's Companionship EXP by its id, each kind of wish's counters, the bench's learned recipes and each recipe's
+// Crafted count by its id, the Frostbearing Tree's offering progress, the World Level adjustment and the name chosen for
+// The Traveler. The save's slices convert to and from these
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
@@ -23,6 +24,7 @@ export interface GenshinSaveState {
   inventory: Inventory;
   quests: ReadonlyMap<string, QuestProgress>;
   reputation: ReputationProgress;
+  travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;
   wallet: Wallet;
   wishPityMap: Readonly<Record<BannerKind, Readonly<WishPity>>>;

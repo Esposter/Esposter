@@ -26,6 +26,8 @@ describe(mergeGenshinSave, () => {
   const GUEST_LEVEL = 2;
   const WISH_KIND = BannerKind.Standard;
   const FATE_POINTS = 1;
+  const ACCOUNT_TRAVELER_NAME = "a";
+  const GUEST_TRAVELER_NAME = "b";
 
   test("unions the landmarks", () => {
     expect.hasAssertions();
@@ -175,6 +177,21 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, reputation: { exp: ACCOUNT_EXP, level: GUEST_LEVEL } };
 
     expect(mergeGenshinSave(account, guest).reputation).toStrictEqual({ exp: ACCOUNT_EXP, level: GUEST_LEVEL });
+  });
+
+  test("keeps the account's Traveler name", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, travelerName: ACCOUNT_TRAVELER_NAME };
+    const guest = { ...EMPTY_GENSHIN_SAVE, travelerName: GUEST_TRAVELER_NAME };
+
+    expect(mergeGenshinSave(account, guest).travelerName).toBe(ACCOUNT_TRAVELER_NAME);
+  });
+
+  test("keeps the guest's Traveler name while the account has chosen none", () => {
+    expect.hasAssertions();
+    const guest = { ...EMPTY_GENSHIN_SAVE, travelerName: GUEST_TRAVELER_NAME };
+
+    expect(mergeGenshinSave(EMPTY_GENSHIN_SAVE, guest).travelerName).toBe(GUEST_TRAVELER_NAME);
   });
 
   test("keeps the counters of the kind of wish the copy that has made more wishes of it holds, whole", () => {

@@ -54,6 +54,9 @@ interface Props {
   questTextMap: Readonly<Record<string, string>>;
   // The quest on the tracker under the minimap, none while no quest is tracked
   trackedQuest?: Quest;
+  // The name the player chose for the Traveler, which the party shows in place of the game's own, empty while none is
+  // Chosen
+  travelerName: string;
 }
 
 defineSlots<{
@@ -76,6 +79,7 @@ const {
   questProgress,
   questTextMap,
   trackedQuest,
+  travelerName,
 } = defineProps<Props>();
 const emit = defineEmits<{ map: []; menu: [] }>();
 </script>
@@ -114,7 +118,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
         :parent="hudRect"
         :rect="interfaceRects[HudInterfaceRectName.TeamButtonContainer]"
       >
-        <HudParty :character-data-map :frame :input :name-text-map :party />
+        <HudParty :character-data-map :frame :input :name-text-map :party :traveler-name />
       </GameRect>
       <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.HealthBarContainer]">
         <HudHealth :game-text :health="member.health" :level="member.level" :max-health="member.maxHealth" />

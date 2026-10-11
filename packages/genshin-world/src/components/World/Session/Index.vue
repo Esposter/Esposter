@@ -315,7 +315,8 @@ const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unl
     unlockedLandmarkIds: savedState.unlockedLandmarkIds,
     wallet,
   });
-// The Reputation, the Companionship EXP and the Frostbearing Tree's offerings no source changes yet, so they are carried as they were saved
+// The Reputation, the Companionship EXP, the Frostbearing Tree's offerings and the Traveler's name no source changes yet,
+// So they are carried as they were saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
   getSaveState: () => ({
@@ -328,6 +329,7 @@ useWorldSaveSync({
     inventory: inventory.value,
     quests: questProgressMap.value,
     reputation: savedState.reputation,
+    travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
     wishPityMap: wishPityMap.value,
@@ -570,6 +572,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :quest-progress="trackerQuest && questProgressMap.get(trackerQuest.id)"
       :quest-text-map
       :tracked-quest="trackerQuest"
+      :traveler-name="savedState.travelerName"
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
     >

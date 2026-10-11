@@ -10,6 +10,7 @@ import {
   MAX_OBJECTIVE_COUNT,
   MAX_QUEST_COUNT,
   MAX_SAVE_ID_LENGTH,
+  MAX_TRAVELER_NAME_LENGTH,
   MAX_UNLOCKED_LANDMARK_COUNT,
 } from "#src/services/save/constants";
 import { BannerKind } from "genshin-interface/save";
@@ -49,6 +50,7 @@ describe("genshinSaveSchema", () => {
         })),
         nextId: maxNumber,
       },
+      offerings: { frostbearingTree: { heldCount: maxNumber, level: maxNumber } },
       quests: Object.fromEntries(
         Array.from({ length: MAX_QUEST_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
@@ -56,6 +58,7 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       reputation: { exp: maxNumber, level: maxNumber },
+      travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
       unlockedLandmarks: Array.from({ length: MAX_UNLOCKED_LANDMARK_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
       ),
