@@ -252,8 +252,11 @@ for (const worker of workers) {
 }
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
-const checkIsSelectionSettled = ({ count, keys }: TerrainSelection): boolean =>
-  keys.subarray(0, count).every((key) => tileStreamer.isSettled(key));
+const checkIsTileSettled = (key: number): boolean => tileStreamer.isSettled(key);
+const checkIsSelectionSettled = (
+  { count, keys }: TerrainSelection,
+  checkIsSettled: (key: number) => boolean,
+): boolean => keys.subarray(0, count).every((key) => checkIsSettled(key));
 // The first frame waits only on the finest tiles it wants, since the coarser rings keep streaming after ready
 const checkIsFirstFrameSettled = (key: number): boolean =>
   getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || tileStreamer.isSettled(key);
@@ -307,19 +310,18 @@ onBeforeRender(() => {
   for (const [level, ring] of ringMap) ring.draw(ringDrawnKeysMap.get(level) ?? []);
   shown.keys.set(draws.keys.subarray(0, draws.count));
   shown.count = draws.count;
-  if (refreshStart !== undefined && checkIsSelectionSettled(wanted) && checkIsSelectionSettled(surrounding)) {
+  if (
+    refreshStart !== undefined &&
+    checkIsSelectionSettled(wanted, checkIsTileSettled) &&
+    checkIsSelectionSettled(surrounding, checkIsTileSettled)
+  ) {
     performance.measure(`${LOAD_STEP_MEASURE_PREFIX}terrain-refresh`, {
       detail: { tileCount: rebuiltTileCount },
       start: refreshStart,
     });
     refreshStart = undefined;
   }
-  if (
-    isReady ||
-    !isGroundSettled ||
-    !wanted.keys.subarray(0, wanted.count).every((key) => checkIsFirstFrameSettled(key))
-  )
-    return;
+  if (isReady || !isGroundSettled || !checkIsSelectionSettled(wanted, checkIsFirstFrameSettled)) return;
   isReady = true;
   resolveTerrainReady();
   emit("ready");
