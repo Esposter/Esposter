@@ -20,8 +20,11 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -129,8 +132,7 @@ const LIGHTFALL_TRIGGER_DELAY_FRAMES = 35;
 const LIGHTFALL_STACK_ICD_SECONDS = 0.1;
 const LIGHTFALL_STACK_ICD_ID = "eula-lightfall-stack-icd";
 const LIGHTFALL_MAX_STACKS = 30;
-const getLightfallStackId = (index: number): string => `eula-lightfall-stack-${index}`;
-const LIGHTFALL_STACK_IDS = Array.from({ length: LIGHTFALL_MAX_STACKS }, (_value, index) => getLightfallStackId(index));
+const LIGHTFALL_STACKS_RESOURCE_ID = "eula-lightfall-stacks";
 const LIGHTFALL_SUMMON_ID = "eula-lightfall";
 // Constellation 6 starts the Sword with this many stacks, with its extra stack from each of Eula's strikes a random roll that
 // This kit leaves out
@@ -140,12 +142,6 @@ const countGrimheartStacks = (effects: readonly KitEffect[], characterId: number
   effects.filter(
     (effect) =>
       effect.kind === "status" && effect.characterId === characterId && GRIMHEART_STACK_IDS.includes(effect.id),
-  ).length;
-
-const countLightfallStacks = (effects: readonly KitEffect[], characterId: number): number =>
-  effects.filter(
-    (effect) =>
-      effect.kind === "status" && effect.characterId === characterId && LIGHTFALL_STACK_IDS.includes(effect.id),
   ).length;
 
 // Each Grimheart stack gained refreshes every stack's seconds, as gcsim refreshes its one duration, and two is the most
@@ -193,9 +189,9 @@ const gainLightfallStack = (
     !startKitCooldown(kitEffectState, characterId, LIGHTFALL_STACK_ICD_ID, LIGHTFALL_STACK_ICD_SECONDS)
   )
     return;
-  const count = countLightfallStacks(kitEffectState.effects, characterId);
+  const count = countKitResource(kitEffectState.effects, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
   if (count >= LIGHTFALL_MAX_STACKS) return;
-  addKitStatus(kitEffectState, characterId, { id: getLightfallStackId(count), secondsRemaining: Infinity });
+  gainKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID, 1, LIGHTFALL_MAX_STACKS);
   const hits = [createLightfallExplosion(explodeBase, explodePerStack, count + 1, LIGHTFALL_EXPLOSION_FRAMES / 60)];
   kitEffectState.effects = kitEffectState.effects.map((effect) => (effect === summon ? { ...summon, hits } : effect));
 };
@@ -209,13 +205,9 @@ const triggerLightfall = (
 ): void => {
   const summon = findStandingKitSummon(kitEffectState.effects, LIGHTFALL_SUMMON_ID, characterId);
   if (summon === undefined) return;
-  const stacks = countLightfallStacks(kitEffectState.effects, characterId);
+  const stacks = spendKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
   const hit = createLightfallExplosion(explodeBase, explodePerStack, stacks, LIGHTFALL_TRIGGER_DELAY_FRAMES / 60);
-  kitEffectState.effects = kitEffectState.effects.filter(
-    (effect) =>
-      effect !== summon &&
-      !(effect.kind === "status" && effect.characterId === characterId && LIGHTFALL_STACK_IDS.includes(effect.id)),
-  );
+  kitEffectState.effects = kitEffectState.effects.filter((effect) => effect !== summon);
   castKitSummon(kitEffectState, summon.body, summon.combatant, [hit]);
 };
 
@@ -291,20 +283,21 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId } = combatant;
         // A fresh cast takes the Sword's stacks from zero, as the cast resets them, Constellation 6 starting it with five
+        spendKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
         kitEffectState.effects = kitEffectState.effects.filter(
-          (effect) =>
-            !(
-              effect.kind === "status" &&
-              effect.characterId === characterId &&
-              LIGHTFALL_STACK_IDS.includes(effect.id)
-            ) && !(effect.kind === "summon" && effect.id === LIGHTFALL_SUMMON_ID),
+          (effect) => !(effect.kind === "summon" && effect.id === LIGHTFALL_SUMMON_ID),
         );
         // Ascension 4 gains a Grimheart stack, which gcsim keeps only while the Grimheart it adds to is up
         if (combatant.ascension >= 4 && countGrimheartStacks(kitEffectState.effects, characterId) > 0)
           gainGrimheartStack(kitEffectState, combatant, grimheartSeconds);
         const startingStacks = combatant.constellationCount >= 6 ? CONSTELLATION_6_STARTING_STACKS : 0;
-        for (const id of LIGHTFALL_STACK_IDS.slice(0, startingStacks))
-          addKitStatus(kitEffectState, characterId, { id, secondsRemaining: Infinity });
+        gainKitResource(
+          kitEffectState,
+          characterId,
+          LIGHTFALL_STACKS_RESOURCE_ID,
+          startingStacks,
+          LIGHTFALL_MAX_STACKS,
+        );
         const lightfall: KitSummon = createKitSummon(
           body,
           combatant,

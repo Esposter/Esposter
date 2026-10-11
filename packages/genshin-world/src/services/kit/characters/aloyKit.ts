@@ -4,7 +4,6 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Element } from "#src/models/Element";
@@ -15,6 +14,8 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Aloy's proud skill groups, read at her talent level. The attack group holds the first strike's two hits at 0 and 1, the
@@ -63,11 +64,9 @@ const FREEZE_BOMB_RADIUS = 4;
 const BOMBLET_RADIUS = 2;
 // The coil stacks a Chillwater Bomblet adds, and the stacks at which Rushing Ice takes them and infuses Aloy's attacks
 const COIL_RUSHING_ICE_STACKS = 4;
-const COIL_STATUS_ID = "aloy-coil";
+const COIL_RESOURCE_ID = "aloy-coil";
 const RUSHING_ICE_STATUS_ID = "aloy-rushing-ice";
-// Provisional: gcsim gives the coils no end while Aloy is on the field, so their status is held until Rushing Ice takes them,
-// Which the kit model reads as a status with no seconds to run out
-const COIL_STATUS_SECONDS = Number.POSITIVE_INFINITY;
+// Provisional: gcsim gives the coils no end while Aloy is on the field, so they are a resource Rushing Ice spends
 
 // Measured: gcsim (MIT) aloy/burst.go, Prophecies of Dawn's circle of radius 6.5 centred 6.5 metres ahead of the body, its
 // Hitmark at 100 frames and its animation at 117 frames
@@ -98,24 +97,12 @@ export const createAloyKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Until it ends. Provisional: gcsim counts a bomblet once for all the enemies it strikes, where this counts each one
   const addCoilStack = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {
     if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, RUSHING_ICE_STATUS_ID)) return;
-    const coil = kitEffectState.effects.find(
-      (effect): effect is KitStatus =>
-        effect.kind === "status" && effect.characterId === combatant.characterId && effect.id === COIL_STATUS_ID,
-    );
-    const stacks = (coil?.stacks ?? 0) + 1;
-    if (stacks < COIL_RUSHING_ICE_STACKS) {
-      addKitStatus(kitEffectState, combatant.characterId, {
-        id: COIL_STATUS_ID,
-        secondsRemaining: COIL_STATUS_SECONDS,
-        stacks,
-      });
+    if (
+      gainKitResource(kitEffectState, combatant.characterId, COIL_RESOURCE_ID, 1, COIL_RUSHING_ICE_STACKS) <
+      COIL_RUSHING_ICE_STACKS
+    )
       return;
-    }
-    addKitStatus(kitEffectState, combatant.characterId, {
-      id: COIL_STATUS_ID,
-      secondsRemaining: COIL_STATUS_SECONDS,
-      stacks: 0,
-    });
+    spendKitResource(kitEffectState, combatant.characterId, COIL_RESOURCE_ID);
     addKitEffect(kitEffectState, {
       characterId: combatant.characterId,
       element: Element.Cryo,

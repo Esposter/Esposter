@@ -81,13 +81,6 @@ describe(createAloyKit, () => {
     ]);
     strike();
     expect(kitEffectState.effects).toStrictEqual([
-      {
-        characterId: ALOY_CHARACTER_ID,
-        id: "aloy-coil",
-        kind: "status",
-        secondsRemaining: Number.POSITIVE_INFINITY,
-        stacks: 0,
-      },
       { characterId: ALOY_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 10 },
       { characterId: ALOY_CHARACTER_ID, id: "aloy-rushing-ice", kind: "status", secondsRemaining: 10 },
     ]);

@@ -4,10 +4,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -24,7 +22,10 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
@@ -111,7 +112,7 @@ const COORDINATED_ATTACK_ICD_ID = "raiden-eye-icd";
 const BURST_FRAMES = 112;
 const BURST_HITMARK_FRAMES = 98;
 const BURST_HIT_AREA = createBoxReach(-0.1, 13, 8);
-const RESOLVE_STATUS_ID = "raiden-resolve";
+const RESOLVE_RESOURCE_ID = "raiden-resolve";
 // Measured: gcsim (MIT) raiden/burst.go, the Resolve another member's burst gives her, the burst group's stacks per point of
 // The energy that burst cost, raised by Constellation 1 by 80% for an Electro member's burst and 20% for any other's, and
 // Resolve's cap of 60 stacks
@@ -168,23 +169,6 @@ const CONSTELLATION_4_SECONDS = 10;
 const CONSTELLATION_4_SOURCE = "raiden-c4";
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_COOLDOWN_SECONDS = 1;
-
-// The stacks a status of the character's counts, none while it holds no status of the id
-const countStatusStacks = (effects: readonly KitEffect[], characterId: number, id: string): number =>
-  effects.find(
-    (effect): effect is KitStatus => effect.kind === "status" && effect.characterId === characterId && effect.id === id,
-  )?.stacks ?? 0;
-
-// Adds Resolve stacks to those she holds, up to their cap, held until her burst spends them
-const gainResolve = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>
-  addKitStatus(kitEffectState, characterId, {
-    id: RESOLVE_STATUS_ID,
-    secondsRemaining: Number.POSITIVE_INFINITY,
-    stacks: Math.min(
-      countStatusStacks(kitEffectState.effects, characterId, RESOLVE_STATUS_ID) + stacks,
-      RESOLVE_MAX_STACKS,
-    ),
-  });
 
 // Whether she holds the Eye, or her skill's task is about to give it
 const checkHasEye = (effects: readonly KitEffect[], characterId: number): boolean =>
@@ -314,14 +298,10 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId, kit } = combatant;
-        const stacks = countStatusStacks(kitEffectState.effects, characterId, RESOLVE_STATUS_ID);
+        const stacks = spendKitResource(kitEffectState, characterId, RESOLVE_RESOURCE_ID);
         kitEffectState.effects = kitEffectState.effects.filter(
           (effect) =>
-            !(
-              effect.kind === "status" &&
-              effect.characterId === characterId &&
-              (effect.id === RESOLVE_STATUS_ID || effect.id === RESTORE_COUNT_ID)
-            ),
+            !(effect.kind === "status" && effect.characterId === characterId && effect.id === RESTORE_COUNT_ID),
         );
         const damageBonus = checkHasEye(kitEffectState.effects, characterId) ? eyeBurstDamageBonus : 0;
         castKitSummon(kitEffectState, body, combatant, [
@@ -415,7 +395,13 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             : isElectro
               ? CONSTELLATION_1_ELECTRO_RESOLVE_MULTIPLIER
               : CONSTELLATION_1_RESOLVE_MULTIPLIER;
-        gainResolve(kitEffectState, characterId, resolveStackGain * event.energyCost * multiplier);
+        gainKitResource(
+          kitEffectState,
+          characterId,
+          RESOLVE_RESOURCE_ID,
+          resolveStackGain * event.energyCost * multiplier,
+          RESOLVE_MAX_STACKS,
+        );
         return;
       }
 
@@ -425,7 +411,13 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           !startKitCooldown(kitEffectState, characterId, ASCENSION_1_ICD_ID, ASCENSION_1_ICD_SECONDS)
         )
           return;
-        gainResolve(kitEffectState, characterId, ASCENSION_1_RESOLVE_STACKS);
+        gainKitResource(
+          kitEffectState,
+          characterId,
+          RESOLVE_RESOURCE_ID,
+          ASCENSION_1_RESOLVE_STACKS,
+          RESOLVE_MAX_STACKS,
+        );
         return;
       }
 
@@ -450,7 +442,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
 
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { enemy, hit, striker } = event;
-      const restoreCount = countStatusStacks(kitEffectState.effects, characterId, RESTORE_COUNT_ID);
+      const restoreCount = findKitStatus(kitEffectState.effects, characterId, RESTORE_COUNT_ID)?.stacks ?? 0;
       if (
         musouIsshin &&
         striker.characterId === characterId &&
