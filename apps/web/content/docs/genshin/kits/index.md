@@ -272,6 +272,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Hu Tao](/docs/genshin/kits/hu-tao)                 | Her string, charged attack and Guide to Afterlife's Paramita stance               |
 | [Iansan](/docs/genshin/kits/iansan)                 | Three strikes, the charged attack and Thunderbolt Rush                            |
 | [Ifa](/docs/genshin/kits/ifa)                       | Three strikes, the charged attack and her plunges                                 |
+| [Ineffa](/docs/genshin/kits/ineffa)                 | Four strikes, charged attack, Cleaning Mode, Cyclonic Exterminator                |
 | [Itto](/docs/genshin/kits/itto)                     | Masatsu Zetsugi, Ushi and the Arataki Kesagiri                                    |
 | [Jahoda](/docs/genshin/kits/jahoda)                 | Three strikes, the charged shot and Savvy Strategy's pursuit                      |
 | [Jean](/docs/genshin/kits/jean)                     | Gale Blade and Dandelion Breeze's field                                           |
