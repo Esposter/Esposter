@@ -320,9 +320,9 @@ export enum GameTextKey {
   Pinecone = "4200020428",
   PluieLotus = "2192902588",
   PortableBearing = "3720804436",
-  PressToOpen = "1860729186",
   // The Precious Chest, the richest tier the wallet rewards, as the game names it
   PreciousChest = "3576739246",
+  PressToOpen = "1860729186",
   Primogem = "2696654964",
   Qingxin = "1573292356",
   QuenepaBerry = "2670149892",
