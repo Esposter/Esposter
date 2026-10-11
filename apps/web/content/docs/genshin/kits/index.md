@@ -218,6 +218,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Alhaitham](/docs/genshin/kits/alhaitham)           | Universality's tap and hold, Particular Field and Projection Attacks |
 | [Aloy](/docs/genshin/kits/aloy)                     | Freeze Bomb and Rushing Ice                                          |
 | [Amber](/docs/genshin/kits/amber)                   | Explosive Puppet's Baron Bunny and Fiery Rain                        |
+| [Arlecchino](/docs/genshin/kits/arlecchino)         | Invitation to a Beheading and All Is Ash's Spike and Cleave          |
 | [Baizhu](/docs/genshin/kits/baizhu)                 | Universal Diagnosis and Holistic Revivification's seamless shield    |
 | [Barbara](/docs/genshin/kits/barbara)               | Let the Show Begin♪ droplets, Melody Loop and Shining Miracle♪       |
 | [Beidou](/docs/genshin/kits/beidou)                 | Tidecaller's shield and the Thunderbeast's Targe                     |
