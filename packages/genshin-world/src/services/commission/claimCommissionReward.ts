@@ -6,8 +6,9 @@ import { checkIsCommissionFinished } from "#src/services/commission/checkIsCommi
 import { findDealtCommission } from "#src/services/commission/findDealtCommission";
 import { takeCommissionClaim } from "#src/services/commission/takeCommissionClaim";
 
-// The state after a finished commission is claimed. Undefined where it is not dealt, is claimed already, is not finished,
-// Or the day's four are claimed
+// The state after a dealt commission's reward is claimed. A finished commission is claimed free; an unfinished one is
+// Claimed for one Encounter Point, which it spends. Undefined where it is not dealt, is claimed already, or the day's four
+// Are claimed, or where it is unfinished and no point is held
 export const claimCommissionReward = (
   day: CommissionDay,
   encounterPoints: number,
@@ -17,6 +18,9 @@ export const claimCommissionReward = (
   random: () => number,
 ): CommissionClaim | undefined => {
   const dealt = findDealtCommission(day, commissionId, slice);
-  if (!dealt || !checkIsCommissionFinished(dealt.progress, dealt.commission)) return undefined;
-  return takeCommissionClaim(day, encounterPoints, dealt, slice, rank, random);
+  if (!dealt) return undefined;
+  if (checkIsCommissionFinished(dealt.progress, dealt.commission))
+    return takeCommissionClaim(day, encounterPoints, dealt, slice, rank, random);
+  if (encounterPoints < 1) return undefined;
+  return takeCommissionClaim(day, encounterPoints - 1, dealt, slice, rank, random);
 };

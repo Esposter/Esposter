@@ -47,10 +47,27 @@ describe(claimCommissionReward, () => {
   };
   const dealtOf = (commissionId: number, count: number) => ({ commissionId, count, dealtRank: DEALT_RANK });
 
-  test("should refuse a commission that is not finished", () => {
+  test("should refuse an unfinished commission with no Encounter Point held", () => {
     expect.hasAssertions();
     const day: CommissionDay = { claimedCommissionIds: [], dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)] };
     expect(claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, minimumRoll)).toBeUndefined();
+  });
+
+  test("should claim an unfinished commission's reward for one point, which it spends", () => {
+    expect.hasAssertions();
+    const day: CommissionDay = { claimedCommissionIds: [], dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)] };
+    expect(claimCommissionReward(day, 2, 1, slice, DEALT_RANK, minimumRoll)).toStrictEqual({
+      bonus: [],
+      day: { claimedCommissionIds: [1], dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)] },
+      encounterPoints: 1,
+      rewards: [{ count: 10, id: MORA_ID }],
+    });
+  });
+
+  test("should claim a finished commission free, keeping the points held", () => {
+    expect.hasAssertions();
+    const day: CommissionDay = { claimedCommissionIds: [], dealtCommissions: [dealtOf(1, FINISH_PROGRESS)] };
+    expect(claimCommissionReward(day, 2, 1, slice, DEALT_RANK, minimumRoll)?.encounterPoints).toBe(2);
   });
 
   test("should refuse a commission that is not dealt today", () => {

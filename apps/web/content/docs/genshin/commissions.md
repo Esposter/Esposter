@@ -35,8 +35,7 @@ A commission is one daily task of Mondstadt's city, read from the game's daily t
 
 The game's Adventure Rank is cut into twelve bands of five ranks, rank 1 to 5 the first and rank 56 to 60 the last, and a rank past the last band stays in it. A reward tier holds the items of each band, and a claim draws each item's count from its range with the world's random source. A draw of zero gives nothing.
 
-- `claimCommissionReward` claims a dealt scene task whose count has reached its finish count. Its reward is the tier's band for the rank it was dealt at.
-- `claimCommissionWithEncounterPoint` claims one for a point, the commission unfinished, and spends the point. A commission claimed either way cannot be claimed again.
+- `claimCommissionReward` claims a dealt scene task. A task whose count has reached its finish count is claimed free; an unfinished one is claimed for one Encounter Point, which it spends. Either way its reward is the tier's band for the rank it was dealt at, and a commission claimed cannot be claimed again.
 - Claims stop at four a day. Each claim counts toward the four, whichever way it was made.
 
 A claim returns the items drawn, Mora and the Adventure EXP and Companionship EXP items included. Routing those to the wallet, the bag, the Adventure Rank and the friendship is the caller's, and no caller of it is built yet.
@@ -65,20 +64,19 @@ The three daily task tables are fetched rather than read from the dump, as the [
 
 ## Key files
 
-| File                                                                                  | Role                                                                 |
-| :------------------------------------------------------------------------------------ | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/commission/Commission.ts`                          | One daily task: its place, finish, groups and reward tier            |
-| `packages/genshin-world/src/models/commission/CommissionSlice.ts`                     | The slice's shape: the tasks, the reward tiers and the bonus by band |
-| `packages/genshin-world/src/services/commission/dealCommissions.ts`                   | Deals four at random, none held and none before Adventure Rank 12    |
-| `packages/genshin-world/src/services/commission/takeCommissionClaim.ts`               | Draws a claim's reward and, on the day's fourth, the bonus           |
-| `packages/genshin-world/src/services/commission/claimCommissionReward.ts`             | A finished commission's claim                                        |
-| `packages/genshin-world/src/services/commission/claimCommissionWithEncounterPoint.ts` | An unfinished commission's claim for one Encounter Point             |
-| `packages/genshin-world/src/services/commission/computeCommissionBand.ts`             | The band an Adventure Rank falls in                                  |
-| `packages/genshin-world/src/services/commission/readMondstadtCommissions.ts`          | Fetches the slice by its key from the hosted game data               |
-| `packages/genshin-world/src/models/reward/RewardItem.ts`                              | An item a reward gives, with the least and the most a claim may draw |
-| `scripts/src/services/genshinAssets/commissions/buildMondstadtCommissions.ts`         | The builder: the dump's tables into the record, for publishing       |
-| `scripts/src/services/genshinAssets/commissions/toCommissionTask.ts`                  | One dump task read into a commission                                 |
-| `scripts/src/services/genshinAssets/rewards/toPreviewItems.ts`                        | A reward preview's items, shared with the expeditions                |
+| File                                                                          | Role                                                                 |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/commission/Commission.ts`                  | One daily task: its place, finish, groups and reward tier            |
+| `packages/genshin-world/src/models/commission/CommissionSlice.ts`             | The slice's shape: the tasks, the reward tiers and the bonus by band |
+| `packages/genshin-world/src/services/commission/dealCommissions.ts`           | Deals four at random, none held and none before Adventure Rank 12    |
+| `packages/genshin-world/src/services/commission/takeCommissionClaim.ts`       | Draws a claim's reward and, on the day's fourth, the bonus           |
+| `packages/genshin-world/src/services/commission/claimCommissionReward.ts`     | A dealt commission's claim: free when finished, one point when not   |
+| `packages/genshin-world/src/services/commission/computeCommissionBand.ts`     | The band an Adventure Rank falls in                                  |
+| `packages/genshin-world/src/services/commission/readMondstadtCommissions.ts`  | Fetches the slice by its key from the hosted game data               |
+| `packages/genshin-world/src/models/reward/RewardItem.ts`                      | An item a reward gives, with the least and the most a claim may draw |
+| `scripts/src/services/genshinAssets/commissions/buildMondstadtCommissions.ts` | The builder: the dump's tables into the record, for publishing       |
+| `scripts/src/services/genshinAssets/commissions/toCommissionTask.ts`          | One dump task read into a commission                                 |
+| `scripts/src/services/genshinAssets/rewards/toPreviewItems.ts`                | A reward preview's items, shared with the expeditions                |
 
 ## Sources
 
