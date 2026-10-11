@@ -188,7 +188,6 @@
     "vue-router": "catalog:",
     "vue3-apexcharts": "catalog:",
     "web-push": "catalog:",
-    "worker-timers": "catalog:",
     "write-excel-file": "catalog:",
     "zod": "catalog:"
   },

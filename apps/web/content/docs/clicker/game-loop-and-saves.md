@@ -9,7 +9,7 @@ Production runs on one worker-based game tick, and the entire game state is one 
 
 ## How it works
 
-`pages/clicker.vue` loads the save with `useReadClicker`, then `useTimers` starts two intervals through the shared `useWorkerInterval`, which schedules on `worker-timers` — a Web Worker, so production continues when the tab is backgrounded (browsers throttle main-thread timers there) — and clears the interval on unmount.
+`pages/clicker.vue` loads the save with `useReadClicker`, then `useTimers` starts two intervals through the shared `useWorkerInterval`, which schedules on the page's worker timers — a Web Worker, so production continues when the tab is backgrounded (browsers throttle main-thread timers there), see [Worker timers](/docs/architecture/worker-timers) — and clears the interval on unmount.
 
 - the game tick — one 60 FPS interval calling `applyGameTick`: it computes each bought building's power once per tick, accumulates the building's lifetime `producedValue`, and adds the summed power to `pointCount`. Powers are read fresh every tick, so purchases apply on the next tick with no watch/teardown machinery.
 - the autosave — saves the full state every 60 seconds.
