@@ -254,6 +254,10 @@ export enum GameTextKey {
   LavenderMelon = "4160392220",
   // A level as the game writes one, its number in place of `{0}`
   LevelFormat = "UI_COMMON_LEVEL_FORMAT",
+  // A level's badge word, its number set on the line beneath, as the Reputation reward page's badges show it. Two of the
+  // Game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
+  // Narrow badge fits, where the Statue's spells "Niveau" and "Stufe" out
+  LevelShort = "2960839764",
   Loading = "UI_BEYOND_RECOMMEND_EMPTY_LOADING",
   // The door's prompt, worded per platform in the game's text and the PC's kept
   LoginBegin = "3535917252",
@@ -347,6 +351,9 @@ export enum GameTextKey {
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RedBerryshroom = "1096616044",
+  // The features a Reputation level unlocks, each worded as the reward page's unlock line, by its function's name
+  ReputationMondstadtMerchantDiscounts = "1610612133",
+  ReputationMondstadtOutcropSearch = "1452899589",
   ReputationNotAchieved = "UI_WISHINGPOND_OFFERING_LEVEL_UNREACH",
   ReputationReward = "REPUTATION_CITY_REWARD",
   RomaritimeFlower = "3918052700",

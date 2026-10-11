@@ -1,12 +1,10 @@
-// One level a nation's Reputation reward page lists: its level as the game words it, how many items it pays and that
-// Count's words for assistive technology, its unlock line where it opens a feature, and whether the nation's Reputation
-// Has reached it
+import type { RewardItemCell } from "#src/models/RewardItemCell";
+
+// One level a nation's Reputation reward page lists: its level, the items it pays, its unlock line where it opens a
+// Feature ("" where it opens none), and whether the nation's Reputation has reached it
 export interface ReputationLevelCell {
-  id: number;
   isAchieved: boolean;
-  itemCount: number;
-  itemCountLabel: string;
-  levelLabel: string;
-  statusLabel: string;
+  items: RewardItemCell[];
+  level: number;
   unlockLabel: string;
 }
