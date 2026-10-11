@@ -34,3 +34,5 @@ export const DUPLICATE_CODE_IGNORED_GLOBS: string[] = [
   "**/apps/web/app/assets/**",
   "**/apps/infra/src/azure/resources/**",
 ];
+// The manifest a Claude plugin's directory holds, the one a plugin's root is read by
+export const CLAUDE_PLUGIN_MANIFEST_PATH = ".claude-plugin/plugin.json";

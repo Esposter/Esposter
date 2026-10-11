@@ -13,27 +13,31 @@ Where a finding's home looked missing, it is settled:
 - **Claude mods:** a pure helper is shared through a relative import inside the plugin. Only a function calling `$`, or making an atom, stays in its register file, as the engine requires.
 - **Styles:** they are shared through a shared component or stylesheet, and the visual suites stay unchanged. A style edit is never landed through a `-u`.
 - **Measured data:** a clone made only of numeric literal rows is data, not code. The finder skips it.
+- **Across Claude plugins:** a clone whose two sides sit in two different plugins (a package with `.claude-plugin/plugin.json`) is not a finding, since each plugin installs standalone with no build and cannot share a file.
+- **Engine-bound register code:** a clone of two `register*.ts` files under a plugin's `src/services` is not a finding, since the engine keeps each `$` call and atom in its own register file. A pure helper in any other file stays a finding.
+- **Declarations and component preamble:** a clone made only of imports, interface and type bodies, `defineProps`, `defineEmits` and `defineModel` calls, or bare composable bindings is each file's own list of what it holds, not logic. The finder skips it.
+- **Enum-keyed record rows:** a clone made only of the rows of a `Record` keyed by an enum is data a table holds. The finder skips it.
 
-| Unit                                                             | Swept | Notes                                                                 |
-| ---------------------------------------------------------------- | ----- | --------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets`                             | —     |                                                                       |
-| `packages/genshin-world`                                         | —     | the rest of the package; `src/services/kit/characters` is its own row |
-| `packages/genshin-world/src/services/kit/characters`             | —     |                                                                       |
-| `packages`                                                       | —     | the light packages not named above                                    |
-| `apps/web/app`                                                   | —     | the rest of the app, excluding the rows above                         |
-| `scripts/src/services/genshinParity`                             | —     |                                                                       |
-| `packages/vue-phaserjs`                                          | —     |                                                                       |
-| `apps/web/shared/assets/clicker/data/upgrades`                   | —     |                                                                       |
-| `apps/web/app/components/Message`                                | —     |                                                                       |
-| `apps/infra`                                                     | —     | its Azure resource declarations are left out of the scan              |
-| `packages/genshin-engine`                                        | —     |                                                                       |
-| `packages/db-schema`                                             | —     |                                                                       |
-| `apps/web/server/trpc/routers`                                   | —     |                                                                       |
-| `packages/agent-console-server`                                  | —     |                                                                       |
-| `apps/web/app/services/dungeons`                                 | —     |                                                                       |
-| `apps/web/app/models/resource`, `apps/web/app/services/resource` | —     |                                                                       |
-| `packages/shared`                                                | —     |                                                                       |
-| `scripts/src`                                                    | —     | the rest of the tooling, excluding the rows above                     |
-| `apps/web/shared`                                                | —     | the rest of the shared tree, excluding the clicker upgrades row above |
-| `apps/web/server`                                                | —     | the rest of the server, excluding the router row above                |
-| `apps/functions/src`                                             | —     | no finding today; the row stays so a copy that lands there is read    |
+| Unit                                                             | Swept                  | Notes                                                                   |
+| ---------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets`                             | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `packages/genshin-world`                                         | —                      | the rest of the package; `src/services/kit/characters` is its own row   |
+| `packages/genshin-world/src/services/kit/characters`             | —                      |                                                                         |
+| `packages`                                                       | 2026-10-11 · Haiku 5.5 | the light packages not named above                                      |
+| `apps/web/app`                                                   | —                      | the rest of the app, excluding the rows above                           |
+| `scripts/src/services/genshinParity`                             | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `packages/vue-phaserjs`                                          | —                      |                                                                         |
+| `apps/web/shared/assets/clicker/data/upgrades`                   | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `apps/web/app/components/Message`                                | —                      |                                                                         |
+| `apps/infra`                                                     | 2026-10-11 · Haiku 5.5 | the rest of the infrastructure, excluding the Azure resource rows above |
+| `packages/genshin-engine`                                        | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `packages/db-schema`                                             | —                      |                                                                         |
+| `apps/web/server/trpc/routers`                                   | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `packages/agent-console-server`                                  | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `apps/web/app/services/dungeons`                                 | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `apps/web/app/models/resource`, `apps/web/app/services/resource` | —                      |                                                                         |
+| `packages/shared`                                                | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `scripts/src`                                                    | 2026-10-11 · Haiku 5.5 | the rest of the tooling, excluding the rows above                       |
+| `apps/web/shared`                                                | —                      | the rest of the shared tree, excluding the clicker upgrades row above   |
+| `apps/web/server`                                                | —                      | the rest of the server, excluding the router row above                  |
+| `apps/functions/src`                                             | 2026-10-11 · Haiku 5.5 | no finding today; the row stays so a copy that lands there is read      |
