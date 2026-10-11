@@ -12,20 +12,21 @@ export const getDefaultModuleOptions = (
 ): ModuleOptions => ({
   allowedMethodsRestricter: false,
   basicAuth: false,
-  csrf: false,
   contentSecurityPolicyReportOnly: false,
   corsHandler: {
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     origin: devServerUrl,
     preflight: { statusCode: 204 },
   },
+  csrf: false,
   enabled: true,
   headers: getDefaultSecurityHeaders(isDevelopment, isStrict),
   hidePoweredBy: true,
   nonce: true,
   rateLimiter: false,
+  removeLoggers: false,
   requestSizeLimiter: { maxRequestSizeInBytes: 2_000_000, maxUploadFileRequestInBytes: 8_000_000 },
   sri: true,
-  strict: isStrict,
   ssg: { exportToPresets: true, hashScripts: true, hashStyles: false, meta: true, nitroHeaders: true },
+  strict: isStrict,
 });

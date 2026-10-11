@@ -10,6 +10,7 @@ import { checkIsRecord } from "#src/runtime/services/checkIsRecord";
 import { computeSubresourceIntegrityHashes } from "#src/services/computeSubresourceIntegrityHashes";
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
 import { getPluginTemplate } from "#src/services/getPluginTemplate";
+import { getRemoveLoggersViteConfig } from "#src/services/getRemoveLoggersViteConfig";
 import { getRouteRulesTemplate } from "#src/services/getRouteRulesTemplate";
 import { getRouteSecurityRules } from "#src/services/getRouteSecurityRules";
 import { getStaticResourceHeaders } from "#src/services/getStaticResourceHeaders";
@@ -17,8 +18,8 @@ import { getTypeTemplate } from "#src/services/getTypeTemplate";
 import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
 import { parseModuleOptions } from "#src/services/parseModuleOptions";
 import {
-  addServerHandler,
   addNitroPlugin,
+  addServerHandler,
   addServerTemplate,
   addTypeTemplate,
   createResolver,
@@ -81,6 +82,9 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
         ),
     });
     addNitroPlugin(ROUTE_RULES_PLUGIN_FILENAME);
+
+    // The bundler drops the console calls, so the built code carries none of them
+    if (options.removeLoggers) nuxt.options.vite = defu(getRemoveLoggersViteConfig(), nuxt.options.vite);
 
     if (options.headers)
       nuxt.options.routeRules = defu(

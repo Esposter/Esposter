@@ -3,8 +3,8 @@ import type { ModuleOptions } from "#src/models/ModuleOptions";
 import { allowedMethodsRestricterOptionsSchema } from "#src/schemas/allowedMethodsRestricterOptionsSchema";
 import { basicAuthOptionsSchema } from "#src/schemas/basicAuthOptionsSchema";
 import { corsHandlerOptionsSchema } from "#src/schemas/corsHandlerOptionsSchema";
-import { rateLimiterOptionsSchema } from "#src/schemas/rateLimiterOptionsSchema";
 import { csrfOptionsSchema } from "#src/schemas/csrfOptionsSchema";
+import { rateLimiterOptionsSchema } from "#src/schemas/rateLimiterOptionsSchema";
 import { requestSizeLimiterOptionsSchema } from "#src/schemas/requestSizeLimiterOptionsSchema";
 import { securityHeadersSchema } from "#src/schemas/securityHeadersSchema";
 import { ssgOptionsSchema } from "#src/schemas/ssgOptionsSchema";
@@ -22,8 +22,9 @@ export const moduleOptionsSchema: z.ZodType<ModuleOptions> = z.strictObject({
   hidePoweredBy: z.boolean(),
   nonce: z.boolean(),
   rateLimiter: z.union([rateLimiterOptionsSchema, z.literal(false)]),
+  removeLoggers: z.boolean(),
   requestSizeLimiter: z.union([requestSizeLimiterOptionsSchema, z.literal(false)]),
   sri: z.boolean(),
-  strict: z.boolean(),
   ssg: z.union([ssgOptionsSchema, z.literal(false)]),
+  strict: z.boolean(),
 });

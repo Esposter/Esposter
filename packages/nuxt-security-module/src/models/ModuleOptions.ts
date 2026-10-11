@@ -10,18 +10,20 @@ import type { SsgOptions } from "#src/models/SsgOptions";
 export interface ModuleOptions {
   allowedMethodsRestricter: AllowedMethodsRestricterOptions | false;
   basicAuth: BasicAuthOptions | false;
-  // The whole module switched off, which registers no handler, plugin or header
-  enabled: boolean;
+  contentSecurityPolicyReportOnly: boolean;
   corsHandler: CorsHandlerOptions | false;
   csrf: CsrfOptions | false;
-  contentSecurityPolicyReportOnly: boolean;
-  headers: SecurityHeaders | false;
+  // The whole module switched off, which registers no handler, plugin or header
+  enabled: boolean;
+  headers: false | SecurityHeaders;
   hidePoweredBy: boolean;
   nonce: boolean;
-  rateLimiter: RateLimiterOptions | false;
-  requestSizeLimiter: RequestSizeLimiterOptions | false;
+  rateLimiter: false | RateLimiterOptions;
+  // Drops the console calls from the built client and server code, through the bundler's own minifier
+  removeLoggers: boolean;
+  requestSizeLimiter: false | RequestSizeLimiterOptions;
   sri: boolean;
+  ssg: false | SsgOptions;
   // Selects the stricter default policy, which the headers default from when it is set
   strict: boolean;
-  ssg: SsgOptions | false;
 }
