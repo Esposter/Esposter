@@ -12,8 +12,8 @@ describe(writeMidi, () => {
     { amplitude: 0.5, durationSeconds: 0.333333, pitchBends: [0, -1, 2], pitchMidi: 60, startTimeSeconds: 3.3333333 },
   ];
 
-  // The bytes @tonejs/midi wrote for these notes, captured before it was replaced, so the replacement is held to the same file
-  test("writes an empty track's bytes as @tonejs/midi did", () => {
+  // The bytes these notes must be written as, pinned here so the writer's output cannot drift unseen
+  test("writes an empty track's bytes", () => {
     expect.hasAssertions();
 
     expect(Buffer.from(writeMidi([])).toString("hex")).toBe(
@@ -21,7 +21,7 @@ describe(writeMidi, () => {
     );
   });
 
-  test("writes one note's bytes as @tonejs/midi did", () => {
+  test("writes one note's bytes", () => {
     expect.hasAssertions();
 
     expect(
@@ -45,7 +45,7 @@ describe(writeMidi, () => {
     );
   });
 
-  test("writes overlapping notes, bends and a zero-length note as @tonejs/midi did", () => {
+  test("writes overlapping notes, bends and a zero-length note", () => {
     expect.hasAssertions();
 
     expect(Buffer.from(writeMidi(RICH_NOTES)).toString("hex")).toBe(
