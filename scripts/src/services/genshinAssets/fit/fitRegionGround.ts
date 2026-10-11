@@ -35,10 +35,9 @@ import { join } from "node:path";
 const GROUND_STEP = 6;
 const GROUND_FALLOFF = 200;
 // How far round its centre a region the catalogue outlines is fitted, in metres: its capital's surroundings, out to
-// Twice the falloff, where a sample weighs a fifth of one at the centre. The features' stop is a share of the whole
-// Extent's error, so fitted over a region's outlines out to Windrise's disc they go to the farther land's cliffs and
-// Leave the city's ground unheld: Mondstadt's bar stood at 1.24 metres against its gate's 0.87, Sumeru's at 2.96
-// Against 2.29
+// Twice the falloff the hills weigh their samples by, where one counts a fifth of one at the centre. The features carry
+// No such weight and stop at a share of the whole extent's error, so past where the hills still weigh the ground they
+// Would be spent on land the fit does not serve, leaving the city's ground unheld
 const REGION_GROUND_RADIUS = 2 * GROUND_FALLOFF;
 // The hills' widths, widest first, down to the knolls round the oak and the statue
 const GROUND_WIDTHS = [200, 120, 70, 40, 24, 14];
