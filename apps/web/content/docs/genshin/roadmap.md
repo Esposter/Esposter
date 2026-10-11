@@ -287,6 +287,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 
 ### Next
 
+- [ ] **The kits' sources win.** [Character kits](/docs/genshin/kits) settles each overlay entry marked `DiffersFromSource` in a commit of its own: the kit's suite takes the source's value, cited, and the record moves under `--only`.
 - [ ] **Seat the challenger NPCs, so a duel opens from a fresh save.** [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation) needs Marjorie and Ellin, whose decks are built, seated on a region's resident row; the duel is on the [as-built page](/docs/genshin/genius-invokation).
 - [ ] **World stalls: the GPU's own time.** [Rendering style](/docs/genshin/rendering-style) needs the scene pass's cost per object kind, the trigger that redraws the cascades with the camera still, and the vertex uniform buffers rewritten with the same bytes each frame, which an instanced attribute or a storage buffer avoids.
 - [ ] **Windrise's references.** [Scene derivation](/docs/genshin/scene-derivation) needs the other hours named in `ParityReferenceMap`, each hour's minute read off its sun, and the other recordings' cameras solved.

@@ -1,4 +1,5 @@
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
+import { KIT_OVERLAY_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -29,4 +30,9 @@ export const LedgerUnitsMap: Record<string, () => string[]> = {
       )
       .map(({ name }) => `\`${name}\``);
   },
+  // One row per kit, named by its overlay
+  "kit-records": () =>
+    readdirSync(KIT_OVERLAY_DIRECTORY)
+      .filter((name) => name.endsWith(".json"))
+      .map((name) => `\`${name.slice(0, -".json".length)}\``),
 };

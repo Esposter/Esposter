@@ -17,7 +17,7 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
       description: "Build every kit's published record, seed each overlay with what its sources lack, and report",
       type: "boolean",
     },
-    docs: { description: "Render each kit page's Provisional and Sources sections (phase 2)", type: "boolean" },
+    docs: { description: "Render each kit page's Provisional and Sources sections (not built yet)", type: "boolean" },
     gcsim: {
       default: GCSIM_CACHE_DIRECTORY,
       description: `A clone of gcsim at ${GCSIM_TAG}, cloned there if absent`,
@@ -40,7 +40,11 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     if (args.docs)
-      throw new InvalidOperationError(Operation.Create, "kits --docs", "renders the kit pages from phase 2 on");
+      throw new InvalidOperationError(
+        Operation.Create,
+        "kits --docs",
+        "is not built yet: each kit page's Provisional and Sources sections are written by hand",
+      );
     const characterIds = args.only?.split(",").map(Number);
     if (args.compare) {
       const inputs = await readKitInputs({
