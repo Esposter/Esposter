@@ -60,13 +60,14 @@ An entry is taken when the machine has its needs, its area is lent, it is not wa
 - **A claim is a ref.** A claim pushes a parentless commit of the empty tree to `refs/claims/<id>`, its message naming the machine, the worker, the entry, when it was claimed and renewed, and the load at that moment. The push that wins creates the ref; a push that is refused because the ref exists names the holder.
 - **Holders are machine and worker pairs.** A machine runs several workers, and a claim held by one of them reads as held to the others on the same machine.
 - **A holder renews every ten minutes**, with a new commit leased from the claim the remote holds at that moment. A renewal stops when the ref is gone, or when another holder has it.
+- **A network that drops never ends a hold.** Every call to origin's fleet refs, a push, a fetch or an `ls-remote`, is killed past `FLEET_REF_TIMEOUT_MILLISECONDS`, a bound well above a healthy call and well inside the renewal interval, because a network that stalls mid-call (a laptop put to sleep, Wi-Fi dropped) otherwise leaves git waiting on its transport for hours. A renewal that fails or is killed is logged and tried again at the next interval. A failed push is judged by where the remote holds the ref afterwards: at the new commit it landed, and still at the leased one nothing refused it, so a renewal that only timed out is retried rather than read as the claim moving.
 - **Silence past thirty minutes frees a claim.** An unrenewed claim is replaced under the same explicit lease, so two machines reclaiming it cannot both land.
 - **A miss stays.** A miss is written into the claim and never goes stale, so the entry waits for the coordinator's call and its paths stay held.
 - **A finished entry releases its claim.** The landing commit removes the entry from its page, and the claim's ref is then deleted, which ends the hold.
 
 ## Load is read, not reported
 
-A machine's watcher pushes `refs/machines/<id>` every ten minutes: a parentless commit carrying the machine's latest sample of CPU, GPU, free memory and platform, and the last commit the machine landed on `ai/queue`, as its sha and author date, read from git rather than kept in a file. The coordinator's status command fetches every claim and heartbeat and prints each machine's last sample, what it last landed and each claim's holder and age. It reads a fixed number of refs regardless of how many machines there are, which is what keeps its cost flat as the fleet grows.
+A machine's watcher pushes `refs/machines/<id>` every ten minutes: a parentless commit carrying the machine's latest sample of CPU, GPU, free memory and platform, and the last commit the machine landed on `ai/queue`, as its sha and author date, read from git rather than kept in a file. A push that fails, or stalls past the same bound, is one logged line, and the watcher keeps sampling and pushes again at the next interval. The coordinator's status command fetches every claim and heartbeat and prints each machine's last sample, what it last landed and each claim's holder and age. It reads a fixed number of refs regardless of how many machines there are, which is what keeps its cost flat as the fleet grows.
 
 An agent lands its commits on `ai/queue` with its own loop, the explicit action [no polling](/docs/architecture/no-polling) names as the trigger. The landed commit shows in its machine's heartbeat, so one machine sees another's progress from the heartbeat, with no message.
 
@@ -87,7 +88,8 @@ No export or recording is ever committed, published or sent to a hosted service.
 | `scripts/src/fleet/data/index.ts`                     | The `ai:fleet:data` command: manifest, files, pull and push over ssh                                     |
 | `scripts/src/services/fleet/selectTakeableEntries.ts` | Selects the entries a machine may take from its profile and the live claims                              |
 | `scripts/src/services/fleet/claimFleetEntry.ts`       | Wins a claim with a plain push, adopts its own, or takes over a stale one with an explicit lease         |
-| `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and tells a refusal by a held ref from a network failure   |
+| `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and reads a failed push by where the remote holds the ref  |
+| `scripts/src/services/fleet/runFleetRefGit.ts`        | Runs a git call to origin's fleet refs under the fleet's bound, so a stalled network fails it            |
 | `scripts/src/services/fleet/parseComputeQueue.ts`     | Reads one compute page's open items, with their ids, needs and written paths, under its queue heading    |
 | `scripts/src/services/fleet/readComputeQueue.ts`      | Reads every compute page, and throws on an id two pages share                                            |
 | `scripts/src/services/fleet/readQueueFiles.ts`        | Reads a folder's files off origin's `ai/queue` in one `git cat-file --batch`, never off the checkout     |

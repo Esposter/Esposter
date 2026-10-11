@@ -46,14 +46,14 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 - **Claiming creates `refs/claims/<entry-id>` on origin, by pushing a parentless commit.** Git refuses the second create as not a fast-forward, so exactly one worker wins. There is no lock service, and two different entries never contend.
 - **A claim belongs to one worker; a machine runs many.** A holder is `{ machine, worker }`. `pnpm ai:fleet:next` prints the worker id it claimed under (`claimed <id> as worker <worker>`), taken from `FLEET_WORKER` or a new short id when the environment gives none. `hold` and `release` take that id as `--worker`, or read it from `FLEET_WORKER`. A worker adopts only a claim that matches both fields, so another worker on the same machine counts as holding the entry, and `next` moves on. A release stops only its own worker's hold, whose file is `~/.esposter/holds/<id>.<worker>.pid`. A claim written before workers reads as worker `""`.
-- **The holder renews it every ten minutes** with an explicit `--force-with-lease=refs/claims/<id>:<its sha>`, and the renewal's message carries its latest utilization line.
+- **The holder renews it every ten minutes** with an explicit `--force-with-lease=refs/claims/<id>:<its sha>`, and the renewal's message carries its latest utilization line. Every call to origin's fleet refs goes through `runFleetRefGit`, killed past `FLEET_REF_TIMEOUT_MILLISECONDS`, so a stalled network fails a renewal, which is logged and tried at the next interval, and never freezes the hold. A new call to a fleet ref takes the same runner, never a bare `runGit`.
 - **A claim unrenewed for thirty minutes is stale.** It is taken over the same way, leased from the stale sha.
 - **Finishing deletes the ref** right after the entry's landing commit is pushed. A missed entry keeps its claim ref, its message naming the miss, until the coordinator's call changes the entry.
 - **A claim never touches `ai/queue`**, so it starts no CI run. The old claim, a `— running` line committed and pushed, cost a commit, a push and a CI run each.
 
 ## Load is read, not reported
 
-- **Each machine's watcher runs as a child of the session the pulse mod starts, not as a Monitor in each session.** `pnpm ai:machine:watch` is the same command on every OS, and it pushes `refs/machines/<id>` every ten minutes with the machine's CPU, GPU, free memory and platform.
+- **Each machine's watcher runs as a child of the session the pulse mod starts, not as a Monitor in each session.** `pnpm ai:machine:watch` is the same command on every OS, and it pushes `refs/machines/<id>` every ten minutes with the machine's CPU, GPU, free memory and platform. A heartbeat push that stalls is killed at the same bound and tried again at the next interval.
 - **`pnpm ai:fleet:status` is the coordinator's whole view:** every machine's last sample, and every claim with its holder and age.
 - **A machine messages the coordinator only for a miss, a failure, or a call it cannot make.** Its idle lines are its own signal to claim.
 

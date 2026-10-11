@@ -24,6 +24,12 @@ export const MILLISECONDS_PER_MINUTE: number = Temporal.Duration.from({ minutes:
 export const RENEW_MILLISECONDS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
 // A claim unrenewed for this long is stale, and any machine may take it over
 export const STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
+// How long one call to origin's fleet refs may take: a push, fetch or ls-remote of one tiny commit, which a healthy
+// Network answers in seconds over SSH or HTTPS alike. A network that stalls mid-call, a laptop put to sleep or Wi-Fi
+// Dropped, leaves git waiting on its transport for hours, so the call is killed here and fails like any other. A
+// Renewal or a heartbeat makes at most three such calls, which keeps a renewal well inside its interval and the
+// Watcher's next reading inside `MACHINE_STATE_STALE_MILLISECONDS`
+export const FLEET_REF_TIMEOUT_MILLISECONDS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 // A renewal's load line samples the machine over this window, so a renewal is quick
 export const LOAD_SAMPLE_MILLISECONDS: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 export const MACHINE_PROFILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "machine.json");

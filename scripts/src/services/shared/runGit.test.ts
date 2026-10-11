@@ -40,4 +40,22 @@ describe(runGit, () => {
     expect(gitDirectory).toBe(`${directory.replaceAll("\\", "/")}/.git`);
     expect(objectsDirectory).toBe(".git/objects");
   });
+
+  // An SSH session across a sleep or a dropped network stays connected and never answers, holding an unbounded call
+  // For hours. The stand-in transport outlasts the bound, and its `#` comments out the host and the remote command git
+  // Appends to it
+  test("fails at its timeout against a remote that never answers", () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("GIT_SSH_COMMAND", "sleep 10 #");
+
+    expect(() =>
+      runGit(
+        ["ls-remote", "ssh://a/"],
+        directory,
+        undefined,
+        Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(`[Error: spawnSync git ETIMEDOUT]`);
+  });
 });
