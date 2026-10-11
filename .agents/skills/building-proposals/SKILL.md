@@ -14,7 +14,6 @@ description: Apply when choosing what to build next, asked for low-hanging fruit
 - **Building a proposal as written without re-verifying it first.** It was written against the code of its day, and a seam that has moved since is found before the build, not halfway through it (`references/building.md`).
 - **Departing from a spec silently.** A build that finds the spec wrong revises the proposal or the as-built page says what was built instead; a feature page that matches neither the code nor the spec it came from is the stale record the next review argues with (`references/building.md`).
 - **Shipping the code now and the docs "later".** The as-built page, the deleted proposal and the roadmap line go in the change that ships the behaviour (`references/shipping.md`).
-- **A migration staged behind a compatibility path** — an adapter that runs the old shape beside the new until a later phase deletes it. The tree moves in whole-tree commits instead, each moving every caller and deleting what it replaces in the same commit, a behaviour guard (a replay digest, a snapshot) proving each one; only per-unit work no tree-wide commit can do gets a ledger (the `sweeps` skill).
 - **Handing an agent a proposal whose calls are still open.** A proposal goes to a `haiku` agent once its spec resolves every judgement call, and one still open is built in the main session (the `llm-delegation` skill, "In a session").
 
 ## The loop
