@@ -10,11 +10,13 @@ describe(getDataRowLines, () => {
     );
   });
 
-  test("reads the brackets framing a row block as data and a line of code as code", () => {
+  test("reads the header of a record of primitives and the brackets framing a row block as data", () => {
     expect.hasAssertions();
 
-    expect(getDataRowLines('  colors: [\n    "#63c2ff",\n  ],\n  const a = makeItem();')).toStrictEqual(
-      new Set([1, 2, 3]),
-    );
+    expect(
+      getDataRowLines(
+        'export const map: Record<number, number> = {\n  colors: [\n    "#63c2ff",\n  ],\n};\nconst a = makeItem();',
+      ),
+    ).toStrictEqual(new Set([1, 2, 3, 4, 5]));
   });
 });
