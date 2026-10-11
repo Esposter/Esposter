@@ -37,11 +37,14 @@ const EDGE_FADE_END = 1;
 const DROPPED_COVERAGE = 0.01;
 // The least cover a cloud's crown is read as a share of, so the outermost fade reads none of it
 const MIN_CROWN_COVER = 0.05;
+// A place's coordinates
+const PLACE_SIZE = 3;
 // A band of clouds as one sprite drawn once for all of them, each cloud a camera-facing billboard of its painted cloud
 // In the atlas, cut off where it covers nothing, its foot at its place. Each is a draw of its own as a sprite apiece,
 // And a band runs to hundreds; drawn as one, they are blended in the order given, which three's own sort of the objects
 // No longer sets, so before each draw they are laid out farthest along the camera's view first, as that sort would, and
-// The nearer edges blend over the farther; only a draw whose order moved rewrites more than their places. Each is
+// The nearer edges blend over the farther; only a draw whose order moved rewrites more than their places, and only a
+// Place that moved is written again. Each is
 // Coloured as the game's cloud particles are (Login/Scene/Index.reference.ts, source `cloudParticleShader`): its shaded
 // Colour mixed toward its lit one where its painted crown is, each blended from away from the sun to toward it by how
 // Far toward the sun the cloud stands, gaining light with the sky's coverage and brightening toward the sun, fading out
@@ -67,7 +70,7 @@ export const createCloudBandSprite = (
     spriteIndex % columns,
     columns - 1 - Math.floor(spriteIndex / columns),
   ]);
-  const positions = new InstancedBufferAttribute(new Float32Array(clouds.length * 3), 3);
+  const positions = new InstancedBufferAttribute(new Float32Array(clouds.length * PLACE_SIZE), PLACE_SIZE);
   const scales = new InstancedBufferAttribute(new Float32Array(clouds.length * 2), 2);
   const cells = new InstancedBufferAttribute(new Float32Array(clouds.length * 2), 2);
   const ranks = new InstancedBufferAttribute(new Float32Array(clouds.length), 1);
@@ -112,13 +115,26 @@ export const createCloudBandSprite = (
     ranks.needsUpdate = true;
   };
   layOut();
+  // Writes each place in the order laid out where the buffer holds another, as the float the buffer keeps of it, and
+  // Tells whether any was written, so a band standing still uploads nothing until its order moves
+  const writePlaces = (): boolean => {
+    let isWritten = false;
+    for (let instance = 0; instance < order.length; instance++) {
+      const cloudPlace = places[order[instance] ?? 0] ?? [];
+      for (let axis = 0; axis < PLACE_SIZE; axis++) {
+        const index = instance * PLACE_SIZE + axis;
+        const value = Math.fround(cloudPlace[axis] ?? 0);
+        if (positions.array[index] === value) continue;
+        positions.array[index] = value;
+        isWritten = true;
+      }
+    }
+    return isWritten;
+  };
   sprite.onBeforeRender = (_renderer, _scene, camera) => {
     modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, sprite.matrixWorld);
-    const isReordered = orderByViewDepth(places, modelViewMatrix, depths, order);
-    for (let instance = 0; instance < order.length; instance++)
-      positions.set(places[order[instance] ?? 0] ?? [], instance * 3);
-    positions.needsUpdate = true;
-    if (isReordered) layOut();
+    if (orderByViewDepth(places, modelViewMatrix, depths, order)) layOut();
+    if (writePlaces()) positions.needsUpdate = true;
   };
   return {
     cover,
