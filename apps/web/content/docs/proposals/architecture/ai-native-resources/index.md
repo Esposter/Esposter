@@ -1,21 +1,20 @@
 ---
 title: AI-native resources
-description: Proposal — whatever a person can do in a resource editor, an agent can do through a typed procedure. Generic tools on the resource router find, describe, read and patch any type's content from what its ResourceDefinitionMap entry already declares, so every type, current and future, is agent-reachable by being in the map.
+description: Proposal — whatever a person can do in a resource editor, an agent can do through a typed procedure. Generic content tools already find, describe, read and patch every type's document from its ResourceDefinitionMap entry; what remains is an open editor adopting an agent's save, the lifecycle as tools, the schema fixes, typed commands and the in-product assistant.
 model: claude-opus-5-5
 ---
 
 # AI-native resources
 
-Every resource editor in Esposter is built for a person's pointer and keyboard. An agent reaches the app through one MCP endpoint ([agent access](/docs/architecture/agent-access)), and of the few hundred procedures behind it only the TodoList's follow-up procedures opt in. So a Sheet, a Dashboard or a Note is, to an agent, a name it cannot open. An editor only a person can drive is closed to the agents that now do much of the owner's work, and adding tools one editor at a time is how the endpoint came to reach a single type.
+Every resource editor in Esposter is built for a person's pointer and keyboard. An agent reaches the app through one MCP endpoint ([agent access](/docs/architecture/agent-access)), and generic tools there find, describe, read and patch every type's document ([agent content tools](/docs/architecture/agent-content-tools)). The rest of what a person does is still closed to it: an agent's save strands the owner's open editor behind a refresh, and creating, publishing, linking or rolling back a resource has no tool. An editor only a person can drive is closed to the agents that now do much of the owner's work, and adding tools one editor at a time is how the endpoint once came to reach a single type.
 
-This proposal wires the agent surface once, at the resource layer. A resource type already declares everything an agent needs in its `ResourceDefinitionMap` entry: a content schema that validates every save, the capabilities that gate its lifecycle, and the one content door every write goes through. A handful of generic procedures on the cross-type `resource` router read that declaration off the row they are handed, so a type is agent-reachable because it is in the map, and a type added next year is reachable the day it exists.
+This proposal wires the agent surface once, at the resource layer. A resource type already declares everything an agent needs in its `ResourceDefinitionMap` entry: a content schema that validates every save, the capabilities that gate its lifecycle, and the one content door every write goes through. Generic procedures on the cross-type `resource` router read that declaration off the row they are handed, so a type is agent-reachable because it is in the map, and a type added next year is reachable the day it exists — as the content tools already are.
 
 ## Sub-pages
 
 Each is a unit built on its own, listed in build order:
 
-- [Agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys) — the keys made before scopes given the follow-ups scope, and the operations that stay the owner's; scopes, read-only hints and per-key attribution shipped ([agent access](/docs/architecture/agent-access))
-- [Content tools](/docs/proposals/architecture/ai-native-resources/content-tools) — find, describe, read at a JSON Pointer and edit by JSON Patch, generic over every type, and the test that holds every type to it
+- [Agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys) — the keys made before scopes given the follow-ups scope, and the operations that stay the owner's; scopes, read-only hints and per-key attribution shipped ([agent access](/docs/architecture/agent-access)), and the content tools after them ([agent content tools](/docs/architecture/agent-content-tools))
 - [Live edits](/docs/proposals/architecture/ai-native-resources/live-edits) — an open editor adopts an agent's save, and an unsaved edit meets it as a choice shown at once
 - [Lifecycle tools](/docs/proposals/architecture/ai-native-resources/lifecycle-tools) — create, rename, tag, delete, restore, publish, references, history and datasets, plus each type's own procedures
 - [Schema fidelity](/docs/proposals/architecture/ai-native-resources/schema-fidelity) — the source fixes where a content schema stops describing what its editor edits
@@ -26,7 +25,7 @@ Each is a unit built on its own, listed in build order:
 
 > Whatever a person can do in an editor, an agent can do through a typed procedure — derived from what the type already declares, never written per type.
 
-Every edit a person makes in any editor ends in one of two places: a new document through the content door, or a lifecycle procedure such as publish. So the contract every type meets covers both, read off its existing declaration — three parts for the document and one for its lifecycle:
+Every edit a person makes in any editor ends in one of two places: a new document through the content door, or a lifecycle procedure such as publish. So the contract every type meets covers both, read off its existing declaration — three parts for the document, which the [agent content tools](/docs/architecture/agent-content-tools) meet, and one for its lifecycle, which [lifecycle tools](/docs/proposals/architecture/ai-native-resources/lifecycle-tools) will:
 
 1. **Describe.** The type's content schema as JSON Schema, carrying its enums, limits and nesting, with the paths an agent may not write marked.
 2. **Read.** The content as the JSON the blob already stores, whole or at a JSON Pointer.
@@ -53,22 +52,22 @@ flowchart TD
 
 ## The audit
 
-What each type in `ResourceDefinitionMap` offers an agent today, and what its content schema gives the generic tools. Each schema was converted with Zod's `z.toJSONSchema` in input mode, the side a writer fills: a schema holding a Date throws under the default, since Zod has no JSON Schema for a Date, and converts once a Date is written as the `date-time` string the stored JSON already holds. The last column is what reaches beyond the content.
+What each type's content schema gives the generic tools, and what reaches beyond its content. Each schema was converted with Zod's `z.toJSONSchema` in input mode, the side a writer fills: a schema holding a Date throws under the default, since Zod has no JSON Schema for a Date, and converts once a Date is written as the `date-time` string the stored JSON already holds.
 
-| Type      | An agent today                          | Conversion       | Where the schema stops describing the content                                              | Beyond the content                                                               |
-| --------- | --------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| Blueprint | nothing                                 | as is            | each entry's `content`, another type's document that deploy parses                         | capture and deploy                                                               |
-| Dashboard | nothing                                 | Dates as strings | nowhere                                                                                    | publish, whose transform resolves every bound dataset                            |
-| Email     | nothing                                 | Dates as strings | the GrapesJS project — `pages` and every key its catchall passes — and the captured `html` | publish, file assets, a personalized export only a live editor can produce       |
-| Flowchart | nothing                                 | Dates as strings | each node's and edge's `data`, where a node's label lives                                  | publish                                                                          |
-| Note      | nothing                                 | as is            | every node's `attrs` and extra keys, and a node `type` that may be any string              | publish                                                                          |
-| Program   | nothing                                 | as is            | nowhere                                                                                    | participant generation and status                                                |
-| Sheet     | nothing                                 | Dates as strings | nowhere                                                                                    | dataset reads, browser-side import and export, column edits that touch every row |
-| Survey    | nothing                                 | as is            | nowhere — but the questions are SurveyJS's JSON inside one `model` string                  | responses, publish, file assets                                                  |
-| TodoList  | the follow-up tools, on follow-ups only | Dates as strings | nowhere                                                                                    | ticking a repeating todo rolls its date                                          |
-| Webpage   | nothing                                 | Dates as strings | the GrapesJS project, and the `html` and `css` a save captured                             | publish, file assets                                                             |
+| Type      | Conversion       | Where the schema stops describing the content                                              | Beyond the content                                                               |
+| --------- | ---------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| Blueprint | as is            | each entry's `content`, another type's document that deploy parses                         | capture and deploy                                                               |
+| Dashboard | Dates as strings | nowhere                                                                                    | publish, whose transform resolves every bound dataset                            |
+| Email     | Dates as strings | the GrapesJS project — `pages` and every key its catchall passes — and the captured `html` | publish, file assets, a personalized export only a live editor can produce       |
+| Flowchart | Dates as strings | each node's and edge's `data`, where a node's label lives                                  | publish                                                                          |
+| Note      | as is            | every node's `attrs` and extra keys, and a node `type` that may be any string              | publish                                                                          |
+| Program   | as is            | nowhere                                                                                    | participant generation and status                                                |
+| Sheet     | Dates as strings | nowhere                                                                                    | dataset reads, browser-side import and export, column edits that touch every row |
+| Survey    | as is            | nowhere — but the questions are SurveyJS's JSON inside one `model` string                  | responses, publish, file assets                                                  |
+| TodoList  | Dates as strings | nowhere                                                                                    | ticking a repeating todo rolls its date                                          |
+| Webpage   | Dates as strings | the GrapesJS project, and the `html` and `css` a save captured                             | publish, file assets                                                             |
 
-**The headline:** one type has any agent surface, the TodoList, and it reaches only the todos a session wrote. Every type needs the same four parts of the contract, which is the argument for writing them once. Every schema converts, given the one Date rule, so describing is generic today; a type whose fourth column reads "nowhere" is described all the way down, and the others stop at the paths that column names, which is where generic writing stops too.
+**The headline:** every type needs the same four parts of the contract, which is the argument for writing them once. Every schema converts, given the one Date rule, so describing is generic; a type whose third column reads "nowhere" is described all the way down and the content tools reach it whole, and the others stop at the paths that column names, which is where generic writing stops too.
 
 ## Where auto-wiring cannot reach
 
@@ -87,7 +86,7 @@ The generic tools reach exactly as far as a type's content schema describes its 
 
 **By construction first.** No step registers a type with the agent surface, so there is no step to forget: the generic tools read the type from the row and the schema from the map, and the map `satisfies Record<ResourceType, ResourceDefinition>`, so a new `ResourceType` does not typecheck without a content schema, and is agent-reachable the moment it does.
 
-**Then one test, over `ResourceTypes` with no roster.** For every type, the agent conversion produces a root object without throwing — a Map, a Set or a BigInt in a schema fails it, since none has a JSON form the content could be stored in — and the undescribed and read-only paths the conversion marks must match the record the test keeps per type. Adding `z.unknown()` to a content schema then fails the build until the part is described or its path recorded, so a partial surface is never silent, and the record shrinks only by a source fix. The test is proven able to fail: under Zod's default conversion, more than half the types throw today.
+**Then one test, over `ResourceTypes` with no roster.** It holds the content already: every type converts to a root object, and the paths it marks undescribed or read-only match the record the test keeps per type, so a partial surface is never silent and the record shrinks only by a source fix ([agent content tools](/docs/architecture/agent-content-tools)).
 
 A second test holds the procedures beyond the content: every procedure on a type's router that the factory did not generate declares either an MCP description or a human-only reason, so a new editor's own procedure cannot ship without a decision ([agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys)).
 
@@ -97,7 +96,7 @@ There is deliberately no per-type patch round trip. It would need a fixture docu
 
 The generic tools reach every type at once, so ordering by value is ordering the units and the source fixes. The app keeps no usage figures by type that a session can read, so value is read from what the owner works in — the TodoList daily, per [TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups) — and from which types the generic tools reach whole.
 
-1. **Agent keys, then content tools.** Every type is found, described, read and edited. The TodoList, Sheet, Dashboard and Program are reached whole from the first day, since their schemas describe everything.
+1. **Agent keys, then content tools** — shipped ([agent access](/docs/architecture/agent-access), [agent content tools](/docs/architecture/agent-content-tools)). Every type is found, described, read and edited, and the TodoList, Sheet, Dashboard and Program are reached whole, since their schemas describe everything. What [agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys) leaves — the keys made before scopes, and the operations that stay the owner's — is its own unit.
 2. **Live edits**, so an agent's write never strands a person's open editor behind a refresh.
 3. **Lifecycle tools** — publishing, links, history and each type's own procedures.
 4. **Schema fidelity** — the Flowchart's node data first, as the smallest fix with the largest gain, then the Note's document check and the Survey's model check.

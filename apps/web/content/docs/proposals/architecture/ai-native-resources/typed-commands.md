@@ -12,7 +12,7 @@ touches:
 
 # Typed commands
 
-Built on [content tools](/docs/proposals/architecture/ai-native-resources/content-tools), whose patch reaches every type and whose update service every command here runs inside. A patch writes exactly the paths it names, which is what an agent wants for most edits and exactly wrong for a few. This unit is that few, and the rule that keeps it few.
+Built on the [agent content tools](/docs/architecture/agent-content-tools), whose patch reaches every type and whose update service every command here runs inside. A patch writes exactly the paths it names, which is what an agent wants for most edits and exactly wrong for a few. This unit is that few, and the rule that keeps it few.
 
 ## When a type earns a command
 

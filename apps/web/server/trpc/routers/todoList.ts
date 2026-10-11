@@ -32,8 +32,8 @@ export const todoListRouter = router({
         scope: McpScope.FollowUps,
       },
     })
-    .mutation<string>(({ ctx, input: { dueAt, id, name, notes, repository, sessionId } }) =>
-      updateTodoListContent(ctx, id, (todoList) => {
+    .mutation<string>(({ ctx, input: { dueAt, name, notes, repository, sessionId } }) =>
+      updateTodoListContent(ctx, ctx.resource, (todoList) => {
         const followUp = new TodoListItem({
           ...(dueAt ? { dueAt: new Date(dueAt) } : {}),
           name,
@@ -53,8 +53,8 @@ export const todoListRouter = router({
         scope: McpScope.FollowUps,
       },
     })
-    .mutation<void>(async ({ ctx, input: { id, itemId, summary, timeZone } }) => {
-      await updateTodoListContent(ctx, id, (todoList) => {
+    .mutation<void>(async ({ ctx, input: { itemId, summary, timeZone } }) => {
+      await updateTodoListContent(ctx, ctx.resource, (todoList) => {
         const followUp = requireOpenFollowUp(todoList, itemId);
         appendNotesParagraph(followUp, summary);
         // As the checkbox ticks it
@@ -71,8 +71,8 @@ export const todoListRouter = router({
         scope: McpScope.FollowUps,
       },
     })
-    .mutation<void>(async ({ ctx, input: { id, itemId, reason } }) => {
-      await updateTodoListContent(ctx, id, (todoList) => {
+    .mutation<void>(async ({ ctx, input: { itemId, reason } }) => {
+      await updateTodoListContent(ctx, ctx.resource, (todoList) => {
         const followUp = requireOpenFollowUp(todoList, itemId);
         followUp.origin.handedBackAt = new Date();
         appendNotesParagraph(followUp, reason);

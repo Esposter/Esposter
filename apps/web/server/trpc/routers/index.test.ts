@@ -1,6 +1,7 @@
 import type { AnyProcedure } from "@trpc/server";
 import type { JSONSchema } from "zod/v4/core";
 
+import { OPAQUE_KEY } from "#server/services/mcp/constants";
 import { trpcRouter } from "#server/trpc/routers";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -47,9 +48,6 @@ const readUnboundedPaths = (schema: boolean | JSONSchema.JSONSchema, path: strin
 };
 
 describe("trpcRouter", () => {
-  // The key the conversion stamps on a `z.unknown()` or `z.any()`, whose `{}` the walk would otherwise read as bounded
-  const OPAQUE_KEY = "x-opaque";
-
   // A request body is parsed whole before a procedure runs, so an input with no ceiling lets any caller hand the
   // Server a string or an array as large as the body limit, and have it validated, stored or queried with
   test("bounds every string and array in every procedure's input", () => {
@@ -79,12 +77,14 @@ describe("trpcRouter", () => {
     expect([...unboundedProcedurePaths]).toStrictEqual([]);
     // An opaque value holds whatever strings and arrays it is sent, so these are the procedures where only the body
     // Limit bounds them: each carries a document whose shape another library or resource owns (GrapesJS, Vue Flow,
-    // TipTap, SurveyJS answers, a blueprint's entries). A new one fails here until it is bounded or named
+    // TipTap, SurveyJS answers, a blueprint's entries), or a patch's values, which the resource's own schema parses once
+    // Applied. A new one fails here until it is bounded or named
     expect([...opaqueProcedurePaths]).toStrictEqual([
       "blueprint.saveResourceContent",
       "email.saveResourceContent",
       "flowchart.saveResourceContent",
       "note.saveResourceContent",
+      "resource.updateResourceContent",
       "survey.createSurveyResponse",
       "survey.updateSurveyResponse",
       "webpage.saveResourceContent",

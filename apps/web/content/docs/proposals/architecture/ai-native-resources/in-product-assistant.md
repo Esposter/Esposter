@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # In-product assistant
 
-Built on [content tools](/docs/proposals/architecture/ai-native-resources/content-tools) and [live edits](/docs/proposals/architecture/ai-native-resources/live-edits). A person working in an editor should not have to leave it to ask an agent for an edit, and asking from inside it must not open a second way in. So the assistant is a shortcut into the person's own Claude Code session, which then works through the tools any agent uses. It also waits on something outside this proposal: a host the page can pair with, which the [agent console](/docs/infra/claude-interface/agent-console) offers only once it is shown again.
+Built on the [agent content tools](/docs/architecture/agent-content-tools) and [live edits](/docs/proposals/architecture/ai-native-resources/live-edits). A person working in an editor should not have to leave it to ask an agent for an edit, and asking from inside it must not open a second way in. So the assistant is a shortcut into the person's own Claude Code session, which then works through the tools any agent uses. It also waits on something outside this proposal: a host the page can pair with, which the [agent console](/docs/infra/claude-interface/agent-console) offers only once it is shown again.
 
 ## One path
 

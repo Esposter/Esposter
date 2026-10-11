@@ -9,7 +9,7 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 
 ## Next
 
-- [ ] [AI-native resources](/docs/proposals/architecture/ai-native-resources) — every type found, described, read and edited by an agent through generic tools over MCP, wired once at the resource layer rather than per editor
+- [ ] [AI-native resources](/docs/proposals/architecture/ai-native-resources) — beyond the content tools every type has, an open editor adopting an agent's save, the lifecycle as tools, the schema fixes and typed commands, wired once at the resource layer rather than per editor
 - [ ] [Flowchart shapes](/docs/proposals/resource/flowchart-shapes) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place
 - [ ] [Dashboard live canvas](/docs/proposals/resource/dashboard-live-canvas) — the editor draws each tile as its real visual over its bound data instead of a stock icon, so a dashboard is seen without publishing it
 - [ ] [Dashboard card and table visuals](/docs/proposals/resource/dashboard-card-and-table-visuals) — a single aggregated number and a table of exact values beside the charts, over the same binding

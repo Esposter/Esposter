@@ -152,18 +152,18 @@ A long drain runs in one session, so its context grows with every follow-up and 
 
 ## Key files
 
-| File                                                                  | Role                                                                        |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `apps/web/shared/models/resource/todoList/TodoListItemOrigin.ts`      | the origin, and the `owner/name` rule its repository keeps                  |
-| `apps/web/server/trpc/routers/todoList.ts`                            | the four follow-up procedures, opted into the MCP bridge                    |
-| `apps/web/server/services/resource/todoList/updateTodoListContent.ts` | read, change and save at the version read, reapplied over a concurrent save |
-| `apps/web/server/services/resource/todoList/checkIsOpenFollowUp.ts`   | the line between the owner's todos and a session's                          |
-| `apps/web/app/components/Resource/TodoList/Origin.vue`                | where a follow-up came from, its resume command, and clearing a handback    |
-| `apps/web/app/components/Resource/TodoList/ConnectAgentButton.vue`    | the steps that connect a session to this list                               |
-| `packages/follow-ups/scripts/start.ts`                                | the SessionStart hook                                                       |
-| `packages/follow-ups/skills/drain/SKILL.md`                           | the loop and its stop rule                                                  |
-| `apps/web/content/docs/architecture/engineering-loops.md`             | the drain among the work a session picks up unasked                         |
-| `packages/follow-ups/skills/capture/SKILL.md`                         | what counts as a follow-up                                                  |
+| File                                                                  | Role                                                                                                                                     |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/models/resource/todoList/TodoListItemOrigin.ts`      | the origin, and the `owner/name` rule its repository keeps                                                                               |
+| `apps/web/server/trpc/routers/todoList.ts`                            | the four follow-up procedures, opted into the MCP bridge                                                                                 |
+| `apps/web/server/services/resource/todoList/updateTodoListContent.ts` | the change to the parsed list, through the generic read, change and save ([agent content tools](/docs/architecture/agent-content-tools)) |
+| `apps/web/server/services/resource/todoList/checkIsOpenFollowUp.ts`   | the line between the owner's todos and a session's                                                                                       |
+| `apps/web/app/components/Resource/TodoList/Origin.vue`                | where a follow-up came from, its resume command, and clearing a handback                                                                 |
+| `apps/web/app/components/Resource/TodoList/ConnectAgentButton.vue`    | the steps that connect a session to this list                                                                                            |
+| `packages/follow-ups/scripts/start.ts`                                | the SessionStart hook                                                                                                                    |
+| `packages/follow-ups/skills/drain/SKILL.md`                           | the loop and its stop rule                                                                                                               |
+| `apps/web/content/docs/architecture/engineering-loops.md`             | the drain among the work a session picks up unasked                                                                                      |
+| `packages/follow-ups/skills/capture/SKILL.md`                         | what counts as a follow-up                                                                                                               |
 
 ## Sources
 

@@ -1,6 +1,8 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { LinkedResource } from "#shared/models/resource/LinkedResource";
+import type { ReadResourceContentResult } from "#shared/models/resource/ReadResourceContentResult";
+import type { ReadResourceContentSchemaResult } from "#shared/models/resource/ReadResourceContentSchemaResult";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
@@ -8,15 +10,18 @@ import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCoun
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
+import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 import type { Clause } from "@esposter/azure";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { escapeLike } from "#server/services/db/escapeLike";
+import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { readCursorPaginationDataAzureTable } from "#server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { applyResourceContentPatches } from "#server/services/resource/applyResourceContentPatches";
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
 import { DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
@@ -24,17 +29,21 @@ import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getSearchSimilarity } from "#server/services/resource/getSearchSimilarity";
+import { readContentAtPointer } from "#server/services/resource/readContentAtPointer";
 import { readResourceConsumers } from "#server/services/resource/readResourceConsumers";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceDependencies } from "#server/services/resource/readResourceDependencies";
 import { readResourceListPage } from "#server/services/resource/readResourceListPage";
+import { readStoredResourceContent } from "#server/services/resource/readStoredResourceContent";
 import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiveResourceContent";
+import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
 import { resourceListSelection } from "#server/services/resource/resourceListSelection";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
+import { updateResourceContent } from "#server/services/resource/updateResourceContent";
 import { withResourceRollback } from "#server/services/resource/withResourceRollback";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
@@ -42,15 +51,19 @@ import { router } from "#server/trpc";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
+import { McpScope } from "#shared/models/auth/McpScope";
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
 import { readActivitiesInputSchema } from "#shared/models/db/resource/ReadActivitiesInput";
 import { readDeletedResourcesInputSchema } from "#shared/models/db/resource/ReadDeletedResourcesInput";
 import { readResourceConsumersInputSchema } from "#shared/models/db/resource/ReadResourceConsumersInput";
+import { readResourceContentInputSchema } from "#shared/models/db/resource/ReadResourceContentInput";
+import { readResourceContentSchemaInputSchema } from "#shared/models/db/resource/ReadResourceContentSchemaInput";
 import { readResourceListInputSchema } from "#shared/models/db/resource/ReadResourceListInput";
 import { resourceFilterInputSchema } from "#shared/models/db/resource/ResourceFilterInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { restoreResourcesInputSchema } from "#shared/models/db/resource/RestoreResourcesInput";
 import { restoreSnapshotVersionInputSchema } from "#shared/models/db/resource/RestoreSnapshotVersionInput";
+import { updateResourceContentInputSchema } from "#shared/models/db/resource/UpdateResourceContentInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
@@ -215,6 +228,33 @@ export const resourceRouter = router({
   readResourceConsumers: standardAuthedProcedure
     .input(readResourceConsumersInputSchema)
     .query<LinkedResource[]>(({ ctx, input: { ids } }) => readResourceConsumers(ctx, ids)),
+  readResourceContent: getOwnerProcedure(undefined, readResourceContentInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Read a resource's content as JSON at a JSON Pointer, the empty pointer for the whole document, with the contentVersion it was read at. An array is answered a page at a time beside its length. Past a size cap the content is left out and the size of each member answered instead, so read a narrower pointer. Content never saved reads as null.",
+        scope: McpScope.Resources,
+      },
+    })
+    // The row was read before the blob, so the version answered is never newer than the content: a patch pinned to it
+    // Is at worst refused as stale, never applied over a save the agent did not read
+    .query<ReadResourceContentResult>(async ({ ctx, input }) => ({
+      ...readContentAtPointer(await readStoredResourceContent(ctx.resource.id), input),
+      contentVersion: ctx.resource.contentVersion,
+    })),
+  readResourceContentSchema: standardAuthedProcedure
+    .input(readResourceContentSchemaInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "A resource type's content as JSON Schema, and what the type can do. Read it before editing that type's content: a node marked readOnly or x-opaque cannot be written at or under, and a date is an ISO 8601 string.",
+        scope: McpScope.Resources,
+      },
+    })
+    .query<ReadResourceContentSchemaResult>(({ input: { type } }) => ({
+      capabilities: ResourceDefinitionMap[type].capabilities,
+      contentSchema: getAgentJsonSchema(ResourceDefinitionMap[type].contentSchema),
+    })),
   // Both directions of the link index around one resource for its Overview, in one round trip
   readResourceReferences: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<ResourceReferences>(
     async ({ ctx }) => {
@@ -227,6 +267,13 @@ export const resourceRouter = router({
   ),
   readResources: standardAuthedProcedure
     .input(readResourceListInputSchema.prefault({}))
+    .meta({
+      mcp: {
+        description:
+          "Find the owner's resources a page at a time, most recently updated first, by name, type, tag or when they were last updated. Answers each one's id, name and type, which the content tools take.",
+        scope: McpScope.Resources,
+      },
+    })
     .query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
       const userId = ctx.getSessionPayload.user.id;
       const where = getResourcesWhere(ctx.db, userId, filter);
@@ -444,4 +491,25 @@ export const resourceRouter = router({
       return true;
     },
   ),
+  updateResourceContent: getOwnerProcedure(undefined, updateResourceContentInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Edit a resource's content with RFC 6902 JSON Patch operations — add, remove, replace, move, copy and test — applied all or none and saved through the type's own schema. Append to an array with the - index. Pass the contentVersion you read and the edit is refused if the content changed since; left out, the edit applies to the latest content with its test operations the only guard. Answers the new contentVersion and the operations that undo the edit.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<UpdateResourceContentResult>(async ({ ctx, input: { contentVersion, operations } }) => {
+      requireAgentWritableOperations(ctx.resource.type, operations);
+      const { resource, result: inverseOperations } = await updateResourceContent(
+        ctx,
+        ctx.resource,
+        (storedContent) => {
+          const { document, inverses } = applyResourceContentPatches(ctx.resource.type, storedContent, operations);
+          return { content: document, result: inverses };
+        },
+        contentVersion,
+      );
+      return { contentVersion: resource.contentVersion, inverseOperations };
+    }),
 });

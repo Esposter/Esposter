@@ -29,7 +29,9 @@ export const resourceFilterInputSchema = z.object({
   // Be matches nothing either way, and the body is not a place to hand the query an arbitrarily large string
   tags: z.record(z.string().max(MAX_TAG_NAME_LENGTH), z.string().max(MAX_TAG_VALUE_LENGTH)).optional(),
   types: createUniqueArraySchema(resourceTypeSchema).max(ResourceTypes.length).optional(),
-  updatedAfter: z.date().optional(),
-  updatedBefore: z.date().optional(),
+  // Coerced, so an agent's ISO string through the MCP endpoint, which hands tRPC raw JSON, reads as the Date the
+  // Browser's transformer revives
+  updatedAfter: z.coerce.date<Date | string>().optional(),
+  updatedBefore: z.coerce.date<Date | string>().optional(),
 });
 export type ResourceFilterInput = z.infer<typeof resourceFilterInputSchema>;

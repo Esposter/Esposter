@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { JsonPatchOperation } from "#shared/models/jsonPatch/JsonPatchOperation";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -16,10 +17,15 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { todoListRouter } from "#server/trpc/routers/todoList";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { JsonPatchOperationType } from "#shared/models/jsonPatch/JsonPatchOperationType";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import {
+  FILES_DIRECTORY_SEGMENT,
+  MAX_RESOURCE_CONTENT_SIZE,
+  STALE_CONTENT_VERSION_ERROR_MESSAGE,
+} from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
@@ -34,7 +40,14 @@ import {
   SnapshotChannel,
   SnapshotReason,
 } from "@esposter/db-schema";
-import { ID_SEPARATOR, jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import {
+  ID_SEPARATOR,
+  InvalidOperationError,
+  jsonDateParse,
+  Operation,
+  takeOne,
+  waitForSynchronizedFunctions,
+} from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -1099,5 +1112,193 @@ describe("resourceRouter", () => {
         (firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue),
       ),
     );
+  });
+
+  test("reads content at a pointer, with the version it was read at", async () => {
+    expect.hasAssertions();
+
+    const { contentVersion, id } = await todoListCaller.createResource({ name });
+    await todoListCaller.saveResourceContent({ content: { items: [new TodoListItem({ name })] }, contentVersion, id });
+
+    await expect(caller.readResourceContent({ id, pointer: "/items/0/name" })).resolves.toStrictEqual({
+      content: name,
+      contentVersion: contentVersion + 1,
+    });
+  });
+
+  test("reads content never saved as null, which a patch writes whole", async () => {
+    expect.hasAssertions();
+
+    const { contentVersion, id } = await todoListCaller.createResource({ name });
+    const readContent = await caller.readResourceContent({ id });
+    await caller.updateResourceContent({
+      id,
+      operations: [{ op: JsonPatchOperationType.Add, path: "", value: { items: [] } }],
+    });
+
+    expect(readContent).toStrictEqual({ content: null, contentVersion });
+    await expect(caller.readResourceContent({ id })).resolves.toStrictEqual({
+      content: { items: [] },
+      contentVersion: contentVersion + 1,
+    });
+  });
+
+  test("patches content, answering the new version and the operations that undo it", async () => {
+    expect.hasAssertions();
+
+    const { contentVersion, id } = await todoListCaller.createResource({ name });
+    await todoListCaller.saveResourceContent({ content: { items: [new TodoListItem({ name })] }, contentVersion, id });
+    const readContent = await caller.readResourceContent({ id });
+    const updatedContent = await caller.updateResourceContent({
+      contentVersion: readContent.contentVersion,
+      id,
+      operations: [{ op: JsonPatchOperationType.Replace, path: "/items/0/name", value: updatedName }],
+    });
+    const updatedName0 = await caller.readResourceContent({ id, pointer: "/items/0/name" });
+    await caller.updateResourceContent({
+      contentVersion: updatedContent.contentVersion,
+      id,
+      operations: updatedContent.inverseOperations,
+    });
+
+    expect(updatedContent).toStrictEqual({
+      contentVersion: readContent.contentVersion + 1,
+      inverseOperations: [{ op: JsonPatchOperationType.Replace, path: "/items/0/name", value: name }],
+    });
+    expect(updatedName0.content).toBe(updatedName);
+    await expect(caller.readResourceContent({ id })).resolves.toStrictEqual({
+      ...readContent,
+      contentVersion: readContent.contentVersion + 2,
+    });
+  });
+
+  // Every case names the read-only path it reaches, written to or taken from; what lies under it is the path check's own
+  test.each<[string, JsonPatchOperation]>([
+    ["writing", { op: JsonPatchOperationType.Replace, path: "/settings/type", value: "" }],
+    ["removing", { op: JsonPatchOperationType.Remove, path: "/settings/type" }],
+    ["moving", { from: "/settings/type", op: JsonPatchOperationType.Move, path: "/settings/a" }],
+    ["copying", { from: "/settings/type", op: JsonPatchOperationType.Copy, path: "/settings/a" }],
+  ])("refuses %s a read-only path", async (_title, operation) => {
+    expect.hasAssertions();
+
+    const { id } = await sheetCaller.createResource({ name });
+
+    await expect(
+      caller.updateResourceContent({ id, operations: [operation] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, "/settings/type", "the path is read-only or undescribed").message}]`,
+    );
+  });
+
+  // Refused by the content never saved holding nothing to compare, not by the path
+  test("lets a test read a read-only path", async () => {
+    expect.hasAssertions();
+
+    const { id } = await sheetCaller.createResource({ name });
+
+    await expect(
+      caller.updateResourceContent({
+        id,
+        operations: [{ op: JsonPatchOperationType.Test, path: "/settings/type", value: "" }],
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Read, name: /settings/type, no such member]`,
+    );
+  });
+
+  test("refuses a patch whose operation fails, the content untouched", async () => {
+    expect.hasAssertions();
+
+    const { contentVersion, id } = await todoListCaller.createResource({ name });
+    await todoListCaller.saveResourceContent({ content: { items: [] }, contentVersion, id });
+
+    await expect(
+      caller.updateResourceContent({
+        id,
+        operations: [
+          { op: JsonPatchOperationType.Add, path: "/items/-", value: { name } },
+          { op: JsonPatchOperationType.Test, path: "/items/0/name", value: updatedName },
+        ],
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Read, name: /items/0/name, the value differs from the test's]`,
+    );
+    await expect(caller.readResourceContent({ id })).resolves.toStrictEqual({
+      content: { items: [] },
+      contentVersion: contentVersion + 1,
+    });
+  });
+
+  test("refuses a patch leaving the content invalid, naming the path", async () => {
+    expect.hasAssertions();
+
+    const { contentVersion, id } = await todoListCaller.createResource({ name });
+    await todoListCaller.saveResourceContent({ content: { items: [] }, contentVersion, id });
+
+    await expect(
+      caller.updateResourceContent({
+        id,
+        operations: [{ op: JsonPatchOperationType.Replace, path: "/items", value: "" }],
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: ✖ Invalid input: expected array, received string
+        → at items]
+    `);
+  });
+
+  // A copy shares the value it copies, so a document copied into itself doubles with each operation: a small request
+  // Expanding past the content cap, which no save would have been let store
+  test("refuses a patch expanding the content past the content cap", async () => {
+    expect.hasAssertions();
+
+    const { id } = await todoListCaller.createResource({ name });
+
+    await expect(
+      caller.updateResourceContent({
+        id,
+        operations: [
+          {
+            op: JsonPatchOperationType.Add,
+            path: "",
+            value: { items: [], name: "a".repeat(MAX_RESOURCE_CONTENT_SIZE / 2) },
+          },
+          { from: "", op: JsonPatchOperationType.Copy, path: "/copy" },
+        ],
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Resource, the patched content or its inverse is larger than ${MAX_RESOURCE_CONTENT_SIZE} bytes]`,
+    );
+  });
+
+  test("refuses a patch pinned to a version the content has moved past", async () => {
+    expect.hasAssertions();
+
+    const { contentVersion, id } = await todoListCaller.createResource({ name });
+    await todoListCaller.saveResourceContent({ content: { items: [] }, contentVersion, id });
+
+    await expect(
+      caller.updateResourceContent({
+        contentVersion,
+        id,
+        operations: [{ op: JsonPatchOperationType.Add, path: "/items/-", value: new TodoListItem({ name }) }],
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${STALE_CONTENT_VERSION_ERROR_MESSAGE}]`);
+  });
+
+  test("does not read or patch another user's content", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+    const otherUserResource = await todoListCaller.createResource({ name });
+
+    await expect(caller.readResourceContent({ id: otherUserResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+    await expect(
+      caller.updateResourceContent({
+        id: otherUserResource.id,
+        operations: [{ op: JsonPatchOperationType.Add, path: "", value: { items: [] } }],
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

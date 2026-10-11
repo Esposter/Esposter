@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Schema fidelity
 
-Built on [content tools](/docs/proposals/architecture/ai-native-resources/content-tools), whose test records, for every type, the paths its content schema leaves undescribed or read-only, and which refuse an agent's write there. Generic tools can only be as good as the schema they read, and [write once](/docs/architecture/write-once) says where to fix a case the mechanism cannot serve: at its source, never with a branch in the mechanism. Each fix below is a change to one type's schema, and each removes lines from that record.
+Built on the [agent content tools](/docs/architecture/agent-content-tools), whose test records, for every type, the paths its content schema leaves undescribed or read-only, and which refuse an agent's write there. Generic tools can only be as good as the schema they read, and [write once](/docs/architecture/write-once) says where to fix a case the mechanism cannot serve: at its source, never with a branch in the mechanism. Each fix below is a change to one type's schema, and each removes lines from that record.
 
 ## Flowchart: a node's data
 

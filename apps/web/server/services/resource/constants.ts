@@ -13,3 +13,9 @@ export const RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS = Temporal.Duration.from({ min
 export const MAX_VIEW_COUNT_ETAG_RETRIES = 3;
 // Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
 export const DUPLICATE_NAME_SUFFIX = " (copy)";
+// A content update that loses to a save made in between is read again and reapplied this many times in all, and then
+// The call fails rather than write over that save
+export const MAX_CONTENT_UPDATE_ATTEMPTS = 3;
+// The most an agent's read answers, in bytes of JSON: at a few bytes a token, well under the 25,000 tokens Claude Code
+// Accepts from one MCP tool call by default
+export const MAX_AGENT_READ_SIZE = 40_000;
