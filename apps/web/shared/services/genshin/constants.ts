@@ -7,5 +7,7 @@ export const GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL = "data/genshin/login/record
 // Developer's own extracted packs: the official packs' terms forbid redistributing them, so no production build serves
 // Them and the world there draws every character as its capsule
 export const GENSHIN_CHARACTER_PACK_BASE_URL = "/data/genshin/characters";
+// Where the signed-in player's own kept packs are served from, one file at a time by its hash, to that player alone
+export const GENSHIN_ACCOUNT_CHARACTER_PACK_FILE_BASE_URL = "/api/genshin/character-packs/files";
 // How long the startup loading screen may wait on a step before it logs which step it is still waiting on, in seconds
 export const LOADING_STALL_WARNING_SECONDS = 20;

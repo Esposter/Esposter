@@ -1,4 +1,5 @@
 import type { AccountCharacterPack } from "#src/models/character/AccountCharacterPack";
+import type { CharacterPack } from "#src/models/character/CharacterPack";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { QualityTier } from "genshin-engine";
@@ -11,6 +12,9 @@ export interface WorldScreenProps {
   // Draws its character ahead of the host's
   accountCharacterPacks?: AccountCharacterPack[];
   accountFileBaseUrl?: string;
+  // Keeps a pack for the account and drops one from it, given while the player is signed in
+  keepAccountCharacterPack?: (characterPack: CharacterPack) => Promise<void>;
+  removeAccountCharacterPack?: (characterId: number) => Promise<void>;
   cameraPose?: WorldCameraPose;
   // Where the host serves the characters' model packs: the index of the ids it holds one for, and under each id that
   // Pack's model, terms and textures. Without it a character is drawn only from a pack the player loaded

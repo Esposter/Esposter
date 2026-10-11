@@ -98,11 +98,13 @@ const {
   hudInterfaceRects,
   isPaused,
   isTuning,
+  keepAccountCharacterPack,
   language,
   materialDataMap,
   nameText,
   qualityTier,
   regionDataBaseUrl,
+  removeAccountCharacterPack,
   save,
   serverClockOffsetMs = 0,
   startingCharacterIdKitMap,
@@ -327,13 +329,16 @@ const {
   activeCharacterPackReader,
   characterIdPackHashMap,
   getCharacterPackReader,
+  isCharacterPackKept,
+  keepCharacterPack,
   removeCharacterPack,
-  storeCharacterPack,
 } = useCharacterPacks({
   accountFileBaseUrl,
   characterPackBaseUrl,
   getAccountCharacterPacks: () => accountCharacterPacks ?? [],
   getActiveCharacterId: () => getActiveCharacterId(party),
+  keepAccountCharacterPack,
+  removeAccountCharacterPack,
 });
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
@@ -785,8 +790,8 @@ defineExpose({ jumpTo, readCameraPosition });
               :character-id
               :character-pack-reader="getCharacterPackReader(characterId)"
               :game-data-base-url
-              :is-character-pack-kept="characterIdPackHashMap.has(characterId)"
-              :keep-character-pack="storeCharacterPack"
+              :is-character-pack-kept="isCharacterPackKept(characterId)"
+              :keep-character-pack="keepCharacterPack"
               :confirm-removal="() => removeCharacterPack(characterId)"
             />
           </template>

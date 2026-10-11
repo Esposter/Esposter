@@ -19,6 +19,8 @@ export const useCharacterPacks = ({
   characterPackBaseUrl,
   getAccountCharacterPacks,
   getActiveCharacterId,
+  keepAccountCharacterPack,
+  removeAccountCharacterPack,
 }: {
   // Where the player's account serves its files, given while the player is signed in
   accountFileBaseUrl?: string;
@@ -28,6 +30,10 @@ export const useCharacterPacks = ({
   getAccountCharacterPacks: () => readonly AccountCharacterPack[];
   // The character on the field, whose pack the world draws on the controller's body
   getActiveCharacterId: () => number;
+  // Keeps a pack for the player's account, given while the player is signed in, rejecting where it is not kept
+  keepAccountCharacterPack?: (characterPack: CharacterPack) => Promise<void>;
+  // Drops a character's pack from the player's account, given while the player is signed in
+  removeAccountCharacterPack?: (characterId: number) => Promise<void>;
 }) => {
   const hostCharacterPackIds = useCharacterPackIds(characterPackBaseUrl);
   const characterPackStorePromise = openCharacterPackStore();
@@ -94,11 +100,25 @@ export const useCharacterPacks = ({
     activeCharacterPackReader,
     characterIdPackHashMap,
     getCharacterPackReader,
-    removeCharacterPack: (characterId: number) =>
-      getResultAsync(() => changeStoredCharacterPacks((store) => store.remove(characterId))).match(noop, (error) => {
+    isCharacterPackKept: (characterId: number) =>
+      characterIdPackHashMap.value.has(characterId) ||
+      getAccountCharacterPacks().some((accountCharacterPack) => accountCharacterPack.characterId === characterId),
+    // Kept in the browser, then in the player's account, so a pack kept for the account draws on this browser too
+    keepCharacterPack: async (characterPack: CharacterPack) => {
+      await changeStoredCharacterPacks((store) => store.put(characterPack));
+      await keepAccountCharacterPack?.(characterPack);
+    },
+    // Removed from the browser and from the account, a failure in either logged and the other still tried
+    removeCharacterPack: async (characterId: number) => {
+      await getResultAsync(() => changeStoredCharacterPacks((store) => store.remove(characterId))).match(
+        noop,
+        (error) => {
+          console.error(error);
+        },
+      );
+      await getResultAsync(async () => removeAccountCharacterPack?.(characterId)).match(noop, (error) => {
         console.error(error);
-      }),
-    storeCharacterPack: (characterPack: CharacterPack) =>
-      changeStoredCharacterPacks((store) => store.put(characterPack)),
+      });
+    },
   };
 };

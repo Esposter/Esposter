@@ -7,7 +7,7 @@ description: The game's characters are drawn from HoYoverse's official MMD model
 
 A character is drawn from the official MMD model pack HoYoverse publishes for it. Every pack's bundled terms forbid redistributing it, so the app never hosts one: nothing of a pack is committed, uploaded to Blob Storage or served from a public address ([hosting the official packs](/docs/genshin/rejected/hosting-official-character-packs)). A pack reaches the world only from a copy its reader holds, and a character with no such copy is drawn as its body's capsule, with no request for a pack.
 
-The two copies are a player's own download, read in their browser ([a player's own pack](/docs/genshin/characters/player-packs)), and, under `nuxt dev` only, the developer's extracted packs served from disk ([development packs](/docs/genshin/characters/development-packs)). The engine reads the model itself ([reading a PMX](/docs/genshin/characters/pmx-reader)), and the world draws it ([drawing it](/docs/genshin/characters/drawing)).
+The copies are a player's own download, read in their browser and kept there, then kept with their account and read back on any device they sign in on ([a player's own pack](/docs/genshin/characters/player-packs)), and, under `nuxt dev` only, the developer's extracted packs served from disk ([development packs](/docs/genshin/characters/development-packs)). The account's copy is readable by its owner alone. The engine reads the model itself ([reading a PMX](/docs/genshin/characters/pmx-reader)), and the world draws it ([drawing it](/docs/genshin/characters/drawing)).
 
 ## The pack's layout
 
@@ -19,17 +19,20 @@ Both copies answer one layout, so the world asks for the same files whichever it
 
 ## How the world picks a reader
 
-`useCharacterPacks` reads the index of the packs the browser keeps as the world opens. `useCharacterPackIds` reads the host's index once. `chooseCharacterPackReader` then reads a character's pack from the browser's copy where it keeps one, else from the host's where the host's index lists the character. A character neither lists is drawn as the body's capsule.
+`useCharacterPacks` reads the index of the packs the browser keeps as the world opens. `useCharacterPackIds` reads the host's index once. `chooseCharacterPackReader` then reads a character's pack from the browser's copy where it keeps one, else from the account's copy, else from the host's where the host's index lists the character. A character none of them lists is drawn as the body's capsule. The account's copy is cached in the browser the first time it is read, so it is read once per device.
 
 ```mermaid
 flowchart LR
   KEPT{"the browser keeps a pack for the character?"} -->|yes| STORE["CharacterPackStore: its files under its id and hash"]
-  KEPT -->|no| BASE{"the app hands the world a packs address?"}
+  KEPT -->|no| ACCOUNT{"the signed-in account keeps one?"}
+  ACCOUNT -->|yes| CACHE["the account's files, cached into the browser store on first read"]
+  ACCOUNT -->|no| BASE{"the app hands the world a packs address?"}
   BASE -->|"no: a build, the parity page"| NONE["no request: the body's capsule"]
   BASE -->|"yes: nuxt dev"| INDEX["index.json, read once: the ids the host holds a pack for"]
   INDEX -->|"the character is not listed"| NONE
   INDEX -->|listed| HOST["the host's {id}/ files"]
   STORE --> MODELFILE["model.pmx"]
+  CACHE --> STORE
   HOST --> MODELFILE
 ```
 
@@ -44,23 +47,24 @@ With no address, or an index that fails to load (which is logged), the host has 
 
 ## Key files
 
-| File                                                                         | Role                                                                                      |
-| :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `apps/web/shared/services/genshin/constants.ts`                              | `GENSHIN_CHARACTER_PACK_BASE_URL`, where the world reads the packs from                   |
-| `apps/web/app/components/Genshin/World.vue`                                  | Hands the world the packs' address in development alone                                   |
-| `packages/genshin-world/src/characterPack.ts`                                | The rules and readers the app's server imports, with none of the world's components       |
-| `packages/genshin-world/src/composables/useCharacterPacks.ts`                | The browser's kept packs and the host's, the reader of the character on the field         |
-| `packages/genshin-world/src/composables/useCharacterPackIds.ts`              | The ids the host's index lists, read once                                                 |
-| `packages/genshin-world/src/services/character/chooseCharacterPackReader.ts` | A character's pack read from the browser's copy, else the host's, else none               |
-| `packages/genshin-world/src/services/character/readCharacterPackFile.ts`     | Reads any file of a host's pack by its path                                               |
-| `packages/genshin-world/src/services/character/getCharacterPackFileUrl.ts`   | Where a file of a pack is served, by the character's id and the file's path               |
-| `packages/genshin-world/src/services/character/getCharacterPackFilePath.ts`  | A model's path cut into the path a pack serves the file at                                |
-| `packages/genshin-world/src/services/character/readCharacterTerms.ts`        | A pack's terms, as a Result                                                               |
-| `packages/genshin-world/src/services/character/constants.ts`                 | A pack's index and file names, the store's names, the terms' encodings, and a read's wait |
+| File                                                                                    | Role                                                                                      |
+| :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `apps/web/shared/services/genshin/constants.ts`                                         | `GENSHIN_CHARACTER_PACK_BASE_URL`, where the world reads the packs from                   |
+| `apps/web/app/components/Genshin/World.vue`                                             | Hands the world the packs' address in development alone                                   |
+| `apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackFile.ts` | The signed-in player's own kept file by its hash, else none                               |
+| `packages/genshin-world/src/characterPack.ts`                                           | The rules and readers the app's server imports, with none of the world's components       |
+| `packages/genshin-world/src/composables/useCharacterPacks.ts`                           | The browser's kept packs and the host's, the reader of the character on the field         |
+| `packages/genshin-world/src/composables/useCharacterPackIds.ts`                         | The ids the host's index lists, read once                                                 |
+| `packages/genshin-world/src/services/character/chooseCharacterPackReader.ts`            | A character's pack read from the browser's copy, else the host's, else none               |
+| `packages/genshin-world/src/services/character/readCharacterPackFile.ts`                | Reads any file of a host's pack by its path                                               |
+| `packages/genshin-world/src/services/character/getCharacterPackFileUrl.ts`              | Where a file of a pack is served, by the character's id and the file's path               |
+| `packages/genshin-world/src/services/character/getCharacterPackFilePath.ts`             | A model's path cut into the path a pack serves the file at                                |
+| `packages/genshin-world/src/services/character/readCharacterTerms.ts`                   | A pack's terms, as a Result                                                               |
+| `packages/genshin-world/src/services/character/constants.ts`                            | A pack's index and file names, the store's names, the terms' encodings, and a read's wait |
 
 ## Notes
 
-- **Within what the terms allow.** No redistribution, which is why the app serves a pack only to the developer whose copy it is, from their own disk, and a player's pack never leaves their own browser. No commercial use of the models, and none of the uses the terms list (adult, extreme religious, gore, personal attacks), which the platform's own rules already forbid.
+- **Within what the terms allow.** No redistribution, which is why the app serves a pack only to the developer whose copy it is, from their own disk, and a player's pack is read back only by that player, from their own browser or their own account. No commercial use of the models, and none of the uses the terms list (adult, extreme religious, gore, personal attacks), which the platform's own rules already forbid.
 
 ## Sources
 

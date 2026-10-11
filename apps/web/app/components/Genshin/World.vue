@@ -2,9 +2,14 @@
 import type { GameLanguage, GameText } from "genshin-text";
 import type { GenshinSave } from "genshin-world/save";
 
-import { GENSHIN_CHARACTER_PACK_BASE_URL, GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
+import {
+  GENSHIN_ACCOUNT_CHARACTER_PACK_FILE_BASE_URL,
+  GENSHIN_CHARACTER_PACK_BASE_URL,
+  GENSHIN_REGION_DATA_BASE_URL,
+} from "#shared/services/genshin/constants";
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
+import { useAccountCharacterPacks } from "@/composables/genshin/useAccountCharacterPacks";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { RoutePath } from "@esposter/shared";
 import { WorldScreen } from "genshin-world";
@@ -25,6 +30,8 @@ interface Props {
 const { gameText, isPaused, language, save, serverClockOffsetMs } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
 const containerBaseUrl = useContainerBaseUrl();
+const { accountCharacterPacks, isSignedIn, keepAccountCharacterPack, removeAccountCharacterPack } =
+  useAccountCharacterPacks();
 // The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URLs its server
 // Serves region data at and, in development alone, the developer's own character packs, and whether the tuning panel
 // Shows; quitting the game leaves for the app's home
@@ -35,14 +42,18 @@ onMounted(() => {
 
 <template>
   <WorldScreen
+    :account-character-packs
+    :account-file-base-url="isSignedIn ? GENSHIN_ACCOUNT_CHARACTER_PACK_FILE_BASE_URL : undefined"
     :character-pack-base-url="IS_DEVELOPMENT ? GENSHIN_CHARACTER_PACK_BASE_URL : undefined"
     :create-terrain-worker="() => new TerrainTileWorker()"
     :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
     :game-text
     :is-paused
     :is-tuning="IS_DEVELOPMENT || undefined"
+    :keep-account-character-pack="isSignedIn ? keepAccountCharacterPack : undefined"
     :language
     :quality-tier="GENSHIN_QUALITY_TIER"
+    :remove-account-character-pack="isSignedIn ? removeAccountCharacterPack : undefined"
     :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
     :save
     :server-clock-offset-ms
