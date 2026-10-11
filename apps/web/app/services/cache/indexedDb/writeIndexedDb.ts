@@ -1,20 +1,20 @@
+import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
+import { toRawDeep } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import type { IndexKey, IndexNames } from "idb";
 
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { CompositeKeyPropertyNames } from "@esposter/azure";
-import { toRawDeep } from "@esposter/shared";
 
 export const writeIndexedDb = async <
   T extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, T>,
+  TIndex extends DatabaseIndexName<IndexedDbDatabaseSchema, T>,
 >(
   configuration: IndexedDbStoreConfiguration<T, TIndex>,
   items: IndexedDbDatabaseSchema[T]["value"][],
-  partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
+  partitionKey: DatabaseIndexKey<IndexedDbDatabaseSchema, T, TIndex>,
 ) => {
   const { indexName, limit, storeName } = configuration;
   const database = await openIndexedDb();

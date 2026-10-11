@@ -199,7 +199,6 @@ catalog:
   h3: ^2.0.2
   happy-dom: ^20.14.6
   howler: ^2.2.4
-  idb: ^8.0.4
   imagetracerjs: ^1.2.6
   js-beautify: ^2.0.3
   jscpd: ^5.4.1

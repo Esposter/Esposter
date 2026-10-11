@@ -1,1 +1,1 @@
-{ "extends": "../configuration/tsconfig.library.json" }
+{ "compilerOptions": { "lib": ["ESNext", "DOM", "DOM.Iterable"] }, "extends": "../configuration/tsconfig.library.json" }

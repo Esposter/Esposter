@@ -1,22 +1,22 @@
+import type { DatabaseIndexName } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { PaginationCacheOptions } from "@/models/cache/indexedDb/PaginationCacheOptions";
 import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
-import type { IndexNames } from "idb";
 import type { Except } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 
 interface CursorPaginationCacheOptions<
   TStore extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
+  TIndex extends DatabaseIndexName<IndexedDbDatabaseSchema, TStore>,
 > extends Except<PaginationCacheOptions<TStore, TIndex>, "getSlice"> {
   getSlice: (partitionKey: string) => CursorPaginationSlice<IndexedDbDatabaseSchema[TStore]["value"]>;
 }
 
 export const useCursorPaginationCache = <
   TStore extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
+  TIndex extends DatabaseIndexName<IndexedDbDatabaseSchema, TStore>,
 >({
   getSlice,
   ...options

@@ -1,7 +1,7 @@
+import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import type { IndexKey, IndexNames } from "idb";
 
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 
@@ -9,10 +9,10 @@ import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 // Answered with an empty list
 export const readIndexedDb = async <
   T extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, T>,
+  TIndex extends DatabaseIndexName<IndexedDbDatabaseSchema, T>,
 >(
   { indexName, storeName }: IndexedDbStoreConfiguration<T, TIndex>,
-  partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
+  partitionKey: DatabaseIndexKey<IndexedDbDatabaseSchema, T, TIndex>,
 ): Promise<IndexedDbDatabaseSchema[T]["value"][]> => {
   const database = await openIndexedDb();
   return database.transaction(storeName, "readonly").objectStore(storeName).index(indexName).getAll(partitionKey);

@@ -1,27 +1,27 @@
+import type { Database } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  Operation,
+  SITE_NAME,
+  getResultAsync,
+  getSynchronizedFunction,
+  noop,
+  openDatabase,
+} from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
-import type { IDBPDatabase } from "idb";
 
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
-import {
-  getResultAsync,
-  getSynchronizedFunction,
-  InvalidOperationError,
-  noop,
-  Operation,
-  SITE_NAME,
-} from "@esposter/shared";
-import { openDB } from "idb";
 
 const DATABASE_NAME = SITE_NAME.toLowerCase();
 const DATABASE_VERSION = 1;
 
-let databasePromise: Promise<IDBPDatabase<IndexedDbDatabaseSchema>> | undefined;
+let databasePromise: Promise<Database<IndexedDbDatabaseSchema>> | undefined;
 
 export const openIndexedDb = () => {
   if (databasePromise) return databasePromise;
-  const promise = openDB<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
+  const promise = openDatabase<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
     upgrade: (database) => {
       const configurations = [
         MemberIndexedDbStoreConfiguration,

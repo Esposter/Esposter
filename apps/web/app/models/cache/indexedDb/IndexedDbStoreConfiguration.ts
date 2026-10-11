@@ -1,10 +1,10 @@
+import type { DatabaseIndexName } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import type { IndexNames } from "idb";
 
 export interface IndexedDbStoreConfiguration<
   T extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, T> = IndexNames<IndexedDbDatabaseSchema, T>,
+  TIndex extends DatabaseIndexName<IndexedDbDatabaseSchema, T> = DatabaseIndexName<IndexedDbDatabaseSchema, T>,
 > {
   indexName: TIndex;
   keyPath: IndexedDbDatabaseSchema[T]["key"];
