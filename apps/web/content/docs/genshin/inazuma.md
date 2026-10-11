@@ -30,12 +30,16 @@ The roof is a convex solid: its base closes it, so a camera under the eaves sees
 
 `data/regions/inazuma.json` is the region's data in the shape `regionDataSchema` reads, holding Inazuma City's building. Narukami Island's outline is a provisional square round the city, so the region is fetched as the camera nears it.
 
+When the [parity](/docs/genshin/parity) inventory draws Inazuma City's witness, the post-and-beam building stands in for the meshes named "Area_Dq_Build_", the Tenshukaku's tiers among them, and the terrain tiles are its ground; every other mesh there is named undrawn, kind by kind (`InazumaUndrawnMeshRegexMap`).
+
 ## Key files
 
-| File                                                                           | Role                                                 |
-| :----------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `packages/genshin-world/src/services/inazuma/createInazumaBuildingGeometry.ts` | The building kit: floors, frame, plaster and storeys |
-| `packages/genshin-world/src/services/inazuma/createInazumaRoofGeometry.ts`     | A hipped or gabled roof as a closed convex solid     |
-| `packages/genshin-world/src/models/inazuma/InazumaBuildingOptions.ts`          | A building's proportions in metres                   |
-| `packages/genshin-world/src/services/inazuma/constants.ts`                     | The island palettes and the building colours         |
-| `packages/genshin-world/src/data/regions/inazuma.json`                         | Inazuma City's building, at a provisional place      |
+| File                                                                           | Role                                                                   |
+| :----------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/inazuma/createInazumaBuildingGeometry.ts` | The building kit: floors, frame, plaster and storeys                   |
+| `packages/genshin-world/src/services/inazuma/createInazumaRoofGeometry.ts`     | A hipped or gabled roof as a closed convex solid                       |
+| `packages/genshin-world/src/models/inazuma/InazumaBuildingOptions.ts`          | A building's proportions in metres                                     |
+| `packages/genshin-world/src/services/inazuma/constants.ts`                     | The island palettes and the building colours                           |
+| `packages/genshin-world/src/data/regions/inazuma.json`                         | Inazuma City's building, at a provisional place                        |
+| `packages/genshin-world/src/services/inazuma/InazumaPartFamilyMeshRegexMap.ts` | Inazuma City's ground and buildings families, by the game's mesh names |
+| `packages/genshin-world/src/services/inazuma/InazumaUndrawnMeshRegexMap.ts`    | Everything else in Inazuma City's export, undrawn, one entry a kind    |
