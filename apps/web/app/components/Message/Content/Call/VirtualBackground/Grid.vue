@@ -14,7 +14,7 @@ const emit = defineEmits<{ select: [virtualBackground: string] }>();
 const callBackgroundStore = useCallBackgroundStore();
 const { createCallBackground, deleteCallBackground, readCallBackgrounds } = callBackgroundStore;
 const { callBackgrounds, isUploadingCallBackground } = storeToRefs(callBackgroundStore);
-const input = useTemplateRef("input");
+const fileInput = useTemplateRef("fileInput");
 // The slot the confirm below is open for, as its selection string
 const deletingSelection = ref("");
 const { isOpen: isDeleteOpen, item: deletingCallBackground } = useSingletonDialog(deletingSelection, () =>
@@ -106,25 +106,18 @@ onMounted(async () => {
           justify-center
           ui-field
           disabled:cursor-default
-          @click="input?.click()"
+          @click="fileInput?.open()"
         >
           <UiSpinner v-if="isUploadingCallBackground" />
           <UiIcon v-else :meaning="UiIconMeaning.Upload" />
         </button>
       </UiTooltip>
-      <!-- The tile above is the labelled upload affordance, so this proxy input stays out of the
-        accessibility tree and out of the tab order -->
-      <input
-        ref="input"
-        type="file"
+      <HiddenFileInput
+        ref="fileInput"
         accept="image/*"
-        aria-hidden="true"
-        tabindex="-1"
-        hidden
-        @change="
-          async (event) => {
-            const file = (event.target as HTMLInputElement).files?.[0];
-            if (input) input.value = '';
+        @select="
+          async (file) => {
+            fileInput?.reset();
             if (!file) return;
             if (!validateFile(file, MAX_CALL_BACKGROUND_SIZE_BYTES)) return;
 

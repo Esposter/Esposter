@@ -2,7 +2,6 @@ import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQ
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
@@ -11,10 +10,8 @@ import { withFinalizerAsync } from "@esposter/shared";
 
 export const useReadSearchedMessages = () => {
   const { $trpc } = useNuxtApp();
-  const layoutStore = useLayoutStore();
-  const { isRightDrawerOpen } = storeToRefs(layoutStore);
   const messageLayoutStore = useMessageLayoutStore();
-  const { rightDrawer } = storeToRefs(messageLayoutStore);
+  const { openRightDrawer } = messageLayoutStore;
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
@@ -42,8 +39,7 @@ export const useReadSearchedMessages = () => {
     // Room switch would otherwise have the first to land clear the second's flag and leave its own raised
     const boundIsSearching = getBoundIsSearching();
     boundIsSearching.value = true;
-    isRightDrawerOpen.value = true;
-    rightDrawer.value = RightDrawer.Search;
+    openRightDrawer(RightDrawer.Search);
     const boundCount = getBoundCount();
     const boundPage = getBoundPage();
     const searchedMessages = await withFinalizerAsync(

@@ -5,7 +5,6 @@ import { RightDrawer } from "@/models/message/RightDrawer";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
 import { NotificationTypeMeaningMap } from "@/services/message/NotificationTypeMeaningMap";
-import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useMessageLayoutStore } from "@/store/message/ui/layout";
@@ -13,10 +12,8 @@ import { NotificationType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const layoutStore = useLayoutStore();
-const { isRightDrawerOpen } = storeToRefs(layoutStore);
 const messageLayoutStore = useMessageLayoutStore();
-const { rightDrawer } = storeToRefs(messageLayoutStore);
+const { openRightDrawer } = messageLayoutStore;
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
@@ -45,10 +42,6 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
       key: roomId,
     },
   );
-};
-const openRightDrawer = (drawer: RightDrawer) => {
-  rightDrawer.value = drawer;
-  isRightDrawerOpen.value = true;
 };
 const items = computed<Item[]>(() => [
   { meaning: UiIconMeaning.Comment, onClick: () => openRightDrawer(RightDrawer.Threads), title: "Followed Threads" },

@@ -27,7 +27,7 @@ const name = computed(() => (isSelf ? `${participant.name} (You)` : participant.
     <button :aria-label="`Pin ${name}`" type="button" cursor-pointer inset-0 absolute @click="emit('click')" />
     <!-- Whoever is speaking glows in the accent, easing in and out with their voice -->
     <div
-      class="speaking"
+      class="speaking ui-speaking"
       :data-speaking="isSpeaking || undefined"
       rd="[var(--ui-container-radius)]"
       pointer-events-none
@@ -48,14 +48,8 @@ const name = computed(() => (isSelf ? `${participant.name} (You)` : participant.
 
 <style scoped>
 .speaking {
-  opacity: 0;
   box-shadow:
     inset 0 0 0 var(--ui-indicator-width) var(--ui-accent),
     0 0 1rem 0.375rem color-mix(in srgb, var(--ui-accent) 40%, transparent);
-  transition: opacity var(--ui-motion-short);
-}
-
-.speaking[data-speaking] {
-  opacity: 1;
 }
 </style>

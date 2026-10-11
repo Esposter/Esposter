@@ -1,8 +1,10 @@
 import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { useLayoutStore } from "@/store/layout";
 
 export const useMessageLayoutStore = defineStore("message/ui/layout", () => {
+  const layoutStore = useLayoutStore();
   const rightDrawer = ref(RightDrawer.Member);
   // The pane pinned beside the thread in split view, and undefined when the drawer shows one pane. Opening a
   // Thread otherwise replaces whatever the drawer was showing, so a split is the only way to read a thread and
@@ -14,5 +16,10 @@ export const useMessageLayoutStore = defineStore("message/ui/layout", () => {
   // Sidebar widths are device-local UI state, so they persist per device instead of syncing
   const leftSideBarWidth = useLocalStorage(LocalStorageKey.MessageLeftSideBarWidth, LEFT_DRAWER_WIDTH);
   const rightSideBarWidth = useLocalStorage(LocalStorageKey.MessageRightSideBarWidth, RIGHT_DRAWER_WIDTH);
-  return { leftSideBarWidth, previousRightDrawer, rightDrawer, rightSideBarWidth, splitRightDrawer };
+  // Shows a pane in the right drawer, opening the drawer if it is closed
+  const openRightDrawer = (drawer: RightDrawer) => {
+    rightDrawer.value = drawer;
+    layoutStore.isRightDrawerOpen = true;
+  };
+  return { leftSideBarWidth, openRightDrawer, previousRightDrawer, rightDrawer, rightSideBarWidth, splitRightDrawer };
 });
