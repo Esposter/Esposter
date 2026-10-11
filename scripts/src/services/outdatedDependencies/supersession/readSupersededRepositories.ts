@@ -16,7 +16,7 @@ const readPackageSupersession = async (packageName: string): Promise<SupersededR
   const githubRepository = getGithubRepository(repository?.url ?? "");
   if (!githubRepository) return undefined;
 
-  const { fullName, isArchived } = readRepositoryState(githubRepository);
+  const { fullName, isArchived } = await readRepositoryState(githubRepository);
   const isRenamed = fullName.toLowerCase() !== githubRepository.toLowerCase();
   if (!isRenamed && !isArchived) return undefined;
 
