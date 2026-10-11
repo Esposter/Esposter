@@ -25,7 +25,7 @@ const recipes: CraftingRecipe[] = [
     kind: CraftingRecipeKind.CondensedResin,
     materials: [
       { count: 1, id: 100_085 },
-      { count: 60, id: 106 },
+      { count: 40, id: 106 },
     ],
     mora: 100,
     nameTextId: "3928328228",
@@ -37,7 +37,7 @@ const recipes: CraftingRecipe[] = [
 ];
 const items: InventoryItem[] = [
   { definition: getItemDefinition(112_002, englishNameText, materialDataMap), id: 1, quantity: 9 },
-  { definition: getItemDefinition(100_085, englishNameText, materialDataMap), id: 2, quantity: 1 },
+  { definition: getItemDefinition(100_085, englishNameText, materialDataMap), id: 2, quantity: 87 },
 ];
 
 export const props = {

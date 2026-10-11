@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CraftingCell } from "#src/models/CraftingCell";
+import type { CraftingMaterial } from "#src/models/CraftingMaterial";
 
 interface Props {
   // The amount slider's name for assistive tech
@@ -16,6 +17,8 @@ interface Props {
   crafters: CraftingCell[];
   // The Crafting Materials row's heading
   craftingMaterialsLabel: string;
+  // The materials the picked recipe takes, each with the count the player holds and the count one craft takes
+  materials: CraftingMaterial[];
   // The button that crafts the picked recipe for the chosen amount
   craftLabel: string;
   // The recipe list in the game's order
@@ -43,6 +46,7 @@ const {
   crafters,
   craftingMaterialsLabel,
   craftLabel,
+  materials,
   recipes,
   requiredCoins,
   requiredLabel,
@@ -86,6 +90,7 @@ const emit = defineEmits<{ close: []; craft: [] }>();
       </ul>
     </div>
     <div class="detail">
+      <div class="materials-band" aria-hidden="true" />
       <p class="recipe-title">{{ recipes.find((recipe) => recipe.id === recipeId)?.name }}</p>
       <ul class="crafters">
         <li v-for="crafter of crafters" :key="crafter.id">
@@ -110,6 +115,11 @@ const emit = defineEmits<{ close: []; craft: [] }>();
       <p class="crafted">{{ craftedLabel }}</p>
       <p class="required">{{ requiredLabel }} {{ requiredCoins }}</p>
       <p class="materials-label">{{ craftingMaterialsLabel }}</p>
+      <ul class="materials">
+        <li v-for="material of materials" :key="material.id" class="material">
+          {{ material.owned }} / {{ material.required }}
+        </li>
+      </ul>
       <button class="craft" type="button" @click="emit('craft')">{{ craftLabel }}</button>
     </div>
   </div>
@@ -266,6 +276,44 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   text-align: center;
 }
 
+.materials-band {
+  position: absolute;
+  top: calc(var(--unit) * 745);
+  left: calc(var(--unit) * 735);
+  width: calc(var(--unit) * 1143);
+  height: calc(var(--unit) * 213);
+  background: #3e4860;
+}
+
+.materials-label {
+  position: absolute;
+  top: calc(var(--unit) * 756);
+  left: calc(var(--unit) * 788);
+  margin: 0;
+  font-size: calc(var(--unit) * 20);
+  line-height: calc(var(--unit) * 24);
+}
+
+.materials {
+  position: absolute;
+  top: calc(var(--unit) * 810);
+  left: calc(var(--unit) * 983);
+  display: flex;
+  gap: calc(var(--unit) * 24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.material {
+  display: grid;
+  width: calc(var(--unit) * 112);
+  height: calc(var(--unit) * 132);
+  background: #4d6786;
+  font-size: calc(var(--unit) * 18);
+  place-items: end center;
+}
+
 .amount {
   position: absolute;
   top: calc(var(--unit) * 666);
@@ -312,6 +360,56 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   margin: 0;
   font-size: calc(var(--unit) * 22);
   line-height: calc(var(--unit) * 26);
+  text-align: center;
+}
+
+.craft {
+  position: absolute;
+  top: calc(var(--unit) * 990);
+  left: calc(var(--unit) * 1636);
+  width: calc(var(--unit) * 224);
+  height: calc(var(--unit) * 50);
+  padding: 0;
+  border: none;
+  border-radius: calc(var(--unit) * 4);
+  background: #fff7ea;
+  color: #212121;
+  font-size: calc(var(--unit) * 22);
+  cursor: inherit;
+}
+
+.crafters {
+  position: absolute;
+  top: calc(var(--unit) * 808);
+  left: calc(var(--unit) * 1517);
+  width: calc(var(--unit) * 111);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.crafter {
+  position: relative;
+  width: 100%;
+  height: calc(var(--unit) * 134);
+  padding: 0;
+  border: none;
+  background: #3b4558;
+  color: inherit;
+  cursor: inherit;
+}
+
+.crafter[aria-pressed="true"] {
+  outline: calc(var(--unit) * 2) solid #fdfdfd;
+}
+
+.crafter-name {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--unit) * 4);
+  left: 0;
+  font-size: calc(var(--unit) * 18);
+  line-height: calc(var(--unit) * 22);
   text-align: center;
 }
 
