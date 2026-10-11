@@ -3,7 +3,8 @@ import type { SpeakerEmbedder } from "#src/models/voiceMatch/SpeakerEmbedder";
 import type { ClipDecoder } from "genshin-persona/src/models/ClipDecoder.ts";
 import type { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 
-import { MAX_WIKI_TITLES_PER_QUERY, MIN_CLIP_SECONDS, MODEL_SAMPLE_RATE } from "#src/services/voiceMatch/constants";
+import { MAX_WIKI_TITLES_PER_QUERY } from "#src/services/shared/constants";
+import { MIN_CLIP_SECONDS, MODEL_SAMPLE_RATE } from "#src/services/voiceMatch/constants";
 import { getClipProfile } from "#src/services/voiceMatch/getClipProfile";
 import { chunk } from "@esposter/shared";
 import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE } from "genshin-persona/src/services/constants.ts";

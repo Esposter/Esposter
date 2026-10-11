@@ -3,10 +3,10 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { ArtifactSlot, Element } from "genshin-world";
 import { join } from "node:path";
 
-// The world package's generated folder, which holds the committed talent loader map
-const GENERATED_DIRECTORY = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "generated");
+// The world package's generated folder, which holds the committed loader maps
+export const WORLD_GENERATED_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "generated");
 // The folder of the committed loader map whose entries read each character's multipliers from the hosted index
-export const TALENT_MULTIPLIER_GENERATED_DIRECTORY: string = join(GENERATED_DIRECTORY, "talentMultipliers");
+export const TALENT_MULTIPLIER_GENERATED_DIRECTORY: string = join(WORLD_GENERATED_DIRECTORY, "talentMultipliers");
 // What a character's quality means in stars: the purple four, and the gold five, the crossover's gold among them
 export const QualityTypeRarityMap: Readonly<Record<string, number>> = {
   QUALITY_ORANGE: 5,

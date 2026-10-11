@@ -1,12 +1,14 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { GameDataset } from "#src/models/data/GameDataset";
+import { skillGlyphsSchema } from "#src/models/hud/SkillGlyphs";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { VENTI_SKILL_GLYPHS } from "#src/services/hud/skillGlyphs/ventiSkillGlyphs";
+import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/generated/characterKitMaps/CharacterIdCreateKitBehaviourMap"), () => ({
+vi.mock(import("#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap"), () => ({
   CharacterIdCreateKitBehaviourMap: {},
 }));
 
@@ -20,14 +22,23 @@ describe(readCharacterKit, () => {
       readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID),
     ]);
 
-    expect(kit).toStrictEqual(travelerKit);
+    // Each carries its own character's icons, which the comparison leaves out
+    expect({ ...kit, skillGlyphs: undefined }).toStrictEqual({ ...travelerKit, skillGlyphs: undefined });
   });
 
-  test("carries the character's own traced skill glyphs", async () => {
+  test("carries the character's own skill and burst icons from the hosted index", async () => {
     expect.hasAssertions();
 
-    const kit = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, VENTI_CHARACTER_ID);
+    const [kit, skillGlyphs] = await Promise.all([
+      readCharacterKit(GAME_DATA_LOCAL_BASE_URL, VENTI_CHARACTER_ID),
+      readGameDataEntry(
+        GAME_DATA_LOCAL_BASE_URL,
+        GameDataset.SkillGlyphs,
+        String(VENTI_CHARACTER_ID),
+        skillGlyphsSchema,
+      ),
+    ]);
 
-    expect(kit.skillGlyphs).toBe(VENTI_SKILL_GLYPHS);
+    expect(kit.skillGlyphs).toStrictEqual(skillGlyphs);
   });
 });

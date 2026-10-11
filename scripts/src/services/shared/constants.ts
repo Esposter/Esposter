@@ -24,6 +24,10 @@ export const TOOL_CACHE_ROOT: string = join(homedir(), SITE_NAME, "cache");
 // And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is kept.
 export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, "node_modules", "oxfmt", "bin", "oxfmt");
 export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, "oxfmt.config.ts");
+// The wiki answers this many titles in one imageinfo call, and this many file reads at once is as many as a run asks of
+// Its file host
+export const MAX_WIKI_TITLES_PER_QUERY = 50;
+export const WIKI_FILE_CONCURRENCY = 8;
 // How long any request a script makes may take (`fetchJson`) — the npm registry and the GitHub API alike
 export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 // `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the collector

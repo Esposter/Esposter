@@ -40,5 +40,3 @@ export const MIN_REFERENCE_SIGNAL_TO_NOISE_DB = 25;
 export const CARRIER_TEXT = "Please call Stella. Ask her to bring these things with her from the store.";
 // Two decimals hold a cosine as well as the ear can tell one clone from another
 export const LIKENESS_DECIMALS = 2;
-// The wiki answers this many titles in one imageinfo call
-export const MAX_WIKI_TITLES_PER_QUERY = 50;

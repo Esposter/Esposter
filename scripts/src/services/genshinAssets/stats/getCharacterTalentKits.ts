@@ -1,11 +1,8 @@
 import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatarRow";
 import type { CharacterTalentKit } from "genshin-world";
 
-import {
-  PLAYABLE_AVATAR_USE_TYPE,
-  TRAVELER_AVATAR_IDS,
-  TRAVELER_DEFAULT_ELEMENT,
-} from "#src/services/genshinAssets/stats/constants";
+import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
+import { getCharacterSkillDepotRows } from "#src/services/genshinAssets/stats/getCharacterSkillDepotRows";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
@@ -18,16 +15,11 @@ export const getCharacterTalentKits = (): CharacterTalentKit[] => {
   const skillMap = readSkillMap();
   return readExcelTable<ExcelAvatarRow>("AvatarExcelConfigData")
     .filter(({ useType }) => useType === PLAYABLE_AVATAR_USE_TYPE)
-    .flatMap(({ candSkillDepotIds, id, skillDepotId }) => {
-      const depotRows = [...new Set([skillDepotId, ...candSkillDepotIds])].flatMap((depotId) => {
-        const depotRow = skillDepotMap.get(depotId);
-        return depotRow === undefined ? [] : [depotRow];
-      });
+    .flatMap((avatarRow) => {
       const characterTalentKit = toCharacterTalentKit(
-        id,
-        depotRows,
+        avatarRow.id,
+        getCharacterSkillDepotRows(avatarRow, skillDepotMap, skillMap),
         skillMap,
-        TRAVELER_AVATAR_IDS.has(id) ? TRAVELER_DEFAULT_ELEMENT : undefined,
       );
       return characterTalentKit === undefined ? [] : [characterTalentKit];
     });

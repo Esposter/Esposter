@@ -117,6 +117,7 @@ export const useWorldCombat = ({
     return {
       burstCooldown: partyMember.burstCooldownSeconds,
       burstCooldownSeconds: combatant.kit.burstCooldownSeconds,
+      characterId: getActiveCharacterId(party),
       element: combatant.element,
       energy: partyMember.energy,
       energyCost: combatant.kit.burstEnergyCost,
@@ -129,10 +130,18 @@ export const useWorldCombat = ({
         partyMember.skillCooldownSeconds,
       ),
       skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
-      skillGlyphs: combatant.kit.skillGlyphs,
       weaponType: combatant.weaponType,
     };
   });
+  // The deployed team's skill and burst icons the HUD's buttons carry, by character id, each carried by its kit
+  const characterIdSkillGlyphsMap = computed(
+    () =>
+      new Map(
+        [...characterIdKitMap.value].flatMap(([characterId, { skillGlyphs }]) =>
+          skillGlyphs ? [[characterId, skillGlyphs] as const] : [],
+        ),
+      ),
+  );
   const startingCombatant = activeCombatant.value;
   if (!startingCombatant)
     throw new InvalidOperationError(Operation.Read, useWorldCombat.name, `${getActiveCharacterId(party)}`);
@@ -195,6 +204,7 @@ export const useWorldCombat = ({
     respawnParty();
   };
   return {
+    characterIdSkillGlyphsMap,
     characters,
     clearKitEffects,
     defeatEnemy,

@@ -1,13 +1,17 @@
 import type { GlyphLayer } from "#src/models/hud/GlyphLayer";
 
-// A character's elemental skill and burst icons as the HUD's buttons carry them, one module a traced character beside its
-// Kit, loaded with it as the character joins the party, a character with none showing its buttons bare. Each is traced
-// Four times enlarged from the wiki's render of its talent (`File:Talent <Name>.png`, 128 pixels), its mark read as each
-// Pixel's share of white over the icon's graded disc and traced at the splits between its tones. A layer's opacity is
-// Its tone's share of white over its disc in the recording: a skill's pale tone 0.38 and its white 0.78, drawn as 0.65
-// Over the pale, as Skyward Sonnet's in `hud-world-pickup` and Chonghua's Layered Frost's in `hud-world-keys` both read,
-// And a charged burst's pale tone 0.54 and its white whole, as Cloud-Parting Star's in `hud-world-keys` reads
+import { glyphLayerSchema } from "#src/models/hud/GlyphLayer";
+import { z } from "zod";
+
+// A character's elemental skill and burst icons as the HUD's buttons carry them, its entry of the hosted `skillGlyphs`
+// Index, which `genshin:assets skill-glyphs` traces from the wiki's render of each talent and the world reads with the
+// Character's kit as it joins the party. A character the index lacks shows its buttons bare
 export interface SkillGlyphs {
   burst: readonly GlyphLayer[];
   skill: readonly GlyphLayer[];
 }
+
+export const skillGlyphsSchema = z.object({
+  burst: z.array(glyphLayerSchema),
+  skill: z.array(glyphLayerSchema),
+}) satisfies z.ZodType<SkillGlyphs>;

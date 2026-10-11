@@ -296,6 +296,7 @@ const { offerFrostbearingTree } = useWorldOfferings({
 });
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
+  characterIdSkillGlyphsMap,
   characters,
   clearKitEffects,
   defeatEnemy,
@@ -647,6 +648,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :camera="mapCamera"
       :catalogue
       :character-data-map="statTables.characterDataMap"
+      :character-id-skill-glyphs-map
       :frame="hudFrame"
       :game-text
       :input

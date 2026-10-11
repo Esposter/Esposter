@@ -1,13 +1,10 @@
-import { PARITY_DIRECTORY, SPECK_SHARE } from "#src/services/genshinParity/shared/constants";
-import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
+import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { resolveSource } from "#src/services/genshinParity/shared/resolveSource";
-import ImageTracer from "imagetracerjs";
+import { traceMask } from "#src/services/genshinParity/shared/traceMask";
 import { writeFile } from "node:fs/promises";
 import { basename, extname, join } from "node:path";
 import sharp from "sharp";
 
-const INK = { a: 255, b: 0, g: 0, r: 0 };
-const PAPER = { a: 255, b: 255, g: 255, r: 255 };
 // A glyph in a region of an image as one filled path, so a mark is derived from the game's own shape rather than
 // Guessed: the region is split into ink and paper halfway between its faintest and strongest ink (a pale mark on a
 // Pale ground splits as well as a dark one), traced into curves, and the ink's paths kept. The SVG is written beside
@@ -51,32 +48,11 @@ export const traceImage = async (
     strongest = Math.max(strongest, ink);
   }
   const threshold = faintest + (strongest - faintest) * inkShare;
-  const speckArea = tracedWidth * tracedHeight * SPECK_SHARE;
-  const isInk = Uint8Array.from(inks, (ink) => Number(ink > threshold));
-  removeMaskSpecks(isInk, tracedWidth, tracedHeight, speckArea);
-  const pixels = new Uint8ClampedArray(pixelCount * 4);
-  for (const [pixel, ink] of isInk.entries()) {
-    const { a, b, g, r } = ink ? INK : PAPER;
-    pixels.set([r, g, b, a], pixel * 4);
-  }
-  const traced = ImageTracer.imagedataToSVG(
-    { data: pixels, height: tracedHeight, width: tracedWidth },
-    {
-      colorsampling: 0,
-      linefilter: false,
-      ltres: 0.5,
-      numberofcolors: 2,
-      pal: [INK, PAPER],
-      // Every path is kept: the mask holds no speck by now, and a part of the mark only a few points long is still one
-      pathomit: 0,
-      qtres: 0.5,
-      roundcoords: 2,
-    },
+  const inkPaths = traceMask(
+    Uint8Array.from(inks, (ink) => Number(ink > threshold)),
+    tracedWidth,
+    tracedHeight,
   );
-  const inkPaths = Array.from(
-    traced.matchAll(/<path[^>]*fill="rgb\(0,0,0\)"[^>]*\sd="(?<d>[^"]+)"/gu),
-    ({ groups }) => groups?.d?.trim() ?? "",
-  ).filter(Boolean);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${tracedWidth} ${tracedHeight}"><path fill-rule="evenodd" d="${inkPaths.join(" ")}"/></svg>`;
   const name = `${basename(path, extname(path))}-trace-${x}-${y}`;
   const svgPath = join(PARITY_DIRECTORY, `${name}.svg`);

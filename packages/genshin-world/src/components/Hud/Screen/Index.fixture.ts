@@ -1,12 +1,16 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { GameDataset } from "#src/models/data/GameDataset";
 import { Element } from "#src/models/Element";
+import { skillGlyphsSchema } from "#src/models/hud/SkillGlyphs";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
-import { VENTI_SKILL_GLYPHS } from "#src/services/hud/skillGlyphs/ventiSkillGlyphs";
+import { CHONGYUN_CHARACTER_ID } from "#src/services/kit/characters/chongyunKit";
+import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { createParty } from "#src/services/party/createParty";
 import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { readCatalogue } from "#src/services/world/readCatalogue";
@@ -30,12 +34,30 @@ const characterDataMap = new Map(
 );
 const party = { ...createParty(PARTY_CHARACTER_IDS), activeIndex: FIELD_MEMBER_INDEX };
 const ALBEDO_QUEST_ID = "albedo";
+// Venti's icons for the field member here, and Chongyun's for `hud-world-keys`, whose frame has him on the field
+const characterIdSkillGlyphsMap = new Map(
+  await Promise.all(
+    [VENTI_CHARACTER_ID, CHONGYUN_CHARACTER_ID].map(
+      async (characterId) =>
+        [
+          characterId,
+          await readGameDataEntry(
+            GAME_DATA_LOCAL_BASE_URL,
+            GameDataset.SkillGlyphs,
+            String(characterId),
+            skillGlyphsSchema,
+          ),
+        ] as const,
+    ),
+  ),
+);
 
 export const isBackdrop = true;
 export const props = {
   camera: { x: 0, yaw: 0, z: 0 },
   catalogue: await readCatalogue(GAME_DATA_LOCAL_BASE_URL),
   characterDataMap,
+  characterIdSkillGlyphsMap,
   frame: { pivotX: 0.5, pivotY: 0.5, seconds: 0, stamina: STAMINA_MAX },
   gameText: ENGLISH_GAME_TEXT,
   input: createInput(window),
@@ -47,6 +69,7 @@ export const props = {
   member: {
     burstCooldown: 0,
     burstCooldownSeconds: 0,
+    characterId: VENTI_CHARACTER_ID,
     element: Element.Anemo,
     energy: 14.2,
     energyCost: 60,
@@ -55,7 +78,6 @@ export const props = {
     maxHealth: 17400,
     skillCooldown: 0,
     skillCooldownSeconds: 0,
-    skillGlyphs: VENTI_SKILL_GLYPHS,
     weaponType: WeaponType.Bow,
   },
   nameTextMap: englishNameText,

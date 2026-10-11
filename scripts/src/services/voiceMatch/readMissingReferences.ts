@@ -1,4 +1,4 @@
-import { MAX_WIKI_TITLES_PER_QUERY } from "#src/services/voiceMatch/constants";
+import { MAX_WIKI_TITLES_PER_QUERY } from "#src/services/shared/constants";
 import { chunk, takeOne } from "@esposter/shared";
 import { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 import { getWikiFileTitle } from "genshin-persona/src/services/getWikiFileTitle.ts";

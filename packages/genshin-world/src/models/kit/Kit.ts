@@ -57,6 +57,7 @@ export interface Kit {
   onSprint?: (context: KitContext, kitState: KitState) => void;
   plungeCollision: KitHit;
   skillCooldownSeconds: number;
-  // The icons its skill and burst buttons carry, if they are traced, read with the kit by the character's own id
+  // The icons its skill and burst buttons carry, read with the kit from the hosted index by the character's own id, none
+  // For a character the index lacks
   skillGlyphs?: SkillGlyphs;
 }

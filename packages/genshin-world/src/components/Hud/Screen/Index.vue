@@ -3,6 +3,7 @@ import type { CharacterData } from "#src/models/character/CharacterData";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { HudMember } from "#src/models/hud/HudMember";
+import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Party } from "#src/models/party/Party";
 import type { Quest } from "#src/models/quest/Quest";
@@ -33,6 +34,8 @@ interface Props {
   catalogue: Catalogue;
   // The deployed team's characters' data, which the team stays hidden without until the stat tables arrive
   characterDataMap?: ReadonlyMap<number, CharacterData>;
+  // The deployed team's skill and burst icons, by character id, each read with its character's kit
+  characterIdSkillGlyphsMap: ReadonlyMap<number, SkillGlyphs>;
   // The world's frame: the stamina the meter fills by, where the follow camera's pivot stands, and the world's clock
   frame: HudFrame;
   // The game's words in the reader's language
@@ -71,6 +74,7 @@ const {
   camera,
   catalogue,
   characterDataMap,
+  characterIdSkillGlyphsMap,
   frame,
   gameText,
   input,
@@ -142,7 +146,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
           :is-touch
           :skill-cooldown="member.skillCooldown"
           :skill-cooldown-seconds="member.skillCooldownSeconds"
-          :skill-glyphs="member.skillGlyphs"
+          :skill-glyphs="characterIdSkillGlyphsMap.get(member.characterId)"
         />
       </GameRect>
     </GameRect>

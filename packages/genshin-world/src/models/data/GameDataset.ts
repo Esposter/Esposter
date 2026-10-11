@@ -43,6 +43,7 @@ export enum GameDataset {
   SceneGroups = "sceneGroups",
   SceneNpcBorn = "sceneNpcBorn",
   Shops = "shops",
+  SkillGlyphs = "skillGlyphs",
   SpiralAbyss = "spiralAbyss",
   Splash = "splash",
   StandingTalks = "standingTalks",

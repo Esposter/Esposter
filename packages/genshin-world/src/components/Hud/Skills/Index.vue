@@ -28,7 +28,8 @@ interface Props {
   // The member on the field's skill: the seconds left of its cooldown and its whole cooldown
   skillCooldown: number;
   skillCooldownSeconds: number;
-  // The member on the field's skill and burst icons, which the buttons carry, none for a member whose icons are not traced
+  // The member on the field's skill and burst icons, which the buttons carry, none until its kit is read or for a
+  // Character the hosted icons lack, whose buttons stay bare
   skillGlyphs?: SkillGlyphs;
 }
 

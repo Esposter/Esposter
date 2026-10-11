@@ -50,6 +50,7 @@ import { sceneNpcBornCommand } from "#src/services/genshinAssets/commands/sceneN
 import { sceneScriptsCommand } from "#src/services/genshinAssets/commands/sceneScriptsCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
+import { skillGlyphsCommand } from "#src/services/genshinAssets/commands/skillGlyphsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
 import { spiralAbyssCommand } from "#src/services/genshinAssets/commands/spiralAbyssCommand";
 import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand";
@@ -96,6 +97,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     palette: paletteCommand,
     friendship: friendshipCommand,
     stats: statsCommand,
+    "skill-glyphs": skillGlyphsCommand,
     kits: kitsCommand,
     enemies: enemiesCommand,
     items: itemsCommand,
