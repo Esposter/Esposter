@@ -10,7 +10,9 @@ git diff --cached --name-only --diff-filter=ACMR -z > "$STAGED_FILE"
 # A worktree with no install of its own borrows the main checkout's tools: pnpm there would install the whole workspace first
 TOOLS_ROOT=.
 [ -e ./node_modules/.bin/oxfmt ] || TOOLS_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
-TOOLS_ROOT=$(cd "$TOOLS_ROOT" && pwd)
+# The physical path: through a symlinked folder the config's ignore patterns match none of the files, and a snapshot is
+# formatted out of the form its writer gives it
+TOOLS_ROOT=$(cd "$TOOLS_ROOT" && pwd -P)
 xargs -0 git ls-files -s -- < "$STAGED_FILE" > "$(git rev-parse --git-path "pre-commit-entries-$PPID")"
 # The list is already NUL-separated, as git diff -z wrote it, and -0 is the form both GNU and macOS's BSD xargs read
 xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxfmt" --config "$TOOLS_ROOT/oxfmt.config.ts" --no-error-on-unmatched-pattern < "$STAGED_FILE" || true
