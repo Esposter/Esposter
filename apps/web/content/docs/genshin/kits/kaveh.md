@@ -13,9 +13,9 @@ Not built yet: the Dendro Cores his skill and burst rupture, which strike the en
 
 ## Key files
 
-| File                                                           | Role                                                                                                                                     |
-| :------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/kavehKit.ts` | `createKavehKit`, Kaveh's kit with his strikes, charged attack and plunges, Artistic Ingenuity's circle, and Painted Dome's stance      |
+| File                                                             | Role                                                                                                                               |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/kavehKit.ts` | `createKavehKit`, Kaveh's kit with his strikes, charged attack and plunges, Artistic Ingenuity's circle, and Painted Dome's stance |
 
 ## Sources
 
