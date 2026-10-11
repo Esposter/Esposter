@@ -37,7 +37,6 @@ This file is an **index and a process**, never a reference. Anything explaining 
 | `packages/trpc-nuxt-module`     | `trpc-nuxt-module`        | tRPC for Nuxt — a Nuxt module for the router's HTTP and WebSocket handlers and composables over `useAsyncData`                                                                  |
 | `packages/virrun`               | `virrun`                  | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated                                                                                                      |
 | `packages/vue-phaserjs`         | `vue-phaserjs`            | Phaser game engine integration for Vue                                                                                                                                          |
-| `packages/xml2js`               | `@esposter/xml2js`        | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                                                                                                            |
 | `scripts`                       | `@esposter/scripts`       | The repo's own tooling: workspace graph, dependency report, sweeps, plugins                                                                                                     |
 
 ## Commands

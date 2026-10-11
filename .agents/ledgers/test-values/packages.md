@@ -15,7 +15,7 @@ splits at `services/exec`'s subdirectories.
 | `azure`, `azure-mock`                                                                               | 2026-10-05 · Opus 5.5 |                                                  |
 | `db`, `db-schema`, `db-mock`                                                                        | 2026-10-05 · Opus 5.5 |                                                  |
 | `shared`, `shared-node`                                                                             | 2026-10-05 · Opus 5.5 |                                                  |
-| `parse-tmx`, `xml2js`                                                                               | 2026-10-05 · Opus 5.5 |                                                  |
+| `parse-tmx`                                                                                         | 2026-10-05 · Opus 5.5 |                                                  |
 | `vue-phaserjs`                                                                                      | 2026-10-05 · Opus 5.5 |                                                  |
 | `configuration`, `infra`                                                                            | 2026-10-05 · Opus 5.5 |                                                  |
 | `keyframe-store`                                                                                    | 2026-10-05 · Opus 5.5 |                                                  |

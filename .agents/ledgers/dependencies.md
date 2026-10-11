@@ -89,7 +89,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@types/three`                          | —     | Keep — types        | declarations for `three`                                                                               |
 | `@types/web-push`                       | —     | Keep — types        | declarations for `web-push`                                                                            |
 | `@types/ws`                             | —     | Keep — types        | declarations for `ws`                                                                                  |
-| `@types/xml2js`                         | —     | Keep — types        | declarations for `xml2js`                                                                              |
 | `@typesafe-ai/sdk`                      | —     | Keep — SDK          | the persona's model client                                                                             |
 | `@unocss/eslint-config`                 | —     | Keep — framework    | the styling engine's integration                                                                       |
 | `@unocss/nuxt`                          | —     | Keep — framework    | the styling engine's integration                                                                       |
@@ -203,7 +202,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `rou3`                                  | —     | Keep — free         | h3's own router, reused by nuxt-security-module                                                        |
 | `rxjs`                                  | —     | Keep — free         | grid-engine's own observables                                                                          |
 | `sass-embedded`                         | —     | Replace — platform  | one `globals.scss` left; native CSS nesting replaces Sass                                              |
-| `sax`                                   | —     | Keep — spec         | the XML tokenizer under our xml2js                                                                     |
+| `sax`                                   | —     | Keep — spec         | the XML tokenizer under parse-tmx's reader                                                                     |
 | `sharp`                                 | —     | Keep — engine       | image processing                                                                                       |
 | `sql-highlight`                         | —     | Remove              | colours in the dev query log, worth less than a dependency                                             |
 | `superjson`                             | —     | Keep — spec         | tRPC's wire transformer                                                                                |
@@ -239,6 +238,5 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `web-push`                              | —     | Keep — security     | push encryption, on the stop list                                                                      |
 | `write-excel-file`                      | —     | Keep — spec         | the spreadsheet format                                                                                 |
 | `ws`                                    | —     | Keep — engine       | the agent console's WebSocket server                                                                   |
-| `xmlbuilder2`                           | —     | Keep — spec         | the XML writer under our xml2js                                                                        |
 | `xss`                                   | —     | Replace — installed | `sanitizeHtml` in @esposter/shared: only a test imports it, comparing two sanitisers                   |
 | `zod`                                   | —     | Keep — framework    | the schema library                                                                                     |

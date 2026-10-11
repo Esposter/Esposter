@@ -24,7 +24,6 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 | @esposter/shared          | 1.13×   | 3779.7409  | ±2.59% | 3802.9957  | 3       |
 | @esposter/azure           | 1.17×   | 3660.0754  | ±4.06% | 3725.9026  | 3       |
 | @esposter/shared-node     | 7.47×   | 571.7602   | ±6.09% | 587.8804   | 3       |
-| @esposter/xml2js          | 1.06×   | 4036.5336  | ±2.59% | 4083.5054  | 3       |
 | azure-mock                | 0.91×   | 4688.1000  | ±4.23% | 4778.0688  | 3       |
 | @esposter/db-schema       | 1.00×   | 4251.8312  | ±4.28% | 4334.0413  | 3       |
 | virrun                    | 0.85×   | 4996.3835  | ±1.61% | 5031.5383  | 3       |

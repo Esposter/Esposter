@@ -331,7 +331,7 @@ export default {
       selector: "SpreadElement > CallExpression[callee.name=/^getTsdownConfiguration/]",
     },
     {
-      // A parameter's name documents its slot even unread; a loop binding and xml2js's `_` key are not parameters, so
+      // A parameter's name documents its slot even unread; a loop binding is not a parameter, so
       // Neither is reached
       message:
         "Name an unused parameter for its slot behind the `_` prefix — `_value`, `_description`, `_match`, never bare `_`. See the naming skill's unused-bindings page.",
