@@ -7,26 +7,26 @@ import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: vi.fn<typeof runGh>() }));
 
-describe(readNewestCommitComments, () => {
-  const getPage = (createdAtMs: number, startCursor: null | string): string =>
-    JSON.stringify({
-      data: {
-        repository: {
-          commitComments: {
-            nodes: [
-              {
-                author: null,
-                body: "",
-                createdAt: Temporal.Instant.fromEpochMilliseconds(createdAtMs).toString(),
-                databaseId: createdAtMs,
-              },
-            ],
-            pageInfo: { hasPreviousPage: startCursor !== null, startCursor },
-          },
+const getPage = (createdAtMs: number, startCursor: null | string): string =>
+  JSON.stringify({
+    data: {
+      repository: {
+        commitComments: {
+          nodes: [
+            {
+              author: null,
+              body: "",
+              createdAt: Temporal.Instant.fromEpochMilliseconds(createdAtMs).toString(),
+              databaseId: createdAtMs,
+            },
+          ],
+          pageInfo: { hasPreviousPage: startCursor !== null, startCursor },
         },
       },
-    } satisfies CommitCommentsPage);
+    },
+  } satisfies CommitCommentsPage);
 
+describe(readNewestCommitComments, () => {
   test("reads pages back until one reaches the span, oldest first", () => {
     expect.hasAssertions();
 

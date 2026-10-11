@@ -24,6 +24,8 @@ export const readNewestCommitComments = (sinceMs: number): GitHubEntry[] => {
   const comments: GitHubEntry[] = [];
   let startCursor: null | string = null;
   do {
+    // Typed, since the cursor it reads is assigned from the page it fetches
+    const cursorArgs: string[] = startCursor === null ? [] : ["-f", `startCursor=${startCursor}`];
     const { nodes, pageInfo } = parseMachineJson<CommitCommentsPage>(
       runGh([
         "api",
@@ -32,7 +34,7 @@ export const readNewestCommitComments = (sinceMs: number): GitHubEntry[] => {
         `owner=${owner.login}`,
         "-f",
         `name=${name}`,
-        ...(startCursor === null ? [] : ["-f", `startCursor=${startCursor}`]),
+        ...cursorArgs,
         "-f",
         `query=${QUERY}`,
       ]),
