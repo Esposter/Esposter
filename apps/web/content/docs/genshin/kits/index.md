@@ -286,6 +286,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Wanderer](/docs/genshin/kits/wanderer)             | Hanega: Song of the Wind and Kyougen: Five Ceremonial Plays          |
 | [Wriothesley](/docs/genshin/kits/wriothesley)       | Darkgold Wolfbite and Icefang Rush                                   |
 | [Xiangling](/docs/genshin/kits/xiangling)           | Guoba, Pyronado and Oil Meets Fire                                   |
+| [Xianyun](/docs/genshin/kits/xianyun)               | Stars Gather at Dusk, with four strikes and Skyladder's first press  |
 | [Xiao](/docs/genshin/kits/xiao)                     | Lemniscatic Wind Cycling and Bane of All Evil                        |
 | [Xingqiu](/docs/genshin/kits/xingqiu)               | Fatal Rainscreen and Raincutter                                      |
 | [Xinyan](/docs/genshin/kits/xinyan)                 | Sweeping Fervor and Riff Revolution                                  |
