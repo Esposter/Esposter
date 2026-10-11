@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
+import {
+  GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
+  LOADING_STALL_WARNING_SECONDS,
+} from "#shared/services/genshin/constants";
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
@@ -15,6 +18,18 @@ const isLoaded = ref(false);
 const isReady = ref(false);
 const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
+// A diagnostic only: while the loading screen shows, each step still unfinished when the warning time is up is logged by
+// Name, so a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too.
+// Nothing is skipped or fallen back to, so the world's absence stays as it was
+useTimeoutFn(() => {
+  if (!isOpeningShown.value) return;
+  for (const [step, isStepDone] of [
+    ["save", isSaveLoaded.value],
+    ["world chunk", isLoaded.value],
+    ["world ready", isReady.value],
+  ] as const)
+    if (!isStepDone) console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on ${step}`);
+}, LOADING_STALL_WARNING_SECONDS * 1000);
 const gameText = await useGameText();
 // The account the page reads, whose hosted game data the opening reads its title logo and its login screen from
 const containerBaseUrl = useContainerBaseUrl();
