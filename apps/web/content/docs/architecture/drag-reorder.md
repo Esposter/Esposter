@@ -5,7 +5,7 @@ description: useDragReorder, the pointer half of every reorderable list, table a
 
 # Drag reorder
 
-`useDragReorder` is the pointer half of a reorderable list, table or sidebar: a row is pressed and dragged to a new place, and the call site is handed the new order. The keyboard half — Alt+Up and Alt+Down, read out through a live region — is `useReorder`'s, and both make their move through `getMovedItems`. The drag used to be [vue-draggable-plus](https://github.com/Alfred-Skyblue/vue-draggable-plus), a Vue wrapper bundling [SortableJS](https://github.com/SortableJS/Sortable) 1.15.2. It is now a composable in the [UI library](/docs/architecture/ui-library), written on Pointer Events. This page is the record the [dependency admission](/docs/architecture/dependency-admission) asks for: how it works, what it leaves out, and every upstream issue with its verdict.
+`useDragReorder` moves a row by pointer: a row is pressed and dragged to a new place in its list, table or sidebar, and the call site is handed the new order. The keyboard half — Alt+Up and Alt+Down, read out through a live region — is `useReorder`'s, and both make their move through `getMovedItems`. The drag used to be [vue-draggable-plus](https://github.com/Alfred-Skyblue/vue-draggable-plus), a Vue wrapper bundling [SortableJS](https://github.com/SortableJS/Sortable) 1.15.2. It is now a composable in the [UI library](/docs/architecture/ui-library), written on Pointer Events. How it works, what it leaves out, and every upstream issue with its verdict are below, as [dependency admission](/docs/architecture/dependency-admission) requires of an absorbed package.
 
 ## Why it is ours
 
@@ -17,7 +17,7 @@ The register kept vue-draggable-plus as an engine, on the stop list's accessibil
 
 Vuetify 0's [`useDragDrop`](https://0.vuetifyjs.com/composables/system/use-drag-drop) was weighed first, as the platform the library already stands on, and not taken. It has no touch delay, no `touch-action` handling and no pointer capture. Its drop zones are measured once and go stale on a scroll. It moves nothing on screen. Its keyboard adapter would compete with the rows' own keys.
 
-Code absorbed into one app is a page in the section of what runs it, as [SQL highlighting](/docs/architecture/sql-highlight) is. So the drag is a composable beside the components that call it, with this page.
+Only the web app drags rows, so, like [SQL highlighting](/docs/architecture/sql-highlight), the drag is no package: it is a composable beside the components that call it, with this page.
 
 ## How it works
 
@@ -40,11 +40,11 @@ flowchart TD
   rest -->|drifts first| scroll["The press ends<br/>and the browser scrolls"]
   distance --> drag
   rest --> drag["A drag: the slots measured,<br/>the pointer captured,<br/>the ghost class worn"]
-  drag --> move["The held row follows by translate,<br/>the rows it passes move aside,<br/>an edge scrolls its scroller"]
+  drag --> move["The held row follows,<br/>the rows it passes move aside,<br/>an edge autoscrolls"]
   move --> ends{"Ends by"}
   ends -->|pointerup| drop["The new order<br/>handed to the call site"]
   ends -->|"Escape, pointercancel<br/>or rows changing"| back["The old order kept"]
-  drop --> settle["Every row slides from where it was let go,<br/>and the click the release raises is swallowed"]
+  drop --> settle["Every row slides into its slot,<br/>the release's click swallowed"]
   back --> settle
 ```
 
@@ -91,7 +91,7 @@ Verdicts by count:
 
 Every in-scope item is proven by one of 26 regression tests in `useDragReorder.test.ts`, each titled with the item leading its class. Every item of the class cites that test in the Proof column, by the item its title starts with.
 
-The suite was run once against vue-draggable-plus 0.6.1, through a throwaway copy that mounted `VueDraggable` with the call sites' old props. 20 tests fail there. The 10 that pass are recorded as pins:
+The suite was run once against vue-draggable-plus 0.6.1, through a throwaway copy that mounted the wrapper's component with the call sites' old props. 20 tests fail there. The 10 that pass are recorded as pins:
 
 - the short press and the drift before the delay;
 - a secondary button and a second finger;
