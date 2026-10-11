@@ -8,13 +8,13 @@ import { BlobServiceClient } from "@azure/storage-blob";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { AzureContainer } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { config } from "dotenv";
+import { existsSync } from "node:fs";
 import { format } from "oxfmt";
 
 import formatterConfiguration from "../../../../../oxfmt.config.ts";
 
 export const createFilePack = async () => {
-  config();
+  if (existsSync(".env")) process.loadEnvFile();
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
   const containerClient = blobServiceClient.getContainerClient(AzureContainer.DungeonsAssets);
   const files: Types.Loader.FileConfig[] = [];

@@ -214,7 +214,6 @@
     "azure-mock": "workspace:*",
     "chokidar": "catalog:",
     "citty": "catalog:",
-    "dotenv": "catalog:",
     "fake-indexeddb": "catalog:",
     "fs-extra": "catalog:",
     "happy-dom": "catalog:",

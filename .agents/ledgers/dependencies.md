@@ -127,7 +127,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `crossws`                               | —     | Keep — framework    | the server's WebSocket layer                                                                           |
 | `defu`                                  | —     | Keep — free         | the framework installs it; the chart resolvers merge with it                                           |
 | `diff`                                  | —     | Keep — engine       | a diff algorithm                                                                                       |
-| `dotenv`                                | —     | Replace — platform  | `process.loadEnvFile()` and `node --env-file` read a `.env`                                            |
 | `drizzle-kit`                           | —     | Keep — framework    | migrations                                                                                             |
 | `drizzle-orm`                           | —     | Keep — framework    | the ORM                                                                                                |
 | `emojilib`                              | —     | Keep — data         | emoji keywords, tracking Unicode                                                                       |

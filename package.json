@@ -115,7 +115,6 @@
     "@lerna-lite/publish": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "dotenv": "catalog:",
     "eslint": "catalog:",
     "knip": "catalog:",
     "npm-run-all2": "catalog:",
