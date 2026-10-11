@@ -61,7 +61,7 @@ No generic transport abstraction sits above them, because resource content is th
 ## Notes
 
 - A browser reads Blob Storage cross-origin, so the storage accounts' CORS rules allow `GET` beside the uploads' `PUT`. An infrastructure deploy that dropped it would fail every large read with a CORS error the owner cannot act on.
-- A row written before `contentSize` existed carries its default of zero and is read inline until its next save writes the size. That is the old path, not a broken one.
+- A row written before `contentSize` existed carries its default of zero and is read inline until its next save writes the size. That inline read is the expected path for such a row, not a broken one.
 - The read SAS lives minutes, like the one behind `/api/resource-assets`, because it is used the moment it is issued.
 
 ## Key files
