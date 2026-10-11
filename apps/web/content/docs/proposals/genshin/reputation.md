@@ -1,6 +1,6 @@
 ---
 title: Reputation
-description: Proposal — what puts each nation's Reputation in the world: the Reputation screen, the keeper placed in region data, requests run as world quests, bounties hunted with Elemental Sight, the shop discounts applied, and Natlan's tribes and supply notices. Mondstadt's levels, rewards, requests and bounties as data and rules are built.
+description: Proposal — what puts each nation's Reputation in the world: the Reputation screen, the keeper placed in region data, requests run as world quests, bounties hunted with Elemental Sight, the shop discounts applied, and Natlan's tribes and supply notices.
 model: claude-haiku-5-5
 needs: [media-engine, game-exports]
 touches:
@@ -13,7 +13,7 @@ touches:
 
 # Reputation
 
-Each nation keeps a Reputation, raised by work done for its people. Mondstadt's levels and the three-a-week claim limit across nations are built: see the [Reputation](/docs/genshin/reputation) page. What remains is what puts them in the world, and the later nations.
+Each nation keeps a Reputation, raised by work done for its people. The [Reputation](/docs/genshin/reputation) page holds Mondstadt's levels and the three-a-week claim limit across nations. What remains is what puts them in the world, and the later nations.
 
 ## Decisions
 
@@ -21,8 +21,8 @@ Each nation keeps a Reputation, raised by work done for its people. Mondstadt's 
 - **Bounties are hunted with Elemental Sight.** From level 2 (level 1 in Natlan), the keeper offers bounties. The player goes to the place named, finds the target's trail with [Elemental Sight](/docs/proposals/genshin/elemental-sight), defeats it and claims the bounty back with the keeper. The target is spawned when the bounty is taken.
 - **Exploration and quests feed it.** Each nation's exploration progress, its chests, puzzles and statue offerings, raises its Reputation at the thresholds `ReputationExploreExcelConfigData` sets, and its Reputation quests give theirs once. A nation's exploration percentage is read off its areas as the [exploration progress](/docs/proposals/genshin/exploration-progress) proposal settles, which also pays Mondstadt's thresholds; a threshold pays once, when the percentage passes it.
 - **Mondstadt's keeper is Hertha, NPC 1663.** The wiki names each nation's keeper (Hertha, Ms. Yu, Madarame Hyakubei, Effendi, Euphrasie), and `genshin:text find "^Hertha$"` with the NPC table gives her id. Her id is the NPC table's row for the keeper, whose billboard is the reputation icon. The hosted `sceneNpcBorn/scene3` dataset holds no birth for NPC 1663 among its 1005, so her place is not in the dump's births, and it is read from the scene group export, as the blacksmith's is ([forging](/docs/proposals/genshin/forging)).
-- **The Reputation screen is the keeper's.** Talking to the keeper opens the nation's Reputation screen: its level and EXP toward the next, each level's reward, and the four sources (bounties, requests, exploration and quests). It is built now from a public clip, opened by the keeper's talk once she stands; until then it is reached only through its fixture on the parity page.
-- **A discount is the shop's own.** The rule is built. The shops apply it to a named shop's prices once they have a screen, and each discount's shops are the ones its function's text names, joined to the shops' ids then.
+- **The Reputation screen is the keeper's.** Talking to the keeper opens the nation's Reputation screen: its level and EXP toward the next, each level's reward, and the four sources (bounties, requests, exploration and quests). It is drawn from a public clip, opened by the keeper's talk once she stands; until then it is reached only through its fixture on the parity page.
+- **A discount is the shop's own.** The shops apply it to a named shop's prices once they have a screen, and each discount's shops are the ones its function's text names, joined to the shops' ids then.
 - **Natlan's tribes and supply notices.** Natlan keeps a Reputation per tribe, and its supply notices take donated items, three a week shared between tribes, each 160 to its tribe and a Sanctifying Unction, as the wiki gives them.
 
 ## How it works
@@ -41,11 +41,11 @@ flowchart TD
 
 **This adds, in order:**
 
-2. **Mondstadt's keeper**, placed in region data, opening the screen and offering its requests from level 2. Waits on Hertha's place: the scene 3 births hold no birth for NPC 1663, so the scene group export is still the only source for it.
-3. **Requests**, as world quests the quest reader carries.
-4. **Bounties**, once Elemental Sight draws a trail and the target spawns.
-5. **The discount at the shops**, once the shops page has a screen.
-6. **Each later nation**, and Natlan's tribes and supply notices, as their regions are built.
+1. **Mondstadt's keeper**, placed in region data, opening the screen and offering its requests from level 2. Waits on Hertha's place: the scene 3 births hold no birth for NPC 1663, so the scene group export is still the only source for it.
+2. **Requests**, as world quests the quest reader carries.
+3. **Bounties**, once Elemental Sight draws a trail and the target spawns.
+4. **The discount at the shops**, once the shops page has a screen.
+5. **Each later nation**, and Natlan's tribes and supply notices, as their regions are built.
 
 ## Data and measures
 

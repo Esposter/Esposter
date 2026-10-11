@@ -1,6 +1,7 @@
 ---
 title: Domains
-description: Proposal — the game's domains still to build: an entrance in the world that acts as a waypoint once unlocked, a level chosen by Adventure Rank, a scene of its own entered with a fade, its challenge's waves, time limit and ley line disorder, and the Petrified Tree whose reward is claimed with resin. One-time domains reward their first clear. model: claude-haiku-5-5
+description: Proposal — the game's domains still to build: an entrance in the world that acts as a waypoint once unlocked, a level chosen by Adventure Rank, a scene of its own entered with a fade, its challenge's waves, time limit and ley line disorder, and the Petrified Tree whose reward is claimed with resin. One-time domains reward their first clear.
+model: claude-haiku-5-5
 needs: [game-exports]
 touches: ["scripts/src/services/genshinAssets/domains/**", "packages/genshin-world/src/data/regions/**"]
 ---
