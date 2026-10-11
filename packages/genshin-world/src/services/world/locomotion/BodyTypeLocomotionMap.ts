@@ -5,9 +5,8 @@ import { PROVISIONAL_LOCOMOTION } from "#src/services/world/locomotion/constants
 
 // How each body type moves, since how far its characters sprint and jump differs by body: a type takes its own entry
 // Once its clips and recordings are measured, never another type's, and moves by the provisional movement until then.
-// The medium female and medium male bodies' speeds, dash, climb, climb jump, swim and drowning are their own clips' root
-// Motion at the body's human scale, read by `genshin:assets locomotion Girl` and `genshin:assets locomotion Boy`; what
-// Their clips do not move, the glide among them, is still provisional
+// A measured body's speeds, dash, climb, climb jump, swim and drowning are its own clips' root motion at its human scale,
+// Read by `genshin:assets locomotion <body>`; what its clips do not move, the glide among them, is still provisional
 export const BodyTypeLocomotionMap = {
   [BodyType.MediumFemale]: {
     ...PROVISIONAL_LOCOMOTION,
@@ -38,6 +37,19 @@ export const BodyTypeLocomotionMap = {
     walkSpeed: 1.23,
   },
   [BodyType.ShortFemale]: PROVISIONAL_LOCOMOTION,
-  [BodyType.TallFemale]: PROVISIONAL_LOCOMOTION,
+  [BodyType.TallFemale]: {
+    ...PROVISIONAL_LOCOMOTION,
+    climbJumpHeight: 3.3,
+    climbJumpSeconds: 1.08,
+    climbSpeed: 0.84,
+    dashSeconds: 1.4,
+    dashSpeed: 7.89,
+    drownSeconds: 3,
+    runSpeed: 5.68,
+    sprintSpeed: 7.17,
+    swimDashSpeed: 3.9,
+    swimSpeed: 1.95,
+    walkSpeed: 1.24,
+  },
   [BodyType.TallMale]: PROVISIONAL_LOCOMOTION,
 } as const satisfies Record<BodyType, Locomotion>;
