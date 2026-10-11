@@ -55,4 +55,24 @@ describe("security", () => {
       expect.arrayContaining(["'self'", "https://container.blob.core.windows.net", "blob:"]),
     );
   });
+
+  test("writes no unset host into a source list", async () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("AZURE_CONTAINER_BASE_URL", undefined);
+    vi.stubEnv("LIVEKIT_URL", undefined);
+    vi.resetModules();
+    const { security } = await import("./security.ts");
+
+    const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
+
+    expect(contentSecurityPolicy?.["connect-src"]).toStrictEqual([
+      "'self'",
+      "wss://*.webpubsub.azure.com",
+      "https://cdn.jsdelivr.net",
+      "https://storage.googleapis.com",
+    ]);
+    expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(["'self'", "blob:"]);
+    expect(contentSecurityPolicy?.["img-src"]).not.toContain(undefined);
+  });
 });
