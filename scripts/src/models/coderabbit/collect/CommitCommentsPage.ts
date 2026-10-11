@@ -1,4 +1,4 @@
-// The repository's newest commit comments as `readSignatureAttempts` selects them, GitHub's own spelling
+// The repository's newest commit comments as `readNewestCommitComments` selects them, GitHub's own spelling
 export interface CommitCommentsPage {
   data: {
     repository: {

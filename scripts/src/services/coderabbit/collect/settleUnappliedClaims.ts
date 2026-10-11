@@ -7,14 +7,20 @@ import {
   MAIN_BRANCH,
   SESSION_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
+import { getAttempts } from "#src/services/coderabbit/collect/getAttempts";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
-import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
+import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
+import { readCommitPatch } from "#src/services/coderabbit/collect/readCommitPatch";
+import { readNewestCommitComments } from "#src/services/coderabbit/collect/readNewestCommitComments";
 
 // A claimed commit the cut could not apply waits on the unported work it needs, and the lane counts each wait against
 // The attempt cap on the commit itself, once per `main` head: a pick onto the same head is the same pick, so a run
-// Against an unchanged `main` is no new attempt, while every head that moves past it without letting it apply is. Past
-// The cap it is parked, which takes it and its claim out of what the queue owes, so a commit that will never apply
-// Stops holding the lane. Returns the commits still waiting.
+// Against an unchanged `main` is no new attempt, while every head that moves past it without letting it apply is. The
+// Count is keyed by the commit's patch rather than its sha, since every rewrite of the queue gives the commit a new sha
+// And a count by sha started again with each: posted on whichever sha the commit has, it is read across every commit's
+// Newest comments. Past the cap it is parked, which takes it and its claim out of what the queue owes, so a commit that
+// Will never apply stops holding the lane. Returns the commits still waiting.
 export const settleUnappliedClaims = ({
   collectorSha,
   cwd,
@@ -23,16 +29,34 @@ export const settleUnappliedClaims = ({
   shas,
   viewerLogin,
 }: UnappliedClaimsInput): string[] => {
+  if (shas.length === 0) return [];
+
   const task = `cut onto ${MAIN_BRANCH} at ${mainSha}`;
-  const claims = shas.map((sha) => ({
-    sha,
-    ...readCommitAttempts({ collectorSha, marker: EXPRESS_FAILED_MARKER, sha, viewerLogin }),
-  }));
+  const comments = readNewestCommitComments();
+  const claims = shas.map((sha) => {
+    const key = readCommitPatch(sha, cwd);
+    const attemptMarker = getMarker(EXPRESS_FAILED_MARKER, key, [collectorSha]);
+    return {
+      ...getAttempts({
+        collectorSha,
+        comments,
+        key,
+        marker: EXPRESS_FAILED_MARKER,
+        post: (body) => {
+          postCommitComment(sha, body);
+        },
+        viewerLogin,
+      }),
+      isCountedAtHead: comments.some(
+        (comment) => checkIsMarked(comment, viewerLogin, attemptMarker) && comment.body.includes(task),
+      ),
+      sha,
+    };
+  });
   const exhaustedShas = claims.filter(({ attempts }) => attempts >= SESSION_ATTEMPT_CAP).map(({ sha }) => sha);
   const waitingClaims = claims.filter(({ attempts }) => attempts < SESSION_ATTEMPT_CAP);
   if (!isDryRun)
-    for (const { comments, recordFailure } of waitingClaims)
-      if (!comments.some((comment) => checkIsMarked(comment, viewerLogin, task))) recordFailure(task);
+    for (const { isCountedAtHead, recordFailure } of waitingClaims) if (!isCountedAtHead) recordFailure(task);
 
   if (exhaustedShas.length > 0)
     parkCommits({

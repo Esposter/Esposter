@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { BannerKind } from "#src/models/BannerKind";
 import type { CurrencyCount } from "#src/models/CurrencyCount";
+import type { TextSegment } from "#src/models/TextSegment";
 import type { WishPoolCell } from "#src/models/WishPoolCell";
 import type { WishPurchase } from "#src/models/WishPurchase";
 import type { WishResultCell } from "#src/models/WishResultCell";
@@ -11,13 +12,13 @@ import { computed } from "vue";
 interface Props {
   // The way back to the world in the reader's language
   backLabel: string;
-  // The banners on offer, in the game's order
+  // The banners on offer, in the game's order, each named in the runs of colour the game words it in
   bannerKinds: BannerKind[];
-  bannerLabels: Record<BannerKind, string>;
+  bannerLabels: Record<BannerKind, TextSegment[]>;
   // The counts the screen shows over its banner
   currencies: CurrencyCount[];
-  // The Epitomized Path's Fate Points as the game words them, "" on every banner but the weapon wish's
-  fatePoints: string;
+  // The Epitomized Path's Fate Points as the game words and colours them, "[]" on every banner but the weapon wish's
+  fatePoints: TextSegment[];
   // The Epitomized Path's name, "" on every banner but the weapon wish's
   pathLabel: string;
   // What the open banner can draw, the highest rarity first and the featured first of each rarity
@@ -63,7 +64,9 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
       <ul class="banners">
         <li v-for="kind of bannerKinds" :key="kind">
           <button class="banner" :aria-pressed="kind === bannerKind" type="button" @click="bannerKind = kind">
-            {{ bannerLabels[kind] }}
+            <span v-for="({ color, text }, index) of bannerLabels[kind]" :key="index" :style="{ color }">{{
+              text
+            }}</span>
           </button>
         </li>
       </ul>
@@ -87,7 +90,9 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
     </ul>
     <p v-if="pathLabel" class="path">
       {{ pathLabel }}
-      <span class="fate-points">{{ fatePoints }}</span>
+      <span class="fate-points">
+        <span v-for="({ color, text }, index) of fatePoints" :key="index" :style="{ color }">{{ text }}</span>
+      </span>
     </p>
     <div v-if="bannerKind" class="sets">
       <button

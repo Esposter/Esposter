@@ -4,7 +4,7 @@ import type { GameText } from "genshin-text";
 
 import MenuExit from "#src/components/Menu/Exit/Index.vue";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
-import MenuWorldLevelTips from "#src/components/Menu/WorldLevelTips/Index.vue";
+import MenuWorldLevelDialog from "#src/components/Menu/WorldLevelDialog/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { PAIMON_MENU_CONTENTS, PAIMON_MENU_LINKS, PAIMON_MENU_SIDE_BAR } from "#src/services/menu/constants";
 import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
@@ -22,12 +22,12 @@ interface Props {
   checkIsBuilt: (screenKind: TitledScreenKind) => boolean;
   // The game's words in the reader's language
   gameText: GameText;
-  // Whether the World Level can be lowered or restored now, and whether it is lowered; the button is drawn only when it can
+  // Whether the World Level can be lowered or restored at all, and whether it is lowered, for its dialog's button
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
   // The server's clock minus this machine's, which the World Level's cooldown is read against
   serverClockOffsetMs?: number;
-  // When the World Level last changed, for the cooldown its panel shows
+  // When the World Level last changed, for the cooldown its dialog's button waits on
   worldLevel: number;
   worldLevelChangedAt?: Temporal.Instant;
 }
@@ -44,13 +44,9 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: []; toggleWorldLevel: [] }>();
 const backButton = useTemplateRef("backButton");
-// The World Level's dialog, which its info icon opens and its own Back closes, focus returning to the icon
-const infoButton = useTemplateRef("infoButton");
-const isWorldLevelTipsOpen = ref(false);
-const closeWorldLevelTips = () => {
-  isWorldLevelTipsOpen.value = false;
-  infoButton.value?.focus();
-};
+const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
+// The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it
+const isWorldLevelDialogOpen = ref(false);
 // Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
 const isExitPrompted = ref(false);
 // The menu is a dialog over the world, so focus starts inside it, on its way back
@@ -109,30 +105,19 @@ onMounted(() => {
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Copy]" class="copy-glyph" />
     <button class="copy" disabled type="button">{{ gameText[GameTextKey.Copy] }}</button>
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.ExpBadge]" />
-    <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }} {{ adventureRank }}</p>
+    <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }}</p>
+    <p class="rank-title value">{{ adventureRank }}</p>
     <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
     <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
-    <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }} {{ worldLevel }}</p>
-    <button v-if="isWorldLevelAdjustable" class="world-level-adjust" type="button" @click="emit('toggleWorldLevel')">
-      {{ gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevert : GameTextKey.WorldLevelLower] }}
-    </button>
-    <MenuWorldLevelTips
-      v-if="isWorldLevelAdjustable && isWorldLevelTipsOpen"
-      class="world-level-tips"
-      :game-text
-      :is-world-level-lowered
-      :server-clock-offset-ms
-      :world-level-changed-at
-      @close="closeWorldLevelTips()"
-    />
+    <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
+    <p class="world-level value">{{ worldLevel }}</p>
     <button
-      v-if="isWorldLevelAdjustable"
-      ref="infoButton"
-      class="side-entry"
-      :aria-label="gameText[GameTextKey.WorldLevelAdjustTitle]"
+      ref="worldLevelInfoButton"
+      class="info"
+      :aria-label="gameText[GameTextKey.WorldLevel]"
       :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
       type="button"
-      @click="isWorldLevelTipsOpen = true"
+      @click="isWorldLevelDialogOpen = true"
     />
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
     <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
@@ -153,6 +138,19 @@ onMounted(() => {
         <span class="label">{{ gameText[labelKey] }}</span>
       </button>
     </div>
+    <MenuWorldLevelDialog
+      v-if="isWorldLevelDialogOpen"
+      :game-text
+      :is-world-level-adjustable
+      :is-world-level-lowered
+      :server-clock-offset-ms
+      :world-level-changed-at
+      @close="
+        isWorldLevelDialogOpen = false;
+        worldLevelInfoButton?.focus();
+      "
+      @toggle-world-level="emit('toggleWorldLevel')"
+    />
   </GameScreen>
   <MenuExit v-else :game-text @close="emit('close')" @quit="emit('quit')" />
 </template>
@@ -341,26 +339,27 @@ onMounted(() => {
   top: calc(var(--unit) * 286);
 }
 
-/* The dialog opens below the World Level, in the same reference pixels as the card, over the entries drawn after it */
-.world-level-tips {
-  z-index: 1;
-  top: calc(var(--unit) * 276);
-  left: calc(var(--unit) * 420);
+/* The rank's and the World Level's values end where the current client's do, 17 units left of the info disc, at its
+   Cap height of 19 units (`world-level-dialog-2024.mkv` at 2 seconds) */
+.value {
+  left: calc(var(--unit) * 688);
+  font-size: calc(var(--unit) * 28);
+  translate: -100% 0;
 }
 
-/* Provisional: the button's place beside the World Level waits on the English PC client's menu measured at 1080 high */
-.world-level-adjust {
+.info {
   position: absolute;
-  top: calc(var(--unit) * 246);
-  left: calc(var(--unit) * 420);
   padding: 0;
   border: none;
+  border-radius: 50%;
   background: none;
-  color: #e2e8ed;
-  cursor: pointer;
-  font: inherit;
-  font-size: calc(var(--unit) * 22);
-  text-decoration: underline;
+  cursor: inherit;
+}
+
+.info:focus-visible,
+.info:hover {
+  outline: none;
+  background: rgb(236 229 215 / 0.2);
 }
 
 .info-glyph {

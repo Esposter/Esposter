@@ -16,7 +16,8 @@ import { runGit } from "#src/services/shared/runGit";
 // Reads everything above that base — a window `develop` already carries unopened included. A commit alone over the
 // Room never reaches here unheld — the sync reshapes it first, or parks it past the reshaper's cap — so a hold is the
 // Residual case the opener parks. Fixes and queue alike are cut to `fileCap`, which a re-cut halves — all but the first
-// Fix, which only the bot's own cap holds back.
+// Fix, which only the bot's own cap holds back — and the cap the window was cut under is returned for the opener to
+// Measure its fold against.
 export const portWindow = ({ baseSha, cwd, developSha, fileCap, fixShas, queueSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
@@ -26,22 +27,25 @@ export const portWindow = ({ baseSha, cwd, developSha, fileCap, fixShas, queueSh
   // — alone over the bot's cap, or conflicting once a fix before it was parked — is parked by the opener rather than
   // Failing every run while nothing shrinks the fixes. A re-cut's smaller cap cuts them too, but never the first: one
   // The bot's own cap holds goes out alone rather than parked, so only a fix no review could read is ever parked
-  for (const [fixCount, sha] of fixShas.entries()) {
+  let fixCount = fixShas.length;
+  let heldSha: string | undefined;
+  for (const [index, sha] of fixShas.entries()) {
     const beforeSha = readHeadSha(cwd);
     const outcome = pickCommit(sha, cwd);
-    const capFileCount = fixCount === 0 ? REVIEW_FILE_CAP : fileCap;
+    const capFileCount = index === 0 ? REVIEW_FILE_CAP : fileCap;
     if (outcome === PickOutcome.Conflict || readWindowFileCount(baseSha, cwd) > capFileCount) {
       runGit(["reset", "--hard", beforeSha], cwd);
-      return { fileCount: readWindowFileCount(baseSha, cwd), fixCount, heldSha: sha, queueShas: [] };
+      fixCount = index;
+      heldSha = sha;
+      break;
     }
   }
   // Owed against the tree the fixes built, not develop: a queue rebased onto `ai/review-fixes` carries the fix
-  // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
-  const fixesHeadSha = readHeadSha(cwd);
-  const owedShas = readCherryShas(fixesHeadSha, queueSha, cwd);
+  // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them. A held fix
+  // Leaves the window the fixes before it, with no queue commit behind them
+  const owedShas = heldSha === undefined ? readCherryShas(readHeadSha(cwd), queueSha, cwd) : [];
   const claimedShas = readTrailedShas(owedShas, EXPRESS_TRAILER, cwd);
   const queueShas: string[] = [];
-  let heldSha: string | undefined;
   // The claimed commits passed over since the last carry, in queue order
   let skippedShas: string[] = [];
   for (const sha of owedShas) {
@@ -73,5 +77,7 @@ export const portWindow = ({ baseSha, cwd, developSha, fileCap, fixShas, queueSh
     skippedShas = skippedShas.filter((skippedSha) => !carriedShas.includes(skippedSha));
   }
 
-  return { fileCount: readWindowFileCount(baseSha, cwd), fixCount: fixShas.length, heldSha, queueShas };
+  const fileCount = readWindowFileCount(baseSha, cwd);
+  // Nothing passes the cap the window is given but a first fix alone, so a window past it was cut under the bot's own
+  return { fileCap: fileCount > fileCap ? REVIEW_FILE_CAP : fileCap, fileCount, fixCount, heldSha, queueShas };
 };

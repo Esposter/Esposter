@@ -285,6 +285,12 @@ export const OAK_TRUNK_SLAB_HALF_HEIGHT = 1;
 export const OAK_TRUNK_REACH = 8;
 // The side of a cell of the oak's leaf normal field, in metres: vertices within a few metres agree to about 18 degrees
 export const OAK_NORMAL_CELL_SIZE = 4;
+// The oak's surface roots are its bark's second submesh, drawn in its second bark material, each root a tube open only
+// Where it leaves the trunk or the root it forks from. Each is cut every half metre along itself into the loops its
+// Centreline runs through, and kept within 5 cm, its radius weighed as its place is (`Oak.reference`)
+export const OAK_ROOT_SUBMESH = 1;
+export const OAK_ROOT_LEVEL_STEP = 0.5;
+export const OAK_ROOT_TOLERANCE = 0.05;
 // A tower's surface is unrolled on a grid of an eighth of a unit of its mesh, about a centimetre as the scene scales
 // It, fine enough that its carving's edges land within a pixel of the exports' where the login sees the towers nearest,
 // And its paint read again on half units, as fine as its loops are traced; a run of its height keeps one tone while

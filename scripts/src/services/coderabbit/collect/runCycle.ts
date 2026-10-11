@@ -23,17 +23,21 @@ import { markFoldedWindowsMerged } from "#src/services/coderabbit/collect/markFo
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
+import { readCarriedPullRequests } from "#src/services/coderabbit/collect/readCarriedPullRequests";
 import { readCoderabbitConfig } from "#src/services/coderabbit/collect/readCoderabbitConfig";
 import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
 import { readMergedPullRequestsSince } from "#src/services/coderabbit/collect/readMergedPullRequestsSince";
+import { readRecutComment } from "#src/services/coderabbit/collect/readRecutComment";
 import { readRecutFileCaps } from "#src/services/coderabbit/collect/readRecutFileCaps";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
+import { relandHeldCommits } from "#src/services/coderabbit/collect/relandHeldCommits";
 import { retargetStrandedWindows } from "#src/services/coderabbit/collect/retargetStrandedWindows";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runRepairStep } from "#src/services/coderabbit/collect/runRepairStep";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
+import { settleWindowChain } from "#src/services/coderabbit/collect/settleWindowChain";
 import { walkWindowStack } from "#src/services/coderabbit/collect/walkWindowStack";
 import { REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
@@ -124,8 +128,11 @@ export const runCycle = async ({
       CycleOutcomeKind.Idle,
       `pull request #${pausedWindow.number} was closed without merging — a person's pause, re-open it to resume`,
     );
-  // The release before the stack is a pause too when a person closed it
-  if (legacyPullRequest?.state === WindowPullRequestState.Closed)
+  // The release before the stack is a pause too when a person closed it, and no pause when a re-cut did
+  if (
+    legacyPullRequest?.state === WindowPullRequestState.Closed &&
+    readRecutComment(legacyPullRequest.number, viewerLogin) === undefined
+  )
     return getOutcome(
       CycleOutcomeKind.Idle,
       `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} was closed without merging — a person's pause`,
@@ -156,8 +163,10 @@ export const runCycle = async ({
   }
 
   // Bottom up, the stack is walked: the bottom merges and is drained once its review completes, a window above an
-  // Unmerged one waits, and a rate limit is settled wherever it refused a review
-  const stack = orderWindowStack(stackPullRequests);
+  // Unmerged one waits, and a rate limit is settled wherever it refused a review. A window off the chain from `main` is
+  // Closed first, for the opener to cut again
+  const chain = settleWindowChain({ cwd, isDryRun, stackPullRequests, viewerLogin });
+  const { stack } = chain;
   const walked = await walkWindowStack({
     collectorSha,
     cwd,
@@ -168,11 +177,14 @@ export const runCycle = async ({
     stack,
     viewerLogin,
   });
+  // The chain's re-cut is reported and woken for with the walk's holds
+  const blockReasons = [...(chain.recut ? [chain.recut.reason] : []), ...walked.blockReasons];
+  const walkedRetriggerDelaySeconds = getSoonestDelay(chain.recut?.retriggerDelaySeconds, walked.retriggerDelaySeconds);
   if (walked.outcome)
     return getOutcome(
       walked.outcome.kind,
       walked.outcome.reason,
-      walked.retriggerDelaySeconds,
+      walkedRetriggerDelaySeconds,
       walked.outcome.targetSha,
     );
   const drainedPullRequests = [...drainedBeforeWalk, ...walked.drainedPullRequests];
@@ -194,16 +206,18 @@ export const runCycle = async ({
   }
 
   // A window cut over `develop` while the release is open would move that pull request's head under its own review, so
-  // No window opens until the walk has merged it. Once merged, `main` has moved past `develop` and the stroke follows it
-  // Before a window is cut, as the next run's would
+  // No window opens until the walk has merged it, or a re-cut has closed it for the opener to cut its commits again —
+  // Read again, since no event follows that close. Once merged, `main` has moved past `develop` and the stroke follows
+  // It before a window is cut, as the next run's would
   if (
     legacyPullRequest?.state === WindowPullRequestState.Open &&
-    !walked.drainedPullRequests.includes(legacyPullRequest.number)
+    !walked.drainedPullRequests.includes(legacyPullRequest.number) &&
+    readLegacyReleasePullRequest()?.state === WindowPullRequestState.Open
   )
     return getOutcome(
       CycleOutcomeKind.Idle,
       `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} is open — no window opens until its review completes and it merges`,
-      walked.retriggerDelaySeconds,
+      walkedRetriggerDelaySeconds,
     );
 
   // The windows: one at a time, for as long as the hourly ceiling and the stacking guard allow. A window that did not
@@ -223,7 +237,7 @@ export const runCycle = async ({
     return getOutcome(
       followed.outcome.kind,
       followed.outcome.reason,
-      getSoonestDelay(walked.retriggerDelaySeconds, followed.outcome.retriggerDelaySeconds),
+      getSoonestDelay(walkedRetriggerDelaySeconds, followed.outcome.retriggerDelaySeconds),
       followed.outcome.targetSha,
     );
   let history = readWindowPullRequests(WindowPullRequestListState.All);
@@ -238,12 +252,20 @@ export const runCycle = async ({
       reviewsPerHour: REVIEWS_PER_HOUR,
     }) > 0
   ) {
-    // A pull request drained by an earlier run that opened nothing is answered by this cut too
+    // A pull request drained by an earlier run that opened nothing is answered by this cut too, and so are the re-cut
+    // Windows each one's drain carried
     const previousWindow = getNewestWindowPullRequest(history);
+    const openingHistory = history;
+    const repliedPullRequests = [
+      ...drainedPullRequests,
+      ...(previousWindow ? readMergedPullRequestsSince(previousWindow.createdAt) : []),
+    ];
     const answeredPullRequests = [
       ...new Set([
-        ...drainedPullRequests,
-        ...(previousWindow ? readMergedPullRequestsSince(previousWindow.createdAt) : []),
+        ...repliedPullRequests,
+        ...repliedPullRequests.flatMap((pullRequest) =>
+          readCarriedPullRequests(openingHistory, pullRequest, viewerLogin),
+        ),
       ]),
     ];
     // oxlint-disable-next-line no-await-in-loop -- each window is cut from the remote the one before it moved
@@ -269,6 +291,10 @@ export const runCycle = async ({
     openedStack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
     history = readWindowPullRequests(WindowPullRequestListState.All);
   }
+  // The held commits not yet tried at this `main` head are picked back onto the queue, after the openings so a
+  // Resolver's session never holds one; the queue push that lands one fires the run that cuts it, and a re-land left
+  // For the next run states its wake
+  const relanded = await relandHeldCommits({ collectorSha, cwd, isDryRun, viewerLogin });
 
   // The ceiling counts openings by when they were made, so it turns over on the clock with no event behind it: while it
   // Holds, the run wakes again once the oldest opening ages out of the hour, however many windows are open then
@@ -282,9 +308,10 @@ export const runCycle = async ({
   // Is owed
   const repaired = await runRepairStep({ collectorSha, cwd, isDryRun, viewerLogin });
   const retriggerDelaySeconds = getSoonestDelay(
-    walked.retriggerDelaySeconds,
+    walkedRetriggerDelaySeconds,
     ceilingDelaySeconds,
     openingOutcome?.retriggerDelaySeconds,
+    relanded.retriggerDelaySeconds,
     repaired.retriggerDelaySeconds,
   );
   if (repaired.outcome)
@@ -295,7 +322,7 @@ export const runCycle = async ({
       repaired.outcome.targetSha,
     );
   if (openingOutcome === undefined || openingOutcome.kind === CycleOutcomeKind.Idle) {
-    const idleReasons = [...walked.blockReasons, ...(openingOutcome === undefined ? [] : [openingOutcome.reason])];
+    const idleReasons = [...blockReasons, ...(openingOutcome === undefined ? [] : [openingOutcome.reason])];
     return getOutcome(
       CycleOutcomeKind.Idle,
       idleReasons.join("; ") ||

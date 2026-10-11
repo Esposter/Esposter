@@ -580,4 +580,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     seconds: 360,
   },
+  // The English PC client's World Level dialog at 1080 high from a public tutorial's recording, its frame at 5 seconds,
+  // The dialog open over the dimmed menu. Scored over the dialog's frame, which is opaque. The recording is an older
+  // Build's, whose help text reads World Level 5 and "reduce" where the current text map reads 3 and "decrease"
+  "world-level-dialog": {
+    capture: "world-level-dialog-2024.mkv",
+    region: { height: 716, width: 1078, x: 421, y: 182 },
+    screen: "MenuWorldLevelDialog",
+    seconds: 5,
+  },
 };

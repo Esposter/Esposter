@@ -24,7 +24,7 @@ const readCheck = (workflowFile: string, sha: string): MainCheck | undefined =>
       "--limit",
       "1",
       "--json",
-      "conclusion,databaseId,status,url",
+      "conclusion,databaseId,status,url,workflowDatabaseId",
     ]),
   ).at(0);
 // The parent whose tree is the head's own — the reviewed `develop` head a release merged, since the fold left
