@@ -7,18 +7,18 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
-| `character-artifacts` | `CharacterScreen` | 10.42% | 0.416 | 6.69% | 0.4314 |
-| `character-artifacts-tabs` | `CharacterScreen` | 7.89% | 0.481 | 5.72% | 0.3580 |
-| `character-attributes` | `CharacterScreen` | 7.74% | 0.765 | 5.57% | 0.3535 |
-| `character-attributes-panel` | `CharacterScreen` | 7.20% | 0.574 | 4.42% | 0.3177 |
-| `character-attributes-tabs` | `CharacterScreen` | 6.34% | 0.500 | 5.07% | 0.3094 |
-| `character-attributes-top` | `CharacterScreen` | 12.11% | 0.649 | 5.89% | 0.4284 |
-| `character-constellation` | `CharacterScreen` | 6.71% | 0.656 | 4.47% | 0.2813 |
-| `character-constellation-tabs` | `CharacterScreen` | 5.28% | 0.490 | 3.57% | 0.2051 |
-| `character-talents` | `CharacterScreen` | 7.92% | 0.468 | 4.91% | 0.3511 |
-| `character-talents-tabs` | `CharacterScreen` | 6.91% | 0.473 | 5.07% | 0.3227 |
-| `character-weapons` | `CharacterScreen` | 10.19% | 0.479 | 6.42% | 0.4153 |
-| `character-weapons-tabs` | `CharacterScreen` | 7.35% | 0.503 | 5.26% | 0.3381 |
+| `character-artifacts` | `CharacterScreen` | 3.17% | 0.775 | 1.61% | 0.1377 |
+| `character-artifacts-tabs` | `CharacterScreen` | 0.88% | 0.976 | 0.32% | 0.0474 |
+| `character-attributes` | `CharacterScreen` | 2.57% | 0.806 | 1.06% | 0.0950 |
+| `character-attributes-panel` | `CharacterScreen` | 4.95% | 0.607 | 2.78% | 0.1793 |
+| `character-attributes-tabs` | `CharacterScreen` | 0.97% | 0.985 | 0.34% | 0.0441 |
+| `character-attributes-top` | `CharacterScreen` | 9.51% | 0.744 | 3.60% | 0.3601 |
+| `character-constellation` | `CharacterScreen` | 2.22% | 0.857 | 1.25% | 0.0787 |
+| `character-constellation-tabs` | `CharacterScreen` | 1.31% | 0.980 | 0.44% | 0.0483 |
+| `character-talents` | `CharacterScreen` | 1.96% | 0.866 | 0.79% | 0.0831 |
+| `character-talents-tabs` | `CharacterScreen` | 0.89% | 0.978 | 0.28% | 0.0466 |
+| `character-weapons` | `CharacterScreen` | 2.72% | 0.856 | 1.57% | 0.1118 |
+| `character-weapons-tabs` | `CharacterScreen` | 0.89% | 0.976 | 0.30% | 0.0453 |
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
 | `crafting-table` | `CraftingScreen` | 39.00% | 0.243 | 44.59% | 0.7678 |
 | `dialogue-choices-line` | `DialogueTalk` | 9.22% | 0.934 | 1.91% | 0.2912 |

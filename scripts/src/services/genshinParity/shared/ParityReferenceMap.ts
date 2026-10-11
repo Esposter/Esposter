@@ -2,12 +2,15 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
+import { getCharacterScreenPlate } from "#src/services/genshinParity/shared/getCharacterScreenPlate";
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
-  // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
   "character-artifacts": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Artifacts"),
     props: { initialTab: "Artifacts" },
     screen: "CharacterScreen",
     seconds: 157.5,
@@ -15,38 +18,54 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Artifacts tab open
   "character-artifacts-tabs": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Artifacts"),
     props: { initialTab: "Artifacts" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
     seconds: 157.5,
   },
   // The English PC client's character screen on Xilonen's Attributes tab at 21:9, from the user's own recording of the
-  // Current build (session-2.mp4 at 154.4 seconds, before the character's model rises into the frame)
-  "character-attributes": { capture: "session-2.mp4", screen: "CharacterScreen", seconds: 154.4 },
+  // Current build (session-2.mp4 at 155 seconds, the interface settled: at 154.4 its closed tabs are still fading in)
+  "character-attributes": {
+    capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Attributes"),
+    screen: "CharacterScreen",
+    seconds: 155,
+  },
   // The frame's panel down the right: the name, the level, the bar and the five base rows
   "character-attributes-panel": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Attributes"),
     region: { height: 620, width: 640, x: 2800, y: 180 },
     screen: "CharacterScreen",
-    seconds: 154.4,
+    seconds: 155,
   },
   // The frame's tab column, its words and their diamonds, clear of the scene's light
   "character-attributes-tabs": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Attributes"),
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
-    seconds: 154.4,
+    seconds: 155,
   },
   // The same frame's band across the top, the name, the portraits and the Geo emblem, clear of the scene
   "character-attributes-top": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Attributes"),
     region: { height: 135, width: 3440, x: 0, y: 0 },
     screen: "CharacterScreen",
-    seconds: 154.4,
+    seconds: 155,
   },
-  // The English PC client's character screen on the Constellation tab at 21:9, the same recording at 158.3 seconds, the tab settled (158 seconds still fades its node list in). Its panel is not drawn yet, so only the frame is scored
+  // The English PC client's character screen on the Constellation tab at 21:9, the same recording at 158.3 seconds, the tab settled (158 seconds still fades its node list in), scored over its own scene with the interface it shows filled from round it
   "character-constellation": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Constellation"),
     props: { initialTab: "Constellation" },
     screen: "CharacterScreen",
     seconds: 158.3,
@@ -54,14 +73,18 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Constellation tab open
   "character-constellation-tabs": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Constellation"),
     props: { initialTab: "Constellation" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
     seconds: 158.3,
   },
-  // The English PC client's character screen on the Talents tab at 21:9, the same recording at 159 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  // The English PC client's character screen on the Talents tab at 21:9, the same recording at 159 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
   "character-talents": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Talents"),
     props: { initialTab: "Talents" },
     screen: "CharacterScreen",
     seconds: 159,
@@ -69,14 +92,18 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Talents tab open
   "character-talents-tabs": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Talents"),
     props: { initialTab: "Talents" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
     seconds: 159,
   },
-  // The English PC client's character screen on the Weapons tab at 21:9, the same recording at 156 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  // The English PC client's character screen on the Weapons tab at 21:9, the same recording at 156 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
   "character-weapons": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Weapons"),
     props: { initialTab: "Weapons" },
     screen: "CharacterScreen",
     seconds: 156,
@@ -84,6 +111,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Weapons tab open
   "character-weapons-tabs": {
     capture: "session-2.mp4",
+    isBackdrop: true,
+    plate: getCharacterScreenPlate("Weapons"),
     props: { initialTab: "Weapons" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
