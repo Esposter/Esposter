@@ -68,6 +68,10 @@ describe(createKavehKit, () => {
       burstStanceRadius: stance?.actions.normalAttacks[0]?.hits[0]?.hitArea.radius,
       normalRadius: KAVEH_KIT.normalAttacks[0]?.hits[0]?.hitArea.radius,
       secondsRemaining: stance?.secondsRemaining,
-    }).toStrictEqual({ burstStanceRadius: expect.closeTo(3.6, 9), normalRadius: expect.closeTo(2.7, 9), secondsRemaining: 12 });
+    }).toStrictEqual({
+      burstStanceRadius: expect.closeTo(3.6, 9),
+      normalRadius: expect.closeTo(2.7, 9),
+      secondsRemaining: 12,
+    });
   });
 });
