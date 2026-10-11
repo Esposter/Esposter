@@ -1,4 +1,4 @@
-import { computeSpectralPeak } from "#src/services/genshinAssets/shared/computeSpectralPeak";
+import { computeSpectralPeak } from "#src/services/recreation/signal/computeSpectralPeak";
 import { describe, expect, test } from "vitest";
 
 describe(computeSpectralPeak, () => {

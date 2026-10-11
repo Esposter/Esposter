@@ -1,4 +1,4 @@
-import { getNeighbourPixels } from "#src/services/genshinParity/shared/getNeighbourPixels";
+import { getNeighbourPixels } from "#src/services/recreation/image/getNeighbourPixels";
 
 // A mask's specks cleared in place, each a run of like pixels smaller than a speck: an island of ink becomes paper, and
 // A hole of paper the region's edge does not reach becomes ink. The source carries both as noise, a sparkle printed on

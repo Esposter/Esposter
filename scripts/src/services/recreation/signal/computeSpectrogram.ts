@@ -1,4 +1,4 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
 import { transformFourier } from "genshin-engine";
 

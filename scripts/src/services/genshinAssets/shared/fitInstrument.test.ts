@@ -1,6 +1,6 @@
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { MUSIC_FRAME_LENGTH, MUSIC_HOP_LENGTH } from "#src/services/genshinAssets/shared/constants";
 import { fitInstrument } from "#src/services/genshinAssets/shared/fitInstrument";
+import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 import { A4_FREQUENCY, A4_PITCH } from "genshin-engine";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription/notes";
 import { describe, expect, test } from "vitest";

@@ -3,7 +3,6 @@ import type { Music, MusicNote, MusicVoice } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { publishGameDataRecord } from "#src/services/gameData/publishGameDataRecord";
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { computeNoteSupport } from "#src/services/genshinParity/music/computeNoteSupport";
 import { readGameMusicSegments } from "#src/services/genshinParity/music/readGameMusicSegments";
@@ -18,6 +17,7 @@ import {
   NOTE_SUPPORT_MIN_DECIBELS,
 } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
+import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 import { withFinalizerAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
 

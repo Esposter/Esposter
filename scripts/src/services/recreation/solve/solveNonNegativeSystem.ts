@@ -1,4 +1,4 @@
-import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
+import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
 
 // How far the residual's slope toward an unknown held at none must rise before it is freed, against the slope's scale,
 // So rounding alone frees nothing

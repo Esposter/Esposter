@@ -1,6 +1,6 @@
-import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
+import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
-import { fillRegionHarmonically } from "#src/services/genshinParity/reference/fillRegionHarmonically";
+import { fillRegionHarmonically } from "#src/services/recreation/image/fillRegionHarmonically";
 import { describe, expect, test } from "vitest";
 
 describe(fillRegionHarmonically, () => {
@@ -12,7 +12,7 @@ describe(fillRegionHarmonically, () => {
   const getFrame = (
     width: number,
     height: number,
-    region: ParityRegion,
+    region: ImageRegion,
     getColour: (column: number, row: number) => number[],
   ): Uint8Array => {
     const pixels = new Uint8Array(width * height * CHANNELS);

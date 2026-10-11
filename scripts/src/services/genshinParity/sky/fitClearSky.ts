@@ -1,4 +1,4 @@
-import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
+import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
 
 // The polynomial's degree across and up the frame: a sky's gradient bends up the frame toward its horizon and across it
 // Toward its sun, smoothly, and a cubic holds both while no cloud's few hundred pixels fit into it

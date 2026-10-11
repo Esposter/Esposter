@@ -1,7 +1,7 @@
-import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
+import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
-import { fillRegionHarmonically } from "#src/services/genshinParity/reference/fillRegionHarmonically";
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { fillRegionHarmonically } from "#src/services/recreation/image/fillRegionHarmonically";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readFile, rename } from "node:fs/promises";
@@ -18,7 +18,7 @@ const DIGEST_LENGTH = 16;
 export const getCleanPlatePath = async (
   referenceId: string,
   referencePath: string,
-  region: ParityRegion,
+  region: ImageRegion,
   { height, width }: { height: number; width: number },
 ): Promise<string | undefined> => {
   if (region.x === 0 && region.y === 0 && region.width >= width && region.height >= height) {

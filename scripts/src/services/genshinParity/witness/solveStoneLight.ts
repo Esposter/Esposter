@@ -3,11 +3,11 @@ import type { StoneLight } from "genshin-engine";
 
 import { accumulateNormalEquations } from "#src/services/genshinParity/shared/accumulateNormalEquations";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
-import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solveNonNegativeSystem";
 import { computeSkyLobeHarmonics } from "#src/services/genshinParity/witness/computeSkyLobeHarmonics";
 import { RIDGE, SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/constants";
 import { groupStoneBins } from "#src/services/genshinParity/witness/groupStoneBins";
 import { writeStoneRampWeights } from "#src/services/genshinParity/witness/writeStoneRampWeights";
+import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonNegativeSystem";
 import {
   computeStoneDarkening,
   STONE_HARMONIC_COUNT,

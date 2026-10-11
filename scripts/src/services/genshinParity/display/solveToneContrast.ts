@@ -1,7 +1,7 @@
 import type { DisplaySample } from "#src/models/genshinParity/display/DisplaySample";
 
 import { computeLightPlaneResidual } from "#src/services/genshinParity/display/computeLightPlaneResidual";
-import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
+import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { GENSHIN_TONE_CONTRAST } from "genshin-engine";
 
 // The refinement's first step from the shipped contrast, and its steps, which bring a contrast to a thousandth

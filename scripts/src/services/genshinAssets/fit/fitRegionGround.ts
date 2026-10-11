@@ -6,7 +6,6 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGroundBounds";
 import { computeLagDifference } from "#src/services/genshinAssets/fit/computeLagDifference";
-import { computeRootMeanSquare } from "#src/services/genshinAssets/fit/computeRootMeanSquare";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
 import { fitTerrainCliffs } from "#src/services/genshinAssets/fit/fitTerrainCliffs";
 import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPlateaus";
@@ -16,10 +15,11 @@ import { fitTerrainRidges } from "#src/services/genshinAssets/fit/fitTerrainRidg
 import { mapTerrainResidualGrid } from "#src/services/genshinAssets/fit/mapTerrainResidualGrid";
 import { readGroundFootprints } from "#src/services/genshinAssets/fit/readGroundFootprints";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { GROUND_RADIUS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
+import { computeMean } from "#src/services/recreation/statistics/computeMean";
+import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResidualFade } from "genshin-engine";
 import { readFile } from "node:fs/promises";

@@ -1,6 +1,6 @@
 import type { LayerScore } from "#src/models/genshinParity/reference/LayerScore";
-import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
+import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { computeLayerMasks } from "#src/services/genshinParity/reference/computeLayerMasks";
@@ -27,7 +27,7 @@ export const scoreLayers = async (
   shot: Buffer,
   gbuffer: WitnessGbuffer,
   // The region both images are cut from, in the frame's own pixels, and the frame's size
-  region: ParityRegion,
+  region: ImageRegion,
   frame: { height: number; width: number },
 ): Promise<LayerScore[]> => {
   const { height: regionHeight, width: regionWidth } = await sharp(reference).metadata();

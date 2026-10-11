@@ -1,9 +1,7 @@
 import type { InstrumentFit } from "#src/models/genshinAssets/shared/InstrumentFit";
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
-import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
-import { computeSpectralPeak } from "#src/services/genshinAssets/shared/computeSpectralPeak";
 import {
   MUSIC_CLEAR_BINS,
   MUSIC_CLEAR_SEMITONES,
@@ -15,6 +13,8 @@ import {
   MUSIC_RELEASE_SECONDS,
 } from "#src/services/genshinAssets/shared/constants";
 import { toFrequency } from "#src/services/genshinAssets/shared/toFrequency";
+import { computeSpectralPeak } from "#src/services/recreation/signal/computeSpectralPeak";
+import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The decay's time constants tried, in seconds, evenly on a log scale from a frame to half a minute

@@ -1,4 +1,4 @@
-import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
+import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import sharp from "sharp";
 
 // The texels a diffuse texture is reduced to before its median is taken, enough for a colour a whole part is painted

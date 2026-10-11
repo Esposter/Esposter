@@ -1,6 +1,6 @@
 import type { GroundPoint } from "genshin-engine";
 
-import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
+import { computeMean } from "#src/services/recreation/statistics/computeMean";
 
 // The mean of a set of points, each axis averaged on its own
 export const getCentroid = (points: readonly GroundPoint[]): GroundPoint => ({

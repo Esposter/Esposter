@@ -1,7 +1,7 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
-import { computeBandBins } from "#src/services/genshinParity/shared/computeBandBins";
 import { LISTEN_BAND_CENTRES } from "#src/services/genshinParity/shared/constants";
+import { computeBandBins } from "#src/services/recreation/signal/computeBandBins";
 
 // Each octave band's energy frame by frame, between the half octaves either side of its centre, in the pitch classes'
 // Own frames

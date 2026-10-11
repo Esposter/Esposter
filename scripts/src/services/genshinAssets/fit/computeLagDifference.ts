@@ -1,6 +1,6 @@
 import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
 
-import { computeRootMeanSquare } from "#src/services/genshinAssets/fit/computeRootMeanSquare";
+import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
 
 // How much a grid's values change over a lag, its power at that scale: the root-mean-square difference between every
 // Two samples the lag apart along either axis, the lag taken to the nearest whole step and at least one

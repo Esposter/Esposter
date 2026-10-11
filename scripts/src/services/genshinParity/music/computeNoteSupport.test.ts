@@ -1,4 +1,4 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 import type { MusicNote } from "genshin-engine";
 
 import { computeNoteSupport } from "#src/services/genshinParity/music/computeNoteSupport";

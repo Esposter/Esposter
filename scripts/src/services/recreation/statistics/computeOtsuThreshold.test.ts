@@ -1,4 +1,4 @@
-import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
+import { computeOtsuThreshold } from "#src/services/recreation/statistics/computeOtsuThreshold";
 import { describe, expect, test } from "vitest";
 
 describe(computeOtsuThreshold, () => {

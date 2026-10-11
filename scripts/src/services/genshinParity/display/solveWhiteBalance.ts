@@ -3,7 +3,7 @@ import type { WhiteBalance } from "genshin-engine";
 
 import { clampWhiteBalance } from "#src/services/genshinParity/display/clampWhiteBalance";
 import { computeLightPlaneResidual } from "#src/services/genshinParity/display/computeLightPlaneResidual";
-import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
+import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { computeWhiteBalance, GENSHIN_TONE_CONTRAST } from "genshin-engine";
 import { Matrix3 } from "three";
 

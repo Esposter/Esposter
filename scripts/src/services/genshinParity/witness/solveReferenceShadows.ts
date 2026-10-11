@@ -3,11 +3,9 @@ import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
-import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
 import { SHADOW_WIDTH } from "#src/services/genshinParity/passes/constants";
 import { LUMINANCE, PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
@@ -22,6 +20,8 @@ import { getSkyGridDirections } from "#src/services/genshinParity/witness/getSky
 import { readReferenceLandmarks } from "#src/services/genshinParity/witness/readReferenceLandmarks";
 import { solveCameraPose } from "#src/services/genshinParity/witness/solveCameraPose";
 import { toSunDirection } from "#src/services/genshinParity/witness/toSunDirection";
+import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
+import { computeOtsuThreshold } from "#src/services/recreation/statistics/computeOtsuThreshold";
 import { BYTE } from "#src/services/shared/constants";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";

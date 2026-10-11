@@ -1,4 +1,4 @@
-export interface ParityRegion {
+export interface ImageRegion {
   height: number;
   width: number;
   x: number;

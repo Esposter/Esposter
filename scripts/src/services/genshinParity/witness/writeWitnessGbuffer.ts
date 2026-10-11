@@ -1,9 +1,9 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 
 import { GBUFFER_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { drawPixels } from "#src/services/genshinParity/shared/drawPixels";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { getFamilyColor } from "#src/services/genshinParity/witness/getFamilyColor";
+import { drawPixels } from "#src/services/recreation/image/drawPixels";
 import { toByte } from "#src/services/shared/toByte";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";

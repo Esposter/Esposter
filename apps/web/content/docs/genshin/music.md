@@ -100,7 +100,7 @@ The order, and the rules each step keeps, are the `genshin-parity` skill's `refe
 | `scripts/src/services/genshinAssets/shared/fitVoiceNoises.ts`             | Every voice's noise in each noise-like band, solved at once       |
 | `scripts/src/services/genshinParity/music/characterizeMusicBands.ts`      | What each band of the game's sound holds, for `bands`             |
 | `packages/genshin-engine/src/audio/computeNoiseSamples.ts`                | An instrument's noise, its bands built in one spectrum            |
-| `scripts/src/services/genshinAssets/shared/computeSpectralPeak.ts`        | A partial's frequency and height between two bins                 |
+| `scripts/src/services/recreation/signal/computeSpectralPeak.ts`           | A partial's frequency and height between two bins                 |
 | `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`           | Pitch agreement and each octave band's distance                   |
 | `scripts/src/services/genshinParity/music/renderMusicSegments.ts`         | Each segment rendered by its screen, beside the game's            |
 | `scripts/src/services/genshinParity/commands/noiseCommand.ts`             | The noise solve read back from our render and from the game's     |

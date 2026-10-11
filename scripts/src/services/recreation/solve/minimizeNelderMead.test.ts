@@ -1,4 +1,4 @@
-import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
+import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { describe, expect, test } from "vitest";
 
 describe(minimizeNelderMead, () => {

@@ -1,4 +1,4 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
 // The peak of a frame's spectrum nearest a frequency: the largest of the bins either side of it, refined by a parabola
 // Through the log magnitudes of that bin and its neighbours, which a Hann window's peak follows closely, so a partial

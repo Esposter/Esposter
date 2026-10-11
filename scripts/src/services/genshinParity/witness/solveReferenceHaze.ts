@@ -2,10 +2,10 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { Haze } from "#src/models/genshinParity/witness/Haze";
 import type { StoneLightReading } from "#src/models/genshinParity/witness/StoneLightReading";
 
-import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { computeFogOpacity } from "#src/services/genshinParity/sky/computeFogOpacity";
 import { computeHazeResidual } from "#src/services/genshinParity/witness/computeHazeResidual";
 import { readStoneLightReading } from "#src/services/genshinParity/witness/readStoneLightReading";
+import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The simplex's steps over the haze's density's and its falloff's logarithms and its most opacity's log-odds, and how

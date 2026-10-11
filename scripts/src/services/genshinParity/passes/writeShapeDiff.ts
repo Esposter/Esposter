@@ -2,8 +2,8 @@ import { computeNormalAngle } from "#src/services/genshinParity/passes/computeNo
 import { SHAPE_NORMAL_GATE_DEGREES } from "#src/services/genshinParity/passes/constants";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { SHAPES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { drawPixels } from "#src/services/genshinParity/shared/drawPixels";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
+import { drawPixels } from "#src/services/recreation/image/drawPixels";
 import { BYTE } from "#src/services/shared/constants";
 import { toByte } from "#src/services/shared/toByte";
 import { mkdir } from "node:fs/promises";

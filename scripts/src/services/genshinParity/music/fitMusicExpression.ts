@@ -1,10 +1,10 @@
 import type { BandLevels } from "#src/models/genshinParity/music/BandLevels";
 import type { MusicExpression } from "#src/models/genshinParity/music/MusicExpression";
 
-import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { computeBandGaps } from "#src/services/genshinParity/music/computeBandGaps";
 import { fitBroadbandGain } from "#src/services/genshinParity/music/fitBroadbandGain";
 import { splitBandLevelsByWindow } from "#src/services/genshinParity/music/splitBandLevelsByWindow";
+import { computeMean } from "#src/services/recreation/statistics/computeMean";
 
 // A render's expression fitted to the game's, window by window: each window's one gain over every band
 // (`fitBroadbandGain`), a window no frame lies in taking its nearest's. The same gains are fitted to the even bands and
