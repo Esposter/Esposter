@@ -103,6 +103,7 @@ jobs:
           git config user.email "Q16solver@users.noreply.github.com"
           git config core.fileMode false
           echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
+          git rm -r -q --cached . && git reset -q --hard
 
       - name: 🤝 Trust the workspace
         uses: ./.github/actions/trust-workspace
