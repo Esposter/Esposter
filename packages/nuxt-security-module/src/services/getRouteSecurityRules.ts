@@ -1,5 +1,6 @@
 import type { ModuleOptions } from "#src/models/ModuleOptions";
 import type { SecurityRouteRules } from "#src/models/SecurityRouteRules";
+import type { RouteRuleConfig } from "h3/rules";
 
 import { moduleOptionsSchema } from "#src/schemas/moduleOptionsSchema";
 import { formatZodIssues } from "#src/services/formatZodIssues";
@@ -9,7 +10,7 @@ import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
 // It is checked as the module's options with that route's overrides laid over them, so a route cannot set an option the module would refuse.
 // A route rule with no `security` key is left out, so it adds no entry to the route table
 export const getRouteSecurityRules = (
-  routeRules: Record<string, { security?: SecurityRouteRules }>,
+  routeRules: Record<string, RouteRuleConfig>,
   options: ModuleOptions,
 ): Record<string, SecurityRouteRules> => {
   const routeSecurityRules: Record<string, SecurityRouteRules> = {};
