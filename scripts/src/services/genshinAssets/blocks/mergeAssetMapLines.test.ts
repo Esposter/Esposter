@@ -19,18 +19,18 @@ const createShard = (entries: string[][]): string[] => [
   "  ]",
   "}",
 ];
-const merge = async (shards: { lines: string[]; root: string }[], gameRoot: string): Promise<string[]> => {
+const merge = async (shards: { lines: string[]; root: string }[], blocksRoot: string): Promise<string[]> => {
   const merged: string[] = [];
   for await (const line of mergeAssetMapLines(
     shards.map(({ lines, root }) => ({ lines: Readable.from(lines), root })),
-    gameRoot,
+    blocksRoot,
   ))
     merged.push(line);
   return merged;
 };
 
 describe(mergeAssetMapLines, () => {
-  test("joins the shards' entries under the first header, each source rebased to the game's blocks", async () => {
+  test("joins the shards' entries under the first header, each source rebased to the installed blocks", async () => {
     expect.hasAssertions();
 
     const merged = await merge(

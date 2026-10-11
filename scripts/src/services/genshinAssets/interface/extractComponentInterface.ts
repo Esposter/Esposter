@@ -8,7 +8,7 @@ import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStu
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
 import { parseRectTransformLayout } from "#src/services/genshinAssets/interface/parseRectTransformLayout";
-import { GAME_BLOCKS_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
+import { GENSHIN_ANIMESTUDIO_OPTIONS, INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
@@ -33,7 +33,7 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
   if (!block) throw new InvalidOperationError(Operation.Read, interfaceOptions.anchorPattern, "in no block");
   const directory = join(getComponentDirectory(component).root, "interface");
   await rm(directory, { force: true, recursive: true });
-  const blockPath = join(GAME_BLOCKS_DIRECTORY, block);
+  const blockPath = join(INSTALLED_BLOCKS_DIRECTORY, block);
   runAnimeStudio(
     [
       blockPath,

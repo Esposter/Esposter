@@ -5,8 +5,8 @@ import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { BodyAvatarMap } from "#src/services/genshinAssets/locomotion/constants";
 import {
   EXTRACTED_DIRECTORY,
-  GAME_BLOCKS_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -23,7 +23,7 @@ export const readBodyHumanScale = async (body: string): Promise<number> => {
   await rm(directory, { force: true, recursive: true });
   runAnimeStudio(
     [
-      join(GAME_BLOCKS_DIRECTORY, avatar.block),
+      join(INSTALLED_BLOCKS_DIRECTORY, avatar.block),
       directory,
       "--types",
       AssetType.Avatar,

@@ -10,8 +10,8 @@ import {
 } from "#src/services/genshinAssets/namecards/constants";
 import {
   ASSET_INDEX_PATH,
-  GAME_BLOCKS_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
@@ -36,7 +36,7 @@ const readNamecardNames = (directory: string): string[] =>
 const exportBlockNamecards = (block: string, names: readonly string[], directory: string): void => {
   runAnimeStudio(
     [
-      join(GAME_BLOCKS_DIRECTORY, block),
+      join(INSTALLED_BLOCKS_DIRECTORY, block),
       directory,
       "--names",
       `^(${names.map((name) => RegExp.escape(name)).join("|")})$`,

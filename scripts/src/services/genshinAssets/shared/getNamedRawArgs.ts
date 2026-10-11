@@ -2,7 +2,7 @@ import type { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
-import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { join } from "node:path";
 
 // The command line that exports one block's assets of a type, by their exact names, raw into a folder grouped by type
@@ -12,7 +12,7 @@ export const getNamedRawArgs = (
   names: readonly string[],
   directory: string,
 ): string[] => [
-  join(GAME_BLOCKS_DIRECTORY, block),
+  join(INSTALLED_BLOCKS_DIRECTORY, block),
   directory,
   "--names",
   `^(${names.map((name) => RegExp.escape(name)).join("|")})$`,

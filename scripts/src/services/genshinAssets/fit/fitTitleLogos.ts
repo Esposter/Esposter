@@ -1,6 +1,6 @@
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { GAME_BLOCKS_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
+import { GENSHIN_ANIMESTUDIO_OPTIONS, INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { traceImage } from "#src/services/genshinParity/shared/traceImage";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { mkdir } from "node:fs/promises";
@@ -48,7 +48,7 @@ export const fitTitleLogos = async (directory: string): Promise<Record<string, s
   await mkdir(spriteDirectory, { recursive: true });
   runAnimeStudio(
     [
-      join(GAME_BLOCKS_DIRECTORY, LOGIN_INTERFACE_BLOCK),
+      join(INSTALLED_BLOCKS_DIRECTORY, LOGIN_INTERFACE_BLOCK),
       spriteDirectory,
       "--names",
       `^(${TITLE_LOGO_SPRITES.map(({ sprite }) => sprite).join("|")})$`,

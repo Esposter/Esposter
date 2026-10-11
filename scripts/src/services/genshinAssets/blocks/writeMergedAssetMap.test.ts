@@ -5,7 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-// A shard's asset map as AnimeStudio writes it, one entry naming the block its source is under the shard's root
+// A shard's asset map as AnimeStudio writes it, one entry naming the block its source is under the shard's root, the
+// Source JSON-escaped as a Windows path's backslashes are
 const createShardText = (root: string, name: string): string =>
   [
     "{",
@@ -13,7 +14,7 @@ const createShardText = (root: string, name: string): string =>
     '  "AssetEntries": [',
     "    {",
     `      "Name": "${name}",`,
-    `      "Source": "${root}/00/1.blk",`,
+    `      "Source": ${JSON.stringify(`${root}/00/1.blk`)},`,
     '      "PathID": 1',
     "    }",
     "  ]",

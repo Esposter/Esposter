@@ -3,8 +3,8 @@ import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStud
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import {
   ANIMESTUDIO_UNPARSED_SUFFIX,
-  GAME_BLOCKS_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { existsSync } from "node:fs";
@@ -33,7 +33,7 @@ export const exportTerrainTiles = async (
     if (foundBlocks.size === tileNames.size) break;
     runAnimeStudio(
       [
-        join(GAME_BLOCKS_DIRECTORY, block),
+        join(INSTALLED_BLOCKS_DIRECTORY, block),
         unparsedDirectory,
         "--types",
         `${AssetType.TerrainData}${ANIMESTUDIO_UNPARSED_SUFFIX}`,

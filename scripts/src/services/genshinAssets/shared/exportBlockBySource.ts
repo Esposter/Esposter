@@ -3,8 +3,8 @@ import type { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import {
-  GAME_BLOCKS_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
   SOURCE_EXPORT_SUFFIX,
 } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
@@ -27,7 +27,7 @@ export const exportBlockBySource = async (
     const typeDirectory = join(directory, blockName, type);
     runAnimeStudio(
       [
-        join(GAME_BLOCKS_DIRECTORY, block),
+        join(INSTALLED_BLOCKS_DIRECTORY, block),
         typeDirectory,
         "--types",
         type,

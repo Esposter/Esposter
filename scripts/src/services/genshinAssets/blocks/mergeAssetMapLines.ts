@@ -4,14 +4,17 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // AnimeStudio's asset map merged from its shards' lines, which hold one entry a block of them. The first shard's header
 // And trailer are kept, every shard's entries follow in turn, and each entry's source is rebased from its shard's blocks
-// Folder to the game's, since AnimeStudio writes the folder it was given. The lines are read one at a time, the map too
-// Large to hold whole
+// Folder to the installed blocks' one, since AnimeStudio writes the folder it was given. The lines are read one at a
+// Time, the map too large to hold whole
 const ENTRIES_OPENING = '"AssetEntries": [';
 const ENTRIES_CLOSING = "]";
 const SOURCE_PREFIX = '"Source": "';
 
-export const mergeAssetMapLines = async function* (shards: AssetMapLines[], gameRoot: string): AsyncGenerator<string> {
-  const to = `${toEscaped(gameRoot)}/`;
+export const mergeAssetMapLines = async function* (
+  shards: AssetMapLines[],
+  blocksRoot: string,
+): AsyncGenerator<string> {
+  const to = `${toEscaped(blocksRoot)}/`;
   const trailer: string[] = [];
   // The last entry read, held until the entry after it shows whether it takes a comma
   let previous: string[] | undefined;
@@ -69,8 +72,8 @@ const tagShardLines = async function* (
 // A JSON string's characters as they stand between its quotes, so a path is found however the file escapes it
 const toEscaped = (path: string): string => JSON.stringify(path).slice(1, -1);
 
-// The source of an entry's line with its shard's root swapped for the game's. A source outside the root is refused:
-// The index reads every source relative to the game's blocks, so a stray one would index as another block
+// The source of an entry's line with its shard's root swapped for the installed blocks'. A source outside the root is refused:
+// The index reads every source relative to the installed blocks, so a stray one would index as another block
 const rebaseSource = (line: string, from: string, to: string, root: string): string => {
   const start = line.indexOf(SOURCE_PREFIX) + SOURCE_PREFIX.length;
   if (!line.startsWith(from, start))

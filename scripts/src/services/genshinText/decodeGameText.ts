@@ -1,8 +1,11 @@
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { EXTRACTED_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
-import { getInstalledBlockPath } from "#src/services/genshinAssets/shared/getInstalledBlockPath";
+import {
+  EXTRACTED_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
+} from "#src/services/genshinAssets/shared/constants";
 import { getPathHash } from "#src/services/genshinAssets/shared/getPathHash";
 import {
   EXCEL_BIN_OUTPUT_PATH,
@@ -49,7 +52,7 @@ export const decodeGameText = async (): Promise<string[]> => {
   for (const [block, blockAssets] of Map.groupBy(assets, (asset) => asset.block))
     runAnimeStudio(
       [
-        getInstalledBlockPath(block),
+        join(INSTALLED_BLOCKS_DIRECTORY, block),
         exportDirectory,
         "--names",
         `^(${blockAssets.map(({ name }) => name).join("|")})$`,

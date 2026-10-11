@@ -5,8 +5,8 @@ import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStu
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import {
   EXTRACTED_DIRECTORY,
-  GAME_BLOCKS_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
 import { computeClipTiming } from "#src/services/genshinAssets/timings/computeClipTiming";
@@ -30,7 +30,7 @@ export const readClipTimings = async (clipPattern: string): Promise<ClipTiming[]
     rmSync(blockDirectory, { force: true, recursive: true });
     runAnimeStudio(
       [
-        join(GAME_BLOCKS_DIRECTORY, block),
+        join(INSTALLED_BLOCKS_DIRECTORY, block),
         blockDirectory,
         "--types",
         AssetType.AnimationClip,

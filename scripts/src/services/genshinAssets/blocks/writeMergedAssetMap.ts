@@ -15,13 +15,13 @@ const readFileLines = async function* (path: string): AsyncGenerator<string> {
 // As they come, waiting on the output's drain so the map is never held whole
 export const writeMergedAssetMap = async (
   shards: AssetMapShard[],
-  gameRoot: string,
+  blocksRoot: string,
   outputPath: string,
 ): Promise<void> => {
   const output = createWriteStream(outputPath, "utf8");
   const lines = mergeAssetMapLines(
     shards.map(({ path, root }) => ({ lines: readFileLines(path), root })),
-    gameRoot,
+    blocksRoot,
   );
   for await (const line of lines) if (!output.write(`${line}\n`)) await once(output, "drain");
   output.end();

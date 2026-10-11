@@ -11,8 +11,8 @@ import { parseShaderPropertyNames } from "#src/services/genshinAssets/materials/
 import {
   ANIMESTUDIO_UNPARSED_SUFFIX,
   DEFERRED_SHADING_BLOCK,
-  GAME_BLOCKS_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
@@ -48,7 +48,7 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
     const rawDirectory = join(directory, "raw", blockName);
     runAnimeStudio(
       [
-        join(GAME_BLOCKS_DIRECTORY, block),
+        join(INSTALLED_BLOCKS_DIRECTORY, block),
         rawDirectory,
         "--types",
         `${AssetType.Shader}${ANIMESTUDIO_UNPARSED_SUFFIX}`,

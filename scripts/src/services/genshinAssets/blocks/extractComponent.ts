@@ -11,8 +11,8 @@ import { walkAssetClosure } from "#src/services/genshinAssets/blocks/walkAssetCl
 import {
   CAB_MAP_PATH,
   EXPORTED_ASSET_TYPES,
-  GAME_BLOCKS_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
   LAYOUT_ASSET_TYPES,
 } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
@@ -80,7 +80,7 @@ const exportResolvedAssets = async (
     const names = [...new Set(blockAssets.map(({ name }) => RegExp.escape(name)))];
     runAnimeStudio(
       [
-        join(GAME_BLOCKS_DIRECTORY, block),
+        join(INSTALLED_BLOCKS_DIRECTORY, block),
         assetsDirectory,
         "--names",
         `^(${names.join("|")})$`,
@@ -169,7 +169,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
     for (const block of await readAssetBlocks(namePattern))
       runAnimeStudio(
         [
-          join(GAME_BLOCKS_DIRECTORY, block),
+          join(INSTALLED_BLOCKS_DIRECTORY, block),
           directory.assets,
           "--names",
           namePattern,

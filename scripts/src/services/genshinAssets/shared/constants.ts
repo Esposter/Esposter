@@ -32,6 +32,9 @@ export const ASSET_MAP_PATH: string = join(EXTRACTED_DIRECTORY, "maps", `${ASSET
 export const ASSET_INDEX_PATH: string = join(EXTRACTED_DIRECTORY, "maps", "index.tsv");
 // Where each shard of the map's blocks is run from while it is mapped: its symlinked blocks and its own asset map
 export const ASSET_MAP_SHARDS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), "shards");
+// The blocks as the game loads them, each a symlink to its hotfixed copy or its StreamingAssets one, written by the map
+// (`linkInstalledBlocks`) and the folder the map, the CAB map and every export open a block through
+export const INSTALLED_BLOCKS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), "blocks");
 // AnimeStudio's command line (github.com/Escartem/AnimeStudio): the CLI the build publishes on macOS, which is where its
 // Map is kept, or the one unpacked under Downloads on Windows, unless `GENSHIN_ANIMESTUDIO_CLI` names another. It writes its
 // CAB map into a `Maps` folder beside its working directory, so it is run from its own folder

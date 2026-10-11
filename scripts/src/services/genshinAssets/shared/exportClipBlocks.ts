@@ -1,6 +1,6 @@
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { GAME_BLOCKS_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
+import { GENSHIN_ANIMESTUDIO_OPTIONS, INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { mkdir } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -16,7 +16,7 @@ export const exportClipBlocks = async (
   for (const block of blocks)
     runAnimeStudio(
       [
-        join(GAME_BLOCKS_DIRECTORY, block),
+        join(INSTALLED_BLOCKS_DIRECTORY, block),
         join(directory, basename(block, ".blk")),
         "--types",
         AssetType.AnimationClip,

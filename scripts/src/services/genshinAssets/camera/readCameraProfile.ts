@@ -4,8 +4,11 @@ import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStu
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { CAMERA_PROFILE_NAME } from "#src/services/genshinAssets/camera/constants";
 import { parseCameraProfile } from "#src/services/genshinAssets/camera/parseCameraProfile";
-import { EXTRACTED_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
-import { getInstalledBlockPath } from "#src/services/genshinAssets/shared/getInstalledBlockPath";
+import {
+  EXTRACTED_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
+} from "#src/services/genshinAssets/shared/constants";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -24,7 +27,7 @@ export const readCameraProfile = async (): Promise<CameraProfileReading> => {
   await rm(directory, { force: true, recursive: true });
   runAnimeStudio(
     [
-      getInstalledBlockPath(block),
+      join(INSTALLED_BLOCKS_DIRECTORY, block),
       directory,
       "--types",
       AssetType.MonoBehaviour,

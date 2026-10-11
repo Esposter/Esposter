@@ -1,4 +1,8 @@
-import { ASSET_INDEX_PATH, ASSET_MAP_PATH, GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import {
+  ASSET_INDEX_PATH,
+  ASSET_MAP_PATH,
+  INSTALLED_BLOCKS_DIRECTORY,
+} from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { once } from "node:events";
 import { createReadStream, createWriteStream } from "node:fs";
@@ -29,7 +33,7 @@ export const writeAssetIndex = async (): Promise<number> => {
     const line = rawLine.trim();
     if (line.startsWith(NAME_PREFIX)) name = parseValue(line, NAME_PREFIX);
     else if (line.startsWith(SOURCE_PREFIX))
-      block = relative(GAME_BLOCKS_DIRECTORY, parseValue(line, SOURCE_PREFIX)).replaceAll("\\", "/");
+      block = relative(INSTALLED_BLOCKS_DIRECTORY, parseValue(line, SOURCE_PREFIX)).replaceAll("\\", "/");
     else if (line.startsWith(PATH_ID_PREFIX)) pathId = line.slice(PATH_ID_PREFIX.length).replace(/,$/u, "");
     else if (line.startsWith(TYPE_PREFIX)) type = parseValue(line, TYPE_PREFIX);
     else if (line.startsWith(OFFSET_PREFIX)) {
