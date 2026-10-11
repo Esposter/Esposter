@@ -25,6 +25,16 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
+const createCore = (reactionType: TransformativeReactionType, characterId = TRAVELER_CHARACTER_ID): KitDendroCore => ({
+  characterId,
+  kind: "dendroCore",
+  position: { x: 0, z: 0 },
+  reactionType,
+  secondsRemaining: 0,
+});
+
+const getDamage = ({ health, maxHealth }: Enemy): number => maxHealth - health;
+
 describe(burstKitDendroCores, () => {
   const LEVEL = 90;
   const STURDY_HEALTH = 1e9;
@@ -48,17 +58,6 @@ describe(burstKitDendroCores, () => {
     maxHealth: STURDY_HEALTH,
   });
 
-  const createCore = (
-    reactionType: TransformativeReactionType,
-    characterId = TRAVELER_CHARACTER_ID,
-  ): KitDendroCore => ({
-    characterId,
-    kind: "dendroCore",
-    position: { x: 0, z: 0 },
-    reactionType,
-    secondsRemaining: 0,
-  });
-
   const createContext = (enemies: Enemy[], party = createParty([TRAVELER_CHARACTER_ID])): KitStrikeContext => ({
     characterIdCombatantMap: new Map([
       [BENCHED_CHARACTER_ID, { ...combatant, characterId: BENCHED_CHARACTER_ID }],
@@ -71,8 +70,6 @@ describe(burstKitDendroCores, () => {
     party,
     random: () => 0,
   });
-
-  const getDamage = ({ health, maxHealth }: Enemy): number => maxHealth - health;
 
   test("bursts a Bloom's core on every enemy within 5 metres of its edge, and none past them", () => {
     expect.hasAssertions();
