@@ -3,7 +3,6 @@ import type { SceneLayout } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import {
-  GENSHIN_ANIMESTUDIO_OPTIONS,
   MAIN_TEXTURE_SLOT,
   TERRAIN_BASE_MAP_SUFFIX,
   TERRAIN_TILE_SIZE,
@@ -12,6 +11,7 @@ import {
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
+import { nameMeshPlacements } from "#src/services/genshinAssets/shared/nameMeshPlacements";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { selectFinestLevels } from "#src/services/genshinAssets/shared/selectFinestLevels";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
@@ -19,7 +19,6 @@ import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRigh
 import { parseTerrainTileName } from "#src/services/genshinAssets/world/parseTerrainTileName";
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -46,13 +45,7 @@ export const writeWitnessLayout = async (
   const toWitness = ([x = 0, y = 0, z = 0]: readonly number[]): [number, number, number] =>
     toRightHanded([x - originX, y - originY, z - originZ]);
   // A mesh a placement names by path ID (a skinned mesh in another file) is named through the asset index first
-  const meshPathIds = new Set(placements.map(({ mesh }) => mesh).filter((mesh) => /^-?\d+$/u.test(mesh)));
-  const meshAssets = await readIndexedAssets(
-    ({ pathId, type }) => type === AssetType.Mesh && meshPathIds.has(pathId),
-    GENSHIN_ANIMESTUDIO_OPTIONS,
-  );
-  const pathIdMeshMap = new Map(meshAssets.map(({ name, pathId }) => [pathId, name]));
-  for (const placement of placements) placement.mesh = pathIdMeshMap.get(placement.mesh) ?? placement.mesh;
+  await nameMeshPlacements(placements);
   const drawn = selectFinestLevels(placements, (mesh) => checkHasFile(AssetType.Mesh, mesh, "obj"));
   const referencedIds = new Set([
     ...drawn.flatMap(({ materials: drawnMaterials }) => drawnMaterials),
