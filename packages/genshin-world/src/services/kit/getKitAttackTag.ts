@@ -1,5 +1,5 @@
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 

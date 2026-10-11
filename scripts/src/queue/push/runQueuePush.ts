@@ -1,7 +1,7 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
 import { acquirePushLock } from "#src/queue/push/acquirePushLock";
-import { markPushPending } from "#src/queue/push/markPushPending";
 import { PUSH_LOCK_PATH, PUSH_PENDING_PATH } from "#src/queue/push/constants";
+import { markPushPending } from "#src/queue/push/markPushPending";
 import { releasePushLock } from "#src/queue/push/releasePushLock";
 import { takePushPending } from "#src/queue/push/takePushPending";
 import { existsSync } from "node:fs";
@@ -23,7 +23,7 @@ export const runQueuePush = async (
     let outcome: QueuePushOutcome;
     try {
       takePushPending(pendingPath);
-      // eslint-disable-next-line no-await-in-loop -- Each pass starts only once the one before it has pushed and let go of the lock
+
       outcome = await push();
     } finally {
       releasePushLock(lockPath);
