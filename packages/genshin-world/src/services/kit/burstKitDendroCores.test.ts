@@ -15,8 +15,8 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { noop } from "@esposter/shared";
@@ -24,6 +24,16 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+
+const createCore = (reactionType: TransformativeReactionType, characterId = TRAVELER_CHARACTER_ID): KitDendroCore => ({
+  characterId,
+  kind: "dendroCore",
+  position: { x: 0, z: 0 },
+  reactionType,
+  secondsRemaining: 0,
+});
+
+const getDamage = ({ health, maxHealth }: Enemy): number => maxHealth - health;
 
 describe(burstKitDendroCores, () => {
   const LEVEL = 90;
@@ -48,21 +58,10 @@ describe(burstKitDendroCores, () => {
     maxHealth: STURDY_HEALTH,
   });
 
-  const createCore = (
-    reactionType: TransformativeReactionType,
-    characterId = TRAVELER_CHARACTER_ID,
-  ): KitDendroCore => ({
-    characterId,
-    kind: "dendroCore",
-    position: { x: 0, z: 0 },
-    reactionType,
-    secondsRemaining: 0,
-  });
-
   const createContext = (enemies: Enemy[], party = createParty([TRAVELER_CHARACTER_ID])): KitStrikeContext => ({
     characterIdCombatantMap: new Map([
-      [TRAVELER_CHARACTER_ID, combatant],
       [BENCHED_CHARACTER_ID, { ...combatant, characterId: BENCHED_CHARACTER_ID }],
+      [TRAVELER_CHARACTER_ID, combatant],
     ]),
     emit: noop,
     enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
@@ -71,8 +70,6 @@ describe(burstKitDendroCores, () => {
     party,
     random: () => 0,
   });
-
-  const getDamage = ({ health, maxHealth }: Enemy): number => maxHealth - health;
 
   test("bursts a Bloom's core on every enemy within 5 metres of its edge, and none past them", () => {
     expect.hasAssertions();
