@@ -13,18 +13,19 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
+const createCombatant = (characterId: number, kit: Kit): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([]),
+  characterId,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit,
+  level: 90,
+});
+
 describe(getMoonsignLevel, () => {
   const PARTY_CHARACTER_IDS = [1, 2, 3, 4];
   const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-  const createCombatant = (characterId: number, kit: Kit): Combatant => ({
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit,
-    level: 90,
-  });
 
   test.each([
     [0, undefined],

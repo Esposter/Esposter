@@ -13,18 +13,18 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
-describe(getAscendantGleamBonus, () => {
-  const createCombatant = (element: Element, attributeLines: AttributeLine[]): Combatant => ({
-    ascension: 0,
-    attributes: computeCharacterAttributes(attributeLines),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    element,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 90,
-  });
+const createCombatant = (element: Element, attributeLines: AttributeLine[]): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes(attributeLines),
+  characterId: TRAVELER_CHARACTER_ID,
+  constellationCount: 0,
+  element,
+  elementalResonances: [],
+  kit: TRAVELER_KIT,
+  level: 90,
+});
 
+describe(getAscendantGleamBonus, () => {
   test.each([
     [Element.Electro, Attribute.Attack, 2000],
     [Element.Pyro, Attribute.Attack, 2000],

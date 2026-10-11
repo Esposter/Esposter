@@ -11,9 +11,6 @@ import { ASCENDANT_GLEAM_STATUS_ID } from "#src/services/party/constants";
 import { getAscendantGleamBonus } from "#src/services/party/getAscendantGleamBonus";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 
-const checkIsAscendantGleam = (effect: KitEffect): effect is KitStatus =>
-  effect.kind === "status" && effect.id === ASCENDANT_GLEAM_STATUS_ID;
-
 // The deployed team's Moonsign: its level, and each member's Benediction turning its reactions Lunar and adding the
 // Base DMG Bonus it gives from its stats as they stand to each, the bonuses of two Benedictions on one reaction adding
 // Up. While the level is Ascendant Gleam, the Ascendant Gleam a member lit gives every Lunar damage its reaction bonus
@@ -38,7 +35,12 @@ export const getPartyMoonsign = (
   const level = getMoonsignLevel(characterIdCombatantMap, party);
   const moonsign: PartyMoonsign = { baseDamageBonusMap, lunarReactionTypes: [...lunarReactionTypes], reactionBonus: 0 };
   if (level === undefined) return moonsign;
-  const ascendantGleam = level === MoonsignLevel.AscendantGleam ? effects.find(checkIsAscendantGleam) : undefined;
+  const ascendantGleam =
+    level === MoonsignLevel.AscendantGleam
+      ? effects.find(
+          (effect): effect is KitStatus => effect.kind === "status" && effect.id === ASCENDANT_GLEAM_STATUS_ID,
+        )
+      : undefined;
   const litCombatant = ascendantGleam && characterIdCombatantMap.get(ascendantGleam.characterId);
   return { ...moonsign, level, reactionBonus: litCombatant ? getAscendantGleamBonus(litCombatant) : 0 };
 };

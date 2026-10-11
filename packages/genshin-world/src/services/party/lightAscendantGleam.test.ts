@@ -15,18 +15,19 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
+const createCombatant = (characterId: number, kit: Kit): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([]),
+  characterId,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit,
+  level: 90,
+});
+
 describe(lightAscendantGleam, () => {
   const PARTY_CHARACTER_IDS = [1, 2, 3, 4];
   const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-  const createCombatant = (characterId: number, kit: Kit): Combatant => ({
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit,
-    level: 90,
-  });
   // The first two members are Moonsign characters, so the deployed team stands at Ascendant Gleam
   const characterIdCombatantMap = new Map(
     PARTY_CHARACTER_IDS.map((characterId, index) => [

@@ -19,25 +19,26 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
+const createCombatant = (
+  characterId: number,
+  kit: Kit,
+  element?: Element,
+  attributeLines: AttributeLine[] = [],
+): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes(attributeLines),
+  characterId,
+  constellationCount: 0,
+  element,
+  elementalResonances: [],
+  kit,
+  level: 90,
+});
+
 describe(getPartyMoonsign, () => {
   const PARTY_CHARACTER_IDS = [1, 2, 3, 4];
   const ELEMENTAL_MASTERY_BONUS = 0.0001;
   const FLAT_BONUS = 0.07;
-  const createCombatant = (
-    characterId: number,
-    kit: Kit,
-    element?: Element,
-    attributeLines: AttributeLine[] = [],
-  ): Combatant => ({
-    ascension: 0,
-    attributes: computeCharacterAttributes(attributeLines),
-    characterId,
-    constellationCount: 0,
-    element,
-    elementalResonances: [],
-    kit,
-    level: 90,
-  });
   // A Lunar-Bloom Benediction scaling on Elemental Mastery, and a flat one on Lunar-Bloom and Lunar-Charged beside it,
   // With an Electro character of 2,000 ATK outside the Moonsign
   const characterIdCombatantMap = new Map([
