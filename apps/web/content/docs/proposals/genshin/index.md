@@ -47,7 +47,6 @@ flowchart TD
 | [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows             |
 | [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                  |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | every placed plant's species, instanced and culled on the GPU                |
-| [World stalls](/docs/proposals/genshin/world-stalls)               | the Windrise frame's GPU stalls, each answered by its pass and object kind   |
 | [Windrise derivation](/docs/proposals/genshin/windrise-derivation) | Windrise's open world rebuilt from every object the game streams             |
 | [Ground detail](/docs/proposals/genshin/ground-detail)             | the ground's layers' detail, each at its own texture's metres per texel      |
 | [Weather](/docs/proposals/genshin/weather)                         | rain, storms, snow, fog and sandstorms, set per area as the game sets them   |
