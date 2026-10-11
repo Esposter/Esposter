@@ -25,22 +25,24 @@ const listRecentCommits = (producerPaths: string[]): Except<ProducerStaleness, "
   isApproximate: true,
 });
 
-// The commit on HEAD a rewrite of the queue replayed the stamp's commit as: one with its subject that carries its very
-// Change, since a subject alone can name an unrelated commit. Undefined for a commit with no change to compare by
+// The commit on HEAD a rewrite of the queue replayed the stamp's commit as: the one with its subject that carries its
+// Very change, since a subject alone can name an unrelated commit. Undefined for a commit with no change to compare by,
+// And for one HEAD holds two such commits of, since a change applied again could be either and neither is known the replay
 const findRewrittenCommit = (commit: string): string | undefined => {
   const { patchId } = readCommitPatch(commit);
   if (!patchId) return undefined;
   const subject = runGit(["log", "-1", "--format=%s", commit]).trim();
-  return runGit(["log", "HEAD", "--format=%H %s", "--fixed-strings", `--grep=${subject}`])
+  const replays = runGit(["log", "HEAD", "--format=%H %s", "--fixed-strings", `--grep=${subject}`])
     .split("\n")
     .filter((line) => line && getLineSubject(line) === subject)
     .map((line) => line.slice(0, line.indexOf(" ")))
-    .find((sha) => readCommitPatch(sha).patchId === patchId);
+    .filter((sha) => readCommitPatch(sha).patchId === patchId);
+  return replays.length === 1 ? replays[0] : undefined;
 };
 
 // The commits to a producer's paths since its stamp's commit, each `<short sha> <subject>`. A commit still on the branch
 // Is listed from its own ancestry, and one the queue rewrote from its replay's, found by its subject and its change. One
-// Git does not know, or whose replay is not on the branch, lists the window's commits, as an approximation
+// Git does not know, or whose one replay is not on the branch, lists the window's commits, as an approximation
 export const listProducerCommits = (commit: string, producerPaths: string[]): Except<ProducerStaleness, "stamp"> => {
   if (!checkIsKnown(commit)) return listRecentCommits(producerPaths);
   const baseCommit = checkIsAncestor(commit, "HEAD") ? commit : findRewrittenCommit(commit);
