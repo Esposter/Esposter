@@ -253,25 +253,24 @@ export const SESSION_DENIALS =
   "Work in this checkout only: never push, never switch branches, never rewrite history, never amend, and never run `gh` or any other command that writes to GitHub — you hold no credential for it, and the collector does every one of those itself once you have exited.";
 // What the drain session may do with a finding's fix: hand it to a foreground subagent on haiku, one finding at a time.
 // The session reads each subagent's diff and judges it before the next, keeps every verdict and every reply its own,
-// And leaves the tree clean. Only the drain is given this clause: the reconciliation roles stay opus-only
-// (`SessionRoleModelMap`), and `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` is never set, so the model asked for is the one used
+// And leaves the tree clean. Only the drain is given this clause, and `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` is never set,
+// So the model asked for is the one used
 export const DRAIN_SUBAGENT_CLAUSE =
   'The fix to each finding may be handed to a foreground subagent: the Agent tool with `model: "haiku"` and `run_in_background: false`, one at a time. Read each subagent\'s diff and judge it before the next. Keep every verdict and every reply your own. Leave the working tree clean, as the rest of this session does.';
 // The finishing ritual a headless session owes, foreground because a `claude -p` session has no next turn
 export const FINISHING_CHECKS_INSTRUCTION =
   "Run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `vp run lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Run them in the foreground and wait for each to finish: this session is one-shot, so a check started in the background is a check whose result no turn of yours will ever read.";
 // What each role runs on, one entry per role: a total record, so a role added to `SessionRole` does not compile
-// Until it has been priced, and a role moved to another family is this one line. The reconciliation roles share
-// The opus family: they are verified by the tree they left rather than trusted, so a cheaper one would be
-// Defensible, and is deliberately not taken (`llm-delegation` skill). The carry role is haiku because its work is
-// Settled before its session starts: the rules a conflict is merged by are written into its prompt.
+// Until it has been priced. Every role runs on haiku, as every subagent does (`llm-delegation` skill): the
+// Reconciliation roles are verified by the tree they left rather than trusted, and the carry role's rules are written
+// Into its prompt
 export const SessionRoleModelMap: Record<SessionRole, SessionModel> = {
   [SessionRole.Carry]: SessionModel.Haiku,
-  [SessionRole.Drain]: SessionModel.Opus,
-  [SessionRole.Fold]: SessionModel.Opus,
-  [SessionRole.Repair]: SessionModel.Opus,
-  [SessionRole.Reshape]: SessionModel.Opus,
-  [SessionRole.Sync]: SessionModel.Opus,
+  [SessionRole.Drain]: SessionModel.Haiku,
+  [SessionRole.Fold]: SessionModel.Haiku,
+  [SessionRole.Repair]: SessionModel.Haiku,
+  [SessionRole.Reshape]: SessionModel.Haiku,
+  [SessionRole.Sync]: SessionModel.Haiku,
 };
 
 export const DRY_RUN_WORKTREE_PREFIX = "review-collector-";

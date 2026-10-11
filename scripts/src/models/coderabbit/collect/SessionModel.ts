@@ -4,5 +4,4 @@
 // Which it runs on.
 export enum SessionModel {
   Haiku = "haiku",
-  Opus = "opus",
 }

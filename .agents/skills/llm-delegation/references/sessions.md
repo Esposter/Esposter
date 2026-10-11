@@ -4,7 +4,7 @@ Read when automation launches a headless session: which model its role takes, an
 
 Each headless session the automation launches is one role, and its model is read off `SessionRoleModelMap` (`scripts/src/services/coderabbit/collect/constants.ts`) at the call site rather than off one constant every role shares. The map is total over the roles, so a role added does not compile until it has been priced, and a role moved to another family — another vendor's — is one line. `scripts/src/services/coderabbit/collect/runSession.ts` is the one launcher, and it takes the model rather than picking it.
 
-**Every role runs on the same family, and that is a decision rather than an oversight.** The reconciliation roles are proved by the tree they left rather than trusted, so a cheaper family would be defensible for them — and is not taken: the headroom is bought at the gate below, where a question skips its session entirely, not at the tier, where every session still runs and each one is a little worse.
+**Every role runs on haiku, as every subagent does** (the `llm-delegation` skill's Settled list). The reconciliation roles are proved by the tree they left rather than trusted, and the carry role's rules are written into its prompt. The headroom is still bought first at the gate below, where a question skips its session entirely.
 
 ## Every spawn owes a gate that can decline it
 

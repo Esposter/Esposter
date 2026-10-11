@@ -61,7 +61,7 @@ describe(runSession, () => {
       getResultLine("success", REFUSAL_LINE),
     ]);
 
-    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
+    await expect(runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" })).resolves.toStrictEqual({
       isEnded: true,
     });
   });
@@ -73,7 +73,7 @@ describe(runSession, () => {
 
     mockSession(1, [getAssistantLine(REFUSAL_LINE), getResultLine("error_during_execution", "the commit failed")]);
 
-    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
+    await expect(runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" })).resolves.toStrictEqual({
       isEnded: false,
     });
   });
@@ -86,7 +86,7 @@ describe(runSession, () => {
 
     mockSession(1, [getResultLine("success", REFUSAL_LINE)]);
 
-    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).rejects.toStrictEqual(
+    await expect(runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" })).rejects.toStrictEqual(
       new SessionLimitedError(LIMIT_RESET_AT_MS),
     );
   });
@@ -98,7 +98,7 @@ describe(runSession, () => {
 
     mockSession(1, [REFUSAL_LINE]);
 
-    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).rejects.toStrictEqual(
+    await expect(runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" })).rejects.toStrictEqual(
       new SessionLimitedError(LIMIT_RESET_AT_MS),
     );
   });
@@ -112,7 +112,7 @@ describe(runSession, () => {
     mockSession(1, []);
 
     await expect(
-      runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" }),
+      runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[SessionUnstartedError: Invalid operation: Read, name: coderabbit, no session started - the launch wrote nothing]`,
     );
@@ -127,7 +127,7 @@ describe(runSession, () => {
     vi.setSystemTime(CYCLE_BUDGET_MS);
 
     await expect(
-      runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" }),
+      runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[CycleBudgetSpentError: Invalid operation: Create, name: coderabbit, the run has spent 100 of its 100 minutes, too few for a session of up to 45]`,
     );
@@ -155,7 +155,7 @@ describe(runSession, () => {
     vi.spyOn(console, "info").mockImplementation(() => {
       resolve();
     });
-    const run = runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" });
+    const run = runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" });
     stdout.write(`${getAssistantLine("a")}\n`);
     await isLineRead;
     controller.abort();
@@ -174,7 +174,7 @@ describe(runSession, () => {
     vi.spyOn(AbortSignal, "timeout").mockReturnValue(controller.signal);
     const kill = vi.spyOn(process, "kill").mockReturnValue(true);
     mockSession(0, [getResultLine("success", "")], pid);
-    await runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" });
+    await runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" });
     controller.abort();
 
     expect(kill).not.toHaveBeenCalled();
@@ -194,7 +194,7 @@ describe(runSession, () => {
     vi.stubEnv("CLAUDE_CODE_OAUTH_TOKEN", "claude-token");
     mockSession(0, [getResultLine("success", "done")]);
 
-    await runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" });
+    await runSession({ cwd: "", model: SessionModel.Haiku, prompt: "prompt" });
 
     const passedEnvironment = spawn.mock.calls[0]?.[2]?.env;
     expect(passedEnvironment?.CLAUDE_CODE_OAUTH_TOKEN).toBe("claude-token");
