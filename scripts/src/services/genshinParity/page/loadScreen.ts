@@ -1,5 +1,6 @@
 import type { LoadReading } from "#src/models/genshinParity/page/LoadReading";
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
+import type { LoadBench } from "genshin-world/parity/models/LoadBench";
 
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { withFinalizerAsync } from "@esposter/shared";

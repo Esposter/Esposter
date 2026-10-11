@@ -1,5 +1,5 @@
 // The normal equations of a least-squares fit: each row's weighted outer product summed into the matrix on the left, and
-// each row's target summed into the vector on the right. A row's zero entry adds nothing, so it is passed over
+// Each row's target summed into the vector on the right. A row's zero entry adds nothing, so it is passed over
 export const accumulateNormalEquations = (
   rows: readonly { row: readonly number[]; target: number; weight: number }[],
   unknownCount: number,

@@ -1,5 +1,5 @@
 // Lua 5.3's instruction set in its numbering (`OpCode` in lopcodes.h); names are spelled out, and each is the
-// enum member for the same numeric value, so an opcode read from a chunk is named the way the reference names it
+// Enum member for the same numeric value, so an opcode read from a chunk is named the way the reference names it
 export enum LuaOpcode {
   Move = 0,
   LoadConstant = 1,
