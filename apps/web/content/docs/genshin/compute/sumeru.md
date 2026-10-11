@@ -7,8 +7,6 @@ description: Sumeru's region: its base ground, renderers, landmarks, camera, sha
 
 ## Queue
 
-- [ ] `[page]` {sumeru-every-renderer} needs game-exports, parity-page — **Sumeru: every renderer claimed.** `pnpm -C scripts genshin:parity passes sumeru --pass Inventory`. Reads the witness and the `WorldScreen` fixture's `witnessComponents.sumeru` claims: the families (`packages/genshin-world/src/services/sumeru/SumeruPartFamilyMeshRegexMap.ts`) and what is not drawn yet (`packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`), which claim each renderer of the capital's witness once when run over its names offline. Writes `scripts/src/services/genshinParity/passes/snapshots/sumeru.snapshot.md`. Bar: renderers unclaimed 0.
-
 ## Waiting
 
 - [ ] `[page]` {sumeru-city-location-camera-landmarks} needs game-exports, parity-page — **sumeru-city-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose sumeru-city-location --witness sumeru --write`. Reads the reference, the witness, the nine landmarks in its `ParityReferenceMap` entry and their shares in `DerivedAssetLandmarkMap[sumeru]`. Writes `cameraPose` in `ParityReferenceMap.ts` when the landmarks reproject within the gate, and `~/Esposter/genshin-parity/pose/sumeru-city-location.png`. Bar: reprojection 2 px RMS (`FRAME_GATE_PIXELS`). — waits on the landmark shares, which the landmarks' meshes item fills.
