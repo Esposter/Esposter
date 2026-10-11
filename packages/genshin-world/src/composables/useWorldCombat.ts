@@ -26,7 +26,7 @@ import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
 import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
-import { createParty } from "#src/services/party/createParty";
+import { createWorldParty } from "#src/services/party/createWorldParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
@@ -59,7 +59,7 @@ export const useWorldCombat = ({
 }) => {
   // The player's characters, the Traveler alone as a new player's, on the field, and their party
   const characters = shallowRef<Character[]>([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);
-  const party = reactive(createParty([...STARTING_TEAM_CHARACTER_IDS]));
+  const party = createWorldParty([...STARTING_TEAM_CHARACTER_IDS]);
   // The deployed team's kits: the starting team's, built at the world's gate, and each character's built once as the team
   // Changes to take it in, its module and multipliers read on demand
   const characterIdKitMap = shallowRef(startingCharacterIdKitMap);

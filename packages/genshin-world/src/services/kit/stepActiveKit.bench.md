@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-11T21:46:07.643Z
+- Date: 2026-10-11T21:46:10.833Z
 - Commit: 96a4ee12b9
 - Node: v26.11.1
 - OS: darwin 27.0.0 (arm64)
@@ -20,10 +20,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------ | -------- | ------- |
-| the fixed step | 1.00×   | 34.5112   | ±2.30% | 42.3555  | 40      |
+| the fixed step | 1.00×   | 19.2826   | ±2.57% | 24.4283  | 40      |
 
 ## stepActiveKit > a minute of the proof party, in combat
 
 | task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------ | -------- | ------- |
-| the fixed step | 1.00×   | 45.7647   | ±5.93% | 71.5373  | 40      |
+| the fixed step | 1.00×   | 30.0845   | ±2.59% | 37.8870  | 40      |

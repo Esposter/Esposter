@@ -12,7 +12,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
-import { createParty } from "#src/services/party/createParty";
+import { createWorldParty } from "#src/services/party/createWorldParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -29,7 +29,6 @@ import {
 } from "genshin-engine";
 import { Vector3 } from "three";
 import { describe } from "vitest";
-import { reactive } from "vue";
 
 // The fixed steps a span of seconds takes
 const toStepCount = (seconds: number): number => Math.round(seconds / FIXED_STEP_SECONDS);
@@ -69,7 +68,7 @@ export const replayScriptedMinute = ({
       createCombatant(createCharacter(characterId, characterDataMap), kit, elementalResonances, statTables),
     ]),
   );
-  const party = reactive(createParty(characterIds));
+  const party = createWorldParty(characterIds);
   if (isInCombat)
     for (const [characterId, { kit }] of characterIdCombatantMap)
       getPartyMember(party, characterId).energy = kit.burstEnergyCost;

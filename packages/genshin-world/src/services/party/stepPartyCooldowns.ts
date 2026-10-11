@@ -4,11 +4,14 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Lowers the skill and burst cooldowns of every member of the deployed team by the step's seconds, none below zero. The
-// Cooldowns run off the field too, as the game's do
+// Cooldowns run off the field too, as the game's do. A cooldown is written only while it runs, so a team at rest writes
+// Nothing, where the world's reactive party would pay a reactive write for each unchanged zero every step
 export const stepPartyCooldowns = (party: Party, stepSeconds: number): void => {
   for (const characterId of getDeployedCharacterIds(party)) {
     const partyMember = getPartyMember(party, characterId);
-    partyMember.burstCooldownSeconds = Math.max(0, partyMember.burstCooldownSeconds - stepSeconds);
-    partyMember.skillCooldownSeconds = Math.max(0, partyMember.skillCooldownSeconds - stepSeconds);
+    if (partyMember.burstCooldownSeconds > 0)
+      partyMember.burstCooldownSeconds = Math.max(0, partyMember.burstCooldownSeconds - stepSeconds);
+    if (partyMember.skillCooldownSeconds > 0)
+      partyMember.skillCooldownSeconds = Math.max(0, partyMember.skillCooldownSeconds - stepSeconds);
   }
 };
