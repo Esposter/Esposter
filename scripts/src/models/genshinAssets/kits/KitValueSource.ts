@@ -34,4 +34,4 @@ export const kitValueSourceSchema: z.ZodType<KitValueSource> = z.discriminatedUn
     row: z.int().positive(),
     source: z.literal(KitSource.Wiki),
   }),
-]);
+]) satisfies z.ZodType<KitValueSource>;
