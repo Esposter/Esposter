@@ -19,6 +19,7 @@ export const moduleOptionsSchema = z.strictObject({
   headers: z.union([securityHeadersSchema, z.literal(false)]),
   hidePoweredBy: z.boolean(),
   nonce: z.boolean(),
+  rateLimiter: z.union([rateLimiterOptionsSchema, z.literal(false)]),
   requestSizeLimiter: z.union([requestSizeLimiterOptionsSchema, z.literal(false)]),
   sri: z.boolean(),
   ssg: z.union([ssgOptionsSchema, z.literal(false)]),
