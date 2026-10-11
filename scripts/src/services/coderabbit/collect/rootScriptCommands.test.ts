@@ -16,25 +16,26 @@ import { describe, expect, test } from "vitest";
 // A pass added to `lint` would silently stop being a gate on everything reaching `main`, and a regenerator added to
 // `lint:fix` would silently stop being tried before a session is spent on the red it answers.
 describe("rootScriptCommands", async () => {
-  // `lint` and `typecheck` are tasks of the root vite.config.ts, cached by `vp run`, so a name resolves to a script
-  // Or to a task's command
+  // `lint` and `typecheck` are tasks of the root vite.config.ts, so a name resolves to a script or to a task's command
   const { default: viteConfiguration } = (await import(
     pathToFileURL(join(REPOSITORY_ROOT, "vite.config.ts")).href
-  )) as { default: { run: { tasks: Record<string, { command: string }> } } };
-  const RUN_S_PREFIX = "run-s ";
-  const WHITESPACE_REGEX = /\s+/u;
-  // A root script or task that aggregates named scripts with `run-s` is each of those expanded in order, its flags
-  // Dropped; any other is run by name. No aggregation here quotes an argument, so a split on whitespace is the
-  // Whole of the parsing — one that grows a quoted argument fails here, which is the right place to find out.
+  )) as { default: { run: { tasks: Record<string, { command?: string; dependsOn?: string[] }> } } };
+  const VP_RUN_PREFIX = "vp run ";
+  const CHAIN_SEPARATOR = " && ";
+  // A root script or task that aggregates named tasks is each of those expanded in order: its `dependsOn`, or the
+  // `vp run` steps of a `&&` chain. Any other is run by name. Nothing here quotes an argument, so a split on the chain
+  // Separator is the whole of the parsing — one that grows a quoted argument fails here, which is the right place to find out.
+  const getChildNames = (scripts: Record<string, string>, name: string): string[] => {
+    const task = viteConfiguration.run.tasks[name];
+    if (task?.dependsOn) return task.dependsOn;
+    const script = scripts[name] ?? task?.command ?? "";
+    return script.startsWith(VP_RUN_PREFIX)
+      ? script.split(CHAIN_SEPARATOR).map((step) => step.slice(VP_RUN_PREFIX.length))
+      : [];
+  };
   const getExpandedCommands = (scripts: Record<string, string>, name: string): string[][] => {
-    const script = scripts[name] ?? viteConfiguration.run.tasks[name]?.command ?? "";
-    if (script.startsWith(RUN_S_PREFIX))
-      return script
-        .slice(RUN_S_PREFIX.length)
-        .split(WHITESPACE_REGEX)
-        .filter((word) => !word.startsWith("--"))
-        .flatMap((child) => getExpandedCommands(scripts, child));
-    else return [[name]];
+    const children = getChildNames(scripts, name);
+    return children.length > 0 ? children.flatMap((child) => getExpandedCommands(scripts, child)) : [[name]];
   };
   const getExpandedSteps = (steps: (string | string[])[]): string[][] => {
     const { scripts = {} } = parseMachineJson<{ scripts?: Record<string, string> }>(

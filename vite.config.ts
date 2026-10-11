@@ -127,12 +127,33 @@ const configuration: UserConfig = defineConfig({
         command: 'echo "every package built"',
         dependsOn: packageBuildTasks.map(([taskName]) => taskName),
       },
-      lint: createTask(
-        "run-s --continue-on-error lint:oxlint lint:eslint lint:workspace lint:unused lint:workflows",
-        [],
-        [],
-      ),
-      typecheck: createTask("run-s --continue-on-error typecheck:root typecheck:workspace", ["apps/web/.nuxt/**"], []),
+      // The aggregates over their leaves, which are package.json scripts. `dependsOn` runs every leaf even after one
+      // Fails, where `&&` stops at the first, so a red check never hides the rest. The leaves are uncached, so an
+      // Aggregate with no inputs of its own would replay a verdict no check produced: each runs every time
+      lint: {
+        cache: false,
+        command: 'echo "every lint check ran"',
+        dependsOn: ["lint:oxlint", "lint:eslint", "lint:workspace", "lint:unused", "lint:workflows"],
+      },
+      "lint:packages": {
+        cache: false,
+        command: 'echo "every packages lint check ran"',
+        dependsOn: ["lint:packages:oxlint", "lint:packages:workspace"],
+      },
+      // The fixers write the same files, so they run in order: `&&` rather than `dependsOn`, which runs in parallel
+      "lint:fix": {
+        cache: false,
+        command: "vp run lint:fix:oxlint && vp run lint:fix:eslint && vp run lint:fix:workspace",
+      },
+      "lint:fix:packages": {
+        cache: false,
+        command: "vp run lint:fix:packages:oxlint && vp run lint:fix:packages:workspace",
+      },
+      typecheck: {
+        cache: false,
+        command: 'echo "every typecheck ran"',
+        dependsOn: ["typecheck:root", "typecheck:workspace"],
+      },
     },
   },
 });

@@ -20,12 +20,12 @@ strictly less than CI does and reports success while CI fails: the app's real pr
 `.nuxt` tsconfig rather than the one in the package, and a package's `lint` is ESLint alone. Which rules only
 the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's ("Running lint").
 
-**A root check is an aggregate over named leaves, never a `&&` chain.** `lint`, `lint:fix`, `lint:packages`,
-`lint:fix:packages` and `typecheck` each run `run-s --continue-on-error` over one script per tool, so every
-tool reports and the aggregate still exits non-zero — where `&&` stopped at the first, and every failure behind
-it cost another full round of fix-and-rerun. `&&` is for a step that needs the one before it to have
-_succeeded_, which is a build consuming what an earlier build produced; ordering alone is not that reason, and
-`lint:fix` is ordered only because its three fixers write the same files. Across workspace projects the same
+**A root check is an aggregate over named leaves through `dependsOn`, never a `&&` chain.** `lint`, `lint:packages` and
+`typecheck` each run over one script per tool, so every tool reports and the aggregate still exits non-zero — where
+`&&` stopped at the first, and every failure behind it cost another full round of fix-and-rerun. `&&` is for a step
+that needs the one before it to have _succeeded_, which is a build consuming what an earlier build produced; ordering
+alone is not that reason. `lint:fix` and `lint:fix:packages` are the two `&&` chains, because their fixers write the
+same files and must not run in parallel. Across workspace projects the same
 rule is `bail: false` in `pnpm-workspace.yaml`, with `build:packages` passing `--bail` back for exactly the
 build case. How a backgrounded run's result is read at all, and why the completion notification's exit code is
 never it, is the `running-checks` skill's (`references/reading-results.md`); an output file that comes back empty is that run not yet flushed,
