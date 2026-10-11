@@ -236,6 +236,7 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         const taunt: KitTaunt = {
           body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
           combatant,
+          damagesTaken: [],
           explosion: iceLotusExplosion,
           health: ICE_LOTUS_HEALTH,
           kind: "taunt",

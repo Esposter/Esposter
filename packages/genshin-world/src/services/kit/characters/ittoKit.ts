@@ -141,7 +141,8 @@ const HIGH_PLUNGE_POISE_DAMAGE = 200;
 // Measured: gcsim v2.47.2 (MIT) itto/skill.go and ushi.go, Masatsu Zetsugi: Akaushi Burst's hit at 14 frames, a
 // Circle of radius 3.5 on the primary target, with its animation of 42 frames, 250 poise and a gauge of 1U, blunt. It
 // Throws Ushi onto the primary target, one at a time, which gives a stack of Superlative Superstrength the first time
-// Its hit strikes and another as it leaves, its seconds run out or its health spent
+// Its hit strikes, one as it takes an enemy's strike, at most once every 2 seconds, and another as it leaves, its seconds
+// Run out or its health spent. Ushi flees as it leaves and deals no damage, so the taunt carries no explosion
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/skill.go
 const SKILL_HITMARK_FRAMES = 14;
 const SKILL_FRAMES = 42;
@@ -149,13 +150,8 @@ const SKILL_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 3.5);
 const SKILL_POISE_DAMAGE = 250;
 const SKILL_GAUGE = 1;
 const USHI_STRUCK_STATUS_ID = "itto-ushi-struck";
-// Ushi flees as it leaves and deals no damage, so the explosion every taunt carries is a hit that reaches nothing
-const USHI_DEPARTURE: KitHit = {
-  hitArea: Object.freeze({ angle: 0, height: 0, radius: Number.NEGATIVE_INFINITY }),
-  hitmarkSeconds: 0,
-  poiseDamage: 0,
-  talentMultiplier: 0,
-};
+const USHI_DAMAGED_COOLDOWN_STATUS_ID = "itto-ushi-damaged-cooldown";
+const USHI_DAMAGED_COOLDOWN_SECONDS = 2;
 
 // Measured: gcsim v2.47.2 (MIT) itto/burst.go, Royal Descent's animation of 91 frames, its ATK bonus per DEF, its 0.1 Normal
 // ATK SPD and its Geo conversion, all for 795 frames: gcsim's 660, 90 and 45, which barely cover the basic combo
@@ -268,7 +264,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       addKitEffect(kitEffectState, {
         body: { facing: body.facing, height: body.height, position: { x, z } },
         combatant,
-        explosion: USHI_DEPARTURE,
+        damagesTaken: [],
         health: skillTalentMultiplier(ITTO_USHI_HEALTH_SHARE_INDEX) * combatant.attributes.maxHealth,
         kind: "taunt",
         secondsRemaining: SKILL_HITMARK_FRAMES / 60 + skillTalentMultiplier(ITTO_USHI_SECONDS_INDEX),
@@ -439,10 +435,27 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
-    // A normal attack of his gives him its stacks as it lands, more as the Raging Oni King, and Ushi one as it leaves.
-    // An Arataki Kesagiri that ends with stacks gained while it played readies the next
+    // A normal attack of his gives him its stacks as it lands, more as the Raging Oni King, and Ushi one as it takes an
+    // Enemy's strike, off its cooldown, and one as it leaves. An Arataki Kesagiri that ends with stacks gained while it
+    // Played readies the next
     onKitEvent: (event, { combatant, kitEffectState }) => {
       const { characterId } = combatant;
+      if (event.kind === KitEventKind.TauntDamaged) {
+        if (
+          event.taunt.combatant.characterId !== characterId ||
+          checkHasKitStatus(kitEffectState.effects, characterId, USHI_DAMAGED_COOLDOWN_STATUS_ID)
+        )
+          return;
+        addKitEffect(kitEffectState, {
+          characterId,
+          id: USHI_DAMAGED_COOLDOWN_STATUS_ID,
+          kind: "status",
+          secondsRemaining: USHI_DAMAGED_COOLDOWN_SECONDS,
+        });
+        gainSuperstrength(kitEffectState, characterId, 1);
+        return;
+      }
+
       if (event.kind === KitEventKind.NormalAttackLanded) {
         const index = normalAttacks.indexOf(event.action);
         if (index === -1) return;

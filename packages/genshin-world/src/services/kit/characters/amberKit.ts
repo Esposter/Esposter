@@ -168,6 +168,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       const taunt: KitTaunt = {
         body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
         combatant,
+        damagesTaken: [],
         explosion,
         // Baron Bunny's HP is the table's share of Amber's Max HP
         health:

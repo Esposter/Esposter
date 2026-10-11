@@ -93,7 +93,7 @@ describe(createGanyuKit, () => {
     const taunt = castEffects(GANYU_KIT.elementalSkill).find((effect): effect is KitTaunt => effect.kind === "taunt");
 
     expect(taunt?.secondsRemaining).toBeCloseTo(373 / 60);
-    expect(taunt?.explosion.hitmarkSeconds).toBe(0);
+    expect(taunt?.explosion?.hitmarkSeconds).toBe(0);
   });
 
   test("the Celestial Shower's field ticks every 18 frames, and each tick's hit lands 8 frames after it", () => {
