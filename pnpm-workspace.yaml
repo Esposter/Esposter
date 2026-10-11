@@ -233,6 +233,7 @@ catalog:
   # Nitro 3 resolves from the app rather than from the module (nuxt-content/mdc)
   remark-emoji: ^5.0.2
   rolldown: ^1.2.13
+  rollup-plugin-visualizer: ^7.1.1
   rxjs: ^7.8.2
   sax: ^1.6.1
   sharp: ^0.35.5

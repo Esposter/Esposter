@@ -1,6 +1,7 @@
 import type { DependencyScoreReport } from "#src/models/dependencies/score/DependencyScoreReport";
 import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 
+import { formatAge } from "#src/services/fleet/formatAge";
 import { formatBytes } from "#src/services/dependencies/score/formatBytes";
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";
@@ -11,7 +12,7 @@ const YES = "yes";
 // Disagreements are listed under the table as rows to re-judge, and an entry no workspace installed is named, since its
 // Installed dimensions score nothing.
 export const printDependencyScores = (
-  { disagreements, errors, scores, unresolvedPackageNames }: DependencyScoreReport,
+  { bundleReportAgeMilliseconds, disagreements, errors, scores, unresolvedPackageNames }: DependencyScoreReport,
   color: ColorPalette,
 ): void => {
   printTable(
@@ -52,6 +53,7 @@ export const printDependencyScores = (
     color,
   );
 
+  console.log(`The bundle column reads the client bundle report written ${formatAge(bundleReportAgeMilliseconds)} ago`);
   console.log(color.cyan("Disagreements"));
   if (disagreements.length === 0) console.log("None");
   for (const { packageName, shimCount, total, verdict } of disagreements)

@@ -1,7 +1,8 @@
 import { ScoreSort } from "#src/models/dependencies/score/ScoreSort";
+import { readDependencyScores } from "#src/services/dependencies/score/readDependencyScores";
+import { runAnalyze } from "#src/services/dependencies/score/runAnalyze";
 import { printDependencyScores } from "#src/services/dependencies/score/printDependencyScores";
 import { printTopBundles } from "#src/services/dependencies/score/printTopBundles";
-import { readDependencyScores } from "#src/services/dependencies/score/readDependencyScores";
 import { createColor } from "#src/services/outdatedDependencies/print/createColor";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
@@ -9,6 +10,12 @@ import { defineCommand } from "citty";
 await runCommand(
   defineCommand({
     args: {
+      analyze: {
+        default: false,
+        description:
+          "Build the app's client bundle with nuxt analyze first, rather than reading the report of the last build",
+        type: "boolean",
+      },
       sort: {
         default: ScoreSort.Score,
         description:
@@ -23,6 +30,7 @@ await runCommand(
       name: "ai:dependencies:score",
     },
     run: async ({ args }) => {
+      if (args.analyze) runAnalyze();
       const report = await readDependencyScores(args.sort);
       const color = createColor(!process.env.NO_COLOR);
       printDependencyScores(report, color);
