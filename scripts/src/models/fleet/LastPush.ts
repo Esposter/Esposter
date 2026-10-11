@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // The last commit a machine's git identity landed on the queue, which its heartbeat carries so every machine's status
-// reads it: the commit's sha and when its author dated it. Read off git, so it needs no record of its own
+// Reads it: the commit's sha and when its author dated it. Read off git, so it needs no record of its own
 export interface LastPush {
   at: string;
   sha: string;
