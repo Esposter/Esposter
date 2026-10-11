@@ -16,6 +16,7 @@ export interface CommissionTask {
 // Which mods are on, each switched by its own command and kept in the store as one record
 export interface EnabledMods {
   commission: boolean;
+  pulse: boolean;
   resin: boolean;
   veil: boolean;
   ward: boolean;
@@ -43,9 +44,12 @@ declare module "claude-code" {
     "genshin-mods": {
       commission: Commission;
       enabledMods: EnabledMods;
+      idleMinutes: number;
+      idleReadingAt: string;
       isCommissionExpanded: boolean;
       isHandingOff: boolean;
       lastCacheRequestAt: number;
+      lastIdleWakeMs: number;
       lastPrompt: string;
       lookupStreak: number;
       now: number;

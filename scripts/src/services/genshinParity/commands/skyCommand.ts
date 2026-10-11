@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { solveReferenceSky } from "#src/services/genshinParity/sky/solveReferenceSky";
 import { parseNames } from "#src/services/shared/parseNames";
 import { defineCommand } from "citty";
@@ -12,12 +12,7 @@ export const skyCommand: SubCommandsDef[string] = defineCommand({
       required: true,
       type: "positional",
     },
-    witness: {
-      description: "The component whose exports the witness draws",
-      required: true,
-      options: Object.values(DerivedAssetComponent),
-      type: "enum",
-    },
+    witness: witnessArg,
   },
   meta: {
     description:

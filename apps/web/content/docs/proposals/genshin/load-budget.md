@@ -39,9 +39,7 @@ flowchart LR
 
 ## Scope and order
 
-1. **Measure.**
-   - Wrap the awaited steps in the measures. Add a `measureLoadStep(name, promise)` helper in `packages/genshin-world`, the one place the naming lives.
-   - Build the `load` command beside `bench`, and write the first budgets for the opening, the login and the Windrise world screens at their measured figures.
+1. **Measure. Built**, see [Load budget](/docs/genshin/load-budget): each awaited load step is measured as `genshin:load:<step>` by `measureLoadStep`, and `genshin:parity load <screen>` prints each figure against its budget in `packages/genshin-world/parity/loadBudgets.ts`, written for the opening, the login and the Windrise world.
 2. **Trim, one step at a time, each measured before and after with `load`:**
    - Read only the region ground in the first view at the gate, and the rest after the world shows. Today `readWindriseData` reads all seven region grounds and the base ground.
    - Leave the far terrain rings out of `ready`, so the first frame waits on the near tiles only.

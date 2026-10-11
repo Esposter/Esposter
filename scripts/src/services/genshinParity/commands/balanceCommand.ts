@@ -1,7 +1,7 @@
 import type { DisplaySample } from "#src/models/genshinParity/display/DisplaySample";
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { computeLightPlaneResidual } from "#src/services/genshinParity/display/computeLightPlaneResidual";
 import { readDisplaySamples } from "#src/services/genshinParity/display/readDisplaySamples";
 import { solveWhiteBalance } from "#src/services/genshinParity/display/solveWhiteBalance";
@@ -18,12 +18,7 @@ export const balanceCommand: SubCommandsDef[string] = defineCommand({
       required: true,
       type: "positional",
     },
-    witness: {
-      description: "The component whose exports the witness draws",
-      required: true,
-      options: Object.values(DerivedAssetComponent),
-      type: "enum",
-    },
+    witness: witnessArg,
   },
   meta: {
     description:

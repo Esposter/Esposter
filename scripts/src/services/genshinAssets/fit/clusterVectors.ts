@@ -1,9 +1,9 @@
 import type { Vector } from "#src/models/shared/Vector";
 
+import { computeSquaredDistance } from "#src/services/genshinAssets/fit/computeSquaredDistance";
+
 // Lloyd's iterations past which the clusters are taken as they stand, far more than a few thousand vectors ever need
 const MAX_ITERATIONS = 100;
-const computeDistance = ([firstX, firstY, firstZ]: Vector, [secondX, secondY, secondZ]: Vector): number =>
-  (firstX - secondX) ** 2 + (firstY - secondY) ** 2 + (firstZ - secondZ) ** 2;
 // Vectors grouped into as many clusters as there are means by k-means, each vector in the cluster whose mean it lies
 // Nearest, the means moved to their clusters' centres and iterated until no vector changes cluster. Returns each
 // Vector's cluster
@@ -15,7 +15,10 @@ export const clusterVectors = (vectors: readonly Vector[], means: readonly Vecto
     for (const [index, vector] of vectors.entries()) {
       let nearest = 0;
       for (let cluster = 1; cluster < centres.length; cluster++)
-        if (computeDistance(vector, centres[cluster] ?? vector) < computeDistance(vector, centres[nearest] ?? vector))
+        if (
+          computeSquaredDistance(vector, centres[cluster] ?? vector) <
+          computeSquaredDistance(vector, centres[nearest] ?? vector)
+        )
           nearest = cluster;
       if (clusters[index] === nearest) continue;
       clusters[index] = nearest;

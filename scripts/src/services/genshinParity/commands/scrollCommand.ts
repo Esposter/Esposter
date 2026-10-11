@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { solveReferenceScroll } from "#src/services/genshinParity/witness/solveReferenceScroll";
 import { parseNames } from "#src/services/shared/parseNames";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
@@ -16,12 +16,7 @@ export const scrollCommand: SubCommandsDef[string] = defineCommand({
       description: "The distances along the glide scanned, in metres: from, to and the step, comma separated",
       type: "string",
     },
-    witness: {
-      description: "The component whose exports the witness draws",
-      required: true,
-      options: Object.values(DerivedAssetComponent),
-      type: "enum",
-    },
+    witness: witnessArg,
   },
   meta: {
     description:

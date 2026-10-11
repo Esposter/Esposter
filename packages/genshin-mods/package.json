@@ -21,6 +21,7 @@
   "files": [
     ".claude-plugin",
     "hooks",
+    "scripts",
     "src",
     "types",
     "!**/*.test.ts",

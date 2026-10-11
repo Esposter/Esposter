@@ -15,12 +15,13 @@ import { readGpuPercentage } from "#src/services/machine/readGpuPercentage";
 import { readProcesses } from "#src/services/machine/readProcesses";
 import { selectOrphans } from "#src/services/machine/selectOrphans";
 import { sweepOrphans } from "#src/services/machine/sweepOrphans";
+import { writeMachineState } from "#src/services/machine/writeMachineState";
 import { getResult } from "@esposter/shared";
 import { cpus } from "node:os";
 import { setTimeout as sleep } from "node:timers/promises";
 
-// Watches the machine for the session, one reading a minute, printing a line only when the state changes or an idle or
-// Tight state's reminder falls due. It runs under Monitor, so each printed line wakes the session (the throughput skill)
+// Watches the machine, one reading a minute, printing a line only when the state changes or an idle or tight state's
+// Reminder falls due, and writing each reading to the state file the genshin-mods pulse reads (the throughput skill)
 export const watchMachine = async (): Promise<void> => {
   const cpuAverages: number[] = [];
   let previousTotals: CpuTotals = getCpuTotals(cpus());
@@ -57,6 +58,15 @@ export const watchMachine = async (): Promise<void> => {
       formatMachineFigures(cpuAveragePercentage, cpuAverages.length, gpuPercentage, freeGigabytes),
     );
     if (line !== undefined) console.info(line);
+    writeMachineState({
+      at: Temporal.Now.instant().toString(),
+      cpuPercentage: cpuAveragePercentage,
+      freeGigabytes,
+      gpuPercentage,
+      minutesInState,
+      processId: process.pid,
+      state,
+    });
     lastState = state;
     const profile = readMachineProfile();
     const now = Temporal.Now.instant().epochMilliseconds;

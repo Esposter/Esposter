@@ -5,9 +5,13 @@
 export enum MaterialType {
   CharacterDevelopmentMaterial = "MATERIAL_AVATAR_MATERIAL",
   Consume = "MATERIAL_CONSUME",
+  ElementalCrystal = "MATERIAL_ELEM_CRYSTAL",
   Exchange = "MATERIAL_EXCHANGE",
+  ExpFruit = "MATERIAL_EXP_FRUIT",
   FishBait = "MATERIAL_FISH_BAIT",
+  Flycloak = "MATERIAL_FLYCLOAK",
   Food = "MATERIAL_FOOD",
+  Namecard = "MATERIAL_NAMECARD",
   NoticeAddHp = "MATERIAL_NOTICE_ADD_HP",
   WeaponExpStone = "MATERIAL_WEAPON_EXP_STONE",
   Widget = "MATERIAL_WIDGET",

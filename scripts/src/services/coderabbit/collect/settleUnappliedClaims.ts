@@ -12,14 +12,16 @@ import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readCommitPatch } from "#src/services/coderabbit/collect/readCommitPatch";
 import { readNewestCommitComments } from "#src/services/coderabbit/collect/readNewestCommitComments";
+import { runGit } from "#src/services/shared/runGit";
 
 // A claimed commit the cut could not apply waits on the unported work it needs, and the lane counts each wait against
 // The attempt cap on the commit itself, once per `main` head: a pick onto the same head is the same pick, so a run
 // Against an unchanged `main` is no new attempt, while every head that moves past it without letting it apply is. The
 // Count is keyed by the commit's patch rather than its sha, since every rewrite of the queue gives the commit a new sha
 // And a count by sha started again with each: posted on whichever sha the commit has, it is read across every commit's
-// Newest comments. Past the cap it is parked, which takes it and its claim out of what the queue owes, so a commit that
-// Will never apply stops holding the lane. Returns the commits still waiting.
+// Comments back to the oldest claim's author date, which a pick keeps and no attempt at its patch predates, so every
+// Attempt is counted however many comments landed since. Past the cap it is parked, which takes it and its claim out of
+// What the queue owes, so a commit that will never apply stops holding the lane. Returns the commits still waiting.
 export const settleUnappliedClaims = ({
   collectorSha,
   cwd,
@@ -31,7 +33,13 @@ export const settleUnappliedClaims = ({
   if (shas.length === 0) return [];
 
   const task = `cut onto ${MAIN_BRANCH} at ${mainSha}`;
-  const comments = readNewestCommitComments(Date.now());
+  const comments = readNewestCommitComments(
+    Math.min(
+      ...shas.map(
+        (sha) => Temporal.Instant.from(runGit(["log", "-1", "--format=%aI", sha], cwd).trim()).epochMilliseconds,
+      ),
+    ),
+  );
   const claims = shas.map((sha) => {
     const attempts = getAttempts({
       collectorSha,

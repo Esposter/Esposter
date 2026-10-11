@@ -59,3 +59,13 @@ export const LOOKUP_COMMAND_REGEX =
 export const DELEGATION_NUDGE_EVERY = 3;
 export const DELEGATION_NUDGE =
   "Third lookup in a row with no decision between them: by the llm-delegation skill's hop rule this chain goes to a haiku agent as one bounded question.";
+// The machine counts as idle under this share on its CPU and its GPU, and the session is woken once it has been idle for
+// The wait, then again each repeat interval while it stays idle
+export const UTILIZATION_LINE_PERCENTAGE = 80;
+export const IDLE_WAKE_MINUTES = 20;
+export const IDLE_WAKE_REPEAT_MINUTES = 30;
+export const IDLE_WAKE_REPEAT_MILLISECONDS: number = Temporal.Duration.from({
+  minutes: IDLE_WAKE_REPEAT_MINUTES,
+}).total("milliseconds");
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
+export const IDLE_WAKE_PROMPT: string = `This machine has run under ${UTILIZATION_LINE_PERCENTAGE}% CPU and GPU for ${IDLE_WAKE_MINUTES} minutes. Run \`pnpm ai:resume\`, then take the next fleet work: \`pnpm ai:fleet:next --kind unit\` for a unit, and a runner per compute-queue lane with items (the throughput skill and \`genshin-parity\`'s \`references/compute-queue.md\`), every agent on haiku unless a call needs the main session.`;

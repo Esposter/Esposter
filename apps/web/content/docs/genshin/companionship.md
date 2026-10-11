@@ -20,7 +20,7 @@ flowchart LR
 ## Data
 
 - **The level table.** The dump's `AvatarFettersLevelExcelConfigData` rows give the EXP each level takes to leave. `genshin:assets friendship` sums them into each level's total, so level 2 is 1,000 and level 10 is 29,100. The row past the top level is never summed in.
-- **The namecards.** The dump's `FetterCharacterCardExcelConfigData` rows name each character's level 10 reward. `RewardExcelConfigData` gives its one item, and `MaterialExcelConfigData` names that item as a namecard, so Amber's is item 210003 under text id 273889772. The namecards and the levels are one file, `friendship.json`.
+- **The namecards.** The dump's `FetterCharacterCardExcelConfigData` rows name each character's level 10 reward. `RewardExcelConfigData` gives its one item, and `MaterialExcelConfigData` names that item as a namecard, so Amber's is item 210003 under text id 273889772. The namecards and the levels are one hosted record, `friendship/friendship`.
 - **The claim amounts.** `BlossomCompanionshipExpMap` holds one amount per blossom kind, provisional until a recording measures it.
 
 ## Notes

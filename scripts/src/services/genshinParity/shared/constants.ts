@@ -61,7 +61,7 @@ export const WHOLE_SCREEN_MIN_WIDTH = 1280;
 export const WHOLE_SCREEN_MIN_ASPECT_RATIO = 1.6;
 export const WHOLE_SCREEN_MAX_ASPECT_RATIO = 1.9;
 // The most a search's output may run to: the fields it prints for each result, read whole as one string
-export const SEARCH_MAX_BUFFER_BYTES = 64 * 1024 * 1024;
+export const SEARCH_MAX_BUFFER_BYTES: number = 64 * 1024 * 1024;
 // A clip's file name carries its video's id, eleven characters, and a clip name of letters, digits and dashes
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const YT_CAPTURE_REGEX: RegExp = /^yt-(?<videoId>[\w-]{11})(?:-|\.)/u;
@@ -75,6 +75,9 @@ export const PARITY_PAGE_ROOT: string = `http://localhost:${process.env.GENSHIN_
 // The page a screen is shot on, by its query
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const PARITY_PAGE_URL: string = `${PARITY_PAGE_ROOT}?screen=`;
+// The browser keeps this many resource timings, so a page with more requests than that drops the rest from its load bench; the
+// Parity page raises it before its first request
+export const RESOURCE_TIMING_BUFFER_SIZE = 4096;
 // The name a backdrop is served to the parity page under, which the page is told in its query
 export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
 // Where a witness's files are served to the page: its layout, which the page is told of, and its meshes and textures

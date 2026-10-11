@@ -11,7 +11,7 @@ import { readNewestCommitComments } from "#src/services/coderabbit/collect/readN
 // Or failed, spends the mark, so the walk is held behind a repair for that one run; a run that found the red held, past
 // Its repairs or gone makes none, and its repair-first read cost nothing
 export const checkIsRepairFirst = (viewerLogin: string): boolean => {
-  const comments = readNewestCommitComments();
+  const comments = readNewestCommitComments(Date.now() - REPAIR_FIRST_SPAN_MS);
   const markedAtMs = getMarkedAtMs(comments, viewerLogin, REPAIR_FIRST_MARKER).at(-1);
   return (
     markedAtMs !== undefined &&

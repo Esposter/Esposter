@@ -1,11 +1,11 @@
 import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
 
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { checkIsVerdict } from "#src/services/coderabbit/collect/checkIsVerdict";
 import { CI_COMPLETED_STATUS } from "#src/services/coderabbit/collect/constants";
 import { readCommitCheck } from "#src/services/coderabbit/collect/readCommitCheck";
 import { readMainHeadIdentities } from "#src/services/coderabbit/collect/readMainHeadIdentities";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 
 // The queued verdict a red `main` head is judged on, or `undefined` while the run that gives it is still going. The
 // Branch's newest verdict counts when its run read the head under any sha the head has (`readMainHeadIdentities`): it

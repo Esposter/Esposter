@@ -4,7 +4,6 @@ import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailed
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { checkIsLockfileOnly } from "#src/services/coderabbit/collect/checkIsLockfileOnly";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import {
@@ -19,6 +18,7 @@ import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths"
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 

@@ -49,7 +49,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 ## Load is read, not reported
 
-- **Each machine runs `pnpm ai:machine:watch` under Monitor.** It is the same command on every OS, and it pushes `refs/machines/<id>` every ten minutes with the machine's CPU, GPU, free memory and platform.
+- **The pulse mod keeps each machine's watcher running and wakes an idle session, so no session arms a Monitor for it.** `pnpm ai:machine:watch` is the same command on every OS, and it pushes `refs/machines/<id>` every ten minutes with the machine's CPU, GPU, free memory and platform.
 - **`pnpm ai:fleet:status` is the coordinator's whole view:** every machine's last sample, and every claim with its holder and age.
 - **A machine messages the coordinator only for a miss, a failure, or a call it cannot make.** Its idle lines are its own signal to claim.
 

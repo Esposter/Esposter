@@ -4,7 +4,6 @@ import type { FoldWindowInput } from "#src/models/coderabbit/collect/FoldWindowI
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { ATTEMPT_RETRY_DELAY_SECONDS, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { getWindowFileCap } from "#src/services/coderabbit/collect/getWindowFileCap";
@@ -15,6 +14,7 @@ import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readRecutFileCaps } from "#src/services/coderabbit/collect/readRecutFileCaps";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
 import { recutWindowStack } from "#src/services/coderabbit/collect/recutWindowStack";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";

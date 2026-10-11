@@ -8,8 +8,8 @@ export interface SearchCandidate {
   fps?: number;
   height?: number;
   title: string;
-  uploader?: string;
   uploadDate?: string;
+  uploader?: string;
   url: string;
 }
 

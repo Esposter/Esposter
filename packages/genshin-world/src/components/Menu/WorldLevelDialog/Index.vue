@@ -76,7 +76,14 @@ onMounted(() => {
        It, what the World Level is, scrolled to its end where the change is told, and the button that lowers the World
        Level by one or restores it, held while the last change's cooldown runs. Every place is the 1080 high recording's
        Own pixels from the frame's top left -->
-  <GameScreen class="world-level-dialog" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.WorldLevel]">
+  <!-- Escape closes the dialog alone, back to the menu, so it stops here short of the input the screens close on -->
+  <GameScreen
+    class="world-level-dialog"
+    role="dialog"
+    aria-modal="true"
+    :aria-label="gameText[GameTextKey.WorldLevel]"
+    @keydown.esc.stop="emit('close')"
+  >
     <div class="backdrop" />
     <div ref="frame" class="frame" tabindex="-1">
       <div v-for="scale of MENU_DIALOG_CORNER_SCALES" :key="scale" class="corner" :style="{ scale }">
@@ -101,7 +108,15 @@ onMounted(() => {
         />
         <rect height="2" width="912" x="41.5" y="8" />
       </svg>
-      <div ref="body" class="body" @scroll="updateScrollThumb()">
+      <!-- Focusable, so a keyboard scrolls back up the help text it opens at the end of -->
+      <div
+        ref="body"
+        class="body"
+        role="region"
+        :aria-label="gameText[GameTextKey.WorldLevel]"
+        tabindex="0"
+        @scroll="updateScrollThumb()"
+      >
         <p ref="info" class="info">
           <span v-for="({ color, text }, index) of infoSegments" :key="index" :style="{ color }">{{ text }}</span>
         </p>

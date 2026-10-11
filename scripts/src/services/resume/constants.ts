@@ -11,3 +11,6 @@ export const DELETE_PID_FILE_ACTION = "delete the pid file";
 export const RED_PATH_ACTION = "the review-queue skill's red path";
 export const REMOVE_WORKTREE_SCRIPT = "bash .agents/skills/throughput/scripts/remove-worktree.sh";
 export const FAILED_RUN_CONCLUSIONS: readonly string[] = ["failure", "startup_failure", "timed_out"];
+export const WATCHER_ACTION =
+  "pnpm ai:machine:watch, or start a session with the genshin-mods plugin, whose pulse mod starts it";
+export const WATCHER_MISSING_TEXT = "machine watcher not running";

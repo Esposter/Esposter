@@ -1,4 +1,5 @@
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
+import type { skipStops as baseSkipStops } from "#src/services/coderabbit/collect/skipStops";
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
@@ -28,9 +29,10 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { runGh, runSession } = vi.hoisted(() => ({
+const { runGh, runSession, skipStops } = vi.hoisted(() => ({
   runGh: vi.fn<typeof baseRunGh>(),
   runSession: vi.fn<typeof baseRunSession>(),
+  skipStops: vi.fn<typeof baseSkipStops>(),
 }));
 
 // The resolver is the Claude session the drain spawns, and the marker it leaves goes out through `gh`; git runs
@@ -40,6 +42,12 @@ vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
 }));
 
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+// Real by default; a test stands one in for a sequence its skips cannot run out, which no fixture conflict reaches
+vi.mock(import("#src/services/coderabbit/collect/skipStops"), async (importOriginal) => {
+  const { skipStops: baseSkipStopsImplementation } = await importOriginal();
+  skipStops.mockImplementation(baseSkipStopsImplementation);
+  return { skipStops: skipStops as unknown as typeof baseSkipStops };
+});
 
 describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
@@ -160,6 +168,20 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     assert.exists(syncedSha);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([carriedPath, nestedPath]);
+  });
+
+  // A carry pushed short of the commits after its stop would drop them with no held branch holding them
+  test("leaves the rewrite unpushed when the commits the session pushed under it do not carry", async () => {
+    expect.hasAssertions();
+
+    const { developSha, queueSha } = setupMovedQueue([filePath, carriedPath]);
+    skipStops.mockReturnValueOnce(false);
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
+
+    expect(syncedSha).toBeUndefined();
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(readSha(`origin/${TEST_FILENAME}`));
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+    expect(runGh).not.toHaveBeenCalled();
   });
 
   // The sync's minutes are never thrown away for one commit: the conflicting one is set aside with a record, and

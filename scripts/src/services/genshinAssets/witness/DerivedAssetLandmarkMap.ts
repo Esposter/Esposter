@@ -5,19 +5,45 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // Each component's landmarks by name, the points of its parts `pose` solves a reference's camera from where the
 // Reference names the pixels it sees them at
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
-  // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the
-  // Bridge's springs and the drum tower's roof) name no mesh, so all six are dropped: the extraction draws market
-  // Stalls, railings and vines within 600 metres of the capital, no arch, bridge or tower, and the Court's buildings its
-  // Layout dumps name (Area_Fd_Build_FDC_Chengqiang_B_01_Lod0) no OBJ exports, since its city blob roots only
-  // Single-mesh props
+  // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the bridge's
+  // Springs and the drum tower's roof corners) are all dropped: the re-extraction exports no arch or bridge mesh near the
+  // Court, and its tall Talou towers (Area_Fd_Build_FDC_Talou_A_01_Lod0, 85 metres) stand on several instances with no
+  // Way to tell which is the reference's drum tower without the pose, which cannot run here (no parity page on
+  // Localhost:3011)
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.Hud]: {},
-  // Inazuma City's eleven landmarks (ParityReferenceMap's inazuma-city-location: the keep's eaves and ledge, the
-  // Platform's corners, a house's base and roof and the pavilion's eaves) name no mesh, so all eleven are dropped: the
-  // Extraction draws railings, roof trims and props within 600 metres of the capital, its largest a wharf platform 7.5
-  // Metres long, and the keep's and the houses' meshes its layout dumps name (Area_Dq_Build_MS_TsgHouse_02_Lod0,
-  // Area_Dq_Build_MS_CityHouse_04_Lod0) no OBJ exports, since its city blob roots only single-mesh props
-  [DerivedAssetComponent.Inazuma]: {},
+  // Inazuma City's four keep landmarks named: the top tier's eaves and the ledge under them, the silhouette edges of
+  // Area_Dq_Build_MS_Tsg_03_Lod0 (the keep's tallest mesh, its top at 176.5 metres) and Area_Dq_Build_MS_Tsg_02_Lod0
+  // (its second tier), each the one standing nearest the keep at (-5260, 150, 3320). The platform's corners, the
+  // Pavilion's eaves and the houses' base and roof are dropped: no mesh near the capital is matched to them with
+  // Confidence, and the house at the keep's base (Area_Dq_Build_MS_TsgHouse_07_Lod0) is a guess not read off the image.
+  // The pose could not run here (no parity page on localhost:3011), so these four are unmeasured
+  [DerivedAssetComponent.Inazuma]: {
+    keepEaveLeft: {
+      isEdge: true,
+      mesh: "Area_Dq_Build_MS_Tsg_03_Lod0",
+      near: [-5269.3, 160.95, 3314.84],
+      share: [0, 1, 0.5],
+    },
+    keepEaveRight: {
+      isEdge: true,
+      mesh: "Area_Dq_Build_MS_Tsg_03_Lod0",
+      near: [-5269.3, 160.95, 3314.84],
+      share: [1, 1, 0.5],
+    },
+    keepLedgeLeft: {
+      isEdge: true,
+      mesh: "Area_Dq_Build_MS_Tsg_02_Lod0",
+      near: [-5264.48, 139.57, 3320.95],
+      share: [0, 1, 0.5],
+    },
+    keepLedgeRight: {
+      isEdge: true,
+      mesh: "Area_Dq_Build_MS_Tsg_02_Lod0",
+      near: [-5264.48, 139.57, 3320.95],
+      share: [1, 1, 0.5],
+    },
+  },
   // Liyue Harbor's six landmarks (ParityReferenceMap's liyue-harbor-location: the gate's and the tower's plinths) name
   // No mesh, so all six are dropped: the extraction holds nothing rigid within 140 metres of the harbour's anchor, its
   // Nearest floor plate (Plot_05, 1.7 metres across) 142 metres off and its pillars 218 metres; its layout dumps name
@@ -67,21 +93,48 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // As water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Natlan]: {},
   // Nasha Town's seven landmarks (ParityReferenceMap's nasha-town-location: the central tower's plinth, ledge struts,
-  // Collar and column edges) name no mesh, so all seven are dropped: the extraction draws floor plates, flat walls,
-  // Pipes, railings and festival props within 600 metres of the capital, no round stack or plinth, and the town's
-  // Buildings its layout dumps name (Area_Ndkl_Build_NXZ_House_01_Lod0) no OBJ exports, since its city blob roots only
-  // Single-mesh props
+  // Collar and column edges) are all dropped: the re-extraction exports 156 buildings, but the tower the reference shows
+  // Is a pink copper stack on its plinth with pods and pipes, and no exported mesh (Area_Ndkl_Build_NXZ_Shanghui_01 or
+  // _02, the tallest near the town, are halls 45 and 66 metres high) matches it with confidence; the pose cannot run
+  // Here (no parity page on localhost:3011)
   [DerivedAssetComponent.NodKrai]: {},
   // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
   // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Snezhnaya]: {},
-  // Sumeru City's nine landmarks (ParityReferenceMap's sumeru-city-location: the harbour minaret's collar, dome and
-  // Finial and the terrace spire's base, wings and tip) name no mesh, so all nine are dropped: the extraction draws
-  // Vines, wharf boards, banners and two house trims 3.4 metres tall within 600 metres of the capital, and the houses'
-  // Meshes its layout dumps name (Area_Xm_Build_XKC_Comp_House_01_Lod0) no OBJ exports, since its city blob roots only
-  // Single-mesh props
-  [DerivedAssetComponent.Sumeru]: {},
+  // Sumeru City's four spire landmarks named (ParityReferenceMap's sumeru-city-location: the terrace spire's base, tip
+  // And wings): the slender Area_Xm_Build_XKC_Shendian_04_Lod0 at the plateau's top (its tip 190.8 to 216.5 metres) for
+  // The tip and wings, and Area_Xm_Build_XKC_Shendian_03_Lod0 under it for the base's left edge, all standing at
+  // (-2253, 191, -4144). The harbour minaret's collar, dome and finial are dropped: the extraction's round towers near
+  // The harbour are walls and pillars (Area_Common_Build_Matou_03_Lod0 and the ruin walls) with no dome among them, so
+  // None is matched to the reference's minaret with confidence. The pose could not run here (no parity page on
+  // Localhost:3011), so these four are unmeasured
+  [DerivedAssetComponent.Sumeru]: {
+    spireBaseLeft: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Shendian_03_Lod0",
+      near: [-2252.81, 190.83, -4144.23],
+      share: [0, 0.5, 0.5],
+    },
+    spireTip: {
+      isInterior: true,
+      mesh: "Area_Xm_Build_XKC_Shendian_04_Lod0",
+      near: [-2252.81, 190.83, -4144.23],
+      share: [0.5, 1, 0.5],
+    },
+    spireWingLeft: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Shendian_04_Lod0",
+      near: [-2252.81, 190.83, -4144.23],
+      share: [0, 0.85, 0.5],
+    },
+    spireWingRight: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Shendian_04_Lod0",
+      near: [-2252.81, 190.83, -4144.23],
+      share: [1, 0.85, 0.5],
+    },
+  },
   // Rigid architecture only, never decoration: the statue's own meshes. Points on the statue's axis, which a round part
   // Holds from any heading: the centre of its dish and the top of its figure; the two ends of the dish's brim, the face
   // Centres of its widest ring; and the two outermost vertices of the plinth's rim, read off the rim's band of vertices

@@ -5,6 +5,7 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
 import { benchScene } from "#parity/benchScene";
+import { benchLoad } from "#parity/benchLoad";
 import { getSceneCamera } from "#parity/getSceneCamera";
 import { getSceneFog } from "#parity/getSceneFog";
 import { getScenePieces } from "#parity/getScenePieces";
@@ -113,6 +114,7 @@ if (screen && root) {
   app.mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
+  Reflect.set(window, "benchLoad", () => benchLoad(sceneContext.value));
   Reflect.set(window, "getSceneCamera", () => getSceneCamera(sceneContext.value));
   Reflect.set(window, "getSceneSky", () => getSceneSky(sceneContext.value));
   Reflect.set(window, "getSceneFog", () => getSceneFog(sceneContext.value));

@@ -14,13 +14,13 @@ import type {
 import type { DataTexture } from "three";
 
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
+import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { MAX_PENDING_TILE_COUNT, TERRAIN_WORKER_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import {
   checkTerrainTileCasts,
   computeTerrainIndices,
-  MAX_TILE_ATTEMPTS,
   createFlowerMaterial,
   createFlowerTileGeometry,
   createTerrainMaterial,
@@ -31,6 +31,7 @@ import {
   getTerrainTileColumn,
   getTerrainTileLevel,
   getTerrainTileRow,
+  MAX_TILE_ATTEMPTS,
   resolveTerrainDraws,
   selectTerrainTiles,
   TERRAIN_LAYER,
@@ -214,6 +215,10 @@ const originMatrix = new Matrix4();
 const viewProjection = new Matrix4();
 const frustum = new Frustum();
 let isReady = false;
+// The terrain's first settled tiles, measured from its mount to the frame it is ready
+const { promise: isTerrainReady, resolve: resolveTerrainReady } = Promise.withResolvers<void>();
+// oxlint-disable-next-line typescript/no-floating-promises -- the measure resolves with the terrain's ready, and nothing waits on it
+measureLoadStep("terrain", isTerrainReady);
 // Each frame the quadtree is walked from the eye's world position, what is missing is asked for, and the tiles to
 // Draw are shown in place of last frame's. It is walked twice: in the view, for what is asked for first and what makes
 // The terrain ready, and all round the eye, for what is held and drawn. Drawn all round, the ground is the same
@@ -258,6 +263,7 @@ onBeforeRender(() => {
   shown.count = draws.count;
   if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => tileStreamer.isSettled(key))) return;
   isReady = true;
+  resolveTerrainReady();
   emit("ready");
 });
 

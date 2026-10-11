@@ -7,6 +7,7 @@ import type { EnabledMods } from "../../types";
 import {
   CACHE_WARNING_MS,
   CLOCK_TICK_MS,
+  IDLE_WAKE_PROMPT,
   RESERVE_SECTION_ID,
   VEIL_SECTION_ID,
   VEIL_SYSTEM_SECTION,
@@ -14,6 +15,10 @@ import {
 } from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
+import { checkIsIdle } from "./pulse/checkIsIdle";
+import { getIdleMinutes } from "./pulse/getIdleMinutes";
+import { getPulseWake } from "./pulse/getPulseWake";
+import { parseMachinePulse } from "./pulse/parseMachinePulse";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
 import { getReserveSummary } from "./resin/getReserveSummary";
 import { getReserveWindow } from "./resin/getReserveWindow";
@@ -25,6 +30,12 @@ const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as c
 const isCommissionExpandedAtom = atom(
   { key: "isCommissionExpanded", plugin: "genshin-mods" } as const,
   InitialState.isCommissionExpanded,
+);
+const idleMinutesAtom = atom({ key: "idleMinutes", plugin: "genshin-mods" } as const, InitialState.idleMinutes);
+const idleReadingAtAtom = atom({ key: "idleReadingAt", plugin: "genshin-mods" } as const, InitialState.idleReadingAt);
+const lastIdleWakeMsAtom = atom(
+  { key: "lastIdleWakeMs", plugin: "genshin-mods" } as const,
+  InitialState.lastIdleWakeMs,
 );
 const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as const, InitialState.lastPrompt);
 const lastCacheRequestAtAtom = atom(
@@ -65,6 +76,34 @@ const suggestWaypoints = async ($: EngineInterface) => {
   if (answer.isAnswered) await update($, waypointsAtom, () => parseWaypoints(answer.text));
 };
 
+// Reads the machine's pulse and wakes the session with the next fleet work once the machine has been idle long enough. Each
+// New reading counts once, a reading at or over the line ends the idle episode, and no wake lands during a turn or while
+// A usage reserve winds down
+const pulseMachine = async ($: EngineInterface) => {
+  if (!(await read($, enabledModsAtom)).pulse) return;
+
+  const output = await $.process.run(["node", `${$.plugin.root}/scripts/machinePulse.mjs`, await $.session.cwd()]);
+  const reading = parseMachinePulse(output.stdout);
+  if (output.exitCode !== 0 || reading === undefined) return;
+
+  const isNewReading = reading.at !== (await read($, idleReadingAtAtom));
+  const idleMinutes = isNewReading
+    ? await update($, idleMinutesAtom, (value) => getIdleMinutes(reading, value))
+    : await read($, idleMinutesAtom);
+  if (isNewReading) {
+    await update($, idleReadingAtAtom, () => reading.at);
+    if (!checkIsIdle(reading)) await update($, lastIdleWakeMsAtom, () => InitialState.lastIdleWakeMs);
+  }
+
+  const nowMs = await $.clock.now();
+  const { isWindDown } = await read($, reserveWindowAtom);
+  const lastWakeMs = await read($, lastIdleWakeMsAtom);
+  if (!getPulseWake({ ...reading, idleMinutes }, { isTurnRunning, isWindDown, lastWakeMs, nowMs })) return;
+
+  await update($, lastIdleWakeMsAtom, () => nowMs);
+  await $.prompt.submit({ text: IDLE_WAKE_PROMPT });
+};
+
 const closeCommission = async ($: EngineInterface) => {
   await update($, commissionAtom, () => InitialState.commission);
   await update($, isCommissionExpandedAtom, () => InitialState.isCommissionExpanded);
@@ -95,7 +134,11 @@ export const registerLifecycle = (on: On): void => {
     $.clock.every(CLOCK_TICK_MS, () => {
       // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and every call in the tick resolves
       tick($);
+      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a run that exits non-zero returns with nothing to show
+      pulseMachine($);
     });
+    // oxlint-disable-next-line typescript/no-floating-promises -- The session start takes no promise, and a run that exits non-zero returns with nothing to show
+    pulseMachine($);
     return next(e);
   });
 

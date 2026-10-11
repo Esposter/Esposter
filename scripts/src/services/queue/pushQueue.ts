@@ -1,5 +1,4 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { carryReplayCommit } from "#src/services/queue/carryReplayCommit";
 import { checkIsRetried } from "#src/services/queue/checkIsRetried";
@@ -9,6 +8,7 @@ import { getRetryDelayMilliseconds } from "#src/services/queue/getRetryDelayMill
 import { readQueueCommits } from "#src/services/queue/readQueueCommits";
 import { selectReplayCommits } from "#src/services/queue/selectReplayCommits";
 import { syncCheckout } from "#src/services/queue/syncCheckout";
+import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";

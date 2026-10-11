@@ -44,7 +44,7 @@ export const runExpressLane = ({
     console.info(`express: would push ${cut.targetSha} to ${MAIN_BRANCH}`);
     return { heldShas: waitingShas };
   } else if (!pushBranch({ branch: MAIN_BRANCH, cwd, expectedSha: mainSha, isDryRun, sha: cut.targetSha }))
-    return { heldShas: claimedShas, outcome: getMovedOutcome(MAIN_BRANCH) };
+    return { heldShas: [...cut.shas, ...waitingShas], outcome: getMovedOutcome(MAIN_BRANCH) };
   return {
     heldShas: [],
     outcome: {
