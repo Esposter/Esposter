@@ -803,10 +803,10 @@ defineExpose({ jumpTo, readCameraPosition });
   height: 100%;
 }
 
-/* Provisional: the teleport's fade to black and back, measured off a recording of a teleport */
+/* The teleport's fade to the loading screen's background and back, its durations read off the teleport clip */
 .teleport-fade {
   position: absolute;
-  background: #000;
+  background: #e9ece9;
   inset: 0;
   opacity: 0;
   pointer-events: none;
