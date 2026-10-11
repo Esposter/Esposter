@@ -1,25 +1,14 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 
-// An area's exploration as the map shows it: how many of its doings are done out of how many it counts, and the done
-// Weight as a percentage of the total, rounded down and uncapped
-export interface ExplorationProgress {
-  doingCount: number;
-  doneCount: number;
-  percentage: number;
-}
-
-// Provisional: the weights are the table's, and they do not yet fit the totals. Galesong Hill's nineteen doings at ten
-// Each make 190 against its total of 146, reading 130 with all of them done, so the scale the percentage takes waits on
-// A recording of the map's steps
+// An area's exploration as the map shows it: the done weight as a percentage of the total, rounded down, and never past
+// 100, which the English map reads in gold once an area is fully explored. Provisional: the weights are the table's,
+// And they do not yet fit the totals. Galesong Hill's nineteen doings at ten each make 190 against its total of 146,
+// And the one recording of the map's steps shows a single chest taking it from 99% to 100%, which nearly any chest's
+// Weight fits, so the scale waits on a recording of more steps
 export const computeExplorationProgress = (
   { doings, total }: ExplorationArea,
   exploredDoingIds: ReadonlySet<string>,
-): ExplorationProgress => {
-  const exploredDoings = doings.filter(({ id }) => exploredDoingIds.has(id));
-  const doneWeight = exploredDoings.reduce((sum, { weight }) => sum + weight, 0);
-  return {
-    doingCount: doings.length,
-    doneCount: exploredDoings.length,
-    percentage: Math.floor((doneWeight * 100) / total),
-  };
+): number => {
+  const doneWeight = doings.reduce((sum, { id, weight }) => (exploredDoingIds.has(id) ? sum + weight : sum), 0);
+  return Math.min(Math.floor((doneWeight * 100) / total), 100);
 };

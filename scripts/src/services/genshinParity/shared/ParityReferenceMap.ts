@@ -486,23 +486,59 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     seconds: 12,
   },
+  // The English PC client's map zoomed out over Galesong Hill at 99% (yt-kgW2IgWKukg at 4.6 seconds, 1080p and 60 frames a
+  // Second, one chest before the area reads 100%). Its label, the name and the progress line under it, scored over the
+  // Glyphs' silhouettes alone, the terrain between their strokes left out. The game places a label from map data the
+  // Catalogue does not hold, so the camera stands where Galesong Hill's outline puts the label on the still's, and the
+  // Area holds one doing at the still's progress; the comparison reads the label's type and its line's place, not where
+  // The map writes it
+  "map-overlay-galesong": {
+    capture: "yt-kgW2IgWKukg-exploration-steps.mp4",
+    props: {
+      camera: { x: -99.42, yaw: 0, z: 636.36 },
+      explorationAreas: [
+        { areaId: "galesong-hill", doings: [{ id: "galesong-hill", kind: "Waypoint", weight: 99 }], total: 100 },
+      ],
+      landmarks: [
+        {
+          areaId: "galesong-hill",
+          heightOffset: 0.79,
+          id: "windrise-statue-of-the-seven",
+          kind: "StatueOfTheSeven",
+          position: { x: 44.38, z: -0.51 },
+          rotation: -1.5708,
+        },
+      ],
+    },
+    region: { height: 84, width: 296, x: 596, y: 336 },
+    screen: "MapOverlay",
+    seconds: 4.6,
+    silhouettes: [
+      { height: 48, ink: [228, 233, 227], width: 136, x: 610, y: 338 },
+      { height: 48, ink: [232, 236, 233], width: 102, x: 774, y: 338 },
+      { height: 24, ink: [232, 236, 223], width: 290, x: 598, y: 392 },
+    ],
+  },
   // The English PC client's map on M over Jueyun Karst, the wiki's full-screen 1080p screenshot. Scored over its interface
-  // Layer alone, the pointer, the area names, the close button and the zoom slider, the terrain the game paints masked
-  // Out; the region tag, the top bar and the domains toggle wait on their text ids and are left out
+  // Layer alone, the terrain the game paints masked out: the pointer, the close button and the zoom slider whole, and the
+  // Area names over their glyphs' silhouettes, since a name's box holds the terrain between its strokes; the region tag,
+  // The top bar and the domains toggle wait on their text ids and are left out
   "map-overlay-jueyun": {
     mask: [
       { height: 70, width: 70, x: 970, y: 555 },
       { height: 68, width: 68, x: 1808, y: 15 },
       { height: 262, width: 34, x: 12, y: 410 },
-      { height: 58, width: 236, x: 780, y: 160 },
-      { height: 54, width: 492, x: 476, y: 390 },
-      { height: 54, width: 296, x: 796, y: 490 },
-      { height: 55, width: 280, x: 1170, y: 590 },
-      { height: 50, width: 192, x: 456, y: 618 },
-      { height: 48, width: 262, x: 606, y: 950 },
-      { height: 48, width: 270, x: 1568, y: 918 },
     ],
     screen: "MapOverlay",
+    silhouettes: [
+      { height: 58, ink: [210, 226, 228], width: 236, x: 780, y: 160 },
+      { height: 54, ink: [234, 251, 252], width: 492, x: 476, y: 390 },
+      { height: 54, ink: [245, 255, 255], width: 296, x: 796, y: 490 },
+      { height: 55, ink: [232, 251, 252], width: 280, x: 1170, y: 590 },
+      { height: 50, ink: [232, 247, 248], width: 192, x: 456, y: 618 },
+      { height: 48, ink: [208, 219, 221], width: 262, x: 606, y: 950 },
+      { height: 48, ink: [168, 169, 169], width: 270, x: 1568, y: 918 },
+    ],
     wikiTitle: "File:Map Stardust in Jueyun.png",
   },
   // The English PC client's Mondstadt city from the wiki's 4K location image of 2024, in daylight (short shadows, a clear

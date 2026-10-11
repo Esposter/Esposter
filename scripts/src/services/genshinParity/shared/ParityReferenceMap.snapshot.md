@@ -51,7 +51,8 @@ committed.
 | `login-interface-mainland-rating` | `LoginInterface` | 3.85% | 0.953 | 2.62% | 0.2090 |
 | `login-interface-title` | `LoginInterface` | 0.51% | 0.997 | 0.25% | 0.0353 |
 | `login-night-title` | `LoginScreen` | 9.41% | 0.371 | 7.01% | 0.3913 |
-| `map-overlay-jueyun` | `MapOverlay` | 60.22% | 0.123 | 38.81% | 0.8864 |
+| `map-overlay-galesong` | `MapOverlay` | 7.76% | 0.778 | 17.30% | 0.4829 |
+| `map-overlay-jueyun` | `MapOverlay` | 56.51% | 0.123 | 38.80% | 0.7746 |
 | `mondstadt-city-location` | `WorldScreen` | 26.66% | 0.292 | 22.43% | 0.7549 |
 | `nasha-town-location` | `WorldScreen` | 29.69% | 0.238 | 24.60% | 0.7627 |
 | `paimon-menu` | `MenuPaimon` | 5.42% | 0.905 | 3.64% | 0.2244 |

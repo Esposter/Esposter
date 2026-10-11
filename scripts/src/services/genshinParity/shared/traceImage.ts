@@ -1,4 +1,4 @@
-import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { PARITY_DIRECTORY, SPECK_SHARE } from "#src/services/genshinParity/shared/constants";
 import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
 import { resolveSource } from "#src/services/genshinParity/shared/resolveSource";
 import ImageTracer from "imagetracerjs";
@@ -8,8 +8,6 @@ import sharp from "sharp";
 
 const INK = { a: 255, b: 0, g: 0, r: 0 };
 const PAPER = { a: 255, b: 255, g: 255, r: 255 };
-// The share of the region under which a run of ink, or of paper the ink encloses, is a speck the source carries
-const SPECK_SHARE = 0.0002;
 // A glyph in a region of an image as one filled path, so a mark is derived from the game's own shape rather than
 // Guessed: the region is split into ink and paper halfway between its faintest and strongest ink (a pale mark on a
 // Pale ground splits as well as a dark one), traced into curves, and the ink's paths kept. The SVG is written beside

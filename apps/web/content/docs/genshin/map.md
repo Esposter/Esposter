@@ -40,7 +40,10 @@ flowchart TD
 
 ## Parity
 
-The overlay is scored against `map-overlay-jueyun`, the English client's map on M over Jueyun Karst at 1920 by 1080, over its interface layer alone: the pointer, the area names, the close button and the zoom slider, as rectangles of the reference's own pixels (`ParityReference.mask`), with the terrain the game paints masked out. The score is high because the names are not drawn: the region data gives no area a place, so each name box holds only the reference's terrain. The boxes also keep the terrain between a glyph's strokes, so the score is an upper bound until the glyphs are traced, and the bar it is judged against is not yet reachable.
+The overlay is scored against two references, each over its interface alone, the terrain the game paints masked out.
+
+- **`map-overlay-jueyun`**, the English client's map on M over Jueyun Karst at 1920 by 1080. The pointer, the close button and the zoom slider are scored as rectangles of the reference's own pixels (`ParityReference.mask`), and the seven area names over their glyphs' silhouettes (`ParityReference.silhouettes`), so the terrain between a name's strokes never counts ([comparison](/docs/genshin/parity/compare)). It scores 56.51% because the names are not drawn: they are Jueyun Karst's subareas, which the catalogue holds no places for, so each silhouette is scored against the page's bare ground.
+- **`map-overlay-galesong`**, the English client's map over Galesong Hill at 99% (`captures/yt-kgW2IgWKukg-exploration-steps.mp4` at 4.6 seconds). The label, the name and its progress line, is scored over its glyphs' silhouettes, the mining mark over the name's "n" left out. The game places a label from map data the catalogue does not hold, so the reference's camera stands where Galesong Hill's outline puts the label on the still's. The sizes, the line's place and the white are the still's, and the label scores 7.76% against a bar of 2%: Signika's strokes are the difference left, the game's face being out of reach ([exploration progress](/docs/genshin/exploration-progress)).
 
 ## Key files
 

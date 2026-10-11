@@ -6,24 +6,25 @@ import { describe, expect, test } from "vitest";
 
 describe(computeExplorationProgress, () => {
   const WEIGHT = 10;
-  const TOTAL = 146;
+  const TOTAL = 15;
   const area: ExplorationArea = {
     areaId: "galesong-hill",
     doings: [
       { id: "40", kind: ExplorationKind.Waypoint, weight: WEIGHT },
       { id: "41", kind: ExplorationKind.Chest, weight: WEIGHT },
-      { id: "42", kind: ExplorationKind.Camp, weight: WEIGHT },
     ],
     total: TOTAL,
   };
 
-  test("should count the doings done out of those counted, and floor the done weight's share of the total", () => {
+  test("should floor the done weight's share of the total", () => {
     expect.hasAssertions();
 
-    expect(computeExplorationProgress(area, new Set(["40"]))).toStrictEqual({
-      doingCount: 3,
-      doneCount: 1,
-      percentage: Math.floor((WEIGHT * 100) / TOTAL),
-    });
+    expect(computeExplorationProgress(area, new Set(["40"]))).toBe(Math.floor((WEIGHT * 100) / TOTAL));
+  });
+
+  test("should read 100 once the done weight passes the total", () => {
+    expect.hasAssertions();
+
+    expect(computeExplorationProgress(area, new Set(["40", "41"]))).toBe(100);
   });
 });

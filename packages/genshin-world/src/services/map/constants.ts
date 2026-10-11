@@ -14,14 +14,13 @@ export const MAP_MARK_SHARE = 0.02;
 // Provisional: the open map's disc at the reference's scale, about 13 pixels of 1080 high. The minimap keeps its own
 // Share, its view being a fraction of the open map's extent
 export const MAP_OVERLAY_MARK_SHARE = 0.0068;
-// Provisional: an area's name at the reference's scale, about 34 pixels of 1080 high, and its dark outline a few pixels
-// Wide, each a share of the open map's extent so it is drawn at the view's own scale
-export const MAP_LABEL_SHARE = 0.0177;
-export const MAP_LABEL_OUTLINE_SHARE = 0.0016;
-// Provisional: an area's progress line, the count and the percentage, at about 60% of the name's size and a little under
-// The name's baseline, not yet read off the game's map, which shows it at its own size and place
-export const MAP_PROGRESS_SHARE = 0.0106;
-export const MAP_PROGRESS_OFFSET_SHARE = 0.0265;
+// An area's name and its progress line, each a share of the open map's extent so they are drawn at the view's own scale.
+// Read off the English PC client's map over Galesong Hill (yt-kgW2IgWKukg at 4.6 seconds, 1080p): the name's capitals
+// 28.8 pixels high and the line's 16.0, their middles 45.9 apart, which Signika's capitals, 0.706 of its size as the page
+// Draws them, take at these sizes at the default view's 4.8 pixels a metre
+export const MAP_LABEL_SHARE = 0.02125;
+export const MAP_PROGRESS_SHARE = 0.012;
+export const MAP_PROGRESS_OFFSET_SHARE = 0.0227;
 // Provisional: the metres the open map shows across its width at the zoom slider's default, centred on the player; not
 // Yet read off the game's zoom levels, which needs the regions' true shapes to measure against
 export const MAP_VIEW_METRES = 400;

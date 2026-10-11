@@ -23,6 +23,9 @@ export const PARITY_FRAME_MS: number = 1000 / 60;
 // Once taking near a minute, where Playwright's default half minute gave up on a page still loading
 export const PARITY_READY_TIMEOUT_MS = 120_000;
 export const COMPARISONS_DIRECTORY: string = join(PARITY_DIRECTORY, "comparisons");
+// The share of an image under which a run of a glyph's ink, or of the paper its ink encloses, is a speck the source
+// Carries
+export const SPECK_SHARE = 0.0002;
 // Each reference's witness G-buffer, its targets as raw floats beside a header and a preview
 export const GBUFFER_DIRECTORY: string = join(PARITY_DIRECTORY, "gbuffer");
 // Each family's parts drawn from straight above, a surface's design in metres

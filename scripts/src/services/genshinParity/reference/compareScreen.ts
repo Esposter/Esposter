@@ -7,6 +7,7 @@ import { formatUnderBlackShare } from "#src/services/genshinParity/display/forma
 import { getCaptureSoftness } from "#src/services/genshinParity/reference/getCaptureSoftness";
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
+import { readScoredMask } from "#src/services/genshinParity/reference/readScoredMask";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
 import {
@@ -21,7 +22,6 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
 import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";
-import { computeScoredMask } from "#src/services/recreation/image/computeScoredMask";
 import { BYTE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -86,9 +86,9 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     .png()
     .toBuffer();
   const { data } = await sharp(difference).greyscale().raw().toBuffer({ resolveWithObject: true });
-  // The scored rectangles are the reference's own, its whole region when it names none, so a mask's leftover never counts
-  const scoredRegions = reference.mask ?? [region];
-  const scoredMask = computeScoredMask(scoredRegions, region, region.width, region.height);
+  // The scored pixels are the reference's own rectangles and glyphs, its whole region when it names none, so a mask's
+  // Leftover never counts
+  const scoredMask = await readScoredMask(referencePath, reference, region, region.width, region.height);
   const cellMeans = Array.from({ length: GRID_SIZE * GRID_SIZE }, () => ({ count: 0, sum: 0 }));
   for (let index = 0; index < data.length; index++) {
     if (!scoredMask[index]) continue;
@@ -118,7 +118,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   // FLIP's error map read at the structure's raster, its mean taken over the scored pixels alone
   const flipHeight = Math.round((STRUCTURE_WIDTH / region.width) * region.height);
   const { errorMap } = await readFlipErrorMap(referenceRegion, shotRegion, STRUCTURE_WIDTH, flipHeight);
-  const flipMask = computeScoredMask(scoredRegions, region, STRUCTURE_WIDTH, flipHeight);
+  const flipMask = await readScoredMask(referencePath, reference, region, STRUCTURE_WIDTH, flipHeight);
   const flipTotal = errorMap.reduce((sum, error, index) => sum + error * (flipMask[index] ?? 0), 0);
   const flip =
     flipTotal /

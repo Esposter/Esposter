@@ -20,7 +20,6 @@ import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtS
 import { computeZoomShare } from "#src/services/map/computeZoomShare";
 import {
   MAP_DRAG_THRESHOLD_PIXELS,
-  MAP_LABEL_OUTLINE_SHARE,
   MAP_LABEL_SHARE,
   MAP_OVERLAY_MARK_SHARE,
   MAP_PROGRESS_OFFSET_SHARE,
@@ -33,7 +32,7 @@ import {
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { GameScreen } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
   camera: MapCamera;
@@ -132,29 +131,30 @@ const onZoomPointerMove = (event: PointerEvent) => {
 const onZoomPointerUp = () => {
   isSlidingZoom = false;
 };
-// Each counted area's progress as the unlocked landmarks leave it, keyed by its catalogue area
-const explorationProgressMap = computed(
+// Each counted area's progress line as the unlocked landmarks leave it, in the game's words and their colours, keyed by
+// Its catalogue area: a fully explored area's percentage turns gold
+const progressSegmentsMap = computed(
   () =>
     new Map(
-      explorationAreas.map((area) => [
-        area.areaId,
-        computeExplorationProgress(area, computeExploredDoingIds(area, landmarks)),
-      ]),
+      explorationAreas.map((area) => {
+        const percentage = computeExplorationProgress(area, computeExploredDoingIds(area, landmarks));
+        const text =
+          gameText[percentage === 100 ? GameTextKey.ExplorationProgressComplete : GameTextKey.ExplorationProgress];
+        return [area.areaId, splitGameTextColors(fillGameTextValues(text, percentage))];
+      }),
     ),
 );
 const areaLabels = computed(() =>
   computeAreaLabels(catalogue, landmarks).map(({ id, name, x, z }) => ({
     id,
     name,
-    progress: explorationProgressMap.value.get(id),
+    progressSegments: progressSegmentsMap.value.get(id) ?? [],
     x,
     z,
   })),
 );
 // The filled areas' progress, read out of the hidden drawing by a screen reader as a list of its own
-const areaProgresses = computed(() =>
-  areaLabels.value.flatMap(({ id, name, progress }) => (progress ? [{ id, name, progress }] : [])),
-);
+const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegments }) => progressSegments.length > 0));
 const originalResin = computed(
   () =>
     regenerateOriginalResin(wallet, Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs }))[
@@ -187,25 +187,18 @@ onMounted(() => {
       @wheel="metres = computeWheelZoomMetres(metres, $event.deltaY)"
     >
       <MapDrawing :catalogue :landmarks :mark-radius @select="(landmark) => emit('jump', computeJumpPose(landmark))" />
-      <template v-for="{ id, name, progress, x, z } of areaLabels" :key="id">
-        <text
-          class="area-name"
-          :font-size="metres * MAP_LABEL_SHARE"
-          :stroke-width="metres * MAP_LABEL_OUTLINE_SHARE"
-          :x
-          :y="z"
-        >
+      <template v-for="{ id, name, progressSegments, x, z } of areaLabels" :key="id">
+        <text class="area-name" :font-size="metres * MAP_LABEL_SHARE" :x :y="z">
           {{ name }}
         </text>
         <text
-          v-if="progress"
+          v-if="progressSegments.length > 0"
           class="area-progress"
           :font-size="metres * MAP_PROGRESS_SHARE"
-          :stroke-width="metres * MAP_LABEL_OUTLINE_SHARE"
           :x
           :y="z + metres * MAP_PROGRESS_OFFSET_SHARE"
         >
-          {{ progress.doneCount }}/{{ progress.doingCount }} {{ progress.percentage }}%
+          <tspan v-for="({ color, text }, index) of progressSegments" :key="index" :fill="color">{{ text }}</tspan>
         </text>
       </template>
       <MapPointer :size="markRadius" :x="camera.x" :yaw="camera.yaw" :z="camera.z" />
@@ -229,8 +222,8 @@ onMounted(() => {
       <path class="zoom-thumb" d="M 0 -7 L 4 0 L 0 7 L -4 0 Z" :transform="`translate(28 ${zoomThumbY})`" />
     </svg>
     <ul class="progress-list">
-      <li v-for="{ id, name, progress } of areaProgresses" :key="id">
-        {{ name }} {{ progress.doneCount }}/{{ progress.doingCount }} {{ progress.percentage }}%
+      <li v-for="{ id, name, progressSegments } of areaProgresses" :key="id">
+        {{ name }} <span v-for="({ text }, index) of progressSegments" :key="index">{{ text }}</span>
       </li>
     </ul>
     <MapJumpList
@@ -278,13 +271,23 @@ onMounted(() => {
   touch-action: none;
 }
 
+/* The labels' white, read off the English map's ink over Galesong Hill, which draws them with no outline. Signika is
+   Narrower than the game's face at one cap height, so each line keeps the game's cap height and is spaced out toward
+   Its width (the name 252 pixels across, its line 278), at the spacing whose strokes score nearest the game's */
 .area-name,
 .area-progress {
-  fill: #ece5d7;
-  paint-order: stroke;
-  stroke: rgb(0 0 0 / 0.5);
+  fill: #e5e9e0;
+  font-weight: 600;
   text-anchor: middle;
   dominant-baseline: middle;
+}
+
+.area-name {
+  letter-spacing: 0.04em;
+}
+
+.area-progress {
+  letter-spacing: 0.03em;
 }
 
 .zoom {

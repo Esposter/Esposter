@@ -1,6 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
 import type { ParityPlacement } from "#src/models/genshinParity/shared/ParityPlacement";
+import type { ParitySilhouette } from "#src/models/genshinParity/shared/ParitySilhouette";
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 // A reference is a wiki file, or one frame of a recording kept in the captures folder: a still the wiki lacks is taken
@@ -47,4 +48,8 @@ interface ParityReferenceBase {
   region?: ImageRegion;
   // The parity page's screen that recreates it, by its component's name
   screen: string;
+  // The glyphs within the region whose strokes alone a comparison scores, beside the mask's rectangles: each split from
+  // The ground behind it in the reference's own pixels, so a name's strokes count and the painted terrain between them,
+  // Which the page does not draw, never does
+  silhouettes?: ParitySilhouette[];
 }
