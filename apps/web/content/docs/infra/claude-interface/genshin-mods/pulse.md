@@ -11,7 +11,7 @@ Pulse draws no row above the prompt. Its visible acts are a prompt the session t
 
 ## How it works
 
-At session start, with pulse on, the plugin starts `pnpm ai:machine:watch` in the session's directory as a child process and reads its output as it arrives, a whole line at a time. Outside the repository the watcher's script is not there, so nothing starts. The watcher writes each reading to `~/.esposter/machine/state.json`, and it refuses to start while another watcher's reading is fresh and that watcher's process is alive, so a second session never samples the machine twice. The watcher is the session's: it ends with the Claude Code process that started it.
+At session start, with pulse on, the plugin starts `pnpm ai:machine:watch` in the session's directory as a child process and reads its output as it arrives, a whole line at a time. Outside the repository the watcher's script is not there, so nothing starts. The watcher writes each reading to `~/.esposter/machine/state.json`, and it holds `~/.esposter/machine/watcher.lock` for its life, taken before its first sample: a watcher that finds the lock held by a live process exits, so two sessions starting together never sample the machine twice. A lock whose process is gone, or written before the machine last booted, is taken over. The watcher is the session's: it ends with the Claude Code process that started it.
 
 The watcher prints one line when the machine goes idle, `machine idle: …`, and repeats that line on each reminder interval while the machine stays idle. Idle is a full three-minute window of CPU under 80% with free memory above its room share. Each idle line wakes the session, unless a turn is running or a usage reserve is winding down, in which case the line is dropped and nothing wakes the session for it. A maintenance tier still wakes, since its instruction keeps the cleanup on haiku.
 
@@ -58,18 +58,18 @@ Pulse is on by default, and `/pulse off` stops it; `/pulse on` turns it back on,
 
 ## Key files
 
-| File                                                           | Role                                                                         |
-| :------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`      | Session start starts the watcher's lines, turn end runs the queue sync       |
-| `packages/genshin-mods/src/services/pulse/getPulseWake.ts`     | The wake decision, a pure function over one watcher line and the session     |
-| `packages/genshin-mods/src/services/pulse/takeWatcherLines.ts` | Splits the watcher's chunks into whole lines, holding a partial one          |
-| `packages/genshin-mods/src/services/constants.ts`              | The idle line's prefix, the watcher's script path and the wake prompt        |
-| `packages/genshin-mods/scripts/queueSync.mjs`                  | Runs `pnpm ai:queue:push` in the repository at a turn's end                  |
-| `.githooks/post-commit`                                        | Starts `pnpm ai:queue:push` detached when a commit lands on `ai/queue`       |
-| `scripts/src/queue/push/index.ts`                              | The one push entry the hook and the mod share, under its lock                |
-| `scripts/src/queue/push/runQueuePush.ts`                       | The lock and pending loop, one push at a time, a marked commit run once more |
-| `scripts/src/services/machine/watchMachine.ts`                 | The watcher's loop, which refuses to start while another watcher is alive    |
-| `scripts/src/services/machine/checkIsWatching.ts`              | Whether another watcher's reading is fresh and its process alive             |
-| `scripts/src/services/machine/writeMachineState.ts`            | The watcher's write of its reading, renamed over the file it replaces        |
-| `scripts/src/services/queue/writeLastPush.ts`                  | The record of each push, which the heartbeat carries                         |
-| `scripts/src/services/resume/getWatcherItems.ts`               | The `watcher` row of `pnpm ai:resume`                                        |
+| File                                                           | Role                                                                                  |
+| :------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`      | Session start starts the watcher's lines, turn end runs the queue sync                |
+| `packages/genshin-mods/src/services/pulse/getPulseWake.ts`     | The wake decision, a pure function over one watcher line and the session              |
+| `packages/genshin-mods/src/services/pulse/takeWatcherLines.ts` | Splits the watcher's chunks into whole lines, holding a partial one                   |
+| `packages/genshin-mods/src/services/constants.ts`              | The idle line's prefix, the watcher's script path and the wake prompt                 |
+| `packages/genshin-mods/scripts/queueSync.mjs`                  | Runs `pnpm ai:queue:push` in the repository at a turn's end                           |
+| `.githooks/post-commit`                                        | Starts `pnpm ai:queue:push` detached when a commit lands on `ai/queue`                |
+| `scripts/src/queue/push/index.ts`                              | The one push entry the hook and the mod share, under its lock                         |
+| `scripts/src/queue/push/runQueuePush.ts`                       | The lock and pending loop, one push at a time, a marked commit run once more          |
+| `scripts/src/services/machine/watchMachine.ts`                 | The watcher's loop, which exits while another watcher holds its lock                  |
+| `scripts/src/services/shared/acquireProcessLock.ts`            | The lock the watcher and the queue push each hold, taken over once its holder is gone |
+| `scripts/src/services/machine/writeMachineState.ts`            | The watcher's write of its reading, renamed over the file it replaces                 |
+| `scripts/src/services/queue/writeLastPush.ts`                  | The record of each push, which the heartbeat carries                                  |
+| `scripts/src/services/resume/getWatcherItems.ts`               | The `watcher` row of `pnpm ai:resume`                                                 |

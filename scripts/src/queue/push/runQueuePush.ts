@@ -1,8 +1,8 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
-import { acquirePushLock } from "#src/queue/push/acquirePushLock";
+import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
 import { markPushPending } from "#src/queue/push/markPushPending";
 import { PUSH_LOCK_PATH, PUSH_PENDING_PATH } from "#src/queue/push/constants";
-import { releasePushLock } from "#src/queue/push/releasePushLock";
+import { releaseProcessLock } from "#src/services/shared/releaseProcessLock";
 import { takePushPending } from "#src/queue/push/takePushPending";
 import { existsSync } from "node:fs";
 
@@ -15,9 +15,9 @@ export const runQueuePush = async (
   pendingPath: string = PUSH_PENDING_PATH,
 ): Promise<QueuePushOutcome> => {
   for (;;) {
-    if (!acquirePushLock(lockPath)) {
+    if (!acquireProcessLock(lockPath)) {
       markPushPending(pendingPath);
-      if (!acquirePushLock(lockPath)) return QueuePushOutcome.Queued;
+      if (!acquireProcessLock(lockPath)) return QueuePushOutcome.Queued;
     }
 
     let outcome: QueuePushOutcome;
@@ -26,7 +26,7 @@ export const runQueuePush = async (
       // eslint-disable-next-line no-await-in-loop -- Each pass starts only once the one before it has pushed and let go of the lock
       outcome = await push();
     } finally {
-      releasePushLock(lockPath);
+      releaseProcessLock(lockPath);
     }
 
     if (!existsSync(pendingPath)) return outcome;

@@ -1,5 +1,5 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
-import { acquirePushLock } from "#src/queue/push/acquirePushLock";
+import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
 import { markPushPending } from "#src/queue/push/markPushPending";
 import { runQueuePush } from "#src/queue/push/runQueuePush";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -32,7 +32,7 @@ describe(runQueuePush, () => {
 
     await expect(runQueuePush(push, lockPath, pendingPath)).resolves.toBe(QueuePushOutcome.Pushed);
     expect(push).toHaveBeenCalledExactlyOnceWith();
-    expect(acquirePushLock(lockPath)).toBe(true);
+    expect(acquireProcessLock(lockPath)).toBe(true);
   });
 
   test("runs once more when a commit lands during the push", async () => {
@@ -54,7 +54,7 @@ describe(runQueuePush, () => {
   test("only marks the commit pending when a live push holds the lock", async () => {
     expect.hasAssertions();
 
-    expect(acquirePushLock(lockPath)).toBe(true);
+    expect(acquireProcessLock(lockPath)).toBe(true);
     const push = vi.fn<() => Promise<QueuePushOutcome>>().mockResolvedValue(QueuePushOutcome.Pushed);
 
     await expect(runQueuePush(push, lockPath, pendingPath)).resolves.toBe(QueuePushOutcome.Queued);
