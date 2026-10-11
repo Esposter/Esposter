@@ -91,6 +91,7 @@ export const ThemeMode = { Dark: "dark", Light: "light", System: "system" } as c
 export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
 ```
 
-The exception is that graph and nothing else. Everything a script runs under `tsx` or `node` keeps its enums, and a
-file that cannot load moves its entry to `tsx`. A `nuxt prepare` printing `NUXT_B5023` names the file that brought an
+The exceptions are that graph and the code Node loads natively by type stripping: a package whose `module.ts` is loaded
+that way sets `erasableSyntaxOnly`, which refuses an enum across the whole package. Everything else a script runs under
+`tsx` or `node` keeps its enums, and a file that cannot load moves its entry to `tsx`. A `nuxt prepare` printing `NUXT_B5023` names the file that brought an
 enum, or an extensionless relative import, back into the graph.

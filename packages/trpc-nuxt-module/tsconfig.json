@@ -1,1 +1,4 @@
-{ "compilerOptions": { "lib": ["ESNext", "dom", "dom.iterable"] }, "extends": "../configuration/tsconfig.node.json" }
+{
+  "compilerOptions": { "erasableSyntaxOnly": true, "lib": ["ESNext", "dom", "dom.iterable"] },
+  "extends": "../configuration/tsconfig.node.json"
+}
