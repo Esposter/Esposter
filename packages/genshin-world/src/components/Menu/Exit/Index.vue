@@ -4,7 +4,7 @@ import type { GameText } from "genshin-text";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import { MenuPromptIcon } from "#src/models/menu/MenuPromptIcon";
 import { MenuPromptGlyphMap } from "#src/services/menu/MenuPromptGlyphMap";
-import { GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -23,25 +23,25 @@ onMounted(() => {
 
 <template>
   <!-- The quit prompt that Quit Game opens over the world: Continue Game sets the world back, and the two exits leave for
-       the app's home, since the browser cannot close the game. Each button is a cream pill with its dark disc and icon at
-       the left and its label centred in the rest, every place in the reference's own pixels -->
+       the app's home, since the browser cannot close the game. Each button is the game's cream pill with its dark disc and
+       icon at the left and its label centred in the rest, every place in the reference's own pixels -->
   <GameScreen class="exit" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.QuitGame]">
     <div class="stack">
-      <button ref="continueButton" class="prompt" type="button" @click="emit('close')">
+      <GameButton ref="continueButton" class="prompt" :kind="GameButtonKind.Pill" @click="emit('close')">
         <span class="disc" />
         <MenuGlyph :glyph="MenuPromptGlyphMap[MenuPromptIcon.ContinueGame]" class="continue-glyph" />
         <span class="label">{{ gameText[GameTextKey.ContinueGame] }}</span>
-      </button>
-      <button class="prompt" type="button" @click="emit('quit')">
+      </GameButton>
+      <GameButton class="prompt" :kind="GameButtonKind.Pill" @click="emit('quit')">
         <span class="disc" />
         <MenuGlyph :glyph="MenuPromptGlyphMap[MenuPromptIcon.ExitToLoginInterface]" class="exit-glyph" />
         <span class="label">{{ gameText[GameTextKey.ExitToLoginInterface] }}</span>
-      </button>
-      <button class="prompt" type="button" @click="emit('quit')">
+      </GameButton>
+      <GameButton class="prompt" :kind="GameButtonKind.Pill" @click="emit('quit')">
         <span class="disc" />
         <MenuGlyph :glyph="MenuPromptGlyphMap[MenuPromptIcon.ExitToDesktop]" class="exit-glyph" />
         <span class="label">{{ gameText[GameTextKey.ExitToDesktop] }}</span>
-      </button>
+      </GameButton>
     </div>
   </GameScreen>
 </template>
@@ -52,7 +52,6 @@ onMounted(() => {
    fixes them (the roadmap's Recordings owed) */
 .exit {
   --reference-pixel: calc(var(--unit) * 1);
-  color: #3f4659;
 }
 
 .stack {
@@ -70,11 +69,6 @@ onMounted(() => {
   width: calc(var(--reference-pixel) * 767);
   height: calc(var(--reference-pixel) * 84);
   padding: 0 0 0 calc(var(--reference-pixel) * 43);
-  border: none;
-  border-radius: calc(var(--reference-pixel) * 42);
-  background: #ece5d7;
-  color: inherit;
-  cursor: inherit;
   text-align: center;
 }
 
@@ -84,11 +78,6 @@ onMounted(() => {
 
 .prompt:nth-child(3) {
   top: calc(var(--reference-pixel) * 320);
-}
-
-.prompt:focus-visible {
-  outline: calc(var(--reference-pixel) * 3) solid #fecc34;
-  outline-offset: calc(var(--reference-pixel) * -3);
 }
 
 .disc {
@@ -101,7 +90,9 @@ onMounted(() => {
   background: #2f3231;
 }
 
+/* Positioned to show over the light a pressed pill adds */
 .label {
+  position: relative;
   display: block;
   font-size: calc(var(--reference-pixel) * 38);
   font-weight: 600;

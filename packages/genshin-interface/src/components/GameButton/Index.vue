@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import type { GameButtonKind } from "#src/models/GameButtonKind";
 
-import { GAME_CREAM, GAME_GOLD, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import {
+  GAME_CREAM,
+  GAME_GOLD,
+  GAME_INK,
+  GAME_SMOOTHSTEP_EASING,
+  INTERACTION_HOVER_MS,
+  INTERACTION_PILL_REST_MS,
+  INTERACTION_PRESS_MS,
+  INTERACTION_REST_MS,
+} from "#src/services/constants";
 
 interface Props {
   // The game's button template it is drawn as, which decides its look in each state
@@ -14,6 +23,8 @@ const { kind, tip } = defineProps<Props>();
 const button = useTemplateRef("button");
 const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
 const restDuration = `${INTERACTION_REST_MS}ms`;
+const pillRestDuration = `${INTERACTION_PILL_REST_MS}ms`;
+const pressDuration = `${INTERACTION_PRESS_MS}ms`;
 // A dialog moves the keyboard's focus to its button
 defineExpose({ focus: () => button.value?.focus() });
 </script>
@@ -137,6 +148,84 @@ defineExpose({ focus: () => button.value?.focus() });
 
 .game-button:enabled:is(:hover, :focus-visible, :active, [data-interaction-state] *) > .tip {
   opacity: 1;
+}
+
+/* The cream pill, read off the game's own (block 07356235: the quit prompt's choices are its option pill, and a dialog's
+   Confirm its brighter twin), its look measured on a dialog's Confirm at 1080 high (`yt-5EmJX_RyuY8-menu-settings` from
+   140.5 seconds). At rest its words are the game's ink, inside a 3 unit pale rim and a 3 unit darker band within it,
+   The pill's own bevel read off the wiki's crop of the quit prompt, and a faint dark shadow 7 units round it. Hovered,
+   A white ring lights over its edge, 1 unit outside it and 2 within, its shadow turning a faint white glow; it holds
+   Its size, the ring alone reaching past it */
+.game-button[data-kind="Pill"] {
+  --state-duration: v-bind(pillRestDuration);
+  border-radius: calc(infinity * 1px);
+  background-color: v-bind(GAME_CREAM);
+  box-shadow:
+    0 0 0 0 rgb(255 255 255 / 0),
+    inset 0 0 0 calc(var(--unit) * 2) rgb(255 255 255 / 0),
+    inset 0 0 0 calc(var(--unit) * 3) #f1ede5,
+    inset 0 0 0 calc(var(--unit) * 6) #e6e1d5,
+    0 0 calc(var(--unit) * 7) rgb(17 17 17 / 0.1);
+  color: v-bind(GAME_INK);
+  transition-duration: var(--state-duration);
+  transition-property: background-color, box-shadow, color;
+}
+
+.game-button[data-kind="Pill"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *) {
+  outline: none;
+  box-shadow:
+    0 0 0 calc(var(--unit) * 1) #fff,
+    inset 0 0 0 calc(var(--unit) * 2) #fff,
+    inset 0 0 0 calc(var(--unit) * 3) #f1ede5,
+    inset 0 0 0 calc(var(--unit) * 6) #e6e1d5,
+    0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.125);
+}
+
+/* Pressed, the pill's cream is tinted to slate at half alpha, its bevel lost in it, and from 2 units inside its edge a
+   Gold light adds over it, as the game adds it, fading from full to half as the words turn from black to cream over the
+   Press's clip. The game's light adds onto the world, which a screen's own layer cannot reach, so the gold is drawn
+   Over the world at half alpha in the colour the sum settles to, the slate and its light together, which matches the
+   Game's over any world but for red, 12 short where the sum passes white; the clip's first frame is the sum alone,
+   Opaque. The words show over the light only when the pill's content is positioned, as a laid out label is not */
+.game-button[data-kind="Pill"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: calc(var(--unit) * 2) solid rgb(73 83 103 / 0.5);
+  border-radius: inherit;
+  background: rgb(255 243 183 / 0.5) padding-box;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--state-duration);
+}
+
+.game-button[data-kind="Pill"]:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background-color: transparent;
+  box-shadow:
+    0 0 0 0 rgb(255 255 255 / 0),
+    inset 0 0 0 calc(var(--unit) * 2) rgb(255 255 255 / 0),
+    inset 0 0 0 calc(var(--unit) * 3) rgb(241 237 229 / 0),
+    inset 0 0 0 calc(var(--unit) * 6) rgb(230 225 213 / 0),
+    0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.1);
+  color: v-bind(GAME_CREAM);
+  animation: pill-press-words v-bind(pressDuration) v-bind(GAME_SMOOTHSTEP_EASING);
+}
+
+.game-button[data-kind="Pill"]:enabled:is(:active, [data-interaction-state="Pressed"] *)::before {
+  opacity: 1;
+  animation: pill-press-light v-bind(pressDuration) v-bind(GAME_SMOOTHSTEP_EASING);
+}
+
+@keyframes pill-press-words {
+  from {
+    color: #000;
+  }
+}
+
+@keyframes pill-press-light {
+  from {
+    background-color: rgb(241 211 142);
+  }
 }
 
 /* The game draws no state for a plain button, so a keyboard's focus is ringed in the white its pills light in */

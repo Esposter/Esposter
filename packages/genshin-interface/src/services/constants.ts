@@ -82,3 +82,10 @@ export const CONSTELLATION_NODE_PLACES: readonly { left: number; top: number }[]
 // Game's own button controllers (block 07356235): a hover in 0.05 seconds, back to rest in 0.1 and a press at once
 export const INTERACTION_HOVER_MS = 50;
 export const INTERACTION_REST_MS = 100;
+// The cream pill's own controllers take twice as long back to rest
+export const INTERACTION_PILL_REST_MS = 200;
+// A press plays its own clip over its 10 frames at 60: a cream pill's gold light fading as its words turn cream
+export const INTERACTION_PRESS_MS = 167;
+// The game's ease in and out, Unity's default curve, a smoothstep: its clips' samples read 0.028, 0.104 and 0.216 at a
+// Tenth, a fifth and three tenths of the way, and a cubic bezier with its handles at the thirds is exactly that
+export const GAME_SMOOTHSTEP_EASING = "cubic-bezier(0.333, 0, 0.667, 1)";
