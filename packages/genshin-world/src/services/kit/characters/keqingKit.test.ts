@@ -6,7 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { KEQING_CHARACTER_ID } from "#src/services/character/constants";
+import { KEQING_CHARACTER_ID } from "#src/services/kit/characters/keqingKit";
 import { createKeqingKit } from "#src/services/kit/characters/keqingKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";

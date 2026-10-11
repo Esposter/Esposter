@@ -113,6 +113,8 @@ const STORM_OF_DEFIANCE_STATUS: EnemyStatus = {
   secondsRemaining: 10,
 };
 
+export const VENTI_CHARACTER_ID = 10_000_022;
+
 // Venti's first kit, at talent level 1: six shots, a fully charged aimed shot, a collision and two plunges, Skyward
 // Sonnet's press and hold, and Wind's Grand Ode's Stormeye. Its multipliers are read from his proud skill groups
 export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {

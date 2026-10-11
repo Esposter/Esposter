@@ -117,6 +117,8 @@ const addInfusion = ({ combatant, kitEffectState }: Parameters<NonNullable<KitAc
   });
 };
 
+export const KAZUHA_CHARACTER_ID = 10_000_047;
+
 // Kazuha's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Chihayaburu's press and
 // Hold, and Kazuha Slash with its Autumn Whirlwind. Constellation 1 shortens his skill cooldowns and Constellation 6 gives
 // Him the infusion. His Ascension passives are not built: the absorption of the Chihayaburu, the Swirl Elemental Mastery
@@ -194,8 +196,8 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // The slash strikes where Kazuha stands, and its Autumn Whirlwind is a summon cast at his body that ticks from there
     elementalBurst: {
       hits: [slashHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
-        addInfusion({ body, combatant, kitEffectState });
+      onStart: ({ body, combatant, kitEffectState, party }) => {
+        addInfusion({ body, combatant, kitEffectState, party });
         addKitEffect(kitEffectState, createKitSummon(body, combatant, tickHits));
       },
       seconds: BURST_FRAMES / 60,

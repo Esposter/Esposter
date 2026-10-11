@@ -9,7 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { YUNJIN_CHARACTER_ID } from "#src/services/character/constants";
+import { YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
 import { createYunjinKit } from "#src/services/kit/characters/yunjinKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";

@@ -9,13 +9,14 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { KUKI_CHARACTER_ID } from "#src/services/character/constants";
+import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKukiKit } from "#src/services/kit/characters/kukiKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const KUKI_KIT = createKukiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KUKI_CHARACTER_ID]));
 
@@ -101,7 +102,14 @@ describe(createKukiKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const party = createParty([KUKI_CHARACTER_ID]);
     getPartyMember(party, KUKI_CHARACTER_ID).healthShare = 0.5;
-    ring?.onTick({ activeCombatant: createKukiCombatant(), enemyMap: new Map(), kitEffectState, party, tickIndex: 0 });
+    ring?.onTick({
+      activeCombatant: createKukiCombatant(),
+      characterIdCombatantMap: new Map([[KUKI_CHARACTER_ID, createKukiCombatant()]]),
+      enemyMap: new Map(),
+      kitEffectState,
+      party,
+      tickIndex: 0,
+    });
     const tickSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(ring?.nextTickSeconds).toBeCloseTo(113 / 60);
@@ -120,6 +128,7 @@ describe(createKukiKit, () => {
       getPartyMember(party, KUKI_CHARACTER_ID).healthShare = healthShare;
       drain?.onTick({
         activeCombatant: createKukiCombatant(),
+        characterIdCombatantMap: new Map([[KUKI_CHARACTER_ID, createKukiCombatant()]]),
         enemyMap: new Map(),
         kitEffectState: { effects: [] },
         party,

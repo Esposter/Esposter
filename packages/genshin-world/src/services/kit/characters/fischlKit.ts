@@ -188,6 +188,8 @@ const createArrow = (
   targetingArea: STRIKE_TARGETING_AREA,
 });
 
+export const FISCHL_CHARACTER_ID = 10_000_031;
+
 // Fischl's first kit, at talent level 1: five arrows, a fully charged aimed shot, a collision and two plunges, Oz's summon
 // And attacks, and Midnight Phantasmagoria with the full Oz it spawns, or the Oz a swap spawns early. One Oz stands at a
 // Time, a new one ending the one standing. Undone Be Thy Sinful Hex and the constellations answer the kit's events. Its

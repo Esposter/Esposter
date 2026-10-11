@@ -9,12 +9,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { YELAN_CHARACTER_ID } from "#src/services/character/constants";
+import { YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
 import { createYelanKit } from "#src/services/kit/characters/yelanKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const YELAN_KIT = createYelanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YELAN_CHARACTER_ID]));
 
@@ -34,7 +35,7 @@ describe(createYelanKit, () => {
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant: createYelanCombatant(), kitEffectState });
+    action.onStart?.(createKitStepContext(createYelanCombatant(), { body: kitBody, kitEffectState }));
     return kitEffectState.effects;
   };
 
@@ -75,6 +76,7 @@ describe(createYelanKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
       activeCombatant: createYelanCombatant(),
+      characterIdCombatantMap: new Map([[YELAN_CHARACTER_ID, createYelanCombatant()]]),
       enemyMap: new Map(),
       kitEffectState,
       party: createParty([YELAN_CHARACTER_ID]),
@@ -93,7 +95,7 @@ describe(createYelanKit, () => {
     const lifelineHit = takeOne(YELAN_KIT.elementalSkill.hits);
     const strike = (effects: KitEffect[]): KitEffect[] => {
       const kitEffectState: KitEffectState = { effects };
-      lifelineHit.onStrike?.({ body: kitBody, combatant: createYelanCombatant(), kitEffectState });
+      lifelineHit.onStrike?.(createKitStepContext(createYelanCombatant(), { body: kitBody, kitEffectState }));
       return kitEffectState.effects;
     };
     const field = castEffects(YELAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");

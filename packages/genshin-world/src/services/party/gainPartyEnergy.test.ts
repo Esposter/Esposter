@@ -6,7 +6,7 @@ import { Element } from "#src/models/Element";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";

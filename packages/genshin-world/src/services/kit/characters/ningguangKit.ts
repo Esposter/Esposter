@@ -151,6 +151,8 @@ const createShockEffect = (characterId: number, { x, z }: GroundPoint): KitField
   return shockEffect;
 };
 
+export const NINGGUANG_CHARACTER_ID = 10_000_027;
+
 // Ningguang's first kit, at talent level 1: two strikes in turn, each of two gems that give her a Star Jade, a charged
 // Attack firing the jades she holds, a collision and two plunges, Jade Screen's hit and screen, and Starshatter's gems
 // With the screen's. Its multipliers are read from her proud skill groups

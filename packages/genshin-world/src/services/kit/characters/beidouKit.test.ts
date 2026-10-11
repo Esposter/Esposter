@@ -5,7 +5,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { BEIDOU_CHARACTER_ID } from "#src/services/character/constants";
+import { BEIDOU_CHARACTER_ID } from "#src/services/kit/characters/beidouKit";
 import { createBeidouKit } from "#src/services/kit/characters/beidouKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";

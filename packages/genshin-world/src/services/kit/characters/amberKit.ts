@@ -107,6 +107,8 @@ const createFieryRainHits = (talentMultiplierMap: TalentMultiplierMap, ascension
   }));
 };
 
+export const AMBER_CHARACTER_ID = 10_000_021;
+
 // Amber's first kit, at talent level 1: five arrows, a fully charged aimed shot, a collision and two plunges, Explosive
 // Puppet's Baron Bunny and Fiery Rain. Its multipliers are read from its proud skill groups. The aimed shot's unlit form,
 // The bow's aim binding and Amber's ascension 4 weak-point ATK bonus are not built, so the charged attack is the full shot

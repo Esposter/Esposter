@@ -17,19 +17,20 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { takeOne } from "@esposter/shared";
 
 // Shenhe's proud skill groups, read at her talent level. The attack group holds the first three strikes at 0 to 2, the
-// fourth's two hits at 3 and 4, the fifth at 5, the charged attack at 6 and its stamina at 7, and the plunges' collision, low
-// and high at 8, 9 and 10. The skill group holds Spring Spirit Summoning's press at 0, its hold at 1, the Quill's ATK share at
+// Fourth's two hits at 3 and 4, the fifth at 5, the charged attack at 6 and its stamina at 7, and the plunges' collision, low
+// And high at 8, 9 and 10. The skill group holds Spring Spirit Summoning's press at 0, its hold at 1, the Quill's ATK share at
 // 2, the press's and hold's Quill durations at 3 and 4, their Quill quotas at 5 and 6, and the press's and hold's cooldowns at
 // 7 and 8. The burst group holds Divine Maiden's Deliverance's initial hit at 0, its RES Decrease at 1, its DoT at 2, its
-// seconds at 3, its cooldown at 4 and its energy cost at 5
+// Seconds at 3, its cooldown at 4 and its energy cost at 5
 const SHENHE_ATTACK_GROUP_ID = 6331;
 const SHENHE_SKILL_GROUP_ID = 6332;
 const SHENHE_BURST_GROUP_ID = 6339;
 
 // Measured: gcsim (MIT) shenhe/attack.go, the first three strikes' fan and circle of 2.5 metres and their 0.5 offset, the
-// fourth's box of 2.2 by 3.6 and the fifth's circle of 3 at the same offset, each a strike at its hitmark, cancelling at
+// Fourth's box of 2.2 by 3.6 and the fifth's circle of 3 at the same offset, each a strike at its hitmark, cancelling at
 // Its cancel frame
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/shenhe
 const NORMAL_ATTACK_STRIKES: {
@@ -91,12 +92,14 @@ const BURST_CRYO_DAMAGE_BONUS = 0.15;
 const BURST_CRYO_DAMAGE_BONUS_SOURCE = "shenhe-burst-cryo";
 
 // Provisional: gcsim gives the Cryo skill and burst no gauge, so the press, hold and each DoT tick read 1U as Ganyu's Cryo hits
-// do, and gcsim gives no poise for the strikes, charged attack, skill or plunges, so each deals none until a source gives it
+// Do, and gcsim gives no poise for the strikes, charged attack, skill or plunges, so each deals none until a source gives it
 // The plunges last 0.4 seconds as Ganyu's do, since gcsim gives Shenhe's no frames for them here
 const PLUNGE_SECONDS = 0.4;
 
+export const SHENHE_CHARACTER_ID = 10_000_063;
+
 // Shenhe's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Spring Spirit Summoning's
-// press and its hold, and Divine Maiden's Deliverance with its initial hit, its field's DoT and the Cryo DMG Bonus and the RES
+// Press and its hold, and Divine Maiden's Deliverance with its initial hit, its field's DoT and the Cryo DMG Bonus and the RES
 // Decrease it gives. Her Quill is not built: the kit prices a hit from its striker alone, and a Quill adds Shenhe's ATK to
 // The hits of whoever carries it, which no kit step reads. Her passives and constellations are not built
 export const createShenheKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
@@ -126,7 +129,9 @@ export const createShenheKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     gauge: 1,
     hitArea: createFanReach(360, BURST_FIELD_RADIUS),
     hitmarkSeconds: isSecondHit
-      ? (BURST_TICK_SECOND_HIT_FRAMES + BURST_TICK_OFFSETS_FRAMES[tickIndex % BURST_TICK_OFFSETS_FRAMES.length]) / 60
+      ? (BURST_TICK_SECOND_HIT_FRAMES +
+          takeOne(BURST_TICK_OFFSETS_FRAMES, tickIndex % BURST_TICK_OFFSETS_FRAMES.length)) /
+        60
       : 0,
     poiseDamage: 0,
     talentMultiplier: burstDotMultiplier,

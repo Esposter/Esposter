@@ -1,6 +1,7 @@
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 
-import { CHONGYUN_CHARACTER_ID, VENTI_CHARACTER_ID } from "#src/services/character/constants";
+import { CHONGYUN_CHARACTER_ID } from "#src/services/kit/characters/chongyunKit";
+import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 
 // The icons each character's skill and burst buttons carry, for those traced, a character with none showing its buttons
 // Bare. Each is traced four times enlarged from the wiki's render of its talent (`File:Talent <Name>.png`, 128 pixels),

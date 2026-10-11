@@ -88,6 +88,8 @@ const BLAZING_DELIGHT_PYRO_DAMAGE_BONUS = 0.1;
 const BLAZING_DELIGHT_SECONDS = 25;
 const BLAZING_DELIGHT_SOURCE = "Blazing Delight";
 
+export const KLEE_CHARACTER_ID = 10_000_029;
+
 // Klee's first kit, at talent level 1: three strikes, a charged attack, a collision and two plunges, Jumpy Dumpty's
 // Bounces and mines on its two charges, and Sparks 'n' Splash's sparks while she stays on the field, with Sparkly
 // Explosion and Blazing Delight's Pyro DMG Bonus. Its multipliers are read from her proud skill groups

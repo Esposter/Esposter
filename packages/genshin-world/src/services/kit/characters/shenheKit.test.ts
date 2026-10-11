@@ -8,12 +8,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { SHENHE_CHARACTER_ID } from "#src/services/character/constants";
+import { SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
 import { createShenheKit } from "#src/services/kit/characters/shenheKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const SHENHE_KIT = createShenheKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SHENHE_CHARACTER_ID]));
 
@@ -46,6 +47,7 @@ describe(createShenheKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     castField(ascension).onTick({
       activeCombatant: createShenheCombatant(),
+      characterIdCombatantMap: new Map([[SHENHE_CHARACTER_ID, createShenheCombatant()]]),
       enemyMap: new Map(),
       kitEffectState,
       party: createParty([SHENHE_CHARACTER_ID]),

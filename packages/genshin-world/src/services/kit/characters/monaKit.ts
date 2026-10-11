@@ -184,6 +184,8 @@ const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: A
         },
       ];
 
+export const MONA_CHARACTER_ID = 10_000_041;
+
 // Mona's kit at talent level 1: four strikes, a charged attack, a collision and two plunges, Mirror Reflection of Doom
 // And Stellaris Phantasm, with its bubble and Omen, and her passives. Its multipliers are read from its proud skill groups
 export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({

@@ -7,7 +7,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { YAE_MIKO_CHARACTER_ID } from "#src/services/character/constants";
+import { YAE_MIKO_CHARACTER_ID } from "#src/services/kit/characters/yaeMikoKit";
 import { createYaeMikoKit } from "#src/services/kit/characters/yaeMikoKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";

@@ -105,6 +105,8 @@ const BURST_TICK_INTERVAL_FRAMES = 90;
 const BURST_TICK_COUNT = 6;
 const BURST_HEAL_HP_SHARE = 0.7;
 
+export const SAYU_CHARACTER_ID = 10_000_053;
+
 // Sayu's first kit, at talent level 1: four strikes, a charged attack of two hits, a collision and two plunges, Fuufuu
 // Windwheel's press, its short hold and its roll of up to ten seconds, and Yoohoo Art: Mujina Flurry with Muji-Muji Daruma.
 // Her passives and constellations are not built, as no kit event reaches a value the fetched sources give. The roll's

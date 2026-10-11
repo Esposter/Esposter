@@ -113,6 +113,8 @@ const createFrostflakeHits = (
   },
 ];
 
+export const AYAKA_CHARACTER_ID = 10_000_002;
+
 // Kamisato Ayaka's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Hyouka,
 // Soumetsu's storm and Senho's infusion. Its multipliers are read from her proud skill groups. Senho's Cryo application
 // And movement, A1's and A4's effects, and every constellation but Blizzard Blade Seki no To are not built

@@ -125,6 +125,8 @@ const isDoneDealActive = (kitEffectState: KitEffectState, characterId: number): 
     (effect) => effect.kind === "status" && effect.characterId === characterId && effect.id === DONE_DEAL_STATUS_ID,
   );
 
+export const YANFEI_CHARACTER_ID = 10_000_048;
+
 // Yanfei's first kit, at talent level 1: three strikes, a charged attack that spends her Scarlet Seals, a collision and two
 // Plunges, Signed Edict and Done Deal. Her Scarlet Seals come from her strikes, Signed Edict and Done Deal, and from Done
 // Deal's each second, with Constellation 6 giving her a fourth. Her Ascension 1 Pyro DMG bonus and Constellation 1's

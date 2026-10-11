@@ -101,6 +101,8 @@ const createDefenseDamageBonus =
   (combatant: Combatant): number =>
     combatant.ascension >= DEFENSE_DAMAGE_ASCENSION ? combatant.attributes.defense * share : 0;
 
+export const GOROU_CHARACTER_ID = 10_000_055;
+
 // Gorou's first kit, at talent level 1: four strikes, a fully charged shot, a collision and two plunges, Inuzaka All-Round
 // Defense with its General's War Banner, and Juuga with its field that follows the body and its Crystal Collapse, which is
 // One summon following the body with its six ticks set out at the cast. Ascension 1 and 4 are built. His constellations are
