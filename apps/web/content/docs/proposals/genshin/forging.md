@@ -1,6 +1,6 @@
 ---
 title: Forging
-description: Proposal — the blacksmith's forge screen and place. The recipes, queues by rank, real-time orders, the daily cap, the four-star weapons from billets, the drop-table Mystic Enhancement Ore, the forging talents and the Serenitea Pot's refusal of Magical Crystal Chunks are built.
+description: Proposal — the blacksmith's place in the world and the forge screen's wiring to the forge state, which the forging page does not yet show.
 model: claude-haiku-5-5
 needs: [game-exports]
 touches:
@@ -13,16 +13,14 @@ touches:
 
 # Forging
 
-The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging talents and the Serenitea Pot's refusal are built, as the [forging](/docs/genshin/forging) page describes. What is left is what a player sees: the forge screen and the blacksmith's place.
+The [forging](/docs/genshin/forging) page holds the recipes, queues, orders, daily cap and forging talents. What is left is what a player sees: the blacksmith's place and the forge screen's wiring to the forge state.
 
 ## Decisions
 
-- **The forge screen is measured like the other screens.** Its layout and its queues' look are read off a recording of the game's blacksmith, through the [recreation passes](/docs/proposals/genshin/recreation-passes), before it is built. Its words come from the refusal keys the [forging](/docs/genshin/forging) page names, and it changes no number the rules set.
-- **The blacksmith's place is an NPC of the Mondstadt scene.** The official map has no blacksmith label, so the place is to be read from the NPC places the hosted `sceneNpcBorn/scene3` dataset holds, not from the spawned places. Every blacksmith is one forge, so the place is a screen's concern only.
+- **The forge screen's layout is measured like the other screens.** Its layout and its queues' look are re-measured off a recording of the game's blacksmith, through the [recreation passes](/docs/proposals/genshin/recreation-passes). Its words come from the refusal keys the [forging](/docs/genshin/forging) page names, and it changes no number the rules set.
+- **The blacksmith's place is an NPC of the Mondstadt scene.** The official map has no blacksmith label, so the place is read from the NPC places the hosted `sceneNpcBorn/scene3` dataset holds, not from the spawned places. Every blacksmith is one forge, so the place is a screen's concern only.
 
 ## Scope and order
-
-**Built:** the [forging page](/docs/genshin/forging) records what is built, and so is the forge screen: `ScreenKind.Forge` in `genshin-world`, and the screen with its Materials and Forge Queues tabs in `genshin-interface`, built on the public clip, its frames under the reference folder `forge-screen`. Its layout is provisional until the owed `forge-order-queue.mkv` re-measures it, and its visual image is approved by the user, which is owed.
 
 **Still to build, in order:**
 
