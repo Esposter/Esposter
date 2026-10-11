@@ -1,7 +1,8 @@
 import type { PmxModel } from "#src/models/character/PmxModel";
+import type { BufferGeometry } from "three";
 
 import { createIndexedGeometry } from "#src/kits/createIndexedGeometry";
-import { BufferAttribute, BufferGeometry } from "three";
+import { BufferAttribute } from "three";
 
 // A PMX model's vertices and triangles as one skinned geometry, a group for each material's run of triangles in the
 // File's order, the order MMD draws them in
