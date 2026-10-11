@@ -1,8 +1,14 @@
 # Parity passes
 
 Each component's last `pnpm -C scripts genshin:parity passes <component>`, which rewrites its own section: every
-pass in order up to the first whose gate fails or that has no measure yet, which is the next work. Commit it with
-the change that moved it, as a bench's report is committed.
+pass in order up to the first whose gate fails or that has no measure yet, which is the next work. A pass run alone
+(`--pass`) rewrites only its own rows. Commit it with the change that moved it, as a bench's report is committed.
+
+## liyue
+
+| Pass | Reading | Value | Gate | Unit | Held |
+| :--- | :------ | ----: | ---: | :--- | :--- |
+| Inventory | renderers unclaimed | 0 | 0 | renderers | yes |
 
 ## login
 
@@ -55,6 +61,24 @@ the change that moved it, as a bench's report is committed.
 | Surface | windrise-statue-day Paving structure | 1.0000 | 0.2183 | share | no |
 | Surface | windrise-statue-day Ground colour | 13.4170 | 2.3000 | ΔE | no |
 | Surface | windrise-statue-day Ground structure | 1.0000 | 0.0430 | share | no |
+
+## mondstadt
+
+| Pass | Reading | Value | Gate | Unit | Held |
+| :--- | :------ | ----: | ---: | :--- | :--- |
+| Inventory | renderers unclaimed | 0 | 0 | renderers | yes |
+
+## natlan
+
+| Pass | Reading | Value | Gate | Unit | Held |
+| :--- | :------ | ----: | ---: | :--- | :--- |
+| Inventory | renderers unclaimed | 0 | 0 | renderers | yes |
+
+## snezhnaya
+
+| Pass | Reading | Value | Gate | Unit | Held |
+| :--- | :------ | ----: | ---: | :--- | :--- |
+| Inventory | renderers unclaimed | 0 | 0 | renderers | yes |
 
 ## windrise
 

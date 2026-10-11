@@ -8,7 +8,6 @@ description: Snezhnaya's region: its base ground, renderers, landmarks, camera, 
 ## Queue
 
 - [ ] `[cpu]` {snezhnaya-region-base} needs game-exports — **Snezhnaya: the region's base ground fitted.** `pnpm -C scripts genshin:assets fit snezhnaya --only ground`. Reads the terrain tiles in the witness folder, `packages/genshin-world/src/data/regions/snezhnaya.json` (its centre is `snezhnograd`'s position, set by hand in `RegionCapitalMap`) and `packages/genshin-world/src/data/catalogue.json` (the outline of `everfrozen-earth`). Writes `snezhnaya/base-ground.json` under `packages/genshin-world/src/data/`. Bar: the fit's RMS within 60 metres of its centre at or under 0.62 metres, Windrise's figure from `fit windrise --only ground`, the same number for every region.
-- [ ] `[page]` {snezhnaya-every-renderer} needs game-exports, parity-page — **Snezhnaya: every renderer claimed.** `pnpm -C scripts genshin:parity passes snezhnaya --pass Inventory`. Reads the witness and the `WorldScreen` fixture's `witnessComponents.snezhnaya` claims: the ground family (`packages/genshin-world/src/services/snezhnaya/SnezhnayaPartFamilyMeshRegexMap.ts`) and what is not drawn yet (`packages/genshin-world/src/services/snezhnaya/SnezhnayaUndrawnMeshRegexMap.ts`), which claim each renderer of the region's witness once when run over its names offline. Writes the snezhnaya section of `ParityPasses.snapshot.md`. Bar: renderers unclaimed 0.
 
 ## Waiting
 
