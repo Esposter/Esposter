@@ -6,7 +6,6 @@ import { buildKitPublication } from "#src/services/genshinAssets/kits/buildKitPu
 import { compareKits } from "#src/services/genshinAssets/kits/compareKits";
 import { GCSIM_CACHE_DIRECTORY, GCSIM_TAG, WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { readKitInputs } from "#src/services/genshinAssets/kits/readKitInputs";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
@@ -17,7 +16,6 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
       description: "Build every kit's published record, seed each overlay with what its sources lack, and report",
       type: "boolean",
     },
-    docs: { description: "Render each kit page's Provisional and Sources sections (not built yet)", type: "boolean" },
     gcsim: {
       default: GCSIM_CACHE_DIRECTORY,
       description: `A clone of gcsim at ${GCSIM_TAG}, cloned there if absent`,
@@ -39,12 +37,6 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
     name: "kits",
   },
   run: async ({ args }) => {
-    if (args.docs)
-      throw new InvalidOperationError(
-        Operation.Create,
-        "kits --docs",
-        "is not built yet: each kit page's Provisional and Sources sections are written by hand",
-      );
     const characterIds = args.only?.split(",").map(Number);
     if (args.compare) {
       const inputs = await readKitInputs({
