@@ -590,9 +590,6 @@ catalogs:
     grapesjs:
       specifier: ^0.23.6
       version: 0.23.6
-    grapesjs-blocks-basic:
-      specifier: ^1.0.2
-      version: 1.0.2
     grapesjs-component-countdown:
       specifier: ^1.0.2
       version: 1.0.2
@@ -1287,9 +1284,6 @@ importers:
       grapesjs:
         specifier: 'catalog:'
         version: 0.23.6
-      grapesjs-blocks-basic:
-        specifier: 'catalog:'
-        version: 1.0.2
       grapesjs-component-countdown:
         specifier: 'catalog:'
         version: 1.0.2
@@ -11150,9 +11144,6 @@ packages:
 
   grammex@3.1.13:
     resolution: {integrity: sha512-LnPnhOBLEJEVKS8WFDVaA397L9Kq55Q9oSITJiVLHVdhAclfUkWzQv74KhvZHKL2Q09Pb1XdsrOsZ4LfTFFTEg==}
-
-  grapesjs-blocks-basic@1.0.2:
-    resolution: {integrity: sha512-SsPKf/CvQkZ+kABOsN01auAPHXh/2J20g0AWYF7fHR3Gw3TZLtdIxT1mk90Qzi76u/7sUYi3CTI+i3ZaTtXHRA==}
 
   grapesjs-component-countdown@1.0.2:
     resolution: {integrity: sha512-YEDlDY8AxUvNNHojDgOFv76jqDwo49LyFf9ES/Yrda1ou0ohQfoouxRXS+3RzDDN5NEBKkM1PggZlcbiIQfr8Q==}
@@ -25228,8 +25219,6 @@ snapshots:
   graceful-fs@4.2.11: {}
 
   grammex@3.1.13: {}
-
-  grapesjs-blocks-basic@1.0.2: {}
 
   grapesjs-component-countdown@1.0.2: {}
 
