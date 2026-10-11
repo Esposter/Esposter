@@ -1,7 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { regionGroundSchema } from "#src/models/world/RegionGround";
 import { readGameData } from "#src/services/data/readGameData";
+import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { REGION_GROUND_KEYS } from "#src/services/world/constants";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
