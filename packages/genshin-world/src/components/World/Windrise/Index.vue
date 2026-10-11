@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
+import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -27,7 +28,6 @@ import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
 import WorldWildlife from "#src/components/World/Wildlife/Index.vue";
 import { useAreaWeather } from "#src/composables/useAreaWeather";
-import { useCharacterPackIds } from "#src/composables/useCharacterPackIds";
 import { useFloatingOrigin } from "#src/composables/useFloatingOrigin";
 import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
@@ -103,13 +103,11 @@ interface Props {
   // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
   // Among everything in the world
   characterBody?: Object3D;
-  // The character on the field, drawn on the body from its pack, or as its body's capsule where no pack is served, the
-  // Host holds none of the character's, or its model fails to load
-  characterId: number;
-  // How the character on the field moves, whose body's capsule is drawn where no pack is served
+  // How the character on the field moves, whose body's capsule is drawn where it has no pack
   characterLocomotion?: Locomotion;
-  // Where the host serves the characters' model packs, without which the character is drawn as its body's capsule
-  characterPackBaseUrl?: string;
+  // Where the pack of the character on the field is read from, which it is drawn on the body from, or as its body's
+  // Capsule where it has none or its model fails to load
+  characterPackReader?: CharacterPackReader;
   createTerrainWorker: () => Worker;
   // The sight the screen turns on and off, which the world spreads its range by and lights its things under, none where
   // No screen holds one
@@ -153,9 +151,8 @@ interface Props {
 const {
   catalogue,
   characterBody,
-  characterId,
   characterLocomotion,
-  characterPackBaseUrl,
+  characterPackReader,
   createTerrainWorker,
   elementalSight,
   enemyMap,
@@ -295,10 +292,8 @@ const { residentSpots } = useResidentSpots(regionDataMap, gameClock, origin, get
 const questTargetPosition = computed(() =>
   questTargetId ? findQuestTargetPosition(regionDataMap, residentSpots.value, questTargetId) : undefined,
 );
-// The characters the host holds a pack for, and the one whose model failed to load, drawn as its body's capsule in its
-// Place
-const characterPackIds = useCharacterPackIds(characterPackBaseUrl);
-const failedCharacterId = ref<number>();
+// The pack whose model failed to load, by its reader's key, drawn as its body's capsule in its place
+const failedCharacterPackKey = ref("");
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
 const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 // The ground under the camera from above, which the grass redraws as the camera moves and grows on, and the rain's
@@ -483,13 +478,12 @@ onUnmounted(() => {
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
       <CharacterModel
-        v-if="characterPackBaseUrl && characterPackIds.has(characterId) && failedCharacterId !== characterId"
-        :key="characterId"
-        :character-id
-        :character-pack-base-url
+        v-if="characterPackReader && failedCharacterPackKey !== characterPackReader.key"
+        :key="characterPackReader.key"
+        :character-pack-reader
         :light-uniforms
         :ramp-texture
-        @error="failedCharacterId = characterId"
+        @error="failedCharacterPackKey = characterPackReader?.key ?? ''"
       />
       <WorldCharacterPlaceholder
         v-else-if="characterLocomotion"

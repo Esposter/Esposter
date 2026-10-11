@@ -32,7 +32,7 @@ export const DRAINS_TRAILER = "Drains";
 // True, only as asked (docs: infra/review-collector/express-lane)
 export const EXPRESS_TRAILER = "Express";
 // The record a repair commit carries of the red `main` head it repaired — the repairer's own claim, which the
-// Checks verify; consecutive ones at `main`'s head are the streak the attempt cap bounds
+// Checks verify; it is what proves a session's commit is the repair it was asked for
 // (docs: infra/review-collector/repair)
 export const REPAIRS_TRAILER = "Repairs";
 // The workflows whose conclusion on `main`'s head says the branch is red — the ones the repairer answers: CI's
@@ -144,8 +144,8 @@ export const HELD_MARKER = "review-collector held";
 export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
 // A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
 export const FOLD_FAILED_MARKER = "review-collector fold-failed";
-// A red `main` head whose repair the session failed on, counted on the head; with the repairs already stacked at
-// The head, the streak the cap bounds
+// An attempt at a red `main`, failed or pushed, posted on the head it was made at and keyed by the red's failure
+// Signature, so the cap bounds the attempts at the same jobs failing on whichever head carries them
 export const REPAIR_FAILED_MARKER = "review-collector repair-failed";
 // Keys the one issue per failure signature whose repairs ran out: the repairer stops on that signature, and the walk
 // Never waits on it
@@ -170,7 +170,7 @@ export const CARRY_SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes
 // Every headless session's wall clock. A session past it is killed with its whole process tree and reads as not ended,
 // So its step counts the attempt and the run retries a minute later (`ATTEMPT_RETRY_DELAY_SECONDS`)
 export const SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 45 }).total("milliseconds");
-// One repair attempt's deadline, covering the regenerators, the verify, the session and the lane's verify together
+// One repair attempt's deadline, covering the regenerators, their verify, the session and the repair step's verify
 export const REPAIR_ATTEMPT_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
 
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";

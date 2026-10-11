@@ -11,9 +11,8 @@ import { toAchievement } from "#src/services/genshinAssets/achievements/toAchiev
 import { toAchievementCategory } from "#src/services/genshinAssets/achievements/toAchievementCategory";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { achievementCategorySchema, achievementSchema, GameDataset } from "genshin-world";
-import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
 
 // The achievements and their categories from the game's tables, each kept whole rather than split by trigger, and published
 // As two records. A disused achievement is left out, and each row is checked against the world's own schema before it is
@@ -30,8 +29,7 @@ export const buildAchievements = (): { achievements: Achievement[]; objects: Rec
   const categories = readExcelTable<ExcelAchievementGoalRow>(ACHIEVEMENT_GOAL_TABLE_NAME)
     .map((row) => achievementCategorySchema.parse(toAchievementCategory(row, rewardMap)))
     .toSorted((firstCategory, secondCategory) => firstCategory.orderId - secondCategory.orderId);
-  mkdirSync(dirname(ACHIEVEMENT_COUNT_PATH), { recursive: true });
-  writeFileSync(ACHIEVEMENT_COUNT_PATH, JSON.stringify({ count: achievements.length }));
+  writeJsonFile(ACHIEVEMENT_COUNT_PATH, { count: achievements.length });
   return {
     achievements,
     objects: {

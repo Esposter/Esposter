@@ -6,19 +6,19 @@ model: claude-opus-5-5
 
 # Collector harbour
 
-The [review collector](/docs/infra/review-collector) is the one part of this repository whose state is spread over three branches, a pull request, commit comments and a workflow's runs, and a stuck collector is found today by reading a red run's log. The harbour draws that state on the [agent console](/docs/proposals/infra/agent-console) as water: `ai/queue` upstream, `develop` in the middle reach, `main` the sea, each commit `ai/queue` owes a boat, the express lane a canal that bypasses the locks, and the release pull request the lock between `develop` and `main`. A held commit is a boat stopped at a lock with the collector's comment as its flag, which is the whole of what a person needs to see.
+The [review collector](/docs/infra/review-collector) is the one part of this repository whose state is spread over three branches, a pull request, commit comments and a workflow's runs, and a stuck collector is found today by reading a red run's log. The harbour draws that state on the [agent console](/docs/proposals/infra/agent-console) as water: `ai/queue` upstream, `develop` in the middle reach, `main` the sea, each commit `ai/queue` owes a boat, the express lane a canal that bypasses the locks, and the release pull request the lock between `develop` and `main`. A held commit is a boat moored off the river on its own `ai/held/*` branch, with the collector's issue as its flag, which is the whole of what a person needs to see.
 
 Unlike the other views this one is Esposter's own: it reads the collector's branches and markers, so it runs only in a checkout whose remote has them.
 
 ## Scope
 
-**Built:** the read. `pnpm ai:coderabbit:state` prints the collector's state as JSON, through the same reads a pass makes: the branch heads, the commits `ai/queue` owes `develop`, the claimed ones, the first commit's held marker and the open release pull request's gate. See the [review collector](/docs/infra/review-collector) index for where it sits among the collector's parts.
+**Built:** the read. `pnpm ai:coderabbit:state` prints the collector's state as JSON, through the same reads a pass makes: the branch heads, the commits `ai/queue` owes `develop`, the claimed ones, the held ones (`heldShas`, the tips of the `ai/held/*` branches) and the open release pull request's gate. See the [review collector](/docs/infra/review-collector) index for where it sits among the collector's parts.
 
 **Left:**
 
 1. **The host's declared command.** A repository declares the command the host runs for a view and reads back as JSON, run on the view opening and on each push the session makes. Waits on the console's view registry ([extensions](/docs/proposals/infra/agent-console/extensions), the Views tier), which is not built.
 2. **The picture.** Boats in queue order upstream; claimed boats in the canal; the window as the boats inside the lock; the lock gate open or shut by the review gate's decision; a red `main` as a storm over the sea. The window's own boats need the stacked windows read too, which the read does not yet do: it reads only the release pull request.
-3. **A click.** A boat opens its commit on GitHub; the held boat opens the comment that holds it.
+3. **A click.** A boat opens its commit on GitHub; a held boat opens the issue that parked it.
 
 ## How it works
 
@@ -27,7 +27,7 @@ flowchart LR
   Q[ai/queue — upstream<br/>owed commits as boats] -->|claimed| X[Express canal] --> M[main — the sea]
   Q -->|window| L{Lock: the release pull request<br/>open when the review gate proceeds}
   L --> D[develop — middle reach] --> R{Release merge} --> M
-  Q -->|conflict past the cap| H[Held at the lock<br/>the held comment as its flag]
+  Q -->|past its attempts| H[Moored on ai/held/*<br/>the collector's issue as its flag]
 ```
 
 ```text

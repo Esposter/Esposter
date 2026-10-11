@@ -2109,6 +2109,9 @@ importers:
       '@vueuse/core':
         specifier: 'catalog:'
         version: 15.0.0(vue@3.5.43)
+      fflate:
+        specifier: 'catalog:'
+        version: 0.8.3
       genshin-engine:
         specifier: workspace:*
         version: link:../genshin-engine
@@ -2118,6 +2121,9 @@ importers:
       genshin-text:
         specifier: workspace:*
         version: link:../genshin-text
+      idb:
+        specifier: 'catalog:'
+        version: 8.0.4
       three:
         specifier: 'catalog:'
         version: 0.186.1

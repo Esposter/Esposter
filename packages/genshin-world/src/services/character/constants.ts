@@ -19,8 +19,15 @@ export const COMBAT_TALENT_ORDER = [
 // The level every combat talent starts at, before any upgrade raises it
 export const TALENT_START_LEVEL = 1;
 // The listing beside the characters' folders of the ids a host holds a pack for, so a character with none is drawn as
-// Its capsule without a request of its own
+// Its capsule without a request of its own, and of the packs the browser keeps
 export const CHARACTER_PACK_INDEX_PATH = "index.json";
+// Where the browser keeps the packs a player loads: the private file system's folder, or the IndexedDB database and its
+// One store, each file under its character's id and its pack's hash
+export const CHARACTER_PACK_STORE_NAME = "genshin-character-packs";
+export const CHARACTER_PACK_STORE_FILES_NAME = "files";
+export const CHARACTER_PACK_STORE_VERSION = 1;
+// The folder macOS's archiver adds to a zip for each file's resource fork, a "._" file beside the file's own name
+export const MACOS_RESOURCE_FORK_FOLDER = "__MACOSX/";
 // A pack's own files, named alike in every pack whatever its folder calls them: its model, and the terms bundled with
 // It as UTF-8. The model's textures keep the paths the model names them by
 export const CHARACTER_MODEL_PATH = "model.pmx";
@@ -46,11 +53,9 @@ export const CHARACTER_PACK_MODEL_NAME_LANGUAGES: readonly GameLanguage[] = [
   GameLanguage.English,
   GameLanguage.Japanese,
 ];
-// A pack's terms are fetched on its own, and abandoned past this so a stalled request cannot hold the page's text back
-export const CHARACTER_TERMS_FETCH_TIMEOUT_MS = 10_000;
-// A model and each of its textures run to megabytes, and are abandoned past this so a stalled request cannot leave a
-// Character loading for good
-export const CHARACTER_MODEL_FETCH_TIMEOUT_MS = 60_000;
+// A file of a host's pack, its model and each of its textures running to megabytes, is abandoned past this so a stalled
+// Request cannot leave a character loading for good
+export const CHARACTER_PACK_FETCH_TIMEOUT_MS = 60_000;
 // The Traveler the world plays, the female twin, as the login's Traveler is
 export const TRAVELER_CHARACTER_ID = 10_000_007;
 // The characters whose kits are built on their own modules, by the avatar ids the game's tables give them
