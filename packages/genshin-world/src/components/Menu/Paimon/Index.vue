@@ -9,7 +9,6 @@ import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import {
   PAIMON_MENU_CLOSE_MS,
   PAIMON_MENU_CONTENTS,
-  PAIMON_MENU_EASING,
   PAIMON_MENU_FADE_MS,
   PAIMON_MENU_LINKS,
   PAIMON_MENU_PANEL_DELAY_MS,
@@ -19,7 +18,7 @@ import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuEntryGlyphMap } from "#src/services/menu/MenuEntryGlyphMap";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
-import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_SMOOTHSTEP_EASING, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -94,7 +93,7 @@ onBeforeUnmount(() => {
     aria-modal="true"
     :aria-label="gameText[GameTextKey.Paimon]"
     :style="{
-      '--menu-ease': PAIMON_MENU_EASING,
+      '--menu-ease': GAME_SMOOTHSTEP_EASING,
       '--menu-fade': `${PAIMON_MENU_FADE_MS}ms`,
       '--menu-panel-delay': `${PAIMON_MENU_PANEL_DELAY_MS}ms`,
     }"

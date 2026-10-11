@@ -52,8 +52,6 @@ export const PAIMON_MENU_SIDE_BAR: readonly { icon: MenuFrameIcon; screenKind: T
 export const PAIMON_MENU_FADE_MS = 160;
 export const PAIMON_MENU_PANEL_DELAY_MS = 100;
 export const PAIMON_MENU_CLOSE_MS = PAIMON_MENU_FADE_MS + PAIMON_MENU_PANEL_DELAY_MS;
-// The smoothstep's CSS form, the closest cubic bezier to its fit
-export const PAIMON_MENU_EASING = "cubic-bezier(0.42, 0, 0.58, 1)";
 // The mirrorings over a dialog frame's middle that turn its top left ornament into each of its four corners', as CSS
 // Scales: the frame is symmetric, so one traced ornament stands for every corner
 export const MENU_DIALOG_CORNER_SCALES: readonly string[] = ["1 1", "-1 1", "1 -1", "-1 -1"];
