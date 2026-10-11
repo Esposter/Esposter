@@ -3,8 +3,9 @@ import type { NuxtConfig } from "nuxt/schema";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
 
-// A type-only import is enough to load the module's augmentation of `h3/rules`
-import type {} from "#src/module";
+// The augmentation of `h3/rules` ships with the module's own file, so the test loads it through the module
+// oxlint-disable-next-line import/no-unassigned-import -- the import exists for the augmentation, not a binding
+import "#src/module";
 
 describe("route rules security key", () => {
   test("a consumer's typed routeRules entry accepts the security key", () => {
