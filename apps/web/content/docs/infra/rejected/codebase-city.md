@@ -1,6 +1,6 @@
 ---
 title: Codebase city
-description: The repository as a voxel city the person walked their character through, each folder a district and each file a building — rejected, because the console's world is now Genshin's continent and has no place for a second map of the code.
+description: The repository as a voxel city the person walked their character through, each folder a district and each file a building — rejected, because the console's world is Genshin's continent and has no place for a second map of the code.
 ---
 
 # Codebase city
