@@ -94,11 +94,15 @@ jobs:
           save: false
 
       - name: 🆔 Identify the collector
-        # `fileMode` off: the install marks a package's `bin` executable, which reads as a dirty tree on Linux
+        # `fileMode` off: the install marks a package's `bin` executable, which reads as a dirty tree on Linux. And no
+        # line-ending normalization: a queue commit that carried CRLF reads as modified under the tree's `text eol=lf`
+        # once a pick writes it, so the next pick refuses to run over it and every replay through it dies there. Each
+        # pick replays its commit byte for byte, so the checkout normalizes nothing
         run: |
           git config user.name "Q16solver"
           git config user.email "Q16solver@users.noreply.github.com"
           git config core.fileMode false
+          echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
 
       - name: 🤝 Trust the workspace
         uses: ./.github/actions/trust-workspace
