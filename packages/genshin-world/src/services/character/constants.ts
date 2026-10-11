@@ -87,6 +87,7 @@ export const ALBEDO_CHARACTER_ID = 10_000_038;
 export const DIONA_CHARACTER_ID = 10_000_039;
 export const KEQING_CHARACTER_ID = 10_000_042;
 export const KAZUHA_CHARACTER_ID = 10_000_047;
+export const YOIMIYA_CHARACTER_ID = 10_000_049;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
