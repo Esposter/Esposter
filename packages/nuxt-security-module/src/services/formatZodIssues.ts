@@ -1,19 +1,32 @@
 import type { z } from "zod";
 
-// Every option group is a union whose first branch is its object and whose second is `false`.
-// The `false` branch's complaint hides the object's, so a union is read through its first branch
-const getReadableIssue = (issue: z.core.$ZodIssue): z.core.$ZodIssue => {
-  const [branch] = issue.code === "invalid_union" ? issue.errors : [];
-  const [firstIssue] = branch ?? [];
-  return firstIssue ? getReadableIssue(firstIssue) : issue;
+interface LeafIssue {
+  issue: z.core.$ZodIssue;
+  path: PropertyKey[];
+}
+
+const getDeepestPathLength = (leafIssues: LeafIssue[]): number =>
+  Math.max(-1, ...leafIssues.map(({ path }) => path.length));
+
+// A union reports each branch's issues, and the branch that matched furthest into the input is the one the author meant.
+// Zod's own pretty-printing stops at the union, so the walk goes through every branch and keeps the deepest one
+const getLeafIssues = (issue: z.core.$ZodIssue, parentPath: PropertyKey[]): LeafIssue[] => {
+  const path = [...parentPath, ...issue.path];
+  if (issue.code !== "invalid_union") return [{ issue, path }];
+
+  const branches = issue.errors.map((branch) => branch.flatMap((branchIssue) => getLeafIssues(branchIssue, path)));
+  return branches.reduce((deepest, branch) =>
+    getDeepestPathLength(branch) > getDeepestPathLength(deepest) ? branch : deepest,
+  );
 };
 
-// A branch reports its path from the union it sits in, so the union's own path leads the leaf's
-const formatIssue = (issue: z.core.$ZodIssue): string => {
-  const readable = getReadableIssue(issue);
-  const path = [...issue.path, ...(readable === issue ? [] : readable.path)];
-  return `${path.join(".") || "(options)"}: ${readable.message}`;
+const formatLeafIssue = ({ issue, path }: LeafIssue): string => {
+  const dottedPath = path.map(String).join(".");
+  return `${dottedPath || "(options)"}: ${issue.message}`;
 };
 
 export const formatZodIssues = (issues: z.core.$ZodIssue[]): string =>
-  issues.map((issue) => formatIssue(issue)).join("; ");
+  issues
+    .flatMap((issue) => getLeafIssues(issue, []))
+    .map((leafIssue) => formatLeafIssue(leafIssue))
+    .join("; ");
