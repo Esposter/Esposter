@@ -30,23 +30,26 @@ flowchart TD
 - **One ground for the world.** `createWorldHeight` builds the ground every reader stands on: the terrain worker, the character's body, the cameras and every landmark. It lays every other region's ground over Windrise's, each the `ground/<region>` record the world's screen reads from the [hosted game data](/docs/genshin/hosted-game-data) before it opens, through [terrain shape height](/docs/genshin/terrain-shape-height), so each region's hills and features are filed into the same cells as Windrise's and a point reads only those near it. A region a fit has drawn stands on its own base round its hills, with its features and residual; one no fit has drawn holds only its plateaus, each over the world's base, which is the ground everywhere no fit has reached. Mondstadt's own record is not laid over: its capital stands inside Windrise's fitted extent, so its hills would be drawn twice there. The session builds the ground once and hands it down as `getGroundHeight`, and each terrain worker composes the same ground from the records it is loaded with as it starts.
 - **Capitals at provisional places.** Each capital stands where its city's waypoints do in the game's own data, read once by hand to the nearest ten metres: Mondstadt City, Liyue Harbor, Inazuma City, Sumeru City, the Court of Fontaine, Natlan's People of the Springs, Nod-Krai's Nasha Town. Snezhnaya's capital, Snezhnograd, is not in the community's dump yet, so it stands at the place the scene has always set by hand, written into `RegionCapitalMap`: about four kilometres along x from Nasha Town, level with it in z. Each plateau is raised to its capital's height the same way, and each capital's area has a square outline round it, so its region loads when the camera comes within reach.
 - **The fit places them exactly.** `genshin:assets fit windrise --only landmarks` places Windrise's oak and statue from the game's placements and then every capital from its waypoints (`fitRegionCapitals`). The game's own area table names each capital's areas; their waypoints are the scene points of the kind Windrise's statue is, and the median waypoint stands the landmark and, for a region no fit has drawn, centres and lifts its first plateau. Mondstadt's capital is written after Windrise's landmarks, since both are in its one file. Each plateau it moves is written into its region's `ground.json`, the file people edit, and published as `ground/<region>` in the same run. A region a fit has drawn stands its capital on its fitted ground, so only its landmark is written.
+- **The Court of Fontaine's export is claimed by its own families.** Fontaine's row house stands in for the Court's "Area_Fd_Build_" meshes and its terrain tiles for the ground when the [parity](/docs/genshin/parity) inventory reads its witness, while `FontaineUndrawnMeshRegexMap` sorts the remainder, from props to the plot's paving, into what is not drawn yet.
 
 ## Key files
 
-| File                                                                      | Role                                                                 |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/world/BuildingLandmark.ts`             | A building landmark: its region's kit and the options that kit takes |
-| `packages/genshin-world/src/models/world/RegionBuilding.ts`               | The kit and its options, checked against the kit's own schema        |
-| `packages/genshin-world/src/models/world/BuildingKit.ts`                  | The kit each region builds with                                      |
-| `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`        | Each kit's geometries as parts in its region's colours               |
-| `packages/genshin-world/src/models/world/RegionPaletteMap.ts`             | The palette colours each kit reads, by region                        |
-| `packages/genshin-world/src/services/world/readRegionPalettes.ts`         | Each region's palette record, read from the hosted game data         |
-| `packages/genshin-world/src/components/World/Landmark/Building/Index.vue` | A building drawn on the ground, one material per part                |
-| `packages/genshin-world/src/services/world/createWorldHeight.ts`          | The world's one ground: every region's laid over Windrise's          |
-| `packages/genshin-world/src/models/world/RegionGround.ts`                 | A region's ground: fitted hills, or plateaus where no fit has drawn  |
-| `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`             | Every capital stood at its waypoints, and an unfitted plateau raised |
-| `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`              | Each region's first landmark and the game's areas that place it      |
-| `scripts/src/services/genshinAssets/palette/PaletteFamilyMap.ts`          | Each region's kit fields and the texture families sampled for them   |
+| File                                                                             | Role                                                                 |
+| :------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/world/BuildingLandmark.ts`                    | A building landmark: its region's kit and the options that kit takes |
+| `packages/genshin-world/src/models/world/RegionBuilding.ts`                      | The kit and its options, checked against the kit's own schema        |
+| `packages/genshin-world/src/models/world/BuildingKit.ts`                         | The kit each region builds with                                      |
+| `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`               | Each kit's geometries as parts in its region's colours               |
+| `packages/genshin-world/src/models/world/RegionPaletteMap.ts`                    | The palette colours each kit reads, by region                        |
+| `packages/genshin-world/src/services/world/readRegionPalettes.ts`                | Each region's palette record, read from the hosted game data         |
+| `packages/genshin-world/src/components/World/Landmark/Building/Index.vue`        | A building drawn on the ground, one material per part                |
+| `packages/genshin-world/src/services/world/createWorldHeight.ts`                 | The world's one ground: every region's laid over Windrise's          |
+| `packages/genshin-world/src/models/world/RegionGround.ts`                        | A region's ground: fitted hills, or plateaus where no fit has drawn  |
+| `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`                    | Every capital stood at its waypoints, and an unfitted plateau raised |
+| `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                     | Each region's first landmark and the game's areas that place it      |
+| `scripts/src/services/genshinAssets/palette/PaletteFamilyMap.ts`                 | Each region's kit fields and the texture families sampled for them   |
+| `packages/genshin-world/src/services/fontaine/FontainePartFamilyMeshRegexMap.ts` | The Court's buildings and ground, matched by mesh name               |
+| `packages/genshin-world/src/services/fontaine/FontaineUndrawnMeshRegexMap.ts`    | The Court's other meshes, sorted by kind as not drawn yet            |
 
 ## Notes
 

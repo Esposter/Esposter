@@ -1,4 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { FontainePartFamilyMeshRegexMap } from "#src/services/fontaine/FontainePartFamilyMeshRegexMap";
+import { FontaineUndrawnMeshRegexMap } from "#src/services/fontaine/FontaineUndrawnMeshRegexMap";
 import { LiyuePartFamilyMeshRegexMap } from "#src/services/liyue/LiyuePartFamilyMeshRegexMap";
 import { LiyueUndrawnMeshRegexMap } from "#src/services/liyue/LiyueUndrawnMeshRegexMap";
 import { MondstadtPartFamilyMeshRegexMap } from "#src/services/mondstadt/MondstadtPartFamilyMeshRegexMap";
@@ -30,6 +32,7 @@ export const readyEvent = "ready";
 // Each capital's own claims on its region's exports, so no renderer of theirs falls to Windrise's families below, whose
 // Terrain tiles and common ruins their exports hold too
 export const witnessComponents = {
+  fontaine: { witnessFamilies: FontainePartFamilyMeshRegexMap, witnessUndrawn: FontaineUndrawnMeshRegexMap },
   liyue: { witnessFamilies: LiyuePartFamilyMeshRegexMap, witnessUndrawn: LiyueUndrawnMeshRegexMap },
   mondstadt: { witnessFamilies: MondstadtPartFamilyMeshRegexMap, witnessUndrawn: MondstadtUndrawnMeshRegexMap },
   natlan: { witnessFamilies: NatlanPartFamilyMeshRegexMap, witnessUndrawn: NatlanUndrawnMeshRegexMap },
