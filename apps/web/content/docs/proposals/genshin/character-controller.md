@@ -38,11 +38,11 @@ The readings are named work before any constant changes. Each is an open questio
 
 ## Scope and order
 
-**Today:** the medium female body moves by its own clips' speeds, dash, climb, swim and drowning, and by the provisional table for the rest; every other body type moves by the provisional table.
+**Today:** the medium female and medium male bodies move by their own clips' speeds, dash, climb, swim and drowning, and by the provisional table for the rest; the tall female, tall male and short female bodies move by the provisional table.
 
 **This adds, in order:**
 
-1. **The medium male body's clip-read entry**, then the tall female's, the tall male's and the short female's, one a build.
+1. **Each remaining body's clip-read entry**: the tall female's, the tall male's and the short female's, one a build, each as the medium male's entry was built.
    - Run `pnpm -C scripts genshin:assets locomotion Boy` with the game closed (`Lady`, `Male` and `Loli` for the others). It prints each clip's seconds, ground covered, speed, recorded speed and rise.
    - Write `BodyTypeLocomotionMap[BodyType.MediumMale]` as `{ ...PROVISIONAL_LOCOMOTION, ... }` with the eleven fields the medium female entry overrides, each off the same clip of `Ani_Avatar_Boy_` as its `Girl` twin, as `~/Esposter/genshin-parity/extracted/locomotion/Girl/locomotion.json` holds them: `walkSpeed`, `runSpeed` and `sprintSpeed` the `WalkCycle`, `RunCycle` and `SprintCycle` speeds; `dashSpeed` and `dashSeconds` the `SprintBS` speed and seconds; `climbSpeed` the `ClimbU` rise a second; `climbJumpHeight` and `climbJumpSeconds` the `ClimbDashU` rise and seconds; `swimSpeed` and `swimDashSpeed` the `SwimF` and `SwimDash` speeds; and `drownSeconds` the `SwimDie` seconds, each to two decimals.
    - Add the run to `Locomotion.reference.ts` as an investigation beside the medium female body's: its command, the readings and their outcome. A clip the body type lacks leaves its field provisional, and the investigation names it.

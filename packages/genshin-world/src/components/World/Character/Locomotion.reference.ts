@@ -19,6 +19,13 @@ export const locomotionTopic: ReferenceTopic = {
       result:
         "The clips carry their root's motion, each speed off its start and stop within 0.3% of the average it records: the walk 1.24 m/s, the run 5.66 and the sprint 7.22; the sprint's start, the dash, 8.48 m/s over 1.22 s; the climb 0.84 m/s up; the climb jump 3.36 m up over 1.08 s; the swim 1.94 m/s over a 1.67 s cycle and its dash 3.88; drowning 3 s. The glide's FlyNormal holds its root still, and the jump's root falls 12 m over its 1.1 s, so neither moves the body, and both are read off recordings",
     },
+    {
+      method:
+        "`pnpm -C scripts genshin:assets locomotion Boy`: the same root read, beside the medium male body's clips",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The medium male body's clips read the same way: the walk 1.33 m/s, the run 5.78 and the sprint 7.45; the dash 8.85 m/s over 1.28 s; the climb 0.87 m/s up; the climb jump 3.45 m up over 1.08 s; the swim 1.27 m/s and its dash 3.91; drowning 3 s. Its glide's FlyNormal and jump move the body as the female's do, so both stay read off recordings",
+    },
   ],
   openQuestions: [
     "The jump's height and the fall's gravity, the glide's forward speed and its sink, the plunge's speed, the step, the steepest walkable slope, the wading depth, the glider's height and the slide down ground too steep to stand on, which no clip holds and a recording's motion pass reads",
