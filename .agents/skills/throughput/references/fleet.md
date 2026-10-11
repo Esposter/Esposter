@@ -10,9 +10,12 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **Its profile is `~/.esposter/machine.json`:**
   - `id`;
   - `areas`, the areas the user lent it for (the MacBook's is `["genshin"]`, and `["*"]` is everything);
-  - `capabilities`: its OS, plus `game-install`, `game-exports`, `parity-page` and `media-engine` as it holds them.
+  - `capabilities`: its OS, plus `game-install`, `game-exports`, `parity-page` and `media-engine` as it holds them;
+  - `fillTarget` and `fillKinds`, the live claims `pnpm ai:fleet:fill` keeps here and the kinds it takes, in order.
 
-  `pnpm ai:fleet:profile` writes what it detects and keeps what the user set.
+  `pnpm ai:fleet:profile` writes what it detects and keeps what the user set, and takes `--fill-target` and `--fill-kinds` to set the fill share.
+
+- **A machine's share of the fleet is its profile's `fillTarget` and `fillKinds`:** the coordinating machine keeps a small unit-only share, and the machine with the most headroom takes the compute lanes.
 
 - **An area the user did not lend is never worked**, however idle the machine is.
 
@@ -36,7 +39,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **A fresh worktree is set up in two installs, never one.** `pnpm i --frozen-lockfile` leaves the workspace state without the `autoDedupe` setting, which `verifyDepsBeforeRun: error` rejects as "changed"; the `pnpm i --offline` that follows records it, and runs no network resolve, so the lockfile stays as committed.
 - **A lane that runs no app installs only its own closure.** The app's install is the one that costs minutes, mostly its `nuxt prepare` postinstall, and a parity or scripts lane never touches `apps/web`. Its setup is the same two installs, filtered to the lane's packages and their dependencies: `pnpm i --frozen-lockfile --prefer-offline --filter @esposter/scripts... --filter genshin-world... --filter genshin-interface... --filter genshin-persona...`, then `pnpm i --offline` with the same filters. Measured on 2026-10-09 in a fresh worktree through `run-in-slot.sh`: 137 s to 21 s (about 2 min 17 s to 21 s, about 6.5x), and `node_modules` 3.5 GB to 1.5 GB. The lane's dists are then built through `build-cached.sh`, a cold build of the four packages took 170 s once; `pnpm -C scripts genshin:parity passes windrise --pass Layout` passed against the worktree's page, and `pnpm exec` passes the stale-install check. An app lane (one that runs `apps/web`) keeps the full two installs above, with no filter: `pnpm i --frozen-lockfile --prefer-offline && pnpm i --offline`.
 - **Its packages are built through the build cache, in dependency order.** `bash .agents/skills/throughput/scripts/build-cached.sh scripts`, then the same on `packages/genshin-world`, brings each leaf and every workspace package it links up to date, so no list of packages is kept to drift: it restores each `dist` from `~/Esposter/dist-cache` when its key matches, and builds it through a slot otherwise. The build skill owns the key.
-- **A machine keeps its live claims at its target with `pnpm ai:fleet:fill`.** It counts its live holds, claims the next entry of each kind in turn (units, then the cpu and page lanes) until it reaches its target, which is its logical cores capped at twenty, and starts each claim's hold detached. It prints one brief per new claim, for a haiku agent to take as its prompt, and `nothing ready` when it claims none.
+- **A machine keeps its live claims at its target with `pnpm ai:fleet:fill`.** It counts its live holds, claims the next entry of each kind in turn (units, then the cpu and page lanes) until it reaches its target, which is the profile's `fillTarget` when set and otherwise its logical cores capped at twenty, and starts each claim's hold detached. It prints one brief per new claim, for a haiku agent to take as its prompt, and `nothing ready` when it claims none.
 - **The coordinator writes entries and settles calls.** It never assigns work by message and never waits on a machine's report, so the fleet grows without its cost growing.
 
 ## A claim is a ref
