@@ -1,0 +1,151 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitField } from "#src/models/kit/KitField";
+import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitSummon } from "#src/models/kit/KitSummon";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createIneffaKit, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
+
+const INEFFA_KIT = createIneffaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [INEFFA_CHARACTER_ID]));
+
+const createIneffaCombatant = (): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 1000 }]),
+  characterId: INEFFA_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: INEFFA_KIT,
+  level: 90,
+  weaponType: WeaponType.Polearm,
+});
+
+describe(createIneffaKit, () => {
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  // The effects an action's start adds to the effects given, as the kit's effects hold them
+  const castEffects = (action: KitAction, effects: KitEffect[] = []): KitEffect[] => {
+    const kitEffectState: KitEffectState = { effects };
+    action.onStart?.({
+      body: kitBody,
+      combatant: createIneffaCombatant(),
+      kitEffectState,
+      party: createParty([INEFFA_CHARACTER_ID]),
+    });
+    return kitEffectState.effects;
+  };
+  const castBirgitta = (action: KitAction, effects: KitEffect[] = []): KitSummon =>
+    takeOne(
+      castEffects(action, effects).filter(
+        (effect): effect is KitSummon => effect.kind === "summon" && effect.id === "birgitta",
+      ),
+    );
+
+  test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
+    expect.hasAssertions();
+    const multipliers = [
+      ...INEFFA_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
+      ...INEFFA_KIT.chargedAttack.hits.map((hit) => hit.talentMultiplier),
+      INEFFA_KIT.plungeCollision.talentMultiplier,
+      takeOne(INEFFA_KIT.lowPlunge.hits).talentMultiplier,
+      takeOne(INEFFA_KIT.highPlunge.hits).talentMultiplier,
+      takeOne(INEFFA_KIT.elementalSkill.hits).talentMultiplier,
+      takeOne(INEFFA_KIT.elementalBurst.hits).talentMultiplier,
+    ].map((multiplier) => Number(multiplier.toFixed(4)));
+
+    expect(multipliers).toStrictEqual([0.3484, 0.3422, 0.2276, 0.5607, 0.9494, 0.6393, 1.2784, 1.5968, 0.864, 6.768]);
+  });
+
+  test("reads her stamina, her cooldowns and her burst's energy cost from her proud skill groups", () => {
+    expect.hasAssertions();
+    expect([
+      INEFFA_KIT.chargedAttackStamina,
+      INEFFA_KIT.skillCooldownSeconds,
+      INEFFA_KIT.burstCooldownSeconds,
+      INEFFA_KIT.burstEnergyCost,
+    ]).toStrictEqual([25, 16, 15, 60]);
+  });
+
+  test("lands her strikes at their hitmarks, her charged attack at 23 frames, her skill at 26, and her burst at 111", () => {
+    expect.hasAssertions();
+    expect({
+      burstHitmarkFrames: INEFFA_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
+      chargedAttackHitmarkFrames: INEFFA_KIT.chargedAttack.hits.map(({ hitmarkSeconds }) =>
+        Math.round(hitmarkSeconds * 60),
+      ),
+      normalAttackHitmarkFrames: INEFFA_KIT.normalAttacks.map(({ hits }) =>
+        Math.round(takeOne(hits).hitmarkSeconds * 60),
+      ),
+      skillHitmarkFrames: INEFFA_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
+    }).toStrictEqual({
+      burstHitmarkFrames: [111],
+      chargedAttackHitmarkFrames: [23],
+      normalAttackHitmarkFrames: [9, 17, 10, 27],
+      skillHitmarkFrames: [26],
+    });
+  });
+
+  test("her skill summons Birgitta at 68 frames, who stands 1,200 frames and discharges 42 frames in and every 119 after", () => {
+    expect.hasAssertions();
+    const birgitta = castBirgitta(INEFFA_KIT.elementalSkill);
+
+    expect(birgitta.spawnSeconds).toBeCloseTo(68 / 60);
+    expect(birgitta.secondsRemaining).toBeCloseTo((68 + 1200) / 60);
+    expect(birgitta.hits).toHaveLength(10);
+    expect(birgitta.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)).slice(0, 2)).toStrictEqual([
+      110, 229,
+    ]);
+  });
+
+  test("her burst summons Birgitta again and ends the one on the field, as gcsim restarts her discharges", () => {
+    expect.hasAssertions();
+    const skillBirgitta = castBirgitta(INEFFA_KIT.elementalSkill);
+    const kitEffectState: KitEffectState = { effects: [skillBirgitta] };
+    INEFFA_KIT.elementalBurst.onStart?.({
+      body: kitBody,
+      combatant: createIneffaCombatant(),
+      kitEffectState,
+      party: createParty([INEFFA_CHARACTER_ID]),
+    });
+    const birgittas = kitEffectState.effects.filter(
+      (effect): effect is KitSummon => effect.kind === "summon" && effect.id === "birgitta",
+    );
+
+    expect(skillBirgitta.secondsRemaining).toBe(0);
+    expect(birgittas.map(({ spawnSeconds }) => Math.round((spawnSeconds ?? 0) * 60))).toStrictEqual([68, 111]);
+  });
+
+  test("her skill places a shield 4 frames in, priced by her ATK and the table's flat HP, for 20 seconds", () => {
+    expect.hasAssertions();
+    const combatant = createIneffaCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    INEFFA_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([INEFFA_CHARACTER_ID]),
+    });
+    const field = takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
+    expect(field.nextTickSeconds).toBeCloseTo(4 / 60);
+
+    field.onTick({
+      activeCombatant: combatant,
+      characterIdCombatantMap: new Map([[INEFFA_CHARACTER_ID, combatant]]),
+      enemyMap: new Map(),
+      kitEffectState,
+      party: createParty([INEFFA_CHARACTER_ID]),
+      tickIndex: 0,
+    });
+    const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
+    expect(shield.health).toBeCloseTo(2.21184 * combatant.attributes.attack + 1386.6759);
+    expect(shield.secondsRemaining).toBe(20);
+  });
+});
