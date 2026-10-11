@@ -686,9 +686,6 @@ catalogs:
     lowlight:
       specifier: ^3.3.0
       version: 3.3.0
-    lru-cache:
-      specifier: ^11.5.3
-      version: 11.5.3
     marked:
       specifier: ^18.1.0
       version: 18.1.0
@@ -1374,9 +1371,6 @@ importers:
       lowlight:
         specifier: 'catalog:'
         version: 3.3.0
-      lru-cache:
-        specifier: 'catalog:'
-        version: 11.5.3
       marked:
         specifier: 'catalog:'
         version: 18.1.0
