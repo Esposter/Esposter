@@ -6,7 +6,11 @@ describe(computeSurfaceOctaves, () => {
   test("gives a flat surface no detail", () => {
     expect.hasAssertions();
 
-    const octaves = computeSurfaceOctaves({ bands: SURFACE_DETAIL_BAND_SIGMAS.map(() => 0), variance: 0 });
+    const octaves = computeSurfaceOctaves({
+      bands: SURFACE_DETAIL_BAND_SIGMAS.map(() => 0),
+      metresPerTexel: 1,
+      variance: 0,
+    });
 
     expect(octaves.map(({ amplitude }) => amplitude)).toStrictEqual(octaves.map(() => 0));
   });

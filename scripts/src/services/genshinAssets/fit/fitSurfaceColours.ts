@@ -12,6 +12,7 @@ import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePart
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
 import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
 import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTriangleArea";
+import { computeUvTexels } from "#src/services/genshinAssets/fit/computeUvTexels";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
 import { tintTexture } from "#src/services/genshinAssets/fit/tintTexture";
@@ -52,15 +53,15 @@ const readTexture = (path: string): Promise<Texture> => sharp(path).raw().toBuff
 // The samples of a mesh's faces where its vertices stand in the world. Each face is read at the points `sampleFaceUvs`
 // Spreads over its UV triangle, through the texture its submesh draws with (`diffuses`, by submesh index), each point
 // Weighted by an equal share of the face's world area and how far its texel is covered, and tagged with the `part` it
-// Is read for, each face's samples kept with the texture they were read through. A face whose centroid `checkKept`
-// Refuses counts for nothing
+// Is read for, each face's samples kept with the texture they were read through, the face's world area and the texels
+// Its UVs cover. A face whose centroid `checkKept` refuses counts for nothing
 const readFaceSamples = (
   { faceGroups, faces, faceUvs, uvs }: ObjMesh,
   world: Vector[],
   diffuses: (Texture | undefined)[],
   part: string,
   checkKept: (centroid: Vector) => boolean = () => true,
-): { diffuse: Texture; samples: SurfaceSample[] }[] =>
+): { area: number; diffuse: Texture; samples: SurfaceSample[]; texels: number }[] =>
   faces.flatMap(([firstIndex, secondIndex, thirdIndex], face) => {
     const [first, second, third] = [world[firstIndex], world[secondIndex], world[thirdIndex]];
     const submesh = Number(SUBMESH_REGEX.exec(faceGroups[face] ?? "")?.groups?.submesh ?? 0);
@@ -73,17 +74,21 @@ const readFaceSamples = (
       [number, number],
       [number, number],
     ];
-    const points = sampleFaceUvs([firstUv, secondUv, thirdUv], diffuse.info);
-    const weight = computeTriangleArea(first, second, third) / points.length;
+    const uvTriangle = [firstUv, secondUv, thirdUv] as const;
+    const points = sampleFaceUvs(uvTriangle, diffuse.info);
+    const area = computeTriangleArea(first, second, third);
     const samples = points.map((uv) => {
       const { colour, coverage } = sampleSurfaceTexture(diffuse, uv);
-      return { colour, part, weight: weight * coverage };
+      return { colour, part, weight: (area / points.length) * coverage };
     });
-    return [{ diffuse, samples }];
+    return [{ area, diffuse, samples, texels: computeUvTexels(uvTriangle, diffuse.info) }];
   });
 const sumWeights = (samples: readonly SurfaceSample[]): number => samples.reduce((sum, { weight }) => sum + weight, 0);
 // A mesh read through its submeshes' textures: its samples, and its detail as the mean of every texture its covered faces
-// Drew, each weighted by the area read through it, so a texture no covered face draws counts for nothing
+// Drew, each weighted by the area read through it, so a texture no covered face draws counts for nothing. Each texture's
+// Detail is drawn at the metres a texel spans on the faces read through it, their world area over the texels their UVs
+// Cover: a terrain tile's base map 2 metres on the flat, its 512 texels over the tile's 1,024, more where the ground
+// Slopes, and a mesh's texture its own
 const readSurface = (
   mesh: ObjMesh,
   world: Vector[],
@@ -92,11 +97,17 @@ const readSurface = (
   checkKept?: (centroid: Vector) => boolean,
 ): ReadSurface => {
   const faceSamples = readFaceSamples(mesh, world, diffuses, part, checkKept);
-  const diffuseWeightMap = new Map<Texture, number>();
-  for (const { diffuse, samples } of faceSamples)
-    diffuseWeightMap.set(diffuse, (diffuseWeightMap.get(diffuse) ?? 0) + sumWeights(samples));
-  const details = [...diffuseWeightMap].flatMap(([diffuse, weight]) => {
-    const detail = weight > 0 ? computeTextureDetail(diffuse) : undefined;
+  const diffuseReadMap = new Map<Texture, { area: number; texels: number; weight: number }>();
+  for (const { area, diffuse, samples, texels } of faceSamples) {
+    const read = diffuseReadMap.get(diffuse) ?? { area: 0, texels: 0, weight: 0 };
+    diffuseReadMap.set(diffuse, {
+      area: read.area + area,
+      texels: read.texels + texels,
+      weight: read.weight + sumWeights(samples),
+    });
+  }
+  const details = [...diffuseReadMap].flatMap(([diffuse, { area, texels, weight }]) => {
+    const detail = weight > 0 && texels > 0 ? computeTextureDetail(diffuse, Math.sqrt(area / texels)) : undefined;
     return detail ? [{ detail, weight }] : [];
   });
   return { detail: averageSurfaceDetails(details), part, samples: faceSamples.flatMap(({ samples }) => samples) };

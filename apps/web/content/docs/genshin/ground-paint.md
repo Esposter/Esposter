@@ -62,4 +62,4 @@ flowchart TD
 
 - **The cell is the surface pass's call.** Windrise's field is fitted at 32 metres, the cell at which the surface pass reads the Ground's colour inside its gate. The cell sizes it was chosen against are [scene derivation](/docs/genshin/scene-derivation)'s.
 - **No rule is laid over Windrise's field.** The slope sorts none of the layers, and the sand at the shore, the snow and the roads are the field's own layers, painted where the game paints them, so a slope, height or path rule has nothing left to place.
-- **A layer has no texture.** Its detail is a pair of colours across patches tens of metres wide. The game's layer textures carry detail under a metre, which a per-pixel layer node would add; it is built only if the surface pass's structure, not its mean colour, says the ground needs it.
+- **A layer has no texture.** Its detail is a pair of colours across patches tens of metres wide. The game's layer textures carry detail under a metre, which a per-pixel layer node would add; it is built only if the surface pass's structure, not its mean colour, says the ground needs it ([ground detail](/docs/proposals/genshin/ground-detail)).

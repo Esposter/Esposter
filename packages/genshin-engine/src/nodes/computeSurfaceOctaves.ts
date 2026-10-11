@@ -1,10 +1,6 @@
 import type { SurfaceDetail } from "#src/models/nodes/SurfaceDetail";
 
-import {
-  SURFACE_DETAIL_BAND_SIGMAS,
-  SURFACE_DETAIL_METRES_PER_TEXEL,
-  SURFACE_OCTAVE_TEXEL_FREQUENCIES,
-} from "#src/nodes/constants";
+import { SURFACE_DETAIL_BAND_SIGMAS, SURFACE_OCTAVE_TEXEL_FREQUENCIES } from "#src/nodes/constants";
 
 export interface SurfaceOctave {
   amplitude: number;
@@ -49,12 +45,12 @@ const solveOctaveEnergies = (responses: number[][], targets: number[]): number[]
   return energies;
 };
 // A surface's detail as noise octaves in the world: the amplitudes whose octaves' bands reproduce the detail's energies
-// Best, each octave's frequency the world's, its texels spanning `SURFACE_DETAIL_METRES_PER_TEXEL`
-export const computeSurfaceOctaves = ({ bands, variance }: SurfaceDetail): SurfaceOctave[] => {
+// Best, each octave's frequency the world's, its texels spanning the metres its texture's do where it is drawn
+export const computeSurfaceOctaves = ({ bands, metresPerTexel, variance }: SurfaceDetail): SurfaceOctave[] => {
   const targets = [...bands, variance];
   const energies = solveOctaveEnergies(computeResponses(targets), targets);
   return SURFACE_OCTAVE_TEXEL_FREQUENCIES.map((texelFrequency, octave) => ({
     amplitude: Math.sqrt(energies[octave] ?? 0),
-    frequency: texelFrequency / SURFACE_DETAIL_METRES_PER_TEXEL,
+    frequency: texelFrequency / metresPerTexel,
   }));
 };

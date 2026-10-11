@@ -29,14 +29,14 @@ const readRelativeLuminance = ({ data, info }: Texture): { mask: Uint8Array; val
   return { mask, values: mean === 0 ? values : values.map((value) => value / mean) };
 };
 // A texture's detail as `SurfaceDetail` holds it: the statistics of its relative luminance over the texels it covers,
-// Undefined for a texture nothing covers
-export const computeTextureDetail = (texture: Texture): SurfaceDetail | undefined => {
+// At the metres a texel spans where it is drawn. Undefined for a texture nothing covers
+export const computeTextureDetail = (texture: Texture, metresPerTexel: number): SurfaceDetail | undefined => {
   const { mask, values } = readRelativeLuminance(texture);
   const [variance, ...bands] = computeDetailStatistics(values, mask, texture.info.width, texture.info.height);
-  return variance === undefined ? undefined : { bands, variance };
+  return variance === undefined ? undefined : { bands, metresPerTexel, variance };
 };
-// The mean of several surfaces' details, each weighted by the area it was sampled over, undefined when none is given or
-// None was sampled over any area
+// The mean of several surfaces' details, their texel sizes too, each weighted by the area it was sampled over,
+// Undefined when none is given or none was sampled over any area
 export const averageSurfaceDetails = (
   details: readonly { detail: SurfaceDetail; weight: number }[],
 ): SurfaceDetail | undefined => {
@@ -48,6 +48,8 @@ export const averageSurfaceDetails = (
       (_band, index) =>
         details.reduce((sum, { detail: { bands }, weight }) => sum + (bands[index] ?? 0) * weight, 0) / totalWeight,
     ),
+    metresPerTexel:
+      details.reduce((sum, { detail: { metresPerTexel }, weight }) => sum + metresPerTexel * weight, 0) / totalWeight,
     variance: details.reduce((sum, { detail: { variance }, weight }) => sum + variance * weight, 0) / totalWeight,
   };
 };

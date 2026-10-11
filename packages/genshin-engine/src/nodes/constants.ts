@@ -30,8 +30,6 @@ export const SURFACE_OCTAVE_TEXEL_FREQUENCIES: number[] = [
   ...SURFACE_DETAIL_BAND_SIGMAS.map((sigma) => 1 / (2 * Math.PI * sigma)),
   1 / (4 * Math.PI * (SURFACE_DETAIL_BAND_SIGMAS.at(-1) ?? 0)),
 ];
-// The metres one texel of a surface's export texture spans, which sets how a band's texel frequency reads as the world's
-export const SURFACE_DETAIL_METRES_PER_TEXEL = 0.04;
 // The scale a surface's detail octaves are drawn at, over the amplitudes that reproduce its export's energies: the
 // Render's noise carries less energy per unit amplitude than the octaves model, and the surface pass settles it
 export const SURFACE_DETAIL_RENDER_GAIN = 4;

@@ -1,3 +1,5 @@
+import { computeUvTexels } from "#src/services/genshinAssets/fit/computeUvTexels";
+
 // The texels a face's UV triangle covers per point it is read at: a face of a small footprint is read at its centroid, and
 // A large one (a leaf card's, its texels mostly transparent) at a lattice of points spread over it, so the opaque texels
 // It covers all count
@@ -9,13 +11,11 @@ const MAX_LATTICE_SIDE = 8;
 // Centre, so every point stands inside the triangle and the points share its area evenly. The lattice's side is set by
 // How many texels the triangle covers in a texture of the given size
 export const sampleFaceUvs = (
-  [first, second, third]: readonly [readonly [number, number], readonly [number, number], readonly [number, number]],
-  { height, width }: { height: number; width: number },
+  uvTriangle: readonly [readonly [number, number], readonly [number, number], readonly [number, number]],
+  size: { height: number; width: number },
 ): [number, number][] => {
-  const texels =
-    (Math.abs((second[0] - first[0]) * (third[1] - first[1]) - (third[0] - first[0]) * (second[1] - first[1])) / 2) *
-    width *
-    height;
+  const [first, second, third] = uvTriangle;
+  const texels = computeUvTexels(uvTriangle, size);
   const side = Math.min(MAX_LATTICE_SIDE, Math.max(1, Math.ceil(Math.sqrt((2 * texels) / SURFACE_SAMPLE_TEXELS))));
   return Array.from({ length: side }, (_row, row) =>
     Array.from({ length: side - row }, (_column, column): [number, number] => {

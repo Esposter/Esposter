@@ -8,7 +8,7 @@ import { Color } from "three";
 import { uniform, vertexColor } from "three/tsl";
 
 // What a mesh carrying no surface is drawn in, as a material draws without a colour of its own
-const DEFAULT_SURFACE = new ObjectSurface(new Color(0xffffff), []);
+const DEFAULT_SURFACE = new ObjectSurface(new Color(0xffffff), [], 0);
 
 const readObjectSurface = (object: null | Object3D): ObjectSurface => {
   const surface: unknown = object?.userData[OBJECT_SURFACE_KEY];
@@ -26,5 +26,6 @@ export const createObjectSurfaceNode = (): Node<"vec3"> =>
         SURFACE_OCTAVE_TEXEL_FREQUENCIES.map((_frequency, octave) =>
           uniform(0).onObjectUpdate(({ object }) => readObjectSurface(object).amplitudes[octave] ?? 0),
         ),
+        uniform(0).onObjectUpdate(({ object }) => readObjectSurface(object).texelsPerMetre),
       ),
     );

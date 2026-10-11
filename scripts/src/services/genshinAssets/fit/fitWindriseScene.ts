@@ -64,8 +64,15 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<GameData
           ([layer, shares]) =>
             `${layer} ${roundFitted((100 * shares.reduce((sum, share) => sum + share, 0)) / shares.length)}% ${layerColours[layer] ?? "unseen"}`,
         );
+        // The metres a texel of each family's detail spans, as its faces draw its textures
+        const detailTexels = Object.entries(surfaces).map(
+          ([family, { detail }]) => `${family} ${detail ? `${detail.metresPerTexel.toPrecision(2)} m` : "none"}`,
+        );
         return {
-          notes: [`ground layers: ${layerShares.join(", ")} of the field's nodes, each with its colour`],
+          notes: [
+            `ground layers: ${layerShares.join(", ")} of the field's nodes, each with its colour`,
+            `surface detail a texel: ${detailTexels.join(", ")}`,
+          ],
           objects: {
             "windrise/ground-layers": groundLayers,
             "windrise/surfaces": {

@@ -9,5 +9,6 @@ import { Color } from "three";
 // Gives a mesh its own colour and detail, which a toon material made with `isObjectSurface` draws it in
 export const setObjectSurface = (object: Object3D, color: ColorRepresentation, detail?: SurfaceDetail): void => {
   const amplitudes = detail ? computeSurfaceOctaves(detail).map(({ amplitude }) => amplitude) : [];
-  object.userData[OBJECT_SURFACE_KEY] = new ObjectSurface(new Color(color), amplitudes);
+  const texelsPerMetre = detail ? 1 / detail.metresPerTexel : 0;
+  object.userData[OBJECT_SURFACE_KEY] = new ObjectSurface(new Color(color), amplitudes, texelsPerMetre);
 };

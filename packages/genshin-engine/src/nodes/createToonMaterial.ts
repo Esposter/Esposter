@@ -15,8 +15,8 @@ import { uniform } from "three/tsl";
 
 // The colour as a uniform of the material's own, not `materialColor`, which reads the colour of whichever material is drawn.
 // A witness target drawn with its own material read white where the stone's colour stands, so no family's colour was ever measured.
-// White is the default colour a material without one draws. A detail's amplitudes are uniforms too, so every detail draws
-// In one program
+// White is the default colour a material without one draws. A detail's amplitudes and texel size are uniforms too, so
+// Every detail draws in one program
 const createMaterialSurfaceNode = (
   color?: ColorRepresentation,
   detail?: SurfaceDetail,
@@ -24,7 +24,10 @@ const createMaterialSurfaceNode = (
   const colorUniform = uniform(new Color(color ?? 0xffffff));
   if (detail === undefined) return colorUniform;
   return colorUniform.mul(
-    createSurfaceDetailNode(computeSurfaceOctaves(detail).map(({ amplitude }) => uniform(amplitude))),
+    createSurfaceDetailNode(
+      computeSurfaceOctaves(detail).map(({ amplitude }) => uniform(amplitude)),
+      uniform(1 / detail.metresPerTexel),
+    ),
   );
 };
 
