@@ -257,6 +257,7 @@ catalog:
   playwright: ^1.64.0
   postgres: ^3.4.9
   publint: ^0.3.25
+  rou3: ^1.0.0
   rate-limiter-flexible: ^11.2.1
   read-excel-file: ^9.3.12
   # @TODO: no upstream issue — `@nuxtjs/mdc`'s generated plugin imports reach `remark-emoji`, its own dependency, which
