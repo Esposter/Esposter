@@ -1,8 +1,8 @@
 import type { LuaDialect } from "#src/models/recreation/lua/LuaDialect";
 
-import { readLengthPrefixedChunk } from "#src/services/recreation/lua/readLengthPrefixedChunk";
 import { flattenLuaFunctions } from "#src/services/recreation/lua/flattenLuaFunctions";
 import { proposeLuaOpcodeMapping } from "#src/services/recreation/lua/proposeLuaOpcodeMapping";
+import { readLengthPrefixedChunk } from "#src/services/recreation/lua/readLengthPrefixedChunk";
 import { readLuaOpcodeName } from "#src/services/recreation/lua/readLuaOpcodeName";
 import { readLuaOpcodeStatistics } from "#src/services/recreation/lua/readLuaOpcodeStatistics";
 
