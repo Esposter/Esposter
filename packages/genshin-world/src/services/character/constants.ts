@@ -100,6 +100,7 @@ export const EULA_CHARACTER_ID = 10_000_051;
 export const RAIDEN_CHARACTER_ID = 10_000_052;
 export const YELAN_CHARACTER_ID = 10_000_060;
 export const ITTO_CHARACTER_ID = 10_000_057;
+export const HEIZOU_CHARACTER_ID = 10_000_059;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
