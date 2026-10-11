@@ -26,6 +26,7 @@ defineSlots<{ tabs?: () => VNode }>();
   <slot name="tabs" />
   <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
 </template>
+
 <style scoped>
 .title,
 .close {

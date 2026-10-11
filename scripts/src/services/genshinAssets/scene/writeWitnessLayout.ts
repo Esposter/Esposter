@@ -9,9 +9,9 @@ import {
   WITNESS_LAYOUT_FILE_NAME,
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { nameMeshPlacements } from "#src/services/genshinAssets/shared/nameMeshPlacements";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
-import { nameMeshPlacements } from "#src/services/genshinAssets/shared/nameMeshPlacements";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { selectFinestLevels } from "#src/services/genshinAssets/shared/selectFinestLevels";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
