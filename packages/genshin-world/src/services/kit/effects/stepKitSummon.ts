@@ -4,7 +4,8 @@ import type { GroundPoint } from "genshin-engine";
 
 // A summon's clock run on by a step: a following summon's body stands where the body on the field stands, and a
 // Travelling summon's body moves forward over the seconds it has been travelling. Then each hit whose hitmark falls
-// Within the step lands from the summon's body, as the hits of an action do, dealt as the summon's kind of attack
+// Within the step lands from the summon's body, as the hits of an action do, dealt as the summon's kind of attack. Its
+// First step lands a hit at its cast too, as an action lands the hits at its start as it starts
 export const stepKitSummon = (summon: KitSummon, stepSeconds: number, body: GroundPoint): KitStrike[] => {
   const fromSeconds = summon.elapsedSeconds;
   summon.elapsedSeconds += stepSeconds;
@@ -21,8 +22,9 @@ export const stepKitSummon = (summon: KitSummon, stepSeconds: number, body: Grou
     summon.body.position.x -= Math.sin(summon.body.facing) * metres;
     summon.body.position.z -= Math.cos(summon.body.facing) * metres;
   }
+  const landedFromSeconds = fromSeconds === 0 ? -Infinity : fromSeconds;
   return summon.hits
-    .filter(({ hitmarkSeconds }) => hitmarkSeconds > fromSeconds && hitmarkSeconds <= summon.elapsedSeconds)
+    .filter(({ hitmarkSeconds }) => hitmarkSeconds > landedFromSeconds && hitmarkSeconds <= summon.elapsedSeconds)
     .map((hit) => ({
       attackTag: summon.attackTag,
       body: summon.body,
