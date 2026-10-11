@@ -54,7 +54,9 @@ It excludes the export's own **package**, not merely its own file: `packages/sha
 library using itself, and counting that would let one real consumer clear a threshold that asks for two. An
 export the package's other files read is a piece of one that does clear it and is not reported. What is reported
 says what the pass does: `move to <package>` for an export one package alone names — it goes beside that consumer,
-its colocated test with it, and the alias import replaces the barrel one — and `dead` for an export nothing names.
+its colocated test with it, and the alias import replaces the barrel one — and `dead` for an export nothing names in a
+file the barrel re-exports. knip's default run skips those as entry exports and reports every other file's unused
+exports itself (`knip.config.ts`).
 A clean pass prints nothing, and `scripts/src/workspace/sharedExportConsumers.test.ts` fails on anything it
 prints, so the rule is enforced rather than swept.
 
