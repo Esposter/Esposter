@@ -8,6 +8,7 @@ import { readPluginItems } from "#src/services/resume/readPluginItems";
 import { readQueueItems } from "#src/services/resume/readQueueItems";
 import { readResumeRow } from "#src/services/resume/readResumeRow";
 import { readTreeItems } from "#src/services/resume/readTreeItems";
+import { readWatcherItems } from "#src/services/resume/readWatcherItems";
 import { readWorktreeItems } from "#src/services/resume/readWorktreeItems";
 import { getResult } from "@esposter/shared";
 import { defineCommand, runMain } from "citty";
@@ -40,6 +41,7 @@ await runMain(
         readResumeRow("claims", () => readClaimItems(requireClaimedRefs())),
         readResumeRow("holds", () => getHoldItems(readHoldFiles(), requireClaimedRefs())),
         readResumeRow("plugins", readPluginItems),
+        readResumeRow("watcher", readWatcherItems),
         collector,
       ]);
       for (const line of formatResumeRows(rows)) console.info(line);

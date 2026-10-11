@@ -15,6 +15,7 @@ import { readGpuPercentage } from "#src/services/machine/readGpuPercentage";
 import { readProcesses } from "#src/services/machine/readProcesses";
 import { selectOrphans } from "#src/services/machine/selectOrphans";
 import { sweepOrphans } from "#src/services/machine/sweepOrphans";
+import { writeMachineState } from "#src/services/machine/writeMachineState";
 import { getResult } from "@esposter/shared";
 import { cpus } from "node:os";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -57,6 +58,15 @@ export const watchMachine = async (): Promise<void> => {
       formatMachineFigures(cpuAveragePercentage, cpuAverages.length, gpuPercentage, freeGigabytes),
     );
     if (line !== undefined) console.info(line);
+    writeMachineState({
+      at: Temporal.Now.instant().toString(),
+      cpuPercentage: cpuAveragePercentage,
+      freeGigabytes,
+      gpuPercentage,
+      minutesInState,
+      processId: process.pid,
+      state,
+    });
     lastState = state;
     const profile = readMachineProfile();
     const now = Temporal.Now.instant().epochMilliseconds;
