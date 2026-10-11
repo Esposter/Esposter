@@ -1,6 +1,6 @@
 ---
 title: Gadgets
-description: Proposal — gadgets as the game runs them, on Z and its quick swap. Each gadget's behaviour is its kind in the game's own widget config, a collector, a detector, a gather point finder or a placed device; the data and cooldowns are built, and the gadgets in the bag, the quick-use slot, the detectors, the collectors, devices and the quick swap are not yet.
+description: Proposal — gadgets as the game runs them, on Z and its quick swap. Each gadget's behaviour is its kind in the game's own widget config, a collector, a detector, a gather point finder or a placed device; the gadgets in the bag, the quick-use slot, the detectors, the collectors, devices and the quick swap are not yet built.
 model: claude-opus-5-5
 needs: [game-exports]
 touches:
@@ -13,7 +13,7 @@ touches:
 
 # Gadgets
 
-Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculus Resonance Stones that find chests and Oculi, the Portable Waypoint, the Kamera, the Parametric Transformer and many more. The bag already files them under their own tab ([inventory](/docs/genshin/inventory)), and the controls already bind `Z` to the one equipped ([controls](/docs/genshin/controls)). Most find or act on what the world spawns, so this page waits on the [spawned places](/docs/proposals/genshin/spawned-places) and the [crafting](/docs/proposals/genshin/crafting) bench most are made at. The gadgets' data and cooldowns are built ([gadgets](/docs/genshin/gadgets)); what remains is below.
+Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculus Resonance Stones that find chests and Oculi, the Portable Waypoint, the Kamera, the Parametric Transformer and many more. The bag already files them under their own tab ([inventory](/docs/genshin/inventory)), and the controls already bind `Z` to the one equipped ([controls](/docs/genshin/controls)). Most find or act on what the world spawns, so this page waits on the [spawned places](/docs/proposals/genshin/spawned-places) and the [crafting](/docs/proposals/genshin/crafting) bench most are made at. The [gadgets](/docs/genshin/gadgets) page holds their data and cooldowns; what remains is below.
 
 ## Decisions
 
@@ -21,7 +21,6 @@ Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculu
 - **A detector points to what the config spawns.** A Treasure Compass (`ConfigWidgetClientDetector`) spawns a treasure box of its city, and the Seelie detector (`ConfigWidgetTreasureMapDetector`) a Seelie crystal. No widget of the config spawns an Oculus, so the Oculus Resonance Stone's target is not in the config, and its detector is not settled until its target is read from another table.
 - **A compass works in its city.** The city table's open-state names put city 1 at Mondstadt (Mengde) and city 2 at Liyue, and the Mondstadt and Liyue compasses name those cities. The city table gives each city its areas, not its region, so a city joins a region's chest slice only once the areas are outlined; the Dragonspine compass names city 3, whose name is not read here.
 - **Equipped on Z, four on the quick swap.** One gadget is equipped to the quick-use slot and used with `Z`. Holding it opens the quick swap, which holds up to four gadgets chosen in the bag. Only a gadget the config marks equipable can be equipped.
-- **A cooldown runs on while paused.** A gadget that is not used up has a cooldown, shared within its cooldown group, which keeps counting while the world is paused under a menu, unlike every combat cooldown. It is kept as the moment it is ready, so it is read rather than ticked. The wiki states this; a recording confirms it ([References sought](/docs/genshin/roadmap#references-sought)).
 - **Where a gadget may be used is the game's.** `WidgetUseableExcelConfigData` says where each may not be used: in another player's world, which waits on [co-op](/docs/genshin/deferred/co-op) being deferred, and in a domain's type or scene, which the [domains](/docs/proposals/genshin/domains) page supplies. The open world refuses none, so this check is not yet built.
 - **Made from instructions.** Most are crafted at the bench or forged once their instructions or diagram are used, which reputation and offerings give; a few come from quests and are kept.
 - **A gadget is a bag item of the widget material type.** Each of the slice's gadgets (the `gadgets/gadgets` record, eleven at this revision) has a `MaterialExcelConfigData` row of type `MATERIAL_WIDGET`, so the bag holds it as any material, filed under `ItemCategory.Gadget`, and `writeItems` writes its row beside the drops' and the forge's items.
@@ -41,8 +40,6 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the gadgets' data and their cooldowns, on [gadgets](/docs/genshin/gadgets).
-
 **This still adds, in order:**
 
 1. **Gadgets in the bag.**
@@ -57,7 +54,7 @@ flowchart TD
 ## Data and measures
 
 - **Read from the game's data:** `ConfigWidget.json`, read into the built slice. `WidgetUseableExcelConfigData` and `WidgetExcelConfigData` are fetched into the dump, and neither is read yet: the first waits on domains and co-op, the second on the bag's items.
-- **Measured:** each gadget's effect where its kind's config leaves it open, off a recording, and the cooldown counting on through a menu, which is owed a recording.
+- **Measured:** each gadget's effect where its kind's config leaves it open, off a recording, and the cooldown counting on through a menu, which is owed a recording ([References sought](/docs/genshin/roadmap#references-sought)).
 
 ## Key files
 
