@@ -7,6 +7,7 @@ import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
@@ -20,9 +21,10 @@ import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 
 // A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each priced
 // By its combatant as its buffs and the kit's own DMG Bonus against that enemy raise it. Each enemy struck drops its
-// Energy to the team, and the strike's bubbles, heals and reactions follow, the reactions it triggered and the damage
-// The enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it reaches, each reaction
-// That landed with a reach reaches the enemies round its own, whose energy and reactions follow in turn
+// Energy to the team, and the strike's bubbles, heals, Crystallize shards and reactions follow, the reactions it
+// Triggered and the damage the enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it
+// Reaches, each reaction that landed with a reach reaches the enemies round its own, whose energy and reactions follow in
+// Turn
 export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStrikeContext): void => {
   const { characterIdCombatantMap, emit, enemyMap, enemyTables, kitEffectState, party, random } = context;
   for (const strike of strikes) {
@@ -51,6 +53,7 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStri
       for (const energyDrop of energyDrops)
         gainPartyEnergy(party, energyDrop, combatant.element, characterIdCombatantMap);
       addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
+      addCrystallizeShards(kitEffectState, enemy, pricedCombatant, reactions, random);
       for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
       healKitStriker(party, pricedCombatant, hit);

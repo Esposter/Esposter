@@ -5,10 +5,10 @@ import type { Party } from "#src/models/party/Party";
 
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
-// Rolls a hit's party heal, if the hit has one and its striker's character holds a shield or the heal is unshielded,
-// And on a pass heals each member of the party by the flat HP plus the striker's ATK, DEF and Max HP shares, each as a
-// Share of that member's own Max HP. It returns whether it healed, so a hit with several enemies rolls until one heal
-// Passes
+// Rolls a hit's party heal, if the hit has one and its striker's character holds a shield it cast, never a Crystallize
+// Shield, or the heal is unshielded, and on a pass heals each member of the party by the flat HP plus the striker's ATK,
+// DEF and Max HP shares, each as a share of that member's own Max HP. It returns whether it healed, so a hit with several
+// Enemies rolls until one heal passes
 export const healKitParty = (
   party: Party,
   characterIdCombatantMap: Map<number, Combatant>,
@@ -20,7 +20,11 @@ export const healKitParty = (
   const { healParty } = kitHit;
   if (!healParty) return false;
   const isShielded = effects.some(
-    (effect) => effect.kind === "shield" && effect.characterId === striker.characterId && effect.secondsRemaining > 0,
+    (effect) =>
+      effect.kind === "shield" &&
+      !effect.isCrystallize &&
+      effect.characterId === striker.characterId &&
+      effect.secondsRemaining > 0,
   );
   if ((!healParty.isUnshielded && !isShielded) || random() >= healParty.chance(striker, effects)) return false;
   const healedHp =

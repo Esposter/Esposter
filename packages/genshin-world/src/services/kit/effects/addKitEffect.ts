@@ -21,11 +21,17 @@ const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
 
 // Adds an effect to the field's list, the game restarting what it is given again rather than stacking it.
 // A shield is recast over the one a character holds, which ends there, so the earlier one is dropped on the next step and
-// Its explosion, if it has one, goes off then
+// Its explosion, if it has one, goes off then. A Crystallize shield overwrites the team's one Crystallize shield alone,
+// Beside every character's own
 export const addKitEffect = (kitEffectState: KitEffectState, effect: KitEffect): void => {
   if (effect.kind === "shield")
     for (const earlier of kitEffectState.effects)
-      if (earlier.kind === "shield" && earlier.characterId === effect.characterId) earlier.secondsRemaining = 0;
+      if (
+        earlier.kind === "shield" &&
+        Boolean(earlier.isCrystallize) === Boolean(effect.isCrystallize) &&
+        (effect.isCrystallize || earlier.characterId === effect.characterId)
+      )
+        earlier.secondsRemaining = 0;
   const index = kitEffectState.effects.findIndex((earlier) => checkIsRestartedBy(earlier, effect));
   kitEffectState.effects =
     index === -1 ? [...kitEffectState.effects, effect] : kitEffectState.effects.with(index, effect);
