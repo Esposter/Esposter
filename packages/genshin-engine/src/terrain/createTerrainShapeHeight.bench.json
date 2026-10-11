@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "filepath": "src/terrain/createTerrainShapeHeight.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 7.013392484374998,
+              "name": "hills",
+              "p99": 7.480762500000014,
+              "rme": 0.43780090889834306,
+              "sampleCount": 64
+            },
+            {
+              "mean": 9.856278562500021,
+              "name": "28 more hills",
+              "p99": 12.478163000000034,
+              "rme": 2.385989653890216,
+              "sampleCount": 64
+            },
+            {
+              "mean": 18.348333937499994,
+              "name": "28 features",
+              "p99": 23.757840499999954,
+              "rme": 2.294513672186121,
+              "sampleCount": 64
+            }
+          ],
+          "fullName": "createTerrainShapeHeight > a tile's heights over 76 hills"
+        }
+      ]
+    }
+  ]
+}

@@ -4,10 +4,11 @@ import type { TerrainFeature } from "genshin-engine";
 
 import { TerrainFeatureKindBlendMap } from "genshin-engine";
 
-// The most features of one kind a fit places
-const MAX_FEATURES = 16;
-// A feature is placed only while it takes off this share of the residual's squared error
-const MIN_GAIN_SHARE = 0.01;
+// The most features of one kind a fit places, and the least share of the residual's squared error a feature must take
+// Off to be placed: the deepest stop whose features still take as much error off for what they cost a vertex to read
+// As the hills' narrowest rung does (the terrain shapes proposal's Decisions)
+const MAX_FEATURES = 200;
+const MIN_GAIN_SHARE = 0.001;
 
 // Places features greedily on a residual grid: each round, the shape and centre whose profile, fitted to the residual
 // It covers by least squares, takes the most squared error off is a feature at that fitted height, and its exact height

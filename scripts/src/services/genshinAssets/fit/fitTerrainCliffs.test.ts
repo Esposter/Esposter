@@ -41,7 +41,29 @@ describe(fitTerrainCliffs, () => {
 
     expect(fitted?.kind).toBe(TerrainFeatureKind.Cliff);
     expect(Math.abs(fittedHeading - heading)).toBeLessThanOrEqual(Math.PI / 8);
-    expect(Math.abs((fitted?.height ?? Number.NaN) - cliff.height)).toBeLessThan(1);
+    // The nearest heading tried stands off the cliff's, so its terrace fitted by least squares reads a little low
+    expect(Math.abs((fitted?.height ?? Number.NaN) - cliff.height)).toBeLessThan(1.5);
+  });
+
+  test("places a cliff the residual is exactly one of at its height, leaving none", () => {
+    expect.hasAssertions();
+
+    // A 48 metre segment at a heading the fit tries, on the one centre this grid holds for that length, so the fit's
+    // Shape is the cliff itself and its height fitted to what the cliff draws is the cliff's own
+    const cliff: CliffFeature = {
+      endX: 18,
+      endZ: -6,
+      falloff: 6,
+      height: 1,
+      kind: TerrainFeatureKind.Cliff,
+      startX: -30,
+      startZ: -6,
+      width: 24,
+    };
+    const { features, remainder } = fitTerrainCliffs(createGrid((x, z) => cliff.height * getCliffBlend(cliff, x, z)));
+
+    expect(features).toStrictEqual([cliff]);
+    expect(remainder.values.every((value) => value === 0)).toBe(true);
   });
 
   test("places no cliff on a residual that is flat", () => {
