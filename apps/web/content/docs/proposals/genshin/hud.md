@@ -49,7 +49,9 @@ Burst fill: the reference's burst disc at 24% energy fills in Anemo's colour, no
 
 The stamina meter is measured on `hud-stamina-climb`, the PC client's meter part drained on a public climb (the capture `yt-hRR2yoP3uY0-world-stamina.mp4`): an arc of radius 104.5 round the pivot, 54 degrees long and 7 wide, a yellow fill over a dark red track, flashing under an eighth. The meter had stood inside its tree rect at the screen's middle, offset off the screen by the pivot; it now stands on the screen. Before, mean 3.25%, shape 0.018, tone 3.68%, FLIP 0.1764 (the meter off the region); built, mean 1.97%, shape 0.724, tone 2.17%, FLIP 0.1411, both on the Mac, the reference new with this pass.
 
-Left of the looks: each character's own skill and burst icons on their discs, which no dataset carries yet; the keys' layout of the skill and burst, whose reference is the same recording's PC frames before the mobile part (its E, Q and Z caps at about 4 seconds); the meter's section ticks, its flash and its fades (`world-stamina.mkv`); and the tracker's altitude line.
+Skill and burst icons: Venti's two, the frame's, are traced from the wiki's talent icons onto their discs at the size and tones `hud-world-pickup` shows, the burst's dimmed to 0.14 while uncharged (mean 9.95%, shape 0.374, tone 9.10%, FLIP 0.4266).
+
+Left of the looks: every other character's skill and burst icons, each pair some 13 KB of paths, so the roster's wants hosted data rather than committed source; the keys' layout of the skill and burst, whose reference is the same recording's PC frames before the mobile part (its E, Q and Z caps at about 4 seconds); the meter's section ticks, its flash and its fades (`world-stamina.mkv`); and the tracker's altitude line.
 
 ## What this does not propose
 

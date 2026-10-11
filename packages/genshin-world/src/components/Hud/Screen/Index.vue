@@ -129,6 +129,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
           v-if="member"
           :burst-cooldown="member.burstCooldown"
           :burst-cooldown-seconds="member.burstCooldownSeconds"
+          :character-id="member.characterId"
           :element="member.element"
           :energy="member.energy"
           :energy-cost="member.energyCost"

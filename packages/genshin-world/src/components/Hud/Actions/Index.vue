@@ -3,6 +3,7 @@ import type { GlyphLayer } from "#src/models/hud/GlyphLayer";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
+import HudGlyph from "#src/components/Hud/Glyph/Index.vue";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { ACTION_BUTTON_BACKGROUND } from "#src/services/hud/constants";
 import { InputActionGlyphLayersMap } from "#src/services/hud/InputActionGlyphLayersMap";
@@ -88,15 +89,7 @@ onUnmounted(() => {
     @lostpointercapture="input.release(code)"
     @pointerdown="(event) => pressCapturedPointer(input, code, event)"
   >
-    <svg class="glyph" aria-hidden="true" viewBox="0 0 128 128">
-      <path
-        v-for="{ opacity, path } of glyphLayers"
-        :key="path"
-        fill-rule="evenodd"
-        :fill-opacity="opacity"
-        :d="path"
-      />
-    </svg>
+    <HudGlyph class="glyph" :glyph-layers />
   </button>
 </template>
 
