@@ -30,6 +30,26 @@ const expectRotation = (rotation: Quaternion, expected: Quaternion): void => {
 };
 const getWorldRotation = (mesh: SkinnedMesh, name: string): Quaternion =>
   mesh.skeleton.getBoneByName(name)?.getWorldQuaternion(new Quaternion()) ?? new Quaternion();
+// A left arm whose shoulder rests at the rotation given, its elbow and wrist each a unit along the bone before it
+const createArm = (armRest: Quaternion): SkinnedMesh => {
+  const arm = new Bone();
+  arm.name = MmdBoneName.LeftArm;
+  arm.quaternion.copy(armRest);
+  const elbow = new Bone();
+  elbow.name = MmdBoneName.LeftElbow;
+  elbow.position.set(1, 0, 0);
+  const wrist = new Bone();
+  wrist.name = MmdBoneName.LeftWrist;
+  wrist.position.set(1, 0, 0);
+  arm.add(elbow);
+  elbow.add(wrist);
+  const mesh = new SkinnedMesh();
+  mesh.add(arm);
+  mesh.bind(new Skeleton([arm, elbow, wrist]));
+  return mesh;
+};
+const getWorldPosition = (mesh: SkinnedMesh, name: string): Vector3 =>
+  mesh.skeleton.getBoneByName(name)?.getWorldPosition(new Vector3()) ?? new Vector3();
 
 describe(createCharacterPoser, () => {
   const LOCOMOTION: Locomotion = {
@@ -73,6 +93,19 @@ describe(createCharacterPoser, () => {
       getWorldRotation(rotated, MmdBoneName.Head),
       getWorldRotation(identity, MmdBoneName.Head).multiply(upperRest.clone().multiply(headRest)),
     );
+  });
+
+  test("raises an arm resting lowered to the T first, so an A-pose arm holds the same pose as a T one", () => {
+    expect.hasAssertions();
+
+    const tArm = createArm(new Quaternion());
+    const aArm = createArm(new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), -0.7));
+    const update = { delta: 1, locomotion: LOCOMOTION, phase: { state: LocomotionState.Idle, stateSeconds: 1 } };
+    createCharacterPoser(tArm).update(update);
+    createCharacterPoser(aArm).update(update);
+
+    for (const name of [MmdBoneName.LeftElbow, MmdBoneName.LeftWrist])
+      expect(getWorldPosition(aArm, name).distanceTo(getWorldPosition(tArm, name))).toBeCloseTo(0);
   });
 
   test("poses only the bones its name map names, under the model's own names", () => {
