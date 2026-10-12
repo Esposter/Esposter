@@ -28,7 +28,7 @@ committed.
 | `dialogue-paimon-line` | `DialogueTalk` | 9.98% | 0.957 | 2.60% | 0.3151 |
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
-| `forge-screen` | `ForgeScreen` | 6.80% | 0.659 | 5.59% | 0.2235 |
+| `forge-screen` | `ForgeScreen` | 6.75% | 0.673 | 5.62% | 0.2223 |
 | `gcg-duel-board` | `GcgScreen` | 13.97% | 0.470 | 9.63% | 0.4658 |
 | `handbook-experience` | `HandbookScreen` | 5.18% | 0.932 | 2.44% | 0.2456 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |

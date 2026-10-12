@@ -92,6 +92,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
             type="button"
             @click="recipeId = recipe.id"
           >
+            <span class="recipe-tile" aria-hidden="true" />
             <span class="recipe-name">{{ recipe.name }}</span>
             <span class="recipe-time">{{ recipe.forgeTimeLabel }}</span>
           </button>
@@ -111,6 +112,10 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
           <span class="item-count">{{ yieldCount }}</span>
         </div>
         <p class="amount-label">{{ amountLabel }}</p>
+        <span aria-hidden="true" class="amount-step amount-minus">−</span>
+        <span class="amount-end amount-min">1</span>
+        <span class="amount-end amount-max">{{ amountMaximum }}</span>
+        <span aria-hidden="true" class="amount-step amount-plus">+</span>
         <section class="materials-box">
           <header class="materials-head">
             <p class="materials-title">{{ materialsBoxLabel }}</p>
@@ -385,5 +390,44 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   width: calc(var(--unit) * 141.4);
   height: calc(var(--unit) * 170.7);
   background: #8d7a5c;
+}
+
+.recipe-tile {
+  position: absolute;
+  top: calc(var(--unit) * 9.8);
+  left: calc(var(--unit) * 14.6);
+  width: calc(var(--unit) * 107.3);
+  height: calc(var(--unit) * 107.3);
+  background: #3a4556;
+}
+.amount-end {
+  top: calc(var(--unit) * 614.4);
+  translate: -50% -50%;
+  font-size: calc(var(--unit) * 26.8);
+  line-height: 1;
+}
+.amount-min {
+  left: calc(var(--unit) * 1318.9);
+}
+.amount-max {
+  left: calc(var(--unit) * 1861.4);
+}
+.amount-step {
+  top: calc(var(--unit) * 614.4);
+  width: calc(var(--unit) * 48.8);
+  height: calc(var(--unit) * 48.8);
+  border-radius: 50%;
+  background: rgb(236 229 216 / 0.9);
+  color: #3b3b3b;
+  font-size: calc(var(--unit) * 31.7);
+  line-height: calc(var(--unit) * 48.8);
+  text-align: center;
+  translate: -50% -50%;
+}
+.amount-minus {
+  left: calc(var(--unit) * 1249.4);
+}
+.amount-plus {
+  left: calc(var(--unit) * 1928.4);
 }
 </style>
