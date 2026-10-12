@@ -15,7 +15,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `aloy`               | 2026-10-12 · Haiku 5.5 |                                                                          |
 | `amber`              | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `arataki-itto`       | 2026-10-13 · Haiku 5.5 |                                                                          |
-| `arlecchino`         | —                      |                                                                          |
+| `arlecchino`         | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `baizhu`             | —                      |                                                                          |
 | `barbara`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `beidou`             | —                      |                                                                          |
