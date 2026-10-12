@@ -7,13 +7,10 @@
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 2 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.1 } },
+  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.1 } },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.1.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.1 }
-  },
-  "skill.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 62 },
+  "skill.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.1 } },
+  "skill.hits.1.hitmarkFrames": { "file": "skill.go", "line": 18, "source": "Gcsim", "value": 62 },
   "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 9932 } },
   "skill.hits.1.gauge": { "cause": "DiffersFromSource" }
 }
