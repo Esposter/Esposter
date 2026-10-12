@@ -168,6 +168,40 @@ o5.x   = (floor(F) & 15) / 255              (the material's nibble, Exact on the
 
 `D` is "_DesaturateScale", read from the body's constant layout at byte 640, which is register 40's `x` (Exact by offset). `K` is "_ContrastScale", at byte 652, register 40's `w` (Exact by offset). `F` is the register 261 `x` field, which the layout names "_FlareType" (Exact on the value, Provisional on the name, since a "_FlareType" on a body would be unusual).
 
+## The outline
+
+The outline is the face's "OUTLINE" pass, whose base programs are vertex 958 (DXBC) and pixel 885 (DXIL). The width is set in the vertex program and the colour in the pixel program.
+
+### The width (vertex 958)
+
+The vertex program pushes each vertex out along its screen-space normal by a width `W`. The depth term `D` picks one of three knots of "_OutlineWidthAdjustZs", and the scale is read from the matching knots of "_OutlineWidthAdjustScales" (Exact on the operators and the knot selection):
+
+```
+k  = 2.414 / cb2[7].y                       (the projection's y scale)
+D  = -k * z                                 (z the view-space depth)
+(Z0, Z1, S0, S1) = (Zs.x, Zs.y, Sc.x, Sc.y) if D < Zs.y, else (Zs.y, Zs.z, Sc.y, Sc.z)
+t  = saturate((D - Z0) / max(Z1 - Z0, 0.001))
+s  = t * (S1 - S0) + S0
+W  = T_w * s * "_OutlineWidth" * "_OutlineCorrectionWidth" * v1.w * 0.41425
+p.xy += W * N_screen                        (N_screen the normal projected to the screen)
+```
+
+`T_w` is the red channel of texture "t0" sampled at the vertex's second texture coordinate, at lod 0 (Exact on the channel and the lod; Provisional on the texture's name, which the slot table does not yet give). `v1.w` is the vertex's own width weight. The offset along the view-space normal, "_MaxOutlineZOffset" times 0.01, is scaled by "_OutlineOffsetBlockBChannel" as well: it is `v1.z - 0.5` where that flag is set, and 1 where it is not (Exact on the form, Provisional on the blue channel's meaning).
+
+### The colour (pixel 885)
+
+The outline's colour is the material's colour times the outline colour, then mixed toward a shade colour by a mask (Exact on the first product and the mix's form; Provisional on the shade colour's source and on the mask):
+
+```
+Oc = "_Color" * "_OutlineColor"                  (the default region's branch)
+Sh = 0.2 * T_s                                   (T_s the rgb of texture "t1" at the pixel's coordinates)
+C  = Oc + m * (Sh - Oc)                          (m the region's mask, read from the layout as a per-region value)
+```
+
+The output colour uses the same tone form as the body's "o1": `O1 = 0.5 + (C_d - 0.5) * (1 + K)` with `C_d` the desaturation of `C`, where "_DesaturateScale" and "_ContrastScale" are read from the same registers as the body's (Exact).
+
+Nothing in the outline's equations has been fitted to a rendered outline, so no number is claimed for its width or colour.
+
 ## The deferred lighting pass's character branch
 
 The pass is "Hidden/Internal-DeferredShading", in the block "00/00612967.blk", exported raw as one shader with 758 programs. Its character-keyed pixel programs ("DEFERRED_TOON_ON" with the character keywords) read a material byte from the G-buffer and branch on it.
