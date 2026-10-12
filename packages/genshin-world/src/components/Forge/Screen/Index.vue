@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ForgeQueueCell } from "genshin-interface";
+import type { ForgeQueueCell, ForgeTab } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import { SECONDS_PER_MINUTE } from "#src/services/forging/constants";
-import { ForgeQueueState, ForgeScreen, ForgeTab, GameScreen } from "genshin-interface";
+import { ForgeQueueState, ForgeScreen, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 // A queue as the game holds it: its state, the recipe it forges, how many it has forged, the seconds left on its order

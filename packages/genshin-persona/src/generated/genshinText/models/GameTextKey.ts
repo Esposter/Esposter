@@ -141,12 +141,12 @@ export enum GameTextKey {
   FineEnhancementOre = "377860124",
   FlamingFlowerStamen = "2387249548",
   FluorescentFungus = "3996649804",
+  // The Amount line over the forge slider, "Amount: {0}"
+  ForgeAmount = "UI_FORGE_PAGE_ITEM_COUNT",
   // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
   // Recipe names; a recipe's own id for the same words repeats the English of these
   ForgeEnhancementOreRefusal = "1106263200",
   ForgeFineEnhancementOreRefusal = "1652126048",
-  // The Amount line over the forge slider, "Amount: {0}"
-  ForgeAmount = "UI_FORGE_PAGE_ITEM_COUNT",
   // The forge screen's words: a recipe's forge time, the queue button with its count, a queue's state (idle, forging,
   // Forged so far and the Adventure Rank it unlocks at), the support character's title and the total forge time
   ForgeItemTime = "UI_FORGE_PAGE_ITEM_TIME",
