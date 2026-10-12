@@ -21,8 +21,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.frostgroveSanctuaryTicks.0.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.frostgroveSanctuaryTicks.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostgroveSanctuaryTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 62 },
   "hits.frostgroveSanctuaryTicks.0.multiplier": {
     "cause": "Unclassified",
@@ -33,8 +31,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.frostgroveSanctuaryTicks.1.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.frostgroveSanctuaryTicks.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostgroveSanctuaryTicks.1.hitmarkFrames": { "cause": "Unclassified", "value": 179 },
   "hits.frostgroveSanctuaryTicks.1.multiplier": {
     "cause": "Unclassified",
@@ -45,8 +41,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.frostgroveSanctuaryTicks.2.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.frostgroveSanctuaryTicks.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostgroveSanctuaryTicks.2.hitmarkFrames": { "cause": "Unclassified", "value": 296 },
   "hits.frostgroveSanctuaryTicks.2.multiplier": {
     "cause": "Unclassified",
@@ -57,8 +51,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.frostgroveSanctuaryTicks.3.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.frostgroveSanctuaryTicks.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostgroveSanctuaryTicks.3.hitmarkFrames": { "cause": "Unclassified", "value": 413 },
   "hits.frostgroveSanctuaryTicks.3.multiplier": {
     "cause": "Unclassified",
@@ -69,8 +61,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.frostgroveSanctuaryTicks.4.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.frostgroveSanctuaryTicks.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostgroveSanctuaryTicks.4.hitmarkFrames": { "cause": "Unclassified", "value": 530 },
   "hits.frostgroveSanctuaryTicks.4.multiplier": {
     "cause": "Unclassified",
@@ -81,8 +71,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.frostgroveSanctuaryTicks.5.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.frostgroveSanctuaryTicks.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostgroveSanctuaryTicks.5.hitmarkFrames": { "cause": "Unclassified", "value": 647 },
   "hits.frostgroveSanctuaryTicks.5.multiplier": {
     "cause": "Unclassified",
@@ -93,8 +81,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.frostgroveSanctuaryTicks.6.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.frostgroveSanctuaryTicks.6.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostgroveSanctuaryTicks.6.hitmarkFrames": { "cause": "Unclassified", "value": 764 },
   "hits.frostgroveSanctuaryTicks.6.multiplier": {
     "cause": "Unclassified",
@@ -105,8 +91,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.frostgroveSanctuaryTicks.7.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.frostgroveSanctuaryTicks.7.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostgroveSanctuaryTicks.7.hitmarkFrames": { "cause": "Unclassified", "value": 881 },
   "hits.frostgroveSanctuaryTicks.7.multiplier": {
     "cause": "Unclassified",

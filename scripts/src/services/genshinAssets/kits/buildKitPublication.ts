@@ -18,8 +18,8 @@ export const buildKitPublication = (
   const kits: Record<string, unknown> = {};
   const kitSources: Record<string, unknown> = {};
   const failures: string[] = [];
-  for (const { characterId, name, overlayName, publishedRecord, sourceCandidateMap } of inputs) {
-    const { record, sources } = buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName));
+  for (const { characterId, name, namedHitCandidateMap, overlayName, publishedRecord, sourceCandidateMap } of inputs) {
+    const { record, sources } = buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName), namedHitCandidateMap);
     kits[String(characterId)] = record;
     kitSources[String(characterId)] = sources;
     if (changedCharacterIds.includes(characterId)) continue;

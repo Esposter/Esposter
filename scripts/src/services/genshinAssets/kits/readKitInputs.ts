@@ -9,6 +9,7 @@ import { checkIsGcsimValueGiven } from "#src/services/genshinAssets/kits/checkIs
 import { GCSIM_PLUNGE_FALLBACK_FOLDER, GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsimFolder";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
+import { getGcsimNamedHitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates";
 import { readGcsimTagCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTagCharacters";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
 import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/getTableKitCandidates";
@@ -73,6 +74,7 @@ export const readKitInputs = async ({
     if (pages.length === 0) notes.push("no wiki talent pages");
     const gcsimCandidateMap: Map<string, KitCandidate[]> =
       gcsim === undefined ? new Map() : getGcsimKitCandidates(gcsim, tables, plungeFallback);
+    const namedHitCandidateMap = gcsim === undefined ? new Map() : getGcsimNamedHitCandidates(gcsim, tables);
     if (gcsim !== undefined)
       for (const [path, constant] of Object.entries(GcsimExpectedPathConstantMap))
         if (!checkIsGcsimValueGiven(gcsimCandidateMap.get(path))) notes.push(`gcsim gives no ${constant}`);
@@ -87,6 +89,7 @@ export const readKitInputs = async ({
       characterId,
       gcsimFolder,
       name: tables.name,
+      namedHitCandidateMap,
       notes,
       overlayName: toKebabCase(tables.name),
       ...(publishedRecord && { publishedRecord }),

@@ -19,8 +19,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
   },
-  "hits.mujiMujiDarumaTicks.0.element": { "cause": "Unclassified", "value": "Wind" },
-  "hits.mujiMujiDarumaTicks.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mujiMujiDarumaTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 145 },
   "hits.mujiMujiDarumaTicks.0.multiplier": {
     "cause": "Unclassified",
@@ -31,8 +29,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
   },
-  "hits.mujiMujiDarumaTicks.1.element": { "cause": "Unclassified", "value": "Wind" },
-  "hits.mujiMujiDarumaTicks.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mujiMujiDarumaTicks.1.hitmarkFrames": { "cause": "Unclassified", "value": 235 },
   "hits.mujiMujiDarumaTicks.1.multiplier": {
     "cause": "Unclassified",
@@ -43,8 +39,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
   },
-  "hits.mujiMujiDarumaTicks.2.element": { "cause": "Unclassified", "value": "Wind" },
-  "hits.mujiMujiDarumaTicks.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mujiMujiDarumaTicks.2.hitmarkFrames": { "cause": "Unclassified", "value": 325 },
   "hits.mujiMujiDarumaTicks.2.multiplier": {
     "cause": "Unclassified",
@@ -55,8 +49,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
   },
-  "hits.mujiMujiDarumaTicks.3.element": { "cause": "Unclassified", "value": "Wind" },
-  "hits.mujiMujiDarumaTicks.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mujiMujiDarumaTicks.3.hitmarkFrames": { "cause": "Unclassified", "value": 415 },
   "hits.mujiMujiDarumaTicks.3.multiplier": {
     "cause": "Unclassified",
@@ -67,8 +59,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
   },
-  "hits.mujiMujiDarumaTicks.4.element": { "cause": "Unclassified", "value": "Wind" },
-  "hits.mujiMujiDarumaTicks.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mujiMujiDarumaTicks.4.hitmarkFrames": { "cause": "Unclassified", "value": 505 },
   "hits.mujiMujiDarumaTicks.4.multiplier": {
     "cause": "Unclassified",
@@ -79,8 +69,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
   },
-  "hits.mujiMujiDarumaTicks.5.element": { "cause": "Unclassified", "value": "Wind" },
-  "hits.mujiMujiDarumaTicks.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mujiMujiDarumaTicks.5.hitmarkFrames": { "cause": "Unclassified", "value": 595 },
   "hits.mujiMujiDarumaTicks.5.multiplier": {
     "cause": "Unclassified",
@@ -1624,6 +1612,12 @@
   "skillHolds.10.cooldownSeconds": { "cause": "Unclassified", "value": 11 },
   "skillHolds.10.minimumHeldSeconds": { "cause": "Unclassified", "value": 10 },
   "skillMaximumHeldSeconds": { "cause": "Unclassified", "value": 10 },
+  "hits.mujiMujiDarumaTicks.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.mujiMujiDarumaTicks.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.mujiMujiDarumaTicks.2.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.mujiMujiDarumaTicks.3.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.mujiMujiDarumaTicks.4.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.mujiMujiDarumaTicks.5.internalCooldownTag": { "cause": "DiffersFromSource" },
   "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },

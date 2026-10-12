@@ -25,10 +25,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
-  "hits.herald.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.herald.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.herald.0.hitmarkFrames": { "cause": "Unclassified", "value": 32 },
-  "hits.herald.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.herald.0.multiplier": { "cause": "Unclassified", "value": { "index": 7, "proudSkillGroupId": 3532 } },
   "hits.herald.0.poiseDamage": { "cause": "Unclassified", "value": 40 },
   "hits.herald.1.area": {

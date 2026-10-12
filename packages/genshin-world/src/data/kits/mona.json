@@ -37,10 +37,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.mirrorReflectionPhantom.0.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.mirrorReflectionPhantom.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mirrorReflectionPhantom.0.hitmarkFrames": { "cause": "Unclassified", "value": 86 },
-  "hits.mirrorReflectionPhantom.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.mirrorReflectionPhantom.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
@@ -50,10 +47,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.mirrorReflectionPhantom.1.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.mirrorReflectionPhantom.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mirrorReflectionPhantom.1.hitmarkFrames": { "cause": "Unclassified", "value": 145 },
-  "hits.mirrorReflectionPhantom.1.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.mirrorReflectionPhantom.1.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
@@ -63,10 +57,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.mirrorReflectionPhantom.2.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.mirrorReflectionPhantom.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mirrorReflectionPhantom.2.hitmarkFrames": { "cause": "Unclassified", "value": 204 },
-  "hits.mirrorReflectionPhantom.2.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.mirrorReflectionPhantom.2.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
@@ -76,10 +67,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.mirrorReflectionPhantom.3.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.mirrorReflectionPhantom.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mirrorReflectionPhantom.3.hitmarkFrames": { "cause": "Unclassified", "value": 263 },
-  "hits.mirrorReflectionPhantom.3.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.mirrorReflectionPhantom.3.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
@@ -89,8 +77,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.mirrorReflectionPhantom.4.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.mirrorReflectionPhantom.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.mirrorReflectionPhantom.4.hitmarkFrames": { "cause": "Unclassified", "value": 329 },
   "hits.mirrorReflectionPhantom.4.multiplier": {
     "cause": "Unclassified",

@@ -28,8 +28,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
-  "hits.slowbakePyronadoTicks.0.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.slowbakePyronadoTicks.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.slowbakePyronadoTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 56 },
   "hits.slowbakePyronadoTicks.0.multiplier": {
     "cause": "Unclassified",
@@ -140,8 +138,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
-  "hits.pyronadoTicks.0.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.pyronadoTicks.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.pyronadoTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 56 },
   "hits.pyronadoTicks.0.multiplier": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 2339 } },
   "hits.pyronadoTicks.0.poiseDamage": { "cause": "Unclassified", "value": 30 },
@@ -222,8 +218,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.crossfireGuobaBreaths.0.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.crossfireGuobaBreaths.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.crossfireGuobaBreaths.0.hitmarkFrames": { "cause": "Unclassified", "value": 126 },
   "hits.crossfireGuobaBreaths.0.multiplier": {
     "cause": "Unclassified",
@@ -234,8 +228,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.crossfireGuobaBreaths.1.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.crossfireGuobaBreaths.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.crossfireGuobaBreaths.1.hitmarkFrames": { "cause": "Unclassified", "value": 226 },
   "hits.crossfireGuobaBreaths.1.multiplier": {
     "cause": "Unclassified",
@@ -246,8 +238,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.crossfireGuobaBreaths.2.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.crossfireGuobaBreaths.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.crossfireGuobaBreaths.2.hitmarkFrames": { "cause": "Unclassified", "value": 326 },
   "hits.crossfireGuobaBreaths.2.multiplier": {
     "cause": "Unclassified",
@@ -258,8 +248,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.crossfireGuobaBreaths.3.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.crossfireGuobaBreaths.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.crossfireGuobaBreaths.3.hitmarkFrames": { "cause": "Unclassified", "value": 426 },
   "hits.crossfireGuobaBreaths.3.multiplier": {
     "cause": "Unclassified",
@@ -271,8 +259,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.guobaBreaths.0.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.guobaBreaths.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.guobaBreaths.0.hitmarkFrames": { "cause": "Unclassified", "value": 126 },
   "hits.guobaBreaths.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 2332 } },
   "hits.guobaBreaths.0.poiseDamage": { "cause": "Unclassified", "value": 32 },
@@ -280,8 +266,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.guobaBreaths.1.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.guobaBreaths.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.guobaBreaths.1.hitmarkFrames": { "cause": "Unclassified", "value": 226 },
   "hits.guobaBreaths.1.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 2332 } },
   "hits.guobaBreaths.1.poiseDamage": { "cause": "Unclassified", "value": 32 },
@@ -289,8 +273,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.guobaBreaths.2.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.guobaBreaths.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.guobaBreaths.2.hitmarkFrames": { "cause": "Unclassified", "value": 326 },
   "hits.guobaBreaths.2.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 2332 } },
   "hits.guobaBreaths.2.poiseDamage": { "cause": "Unclassified", "value": 32 },
@@ -298,8 +280,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.guobaBreaths.3.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.guobaBreaths.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.guobaBreaths.3.hitmarkFrames": { "cause": "Unclassified", "value": 426 },
   "hits.guobaBreaths.3.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 2332 } },
   "hits.guobaBreaths.3.poiseDamage": { "cause": "Unclassified", "value": 32 },

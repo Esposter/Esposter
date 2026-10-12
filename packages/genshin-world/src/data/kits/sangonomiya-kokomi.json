@@ -13,8 +13,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.0.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.bakeKurageRipples.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.bakeKurageRipples.0.hitmarkFrames": { "cause": "Unclassified", "value": 24 },
   "hits.bakeKurageRipples.0.multiplier": {
     "cause": "Unclassified",
@@ -25,8 +23,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.1.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.bakeKurageRipples.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.bakeKurageRipples.1.hitmarkFrames": { "cause": "Unclassified", "value": 150 },
   "hits.bakeKurageRipples.1.multiplier": {
     "cause": "Unclassified",
@@ -37,8 +33,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.2.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.bakeKurageRipples.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.bakeKurageRipples.2.hitmarkFrames": { "cause": "Unclassified", "value": 270 },
   "hits.bakeKurageRipples.2.multiplier": {
     "cause": "Unclassified",
@@ -49,8 +43,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.3.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.bakeKurageRipples.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.bakeKurageRipples.3.hitmarkFrames": { "cause": "Unclassified", "value": 390 },
   "hits.bakeKurageRipples.3.multiplier": {
     "cause": "Unclassified",
@@ -61,8 +53,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.4.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.bakeKurageRipples.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.bakeKurageRipples.4.hitmarkFrames": { "cause": "Unclassified", "value": 510 },
   "hits.bakeKurageRipples.4.multiplier": {
     "cause": "Unclassified",
@@ -73,8 +63,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.5.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.bakeKurageRipples.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.bakeKurageRipples.5.hitmarkFrames": { "cause": "Unclassified", "value": 630 },
   "hits.bakeKurageRipples.5.multiplier": {
     "cause": "Unclassified",
@@ -85,8 +73,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.6.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.bakeKurageRipples.6.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.bakeKurageRipples.6.hitmarkFrames": { "cause": "Unclassified", "value": 750 },
   "hits.bakeKurageRipples.6.multiplier": {
     "cause": "Unclassified",

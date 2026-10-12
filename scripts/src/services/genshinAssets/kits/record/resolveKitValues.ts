@@ -2,18 +2,21 @@ import type { ResolvedKitValues } from "#src/models/genshinAssets/kits/build/Res
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
+import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
+import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A kit's values from its sources' candidates and its overlay: each path takes its first source's value, the overlay
-// Then sets its own values, removes others and picks another source where it names one, and the rules fill what is
-// Still missing over the actions and hits that leaves
+// Then sets its own values, removes others and picks another source where it names one, the named lists' hits join to
+// Their multipliers' talent variables, and the rules fill what is still missing over the actions and hits that leaves
 export const resolveKitValues = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
+  namedHitCandidateMap: NamedHitCandidateMap,
 ): ResolvedKitValues => {
   const valueMap = new Map<string, unknown>();
   const provenanceMap = new Map<string, KitValueSource>();
@@ -36,7 +39,13 @@ export const resolveKitValues = (
       provenanceMap.set(path, { cause: entry.cause, source: KitSource.Overlay });
     }
   chooseDefaults(sourceCandidateMap);
+  const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
+  chooseDefaults(namedHitKitCandidateMap);
   const ruleCandidateMap = getRuleKitCandidates(valueMap);
   chooseDefaults(ruleCandidateMap);
-  return { candidateMap: mergeKitCandidates(sourceCandidateMap, ruleCandidateMap), provenanceMap, valueMap };
+  return {
+    candidateMap: mergeKitCandidates(sourceCandidateMap, namedHitKitCandidateMap, ruleCandidateMap),
+    provenanceMap,
+    valueMap,
+  };
 };

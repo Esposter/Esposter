@@ -2,6 +2,7 @@ import type { KitComparison } from "#src/models/genshinAssets/kits/build/KitComp
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
+import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitRecord } from "genshin-world";
 
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
@@ -10,6 +11,7 @@ import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKit
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
+import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
 import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
 import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
@@ -25,6 +27,7 @@ export const compareKitRecord = (
   mainCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   isTagPredated: boolean,
   committedOverlay: KitOverlay,
+  namedHitCandidateMap: NamedHitCandidateMap,
 ): KitComparison => {
   const publishedValueMap = flattenKitValues(publishedRecord);
   const overlay: KitOverlay = {};
@@ -37,12 +40,16 @@ export const compareKitRecord = (
     );
     if (entry !== undefined) overlay[path] = entry;
   };
-  const candidateMap = mergeKitCandidates(sourceCandidateMap, getRuleKitCandidates(publishedValueMap));
+  const candidateMap = mergeKitCandidates(
+    sourceCandidateMap,
+    getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
+    getRuleKitCandidates(publishedValueMap),
+  );
   for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
-  const resolved = resolveKitValues(sourceCandidateMap, overlay);
+  const resolved = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap);
   for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())
     if (!publishedValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
-  return getResult(() => buildKitRecord(sourceCandidateMap, overlay)).match(
+  return getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap)).match(
     (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, publishedRecord), overlay }),
     (error): KitComparison => ({ failures: [error.message], overlay }),
   );

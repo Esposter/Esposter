@@ -54,7 +54,16 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
   const ruleCauses: string[] = [];
   const gapLines: string[] = [];
   let gapCount = 0;
-  for (const { gcsimFolder, name, notes, overlayName, publishedRecord, sourceCandidateMap, tables } of inputs) {
+  for (const {
+    gcsimFolder,
+    name,
+    namedHitCandidateMap,
+    notes,
+    overlayName,
+    publishedRecord,
+    sourceCandidateMap,
+    tables,
+  } of inputs) {
     // A kit yet to be published has no record for its overlay to reproduce, so its first publish seeds nothing
     if (publishedRecord === undefined) {
       failureLines.push(`  ${name}: has no published kit to compare`);
@@ -62,7 +71,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     }
     const { committedOverlay, gapPaths, overlayFailures } = getResult(() => readKitOverlay(overlayName)).match(
       (overlay) =>
-        getResult(() => buildKitRecord(sourceCandidateMap, overlay)).match(
+        getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap)).match(
           ({ record }) => ({
             committedOverlay: overlay,
             gapPaths: getMismatchedKitPaths(record, publishedRecord),
@@ -96,6 +105,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       mainCandidateMap,
       isTagPredated,
       committedOverlay,
+      namedHitCandidateMap,
     );
     const overlayPath = join(KIT_OVERLAY_DIRECTORY, `${overlayName}.json`);
     const entries = Object.entries(overlay);

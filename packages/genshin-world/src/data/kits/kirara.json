@@ -12,8 +12,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 }
   },
-  "hits.detonatedCardamoms.0.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.detonatedCardamoms.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.detonatedCardamoms.0.hitmarkFrames": { "cause": "Unclassified", "value": 180 },
   "hits.detonatedCardamoms.0.multiplier": {
     "cause": "Unclassified",
@@ -24,8 +22,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 }
   },
-  "hits.detonatedCardamoms.1.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.detonatedCardamoms.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.detonatedCardamoms.1.hitmarkFrames": { "cause": "Unclassified", "value": 180 },
   "hits.detonatedCardamoms.1.multiplier": {
     "cause": "Unclassified",
@@ -1077,6 +1073,8 @@
   "skillHolds.10.action.hits.20.multiplier": { "cause": "Unclassified", "value": 1.44 },
   "skillHolds.10.cooldownSeconds": { "cause": "Unclassified", "value": 12 },
   "skillHolds.10.minimumHeldSeconds": { "cause": "Unclassified", "value": 10 },
+  "hits.detonatedCardamoms.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.detonatedCardamoms.1.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },

@@ -39,9 +39,10 @@ describe(buildKitPublication, () => {
   const createInput = (characterId: number, isPublished: boolean): KitInput => ({
     characterId,
     name: String(characterId),
+    namedHitCandidateMap: new Map(),
     notes: [],
     overlayName: "",
-    ...(isPublished && { publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}).record }),
+    ...(isPublished && { publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map()).record }),
     sourceCandidateMap: SOURCE_CANDIDATE_MAP,
     tables: {
       characterId,

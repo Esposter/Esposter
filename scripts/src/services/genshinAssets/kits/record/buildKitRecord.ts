@@ -2,6 +2,7 @@ import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
+import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
 import { kitSourcesSchema } from "#src/models/genshinAssets/kits/KitSources";
 import { GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
@@ -16,8 +17,9 @@ import { kitRecordSchema } from "genshin-world";
 export const buildKitRecord = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
+  namedHitCandidateMap: NamedHitCandidateMap,
 ): BuiltKit => {
-  const { provenanceMap, valueMap } = resolveKitValues(sourceCandidateMap, overlay);
+  const { provenanceMap, valueMap } = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap);
   const record = kitRecordSchema.parse(unflattenKitValues(valueMap));
   const values: Record<string, KitValueSource> = {};
   for (const path of flattenKitValues(record).keys()) {

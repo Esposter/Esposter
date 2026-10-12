@@ -21,10 +21,7 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.6097722286464435 }
   },
-  "hits.projectionAttackOneMirror.0.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.projectionAttackOneMirror.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.projectionAttackOneMirror.0.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
-  "hits.projectionAttackOneMirror.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.projectionAttackOneMirror.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
@@ -35,10 +32,7 @@
     "cause": "Unclassified",
     "value": { "angle": 3.141592653589793, "height": 2, "radius": 5.4 }
   },
-  "hits.projectionAttackTwoMirrors.0.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.projectionAttackTwoMirrors.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.projectionAttackTwoMirrors.0.hitmarkFrames": { "cause": "Unclassified", "value": 28 },
-  "hits.projectionAttackTwoMirrors.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.projectionAttackTwoMirrors.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
@@ -48,10 +42,7 @@
     "cause": "Unclassified",
     "value": { "angle": 3.141592653589793, "height": 2, "radius": 5.4 }
   },
-  "hits.projectionAttackTwoMirrors.1.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.projectionAttackTwoMirrors.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.projectionAttackTwoMirrors.1.hitmarkFrames": { "cause": "Unclassified", "value": 37 },
-  "hits.projectionAttackTwoMirrors.1.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.projectionAttackTwoMirrors.1.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
@@ -62,10 +53,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 }
   },
-  "hits.projectionAttackThreeMirrors.0.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.projectionAttackThreeMirrors.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.projectionAttackThreeMirrors.0.hitmarkFrames": { "cause": "Unclassified", "value": 32 },
-  "hits.projectionAttackThreeMirrors.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.projectionAttackThreeMirrors.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
@@ -75,10 +63,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 }
   },
-  "hits.projectionAttackThreeMirrors.1.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.projectionAttackThreeMirrors.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.projectionAttackThreeMirrors.1.hitmarkFrames": { "cause": "Unclassified", "value": 41 },
-  "hits.projectionAttackThreeMirrors.1.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.projectionAttackThreeMirrors.1.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
@@ -88,10 +73,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 }
   },
-  "hits.projectionAttackThreeMirrors.2.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.projectionAttackThreeMirrors.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.projectionAttackThreeMirrors.2.hitmarkFrames": { "cause": "Unclassified", "value": 51 },
-  "hits.projectionAttackThreeMirrors.2.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "hits.projectionAttackThreeMirrors.2.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
@@ -102,10 +84,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.0.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.0.hitmarkFrames": { "cause": "Unclassified", "value": 94 },
-  "hits.particularFieldHits.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -115,10 +94,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.1.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.1.hitmarkFrames": { "cause": "Unclassified", "value": 115 },
-  "hits.particularFieldHits.1.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.1.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -128,10 +104,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.2.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.2.hitmarkFrames": { "cause": "Unclassified", "value": 136 },
-  "hits.particularFieldHits.2.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.2.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -141,10 +114,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.3.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.3.hitmarkFrames": { "cause": "Unclassified", "value": 157 },
-  "hits.particularFieldHits.3.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.3.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -154,10 +124,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.4.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.4.hitmarkFrames": { "cause": "Unclassified", "value": 178 },
-  "hits.particularFieldHits.4.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.4.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -167,10 +134,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.5.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.5.hitmarkFrames": { "cause": "Unclassified", "value": 199 },
-  "hits.particularFieldHits.5.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.5.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -180,10 +144,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.6.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.6.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.6.hitmarkFrames": { "cause": "Unclassified", "value": 220 },
-  "hits.particularFieldHits.6.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.6.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -193,10 +154,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.7.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.7.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.7.hitmarkFrames": { "cause": "Unclassified", "value": 241 },
-  "hits.particularFieldHits.7.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.7.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -206,10 +164,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.8.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.8.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.8.hitmarkFrames": { "cause": "Unclassified", "value": 262 },
-  "hits.particularFieldHits.8.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.8.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }
@@ -219,10 +174,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
   },
-  "hits.particularFieldHits.9.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.particularFieldHits.9.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.particularFieldHits.9.hitmarkFrames": { "cause": "Unclassified", "value": 283 },
-  "hits.particularFieldHits.9.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.particularFieldHits.9.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7839 }

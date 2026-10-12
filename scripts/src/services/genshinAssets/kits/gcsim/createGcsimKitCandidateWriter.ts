@@ -4,7 +4,6 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
@@ -19,14 +18,8 @@ import {
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { GcsimInternalCooldownTagMap } from "#src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap";
+import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea";
-import { CombatTalent } from "genshin-world";
-
-const GcsimTalentTypeCombatTalentMap: Record<GcsimTalentType, CombatTalent> = {
-  [GcsimTalentType.Attack]: CombatTalent.NormalAttack,
-  [GcsimTalentType.Burst]: CombatTalent.ElementalBurst,
-  [GcsimTalentType.Skill]: CombatTalent.ElementalSkill,
-};
 
 // The first frames of a constant's list, descending through each level's first element
 const readFirstGoFrames = (value: GoValue | undefined): GoValue | undefined =>
