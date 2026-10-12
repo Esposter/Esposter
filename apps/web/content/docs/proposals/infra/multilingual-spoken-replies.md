@@ -64,7 +64,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 ### The output
 
 - **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's tokens rather than the last sentence's. Where the [spoken replies](/docs/infra/claude-interface/spoken-replies) page's streaming cuts by token count to shorten the first wait of an engine that already reads faster than real time, this one cuts at punctuation, because each clause is its own synthesis where a token chunk is one more vocoder pass over everything before it — a price that pays only while the engine outruns real time, which the larger checkpoint will not.
-- **The per-chunk speech check, the device ladder it moves, the player that takes a stream and the single pending request are already shipped** ([spoken replies](/docs/infra/claude-interface/spoken-replies)). This proposal's output adds only the clause cut in front of them.
+- **The per-chunk speech check, the device ladder it moves, the player that takes a stream and one pending turn are already shipped** ([spoken replies](/docs/infra/claude-interface/spoken-replies)). This proposal's output adds only the clause cut in front of them.
 
 ### The measurement
 
@@ -92,7 +92,7 @@ The existing files the work touches, with the role each plays after the change.
 | `packages/genshin-persona/src/models/SpeechRequest.ts`            | The text's language beside the dub, two fields where there was one                                |
 | `packages/genshin-persona/src/models/VoiceLanguage.ts`            | Unchanged codes — the dub's and the model's tokens are the same ISO spelling                      |
 | `packages/genshin-persona/src/services/createAudioPlayer.ts`      | A player fed clauses rather than a whole line at a time                                           |
-| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer streaming chunks under the one-pending-request rule                      |
+| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer streaming chunks under the one-pending-turn rule                         |
 | `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | The likeness re-measured through the new engine                                                   |
 | `apps/web/content/docs/infra/claude-interface/spoken-replies.md`  | Rewritten as-built: the engine section, the ladder's memory, streaming no longer a "does not"     |
 
