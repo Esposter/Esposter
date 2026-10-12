@@ -167,4 +167,27 @@ describe(checkIsDeepEqual, () => {
     expect(checkIsDeepEqual(new Object(1), new Object(1))).toBe(true);
     expect(checkIsDeepEqual(new Object(1), new Object(2))).toBe(false);
   });
+
+  test("a data field named constructor compares by the value it holds", () => {
+    expect.hasAssertions();
+
+    expect(checkIsDeepEqual({ constructor: { a: 1 } }, { constructor: { a: 1 } })).toBe(true);
+    expect(checkIsDeepEqual({ constructor: { a: 1 } }, { constructor: { a: 2 } })).toBe(false);
+  });
+
+  test("two buffers compare by their bytes, shared or not", () => {
+    expect.hasAssertions();
+
+    expect(checkIsDeepEqual(new SharedArrayBuffer(2), new SharedArrayBuffer(3))).toBe(false);
+    expect(checkIsDeepEqual(new SharedArrayBuffer(2), new SharedArrayBuffer(2))).toBe(true);
+  });
+
+  test("two distinct blobs are unequal, as their bytes are read asynchronously", () => {
+    expect.hasAssertions();
+
+    const blob = new Blob(["a"]);
+
+    expect(checkIsDeepEqual(new Blob(["a"]), new Blob(["b"]))).toBe(false);
+    expect(checkIsDeepEqual(blob, blob)).toBe(true);
+  });
 });
