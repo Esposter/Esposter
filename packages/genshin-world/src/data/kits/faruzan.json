@@ -1,32 +1,29 @@
 {
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 96 },
-  "frames.firstWhirlwindPulse": { "cause": "Unclassified", "value": 180 },
-  "frames.dazzlingPolyhedron": { "cause": "Unclassified", "value": 788 },
+  "frames.firstWhirlwindPulse": { "cause": "Unsourced", "value": 180 },
+  "frames.dazzlingPolyhedron": { "cause": "Unsourced", "value": 788 },
   "frames.whirlwindPulseInterval": { "cause": "Unclassified", "value": 120 },
   "hits.whirlwindPulse.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.whirlwindPulse.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
-  "hits.whirlwindPulse.multiplier": { "cause": "Unclassified", "value": 0 },
-  "hits.whirlwindPulse.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.whirlwindPulse.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
+  "hits.whirlwindPulse.multiplier": { "cause": "Unsourced", "value": 0 },
+  "hits.whirlwindPulse.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "parameters.perfidiousWindRuinResistanceReduction": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 7639 }
   },
-  "parameters.perfidiousWindRuinSeconds": {
-    "cause": "Unclassified",
-    "value": { "index": 4, "proudSkillGroupId": 7639 }
-  },
+  "parameters.perfidiousWindRuinSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 7639 } },
   "parameters.prayerfulWindAnemoDamageBonus": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 7639 }
   },
-  "parameters.prayerfulWindSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 7639 } },
+  "parameters.prayerfulWindSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 7639 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7632 } }
 }
