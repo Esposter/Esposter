@@ -84,6 +84,7 @@ describe(serveGenshinSceneExport, () => {
     `${TEST_FILENAME}${TEST_FILENAME}/${WITNESS_LAYOUT_FILE_NAME}`,
     `${TEST_FILENAME}/..%2F${TEST_FILENAME}`,
     `${TEST_FILENAME}/../../${TEST_FILENAME}/${TEST_FILENAME}`,
+    `${TEST_FILENAME}/%E0`,
   ])("finds nothing at %s", async (path) => {
     expect.hasAssertions();
     expect((await serveGenshinSceneExport(path, directory)).status).toBe(404);

@@ -1,6 +1,7 @@
 import { createFileResponse } from "#server/services/genshin/createFileResponse";
 import { SCENE_EXPORT_ASSETS_FOLDER } from "#server/services/genshin/sceneExport/constants";
 import { listSceneExportComponents } from "#server/services/genshin/sceneExport/listSceneExportComponents";
+import { getResult } from "@esposter/shared";
 import { SCENE_EXPORT_INDEX_PATH, SCENE_EXPORT_ROOT_FILE_NAMES } from "genshin-world/sceneExport";
 import { statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -12,7 +13,13 @@ import { resolve, sep } from "node:path";
 // Assets. Only a folder the index lists is read, and only a root file or a file inside its assets is served, so no path
 // Reaches outside the exports' directory. Nothing is cached: an export written again is read again on the next request
 export const serveGenshinSceneExport = async (encodedPath: string, directory: string): Promise<Response> => {
-  const [component = "", ...pathParts] = encodedPath.split("/").map((part) => decodeURIComponent(part));
+  // A malformed escape, as in "%E0", is no path the exports hold, so it is answered as one they lack
+  const decodedParts = getResult(() => encodedPath.split("/").map((part) => decodeURIComponent(part))).match(
+    (parts) => parts,
+    () => undefined,
+  );
+  if (decodedParts === undefined) return new Response(null, { status: 404 });
+  const [component = "", ...pathParts] = decodedParts;
   if (component === SCENE_EXPORT_INDEX_PATH && pathParts.length === 0)
     return Response.json(await listSceneExportComponents(directory));
   if (!(await listSceneExportComponents(directory)).includes(component)) return new Response(null, { status: 404 });
