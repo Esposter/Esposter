@@ -14,6 +14,11 @@ describe(getPackageFormat, () => {
       { exports: { ".": { import: "./index.js", require: "./index.cjs" } } },
       PackageFormat.Dual,
     ],
+    [
+      "an import and require exports map under a module type",
+      { exports: { ".": { import: "./index.js", require: "./index.cjs" } }, type: "module" },
+      PackageFormat.Dual,
+    ],
     ["a require-only exports map", { exports: { ".": { require: "./index.cjs" } } }, PackageFormat.Commonjs],
     ["a declarations-only scope", { name: "@types/alpha", types: "index.d.ts" }, PackageFormat.Types],
     ["a declarations-only entry", { types: "index.d.ts" }, PackageFormat.Types],

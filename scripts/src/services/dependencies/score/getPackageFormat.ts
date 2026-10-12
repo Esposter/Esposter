@@ -22,11 +22,10 @@ export const getPackageFormat = (manifest: InstalledManifest): PackageFormat => 
     manifest.name?.startsWith(TYPES_SCOPE) ||
     ((manifest.types ?? manifest.typings) !== undefined && !checkHasEntrypoint(manifest));
   if (isTypesOnly) return PackageFormat.Types;
-  if (manifest.type === "module") return PackageFormat.Esm;
 
   const conditions = new Set<string>();
   collectConditions(manifest.exports, conditions);
   if (conditions.has("import") && conditions.has("require")) return PackageFormat.Dual;
-  if (conditions.has("import")) return PackageFormat.Esm;
+  if (manifest.type === "module" || conditions.has("import")) return PackageFormat.Esm;
   return PackageFormat.Commonjs;
 };
