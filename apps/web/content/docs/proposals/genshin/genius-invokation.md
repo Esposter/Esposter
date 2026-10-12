@@ -37,8 +37,6 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 ## Scope and order
 
 **Standing:** the [as-built page](/docs/genshin/genius-invokation) holds the rules engine, the decks already built and the duel board, which opens from a resident's talk. No duel is seated yet: the two challengers whose decks are built, Marjorie and Ellin, have no resident row in the regions' data. Every resident holds their standing talk, which offers a seated challenger's duel as a reply.
-**Today:** the [as-built page](/docs/genshin/genius-invokation) holds the rules engine, the decks already built and the duel board, which opens from a resident's talk. No duel is seated yet: the two challengers whose decks are built, Marjorie and Ellin, have no resident row in the regions' data. Every resident holds their standing talk, which offers a seated challenger's duel as a reply.
-
 **This adds, in order:**
 
 1. **The Player Level and the games it opens.** Left: `genshin:assets gcg` writing the slice from `toGcgLevels.ts`, and `services/gcg/readGcgLevels.ts` reading it with its schemas. Both wait on the hosted game data, since the slice is published to Blob storage and never written into `generated/`. **Publish, for the Mac:** once the hosted game data is built, the slice goes through `publishGameDataStep` with its `writeGcgLevels` dry run.
