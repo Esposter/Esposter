@@ -4,6 +4,7 @@ import type { SceneLayout } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { computeWaterfallSheet } from "#src/services/genshinAssets/fit/computeWaterfallSheet";
+import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
@@ -13,7 +14,7 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { Quaternion, Vector3 } from "three";
+import { Vector3 } from "three";
 
 const WATERFALL_MESH_PREFIX = "Eff_Model_WaterFall_";
 
@@ -26,15 +27,13 @@ export const fitWaterfallSheets = async (component: DerivedAssetComponent): Prom
   const waterfalls = await Promise.all(
     layout.placements
       .filter(({ mesh }) => mesh.startsWith(WATERFALL_MESH_PREFIX))
-      .map(async ({ mesh, position, rotation, scale }) => {
-        const { vertices } = await readObjMesh(join(assets, AssetType.Mesh, `${mesh}.obj`));
-        const stretch = new Vector3(...scale);
-        const turn = new Quaternion(...rotation);
-        const offset = new Vector3(...position);
+      .map(async (placement) => {
+        const { vertices } = await readObjMesh(join(assets, AssetType.Mesh, `${placement.mesh}.obj`));
         return computeWaterfallSheet(
-          vertices.map((vertex) =>
-            new Vector3(...toRightHanded(vertex)).multiply(stretch).applyQuaternion(turn).add(offset),
-          ),
+          toWorldVertices(
+            vertices.map((vertex) => toRightHanded(vertex)),
+            placement,
+          ).map((vertex) => new Vector3(...vertex)),
         );
       }),
   );
