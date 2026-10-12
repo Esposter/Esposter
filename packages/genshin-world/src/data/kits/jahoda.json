@@ -1,35 +1,35 @@
 {
-  "areas.pursuitCircle": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 } },
+  "areas.pursuitCircle": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 } },
   "burst.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 }
   },
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.unfilledHit": { "cause": "Unclassified", "value": 4 },
-  "frames.pursuit": { "cause": "Unclassified", "value": 364 },
-  "frames.pursuitFirstFill": { "cause": "Unclassified", "value": 37 },
-  "frames.filledDrainHit": { "cause": "Unclassified", "value": 6 },
-  "frames.fillInterval": { "cause": "Unclassified", "value": 30 },
-  "frames.filledPressHit": { "cause": "Unclassified", "value": 2 },
+  "frames.unfilledHit": { "file": "skill.go", "line": 29, "source": "Gcsim", "value": 4 },
+  "frames.pursuit": { "cause": "Unsourced", "value": 364 },
+  "frames.pursuitFirstFill": { "cause": "Unsourced", "value": 37 },
+  "frames.filledDrainHit": { "cause": "Unsourced", "value": 6 },
+  "frames.fillInterval": { "file": "skill.go", "line": 23, "source": "Gcsim", "value": 30 },
+  "frames.filledPressHit": { "file": "skill.go", "line": 30, "source": "Gcsim", "value": 2 },
   "hitFields.flaskDrain.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 }
   },
-  "hitFields.flaskDrain.element": { "cause": "Unclassified", "value": "Wind" },
-  "hitFields.flaskDrain.gauge": { "cause": "Unclassified", "value": 1 },
-  "hitFields.flaskDrain.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hitFields.flaskDrain.element": { "cause": "Unsourced", "value": "Wind" },
+  "hitFields.flaskDrain.gauge": { "cause": "Unsourced", "value": 1 },
+  "hitFields.flaskDrain.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.flaskDrainTalentMultipliers.length": { "cause": "Unclassified", "value": 2 },
+  "parameters.flaskDrainTalentMultipliers.length": { "cause": "Unsourced", "value": 2 },
   "parameters.flaskDrainTalentMultipliers.0": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 12432 }
   },
   "parameters.flaskDrainTalentMultipliers.1": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 12432 }
   },
   "parameters.flaskFillValue": { "cause": "DiffersFromSource", "value": { "index": 3, "proudSkillGroupId": 12432 } },
@@ -37,8 +37,8 @@
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "skillChain.followUps.length": { "cause": "Unclassified", "value": 1 },
+  "skillChain.followUps.length": { "cause": "Unsourced", "value": 1 },
   "skillChain.followUps.0.animationFrames": { "cause": "Unclassified", "value": 48 },
-  "skillChain.followUps.0.hits.length": { "cause": "Unclassified", "value": 0 },
-  "skillChain.windowSeconds": { "cause": "Unclassified", "value": 6.066666666666666 }
+  "skillChain.followUps.0.hits.length": { "cause": "Unsourced", "value": 0 },
+  "skillChain.windowSeconds": { "cause": "Unsourced", "value": 6.066666666666666 }
 }
