@@ -3,6 +3,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitField } from "#src/models/kit/KitField";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
@@ -93,21 +94,13 @@ const CONSTELLATION_4_ENERGY = 4;
 const CONSTELLATION_4_COOLDOWN_SECONDS = 5;
 const CONSTELLATION_4_COOLDOWN_STATUS_ID = "furina-c4-cooldown";
 
-// Ascension 4's Salon DMG Bonus and the share it cuts off the Singer's interval, from her Max HP
-const getSalonDamageBonus = ({ ascension, attributes }: Combatant): number =>
-  ascension < ASCENSION_4
-    ? 0
-    : Math.min(
-        (attributes.maxHealth / ASCENSION_4_MAX_HEALTH_STEP) * ASCENSION_4_DAMAGE_BONUS_PER_STEP,
-        ASCENSION_4_DAMAGE_BONUS_MAX,
-      );
-const getSingerIntervalCut = ({ ascension, attributes }: Combatant): number =>
-  ascension < ASCENSION_4
-    ? 0
-    : Math.min(
-        (attributes.maxHealth / ASCENSION_4_MAX_HEALTH_STEP) * ASCENSION_4_INTERVAL_CUT_PER_STEP,
-        ASCENSION_4_INTERVAL_CUT_MAX,
-      );
+// Ascension 4's share of her Max HP, a rate per step of it up to a cap: the Salon's DMG Bonus and the Singer's interval cut
+const getAscension4MaxHealthShare = ({ ascension, attributes }: Combatant, rate: number, cap: number): number =>
+  ascension < ASCENSION_4 ? 0 : Math.min((attributes.maxHealth / ASCENSION_4_MAX_HEALTH_STEP) * rate, cap);
+const getSalonDamageBonus = (combatant: Combatant): number =>
+  getAscension4MaxHealthShare(combatant, ASCENSION_4_DAMAGE_BONUS_PER_STEP, ASCENSION_4_DAMAGE_BONUS_MAX);
+const getSingerIntervalCut = (combatant: Combatant): number =>
+  getAscension4MaxHealthShare(combatant, ASCENSION_4_INTERVAL_CUT_PER_STEP, ASCENSION_4_INTERVAL_CUT_MAX);
 
 // Ends the Salon a character holds, its members' fields or the Singer's and the attacks still on their way, as gcsim
 // Drops a summon's tasks once a later summon has taken over from it
@@ -282,62 +275,85 @@ export const createFurinaKitBehaviour = ({
     });
   };
 
+  // A field a member or the Singer casts where she stands, following her body, and ticking on its own schedule
+  const castFollowingField = (
+    kitEffectState: KitEffectState,
+    combatant: Combatant,
+    { x, z }: GroundPoint,
+    {
+      delaySeconds,
+      id,
+      initialTickSeconds,
+      intervalSeconds,
+      onTick,
+      secondsRemaining,
+    }: {
+      delaySeconds: number;
+      id: string;
+      initialTickSeconds: number;
+      intervalSeconds: number;
+      onTick: (tick: KitContext, field: KitField) => void;
+      secondsRemaining: number;
+    },
+  ): void => {
+    const field = castKitField(
+      kitEffectState,
+      combatant.characterId,
+      { x, z },
+      {
+        id,
+        isFollowing: true,
+        nextTickSeconds: delaySeconds + initialTickSeconds,
+        onTick: (tick) => onTick(tick, field),
+        secondsRemaining,
+        tickIntervalSeconds: intervalSeconds,
+      },
+    );
+  };
   const castSalonMember = (
     kitEffectState: KitEffectState,
     combatant: Combatant,
     salonMember: SalonMember,
-    { x, z }: GroundPoint,
+    centre: GroundPoint,
     delaySeconds: number,
     secondsRemaining: number,
-  ): void => {
-    const field = castKitField(
-      kitEffectState,
-      combatant.characterId,
-      { x, z },
-      {
-        id: SALON_MEMBER_FIELD_ID,
-        isFollowing: true,
-        nextTickSeconds: delaySeconds + salonMember.initialTickSeconds,
-        onTick: (tick) => {
-          if (field.secondsRemaining > 0) attackWithSalonMember(tick, combatant, salonMember, field.centre);
-        },
-        secondsRemaining,
-        tickIntervalSeconds: salonMember.intervalSeconds,
+  ): void =>
+    castFollowingField(kitEffectState, combatant, centre, {
+      delaySeconds,
+      id: SALON_MEMBER_FIELD_ID,
+      initialTickSeconds: salonMember.initialTickSeconds,
+      intervalSeconds: salonMember.intervalSeconds,
+      onTick: (tick, field) => {
+        if (field.secondsRemaining > 0) attackWithSalonMember(tick, combatant, salonMember, field.centre);
       },
-    );
-  };
+      secondsRemaining,
+    });
 
   const castSinger = (
     kitEffectState: KitEffectState,
     combatant: Combatant,
-    { x, z }: GroundPoint,
+    centre: GroundPoint,
     delaySeconds: number,
     secondsRemaining: number,
-  ): void => {
-    const field = castKitField(
-      kitEffectState,
-      combatant.characterId,
-      { x, z },
-      {
-        id: SINGER_FIELD_ID,
-        isFollowing: true,
-        nextTickSeconds: delaySeconds + singerInitialTickSeconds,
-        onTick: (tick) => {
-          if (field.secondsRemaining <= 0) return;
-          changeKitMemberHealth(
-            tick,
-            combatant,
-            tick.activeCombatant.characterId,
-            singerFlatHealth + singerMaxHealthShare * combatant.attributes.maxHealth,
-          );
-          gainConstellation4Energy(tick, combatant);
-        },
-        secondsRemaining,
-        // Ascension 4's cut is taken off the interval in whole frames, as gcsim rounds it
-        tickIntervalSeconds: toKitSeconds(Math.round(singerIntervalFrames * (1 - getSingerIntervalCut(combatant)))),
+  ): void =>
+    castFollowingField(kitEffectState, combatant, centre, {
+      delaySeconds,
+      id: SINGER_FIELD_ID,
+      initialTickSeconds: singerInitialTickSeconds,
+      // Ascension 4's cut is taken off the interval in whole frames, as gcsim rounds it
+      intervalSeconds: toKitSeconds(Math.round(singerIntervalFrames * (1 - getSingerIntervalCut(combatant)))),
+      onTick: (tick, field) => {
+        if (field.secondsRemaining <= 0) return;
+        changeKitMemberHealth(
+          tick,
+          combatant,
+          tick.activeCombatant.characterId,
+          singerFlatHealth + singerMaxHealthShare * combatant.attributes.maxHealth,
+        );
+        gainConstellation4Energy(tick, combatant);
       },
-    );
-  };
+      secondsRemaining,
+    });
 
   // Brings out the summons of the Arkhe she holds after the delay, for the seconds Salon Solitaire has left, in place of
   // The ones out
