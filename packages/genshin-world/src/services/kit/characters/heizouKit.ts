@@ -27,7 +27,6 @@ export const createHeizouKitBehaviour = ({ kit, readHit }: KitRecordReader): Kit
   const iris = readHit("iris");
   const createIrisHit = (element: Element): KitHit => ({ ...iris, element });
   return {
-    // The burst counts the enemies its aura check tags afresh each cast
     burst: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         addKitStatus(kitEffectState, combatant.characterId, {
