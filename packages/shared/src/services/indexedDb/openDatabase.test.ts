@@ -205,6 +205,22 @@ describe(openDatabase, () => {
     database.close();
   });
 
+  test("an upgrade's transaction reads done after it has already committed", async () => {
+    expect.hasAssertions();
+
+    const upgradeTransactions: { done: Promise<void> }[] = [];
+    const database = await openDatabase<Schema>("upgradeDone", 1, {
+      upgrade: (upgradeDatabase, _oldVersion, _newVersion, transaction) => {
+        upgradeDatabase.createObjectStore("users", { keyPath: "id" });
+        upgradeTransactions.push(transaction);
+      },
+    });
+
+    expect(upgradeTransactions).toHaveLength(1);
+    await expect(upgradeTransactions[0]?.done).resolves.toBeUndefined();
+    database.close();
+  });
+
   test("loads without an indexedDB global, since nothing reads it at import", async () => {
     expect.hasAssertions();
 
