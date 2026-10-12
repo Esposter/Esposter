@@ -178,11 +178,6 @@ const startEndlessWaltz = (
   addKitStatus(kitEffectState, characterId, { id: ENDLESS_WALTZ_STATUS_ID, secondsRemaining: ENDLESS_WALTZ_SECONDS });
 };
 
-// Furina's behaviour: her strikes open Spiritbreath Thorn or Surging Blade, and her charged attack turns her Arkhe a frame
-// After its hit. Salon Solitaire takes the Arkhe she holds: Ousia's bubble and Salon members, which drain the team as they
-// Attack, or Pneuma's Singer of Many Waters, which heals the character on the field. Let the People Rejoice starts its
-// Fanfare, which each change to a member's HP feeds. Ascensions 1 and 4 and Constellations 1, 2's Fanfare and 4 are built;
-// Constellation 2's Max HP, 3, 5 and 6 are not
 // A field a member or the Singer casts where she stands, following her body, and ticking on its own schedule
 const castFollowingField = (
   kitEffectState: KitEffectState,
@@ -219,6 +214,11 @@ const castFollowingField = (
   );
 };
 
+// Furina's behaviour: her strikes open Spiritbreath Thorn or Surging Blade, and her charged attack turns her Arkhe a frame
+// After its hit. Salon Solitaire takes the Arkhe she holds: Ousia's bubble and Salon members, which drain the team as they
+// Attack, or Pneuma's Singer of Many Waters, which heals the character on the field. Let the People Rejoice starts its
+// Fanfare, which each change to a member's HP feeds. Ascensions 1 and 4 and Constellations 1, 2's Fanfare and 4 are built;
+// Constellation 2's Max HP, 3, 5 and 6 are not
 export const createFurinaKitBehaviour = ({
   kit,
   readFrames,
