@@ -89,7 +89,7 @@ Verdicts by count:
 | Noise                                 |                 32 |          5 |
 | Total                                 |                265 |        810 |
 
-Every in-scope item is proven by one of 26 regression tests in `useDragReorder.test.ts`, each titled with the item leading its class. Every item of the class cites that test in the Proof column, by the item its title starts with.
+Every in-scope item is proven by one of 20 regression tests in `useDragReorder.test.ts`, each titled with the item leading its class. Every item of the class cites that test in the Proof column, by the item its title starts with.
 
 The suite was run once against vue-draggable-plus 0.6.1, through a throwaway copy that mounted the wrapper's component with the call sites' old props. 20 tests fail there. The 10 that pass are recorded as pins:
 
