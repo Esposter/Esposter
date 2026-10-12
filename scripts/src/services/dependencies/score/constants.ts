@@ -8,8 +8,10 @@ export const LEDGER_PATH = ".agents/ledgers/dependencies.md";
 export const UNJUDGED_VERDICT = "—";
 // A verdict's kind and its reason are split on this, as the ledger writes them
 export const VERDICT_SEPARATOR = " — ";
+// The reasons a Keep verdict is right to keep a package for whatever its type workarounds, which the shim check does not second-guess
+const CORE_EXEMPT_REASONS: string[] = ["engine", "SDK", "framework", "tooling"];
 // The reasons a Keep verdict is right to keep a package for, which the absorb check does not second-guess
-export const KEEP_EXEMPT_REASONS: string[] = ["engine", "SDK", "framework", "tooling", "types", "hold", "free"];
+export const KEEP_EXEMPT_REASONS: string[] = [...CORE_EXEMPT_REASONS, "types", "hold", "free"];
 
 // The score's weights: four dimensions out of 100, each band's points under its exclusive upper bound
 export const SIZE_BANDS: ScoreBand[] = [
@@ -64,7 +66,7 @@ export const TYPE_SHIM_PATTERN = `@ts-expect-error|as unknown as|declare module 
 // The lines either side of a directive or a cast that an import or a call must fall within to be counted against a package
 export const SHIM_LINE_WINDOW = 3;
 // The reasons a Keep verdict keeps a package whose type workarounds absorbing it would fix at the root
-export const SHIM_EXEMPT_REASONS: string[] = ["engine", "SDK", "framework", "tooling"];
+export const SHIM_EXEMPT_REASONS: string[] = CORE_EXEMPT_REASONS;
 
 // The app whose client bundle the report is read from, against the repository root
 export const APP_DIRECTORY = "apps/web";
