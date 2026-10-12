@@ -63,7 +63,7 @@ The `Run:` line is what lets the settle job tell an issue a fixer may still be o
 
 Each issue gets one fix job, in a matrix over the issue numbers the run opened, up to `REVIEW_FIX_MATRIX_CAP`. GitHub limits a matrix to that many jobs. Issues past the cap are not lost: they stay open, and the settle job takes them.
 
-The fixer runs once over the issue's findings at the tip of `ai/queue`. Its commits land on `ai/queue` by pull and push, and a fix whose commit does not land is deferred again. Then it updates its issue:
+The fixer runs once over the issue's findings at the tip of `ai/queue`. Its commits land on `ai/queue` by pull and push, and a fix whose commit does not land is deferred again. A pull whose rebase stops on a conflict is aborted, so the checkout leaves the landing as it entered it: a rebase left in progress would refuse every later pull, the settle job's next settlers included. Then it updates its issue:
 
 - when every finding is fixed or refuted, it comments each finding's outcome and reason, and closes the issue;
 - otherwise it comments the fixed and refuted findings, and rewrites the body to the findings still open, each with a `Why deferred:` line holding the fixer's reason.
