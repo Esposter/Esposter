@@ -7,22 +7,30 @@ import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcs
 import { readGcsimConfig } from "#src/services/genshinAssets/kits/gcsim/readGcsimConfig";
 import { readGcsimTalentParameters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters";
 import { readGcsimTravels } from "#src/services/genshinAssets/kits/gcsim/readGcsimTravels";
+import { selectGcsimGenderConstants } from "#src/services/genshinAssets/kits/gcsim/selectGcsimGenderConstants";
+import { posix } from "node:path";
 
 const TALENT_FILE_PREFIX = "zz_";
 
-// One gcsim character folder as the builder reads it, from its files by name: the config, the package's constants and
-// `AttackInfo` literals and projectile travels over every Go file but the generated talent file and the tests, and the
-// Talent file's labels
+// One gcsim character folder as the builder reads it, from its files by their paths below it: the config, the
+// Package's constants at the form's gender and `AttackInfo` literals and projectile travels over every Go file but the
+// Generated talent file and the tests, and the talent file's labels
 export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, string>): GcsimCharacter => {
   const goSources: GoSource[] = [...fileMap]
-    .filter(([name]) => name.endsWith(".go") && !name.endsWith("_test.go") && !name.startsWith(TALENT_FILE_PREFIX))
+    .filter(([path]) => {
+      const name = posix.basename(path);
+      return name.endsWith(".go") && !name.endsWith("_test.go") && !name.startsWith(TALENT_FILE_PREFIX);
+    })
     .map(([name, source]) => ({ name, source }));
-  const constantMap = evaluateGoConstants(goSources);
+  const constantMap = selectGcsimGenderConstants(goSources, evaluateGoConstants(goSources));
   const [talentFile = "", talentSource = ""] =
-    [...fileMap].find(([name]) => name.startsWith(TALENT_FILE_PREFIX) && name.endsWith(".go")) ?? [];
+    [...fileMap].find(([path]) => posix.basename(path).startsWith(TALENT_FILE_PREFIX) && path.endsWith(".go")) ?? [];
+  const [configFile = GCSIM_CONFIG_FILE, configSource = ""] =
+    [...fileMap].find(([path]) => posix.basename(path) === GCSIM_CONFIG_FILE) ?? [];
   return {
     attacks: readGcsimAttacks(goSources, constantMap),
-    config: readGcsimConfig(fileMap.get(GCSIM_CONFIG_FILE) ?? ""),
+    config: readGcsimConfig(configSource),
+    configFile,
     constantMap,
     fileNames: [...fileMap.keys()],
     folder,

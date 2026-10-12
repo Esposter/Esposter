@@ -14,8 +14,8 @@ export enum KitProvisionalCause {
   // The value agrees with gcsim's current branch but not the tag the builder reads, so it was read past the licence
   // Line
   ReadPastLicence = "ReadPastLicence",
-  // A hit gcsim centres on its target reaches the circle round the body to the targeting zone's edge, until an area
-  // Holds a target
+  // A hit gcsim centres on its target reaches the circle round the body to the targeting zone's edge, and an arrow's box
+  // On its target the circle round the body as long as the box, until an area holds a target
   TargetCentred = "TargetCentred",
   // No source gives the value, and no cause is known yet
   Unclassified = "Unclassified",

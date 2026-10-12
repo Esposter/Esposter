@@ -8,7 +8,9 @@ import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsi
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { readGcsimTagCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTagCharacters";
 import { adoptKitParameters } from "#src/services/genshinAssets/kits/module/adoptKitParameters";
+import { buildKitModule } from "#src/services/genshinAssets/kits/module/buildKitModule";
 import { encodeTalentMultiplierMap } from "#src/services/genshinAssets/kits/module/encodeTalentMultiplierMap";
+import { readKitModules } from "#src/services/genshinAssets/kits/module/readKitModules";
 import { toModuleKitRecord } from "#src/services/genshinAssets/kits/module/toModuleKitRecord";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
 import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/getTableKitCandidates";
@@ -16,17 +18,16 @@ import { readKitTables } from "#src/services/genshinAssets/kits/tables/readKitTa
 import { getWikiKitCandidates } from "#src/services/genshinAssets/kits/wiki/getWikiKitCandidates";
 import { readWikiTalentPages } from "#src/services/genshinAssets/kits/wiki/readWikiTalentPages";
 import { InvalidOperationError, Operation, toKebabCase } from "@esposter/shared";
-import { CharacterIdCreateKitMap } from "genshin-world";
 
 // The values gcsim is expected to give every kit, each by the constant that gives it, so a kit missing one names what
 // The reader could not read
 const GcsimExpectedPathConstantMap: Record<string, string> = {
-  "burst.cancelFrames": "burstFrames",
+  "burst.animationFrames": "burstFrames",
   "burst.hits.length": "burstHitmark(s)",
   "chargedAttack.hits.length": "chargeHitmark(s) or aimedHitmarks",
-  "normalAttacks.0.cancelFrames": "attackFrames",
+  "normalAttacks.0.animationFrames": "attackFrames",
   "normalAttacks.length": "attackHitmarks",
-  "skill.cancelFrames": "skillFrames",
+  "skill.animationFrames": "skillFrames",
 };
 
 // What the builder reads for every character with a kit module, or the named ones: the record each module holds today,
@@ -34,7 +35,7 @@ const GcsimExpectedPathConstantMap: Record<string, string> = {
 // As the table's, and the candidates gcsim's tag, the wiki and the tables give its record. gcsim's tag is read from its
 // Clone and the wiki's answers from their cache, each fetched first where it is absent
 export const readKitInputs = async ({
-  characterIds = Object.keys(CharacterIdCreateKitMap).map(Number),
+  characterIds,
   gcsimDirectory,
   wikiCacheDirectory,
 }: {
@@ -46,21 +47,21 @@ export const readKitInputs = async ({
   const plungeFallback = tagCharacterMap.get(GCSIM_PLUNGE_FALLBACK_FOLDER);
   if (plungeFallback === undefined)
     throw new InvalidOperationError(Operation.Read, GCSIM_PLUNGE_FALLBACK_FOLDER, `has no folder at ${GCSIM_TAG}`);
-  const tablesMap = await readKitTables(characterIds);
+  const modules = (await readKitModules()).filter(
+    ({ characterId }) => characterIds === undefined || characterIds.includes(characterId),
+  );
+  const tablesMap = await readKitTables(modules.map(({ characterId }) => characterId));
   const inputs: KitInput[] = [];
-  for (const [characterId, tables] of tablesMap) {
-    const loadCreateKit = CharacterIdCreateKitMap[characterId];
-    if (loadCreateKit === undefined)
-      throw new InvalidOperationError(Operation.Read, String(characterId), "has no kit module");
+  for (const module of modules) {
+    const { characterId } = module;
+    const tables = tablesMap.get(characterId);
+    if (tables === undefined) throw new InvalidOperationError(Operation.Read, String(characterId), "has no tables");
     const notes: string[] = [];
     const gcsimFolder = findGcsimFolder(tagCharacterMap, tables.name);
     const gcsim = gcsimFolder === undefined ? undefined : tagCharacterMap.get(gcsimFolder);
     if (gcsim === undefined) notes.push(`no gcsim folder at ${GCSIM_TAG}`);
     // oxlint-disable-next-line no-await-in-loop -- one category request at a time, which the wiki asks of a client
-    const [pages, createKit] = await Promise.all([
-      readWikiTalentPages(tables.name, wikiCacheDirectory),
-      loadCreateKit(),
-    ]);
+    const pages = await readWikiTalentPages(tables.name, wikiCacheDirectory);
     if (pages.length === 0) notes.push("no wiki talent pages");
     const gcsimCandidateMap: Map<string, KitCandidate[]> =
       gcsim === undefined ? new Map() : getGcsimKitCandidates(gcsim, tables, plungeFallback);
@@ -70,8 +71,13 @@ export const readKitInputs = async ({
           notes.push(`gcsim gives no ${constant}`);
     const tableCandidateMap = getTableKitCandidates(tables);
     const gcsimTableCandidateMap = mergeKitCandidates(gcsimCandidateMap, tableCandidateMap);
-    const kit = createKit(tables.talentMultiplierMap);
-    const encodedKit = createKit(encodeTalentMultiplierMap(tables.talentMultiplierMap));
+    const { record, unreadSites } = toModuleKitRecord(
+      module,
+      buildKitModule(module, tables.talentMultiplierMap),
+      buildKitModule(module, encodeTalentMultiplierMap(tables.talentMultiplierMap)),
+      tables.element,
+      tables.talentMultiplierMap,
+    );
     const sourceCandidateMap = mergeKitCandidates(
       gcsimCandidateMap,
       getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables)),
@@ -80,16 +86,13 @@ export const readKitInputs = async ({
     inputs.push({
       characterId,
       gcsimFolder,
-      moduleRecord: adoptKitParameters(
-        toModuleKitRecord(kit, encodedKit, tables.element, tables.talentMultiplierMap),
-        sourceCandidateMap,
-        tables.talentMultiplierMap,
-      ),
+      moduleRecord: adoptKitParameters(record, sourceCandidateMap, tables.talentMultiplierMap),
       name: tables.name,
       notes,
       overlayName: toKebabCase(tables.name),
       sourceCandidateMap,
       tables,
+      unreadSites,
     });
   }
   return inputs;
