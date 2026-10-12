@@ -31,6 +31,9 @@ const readNormalCounter = (path: string): number | undefined => {
   return counter === undefined ? undefined : Number(counter);
 };
 
+// A module-scope table's declaration, `name = [][]float64{` or `name = []float64{`
+const TABLE_DECLARATION_REGEX = /^\s*(?:var |const )?(?<name>[A-Za-z_]\w*)\s*(?::=|=)\s*\[\]/u;
+
 const countParentheses = (text: string, character: string): number => text.split(character).length - 1;
 
 // The constructor on a line with the lines its arguments run on, up to the parenthesis that closes it
@@ -47,6 +50,18 @@ const readConstructorText = (lines: readonly string[], lineIndex: number): strin
     depth += countParentheses(line, "(") - countParentheses(line, ")");
   }
   return text;
+};
+
+// The constructor an area is read from, by the line it is cited at. A table's declaration line is cited by its row, so the
+// Constructor is the nearest `combat.New` line above the first use of the table below it; any other line is its own
+const readConstructorIndex = (lines: readonly string[], lineIndex: number): number => {
+  const name = TABLE_DECLARATION_REGEX.exec(lines[lineIndex] ?? "")?.groups?.name;
+  if (name === undefined) return lineIndex;
+  const use = lines.findIndex((line, index) => index > lineIndex && line.includes(`${name}[`));
+  if (use === -1) return lineIndex;
+  let constructor = use;
+  while (constructor > lineIndex && !(lines[constructor] ?? "").includes("combat.New")) constructor--;
+  return constructor > lineIndex ? constructor : lineIndex;
 };
 
 // The area a cited constructor gives, read across its lines, with its line: the row of the table whose cell is the
@@ -132,7 +147,7 @@ export const readGcsimCitedCandidates = (
     const lines = readFileSync(join(gcsimDirectory, file), "utf8").split("\n");
     // An area is cited by the constructor on its line, whole, with the table cells it reads cited by their rows
     if (typeof entry.value === "object" && entry.value !== null && !Array.isArray(entry.value)) {
-      const cited = readCitedArea(lines, entry.line - 1, file, readNormalCounter(path));
+      const cited = readCitedArea(lines, readConstructorIndex(lines, entry.line - 1), file, readNormalCounter(path));
       if (cited !== undefined)
         addKitCandidate(candidateMap, path, {
           provenance: { file, line: cited.line, source: KitSource.Gcsim },

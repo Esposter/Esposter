@@ -30,9 +30,6 @@ import { takeOne } from "@esposter/shared";
 // Measured: gcsim (MIT) alhaitham/skill.go and burst.go, he holds up to three Mirrors, and Particular Field: Fetters of
 // Phenomena strikes four times plus twice per Mirror it consumes
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/alhaitham
-const MIRRORS_MAX = 3;
-const BURST_BASE_HIT_COUNT = 4;
-const BURST_HIT_COUNT_PER_MIRROR = 2;
 
 // Measured: gcsim (MIT) alhaitham/asc.go and cons.go, Ascension 1 makes a Mirror from a charged attack's or a plunge's hit
 // On an enemy once every 12 seconds, and Ascension 4 raises a Projection Attack's and the burst's DMG by 0.1% per Elemental
@@ -41,22 +38,10 @@ const BURST_HIT_COUNT_PER_MIRROR = 2;
 // Made for as long, and Constellation 6 gives 10% CRIT Rate and 70% CRIT DMG for 6 seconds on each Mirror past three, which
 // Each further one extends by 6 seconds
 const ASCENSION_1 = 1;
-const ASCENSION_1_ICD_SECONDS = 12;
 const ASCENSION_4 = 4;
-const ASCENSION_4_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.001;
-const ASCENSION_4_DAMAGE_BONUS_MAX = 1;
 const CONSTELLATION_2 = 2;
-const CONSTELLATION_2_ELEMENTAL_MASTERY = 50;
-const CONSTELLATION_2_SECONDS = 8;
-const CONSTELLATION_2_STACKS_MAX = 4;
 const CONSTELLATION_4 = 4;
-const CONSTELLATION_4_ELEMENTAL_MASTERY_PER_MIRROR = 30;
-const CONSTELLATION_4_DENDRO_DAMAGE_BONUS_PER_MIRROR = 0.1;
-const CONSTELLATION_4_SECONDS = 15;
 const CONSTELLATION_6 = 6;
-const CONSTELLATION_6_CRITICAL_RATE = 0.1;
-const CONSTELLATION_6_CRITICAL_DAMAGE = 0.7;
-const CONSTELLATION_6_SECONDS = 6;
 // A stance, status or infusion a kit holds until a swap ends it, as gcsim's Mirrors last while he stays on the field
 const HELD_UNTIL_SWAP_SECONDS = Number.POSITIVE_INFINITY;
 const MIRROR_STATUS_ID = "alhaitham-mirrors";
@@ -118,47 +103,66 @@ const setMirrorCount = (kitEffectState: KitEffectState, characterId: number, mir
   });
 };
 
+// The constellation values the buffs of Constellations 2 and 6 are made from, read from the record
+interface ConstellationBuffs {
+  constellation2ElementalMastery: number;
+  constellation2Seconds: number;
+  constellation2StacksMax: number;
+  constellation6CriticalDamage: number;
+  constellation6CriticalRate: number;
+  constellation6Seconds: number;
+}
+
 // Adds Constellation 2's Elemental Mastery for one Mirror made, on the next of its four sources, as gcsim cycles them
-const addConstellation2Buff = (kitEffectState: KitEffectState, characterId: number): void => {
+const addConstellation2Buff = (
+  kitEffectState: KitEffectState,
+  characterId: number,
+  buffs: ConstellationBuffs,
+): void => {
   const cursor = findKitStatus(kitEffectState.effects, characterId, CONSTELLATION_2_CURSOR_STATUS_ID)?.stacks ?? 0;
   addKitStatus(kitEffectState, characterId, {
     id: CONSTELLATION_2_CURSOR_STATUS_ID,
     secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
-    stacks: (cursor + 1) % CONSTELLATION_2_STACKS_MAX,
+    stacks: (cursor + 1) % buffs.constellation2StacksMax,
   });
   buffKitMember(kitEffectState, characterId, {
-    amount: CONSTELLATION_2_ELEMENTAL_MASTERY,
+    amount: buffs.constellation2ElementalMastery,
     attribute: Attribute.ElementalMastery,
-    secondsRemaining: CONSTELLATION_2_SECONDS,
+    secondsRemaining: buffs.constellation2Seconds,
     source: `${CONSTELLATION_2_SOURCE_PREFIX}${cursor + 1}`,
   });
 };
 
 // Adds Constellation 6's CRIT for each Mirror past three, where a further one extends the buff already on him
-const addConstellation6Buffs = (kitEffectState: KitEffectState, characterId: number, overflow: number): void => {
+const addConstellation6Buffs = (
+  kitEffectState: KitEffectState,
+  characterId: number,
+  overflow: number,
+  buffs: ConstellationBuffs,
+): void => {
   for (let index = 0; index < overflow; index++) {
     const critical = findKitBuff(kitEffectState.effects, characterId, Attribute.CriticalRate, CONSTELLATION_6_SOURCE);
     if (critical) {
-      critical.secondsRemaining += CONSTELLATION_6_SECONDS;
+      critical.secondsRemaining += buffs.constellation6Seconds;
       const criticalDamage = findKitBuff(
         kitEffectState.effects,
         characterId,
         Attribute.CriticalDamage,
         CONSTELLATION_6_SOURCE,
       );
-      if (criticalDamage) criticalDamage.secondsRemaining += CONSTELLATION_6_SECONDS;
+      if (criticalDamage) criticalDamage.secondsRemaining += buffs.constellation6Seconds;
       continue;
     }
     buffKitMember(kitEffectState, characterId, {
-      amount: CONSTELLATION_6_CRITICAL_RATE,
+      amount: buffs.constellation6CriticalRate,
       attribute: Attribute.CriticalRate,
-      secondsRemaining: CONSTELLATION_6_SECONDS,
+      secondsRemaining: buffs.constellation6Seconds,
       source: CONSTELLATION_6_SOURCE,
     });
     buffKitMember(kitEffectState, characterId, {
-      amount: CONSTELLATION_6_CRITICAL_DAMAGE,
+      amount: buffs.constellation6CriticalDamage,
       attribute: Attribute.CriticalDamage,
-      secondsRemaining: CONSTELLATION_6_SECONDS,
+      secondsRemaining: buffs.constellation6Seconds,
       source: CONSTELLATION_6_SOURCE,
     });
   }
@@ -193,6 +197,29 @@ export const createAlhaithamKitBehaviour = ({
   const projectionElementalMasteryShare = readParameter("projectionAttackElementalMasteryShare");
   const burstElementalMasteryShare = readParameter("particularFieldElementalMasteryShare");
   const skillElementalMasteryShare = readParameter("universalityElementalMasteryShare");
+  const mirrorsMax = readParameter("mirrorsMax");
+  const burstBaseHitCount = readParameter("burstBaseHitCount");
+  const burstHitCountPerMirror = readParameter("burstHitCountPerMirror");
+  const ascension1IcdSeconds = readSeconds("ascension1IcdDuration");
+  const ascension4DamagePerElementalMastery = readParameter("ascension4DamagePerElementalMastery");
+  const ascension4DamageMax = readParameter("ascension4DamageMax");
+  const constellation2ElementalMastery = readParameter("constellation2ElementalMastery");
+  const constellation2Seconds = readSeconds("constellation2Duration");
+  const constellation2StacksMax = readParameter("constellation2StacksMax");
+  const constellation4ElementalMasteryPerMirror = readParameter("constellation4ElementalMasteryPerMirror");
+  const constellation4DendroDamageBonusPerMirror = readParameter("constellation4DendroDamageBonusPerMirror");
+  const constellation4Seconds = readSeconds("constellation4Duration");
+  const constellation6CriticalRate = readParameter("constellation6CriticalRate");
+  const constellation6CriticalDamage = readParameter("constellation6CriticalDamage");
+  const constellation6Seconds = readSeconds("constellation6Duration");
+  const constellationBuffs: ConstellationBuffs = {
+    constellation2ElementalMastery,
+    constellation2Seconds,
+    constellation2StacksMax,
+    constellation6CriticalDamage,
+    constellation6CriticalRate,
+    constellation6Seconds,
+  };
   // A Projection Attack's hits are those of the Mirrors he holds as it triggers, one, two or three
   const projectionHitBehaviour: KitHitBehaviour = {
     additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, projectionElementalMasteryShare),
@@ -241,12 +268,13 @@ export const createAlhaithamKitBehaviour = ({
     const { characterId, constellationCount } = combatant;
     const count = getMirrorCount(kitEffectState.effects, characterId);
     const total = count + generated;
-    if (count === 0 || total > MIRRORS_MAX) startMirrorDecay(kitEffectState, body, combatant);
-    setMirrorCount(kitEffectState, characterId, Math.min(total, MIRRORS_MAX));
+    if (count === 0 || total > mirrorsMax) startMirrorDecay(kitEffectState, body, combatant);
+    setMirrorCount(kitEffectState, characterId, Math.min(total, mirrorsMax));
     if (constellationCount >= CONSTELLATION_2)
-      for (let made = 0; made < generated; made++) addConstellation2Buff(kitEffectState, characterId);
-    if (constellationCount >= CONSTELLATION_6 && total > MIRRORS_MAX)
-      addConstellation6Buffs(kitEffectState, characterId, total - MIRRORS_MAX);
+      for (let made = 0; made < generated; made++)
+        addConstellation2Buff(kitEffectState, characterId, constellationBuffs);
+    if (constellationCount >= CONSTELLATION_6 && total > mirrorsMax)
+      addConstellation6Buffs(kitEffectState, characterId, total - mirrorsMax, constellationBuffs);
   };
 
   // A Projection Attack triggers on a normal attack, charged attack or plunge that strikes an enemy. An Ascension 1 charged
@@ -261,7 +289,7 @@ export const createAlhaithamKitBehaviour = ({
     if (
       isMirrorSource &&
       ascension >= ASCENSION_1 &&
-      startKitCooldown(kitEffectState, characterId, ASCENSION_1_ICD_STATUS_ID, ASCENSION_1_ICD_SECONDS)
+      startKitCooldown(kitEffectState, characterId, ASCENSION_1_ICD_STATUS_ID, ascension1IcdSeconds)
     )
       gainMirrors(kitEffectState, body, combatant, 1);
     const count = getMirrorCount(kitEffectState.effects, characterId);
@@ -303,7 +331,7 @@ export const createAlhaithamKitBehaviour = ({
           kitEffectState,
           body,
           combatant,
-          particularFieldHits.slice(0, BURST_BASE_HIT_COUNT + BURST_HIT_COUNT_PER_MIRROR * consumed),
+          particularFieldHits.slice(0, burstBaseHitCount + burstHitCountPerMirror * consumed),
         );
         setMirrorCount(kitEffectState, characterId, 0);
         // Constellation 4's loss is the team's Elemental Mastery for each Mirror consumed, to every member but Alhaitham
@@ -311,15 +339,15 @@ export const createAlhaithamKitBehaviour = ({
           for (const memberId of getDeployedCharacterIds(party)) {
             if (memberId === characterId) continue;
             buffKitMember(kitEffectState, memberId, {
-              amount: CONSTELLATION_4_ELEMENTAL_MASTERY_PER_MIRROR * consumed,
+              amount: constellation4ElementalMasteryPerMirror * consumed,
               attribute: Attribute.ElementalMastery,
-              secondsRemaining: CONSTELLATION_4_SECONDS,
+              secondsRemaining: constellation4Seconds,
               source: CONSTELLATION_4_LOSS_SOURCE,
             });
           }
         // Constellation 6 makes three Mirrors whatever the burst consumed, and the rest are made the regeneration's
         // Seconds on
-        const generated = constellationCount >= CONSTELLATION_6 ? MIRRORS_MAX : MIRRORS_MAX - consumed;
+        const generated = constellationCount >= CONSTELLATION_6 ? mirrorsMax : mirrorsMax - consumed;
         if (generated <= 0) return;
         scheduleKitTask(
           kitEffectState,
@@ -329,9 +357,9 @@ export const createAlhaithamKitBehaviour = ({
             gainMirrors(tick.kitEffectState, body, combatant, generated);
             if (constellationCount >= CONSTELLATION_4)
               buffKitMember(tick.kitEffectState, characterId, {
-                amount: CONSTELLATION_4_DENDRO_DAMAGE_BONUS_PER_MIRROR * generated,
+                amount: constellation4DendroDamageBonusPerMirror * generated,
                 attribute: Attribute.DendroDamageBonus,
-                secondsRemaining: CONSTELLATION_4_SECONDS,
+                secondsRemaining: constellation4Seconds,
                 source: CONSTELLATION_4_GAIN_SOURCE,
               });
           },
@@ -345,9 +373,8 @@ export const createAlhaithamKitBehaviour = ({
       (hit.internalCooldownTag === InternalCooldownTag.ElementalBurst ||
         hit.internalCooldownTag === InternalCooldownTag.ElementalSkill)
         ? Math.min(
-            combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] *
-              ASCENSION_4_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY,
-            ASCENSION_4_DAMAGE_BONUS_MAX,
+            combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * ascension4DamagePerElementalMastery,
+            ascension4DamageMax,
           )
         : 0,
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => strikeHitBehaviour) })),
