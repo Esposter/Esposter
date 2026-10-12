@@ -3,9 +3,9 @@ import type { AssetMapLines } from "#src/models/genshinAssets/shared/AssetMapLin
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // AnimeStudio's asset map merged from its shards' lines, which hold one entry a block of them. The first shard's header
-// And trailer are kept, every shard's entries follow in turn, and each entry's source is rebased from its shard's blocks
-// Folder to the installed blocks' one, since AnimeStudio writes the folder it was given. The lines are read one at a
-// Time, the map too large to hold whole
+// And trailer are kept, every shard's entries follow in turn, and each entry's source is rebased from its shard's
+// Blocks Folder to the installed blocks' one, since AnimeStudio writes the folder it was given. The lines are read
+// One at a Time, the map too large to hold whole
 const ENTRIES_OPENING = '"AssetEntries": [';
 const ENTRIES_CLOSING = "]";
 const SOURCE_PREFIX = '"Source": "';
