@@ -4,7 +4,9 @@ import type { ReviewSettlementDisposition } from "#src/models/review/ReviewSettl
 import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimitedError";
 import { ReviewSettlementOutcome } from "#src/models/review/ReviewSettlementOutcome";
 import { checkIsHeldByLiveRun } from "#src/services/review/checkIsHeldByLiveRun";
-import { getRunStatus } from "#src/services/review/getRunStatus";
+import { REVIEW_SETTLE_DEADLINE } from "#src/services/review/constants";
+import { dispatchReview } from "#src/services/review/dispatchReview";
+import { getRunJobs } from "#src/services/review/getRunJobs";
 import { checkoutQueue } from "#src/services/review/git/checkoutQueue";
 import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { landCommits } from "#src/services/review/git/landCommits";
@@ -18,7 +20,7 @@ import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
 import { REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { runGh } from "#src/services/shared/runGh";
 import { runGit } from "#src/services/shared/runGit";
-import { getResultAsync, takeOne } from "@esposter/shared";
+import { getResult, getResultAsync, takeOne } from "@esposter/shared";
 
 // What one issue's settler produced: its dispositions, or the error that ended it
 type SettleOutcome = { dispositions: ReviewSettlementDisposition[] } | { error: Error };
@@ -52,23 +54,31 @@ const closeSettledIssue = (issue: ReviewIssue, dispositions: ReviewSettlementDis
   return true;
 };
 
-// Settles every open review issue one at a time, oldest first. A settler's commits land before the next one starts, so
-// Settlers never conflict with each other. An issue another live run owns is left to that run's own settle job. A usage
-// Limit stops the loop, and every issue not yet settled stays open.
+// Settles every open review issue one at a time, oldest first. Each settler starts clean on the queue's latest tip, and
+// Its commits land before the next one starts, so settlers never conflict with each other. An issue a fixer may still be
+// On is left for a later settle job. A usage limit stops the loop, and every issue not yet settled stays open for the next
+// Push's run. The deadline stops it too, and then the run dispatches the next one, since no push may follow.
 export const runReviewSettle = async (): Promise<void> => {
-  fetchRemote();
-  checkoutQueue();
+  const deadline = Date.now() + REVIEW_SETTLE_DEADLINE.total("milliseconds");
   const currentRunId = process.env.GITHUB_RUN_ID ?? "";
   const rows = ["## Settle", "", "| Issue | Fixed | Recorded | Refuted | Result |", "| --- | --- | --- | --- | --- |"];
   let isLimited = false;
+  let isPastDeadline = false;
   for (const issue of listReviewIssues()) {
     if (isLimited) break;
+    if (Date.now() >= deadline) {
+      isPastDeadline = true;
+      break;
+    }
 
     const issueRunId = getReviewIssueRunId(issue.body);
-    if (checkIsHeldByLiveRun(issueRunId, currentRunId, getRunStatus)) {
+    if (checkIsHeldByLiveRun(issue.number, issueRunId, currentRunId, getRunJobs)) {
       rows.push(`| #${issue.number} | | | | held by run ${issueRunId} |`);
       continue;
     }
+
+    fetchRemote();
+    checkoutQueue();
 
     // oxlint-disable-next-line no-await-in-loop -- Settlers run one at a time, so each one lands before the next starts
     const outcome: SettleOutcome = await getResultAsync(() => runSettler(issue)).match(
@@ -98,5 +108,16 @@ export const runReviewSettle = async (): Promise<void> => {
   }
   if (isLimited)
     rows.push("", "Claude's usage limit stopped the settle job, so every issue not yet settled stays open.");
+  if (isPastDeadline)
+    rows.push(
+      "",
+      getResult(dispatchReview).match(
+        () => "The deadline stopped the settle job, so the next run is dispatched for the issues left open.",
+        (error) => {
+          process.exitCode = 1;
+          return `The deadline stopped the settle job, and the next run was not dispatched: ${error.message}`;
+        },
+      ),
+    );
   writeReviewSummary(rows);
 };

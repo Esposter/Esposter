@@ -3,8 +3,7 @@ import * as github from "@pulumi/github";
 
 // The token a job is handed when its workflow declares no `permissions:` block of its own. Every workflow in
 // `.github/workflows` declares one — the release and the branch cleanup take `contents: write`, and the review reads
-// Only, pushing with its own token, and takes `actions: write` only to continue a backlog larger than one run — so this is
-// What a workflow written or edited without thinking about it
+// Only, pushing with its own token — so this is what a workflow written or edited without thinking about it
 // Inherits, and read is the only value that makes that mistake harmless.
 // `canApprovePullRequestReviews` stays off: an approving review from the built-in token is one no person gave,
 // And on a pull request rule that counts approvals it would be indistinguishable from one.

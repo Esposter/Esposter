@@ -30,9 +30,10 @@ flowchart TD
   T[Push to ai/queue, or a dispatch] --> P[Plan every window owed, each cut by the file cap]
   P --> POOL[One pool over every batch of every window, stopped at the run's deadline]
   POOL -->|a window's last batch lands| W{Window status}
-  W -->|passed, and the passed prefix reaches it| M[Steady mode: main fast-forwards to the window's end]
-  M -->|push rejected: main moved meanwhile| STOP[The prefix stops for this run]
-  M -->|pushed| I[Open the window's review issues, each with its findings file]
+  W -->|passed, and the passed prefix reaches it| I[Open the window's review issues, each with its findings file]
+  I -->|an issue did not open| STOP[The prefix stops for this run]
+  I -->|steady mode| M[main fast-forwards to the window's end]
+  M -->|push rejected: main moved meanwhile| STOP
   W -->|limited, failed or unreached| STOP
   POOL -->|the deadline left windows unreviewed| D[Dispatch the next run once]
   I --> FX[Fix job per issue: fixes what it can, then narrows or closes the issue]
@@ -47,16 +48,16 @@ flowchart TD
 5. **Batches.** Each window's changed files, after the excluded paths and binary files are dropped, are sorted by path so neighbours land together, then packed in order into batches under a file cap and a changed-line cap.
 6. **Reviewers.** One pool holds every batch of every window and runs at most `REVIEW_RUNNER_SESSION_CAP` sessions at once. Each window has one detached worktree at its end, shared by its reviewers and removed after the pool. A reviewer is read-only and answers with a JSON object of findings. A batch that fails is retried once.
 7. **Window status.** A window passes when every batch answered. It is limited when a batch hit the account's usage limit, failed when a batch still errored, and unreached when the deadline left a batch unstarted.
-8. **The prefix advances as it grows.** Whenever a window settles, the run acts on each window that has just joined the passed prefix, in window order. The prefix is the windows before the first one that did not pass, so a window after a stopped one never reads its base as landed. In steady mode the run fast-forwards `main` to the newly passed prefix's end, once per advance and never forced. Then it opens each newly passed window's review issues. A rejected push means `main` moved meanwhile: the windows may be stale, so the run opens no issues for them and stops advancing for the rest of the run. The next run re-measures.
+8. **The prefix advances as it grows.** Whenever a window settles, the run acts on each window that has just joined the passed prefix, in window order. The prefix is the windows before the first one that did not pass, so a window after a stopped one never reads its base as landed. The run first opens each newly passed window's review issues, so no finding is held only in the run's memory once `main` moves past it. A window whose issues did not open ends the prefix there for the rest of the run, and the next run reviews it again. In steady mode the run then fast-forwards `main` to the end of the windows whose issues opened, once per advance and never forced. A rejected push means `main` moved meanwhile: the run stops advancing for the rest of the run, the issues it opened stay open, and the next run, which reviews those windows again, may raise their findings again.
 9. **Fix and settle.** Each issue's findings file goes to a fix job, and the settle job runs after every fix. Both are described below.
 
-Because the prefix advances as the pool runs, a timeout or a crash loses only the windows still in flight. Everything already passed is on `main` with its issues open.
+Because the prefix advances as the pool runs, a timeout or a crash loses only the windows still in flight. Everything already passed has its issues open and, in steady mode, is on `main`. A batch's error is printed to the job's log as well as its summary, since GitHub's API reads a job's log but not its summary.
 
 ### Review issues
 
 Each newly passed window that has findings opens its review issues. A window's findings are split into chunks of at most `REVIEW_ISSUE_FINDING_CAP`, so each issue's body stays far under GitHub's body limit, and a window with more is split into parts. Each issue is titled with its range and its finding count, and its body holds one line saying the review owes these findings until the settle job closes it, the run's ID on a `Run:` line, the range, and each finding with its trigger.
 
-The `Run:` line is what lets the settle job tell a finding owned by a run still in progress from one nobody is working on. An issue with no `Run:` line, such as one a person opened, is never held back.
+The `Run:` line is what lets the settle job tell an issue a fixer may still be on from one nobody is working on. An issue with no `Run:` line, such as one a person opened, is never held back.
 
 ### The fix job
 
@@ -73,17 +74,17 @@ A fix job that crashes leaves its issue open and whole, which is correct: the se
 
 The settle job runs after the review and every fix job, whatever their outcome, so an open issue is never left without an owner. It lists every open `review` issue, oldest first, and settles them one at a time, since each settler lands its commits before the next starts.
 
-An issue whose `Run:` line names another run that is still going is left alone: that run's fixer may still be on it, and that run's own settle job will take it. Otherwise one settler session settles the whole issue on the queue's tip, and each of its findings must reach a terminal state:
+An issue whose `Run:` line names another run is left alone while that run's review job, or the issue's own fix job, has not completed, since a fixer may still be on it. The jobs are read by their names in `Review.yaml`. Another run's settle job holds nothing, since settle jobs never overlap, and a run that cannot be read holds nothing, so a deleted run never strands its issues. Otherwise one settler session settles the whole issue on a clean checkout of the queue's latest tip, so nothing an earlier settler left uncommitted or unlanded carries in, and each of its findings must reach a terminal state:
 
 - fixed, at its root, with the touched tests run;
 - refuted, with the reason the code disproves it;
 - recorded, in the owning area's proposal or roadmap page, where the build loop takes it.
 
-A settler never defers and never opens an issue. Its answer is validated against a schema whose outcomes are only those three, and an answer that leaves a finding out fails the issue. When the settler's commits land, the issue is commented with each finding's outcome and closed. When they do not land, the issue stays open for the next run. When the settler fails, its error is commented on the issue, the issue stays open, and the job goes on to the next issue and ends red. A usage limit stops the loop, and every issue not yet settled stays open.
+A settler never defers and never opens an issue. Its answer is validated against a schema whose outcomes are only those three, and an answer that leaves a finding out fails the issue. When the settler's commits land, the issue is commented with each finding's outcome and closed. When they do not land, the issue stays open for the next run. When the settler fails, its error is commented on the issue, the issue stays open, and the job goes on to the next issue and ends red. A usage limit stops the loop, and every issue not yet settled stays open for the next push's run. No settler starts once `REVIEW_SETTLE_DEADLINE` has passed, which leaves one settler's wall clock below the job's timeout, and a loop the deadline stopped dispatches the next run, since no push may follow.
 
 ### The deadline and its one dispatch
 
-The pool starts no new batch once `REVIEW_RUN_DEADLINE` has passed since the run began, and the batches already started finish. The review job's timeout is GitHub's hosted maximum, above that deadline. Windows the deadline left unreviewed are owed, and when the run stopped for nothing else (no limit, no failure), it dispatches `Review.yaml` on `ai/queue` once, with `gh workflow run`. That dispatch needs `actions: write`, which the review job alone holds. A workflow group folds the dispatch into any run already waiting. A run stopped by a usage limit or a failure dispatches nothing, since the next push resumes it, and a rerun would meet the same limit or failure.
+The pool starts no new batch once `REVIEW_RUN_DEADLINE` has passed since the run began, and the batches already started finish. The review job's timeout is GitHub's hosted maximum, above that deadline. Windows the deadline left unreviewed are owed, and when the run stopped for nothing else (no limit, no failure), it dispatches `Review.yaml` on `ai/queue` once, with `gh workflow run` under the collector's token, so the workflow's own token stays read-only. A workflow group folds the dispatch into any run already waiting. A run stopped by a usage limit or a failure dispatches nothing, since the next push resumes it, and a rerun would meet the same limit or failure.
 
 ### Range mode
 
@@ -110,7 +111,7 @@ The cost is the settler's and the fixer's sessions on the same subscription as t
 ## Decisions
 
 - **Limits are amounts, never time.** The window, the batch, the issue's findings, the matrix and the sessions one runner holds are each bounded by how much is read or how much a runner holds. The one time bound is the deadline, which leaves the rest for the next run rather than failing it.
-- **`main` advances as the prefix grows.** The windows that have passed move `main` at once and open their issues at once, so a timeout or a crash loses only what is still in flight.
+- **`main` advances as the prefix grows, behind its issues.** The windows that have passed open their issues at once and then move `main`, so a timeout or a crash loses only what is still in flight, and `main` never passes a finding no issue holds.
 - **Every finding is owed an issue.** A finding lives in an open issue until a terminal state closes it, so no finding can be lost to a job that ends early.
 - **No pull requests, no `develop`, no express lane, no repair.** A pull request is a review slot the bot must spend, and a `develop` branch is a second place the reviewed prefix would have to be kept. Every commit is reviewed in its window, however small, and a red `main` is fixed on `ai/queue` first, as the CI section below sets out.
 - **`main` is the reviewed prefix of `ai/queue`.** Only the review's fast-forward moves `main`, so `main` is always an ancestor of `ai/queue`, and what `main` holds is exactly what a review has read.
@@ -133,6 +134,8 @@ Each limit is one named constant in the review's code, with its reason beside it
 | `REVIEW_ISSUE_FINDING_CAP`  | The findings one review issue holds, so its body stays far under GitHub's body limit.                                      |
 | `REVIEW_FIX_MATRIX_CAP`     | The issues one run's fix matrix takes, GitHub's per-matrix job limit. Past it, the settle job takes the issues.            |
 | `REVIEW_RUN_DEADLINE`       | The wall clock of one run, after which no new batch starts. The review job's timeout is GitHub's hosted maximum above it.  |
+| `REVIEW_SETTLE_DEADLINE`    | The wall clock of the settle loop, after which no settler starts. One settler's wall clock fits below the job's timeout.   |
+| `REVIEW_JOB_NAME`           | The review job's name in `Review.yaml`, which the settle job reads to tell whether a run is still opening issues.          |
 | `REVIEW_ISSUE_LABEL`        | The label of the issues the review owes. It is outside the triage roles.                                                   |
 | `ReviewSessionRoleModelMap` | The model each role's session runs.                                                                                        |
 | `REVIEWER_TIMEOUT_MS`       | The wall clock of one reviewer, past which its process tree is killed.                                                     |
@@ -151,7 +154,7 @@ When Claude Code reports the account's usage limit, the launcher throws a distin
 
 `.github/workflows/Review.yaml` runs on a push to `ai/queue`, and on a dispatch that takes two optional inputs, `from` and `to`, which it passes to the script through the environment rather than the command line.
 
-- The **review** job holds the concurrency group, one for steady state and another for range mode, with cancellation off. One run reviews and one waits behind it, so the next review starts as soon as this one ends, while its fixers are still working. It has a timeout of GitHub's hosted maximum and `actions: write` for its one dispatch. It uploads each window's findings as an artifact, even when a window failed, so the issues already opened still reach their fixers.
+- The **review** job holds the concurrency group, one for steady state and another for range mode, with cancellation off. One run reviews and one waits behind it, so the next review starts as soon as this one ends, while its fixers are still working. It has a timeout of GitHub's hosted maximum. It uploads each window's findings as an artifact, even when a window failed, so the issues already opened still reach their fixers.
 - The **fix** job runs once per issue in `fix_issues`, as a matrix of the same run, with no concurrency group. It checks out the tip of `ai/queue` with the full install, reads its issue's findings file, and runs `ai:review:fix` for it.
 - The **settle** job runs after the review and every fix, with the settle concurrency group, which takes one settlement at a time. It checks out the tip of `ai/queue` and runs `ai:review:settle`.
 
@@ -177,7 +180,7 @@ A review does not gate on CI. A window's review completes and `main` moves, what
 | `scripts/src/services/review/runReviewFix.ts`                     | the fix job's half: the fixer, its landing, and the issue narrowed or closed                                     |
 | `scripts/src/services/review/runReviewSettle.ts`                  | the settle job's half: each open issue settled, its commits landed, and the issue closed                         |
 | `scripts/src/services/review/runSettler.ts`                       | the settler session and its answer, which must settle every finding                                              |
-| `scripts/src/services/review/checkIsHeldByLiveRun.ts`             | whether an issue belongs to another run still going                                                              |
+| `scripts/src/services/review/checkIsHeldByLiveRun.ts`             | whether a fixer may still be on an issue: its run's review job or its own fix job has not completed              |
 | `scripts/src/services/review/checkIsBacklogOwed.ts`               | whether the run stopped for the deadline alone, and so dispatches the next run                                   |
 | `scripts/src/services/review/readReviewWindows.ts`                | plans every window owed, each with its base, end, commits and batches                                            |
 | `scripts/src/services/review/getPassedWindowCount.ts`             | the passed prefix: the windows before the first that did not pass                                                |

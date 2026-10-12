@@ -39,6 +39,11 @@ export const SETTLER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 120 
 // The wall clock of one run, from its start: once it has passed, no further batch starts, and the batches already started
 // Finish. The review job's timeout is GitHub's hosted maximum, 360 minutes, above it.
 export const REVIEW_RUN_DEADLINE: Temporal.Duration = Temporal.Duration.from({ minutes: 300 });
+// The wall clock of the settle job's loop, from its start: once it has passed, no further settler starts. The job's own
+// Timeout, 360 minutes, is above it by one settler's wall clock and the job's setup.
+export const REVIEW_SETTLE_DEADLINE: Temporal.Duration = Temporal.Duration.from({ minutes: 220 });
+// The name `Review.yaml` gives its review job, which the settle job reads to tell whether a run is still opening issues
+export const REVIEW_JOB_NAME = "Review";
 
 // The Claude Code CLI, run through `pnpm dlx` so the session needs no install in the checkout
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";

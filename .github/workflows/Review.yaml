@@ -22,6 +22,7 @@ permissions:
 
 jobs:
   review:
+    # The settle job reads this name (`REVIEW_JOB_NAME`) to tell whether a run is still opening issues
     name: Review
     runs-on: ubuntu-latest
     # The review job alone holds the group: one run reviews and one waits behind it, so the next review starts as soon as
@@ -33,11 +34,6 @@ jobs:
     # Bounded by the run's deadline (`REVIEW_RUN_DEADLINE`, 300 minutes), which leaves the batches past it for the next run
     # and lets the batches started before it finish. 360 minutes is GitHub's hosted maximum.
     timeout-minutes: 360
-    # `actions: write` is for the one dispatch that continues a backlog the deadline left. The group folds that dispatch into
-    # any run already waiting. A run stopped by a usage limit or a failure does not dispatch: the next push resumes it.
-    permissions:
-      actions: write
-      contents: read
     outputs:
       fix_issues: ${{ steps.review.outputs.fix_issues }}
     steps:
@@ -78,6 +74,8 @@ jobs:
       - name: 🤝 Trust the workspace
         uses: ./.github/actions/trust-workspace
 
+      # A deadline the review leaves windows to is continued by a dispatch through the collector's token, so the job's own
+      # token stays read-only
       - name: 🔍 Review
         id: review
         env:
@@ -102,6 +100,7 @@ jobs:
   # One fix job per review issue of this run, in a matrix. No concurrency group: each fixer lands its commits on `ai/queue`
   # by pull and push, and a fixer that crashes leaves its issue open and whole for the settle job.
   fix:
+    # The settle job reads this name (`getFixJobName`) to tell whether an issue's fixer is still on it
     name: Fix issue #${{ matrix.issue }}
     needs: review
     if: ${{ !cancelled() && needs.review.outputs.fix_issues != '' && needs.review.outputs.fix_issues != '[]' }}
@@ -170,8 +169,9 @@ jobs:
     needs: [review, fix]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
-    # Bounded by GitHub's hosted maximum for the whole job, since it settles every open issue in turn. Each settler session
-    # has its own wall clock limit of 120 minutes, and an issue the job does not reach stays open for the next run.
+    # Bounded by GitHub's hosted maximum for the whole job, since it settles every open issue in turn. No settler starts past
+    # the loop's deadline (`REVIEW_SETTLE_DEADLINE`), each settler session has its own wall clock limit of 120 minutes, and
+    # the issues the deadline leaves stay open for the run it dispatches.
     timeout-minutes: 360
     # The settlers land their commits one at a time, so a second settle job waits behind the first rather than racing it
     concurrency:

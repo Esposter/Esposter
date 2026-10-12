@@ -7,6 +7,7 @@ import { ReviewMode } from "#src/models/review/ReviewMode";
 import { ReviewWindowStatus } from "#src/models/review/ReviewWindowStatus";
 import { checkIsBacklogOwed } from "#src/services/review/checkIsBacklogOwed";
 import { REVIEW_FIX_MATRIX_CAP, REVIEW_ISSUE_LABEL, REVIEW_RUN_DEADLINE } from "#src/services/review/constants";
+import { dispatchReview } from "#src/services/review/dispatchReview";
 import { formatReviewWindow } from "#src/services/review/formatReviewWindow";
 import { getNewlyPassedWindowIndices } from "#src/services/review/getNewlyPassedWindowIndices";
 import { getPassedWindowCount } from "#src/services/review/getPassedWindowCount";
@@ -22,7 +23,6 @@ import { writeFixIssues } from "#src/services/review/writeFixIssues";
 import { writeReviewIssueFindings } from "#src/services/review/writeReviewIssueFindings";
 import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
 import { MAIN_BRANCH, QUEUE_BRANCH, REMOTE_MAIN_REF, REMOTE_QUEUE_REF } from "#src/services/shared/constants";
-import { runGh } from "#src/services/shared/runGh";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, noop, Operation, takeOne } from "@esposter/shared";
 
@@ -111,53 +111,70 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
   // Set once `main` refused a push: the windows then may be stale, so no further advance or issue happens in this run
   let isStopped = false;
 
-  const openIssuesFor = (index: number): void => {
+  // Opens a window's findings as issues, and returns whether every one opened. A window with none has nothing to open.
+  const openIssuesFor = (index: number): boolean => {
     const { base, end } = takeOne(windows, index);
     const findings = takeOne(findingsByWindow, index);
-    if (findings.length === 0) return;
+    if (findings.length === 0) return true;
 
-    const opened = getResult(() => openReviewIssues(base, end, findings, runId)).match(
-      (issues) => issues,
+    return getResult(() => openReviewIssues(base, end, findings, runId)).match(
+      (opened) => {
+        for (const issue of opened) {
+          issueNumbers.push(issue.issue);
+          if (findingsDirectory !== "") writeReviewIssueFindings(findingsDirectory, issue);
+        }
+        return true;
+      },
       (error) => {
-        issueErrors.push(`window ${index}: ${findings.length} finding(s) did not open an issue: ${error.message}`);
-        return [];
+        const line = `window ${index}: ${findings.length} finding(s) did not open an issue: ${error.message}`;
+        console.error(line);
+        issueErrors.push(line);
+        return false;
       },
     );
-    for (const issue of opened) {
-      issueNumbers.push(issue.issue);
-      if (findingsDirectory !== "") writeReviewIssueFindings(findingsDirectory, issue);
-    }
   };
 
   // The one place the run acts on windows, called as each window settles. The pool's callbacks are synchronous, so the
-  // Advances and issues run one at a time in window order without a queue of their own.
+  // Issues and advances run one at a time in window order without a queue of their own. A window's issues open before
+  // `main` moves past it, so a finding is never left only in a run's memory: a window whose issues did not open stops the
+  // Run's advances there, and the next run reviews it again.
   const advancePassedWindows = (): void => {
     if (isStopped) return;
-    const indices = getNewlyPassedWindowIndices(statuses, handledCount);
-    if (indices.length === 0) return;
-
-    const { end } = takeOne(windows, takeOne(indices, indices.length - 1));
-    if (mode === ReviewMode.Steady) {
-      const isMainMoved = advanceMain(end);
-      if (!isMainMoved) {
-        mainNotices.push(
-          `${MAIN_BRANCH} was not advanced, because it moved meanwhile. The next run re-measures, and no fixer runs on these windows.`,
-        );
+    let lastOpenedIndex = -1;
+    for (const index of getNewlyPassedWindowIndices(statuses, handledCount)) {
+      if (!openIssuesFor(index)) {
         isStopped = true;
-        return;
+        break;
       }
-      mainNotices.push(`${MAIN_BRANCH} advanced to ${end.slice(0, 12)}.`);
+      lastOpenedIndex = index;
     }
-    handledCount += indices.length;
-    for (const index of indices) openIssuesFor(index);
+    if (lastOpenedIndex === -1) return;
+
+    handledCount = lastOpenedIndex + 1;
+    if (mode !== ReviewMode.Steady) return;
+
+    const { end } = takeOne(windows, lastOpenedIndex);
+    if (advanceMain(end)) {
+      mainNotices.push(`${MAIN_BRANCH} advanced to ${end.slice(0, 12)}.`);
+      return;
+    }
+    mainNotices.push(
+      `${MAIN_BRANCH} was not advanced, because it moved meanwhile. The next run reviews these windows again, and may raise the findings of their issues again.`,
+    );
+    isStopped = true;
   };
 
   // A window with no batch has nothing to read, so it settles at once as a pass, which the callback handles
   await reviewWindows(windows, deadline, (index, outcomes) => {
     statuses[index] = getReviewWindowStatus(outcomes);
     findingsByWindow[index] = getFindings(outcomes);
-    for (const outcome of outcomes)
-      if ("error" in outcome) batchErrors.push(`- window ${index}: ${outcome.error.message}`);
+    // Logged as well as summarized, since a job's summary is not readable through GitHub's API and its log is
+    for (const outcome of outcomes) {
+      if (!("error" in outcome)) continue;
+      const line = `window ${index}: ${outcome.error.message}`;
+      console.error(line);
+      batchErrors.push(`- ${line}`);
+    }
     advancePassedWindows();
   });
 
@@ -166,7 +183,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
   const passedCount = getPassedWindowCount(settled);
   const isBacklogOwed = mode === ReviewMode.Steady && checkIsBacklogOwed(settled);
   if (isBacklogOwed)
-    getResult(() => runGh(["workflow", "run", "Review.yaml", "--ref", QUEUE_BRANCH])).match(noop, (error) => {
+    getResult(dispatchReview).match(noop, (error) => {
       issueErrors.push(`the next run was not dispatched: ${error.message}`);
     });
   writeFixIssues(issueNumbers.slice(0, REVIEW_FIX_MATRIX_CAP));

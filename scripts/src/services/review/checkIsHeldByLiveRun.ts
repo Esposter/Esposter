@@ -1,7 +1,19 @@
-// Whether an issue belongs to another run that is still going, so that run's own fixer or settle job may still be on it.
-// The status is read only for such a run: an issue with no run, or this run's own, is never held.
+import type { ReviewRunJob } from "#src/models/review/ReviewRunJob";
+
+import { REVIEW_JOB_NAME } from "#src/services/review/constants";
+import { getFixJobName } from "#src/services/review/getFixJobName";
+
+// Whether a fixer may still be on an issue: another run opened it, and that run's review job, which opens and lists its
+// Issues, or the issue's own fix job has not completed. Another run's settle job holds nothing, since settle jobs share one
+// Concurrency group and never overlap. The jobs are read only for another run, and a run that cannot be read has none.
 export const checkIsHeldByLiveRun = (
+  issue: number,
   issueRunId: string,
   currentRunId: string,
-  getRunStatus: (runId: string) => string,
-): boolean => issueRunId !== "" && issueRunId !== currentRunId && getRunStatus(issueRunId) !== "completed";
+  getRunJobs: (runId: string) => ReviewRunJob[],
+): boolean =>
+  issueRunId !== "" &&
+  issueRunId !== currentRunId &&
+  getRunJobs(issueRunId).some(
+    ({ name, status }) => status !== "completed" && (name === REVIEW_JOB_NAME || name === getFixJobName(issue)),
+  );
