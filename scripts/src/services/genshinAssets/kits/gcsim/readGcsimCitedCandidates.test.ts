@@ -78,6 +78,16 @@ describe("readGcsimCitedCandidates", () => {
     });
   });
 
+  test("a cited scalar inside a loop gives the loop's value equal to it, not the loop's array", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "frames.blossomHitmark": { file: "loop.go", line: 5, source: KitSource.Gcsim, value: 15 },
+    };
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("frames.blossomHitmark");
+    expect(candidates?.[0]?.value).toBe(15);
+    expect(classifyKitValue(15, candidates ?? [], [], false)).toBeUndefined();
+  });
+
   test("a cited array the loop does not give reads as DiffersFromSource, with the loop's own array as the difference", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = {
