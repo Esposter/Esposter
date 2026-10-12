@@ -238,6 +238,8 @@ F  = smoothstep(0, 1, saturate((T - lo) / (hi - lo)))
 
 A face with no face map is lit, so `F` is one.
 
+The face map holds the nose's two flanks at its two ends, one always in shadow and the other always lit, so the nose shows a small mark at every light angle: a dark one in front light, as the character screen draws it ([Hydro Lumine on the character screen](https://www.youtube.com/watch?v=KPlvZW6udfk), 0:18), and a light one with the light behind, where the rest of the face is in shadow. A pale dot on the nose of a back-lit face is that lit flank, not a fault in the lookup.
+
 ### The shadow colour
 
 The face's colour is the material colour blended toward white by the lookup, over the face's shadow colour. With `Cm` the material colour on the main texture and `F` the lookup above (Exact, from the pixel program):
