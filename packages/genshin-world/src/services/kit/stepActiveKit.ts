@@ -127,7 +127,7 @@ export const stepActiveKit = (
   if (action && (isBurst || getKitSkillActions(kit).includes(action)))
     lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
   // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body has moved
-  action?.onStart?.({ ...context, body: copyKitBody(kitBody) }, target);
+  action?.onStart?.({ ...context, body: copyKitBody(body) }, target);
   if (action) coordinateKitSummons(action, context);
   // The ores are struck by the hits as the kit gives them, before an infusion copies them
   for (const hit of landedHits) strikeOre(body, readOreHit(combatant, hit));
