@@ -204,14 +204,17 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   background: #ece5d8;
   color: #3b3b3b;
 }
-.recipes {
+.recipes,
+.queues {
   position: absolute;
   top: calc(var(--unit) * 252);
   left: calc(var(--unit) * 134);
-  width: calc(var(--unit) * 750);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+.recipes {
+  width: calc(var(--unit) * 750);
 }
 .recipes li + li {
   margin-top: calc(var(--unit) * 9.7);
@@ -297,13 +300,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   font-size: calc(var(--unit) * 29);
 }
 .queues {
-  position: absolute;
-  top: calc(var(--unit) * 252);
-  left: calc(var(--unit) * 134);
   width: calc(var(--unit) * 1600);
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .item-icon {
