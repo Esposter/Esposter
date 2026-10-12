@@ -95,11 +95,11 @@ onUnmounted(() => {
 
 <style scoped>
 /* Each disc and glyph as `hud-world-pickup` shows the touch layout, measured in that recording's pixels from the right
-   Edge and the foot of `GrpActionBtn`, the rect the buttons hang in, at 1080 / 934 units a pixel: the attack's disc of
-   Radius 82 centred 324.6 in and 218 up, the jump's and the sprint's of radius 61 at 166.6 in and 321 and 129 up, and the
-   Aim's of radius 37 at 539.6 in and 235 up. Each glyph's square is centred on its disc, its side read off the glyph's
-   Box against its icon's: the attack's the disc's own, the jump's 1.26 and the sprint's 0.985 of its icon's 128 pixels,
-   And the aim's the 54 pixels it was measured in */
+   Edge and the foot of `GrpActionBtn`, the rect the buttons hang in, which the canvas's inset stands 76.8 pixels in, at
+   864 / 934 units a pixel: the attack's disc of radius 82 centred 308.9 in and 218 up, the jump's and the sprint's of
+   Radius 61 at 150.9 in and 321 and 129 up, and the aim's of radius 37 at 523.9 in and 235 up. Each glyph's square is
+   Centred on its disc, its side read off the glyph's box against its icon's: the attack's the disc's own, the jump's
+   1.26 and the sprint's 0.985 of its icon's 128 pixels, and the aim's the 54 pixels it was measured in */
 .action {
   position: absolute;
   padding: 0;
@@ -112,35 +112,35 @@ onUnmounted(() => {
 }
 
 .attack {
-  --glyph-size: calc(var(--unit) * 189.6);
-  right: calc(var(--unit) * 280.5);
-  bottom: calc(var(--unit) * 157.3);
-  width: calc(var(--unit) * 189.6);
-  height: calc(var(--unit) * 189.6);
+  --glyph-size: calc(var(--unit) * 151.7);
+  right: calc(var(--unit) * 209.9);
+  bottom: calc(var(--unit) * 125.8);
+  width: calc(var(--unit) * 151.7);
+  height: calc(var(--unit) * 151.7);
 }
 
 .aim {
-  --glyph-size: calc(var(--unit) * 62.4);
-  right: calc(var(--unit) * 581.2);
-  bottom: calc(var(--unit) * 229);
-  width: calc(var(--unit) * 85.6);
-  height: calc(var(--unit) * 85.6);
+  --glyph-size: calc(var(--unit) * 49.9);
+  right: calc(var(--unit) * 450.4);
+  bottom: calc(var(--unit) * 183.2);
+  width: calc(var(--unit) * 68.5);
+  height: calc(var(--unit) * 68.5);
 }
 
 .jump,
 .sprint {
-  right: calc(var(--unit) * 122.1);
-  width: calc(var(--unit) * 141.1);
-  height: calc(var(--unit) * 141.1);
+  right: calc(var(--unit) * 83.1);
+  width: calc(var(--unit) * 112.9);
+  height: calc(var(--unit) * 112.9);
 }
 
 .jump {
-  --glyph-size: calc(var(--unit) * 186.5);
-  bottom: calc(var(--unit) * 300.6);
+  --glyph-size: calc(var(--unit) * 149.2);
+  bottom: calc(var(--unit) * 240.5);
 }
 
 .sprint {
-  --glyph-size: calc(var(--unit) * 145.8);
-  bottom: calc(var(--unit) * 78.6);
+  --glyph-size: calc(var(--unit) * 116.6);
+  bottom: calc(var(--unit) * 62.9);
 }
 </style>

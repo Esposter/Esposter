@@ -16,57 +16,73 @@ const { gameText, health, level, maxHealth } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The member on the field's HP bar at the bottom's middle, its level before it and its HP under it, whole numbers as
-       The game writes them -->
+  <!-- The member on the field's HP bar filling its container at the bottom's middle, its HP over it and its level before
+       It, whole numbers as the game writes them -->
   <div class="health">
     <span class="level">{{ fillGameTextValues(gameText[GameTextKey.LevelFormat], level) }}</span>
-    <div class="bar">
-      <div
-        class="track"
-        :aria-label="gameText[GameTextKey.Health]"
-        :aria-valuemax="Math.round(maxHealth)"
-        aria-valuemin="0"
-        :aria-valuenow="Math.ceil(health)"
-        role="meter"
-      >
-        <span class="fill" :style="{ width: `${(health / maxHealth) * 100}%` }" />
-      </div>
-      <span aria-hidden="true">{{ Math.ceil(health) }}/{{ Math.round(maxHealth) }}</span>
+    <div
+      class="track"
+      :aria-label="gameText[GameTextKey.Health]"
+      :aria-valuemax="Math.round(maxHealth)"
+      aria-valuemin="0"
+      :aria-valuenow="Math.ceil(health)"
+      role="meter"
+    >
+      <span class="fill" :style="{ width: `${(health / maxHealth) * 100}%` }" />
     </div>
+    <span class="value" aria-hidden="true">{{ Math.ceil(health) }} / {{ Math.round(maxHealth) }}</span>
   </div>
 </template>
 
 <style scoped>
-/* Provisional: the bar's size, colours and type, and where the level and the numbers sit, measured off a recording of
-   The English PC client's world HUD */
+/* The bar fills its container, the 512 by 20 canvas units the game draws at half scale, so every length here is in
+   Its units. Measured off the English PC client's world HUD at 1080 high and the mobile client's at 934:
+   The bar's ends come to a point 7.5 units long, its fill is a flat lime over a black at two fifths, its HP is set 28
+   Units high on its middle, and its level 25 high stands 24 units before its point */
 .health {
-  display: flex;
-  align-items: flex-start;
+  position: relative;
+  height: 100%;
   color: #fff;
-  font-size: calc(var(--unit) * 18);
-  gap: calc(var(--unit) * 10);
   line-height: 1;
-  text-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.7);
-}
-
-.bar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: calc(var(--unit) * 4);
+  text-shadow: 0 0 calc(var(--canvas-unit) * 5) rgb(0 0 0 / 0.7);
 }
 
 .track {
-  width: calc(var(--unit) * 340);
-  height: calc(var(--unit) * 12);
+  height: 100%;
   overflow: hidden;
-  border-radius: calc(var(--unit) * 6);
   background: rgb(0 0 0 / 0.4);
+  clip-path: polygon(
+    calc(var(--canvas-unit) * 7.5) 0,
+    calc(100% - var(--canvas-unit) * 7.5) 0,
+    100% 50%,
+    calc(100% - var(--canvas-unit) * 7.5) 100%,
+    calc(var(--canvas-unit) * 7.5) 100%,
+    0 50%
+  );
 }
 
 .fill {
   display: block;
   height: 100%;
-  background: #8fd14f;
+  background: #93d621;
+}
+
+.level,
+.value {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  white-space: nowrap;
+}
+
+.level {
+  right: calc(100% + var(--canvas-unit) * 24);
+  font-size: calc(var(--canvas-unit) * 25);
+}
+
+.value {
+  left: 50%;
+  font-size: calc(var(--canvas-unit) * 28);
+  translate: -50% -50%;
 }
 </style>

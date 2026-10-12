@@ -8,17 +8,22 @@ export const ASCENSION_PHASE_COUNT = 6;
 // App through its fonts module, the parity page and the visual suite from `@fontsource/signika`
 export const GAME_FONT_FAMILY = '"HYWenHei 85W", "HYWenHei-85W", Signika, ui-sans-serif, sans-serif';
 // The game lays its interface out on a 1920 by 1080 screen scaled to fit the window's height or its width, whichever
-// Is less, so a unit is that screen's pixel in the window's own container
-export const GAME_UNIT = "min(100cqh / 1080, 100cqw / 1920)";
+// Is less, and then by the client's interface scale, so a unit is that screen's pixel in the window's own container
+export const GAME_UNIT = "calc(min(100cqh / 1080, 100cqw / 1920) * var(--interface-scale))";
 // The game's interface canvas: its RectTransforms are laid out on a 1600 by 900 reference, scaled to fit the window's
 // Smaller axis as the screen is, so a canvas unit is 1.2 screen units at 1080 high (a piece 128 plus 32 canvas units
 // Up reads 192 pixels on the 1080 high recording)
-export const GAME_CANVAS_UNIT = "min(100cqh / 900, 100cqw / 1600)";
+export const GAME_CANVAS_UNIT = "calc(min(100cqh / 900, 100cqw / 1600) * var(--interface-scale))";
 // How far the canvas stands in from each side of a screen wider than 16:9: its spare width, up to 71 screen units,
 // As the corner buttons show on a 2560 by 1080 and a 3440 by 1440 recording alike, so the game widens its margin
 // By a fixed step rather than by all the spare width. A piece anchored to a side rides on the canvas's side, not
-// The screen's
-export const GAME_CANVAS_INSET = "min(var(--unit) * 71, (100cqw - var(--unit) * 1920) / 2)";
+// The screen's. The spare width is the window's own, whatever the interface's scale
+export const GAME_CANVAS_INSET = "min(var(--unit) * 71, (100cqw - min(100cqh * 16 / 9, 100cqw)) / 2)";
+// The mobile client draws its whole interface a quarter larger than the PC client, its canvas 1280 by 720 where the
+// PC's is 1600 by 900. Its HP bar, the 512 by 20 container at half scale, reads 329 pixels wide and 75 up on a phone
+// Recording 934 high and 202 wide and 46 up on another 576 high, 724 and 727 canvas units high, and the Paimon
+// Button, the quest toggle and the chat button stand 76.5 pixels in on the first, 71 of its screen units
+export const MOBILE_INTERFACE_SCALE = 1.25;
 // The canvas as a rect of its own, the full screen's: a piece whose parent rect is this one is laid on the canvas
 export const GAME_CANVAS_RECT: CanvasRect = {
   anchorMax: [1, 1],

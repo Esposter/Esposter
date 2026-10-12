@@ -206,27 +206,28 @@ onUnmounted(() => {
 }
 
 /* The touch layout's skill and burst as `hud-world-pickup` shows them, each a disc as the action buttons' are, measured
-   In that recording's pixels from the right edge and the foot of `GrpActionBtn` at 1080 / 934 units a pixel: the
-   Skill's of radius 61 centred 482.6 in and 129 up, and the burst's of radius 44.5 at 629.1 in and 93.5 up. Each icon's
+   In that recording's pixels from the right edge and the foot of `GrpActionBtn` at 864 / 934 units a pixel, as the
+   Action buttons are: the skill's of radius 61 centred 466.9 in and 129 up, and the burst's of radius 44.5 at 613.4 in
+   And 93.5 up. Each icon's
    Square is 1.355 of the skill's disc and 1.048 of the burst's, Skyward Sonnet's 84 by 90 pixel mark being 65 by 70 of
    Its icon's 128 and Wind's Grand Ode's inner circle 37.5 pixels across against its icon's 51.5 */
 .touch .skill {
-  --glyph-size: calc(var(--unit) * 141.1 * 1.355);
+  --glyph-size: calc(var(--unit) * 112.9 * 1.355);
 
-  right: calc(var(--unit) * 487.5);
-  bottom: calc(var(--unit) * 78.6);
-  width: calc(var(--unit) * 141.1);
-  height: calc(var(--unit) * 141.1);
+  right: calc(var(--unit) * 375.5);
+  bottom: calc(var(--unit) * 62.9);
+  width: calc(var(--unit) * 112.9);
+  height: calc(var(--unit) * 112.9);
   background: conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), v-bind(ACTION_BUTTON_BACKGROUND) 0);
 }
 
 .touch .burst {
-  --glyph-size: calc(var(--unit) * 102.9 * 1.048);
+  --glyph-size: calc(var(--unit) * 82.3 * 1.048);
 
-  right: calc(var(--unit) * 676);
-  bottom: calc(var(--unit) * 56.7);
-  width: calc(var(--unit) * 102.9);
-  height: calc(var(--unit) * 102.9);
+  right: calc(var(--unit) * 526.2);
+  bottom: calc(var(--unit) * 45.3);
+  width: calc(var(--unit) * 82.3);
+  height: calc(var(--unit) * 82.3);
   background:
     conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), transparent 0),
     linear-gradient(to top, var(--burst-fill) calc(var(--energy) * 100%), v-bind(ACTION_BUTTON_BACKGROUND) 0);

@@ -102,7 +102,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
        Itself, and on a touch screen the touch layout's action buttons beside the skill and burst and the touch controls
        Under them all. Everything between the pieces lets the pointer through to the world, and a press on a piece stays
        The piece's, never reaching the world's input as an attack -->
-  <GameScreen class="hud" @mousedown.stop>
+  <GameScreen class="hud" :is-touch @mousedown.stop>
     <HudTouch v-if="isTouch" :input />
     <!-- The page as the game's tree under `GrpMainPage` nests it: each piece a `GameRect` placed by its RectTransform
          inside its game parent's -->
