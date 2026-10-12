@@ -32,6 +32,14 @@ describe("spaceWordBoundaries type", () => {
     expectTypeOf(prettify("0A")).toEqualTypeOf<"0 A">();
   });
 
+  test("a boundary consumed by a split is checked against the character after it", () => {
+    expect.hasAssertions();
+
+    expectTypeOf(prettify("v2Beta")).toEqualTypeOf<"v 2 Beta">();
+    expectTypeOf(prettify("a1b")).toEqualTypeOf<"a 1 b">();
+    expectTypeOf(prettify("1bC")).toEqualTypeOf<"1 b C">();
+  });
+
   test("an uppercase run and a separator are not word boundaries, the runtime regex splits neither", () => {
     expect.hasAssertions();
 
