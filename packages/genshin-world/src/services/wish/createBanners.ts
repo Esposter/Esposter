@@ -10,8 +10,8 @@ import {
   CHARACTER_EVENT_FEATURED_FOUR_STAR_IDS,
   CHARACTER_EVENT_FIVE_STAR_IDS,
   CHARACTER_EVENT_FOUR_STAR_IDS,
-  CHARACTER_EVENT_WEAPON_IDS,
   STANDARD_WISH_CHARACTER_IDS,
+  STANDARD_WISH_FOUR_AND_THREE_STAR_WEAPON_IDS,
   STANDARD_WISH_WEAPON_IDS,
 } from "#src/services/wish/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -56,7 +56,7 @@ export const createBanners = (
   const characterEventItems = [
     ...toWishItems(CHARACTER_EVENT_FIVE_STAR_IDS, WishItemKind.Character),
     ...toWishItems(CHARACTER_EVENT_FOUR_STAR_IDS, WishItemKind.Character),
-    ...toWishItems(CHARACTER_EVENT_WEAPON_IDS, WishItemKind.Weapon),
+    ...toWishItems(STANDARD_WISH_FOUR_AND_THREE_STAR_WEAPON_IDS, WishItemKind.Weapon),
   ];
   return [
     toBanner(

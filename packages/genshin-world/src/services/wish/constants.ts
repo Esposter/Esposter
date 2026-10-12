@@ -65,16 +65,25 @@ export const STANDARD_WISH_CHARACTER_IDS: readonly number[] = [
   10_000_020, 10_000_045, 10_000_053, 10_000_097, 10_000_059, 10_000_043, 10_000_050, 10_000_023, 10_000_025,
   10_000_044, 10_000_048, 10_000_077, 10_000_064,
 ];
-// The standard wish's weapons by the game's ids, as the wiki lists them: Amos' Bow, Aquila Favonia, Lost Prayer to the
-// Sacred Winds, Primordial Jade Winged-Spear, Skyward Atlas, Skyward Blade, Skyward Harp, Skyward Pride, Skyward Spine
-// And Wolf's Gravestone at five stars; Dragon's Bane, Eye of Perception, the five Favonius weapons, Lion's Roar,
-// Rainslasher, Rust, the four Sacrificial weapons, The Bell, The Flute, The Stringless and The Widsith at four; and
-// Black Tassel, Bloodtainted Greatsword, Cool Steel, Debate Club, Emerald Orb, Ferrous Shadow, Harbinger of Dawn, Magic
-// Guide, Raven Bow, Sharpshooter's Oath, Skyrider Sword, Slingshot and Thrilling Tales of Dragon Slayers at three
+// The standard wish's five-star weapons by the game's ids, as the wiki lists them: Amos' Bow, Aquila Favonia, Lost Prayer to
+// the Sacred Winds, Primordial Jade Winged-Spear, Skyward Atlas, Skyward Blade, Skyward Harp, Skyward Pride, Skyward Spine
+// and Wolf's Gravestone
+export const STANDARD_WISH_FIVE_STAR_WEAPON_IDS: readonly number[] = [
+  15_502, 11_501, 14_502, 13_505, 14_501, 11_502, 15_501, 12_501, 13_502, 12_502,
+];
+// The standard wish's four-star and three-star weapons by the game's ids, as the wiki lists them: Dragon's Bane, Eye of
+// Perception, the five Favonius weapons, Lion's Roar, Rainslasher, Rust, the four Sacrificial weapons, The Bell, The Flute,
+// The Stringless and The Widsith at four; and Black Tassel, Bloodtainted Greatsword, Cool Steel, Debate Club, Emerald Orb,
+// Ferrous Shadow, Harbinger of Dawn, Magic Guide, Raven Bow, Sharpshooter's Oath, Skyrider Sword, Slingshot and Thrilling
+// Tales of Dragon Slayers at three
+export const STANDARD_WISH_FOUR_AND_THREE_STAR_WEAPON_IDS: readonly number[] = [
+  13_401, 14_409, 14_401, 12_401, 13_407, 11_401, 15_401, 11_405, 12_405, 15_405, 15_403, 14_403, 12_403, 11_403,
+  12_402, 11_402, 15_402, 14_402, 13_303, 12_302, 11_301, 12_305, 14_304, 12_301, 11_302, 14_301, 15_301, 15_302,
+  11_306, 15_304, 14_302,
+];
 export const STANDARD_WISH_WEAPON_IDS: readonly number[] = [
-  15_502, 11_501, 14_502, 13_505, 14_501, 11_502, 15_501, 12_501, 13_502, 12_502, 13_401, 14_409, 14_401, 12_401,
-  13_407, 11_401, 15_401, 11_405, 12_405, 15_405, 15_403, 14_403, 12_403, 11_403, 12_402, 11_402, 15_402, 14_402,
-  13_303, 12_302, 11_301, 12_305, 14_304, 12_301, 11_302, 14_301, 15_301, 15_302, 11_306, 15_304, 14_302,
+  ...STANDARD_WISH_FIVE_STAR_WEAPON_IDS,
+  ...STANDARD_WISH_FOUR_AND_THREE_STAR_WEAPON_IDS,
 ];
 // The beginners' wish's characters by the game's ids, as the wiki lists them: Diluc, Jean, Keqing, Mona and Qiqi at
 // Five stars, and Barbara, Beidou, Bennett, Chongyun, Fischl, Ningguang, Razor, Sucrose, Xiangling and Xingqiu at four.
@@ -97,9 +106,4 @@ export const CHARACTER_EVENT_FIVE_STAR_IDS: readonly number[] = [
 export const CHARACTER_EVENT_FOUR_STAR_IDS: readonly number[] = [
   10_000_014, 10_000_032, 10_000_036, 10_000_039, 10_000_031, 10_000_027, 10_000_034, 10_000_020, 10_000_045,
   10_000_043, 10_000_023,
-];
-export const CHARACTER_EVENT_WEAPON_IDS: readonly number[] = [
-  13_401, 14_409, 14_401, 12_401, 13_407, 11_401, 15_401, 11_405, 12_405, 15_405, 15_403, 14_403, 12_403, 11_403,
-  12_402, 11_402, 15_402, 14_402, 13_303, 12_302, 11_301, 12_305, 14_304, 12_301, 11_302, 14_301, 15_301, 15_302,
-  11_306, 15_304, 14_302,
 ];
