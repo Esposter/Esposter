@@ -1,7 +1,9 @@
 name: 🏗️ Pulumi
 
 on:
-  pull_request:
+  push:
+    branches:
+      - ai/queue
     paths:
       - "apps/infra/**"
       - ".github/workflows/Pulumi.yaml"
@@ -10,10 +12,9 @@ on:
 permissions:
   id-token: write
   contents: read
-  pull-requests: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
@@ -40,7 +41,6 @@ jobs:
           command: preview
           stack-name: prod
           work-dir: apps/infra
-          comment-on-pr: true
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           ARM_USE_OIDC: true
