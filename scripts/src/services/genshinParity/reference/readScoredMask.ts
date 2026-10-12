@@ -1,5 +1,5 @@
+import type { SilhouetteInk } from "#src/models/genshinParity/reference/SilhouetteInk";
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
-import type { ParitySilhouette } from "#src/models/genshinParity/shared/ParitySilhouette";
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 import { computeScoredMask } from "#src/services/recreation/image/computeScoredMask";
@@ -10,7 +10,7 @@ import { computeScoredMask } from "#src/services/recreation/image/computeScoredM
 // Never does. The whole region when the reference names neither
 export const readScoredMask = (
   { mask, silhouettes = [] }: ParityReference,
-  inks: { isInk: Uint8Array; silhouette: ParitySilhouette }[],
+  inks: SilhouetteInk[],
   region: ImageRegion,
   width: number,
   height: number,

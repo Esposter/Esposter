@@ -1,3 +1,4 @@
+import type { SilhouetteInk } from "#src/models/genshinParity/reference/SilhouetteInk";
 import type { ParitySilhouette } from "#src/models/genshinParity/shared/ParitySilhouette";
 
 import { splitGlyph } from "#src/services/genshinParity/shared/splitGlyph";
@@ -8,7 +9,7 @@ import sharp from "sharp";
 export const readSilhouetteInks = (
   referencePath: string,
   silhouettes: readonly ParitySilhouette[],
-): Promise<{ isInk: Uint8Array; silhouette: ParitySilhouette }[]> =>
+): Promise<SilhouetteInk[]> =>
   Promise.all(
     silhouettes.map(async (silhouette) => {
       const { data, info } = await sharp(referencePath)
