@@ -12,12 +12,15 @@ import { describe, expect, test } from "vitest";
 describe("readGcsimCitedCandidates", () => {
   const FOLDER = "aino";
   const ASC_GO = "package aino\n\nfunc tick() {\n\tadd(1.5 * 60)\n}\n";
+  const AREA_GO =
+    "package albedo\n\nfunc burst() {\n\tcombat.NewCircleHitOnTargetFanAngle(c.Core.Combat.Player(), nil, 8, 120)\n}\n";
   const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
   const createGcsimDirectory = () => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
     writeFileSync(join(directory, "internal", "characters", FOLDER, "asc.go"), ASC_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "loop.go"), LOOP_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "area.go"), AREA_GO);
     return directory;
   };
 
@@ -78,6 +81,45 @@ describe("readGcsimCitedCandidates", () => {
     expect(classifyKitValue([10, 15, 21], candidates, [], false)).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: [10, 15, 21],
+    });
+  });
+
+  test("a cited area whose constructor's radius and fan angle equal the object's gives the cited area", () => {
+    expect.hasAssertions();
+    const angle = (120 * Math.PI) / 180;
+    const overlay: KitOverlay = {
+      "burst.hits.0.area": {
+        file: "area.go",
+        line: 4,
+        source: KitSource.Gcsim,
+        value: { angle, height: 2, radius: 8 },
+      },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("burst.hits.0.area")?.[0];
+    expect(candidate?.value).toStrictEqual({ angle, height: 2, radius: 8 });
+    expect(candidate?.provenance).toStrictEqual({
+      file: "internal/characters/aino/area.go",
+      line: 4,
+      source: KitSource.Gcsim,
+    });
+  });
+
+  test("a cited area whose radius the constructor does not give reads as DiffersFromSource, with the constructor's area", () => {
+    expect.hasAssertions();
+    const angle = (120 * Math.PI) / 180;
+    const overlay: KitOverlay = {
+      "burst.hits.0.area": {
+        file: "area.go",
+        line: 4,
+        source: KitSource.Gcsim,
+        value: { angle, height: 2, radius: 9 },
+      },
+    };
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("burst.hits.0.area") ?? [];
+    expect(candidates[0]?.value).toStrictEqual({ angle, height: 2, radius: 8 });
+    expect(classifyKitValue({ angle, height: 2, radius: 9 }, candidates, [], false)).toStrictEqual({
+      cause: KitProvisionalCause.DiffersFromSource,
+      value: { angle, height: 2, radius: 9 },
     });
   });
 });
