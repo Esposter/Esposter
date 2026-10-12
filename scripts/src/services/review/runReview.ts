@@ -215,12 +215,14 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
   if (passedCount < windows.length) {
     const { base } = takeOne(windows, passedCount);
     const resume = mode === ReviewMode.Range ? ` Resume with \`from=${base}\`.` : "";
-    const cause = {
-      [ReviewWindowStatus.Failed]: `window ${passedCount} did not pass`,
-      [ReviewWindowStatus.Limited]: `Claude's usage limit stopped window ${passedCount}`,
-      [ReviewWindowStatus.Passed]: `window ${passedCount} did not pass`,
-      [ReviewWindowStatus.Unreached]: `the deadline left window ${passedCount} unreviewed`,
-    }[takeOne(settled, passedCount)];
+    // The window that ends the prefix never passed, so it failed unless the limit or the deadline stopped it
+    const blockingStatus = takeOne(settled, passedCount);
+    const cause =
+      blockingStatus === ReviewWindowStatus.Limited
+        ? `Claude's usage limit stopped window ${passedCount}`
+        : blockingStatus === ReviewWindowStatus.Unreached
+          ? `the deadline left window ${passedCount} unreviewed`
+          : `window ${passedCount} did not pass`;
     summary.push("", `${cause}, so the windows after it did not pass.${resume}`);
   }
   summary.push(...batchErrors, ...issueErrors.map((error) => `- ${error}`));
