@@ -20,6 +20,23 @@ const readColour = (colors: Readonly<Record<string, Vector4Tuple>>, name: string
   return colour && [colour[0], colour[1], colour[2]];
 };
 
+// An outline's width knots, the first three of the four the game gives, or none where the material holds no such knots
+const readKnots = (colors: Readonly<Record<string, Vector4Tuple>>, name: string): undefined | Vector3Tuple => {
+  const knots = colors[name];
+  return knots && [knots[0], knots[1], knots[2]];
+};
+
+// An outline's offset along the view normal, "_MaxOutlineZOffset" times 0.01, which the vertex's blue scales from its
+// Middle where the material's block-B switch is set (Exact on the form, Provisional on the blue channel's meaning)
+const readOutlineOffset = (
+  nameFloatMap: ReadonlyMap<string, number>,
+): undefined | { isBlueScaled: boolean; size: number } => {
+  const size = nameFloatMap.get("_MaxOutlineZOffset");
+  return size === undefined
+    ? undefined
+    : { isBlueScaled: readSwitch(nameFloatMap, "_OutlineOffsetBlockBChannel") ?? false, size: size * 0.01 };
+};
+
 // A material's shading colours for each region, the region one's by the name the game gives it and the later regions' by
 // Its number after it, white where the material holds none
 const readRegionColors = (colors: Readonly<Record<string, Vector4Tuple>>, name: string): ShadingRegionColours => {
@@ -44,15 +61,17 @@ export const createAvatarShadingInputs = (
   const nameFloatMap = new Map(Object.entries(floats));
   const inputs: Partial<CharacterShadingInputs> = {
     color,
+    coolShadowMultiplyColors: readRegionColors(colors, "_CoolShadowMultColor"),
     faceDraw: createFaceDraw({
       flipFactor: nameFloatMap.get("_FaceFlipFactor"),
       rotateOffset: nameFloatMap.get("_FaceMapRotateOffset"),
     }),
     faceMap: slotTextureMap.get("_FaceMapTex"),
     faceSoftness: nameFloatMap.get("_FaceMapSoftness"),
-    coolShadowMultiplyColors: readRegionColors(colors, "_CoolShadowMultColor"),
     isCoolShadow: readSwitch(nameFloatMap, "_UseCoolShadowColorOrTex"),
     isLightMapAo: readSwitch(nameFloatMap, "_UseLightMapColorAO"),
+    // The game's outline weights its width by each vertex's colour alpha, so its width is read from the vertex, not the material
+    isOutlineVertexWeighted: true,
     isVertexAo: readSwitch(nameFloatMap, "_UseVertexColorAO"),
     isVertexRampWidth: readSwitch(nameFloatMap, "_UseVertexRampWidth"),
     kind,
@@ -62,6 +81,9 @@ export const createAvatarShadingInputs = (
     metalDarkColor: readColour(colors, "_MTMapDarkColor"),
     metalLightColor: readColour(colors, "_MTMapLightColor"),
     metalTexture: slotTextureMap.get("_MTMap"),
+    outlineDepths: readKnots(colors, "_OutlineWidthAdjustZs"),
+    outlineOffset: readOutlineOffset(nameFloatMap),
+    outlineScales: readKnots(colors, "_OutlineWidthAdjustScales"),
     rampTexture: slotTextureMap.get("_PackedShadowRampTex"),
     // A region the material holds no colour for takes the material's own, as a region with no tint of its own does
     regionTints: {

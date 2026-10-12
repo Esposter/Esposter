@@ -38,6 +38,8 @@ describe(createCharacterMaterial, () => {
     expect(characterMaterial.outputNode).not.toBeNull();
     expect(characterMaterial.edge).toStrictEqual({
       color: [0, 0, 0, 1],
+      isVertexWeighted: false,
+      offset: undefined,
       size: 1,
       widthKnots: { depths: [1, 2, 3], scales: [1, 1, 1] },
     });

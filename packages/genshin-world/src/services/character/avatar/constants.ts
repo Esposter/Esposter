@@ -8,6 +8,8 @@ export const AVATAR_COMPONENT = "playergirl";
 // Below the component's assets by its export folder, as a witness's meshes and textures are
 // The one slot a texture is a colour in. Every other slot is data, read as it is stored
 export const AVATAR_COLOUR_TEXTURE_SLOT = "_MainTex";
+// The game's outline width is its "_OutlineWidth" times this factor, as its vertex program reads the width (Exact)
+export const AVATAR_OUTLINE_WIDTH_FACTOR = 0.41425;
 export const AVATAR_TEXTURE_FOLDER = "Texture2D";
 // The texture slots a material's shading reads, by the game's property names
 export const AVATAR_TEXTURE_SLOTS = [

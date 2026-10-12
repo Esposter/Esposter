@@ -10,6 +10,7 @@ import type { Texture } from "three";
 import { alignArmRest } from "#src/services/character/avatar/alignArmRest";
 import {
   AVATAR_HUMANOID_MMD_NAME_MAP,
+  AVATAR_OUTLINE_WIDTH_FACTOR,
   AVATAR_TEXTURE_SLOTS,
   PACK_ARM_REST_CHAINS,
 } from "#src/services/character/avatar/constants";
@@ -52,14 +53,18 @@ const createAvatarMaterial = (
     const texture = file === undefined ? undefined : textureFileMap.get(file);
     if (texture) slotTextureMap.set(slot, texture);
   }
+  // The game's outline is the material's own edge, in its colour and its width, so the avatar's material carries both
+  // The outline's colour is the material's colour times the outline's, so the diffuse carries the colour
+  const materialColour = avatarMaterial.colors._Color ?? [1, 1, 1, 1];
+  const outlineColour = avatarMaterial.colors._OutlineColor ?? [0, 0, 0, 1];
   const pmxMaterial: PmxMaterial = {
     ambientColor: [0, 0, 0],
-    diffuseColor: [1, 1, 1, 1],
-    edgeColor: [0, 0, 0, 0],
-    edgeSize: 0,
+    diffuseColor: [materialColour[0], materialColour[1], materialColour[2], 1],
+    edgeColor: outlineColour,
+    edgeSize: (avatarMaterial.floats._OutlineWidth ?? 0) * AVATAR_OUTLINE_WIDTH_FACTOR,
     indexCount,
     isDoubleSided: false,
-    isOutlined: false,
+    isOutlined: true,
     isToonShared: false,
     name: materialName,
     specularColor: [0, 0, 0],

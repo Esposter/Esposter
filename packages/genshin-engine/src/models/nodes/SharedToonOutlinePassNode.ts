@@ -4,7 +4,7 @@ import type { Material, Node, NodeFrame, NodeMaterial, Renderer } from "three/we
 import { createOutlineScaleNode } from "#src/character/shading/createOutlineScaleNode";
 import { createOutlineMaterial } from "#src/models/nodes/createOutlineMaterial";
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
-import { float, vec4 } from "three/tsl";
+import { float, vec4, vertexColor } from "three/tsl";
 import { ToonOutlinePassNode } from "three/webgpu";
 
 // Three keys an outline material by the toon material it outlines and builds each one from scratch, though every one is
@@ -50,15 +50,21 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     return undefined;
   }
 
-  #getEdgeOutlineMaterial({ color, size, widthKnots }: ToonEdge): NodeMaterial {
-    const key = `${color.join(",")}:${size}:${widthKnots.depths.join(",")}:${widthKnots.scales.join(",")}`;
+  #getEdgeOutlineMaterial({ color, isVertexWeighted, offset, size, widthKnots }: ToonEdge): NodeMaterial {
+    const key = `${color.join(",")}:${size}:${widthKnots.depths.join(",")}:${widthKnots.scales.join(",")}:${isVertexWeighted}:${offset?.size}:${offset?.isBlueScaled}`;
     let edgeOutlineMaterial = this.#edgeOutlineMaterials.get(key);
     if (edgeOutlineMaterial === undefined) {
       const [red, green, blue, alpha] = color;
+      const weight = isVertexWeighted ? vertexColor().a : float(1);
       const width = this.thicknessNode
         .mul(float(size))
-        .mul(createOutlineScaleNode(widthKnots.depths, widthKnots.scales));
-      edgeOutlineMaterial = createOutlineMaterial(vec4(red, green, blue, alpha), width);
+        .mul(createOutlineScaleNode(widthKnots.depths, widthKnots.scales))
+        .mul(weight);
+      // The offset's blue is read from the vertex colour and centred on a half, where the material asks for it
+      const offsetNode = offset
+        ? float(offset.size).mul(offset.isBlueScaled ? vertexColor().b.sub(0.5) : float(1))
+        : undefined;
+      edgeOutlineMaterial = createOutlineMaterial(vec4(red, green, blue, alpha), width, offsetNode);
       this.#edgeOutlineMaterials.set(key, edgeOutlineMaterial);
     }
     return edgeOutlineMaterial;

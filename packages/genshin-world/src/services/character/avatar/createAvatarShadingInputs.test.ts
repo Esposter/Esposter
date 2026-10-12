@@ -17,6 +17,7 @@ describe("createAvatarShadingInputs", () => {
     expect(rest).toStrictEqual({
       color: [0.5, 0.25, 1],
       coolShadowMultiplyColors: WHITE_REGIONS,
+      isOutlineVertexWeighted: true,
       kind: CharacterMaterialKind.Face,
       regionTints: { five: [0.5, 0.25, 1], four: [0.5, 0.25, 1], three: [0.5, 0.25, 1], two: [0.5, 0.25, 1] },
       shadowMultiplyColors: WHITE_REGIONS,

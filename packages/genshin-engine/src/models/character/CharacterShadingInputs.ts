@@ -33,6 +33,8 @@ export interface CharacterShadingInputs {
   isEmissionFromAlpha: boolean;
   // Whether the lightmap's green is the threshold's occlusion, "_UseLightMapColorAO"
   isLightMapAo: boolean;
+  // Whether the vertex colour's alpha scales the outline's width, as the game's outline reads it
+  isOutlineVertexWeighted?: boolean;
   // Whether the vertex's ambient occlusion scales the threshold, and its value, "_UseVertexColorAO"
   isVertexAo: boolean;
   // Whether the vertex's ramp weight scales the band, "_UseVertexRampWidth", and its value
@@ -51,6 +53,8 @@ export interface CharacterShadingInputs {
   metalTexture?: Texture;
   // The outline's width knots, "_OutlineWidthAdjustZs" and "_OutlineWidthAdjustScales"
   outlineDepths: Vector3Tuple;
+  // The outline's offset along the view-space normal, from the game's "_MaxOutlineZOffset", where a game model has one
+  outlineOffset?: { isBlueScaled: boolean; size: number };
   outlineScales: Vector3Tuple;
   // The packed shadow ramp "_PackedShadowRampTex", read as its row, and the layout it is read by: the game's and the
   // World's shared ramps are rows, and a pack's own toon is a column

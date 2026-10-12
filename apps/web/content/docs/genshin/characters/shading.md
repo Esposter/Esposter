@@ -272,7 +272,9 @@ W  = T_w * s * "_OutlineWidth" * "_OutlineCorrectionWidth" * v1.w * 0.41425
 p.xy += W * N_screen                        (N_screen the normal projected to the screen)
 ```
 
-`T_w` is the red channel of texture "t0" sampled at the vertex's second texture coordinate, at lod 0 (Exact on the channel and the lod; Provisional on the texture's name, which the slot table does not yet give). `v1.w` is the vertex's own width weight. The offset along the view-space normal, "_MaxOutlineZOffset" times 0.01, is scaled by "_OutlineOffsetBlockBChannel" as well: it is `v1.z - 0.5` where that flag is set, and 1 where it is not (Exact on the form, Provisional on the blue channel's meaning).
+`T_w` is the red channel of texture "t0" sampled at the vertex's second texture coordinate, at lod 0 (Exact on the channel and the lod; Provisional on the texture's name, which the slot table does not yet give). `v1.w` is the vertex's colour alpha, so a vertex with none is not pushed out at all. The offset along the view-space normal, "_MaxOutlineZOffset" times 0.01, is scaled by "_OutlineOffsetBlockBChannel" as well: it is `v1.z - 0.5` where that flag is set, and 1 where it is not (Exact on the form, Provisional on the blue channel's meaning).
+
+The code (`createOutlineMaterial` and `createAvatarShadingInputs`) takes the knots, the vertex weight and the offset from the game, and the width as `"_OutlineWidth" * 0.41425` with `T_w` taken as 1, since the slot is not yet named and no texture is read. The offset is the game's form. "_OutlineCorrectionWidth" is not read: the face holds none, so the code takes 1 where a material holds none, which is the game's default. The pack's outline is the world's own, unchanged.
 
 ### The colour (pixel 885)
 
@@ -285,6 +287,8 @@ C  = Oc + m * (Sh - Oc)                          (m the region's mask, read from
 ```
 
 The output colour uses the same tone form as the body's "o1": `O1 = 0.5 + (C_d - 0.5) * (1 + K)` with `C_d` the desaturation of `C`, where "_DesaturateScale" and "_ContrastScale" are read from the same registers as the body's (Exact).
+
+The code takes `Oc` as the outline colour for every pixel, tone-mapped as the body's is, and does not yet read the shade texture, the mask, or the regions' "_OutlineColor2" to "5": the mix toward the shade is not built, so an outline here is one flat colour.
 
 Nothing in the outline's equations has been fitted to a rendered outline, so no number is claimed for its width or colour.
 
@@ -314,7 +318,7 @@ Program 394 (keywords "ELEMENT_VIEW_ON", "HAS_CHARACTER_LIGHT", "MHY_SHADER_HIGH
 
 The values in the Lumine column are the game's own, read from its material bytes. They are not committed here as numbers; `inventory-values.txt` is the extracted record. A player's pack supplies only what its own file holds, so for a production pack the regions and the lightmap take their defaults.
 
-In development the Traveler's model reads these from the game's own values in `avatar.json`, not from a pack: the main texture, lightmap, metal map, packed shadow ramp and face map by their slots; the colours `_Color` and `_Color2` to `_Color5`, the metal colours and `_SpecularColor`; the floats `_Shininess`, `_SpecMulti`, `_LightArea` and `_FaceMapSoftness`; and the three `_UseLightMapColorAO`, `_UseVertexColorAO` and `_UseVertexRampWidth` switches. A value a material does not hold keeps its default. Two inputs are still at their default for the model: the region toggles, which are off, and the outline, which is the world's own (Provisional until the toggles' properties are read).
+In development the Traveler's model reads these from the game's own values in `avatar.json`, not from a pack: the main texture, lightmap, metal map, packed shadow ramp and face map by their slots; the colours `_Color` and `_Color2` to `_Color5`, the metal colours and `_SpecularColor`; the floats `_Shininess`, `_SpecMulti`, `_LightArea` and `_FaceMapSoftness`; and the three `_UseLightMapColorAO`, `_UseVertexColorAO` and `_UseVertexRampWidth` switches. A value a material does not hold keeps its default. The outline reads the game's own edge colour, width, width knots and offset, as "The outline" section sets out. The region toggles are still off, the outline's region colours are not yet read, and the outline's width is taken with `T_w` as 1 (Provisional until the toggles' properties are read).
 
 ## Open
 
