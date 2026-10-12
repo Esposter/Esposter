@@ -79,7 +79,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `mika`               | —                      |                                                                          |
 | `mona`               | —                      |                                                                          |
 | `mualani`            | 2026-10-13 · Haiku 5.5 |                                                                          |
-| `nahida`             | —                      |                                                                          |
+| `nahida`             | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `navia`              | —                      |                                                                          |
 | `nefer`              | —                      |                                                                          |
 | `neuvillette`        | —                      |                                                                          |
