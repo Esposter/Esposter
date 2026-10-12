@@ -16,6 +16,7 @@ Superlative Superstrength is a resource of up to 5 on the team's effects. His se
 - **Ushi is a taunt with no explosion, and gives its stack as an enemy's strike damages it.** Ushi flees without dealing damage, so it carries no explosion. Each strike it takes is a `TauntDamaged` event, which gives Itto a stack off a 2-second cooldown of his own, the talent's "only 1 stack can be gained in this way every 2s"; gcsim leaves that stack to a parameter that defaults to none, since its enemies do not strike.
 - **Masatsu Zetsugi's gauge is 1U**, the Durability of 25 gcsim gives it.
 - **Royal Descent ends as Itto leaves the field.** gcsim's `itto-exit` deletes the burst's ATK and ATK SPD on a swap, which its Geo conversion reads (`itto/burst.go`), so the burst's buff and infusion each end on a swap (`isEndedOnSwap`).
+- **The Arataki Kesagiri's areas, hitmarks and frames are not read from gcsim.** gcsim picks each slash's hitbox row and hitmark by the state the stacks leave, and subtracts a windup from the hitmark, so no line gives the record's value and they are Unsourced. Each slash's poise is cited at the line that sets it, and the multipliers and stamina wait for a reader that joins a slash to its talent row.
 
 ## Key files
 
