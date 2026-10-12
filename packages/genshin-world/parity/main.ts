@@ -30,7 +30,7 @@ import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { loadWitness } from "#src/services/scene/loadWitness";
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
-import { capitalize, jsonDateParse } from "@esposter/shared";
+import { capitalize, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { StoneNodeMaterial } from "genshin-engine";
 import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 
@@ -42,8 +42,8 @@ import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
 // Place of its own parts, from the layout the shooting browser serves there, claimed by the fixture's
-// `witnessComponents` entry `&witnessComponent=<name>` names, or else by the fixture's own claims. A tool sets the
-// Screen's props as it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on,
+// `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks, or else by the fixture's own
+// Claims. A tool sets the screen's props as it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on,
 // And renders a segment of the Login's music to score it
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
@@ -97,7 +97,13 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  const getClaims = (witnessComponent: string) => screen.witnessComponents?.[witnessComponent] ?? screen;
+  // A component the fixture does not list is a typo in the tool's URL, never a reason to measure with the screen's claims
+  const getClaims = (witnessComponent: string) => {
+    const claims = witnessComponent ? screen.witnessComponents?.[witnessComponent] : screen;
+    if (!claims)
+      throw new InvalidOperationError(Operation.Read, witnessComponent, "not a witness component of the screen");
+    return claims;
+  };
   // Lit as the login's stone is, by the game's deferred pass from its stone light, whichever scene draws the exports
   const parts = witnessLayoutUrl
     ? (
