@@ -9,6 +9,7 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 // The name an expression is rooted in, `attack` for `attack[c.NormalCounter][i]`
@@ -21,13 +22,26 @@ const getRootName = (expression: GoExpression): string | undefined => {
 const getName = (expression: GoExpression | undefined): string | undefined =>
   expression?.kind === GoExpressionKind.Identifier ? expression.name : undefined;
 
-// The name a literal at the position is assigned with `:=`, `ai := info.AttackInfo{`, read back past its qualified type
-const readAssignedName = (tokens: readonly GoToken[], position: number): string | undefined => {
+// The name a literal at the position is given to, by `:=` or `=`, `ai := info.AttackInfo{` or `c.skillAttackInfo =
+// Info.AttackInfo{`, read back past its qualified type. A literal a function returns takes that function's name, as a
+// Helper's does, `return info.AttackInfo{` in `func (c *char) a1AttackInfo()`
+const readVariableName = (tokens: readonly GoToken[], position: number): string | undefined => {
   let start = position;
   while (checkIsGoPunctuation(tokens[start - 1], ".") && tokens[start - 2]?.kind === GoTokenKind.Identifier) start -= 2;
-  return checkIsGoPunctuation(tokens[start - 1], ":=") && tokens[start - 2]?.kind === GoTokenKind.Identifier
+  if (tokens[start - 1]?.text === "return") return readFunctionName(tokens, start - 1);
+  return (checkIsGoPunctuation(tokens[start - 1], ":=") || checkIsGoPunctuation(tokens[start - 1], "=")) &&
+    tokens[start - 2]?.kind === GoTokenKind.Identifier
     ? tokens[start - 2]?.text
     : undefined;
+};
+
+// The name of the nearest function before the position, `a1AttackInfo` in `func (c *char) a1AttackInfo() info.AttackInfo {`
+const readFunctionName = (tokens: readonly GoToken[], position: number): string | undefined => {
+  let start = position;
+  while (start >= 0 && tokens[start]?.text !== "func") start--;
+  if (start < 0) return undefined;
+  const nameStart = checkIsGoPunctuation(tokens[start + 1], "(") ? skipGoBrackets(tokens, start + 1) : start + 1;
+  return tokens[nameStart]?.kind === GoTokenKind.Identifier ? tokens[nameStart]?.text : undefined;
 };
 
 // The locals of a file that name a slice of another name, `for i, mult := range attack[c.NormalCounter]` or
@@ -67,6 +81,9 @@ export const readGcsimAttacks = (
     const attacks: GcsimAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.text !== "AttackInfo" || !checkIsGoPunctuation(tokens[position + 1], "{")) continue;
+      // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens its body rather than a literal
+      const typeStart = checkIsGoPunctuation(tokens[position - 1], ".") ? position - 2 : position;
+      if (checkIsGoPunctuation(tokens[typeStart - 1], ")")) continue;
       const fieldMap = new Map<string, { expression: GoExpression; line: number }>();
       let cursor = position + 2;
       while (cursor < tokens.length && !checkIsGoPunctuation(tokens[cursor], "}")) {
@@ -99,7 +116,7 @@ export const readGcsimAttacks = (
         strikeType: getName(fieldMap.get("StrikeType")?.expression),
         talentVariable:
           multiplierField === undefined ? undefined : resolveAlias(getRootName(multiplierField.expression)),
-        variableName: readAssignedName(tokens, position),
+        variableName: readVariableName(tokens, position),
       });
     }
     return attacks;

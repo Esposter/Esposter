@@ -29,8 +29,11 @@ const addQueuedSlotHits = (
   attackTags: readonly string[],
 ): void => {
   const { add, addHit, toFile } = writer;
-  const { config, constantMap } = gcsim;
-  const framesFile = findGcsimConstant(constantMap, `${slot}Frames`)?.file;
+  const { attacks, config, constantMap } = gcsim;
+  // A slot's file is the one its frames are in, else the one its first attack literal is
+  const framesFile =
+    findGcsimConstant(constantMap, `${slot}Frames`)?.file ??
+    attacks.find(({ attackTag }) => attackTag !== undefined && attackTags.includes(attackTag))?.file;
   const fileHits = framesFile === undefined ? [] : getGcsimQueuedHits(gcsim, attackTags, framesFile);
   const [firstHit] = fileHits;
   if (firstHit === undefined) return;

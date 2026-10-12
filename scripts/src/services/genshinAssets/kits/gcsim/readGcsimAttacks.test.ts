@@ -42,4 +42,29 @@ describe(readGcsimAttacks, () => {
       },
     ]);
   });
+
+  test("names a literal a helper returns by the helper and a literal assigned to a field by the field", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package dehya",
+          "",
+          "func (c *char) a1AttackInfo() info.AttackInfo {",
+          "\treturn info.AttackInfo{AttackTag: attacks.AttackTagNormal}",
+          "}",
+          "",
+          "func (c *char) skill() {",
+          "\tc.skillAttackInfo = info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ variableName }) => variableName),
+    ).toStrictEqual(["a1AttackInfo", "skillAttackInfo"]);
+  });
 });
