@@ -27,7 +27,7 @@ flowchart TD
   PUT -->|"every file written"| INDEXED["the index names the pack, then the pack it replaces is removed"]
   INDEXED --> SIGNED{"signed in?"}
   SIGNED -->|no| DRAW["chooseCharacterPackReader reads it ahead of the host's: the model on the body"]
-  SIGNED -->|yes| KEEP["keepAccountCharacterPack: each file uploaded under its hash, then the account's list names the pack"]
+  SIGNED -->|yes| KEEP["keepAccountCharacterPack: each file uploaded by hash, then listed on the account"]
   KEEP --> DRAW
 ```
 

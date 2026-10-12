@@ -43,7 +43,7 @@ flowchart TD
   HIDE --> COLLIDE["the body and the camera collide with our hidden stand-in, and walk on our ground"]
 ```
 
-- **Only the families a scene names are drawn** (`WorldSceneExportFamilyMeshRegexMap`, `LoginPartFamilyMeshRegexMap`), the same families a witness render compares by name: Windrise's oak, paving and statue, each region's buildings, and every family of the login's. A capital's exports run past a gigabyte, most of it in meshes no family draws, and only the drawn families' meshes and textures are fetched.
+- **Only the families a scene names are drawn** (`WorldSceneExportFamilyMeshRegexMap`, `LoginPartFamilyMeshRegexMap`), the same families a witness render compares by name: Windrise's oak, paving and statue, each region's buildings, and every family of the login's. A capital's exports weigh over a gigabyte, mostly meshes that no family draws, and only the drawn families' meshes and textures are fetched.
 - **An export is lit as the stand-in it replaces.** Each exported material is laid over a material the scene makes (`createWitnessMaterial`): its texture and tint multiply the scene's colour and its glow adds to the scene's emission. The world's are `createToonMaterial` over the world's ramp, with the wetness and the rim the environment takes, and the leaf shader's cards `createLeafMaterial`, swaying in the [one wind](/docs/genshin/vegetation); the login's are the stone's deferred pass from its one stone light ([rendering style](/docs/genshin/rendering-style)). A part looks as the game draws it as far as our light allows, the game's own lighting being the [passes'](/docs/proposals/genshin/recreation-passes) to re-derive.
 - **The ground stays ours.** A terrain tile's export holds its far base map alone, none of the layers the game paints over it near, and the body walks on our heights and the grass grows on our tiles, so Windrise's and every region's ground is drawn from the terrain worker as in production ([terrain](/docs/genshin/terrain)). Windrise's exports place no grass, and Snezhnaya's no building of its capital yet, so both are drawn from our stand-ins alone.
 - **A landmark an export stands in for is hidden, never removed.** The family each landmark kind stands for (`LandmarkKindSceneExportFamilyMap`) has its extent read once as it loads, and a landmark standing within it is hidden (`getExportedLandmarkIds`): the great oak within the exported oak's, a capital within its buildings'. It stays mounted, so the [landmark collider](/docs/genshin/character-controller) still holds it and the body collides as in production.
@@ -52,23 +52,23 @@ flowchart TD
 
 ## Key files
 
-| File                                                                              | Role                                                                              |
-| :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `apps/web/modules/serveGenshinExtractions.ts`                                     | Registers the exports' and the packs' routes under `nuxt dev` alone               |
-| `apps/web/server/development/genshinSceneExports.ts`                              | The route: the exports' directory handed to the service                           |
-| `apps/web/server/services/genshin/sceneExport/serveGenshinSceneExport.ts`         | Answers the index, a layout or a file inside a component's assets                 |
-| `apps/web/server/services/genshin/sceneExport/listSceneExportComponents.ts`       | The index: the folders holding a witness layout                                   |
-| `apps/web/server/services/genshin/sceneExport/constants.ts`                       | The parity directory's default, and the folder names read                         |
-| `packages/genshin-world/src/composables/useSceneExports.ts`                       | A scene's wanted components loaded, kept while wanted and freed                   |
-| `packages/genshin-world/src/services/scene/loadWitness.ts`                        | The exports laid out as the scene's parts, loading only the meshes a family draws |
-| `packages/genshin-world/src/services/scene/createWitnessMaterial.ts`              | An exported material laid over the scene's own                                    |
-| `packages/genshin-world/src/services/scene/loadSceneExport.ts`                    | A component's exports with each family's extent in the world's own coordinates    |
-| `packages/genshin-world/src/services/world/WorldSceneExportFamilyMeshRegexMap.ts` | The families of each component the world draws                                    |
-| `packages/genshin-world/src/services/world/getExportedLandmarkIds.ts`             | The landmarks an export draws in place of ours                                    |
-| `packages/genshin-world/src/services/world/LandmarkKindSceneExportFamilyMap.ts`   | The family each kind of landmark stands in for                                    |
+| File                                                                              | Role                                                                           |
+| :-------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `apps/web/modules/serveGenshinExtractions.ts`                                     | Registers the exports' and the packs' routes under `nuxt dev` alone            |
+| `apps/web/server/development/genshinSceneExports.ts`                              | The route: the exports' directory handed to the service                        |
+| `apps/web/server/services/genshin/sceneExport/serveGenshinSceneExport.ts`         | Answers the index, a layout or a file inside a component's assets              |
+| `apps/web/server/services/genshin/sceneExport/listSceneExportComponents.ts`       | The index: the folders holding a witness layout                                |
+| `apps/web/server/services/genshin/sceneExport/constants.ts`                       | The parity directory's default, and the folder names read                      |
+| `packages/genshin-world/src/composables/useSceneExports.ts`                       | A scene's wanted components loaded, kept while wanted and freed                |
+| `packages/genshin-world/src/services/scene/loadWitness.ts`                        | The witness's own loader, which the development world reuses                   |
+| `packages/genshin-world/src/services/scene/createWitnessMaterial.ts`              | An exported material laid over the scene's own                                 |
+| `packages/genshin-world/src/services/scene/loadSceneExport.ts`                    | A component's exports with each family's extent in the world's own coordinates |
+| `packages/genshin-world/src/services/world/WorldSceneExportFamilyMeshRegexMap.ts` | The families of each component the world draws                                 |
+| `packages/genshin-world/src/services/world/getExportedLandmarkIds.ts`             | The landmarks an export draws in place of ours                                 |
+| `packages/genshin-world/src/services/world/LandmarkKindSceneExportFamilyMap.ts`   | The family each kind of landmark stands in for                                 |
 
 ## Decisions
 
-- **The development world draws the developer's own extraction; nothing of it ships.** Decided by the user on 2026-10-12: under `nuxt dev` alone the world reads the game's exports from the developer's own extraction, as the development packs are read, while the compute queue keeps re-deriving each object for the deployed site. The line is the one the [scene derivation](/docs/genshin/scene-derivation) draws: no file, format or data of the game's is committed, built, uploaded or deployed. A developer's own copy read on their own machine crosses none of those.
+- **The development world draws the developer's own extraction; nothing of it ships.** Decided by the user on 2026-10-12: under `nuxt dev` alone the world reads the game's exports from the developer's own extraction, as the development packs are read, while the compute queue keeps re-deriving each object for the deployed site. The line is the one the [scene derivation](/docs/genshin/scene-derivation) draws: nothing of the game's, file, format or data, is ever committed, built, uploaded or deployed. A developer's own copy read on their own machine crosses none of those.
 - **The route is the scene layout the witness already reads.** The development world and the parity page's witness draw one layout through one loader, so a family the witness prices is the family the development world draws, and an export's fidelity in the browser is the witness's.
 - **Collision and ground stay our data.** An export's meshes run to millions of triangles in a capital, and a collider built over them stalls the main thread; our hidden stand-ins and our ground answer the controller as in production, so nothing the body does differs between a development world and the deployed one.

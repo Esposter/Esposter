@@ -8,6 +8,10 @@ export const MAX_CHARACTER_PACK_SIZE = 256 * MEGABYTE;
 export const MAX_ACCOUNT_CHARACTER_PACKS_SIZE = 1024 * MEGABYTE;
 // The most files a pack keeps, which bounds the list each request names
 export const MAX_CHARACTER_PACK_FILE_COUNT = 256;
+// The longest path a file is served at within its pack, far above a release's deepest texture path
+export const MAX_CHARACTER_PACK_PATH_LENGTH = 256;
+// The longest name a pack's model is given, far above any the game's releases carry
+export const MAX_CHARACTER_PACK_MODEL_NAME_LENGTH = 128;
 // A file's SHA-256 in hexadecimal, the name it is stored under
 export const SHA256_REGEX = /^[\da-f]{64}$/u;
 // A file is stored under its hash and never changes, so the browser keeps it for as long as it is served

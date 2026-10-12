@@ -62,7 +62,7 @@ Every field below is held only by the group scripts, which are the server's and 
 
 - **A camp's monsters and their levels.** No member is a monster, so the [enemies](/docs/genshin/enemies) keep Mondstadt's stand-in camp.
 - **A puzzle's mechanisms and a chest's gadget.** The only gadgets are the viewpoints.
-- **A trigger's region.** A trigger member names its group but has no place. A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's `scene3_dummy_points.lua` holds ([quests](/docs/genshin/quests)).
+- **A trigger's region.** A trigger member names its group but has no place. A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's scene3_dummy_points.lua holds ([quests](/docs/genshin/quests)).
 - **The suites that move a resident by the hour.** The births give each NPC one spot, so no resident has a night spot.
 - **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth, so the record places their services' building points but not them.
 

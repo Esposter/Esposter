@@ -51,7 +51,7 @@ With no address, or an index that fails to load (which is logged), the host has 
 | :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
 | `apps/web/shared/services/genshin/constants.ts`                                         | `GENSHIN_CHARACTER_PACK_BASE_URL`, where the world reads the packs from                   |
 | `apps/web/app/components/Genshin/World.vue`                                             | Hands the world the packs' address in development alone                                   |
-| `apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackFile.ts` | The signed-in player's own kept file by its hash, else none                               |
+| `apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackFile.ts` | One file of the signed-in player's kept packs, by hash, else none                         |
 | `packages/genshin-world/src/characterPack.ts`                                           | The rules and readers the app's server imports, with none of the world's components       |
 | `packages/genshin-world/src/composables/useCharacterPacks.ts`                           | The browser's kept packs and the host's, the reader of the character on the field         |
 | `packages/genshin-world/src/composables/useCharacterPackIds.ts`                         | The ids the host's index lists, read once                                                 |
