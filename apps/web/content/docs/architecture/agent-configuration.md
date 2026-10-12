@@ -64,7 +64,7 @@ flowchart LR
   Name --> Page["The page keeps the one line and the why"]
 ```
 
-Those scripts are named **`ai:<domain>:`**`<verb>`, and the prefix is decided by audience rather than by what the script does: `ai:sweep:*` carries the sweep scans, `ai:coderabbit:*` the review tooling, while `graph:gen`, `outdated:dependencies` and `update:node` — what a person runs by hand — keep their plain names. The prefix guards nothing; it tells whoever opens the manifest which entries were not written for them.
+Those scripts are named **`ai:<domain>:`**`<verb>`, and the prefix is decided by audience rather than by what the script does: `ai:sweep:*` carries the sweep scans, `ai:review` the review run, while `graph:gen`, `outdated:dependencies` and `update:node` — what a person runs by hand — keep their plain names. The prefix guards nothing; it tells whoever opens the manifest which entries were not written for them.
 
 ## Configuration there, documentation in public
 

@@ -140,7 +140,7 @@ It is the convergence test every loop in the repository uses: each pass should f
 
 ### Running unattended
 
-A drain can run while the owner is away, which is what makes it worth having. It runs in whatever permission mode its session has and relies on the repository's own safety net rather than one of its own: in Esposter every change it pushes lands on the review queue and passes the collector's review before reaching `develop` ([review collector](/docs/infra/review-collector)). In Esposter the drain is also a step of what a session runs next when nothing is asked, after a red collector run and before an area owed a product review, since the owner wrote each follow-up down or accepted a session writing it.
+A drain can run while the owner is away, which is what makes it worth having. It runs in whatever permission mode its session has and relies on the repository's own safety net rather than one of its own: in Esposter every change it pushes lands on `ai/queue`, where the review workflow reviews it before fast-forwarding `main` to it ([review](/docs/infra/review)). In Esposter the drain is also a step of what a session runs next when nothing is asked, after a red review run and before an area owed a product review, since the owner wrote each follow-up down or accepted a session writing it.
 
 A long drain runs in one session, so its context grows with every follow-up and relies on automatic compaction. A fresh session per follow-up, started by the [agent console](/docs/infra/claude-interface/agent-console)'s host, would keep each one clean — a later step, once a drain has been seen to degrade.
 

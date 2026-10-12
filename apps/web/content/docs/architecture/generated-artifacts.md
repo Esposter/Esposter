@@ -58,7 +58,7 @@ A generated `.ts` is source and is formatted as source — the generator emits t
 
 ## Review
 
-A regenerated folder is the emptiest thing a reviewer can read: hundreds of files carrying numbers a script derived, with the one thing worth judging — the generator — in the same window or an earlier one. So `generated/**` is on CodeRabbit's path filters beside the test snapshots and the migrations, which keeps it out of a window's file count as well as its review, and the commit that carries a regeneration claims the [express lane](/docs/infra/review-collector/express-lane) with an `Express:` trailer, reaching `main` on the checks alone instead of waiting in the queue for a window. The generator's own change is a separate commit that is reviewed in full.
+A regenerated folder is the emptiest thing a reviewer can read: hundreds of files carrying numbers a script derived, with the one thing worth judging — the generator — in the same window or an earlier one. Those files count toward their window's file cap like any other, so a regeneration can fill a window on its own. The generator's own change is a separate commit that is reviewed in full.
 
 ## Key files
 
@@ -72,4 +72,3 @@ A regenerated folder is the emptiest thing a reviewer can read: hundreds of file
 | `packages/genshin-persona/src/services/readPersonaModule.ts`     | Loads one character's card by path                                  |
 | `packages/genshin-persona/src/services/getCharacterReference.ts` | The authored reference over the generated one                       |
 | `oxfmt.config.ts`                                                | The formatter's ignore list                                         |
-| `.coderabbit.yaml`                                               | The review's ignore list                                            |

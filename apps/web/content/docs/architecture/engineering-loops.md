@@ -29,9 +29,11 @@ flowchart TD
     FINISH["finishing — review, tests, docs, skills, ledgers"] --> CHECKS["the touched tests"]
     CHECKS --> QUEUE["review-queue — ai/queue"]
     QUEUE -->|"every push"| CI["CI — format, typecheck, lint, the whole suite"]
-    QUEUE --> COLLECTOR["review collector — one CodeRabbit review per window"]
-    CI -->|"red on main"| COLLECTOR
-    COLLECTOR -->|"findings"| FINISH
+    QUEUE --> REVIEW["review — haiku reviewers over each window of ai/queue"]
+    REVIEW -->|"main fast-forwards to the window's end"| CI
+    REVIEW -->|"fixer fixes the findings on ai/queue"| QUEUE
+    REVIEW -->|"findings the fixer defers"| REVIEWISSUE["one GitHub issue per run"]
+    REVIEWISSUE -->|"an agent picks it up"| FINISH
   end
 
   subgraph health ["Code-health loop"]
@@ -44,13 +46,13 @@ flowchart TD
   LEDGER -->|"a fix that changes behaviour"| PROPOSAL
   FINISH -->|"an unfixed finding"| PROPOSAL
   FINISH -->|"a lesson"| SKILLS["skills — the knowledge loop"]
-  COLLECTOR -->|"a lesson"| SKILLS
+  REVIEW -->|"a lesson"| SKILLS
   LEDGER -->|"a rule gap"| SKILLS
   SKILLS -->|"read by every loop"| FINISH
 ```
 
 - **The product loop** decides what the products should do and builds it. The product review holds each surface against its reference product and triages every gap into a [proposal](/docs/proposals), a deferred or a rejected page (`product-review` skill). A build takes the cheapest valuable proposal, re-verifies it, builds it and ships it as an as-built page (`building-proposals` skill); a whole area's proposals at once go out as an [agent batch](/docs/architecture/agent-batches). The ship moves the surface the last review judged, so the area is owed a pass. `pnpm ai:proposals:report` computes both halves from the tree and git: the size of each open proposal, and which areas are owed a pass.
-- **The change loop** is what every change goes through, whatever loop it came from. The finishing audit asks what the change owes beyond its code: both review lanes, tests, docs and diagrams, skills, ledgers and enforcers (`finishing` skill, and "Finishing a change" in `AGENTS.md`). The session runs only the tests of what it touched, and leaves format, typecheck, lint and the whole suite to CI on the push, then watches that run and fixes a red typecheck or lint itself. It commits to one queue branch, and the [review collector](/docs/infra/review-collector) cuts that queue into review windows and merges each release once its single review is done, repairing whatever CI found red on `main`. A finding that review raises comes back into the loop as a change of its own.
+- **The change loop** is what every change goes through, whatever loop it came from. The finishing audit asks what the change owes beyond its code: both review lanes, tests, docs and diagrams, skills, ledgers and enforcers (`finishing` skill, and "Finishing a change" in `AGENTS.md`). The session runs only the tests of what it touched, and leaves format, typecheck, lint and the whole suite to CI on the push, then watches that run and fixes a red typecheck or lint itself. It commits to one queue branch, `ai/queue`, and the [review](/docs/infra/review) reads that queue a window at a time: `main` fast-forwards to each window's end, and a fixer fixes what the reviewers found on the queue. Findings the fixer defers become one GitHub issue per run, labelled for an agent to pick up.
 - **The code-health loop** covers simplifying, refactoring and optimizing code that already works. A sweep carries one settled convention across old code, one ledger unit per commit (`sweeps` skill). The quality ledger and the runtime-efficiency ledger are sweeps too. A finding a sweep writes twice becomes an enforcer, so the sweep shrinks rather than repeats. A fix that would change behaviour leaves the sweep and becomes a proposal.
 - **The knowledge loop** keeps the other loops from repeating themselves. A convention a session discovers or corrects goes into the skill that owns it (`skill-authoring` skill). A regression a review re-finds is added to its append-only list of causes, and each round's meta pass asks what the round's own evidence says about the review's instructions (`code-review` skill). The skill sweep re-reads the whole skill tree until a pass finds nothing (`skill-sweep` skill).
 - **Issues** reach the loops through triage. `pnpm ai:triage:label` gives an issue one of the tracker's roles. A `ready-for-agent` issue is built like a proposal and closed when it ships; an issue that needs a design decision is read by the next product-review pass of its area.
@@ -69,7 +71,7 @@ flowchart TD
 | A settled convention that old code predates                | `sweeps` skill, one ledger per convention                                                              |
 | Making something faster or cheaper                         | `runtime-efficiency` skill for where the work runs, `bench` skill for measuring it                     |
 | A convention learned or corrected                          | `skill-authoring` skill                                                                                |
-| A review finding from CodeRabbit                           | `coderabbit` and `review-queue` skills                                                                 |
+| A finding a review defers to an issue                      | the issue the review opens, then the loop its role names (`review-queue` skill)                        |
 | A dependency update                                        | `dependency-updates` skill                                                                             |
 | A GitHub issue                                             | `pnpm ai:triage:label`, then the loop its role names                                                   |
 
@@ -90,15 +92,15 @@ A loop that finds as much on one pass as it did on the last is not converging. T
 A session that finishes a unit of work does not stop to ask whether to go on. It takes up the first of these that exists, runs it to its own stop rule, commits and pushes it, and reads the list again, until the list is empty or the user redirects it. Each one is read off a command rather than a list someone keeps:
 
 1. **This machine's leftovers.** `pnpm ai:resume` lists what an earlier session left on this machine: uncommitted paths, unpushed commits, worktrees, its own stale claims, dead holds, missing plugins. Each one is finished, recorded or released before anything else, since every later step builds on the tree and the claims they hold (`resuming` skill).
-2. **Something red.** A failing collector run, or an issue the collector opened for what it routed around — commits parked on `ai/held/*`, findings deferred past the drain's attempts, a red `main` past its repairs (`review-queue` skill) — since every later piece of work lands on top of it. A review's findings are not on this list otherwise: the collector drains them into the next window itself.
+2. **Something red.** A failing review run, or a review issue for findings the fixer deferred (`review-queue` skill), since every later piece of work lands on top of it. A review's findings are not on this list otherwise: the fixer works them on `ai/queue` itself.
 3. **This repository's follow-ups**, when the follow-ups plugin is installed: the owner wrote each one down, or accepted a session writing it, so it outranks work a session would pick for itself. The plugin's drain skill works them one change at a time to its own stop rule ([TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups)).
 4. **An area owed a product-review pass**, as `pnpm ai:proposals:report` lists it, so the specs match the shipped surface before anything is built from them.
 5. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).
 6. **An open ledger row**, as `pnpm ai:sweep:ledger-coverage` dates them (`sweeps` skill); the skills' own rows are the skill sweep.
 
-Beside every step, never one of them: **the machine's compute queue.** Once the leftovers are clear, `pnpm ai:fleet:fill` claims up to the machine's share and a `haiku` agent takes each brief it prints, and it runs again on each idle line from the machine's watcher. The runners keep going through every later step, and a pause the session takes for any of them, a usage window's end, a stop on one lane or a collector repair, leaves them running: only the user stops the queue (the `genshin-parity` skill's `references/compute-queue.md`, "Keeping it busy").
+Beside every step, never one of them: **the machine's compute queue.** Once the leftovers are clear, `pnpm ai:fleet:fill` claims up to the machine's share and a `haiku` agent takes each brief it prints, and it runs again on each idle line from the machine's watcher. The runners keep going through every later step, and a pause the session takes for any of them, a usage window's end or a stop on one lane, leaves them running: only the user stops the queue (the `genshin-parity` skill's `references/compute-queue.md`, "Keeping it busy").
 
-No step on this list waits for approval, since each one ends in a queue push, which spends nothing and is reviewed by the collector's one release review. What still asks first is whatever spends something outside the queue: opening a pull request, pushing `develop` or `main`, a paid service, or a destructive change to shared infrastructure.
+No step on this list waits for approval, since each one ends in a queue push, which spends nothing and is reviewed by the review window that carries it. What still asks first is whatever spends something outside the queue: opening a pull request, a paid service, or a destructive change to shared infrastructure.
 
 ## Key files
 
@@ -109,7 +111,7 @@ No step on this list waits for approval, since each one ends in a queue push, wh
 | `.agents/skills/finishing/SKILL.md`          | the audit every change passes before it is done                      |
 | `.agents/skills/code-review/SKILL.md`        | the two review lanes, the stop rule and the meta pass                |
 | `.agents/skills/sweeps/SKILL.md`             | sweeps, ledgers and handing a repeated finding to an enforcer        |
-| `.agents/skills/review-queue/SKILL.md`       | the session's side of the review collector                           |
+| `.agents/skills/review-queue/SKILL.md`       | the session's side of the review queue                               |
 | `.agents/skills/resuming/SKILL.md`           | a session's leftovers brought back in sync before new work           |
 | `.agents/skills/skill-authoring/SKILL.md`    | where a lesson goes, and how a skill is kept                         |
 | `scripts/src/proposals/report/index.ts`      | sizes every open proposal and lists the areas owed a pass            |
