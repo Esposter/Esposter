@@ -22,6 +22,7 @@ import { computeExtentGap } from "#src/services/genshinAssets/world/computeExten
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
 import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapitalWorldPlace";
+import { toPointExtent } from "#src/services/genshinAssets/world/toPointExtent";
 import { computeMean } from "#src/services/recreation/statistics/computeMean";
 import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -86,7 +87,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   // How far a place stands from the nearest of the cities' areas, none inside one
   const getCityDistance = (x: number, z: number): number => {
     const place = toCapitalWorldPlace({ x, z }, origin);
-    const placeExtent = { maxX: place.x, maxZ: place.z, minX: place.x, minZ: place.z };
+    const placeExtent = toPointExtent(place);
     return Math.min(...cityAreas.map(({ extent }) => computeExtentGap(extent, placeExtent)));
   };
   // A centre standing in a city reads its bar on the ground round the city, the nearest a region's own ground comes

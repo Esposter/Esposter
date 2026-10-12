@@ -11,6 +11,7 @@ import { computeExtentGap } from "#src/services/genshinAssets/world/computeExten
 import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
 import { selectCapitalCityArea } from "#src/services/genshinAssets/world/selectCapitalCityArea";
 import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapitalWorldPlace";
+import { toPointExtent } from "#src/services/genshinAssets/world/toPointExtent";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -54,7 +55,7 @@ export const readGroundFootprints = async (
         cityAreas ??= readCityAreas();
         const areas = await cityAreas;
         const place = toCapitalWorldPlace({ x, z }, origin);
-        const placeExtent = { maxX: place.x, maxZ: place.z, minX: place.x, minZ: place.z };
+        const placeExtent = toPointExtent(place);
         const standingAreas = areas.filter(({ extent }) => computeExtentGap(extent, placeExtent) === 0);
         for (const area of areas)
           if (standingAreas.some(({ extent }) => computeExtentGap(extent, area.extent) < barRadius))
