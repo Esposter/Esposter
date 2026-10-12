@@ -17,14 +17,14 @@ Built on the [agent content tools](/docs/architecture/agent-content-tools), whos
 1. **A size for a leaf** — the result of a read past the cap at a non-container pointer carries the value's JSON size, so the reply names what it withheld rather than an empty set of members.
 2. **The contract** — the decision is the field's name and whether a string's `length` joins its size, on the agent-facing `ReadResourceContentResult` and in the tool's description, since an agent reads both.
 
-Once the field exists, the test that pins the empty answer changes to the new one.
+Once the field exists, the test file gains a case for the leaf's answer, beside the object and array cases; no test pins the empty answer today.
 
 ## Key files
 
 | File                                                             | Change                                                          |
 | :--------------------------------------------------------------- | :-------------------------------------------------------------- |
 | `apps/web/server/services/resource/readContentAtPointer.ts`      | answers a leaf past the cap its size, not `memberSizes: {}`     |
-| `apps/web/server/services/resource/readContentAtPointer.test.ts` | pins the leaf's answer in place of the empty object             |
+| `apps/web/server/services/resource/readContentAtPointer.test.ts` | adds a case for the leaf's answer                               |
 | `apps/web/shared/models/resource/ReadResourceContentResult.ts`   | the result's shape gains the leaf's size                        |
 | `apps/web/content/docs/architecture/agent-content-tools.md`      | the "Past `MAX_AGENT_READ_SIZE`" bullet names the leaf's answer |
 
