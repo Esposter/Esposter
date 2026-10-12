@@ -99,7 +99,7 @@ catalog:
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.268.0
   "@standard-schema/spec": ^1.1.0
-  "@takumi-rs/core": ^2.14.0
+  "@takumi-rs/core": ^2.15.0
   "@tensorflow/tfjs": ^4.22.0
   "@tiptap/core": ^3.31.4
   "@tiptap/extension-code-block-lowlight": ^3.31.4
@@ -161,7 +161,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   "@xterm/addon-fit": ^0.11.0
   "@xterm/xterm": ^6.0.0
-  apexcharts: ^8.0.0
+  apexcharts: ^8.1.0
   better-auth: ^1.7.7
   bowser: ^2.14.1
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
@@ -298,7 +298,7 @@ catalog:
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-eslint-parser: ^10.4.1
-  vue-pdf-embed: ^2.1.6
+  vue-pdf-embed: ^2.1.7
   vue-router: ^5.4.0
   # @TODO: https://github.com/vuejs/language-tools/issues/6237 — back to a caret, with the Renovate rule that holds it
   # dropped, once a release fixes it: 3.3.12 reports `Property 'value' does not exist` on imported refs used in templates
@@ -310,7 +310,7 @@ catalog:
   ws: ^8.22.0
   xmlbuilder2: ^4.0.3
   xss: ^1.0.15
-  zod: ^4.6.5
+  zod: ^4.6.6
 
 catalogMode: strict
 
