@@ -2,10 +2,10 @@ import { compactSvgPath } from "#src/services/genshinParity/shared/compactSvgPat
 import { parseSvgPath } from "#src/services/genshinParity/shared/parseSvgPath";
 import { describe, expect, test } from "vitest";
 
-const SCALE = 100;
-const EXCERPT = "M 573.5 114 L 574 115.5 L 566 128.5 L 549 163.5 L 549 165.5 L 542 179.5";
-
 describe(compactSvgPath, () => {
+  const SCALE = 100;
+  const EXCERPT = "M 573.5 114 L 574 115.5 L 566 128.5 L 549 163.5 L 549 165.5 L 542 179.5";
+
   test("writes the same points, so parsing its output gives back the input's absolute geometry", () => {
     expect.hasAssertions();
 
