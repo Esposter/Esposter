@@ -1,6 +1,7 @@
 import type { ToonEdge } from "#src/models/nodes/ToonEdge";
 import type { Material, Node, NodeFrame, NodeMaterial, Renderer } from "three/webgpu";
 
+import { createOutlineScaleNode } from "#src/character/shading/createOutlineScaleNode";
 import { createOutlineMaterial } from "#src/models/nodes/createOutlineMaterial";
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import { float, vec4 } from "three/tsl";
@@ -49,12 +50,15 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     return undefined;
   }
 
-  #getEdgeOutlineMaterial({ color, size }: ToonEdge): NodeMaterial {
-    const key = `${color.join(",")}:${size}`;
+  #getEdgeOutlineMaterial({ color, size, widthKnots }: ToonEdge): NodeMaterial {
+    const key = `${color.join(",")}:${size}:${widthKnots.depths.join(",")}:${widthKnots.scales.join(",")}`;
     let edgeOutlineMaterial = this.#edgeOutlineMaterials.get(key);
     if (edgeOutlineMaterial === undefined) {
       const [red, green, blue, alpha] = color;
-      edgeOutlineMaterial = createOutlineMaterial(vec4(red, green, blue, alpha), this.thicknessNode.mul(float(size)));
+      const width = this.thicknessNode
+        .mul(float(size))
+        .mul(createOutlineScaleNode(widthKnots.depths, widthKnots.scales));
+      edgeOutlineMaterial = createOutlineMaterial(vec4(red, green, blue, alpha), width);
       this.#edgeOutlineMaterials.set(key, edgeOutlineMaterial);
     }
     return edgeOutlineMaterial;
