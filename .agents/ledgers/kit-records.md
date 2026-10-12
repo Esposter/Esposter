@@ -54,8 +54,8 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `ineffa`             | —     |                                                                          |
 | `jahoda`             | —     |                                                                          |
 | `jean`               | —     |                                                                          |
-| `kaedehara-kazuha`   | —     |                                                                          |
 | `kachina`            | —     |                                                                          |
+| `kaedehara-kazuha`   | —     |                                                                          |
 | `kaeya`              | —     |                                                                          |
 | `kamisato-ayaka`     | —     |                                                                          |
 | `kamisato-ayato`     | —     |                                                                          |
