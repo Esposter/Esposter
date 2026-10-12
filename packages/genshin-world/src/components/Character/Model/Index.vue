@@ -22,10 +22,10 @@ const disposeMesh = ({ geometry, material, skeleton }: SkinnedMesh<BufferGeometr
   for (const characterMaterial of material) characterMaterial.dispose();
   // A texture several materials draw with is released once, its decoded image closed with it, which three leaves open.
   // Only a pack's own textures are decoded from a bitmap, so the world's ramps, shared by every model, are left alive
-  const isPackTexture = (texture: Texture | null | undefined): texture is Texture<ImageBitmap> =>
+  const checkIsPackTexture = (texture: null | Texture | undefined): texture is Texture<ImageBitmap> =>
     texture?.image instanceof ImageBitmap;
   const packTextures = material.flatMap(({ gradientMap, map, sphereMap }) => [gradientMap, map, sphereMap]);
-  for (const texture of new Set(packTextures.filter(isPackTexture))) {
+  for (const texture of new Set(packTextures.filter(checkIsPackTexture))) {
     texture.dispose();
     texture.image.close();
   }
