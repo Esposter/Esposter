@@ -27,29 +27,36 @@ const chunkAttributeKindMap = {
   y: AttributeKind.RequiredNumber,
 } as const;
 
-// Zstandard is the one Tiled compression this reader does not decode, since no browser ships a decompressor for it
-const parseCompression = (value: string | undefined): Compression | undefined => {
+// An attribute holding one of an enum's values is read as that value, and any other value is refused by name. Zstandard
+// Is the one Tiled compression the enum leaves out, since no browser ships a decompressor for it
+const parseEnumAttribute = <T extends string>(
+  operation: string,
+  label: string,
+  enumObject: Record<string, T>,
+  value: string | undefined,
+): T | undefined => {
   if (value === undefined) return undefined;
-  if (value === Compression.Gzip) return Compression.Gzip;
-  else if (value === Compression.Zlib) return Compression.Zlib;
-  throw new InvalidOperationError(Operation.Read, parseCompression.name, `${value} is not a supported compression`);
+  const enumValue = Object.values(enumObject).find((member) => member === value);
+  if (enumValue !== undefined) return enumValue;
+  throw new InvalidOperationError(Operation.Read, operation, `${value} is not a supported ${label}`);
 };
-const parseEncoding = (value: string | undefined): Encoding | undefined => {
-  if (value === undefined) return undefined;
-  if (value === Encoding.Base64) return Encoding.Base64;
-  else if (value === Encoding.Csv) return Encoding.Csv;
-  throw new InvalidOperationError(Operation.Read, parseEncoding.name, `${value} is not a supported encoding`);
-};
+const parseCompression = (value: string | undefined): Compression | undefined =>
+  parseEnumAttribute(parseCompression.name, "compression", Compression, value);
+const parseEncoding = (value: string | undefined): Encoding | undefined =>
+  parseEnumAttribute(parseEncoding.name, "encoding", Encoding, value);
+
+// A data source holds the cells of one data element, read in the compression and encoding that element wrote
+const createDataSource = (compression: Compression | undefined, encoding: Encoding | undefined): TMXDataSource => ({
+  chunked: false,
+  compression,
+  encoding,
+  gids: [],
+  text: "",
+});
 
 // A layer's data is queued with the cells a finite map gives the layer, and is decoded once the document is read
 const openTileData = (layer: TMXLayerParsed, attributes: TMXAttributes, context: TMXReadContext): TMXFrame => {
-  const source: TMXDataSource = {
-    chunked: false,
-    compression: parseCompression(attributes.compression),
-    encoding: parseEncoding(attributes.encoding),
-    gids: [],
-    text: "",
-  };
+  const source = createDataSource(parseCompression(attributes.compression), parseEncoding(attributes.encoding));
   context.pending.push({ expectedCount: context.tileCount, owner: layer, source });
   return { owner: layer, tag: TMXTagName.Data, target: source, text: "" };
 };
@@ -70,13 +77,7 @@ const openTmxDataChild = (
       parent.owner.chunks ??= [];
       parent.owner.chunks.push(chunk);
       source.chunked = true;
-      const chunkSource: TMXDataSource = {
-        chunked: false,
-        compression: source.compression,
-        encoding: source.encoding,
-        gids: [],
-        text: "",
-      };
+      const chunkSource = createDataSource(source.compression, source.encoding);
       context.pending.push({ owner: chunk, source: chunkSource });
       return { tag, target: chunkSource, text: "" };
     }
