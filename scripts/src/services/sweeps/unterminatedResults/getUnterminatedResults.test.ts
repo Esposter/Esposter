@@ -45,7 +45,6 @@ describe(getUnterminatedResults, () => {
     ]);
   });
 
-  // The argument is a bare identifier, which a bracket-less read would run into the name it follows
   // A bare identifier argument is the shape a name-and-bracket match reads as one longer name
   test("reports a call whose argument is a bare identifier", () => {
     expect.hasAssertions();
