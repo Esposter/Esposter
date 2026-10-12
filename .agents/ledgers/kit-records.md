@@ -121,3 +121,4 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `yumemizuki-mizuki`  | —     |                                                                          |
 | `yun-jin`            | —     |                                                                          |
 | `zhongli`            | —     |                                                                          |
+| `zibai`              | —     |                                                                          |
