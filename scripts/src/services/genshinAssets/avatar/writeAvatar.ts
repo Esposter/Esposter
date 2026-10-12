@@ -1,13 +1,15 @@
 import type { AvatarRigNode } from "#src/models/genshinAssets/avatar/AvatarRigNode";
 import type { DumpedMesh } from "#src/models/genshinAssets/avatar/DumpedMesh";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { DumpedPointer } from "#src/models/genshinAssets/shared/DumpedPointer";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
+import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import type { AvatarRig } from "#src/services/genshinAssets/avatar/readAvatarRig";
+import type { RosterRenderer } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 import type { RendererBone } from "#src/services/genshinAssets/avatar/readRendererBones";
 import type { AvatarBone, AvatarManifest, AvatarMaterial } from "genshin-world/sceneExport";
 
+import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { buildAvatarMesh } from "#src/services/genshinAssets/avatar/buildAvatarMesh";
 import { AVATAR_SOURCE_MAP } from "#src/services/genshinAssets/avatar/constants";
@@ -22,38 +24,38 @@ import {
   readSkinnedRenderers,
 } from "#src/services/genshinAssets/avatar/readRendererBones";
 import { createAvatarBinary } from "#src/services/genshinAssets/avatar/writeAvatarBinary";
-import { GENSHIN_ANIMESTUDIO_OPTIONS, INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import {
+  CAB_MAP_PATH,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+  INSTALLED_BLOCKS_DIRECTORY,
+} from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
+import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
-import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
+import { readObjectNames } from "#src/services/genshinAssets/shared/readObjectNames";
+import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
+import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { readFile, rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { crc32 } from "node:zlib";
+import { basename, join } from "node:path";
 
 // A component's game model written beside its exports as its avatar: the rig of its Avatar asset, each of its LOD0
-// Meshes skinned to that rig, and the values of the materials they draw with. The rig's bones keep their rest pose, and
-// A bone a mesh names that the rig lacks is added under the nearest ancestor the rig has, at the layout's own pose
+// Meshes skinned to that rig, and the values of the materials they draw with. Every pointer is resolved through the CAB
+// Its renderer lies in, so a mesh or material another CAB names is read from that CAB. The rig's bones keep their rest
+// Pose, and a bone a mesh names that the rig lacks is added under the nearest ancestor the rig has, at the layout's pose
 export const writeAvatar = async (component: DerivedAssetComponent): Promise<string> => {
   const source = AVATAR_SOURCE_MAP[component];
   if (!source) throw new InvalidOperationError(Operation.Create, component, "has no game model to write as an avatar");
   const directory = getComponentDirectory(component);
   const rig = await exportRig(source.block, source.name, directory.root);
-  const meshNames = new Map(
-    (
-      await readIndexedAssets(
-        ({ block, type }) => block === source.block && type === AssetType.Mesh,
-        GENSHIN_ANIMESTUDIO_OPTIONS,
-      )
-    ).map(({ name, pathId }) => [pathId, name]),
-  );
+  const cabMap = parseCabMap(await readFile(CAB_MAP_PATH));
   const { objects } = await readComponentLayout(component);
   const objectMap = new Map(objects.map((object) => [getTransformKey(object.file, object.transformId), object]));
   const [modelRoot] = DerivedAssetComponentMap[component].roots;
@@ -64,65 +66,87 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
   if (rootObjects.length !== 1 || !rootObject)
     throw new InvalidOperationError(Operation.Read, component, "has no single model root in its layout");
   const gameObjectMap = new Map(objects.map((object) => [`${object.file}|${object.gameObjectId}`, object]));
-  const renderersMap = await readSkinnedRenderers(directory.layout, new Set(meshNames.keys()));
-  const skinnedRenderers = [...renderersMap].flatMap(([pathId, renderers]) =>
-    renderers.map((skinned) => ({
-      ...skinned,
-      name: meshNames.get(pathId) ?? "",
-      object: gameObjectMap.get(`${skinned.file}|${skinned.renderer.m_GameObject.m_PathID}`),
-    })),
+  const renderers = await readSkinnedRenderers(directory.layout, cabMap);
+  const meshNames = await readObjectNames(
+    renderers.flatMap(({ mesh }) => (mesh ? [mesh] : [])),
+    cabMap,
   );
-  const skinnedMaterialRefs = skinnedRenderers.flatMap(({ renderer }) => renderer.m_Materials);
-  const materialNames = await readAssetNames(new Set(skinnedMaterialRefs.map(({ m_PathID }) => m_PathID)));
+  const materialRefs = renderers.flatMap(({ materials }) =>
+    materials.flatMap((material) => (material ? [material] : [])),
+  );
+  const materialNames = await readObjectNames(materialRefs, cabMap);
   const componentMaterials = await readComponentMaterials(component);
-  const texturedMaterials = readTexturedMaterialPathIds(materialNames, componentMaterials);
+  const texturedMaterials = readTexturedObjectKeys(materialNames, componentMaterials);
+  const candidates = renderers.flatMap((skinned): RosterRenderer[] => {
+    const { mesh } = skinned;
+    const name = mesh ? meshNames.get(toObjectKey(mesh.file, mesh.pathId)) : undefined;
+    return mesh && name !== undefined
+      ? [
+          {
+            ...skinned,
+            mesh,
+            name,
+            object: gameObjectMap.get(`${skinned.file}|${skinned.renderer.m_GameObject.m_PathID}`),
+          },
+        ]
+      : [];
+  });
   const roster = readAvatarRoster(
-    skinnedRenderers,
+    candidates,
     getTransformKey(rootObject.file, rootObject.transformId),
     objectMap,
     texturedMaterials,
   );
   if (roster.length === 0)
     throw new InvalidOperationError(Operation.Read, source.name, "has no enabled LOD0 renderer under its model root");
-  const drawn = await Promise.all(
-    roster.map(async (skinned) => {
-      const { name, renderer } = skinned;
-      const mesh = parseMachineJson<DumpedMesh>(
-        await readFile(join(directory.assets, AssetType.Mesh, `${name}.json`), "utf8"),
-      );
-      const rootBone = readRendererRootBone(skinned, objectMap);
-      if (!rootBone) throw new InvalidOperationError(Operation.Read, name, "has a root bone outside the rig");
-      return { bones: readRendererBones(skinned, objectMap), materialRefs: renderer.m_Materials, mesh, name, rootBone };
-    }),
+  const meshesDirectory = join(directory.root, "avatar-meshes");
+  const meshDumps = await withFinalizerAsync(
+    () =>
+      readMeshDumps(
+        roster.map(({ mesh }) => mesh),
+        meshNames,
+        meshesDirectory,
+      ),
+    () => rm(meshesDirectory, { force: true, recursive: true }),
   );
-  const { nodes, paths } = buildSkeleton(rig.nodes, [
+  const drawn = roster.map((skinned) => {
+    const { mesh, name } = skinned;
+    const dump = meshDumps.get(toObjectKey(mesh.file, mesh.pathId));
+    if (!dump) throw new InvalidOperationError(Operation.Read, name, "has no mesh dump");
+    const rootBone = readRendererRootBone(skinned, objectMap);
+    if (!rootBone) throw new InvalidOperationError(Operation.Read, name, "has a root bone outside the rig");
+    return {
+      bones: readRendererBones(skinned, name, dump, objectMap),
+      materials: skinned.materials,
+      mesh: dump,
+      name,
+      rootBone,
+    };
+  });
+  const { nodeOfPath, nodes } = buildSkeleton(rig.nodes, [
     ...drawn.flatMap(({ bones }) => bones),
     ...drawn.map(({ rootBone }) => rootBone),
   ]);
-  const nodeOfHash = new Map(paths.map((path, node) => [crc32(path), node]));
   const materials = await readMaterials(
     component,
     materialNames,
     componentMaterials,
-    drawn.flatMap(({ materialRefs, mesh }) => materialRefs.slice(0, mesh.m_SubMeshes.length)),
+    drawn.flatMap(({ materials: refs, mesh }) =>
+      refs.slice(0, mesh.m_SubMeshes.length).flatMap((ref) => (ref ? [ref] : [])),
+    ),
   );
-  for (const { mesh, name } of drawn) {
-    const unresolved = mesh.m_BoneNameHashes.filter((hash) => !nodeOfHash.has(hash)).length;
-    if (unresolved)
-      console.warn(`${name}: ${unresolved} bones are in neither the rig nor the layout, and stay unposed`);
-  }
   const binary = createAvatarBinary();
   const manifest: AvatarManifest = {
     bones: nodes,
     humanoid: rig.humanoid,
     materials,
-    meshes: drawn.map(({ materialRefs, mesh, name, rootBone }) =>
+    meshes: drawn.map(({ bones, materials: refs, mesh, name, rootBone }) =>
       buildAvatarMesh(
         name,
         mesh,
-        mesh.m_BoneNameHashes.map((hash) => nodeOfHash.get(hash) ?? ANIMATOR_ROOT_NODE),
-        materialRefs.map(({ m_PathID }) => materialNames.get(m_PathID) ?? ""),
-        paths.indexOf(rootBone.path),
+        bones.map(({ path }) => readNodeOfPath(nodeOfPath, path)),
+        refs.map((ref) => (ref ? materialNames.get(toObjectKey(ref.file, ref.pathId)) : undefined) ?? ""),
+        readNodeOfPath(nodeOfPath, rootBone.path),
         binary,
       ),
     ),
@@ -131,6 +155,38 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
   const path = join(directory.root, AVATAR_MANIFEST_FILE_NAME);
   await writeFile(path, JSON.stringify(manifest));
   return path;
+};
+
+// Every mesh's dump, read from the folder of the CAB it lies in: a block's meshes are exported folder by folder per CAB,
+// So a mesh's name names it only within its own CAB, and a mesh of another CAB with the same name is never read in its place
+const readMeshDumps = async (
+  meshes: readonly ResolvedObject[],
+  names: ReadonlyMap<string, string>,
+  directory: string,
+): Promise<Map<string, DumpedMesh>> => {
+  for (const block of new Set(meshes.map((mesh) => mesh.block)))
+    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio exports one block at a time
+    await exportBlockBySource(block, [AssetType.Mesh], AnimeStudioExportType.Json, directory);
+  const entries = await Promise.all(
+    meshes.map(async (mesh): Promise<[string, DumpedMesh]> => {
+      const key = toObjectKey(mesh.file, mesh.pathId);
+      const name = names.get(key) ?? "";
+      const path = join(directory, basename(mesh.block, ".blk"), AssetType.Mesh, mesh.file, `${name}.json`);
+      return [key, parseMachineJson<DumpedMesh>(await readFile(path, "utf8"))];
+    }),
+  );
+  return new Map(entries);
+};
+
+// The keys of the materials that have a main texture, which a renderer must all have to be drawn
+const readTexturedObjectKeys = (
+  names: ReadonlyMap<string, string>,
+  componentMaterials: readonly MaterialValues[],
+): Set<string> => {
+  const texturedNames = new Set(
+    componentMaterials.filter(({ textures }) => "_MainTex" in textures).map(({ name }) => name),
+  );
+  return new Set([...names].filter(([, name]) => texturedNames.has(name)).map(([key]) => key));
 };
 
 // The rig of the Avatar asset, exported from its block into a folder beside the component's exports and removed once read
@@ -155,16 +211,12 @@ const exportRig = (block: string, name: string, root: string): Promise<AvatarRig
   );
 };
 
-// The rig's root, the animator's own node, which rests at the identity, so a bone the rig and the layout both lack stays
-// Where the mesh is drawn
-const ANIMATOR_ROOT_NODE = 0;
-
 // The rig's nodes, then every bone a mesh names that the rig lacks, parents first, each in three's axes. A bone's path is
 // Its parent's path and its own name, so its parent is found by the path it is cut from
 const buildSkeleton = (
   rigNodes: readonly AvatarRigNode[],
   bones: readonly RendererBone[],
-): { nodes: AvatarBone[]; paths: string[] } => {
+): { nodeOfPath: Map<string, number>; nodes: AvatarBone[] } => {
   const nodes: AvatarBone[] = rigNodes.map(({ parent, path, position, rotation, scale }) => ({
     name: leafName(path),
     parent,
@@ -172,8 +224,7 @@ const buildSkeleton = (
     rotation: mirrorAvatarRotation(rotation),
     scale,
   }));
-  const paths = rigNodes.map(({ path }) => path);
-  const nodeOfPath = new Map(paths.map((path, node) => [path, node]));
+  const nodeOfPath = new Map(rigNodes.map(({ path }, node) => [path, node]));
   const pathObjectMap = new Map(bones.map(({ object, path }) => [path, object]));
   const sortedPathObjects = [...pathObjectMap.entries()].toSorted(([a], [b]) => depth(a) - depth(b));
   for (const [path, object] of sortedPathObjects) {
@@ -181,10 +232,16 @@ const buildSkeleton = (
     const parent = nodeOfPath.get(path.slice(0, Math.max(path.lastIndexOf("/"), 0)));
     if (parent === undefined) throw new InvalidOperationError(Operation.Read, path, "has no ancestor in the rig");
     nodes.push(addedNode(object, parent, leafName(path)));
-    paths.push(path);
     nodeOfPath.set(path, nodes.length - 1);
   }
-  return { nodes, paths };
+  return { nodeOfPath, nodes };
+};
+
+// The rig node of a bone's path. Every bone a renderer names is placed in the skeleton, so a path it lacks is an error
+const readNodeOfPath = (nodeOfPath: ReadonlyMap<string, number>, path: string): number => {
+  const node = nodeOfPath.get(path);
+  if (node === undefined) throw new InvalidOperationError(Operation.Read, path, "is not in the avatar's skeleton");
+  return node;
 };
 const addedNode = (object: SceneObject, parent: number, name: string): AvatarBone => ({
   name,
@@ -196,25 +253,14 @@ const addedNode = (object: SceneObject, parent: number, name: string): AvatarBon
 const leafName = (path: string): string => path.slice(path.lastIndexOf("/") + 1);
 const depth = (path: string): number => path.split("/").length;
 
-// The path IDs of the referenced materials that have a main texture, which a renderer must all have to be drawn
-const readTexturedMaterialPathIds = (
-  names: ReadonlyMap<string, string>,
-  componentMaterials: readonly MaterialValues[],
-): Set<string> => {
-  const texturedNames = new Set(
-    componentMaterials.filter(({ textures }) => "_MainTex" in textures).map(({ name }) => name),
-  );
-  return new Set([...names].filter(([, name]) => texturedNames.has(name)).map(([pathId]) => pathId));
-};
-
 // The materials the meshes draw with, by name, with each one's values and its texture files by slot
 const readMaterials = async (
   component: DerivedAssetComponent,
   names: ReadonlyMap<string, string>,
   componentMaterials: readonly MaterialValues[],
-  references: readonly DumpedPointer[],
+  references: readonly ResolvedObject[],
 ): Promise<Record<string, AvatarMaterial>> => {
-  const usedNames = new Set(references.flatMap(({ m_PathID }) => names.get(m_PathID) ?? []));
+  const usedNames = new Set(references.flatMap((ref) => names.get(toObjectKey(ref.file, ref.pathId)) ?? []));
   const used = componentMaterials.filter(({ name }) => usedNames.has(name));
   const textureNames = await readAssetNames(
     new Set(used.flatMap(({ textures }) => Object.values(textures).map(({ pathId }) => pathId))),

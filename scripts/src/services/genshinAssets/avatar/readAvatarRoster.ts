@@ -1,10 +1,14 @@
+import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import type { SkinnedRenderer } from "#src/services/genshinAssets/avatar/readRendererBones";
 
 import { getTransformKey } from "#src/services/genshinAssets/avatar/readRendererBones";
+import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 
-// A skinned renderer with the name its mesh has in the asset index, and the scene object its game object is
+// A skinned renderer whose mesh resolves, with the name the asset index gives that mesh and the scene object its game
+// Object is
 export interface RosterRenderer extends SkinnedRenderer {
+  mesh: ResolvedObject;
   name: string;
   object?: SceneObject;
 }
@@ -24,7 +28,8 @@ const checkInTree = (object: SceneObject, rootKey: string, objectMap: ReadonlyMa
 
 // The meshes a model draws: the LOD0 renderers under its root, in name order. A renderer whose own dump switches it off is
 // Left out; a dump that says nothing of the switch leaves the renderer on, as Unity's default does. A renderer is also left
-// Out when any material it lists has no main texture: such a material is the effect system's shell, and an effect fills it
+// Out when any material it lists has no main texture: such a material is the effect system's shell, and an effect fills it.
+// The textured materials are keyed by file and path ID, as the renderers' materials resolve
 export const readAvatarRoster = (
   renderers: readonly RosterRenderer[],
   rootKey: string,
@@ -33,11 +38,13 @@ export const readAvatarRoster = (
 ): RosterRenderer[] =>
   renderers
     .filter(
-      ({ name, object, renderer }) =>
+      ({ materials, name, object, renderer }) =>
         renderer.m_Enabled !== 0 &&
         !LOD_SUFFIX_REGEX.test(name) &&
         object !== undefined &&
         checkInTree(object, rootKey, objectMap) &&
-        renderer.m_Materials.every(({ m_PathID }) => texturedMaterials.has(m_PathID)),
+        materials.every(
+          (material) => material !== undefined && texturedMaterials.has(toObjectKey(material.file, material.pathId)),
+        ),
     )
     .toSorted((firstRenderer, secondRenderer) => firstRenderer.name.localeCompare(secondRenderer.name));

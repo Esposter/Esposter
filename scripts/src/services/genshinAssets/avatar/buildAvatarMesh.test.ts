@@ -10,7 +10,7 @@ describe(buildAvatarMesh, () => {
 
     const binary = createAvatarBinary();
     const mesh: DumpedMesh = {
-      m_BoneNameHashes: [0, 0],
+      m_BindPose: [{}, {}],
       m_Colors: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       m_Indices: [0, 1, 2],
       m_Normals: [0, 0, 1, 0, 0, 1, 0, 0, 1],

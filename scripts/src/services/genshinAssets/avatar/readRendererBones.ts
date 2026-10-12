@@ -1,40 +1,61 @@
+import type { DumpedMesh } from "#src/models/genshinAssets/avatar/DumpedMesh";
+import type { DumpedPointer } from "#src/models/genshinAssets/shared/DumpedPointer";
 import type { DumpedSkinnedMeshRenderer } from "#src/models/genshinAssets/shared/DumpedSkinnedMeshRenderer";
+import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
+import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { RIG_ROOT_BONE_NAME } from "#src/services/genshinAssets/avatar/constants";
+import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
-// A skinned renderer that draws one mesh, as its dump holds it, with the file (its CAB) it lies in
+// A skinned renderer as its dump holds it, with the file (its CAB) it lies in. Each pointer it holds is resolved through
+// That file's externals, so a pointer with a file index other than zero names its object in another CAB; a pointer that
+// Names none, or one whose file the CAB map does not know, is undefined
 export interface SkinnedRenderer {
+  bones: (ResolvedObject | undefined)[];
   file: string;
+  materials: (ResolvedObject | undefined)[];
+  mesh?: ResolvedObject;
   renderer: DumpedSkinnedMeshRenderer;
+  rootBone?: ResolvedObject;
 }
 
-// Every skinned renderer of a layout that draws one of the meshes by its path ID, keyed by that path ID, read in one pass
-// Over the dumps of every block's CABs
+// Every skinned renderer dump of a layout, each with its pointers resolved through the CAB map
 export const readSkinnedRenderers = async (
   layoutDirectory: string,
-  meshPathIds: ReadonlySet<string>,
-): Promise<Map<string, SkinnedRenderer[]>> => {
-  const renderersMap = new Map<string, SkinnedRenderer[]>();
+  cabMap: ReadonlyMap<string, CabEntry>,
+): Promise<SkinnedRenderer[]> => {
+  const renderers: SkinnedRenderer[] = [];
   for (const cabDirectory of await listCabDirectories(layoutDirectory)) {
+    const file = basename(cabDirectory);
     // oxlint-disable-next-line no-await-in-loop -- one CAB's dumps are read at a time, holding their thousands of files
     const dumps = await readCabRenderers(cabDirectory);
-    for (const renderer of dumps) {
-      const pathId = renderer.m_Mesh.m_PathID;
-      if (!meshPathIds.has(pathId)) continue;
-      const renderers = renderersMap.get(pathId) ?? [];
-      renderers.push({ file: basename(cabDirectory), renderer });
-      renderersMap.set(pathId, renderers);
-    }
+    for (const renderer of dumps)
+      renderers.push({
+        bones: renderer.m_Bones.map((pointer) => resolveDumpedPointer(cabMap, file, pointer)),
+        file,
+        materials: renderer.m_Materials.map((pointer) => resolveDumpedPointer(cabMap, file, pointer)),
+        mesh: resolveDumpedPointer(cabMap, file, renderer.m_Mesh),
+        renderer,
+        rootBone: resolveDumpedPointer(cabMap, file, renderer.m_RootBone),
+      });
   }
-  return renderersMap;
+  return renderers;
 };
+
+// A dumped pointer resolved as the object it names, from the file its renderer lies in
+const resolveDumpedPointer = (
+  cabMap: ReadonlyMap<string, CabEntry>,
+  file: string,
+  { m_FileID, m_PathID }: DumpedPointer,
+): ResolvedObject | undefined => resolveObjectPointer(cabMap, file, { fileIndex: m_FileID, pathId: m_PathID });
 
 // The folders of every CAB holding skinned renderer dumps, under each block of a layout
 const listCabDirectories = async (layoutDirectory: string): Promise<string[]> => {
@@ -85,19 +106,31 @@ const readBoneChain = (
   return { object: leaf, path: chain.map(({ name }) => name).join("/") };
 };
 
-// Every bone of a renderer the layout holds up to the rig's root. A bone whose transform the dumps lost is left out, since
-// Its path cannot be read, and the rig places the bones it holds without one
+// The bones of a renderer in the order of its skin's joint indices, which is the order of its mesh's bind poses: joint i
+// Is m_Bones[i]. A mesh whose bind poses do not match its renderer's bones is not the mesh the renderer draws, and a bone
+// The layout cannot place has no rest, so both throw
 export const readRendererBones = (
-  { file, renderer }: SkinnedRenderer,
+  skinned: SkinnedRenderer,
+  name: string,
+  mesh: DumpedMesh,
   objectMap: ReadonlyMap<string, SceneObject>,
-): RendererBone[] =>
-  renderer.m_Bones.flatMap(({ m_PathID }): RendererBone[] => {
-    const bone = readBoneChain(file, m_PathID, objectMap);
-    return bone ? [bone] : [];
+): RendererBone[] => {
+  if (mesh.m_BindPose.length !== skinned.renderer.m_Bones.length)
+    throw new InvalidOperationError(
+      Operation.Read,
+      name,
+      `has ${mesh.m_BindPose.length} bind poses for a renderer of ${skinned.renderer.m_Bones.length} bones`,
+    );
+  return skinned.bones.map((bone) => {
+    const resolved = bone && readBoneChain(bone.file, bone.pathId, objectMap);
+    if (!resolved)
+      throw new InvalidOperationError(Operation.Read, name, "has a bone the layout does not place in the rig");
+    return resolved;
   });
+};
 
 // The renderer's root bone, the transform its pose is taken relative to, which the face's light is read against
 export const readRendererRootBone = (
-  { file, renderer }: SkinnedRenderer,
+  { rootBone }: SkinnedRenderer,
   objectMap: ReadonlyMap<string, SceneObject>,
-): RendererBone | undefined => readBoneChain(file, renderer.m_RootBone.m_PathID, objectMap);
+): RendererBone | undefined => (rootBone ? readBoneChain(rootBone.file, rootBone.pathId, objectMap) : undefined);

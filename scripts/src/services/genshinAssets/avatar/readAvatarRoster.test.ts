@@ -4,6 +4,7 @@ import type { RosterRenderer } from "#src/services/genshinAssets/avatar/readAvat
 
 import { readAvatarRoster } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 import { getTransformKey } from "#src/services/genshinAssets/avatar/readRendererBones";
+import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { describe, expect, test } from "vitest";
 
 // A scene object of the given name in the given CAB, under the given parent, with no transform of its own to speak of
@@ -22,23 +23,30 @@ const sceneObject = (name: string, file: string, transformId: string, parentId =
   transformId,
 });
 
-// A renderer of the given mesh name on the given object, switched on or off as its dump says
+// A renderer of the given mesh name on the given object, switched on or off as its dump says. Its materials lie in the
+// Object's CAB, so each is keyed by that file and its path ID
 const renderer = (
   name: string,
   object: SceneObject | undefined,
   m_Enabled?: number,
   materialPathIds: string[] = [],
-): RosterRenderer => ({
-  file: object?.file ?? "",
-  name,
-  object,
-  renderer: {
-    m_Enabled,
-    m_GameObject: { m_PathID: "" },
-    m_Materials: materialPathIds.map((m_PathID) => ({ m_FileID: 0, m_PathID })),
-    m_Mesh: {},
-  } as unknown as DumpedSkinnedMeshRenderer,
-});
+): RosterRenderer => {
+  const file = object?.file ?? "";
+  return {
+    bones: [],
+    file,
+    materials: materialPathIds.map((pathId) => ({ block: "", file, pathId })),
+    mesh: { block: "", file, pathId: name },
+    name,
+    object,
+    renderer: {
+      m_Enabled,
+      m_GameObject: { m_PathID: "" },
+      m_Materials: materialPathIds.map((m_PathID) => ({ m_FileID: 0, m_PathID })),
+      m_Mesh: {},
+    } as unknown as DumpedSkinnedMeshRenderer,
+  };
+};
 
 describe(readAvatarRoster, () => {
   test("takes the LOD0 renderers under the root, in name order, and leaves out the ones outside it", () => {
@@ -99,7 +107,7 @@ describe(readAvatarRoster, () => {
       ],
       getTransformKey(root.file, root.transformId),
       objectMap,
-      new Set(["mat-body", "mat-hair"]),
+      new Set([toObjectKey("cab-a", "mat-body"), toObjectKey("cab-a", "mat-hair")]),
     );
 
     expect(roster.map(({ name }) => name)).toStrictEqual(["Body"]);
