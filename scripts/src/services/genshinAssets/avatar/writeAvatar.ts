@@ -64,16 +64,22 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
     throw new InvalidOperationError(Operation.Read, component, "has no single model root in its layout");
   const gameObjectMap = new Map(objects.map((object) => [`${object.file}|${object.gameObjectId}`, object]));
   const renderersMap = await readSkinnedRenderers(directory.layout, new Set(meshNames.keys()));
+  const skinnedRenderers = [...renderersMap].flatMap(([pathId, renderers]) =>
+    renderers.map((skinned) => ({
+      ...skinned,
+      name: meshNames.get(pathId) ?? "",
+      object: gameObjectMap.get(`${skinned.file}|${skinned.renderer.m_GameObject.m_PathID}`),
+    })),
+  );
+  const texturedMaterials = await readTexturedMaterialPathIds(
+    component,
+    skinnedRenderers.flatMap(({ renderer }) => renderer.m_Materials),
+  );
   const roster = readAvatarRoster(
-    [...renderersMap].flatMap(([pathId, skinnedRenderers]) =>
-      skinnedRenderers.map((skinned) => ({
-        ...skinned,
-        name: meshNames.get(pathId) ?? "",
-        object: gameObjectMap.get(`${skinned.file}|${skinned.renderer.m_GameObject.m_PathID}`),
-      })),
-    ),
+    skinnedRenderers,
     getTransformKey(rootObject.file, rootObject.transformId),
     objectMap,
+    texturedMaterials,
   );
   if (roster.length === 0)
     throw new InvalidOperationError(Operation.Read, source.name, "has no enabled LOD0 renderer under its model root");
@@ -186,6 +192,18 @@ const addedNode = (object: SceneObject, parent: number, name: string): AvatarBon
 });
 const leafName = (path: string): string => path.slice(path.lastIndexOf("/") + 1);
 const depth = (path: string): number => path.split("/").length;
+
+// The path IDs of the referenced materials that have a main texture, which a renderer must all have to be drawn
+const readTexturedMaterialPathIds = async (
+  component: DerivedAssetComponent,
+  references: readonly DumpedPointer[],
+): Promise<Set<string>> => {
+  const names = await readAssetNames(new Set(references.map(({ m_PathID }) => m_PathID)));
+  const texturedNames = new Set(
+    (await readComponentMaterials(component)).filter(({ textures }) => "_MainTex" in textures).map(({ name }) => name),
+  );
+  return new Set([...names].filter(([, name]) => texturedNames.has(name)).map(([pathId]) => pathId));
+};
 
 // The materials the meshes draw with, by name, with each one's values and its texture files by slot, and the name of
 // Each material by path ID so a submesh finds its own

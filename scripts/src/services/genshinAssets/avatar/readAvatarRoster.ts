@@ -23,11 +23,13 @@ const checkInTree = (object: SceneObject, rootKey: string, objectMap: ReadonlyMa
 };
 
 // The meshes a model draws: the LOD0 renderers under its root, in name order. A renderer whose own dump switches it off is
-// Left out; a dump that says nothing of the switch leaves the renderer on, as Unity's default does
+// Left out; a dump that says nothing of the switch leaves the renderer on, as Unity's default does. A renderer is also left
+// Out when any material it lists has no main texture: such a material is the effect system's shell, and an effect fills it
 export const readAvatarRoster = (
   renderers: readonly RosterRenderer[],
   rootKey: string,
   objectMap: ReadonlyMap<string, SceneObject>,
+  texturedMaterials: ReadonlySet<string>,
 ): RosterRenderer[] =>
   renderers
     .filter(
@@ -35,6 +37,7 @@ export const readAvatarRoster = (
         renderer.m_Enabled !== 0 &&
         !LOD_SUFFIX_REGEX.test(name) &&
         object !== undefined &&
-        checkInTree(object, rootKey, objectMap),
+        checkInTree(object, rootKey, objectMap) &&
+        renderer.m_Materials.every(({ m_PathID }) => texturedMaterials.has(m_PathID)),
     )
     .toSorted((firstRenderer, secondRenderer) => firstRenderer.name.localeCompare(secondRenderer.name));

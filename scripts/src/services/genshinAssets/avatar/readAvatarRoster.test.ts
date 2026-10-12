@@ -23,14 +23,19 @@ const sceneObject = (name: string, file: string, transformId: string, parentId =
 });
 
 // A renderer of the given mesh name on the given object, switched on or off as its dump says
-const renderer = (name: string, object: SceneObject | undefined, m_Enabled?: number): RosterRenderer => ({
+const renderer = (
+  name: string,
+  object: SceneObject | undefined,
+  m_Enabled?: number,
+  materialPathIds: string[] = [],
+): RosterRenderer => ({
   file: object?.file ?? "",
   name,
   object,
   renderer: {
     m_Enabled,
     m_GameObject: { m_PathID: "" },
-    m_Materials: [],
+    m_Materials: materialPathIds.map((m_PathID) => ({ m_FileID: 0, m_PathID })),
     m_Mesh: {},
   } as unknown as DumpedSkinnedMeshRenderer,
 });
@@ -50,6 +55,7 @@ describe(readAvatarRoster, () => {
       [renderer("Face", face), renderer("Body", body), renderer("Body_LOD1", body), renderer("Body", other)],
       getTransformKey(root.file, root.transformId),
       objectMap,
+      new Set(),
     );
 
     expect(roster.map(({ name }) => name)).toStrictEqual(["Body", "Face"]);
@@ -69,8 +75,33 @@ describe(readAvatarRoster, () => {
       [renderer("Body", body, 1), renderer("EffectMesh", effect, 0), renderer("Brow", brow)],
       getTransformKey(root.file, root.transformId),
       objectMap,
+      new Set(),
     );
 
     expect(roster.map(({ name }) => name)).toStrictEqual(["Body", "Brow"]);
+  });
+
+  test("leaves out a renderer with a material that has no main texture, the effect shell, and keeps a textured one", () => {
+    expect.hasAssertions();
+    const root = sceneObject("Model", "cab-a", "1");
+    const body = sceneObject("Body", "cab-a", "2", "1");
+    const effect = sceneObject("EffectMesh", "cab-a", "3", "1");
+    const face = sceneObject("Face", "cab-a", "4", "1");
+    const objectMap = new Map(
+      [root, body, effect, face].map((object) => [getTransformKey(object.file, object.transformId), object]),
+    );
+
+    const roster = readAvatarRoster(
+      [
+        renderer("Body", body, undefined, ["mat-body", "mat-hair"]),
+        renderer("EffectMesh", effect, undefined, ["mat-shell"]),
+        renderer("Face", face, undefined, ["mat-body", "mat-shell"]),
+      ],
+      getTransformKey(root.file, root.transformId),
+      objectMap,
+      new Set(["mat-body", "mat-hair"]),
+    );
+
+    expect(roster.map(({ name }) => name)).toStrictEqual(["Body"]);
   });
 });
