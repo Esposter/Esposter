@@ -2,10 +2,7 @@ import type { GameDataPublication } from "#src/models/gameData/GameDataPublicati
 import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatarRow";
 import type { SkillGlyphs } from "genshin-world";
 
-import {
-  SKILL_GLYPHS_GENERATED_DIRECTORY,
-  SkillGlyphTonesMap,
-} from "#src/services/genshinAssets/skillGlyphs/constants";
+import { SkillGlyphTonesMap } from "#src/services/genshinAssets/skillGlyphs/constants";
 import { getSkillGlyphsLoaderMapSource } from "#src/services/genshinAssets/skillGlyphs/getSkillGlyphsLoaderMapSource";
 import { traceTalentIcon } from "#src/services/genshinAssets/skillGlyphs/traceTalentIcon";
 import { PLAYABLE_AVATAR_USE_TYPE } from "#src/services/genshinAssets/stats/constants";
@@ -17,8 +14,6 @@ import { resolveWikiFiles } from "#src/services/genshinParity/shared/resolveWiki
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import { GameDataset, skillGlyphsSchema } from "genshin-world";
-import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 
 // The wiki files a talent's name with its colons dropped, or, for a few, made dashes
 const getTitles = (talentName: string) => [
@@ -27,10 +22,15 @@ const getTitles = (talentName: string) => [
 
 // Every playable character's skill and burst icons as the HUD's buttons carry them, each traced from the wiki's render
 // Of its talent (`File:Talent <Name>.png`) by `traceTalentIcon`, one entry a character of the hosted `skillGlyphs` index,
-// And the loader map naming the characters it holds. A talent is named in English from the first of the character's skill
-// Sets that names both (`getCharacterSkillDepotRows`), and the wiki files a name's colons as nothing or as a dash, so both
-// Titles are asked for. A character the wiki holds either icon of under neither is left out and noted
-export const buildSkillGlyphs = async (): Promise<{ notes: string[]; publication: GameDataPublication }> => {
+// And the loader map's source naming the characters it holds, written only once published. A talent is named in English
+// From the first of the character's skill Sets that names both (`getCharacterSkillDepotRows`), and the wiki files a
+// Name's colons as nothing or as a dash, so both titles are asked for. A character the wiki holds either icon of under
+// Neither is left out and noted
+export const buildSkillGlyphs = async (): Promise<{
+  loaderMapSource: string;
+  notes: string[];
+  publication: GameDataPublication;
+}> => {
   const skillDepotMap = readSkillDepotMap();
   const skillMap = readSkillMap();
   const englishTextMap = readTextMap(GameLanguage.English);
@@ -83,13 +83,9 @@ export const buildSkillGlyphs = async (): Promise<{ notes: string[]; publication
       }),
     ]);
   }
-  mkdirSync(SKILL_GLYPHS_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(
-    join(SKILL_GLYPHS_GENERATED_DIRECTORY, "SkillGlyphsLoaderMap.ts"),
-    getSkillGlyphsLoaderMapSource(characterIdSkillGlyphsEntries.map(([characterId]) => characterId)),
-  );
   notes.push(`${characterIdSkillGlyphsEntries.length} of ${characterTalents.length} characters' icons traced`);
   return {
+    loaderMapSource: getSkillGlyphsLoaderMapSource(characterIdSkillGlyphsEntries.map(([characterId]) => characterId)),
     notes,
     publication: {
       indexes: {
