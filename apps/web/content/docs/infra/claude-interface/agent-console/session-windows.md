@@ -1,11 +1,11 @@
 ---
 title: Session windows
-description: Each agent console session on this computer runs in a console window of its own that logs the conversation, so a session is seen and stopped from its window or from the page, either end shows the other's change at once, and a host killed without stopping takes no session with it.
+description: On Windows, each agent console session a loopback host opens runs in a console window of its own that logs the conversation, so a session is seen and stopped from its window or from the page, either end shows the other's change at once, and a host killed without stopping takes no session with it.
 ---
 
 # Session Windows
 
-Each session on this computer runs in a window of its own, outside the [host](/docs/infra/claude-interface/agent-console/host)'s process, so closing that window stops exactly that session. Inside the host's process, the only way to stop one outside the page is to stop the host and every session with it, and nothing on the desktop says which sessions are running. A window works as a browser window does, so closing it closes one session. The page still manages all of them. Claude Code's desktop app works the same way: sessions side by side in one app, each stopped on its own ([Claude Code desktop](https://code.claude.com/docs/en/desktop)).
+On Windows, a host listening on the loopback runs each session in a window of its own, outside the [host](/docs/infra/claude-interface/agent-console/host)'s process, so closing that window stops exactly that session. Elsewhere, and for a host listening beyond the loopback, sessions stay inside the host's process. Inside the host's process, the only way to stop one outside the page is to stop the host and every session with it, and nothing on the desktop says which sessions are running. A window works as a browser window does, so closing it closes one session. The page still manages all of them. Claude Code's desktop app works the same way: sessions side by side in one app, each stopped on its own ([Claude Code desktop](https://code.claude.com/docs/en/desktop)).
 
 ## How it works
 
