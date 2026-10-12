@@ -1,4 +1,5 @@
-import { SECONDS_PER_DAY, SECONDS_PER_MINUTE } from "#src/services/machine/constants";
+import { SECONDS_PER_DAY } from "#src/services/machine/constants";
+import { SECONDS_PER_MINUTE } from "#src/services/shared/constants";
 
 // A `ps` CPU time, `[[dd-]hh:]mm:ss[.cc]`, in seconds
 export const parseCpuTime = (time: string): number => {

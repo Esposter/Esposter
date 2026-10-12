@@ -27,7 +27,6 @@ export const ORPHAN_COMMAND_LINE_CHARACTERS = 120;
 export const WINDOWS_TICKS_PER_SECOND = 10_000_000;
 // An orphan on macOS is reparented to launchd, which is always process 1
 export const LAUNCHD_PROCESS_ID = 1;
-export const SECONDS_PER_MINUTE: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 export const SECONDS_PER_DAY: number = Temporal.Duration.from({ hours: 24 }).total("seconds");
 // The watcher's latest reading, written each minute for the genshin-mods pulse and `pnpm ai:resume` to read. It is
 // Written beside its file and renamed over it, and a reading older than the stale line is one the watcher missed
