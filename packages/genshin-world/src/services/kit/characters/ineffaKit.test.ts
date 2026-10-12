@@ -36,10 +36,11 @@ const castEffects = (action: KitAction, effects: KitEffect[] = []): KitEffect[] 
   action.onStart?.(createKitTestContext(createIneffaCombatant(), { kitEffectState }));
   return kitEffectState.effects;
 };
+const BIRGITTA_ID = "birgitta";
 const castBirgitta = (action: KitAction, effects: KitEffect[] = []): KitSummon =>
   takeOne(
     castEffects(action, effects).filter(
-      (effect): effect is KitSummon => effect.kind === "summon" && effect.id === "birgitta",
+      (effect): effect is KitSummon => effect.kind === "summon" && effect.id === BIRGITTA_ID,
     ),
   );
 
@@ -103,10 +104,8 @@ describe(createIneffaKitBehaviour, () => {
   test("her burst summons Birgitta again and ends the one on the field, as gcsim restarts her discharges", () => {
     expect.hasAssertions();
     const skillBirgitta = castBirgitta(INEFFA_KIT.elementalSkill);
-    const kitEffectState: KitEffectState = { effects: [skillBirgitta] };
-    INEFFA_KIT.elementalBurst.onStart?.(createKitTestContext(createIneffaCombatant(), { kitEffectState }));
-    const birgittas = kitEffectState.effects.filter(
-      (effect): effect is KitSummon => effect.kind === "summon" && effect.id === "birgitta",
+    const birgittas = castEffects(INEFFA_KIT.elementalBurst, [skillBirgitta]).filter(
+      (effect): effect is KitSummon => effect.kind === "summon" && effect.id === BIRGITTA_ID,
     );
 
     expect(skillBirgitta.secondsRemaining).toBe(0);
