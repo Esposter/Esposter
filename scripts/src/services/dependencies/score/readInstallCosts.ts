@@ -20,13 +20,12 @@ export const readInstallCosts = (packageNameInstalledMap: Map<string, InstalledP
 
   const packageNameInstallCostMap = new Map<string, InstallCost>();
   for (const [packageName, closure] of packageNameClosureMap) {
-    const [ownRealDirectory = ""] = closure;
     let bytes = 0;
     let isShared = false;
 
     for (const realDirectory of closure) {
       bytes += getOrCreate(directoryBytesMap, realDirectory, () => getDirectoryBytes(realDirectory));
-      if (realDirectory !== ownRealDirectory && (reachCountMap.get(realDirectory) ?? 0) > 1) isShared = true;
+      if ((reachCountMap.get(realDirectory) ?? 0) > 1) isShared = true;
     }
     packageNameInstallCostMap.set(packageName, { bytes, isShared });
   }
