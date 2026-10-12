@@ -71,13 +71,13 @@ const { gameText, health, level, maxHealth } = defineProps<Props>();
 .value {
   position: absolute;
   top: 50%;
-  translate: 0 -50%;
   white-space: nowrap;
 }
 
 .level {
   right: calc(100% + var(--canvas-unit) * 24);
   font-size: calc(var(--canvas-unit) * 25);
+  translate: 0 -50%;
 }
 
 .value {
