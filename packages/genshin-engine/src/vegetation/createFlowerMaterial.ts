@@ -18,17 +18,16 @@ import {
   modelWorldMatrix,
   positionGeometry,
   positionLocal,
-  step,
   uv,
   vec2,
   vec3,
   vec4,
 } from "three/tsl";
 
-const FLOWER_ALPHA_TEST = 0.5;
-// The flower's head, a disc toward the top of each card, the stem below it left to the grass round it
+// The flower's head, a disc toward the top of each card, and the stem under it, a strip down to the ground
 const HEAD_CENTER = vec2(0.5, 0.7);
 const HEAD_RADIUS = 0.28;
+const STEM_HALF_WIDTH = 0.04;
 // The scattered flowers, each instance placed and coloured by its tile's per-instance attributes
 // (`createFlowerTileGeometry`), so every tile's flowers share this one material, cut to a head on each crossed card.
 // Like a grass blade, each takes the ground's upward normal so it shades with the field it stands in, and the wind
@@ -39,8 +38,9 @@ export const createFlowerMaterial = (
 ): ToonNodeMaterial => {
   const flowerMaterial = createToonMaterial({ ...toonMaterialOptions, isOutlined: false });
   flowerMaterial.side = DoubleSide;
-  flowerMaterial.opacityNode = step(uv().sub(HEAD_CENTER).length(), HEAD_RADIUS);
-  flowerMaterial.alphaTest = FLOWER_ALPHA_TEST;
+  const onHead = uv().sub(HEAD_CENTER).length().lessThanEqual(HEAD_RADIUS);
+  const onStem = uv().x.sub(0.5).abs().lessThanEqual(STEM_HALF_WIDTH).and(uv().y.lessThanEqual(HEAD_CENTER.y));
+  flowerMaterial.maskNode = onHead.or(onStem);
   flowerMaterial.colorNode = attribute(FLOWER_COLOR_ATTRIBUTE_NAME, "vec3").mul(
     createWetDarkeningNode(toonMaterialOptions.lightUniforms),
   );

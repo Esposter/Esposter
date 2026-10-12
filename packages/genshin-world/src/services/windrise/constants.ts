@@ -81,8 +81,8 @@ export const MIDDLE_GRASS_RING: GrassRing = {
 export const FLOWER_SPACING = 2.5;
 export const FLOWER_CANDIDATE_COUNT = 48;
 export const FLOWER_MIN_GRASS = 0.9;
-export const FLOWER_MIN_SIZE = 0.5;
-export const FLOWER_MAX_SIZE = 0.75;
+export const FLOWER_MIN_SIZE = 0.12;
+export const FLOWER_MAX_SIZE = 0.2;
 export const FLOWER_COLORS: readonly number[] = [0xf4f1e6, 0xf2d64b, 0xb8a6e8];
 // Windrise's day: a deep blue night lit by the moon, an apricot dawn, a high clear afternoon, a gold and violet dusk.
 // The light is near nothing at six and eighteen, where the moon hands the sky to the sun and back
