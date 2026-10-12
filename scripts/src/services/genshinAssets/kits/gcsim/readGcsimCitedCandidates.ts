@@ -26,22 +26,31 @@ const readCitedValue = (lines: readonly string[], lineIndex: number, citedValue:
   const delay = readGcsimQueueDelay(lines, lineIndex, resolveName);
   if (delay === undefined) return undefined;
   const loop = readGcsimEnclosingLoop(lines, lineIndex, resolveName);
+  // A value the line gives as written is cited as written, and one only the queued block's delay makes is cited with it
+  const shifts = delay === 0 ? [0] : [0, delay];
   if (loop === undefined) {
-    const lineValues = readGcsimLineValues(lineText, resolveName).map((value) => value + delay);
-    return lineValues.find((lineValue) => checkIsKitValueEqual(lineValue, citedValue)) ?? lineValues[0];
+    const rawValues = readGcsimLineValues(lineText, resolveName);
+    for (const shift of shifts) {
+      const lineValues = rawValues.map((value) => value + shift);
+      const matching = lineValues.find((lineValue) => checkIsKitValueEqual(lineValue, citedValue));
+      if (matching !== undefined) return matching;
+    }
+    return rawValues.length === 0 ? undefined : (rawValues[0] ?? 0) + delay;
   }
   if (loop.count === 0) return undefined;
-  const valuesByIndex = Array.from({ length: loop.count }, (_value, index) =>
-    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))).map(
-      (value) => value + delay,
-    ),
+  const rawByIndex = Array.from({ length: loop.count }, (_value, index) =>
+    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))),
   );
   const positions = Array.from(
-    { length: Math.min(...valuesByIndex.map((values) => values.length)) },
+    { length: Math.min(...rawByIndex.map((values) => values.length)) },
     (_value, position) => position,
   );
-  const arrayAt = (position: number) => valuesByIndex.map((values) => values[position]);
-  const array = arrayAt(positions.find((position) => checkIsKitValueEqual(arrayAt(position), citedValue)) ?? 0);
+  for (const shift of shifts)
+    for (const position of positions) {
+      const array = rawByIndex.map((values) => (values[position] ?? Number.NaN) + shift);
+      if (checkIsKitValueEqual(array, citedValue)) return array;
+    }
+  const array = rawByIndex.map((values) => (values[0] === undefined ? undefined : values[0] + delay));
   return array.every((value) => value !== undefined) ? array : undefined;
 };
 
