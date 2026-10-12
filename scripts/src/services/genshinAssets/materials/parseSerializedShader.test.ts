@@ -22,52 +22,6 @@ const uint16List = (values: number[]): Buffer => {
   return align(Buffer.concat([int32(values.length), body]));
 };
 const uint8List = (bytes: Buffer): Buffer => align(Buffer.concat([int32(bytes.length), bytes]));
-// A render state is its name and then 708 bytes of zeroes: every float value is a zero float with an empty name, and every
-// Other name is empty
-const RENDER_STATE_BYTES = 712;
-const EMPTY_PARAMETER_LISTS_BYTES = 32;
-const TRAILER_BYTES = 24;
-const subProgram = (blobIndex: number, gpuProgramType: number, keywordIndices: number[]): Buffer =>
-  Buffer.concat([
-    uint32(blobIndex),
-    Buffer.alloc(4),
-    Buffer.alloc(16),
-    int32(0),
-    int32(0),
-    uint32(0),
-    uint16List(keywordIndices),
-    uint16List([]),
-    Buffer.from([0, gpuProgramType, 0, 0]),
-    Buffer.alloc(EMPTY_PARAMETER_LISTS_BYTES),
-    int32(0),
-    Buffer.alloc(TRAILER_BYTES),
-  ]);
-// A pass's trailer is one zero word or two, as the game writes it, and two is the usual one
-const pass = (
-  name: string,
-  keywords: [string, number][],
-  stages: { fragment: Buffer[]; geometry: Buffer[]; vertex: Buffer[] },
-  trailerWords: 1 | 2 = 2,
-): Buffer =>
-  Buffer.concat([
-    list(keywords.map(([keyword, index]) => Buffer.concat([string(keyword), int32(index)]))),
-    int32(0),
-    string(name),
-    Buffer.alloc(RENDER_STATE_BYTES - 4),
-    uint32(0),
-    list(stages.vertex),
-    list(stages.fragment),
-    list(stages.geometry),
-    list([]),
-    list([]),
-    list([]),
-    Buffer.alloc(4),
-    string(""),
-    string(""),
-    string(""),
-    list([]),
-    ...Array.from({ length: trailerWords }, () => int32(0)),
-  ]);
 // A program's container is its magic and some bytes of the game's own, and a blob chunk is its entry count, each entry's
 // Offset and length, then each program's header and container
 const payload = (text: string): Buffer => Buffer.concat([Buffer.from("DXBC"), Buffer.from(text)]);
@@ -93,6 +47,53 @@ const blobChunk = (programs: { code: Buffer; gpuProgramType: number }[]): Buffer
 };
 
 describe(parseSerializedShader, () => {
+  // A render state is its name and then 708 bytes of zeroes: every float value is a zero float with an empty name, and every
+  // Other name is empty
+  const RENDER_STATE_BYTES = 712;
+  const EMPTY_PARAMETER_LISTS_BYTES = 32;
+  const TRAILER_BYTES = 24;
+  const subProgram = (blobIndex: number, gpuProgramType: number, keywordIndices: number[]): Buffer =>
+    Buffer.concat([
+      uint32(blobIndex),
+      Buffer.alloc(4),
+      Buffer.alloc(16),
+      int32(0),
+      int32(0),
+      uint32(0),
+      uint16List(keywordIndices),
+      uint16List([]),
+      Buffer.from([0, gpuProgramType, 0, 0]),
+      Buffer.alloc(EMPTY_PARAMETER_LISTS_BYTES),
+      int32(0),
+      Buffer.alloc(TRAILER_BYTES),
+    ]);
+  // A pass's trailer is one zero word or two, as the game writes it, and two is the usual one
+  const pass = (
+    name: string,
+    keywords: [string, number][],
+    stages: { fragment: Buffer[]; geometry: Buffer[]; vertex: Buffer[] },
+    trailerWords: 1 | 2 = 2,
+  ): Buffer =>
+    Buffer.concat([
+      list(keywords.map(([keyword, index]) => Buffer.concat([string(keyword), int32(index)]))),
+      int32(0),
+      string(name),
+      Buffer.alloc(RENDER_STATE_BYTES - 4),
+      uint32(0),
+      list(stages.vertex),
+      list(stages.fragment),
+      list(stages.geometry),
+      list([]),
+      list([]),
+      list([]),
+      Buffer.alloc(4),
+      string(""),
+      string(""),
+      string(""),
+      list([]),
+      ...Array.from({ length: trailerWords }, () => int32(0)),
+    ]);
+
   test("reads a pass whose trailer is one word, so the next pass starts right after it", () => {
     expect.hasAssertions();
 
