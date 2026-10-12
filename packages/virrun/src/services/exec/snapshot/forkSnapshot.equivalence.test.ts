@@ -2,8 +2,8 @@ import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
-import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
 import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
+import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
 import {
   ACCEPTANCE_TIMEOUT_MS,
   ESBUILD_VERSION_REGEX,

@@ -11,6 +11,7 @@ import { persistWithCache } from "#src/services/exec/cache/persistWithCache";
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
 import { VIRRUN_SNAPSHOT_TEMP_PREFIXES } from "#src/services/exec/snapshot/constants";
+import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
 import { createLease } from "#src/services/exec/snapshot/createLease";
 import { createPrepareLayer } from "#src/services/exec/snapshot/createPrepareLayer";
 import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
@@ -19,7 +20,6 @@ import { pruneStalePrepareLayers } from "#src/services/exec/snapshot/pruneStaleP
 import { pruneStaleSnapshots } from "#src/services/exec/snapshot/pruneStaleSnapshots";
 import { reapStaleTemps } from "#src/services/exec/snapshot/reapStaleTemps";
 import { resolvePrepareLocation } from "#src/services/exec/snapshot/resolvePrepareLocation";
-import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { VIRRUN_ENV_KEY, VIRRUN_ENV_VALUE } from "#src/services/exec/util/constants";
 import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";

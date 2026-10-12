@@ -1,8 +1,8 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
-import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
 import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
+import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { describe } from "vitest";
 
