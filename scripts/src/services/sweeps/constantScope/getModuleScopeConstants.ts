@@ -21,7 +21,7 @@ const checkIsCallTo = (statement: ts.Statement, calleeName: string): boolean =>
 const checkIsExported = (statement: ts.VariableStatement): boolean =>
   (statement.modifiers ?? []).some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword);
 
-// A function is movable into a describe alongside what it captures, so it holds no state the scope must keep out
+// A function holds no state of its own, and a `vi.hoisted` block must stay at module scope, so neither is a constant to move
 const checkIsMovable = (initializer: ts.Expression | undefined): boolean =>
   initializer === undefined ||
   (!ts.isArrowFunction(initializer) &&
@@ -50,13 +50,14 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
     if (checkIsCallTo(statement, MOCK_CALLEE)) pinningNodes.push(statement);
     else if (ts.isVariableStatement(statement) && !checkIsExported(statement))
       for (const declaration of statement.declarationList.declarations) {
-        if (!ts.isIdentifier(declaration.name)) continue;
         const { initializer } = declaration;
-        const line = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
         if (!checkIsMovable(initializer)) continue;
         else if (initializer && getDescendants(initializer).some((node) => ts.isAwaitExpression(node)))
           pinningNodes.push(initializer);
-        else candidates.push({ initializer, line, name: declaration.name.text });
+        else if (ts.isIdentifier(declaration.name)) {
+          const line = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
+          candidates.push({ initializer, line, name: declaration.name.text });
+        }
       }
 
   // A pinned constant pins what its own initializer reads, so the set is closed to a fixed point

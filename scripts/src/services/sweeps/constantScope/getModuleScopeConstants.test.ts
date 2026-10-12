@@ -47,8 +47,7 @@ describe(getModuleScopeConstants, () => {
     expect(getModuleScopeConstants(`const ${name} = async function () {\n  return "";\n};`)).toStrictEqual([]);
   });
 
-  // The body is rebuilt from its code, so a comment between two keywords has to leave a boundary —
-  // Without one this reads as `asyncfunction` and the exemption stops matching
+  // A comment between two keywords is trivia the AST skips, so the exemption still matches the function's head
   test("skips an async function expression with a comment inside its head", () => {
     expect.hasAssertions();
 
@@ -72,6 +71,12 @@ describe(getModuleScopeConstants, () => {
     expect.hasAssertions();
 
     expect(getModuleScopeConstants(`const ${name} = new Set(await readdir(""));`)).toStrictEqual([]);
+  });
+
+  test("keeps a constant a top-level await destructuring reads at module scope", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`const cfg = { url: "" };\nconst { data } = await fetchIt(cfg);`)).toStrictEqual([]);
   });
 
   // The factory runs above the imports, where a describe scope is invisible, so what it returns stays out too
