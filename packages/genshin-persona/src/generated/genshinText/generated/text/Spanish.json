@@ -256,6 +256,7 @@
   "UI_FORGE_PAGE_QUEUE_LOCK_LEVEL": "Desbloqueable en Rango de Aventura {0}",
   "UI_FORGE_PAGE_QUEUE_PROGRESS": "Cantidad forjada: {0}",
   "UI_FORGE_PAGE_QUEUE_UNFINISH": "Forjando...",
+  "UI_FORGE_PAGE_TITLE": "Forjar",
   "UI_FRIEND_COPY": "Copiar",
   "UI_FRIEND_TITLE": "Amigos",
   "UI_GACHAPAGE_BUYFATE_DIRECT": "Ir a comprar “{0}”",

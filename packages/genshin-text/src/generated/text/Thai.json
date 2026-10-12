@@ -256,6 +256,7 @@
   "UI_FORGE_PAGE_QUEUE_LOCK_LEVEL": "ปลดล็อกที่แรงก์ผจญภัย {0}",
   "UI_FORGE_PAGE_QUEUE_PROGRESS": "จำนวนที่สร้างเสร็จ {0}",
   "UI_FORGE_PAGE_QUEUE_UNFINISH": "กำลังสร้าง",
+  "UI_FORGE_PAGE_TITLE": "การหลอม",
   "UI_FRIEND_COPY": "คัดลอก",
   "UI_FRIEND_TITLE": "เพื่อน",
   "UI_GACHAPAGE_BUYFATE_DIRECT": "ไปซื้อ {0}",

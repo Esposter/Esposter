@@ -256,6 +256,7 @@
   "UI_FORGE_PAGE_QUEUE_LOCK_LEVEL": "Hạng Mạo Hiểm đạt {0} sẽ mở",
   "UI_FORGE_PAGE_QUEUE_PROGRESS": "Số lượng đã rèn {0}",
   "UI_FORGE_PAGE_QUEUE_UNFINISH": "Đang rèn",
+  "UI_FORGE_PAGE_TITLE": "Rèn",
   "UI_FRIEND_COPY": "Sao Chép",
   "UI_FRIEND_TITLE": "Bạn Bè",
   "UI_GACHAPAGE_BUYFATE_DIRECT": "Đến Mua {0}",
