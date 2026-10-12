@@ -33,9 +33,9 @@ interface Props {
   totalSeconds: number;
 }
 
-const amount = defineModel<number>("amount", { default: 1 });
-const recipeId = defineModel<number>("recipeId", { default: 0 });
-const tab = defineModel<ForgeTab>("tab", { default: ForgeTab.Materials });
+const amount = defineModel<number>("amount", { required: true });
+const recipeId = defineModel<number>("recipeId", { required: true });
+const tab = defineModel<ForgeTab>("tab", { required: true });
 const { amountMaximum, coins, gameText, queues, recipes, requiredCoins, totalSeconds } = defineProps<Props>();
 const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 // A duration in the game's own shape: seconds under a minute, then whole minutes
