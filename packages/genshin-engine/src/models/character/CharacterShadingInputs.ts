@@ -53,8 +53,8 @@ export interface CharacterShadingInputs {
   metalTexture?: Texture;
   // The outline's width knots, "_OutlineWidthAdjustZs" and "_OutlineWidthAdjustScales"
   outlineDepths: Vector3Tuple;
-  // The outline's offset along the view-space normal, from the game's "_MaxOutlineZOffset", where a game model has one
-  outlineOffset?: { isBlueScaled: boolean; size: number };
+  // The outline's offset along the view ray, from the game's "_MaxOutlineZOffset", where a game model has one
+  outlineOffset?: { blockBChannel: number; size: number };
   outlineScales: Vector3Tuple;
   // The packed shadow ramp "_PackedShadowRampTex", read as its row, and the layout it is read by: the game's and the
   // World's shared ramps are rows, and a pack's own toon is a column

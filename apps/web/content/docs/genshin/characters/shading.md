@@ -228,7 +228,7 @@ uv = (flip ? 1 - uv.x : uv.x, uv.y)
 
 ### The shadow's lookup
 
-With the face map's texel `T` at that UV, the softness window `s = max(_FaceMapSoftness, 1e-6)`, and the threshold above:
+With the face map's texel `T` at that UV, which is its alpha, not its red (Exact: the program samples "t2" into a destination's `.w`), the softness window `s = max(_FaceMapSoftness, 1e-6)`, and the threshold above:
 
 ```
 lo = clamp(threshold - s, 1e-4, 0.9989)
@@ -260,7 +260,7 @@ The outline is the face's "OUTLINE" pass, whose base programs are vertex 958 (DX
 
 ### The width (vertex 958)
 
-The vertex program pushes each vertex out along its screen-space normal by a width `W`. The depth term `D` picks one of three knots of "_OutlineWidthAdjustZs", and the scale is read from the matching knots of "_OutlineWidthAdjustScales" (Exact on the operators and the knot selection):
+The vertex program moves each vertex in view space, before the projection: along its ray from the eye by an offset, then along its screen normal by a width `W`. The depth term `D` picks one of three knots of "_OutlineWidthAdjustZs", and the scale is read from the matching knots of "_OutlineWidthAdjustScales" (Exact on the operators and the knot selection):
 
 ```
 k  = 2.414 / cb2[7].y                       (the projection's y scale)
@@ -269,12 +269,21 @@ D  = -k * z                                 (z the view-space depth)
 t  = saturate((D - Z0) / max(Z1 - Z0, 0.001))
 s  = t * (S1 - S0) + S0
 W  = T_w * s * "_OutlineWidth" * "_OutlineCorrectionWidth" * v1.w * 0.41425
-p.xy += W * N_screen                        (N_screen the normal projected to the screen)
+V.xy += normalize(vec3(N_view.xy, 0.01)).xy * W     (V the view-space position, N_view the view-space normal)
 ```
 
-`T_w` is the red channel of texture "t0" sampled at the vertex's second texture coordinate, at lod 0 (Exact on the channel and the lod; Provisional on the texture's name, which the slot table does not yet give). `v1.w` is the vertex's colour alpha, so a vertex with none is not pushed out at all. The offset along the view-space normal, "_MaxOutlineZOffset" times 0.01, is scaled by "_OutlineOffsetBlockBChannel" as well: it is `v1.z - 0.5` where that flag is set, and 1 where it is not (Exact on the form, Provisional on the blue channel's meaning).
+`T_w` is the blue channel of texture "t0" sampled at the vertex's second texture coordinate, at lod 0 (Exact on the channel and the lod; Provisional on the texture's name, which the slot table does not yet give). `v1.w` is the vertex's colour alpha, so a vertex with none is not pushed out at all.
 
-The code (`createOutlineMaterial` and `createAvatarShadingInputs`) takes the knots, the vertex weight and the offset from the game, and the width as `"_OutlineWidth" * 0.41425` with `T_w` taken as 1, since the slot is not yet named and no texture is read. The offset is the game's form. "_OutlineCorrectionWidth" is not read: the face holds none, so the code takes 1 where a material holds none, which is the game's default. The pack's outline is the world's own, unchanged.
+The offset comes first, along the ray from the eye, not along the normal (Exact):
+
+```
+f = (_OutlineOffsetBlockBChannel < 0.5) ? (v1.z - 0.5) : 1
+V += normalize(V) * "_MaxOutlineZOffset" * 0.01 * f
+```
+
+A flag of zero with a blue of a half offsets nothing, so a face vertex is not pushed out by it. "_OutLineZOffset" (cb0[31].x) biases the clip depth where a facing test is negative; it is not built, and the outline's depth is the projection's.
+
+The code (`createGameOutlineMaterial`, `getGameOutlineOffset`, `createAvatarShadingInputs`) takes the knots, the vertex weight, the offset and the flag from the game, in the program's view-space form: the offset is the pure equation `getGameOutlineOffset`, and the width is `"_OutlineWidth" * 0.41425` weighted by the alpha, with `T_w` taken as 1 since no texture is read, and "_OutlineCorrectionWidth" taken as 1 where a material holds none. The pack's outline is the world's own, unchanged, in clip space.
 
 ### The colour (pixel 885)
 

@@ -18,6 +18,6 @@ export const createFaceShadeNode = (
   const window = max(float(softness), float(1e-6));
   const low = clamp(threshold.sub(window), 1e-4, 0.9989);
   const high = min(threshold.add(window), 0.9999);
-  const faceTexel = faceMap ? texture(faceMap, createFaceUv(flip)).r : float(1);
+  const faceTexel = faceMap ? texture(faceMap, createFaceUv(flip)).a : float(1);
   return smoothstep(0, 1, saturate(faceTexel.sub(low).div(high.sub(low))));
 };

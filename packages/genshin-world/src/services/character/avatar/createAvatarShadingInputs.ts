@@ -26,15 +26,15 @@ const readKnots = (colors: Readonly<Record<string, Vector4Tuple>>, name: string)
   return knots && [knots[0], knots[1], knots[2]];
 };
 
-// An outline's offset along the view normal, "_MaxOutlineZOffset" times 0.01, which the vertex's blue scales from its
-// Middle where the material's block-B switch is set (Exact on the form, Provisional on the blue channel's meaning)
+// An outline's offset along the view ray, "_MaxOutlineZOffset" times 0.01, with the block-B flag the vertex's blue is read
+// Through (Exact on the form: the flag below a half takes the blue less a half, and the flag at one or above takes one)
 const readOutlineOffset = (
   nameFloatMap: ReadonlyMap<string, number>,
-): undefined | { isBlueScaled: boolean; size: number } => {
+): undefined | { blockBChannel: number; size: number } => {
   const size = nameFloatMap.get("_MaxOutlineZOffset");
   return size === undefined
     ? undefined
-    : { isBlueScaled: readSwitch(nameFloatMap, "_OutlineOffsetBlockBChannel") ?? false, size: size * 0.01 };
+    : { blockBChannel: nameFloatMap.get("_OutlineOffsetBlockBChannel") ?? 0, size: size * 0.01 };
 };
 
 // A material's shading colours for each region, the region one's by the name the game gives it and the later regions' by

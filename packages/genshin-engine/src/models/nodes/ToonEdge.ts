@@ -8,9 +8,8 @@ export interface ToonEdge {
   color: Vector4Tuple;
   // Whether the vertex colour's alpha scales the width, so a vertex with no alpha is not pushed out at all
   isVertexWeighted?: boolean;
-  // The offset along the view-space normal, its size as a multiple of the scene's, and whether the vertex colour's blue
-  // Scales it, from its middle
-  offset?: { isBlueScaled: boolean; size: number };
+  // The game's offset along the view ray, its size and the block-B flag that decides whether the vertex's blue scales it
+  offset?: { blockBChannel: number; size: number };
   size: number;
   widthKnots: OutlineWidthKnots;
 }
