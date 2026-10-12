@@ -4,6 +4,7 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBubbleSpec } from "#src/models/kit/KitBubbleSpec";
+import type { KitLunarHit } from "#src/models/kit/KitLunarHit";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
 import type { KitStackedHit } from "#src/models/kit/KitStackedHit";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
@@ -34,6 +35,9 @@ export interface KitHit {
   hitmarkSeconds: number;
   internalCooldownTag?: InternalCooldownTag;
   isBlunt?: true;
+  // The Lunar reaction the hit deals its damage as, if it is a direct Lunar hit, priced by the Lunar formula rather than
+  // As a talent's hit
+  lunarHit?: KitLunarHit;
   // Run for each enemy the hit strikes, given the body it lands from, its striker and the team's effects, if the hit gives
   // Its striker something back as it lands
   onStrike?: (context: KitStepContext) => void;

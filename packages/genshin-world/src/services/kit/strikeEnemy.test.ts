@@ -6,17 +6,21 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { getDamage } from "#src/services/combat/damage/getDamage";
+import { getLunarDamage } from "#src/services/combat/damage/getLunarDamage";
+import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -323,6 +327,49 @@ describe(strikeEnemy, () => {
     });
 
     strikeEnemy(enemyTables, enemy, hit, combatant, NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("prices a direct Lunar hit by the Lunar formula over its scaling stat, with the Moonsign's bonuses and no Defence", () => {
+    expect.hasAssertions();
+
+    const ELEMENTAL_MASTERY = 400;
+    const BASE_DAMAGE_BONUS = 0.07;
+    const REACTION_BONUS = 0.18;
+    const enemy = createSturdyEnemy();
+    const combatant: Combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY },
+      ]),
+    };
+    const hit: KitHit = {
+      element: Element.Dendro,
+      hitArea: TRAVELER_KIT.plungeCollision.hitArea,
+      hitmarkSeconds: 0,
+      lunarHit: {
+        getScalingStat: ({ attributes }) => attributes.attributeTotalMap[Attribute.ElementalMastery],
+        lunarReactionType: LunarReactionType.LunarBloom,
+      },
+      poiseDamage: 0,
+      talentMultiplier: 2,
+    };
+    const damage =
+      getLunarDamage(
+        LunarReactionType.LunarBloom,
+        2 * ELEMENTAL_MASTERY,
+        ELEMENTAL_MASTERY,
+        BASE_DAMAGE_BONUS,
+        REACTION_BONUS,
+      ) * getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Dendro));
+
+    strikeEnemy(enemyTables, enemy, hit, combatant, NEVER_CRITICAL, {
+      baseDamageBonusMap: { [LunarReactionType.LunarBloom]: BASE_DAMAGE_BONUS },
+      lunarReactionTypes: [LunarReactionType.LunarBloom],
+      reactionBonus: REACTION_BONUS,
+    });
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });

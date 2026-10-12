@@ -24,6 +24,9 @@ export const applyReactionAura = (state: ElementalState, reactionType: ReactionT
     case ReactionType.Burgeon:
     case ReactionType.ElectroCharged:
     case ReactionType.Hyperbloom:
+    case ReactionType.LunarBloom:
+    case ReactionType.LunarCharged:
+    case ReactionType.LunarCrystallize:
     case ReactionType.Melt:
     case ReactionType.Overloaded:
     case ReactionType.Spread:

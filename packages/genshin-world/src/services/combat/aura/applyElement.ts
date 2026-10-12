@@ -1,4 +1,5 @@
 import type { ElementalState } from "#src/models/combat/ElementalState";
+import type { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import type { Reaction } from "#src/models/combat/Reaction";
 
 import { AuraType } from "#src/models/combat/AuraType";
@@ -20,6 +21,7 @@ import { consumeAuras } from "#src/services/combat/aura/consumeAuras";
 import { ElementAuraTypeMap } from "#src/services/combat/aura/ElementAuraTypeMap";
 import { ElementReactionStepsMap } from "#src/services/combat/aura/ElementReactionStepsMap";
 import { extinguishBurning } from "#src/services/combat/aura/extinguishBurning";
+import { getLunarReactionType } from "#src/services/combat/aura/getLunarReactionType";
 import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged";
 
 // An element's attack on a target at a gauge, written into its auras in place, and the reactions it triggers. It tries
@@ -30,11 +32,13 @@ import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged
 // As an aura: an attack's taxed and decaying by its gauge, and a self aura, an element put on with no attack, whole
 // And lasting its source's seconds at its source's rate, never decaying where those are Infinity. Electro coming to
 // Lie beside Hydro starts Electro-Charged, which ticks at once. Crystallize triggers once a second, however many auras
-// It could meet
+// It could meet. A reaction the attacking party's Moonsign turns Lunar is recorded as its Lunar form, consuming as the
+// Reaction it replaces does
 export const applyElement = (
   state: ElementalState,
   element: Element,
   gauge: number,
+  lunarReactionTypes: readonly LunarReactionType[] = [],
   selfAuraSeconds?: number,
 ): Reaction[] => {
   const { auras, seconds } = state;
@@ -43,7 +47,11 @@ export const applyElement = (
   const isHydroHidden = auras.has(AuraType.Freeze) && [Element.Electro, Element.Pyro].includes(element);
   const reactions: Reaction[] = [];
   let remainingGauge = gauge;
-  for (const { auraTypes, coefficient, ...reaction } of steps) {
+  for (const { auraTypes, coefficient, ...stepReaction } of steps) {
+    const reaction: Reaction = {
+      ...stepReaction,
+      reactionType: getLunarReactionType(stepReaction, lunarReactionTypes) ?? stepReaction.reactionType,
+    };
     // A Geo attack shatters a Freeze even at no gauge, as its internal cooldown leaves it
     if (remainingGauge <= 0 && reaction.reactionType !== ReactionType.Shattered) break;
     const auraGauge = Math.max(...auraTypes.map((auraType) => auras.get(auraType)?.gauge ?? 0));

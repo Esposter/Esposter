@@ -5,6 +5,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitEventContext } from "#src/models/kit/KitEventContext";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitMoonsignBenediction } from "#src/models/kit/KitMoonsignBenediction";
 import type { KitSkillChain } from "#src/models/kit/KitSkillChain";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 import type { KitState } from "#src/models/kit/KitState";
@@ -46,6 +47,8 @@ export interface Kit {
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
   highPlunge: KitAction;
   lowPlunge: KitAction;
+  // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign
+  moonsignBenediction?: KitMoonsignBenediction;
   normalAttacks: KitAction[];
   // Run on each event of combat while the character is in the deployed team, on the field or off it, if its passives or
   // Constellations answer any
