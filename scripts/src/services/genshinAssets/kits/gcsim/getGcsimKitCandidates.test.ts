@@ -2,6 +2,8 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
+import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { CombatTalent, WeaponType } from "genshin-world";
@@ -371,5 +373,52 @@ describe(getGcsimKitCandidates, () => {
         .get("plunges.low.hits.0.hitmarkFrames")
         ?.map(({ provenance, value }) => [value, "cause" in provenance ? provenance.cause : undefined]),
     ]).toStrictEqual([[[67, KitProvisionalCause.NoActionFile]], [[36, KitProvisionalCause.NoActionFile]]]);
+  });
+
+  test("gives a hold's hit no area from a hitbox when two calls fire at its hitmark, as it gives it no attack", () => {
+    expect.hasAssertions();
+
+    const hitbox = {
+      center: GcsimHitboxCenter.Player,
+      file: "skill.go",
+      line: 3,
+      name: "DamageOverTime",
+      radius: 6,
+      shape: GcsimHitboxShape.Circle,
+    };
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        ["skillHoldFrames", toConstant(80)],
+        ["skillHoldHitmarks", toConstant(60)],
+      ]),
+      filePaths: [],
+      folder: "razor",
+      queuedAttacks: [
+        { attackLine: undefined, attackName: undefined, delay: 60, delayLine: 4, file: "skill.go", hitbox, line: 4 },
+        { attackLine: undefined, attackName: "hit", delay: 60, delayLine: 5, file: "skill.go", hitbox, line: 5 },
+      ],
+      talentFile: "razor.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Razor",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Claymore,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(candidateMap.get("skillHolds.0.action.hits.0.area")).toBeUndefined();
   });
 });

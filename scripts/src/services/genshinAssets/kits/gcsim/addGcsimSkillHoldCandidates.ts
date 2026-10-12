@@ -44,16 +44,16 @@ export const addGcsimSkillHoldCandidates = (
     if (hitmarks?.values === undefined) continue;
     add(`${path}.hits.length`, hitmarks.values.length, toFile(hitmarks.file), hitmarks.line);
     for (const [hitIndex, hitmark] of hitmarks.values.entries()) {
-      // The hold's attack is the one call firing at its hitmark, if one call alone does
+      // The hold's attack and area are the one call firing at its hitmark, if one call alone does
       const firedCalls = queuedAttacks.filter(({ delay, file }) => file === hitmarks.file && delay === hitmark);
       const [firedCall] = firedCalls;
-      const firedAttack =
-        firedCalls.length === 1 && firedCall !== undefined ? findQueuedAttack(attacks, firedCall) : undefined;
+      const isFiredAlone = firedCalls.length === 1;
+      const firedAttack = isFiredAlone && firedCall !== undefined ? findQueuedAttack(attacks, firedCall) : undefined;
       addHit(
         `${path}.hits.${hitIndex}`,
         {
           areaHitbox:
-            firedCall?.hitbox ??
+            (isFiredAlone ? firedCall?.hitbox : undefined) ??
             (hitmarks.values.length === 1 ? findGcsimHitbox(config, "skill", GCSIM_SKILL_HOLD_HITBOX_NAME) : undefined),
           attack: firedAttack,
           hitmark: {
