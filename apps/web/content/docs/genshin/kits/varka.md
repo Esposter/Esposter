@@ -14,7 +14,7 @@ gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 ## Decisions
 
 - **The burst's hits are Anemo.** gcsim makes the first hit the element of his conversion, which is Anemo while no Four Winds conversion stands, and the second Anemo. The record holds each as Anemo, the default it gives.
-- **The skill and burst areas are the circles gcsim gives round his body.** The skill is a circle of 5 metres, and the burst is the circle of 7 metres offset 2 metres ahead, priced at 9 metres as the area holds no offset. Their hitboxes are not named as gcsim's press names are, so each is recorded by hand as `Unclassified`.
+- **The skill and burst areas are the circles gcsim gives round his body.** The skill is a circle of 5 metres, and the burst is the circle of 7 metres offset 2 metres ahead, priced at 9 metres as the area holds no offset. The burst's area and its Wind element have no literal gcsim gives at the burst's own line, so both are `Unsourced` and the published values stand.
 
 ## Not built
 
