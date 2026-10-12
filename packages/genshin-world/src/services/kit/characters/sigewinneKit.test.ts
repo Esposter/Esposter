@@ -12,9 +12,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
-
 const SIGEWINNE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SIGEWINNE_CHARACTER_ID);
-
 const createSigewinneCombatant = (health: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: health }]),

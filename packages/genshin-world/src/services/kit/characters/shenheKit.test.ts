@@ -15,7 +15,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const SHENHE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SHENHE_CHARACTER_ID);
-
 const createShenheCombatant = (ascension = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

@@ -24,7 +24,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
 const createCore = (reactionType: TransformativeReactionType, characterId = TRAVELER_CHARACTER_ID): KitDendroCore => ({
   characterId,
   kind: "dendroCore",

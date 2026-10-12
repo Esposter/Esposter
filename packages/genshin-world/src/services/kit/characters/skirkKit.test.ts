@@ -17,7 +17,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const SKIRK_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SKIRK_CHARACTER_ID);
-
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const findField = (kitEffectState: KitEffectState): KitField | undefined =>

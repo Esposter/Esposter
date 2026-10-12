@@ -43,7 +43,6 @@ import { describe, expect, test, vi } from "vitest";
 
 const characterIdKitMap = await readCharacterKits(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
 const createCombatant = (characterId: number, kit: Kit): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),

@@ -14,9 +14,7 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 
 describe(absorbKitShield, () => {
   const CHARACTER_ID = TRAVELER_CHARACTER_ID;
-
   const OTHER_CHARACTER_ID = 2;
-
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),

@@ -26,9 +26,7 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const MONA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MONA_CHARACTER_ID);
-
 const NEVER_CRITICAL = (): number => 1;
-
 const createSturdyEnemy = (): Enemy => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   health: 1e9,

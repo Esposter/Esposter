@@ -19,7 +19,6 @@ const NOELLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NOELLE_CHARA
 
 describe("noelle kit", () => {
   const DEFENSE = 800;
-
   const createNoelleCombatant = (): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([

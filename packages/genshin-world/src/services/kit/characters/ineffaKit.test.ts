@@ -18,7 +18,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const INEFFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, INEFFA_CHARACTER_ID);
-
 const createIneffaCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 1000 }]),

@@ -20,7 +20,6 @@ import { describe, expect, test } from "vitest";
 
 const XIAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XIAO_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
 const createXiaoCombatant = (ascension: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

@@ -9,7 +9,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const EMILIE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, EMILIE_CHARACTER_ID);
-
 const createEmilieCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

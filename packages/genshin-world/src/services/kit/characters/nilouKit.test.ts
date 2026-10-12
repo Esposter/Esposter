@@ -23,7 +23,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const NILOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NILOU_CHARACTER_ID);
-
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const findField = (kitEffectState: KitEffectState): KitField | undefined =>
@@ -56,7 +55,6 @@ describe(createNilouKitBehaviour, () => {
   });
 
   const MAX_HEALTH = 10_000;
-
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads the strikes', charged attack's, plunges' multipliers from her proud skill group", () => {

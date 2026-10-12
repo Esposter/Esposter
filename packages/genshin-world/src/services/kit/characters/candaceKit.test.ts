@@ -27,7 +27,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const CANDACE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CANDACE_CHARACTER_ID);
-
 const countSummons = (kitEffectState: KitEffectState): number =>
   kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
 

@@ -17,7 +17,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const KUKI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KUKI_CHARACTER_ID);
-
 const createKukiCombatant = (ascension = 0, constellationCount = 0, elementalMastery = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([

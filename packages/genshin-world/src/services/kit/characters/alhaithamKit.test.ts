@@ -57,7 +57,6 @@ describe(createAlhaithamKitBehaviour, () => {
   });
 
   const ELEMENTAL_MASTERY = 1000;
-
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads his strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {

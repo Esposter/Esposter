@@ -3,9 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe("generated character kit behaviour map", () => {
   const CHARACTER_ID_SUFFIX = "_CHARACTER_ID";
-
   const CREATE_KIT_PREFIX = "create";
-
   const CREATE_KIT_SUFFIX = "KitBehaviour";
 
   test("holds every kit module keyed by the character id it declares, with no duplicate ids", () => {

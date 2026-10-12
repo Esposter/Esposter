@@ -37,7 +37,6 @@ describe(strikeMoondriftHarmonyHits, () => {
     level: LEVEL,
   };
   const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
-
   const createHitEnemy = (): Enemy => ({
     ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     health: STURDY_HEALTH,

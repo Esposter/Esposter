@@ -12,7 +12,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const AMBER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AMBER_CHARACTER_ID);
-
 const createAmberCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

@@ -15,7 +15,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const AYAKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYAKA_CHARACTER_ID);
-
 const createAyakaCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

@@ -24,7 +24,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ORORON_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ORORON_CHARACTER_ID);
-
 const createOroronCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

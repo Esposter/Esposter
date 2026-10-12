@@ -17,7 +17,6 @@ import { describe, expect, test } from "vitest";
 
 const CHEVREUSE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHEVREUSE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
 const createChevreuseCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

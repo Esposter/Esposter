@@ -20,7 +20,6 @@ import { describe, expect, test } from "vitest";
 
 const HEIZOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, HEIZOU_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
 const createHeizouCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 100 }]),

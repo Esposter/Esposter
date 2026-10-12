@@ -23,7 +23,6 @@ import { describe, expect, test } from "vitest";
 
 const SUCROSE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SUCROSE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
 const createSucroseCombatant = (ascension = 0, constellationCount = 0, elementalMastery = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementalMastery }]),

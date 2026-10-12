@@ -19,7 +19,6 @@ import { describe, expect, test } from "vitest";
 
 const XINGQIU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XINGQIU_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
 const createXingqiuCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([

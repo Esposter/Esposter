@@ -12,7 +12,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const YANFEI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YANFEI_CHARACTER_ID);
-
 const createYanfeiCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

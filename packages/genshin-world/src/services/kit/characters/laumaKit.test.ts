@@ -11,7 +11,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const LAUMA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAUMA_CHARACTER_ID);
-
 const createCombatant = (elementalMastery: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementalMastery }]),

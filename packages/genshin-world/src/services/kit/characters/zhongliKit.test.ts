@@ -17,7 +17,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ZHONGLI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ZHONGLI_CHARACTER_ID);
-
 const createZhongliCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

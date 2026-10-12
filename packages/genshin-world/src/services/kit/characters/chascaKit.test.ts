@@ -4,7 +4,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const CHASCA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHASCA_CHARACTER_ID);
-
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
 describe(createChascaKitBehaviour, () => {

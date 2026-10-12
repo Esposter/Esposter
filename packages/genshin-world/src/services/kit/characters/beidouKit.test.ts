@@ -14,7 +14,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const BEIDOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BEIDOU_CHARACTER_ID);
-
 const createBeidouCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([

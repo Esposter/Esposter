@@ -16,7 +16,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const YELAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YELAN_CHARACTER_ID);
-
 const createYelanCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

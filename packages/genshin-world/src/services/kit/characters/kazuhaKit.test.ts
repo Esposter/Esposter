@@ -18,7 +18,6 @@ import { describe, expect, test } from "vitest";
 
 const KAZUHA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAZUHA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
 const createKazuhaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

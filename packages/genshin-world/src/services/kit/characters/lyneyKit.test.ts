@@ -13,7 +13,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const LYNEY_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LYNEY_CHARACTER_ID);
-
 const getSummonHitmarkSeconds = (kitEffectState: KitEffectState): number | undefined => {
   const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
   return summon?.hits[0]?.hitmarkSeconds;

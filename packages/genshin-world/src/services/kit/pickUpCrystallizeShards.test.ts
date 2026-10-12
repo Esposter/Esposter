@@ -16,7 +16,6 @@ describe(pickUpCrystallizeShards, () => {
   const CHARACTER_ID = 1;
   const OTHER_CHARACTER_ID = 2;
   const PICKABLE_SECONDS = CRYSTALLIZE_SHARD_SECONDS - CRYSTALLIZE_SHARD_PICKUP_DELAY_SECONDS;
-
   const createShard = (element: Element, x: number, secondsRemaining = PICKABLE_SECONDS): KitCrystallizeShard => ({
     characterId: OTHER_CHARACTER_ID,
     element,

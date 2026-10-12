@@ -21,7 +21,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ALBEDO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALBEDO_CHARACTER_ID);
-
 const createAlbedoCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 1000 }]),

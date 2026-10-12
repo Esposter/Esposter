@@ -19,7 +19,6 @@ import { describe, expect, test } from "vitest";
 
 const NINGGUANG_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NINGGUANG_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
 const createNingguangCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

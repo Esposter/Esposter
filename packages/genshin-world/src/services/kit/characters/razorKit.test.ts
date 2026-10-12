@@ -16,7 +16,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const RAZOR_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, RAZOR_CHARACTER_ID);
-
 const createRazorCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 200 }]),

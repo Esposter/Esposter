@@ -60,9 +60,7 @@ describe(createAyatoKitBehaviour, () => {
   });
 
   const MAX_HEALTH = 10_000;
-
   const NAMISEN_SHARE = 0.005611;
-
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {

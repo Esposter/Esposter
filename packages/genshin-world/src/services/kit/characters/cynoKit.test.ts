@@ -23,7 +23,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const CYNO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CYNO_CHARACTER_ID);
-
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const findField = (kitEffectState: KitEffectState): KitField | undefined =>
@@ -54,9 +53,7 @@ describe(createCynoKitBehaviour, () => {
   });
 
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-
   const MAX_HEALTH = 10_000;
-
   const ELEMENTAL_MASTERY = 200;
 
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill group", () => {

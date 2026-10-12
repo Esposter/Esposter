@@ -5,7 +5,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ARLECCHINO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ARLECCHINO_CHARACTER_ID);
-
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
 describe(createArlecchinoKitBehaviour, () => {

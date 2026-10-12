@@ -12,7 +12,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const CHIORI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHIORI_CHARACTER_ID);
-
 const createChioriCombatant = (defense: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: defense }]),

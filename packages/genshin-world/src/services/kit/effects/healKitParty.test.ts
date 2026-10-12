@@ -17,7 +17,6 @@ const NOELLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NOELLE_CHARA
 
 describe(healKitParty, () => {
   const NOELLE_HIT = takeOne(NOELLE_KIT.elementalSkill.hits);
-
   const SHIELD: KitEffect = {
     characterId: NOELLE_CHARACTER_ID,
     element: undefined,
@@ -27,7 +26,6 @@ describe(healKitParty, () => {
   };
 
   const MEMBER_ID = 10_000_032;
-
   const createCombatant = (characterId: number, maxHealth: number): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([
@@ -48,7 +46,6 @@ describe(healKitParty, () => {
     const party = createParty([NOELLE_CHARACTER_ID, MEMBER_ID]);
     for (const characterId of [NOELLE_CHARACTER_ID, MEMBER_ID]) getPartyMember(party, characterId).healthShare = 0.5;
     const healParty = { chance: () => 0.5, defenseShare: 0.2128, flatHealth: 102.7 };
-
     const isHealed = healKitParty(
       createKitTestContext(noelle, {
         characterIdCombatantMap: new Map([

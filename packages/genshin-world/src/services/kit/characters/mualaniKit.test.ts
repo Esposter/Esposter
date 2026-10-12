@@ -5,7 +5,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const MUALANI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MUALANI_CHARACTER_ID);
-
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
 describe(createMualaniKitBehaviour, () => {

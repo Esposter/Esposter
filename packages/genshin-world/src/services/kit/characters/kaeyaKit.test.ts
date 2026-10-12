@@ -14,7 +14,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const KAEYA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAEYA_CHARACTER_ID);
-
 const createKaeyaCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

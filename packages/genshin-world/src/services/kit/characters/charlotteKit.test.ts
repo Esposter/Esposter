@@ -33,9 +33,7 @@ describe(createCharlotteKitBehaviour, () => {
   });
 
   const MAX_HEALTH = 10_000;
-
   const ATTACK = 1000;
-
   const THORN_HITMARK_SECONDS = 97 / 60;
 
   test("the charged attack's Spiritbreath Thorn strikes once, and a thorn within its six-second cooldown is not opened", () => {

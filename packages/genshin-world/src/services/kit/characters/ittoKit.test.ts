@@ -17,7 +17,6 @@ import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
 const ITTO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ITTO_CHARACTER_ID);
-
 const createIttoCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

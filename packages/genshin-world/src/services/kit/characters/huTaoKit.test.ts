@@ -23,7 +23,6 @@ import { describe, expect, test } from "vitest";
 
 const HU_TAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, HU_TAO_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
 const createHuTaoCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

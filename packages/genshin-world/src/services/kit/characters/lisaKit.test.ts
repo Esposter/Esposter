@@ -24,7 +24,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const LISA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LISA_CHARACTER_ID);
-
 const createLisaCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

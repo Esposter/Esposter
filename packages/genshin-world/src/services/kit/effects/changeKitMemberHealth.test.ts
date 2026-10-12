@@ -13,7 +13,6 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
 const createCombatant = (characterId: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 16_000 }]),
@@ -27,7 +26,6 @@ const createCombatant = (characterId: number): Combatant => ({
 describe(changeKitMemberHealth, () => {
   const SOURCE_ID = 1;
   const MEMBER_ID = 2;
-
   const source = createCombatant(SOURCE_ID);
   const characterIdCombatantMap = new Map([
     [MEMBER_ID, createCombatant(MEMBER_ID)],

@@ -16,7 +16,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const NAVIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NAVIA_CHARACTER_ID);
-
 const createNaviaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -70,11 +69,8 @@ describe(createNaviaKitBehaviour, () => {
     hit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), { body: kitBody, combatant, hit });
 
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
   const SHRAPNEL_STATUS_ID = "navia-crystal-shrapnel";
-
   const BURST_SHRAPNEL_ICD_STATUS_ID = "navia-burst-shrapnel-icd";
-
   const ARKHE_ICD_STATUS_ID = "navia-arkhe-icd";
 
   test("reads her strikes', charged attack's, plunges', and burst's multipliers from her proud skill groups", () => {

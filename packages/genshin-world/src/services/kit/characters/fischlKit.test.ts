@@ -24,7 +24,6 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const FISCHL_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FISCHL_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
 const createFischlCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

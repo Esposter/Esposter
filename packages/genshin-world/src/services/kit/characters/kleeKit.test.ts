@@ -19,7 +19,6 @@ import { describe, expect, test } from "vitest";
 
 const KLEE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KLEE_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
 const createKleeCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

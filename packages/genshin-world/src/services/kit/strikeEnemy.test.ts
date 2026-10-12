@@ -34,7 +34,6 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 
 // Gcsim gives the Traveler's skill hit the Wind element; these reaction tests need the element-less hit the record held before.
 const elementlessSkillHit = (): KitHit => ({ ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: undefined });
-
 const NEVER_CRITICAL = (): number => 1;
 
 describe(strikeEnemy, () => {
@@ -44,7 +43,6 @@ describe(strikeEnemy, () => {
   const STURDY_HEALTH = 1e9;
   const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
   const { defense } = computeEnemyStats(enemyTables.enemyLevelCurves, kind, ENEMY_CAMP_MEMBER.level);
-
   const createSturdyEnemy = (): Enemy => ({
     ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     health: STURDY_HEALTH,
@@ -493,7 +491,6 @@ describe(strikeEnemy, () => {
     const enemy = createSturdyEnemy();
     enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
     const combatant = createCombatant(Element.Anemo);
-
     const first = strikeEnemy(enemyTables, enemy, elementlessSkillHit(), combatant, NEVER_CRITICAL);
     const second = strikeEnemy(
       enemyTables,

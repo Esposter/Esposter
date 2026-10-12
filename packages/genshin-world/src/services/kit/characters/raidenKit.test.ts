@@ -26,7 +26,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const RAIDEN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, RAIDEN_CHARACTER_ID);
-
 const createRaidenCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

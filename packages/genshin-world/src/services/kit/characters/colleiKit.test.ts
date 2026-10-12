@@ -16,7 +16,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const COLLEI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, COLLEI_CHARACTER_ID);
-
 const createColleiCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

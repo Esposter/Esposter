@@ -18,7 +18,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const SARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KUJOU_SARA_CHARACTER_ID);
-
 const createSaraCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 1000 }]),

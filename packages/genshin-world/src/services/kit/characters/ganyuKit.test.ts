@@ -17,7 +17,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const GANYU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GANYU_CHARACTER_ID);
-
 const createGanyuCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

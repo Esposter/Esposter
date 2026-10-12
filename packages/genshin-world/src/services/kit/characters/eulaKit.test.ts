@@ -12,7 +12,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const EULA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, EULA_CHARACTER_ID);
-
 const createEulaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

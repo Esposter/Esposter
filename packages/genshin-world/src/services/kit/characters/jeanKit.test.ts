@@ -26,9 +26,7 @@ const JEAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, JEAN_CHARACTER
 
 describe(createJeanKitBehaviour, () => {
   const MAX_HEALTH = 10_000;
-
   const BASE_ATTACK = 200;
-
   const createJeanCombatant = (ascension: number, constellationCount: number): Combatant => ({
     ascension,
     attributes: computeCharacterAttributes([

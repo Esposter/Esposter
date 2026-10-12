@@ -25,7 +25,6 @@ import { describe, expect, test } from "vitest";
 
 const FURINA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FURINA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-
 const createEnemyAt = (x: number): Enemy => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   position: { x, z: 0 },
@@ -53,9 +52,7 @@ describe(createFurinaKitBehaviour, () => {
   });
 
   const MAX_HEALTH = 20_000;
-
   const TEAMMATE_CHARACTER_ID = 1;
-
   const LOW_TEAMMATE_CHARACTER_ID = 2;
 
   test("the charged attack turns her to Pneuma a frame after its hit, handing Salon Solitaire's members to the Singer", () => {

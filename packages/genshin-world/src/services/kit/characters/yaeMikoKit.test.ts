@@ -14,7 +14,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const YAE_MIKO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAE_MIKO_CHARACTER_ID);
-
 const getTotemLevels = (effects: KitEffect[]): number[] =>
   effects
     .filter((effect): effect is KitSummon => effect.kind === "summon" && effect.id === "yae-sesshou-sakura")

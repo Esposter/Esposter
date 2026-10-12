@@ -14,7 +14,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const DAHLIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DAHLIA_CHARACTER_ID);
-
 const createDahliaCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 1000 }]),

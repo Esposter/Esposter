@@ -16,7 +16,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const XINYAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XINYAN_CHARACTER_ID);
-
 const createXinyanCombatant = (ascension = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 800 }]),

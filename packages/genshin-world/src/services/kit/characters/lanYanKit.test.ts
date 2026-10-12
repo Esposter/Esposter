@@ -12,7 +12,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const LAN_YAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAN_YAN_CHARACTER_ID);
-
 const createLanYanCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

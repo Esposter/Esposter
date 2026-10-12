@@ -25,7 +25,6 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const BENNETT_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BENNETT_CHARACTER_ID);
-
 const readFirstFieldTick = (
   combatant: Combatant,
   fieldCharacterId: number,
@@ -48,9 +47,7 @@ const readFirstFieldTick = (
 
 describe("bennett kit", () => {
   const MAX_HEALTH = 10_000;
-
   const BASE_ATTACK = 200;
-
   const createBennettCombatant = (): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([
@@ -232,7 +229,6 @@ describe("bennett kit", () => {
   test("plays each Charge Level by how long the skill was held, with that level's cooldown", () => {
     expect.hasAssertions();
     const [chargeLevel1, chargeLevel2] = BENNETT_KIT.elementalSkillHolds ?? [];
-
     const level1 = releaseSkill(0.6, NO_EFFECT_STATE);
     expect(level1.action).toBe(chargeLevel1?.action);
     expect(level1.partyMember.skillCooldownSeconds).toBeCloseTo(7.5, 5);
