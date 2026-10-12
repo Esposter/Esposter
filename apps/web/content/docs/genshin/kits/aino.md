@@ -33,7 +33,7 @@ Aino's kit is its record and one behaviour module, `createAinoKitBehaviour`, on 
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/aino), MIT: each strike's hitmark, animation, poise and shape, Musecatcher's stages, and Cool Your Jets Ducky's interval, duration, radius and landing delay, read from `attack.go`, `skill.go`, `burst.go` and `asc.go`.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/aino), MIT: each strike's hitmark, animation, poise and shape, Musecatcher's stages, and Cool Your Jets Ducky's interval, duration, radius and landing delay, read from `attack.go`, `skill.go`, `burst.go` and `asc.go`.
 - The proud skill groups' indices, read from gcsim's data file for the character, and the group values of the hosted game data.
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/ayato), MIT: the claymore charge's frames and reach, borrowed as Aino's charged attack's are provisional.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ayato), MIT: the claymore charge's frames and reach, borrowed as Aino's charged attack's are provisional.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Aino's own folder has no plunge file.

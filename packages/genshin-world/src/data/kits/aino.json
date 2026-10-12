@@ -1,14 +1,14 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 55 },
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
+  "chargedAttack.animationFrames": { "cause": "NoActionFile", "value": 55 },
+  "chargedAttack.hits.length": { "cause": "NoActionFile", "value": 1 },
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoActionFile",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 }
   },
-  "chargedAttack.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "chargedAttack.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 24 },
+  "chargedAttack.hits.0.element": { "cause": "NoActionFile", "value": "Water" },
+  "chargedAttack.hits.0.gauge": { "cause": "NoActionFile", "value": 1 },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 24 },
   "frames.waterBallFirstFall": { "cause": "Unclassified", "value": 123 },
   "frames.waterBallInterval": { "cause": "Unclassified", "value": 90 },
   "hits.waterBall.area": {
@@ -19,7 +19,7 @@
   "hits.waterBall.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.waterBall.hitmarkFrames": { "cause": "Unclassified", "value": 10 },
   "hits.waterBall.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 12139 } },
-  "hits.waterBall.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.waterBall.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "plungeCollision.element": { "cause": "Unclassified", "value": "Water" },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
