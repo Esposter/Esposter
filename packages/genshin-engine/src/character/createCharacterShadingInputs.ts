@@ -41,6 +41,8 @@ export const createCharacterShadingInputs = (overrides: CharacterShadingOverride
     rampWidth: DEFAULT_RAMP_WIDTH,
     regionTints: { five: color, four: color, three: color, two: color },
     regionToggles: { five: false, four: false, three: false, two: false },
+    shadowMultiplyColors: { five: WHITE, four: WHITE, one: WHITE, three: WHITE, two: WHITE },
+    coolShadowMultiplyColors: { five: WHITE, four: WHITE, one: WHITE, three: WHITE, two: WHITE },
     shininess: 1,
     specularColor: BLACK,
     specularInShadow: 1,

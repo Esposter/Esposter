@@ -195,7 +195,7 @@ Hair's equations are not fitted to a rendered frame, so no number is claimed.
 
 ## The face
 
-The face is not shaded on the body's ramp. Its shadow is its face map compared with a threshold that turns with the light, and both the threshold and the flip of the face map are set once a frame on the CPU from the light and the face's root bone. The shadow colour is set per pixel, and the shadow colour's equations are below.
+The face is not shaded on the body's ramp. Its shadow is its face map compared with a threshold that turns with the light, and both the threshold and the flip of the face map are set once a frame on the CPU from the light and the face's root bone. The shadow colour is set per pixel, and its equations are below.
 
 ### The light's angle to the root bone
 
@@ -237,6 +237,22 @@ F  = smoothstep(0, 1, saturate((T - lo) / (hi - lo)))
 ```
 
 A face with no face map is lit, so `F` is one.
+
+### The shadow colour
+
+The face's colour is the material colour blended toward white by the lookup, over the face's shadow colour. With `Cm` the material colour on the main texture and `F` the lookup above (Exact, from the pixel program):
+
+```
+C = Cm * mix(S, 1, F)
+```
+
+`S` is the pixel's region's first shadow colour, read from the lightmap's alpha as the body's region is: `_FirstShadowMultColor` for region one and `_FirstShadowMultColor2` to `5` for regions two to five. Where `_UseCoolShadowColorOrTex` is set, `S` is mixed toward the cool shadow colour of the same region, `_CoolShadowMultColor` (and `2` to `5`), by the colour tone:
+
+```
+S = mix(S, S_cool, tone)    where _UseCoolShadowColorOrTex is set
+```
+
+A face in shadow therefore takes its shadow colour and is never black. The tone is the body's cool tone, which the avatar does not yet drive, so the cool colour weighs nothing until it is set.
 
 ## The outline
 

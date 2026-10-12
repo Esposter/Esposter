@@ -18,6 +18,7 @@ import { createShadingRegionNode } from "#src/character/shading/createShadingReg
 import { createToneNode } from "#src/character/shading/createToneNode";
 import { createToonThresholdNode } from "#src/character/shading/createToonThresholdNode";
 import { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
+import type { ShadingRegionColours } from "#src/models/character/ShadingRegionColours";
 import {
   cameraViewMatrix,
   float,
@@ -35,6 +36,28 @@ import {
 
 const toVec3 = ([red, green, blue]: Vector3Tuple): Node<"vec3"> => vec3(red, green, blue);
 
+// A colour by the region a pixel is in: the first region's colour, unless a later region's is selected
+const selectRegionColor = (region: Node<"float">, colors: ShadingRegionColours): Node<"vec3"> => {
+  const regionColorEntries: [number, Vector3Tuple][] = [
+    [2, colors.two],
+    [3, colors.three],
+    [4, colors.four],
+    [5, colors.five],
+  ];
+  return regionColorEntries.reduce<Node<"vec3">>(
+    (current, [regionNumber, regionColor]) => select(region.equal(float(regionNumber)), toVec3(regionColor), current),
+    toVec3(colors.one),
+  );
+};
+
+// The shadow colour a pixel is shaded by: its region's first shadow colour, mixed toward its cool shadow colour by the
+// Cool tone where the cool shadow is on
+const createShadowMultiplyNode = (region: Node<"float">, inputs: CharacterShadingInputs): Node<"vec3"> => {
+  const firstShadow = selectRegionColor(region, inputs.shadowMultiplyColors);
+  if (!inputs.isCoolShadow) return firstShadow;
+  return mix(firstShadow, selectRegionColor(region, inputs.coolShadowMultiplyColors), inputs.coolShadowTone);
+};
+
 // The character's colour as the game's shader draws it, the TSL form of the shading page: the region's tint on the main
 // Texture, lit on the shadow ramp row of its region, its emission lerped in by the main texture's alpha, its specular
 // Step, the metal matcap where the lightmap's red passes the gate, and the output tone. A face is shaded by its face map
@@ -50,16 +73,7 @@ export const createCharacterShadingNode = (
     ? texture(inputs.lightMapTexture, uv())
     : vec4(flatRed, flatGreen, flatBlue, flatAlpha);
   const region = createShadingRegionNode(lightMap.a, regionToggles);
-  const regionTintEntries: [number, Vector3Tuple][] = [
-    [2, regionTints.two],
-    [3, regionTints.three],
-    [4, regionTints.four],
-    [5, regionTints.five],
-  ];
-  const tint = regionTintEntries.reduce<Node<"vec3">>(
-    (current, [regionNumber, regionColor]) => select(region.equal(float(regionNumber)), toVec3(regionColor), current),
-    toVec3(color),
-  );
+  const tint = selectRegionColor(region, { ...regionTints, one: color });
   const mainSample = inputs.mainTexture ? texture(inputs.mainTexture, uv()) : vec4(1);
   const materialColour = mainSample.rgb.mul(tint);
 
@@ -81,12 +95,20 @@ export const createCharacterShadingNode = (
       inputs.rampTexture,
       createRampUvNode(inputs.rampLayout, column, float(rowBase).add(region.sub(1).mul(RAMP_ROW_STEP))),
     ).r;
+  // A face keeps its shadow colour where its face map has it lit, so it is never black: the shadow colour is mixed toward
+  // White by the face map's lit fraction. A body's shade is its ramp's value, as a grey
   const shade =
     kind === CharacterMaterialKind.Face
-      ? createFaceShadeNode(inputs.faceMap, inputs.faceSoftness, inputs.faceDraw)
-      : inputs.isCoolShadow
-        ? mix(sampleRamp(RAMP_ROW_BASE), sampleRamp(COOL_RAMP_ROW_BASE), inputs.coolShadowTone)
-        : sampleRamp(RAMP_ROW_BASE);
+      ? mix(
+          createShadowMultiplyNode(region, inputs),
+          vec3(1),
+          createFaceShadeNode(inputs.faceMap, inputs.faceSoftness, inputs.faceDraw),
+        )
+      : vec3(
+          inputs.isCoolShadow
+            ? mix(sampleRamp(RAMP_ROW_BASE), sampleRamp(COOL_RAMP_ROW_BASE), inputs.coolShadowTone)
+            : sampleRamp(RAMP_ROW_BASE),
+        );
   // The lit colour and the specular carry the hour's light colour, as the game's carry its main light's, and the emission
   // Does not
   const lit = materialColour.mul(shade).mul(brightness).mul(lightColor);

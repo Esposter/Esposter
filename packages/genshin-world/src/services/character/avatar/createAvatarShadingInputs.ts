@@ -1,6 +1,6 @@
 import type { AvatarMaterial } from "#src/models/avatar/AvatarMaterial";
 import type { AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
-import type { CharacterMaterialKind, CharacterShadingInputs } from "genshin-engine";
+import type { CharacterMaterialKind, CharacterShadingInputs, ShadingRegionColours } from "genshin-engine";
 import type { Texture, Vector3Tuple, Vector4Tuple } from "three";
 
 import { createFaceDraw } from "genshin-engine";
@@ -14,9 +14,23 @@ const readSwitch = (nameFloatMap: ReadonlyMap<string, number>, name: string): bo
 };
 
 // A colour the material holds, as the three components the shading reads, or none where it holds no such colour
+const WHITE: Vector3Tuple = [1, 1, 1];
 const readColour = (colors: Readonly<Record<string, Vector4Tuple>>, name: string): undefined | Vector3Tuple => {
   const colour = colors[name];
   return colour && [colour[0], colour[1], colour[2]];
+};
+
+// A material's shading colours for each region, the region one's by the name the game gives it and the later regions' by
+// Its number after it, white where the material holds none
+const readRegionColors = (colors: Readonly<Record<string, Vector4Tuple>>, name: string): ShadingRegionColours => {
+  const regionColor = (suffix: string): Vector3Tuple => readColour(colors, `${name}${suffix}`) ?? WHITE;
+  return {
+    five: regionColor("5"),
+    four: regionColor("4"),
+    one: regionColor(""),
+    three: regionColor("3"),
+    two: regionColor("2"),
+  };
 };
 
 // A material's shading inputs as the game's own values give them, the values by property name and the textures by the
@@ -36,6 +50,8 @@ export const createAvatarShadingInputs = (
     }),
     faceMap: slotTextureMap.get("_FaceMapTex"),
     faceSoftness: nameFloatMap.get("_FaceMapSoftness"),
+    coolShadowMultiplyColors: readRegionColors(colors, "_CoolShadowMultColor"),
+    isCoolShadow: readSwitch(nameFloatMap, "_UseCoolShadowColorOrTex"),
     isLightMapAo: readSwitch(nameFloatMap, "_UseLightMapColorAO"),
     isVertexAo: readSwitch(nameFloatMap, "_UseVertexColorAO"),
     isVertexRampWidth: readSwitch(nameFloatMap, "_UseVertexRampWidth"),
@@ -54,6 +70,7 @@ export const createAvatarShadingInputs = (
       three: readColour(colors, "_Color3") ?? color,
       two: readColour(colors, "_Color2") ?? color,
     },
+    shadowMultiplyColors: readRegionColors(colors, "_FirstShadowMultColor"),
     shininess: nameFloatMap.get("_Shininess"),
     specularColor: readColour(colors, "_SpecularColor"),
     specularMultiplier: nameFloatMap.get("_SpecMulti"),

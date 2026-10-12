@@ -3,6 +3,9 @@ import { CharacterMaterialKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 describe("createAvatarShadingInputs", () => {
+  // Every region at white, the shading's own default for a region a material holds no colour for
+  const WHITE_REGIONS = { five: [1, 1, 1], four: [1, 1, 1], one: [1, 1, 1], three: [1, 1, 1], two: [1, 1, 1] };
+
   test("leaves out each value the material does not hold, so the shading keeps its default for it", () => {
     expect.assertions(2);
     const inputs = createAvatarShadingInputs(
@@ -13,11 +16,46 @@ describe("createAvatarShadingInputs", () => {
     const { faceDraw, ...rest } = inputs;
     expect(rest).toStrictEqual({
       color: [0.5, 0.25, 1],
+      coolShadowMultiplyColors: WHITE_REGIONS,
       kind: CharacterMaterialKind.Face,
       regionTints: { five: [0.5, 0.25, 1], four: [0.5, 0.25, 1], three: [0.5, 0.25, 1], two: [0.5, 0.25, 1] },
+      shadowMultiplyColors: WHITE_REGIONS,
       shininess: 10,
     });
     // The face draw is always made, since the frame sets it, and a material with no flip or offset takes the defaults
     expect(faceDraw?.rotateOffset).toBe(0);
+  });
+
+  test("reads each region's first and cool shadow colour, white where the material holds none", () => {
+    expect.assertions(2);
+    const inputs = createAvatarShadingInputs(
+      {
+        colors: {
+          _CoolShadowMultColor: [0.2, 0.2, 0.3, 1],
+          _CoolShadowMultColor3: [0.1, 0.1, 0.2, 1],
+          _FirstShadowMultColor: [0.9, 0.5, 0.4, 1],
+          _FirstShadowMultColor2: [0.5, 0.3, 0.3, 1],
+        },
+        floats: { _UseCoolShadowColorOrTex: 1 },
+        keywords: [],
+        textures: {},
+      },
+      CharacterMaterialKind.Face,
+      new Map(),
+    );
+    expect(inputs.shadowMultiplyColors).toStrictEqual({
+      five: [1, 1, 1],
+      four: [1, 1, 1],
+      one: [0.9, 0.5, 0.4],
+      three: [1, 1, 1],
+      two: [0.5, 0.3, 0.3],
+    });
+    expect(inputs.coolShadowMultiplyColors).toStrictEqual({
+      five: [1, 1, 1],
+      four: [1, 1, 1],
+      one: [0.2, 0.2, 0.3],
+      three: [0.1, 0.1, 0.2],
+      two: [1, 1, 1],
+    });
   });
 });

@@ -1,6 +1,7 @@
 import type { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
 import type { FaceDraw } from "#src/models/character/FaceDraw";
 import type { RampLayout } from "#src/models/character/RampLayout";
+import type { ShadingRegionColours } from "#src/models/character/ShadingRegionColours";
 import type { ShadingRegionToggles } from "#src/models/character/ShadingRegionToggles";
 import type { Texture, Vector3Tuple } from "three";
 
@@ -13,6 +14,8 @@ export interface CharacterShadingInputs {
   color: Vector3Tuple;
   // The contrast and desaturation of the output tone, "_ContrastScale" and "_DesaturateScale"
   contrastScale: number;
+  // Each region's cool shadow colour, "_CoolShadowMultColor" and its later regions, mixed in where the cool shadow is on
+  coolShadowMultiplyColors: ShadingRegionColours;
   // The shadow ramp is read as its cool row too, mixed in by the cool tone, where the cool shadow is on
   coolShadowTone: number;
   desaturateScale: number;
@@ -57,6 +60,8 @@ export interface CharacterShadingInputs {
   regionTints: Record<"five" | "four" | "three" | "two", Vector3Tuple>;
   // The region the lightmap's alpha selects, and each region's own tint
   regionToggles: ShadingRegionToggles;
+  // Each region's first shadow colour, "_FirstShadowMultColor" and its later regions, the colour a face in shadow keeps
+  shadowMultiplyColors: ShadingRegionColours;
   // The specular's colour, power and weights, "_SpecularColor", "_Shininess", "_SpecMulti" and "_SpecualrInShaow"
   shininess: number;
   specularColor: Vector3Tuple;
