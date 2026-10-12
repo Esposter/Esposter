@@ -9,8 +9,8 @@ import { getRequestIP, HTTPError } from "nitro/h3";
 
 const rateLimiterStore = createInMemoryRateLimiterStore(MAX_RATE_LIMIT_ENTRIES);
 
-// The client is the connection's address. A forwarded address is a header the client writes itself,
-// So it is read only when a trusted proxy is set up to say so, and never by default
+// The client is the connection's address. A forwarded address is a header the client writes itself, so it is never
+// Read, and behind a proxy every client shares the proxy's address
 const rateLimiter: Middleware = defineMiddleware(async (event) => {
   const rules = getSecurityRules(event);
   if (!rules?.enabled || !rules.rateLimiter) return;
