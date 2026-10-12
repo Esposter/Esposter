@@ -22,7 +22,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `bennett`            | —                      |                                                                          |
 | `candace`            | —                      |                                                                          |
 | `charlotte`          | —                      |                                                                          |
-| `chasca`             | —                      |                                                                          |
+| `chasca`             | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `chevreuse`          | —                      |                                                                          |
 | `chiori`             | —                      |                                                                          |
 | `chongyun`           | —                      |                                                                          |
