@@ -8,8 +8,8 @@ import { cameraProjectionMatrix, float, modelViewMatrix, normalize, normalLocal,
 // drawn from behind in the colour given. Three builds the same material per toon material, which the outline pass
 // Shares
 export const createOutlineMaterial = (colorNode: Node<"vec4">, thicknessNode: Node<"float">): NodeMaterial => {
-  const material = new NodeMaterial();
-  material.isMeshToonOutlineMaterial = true;
+  // Three's outline pass finds its own outline materials by this flag, which NodeMaterial does not type
+  const material = Object.assign(new NodeMaterial(), { isMeshToonOutlineMaterial: true });
   material.name = "Toon_Outline";
   material.side = BackSide;
   const outlineNormal = normalLocal.negate();

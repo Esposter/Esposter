@@ -1,5 +1,5 @@
 import type { ToonEdge } from "#src/models/nodes/ToonEdge";
-import type { Material, NodeFrame, NodeMaterial, Renderer } from "three/webgpu";
+import type { Material, Node, NodeFrame, NodeMaterial, Renderer } from "three/webgpu";
 
 import { createOutlineMaterial } from "#src/models/nodes/createOutlineMaterial";
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
@@ -12,6 +12,10 @@ import { ToonOutlinePassNode } from "three/webgpu";
 // Once from the pass's nodes, and an object's skinned, instanced or morphed variant still compiles as its own pipeline.
 // A material with its own edge is outlined by one material per distinct edge, built once and shared the same way
 export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
+  // The pass's nodes, which three types untyped, as the outline materials built from them read them
+  declare colorNode: Node<"vec3">;
+  declare thicknessNode: Node<"float">;
+  declare alphaNode: Node<"float">;
   // One frame's draw answers every compile asked for before it
   #drawn?: PromiseWithResolvers<void>;
   #edgeOutlineMaterials = new Map<string, NodeMaterial>();
