@@ -1,6 +1,7 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
+import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
@@ -27,6 +28,10 @@ const GcsimTalentTypeCombatTalentMap: Record<GcsimTalentType, CombatTalent> = {
   [GcsimTalentType.Skill]: CombatTalent.ElementalSkill,
 };
 
+// The first frames of a constant's list, descending through each level's first element
+const readFirstGoFrames = (value: GoValue | undefined): GoValue | undefined =>
+  Array.isArray(value) ? readFirstGoFrames(value[0]) : value;
+
 // The writer of one gcsim character's values into a kit's candidate map, each cited at the file and line it is read from
 export const createGcsimKitCandidateWriter = (
   candidateMap: Map<string, KitCandidate[]>,
@@ -41,10 +46,19 @@ export const createGcsimKitCandidateWriter = (
     });
   return {
     add,
+    // A slot's frames are one set, or a list of them one for each of its states, a list of lists for a slot with a list of
+    // States per level, the first state at each level being the press or the tap a slot is read by
     addFrames: (path, ...names) => {
       const constant = findGcsimConstant(constantMap, ...names);
-      if (constant !== undefined && !Array.isArray(constant.value) && typeof constant.value === "object")
-        add(path, constant.value.animationFrames, toFile(constant.file), constant.line);
+      const isList = Array.isArray(constant?.value);
+      const frames = readFirstGoFrames(constant?.value);
+      if (constant !== undefined && typeof frames === "object" && frames !== null && !Array.isArray(frames))
+        add(
+          path,
+          frames.animationFrames,
+          toFile(constant.file),
+          isList ? (constant.elementLines[0] ?? constant.line) : constant.line,
+        );
     },
     // A hit's area from its hitbox, its multiplier from its talent parameter joined through the config's `talents` and
     // The talent file's labels, and the rest from its `AttackInfo` fields, its poise else from the poise variable's

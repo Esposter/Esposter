@@ -47,4 +47,99 @@ describe(getGcsimKitCandidates, () => {
       ),
     ).toStrictEqual([undefined, [1], undefined]);
   });
+
+  test("reads a skill's frames from the first state of its list of frames", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["skillFrames", toConstant([{ animationFrames: 50 }, { animationFrames: 80 }])]]),
+      filePaths: [],
+      folder: "mona",
+      talentFile: "mona.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Mona",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Catalyst,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(candidateMap.get("skill.animationFrames")?.map(({ value }) => value)).toStrictEqual([50]);
+  });
+
+  test("reads a skill's frames from the first state of each level of its nested list of frames", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        ["skillFrames", toConstant([[{ animationFrames: 40 }, { animationFrames: 60 }], [{ animationFrames: 70 }]])],
+      ]),
+      filePaths: [],
+      folder: "navia",
+      talentFile: "navia.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Navia",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Claymore,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(candidateMap.get("skill.animationFrames")?.map(({ value }) => value)).toStrictEqual([40]);
+  });
+
+  test("gives a burst with no attack under its tag no hits", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["burstFrames", toConstant({ animationFrames: 90 })]]),
+      filePaths: [],
+      folder: "barbara",
+      talentFile: "barbara.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Barbara",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Catalyst,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(candidateMap.get("burst.hits.length")?.map(({ value }) => value)).toStrictEqual([0]);
+  });
 });

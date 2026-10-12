@@ -16,7 +16,7 @@ import { SKILL_TARGETING_AREA } from "genshin-world";
 // Their frames from `<slot>Frames` or the press's or tap's, and each hit by its place among the slot's talent
 // Multipliers and the ability's hitboxes, where they are as many as its hitmarks. A skill of one hit with no hitbox for
 // Each takes the `E-Tap` or `E-Press` hitbox. A press's `Hitmarks` listing numbers is its hitmark in each state gcsim
-// Reads it at, so it gives no hits
+// Reads it at, so it gives no hits. A burst with no attack under its tag is a buff, a heal or a drain, and gives none
 export const addGcsimSkillAndBurstCandidates = (
   { add, addFrames, addHit, toFile }: GcsimKitCandidateWriter,
   { attacks, config, constantMap, travelMap }: GcsimCharacter,
@@ -35,8 +35,13 @@ export const addGcsimSkillAndBurstCandidates = (
     const hitmarkValues = toGoNumbers(hitmarks?.value);
     const isPressStateList =
       Array.isArray(hitmarks?.value) && pressNames.some((pressName) => hitmarks.name === `${pressName}Hitmarks`);
-    if (hitmarks === undefined || hitmarkValues === undefined || isPressStateList) continue;
     const slotAttacks = attacks.filter(({ attackTag }) => attackTag !== undefined && attackTags.includes(attackTag));
+    if (slot === "burst" && hitmarks === undefined && slotAttacks.length === 0) {
+      const burstFrames = findGcsimConstant(constantMap, "burstFrames");
+      if (burstFrames !== undefined) add("burst.hits.length", 0, toFile(burstFrames.file), burstFrames.line);
+      continue;
+    }
+    if (hitmarks === undefined || hitmarkValues === undefined || isPressStateList) continue;
     const slotLeaves = [...new Set(slotAttacks.map(({ talentVariable }) => talentVariable))].flatMap(
       (variable) => config.talentVariables.find(({ name }) => name === variable)?.leaves ?? [],
     );
