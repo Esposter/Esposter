@@ -17,7 +17,7 @@ import { mapTerrainResidualGrid } from "#src/services/genshinAssets/fit/mapTerra
 import { readGroundFootprints } from "#src/services/genshinAssets/fit/readGroundFootprints";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { smoothTerrainGrid } from "#src/services/genshinAssets/fit/smoothTerrainGrid";
-import { CATALOGUE_FILE, GROUND_RADIUS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { CATALOGUE_PATH, GROUND_RADIUS } from "#src/services/genshinAssets/shared/constants";
 import { computeExtentGap } from "#src/services/genshinAssets/world/computeExtentGap";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
@@ -29,7 +29,6 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResidualFade } from "genshin-engine";
 import { GameDataset, regionGroundSchema } from "genshin-world";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 // Every sample how far apart, and the distance a sample there weighs half of one at the centre, in metres: the valley
 // The screen's views see, its near ground first
@@ -75,7 +74,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   const [getGameHeight, origin, catalogueJson] = await Promise.all([
     readWorldTerrainHeight(region),
     readWorldOrigin(DerivedAssetComponent.Windrise),
-    readFile(join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE), "utf8"),
+    readFile(CATALOGUE_PATH, "utf8"),
   ]);
   const [originX, originY, originZ] = origin;
   const { regions } = parseMachineJson<Catalogue>(catalogueJson);

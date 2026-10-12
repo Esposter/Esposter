@@ -284,6 +284,8 @@ export const DECOMPILER_BATCH_SIZE = 200;
 export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
 // The catalogue's file in the world data, the regions, areas and subareas people edit and `fitAreaOutlines` outlines
 export const CATALOGUE_FILE = "catalogue.json";
+// The catalogue read from the world data, its file joined to the directory every reader of it shares
+export const CATALOGUE_PATH: string = join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE);
 // The game's own area table in the community's dump, each area's id and the text id of its name, and the field a scene
 // Point files the area it stands in under, as the dump obfuscates it: Windrise's statue's holds 201, which the table
 // Names Windrise

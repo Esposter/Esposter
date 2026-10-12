@@ -1,6 +1,6 @@
 import { AGE_RATING_KEY, CATALOGUE_KEY } from "#src/services/gameData/constants";
 import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/checkIsRegionGroundFitted";
-import { CATALOGUE_FILE, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { CATALOGUE_PATH, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readRegionGroundFiles } from "#src/services/genshinAssets/shared/readRegionGroundFiles";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -14,7 +14,7 @@ import { join } from "node:path";
 // Refused, since publishing it would put the plateaus back in place of the fitted ground
 export const readAuthoredGameData = async (): Promise<Record<string, unknown>> => {
   const [catalogueJson, regionGroundMap, ageRatingJson] = await Promise.all([
-    readFile(join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE), "utf8"),
+    readFile(CATALOGUE_PATH, "utf8"),
     readRegionGroundFiles(),
     readFile(join(WORLD_DATA_DIRECTORY, `${AGE_RATING_KEY}.json`), "utf8"),
   ]);

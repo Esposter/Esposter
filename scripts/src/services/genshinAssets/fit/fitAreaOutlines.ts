@@ -9,10 +9,10 @@ import { CATALOGUE_KEY } from "#src/services/gameData/constants";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import {
   CATALOGUE_FILE,
+  CATALOGUE_PATH,
   OPEN_WORLD_SCENE_ID,
   WORLD_AREA_POLYGONS_PATH,
   WORLD_AREAS_PATH,
-  WORLD_DATA_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
@@ -21,7 +21,6 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameLanguage } from "genshin-text";
 import { AreaTerrainType, catalogueSchema } from "genshin-world";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 // Each area's and subarea's outline in the catalogue, the game's own: the polygons the community's dump holds for the
 // Open world's areas, carried into the world's axes round the oak's foot to the metre. An area is the game's level-one
@@ -35,7 +34,7 @@ export const fitAreaOutlines = async (): Promise<GameDataBuild> => {
     readFile(WORLD_AREAS_PATH, "utf8"),
     readFile(WORLD_AREA_POLYGONS_PATH, "utf8"),
     readWorldOrigin(DerivedAssetComponent.Windrise),
-    readFile(join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE), "utf8"),
+    readFile(CATALOGUE_PATH, "utf8"),
   ]);
   const textMap = readTextMap(GameLanguage.English);
   const areas = parseMachineJson<WorldArea[]>(areasJson).filter(({ sceneID }) => sceneID === OPEN_WORLD_SCENE_ID);
