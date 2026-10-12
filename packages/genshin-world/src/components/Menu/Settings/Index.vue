@@ -154,7 +154,7 @@ onMounted(() => {
     <!-- The scroll bar shows only while the page has more than it shows -->
     <template v-if="scrollThumb.share < 1">
       <svg class="scroll-caret" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 4.25 5 0.75 9 4.25" /></svg>
-      <MenuScrollTrack :offset="scrollThumb.offset" :share="scrollThumb.share" />
+      <MenuScrollTrack class="track" :offset="scrollThumb.offset" :share="scrollThumb.share" />
     </template>
   </GameScreen>
 </template>

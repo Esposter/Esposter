@@ -127,7 +127,7 @@ onMounted(() => {
           <span v-for="({ color, text }, index) of infoSegments" :key="index" :style="{ color }">{{ text }}</span>
         </p>
       </div>
-      <MenuScrollTrack :offset="scrollThumb.offset" :share="scrollThumb.share" />
+      <MenuScrollTrack class="track" :offset="scrollThumb.offset" :share="scrollThumb.share" />
       <svg class="caret up" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 4.25 5 0.75 9 4.25" /></svg>
       <svg class="caret down" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 0.75 5 4.25 9 0.75" /></svg>
       <GameButton
