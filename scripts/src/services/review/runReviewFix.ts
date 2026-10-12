@@ -31,7 +31,8 @@ export const runReviewFix = async ({ base, end, findings, issue }: ReviewIssueFi
   );
 
   const isAhead = runGit(["rev-list", "--count", `${REMOTE_QUEUE_REF}..HEAD`]).trim() !== "0";
-  const isLanded = isAhead ? landCommits() : true;
+  // Nothing ahead of the queue means the fixer committed nothing, so no fix it claims has landed
+  const isLanded = isAhead && landCommits();
   const dispositions = resolveDispositions(findings.length, fixer.dispositions, fixer.failureReason);
   // A fix whose commit never reached the queue is not a fix
   if (!isLanded)
