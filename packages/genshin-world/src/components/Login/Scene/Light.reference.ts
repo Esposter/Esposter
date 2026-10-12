@@ -63,6 +63,13 @@ export const lightTopic: ReferenceTopic = {
     },
     {
       method:
+        "The login drawn under nuxt dev from its own exports, each material laid over the stone with its rim glow as the program grades it, looked at down the walkway on the title and at the door",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The walkway's middle lane, LoginScene_Ground02 compiling ENABLE_RIM_GLOW_ON at an _RGStrength of 1, glowed near white along the glide's grazing view where the game shows grey-blue stone: the glow our stand-in's fit had already set to none came back through the export path. The witness's material draws no rim glow of its own, so an export's glow is its host's as fitted to the frames, and createWitnessMaterial.test.ts holds the walkway's at the host's alone. The door and the towers draw none over their exports, which their frames measured within noise of an eighth (door 19.68 against 19.86 ΔE, towers 1.43 against 1.42)",
+    },
+    {
+      method:
         "The fog's density and colours solved with each light's share, ours drawn under the sun alone and the sky alone, the bins split by how their faces turn to the sun, on login-door-recording, then compare there and on the dusk still",
       outcome: InvestigationOutcome.Rejected,
       result:

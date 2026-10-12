@@ -6,6 +6,7 @@ import { LEAF_SHADER } from "#src/services/scene/constants";
 import { createWitnessMaterial } from "#src/services/scene/createWitnessMaterial";
 import { ToonNodeMaterial } from "genshin-engine";
 import { DoubleSide, Texture } from "three";
+import { vec3 } from "three/tsl";
 import { describe, expect, test } from "vitest";
 
 const createMaterialFactory: WitnessMaterialFactory = () => new ToonNodeMaterial({}, false);
@@ -38,5 +39,25 @@ describe("createWitnessMaterial", () => {
       isLeafCard: material.userData.isLeafCard,
       side: material.side,
     }).toStrictEqual({ alphaTest: 0, hasMaskNode: true, hasOpacityNode: false, isLeafCard: true, side: DoubleSide });
+  });
+
+  test("draws no rim glow of the export's own, so the walkway's middle lane keeps the host's glow alone", () => {
+    expect.hasAssertions();
+
+    const hostGlowNode = vec3(0);
+    const walkwayMaterial = createWitnessMaterial(
+      {
+        colors: { _RGColor: [0.7, 0.96, 1, 1] },
+        floats: { _EnableRimGlow: 1, _RGPower: 2, _RGStrength: 1, [WitnessProperty.EmissionType]: 0 },
+        keywords: ["EMISSION_TYPE_NONE", "ENABLE_RIM_GLOW_ON"],
+        name: "LoginScene_Ground02",
+        shader: "miHoYo/Scene/Login Base",
+        textures: {},
+      },
+      new Map(),
+      () => Object.assign(new ToonNodeMaterial({}, false), { emissiveNode: hostGlowNode }),
+    );
+
+    expect(walkwayMaterial.emissiveNode).toBe(hostGlowNode);
   });
 });
