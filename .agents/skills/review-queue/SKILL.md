@@ -5,7 +5,7 @@ description: Apply when about to git commit or git push, when deciding what bran
 
 # Review Queue
 
-Every agent works on **one permanent branch, `ai/queue`**, from its own git worktree, and lands its commits on it with `git pull --rebase` and `git push`. Nothing rewrites `ai/queue`. The review (`apps/web/content/docs/infra/review.md`, its workflow `.github/workflows/Review.yaml`) reads the commits `main` does not yet have, reviews them in windows, and fast-forwards `main` to the end of each reviewed window, so `main` is always an ancestor of `ai/queue`. This skill is what an agent does on its side of that.
+Every agent works on **one permanent branch, `ai/queue`**, from its own git worktree, and lands its commits on it with `git pull --rebase` and `git push`. Nothing rewrites `ai/queue`. The review (`apps/web/content/docs/infra/review.md`, its workflow `.github/workflows/Review.yaml`) plans every window of the commits `main` does not yet have, reviews all of them in one pool, and moves `main` forward only through the windows that passed. This skill is what an agent does on its side of that.
 
 ## Settled — do not re-propose
 
@@ -23,7 +23,7 @@ Every agent works on **one permanent branch, `ai/queue`**, from its own git work
 | Ref          | Written by                              | How                                                                          |
 | :----------- | :-------------------------------------- | :--------------------------------------------------------------------------- |
 | `ai/queue`   | every session, and Renovate's automerge | a plain push, after `git pull --rebase`; never force-pushed, never rewritten |
-| `main`       | the review only                         | a fast-forward to the end of a reviewed window                               |
+| `main`       | the review only                         | a fast-forward to the end of the last window that passed                     |
 | other `ai/*` | the one session that owns it            | a plain push                                                                 |
 
 A session never pushes `main`. Its branch in its own worktree is local, named after the worktree, and never pushed under its own name: it only gives the pull a fork point.

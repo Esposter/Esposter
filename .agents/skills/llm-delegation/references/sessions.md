@@ -7,7 +7,7 @@ Read when automation launches a headless session: its one launcher, its two role
 The roles are `ReviewSessionRole` (`scripts/src/models/review/ReviewSessionRole.ts`):
 
 - **Reviewer**, one per batch, read-only. Print mode allows only the tools in `REVIEWER_TOOLS`, so every edit is denied.
-- **Fixer**, one per run and only when findings exist. It may edit and commit, and it never touches GitHub; the script lands its commits.
+- **Fixer**, one per window with findings, each in its own fix job with no concurrency group, so a window's fixer runs beside the next review. It may edit and commit, and it never touches GitHub; the script lands its commits.
 
 ## Every spawn owes a gate that can decline it
 

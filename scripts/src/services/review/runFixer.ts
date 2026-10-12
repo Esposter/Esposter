@@ -9,7 +9,7 @@ import { parseReviewAnswer } from "#src/services/review/parseReviewAnswer";
 import { runSession } from "#src/services/review/runSession";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 
-// The one fixer session, in this checkout at the queue's tip. It is not retried: a fixer that fails defers every finding
+// The fixer session for one window, in this checkout at the queue's tip. It is not retried: a fixer that fails defers every finding
 // To the run's issue, which is the outcome a retry would only delay.
 export const runFixer = async (base: string, end: string, findings: ReviewFinding[]): Promise<ReviewDisposition[]> => {
   const output = await runSession({
