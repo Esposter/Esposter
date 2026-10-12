@@ -28,7 +28,7 @@ committed.
 | `dialogue-paimon-line` | `DialogueTalk` | 9.98% | 0.957 | 2.60% | 0.3151 |
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
-| `forge-screen` | `ForgeScreen` | 6.75% | 0.673 | 5.62% | 0.2223 |
+| `forge-screen` | `ForgeScreen` | 6.72% | 0.685 | 5.60% | 0.2216 |
 | `gcg-duel-board` | `GcgScreen` | 13.97% | 0.470 | 9.63% | 0.4658 |
 | `handbook-experience` | `HandbookScreen` | 5.18% | 0.932 | 2.44% | 0.2456 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
@@ -71,7 +71,7 @@ committed.
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |
 | `windrise-statue-day` | `WorldScreen` | 28.46% | 0.229 | 29.94% | 0.7878 |
-| `wish-screen` | `WishScreen` | 52.22% | 0.118 | 50.35% | 0.8926 |
+| `wish-screen` | `WishScreen` | 50.96% | 0.425 | 49.28% | 0.8743 |
 | `world-level-dialog` | `MenuWorldLevelDialog` | 5.86% | 0.862 | 1.99% | 0.1965 |
 
 ## Layers

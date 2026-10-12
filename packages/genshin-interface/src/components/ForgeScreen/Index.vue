@@ -15,6 +15,8 @@ interface Props {
   closeLabel: string;
   // The coins the wallet holds
   coins: number;
+  // The Materials box's heading, and the support character's, in the game's words
+  materialsBoxLabel: string;
   // The Materials tab's label
   materialsLabel: string;
   // The Obtain button of a finished queue, and the Start button of the Materials tab, in the game's words
@@ -23,14 +25,12 @@ interface Props {
   queues: ForgeQueueCell[];
   // The Forge Queues tab's label with its open queues, the game's "Forge Queues (1/3)"
   queuesLabel: string;
-  // The Materials box's heading, and the support character's, in the game's words
-  materialsBoxLabel: string;
-  supportLabel: string;
   // The Materials tab's recipe list, in the game's order
   recipes: ForgeRecipeCell[];
   // The coins the selected recipe costs for its amount
   requiredCoins: number;
   startLabel: string;
+  supportLabel: string;
   // The title the game shows over the screen
   title: string;
   // The Materials tab's total forge time for the amount, in the game's words
@@ -239,16 +239,16 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 }
 .recipe-name {
   position: absolute;
-  top: calc(var(--unit) * 28);
-  left: calc(var(--unit) * 141);
-  font-size: calc(var(--unit) * 29);
+  top: calc(var(--unit) * 14);
+  left: calc(var(--unit) * 152);
+  font-size: calc(var(--unit) * 35);
   line-height: 1;
 }
 .recipe-time {
   position: absolute;
-  top: calc(var(--unit) * 78);
-  left: calc(var(--unit) * 141);
-  font-size: calc(var(--unit) * 24);
+  top: calc(var(--unit) * 64);
+  left: calc(var(--unit) * 151);
+  font-size: calc(var(--unit) * 29);
   line-height: 1;
 }
 .detail {
