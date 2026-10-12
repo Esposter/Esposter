@@ -61,6 +61,40 @@ describe("readGcsimCitedCandidates local aliases", () => {
     ]);
   });
 
+  // The alias's expression is read as one operand, so `r*2` is (2 + 3) * 2, not 2 + 3 * 2
+  const SUM_GO = [
+    "package aino",
+    "",
+    "func burst() {",
+    "\tr := 2 + 3",
+    "\tap := combat.NewCircleHit(c.Core.Combat.Player(), nil, nil, r*2)",
+    "}",
+    "",
+  ].join("\n");
+
+  test("a local bound to a sum is read as one operand of the expression that uses it", () => {
+    expect.hasAssertions();
+    const candidates =
+      readGcsimCitedCandidates(
+        {
+          "burst.area": {
+            file: "burst.go",
+            line: 5,
+            source: KitSource.Gcsim,
+            value: { angle: 2 * Math.PI, height: 2, radius: 10 },
+          },
+        },
+        createGcsimDirectory(SUM_GO),
+        FOLDER,
+      ).get("burst.area") ?? [];
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: "internal/characters/aino/burst.go", line: 5, source: KitSource.Gcsim },
+        value: { angle: 2 * Math.PI, height: 2, radius: 10 },
+      },
+    ]);
+  });
+
   test("an alias assigned more than once gives no area, so nothing is guessed", () => {
     expect.hasAssertions();
     const candidates =
