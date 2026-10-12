@@ -80,9 +80,10 @@ export const fitAreaOutlines = async (): Promise<GameDataBuild> => {
   const subareas = catalogueAreas.flatMap((area) => area.subareas);
   const outlinedSubareas = subareas.filter(({ outlines }) => outlines.length > 0);
   const cities = subareas.filter(({ areaTerrainType }) => areaTerrainType === AreaTerrainType.City);
+  const outlinedCities = cities.filter(({ outlines }) => outlines.length > 0);
   const notes = [
     `${gameAreaIds.length} of ${catalogueAreas.length} areas take the game's outline, ${keptAreaIds.length} keep the catalogue's (${keptAreaIds.join(", ")})`,
-    `${outlinedSubareas.length} of ${subareas.length} subareas take the game's outlines, among them ${outlinedSubareas.filter((subarea) => cities.includes(subarea)).length} of the ${cities.length} cities the game marks`,
+    `${outlinedSubareas.length} of ${subareas.length} subareas take the game's outlines, among them ${outlinedCities.length} of the ${cities.length} cities the game marks`,
   ];
   return {
     notes: [...notes, await writeWorldData(CATALOGUE_FILE, catalogue)],
