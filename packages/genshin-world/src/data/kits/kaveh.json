@@ -28,7 +28,7 @@
   },
   "stances.paintedDome.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
   "stances.paintedDome.normalAttacks.0.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 8131 }
   },
   "stances.paintedDome.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 107.738 },
@@ -41,7 +41,7 @@
   },
   "stances.paintedDome.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 22 },
   "stances.paintedDome.normalAttacks.1.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 8131 }
   },
   "stances.paintedDome.normalAttacks.1.hits.0.poiseDamage": { "cause": "Unclassified", "value": 98.524 },
@@ -54,7 +54,7 @@
   },
   "stances.paintedDome.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 33 },
   "stances.paintedDome.normalAttacks.2.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 8131 }
   },
   "stances.paintedDome.normalAttacks.2.hits.0.poiseDamage": { "cause": "Unclassified", "value": 123.542 },
@@ -67,7 +67,7 @@
   },
   "stances.paintedDome.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "stances.paintedDome.normalAttacks.3.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 8131 }
   },
   "stances.paintedDome.normalAttacks.3.hits.0.poiseDamage": { "cause": "Unclassified", "value": 148.118 },

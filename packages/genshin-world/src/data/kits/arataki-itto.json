@@ -328,5 +328,5 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 18.5 }
   },
   "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 14 },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5732 } }
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5732 } }
 }

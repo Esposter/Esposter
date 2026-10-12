@@ -19,7 +19,7 @@
   },
   "hits.frostgroveSanctuaryTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 62 },
   "hits.frostgroveSanctuaryTicks.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
   "hits.frostgroveSanctuaryTicks.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -29,7 +29,7 @@
   },
   "hits.frostgroveSanctuaryTicks.1.hitmarkFrames": { "cause": "Unclassified", "value": 179 },
   "hits.frostgroveSanctuaryTicks.1.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
   "hits.frostgroveSanctuaryTicks.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -39,7 +39,7 @@
   },
   "hits.frostgroveSanctuaryTicks.2.hitmarkFrames": { "cause": "Unclassified", "value": 296 },
   "hits.frostgroveSanctuaryTicks.2.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
   "hits.frostgroveSanctuaryTicks.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -49,7 +49,7 @@
   },
   "hits.frostgroveSanctuaryTicks.3.hitmarkFrames": { "cause": "Unclassified", "value": 413 },
   "hits.frostgroveSanctuaryTicks.3.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
   "hits.frostgroveSanctuaryTicks.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -59,7 +59,7 @@
   },
   "hits.frostgroveSanctuaryTicks.4.hitmarkFrames": { "cause": "Unclassified", "value": 530 },
   "hits.frostgroveSanctuaryTicks.4.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
   "hits.frostgroveSanctuaryTicks.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -69,7 +69,7 @@
   },
   "hits.frostgroveSanctuaryTicks.5.hitmarkFrames": { "cause": "Unclassified", "value": 647 },
   "hits.frostgroveSanctuaryTicks.5.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
   "hits.frostgroveSanctuaryTicks.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -79,7 +79,7 @@
   },
   "hits.frostgroveSanctuaryTicks.6.hitmarkFrames": { "cause": "Unclassified", "value": 764 },
   "hits.frostgroveSanctuaryTicks.6.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
   "hits.frostgroveSanctuaryTicks.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -89,7 +89,7 @@
   },
   "hits.frostgroveSanctuaryTicks.7.hitmarkFrames": { "cause": "Unclassified", "value": 881 },
   "hits.frostgroveSanctuaryTicks.7.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
   "hits.frostgroveSanctuaryTicks.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -122,13 +122,10 @@
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource", "value": true },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
   "skill.hits.length": { "source": "Gcsim" },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 11932 } },
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11932 } },
   "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 42 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 16 },
-  "skillHolds.0.action.hits.0.multiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 0, "proudSkillGroupId": 11932 }
-  },
+  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11932 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 11932 } },
   "skillHolds.0.variant.animationFrames": { "cause": "Unclassified", "value": 64 },
   "skillHolds.0.variant.hits.length": { "cause": "Unclassified", "value": 1 },
@@ -137,10 +134,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "skillHolds.0.variant.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 45 },
-  "skillHolds.0.variant.hits.0.multiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 11932 }
-  },
+  "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11932 } },
   "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" }
 }

@@ -7,22 +7,29 @@ import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
-// The hit each multiplier of a talent variable joins to, keyed by its proud skill group and index: the variable's one
-// Attack literal's element, gauge, tag, poise and strike type, for a variable every attack of which is one literal.
-// A named list's hit takes these by its multiplier, so a variable with two literals gives none
+// The hit each multiplier of a talent variable joins to, keyed by its proud skill group and index: the multiplier's own
+// Talent row, and the variable's attack's element, gauge, tag, poise and strike type where the variable's one literal is
+// Every attack of it. A named list's hit takes these by its multiplier, so a variable with two literals gives its fields none
 export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTables): NamedHitCandidateMap => {
   const { attacks, config, talentParameterMap } = gcsim;
   const namedHitCandidateMap: NamedHitCandidateMap = new Map();
   for (const { leaves, name: variable } of config.talentVariables) {
-    const [attack, ...otherAttacks] = attacks.filter(({ talentVariable }) => talentVariable === variable);
-    if (attack === undefined || otherAttacks.length > 0) continue;
-    for (const { reference } of leaves) {
+    const variableAttacks = attacks.filter(({ talentVariable }) => talentVariable === variable);
+    if (variableAttacks.length === 0) continue;
+    const [attack] = variableAttacks;
+    const joinedAttack = variableAttacks.length === 1 ? attack : undefined;
+    for (const leaf of leaves) {
+      const { reference } = leaf;
       const parameter = talentParameterMap.get(`${reference.type}|${reference.label}`);
       const index = parameter?.indexes[reference.selector] ?? parameter?.indexes[0];
       const key = `${tables.talentGroupIdMap[GcsimTalentTypeCombatTalentMap[reference.type]]}|${index}`;
       if (index === undefined || namedHitCandidateMap.has(key)) continue;
       const candidateMap = new Map<string, KitCandidate[]>();
-      createGcsimKitCandidateWriter(candidateMap, gcsim, tables).addHit(key, { attack }, SKILL_TARGETING_AREA);
+      createGcsimKitCandidateWriter(candidateMap, gcsim, tables).addHit(
+        key,
+        { attack: joinedAttack, talentLeaf: leaf },
+        SKILL_TARGETING_AREA,
+      );
       namedHitCandidateMap.set(
         key,
         new Map(

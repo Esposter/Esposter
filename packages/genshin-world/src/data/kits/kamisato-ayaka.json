@@ -1,4 +1,6 @@
 {
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 7, "proudSkillGroupId": 231 } },
+  "chargedAttack.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 7, "proudSkillGroupId": 231 } },
   "hits.frostflake.length": { "cause": "Unclassified", "value": 20 },
   "hits.frostflake.0.area": {
     "cause": "Unclassified",

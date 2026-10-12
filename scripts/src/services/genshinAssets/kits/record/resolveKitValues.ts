@@ -33,7 +33,11 @@ export const resolveKitValues = (
   };
   for (const [path, entry] of Object.entries(overlay))
     if ("source" in entry) {
-      const candidate = sourceCandidateMap.get(path)?.find(({ provenance }) => provenance.source === entry.source);
+      const candidate =
+        sourceCandidateMap.get(path)?.find(({ provenance }) => provenance.source === entry.source) ??
+        getNamedHitKitCandidates(new Map([[path, entry.value]]), namedHitCandidateMap)
+          .get(path)
+          ?.find(({ provenance }) => provenance.source === entry.source);
       if (candidate === undefined)
         throw new InvalidOperationError(Operation.Read, path, `has no ${entry.source} value for the overlay to choose`);
       valueMap.set(path, candidate.value);

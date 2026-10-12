@@ -34,7 +34,7 @@
   },
   "hits.mirrorReflectionPhantom.0.hitmarkFrames": { "cause": "Unclassified", "value": 86 },
   "hits.mirrorReflectionPhantom.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
   },
   "hits.mirrorReflectionPhantom.0.poiseDamage": { "cause": "Unclassified", "value": 40 },
@@ -44,7 +44,7 @@
   },
   "hits.mirrorReflectionPhantom.1.hitmarkFrames": { "cause": "Unclassified", "value": 145 },
   "hits.mirrorReflectionPhantom.1.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
   },
   "hits.mirrorReflectionPhantom.1.poiseDamage": { "cause": "Unclassified", "value": 40 },
@@ -54,7 +54,7 @@
   },
   "hits.mirrorReflectionPhantom.2.hitmarkFrames": { "cause": "Unclassified", "value": 204 },
   "hits.mirrorReflectionPhantom.2.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
   },
   "hits.mirrorReflectionPhantom.2.poiseDamage": { "cause": "Unclassified", "value": 40 },
@@ -64,7 +64,7 @@
   },
   "hits.mirrorReflectionPhantom.3.hitmarkFrames": { "cause": "Unclassified", "value": 263 },
   "hits.mirrorReflectionPhantom.3.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
   },
   "hits.mirrorReflectionPhantom.3.poiseDamage": { "cause": "Unclassified", "value": 40 },
@@ -74,7 +74,7 @@
   },
   "hits.mirrorReflectionPhantom.4.hitmarkFrames": { "cause": "Unclassified", "value": 329 },
   "hits.mirrorReflectionPhantom.4.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 4132 }
   },
   "hits.mirrorReflectionPhantom.4.poiseDamage": { "cause": "Unclassified", "value": 150 },

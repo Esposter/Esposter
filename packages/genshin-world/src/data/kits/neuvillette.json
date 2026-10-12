@@ -29,7 +29,7 @@
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8732 } },
   "skill.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
-  "skill.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 8732 } },
+  "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8732 } },
   "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }

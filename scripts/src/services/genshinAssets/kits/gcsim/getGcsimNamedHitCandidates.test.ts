@@ -67,11 +67,15 @@ describe(getGcsimNamedHitCandidates, () => {
     const joined = getNamedHitKitCandidates(multiplierMap(BURST_PROUD_SKILL_GROUP_ID), namedHitCandidateMap);
 
     expect([...joined.keys()]).toStrictEqual([
+      "hits.fieryRainArrows.0.multiplier",
       "hits.fieryRainArrows.0.element",
       "hits.fieryRainArrows.0.internalCooldownTag",
       "hits.fieryRainArrows.0.isBlunt",
     ]);
     expect(joined.get("hits.fieryRainArrows.0.element")?.map(({ value }) => value)).toStrictEqual([Element.Pyro]);
+    expect(joined.get("hits.fieryRainArrows.0.multiplier")?.map(({ value }) => value)).toStrictEqual([
+      { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
+    ]);
     expect(getNamedHitKitCandidates(multiplierMap(0), namedHitCandidateMap).size).toBe(0);
   });
 

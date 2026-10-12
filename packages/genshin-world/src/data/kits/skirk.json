@@ -106,7 +106,7 @@
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 12 },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -121,7 +121,7 @@
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -136,7 +136,7 @@
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -148,7 +148,7 @@
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 23 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -163,7 +163,7 @@
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 4, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -175,7 +175,7 @@
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -190,7 +190,7 @@
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 25 },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 6, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },

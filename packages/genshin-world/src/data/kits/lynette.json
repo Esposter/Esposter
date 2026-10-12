@@ -1,6 +1,6 @@
 {
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 } },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8339 } },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8339 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.bogglecatFirstTick": { "cause": "Unclassified", "value": 122 },
@@ -11,7 +11,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "hits.bogglecatTick.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
-  "hits.bogglecatTick.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 8339 } },
+  "hits.bogglecatTick.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8339 } },
   "hits.bogglecatTick.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -20,5 +20,5 @@
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8332 } }
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8332 } }
 }

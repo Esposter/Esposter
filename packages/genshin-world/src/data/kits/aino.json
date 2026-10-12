@@ -16,7 +16,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 }
   },
   "hits.waterBall.hitmarkFrames": { "cause": "Unclassified", "value": 10 },
-  "hits.waterBall.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 12139 } },
+  "hits.waterBall.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 12139 } },
   "hits.waterBall.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "plungeCollision.element": { "cause": "Unclassified", "value": "Water" },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 30 },

@@ -6,10 +6,12 @@ import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedH
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitRecord } from "genshin-world";
 
+import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
+import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
@@ -35,6 +37,20 @@ export const compareKitRecord = (
   const publishedValueMap = flattenKitValues(publishedRecord);
   const overlay: KitOverlay = {};
   const classify = (path: string, value: unknown, candidateMap: ReadonlyMap<string, KitCandidate[]>) => {
+    // A multiplier joined to its talent row names the row by its own value, so the overlay keeps the value with the
+    // Source it joins to, where no source of the path gives the value itself
+    const isJoinedMultiplier =
+      path.endsWith(".multiplier") &&
+      (candidateMap.get(path) ?? []).some(
+        (candidate) => candidate.provenance.source === KitSource.Gcsim && checkIsKitValueEqual(candidate.value, value),
+      ) &&
+      !(sourceCandidateMap.get(path) ?? []).some(
+        (candidate) => candidate.provenance.source === KitSource.Gcsim && checkIsKitValueEqual(candidate.value, value),
+      );
+    if (isJoinedMultiplier) {
+      overlay[path] = { source: KitSource.Gcsim, value };
+      return;
+    }
     const committedEntry: KitOverlayEntry | undefined = committedOverlay[path];
     const entry = keepCommittedKitCause(
       classifyKitValue(value, candidateMap.get(path) ?? [], mainCandidateMap.get(path) ?? [], isTagPredated),

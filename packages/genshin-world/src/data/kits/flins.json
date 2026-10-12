@@ -32,7 +32,7 @@
   },
   "stances.manifestFlame.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 28 },
   "stances.manifestFlame.chargedAttack.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.chargedAttack.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -52,7 +52,7 @@
     "value": "NormalAttack"
   },
   "stances.manifestFlame.normalAttacks.0.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -71,7 +71,7 @@
     "value": "NormalAttack"
   },
   "stances.manifestFlame.normalAttacks.1.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.normalAttacks.1.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -90,7 +90,7 @@
     "value": "NormalAttack"
   },
   "stances.manifestFlame.normalAttacks.2.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.normalAttacks.2.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -109,7 +109,7 @@
     "value": "NormalAttack"
   },
   "stances.manifestFlame.normalAttacks.3.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.normalAttacks.3.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -125,7 +125,7 @@
     "value": "NormalAttack"
   },
   "stances.manifestFlame.normalAttacks.3.hits.1.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.normalAttacks.3.hits.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -144,7 +144,7 @@
     "value": "NormalAttack"
   },
   "stances.manifestFlame.normalAttacks.4.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "source": "Gcsim",
     "value": { "index": 4, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.normalAttacks.4.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },

@@ -1,5 +1,8 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 10631 } },
+  "normalAttacks.2.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 10631 } },
+  "normalAttacks.2.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 10631 } },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 31 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }

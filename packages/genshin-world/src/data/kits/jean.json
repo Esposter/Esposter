@@ -26,22 +26,27 @@
   "normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.healParty.flatHealth": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 331 } },
   "normalAttacks.1.hits.0.healParty.attackShare": { "cause": "Unclassified", "value": 0.15 },
   "normalAttacks.1.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.1.hits.0.healParty.flatHealth": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.1.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 331 } },
   "normalAttacks.2.hits.0.healParty.attackShare": { "cause": "Unclassified", "value": 0.15 },
   "normalAttacks.2.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.2.hits.0.healParty.flatHealth": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.2.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "normalAttacks.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 331 } },
   "normalAttacks.3.hits.0.healParty.attackShare": { "cause": "Unclassified", "value": 0.15 },
   "normalAttacks.3.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.3.hits.0.healParty.flatHealth": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.3.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "normalAttacks.3.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 331 } },
   "normalAttacks.4.hits.0.healParty.attackShare": { "cause": "Unclassified", "value": 0.15 },
   "normalAttacks.4.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.4.hits.0.healParty.flatHealth": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.4.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "normalAttacks.4.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 331 } },
   "parameters.activationFlatHeal": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 339 } },
   "parameters.activationAttackShare": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 339 } },
   "parameters.regenerationFlatHeal": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 339 } },
@@ -59,10 +64,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.561797891182818 }
   },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 21 },
-  "skillHolds.0.action.hits.0.multiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 0, "proudSkillGroupId": 332 }
-  },
+  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 332 } },
   "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unclassified", "value": 250 },
   "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 332 } },
   "skillHolds.0.minimumHeldSeconds": { "cause": "Unclassified", "value": 1 },
@@ -73,10 +75,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.561797891182818 }
   },
   "skillHolds.0.variant.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 21 },
-  "skillHolds.0.variant.hits.0.multiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 0, "proudSkillGroupId": 332 }
-  },
+  "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 332 } },
   "skillHolds.0.variant.hits.0.poiseDamage": { "cause": "Unclassified", "value": 250 },
   "skillMaximumHeldSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 332 } }
 }

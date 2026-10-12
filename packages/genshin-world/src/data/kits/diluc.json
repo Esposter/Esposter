@@ -38,10 +38,7 @@
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 3.4 }
   },
   "skillChain.followUps.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 28 },
-  "skillChain.followUps.0.hits.0.multiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 1632 }
-  },
+  "skillChain.followUps.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 1632 } },
   "skillChain.followUps.1.animationFrames": { "cause": "Unclassified", "value": 66 },
   "skillChain.followUps.1.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillChain.followUps.1.hits.0.area": {
@@ -49,9 +46,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.9 }
   },
   "skillChain.followUps.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
-  "skillChain.followUps.1.hits.0.multiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 2, "proudSkillGroupId": 1632 }
-  },
+  "skillChain.followUps.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 1632 } },
   "skillChain.windowSeconds": { "cause": "Unclassified", "value": 4 }
 }
