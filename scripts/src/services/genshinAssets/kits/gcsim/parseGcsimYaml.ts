@@ -3,6 +3,7 @@ import type { GcsimYamlLine } from "#src/models/genshinAssets/kits/gcsim/GcsimYa
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const FLOW_DELIMITER_REGEX = /[,:[\]{}]/u;
+const FLOW_SPACE_REGEX = /\s/u;
 const FLOW_START_REGEX = /^[[{]/u;
 const NUMBER_REGEX = /^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/iu;
 const KEY_REGEX = /^(?<key>[^\s"#'[{-][^:]*?):(?:\s+(?<value>.*))?$/u;
@@ -35,8 +36,9 @@ const parseScalar = (text: string): unknown => {
 // Values a scalar or a flow collection of its own
 const parseFlow = (text: string): unknown => {
   let position = 0;
+  // A blank line folded into a flow collection is a newline, which the collection reads as the space it is
   const skipSpaces = () => {
-    while (text[position] === " ") position++;
+    while (FLOW_SPACE_REGEX.test(text[position] ?? "")) position++;
   };
   const readValue = (): unknown => {
     skipSpaces();

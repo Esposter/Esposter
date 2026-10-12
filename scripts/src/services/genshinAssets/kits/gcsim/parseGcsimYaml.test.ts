@@ -49,6 +49,13 @@ describe(parseGcsimYaml, () => {
     expect(parseGcsimYaml("a:\n  x\n\n\n  y")).toStrictEqual({ a: "x\n\ny" });
   });
 
+  test("reads a flow collection a blank line folds into as the space it is, not as an empty item", () => {
+    expect.hasAssertions();
+
+    expect(parseGcsimYaml("a: [1,\n\n  ]")).toStrictEqual({ a: [1] });
+    expect(parseGcsimYaml("a: {x: 1,\n\n  }")).toStrictEqual({ a: { x: 1 } });
+  });
+
   test("folds a plain scalar wrapped over the lines below its key, as Iansan's note is", () => {
     expect.hasAssertions();
 
