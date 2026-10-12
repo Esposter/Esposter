@@ -5,10 +5,7 @@ import { HTML_NAMESPACE, MAX_NESTING_DEPTH, NON_TEXT_TAGS, VOID_TAGS } from "#sr
 import { escapeAttribute } from "#src/services/sanitizeHtml/escapeAttribute";
 import { escapeText } from "#src/services/sanitizeHtml/escapeText";
 import { filterAttributes } from "#src/services/sanitizeHtml/filterAttributes";
-
-const getChildNodes = (element: DefaultTreeAdapterTypes.Element): DefaultTreeAdapterTypes.ChildNode[] =>
-  // A template keeps its children in a fragment of their own rather than under the element
-  "content" in element ? (element.content as DefaultTreeAdapterTypes.DocumentFragment).childNodes : element.childNodes;
+import { getChildNodes } from "#src/services/sanitizeHtml/getChildNodes";
 
 // Renders a parsed node as the markup it is allowed to be. Anything the policy does not name is unwrapped to its text,
 // Or dropped with its content when it is a non-text element, so the output is built from allowed parts only

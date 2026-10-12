@@ -7,6 +7,10 @@ import { filterClasses } from "#src/services/sanitizeHtml/filterClasses";
 import { filterSrcset } from "#src/services/sanitizeHtml/filterSrcset";
 import { filterStyle } from "#src/services/sanitizeHtml/filterStyle";
 
+// The entry a tag's policy names, or undefined when the policy names none for that tag
+const getTagPolicy = <T>(tagPolicies: Record<string, T>, tagName: string): T | undefined =>
+  Object.hasOwn(tagPolicies, tagName) ? tagPolicies[tagName] : undefined;
+
 // Keeps the attributes a tag's policy names, each in the form the policy allows. A transform runs first, so what it
 // Writes is filtered like the markup it replaced. Attribute names come from the parser already lower-cased
 export const filterAttributes = (
@@ -14,13 +18,10 @@ export const filterAttributes = (
   policy: SanitizePolicy,
 ): Record<string, string> => {
   const { tagName } = element;
-  const allowedAttributes =
-    (Object.hasOwn(policy.allowedAttributes, tagName) ? policy.allowedAttributes[tagName] : undefined) ?? [];
+  const allowedAttributes = getTagPolicy(policy.allowedAttributes, tagName) ?? [];
   const isClassAllowed = Object.hasOwn(policy.allowedClasses, tagName);
   const parsedAttributes = Object.fromEntries(element.attrs.map(({ name, value }) => [name, value]));
-  const transform = Object.hasOwn(policy.transformAttributes, tagName)
-    ? policy.transformAttributes[tagName]
-    : undefined;
+  const transform = getTagPolicy(policy.transformAttributes, tagName);
   const attributes = transform ? transform(parsedAttributes) : parsedAttributes;
 
   const kept: Record<string, string> = {};
@@ -34,13 +35,8 @@ export const filterAttributes = (
 };
 
 const filterValue = (tagName: string, name: string, value: string, policy: SanitizePolicy): string | undefined => {
-  if (name === "style")
-    return filterStyle(value, Object.hasOwn(policy.allowedStyles, tagName) ? policy.allowedStyles[tagName] : undefined);
-  if (name === "class")
-    return filterClasses(
-      value,
-      Object.hasOwn(policy.allowedClasses, tagName) ? policy.allowedClasses[tagName] : undefined,
-    );
+  if (name === "style") return filterStyle(value, getTagPolicy(policy.allowedStyles, tagName));
+  if (name === "class") return filterClasses(value, getTagPolicy(policy.allowedClasses, tagName));
   if (name === SRCSET_ATTRIBUTE) return filterSrcset(value, policy.allowedSchemes);
   if (URL_ATTRIBUTES.includes(name)) return checkIsAllowedUrl(value, policy.allowedSchemes) ? value : undefined;
   return value;
