@@ -14,3 +14,10 @@ const { offset, share } = defineProps<Props>();
     <div v-if="share < 1" class="thumb" :style="{ height: `${share * 100}%`, top: `${(1 - share) * offset * 100}%` }" />
   </div>
 </template>
+
+<style scoped>
+.track,
+.thumb {
+  position: absolute;
+}
+</style>

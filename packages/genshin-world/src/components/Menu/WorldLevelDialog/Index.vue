@@ -258,7 +258,6 @@ onMounted(() => {
 }
 
 .track {
-  position: absolute;
   top: calc(var(--unit) * 105);
   left: calc(var(--unit) * 1021);
   width: calc(var(--unit) * 5);
@@ -267,7 +266,6 @@ onMounted(() => {
 }
 
 .track :deep(.thumb) {
-  position: absolute;
   left: 0;
   width: calc(var(--unit) * 6);
   background: #beb9b9;

@@ -490,7 +490,6 @@ onMounted(() => {
 
 /* Provisional: the track's and the thumb's alphas, solved from the two worlds the clip shows behind them */
 .track {
-  position: absolute;
   top: calc(var(--unit) * 130);
   left: calc(var(--unit) * 1819);
   width: calc(var(--unit) * 5);
@@ -499,7 +498,6 @@ onMounted(() => {
 }
 
 .track :deep(.thumb) {
-  position: absolute;
   left: calc(var(--unit) * -1);
   width: calc(var(--unit) * 7);
   border-radius: calc(var(--unit) * 3.5) calc(var(--unit) * 3.5) 0 0;
