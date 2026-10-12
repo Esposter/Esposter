@@ -20,6 +20,12 @@ export const WITNESS_LAYOUT_FILE_NAME = "witness.json";
 // Binary of its meshes' typed arrays the manifest's views lie in
 export const AVATAR_MANIFEST_FILE_NAME = "avatar.json";
 export const AVATAR_BINARY_FILE_NAME = "avatar.bin";
+// The files a component holds at its root, beside its assets, which the exports' server serves by name
+export const SCENE_EXPORT_ROOT_FILE_NAMES = [
+  WITNESS_LAYOUT_FILE_NAME,
+  AVATAR_MANIFEST_FILE_NAME,
+  AVATAR_BINARY_FILE_NAME,
+];
 // The families whose parts a scene moves one by one, so the witness keeps a group per part of each: the login's walkway,
 // Whose pieces rise as the camera nears them. Every other family's parts stand still and are drawn as instances
 export const MOVING_PART_FAMILIES: ReadonlySet<string> = new Set<string>([LoginPartFamily.Walkway]);
