@@ -5,7 +5,7 @@ description: Mavuika's kit as built outside her Nightsoul Blessing: her four str
 
 # Mavuika
 
-Mavuika's kit is one module, `createMavuikaKit`, avatar 10000106: her four strikes, a charged attack, and the low, high and collision plunges, played when she is not in her Blessing. Her multipliers are read from proud skill groups 10631, 10632 and 10639, with the skill's cooldown from the second and the burst's from the third. The charged attack costs the 50 stamina gcsim's charge takes.
+Mavuika's kit is its record and one behaviour module, `createMavuikaKitBehaviour`, avatar 10000106: her four strikes, a charged attack, and the low, high and collision plunges, played when she is not in her Blessing. Her multipliers are read from proud skill groups 10631, 10632 and 10639, with the skill's cooldown from the second and the burst's from the third. The charged attack costs the 50 stamina gcsim's charge takes.
 
 ## Not yet built
 
@@ -24,9 +24,9 @@ Without Nightsoul state in the framework, her Flamestrider Blessing, a stance th
 
 ## Key files
 
-| File                                                               | Role                                                                                                                                                          |
-| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/mavuikaKit.ts` | `createMavuikaKit`, Mavuika's four strikes, charged attack and plunges outside her Nightsoul Blessing, with her skill and burst waiting on the Nightsoul hook |
+| File                                                               | Role                                                                                                                                                                   |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/mavuikaKit.ts` | `createMavuikaKitBehaviour`, Mavuika's four strikes, charged attack and plunges outside her Nightsoul Blessing, with her skill and burst waiting on the Nightsoul hook |
 
 ## Sources
 

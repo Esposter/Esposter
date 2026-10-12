@@ -5,7 +5,7 @@ description: Chiori's kit as built: her four strikes, charged attack, collision 
 
 # Chiori
 
-Chiori's kit is one module, `createChioriKit`, on avatar 10000094: four strikes with the third of two hits, a charged attack of two thrusts, a collision and two plunges, Fluttering Hasode's upward sweep with its Tamoto doll and its hold, and Hiyoku: Twin Blades. Her multipliers are read from proud skill groups 9431, 9432 and 9439, and match gcsim's values to four decimal places. Her damage that scales with Defense is each hit's additive base damage, read from its striker as it is priced, as Zhongli's Max HP share is.
+Chiori's kit is its record and one behaviour module, `createChioriKitBehaviour`, on avatar 10000094: four strikes with the third of two hits, a charged attack of two thrusts, a collision and two plunges, Fluttering Hasode's upward sweep with its Tamoto doll and its hold, and Hiyoku: Twin Blades. Her multipliers are read from proud skill groups 9431, 9432 and 9439, and match gcsim's values to four decimal places. Her damage that scales with Defense is each hit's additive base damage, read from its striker as it is priced, as Zhongli's Max HP share is.
 
 ## Decisions
 
@@ -24,9 +24,9 @@ Chiori's kit is one module, `createChioriKit`, on avatar 10000094: four strikes 
 
 ## Key files
 
-| File                                                              | Role                                                                                                                             |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/chioriKit.ts` | `createChioriKit`, Chiori's kit with her strikes, charged attack, plunges, Fluttering Hasode with Tamoto and Hiyoku: Twin Blades |
+| File                                                              | Role                                                                                                                                      |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/chioriKit.ts` | `createChioriKitBehaviour`, Chiori's kit with her strikes, charged attack, plunges, Fluttering Hasode with Tamoto and Hiyoku: Twin Blades |
 
 ## Sources
 

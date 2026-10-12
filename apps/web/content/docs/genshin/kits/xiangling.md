@@ -5,7 +5,7 @@ description: Xiangling's kit as built, with Guoba and its breaths, the following
 
 # Xiangling
 
-Xiangling's kit is one module, `createXianglingKit`, on avatar 10000023: five strikes, the third of two hits and the fourth of four, a charged attack, a collision and two plunges, Guoba Attack's Guoba, and Pyronado's three swings and its Pyronado. Her multipliers are read from proud skill groups 2331, 2332 and 2339, and match the wiki's Dough-Fu, Guoba Attack and Pyronado values to two decimal places; the charged attack's stamina, the skill's cooldown, the Pyronado's seconds and the burst's cooldown and cost are read from the same groups. Guoba is a summon and the Pyronado a summon that follows the body on the field, built on the kit framework's shared effects, with Crossfire's wider flame from Ascension 1, Beware, It's Super Hot!'s chili pepper from Ascension 4, and Crispy Outside, Tender Inside's Pyro RES, Oil Meets Fire's Implode, Slowbake's longer Pyronado and Condensed Pyronado's Pyro DMG Bonus from one, two, four and six constellations. Guoba's Pyro aura, its particles, Chef de Cuisine, Deepfry and Guoba Mad are not built.
+Xiangling's kit is its record and one behaviour module, `createXianglingKitBehaviour`, on avatar 10000023: five strikes, the third of two hits and the fourth of four, a charged attack, a collision and two plunges, Guoba Attack's Guoba, and Pyronado's three swings and its Pyronado. Her multipliers are read from proud skill groups 2331, 2332 and 2339, and match the wiki's Dough-Fu, Guoba Attack and Pyronado values to two decimal places; the charged attack's stamina, the skill's cooldown, the Pyronado's seconds and the burst's cooldown and cost are read from the same groups. Guoba is a summon and the Pyronado a summon that follows the body on the field, built on the kit framework's shared effects, with Crossfire's wider flame from Ascension 1, Beware, It's Super Hot!'s chili pepper from Ascension 4, and Crispy Outside, Tender Inside's Pyro RES, Oil Meets Fire's Implode, Slowbake's longer Pyronado and Condensed Pyronado's Pyro DMG Bonus from one, two, four and six constellations. Guoba's Pyro aura, its particles, Chef de Cuisine, Deepfry and Guoba Mad are not built.
 
 ## Decisions
 
@@ -22,9 +22,9 @@ Xiangling's kit is one module, `createXianglingKit`, on avatar 10000023: five st
 
 ## Key files
 
-| File                                                                 | Role                                                                                                                        |
-| :------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/xianglingKit.ts` | `createXianglingKit`, Xiangling's kit with Guoba and its chili pepper, the following Pyronado, and Oil Meets Fire's Implode |
+| File                                                                 | Role                                                                                                                                 |
+| :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/xianglingKit.ts` | `createXianglingKitBehaviour`, Xiangling's kit with Guoba and its chili pepper, the following Pyronado, and Oil Meets Fire's Implode |
 
 ## Sources
 

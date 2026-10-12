@@ -5,7 +5,7 @@ description: Dori's kit as built: her three strikes, a provisional charged attac
 
 # Dori
 
-Dori's kit is one module, `createDoriKit`, avatar 10000068: three strikes, a charged attack, a collision and two plunges, Troubleshooter Shot with its After-Sales Service Round, and Alcazarzaray's Exactitude's Connector field. Her multipliers are read from proud skill groups 6831, 6832 and 6839; the skill's cooldown, the burst's cooldown, energy cost and duration, and the charged attack's stamina and maximum duration come from the same groups. The particles are not built.
+Dori's kit is its record and one behaviour module, `createDoriKitBehaviour`, avatar 10000068: three strikes, a charged attack, a collision and two plunges, Troubleshooter Shot with its After-Sales Service Round, and Alcazarzaray's Exactitude's Connector field. Her multipliers are read from proud skill groups 6831, 6832 and 6839; the skill's cooldown, the burst's cooldown, energy cost and duration, and the charged attack's stamina and maximum duration come from the same groups. The particles are not built.
 
 Not yet built: Continuous Healing and Energy Regeneration, which the burst's own clock of 11, 131 and every 120 frames sets and which no field can yet heal on; the Electro infusion the burst gives Dori herself, which waits on a hook that infuses the kit's own character; and the passives and constellations, which wait on the passive hook.
 
@@ -19,9 +19,9 @@ Not yet built: Continuous Healing and Energy Regeneration, which the burst's own
 
 ## Key files
 
-| File                                                            | Role                                                                                                        |
-| :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/doriKit.ts` | `createDoriKit`, Dori's kit with Troubleshooter Shot, its After-Sales Service Round and the Connector field |
+| File                                                            | Role                                                                                                                 |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/doriKit.ts` | `createDoriKitBehaviour`, Dori's kit with Troubleshooter Shot, its After-Sales Service Round and the Connector field |
 
 ## Sources
 

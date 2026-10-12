@@ -5,7 +5,7 @@ description: Nilou's kit as built, with Dance of Haftkarsvar's Pirouette and Lun
 
 # Nilou
 
-Nilou's kit is one module, `createNilouKit`, on avatar 10000070: three strikes, a charged attack of two hits, a collision and two plunges, Dance of Haftkarsvar with its Pirouette and Lunar Prayer, and Dance of Abzendegi's hit. Her multipliers are read from proud skill groups 7031, 7032 and 7039, and her skill and burst strike for shares of her Max HP, not her ATK, as gcsim's "FlatDmg" does. The skill's cooldown is 18 seconds, the burst's cooldown 18 seconds and its cost 70 energy, the charged attack's stamina 20.
+Nilou's kit is its record and one behaviour module, `createNilouKitBehaviour`, on avatar 10000070: three strikes, a charged attack of two hits, a collision and two plunges, Dance of Haftkarsvar with its Pirouette and Lunar Prayer, and Dance of Abzendegi's hit. Her multipliers are read from proud skill groups 7031, 7032 and 7039, and her skill and burst strike for shares of her Max HP, not her ATK, as gcsim's "FlatDmg" does. The skill's cooldown is 18 seconds, the burst's cooldown 18 seconds and its cost 70 energy, the charged attack's stamina 20.
 
 ## Decisions
 
@@ -27,9 +27,9 @@ Nilou's kit is one module, `createNilouKit`, on avatar 10000070: three strikes, 
 
 ## Key files
 
-| File                                                             | Role                                                                                                               |
-| :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/nilouKit.ts` | `createNilouKit`, Nilou's kit with Dance of Haftkarsvar's Pirouette and Lunar Prayer, and Dance of Abzendegi's hit |
+| File                                                             | Role                                                                                                                        |
+| :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/nilouKit.ts` | `createNilouKitBehaviour`, Nilou's kit with Dance of Haftkarsvar's Pirouette and Lunar Prayer, and Dance of Abzendegi's hit |
 
 ## Sources
 

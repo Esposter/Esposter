@@ -5,7 +5,7 @@ description: Sethos's kit as built, with his three strikes, the fully-charged Ai
 
 # Sethos
 
-Sethos's kit is one module, `createSethosKit`, on avatar 10000097: three strikes, the second of two hits, a fully-charged Aimed Shot as his charged attack, a collision and two plunges, and Ancient Rite: Thunderous Roar of Sand. His multipliers are read from proud skill groups 9731, 9732 and 9739, matching gcsim's to three decimal places. His skill's cooldown, his burst's cooldown and cost, and the charged attack's lack of a stamina cost come from those groups or from gcsim. The skill strikes an Electro circle of radius 4.5 round him at 13 frames of a 38-frame animation. The fully-charged Aimed Shot lands at 74 frames of an 83-frame animation, and its Electro gauge is 1U.
+Sethos's kit is its record and one behaviour module, `createSethosKitBehaviour`, on avatar 10000097: three strikes, the second of two hits, a fully-charged Aimed Shot as his charged attack, a collision and two plunges, and Ancient Rite: Thunderous Roar of Sand. His multipliers are read from proud skill groups 9731, 9732 and 9739, matching gcsim's to three decimal places. His skill's cooldown, his burst's cooldown and cost, and the charged attack's lack of a stamina cost come from those groups or from gcsim. The skill strikes an Electro circle of radius 4.5 round him at 13 frames of a 38-frame animation. The fully-charged Aimed Shot lands at 74 frames of an 83-frame animation, and its Electro gauge is 1U.
 
 ## Decisions
 
@@ -23,9 +23,9 @@ Sethos's kit is one module, `createSethosKit`, on avatar 10000097: three strikes
 
 ## Key files
 
-| File                                                              | Role                                                      |
-| :---------------------------------------------------------------- | :-------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/sethosKit.ts` | `createSethosKit`, Sethos's strikes, aimed shot and skill |
+| File                                                              | Role                                                               |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/sethosKit.ts` | `createSethosKitBehaviour`, Sethos's strikes, aimed shot and skill |
 
 ## Sources
 

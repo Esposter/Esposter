@@ -5,7 +5,7 @@ description: Mika's kit as built, with his five strikes, charged attack, plunges
 
 # Mika
 
-Mika's kit is one module, `createMikaKit`, on avatar 10000080: five strikes, a charged attack, a collision and two plunges, Starfrost Swirl's press, which is a Cryo box of 2.5 by 10 metres 0.4 metres behind the body, and its held form, Rimestar Flare, a Cryo hit on the primary target that the held skill releases after half a second. His burst, Skyfeather Song, heals the active character once at its 51st frame. His multipliers are read from proud skill groups 8031, 8032 and 8039; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups.
+Mika's kit is its record and one behaviour module, `createMikaKitBehaviour`, on avatar 10000080: five strikes, a charged attack, a collision and two plunges, Starfrost Swirl's press, which is a Cryo box of 2.5 by 10 metres 0.4 metres behind the body, and its held form, Rimestar Flare, a Cryo hit on the primary target that the held skill releases after half a second. His burst, Skyfeather Song, heals the active character once at its 51st frame. His multipliers are read from proud skill groups 8031, 8032 and 8039; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups.
 
 Not built yet: Rimestar Shard, which strikes three random enemies within 10 metres of the body after the flare, as it needs a strike on three chosen enemies rather than all in reach; Eagleplume, the party's heal on each member's normal attack, which waits on a reaction to another member's attacks; the ATK SPD bonus Starfrost Swirl gives the team, as the attributes do not yet hold attack speed; and his Ascension and Constellation passives.
 
@@ -13,9 +13,9 @@ Gcsim gives Mika's plunges no file, so they take the shared plunge reach and lan
 
 ## Key files
 
-| File                                                            | Role                                                                                                                                                       |
-| :-------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/mikaKit.ts` | `createMikaKit`, Mika's kit with his strikes, charged attack, plunges, Starfrost Swirl's press and held Rimestar Flare, and Skyfeather Song's initial heal |
+| File                                                            | Role                                                                                                                                                                |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/mikaKit.ts` | `createMikaKitBehaviour`, Mika's kit with his strikes, charged attack, plunges, Starfrost Swirl's press and held Rimestar Flare, and Skyfeather Song's initial heal |
 
 ## Sources
 

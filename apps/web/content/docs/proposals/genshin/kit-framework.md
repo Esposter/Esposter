@@ -122,19 +122,25 @@ interface KitHitRecord {
 // A table's parameter by its group and index, or a number where no table holds it
 type KitParameter = number | { index: number; proudSkillGroupId: number };
 
-// What a character alone does, each call given the world's one context and the kit's own combatant
+// What a character alone does, each call given the world's one context and the kit's own combatant. Its module returns
+// It from its record's reader, which reads each named value once as the kit is built
 interface KitBehaviour {
-  burst?: KitActionBehaviour; // { onStart?: (context, target?) => void }
-  hits?: Record<string, KitHitBehaviour>; // by the record's hit name: enemyStatus, onStrike, partyHeal
+  burst?: KitActionBehaviour; // { onStart?: (context, target?) => void, hits?: KitHitBehaviour[] }
+  burstVariant?: KitVariantBehaviour; // { checkIsActive, onStart?, hits? }
+  chargedAttack?: KitActionBehaviour;
+  moonsignBenediction?: { getBaseDamageBonus };
   normalAttacks?: KitActionBehaviour[];
-  onKitEvent?: (event: KitEvent, context: KitContext, combatant: Combatant) => void;
-  passives?: KitPassives; // bonuses, a strike's bonus, cooldown and stamina multipliers, onSprint
+  plungeCollision?: KitHitBehaviour; // enemyStatus, onStrike, a party heal's chance, a bubble's omen, a stack's status
+  plunges?: Partial<Record<KitPlunge, KitActionBehaviour>>;
   skill?: KitActionBehaviour;
-  skillHolds?: KitActionBehaviour[];
+  skillChain?: KitActionBehaviour[];
+  skillHolds?: KitHoldBehaviour[]; // { onStart?, hits?, variant? }
+  onKitEvent?: (event: KitEvent, context: KitContext, combatant: Combatant) => void;
+  // Beside it the passives, each top-level: getPassiveBonuses, getStrikeDamageBonus, onSprint and two multipliers
 }
 ```
 
-`buildKit` throws if a behaviour names a hit its record does not hold, so a typo in a hit name fails that kit's suite.
+A behaviour joins its record's slots by place, an action's hits in the record's order, and the reader throws on a name its record does not hold, so a typo in a name fails that kit's suite.
 
 ### The primitives
 
@@ -144,7 +150,7 @@ Each primitive absorbs one family of the finder's kit pairs, or one shape a hand
 | :-------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
 | `KitRecord` and `buildKit`                          | Plunges, normal-attack strings, measured areas, one-hit skills and bursts, charged attacks: most of the finder's pairs | A local plunge builder in about a third of the kits, a frame divided by 60 over a thousand times, a few hundred group-id constants |
 | `castKitSummon`                                     | Summon ticks, coordinated attacks, hits queued past an action's end                                                    | Over a hundred casts, each a summon and an effect add, often spread with an id or a tag                                            |
-| `createPeriodicKitHits`                             | A hit every interval from a first frame: Oz, Guoba, Pyronado, the steles                                               | Dozens of `Array.from` builders                                                                                                    |
+| `createPeriodicKitHits`, until step 7's records     | A hit every interval from a first frame: Oz, Guoba, Pyronado, the steles                                               | Dozens of `Array.from` builders                                                                                                    |
 | `castKitField`                                      | Fields                                                                                                                 | Dozens of nine-field literals                                                                                                      |
 | `scheduleKitTask`                                   | gcsim's `QueueCharTask`                                                                                                | Over a dozen one-tick fields with an infinite interval that linger a tenth of a second past their tick                             |
 | `castKitShield`, `castKitTaunt`                     | Shields and taunts, over the one absorb order already shared                                                           | About a dozen shield literals                                                                                                      |
@@ -244,10 +250,10 @@ What it does after:
 ### Loading
 
 - **A kit loads when its character joins.**
-  - `readCharacterKits(gameDataBaseUrl, characterIds)` reads each member's multipliers entry, its `kits` record and its behaviour module together, then builds its kit once.
+  - `readCharacterKits(gameDataBaseUrl, characterIds)` reads each member's multipliers entry, its `kits` record and its behaviour module together, then builds its kit once (`readCharacterKit`).
   - It runs where `readTalentMultipliers` was awaited, with the same retry: at the world's gate for the starting team, and as the team changes. The load budget's `talent-multipliers` step became `character-kits`.
-  - Step 8 landed its loading half, the module and the multipliers read together and the kit built from them; step 7 adds the `kits` record and `buildKit` to it.
-  - The generated `CharacterIdCreateKitMap` becomes a loader map of `import()` calls, still generated at build from each module's declared id, written as the literal the module declares, since importing the constant would load the module. A map elsewhere keyed by a kit's id writes the literal too (`CharacterIdSkillGlyphsMap`).
+  - Step 8 landed its loading half, the module and the multipliers read together and the kit built from them; step 7 added the `kits` record and `buildKit` to it.
+  - The generated `CharacterIdCreateKitBehaviourMap` is a loader map of `import()` calls, still generated at build from each module's declared id, written as the literal the module declares, since importing the constant would load the module. A map elsewhere keyed by a kit's id writes the literal too (`CharacterIdSkillGlyphsMap`).
   - A character with no module still falls back to the Traveler's kit.
 - **The barrel leaves the kit modules out.**
   - The source barrel lists every module and the entry re-exports it, so a dynamic import alone would load nothing lazily.
@@ -348,7 +354,7 @@ flowchart TD
    - `kits` and `kitSources` are published for every built character, each record reproducing its module's values, and the builder's tests take their oracles from gcsim's and the wiki's own text.
    - The record was completed ahead of step 7, so that it holds every value a module reads. A module is read for its record rather than given one: its text is analysed for the values its behaviours read, and it is built under a probe twice, once from its multipliers and once from encoded ones. What its slots do not hold, named bags hold. The Traveler has a record, read from her composite gcsim folder at Lumine's gender. Holds and presses are read from gcsim's names, and an arrow's box on its target by rule. The gap against the committed overlays went from 5,013 values in 85 kits to none in 107.
    - Corrections to the shape above, as built. `burstEnergyCost` is optional, since Mavuika's burst draws on none. `cancelFrames` is `animationFrames`, since a kit's action ends where its animation does, not where it may be cancelled. A hit holds no `name`: a behaviour reads a hit by its key in a bag, and a slot's hits by their place. `isNightsoul` is not recorded, as no kit's hit carries it. The `hits` and `stances` the shape had are two of the bags, and a stance holds only the actions that differ from its kit's.
-   - What is not a value is not recorded. A behaviour's own numbers, its status ids, an omen's id and its functions stay in its module. A talent read whose group or index the behaviour picks has no one value to record, so step 7 reads it as its module does.
+   - What is not a value is not recorded. A behaviour's own numbers, its status ids, an omen's id and its functions stay in its module. A talent read whose group or index the behaviour picks has no one value to record, so step 7 records its candidates as a list for the behaviour to pick from.
    - gcsim names its skill and burst hitboxes by no convention, and a burst's variant or a hold's is no constant of its own, so variants, Kazuha's and Razor's frames as arrays, Lynette's hold end and Zhongli's press hitmark are not read from gcsim. Their values stand in the overlays, as Bennett's hold frames, which gcsim does not give, and Kirara's and Sayu's holds, which gcsim models as two levels against the modules' eleven.
 2. **The guard and the bench.** Landed.
    - A replay test drives each kit alone, and the proof party together, through the scripted minute at a fixed seed, and snapshots each strike log's count and its multipliers by attack tag, bugs included.
@@ -372,12 +378,20 @@ flowchart TD
 - `buffKitMember` and `buffKitTeam`. Landed. Every one of the 41 buff literals is a call that names its member apart from the buff, and the seven loops that gave every member of the deployed team the same buff are one call each; the two that leave their caster out and Sucrose's, which picks members by element, keep their loops. The finder held at 71.
 - Every heal through `changeKitMemberHealth`. Landed as a fix: the direct heals and the hit heals read the Healing Bonuses and name their healer, as gcsim's do, and a party heal reaches the deployed team. `healKitTeam` was left out: after the move a team heal is a two-line loop in two places, which a primitive would not shorten.
 - `addKitStatus` and `startKitCooldown`. Landed. The 68 status literals are a call each, and 23 check-then-add gates are one call that starts the cooldown and returns whether it ran; two local finders went to `findKitStatus`, and in a commit behind it the last five inline ones. Two gates stay by hand: Qiqi's A Glimpse into Arcanum checks before its roll and starts after it, and Chevreuse's Overcharged Ball is a mark, not a cooldown. Navia's two, which read whether the status has run out rather than whether it is there, followed in a fix that has every gate read it so, as gcsim's `StatusIsActive` does; no digest moves. The finder held at 71.
-- `castKitShield`, `castKitTaunt` and `infuseKitMember` were left out: a shield, a taunt or an infusion literal names only its kind beyond what each kit must say, so a call would shorten each by a line and absorb nothing.
+- `castKitShield` and `infuseKitMember` were left out: a shield or an infusion literal names only its kind beyond what each kit must say, so a call would shorten each by a line and absorb nothing. `castKitTaunt` landed with step 7, where Amber's Baron Bunny and Ganyu's Ice Lotus were the finder's last kit-against-kit pair: the call copies the taunt's body as a summon's does, and Itto's Ushi takes it too.
 - `enterKitStance` with `isEndedOnSwap`, the name the boolean convention gives `endsOnSwap`. Landed. The seven stances a hand-written swap handler ended take the option, and the step ends the leaving character's stance before the team's kits hear of the swap; Skirk's and Yoimiya's handlers went, and the other five keep only what else gcsim's exit deletes. The finder went from 71 to 70. A buff and an infusion took the option behind it, and Hu Tao's swap handler went; Itto's Royal Descent, which gcsim's exit deletes and no kit here ended, took it in a fix of its own, and no digest moved.
 - Four stances gcsim's exit deletes ended on no swap here: Hu Tao's Paramita Papilio, Kokomi's Ceremonial Garment, Kaveh's Painted Dome and Flins's Manifest Flame. Landed as a fix behind the option, with Hu Tao's swap ending the Paramita's infusion and ATK; no digest moves, as the replay swaps only the proof party.
 - `gainKitResource` and `spendKitResource`, with `countKitResource` to read one. Landed. Raiden's Resolve, Itto's Superlative Superstrength, Eula's Lightfall Sword stacks, thirty statuses of their own ids until then, and Aloy's coils are each a capped gain and a spend, and three local counters went. `KitResource` was left out: a resource is held as a status that never runs out, so the walk and the one list of effects take it as they are, and a kind of its own waits on the Nightsoul points, the first resource a rule outside its kit reads. Ayato's Namisen and Alhaitham's Mirrors stay statuses held until a swap, as gcsim sets each outright as well as adding to it. No digest moves; only the effect lists in two replays change, Eula's holding one resource for the Sword's stacks and Aloy's dropping her coils as Rushing Ice spends them, where it kept them at nought. The finder held at 70.
 
-7. **`buildKit` and `readCharacterKits`, each module reading its record.** The frames, areas and talent indices leave the modules, and the reach helpers (`createBoxReach`, `createCircleReach`, `createFanReach`, `createTargetedHitArea`) go as builder rules. The kits index's framework sections are rewritten for the record.
+7. **`buildKit` and `readCharacterKits`, each module reading its record.** Landed, the reach helpers' move behind it. The frames, areas and talent indices leave the modules, and the reach helpers (`createBoxReach`, `createCircleReach`, `createFanReach`, `createTargetedHitArea`) go as builder rules. The kits index's framework sections are rewritten for the record.
+   - Each module is `create<Name>KitBehaviour`, which `buildKit` joins to the kit its record's slots build, and `readCharacterKit` reads a member's record, multipliers and behaviour together; the Traveler's behaviour adds nothing to her record. The modules fell from 29,438 lines to 9,711, and the finder over the kit tree from 70 to none: the last two, Amber's and Ganyu's taunt literal and a filter Yae Miko's skill and burst both wrote, went to `castKitTaunt` and a finder of her standing totems.
+   - Corrected against the sketch: a behaviour joins an action's hits by place, in its record's order, rather than by name; the passives stay top-level beside the actions; and the reader throws on a name its record does not hold, on one it holds in the other shape, and on a bubble, a party heal or a stacked hit left without the id or chance only a behaviour gives.
+   - Each value a behaviour reads outside the slots is in a bag under what it is in the game. The names step 1's reader took from where a module read them (`elementalSkillOnStart`, `onKitEventSecondsRemaining2`) were renamed, the entries no behaviour reads were pruned, and seventeen kits gained the hits, stances and parameters their modules had built by hand, Raiden's Musou Isshin, Alhaitham's projections and Flins's and Skirk's stances among them, each published under `--only` with every digest byte-equal.
+   - A value a kit picks as it plays (a shield's level, the seals spent, a Salon member) is a list in its record, so no module names a talent's group, and a reader of a talent's parameter by its group was left out.
+   - `createPeriodicKitHits` went: each list of hits it built is in its kit's record, hit by hit, and Oz's, whose count its seconds set, is built from them.
+   - The scripts read no module: the reference record is the published one, a publish builds every published kit and fails on any that differs unless `--only` names it, and `--compare` reseeds the overlays against the published record. A kit's first publish is not built, as no kit is waiting on one: the publish fails on an `--only` naming no published kit.
+   - Lane F's one shape for `isEndedOnSwap` rode with it: a buff, an infusion and a stance each take `KitSwapEndable`.
+   - What stays in a module is what its character alone does, with its source: status, field and summon ids, passive and constellation gates and numbers, offsets, and the durations and field radii a table gives otherwise or not at all. Five still count frames, as gcsim does, for step 9's zero test to meet: Beidou's Bane of Evil, Durin's dragons, Furina's Singer, Kinich's lasers and Yae Miko's totems.
 8. **The loader map on `lazyDirectories`.** Landed, over its ceiling. `CharacterIdCreateKitMap` is a map of `import()` calls, the barrel leaves the kit modules out, and `readCharacterKits` reads a member's module and multipliers together, at the gate and as the team changes.
    - The entry fell from 2,153,111 bytes to 1,386,245, 36,245 over the ceiling: the modules took about 767 KB with them, a little less than the ceiling assumed, and the loader map came in at about 9 KB.
    - What holds the rest up is none of the kits': the hand-traced glyph path maps (about 312 KB over sixteen files, `ElementMarkPathMap` alone 98,658 bytes), the components (about 345 KB) and the framework (about 61 KB). The ceiling stands.
@@ -423,21 +437,22 @@ flowchart TD
 
 ## Key files
 
-| File                                                                | Role                                                                                                                  |
-| :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/stepActiveKit.ts`          | The frame: the outbox, the effects, the step and the strikes, reading what the build resolved                         |
-| `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses                                                                                    |
-| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts` | The effects stepped by index in today's order and compacted in place                                                  |
-| `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, each hit carrying its attack tag                                                      |
-| `packages/genshin-world/src/services/kit/readCharacterKits.ts`      | A joining member's module and multipliers read together and its kit built once; step 7 adds the record and `buildKit` |
-| `packages/genshin-world/scripts/kit/generateCharacterKitMap.ts`     | Writes the loader map of `import()` calls from each module's declared id                                              |
-| `packages/configuration/src/generateExports.ts`                     | The barrel's option for directories a package loads on demand                                                         |
-| `packages/genshin-world/src/composables/useWorldCombat.ts`          | Builds the world's one `KitContext`, and awaits `readCharacterKits` as the team changes                               |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`      | The gate whose `character-kits` step reads the starting team's kits                                                   |
-| `packages/genshin-world/src/index.test.ts`                          | The entry's size snapshot, held at or under its ceiling                                                               |
-| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`     | The precedent for one index entry per avatar, and for values published apart from their labels                        |
-| `scripts/src/services/sweeps/duplicateCode/constants.ts`            | The finder whose zero holds the kit tree                                                                              |
-| `apps/web/content/docs/genshin/kits/index.md`                       | The framework's page, its provisional causes rendered from `KitProvisionalCause`                                      |
+| File                                                                | Role                                                                                                         |
+| :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`          | The frame: the outbox, the effects, the step and the strikes, reading what the build resolved                |
+| `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses                                                                           |
+| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts` | The effects stepped by index in today's order and compacted in place                                         |
+| `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, each hit carrying its attack tag                                             |
+| `packages/genshin-world/src/services/kit/readCharacterKit.ts`       | A joining member's module, record and multipliers read together, and its kit built once                      |
+| `packages/genshin-world/src/services/kit/buildKit.ts`               | A kit from its record, its multipliers and its behaviour, its frames, areas and talent indices resolved once |
+| `packages/genshin-world/scripts/kit/generateCharacterKitMap.ts`     | Writes the loader map of `import()` calls from each module's declared id                                     |
+| `packages/configuration/src/generateExports.ts`                     | The barrel's option for directories a package loads on demand                                                |
+| `packages/genshin-world/src/composables/useWorldCombat.ts`          | Builds the world's one `KitContext`, and awaits `readCharacterKits` as the team changes                      |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`      | The gate whose `character-kits` step reads the starting team's kits                                          |
+| `packages/genshin-world/src/index.test.ts`                          | The entry's size snapshot, held at or under its ceiling                                                      |
+| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`     | The precedent for one index entry per avatar, and for values published apart from their labels               |
+| `scripts/src/services/sweeps/duplicateCode/constants.ts`            | The finder whose zero holds the kit tree                                                                     |
+| `apps/web/content/docs/genshin/kits/index.md`                       | The framework's page, its provisional causes rendered from `KitProvisionalCause`                             |
 
 ## Sources
 

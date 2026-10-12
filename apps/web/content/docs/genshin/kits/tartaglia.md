@@ -5,7 +5,7 @@ description: Tartaglia's kit as built: his Ranged and Melee stances, Riptide and
 
 # Tartaglia
 
-Tartaglia's kit is one module, `createTartagliaKit`, on avatar 10000033: six arrows, a fully charged aimed shot, a collision and two plunges in his Ranged Stance, Foul Legacy: Raging Tide's change into his Melee Stance with its six Hydro strikes, the sixth of two hits, its charged attack of two hits and its press back, and Havoc: Obliteration in either stance. His multipliers are read from proud skill groups 3331, 3332 and 3339, and match the wiki's Cutting Torrent, Foul Legacy: Raging Tide and Havoc: Obliteration values to two decimal places; Riptide's seconds, the Melee Stance's charged attack stamina, its longest seconds and the cooldowns its end sets, and the burst's energy back, cooldown and cost are read from the same groups. The Melee Stance is a stance among the team's effects that ends on a press back, at its longest or as he leaves the field, and its end sets the skill's cooldown by the whole seconds it held. Riptide is a status on the enemy that a fully charged aimed shot, Flash of Havoc, Riptide Burst and Sword of Torrents give, and it sets off Riptide Flash, Riptide Slash, Riptide Blast and Riptide Burst, each on its own interval. Never Ending and Sword of Torrents from Ascension 1 and 4, and Tide Withholder, Understream, Hydrospout and Havoc: Annihilation from one, two, four and six constellations are built. Master of Weaponry, the particles and the Melee Stance's refusal of plunges are not built.
+Tartaglia's kit is its record and one behaviour module, `createTartagliaKitBehaviour`, on avatar 10000033: six arrows, a fully charged aimed shot, a collision and two plunges in his Ranged Stance, Foul Legacy: Raging Tide's change into his Melee Stance with its six Hydro strikes, the sixth of two hits, its charged attack of two hits and its press back, and Havoc: Obliteration in either stance. His multipliers are read from proud skill groups 3331, 3332 and 3339, and match the wiki's Cutting Torrent, Foul Legacy: Raging Tide and Havoc: Obliteration values to two decimal places; Riptide's seconds, the Melee Stance's charged attack stamina, its longest seconds and the cooldowns its end sets, and the burst's energy back, cooldown and cost are read from the same groups. The Melee Stance is a stance among the team's effects that ends on a press back, at its longest or as he leaves the field, and its end sets the skill's cooldown by the whole seconds it held. Riptide is a status on the enemy that a fully charged aimed shot, Flash of Havoc, Riptide Burst and Sword of Torrents give, and it sets off Riptide Flash, Riptide Slash, Riptide Blast and Riptide Burst, each on its own interval. Never Ending and Sword of Torrents from Ascension 1 and 4, and Tide Withholder, Understream, Hydrospout and Havoc: Annihilation from one, two, four and six constellations are built. Master of Weaponry, the particles and the Melee Stance's refusal of plunges are not built.
 
 ## Decisions
 
@@ -17,9 +17,9 @@ Tartaglia's kit is one module, `createTartagliaKit`, on avatar 10000033: six arr
 
 ## Key files
 
-| File                                                                 | Role                                                                                                        |
-| :------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/tartagliaKit.ts` | `createTartagliaKit`, Tartaglia's kit with his two stances, Riptide and its strikes, and his constellations |
+| File                                                                 | Role                                                                                                                 |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/tartagliaKit.ts` | `createTartagliaKitBehaviour`, Tartaglia's kit with his two stances, Riptide and its strikes, and his constellations |
 
 ## Sources
 

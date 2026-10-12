@@ -35,7 +35,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** a character without a module of its own fights with the Traveler's kit until one is written.
+**Today:** a character without a module of its own fights with the Traveler's kit until one is written, as `readCharacterKit` falls back to the Traveler's record and `createTravelerKitBehaviour`.
 
 **This adds, in order:**
 
@@ -60,10 +60,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                         | Role after the change                         |
-| :----------------------------------------------------------- | :-------------------------------------------- |
-| `packages/genshin-engine/src/input/InputActionBindingMap.ts` | The aim binding a bow's kit reads             |
-| `packages/genshin-world/src/services/kit/travelerKit.ts`     | `createTravelerKit`, the Traveler's Anemo kit |
+| File                                                         | Role after the change                                                                                  |
+| :----------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/input/InputActionBindingMap.ts` | The aim binding a bow's kit reads                                                                      |
+| `packages/genshin-world/src/services/kit/travelerKit.ts`     | `createTravelerKitBehaviour`, the Traveler's behaviour and the fallback for a character with no module |
 
 New files, as the modules come:
 

@@ -5,7 +5,7 @@ description: Lisa's kit as built: four strikes, a charged attack, Violet Arc's p
 
 # Lisa
 
-Lisa's kit is one module, `createLisaKit`, on avatar 10000006: four strikes, a charged attack, a collision and two plunges, Violet Arc's press and its hold, released by itself at 4 seconds, and Lightning Rose's thirty discharges. Its multipliers are read from proud skill groups 431, 432 and 439, and match the wiki's Lightning Touch, Violet Arc and Lightning Rose values to two decimal places. Lightning Rose is a summon, built as the [shared effects](/docs/genshin/kits).
+Lisa's kit is its record and one behaviour module, `createLisaKitBehaviour`, on avatar 10000006: four strikes, a charged attack, a collision and two plunges, Violet Arc's press and its hold, released by itself at 4 seconds, and Lightning Rose's thirty discharges. Its multipliers are read from proud skill groups 431, 432 and 439, and match the wiki's Lightning Touch, Violet Arc and Lightning Rose values to two decimal places. Lightning Rose is a summon, built as the [shared effects](/docs/genshin/kits).
 
 ## Decisions
 
@@ -17,9 +17,9 @@ Lisa's kit is one module, `createLisaKit`, on avatar 10000006: four strikes, a c
 
 ## Key files
 
-| File                                                            | Role                                                                                                      |
-| :-------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/lisaKit.ts` | `createLisaKit`, Lisa's kit with Violet Arc's hold and Conductive stacks, and Lightning Rose's discharges |
+| File                                                            | Role                                                                                                               |
+| :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/lisaKit.ts` | `createLisaKitBehaviour`, Lisa's kit with Violet Arc's hold and Conductive stacks, and Lightning Rose's discharges |
 
 ## Sources
 

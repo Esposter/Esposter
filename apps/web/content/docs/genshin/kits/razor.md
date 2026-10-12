@@ -5,7 +5,7 @@ description: Razor's kit as built: the strikes, charged attack and collision, Cl
 
 # Razor
 
-Razor's kit is one module, `createRazorKit`, on avatar 10000020: four strikes, a charged attack, a collision and two plunges, Claw and Thunder's press and its hold, and Lightning Fang's blast. His multipliers are read from proud skill groups 2031, 2032 and 2039, and match the wiki's Steel Fang, Claw and Thunder and Lightning Fang values to two decimal places. An Electro Sigil's Energy Recharge, energy and seconds, the press's and the hold's cooldowns, and the Soul Companion's share, the Electro RES bonus, the Wolf Within's seconds and the burst's cooldown and cost are read from the same groups. The press's Electro Sigils and their clearing into energy by the hold and the burst, and Lightning Fang's Wolf Within with its Soul Companion beside each strike and its Electro RES, are built over the shared effects, with Awakening's cooldown cut and reset from Ascension 1 and Lupus Fulguris's lightning from six constellations. The Wolf Within's ATK SPD, its disabled charged attack and its energy back as Razor leaves the field, Hunger, and his other constellations and Hexerei kit are not built.
+Razor's kit is its record and one behaviour module, `createRazorKitBehaviour`, on avatar 10000020: four strikes, a charged attack, a collision and two plunges, Claw and Thunder's press and its hold, and Lightning Fang's blast. His multipliers are read from proud skill groups 2031, 2032 and 2039, and match the wiki's Steel Fang, Claw and Thunder and Lightning Fang values to two decimal places. An Electro Sigil's Energy Recharge, energy and seconds, the press's and the hold's cooldowns, and the Soul Companion's share, the Electro RES bonus, the Wolf Within's seconds and the burst's cooldown and cost are read from the same groups. The press's Electro Sigils and their clearing into energy by the hold and the burst, and Lightning Fang's Wolf Within with its Soul Companion beside each strike and its Electro RES, are built over the shared effects, with Awakening's cooldown cut and reset from Ascension 1 and Lupus Fulguris's lightning from six constellations. The Wolf Within's ATK SPD, its disabled charged attack and its energy back as Razor leaves the field, Hunger, and his other constellations and Hexerei kit are not built.
 
 ## Decisions
 
@@ -26,9 +26,9 @@ Razor's kit is one module, `createRazorKit`, on avatar 10000020: four strikes, a
 
 ## Key files
 
-| File                                                             | Role                                                                                                                          |
-| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/razorKit.ts` | `createRazorKit`, Razor's kit with the Electro Sigils, the Wolf Within and its Soul Companion, and Lupus Fulguris's lightning |
+| File                                                             | Role                                                                                                                                   |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/razorKit.ts` | `createRazorKitBehaviour`, Razor's kit with the Electro Sigils, the Wolf Within and its Soul Companion, and Lupus Fulguris's lightning |
 
 ## Sources
 

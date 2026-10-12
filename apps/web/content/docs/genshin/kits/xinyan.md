@@ -5,7 +5,7 @@ description: Xinyan's kit as built, with Sweeping Fervor's shield that steps up 
 
 # Xinyan
 
-Xinyan's kit is one module, `createXinyanKit`, on avatar 10000044: four blunt strikes, a charged attack of two hits, a collision and two plunges, Sweeping Fervor with its shield, which steps up to Lead-In and Rave by the enemies it strikes and Rave's Pyro DoT, and Riff Revolution with its Physical hit and seven Pyro DoT hits. Her multipliers are read from proud skill groups 4431, 4432 and 4439; the charged attack's stamina, the shield's seconds and its DEF and flat shares at each level, the skill's cooldown and the burst's cooldown and energy cost are read from the same groups. Ascension 1 and Constellations 2 and 4 are built. Ascension 4 is not, as no kit event reaches the team's shield, Constellation 1 is not, as the kit's normal attack speed reads only an infusion's, and Constellation 6 is not, as gcsim has none. The charged attack has no gcsim source, so its reach, frames and poise stand in as the fourth strike's.
+Xinyan's kit is its record and one behaviour module, `createXinyanKitBehaviour`, on avatar 10000044: four blunt strikes, a charged attack of two hits, a collision and two plunges, Sweeping Fervor with its shield, which steps up to Lead-In and Rave by the enemies it strikes and Rave's Pyro DoT, and Riff Revolution with its Physical hit and seven Pyro DoT hits. Her multipliers are read from proud skill groups 4431, 4432 and 4439; the charged attack's stamina, the shield's seconds and its DEF and flat shares at each level, the skill's cooldown and the burst's cooldown and energy cost are read from the same groups. Ascension 1 and Constellations 2 and 4 are built. Ascension 4 is not, as no kit event reaches the team's shield, Constellation 1 is not, as the kit's normal attack speed reads only an infusion's, and Constellation 6 is not, as gcsim has none. The charged attack has no gcsim source, so its reach, frames and poise stand in as the fourth strike's.
 
 ## Decisions
 
@@ -13,9 +13,9 @@ Xinyan's kit is one module, `createXinyanKit`, on avatar 10000044: four blunt st
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                       |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/xinyanKit.ts` | `createXinyanKit`, Xinyan's kit with Sweeping Fervor's shield and its Pyro DoT, and Riff Revolution's Physical hit and seven Pyro DoT hits |
+| File                                                              | Role                                                                                                                                                |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/xinyanKit.ts` | `createXinyanKitBehaviour`, Xinyan's kit with Sweeping Fervor's shield and its Pyro DoT, and Riff Revolution's Physical hit and seven Pyro DoT hits |
 
 ## Sources
 

@@ -5,7 +5,7 @@ description: Flins's kit as built, with his five strikes, charged attack, provis
 
 # Flins
 
-Flins's kit is one module, `createFlinsKit`, on avatar 10000120: his five strikes, a charged attack, a plunge collision and two plunges, Manifest Flame's press, which starts the stance, and Cometh the Night's initial and final hits. His multipliers are read from proud skill groups 12031, 12032 and 12039, matching gcsim's to six decimal places. From the same groups come the charged attack's stamina, the burst's energy cost and the skill's cooldown. The burst's cooldown is gcsim's 15 seconds, not the table's 20, as the decisions below give.
+Flins's kit is its record and one behaviour module, `createFlinsKitBehaviour`, on avatar 10000120: his five strikes, a charged attack, a plunge collision and two plunges, Manifest Flame's press, which starts the stance, and Cometh the Night's initial and final hits. His multipliers are read from proud skill groups 12031, 12032 and 12039, matching gcsim's to six decimal places. From the same groups come the charged attack's stamina, the burst's energy cost and the skill's cooldown. The burst's cooldown is gcsim's 15 seconds, not the table's 20, as the decisions below give.
 
 ## Decisions
 
@@ -28,9 +28,9 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                     |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/flinsKit.ts` | `createFlinsKit`, Flins's strikes, charged attack, provisional plunges, Manifest Flame's press and stance, and Cometh the Night's initial and final hits |
+| File                                                             | Role                                                                                                                                                              |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/flinsKit.ts` | `createFlinsKitBehaviour`, Flins's strikes, charged attack, provisional plunges, Manifest Flame's press and stance, and Cometh the Night's initial and final hits |
 
 ## Sources
 

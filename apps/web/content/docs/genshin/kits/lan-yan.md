@@ -5,7 +5,7 @@ description: Lan Yan's kit as built, with her four strikes, charged attack, plun
 
 # Lan Yan
 
-Lan Yan's kit is one module, `createLanYanKit`, on avatar 10000108: her four strikes, a charged attack of three hits, a plunge collision and two plunges, and the burst's three hits with Constellation 4's party Elemental Mastery. Her multipliers are read from proud skill groups 10831, 10832 and 10839, matching gcsim's to four decimal places. Her skill's cooldown is 16 seconds, her burst's 15 with a cost of 60 energy, and her charged attack takes 50 stamina.
+Lan Yan's kit is its record and one behaviour module, `createLanYanKitBehaviour`, on avatar 10000108: her four strikes, a charged attack of three hits, a plunge collision and two plunges, and the burst's three hits with Constellation 4's party Elemental Mastery. Her multipliers are read from proud skill groups 10831, 10832 and 10839, matching gcsim's to four decimal places. Her skill's cooldown is 16 seconds, her burst's 15 with a cost of 60 energy, and her charged attack takes 50 stamina.
 
 ## Decisions
 
@@ -23,9 +23,9 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                              | Role                                                                                                                     |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/lanYanKit.ts` | `createLanYanKit`, Lan Yan's strikes, charged attack, plunges, burst and Constellation 4, the press waiting on its hooks |
+| File                                                              | Role                                                                                                                              |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/lanYanKit.ts` | `createLanYanKitBehaviour`, Lan Yan's strikes, charged attack, plunges, burst and Constellation 4, the press waiting on its hooks |
 
 ## Sources
 

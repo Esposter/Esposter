@@ -5,7 +5,7 @@ description: Barbara's kit as built: her strikes, charged attack and plunges, Le
 
 # Barbara
 
-Barbara's kit is one module, `createBarbaraKit`, avatar 10000014: four strikes, a charged attack, a collision and two plunges, as Hydro catalyst hits, Let the Show Begin♪'s two droplets and its Melody Loop, and Shining Miracle♪'s heal. Her multipliers are read from proud skill groups 1431, 1432 and 1439, and match the wiki's Whisper of Water, Let the Show Begin♪ and Shining Miracle♪ values to two decimal places; the loop's heals and duration, the skill's cooldown, and the burst's heal, cooldown and cost are read from the same groups. The droplets are a summon, and the Melody Loop and the burst's heal are fields with no edge, built as the shared effects below, with the loop's party heal on her strikes and charged attack, and Vitality Burst's cooldown cut and Hydro DMG Bonus from two constellations. The burst's heal on the off-field members, the loop's Wet, her passives and her other constellations are not built.
+Barbara's kit is its record and one behaviour module, `createBarbaraKitBehaviour`, avatar 10000014: four strikes, a charged attack, a collision and two plunges, as Hydro catalyst hits, Let the Show Begin♪'s two droplets and its Melody Loop, and Shining Miracle♪'s heal. Her multipliers are read from proud skill groups 1431, 1432 and 1439, and match the wiki's Whisper of Water, Let the Show Begin♪ and Shining Miracle♪ values to two decimal places; the loop's heals and duration, the skill's cooldown, and the burst's heal, cooldown and cost are read from the same groups. The droplets are a summon, and the Melody Loop and the burst's heal are fields with no edge, built as the shared effects below, with the loop's party heal on her strikes and charged attack, and Vitality Burst's cooldown cut and Hydro DMG Bonus from two constellations. The burst's heal on the off-field members, the loop's Wet, her passives and her other constellations are not built.
 
 ## Decisions
 
@@ -22,9 +22,9 @@ Barbara's kit is one module, `createBarbaraKit`, avatar 10000014: four strikes, 
 
 ## Key files
 
-| File                                                               | Role                                                                                                                     |
-| :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/barbaraKit.ts` | `createBarbaraKit`, Barbara's kit with the droplets, the Melody Loop's field and party heal, and Shining Miracle♪'s heal |
+| File                                                               | Role                                                                                                                              |
+| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/barbaraKit.ts` | `createBarbaraKitBehaviour`, Barbara's kit with the droplets, the Melody Loop's field and party heal, and Shining Miracle♪'s heal |
 
 ## Sources
 

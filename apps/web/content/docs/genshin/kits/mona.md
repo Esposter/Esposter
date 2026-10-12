@@ -5,7 +5,7 @@ description: Mona's kit as built: four strikes, a charged attack, Mirror Reflect
 
 # Mona
 
-Mona's kit is one module, `createMonaKit`, on avatar 10000041: four strikes, a charged attack, a collision and two plunges, all Hydro catalyst hits, Mirror Reflection of Doom and Stellaris Phantasm's bubble. Its multipliers are read from proud skill groups 4131, 4132 and 4139, and match the wiki's Ripple of Fate, Mirror Reflection of Doom and Stellaris Phantasm values to two decimal places. Mirror Reflection is a summon, built as the [shared effects](/docs/genshin/kits); the bubble, its explosion and its Omen are built. A1's phantom and A4's Hydro bonus are built too.
+Mona's kit is its record and one behaviour module, `createMonaKitBehaviour`, on avatar 10000041: four strikes, a charged attack, a collision and two plunges, all Hydro catalyst hits, Mirror Reflection of Doom and Stellaris Phantasm's bubble. Its multipliers are read from proud skill groups 4131, 4132 and 4139, and match the wiki's Ripple of Fate, Mirror Reflection of Doom and Stellaris Phantasm values to two decimal places. Mirror Reflection is a summon, built as the [shared effects](/docs/genshin/kits); the bubble, its explosion and its Omen are built. A1's phantom and A4's Hydro bonus are built too.
 
 ## Decisions
 
@@ -17,9 +17,9 @@ Mona's kit is one module, `createMonaKit`, on avatar 10000041: four strikes, a c
 
 ## Key files
 
-| File                                                            | Role                                                                                                              |
-| :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/monaKit.ts` | `createMonaKit`, Mona's kit with Mirror Reflection's summon, the bubble and its Omen, A1's phantom and A4's bonus |
+| File                                                            | Role                                                                                                                       |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/monaKit.ts` | `createMonaKitBehaviour`, Mona's kit with Mirror Reflection's summon, the bubble and its Omen, A1's phantom and A4's bonus |
 
 ## Sources
 

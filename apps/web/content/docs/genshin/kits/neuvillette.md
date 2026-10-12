@@ -5,7 +5,7 @@ description: Neuvillette's kit as built, with his three hydro strikes, the short
 
 # Neuvillette
 
-Neuvillette's kit is one module, `createNeuvilletteKit`, on avatar 10000087: three hydro strikes, a short charged attack, a collision and two plunges, O Tears, I Shall Repay with its Spiritbreath Thorn, and O Tides, I Have Returned with its first hit and its two Waterfalls. His multipliers are read from proud skill groups 8731, 8732 and 8739; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. His skill and burst hits deal their share of Max HP as a flat base damage, as gcsim gives them, so each takes the table's share times the wearer's Max HP; Spiritbreath Thorn alone is a share of ATK, Hydro with no gauge, landing at 60 frames past the skill's 42-frame animation, as the second Waterfall lands at 154 past the burst's 135.
+Neuvillette's kit is its record and one behaviour module, `createNeuvilletteKitBehaviour`, on avatar 10000087: three hydro strikes, a short charged attack, a collision and two plunges, O Tears, I Shall Repay with its Spiritbreath Thorn, and O Tides, I Have Returned with its first hit and its two Waterfalls. His multipliers are read from proud skill groups 8731, 8732 and 8739; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. His skill and burst hits deal their share of Max HP as a flat base damage, as gcsim gives them, so each takes the table's share times the wearer's Max HP; Spiritbreath Thorn alone is a share of ATK, Hydro with no gauge, landing at 60 frames past the skill's 42-frame animation, as the second Waterfall lands at 154 past the burst's 135.
 
 Provisional: gcsim gives Neuvillette no plunge file, so his plunges take Bennett's timings, reaches and poise, with his own multipliers from the table's plunge entries; and his charged attack is the short Charge Attack, the one released before Equitable Judgment's hold, with its box priced as a circle of its length.
 
@@ -13,9 +13,9 @@ Not built: Equitable Judgment, the held charged attack, whose length counts the 
 
 ## Key files
 
-| File                                                                   | Role                                                                                                                                           |
-| :--------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/neuvilletteKit.ts` | `createNeuvilletteKit`, Neuvillette's kit with his strikes, short charged attack, plunges, O Tears, I Shall Repay and O Tides, I Have Returned |
+| File                                                                   | Role                                                                                                                                                    |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/neuvilletteKit.ts` | `createNeuvilletteKitBehaviour`, Neuvillette's kit with his strikes, short charged attack, plunges, O Tears, I Shall Repay and O Tides, I Have Returned |
 
 ## Sources
 

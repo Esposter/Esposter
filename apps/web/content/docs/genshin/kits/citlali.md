@@ -5,7 +5,7 @@ description: Citlali's kit as built: her three strikes, charged attack, Obsidian
 
 # Citlali
 
-Citlali's kit is one module, `createCitlaliKit`, avatar 10000107: her three strikes, a charged attack, the hit of Obsidian Tzitzimitl, Ice Storm, and a collision, low and high plunge. Her multipliers are read from proud skill groups 10731, 10732 and 10739: the strikes, charged attack, stamina and plunges from the first, Obsidian Tzitzimitl and the skill's cooldown from the second, and Ice Storm, the burst's cooldown and its energy cost from the third. The charged attack costs 50 stamina, and Ice Storm costs 60 energy.
+Citlali's kit is its record and one behaviour module, `createCitlaliKitBehaviour`, avatar 10000107: her three strikes, a charged attack, the hit of Obsidian Tzitzimitl, Ice Storm, and a collision, low and high plunge. Her multipliers are read from proud skill groups 10731, 10732 and 10739: the strikes, charged attack, stamina and plunges from the first, Obsidian Tzitzimitl and the skill's cooldown from the second, and Ice Storm, the burst's cooldown and its energy cost from the third. The charged attack costs 50 stamina, and Ice Storm costs 60 energy.
 
 ## Not yet built
 
@@ -21,9 +21,9 @@ Citlali's kit is one module, `createCitlaliKit`, avatar 10000107: her three stri
 
 ## Key files
 
-| File                                                               | Role                                                                                                                                                                   |
-| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/citlaliKit.ts` | `createCitlaliKit`, Citlali's strikes, charged attack, Obsidian Tzitzimitl, Ice Storm and plunges, with Itzpapa, the Opal Shield and the skulls waiting on their hooks |
+| File                                                               | Role                                                                                                                                                                            |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/citlaliKit.ts` | `createCitlaliKitBehaviour`, Citlali's strikes, charged attack, Obsidian Tzitzimitl, Ice Storm and plunges, with Itzpapa, the Opal Shield and the skulls waiting on their hooks |
 
 ## Sources
 

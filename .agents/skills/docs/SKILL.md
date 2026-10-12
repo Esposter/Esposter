@@ -30,7 +30,7 @@ All documentation lives in `apps/web/content/docs/` and is rendered in the app a
 - **One feature, proposal, or decision per file — never merged**, like a Vue SFC; a feature starts as one flat page and gains a folder of sub-pages only once its sub-features exist (`references/page-shapes.md`).
 - **A file is removed only when its idea is superseded**, never "to tidy up" — the supersession is recorded in a `deferred/` or `rejected/` page.
 - **Area folders and file names are kebab-case**, since they become URL slugs.
-- **A list of N peer features is N pages plus a derived index, never one page.** The character kits are one page each under `genshin/kits/` with `genshin/kits/index.md` holding the framework and the table; a kit is one module that declares its own id and one page, and the kit map is generated, so a new kit edits no shared file (`genshin-world`'s `CharacterIdCreateKitMap`).
+- **A list of N peer features is N pages plus a derived index, never one page.** The character kits are one page each under `genshin/kits/` with `genshin/kits/index.md` holding the framework and the table; a kit is its published record, one behaviour module that declares its own id and one page, and the behaviour map is generated, so a new kit edits no shared file (`genshin-world`'s `CharacterIdCreateKitBehaviourMap`).
 
 ## Format and registration
 

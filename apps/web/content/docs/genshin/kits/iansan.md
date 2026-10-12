@@ -5,7 +5,7 @@ description: Iansan's kit as built, with her three strikes, charged attack, prov
 
 # Iansan
 
-Iansan's kit is one module, `createIansanKit`, on avatar 10000110: her three strikes and charged attack, a plunge collision with two plunges, and the hits of the skill's activation and the burst. Her multipliers are read from proud skill groups 11031, 11032 and 11039, matching gcsim's to four decimal places. Her skill cools for 16 seconds, her burst for 18 at 70 energy, and her charged attack costs 25 stamina.
+Iansan's kit is its record and one behaviour module, `createIansanKitBehaviour`, on avatar 10000110: her three strikes and charged attack, a plunge collision with two plunges, and the hits of the skill's activation and the burst. Her multipliers are read from proud skill groups 11031, 11032 and 11039, matching gcsim's to four decimal places. Her skill cools for 16 seconds, her burst for 18 at 70 energy, and her charged attack costs 25 stamina.
 
 ## Decisions
 
@@ -24,9 +24,9 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                                     |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/iansanKit.ts` | `createIansanKit`, Iansan's strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, the Nightsoul state and party ATK bonus waiting on their hooks |
+| File                                                              | Role                                                                                                                                                                                              |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/iansanKit.ts` | `createIansanKitBehaviour`, Iansan's strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, the Nightsoul state and party ATK bonus waiting on their hooks |
 
 ## Sources
 

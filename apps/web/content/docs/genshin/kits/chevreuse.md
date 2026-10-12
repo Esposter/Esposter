@@ -5,7 +5,7 @@ description: Chevreuse's kit as built, with Short-Range Rapid Interdiction Fire'
 
 # Chevreuse
 
-Chevreuse's kit is one module, `createChevreuseKit`, on avatar 10000090: four normal attacks, a charged attack, a collision and two plunges, Short-Range Rapid Interdiction Fire's press and its hold, and Ring of Bursting Grenades with its eight shells. Her multipliers are read from proud skill groups 9031, 9032 and 9039, matching gcsim's to three decimal places; the cooldowns, the burst's energy cost and the charged attack's stamina come from those groups or from gcsim. The hold releases a Pyro box of 3 by 7 metres, and once an Overloaded reaction has happened, the next hold casts the Overcharged Ball instead, a Pyro circle of radius 5 on the primary target with 125 poise, which spends the ball as it starts. Explosive Grenade's circle of radius 6 lands at 59 frames, and its eight shells explode from 83 to 119 frames after the cast, past its animation's end, which they still land in.
+Chevreuse's kit is its record and one behaviour module, `createChevreuseKitBehaviour`, on avatar 10000090: four normal attacks, a charged attack, a collision and two plunges, Short-Range Rapid Interdiction Fire's press and its hold, and Ring of Bursting Grenades with its eight shells. Her multipliers are read from proud skill groups 9031, 9032 and 9039, matching gcsim's to three decimal places; the cooldowns, the burst's energy cost and the charged attack's stamina come from those groups or from gcsim. The hold releases a Pyro box of 3 by 7 metres, and once an Overloaded reaction has happened, the next hold casts the Overcharged Ball instead, a Pyro circle of radius 5 on the primary target with 125 poise, which spends the ball as it starts. Explosive Grenade's circle of radius 6 lands at 59 frames, and its eight shells explode from 83 to 119 frames after the cast, past its animation's end, which they still land in.
 
 ## Decisions
 
@@ -24,9 +24,9 @@ Chevreuse's kit is one module, `createChevreuseKit`, on avatar 10000090: four no
 
 ## Key files
 
-| File                                                                 | Role                                                               |
-| :------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/chevreuseKit.ts` | `createChevreuseKit`, her press, hold, shells and Overcharged Ball |
+| File                                                                 | Role                                                                        |
+| :------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/chevreuseKit.ts` | `createChevreuseKitBehaviour`, her press, hold, shells and Overcharged Ball |
 
 ## Sources
 

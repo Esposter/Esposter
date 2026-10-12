@@ -5,7 +5,7 @@ description: Xilonen's kit as built: her three strikes, charged attack, collisio
 
 # Xilonen
 
-Xilonen's kit is one module, `createXilonenKit`, on avatar 10000103: three strikes with the second of two hits, a charged attack, a collision and two plunges, and Yohual's Scratch's hit. Her multipliers are read from proud skill groups 10331, 10332 and 10339, and match gcsim's values to four decimal places. Her plunges' and Yohual's Scratch's damage is her share of Defense, added as flat damage to each hit's base damage as it is priced, as Chiori's Defense shares are.
+Xilonen's kit is its record and one behaviour module, `createXilonenKitBehaviour`, on avatar 10000103: three strikes with the second of two hits, a charged attack, a collision and two plunges, and Yohual's Scratch's hit. Her multipliers are read from proud skill groups 10331, 10332 and 10339, and match gcsim's values to four decimal places. Her plunges' and Yohual's Scratch's damage is her share of Defense, added as flat damage to each hit's base damage as it is priced, as Chiori's Defense shares are.
 
 ## Decisions
 
@@ -26,9 +26,9 @@ Xilonen's kit is one module, `createXilonenKit`, on avatar 10000103: three strik
 
 ## Key files
 
-| File                                                               | Role                                                                                             |
-| :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/xilonenKit.ts` | `createXilonenKit`, Xilonen's kit with her strikes, charged attack, plunges and Yohual's Scratch |
+| File                                                               | Role                                                                                                      |
+| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/xilonenKit.ts` | `createXilonenKitBehaviour`, Xilonen's kit with her strikes, charged attack, plunges and Yohual's Scratch |
 
 ## Sources
 

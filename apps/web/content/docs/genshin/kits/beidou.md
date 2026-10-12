@@ -5,7 +5,7 @@ description: Beidou's kit as built: her strikes, charged attack and plunges, Tid
 
 # Beidou
 
-Beidou's kit is one module, `createBeidouKit`, avatar 10000024: five strikes, a charged attack, a collision and two plunges, Tidecaller's press with its shield, and Stormbreaker's hit with its Thunderbeast's Targe. Her multipliers are read from proud skill groups 2431, 2432 and 2439, and match the wiki's Oceanborne, Tidecaller and Stormbreaker values to two decimal places; the charged attack's stamina, the shield's share of her Max HP and its flat HP, the skill's cooldown, the Targe's seconds and the burst's cooldown and cost are read from the same groups. The Targe is a summon that follows the body on the field, built atop the shared effects, with its lightning discharge beside Beidou's strikes and charged attack at most once a second, and Bane of Evil's Electro RES cut from six constellations. Tidecaller's hold and its bonus on hits taken, Retribution, Lightning Storm, the Targe's DMG reduction and its discharge from the other members' attacks, Sea Beast's Scourge, Upon the Turbulent Sea, the Thunder Arises and Stunning Revenge are not built.
+Beidou's kit is its record and one behaviour module, `createBeidouKitBehaviour`, avatar 10000024: five strikes, a charged attack, a collision and two plunges, Tidecaller's press with its shield, and Stormbreaker's hit with its Thunderbeast's Targe. Her multipliers are read from proud skill groups 2431, 2432 and 2439, and match the wiki's Oceanborne, Tidecaller and Stormbreaker values to two decimal places; the charged attack's stamina, the shield's share of her Max HP and its flat HP, the skill's cooldown, the Targe's seconds and the burst's cooldown and cost are read from the same groups. The Targe is a summon that follows the body on the field, built atop the shared effects, with its lightning discharge beside Beidou's strikes and charged attack at most once a second, and Bane of Evil's Electro RES cut from six constellations. Tidecaller's hold and its bonus on hits taken, Retribution, Lightning Storm, the Targe's DMG reduction and its discharge from the other members' attacks, Sea Beast's Scourge, Upon the Turbulent Sea, the Thunder Arises and Stunning Revenge are not built.
 
 ## Decisions
 
@@ -25,9 +25,9 @@ Beidou's kit is one module, `createBeidouKit`, avatar 10000024: five strikes, a 
 
 ## Key files
 
-| File                                                              | Role                                                                                                                          |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/beidouKit.ts` | `createBeidouKit`, Beidou's kit with Tidecaller's shield, the Thunderbeast's Targe and its discharges, and Bane of Evil's cut |
+| File                                                              | Role                                                                                                                                   |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/beidouKit.ts` | `createBeidouKitBehaviour`, Beidou's kit with Tidecaller's shield, the Thunderbeast's Targe and its discharges, and Bane of Evil's cut |
 
 ## Sources
 

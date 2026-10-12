@@ -5,7 +5,7 @@ description: Gaming's kit as built: his four strikes, a provisional charged atta
 
 # Gaming
 
-Gaming's kit is one module, `createGamingKit`, avatar 10000092: four strikes, a charged attack, a collision and two plunges, Bestial Ascent, whose cast strikes nothing of its own, and Suanni's Gilded Dance's one strike. His multipliers are read from proud skill groups 9231, 9232 and 9239, its cooldowns and the burst's energy cost among them. Ascension and Constellations are not built, and Bestial Ascent's Charmed Cloudstrider plunge, which is the skill's whole damage, is not either.
+Gaming's kit is its record and one behaviour module, `createGamingKitBehaviour`, avatar 10000092: four strikes, a charged attack, a collision and two plunges, Bestial Ascent, whose cast strikes nothing of its own, and Suanni's Gilded Dance's one strike. His multipliers are read from proud skill groups 9231, 9232 and 9239, its cooldowns and the burst's energy cost among them. Ascension and Constellations are not built, and Bestial Ascent's Charmed Cloudstrider plunge, which is the skill's whole damage, is not either.
 
 ## Not yet built
 
@@ -22,9 +22,9 @@ Gaming's kit is one module, `createGamingKit`, avatar 10000092: four strikes, a 
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                            |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/gamingKit.ts` | `createGamingKit`, Gaming's kit with his four strikes, provisional charged attack, collision and two plunges, Bestial Ascent and Suanni's Gilded Dance's strike |
+| File                                                              | Role                                                                                                                                                                     |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/gamingKit.ts` | `createGamingKitBehaviour`, Gaming's kit with his four strikes, provisional charged attack, collision and two plunges, Bestial Ascent and Suanni's Gilded Dance's strike |
 
 ## Sources
 

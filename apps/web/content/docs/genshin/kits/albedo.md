@@ -5,7 +5,7 @@ description: Albedo's kit as built: his strikes, charged attack and plunges, wit
 
 # Albedo
 
-Albedo's kit is one module, `createAlbedoKit`, avatar 10000038: five strikes, a charged attack of two hits, a collision and two plunges, Abiogenesis: Solar Isotoma with its hit and the Transient Blossoms it sets off, and Rite of Progeniture: Tectonic Tide with its Fatal Blossoms. His multipliers are read from proud skill groups 3831, 3832 and 3839; the charged attack's stamina, the field's seconds and cooldown, and the burst's cooldown and energy cost are read from the same groups. A Transient Blossom's tick is priced by his DEF, and the Fatal Blossoms come only while the field stands. His passives and Constellations 2, 4 and 6 are not built, as their enemy HP conditions, party buffs and stacks are not on the kit's effects.
+Albedo's kit is its record and one behaviour module, `createAlbedoKitBehaviour`, avatar 10000038: five strikes, a charged attack of two hits, a collision and two plunges, Abiogenesis: Solar Isotoma with its hit and the Transient Blossoms it sets off, and Rite of Progeniture: Tectonic Tide with its Fatal Blossoms. His multipliers are read from proud skill groups 3831, 3832 and 3839; the charged attack's stamina, the field's seconds and cooldown, and the burst's cooldown and energy cost are read from the same groups. A Transient Blossom's tick is priced by his DEF, and the Fatal Blossoms come only while the field stands. His passives and Constellations 2, 4 and 6 are not built, as their enemy HP conditions, party buffs and stacks are not on the kit's effects.
 
 ## Decisions
 
@@ -13,9 +13,9 @@ Albedo's kit is one module, `createAlbedoKit`, avatar 10000038: five strikes, a 
 
 ## Key files
 
-| File                                                              | Role                                                                                                             |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/albedoKit.ts` | `createAlbedoKit`, Albedo's kit with Solar Isotoma, its Transient Blossoms, Tectonic Tide and the Fatal Blossoms |
+| File                                                              | Role                                                                                                                      |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/albedoKit.ts` | `createAlbedoKitBehaviour`, Albedo's kit with Solar Isotoma, its Transient Blossoms, Tectonic Tide and the Fatal Blossoms |
 
 ## Sources
 

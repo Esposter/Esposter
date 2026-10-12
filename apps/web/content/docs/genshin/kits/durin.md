@@ -5,7 +5,7 @@ description: Durin's kit as built, with his four strikes, charged attack, provis
 
 # Durin
 
-Durin's kit is one module, `createDurinKit`, on avatar 10000123: his four strikes, a charged attack, a plunge collision and two plunges, Tap E, which opens a six-second window, its two recasts, and As the Light Shifts and As the Stars Smolder, the burst the Denial of Darkness recast switches to. His multipliers are read from proud skill groups 12331, 12332 and 12339, matching gcsim's to six decimal places. The same groups give the charged attack's stamina, the burst's energy cost and cooldown, and the skill's cooldown.
+Durin's kit is its record and one behaviour module, `createDurinKitBehaviour`, on avatar 10000123: his four strikes, a charged attack, a plunge collision and two plunges, Tap E, which opens a six-second window, its two recasts, and As the Light Shifts and As the Stars Smolder, the burst the Denial of Darkness recast switches to. His multipliers are read from proud skill groups 12331, 12332 and 12339, matching gcsim's to six decimal places. The same groups give the charged attack's stamina, the burst's energy cost and cooldown, and the skill's cooldown.
 
 ## Decisions
 
@@ -29,9 +29,9 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                       |
-| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/durinKit.ts` | `createDurinKit`, Durin's strikes, charged attack, provisional plunges, Tap E's window and its recasts, and the two Dragon bursts with their status switch |
+| File                                                             | Role                                                                                                                                                                |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/durinKit.ts` | `createDurinKitBehaviour`, Durin's strikes, charged attack, provisional plunges, Tap E's window and its recasts, and the two Dragon bursts with their status switch |
 
 ## Sources
 

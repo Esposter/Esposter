@@ -5,7 +5,7 @@ description: Cyno's kit as built, with the Invoker's Spear, Secret Rite: Chasmic
 
 # Cyno
 
-Cyno's kit is one module, `createCynoKit`, on avatar 10000071: the Invoker's Spear with its four strikes, charged attack, plunges and collision; Secret Rite: Chasmic Soulfarer; and Sacred Rite: Wolf's Swiftness, which sets Pactsworn Pathclearer on the team as a stance with its own five strikes, charged attack and skill, Mortuary Rite. His multipliers come from proud skill groups 7131, 7132 and 7139, read at level 1. The skill's cooldown is 7.5 seconds, the burst's cooldown 20 seconds and its cost 80 energy, and the charged attack's stamina 25.
+Cyno's kit is its record and one behaviour module, `createCynoKitBehaviour`, on avatar 10000071: the Invoker's Spear with its four strikes, charged attack, plunges and collision; Secret Rite: Chasmic Soulfarer; and Sacred Rite: Wolf's Swiftness, which sets Pactsworn Pathclearer on the team as a stance with its own five strikes, charged attack and skill, Mortuary Rite. His multipliers come from proud skill groups 7131, 7132 and 7139, read at level 1. The skill's cooldown is 7.5 seconds, the burst's cooldown 20 seconds and its cost 80 energy, and the charged attack's stamina 25.
 
 ## Decisions
 
@@ -30,9 +30,9 @@ Cyno's kit is one module, `createCynoKit`, on avatar 10000071: the Invoker's Spe
 
 ## Key files
 
-| File                                                            | Role                                                                                                                        |
-| :-------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/cynoKit.ts` | `createCynoKit`, Cyno's kit with the Invoker's Spear, Secret Rite, Sacred Rite and Pactsworn Pathclearer with Mortuary Rite |
+| File                                                            | Role                                                                                                                                 |
+| :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/cynoKit.ts` | `createCynoKitBehaviour`, Cyno's kit with the Invoker's Spear, Secret Rite, Sacred Rite and Pactsworn Pathclearer with Mortuary Rite |
 
 ## Sources
 

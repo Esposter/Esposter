@@ -5,7 +5,7 @@ description: Amber's kit as built: her five arrows, fully charged aimed shot, Ex
 
 # Amber
 
-Amber's kit is one module, `createAmberKit`, avatar 10000021: five arrows, a fully charged aimed shot, a collision and two plunges, Explosive Puppet's Baron Bunny and Fiery Rain. Its multipliers are read from proud skill groups 2131, 2132 and 2139, and match the wiki's Sharpshooter, Explosive Puppet and Fiery Rain values to two decimal places. Baron Bunny is a taunt, built as the shared effects below, and Fiery Rain is a summon of eighteen arrows, with Ascension 1's CRIT Rate and AoE.
+Amber's kit is its record and one behaviour module, `createAmberKitBehaviour`, avatar 10000021: five arrows, a fully charged aimed shot, a collision and two plunges, Explosive Puppet's Baron Bunny and Fiery Rain. Its multipliers are read from proud skill groups 2131, 2132 and 2139, and match the wiki's Sharpshooter, Explosive Puppet and Fiery Rain values to two decimal places. Baron Bunny is a taunt, built as the shared effects below, and Fiery Rain is a summon of eighteen arrows, with Ascension 1's CRIT Rate and AoE.
 
 ## Decisions
 
@@ -19,9 +19,9 @@ Amber's kit is one module, `createAmberKit`, avatar 10000021: five arrows, a ful
 
 ## Key files
 
-| File                                                             | Role                                                                           |
-| :--------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/amberKit.ts` | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon |
+| File                                                             | Role                                                                                    |
+| :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/amberKit.ts` | `createAmberKitBehaviour`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon |
 
 ## Sources
 

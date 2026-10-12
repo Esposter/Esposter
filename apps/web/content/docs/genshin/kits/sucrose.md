@@ -5,7 +5,7 @@ description: Sucrose's kit as built: Astable Anemohypostasis Creation-6308 with 
 
 # Sucrose
 
-Sucrose's kit is one module, `createSucroseKit`, on avatar 10000043: four strikes, a charged attack, a collision and two plunges, Astable Anemohypostasis Creation-6308 with its Swirl, and Forbidden Creation-Isomer 75 / Type II with its Anemo field, which absorbs whichever of Pyro, Hydro, Electro and Cryo an enemy within reach holds first, in gcsim's priority, and strikes it on each tick. Her multipliers are read from proud skill groups 4331, 4332 and 4339; the charged attack's stamina, the skill's cooldown, and the burst's seconds, cooldown and energy cost are read from the same groups. Her Swirl's Elemental Mastery share at Ascension 1, the team's share of her Elemental Mastery on each skill and burst hit at Ascension 4, and Constellations 2 and 6 are built. The skill's pull is not built. Constellation 4 is not, as the kit has no cooldown to shorten, and her Hexerei team bonus is not built.
+Sucrose's kit is its record and one behaviour module, `createSucroseKitBehaviour`, on avatar 10000043: four strikes, a charged attack, a collision and two plunges, Astable Anemohypostasis Creation-6308 with its Swirl, and Forbidden Creation-Isomer 75 / Type II with its Anemo field, which absorbs whichever of Pyro, Hydro, Electro and Cryo an enemy within reach holds first, in gcsim's priority, and strikes it on each tick. Her multipliers are read from proud skill groups 4331, 4332 and 4339; the charged attack's stamina, the skill's cooldown, and the burst's seconds, cooldown and energy cost are read from the same groups. Her Swirl's Elemental Mastery share at Ascension 1, the team's share of her Elemental Mastery on each skill and burst hit at Ascension 4, and Constellations 2 and 6 are built. The skill's pull is not built. Constellation 4 is not, as the kit has no cooldown to shorten, and her Hexerei team bonus is not built.
 
 ## Decisions
 
@@ -13,9 +13,9 @@ Sucrose's kit is one module, `createSucroseKit`, on avatar 10000043: four strike
 
 ## Key files
 
-| File                                                               | Role                                                                                                                                                                 |
-| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/sucroseKit.ts` | `createSucroseKit`, Sucrose's kit with Astable Anemohypostasis Creation-6308 and its Swirl, and Forbidden Creation's Anemo field, its absorb check and absorbed hits |
+| File                                                               | Role                                                                                                                                                                          |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/sucroseKit.ts` | `createSucroseKitBehaviour`, Sucrose's kit with Astable Anemohypostasis Creation-6308 and its Swirl, and Forbidden Creation's Anemo field, its absorb check and absorbed hits |
 
 ## Sources
 

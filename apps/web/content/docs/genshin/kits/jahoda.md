@@ -5,7 +5,7 @@ description: Jahoda's kit as built: her three strikes, fully charged shot, Savvy
 
 # Jahoda
 
-Jahoda's kit is one module, `createJahodaKit`, avatar 10000124: three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit. Her multipliers are read from proud skill groups 12431, 12432 and 12439; the flask's fill, the skill's cooldown, the burst's cooldown and its energy cost are read from the same groups.
+Jahoda's kit is its record and one behaviour module, `createJahodaKitBehaviour`, avatar 10000124: three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit. Her multipliers are read from proud skill groups 12431, 12432 and 12439; the flask's fill, the skill's cooldown, the burst's cooldown and its energy cost are read from the same groups.
 
 ## Decisions
 
@@ -23,9 +23,9 @@ Jahoda's kit is one module, `createJahodaKit`, avatar 10000124: three strikes, a
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                           |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/jahodaKit.ts` | `createJahodaKit`, Jahoda's kit with her strikes, charged shot, plunges, Savvy Strategy's pursuit and flask drains, and Hidden Aces' first hit |
+| File                                                              | Role                                                                                                                                                    |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/jahodaKit.ts` | `createJahodaKitBehaviour`, Jahoda's kit with her strikes, charged shot, plunges, Savvy Strategy's pursuit and flask drains, and Hidden Aces' first hit |
 
 ## Sources
 

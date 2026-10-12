@@ -5,7 +5,7 @@ description: Yumemizuki Mizuki's kit as built, with her three strikes, charged a
 
 # Yumemizuki Mizuki
 
-Mizuki's kit is one module, `createMizukiKit`, on avatar 10000109: three strikes, a charged attack, two plunges and the collision between them, her skill's activation hit and her burst's. Her multipliers are read from proud skill groups 10931, 10932 and 10939, matching gcsim's to four decimal places. The skill's cooldown is 15 seconds, the burst's 15 seconds and 60 energy, and the charged attack takes 50 stamina.
+Mizuki's kit is its record and one behaviour module, `createMizukiKitBehaviour`, on avatar 10000109: three strikes, a charged attack, two plunges and the collision between them, her skill's activation hit and her burst's. Her multipliers are read from proud skill groups 10931, 10932 and 10939, matching gcsim's to four decimal places. The skill's cooldown is 15 seconds, the burst's 15 seconds and 60 energy, and the charged attack takes 50 stamina.
 
 ## Decisions
 
@@ -26,9 +26,9 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                                |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/mizukiKit.ts` | `createMizukiKit`, Mizuki's three strikes and charged attack, provisional plunges, the activation hit of her skill and her burst's hit, the state and snacks waiting on their hooks |
+| File                                                              | Role                                                                                                                                                                                         |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/mizukiKit.ts` | `createMizukiKitBehaviour`, Mizuki's three strikes and charged attack, provisional plunges, the activation hit of her skill and her burst's hit, the state and snacks waiting on their hooks |
 
 ## Sources
 

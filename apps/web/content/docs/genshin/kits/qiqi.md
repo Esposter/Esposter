@@ -5,7 +5,7 @@ description: Qiqi's kit as built: five strikes, a charged attack, Herald of Fros
 
 # Qiqi
 
-Qiqi's kit is one module, `createQiqiKit`, on avatar 10000035: five strikes, a charged attack of two slashes, a collision and two plunges, Herald of Frost with its initial damage and swipes that follow her, and Fortune-Preserving Talisman's damage and the Talisman it marks enemies with. Her multipliers are read from proud skill groups 3531, 3532 and 3539, and match the wiki's Ancient Sword Art, Herald of Frost and Adeptus Art: Preserver of Fortune values to two decimal places; the charged attack's stamina, the skill's duration and cooldown, and the burst's heal, seconds, cooldown and cost are read from the same groups. The Herald is a summon that follows the body on the field, its regeneration on hit is the shared party heal on each Normal and Charged Attack hit while it stands, and its continuous regeneration is a field with no edge that heals the active character each 4.5 seconds, as the [shared effects](/docs/genshin/kits). The Talisman is a status on each enemy the burst strikes, given before its damage, and damage the character on the field deals an enemy holding it heals that character, at most once a second for each enemy. A Glimpse into Arcanum from Ascension 4, and Ascetics of Frost's energy, Frozen to the Bone's DMG Bonus, Divine Suppression's ATK cut and Rite of Resurrection's revive from one, two, four and six constellations are built. Life-Prolonging Methods is not built.
+Qiqi's kit is its record and one behaviour module, `createQiqiKitBehaviour`, on avatar 10000035: five strikes, a charged attack of two slashes, a collision and two plunges, Herald of Frost with its initial damage and swipes that follow her, and Fortune-Preserving Talisman's damage and the Talisman it marks enemies with. Her multipliers are read from proud skill groups 3531, 3532 and 3539, and match the wiki's Ancient Sword Art, Herald of Frost and Adeptus Art: Preserver of Fortune values to two decimal places; the charged attack's stamina, the skill's duration and cooldown, and the burst's heal, seconds, cooldown and cost are read from the same groups. The Herald is a summon that follows the body on the field, its regeneration on hit is the shared party heal on each Normal and Charged Attack hit while it stands, and its continuous regeneration is a field with no edge that heals the active character each 4.5 seconds, as the [shared effects](/docs/genshin/kits). The Talisman is a status on each enemy the burst strikes, given before its damage, and damage the character on the field deals an enemy holding it heals that character, at most once a second for each enemy. A Glimpse into Arcanum from Ascension 4, and Ascetics of Frost's energy, Frozen to the Bone's DMG Bonus, Divine Suppression's ATK cut and Rite of Resurrection's revive from one, two, four and six constellations are built. Life-Prolonging Methods is not built.
 
 ## Decisions
 
@@ -18,9 +18,9 @@ Qiqi's kit is one module, `createQiqiKit`, on avatar 10000035: five strikes, a c
 
 ## Key files
 
-| File                                                            | Role                                                                                                                       |
-| :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/qiqiKit.ts` | `createQiqiKit`, Qiqi's kit with Herald of Frost, the Talisman and its heal, A Glimpse into Arcanum and her constellations |
+| File                                                            | Role                                                                                                                                |
+| :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/qiqiKit.ts` | `createQiqiKitBehaviour`, Qiqi's kit with Herald of Frost, the Talisman and its heal, A Glimpse into Arcanum and her constellations |
 
 ## Sources
 
