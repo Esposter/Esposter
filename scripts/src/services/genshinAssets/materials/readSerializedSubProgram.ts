@@ -53,8 +53,8 @@ export const readSerializedSubProgram = (cursor: BinaryCursor): SerializedSubPro
   cursor.int8();
   let gpuProgramType = cursor.int8();
   cursor.align();
-  // A record whose GPU program type is unknown or outside the enum is read again, with a keyword list between its tier
-  // and its type, as AnimeStudio reads it for this game alone
+  // A record whose GPU program type is unknown or outside the enum is read again, with a keyword list between its
+  // Tier and its type, as AnimeStudio reads it for this game alone
   if (gpuProgramType <= 0 || gpuProgramType > MAX_GPU_PROGRAM_TYPE) {
     cursor.rewind(4);
     cursor.uint16List();
