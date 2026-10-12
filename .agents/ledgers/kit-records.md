@@ -73,7 +73,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `linnea`             | —                      |                                                                          |
 | `lisa`               | —                      |                                                                          |
 | `lohen`              | —                      |                                                                          |
-| `lynette`            | —                      |                                                                          |
+| `lynette`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `lyney`              | —                      |                                                                          |
 | `mavuika`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `mika`               | 2026-10-13 · Haiku 5.5 |                                                                          |
