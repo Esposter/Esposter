@@ -166,6 +166,8 @@ const readBracedCodePoint = (characters: Character[], index: number): Cooked | u
   return { length: cursor - index + 1, text: String.fromCodePoint(codePoint) };
 };
 
+const fromHexadecimal = (hexadecimal: string): string => String.fromCodePoint(Number.parseInt(hexadecimal, 16));
+
 const readEscape = (characters: Character[], index: number): Cooked => {
   const character = characters[index];
   if (!character) return { length: 0, text: "" };
@@ -177,8 +179,7 @@ const readEscape = (characters: Character[], index: number): Cooked => {
 
   if (next?.value === "x") {
     const hexadecimal = readHexadecimal(characters, index + 2, HEXADECIMAL_BYTE_DIGITS);
-    if (hexadecimal !== undefined)
-      return { length: 2 + HEXADECIMAL_BYTE_DIGITS, text: String.fromCodePoint(Number.parseInt(hexadecimal, 16)) };
+    if (hexadecimal !== undefined) return { length: 2 + HEXADECIMAL_BYTE_DIGITS, text: fromHexadecimal(hexadecimal) };
   }
 
   if (next?.value === "u") {
@@ -186,8 +187,7 @@ const readEscape = (characters: Character[], index: number): Cooked => {
     if (braced) return braced;
 
     const hexadecimal = readHexadecimal(characters, index + 2, HEXADECIMAL_UNIT_DIGITS);
-    if (hexadecimal !== undefined)
-      return { length: 2 + HEXADECIMAL_UNIT_DIGITS, text: String.fromCodePoint(Number.parseInt(hexadecimal, 16)) };
+    if (hexadecimal !== undefined) return { length: 2 + HEXADECIMAL_UNIT_DIGITS, text: fromHexadecimal(hexadecimal) };
   }
 
   return { length: 1, text: character.value };
