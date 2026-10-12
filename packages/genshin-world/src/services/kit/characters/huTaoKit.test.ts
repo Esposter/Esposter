@@ -12,8 +12,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { HU_TAO_CHARACTER_ID } from "#src/services/kit/characters/huTaoKit";
-import { createHuTaoKit } from "#src/services/kit/characters/huTaoKit";
+import { createHuTaoKit, HU_TAO_CHARACTER_ID } from "#src/services/kit/characters/huTaoKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
 import { createParty } from "#src/services/party/createParty";

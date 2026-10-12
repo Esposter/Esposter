@@ -6,8 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
-import { createXingqiuKit } from "#src/services/kit/characters/xingqiuKit";
+import { createXingqiuKit, XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -63,7 +62,7 @@ describe(createXingqiuKit, () => {
     // Fatal Rainscreen's hits land at 12 and 31 frames, ahead of the Rain Swords' first Hydro at 44
     const rainscreenStrikes = stepKitEffects(skillKitEffectState, 0.6, context);
     const burstKitEffectState: KitEffectState = { effects: [] };
-    const burstStart = { body: kitBody, combatant, kitEffectState: burstKitEffectState, party: party };
+    const burstStart = { body: kitBody, combatant, kitEffectState: burstKitEffectState, party };
     XINGQIU_KIT.elementalBurst.onStart?.(burstStart);
     coordinateKitSummons(takeOne(XINGQIU_KIT.normalAttacks), burstStart);
     // The Rain Swords' first Hydro lands at 19 frames, and the first wave's two swords at 20
@@ -126,7 +125,7 @@ describe(createXingqiuKit, () => {
       const party = createParty([XINGQIU_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
       const context = { activeCombatant: travelerCombatant, body, party };
-      const travelerStart = { body: kitBody, combatant: travelerCombatant, kitEffectState, party: party };
+      const travelerStart = { body: kitBody, combatant: travelerCombatant, kitEffectState, party };
       const normalAttack = takeOne(TRAVELER_KIT.normalAttacks);
       XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
       const waves = Array.from({ length: swordCounts.length }, () => {

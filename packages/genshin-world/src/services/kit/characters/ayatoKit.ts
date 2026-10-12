@@ -135,8 +135,8 @@ export const AYATO_CHARACTER_ID = 10_000_066;
 // Its water illusion and Soukai Kanka, whose Shunsuiken strikes take the Namisen stacks, and Kamisato Art: Suiyuu with its
 // Ticks. Ascension 1, Constellations 1, 2 and 6 are built. Ascension 4's energy off the field, Constellation 4's team attack
 // Speed and the Max HP that Constellation 2 gives at three stacks are not, as the kit has no off-field energy or attack speed
-// to price them, and a passive reads the combatant alone; the normal attack DMG bonus of Suiyuu is not either, as no kit step
-// reads a normal attack's DMG Bonus from the team's effects
+// To price them, and a passive reads the combatant alone; the normal attack DMG bonus of Suiyuu is not either, as no kit step
+// Reads a normal attack's DMG Bonus from the team's effects
 export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, AYATO_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);

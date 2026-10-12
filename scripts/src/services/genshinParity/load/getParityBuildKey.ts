@@ -18,7 +18,8 @@ export const getParityBuildKey = (): string => {
   for (let index = 0; index < entries.length; index += 1) {
     const entry = entries[index];
     if (!entry) continue;
-    if (entry[0] === "R" || entry[0] === "C") index += 1;
+    // A rename or copy in either column, the index's or the worktree's, is followed by its old path
+    if ([entry[0], entry[1]].some((status) => status === "R" || status === "C")) index += 1;
     const changedPath = join(REPOSITORY_ROOT, entry.slice(3));
     if (!existsSync(changedPath)) {
       changedFiles.push(entry);

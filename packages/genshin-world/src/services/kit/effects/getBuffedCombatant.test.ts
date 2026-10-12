@@ -8,8 +8,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
-import { createDilucKit } from "#src/services/kit/characters/dilucKit";
+import { createDilucKit, DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";

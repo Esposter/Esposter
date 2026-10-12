@@ -21,7 +21,12 @@ export const stepKitSummon = (summon: KitSummon, stepSeconds: number, body: Grou
     summon.body.position.x -= Math.sin(summon.body.facing) * metres;
     summon.body.position.z -= Math.cos(summon.body.facing) * metres;
   }
+  // A hit whose hitmark is the cast itself falls at the seconds the first step begins at, so it lands on that step
   return summon.hits
-    .filter(({ hitmarkSeconds }) => hitmarkSeconds > fromSeconds && hitmarkSeconds <= summon.elapsedSeconds)
+    .filter(
+      ({ hitmarkSeconds }) =>
+        (hitmarkSeconds > fromSeconds || (fromSeconds === 0 && hitmarkSeconds === 0)) &&
+        hitmarkSeconds <= summon.elapsedSeconds,
+    )
     .map((hit) => ({ body: summon.body, combatant: summon.combatant, hit, target: summon.target }));
 };

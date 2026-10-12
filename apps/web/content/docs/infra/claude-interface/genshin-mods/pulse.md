@@ -54,7 +54,7 @@ Pulse is on by default, and `/pulse off` stops it; `/pulse on` turns it back on,
 
 ## Notes
 
-- The idle line is the watcher's, decided by its own three-minute window of CPU and by its memory room, and it does not read the GPU.
+- The idle line is the watcher's, decided by its own three-minute window of CPU and by its memory room. The watcher reads the GPU and the line carries its figure, but the idle test does not weigh it.
 - A watcher stops with its session, so a machine with no session open reports no reading and its heartbeat pauses until one starts.
 - The idle line repeats on the watcher's reminder while the machine stays idle, so an idle session is woken again at each reminder rather than on a timer of the pulse's own.
 

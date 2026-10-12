@@ -8,8 +8,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
-import { createShenheKit } from "#src/services/kit/characters/shenheKit";
+import { createShenheKit, SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
 import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
@@ -91,7 +90,7 @@ describe(createShenheKit, () => {
     ]).toStrictEqual([25, 80, 20]);
   });
 
-  test("Divine Maiden's Deliverance's field ticks from 82 frames, every 117, and its DoT's second hit follows its tick's offset", () => {
+  test("divine Maiden's Deliverance's field ticks from 82 frames, every 117, and its DoT's second hit follows its tick's offset", () => {
     expect.hasAssertions();
     const field = castField(0);
 

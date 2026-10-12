@@ -10,13 +10,13 @@ Today the dub picks **whose** voice reads a reply and nothing else: `ja` clones 
 
 ## Scope
 
-**Today:** one engine, Chatterbox Nano, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized, then vocoded once, then played as one WAV while the next is generated.
+**Today:** one engine, Chatterbox Nano, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized and vocoded in token chunks, each chunk played as its speech is made, so the first sound follows the first chunk rather than the whole line.
 
 **This adds:**
 
 1. **The model** — Chatterbox Multilingual, the 0.5B checkpoint trained on 23 languages including `ja`, `zh` and `ko`, the three dubs beside English the wiki hosts. Its ONNX export exists; what does not yet exist is a Transformers.js release that loads it. That release is the gate, below.
 2. **The input** — the text's language detected from its script and handed to the model as its language token, sentence terminators of every script the roster speaks, and a sentence in a script no model reads dropped before it can be mistaken for a broken device.
-3. **The output** — the sentence synthesized and vocoded in clauses so playback starts before the last token, because the multilingual checkpoint is the 0.5B architecture, several times Nano's size, and the reading faster than real time that makes streaming unnecessary today will not survive the swap.
+3. **The output** — the sentence synthesized and vocoded in clauses so playback starts before the last token, because the multilingual checkpoint is the 0.5B architecture, several times Nano's size, and the reading faster than real time that keeps the token-chunk streaming cheap will not survive the swap.
 4. **The measurement** — every precision choice and every reference likeness re-measured against the new engine, since all of them were measured against Nano.
 
 Nothing here touches what the dub means to the user: `voice ja` still says whose voice, and the `VoiceLanguage` codes stay the ISO ones because the model's language tokens are spelled the same way.
@@ -64,7 +64,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 ### The output
 
 - **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's tokens rather than the last sentence's. Where the [spoken replies](/docs/infra/claude-interface/spoken-replies) page's streaming cuts by token count to shorten the first wait of an engine that already reads faster than real time, this one cuts at punctuation, because each clause is its own synthesis where a token chunk is one more vocoder pass over everything before it — a price that pays only while the engine outruns real time, which the larger checkpoint will not.
-- **Everything past the cut is that proposal's stage 2**, and is built once by whichever of the two lands first: the per-chunk speech check and the ladder it moves, the player that takes a stream rather than a file, and what the single pending request means while a reply is part-played. The split is worth having even into a queue of files.
+- **The per-chunk speech check, the device ladder it moves, the player that takes a stream and the single pending request are already shipped** ([spoken replies](/docs/infra/claude-interface/spoken-replies)). This proposal's output adds only the clause cut in front of them.
 
 ### The measurement
 

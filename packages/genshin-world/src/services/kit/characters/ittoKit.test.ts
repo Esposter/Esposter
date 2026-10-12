@@ -6,8 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
-import { createIttoKit } from "#src/services/kit/characters/ittoKit";
+import { createIttoKit, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
 import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
@@ -26,7 +25,7 @@ const createIttoCombatant = (): Combatant => ({
 });
 
 describe(createIttoKit, () => {
-  test("Royal Descent adds its ATK per DEF and a Geo conversion with the burst's Normal ATK SPD for its seconds", () => {
+  test("royal Descent adds its ATK per DEF and a Geo conversion with the burst's Normal ATK SPD for its seconds", () => {
     expect.hasAssertions();
     const combatant = createIttoCombatant();
     const kitEffectState: KitEffectState = { effects: [] };

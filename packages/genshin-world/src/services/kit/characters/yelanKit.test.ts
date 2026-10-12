@@ -9,8 +9,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
-import { createYelanKit } from "#src/services/kit/characters/yelanKit";
+import { createYelanKit, YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
 import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
@@ -60,7 +59,7 @@ describe(createYelanKit, () => {
     expect(Math.round(YELAN_KIT.chargedAttack.seconds * 60)).toBe(96);
   });
 
-  test("Lingering Lifeline's damage is a share of the caster's Max HP, and its cooldown is 10 seconds", () => {
+  test("lingering Lifeline's damage is a share of the caster's Max HP, and its cooldown is 10 seconds", () => {
     expect.hasAssertions();
     const lifelineHit = takeOne(YELAN_KIT.elementalSkill.hits);
 
@@ -70,7 +69,7 @@ describe(createYelanKit, () => {
     expect(YELAN_KIT.skillCooldownSeconds).toBe(10);
   });
 
-  test("Depth-Clarion Dice lasts 15 seconds from its hit, costs 70 energy and waves each second of it", () => {
+  test("depth-Clarion Dice lasts 15 seconds from its hit, costs 70 energy and waves each second of it", () => {
     expect.hasAssertions();
     const field = castEffects(YELAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };

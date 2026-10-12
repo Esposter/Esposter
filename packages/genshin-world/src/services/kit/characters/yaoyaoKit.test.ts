@@ -1,6 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { createYaoyaoKit, YAOYAO_CHARACTER_ID } from "#src/services/kit/characters/yaoyaoKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { YAOYAO_CHARACTER_ID, createYaoyaoKit } from "#src/services/kit/characters/yaoyaoKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

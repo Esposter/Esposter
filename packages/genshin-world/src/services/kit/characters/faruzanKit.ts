@@ -74,7 +74,7 @@ const WHIRLWIND_PULSE_RADIUS = 6;
 // Measured: gcsim (MIT, main) faruzan/burst.go, the three gadgets' places, offset from the body at the cast as gcsim's
 // CalcOffsetPoint places them: the top right, the top left, then the bottom middle, cycled through by each Pulse
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/faruzan/burst.go
-const WHIRLWIND_GADGET_OFFSETS: readonly { lateral: number; forward: number }[] = [
+const WHIRLWIND_GADGET_OFFSETS: readonly { forward: number; lateral: number }[] = [
   { forward: 10.5, lateral: 5.19 },
   { forward: 10.5, lateral: -5.19 },
   { forward: 1.5, lateral: 0 },
@@ -190,8 +190,8 @@ export const createFaruzanKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     ]);
 
   // Prayerful Wind's Gift gives every member of the deployed team the Anemo DMG Bonus for its seconds
-  const addPrayerfulWindsGift = (kitEffectState: KitEffectState, { characterIdMemberMap }: Party): void => {
-    for (const characterId of characterIdMemberMap.keys())
+  const addPrayerfulWindsGift = (kitEffectState: KitEffectState, { deployedTeamIndex, teams }: Party): void => {
+    for (const characterId of teams[deployedTeamIndex]?.characterIds ?? [])
       addKitEffect(kitEffectState, {
         amount: burstTalentMultiplier(1),
         attribute: Attribute.AnemoDamageBonus,
@@ -246,7 +246,7 @@ export const createFaruzanKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [burstHit],
-      onStart: ({ body, kitEffectState, party, combatant }) => {
+      onStart: ({ body, combatant, kitEffectState, party }) => {
         addKitEffect(kitEffectState, createDazzlingPolyhedron(body, combatant));
         addPrayerfulWindsGift(kitEffectState, party);
       },

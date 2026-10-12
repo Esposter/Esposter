@@ -10,8 +10,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { LISA_CHARACTER_ID } from "#src/services/kit/characters/lisaKit";
-import { createLisaKit } from "#src/services/kit/characters/lisaKit";
+import { createLisaKit, LISA_CHARACTER_ID } from "#src/services/kit/characters/lisaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";

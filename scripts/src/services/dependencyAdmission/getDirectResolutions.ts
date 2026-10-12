@@ -5,7 +5,7 @@ const IMPORTER_CATALOG_REGEX =
   /^ {6}['"]?(?<name>[^'":\n]+)['"]?:\n {8}specifier: ['"]?catalog:['"]?\n {8}version: ['"]?(?<version>[^'"\n]+)/gmu;
 
 // Maps each catalog name an importer depends on to the `packages:` key its resolution is recorded under. An alias's
-// version already names its package (`@nuxt/kit-nightly@5.0.0-…`), any other is the catalog name at that version.
+// Version already names its package (`@nuxt/kit-nightly@5.0.0-…`), any other is the catalog name at that version.
 // Peer suffixes `(…)` are dropped, as the `packages:` keys carry none.
 export const getDirectResolutions = (lockYaml: string): Map<string, string> => {
   const resolutions = new Map<string, string>();
@@ -16,7 +16,7 @@ export const getDirectResolutions = (lockYaml: string): Map<string, string> => {
     if (!name || !version) continue;
 
     const resolvedVersion = takeOne(version.split("("));
-    resolutions.set(name, resolvedVersion.indexOf("@", 1) === -1 ? `${name}@${resolvedVersion}` : resolvedVersion);
+    resolutions.set(name, !resolvedVersion.includes("@", 1) ? `${name}@${resolvedVersion}` : resolvedVersion);
   }
 
   return resolutions;

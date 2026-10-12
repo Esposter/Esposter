@@ -99,9 +99,15 @@ onBeforeUnmount(() => {
       '--menu-panel-delay': `${PAIMON_MENU_PANEL_DELAY_MS}ms`,
     }"
   >
-    <div class="menu" :inert="isWorldLevelDialogOpen">
+    <div class="menu" :inert="isWorldLevelDialogOpen || isClosing">
       <div class="side-bar" />
-      <button ref="backButton" class="back" :aria-label="gameText[GameTextKey.Back]" type="button" @click="closeMenu" />
+      <button
+        ref="backButton"
+        class="back"
+        :aria-label="gameText[GameTextKey.Back]"
+        type="button"
+        @click="closeMenu()"
+      />
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
       <template v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR" :key="screenKind">
         <button
@@ -182,7 +188,7 @@ onBeforeUnmount(() => {
       :is-world-level-lowered
       :server-clock-offset-ms
       :world-level-changed-at
-      @close="closeWorldLevelDialog"
+      @close="closeWorldLevelDialog()"
       @toggle-world-level="emit('toggleWorldLevel')"
     />
   </GameScreen>

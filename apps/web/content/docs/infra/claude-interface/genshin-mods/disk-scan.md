@@ -58,5 +58,5 @@ The check is a regular expression over the command's text, a few microseconds pe
 ## Notes
 
 - The guard covers the Bash tool. A PowerShell command that scans a drive (`Get-ChildItem C:\ -Recurse`) is not read.
-- It has no command and no switch: it runs in every session where the plugin is enabled, as the delegation guard does.
+- No command turns it off: it refuses in every session where the plugin is enabled.
 - A scan the guard misses is still caught by the machine watcher, which stops an orphaned `find`, `du`, `grep` or `rg` once it has burnt half a minute of CPU.

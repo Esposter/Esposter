@@ -57,7 +57,7 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 ## Notes
 
 - **The Traveler at level 90 is the run's check.** The tables hold the whole roster, every weapon and every set, and the Traveler at level 90 with a Dull Blade gives the wiki's 10,874.91 Max HP and 682.52 DEF, which a test holds every regeneration to.
-- **A set's bonus adds only its attributes.** A bonus that waits on a condition, a 4-piece's effect in combat, adds no line; it is a module of its set's answering the kits' events, as [artifact enhancement](/docs/genshin/artifact-enhancement) describes, or the set's description alone until its set has one.
+- **A set's bonus adds only its attributes.** A bonus that waits on a condition, a 4-piece's effect in combat, adds no line; [artifact enhancement](/docs/genshin/artifact-enhancement) says how it is answered, or the set's description alone stands until its set has one.
 
 ## Sources
 

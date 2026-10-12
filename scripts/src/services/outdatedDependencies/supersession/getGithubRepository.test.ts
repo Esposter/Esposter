@@ -20,6 +20,12 @@ describe(getGithubRepository, () => {
     expect(getGithubRepository("https://notgithub.com/unjs/radix3")).toBe("");
   });
 
+  test("returns nothing for a path that only contains github.com", () => {
+    expect.hasAssertions();
+
+    expect(getGithubRepository("https://gitlab.com/github.com/unjs/radix3")).toBe("");
+  });
+
   test("reads owner and repo from an SSH URL", () => {
     expect.hasAssertions();
 

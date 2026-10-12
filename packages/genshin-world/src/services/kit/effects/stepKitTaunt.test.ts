@@ -2,8 +2,7 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
-import { createAmberKit } from "#src/services/kit/characters/amberKit";
+import { AMBER_CHARACTER_ID, createAmberKit } from "#src/services/kit/characters/amberKit";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";

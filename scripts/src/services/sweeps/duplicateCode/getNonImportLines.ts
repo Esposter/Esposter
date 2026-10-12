@@ -6,7 +6,7 @@
 const IMPORT_START_REGEX = /^\s*import[\s{*"']/u;
 const IMPORT_END_REGEX =
   /(?:(?:^|\s)from|^\s*import)\s+["'][^"']+["'](?:\s+with\s*\{(?:\/\*.*?\*\/|(?!\/[/*])[^}])*\})?;?\s*(?:\/\/.*|\/\*.*\*\/\s*)?$/u;
-const ATTRIBUTES_START_REGEX = /["']\s+with\s*\{(?:\/\*.*?\*\/|(?!\/[/*])[^}])*(?:\/\/.*)?$/u;
+const ATTRIBUTES_START_REGEX = /["']\s+with\s*\{(?:\/\*.*?\*\/|(?!\/[/*])[^}])*(?:\/\/.*|\/\*.*)?$/u;
 const ATTRIBUTES_END_REGEX = /^(?:\/\*.*?\*\/|(?!\/[/*])[^}])*\};?\s*(?:\/\/.*|\/\*.*\*\/\s*)?$/u;
 
 // The 1-based lines of a file that are code rather than an import declaration or a blank line.

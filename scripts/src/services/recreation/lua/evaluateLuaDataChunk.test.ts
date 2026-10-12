@@ -1,6 +1,6 @@
+import { GENSHIN_LUA_53 } from "#src/services/genshinAssets/lua/GENSHIN_LUA_53";
 import { CALL_CHUNK, GENSHIN_CHUNK, POINTS_CHUNK } from "#src/services/recreation/lua/constants.test";
 import { evaluateLuaDataChunk } from "#src/services/recreation/lua/evaluateLuaDataChunk";
-import { GENSHIN_LUA_53 } from "#src/services/genshinAssets/lua/GENSHIN_LUA_53";
 import { readLuaChunk } from "#src/services/recreation/lua/readLuaChunk";
 import { STOCK_LUA_53 } from "#src/services/recreation/lua/STOCK_LUA_53";
 import { describe, expect, test } from "vitest";

@@ -9,12 +9,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { FARUZAN_CHARACTER_ID, createFaruzanKit } from "#src/services/kit/characters/faruzanKit";
+import { createFaruzanKit, FARUZAN_CHARACTER_ID } from "#src/services/kit/characters/faruzanKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const FARUZAN_KIT = createFaruzanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FARUZAN_CHARACTER_ID]));
 
@@ -106,6 +107,29 @@ describe(createFaruzanKit, () => {
       secondsRemaining: 4,
       source: "faruzan-prayerful-wind",
     });
+  });
+
+  test("prayerful Wind's Gift is given to the deployed team's members only", () => {
+    expect.hasAssertions();
+    const benchedCharacterId = FARUZAN_CHARACTER_ID + 1;
+    const benchedParty = createParty([FARUZAN_CHARACTER_ID]);
+    benchedParty.characterIdMemberMap.set(benchedCharacterId, createPartyMember());
+    const field = castEffects(FARUZAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const kitEffectState: KitEffectState = { effects: [] };
+    field?.onTick({
+      activeCombatant: createFaruzanCombatant(),
+      characterIdCombatantMap: new Map([[FARUZAN_CHARACTER_ID, createFaruzanCombatant()]]),
+      enemyMap: new Map(),
+      kitEffectState,
+      party: benchedParty,
+      tickIndex: 0,
+    });
+
+    const buffedCharacterIds = kitEffectState.effects.flatMap((effect) =>
+      effect.kind === "buff" ? [effect.characterId] : [],
+    );
+
+    expect(buffedCharacterIds).toStrictEqual([FARUZAN_CHARACTER_ID]);
   });
 
   test("the initial burst hit cuts the enemy's Anemo RES by 30% for 4 seconds", () => {

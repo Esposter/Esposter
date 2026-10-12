@@ -1,6 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { HEIZOU_CHARACTER_ID } from "#src/services/kit/characters/heizouKit";
-import { createHeizouKit } from "#src/services/kit/characters/heizouKit";
+import { createHeizouKit, HEIZOU_CHARACTER_ID } from "#src/services/kit/characters/heizouKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
