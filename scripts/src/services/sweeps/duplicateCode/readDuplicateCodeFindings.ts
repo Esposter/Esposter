@@ -12,7 +12,7 @@ import {
 } from "#src/services/sweeps/duplicateCode/constants";
 import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindings";
 import { getPluginRoot } from "#src/services/sweeps/duplicateCode/getPluginRoot";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, Operation, withFinalizer } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -77,11 +77,18 @@ export const readDuplicateCodeFindings = (): DuplicateCodeFinding[] => {
   );
   if (result.status !== 0) {
     rmSync(outputDirectory, { force: true, recursive: true });
-    throw new InvalidOperationError(Operation.Read, "jscpd", result.stderr || result.stdout);
+    // A launcher that never ran or was killed has no output, so its spawn error or signal is the only detail it leaves
+    throw new InvalidOperationError(
+      Operation.Read,
+      "jscpd",
+      result.stderr || result.stdout || result.error?.message || result.signal || "",
+    );
   }
 
-  const report = jsonDateParse<JscpdReport>(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8"));
-  rmSync(outputDirectory, { force: true, recursive: true });
+  const report = withFinalizer(
+    () => jsonDateParse<JscpdReport>(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8")),
+    () => rmSync(outputDirectory, { force: true, recursive: true }),
+  );
   const clones: DuplicateCodeClone[] = report.duplicates.map(({ firstFile, secondFile }) => ({
     duplicationA: toDuplicateCodeFragment(firstFile),
     duplicationB: toDuplicateCodeFragment(secondFile),
