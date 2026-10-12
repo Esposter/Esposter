@@ -1,5 +1,5 @@
 {
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.5 } },
+  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.5 } },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.animationFrames": { "cause": "DiffersFromSource", "value": 28 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -8,7 +8,7 @@
   "plunges.high.animationFrames": { "cause": "DiffersFromSource", "value": 77 },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 38 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 75 },
+  "plunges.low.animationFrames": { "cause": "Unsourced", "value": 75 },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 37 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.area": {
@@ -16,6 +16,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 17.000624902374255 }
   },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skillCharges": { "cause": "Unclassified", "value": 2 },
+  "skillCharges": { "cause": "Unsourced", "value": 2 },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }
 }
