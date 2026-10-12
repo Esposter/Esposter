@@ -1,32 +1,26 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.firstSeamlessShieldRefresh": { "cause": "Unclassified", "value": 223 },
-  "frames.seamlessShield": { "cause": "Unclassified", "value": 152 },
-  "frames.seamlessShieldRefreshField": { "cause": "Unclassified", "value": 808 },
-  "frames.seamlessShieldRefreshInterval": { "cause": "Unclassified", "value": 146 },
-  "frames.firstSeamlessShield": { "cause": "Unclassified", "value": 233 },
+  "frames.firstSeamlessShieldRefresh": { "cause": "Unsourced", "value": 223 },
+  "frames.seamlessShield": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 152 },
+  "frames.seamlessShieldRefreshField": { "cause": "Unsourced", "value": 808 },
+  "frames.seamlessShieldRefreshInterval": { "file": "burst.go", "line": 18, "source": "Gcsim", "value": 146 },
+  "frames.firstSeamlessShield": { "cause": "Unsourced", "value": 233 },
   "hits.spiritvein.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
   "hits.spiritvein.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 8239 } },
-  "hits.spiritvein.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.spiritvein.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.seamlessShieldMaxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 8239 }
   },
-  "parameters.seamlessShieldFlatHealth": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 8239 }
-  },
+  "parameters.seamlessShieldFlatHealth": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8239 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
-  "skill.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.6 }
-  },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 13 },
+  "skill.hits.length": { "cause": "Unsourced", "value": 1 },
+  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.6 } },
+  "skill.hits.0.hitmarkFrames": { "file": "skill.go", "line": 26, "source": "Gcsim", "value": 13 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8232 } }
 }
