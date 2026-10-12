@@ -12,7 +12,7 @@ export interface ModuleOptions {
   basicAuth: BasicAuthOptions | false;
   contentSecurityPolicyReportOnly: boolean;
   corsHandler: CorsHandlerOptions | false;
-  csrf: false | CsrfOptions;
+  csrf: CsrfOptions | false;
   // The whole module switched off, which registers no handler, plugin or header
   enabled: boolean;
   headers: false | SecurityHeaders;
