@@ -1,14 +1,5 @@
-// The cell a table index expression reads, cited by the line of the row it is read from
-export interface GcsimTableCite {
-  line: number;
-  value: number;
-}
-
-// A row of a module-scope Go table: the line its row starts on (1-based) and its cells as source text
-export interface GcsimTableRow {
-  cells: string[];
-  line: number;
-}
+import type { GcsimTableCite } from "#src/models/genshinAssets/kits/gcsim/GcsimTableCite";
+import type { GcsimTableRow } from "#src/models/genshinAssets/kits/gcsim/GcsimTableRow";
 
 interface TableCharacter {
   char: string;
@@ -47,7 +38,7 @@ const readTableBody = (lines: readonly string[], name: string): TableCharacter[]
 
 // Reads the rows of a module-scope table, `name = [][]float64{...}` or `name = []float64{...}`: each top-level item of a
 // Two-dimensional table is a brace group, a row of cells, and each item of a one-dimensional table is a row of one cell
-export const readGcsimTableRows = (lines: readonly string[], name: string): GcsimTableRow[] | undefined => {
+const readGcsimTableRows = (lines: readonly string[], name: string): GcsimTableRow[] | undefined => {
   const body = readTableBody(lines, name);
   if (body === undefined) return undefined;
   const items: { line: number; text: string }[] = [];
