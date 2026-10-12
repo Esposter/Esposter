@@ -1,26 +1,26 @@
 {
   "burst.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.765244492586962 }
   },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
   "burst.hits.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.765244492586962 }
   },
   "burst.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
   "burst.hits.2.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.765244492586962 }
   },
   "burst.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
   "burst.hits.3.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.765244492586962 }
   },
   "burst.hits.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
   "burst.hits.4.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.765244492586962 }
   },
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
