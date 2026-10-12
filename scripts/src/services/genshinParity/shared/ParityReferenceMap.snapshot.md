@@ -71,7 +71,7 @@ committed.
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |
 | `windrise-statue-day` | `WorldScreen` | 28.46% | 0.229 | 29.94% | 0.7878 |
-| `wish-screen` | `WishScreen` | 49.99% | 0.176 | 47.91% | 0.8866 |
+| `wish-screen` | `WishScreen` | 52.22% | 0.118 | 50.35% | 0.8926 |
 | `world-level-dialog` | `MenuWorldLevelDialog` | 5.86% | 0.862 | 1.99% | 0.1965 |
 
 ## Layers

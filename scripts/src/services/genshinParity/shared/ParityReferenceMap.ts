@@ -856,8 +856,27 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     seconds: 360,
   },
   // The English PC client's wish screen on the Character Event banner, Born of Ocean Swell open, at 78 seconds of the public
-  // 1080p recording, once its banner has settled; scored whole, its sky backdrop drawn by the screen's own blurred art
-  "wish-screen": { capture: "yt-uhCW3MZTgL8.mp4", screen: "WishScreen", seconds: 78 },
+  // 1080p recording, once its banner has settled: scored whole over its sky, the game's pieces (the tab row, the currency,
+  // the banner card, the Shop, Details and History row and the wish buttons) filled from round them
+  "wish-screen": {
+    capture: "yt-uhCW3MZTgL8.mp4",
+    isBackdrop: true,
+    plate: [
+      { height: 95, width: 560, x: 675, y: 0 },
+      { height: 50, width: 300, x: 1480, y: 20 },
+      { height: 60, width: 60, x: 1805, y: 12 },
+      { height: 50, width: 160, x: 45, y: 20 },
+      { height: 680, width: 1300, x: 315, y: 210 },
+      { height: 35, width: 230, x: 60, y: 955 },
+      { height: 40, width: 570, x: 60, y: 1012 },
+      { height: 80, width: 345, x: 1145, y: 972 },
+      { height: 80, width: 345, x: 1520, y: 972 },
+      { height: 30, width: 215, x: 1645, y: 1050 },
+      { height: 95, width: 200, x: 0, y: 0 },
+    ],
+    screen: "WishScreen",
+    seconds: 78,
+  },
   // The English PC client's World Level dialog at 1080 high from a public tutorial's recording, its frame at 5 seconds,
   // The dialog open over the dimmed menu. Scored over the dialog's frame, which is opaque. The recording is an older
   // Build's, whose help text reads World Level 5 and "reduce" where the current text map reads 3 and "decrease"

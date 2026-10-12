@@ -233,6 +233,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Bag scroll** — `bag-scroll.mkv`, waits on [inventory](/docs/proposals/genshin/inventory).
 - [ ] **Bag select** — `bag-select.mkv`, waits on [inventory](/docs/proposals/genshin/inventory).
 - [ ] **Standard Wish banner** — `wish-standard.png`, waits on [wish](/docs/proposals/genshin/wish).
+- [ ] **Wish event rotation** — the event banners after Born of Ocean Swell of 2021-05-18, which no game table names; built from the wiki one banner at a time, waits on [wish](/docs/proposals/genshin/wish).
 - [ ] **Adventurer Handbook** — `handbook-open-close.mkv`, waits on [Adventurer Handbook](/docs/genshin/adventurer-handbook).
 - [ ] **Bag sort dropdown open** — `bag-sort-open.png`, waits on [inventory](/docs/proposals/genshin/inventory).
 - [ ] **Attributes Details** — `character-details.mkv`, waits on [character screen](/docs/proposals/genshin/character-screen).
