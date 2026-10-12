@@ -42,6 +42,13 @@ describe(parseGcsimYaml, () => {
     });
   });
 
+  test("folds a blank line inside a wrapped plain scalar into a newline, as YAML does", () => {
+    expect.hasAssertions();
+
+    expect(parseGcsimYaml("a:\n  x\n\n  y")).toStrictEqual({ a: "x\ny" });
+    expect(parseGcsimYaml("a:\n  x\n\n\n  y")).toStrictEqual({ a: "x\n\ny" });
+  });
+
   test("folds a plain scalar wrapped over the lines below its key, as Iansan's note is", () => {
     expect.hasAssertions();
 

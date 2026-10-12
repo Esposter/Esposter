@@ -85,14 +85,20 @@ const parseValue = (text: string): unknown => (FLOW_START_REGEX.test(text) ? par
 // Scalars, wrapped over lines as YAML folds them, and comments.
 // Anything past that, an anchor, a tag or a block scalar, is refused rather than read wrong
 export const parseGcsimYaml = (yaml: string): unknown => {
-  const lines: GcsimYamlLine[] = yaml.split("\n").flatMap((rawLine) => {
+  const lines: GcsimYamlLine[] = [];
+  let blankLines = 0;
+  for (const rawLine of yaml.split("\n")) {
     const text = stripComment(rawLine).trimEnd();
     const trimmedText = text.trimStart();
-    return trimmedText === "" ? [] : [{ indent: text.length - trimmedText.length, text: trimmedText }];
-  });
+    if (trimmedText !== "") {
+      lines.push({ blankLines, indent: text.length - trimmedText.length, text: trimmedText });
+      blankLines = 0;
+    } else if (rawLine.trim() === "") blankLines++;
+  }
   let index = 0;
   // A value's continuation lines are the lines after it more indented than the line it starts on and neither a key nor a
-  // Sequence item; YAML folds them into the value with one space, so a plain scalar wrapped over lines reads as one
+  // Sequence item; YAML folds them into the value with one space, or with a newline for each blank line between them, so
+  // A plain scalar wrapped over lines reads as one
   const readValue = (text: string, lineIndent: number): unknown => {
     let folded = text;
     for (
@@ -103,7 +109,8 @@ export const parseGcsimYaml = (yaml: string): unknown => {
       !SEQUENCE_ITEM_REGEX.test(line.text);
       line = lines[index]
     ) {
-      folded += ` ${line.text}`;
+      folded += line.blankLines === 0 ? " " : "\n".repeat(line.blankLines);
+      folded += line.text;
       index++;
     }
     return parseValue(folded);
@@ -129,7 +136,7 @@ export const parseGcsimYaml = (yaml: string): unknown => {
         } else if (SEQUENCE_ITEM_REGEX.test(item) || KEY_REGEX.test(item)) {
           // The item opens a nested block on the dash's own line, read as though it started on a line of its own at
           // The column it starts at
-          lines[index] = { indent: indent + line.text.length - item.length, text: item };
+          lines[index] = { blankLines: line.blankLines, indent: indent + line.text.length - item.length, text: item };
           items.push(parseBlock(indent + line.text.length - item.length));
         } else {
           index++;
