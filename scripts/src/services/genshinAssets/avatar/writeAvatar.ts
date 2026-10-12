@@ -52,11 +52,12 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
   );
   const { objects } = await readComponentLayout(component);
   const objectMap = new Map(objects.map((object) => [getTransformKey(object.file, object.transformId), object]));
+  const renderersMap = await readSkinnedRenderers(directory.layout, new Set(meshIds.values()));
   const drawn = await Promise.all(
     source.meshes.map(async (name) => {
       const pathId = meshIds.get(name);
       if (!pathId) throw new InvalidOperationError(Operation.Read, name, `is not in block ${source.block}`);
-      const [skinned] = await readSkinnedRenderers(directory.layout, pathId);
+      const [skinned] = renderersMap.get(pathId) ?? [];
       if (!skinned) throw new InvalidOperationError(Operation.Read, name, "is drawn by no skinned renderer");
       const mesh = parseMachineJson<DumpedMesh>(
         await readFile(join(directory.assets, AssetType.Mesh, `${name}.json`), "utf8"),

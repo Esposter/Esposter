@@ -15,16 +15,25 @@ export interface SkinnedRenderer {
   renderer: DumpedSkinnedMeshRenderer;
 }
 
-// Every skinned renderer of a layout that draws the mesh by its path ID, read from the dumps of every block's CABs
-export const readSkinnedRenderers = async (layoutDirectory: string, meshPathId: string): Promise<SkinnedRenderer[]> => {
-  const renderers: SkinnedRenderer[] = [];
+// Every skinned renderer of a layout that draws one of the meshes by its path ID, keyed by that path ID, read in one pass
+// Over the dumps of every block's CABs
+export const readSkinnedRenderers = async (
+  layoutDirectory: string,
+  meshPathIds: ReadonlySet<string>,
+): Promise<Map<string, SkinnedRenderer[]>> => {
+  const renderersMap = new Map<string, SkinnedRenderer[]>();
   for (const cabDirectory of await listCabDirectories(layoutDirectory)) {
     // oxlint-disable-next-line no-await-in-loop -- one CAB's dumps are read at a time, holding their thousands of files
     const dumps = await readCabRenderers(cabDirectory);
-    for (const renderer of dumps)
-      if (renderer.m_Mesh.m_PathID === meshPathId) renderers.push({ file: basename(cabDirectory), renderer });
+    for (const renderer of dumps) {
+      const pathId = renderer.m_Mesh.m_PathID;
+      if (!meshPathIds.has(pathId)) continue;
+      const renderers = renderersMap.get(pathId) ?? [];
+      renderers.push({ file: basename(cabDirectory), renderer });
+      renderersMap.set(pathId, renderers);
+    }
   }
-  return renderers;
+  return renderersMap;
 };
 
 // The folders of every CAB holding skinned renderer dumps, under each block of a layout
