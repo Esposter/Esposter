@@ -388,7 +388,7 @@ for path in $(git diff --cached --name-only); do printf 'formatted\\n' >> "$path
     assert.exists(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath, filePath]);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
-    expect(runSession).toHaveBeenCalledOnce();
+    expect(runSession).toHaveBeenCalledTimes(1);
   });
 
   test("aborts a conflict on a dry run and leaves the queue where it was", async () => {

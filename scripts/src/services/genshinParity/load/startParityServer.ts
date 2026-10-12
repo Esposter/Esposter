@@ -58,7 +58,7 @@ export const startParityServer = async (isDev: boolean): Promise<ParityServer> =
     let output = "";
     const onData = (chunk: Buffer) => {
       // The address can be split across chunks, so it is looked for in all the output so far. Vite colours it, its port
-      // between escape codes, so they are stripped before it is looked for
+      // Between escape codes, so they are stripped before it is looked for
       output += chunk.toString();
       if (!output.replaceAll(ANSI_ESCAPE_REGEX, "").includes(origin)) return;
       clearTimeout(timeout);

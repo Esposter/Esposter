@@ -15,7 +15,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Quaternion, Vector3 } from "three";
 
-const WATERFALL_MESH_REGEX = /^Eff_Model_WaterFall_/u;
+const WATERFALL_MESH_PREFIX = "Eff_Model_WaterFall_";
 
 // A region's waterfalls, each sheet read off its fall's mesh as the witness lays it out: every placement of one, its
 // Vertices carried into the world by its scale, turn and place in that order, as a lathe's are, and each mesh read as one
@@ -25,7 +25,7 @@ export const fitWaterfallSheets = async (component: DerivedAssetComponent): Prom
   const layout = parseMachineJson<SceneLayout>(await readFile(join(root, WITNESS_LAYOUT_FILE_NAME), "utf8"));
   const waterfalls = await Promise.all(
     layout.placements
-      .filter(({ mesh }) => WATERFALL_MESH_REGEX.test(mesh))
+      .filter(({ mesh }) => mesh.startsWith(WATERFALL_MESH_PREFIX))
       .map(async ({ mesh, position, rotation, scale }) => {
         const { vertices } = await readObjMesh(join(assets, AssetType.Mesh, `${mesh}.obj`));
         const stretch = new Vector3(...scale);

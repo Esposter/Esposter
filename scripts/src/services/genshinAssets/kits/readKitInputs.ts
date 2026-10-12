@@ -2,7 +2,6 @@ import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitRecord } from "genshin-world";
 
-import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { readPublishedGameDataEntries } from "#src/services/gameData/readPublishedGameDataEntries";
 import { readPublishedGameDataIndex } from "#src/services/gameData/readPublishedGameDataIndex";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";

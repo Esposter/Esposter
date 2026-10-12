@@ -39,7 +39,7 @@ foreach ($file in Get-ChildItem -LiteralPath '${directory.replaceAll("'", "''")}
 $count
 `;
 // Where a machine without Windows' compiler library gets its disassembler: `vkd3d-compiler` from Wine's vkd3d project,
-// named by VKD3D_COMPILER or found on PATH
+// Named by VKD3D_COMPILER or found on PATH
 const VKD3D_ARGUMENTS = ["-x", "dxbc-tpf", "-b", "d3d-asm"];
 // Every DXBC program in a folder disassembled beside it, returning how many were. Windows reads them through
 // D3DDisassemble; elsewhere `vkd3d-compiler` disassembles each one, and a program it cannot read is left without its assembly
@@ -64,7 +64,7 @@ const disassembleWithVkd3d = (directory: string): number => {
     // A missing compiler throws, since no program can then be read; a program it cannot read is skipped
     if (error) throw error;
     if (status !== 0) continue;
-    writeFileSync(join(directory, name.replace(/\.dxbc$/, ".asm")), stdout);
+    writeFileSync(join(directory, name.replace(/\.dxbc$/u, ".asm")), stdout);
     count++;
   }
   return count;

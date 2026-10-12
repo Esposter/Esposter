@@ -61,15 +61,15 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       continue;
     }
     const { committedOverlay, gapPaths, overlayFailures } = getResult(() => readKitOverlay(overlayName)).match(
-      (committedOverlay) =>
-        getResult(() => buildKitRecord(sourceCandidateMap, committedOverlay)).match(
+      (overlay) =>
+        getResult(() => buildKitRecord(sourceCandidateMap, overlay)).match(
           ({ record }) => ({
-            committedOverlay,
+            committedOverlay: overlay,
             gapPaths: getMismatchedKitPaths(record, publishedRecord),
             overlayFailures: [],
           }),
           (error) => ({
-            committedOverlay,
+            committedOverlay: overlay,
             gapPaths: [],
             overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
           }),

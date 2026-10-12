@@ -857,7 +857,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The English PC client's wish screen on the Character Event banner, Born of Ocean Swell open, at 78 seconds of the public
   // 1080p recording, once its banner has settled: scored whole over its sky, the game's pieces (the tab row, the currency,
-  // the banner card, the Shop, Details and History row and the wish buttons) filled from round them
+  // The banner card, the Shop, Details and History row and the wish buttons) filled from round them
   "wish-screen": {
     capture: "yt-uhCW3MZTgL8.mp4",
     isBackdrop: true,

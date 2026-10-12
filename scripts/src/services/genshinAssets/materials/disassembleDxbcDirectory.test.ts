@@ -21,9 +21,12 @@ describe.skipIf(process.platform === "win32")(disassembleDxbcDirectory, () => {
     delete process.env.VKD3D_COMPILER;
     await rm(directory, { force: true, recursive: true });
   });
+
   test("writes the assembly of each program the compiler reads and counts only those", async () => {
+    expect.hasAssertions();
+
     expect(disassembleDxbcDirectory(directory)).toBe(1);
-    expect(await readFile(join(directory, "good.asm"), "utf8")).toBe("ASM\n");
+    await expect(readFile(join(directory, "good.asm"), "utf8")).resolves.toBe("ASM\n");
     expect((await readdir(directory)).filter((name) => name.endsWith(".asm"))).toStrictEqual(["good.asm"]);
   });
 });

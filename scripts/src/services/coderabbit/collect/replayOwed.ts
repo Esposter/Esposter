@@ -40,7 +40,7 @@ import { getResult, noop } from "@esposter/shared";
 const checkIsCarried = (sourceSha: string, cwd: string): boolean =>
   readCherryShas(readHeadSha(cwd), sourceSha, cwd).length === 0;
 // A pick git refused leaves the sequence open with nothing in progress, so no conflict can be resolved; it is named by
-// the paths git refused over rather than read as a conflict the resolver left unresolved
+// The paths git refused over rather than read as a conflict the resolver left unresolved
 const throwIfRefused = (cwd: string): void => {
   const refusedPaths = readRefusedPaths(cwd);
   if (refusedPaths.length > 0)
@@ -156,5 +156,5 @@ const replayCommits = async ({
 };
 
 // The replay's own git and the sessions it hands a conflict to run with the repository's hooks off, so each commit
-// lands as it was picked (`withoutHooks`)
+// Lands as it was picked (`withoutHooks`)
 export const replayOwed = (input: ReplayInput): Promise<ReplayOutcome> => withoutHooksAsync(() => replayCommits(input));

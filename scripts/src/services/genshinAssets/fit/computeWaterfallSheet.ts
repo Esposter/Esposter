@@ -7,6 +7,12 @@ import { Vector3 } from "three";
 // Precision every fitted number keeps
 const LIP_EDGE_TOLERANCE = 0.01;
 
+// A rounded negative zero is written as zero, so a point on an axis reads the same whichever way its sign fell
+const toPoint = ({ x, y, z }: Vector3): WaterfallSheetRecord["lip"] => ({
+  x: roundFitted(x) || 0,
+  y: roundFitted(y) || 0,
+  z: roundFitted(z) || 0,
+});
 // A waterfall's sheet read off its mesh's points in the world's axes: the centre of its highest edge as the lip, the unit
 // Direction across that edge on the ground, turned to face +x or else +z, the edge's length as its width and the mesh's
 // Height as its drop
@@ -17,7 +23,7 @@ export const computeWaterfallSheet = (points: Vector3[]): WaterfallSheetRecord =
   let start = lipPoints[0] ?? new Vector3();
   let end = start;
   let edgeLength = 0;
-  for (const first of lipPoints) {
+  for (const first of lipPoints)
     for (const second of lipPoints) {
       const length = Math.hypot(second.x - first.x, second.z - first.z);
       if (length > edgeLength) {
@@ -26,16 +32,10 @@ export const computeWaterfallSheet = (points: Vector3[]): WaterfallSheetRecord =
         edgeLength = length;
       }
     }
-  }
+
   const across = new Vector3(end.x - start.x, 0, end.z - start.z).normalize();
   const acrossX = roundFitted(across.x);
   if (acrossX < 0 || (acrossX === 0 && roundFitted(across.z) < 0)) across.negate();
-  // A rounded negative zero is written as zero, so a point on an axis reads the same whichever way its sign fell
-  const toPoint = ({ x, y, z }: Vector3): WaterfallSheetRecord["lip"] => ({
-    x: roundFitted(x) || 0,
-    y: roundFitted(y) || 0,
-    z: roundFitted(z) || 0,
-  });
   return {
     across: toPoint(across),
     drop: roundFitted(highest - lowest),
