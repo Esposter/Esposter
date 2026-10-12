@@ -4,12 +4,11 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
-import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
-import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 
@@ -67,14 +66,11 @@ export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds 
   // A Whirlwind Pulse is a hit of no damage cast from its gadget's place, which shreds each enemy within its reach
   const whirlwindPulse = readHit("whirlwindPulse", { enemyStatus: createPerfidiousWindRuin });
   // Prayerful Wind's Gift gives every member of the deployed team the Anemo DMG Bonus for its seconds
-  const addPrayerfulWindsGift = (kitEffectState: KitEffectState, { deployedTeamIndex, teams }: Party): void => {
-    for (const characterId of teams[deployedTeamIndex]?.characterIds ?? [])
-      buffKitMember(kitEffectState, characterId, {
-        amount: prayerfulWindAnemoDamageBonus,
-        attribute: Attribute.AnemoDamageBonus,
-        secondsRemaining: prayerfulWindSeconds,
-        source: PRAYERFUL_WIND_SOURCE,
-      });
+  const prayerfulWindsGift = {
+    amount: prayerfulWindAnemoDamageBonus,
+    attribute: Attribute.AnemoDamageBonus,
+    secondsRemaining: prayerfulWindSeconds,
+    source: PRAYERFUL_WIND_SOURCE,
   };
   // The Dazzling Polyhedron's field is placed where the burst is cast, and its gadgets are placed from that cast's body. Its
   // Ticks are the Whirlwind Pulses, each cast from the gadget its count cycles to, and it lingers past its seconds
@@ -82,7 +78,7 @@ export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds 
     castKitField(kitEffectState, combatant.characterId, castBody.position, {
       nextTickSeconds: firstWhirlwindPulseSeconds,
       onTick: ({ kitEffectState: tickKitEffectState, party }, tickIndex) => {
-        addPrayerfulWindsGift(tickKitEffectState, party);
+        buffKitTeam(tickKitEffectState, party, prayerfulWindsGift);
         const gadgetOffset = WHIRLWIND_GADGET_OFFSETS[tickIndex % WHIRLWIND_GADGET_OFFSETS.length];
         if (gadgetOffset)
           castKitSummon(tickKitEffectState, createOffsetBody(castBody, gadgetOffset), combatant, [whirlwindPulse]);
@@ -96,7 +92,7 @@ export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds 
       hits: [{ enemyStatus: createPerfidiousWindRuin }],
       onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
         castDazzlingPolyhedron(kitEffectState, body, combatant);
-        addPrayerfulWindsGift(kitEffectState, party);
+        buffKitTeam(kitEffectState, party, prayerfulWindsGift);
       },
     },
   };
