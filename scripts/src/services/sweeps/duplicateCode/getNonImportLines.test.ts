@@ -44,6 +44,14 @@ describe(getNonImportLines, () => {
     expect(getNonImportLines(`import a from "a.json" with { type: "json" // }\n};\nb`)).toStrictEqual(new Set([3]));
   });
 
+  test("keeps import attributes open across a block comment that opens on the brace's line", () => {
+    expect.hasAssertions();
+
+    expect(getNonImportLines(`import a from "a.json" with { /* type\n */ type: "json" };\nb`)).toStrictEqual(
+      new Set([3]),
+    );
+  });
+
   test("does not close import attributes on a brace in a block comment, and closes on the brace after it", () => {
     expect.hasAssertions();
 
