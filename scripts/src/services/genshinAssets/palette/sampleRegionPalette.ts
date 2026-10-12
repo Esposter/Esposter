@@ -20,7 +20,9 @@ export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDa
   const fileNames = await readdir(textureDirectory);
   const notes: string[] = [];
   const palette: Record<string, PaletteColour> = {};
-  for (const [field, families] of Object.entries(PaletteFamilyMap[region])) {
+  for (const [field, fieldFamilies] of Object.entries(PaletteFamilyMap[region])) {
+    // Only the families with a diffuse texture in the extraction are read, so the evidence names those alone
+    const families = fieldFamilies.filter((family) => matchFamilyTextures(fileNames, [family]).length > 0);
     const texturePaths = matchFamilyTextures(fileNames, families).map((fileName) => join(textureDirectory, fileName));
     if (texturePaths.length === 0) {
       notes.push(`${region} ${field}: no diffuse texture of its families in the extraction, left provisional`);
