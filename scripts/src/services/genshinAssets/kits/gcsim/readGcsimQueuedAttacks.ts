@@ -55,7 +55,8 @@ const getPassedName = (expression: GoExpression): string | undefined => {
 
 // The numbers a file's locals are first given with `:=`, `windup := 0`, which a delay written in terms of a local reads, as
 // The local is its first value before a branch of the function changes it. A local its declaration gives no number, a
-// `travel, ok := p["travel"]`, takes the first constant it is assigned, `travel = tickTravel` in the branch that defaults it
+// `travel, ok := p["travel"]`, takes the first number it is assigned, a constant or a literal, `travel = 5` or
+// `travel = tickTravel` in the branch that defaults it
 const readLocalNumberMap = (
   tokens: readonly GoToken[],
   constantMap: ReadonlyMap<string, GoConstant>,
@@ -73,15 +74,20 @@ const readLocalNumberMap = (
   }
   for (const [position, token] of tokens.entries()) {
     const value = tokens[position + 2];
-    const constant = value?.kind === GoTokenKind.Identifier ? constantMap.get(value.text)?.value : undefined;
+    const number =
+      value?.kind === GoTokenKind.Number
+        ? Number(value.text.replaceAll("_", ""))
+        : value?.kind === GoTokenKind.Identifier
+          ? constantMap.get(value.text)?.value
+          : undefined;
     if (
       token.kind === GoTokenKind.Identifier &&
       checkIsGoPunctuation(tokens[position + 1], "=") &&
       !checkIsGoPunctuation(tokens[position - 1], ".") &&
-      typeof constant === "number" &&
+      typeof number === "number" &&
       !localNumberMap.has(token.text)
     )
-      localNumberMap.set(token.text, constant);
+      localNumberMap.set(token.text, number);
   }
   return localNumberMap;
 };
@@ -115,18 +121,18 @@ const readConstantLoop = (
   const isBoundInclusive = checkIsGoPunctuation(tokens[start.end + 2], "<=");
   const bound = parseGoExpression(tokens, start.end + 3);
   const stepStart = bound.end + 1;
-  if (
-    !checkIsGoPunctuation(tokens[bound.end], ";") ||
-    tokens[stepStart]?.text !== variable.text ||
-    !checkIsGoPunctuation(tokens[stepStart + 1], "+") ||
-    !checkIsGoPunctuation(tokens[stepStart + 2], "=")
-  )
-    return undefined;
-  const step = parseGoExpression(tokens, stepStart + 3);
-  if (!checkIsGoPunctuation(tokens[step.end], "{")) return undefined;
-  const [startValue, boundValue, stepValue] = [start, bound, step].map(({ expression }) =>
-    evaluateGoExpression(expression, resolveName),
-  );
+  if (!checkIsGoPunctuation(tokens[bound.end], ";") || tokens[stepStart]?.text !== variable.text) return undefined;
+  // `i++` steps by one, `i += 90` by its expression
+  const isIncrement = checkIsGoPunctuation(tokens[stepStart + 1], "++");
+  const isAddAssign =
+    checkIsGoPunctuation(tokens[stepStart + 1], "+") && checkIsGoPunctuation(tokens[stepStart + 2], "=");
+  if (!isIncrement && !isAddAssign) return undefined;
+  const step = isIncrement ? undefined : parseGoExpression(tokens, stepStart + 3);
+  const stepEnd = step === undefined ? stepStart + 2 : step.end;
+  if (!checkIsGoPunctuation(tokens[stepEnd], "{")) return undefined;
+  const startValue = evaluateGoExpression(start.expression, resolveName);
+  const boundValue = evaluateGoExpression(bound.expression, resolveName);
+  const stepValue = step === undefined ? 1 : evaluateGoExpression(step.expression, resolveName);
   if (
     typeof startValue !== "number" ||
     typeof boundValue !== "number" ||
@@ -139,8 +145,8 @@ const readConstantLoop = (
     if (values.length === MAX_LOOP_ITERATIONS) return undefined;
     values.push(value);
   }
-  const bodyEnd = findClosingBrace(tokens, step.end);
-  return bodyEnd === undefined ? undefined : { bodyEnd, bodyStart: step.end, values, variable: variable.text };
+  const bodyEnd = findClosingBrace(tokens, stepEnd);
+  return bodyEnd === undefined ? undefined : { bodyEnd, bodyStart: stepEnd, values, variable: variable.text };
 };
 
 // Each constant loop of a file, read at its `for` keyword

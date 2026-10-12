@@ -162,6 +162,44 @@ describe(readGcsimQueuedAttacks, () => {
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([78]);
   });
 
+  test("reads a queue call's delay in terms of a local a branch defaults to a literal, and repeats it in a loop bounded by that local", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package aloy",
+          "",
+          "const (",
+          "\tskillRelease = 20",
+          ")",
+          "",
+          "func (c *char) skill(p map[string]int) {",
+          '\ttravel, ok := p["travel"]',
+          "\tif !ok {",
+          "\t\ttravel = 5",
+          "\t}",
+          '\tbomblets, ok := p["bomblets"]',
+          "\tif !ok {",
+          "\t\tbomblets = 2",
+          "\t}",
+          "\tfor i := 0; i < bomblets; i++ {",
+          "\t\tc.Core.QueueAttack(ai, ap, skillRelease, skillRelease+travel+((i+1)*6), cb)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+    ).toStrictEqual([
+      [17, 31],
+      [17, 37],
+    ]);
+  });
+
   test("repeats a queue call in a loop whose bound is inclusive, `i <= 120`, once per value up to it", () => {
     expect.hasAssertions();
 
