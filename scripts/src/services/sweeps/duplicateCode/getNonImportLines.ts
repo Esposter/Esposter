@@ -10,6 +10,15 @@ const IMPORT_END_REGEX =
 const ATTRIBUTES_START_REGEX = /["']\s+with\s*\{(?:(?!\/\/)[^}])*(?:\/\/.*)?$/u;
 const ATTRIBUTES_END_REGEX = /^(?:(?!\/\/)[^}])*\};?\s*(?:\/\/.*)?$/u;
 
+// The index just past the string literal opening at `open`, or the line's end when it is not closed on the line
+const findStringEnd = (line: string, open: number): number => {
+  const quote = line[open];
+  for (let index = open + 1; index < line.length; index++)
+    if (line[index] === "\\") index++;
+    else if (line[index] === quote) return index + 1;
+  return line.length;
+};
+
 // The line with its block comments blanked to spaces, and whether a block comment is still open at its end.
 const blankBlockComments = (line: string, isInBlockComment: boolean) => {
   let code = "";
@@ -23,12 +32,16 @@ const blankBlockComments = (line: string, isInBlockComment: boolean) => {
       rest = rest.slice(end + 2);
       isInComment = false;
     } else {
-      const start = rest.indexOf("/*");
-      const lineCommentStart = rest.indexOf("//");
-      if (start === -1 || (lineCommentStart !== -1 && lineCommentStart < start))
-        return { code: code + rest, isInBlockComment: false };
-      code += `${rest.slice(0, start)}  `;
-      rest = rest.slice(start + 2);
+      const token = /\/\*|\/\/|["'`]/u.exec(rest);
+      if (!token || token[0] === "//") return { code: code + rest, isInBlockComment: false };
+      if (token[0] !== "/*") {
+        const end = findStringEnd(rest, token.index);
+        code += rest.slice(0, end);
+        rest = rest.slice(end);
+        continue;
+      }
+      code += `${rest.slice(0, token.index)}  `;
+      rest = rest.slice(token.index + 2);
       isInComment = true;
     }
 

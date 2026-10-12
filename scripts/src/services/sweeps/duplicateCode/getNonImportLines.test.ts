@@ -66,6 +66,12 @@ describe(getNonImportLines, () => {
     );
   });
 
+  test("reads a block comment opener inside a string literal as code, not as a comment", () => {
+    expect.hasAssertions();
+
+    expect(getNonImportLines(`const GLOB = "**/*.ts";\nimport a from "a";\nb`)).toStrictEqual(new Set([1, 3]));
+  });
+
   test("does not close an import list on a from clause inside a block comment spanning lines", () => {
     expect.hasAssertions();
 
