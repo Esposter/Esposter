@@ -74,8 +74,8 @@ export const loadWitness = async (
   const [meshes, textures] = await Promise.all([
     Promise.all(
       meshNames.map(async (name) => {
-        if (!rigidMeshNames.has(name)) return { object: await objLoader.loadAsync(getUrl(`Mesh/${name}.obj`)) };
         const objUrl = getUrl(`Mesh/${name}.obj`);
+        if (!rigidMeshNames.has(name)) return { object: await objLoader.loadAsync(objUrl) };
         const [objResponse, skinResponse] = await Promise.all([fetch(objUrl), fetch(getUrl(`Mesh/${name}.json`))]);
         if (!objResponse.ok)
           throw new InvalidOperationError(
