@@ -7,21 +7,18 @@
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
   "normalAttacks.3.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.initialHealFlatHealth": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8039 } },
-  "parameters.initialHealMaxHealthShare": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 8039 }
-  },
+  "parameters.initialHealFlatHealth": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8039 } },
+  "parameters.initialHealMaxHealthShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8039 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8032 } },
   "skillHolds.0.action.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 15 }
   },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8032 } },
-  "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 8032 } },
+  "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 8032 } },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }
