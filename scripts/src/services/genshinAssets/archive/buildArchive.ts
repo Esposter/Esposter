@@ -10,11 +10,13 @@ import { readMaterialCandidates } from "#src/services/genshinAssets/archive/read
 import { readTravelLogCandidates } from "#src/services/genshinAssets/archive/readTravelLogCandidates";
 import { readTutorialCandidates } from "#src/services/genshinAssets/archive/readTutorialCandidates";
 import { toArchiveEntries } from "#src/services/genshinAssets/archive/toArchiveEntries";
+import { toViewpointEntries } from "#src/services/genshinAssets/archive/toViewpointEntries";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import {
   archiveBookSchema,
   archiveEntrySchema,
+  archiveViewpointSchema,
   ArchiveSection,
   GameDataset,
   travelLogEntrySchema,
@@ -23,6 +25,7 @@ import {
 // Each section's entries checked against the world's schema for it, which keeps the fields its own entries carry
 const parseSectionEntries = (section: ArchiveSection, entries: readonly ArchiveEntry[]): ArchiveEntry[] => {
   if (section === ArchiveSection.Books) return archiveBookSchema.array().parse(entries);
+  if (section === ArchiveSection.Geography) return archiveViewpointSchema.array().parse(entries);
   if (section === ArchiveSection.TravelLog) return travelLogEntrySchema.array().parse(entries);
   return archiveEntrySchema.array().parse(entries);
 };
@@ -42,7 +45,7 @@ export const buildArchive = (): { bodyIds: number[]; notes: string[]; objects: R
       ...toArchiveEntries(weapons, englishTextMap),
       ...toArchiveEntries(artifactSets, englishTextMap),
     ],
-    [ArchiveSection.Geography]: toArchiveEntries(readGeographyCandidates(), englishTextMap),
+    [ArchiveSection.Geography]: toViewpointEntries(readGeographyCandidates(), englishTextMap),
     [ArchiveSection.LivingBeings]: toArchiveEntries(readLivingBeingCandidates(), englishTextMap),
     [ArchiveSection.Materials]: toArchiveEntries(readMaterialCandidates(), englishTextMap),
     [ArchiveSection.TravelLog]: getNamedCandidates(readTravelLogCandidates(), englishTextMap).map(

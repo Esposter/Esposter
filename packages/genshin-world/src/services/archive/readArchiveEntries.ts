@@ -2,6 +2,7 @@ import type { ArchiveSectionEntriesMap } from "#src/models/archive/ArchiveSectio
 
 import { archiveBookSchema } from "#src/models/archive/ArchiveBook";
 import { archiveEntrySchema } from "#src/models/archive/ArchiveEntry";
+import { archiveViewpointSchema } from "#src/models/archive/ArchiveViewpoint";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries";
 import { readGameData } from "#src/services/data/readGameData";
@@ -13,7 +14,7 @@ export const readArchiveEntries = async (gameDataBaseUrl: string): Promise<Archi
   const [books, equipment, geography, livingBeings, materials, travelLog, tutorials] = await Promise.all([
     readGameData(gameDataBaseUrl, "archive/books", z.array(archiveBookSchema)),
     readGameData(gameDataBaseUrl, "archive/equipment", z.array(archiveEntrySchema)),
-    readGameData(gameDataBaseUrl, "archive/geography", z.array(archiveEntrySchema)),
+    readGameData(gameDataBaseUrl, "archive/geography", z.array(archiveViewpointSchema)),
     readGameData(gameDataBaseUrl, "archive/livingBeings", z.array(archiveEntrySchema)),
     readGameData(gameDataBaseUrl, "archive/materials", z.array(archiveEntrySchema)),
     readTravelLogEntries(gameDataBaseUrl),
