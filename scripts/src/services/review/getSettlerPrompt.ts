@@ -1,6 +1,6 @@
 import type { ReviewIssue } from "#src/models/review/ReviewIssue";
 
-import { REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
+import { REVIEW_COMMIT_INSTRUCTION, REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
 
 // The settler's prompt for one review issue: the issue's body is its findings, which the prompt numbers from zero in the
 // Order the body lists them. Unlike the fixer, a settler may not defer: each finding ends fixed, refuted or recorded.
@@ -17,8 +17,7 @@ The issue's body is the findings the review owes. They are the bullets that open
 
 ${REVIEW_SESSION_CHECKS}
 
-Commit each coherent fix by pathspec with a conventional message (\`type(scope): what changed\`) ending with the line:
-Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>
+${REVIEW_COMMIT_INSTRUCTION}
 Never push, never amend, never stash, and never touch a file no finding concerns.
 
 The issue:

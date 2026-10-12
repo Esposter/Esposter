@@ -36,6 +36,9 @@ export const ReviewSessionRoleModelMap: Record<ReviewSessionRole, string> = {
 // Red: a fix that keeps a test green can still break a type or a docs rule
 export const REVIEW_SESSION_CHECKS =
   "Before committing, run the tests of the files you touched (`pnpm test <paths> --run` from the package that owns them), the workspace rules (`pnpm test src/workspace --run` from `scripts`), the docs suite (`pnpm test content/docs --run` from `apps/web`) when you touched a page, `pnpm typecheck` and `pnpm lint` in each package you touched, and every check a skill you loaded names for a change to those files, such as a run over a reader's real inputs, and keep them all green. A fix they refuse is not made.";
+// The commit a fixer or a settler makes for each fix, with the trailer that names the session that made it
+export const REVIEW_COMMIT_INSTRUCTION =
+  "Commit each coherent fix by pathspec with a conventional message (`type(scope): what changed`) ending with the line:\nCo-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>";
 // Wall clock for one reviewer, the fixer and the settler
 export const REVIEWER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 20 }).total("milliseconds");
 export const FIXER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 90 }).total("milliseconds");

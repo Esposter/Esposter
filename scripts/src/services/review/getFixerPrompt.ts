@@ -1,6 +1,6 @@
 import type { ReviewFinding } from "#src/models/review/ReviewFinding";
 
-import { REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
+import { REVIEW_COMMIT_INSTRUCTION, REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
 
 export interface FixerPromptInput {
   base: string;
@@ -22,8 +22,7 @@ For each finding, in order:
 2. Fix a real one at its root, following the \`code-review\` skill's \`references/fixing-findings.md\` and loading the skills the touched files need. Defer, rather than fix, a finding that needs a design decision, a new feature or a change beyond a mechanical ripple from the files it names.
 3. ${REVIEW_SESSION_CHECKS}
 
-Commit each coherent fix by pathspec with a conventional message (\`type(scope): what changed\`) ending with the line:
-Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>
+${REVIEW_COMMIT_INSTRUCTION}
 Never push, never amend, and never touch a file no finding concerns.
 
 Answer with one JSON object and nothing after it:
