@@ -18,7 +18,7 @@ Mizuki's kit is its record and one behaviour module, `createMizukiKitBehaviour`,
 ## Not built
 
 - **The Dreamdrifter state waits on its hook.** Her skill's activation enters the state, in which she drifts forward while clouds of Anemo strike the enemies near her every 45 frames, she may steer her drift, and only her swap, dash and burst are open to her. The state restricts the actions the kit plays, which is a hook of its own, so the clouds wait on it, and the press deals its activation hit only until then. The Swirl bonus the state gives the party waits on it too.
-- **The snack pick-ups wait on the snack hook.** Her burst leaves a snack every 90 frames for 12 seconds, each a gadget that explodes on its own or when a member collects it, healing that member by a share of Elemental Mastery and flat HP. The pick-up's heal and its Munen Shockwave wait on it, and so do the Ascension 4 and Constellation 4 that read the snacks.
+- **The snack pick-ups wait on the snack hook.** Her burst leaves a snack every 90 frames for 12 seconds, each a gadget that explodes on its own or when a member collects it, healing that member by a share of Elemental Mastery and flat HP. The pick-up's heal and its Munen Shockwave wait on it, and so does Constellation 4, which reads the snacks.
 - **Ascension 1 (Swirl extends the Dreamdrifter), Ascension 4 (the party's hits while she drifts) and Constellations 1, 2 and 6 wait on the Dreamdrifter state hook.** Each reads the state or the Swirl it gives, and Constellation 4 waits on the snack hook as well.
 - **The charged attack's windup waits on a hook that times an action by the state it starts from**, the 14 frames gcsim gives it when it is cast out of the air, as above.
 

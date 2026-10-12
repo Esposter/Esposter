@@ -28,7 +28,7 @@ flowchart LR
 - **The tab sits in the character menu's panel,** widened from the characters' row's left edge so the list and the text share it. The reference is the game's separate Profile / Story page with its own header, and that page is not built; the tab's layout and colours are provisional until the user compares them.
 - **The namecard is the avatar icon's name with the namecard prefix,** for every playable character but Xinyan, Yae Miko and Momoka, who have none. The writer stores it per character; the panel shows the namecard's name once the Friendship holds it, and its art is not drawn yet.
 - **The Friendship Level is read from the save's Companionship EXP,** through the [companionship](/docs/genshin/companionship) level table, once the screen is given the save's companionship slice.
-- **The Profile tab's layout is provisional.** It is set beside `references/character-profile/yt-2I_vWTyHqHg-profile-2s.png`, a frame of the English client's profile page, and its sizes and colours in the character menu's panel stand until it is.
+- **The Profile tab's reference frame** is `references/character-profile/yt-2I_vWTyHqHg-profile-2s.png`, a frame of the English client's profile page; its sizes and colours in the character menu's panel stand until the user compares them.
 
 ## Notes
 

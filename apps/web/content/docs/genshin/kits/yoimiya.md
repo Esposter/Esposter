@@ -11,7 +11,6 @@ Niwabi Fire-Dance is a stance for the table's 10 seconds whose strikes deal Pyro
 
 ## Decisions
 
-- **Yoimiya's Niwabi Fire-Dance multiplies her Normal Attacks, which an infusion cannot carry.** gcsim scales each Normal Attack's multiplier by the skill's 137.9% while the infusion stands. An infusion here only sets the element, so her Normal Attacks keep their own multipliers, and the infusion is built without that scale.
 - **Yoimiya's plunges land 0.4 seconds after they start.** gcsim gives her plunges no timing, so her reaches and landing are Ganyu's.
 - **Niwabi Fire-Dance is a stance, not an infusion.** gcsim scales each Normal Attack's multiplier by the skill's 137.9% and makes it Pyro, and leaves her aimed shots and plunges alone. An infusion only sets the element, and on her charged attack and plunges too, so the skill is a stance whose normal attacks are the Blazing Arrows, each hit its strike's at the raised multiplier.
 - **Aurous Blaze answers the damage the team deals, not every hit gcsim sees.** The mark is an enemy status, and the explosion answers the damage taken that the kit events report. A hit that carries a kind of attack, a normal or charged attack, a plunge, a skill or a burst, sets it off, as gcsim's six attack tags do, whether an action or a summon deals it. A summon whose kit names no kind and a reaction's own damage carry none, so they do not. The explosion is Elemental Burst DMG, gcsim's tag for it, and as it is Yoimiya's own it sets off no other.

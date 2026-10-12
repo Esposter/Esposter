@@ -11,10 +11,10 @@ For the burst's 15 seconds the Ooyoroi stands as a summon, and a normal attack t
 
 ## Decisions
 
-- **Thoma's Fiery Collapse fires on a shielded character's damage, which no kit event reaches yet.** gcsim triggers it on each hit a shielded character takes, behind a one-second internal cooldown, and it sets off a shield of its own. The kit builds Crimson Ooyoroi's initial hit and leaves Fiery Collapse and its shield out. Blazing Blessing's shield is set at its table value without a cap for a recast, as the kit's shields replace each other, where gcsim caps it at the table's maximum.
+- **Thoma's Fiery Collapse fires on a shielded character's damage, which no kit event reaches yet.** gcsim triggers it on each hit a shielded character takes, behind a one-second internal cooldown, and it sets off a shield of its own. The kit fires it from normal attacks instead, as the bullet below says.
 - **Thoma's plunges land 0.4 seconds in.** gcsim gives his plunges no timing, so his reaches and landing are Ganyu's.
 - **Fiery Collapse answers the normal attacks of whoever is on the field, as Xingqiu's Raincutter does.** gcsim sets it off through the same watcher as Raincutter, on the normal attacks the character on the field starts, behind its one-second interval, so the Ooyoroi is a summon that coordinates with them. Its shield stacks onto the one Thoma holds, as gcsim's does, capped at Blazing Blessing's most.
-- **Blazing Blessing's shield is set at its table value without a cap for a recast**, as the kit's shields replace each other, where gcsim keeps the larger of the new and the standing one.
+- **Blazing Blessing's shield is set at its table value without a cap for a recast**, as the kit's shields replace each other, as gcsim's do.
 
 ## Key files
 
