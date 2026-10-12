@@ -7,8 +7,8 @@ export type DeepOmit<T, TKey extends PropertyKey> = T extends DeepOmitKeptValue
   : T extends readonly unknown[]
     ? { [K in keyof T]: DeepOmit<T[K], TKey> }
     : T extends object
-      ? // An open object type such as `object` has no keys to walk, so it is kept as it is
-        Record<string, unknown> extends T
+      ? // An object type with no keys, such as `object`, has nothing to walk, so it is kept as it is
+        [keyof T] extends [never]
         ? T
         : {
             [P in keyof T as P extends symbol ? never : P extends TKey ? never : P]: DeepOmit<T[P], TKey>;

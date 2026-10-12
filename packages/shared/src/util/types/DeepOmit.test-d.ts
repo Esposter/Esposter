@@ -114,4 +114,10 @@ describe("deepOmit type", () => {
 
     expectTypeOf<DeepOmit<{ id: string; meta: object }, "id">>().toEqualTypeOf<{ meta: object }>();
   });
+
+  test("omits key from an all-optional object", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<DeepOmit<{ id?: string; token?: string }, "token">>().toEqualTypeOf<{ id?: string }>();
+  });
 });
