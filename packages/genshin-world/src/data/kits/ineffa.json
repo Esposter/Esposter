@@ -5,7 +5,7 @@
   "chargedAttack.hits.0.element": { "cause": "DiffersFromSource", "value": "Electric" },
   "chargedAttack.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.birgittaFirstDischarge": { "cause": "Unclassified", "value": 42 },
+  "frames.birgittaFirstDischarge": { "cause": "Unsourced", "value": 42 },
   "frames.birgittaDischargeInterval": { "file": "skill.go", "line": 83, "source": "Gcsim", "value": 119 },
   "frames.birgitta": { "cause": "Unsourced", "value": 1200 },
   "frames.skillShield": { "file": "skill.go", "line": 39, "source": "Gcsim", "value": 4 },
