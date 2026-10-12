@@ -9,7 +9,6 @@ import {
 import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
-import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { SKILL_TARGETING_AREA } from "genshin-world";
@@ -19,7 +18,7 @@ import { SKILL_TARGETING_AREA } from "genshin-world";
 // Multipliers and the ability's hitboxes, where they are as many as its hitmarks. A skill of one hit with no hitbox for
 // Each takes the `E-Tap` or `E-Press` hitbox. A press's `Hitmarks` listing numbers is its hitmark in each state gcsim
 // Reads it at, so it gives no hits. A burst with no attack under its tag is a buff, a heal or a drain, and gives none. A
-// slot with no hitmark constant is hit by its queue calls, each at its damage delay, through `addGcsimQueuedHits`
+// Slot with no hitmark constant is hit by its queue calls, each at its damage delay, through `addGcsimQueuedHits`
 export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter): void => {
   const { add, addFrames, addHit, toFile } = writer;
   const { animationFrameNameMap, attacks, config, constantMap, travelMap } = gcsim;

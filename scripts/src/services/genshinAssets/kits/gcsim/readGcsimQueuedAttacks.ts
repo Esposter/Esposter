@@ -75,8 +75,8 @@ const readLocalNumberMap = (tokens: readonly GoToken[]): Map<string, number> => 
 export const readGcsimQueuedAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
-): GcsimQueuedAttack[] => {
-  return sources.flatMap(({ path: file, source }) => {
+): GcsimQueuedAttack[] =>
+  sources.flatMap(({ path: file, source }) => {
     const tokens = tokenizeGo(source);
     const localNumberMap = readLocalNumberMap(tokens);
     const resolveName = (name: string) => constantMap.get(name)?.value ?? localNumberMap.get(name);
@@ -104,4 +104,3 @@ export const readGcsimQueuedAttacks = (
     }
     return queuedAttacks;
   });
-};
