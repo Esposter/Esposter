@@ -95,7 +95,7 @@ describe(getGcsimKitCandidates, () => {
       ["normalAttacks.length", "normalAttacks.1.animationFrames", "normalAttacks.1.hits.length"].map((path) =>
         candidateMap.get(path)?.map(({ value }) => value),
       ),
-    ).toStrictEqual([[2], [60], [1]]);
+    ).toStrictEqual([[2], [40], [1]]);
   });
 
   test("reads a burst's hits from its queue calls, each at the damage delay its call passes, where it has no hitmark constant", () => {
