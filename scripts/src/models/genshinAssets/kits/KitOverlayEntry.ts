@@ -15,7 +15,7 @@ export const kitOverlayEntrySchema: z.ZodType<KitOverlayEntry> = z.union([
   z.strictObject({ cause: z.enum(KitProvisionalCause), value: z.unknown().optional() }),
   z.strictObject({
     file: z.string().min(1),
-    line: z.number().int().positive(),
+    line: z.int().positive(),
     source: z.literal(KitSource.Gcsim),
     value: z.unknown().optional(),
   }),
