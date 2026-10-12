@@ -4,6 +4,8 @@ import { checkIsKitAtom } from "#src/services/genshinAssets/kits/record/checkIsK
 // Area or a table's parameter whose every field is equal
 export const checkIsKitValueEqual = (left: unknown, right: unknown): boolean => {
   if (left === right) return true;
+  else if (Array.isArray(left) && Array.isArray(right))
+    return left.length === right.length && left.every((value, index) => checkIsKitValueEqual(value, right[index]));
   else if (
     typeof left !== "object" ||
     typeof right !== "object" ||

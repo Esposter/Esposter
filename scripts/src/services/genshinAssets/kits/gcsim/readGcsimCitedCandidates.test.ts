@@ -12,10 +12,12 @@ import { describe, expect, test } from "vitest";
 describe("readGcsimCitedCandidates", () => {
   const FOLDER = "aino";
   const ASC_GO = "package aino\n\nfunc tick() {\n\tadd(1.5 * 60)\n}\n";
+  const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
   const createGcsimDirectory = () => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
     writeFileSync(join(directory, "internal", "characters", FOLDER, "asc.go"), ASC_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "loop.go"), LOOP_GO);
     return directory;
   };
 
@@ -46,6 +48,36 @@ describe("readGcsimCitedCandidates", () => {
     expect(classifyKitValue(100, candidates, [], false)).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: 100,
+    });
+  });
+
+  test("a cited line inside a loop whose array matches the loop's values gives that array as its candidate", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "frames.blossomHitmarks": { file: "loop.go", line: 5, source: KitSource.Gcsim, value: [10, 15, 20] },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get(
+      "frames.blossomHitmarks",
+    )?.[0];
+    expect(candidate?.value).toStrictEqual([10, 15, 20]);
+    expect(candidate?.provenance).toStrictEqual({
+      file: "internal/characters/aino/loop.go",
+      line: 5,
+      source: KitSource.Gcsim,
+    });
+  });
+
+  test("a cited array the loop does not give reads as DiffersFromSource, with the loop's own array as the difference", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "frames.blossomHitmarks": { file: "loop.go", line: 5, source: KitSource.Gcsim, value: [10, 15, 21] },
+    };
+    const candidates =
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("frames.blossomHitmarks") ?? [];
+    expect(candidates[0]?.value).toStrictEqual([10, 15, 20]);
+    expect(classifyKitValue([10, 15, 21], candidates, [], false)).toStrictEqual({
+      cause: KitProvisionalCause.DiffersFromSource,
+      value: [10, 15, 21],
     });
   });
 });
