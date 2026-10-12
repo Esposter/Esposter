@@ -52,6 +52,7 @@
     "generate": "nuxt generate",
     "generate-pwa-assets": "pnpx pwa-asset-generator https://prodstesposter001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f",
     "lint": "TIMING=1 eslint .",
+    "lint:fix": "TIMING=1 eslint --fix .",
     "phaser:gen": "tsx --tsconfig tsconfig.root.json scripts/phaser/index.ts",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
