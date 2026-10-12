@@ -3,5 +3,6 @@ import type { DumpedPointer } from "#src/models/genshinAssets/shared/DumpedPoint
 
 // A skinned renderer draws its mesh itself, with no filter beside it: a part whose pieces a clip moves, such as a door
 export interface DumpedSkinnedMeshRenderer extends DumpedMeshRenderer {
+  m_Bones: DumpedPointer[];
   m_Mesh: DumpedPointer;
 }

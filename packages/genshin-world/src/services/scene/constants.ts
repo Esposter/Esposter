@@ -16,6 +16,10 @@ export const LEAF_SHADER = "Shader #9134712319877186229";
 // The layout `genshin:assets witness` writes beside a component's exports, which the parity page's witness and the world
 // Under `nuxt dev` both draw them by
 export const WITNESS_LAYOUT_FILE_NAME = "witness.json";
+// The game's own character model `genshin:assets avatar` writes beside a component's exports: its manifest, and the
+// Binary of its meshes' typed arrays the manifest's views lie in
+export const AVATAR_MANIFEST_FILE_NAME = "avatar.json";
+export const AVATAR_BINARY_FILE_NAME = "avatar.bin";
 // The families whose parts a scene moves one by one, so the witness keeps a group per part of each: the login's walkway,
 // Whose pieces rise as the camera nears them. Every other family's parts stand still and are drawn as instances
 export const MOVING_PART_FAMILIES: ReadonlySet<string> = new Set<string>([LoginPartFamily.Walkway]);
