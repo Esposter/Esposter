@@ -70,7 +70,7 @@ const BarrelPathsMap: Record<ExportsGeneration, string[]> = {
   typescript: [BARREL_FILE],
   vue: [COMPONENT_BARREL_PATH, BARREL_FILE],
 };
-const ALL_BARREL_PATHS = [COMPONENT_BARREL_PATH, BARREL_FILE];
+const ALL_BARREL_PATHS = new Set(Object.values(BarrelPathsMap).flat());
 // Writes the barrels into `src` under the package directory tsdown resolved, from the build's `build:prepare` hook.
 // `lazyDirectories` are `src`-relative directories the package loads on demand, and the source barrel leaves them out.
 export const generateExports = (
