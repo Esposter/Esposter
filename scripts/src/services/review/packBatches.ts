@@ -6,21 +6,21 @@ export const packBatches = (files: ReviewFile[], fileCap: number, lineCap: numbe
   const batches: ReviewFile[][] = [];
   let batch: ReviewFile[] = [];
   let batchLines = 0;
+  const closeBatch = () => {
+    if (batch.length > 0) batches.push(batch);
+    batch = [];
+    batchLines = 0;
+  };
   for (const file of files) {
-    const isFull = batch.length >= fileCap || batchLines + file.lines > lineCap;
-    if (batch.length > 0 && isFull) {
-      batches.push(batch);
-      batch = [];
-      batchLines = 0;
+    if (file.lines > lineCap) {
+      closeBatch();
+      batches.push([file]);
+      continue;
     }
+    if (batch.length >= fileCap || batchLines + file.lines > lineCap) closeBatch();
     batch.push(file);
     batchLines += file.lines;
-    if (file.lines > lineCap) {
-      batches.push(batch);
-      batch = [];
-      batchLines = 0;
-    }
   }
-  if (batch.length > 0) batches.push(batch);
+  closeBatch();
   return batches;
 };
