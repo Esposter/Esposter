@@ -78,6 +78,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `mualani`            | —     |                                                                          |
 | `nahida`             | —     |                                                                          |
 | `navia`              | —     |                                                                          |
+| `nefer`              | —     |                                                                          |
 | `neuvillette`        | —     |                                                                          |
 | `nicole`             | —     |                                                                          |
 | `nilou`              | —     |                                                                          |
