@@ -6,3 +6,5 @@ export const LOGIN_DOOR_RELIEF_PIXELS_PER_METRE = 200;
 export const LOGIN_DOOR_SLIT_WIDTH = 0.04;
 export const LOGIN_DOOR_SLIT_STRENGTH = 4;
 export const LOGIN_DOOR_PANEL_STRENGTH = 0.6;
+// The game's material for the door's panel, which lights as ours does where the exports draw the door
+export const LOGIN_DOOR_PANEL_MATERIAL = "LoginScene_Door02";

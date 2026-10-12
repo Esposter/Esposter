@@ -24,6 +24,7 @@ import { applyLoginDoorLift } from "#src/services/login/door/applyLoginDoorLift"
 import { computeLoginDoorLiftMs } from "#src/services/login/door/computeLoginDoorLiftMs";
 import {
   LOGIN_DOOR_GLOW_COLOR,
+  LOGIN_DOOR_PANEL_MATERIAL,
   LOGIN_DOOR_PANEL_STRENGTH,
   LOGIN_DOOR_SLIT_STRENGTH,
   LOGIN_DOOR_SLIT_WIDTH,
@@ -100,18 +101,7 @@ import {
   synthesizeCloudLayerTextures,
 } from "genshin-engine";
 import { BatchedMesh, DirectionalLight, Euler, Group, HemisphereLight, Matrix4, Mesh } from "three";
-import {
-  abs,
-  color,
-  exp,
-  mix,
-  mx_fractal_noise_float,
-  positionLocal,
-  positionWorld,
-  smoothstep,
-  uniform,
-  vec2,
-} from "three/tsl";
+import { abs, color, exp, mix, mx_fractal_noise_float, positionWorld, smoothstep, uniform, vec2 } from "three/tsl";
 import { MeshBasicNodeMaterial } from "three/webgpu";
 
 interface Props {
@@ -169,6 +159,24 @@ const {
   walkway,
 } = defineProps<Props>();
 const emit = defineEmits<{ doorFormed: []; ready: [] }>();
+// Where the door stands and how long it takes to rise, the camera's pose over the walkway and short of the door, and
+// The walkway's and the towers' rows the glide wraps by, each read once from the records the scene is built from
+const doorRestPosition = getLoginDoorPosition(door);
+const doorLiftMs = computeLoginDoorLiftMs(door);
+const cameraHeight = computeLoginCameraHeight(walkway);
+const cameraRestZ = computeLoginCameraZ(door);
+const walkwayRow = scroll.LoginScene_Bridge01_Vo;
+const towersRow = scroll.LoginScene_Build_All;
+// The door lights from a line down its middle outward, over the panel's own glow, as the game opens it: our panel and
+// The exported one alike
+const doorGlow = uniform(0);
+const doorLightNode = color(LOGIN_DOOR_GLOW_COLOR).mul(
+  doorGlow.mul(
+    exp(abs(positionWorld.x.sub(doorRestPosition[0])).div(LOGIN_DOOR_SLIT_WIDTH).negate())
+      .mul(LOGIN_DOOR_SLIT_STRENGTH)
+      .add(LOGIN_DOOR_PANEL_STRENGTH),
+  ),
+);
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
 // Them, alone when it asks
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
@@ -179,7 +187,11 @@ const sceneExportMap = useSceneExports(
   sceneExportBaseUrl,
   () => [LOGIN_SCENE_EXPORT_COMPONENT],
   { [LOGIN_SCENE_EXPORT_COMPONENT]: LoginPartFamilyMeshRegexMap },
-  () => new StoneNodeMaterial(loginStoneLight),
+  ({ name }) => {
+    const material = new StoneNodeMaterial(loginStoneLight);
+    if (name === LOGIN_DOOR_PANEL_MATERIAL) material.emissiveNode = doorLightNode;
+    return material;
+  },
 );
 const exportedParts = computed(() => witness?.parts ?? sceneExportMap.get(LOGIN_SCENE_EXPORT_COMPONENT)?.parts);
 // Whether the exports draw a family in place of ours: the families a witness render names, else every family the
@@ -192,14 +204,6 @@ const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !checkIsExpo
 const { scene, sizes } = useTres();
 const cameraFov = computed(() => getLoginCameraFov(sizes.aspectRatio.value));
 const { onRender } = useLoop();
-// Where the door stands and how long it takes to rise, the camera's pose over the walkway and short of the door, and
-// The walkway's and the towers' rows the glide wraps by, each read once from the records the scene is built from
-const doorRestPosition = getLoginDoorPosition(door);
-const doorLiftMs = computeLoginDoorLiftMs(door);
-const cameraHeight = computeLoginCameraHeight(walkway);
-const cameraRestZ = computeLoginCameraZ(door);
-const walkwayRow = scroll.LoginScene_Bridge01_Vo;
-const towersRow = scroll.LoginScene_Build_All;
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = LOGIN_RIM_STRENGTH;
 const light = new DirectionalLight();
@@ -291,19 +295,7 @@ const walkwayPaving = createLoginPaving(paving);
 walkwayMaterial.colorNode = walkwayPaving.shade.mul(color(stone.walkway.albedo));
 walkwayMaterial.normalNode = walkwayPaving.normalNode;
 const doorFrameMaterial = createStoneMaterial(stone.door, loginStoneLight);
-// The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
-const doorGlow = uniform(0);
-const doorMaterial = createStoneMaterial(
-  stone.doorPanel,
-  loginStoneLight,
-  color(LOGIN_DOOR_GLOW_COLOR).mul(
-    doorGlow.mul(
-      exp(abs(positionLocal.x).div(LOGIN_DOOR_SLIT_WIDTH).negate())
-        .mul(LOGIN_DOOR_SLIT_STRENGTH)
-        .add(LOGIN_DOOR_PANEL_STRENGTH),
-    ),
-  ),
-);
+const doorMaterial = createStoneMaterial(stone.doorPanel, loginStoneLight, doorLightNode);
 // The door's front painted with its panel's raised bands and its feet's gilding over its stone
 const doorAlbedo = createLoginDoorRelief(door).mul(color(stone.door.albedo));
 doorFrameMaterial.colorNode = doorAlbedo;
