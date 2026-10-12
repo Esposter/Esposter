@@ -34,7 +34,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.1 }
   },
-  "skill.hits.1.element": { "cause": "Unclassified", "value": "Grass" },
   "skill.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 62 },
-  "skill.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 9932 } }
+  "skill.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 9932 } },
+  "skill.hits.1.gauge": { "cause": "DiffersFromSource" }
 }

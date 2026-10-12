@@ -82,7 +82,6 @@
   "hits.kamera.7.multiplier": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 8839 } },
   "hits.kamera.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.thorn.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
-  "hits.thorn.element": { "cause": "Unclassified", "value": "Ice" },
   "hits.thorn.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.thorn.multiplier": { "cause": "Unclassified", "value": { "index": 8, "proudSkillGroupId": 8831 } },
   "hits.thorn.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -90,8 +89,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0 }
   },
-  "hits.snappyMark.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.snappyMark.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.snappyMark.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.snappyMark.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 8832 } },
   "hits.snappyMark.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -111,12 +108,13 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8832 } },
   "skillCooldownSeconds": { "cause": "DiffersFromSource", "value": { "index": 7, "proudSkillGroupId": 8832 } },
   "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 },
+  "hits.thorn.gauge": { "cause": "DiffersFromSource" },
+  "hits.snappyMark.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

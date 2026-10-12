@@ -71,8 +71,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 }
   },
-  "stances.pactswornPathclearer.chargedAttack.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
-  "stances.pactswornPathclearer.chargedAttack.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.pactswornPathclearer.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
   "stances.pactswornPathclearer.chargedAttack.hits.0.multiplier": {
     "cause": "Unclassified",
@@ -176,16 +174,13 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.5 }
   },
-  "stances.pactswornPathclearer.skill.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
-  "stances.pactswornPathclearer.skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.pactswornPathclearer.skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 28 },
-  "stances.pactswornPathclearer.skill.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
   "stances.pactswornPathclearer.skill.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 7132 }
   },
-  "stances.pactswornPathclearer.skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 75 },
   "stances.pactswornPathclearer.skill.targeting": { "cause": "Unclassified", "value": "Skill" },
+  "stances.pactswornPathclearer.chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },

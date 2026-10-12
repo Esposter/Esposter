@@ -58,8 +58,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.561797891182818 }
   },
-  "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Wind" },
-  "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 2 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 21 },
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "Unclassified",
@@ -74,8 +72,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.561797891182818 }
   },
-  "skillHolds.0.variant.hits.0.element": { "cause": "Unclassified", "value": "Wind" },
-  "skillHolds.0.variant.hits.0.gauge": { "cause": "Unclassified", "value": 2 },
   "skillHolds.0.variant.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 21 },
   "skillHolds.0.variant.hits.0.multiplier": {
     "cause": "Unclassified",

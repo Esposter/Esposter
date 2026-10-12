@@ -30,10 +30,8 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 25.5 }
   },
-  "skill.hits.1.element": { "cause": "Unclassified", "value": "Fire" },
-  "skill.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
   "skill.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
-  "skill.hits.1.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "skill.hits.1.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "skill.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 9632 } },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }

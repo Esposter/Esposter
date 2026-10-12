@@ -102,8 +102,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.78013840664737 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 12 },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.multiplier": {
     "cause": "Unclassified",
@@ -117,8 +117,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.675467891024383 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.multiplier": {
     "cause": "Unclassified",
@@ -132,8 +132,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.313930922024598 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.multiplier": {
     "cause": "Unclassified",
@@ -144,8 +144,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.459820624195552 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.element": { "cause": "Unclassified", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.element": { "cause": "DiffersFromSource", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 23 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.multiplier": {
     "cause": "Unclassified",
@@ -159,8 +159,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.041522986797285 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.multiplier": {
     "cause": "Unclassified",
@@ -171,8 +171,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.041522986797285 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.element": { "cause": "Unclassified", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.element": { "cause": "DiffersFromSource", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.multiplier": {
     "cause": "Unclassified",
@@ -186,8 +186,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.849203781276161 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 25 },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.multiplier": {
     "cause": "Unclassified",
@@ -200,6 +200,13 @@
   "burst.hits.2.internalCooldownTag": { "cause": "DiffersFromSource" },
   "burst.hits.3.internalCooldownTag": { "cause": "DiffersFromSource" },
   "burst.hits.4.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },

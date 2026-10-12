@@ -314,15 +314,11 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "hits.baronBunnyExplosion.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.baronBunnyExplosion.gauge": { "cause": "Unclassified", "value": 2 },
   "hits.baronBunnyExplosion.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
-  "hits.baronBunnyExplosion.isBlunt": { "cause": "Unclassified", "value": true },
   "hits.baronBunnyExplosion.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 2132 }
   },
-  "hits.baronBunnyExplosion.poiseDamage": { "cause": "Unclassified", "value": 260 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 14 },
   "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 10 },
   "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 27 },

@@ -137,8 +137,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
-  "stances.ceremonialGarment.chargedAttack.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.ceremonialGarment.chargedAttack.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.flatHealth": {
     "cause": "Unclassified",
@@ -163,8 +161,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
-  "stances.ceremonialGarment.normalAttacks.0.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.ceremonialGarment.normalAttacks.0.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.flatHealth": {
     "cause": "Unclassified",
@@ -188,8 +184,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
-  "stances.ceremonialGarment.normalAttacks.1.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.ceremonialGarment.normalAttacks.1.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.flatHealth": {
     "cause": "Unclassified",
@@ -213,8 +207,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
-  "stances.ceremonialGarment.normalAttacks.2.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.ceremonialGarment.normalAttacks.2.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.flatHealth": {
     "cause": "Unclassified",
@@ -235,6 +227,9 @@
   "stances.ceremonialGarment.skill.animationFrames": { "cause": "Unclassified", "value": 61 },
   "stances.ceremonialGarment.skill.hits.length": { "cause": "Unclassified", "value": 0 },
   "stances.ceremonialGarment.skill.targeting": { "cause": "Unclassified", "value": "Skill" },
+  "stances.ceremonialGarment.normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.ceremonialGarment.normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "stances.ceremonialGarment.normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },

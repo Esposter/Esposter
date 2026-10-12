@@ -39,11 +39,6 @@
     "value": { "angle": 4.537856055185257, "height": 2, "radius": 3.6 }
   },
   "stances.paintedDome.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
-  "stances.paintedDome.normalAttacks.0.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
-    "value": "NormalAttack"
-  },
-  "stances.paintedDome.normalAttacks.0.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
   "stances.paintedDome.normalAttacks.0.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 8131 }
@@ -57,11 +52,6 @@
     "value": { "angle": 4.537856055185257, "height": 2, "radius": 3.6 }
   },
   "stances.paintedDome.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 22 },
-  "stances.paintedDome.normalAttacks.1.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
-    "value": "NormalAttack"
-  },
-  "stances.paintedDome.normalAttacks.1.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
   "stances.paintedDome.normalAttacks.1.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 8131 }
@@ -75,11 +65,6 @@
     "value": { "angle": 4.1887902047863905, "height": 2, "radius": 3.7 }
   },
   "stances.paintedDome.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 33 },
-  "stances.paintedDome.normalAttacks.2.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
-    "value": "NormalAttack"
-  },
-  "stances.paintedDome.normalAttacks.2.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
   "stances.paintedDome.normalAttacks.2.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 8131 }
@@ -93,11 +78,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.6 }
   },
   "stances.paintedDome.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
-  "stances.paintedDome.normalAttacks.3.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
-    "value": "NormalAttack"
-  },
-  "stances.paintedDome.normalAttacks.3.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
   "stances.paintedDome.normalAttacks.3.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 8131 }

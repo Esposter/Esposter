@@ -24,8 +24,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "skillHolds.0.action.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 50 },
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "Unclassified",
@@ -39,8 +38,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 }
   },
-  "skillHolds.1.action.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "skillHolds.1.action.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "skillHolds.1.action.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "skillHolds.1.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 93 },
   "skillHolds.1.action.hits.0.multiplier": {
     "cause": "Unclassified",

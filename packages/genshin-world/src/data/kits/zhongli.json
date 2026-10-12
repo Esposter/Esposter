@@ -671,33 +671,20 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.topazMeteor.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.topazMeteor.gauge": { "cause": "Unclassified", "value": 4 },
   "hits.topazMeteor.hitmarkFrames": { "cause": "Unclassified", "value": 101 },
-  "hits.topazMeteor.isBlunt": { "cause": "Unclassified", "value": true },
   "hits.topazMeteor.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 3039 } },
-  "hits.topazMeteor.poiseDamage": { "cause": "Unclassified", "value": 500 },
   "hits.meteor.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.5 } },
-  "hits.meteor.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.meteor.gauge": { "cause": "Unclassified", "value": 4 },
   "hits.meteor.hitmarkFrames": { "cause": "Unclassified", "value": 101 },
-  "hits.meteor.isBlunt": { "cause": "Unclassified", "value": true },
   "hits.meteor.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 3039 } },
-  "hits.meteor.poiseDamage": { "cause": "Unclassified", "value": 500 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 33.76 },
   "parameters.shieldFlatHealth": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 3032 } },
   "parameters.shieldMaxHealthShare": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 3032 } },
   "parameters.shieldSeconds": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 3032 } },
   "plungeCollision.element": { "cause": "Unclassified", "value": "Rock" },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.0.action.hits.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
-  "skillHolds.0.action.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 3032 }
   },
-  "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unclassified", "value": 142.9 },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

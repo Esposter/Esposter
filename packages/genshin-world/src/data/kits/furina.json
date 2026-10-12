@@ -53,7 +53,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.242640687119286 }
   },
-  "hits.arkhe.element": { "cause": "Unclassified", "value": "Water" },
   "hits.arkhe.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "hits.arkhe.multiplier": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 8931 } },
   "hits.arkhe.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -142,5 +141,6 @@
   },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "hits.arkhe.gauge": { "cause": "DiffersFromSource" }
 }

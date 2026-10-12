@@ -77,11 +77,7 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 18.5 }
   },
-  "skill.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "skill.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5132 } },
-  "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "skillHolds.0.action.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 20.5 }

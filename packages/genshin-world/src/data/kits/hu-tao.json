@@ -20,8 +20,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0 }
   },
-  "hits.bloodBlossom.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.bloodBlossom.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.bloodBlossom.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.bloodBlossom.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 4632 } },
   "hits.bloodBlossom.poiseDamage": { "cause": "Unclassified", "value": 0 },

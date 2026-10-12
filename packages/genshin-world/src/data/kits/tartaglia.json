@@ -60,8 +60,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.flashOfHavoc.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.flashOfHavoc.gauge": { "cause": "Unclassified", "value": 2 },
   "hits.flashOfHavoc.hitmarkFrames": { "cause": "Unclassified", "value": 70 },
   "hits.flashOfHavoc.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3339 } },
   "hits.flashOfHavoc.poiseDamage": { "cause": "Unclassified", "value": 200 },
@@ -78,8 +76,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.riptideBlast.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.riptideBlast.gauge": { "cause": "Unclassified", "value": 2 },
   "hits.riptideBlast.hitmarkFrames": { "cause": "Unclassified", "value": 48 },
   "hits.riptideBlast.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3339 } },
   "hits.riptideBlast.poiseDamage": { "cause": "Unclassified", "value": 100 },
@@ -87,8 +83,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.riptideBurst.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.riptideBurst.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.riptideBurst.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "hits.riptideBurst.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
   "hits.riptideBurst.multiplier": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 3331 } },
   "hits.riptideBurst.poiseDamage": { "cause": "Unclassified", "value": 60 },
@@ -110,11 +105,7 @@
   },
   "parameters.stanceCooldownSeconds": { "cause": "Unclassified", "value": { "index": 13, "proudSkillGroupId": 3332 } },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 } },
-  "skill.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "skill.hits.0.gauge": { "cause": "Unclassified", "value": 2 },
-  "skill.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 3332 } },
-  "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 51.75 },
   "skillCooldownSeconds": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.burst.animationFrames": { "cause": "Unclassified", "value": 103 },
   "stances.meleeStance.burst.hits.length": { "cause": "Unclassified", "value": 1 },
@@ -137,10 +128,11 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.2 }
   },
-  "stances.meleeStance.chargedAttack.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.meleeStance.chargedAttack.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 14 },
-  "stances.meleeStance.chargedAttack.hits.0.internalCooldownTag": { "cause": "Unclassified", "value": "ChargedAttack" },
+  "stances.meleeStance.chargedAttack.hits.0.internalCooldownTag": {
+    "cause": "DiffersFromSource",
+    "value": "ChargedAttack"
+  },
   "stances.meleeStance.chargedAttack.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 8, "proudSkillGroupId": 3332 }
@@ -171,11 +163,9 @@
     "cause": "Unclassified",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.6 }
   },
-  "stances.meleeStance.normalAttacks.0.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.meleeStance.normalAttacks.0.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 8 },
   "stances.meleeStance.normalAttacks.0.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": "TartagliaFoulLegacy"
   },
   "stances.meleeStance.normalAttacks.0.hits.0.multiplier": {
@@ -190,11 +180,9 @@
     "cause": "Unclassified",
     "value": { "angle": 4.71238898038469, "height": 2, "radius": 2.6 }
   },
-  "stances.meleeStance.normalAttacks.1.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.meleeStance.normalAttacks.1.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 6 },
   "stances.meleeStance.normalAttacks.1.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": "TartagliaFoulLegacy"
   },
   "stances.meleeStance.normalAttacks.1.hits.0.multiplier": {
@@ -209,11 +197,9 @@
     "cause": "Unclassified",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.6 }
   },
-  "stances.meleeStance.normalAttacks.2.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.meleeStance.normalAttacks.2.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 16 },
   "stances.meleeStance.normalAttacks.2.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": "TartagliaFoulLegacy"
   },
   "stances.meleeStance.normalAttacks.2.hits.0.multiplier": {
@@ -228,11 +214,9 @@
     "cause": "Unclassified",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.9 }
   },
-  "stances.meleeStance.normalAttacks.3.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.meleeStance.normalAttacks.3.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 7 },
   "stances.meleeStance.normalAttacks.3.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": "TartagliaFoulLegacy"
   },
   "stances.meleeStance.normalAttacks.3.hits.0.multiplier": {
@@ -247,11 +231,9 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.8000000000000003 }
   },
-  "stances.meleeStance.normalAttacks.4.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.meleeStance.normalAttacks.4.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 7 },
   "stances.meleeStance.normalAttacks.4.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": "TartagliaFoulLegacy"
   },
   "stances.meleeStance.normalAttacks.4.hits.0.multiplier": {
@@ -266,11 +248,9 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.6400549446402595 }
   },
-  "stances.meleeStance.normalAttacks.5.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.meleeStance.normalAttacks.5.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.normalAttacks.5.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
   "stances.meleeStance.normalAttacks.5.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": "TartagliaFoulLegacy"
   },
   "stances.meleeStance.normalAttacks.5.hits.0.multiplier": {
@@ -282,11 +262,9 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.7 }
   },
-  "stances.meleeStance.normalAttacks.5.hits.1.element": { "cause": "Unclassified", "value": "Water" },
-  "stances.meleeStance.normalAttacks.5.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.normalAttacks.5.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 20 },
   "stances.meleeStance.normalAttacks.5.hits.1.internalCooldownTag": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": "TartagliaFoulLegacy"
   },
   "stances.meleeStance.normalAttacks.5.hits.1.multiplier": {

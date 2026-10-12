@@ -30,8 +30,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.324555320336759 }
   },
-  "stances.manifestFlame.chargedAttack.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
-  "stances.manifestFlame.chargedAttack.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "stances.manifestFlame.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 28 },
   "stances.manifestFlame.chargedAttack.hits.0.multiplier": {
     "cause": "Unclassified",

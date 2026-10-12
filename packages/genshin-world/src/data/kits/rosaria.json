@@ -13,8 +13,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.5 }
   },
-  "hits.ritesTick.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.ritesTick.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.ritesTick.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.ritesTick.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 4539 } },
   "hits.ritesTick.poiseDamage": { "cause": "Unclassified", "value": 0 },

@@ -15,8 +15,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 }
   },
-  "hits.waterBall.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.waterBall.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.waterBall.hitmarkFrames": { "cause": "Unclassified", "value": 10 },
   "hits.waterBall.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 12139 } },
   "hits.waterBall.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
@@ -36,5 +34,6 @@
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 12132 } },
   "skill.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 12132 } },
   "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "skill.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skill.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.waterBall.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

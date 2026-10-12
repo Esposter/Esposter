@@ -22,8 +22,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 12.5 }
   },
-  "hits.celestialShower.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.celestialShower.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.celestialShower.hitmarkFrames": { "cause": "Unclassified", "value": 8 },
   "hits.celestialShower.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 3739 } },
   "hits.celestialShower.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -31,8 +29,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
-  "hits.iceLotusExplosion.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.iceLotusExplosion.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.iceLotusExplosion.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.iceLotusExplosion.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3732 } },
   "hits.iceLotusExplosion.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -45,5 +41,6 @@
   "parameters.celestialShowerSeconds": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3739 } },
   "parameters.iceLotusSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3732 } },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
-  "skill.hits.0.multiplier": { "cause": "DiffersFromSource", "value": { "index": 0, "proudSkillGroupId": 3732 } }
+  "skill.hits.0.multiplier": { "cause": "DiffersFromSource", "value": { "index": 0, "proudSkillGroupId": 3732 } },
+  "hits.celestialShower.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

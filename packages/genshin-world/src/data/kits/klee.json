@@ -169,12 +169,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 }
   },
-  "hits.chargedAttackBomb.element": { "cause": "Unclassified", "value": "Fire" },
-  "hits.chargedAttackBomb.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.chargedAttackBomb.hitmarkFrames": { "cause": "Unclassified", "value": 72 },
-  "hits.chargedAttackBomb.isBlunt": { "cause": "Unclassified", "value": true },
   "hits.chargedAttackBomb.multiplier": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 2931 } },
-  "hits.chargedAttackBomb.poiseDamage": { "cause": "Unclassified", "value": 180 },
   "normalAttacks.0.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.length": { "cause": "DiffersFromSource", "value": 0 },

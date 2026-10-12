@@ -305,6 +305,8 @@
   "hits.frostyParfaitTicks.20.element": { "cause": "DiffersFromSource" },
   "hits.frostyParfaitTicks.20.gauge": { "cause": "DiffersFromSource" },
   "hits.frostyParfaitTicks.20.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.surgingBlade.element": { "cause": "DiffersFromSource" },
+  "hits.surgingBlade.gauge": { "cause": "DiffersFromSource" },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },

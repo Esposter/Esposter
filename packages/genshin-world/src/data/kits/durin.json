@@ -493,10 +493,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.7 }
   },
-  "skillChain.followUps.0.hits.0.element": { "cause": "Unclassified", "value": "Fire" },
-  "skillChain.followUps.0.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "skillChain.followUps.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
-  "skillChain.followUps.0.hits.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
   "skillChain.followUps.0.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 12332 }
