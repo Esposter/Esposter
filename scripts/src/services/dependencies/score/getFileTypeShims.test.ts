@@ -23,6 +23,14 @@ describe(getFileTypeShims, () => {
     );
   });
 
+  test("counts a cast of a dollar-named binding, whose name is escaped in the call's pattern", () => {
+    expect.hasAssertions();
+
+    const text = ['import { $t } from "vue-i18n";', 'const label = $t("a") as unknown as string;'].join("\n");
+
+    expect(getFileTypeShims(text)).toStrictEqual(new Map([["vue-i18n", 1]]));
+  });
+
   test("counts nothing for a directive with no import beside it", () => {
     expect.hasAssertions();
 

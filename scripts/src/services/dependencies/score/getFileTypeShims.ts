@@ -49,13 +49,19 @@ const getNearbyPackageNames = (importLines: ImportLine[], index: number): Set<st
       .map(({ packageName }) => packageName),
   );
 
-// Every package whose imported name is called or read from within the window of a cast
+// A binding name may carry `$`, which a pattern reads as its end anchor, so every syntax character is escaped
+const escapeRegExp = (text: string): string => text.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
+
+// Every package whose imported name is called or read from within the window of a cast. The lookbehind stands in for `\b`,
+// which a name starting with `$` never satisfies beside a space
 const getCalledPackageNames = (lines: string[], importLines: ImportLine[], index: number): Set<string> => {
   const windowText = lines.slice(Math.max(0, index - SHIM_LINE_WINDOW), index + SHIM_LINE_WINDOW + 1).join("\n");
   return new Set(
     importLines
       .filter(({ bindingNames }) =>
-        bindingNames.some((bindingName) => new RegExp(String.raw`\b${bindingName}\s*[(.]`, "u").test(windowText)),
+        bindingNames.some((bindingName) =>
+          new RegExp(String.raw`(?<![\w$])${escapeRegExp(bindingName)}\s*[(.]`, "u").test(windowText),
+        ),
       )
       .map(({ packageName }) => packageName),
   );
@@ -67,14 +73,16 @@ export const getFileTypeShims = (text: string): Map<string, number> => {
   const lines = text.split("\n");
   const importLines = readImportLines(lines);
   const packageNameCountMap = new Map<string, number>();
+  const countShim = (packageName: string): void => {
+    packageNameCountMap.set(packageName, (packageNameCountMap.get(packageName) ?? 0) + 1);
+  };
   const countShims = (packageNames: Set<string>): void => {
-    for (const packageName of packageNames)
-      packageNameCountMap.set(packageName, (packageNameCountMap.get(packageName) ?? 0) + 1);
+    for (const packageName of packageNames) countShim(packageName);
   };
 
   for (const [index, line] of lines.entries()) {
     const declaredSpecifier = DECLARE_MODULE_REGEX.exec(line)?.groups?.specifier;
-    if (declaredSpecifier !== undefined) countShims(new Set([getImportedPackageName(declaredSpecifier)]));
+    if (declaredSpecifier !== undefined) countShim(getImportedPackageName(declaredSpecifier));
     if (line.includes(EXPECT_ERROR)) countShims(getNearbyPackageNames(importLines, index));
     if (line.includes(UNKNOWN_CAST)) countShims(getCalledPackageNames(lines, importLines, index));
   }
