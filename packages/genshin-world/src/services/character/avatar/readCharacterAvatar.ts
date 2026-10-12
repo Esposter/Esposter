@@ -33,19 +33,20 @@ export const readCharacterAvatar = async (
     readBinary(),
   ]);
   const drawnMaterials = new Set(manifest.meshes.flatMap(({ submeshes }) => submeshes.map(({ material }) => material)));
-  const textureFiles = [...drawnMaterials].flatMap((materialName) => {
-    const textures = manifest.materials[materialName]?.textures ?? {};
-    return AVATAR_TEXTURE_SLOTS.map(({ slot }) => textures[slot]).filter((file) => file !== undefined);
-  });
+  const textureFiles = new Set<string>();
   // A file is a colour where any slot holding it is a colour slot, so one texture decodes one way for every material
-  const colourFiles = new Set(
-    [...drawnMaterials].flatMap((materialName) => {
-      const textures = manifest.materials[materialName]?.textures ?? {};
-      return AVATAR_TEXTURE_SLOTS.filter(({ isColour }) => isColour).map(({ slot }) => textures[slot]);
-    }),
-  );
+  const colourFiles = new Set<string>();
+  for (const materialName of drawnMaterials) {
+    const textures = manifest.materials[materialName]?.textures ?? {};
+    for (const { isColour, slot } of AVATAR_TEXTURE_SLOTS) {
+      const file = textures[slot];
+      if (file === undefined) continue;
+      textureFiles.add(file);
+      if (isColour) colourFiles.add(file);
+    }
+  }
   const textureFileEntries = await Promise.all(
-    Array.from(new Set(textureFiles), async (file): Promise<[string, Texture]> => {
+    Array.from(textureFiles, async (file): Promise<[string, Texture]> => {
       const blob = await (await fetchFile(`${componentUrl}/${AVATAR_TEXTURE_FOLDER}/${file}`)).blob();
       return [file, await createAvatarTexture(blob, colourFiles.has(file))];
     }),
