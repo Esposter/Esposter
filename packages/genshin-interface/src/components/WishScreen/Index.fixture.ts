@@ -18,7 +18,9 @@ export const props = {
     { id: "Primogem", name: "Primogem", quantity: 0 },
     { id: "IntertwinedFate", name: "Intertwined Fate", quantity: 1 },
   ],
+  detailsLabel: "Details",
   fatePoints: [{ text: "Fate Point: " }, { color: "#f39000", text: "0" }, { text: "/1" }],
+  historyLabel: "History",
   pathLabel: "Epitomized Path",
   pool: [
     { id: 15_502, isFeatured: true, name: "Amos' Bow", rarity: 5 },
@@ -26,15 +28,30 @@ export const props = {
     { id: 11_401, isFeatured: true, name: "Favonius Sword", rarity: 4 },
     { id: 11_301, isFeatured: false, name: "Cool Steel", rarity: 3 },
   ],
+  probabilityLabel: "Probability increased!",
   purchases: [],
   results: [],
   sets: [
     { cost: "Intertwined Fate ×1", count: 1, isAffordable: true, label: "Wish ×1" },
     { cost: "Intertwined Fate ×10", count: 10, isAffordable: false, label: "Wish ×10" },
   ],
+  shopLabel: "Shop",
   title: "Wish",
 };
 export const variants = {
+  characterEvent: {
+    bannerCard: {
+      featuredTitle: "Dance of the Shimmering Wave",
+      rateUp: "Every 10 wishes is guaranteed to include at least one 4-star or higher item.",
+      title: [{ color: "#35AACCFF", text: "Born of" }, { text: " Ocean Swell" }],
+    },
+    bannerKind: BannerKind.CharacterEvent,
+    pool: [
+      { id: 10_000_051, isFeatured: true, name: "Eula", rarity: 5 },
+      { id: 10_000_052, isFeatured: false, name: "Diluc", rarity: 5 },
+      { id: 10_000_053, isFeatured: true, name: "Xingqiu", rarity: 4 },
+    ],
+  },
   results: {
     results: [
       { isCapturingRadiance: false, name: "Favonius Sword", rarity: 4, wishReturn: "Masterless Starglitter ×2" },

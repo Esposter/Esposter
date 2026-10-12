@@ -122,6 +122,16 @@ const fatePoints = computed(() =>
     : [],
 );
 const banner = computed(() => banners.value.find(({ kind }) => kind === bannerKind.value));
+// The Character Event banner's card, the banner the world builds its card for
+const bannerCard = computed(() =>
+  bannerKind.value === BannerKind.CharacterEvent
+    ? {
+        featuredTitle: gameText[GameTextKey.WishCharacterEventFeaturedTitle],
+        rateUp: gameText[GameTextKey.WishRateUp],
+        title: splitGameTextColors(gameText[GameTextKey.WishCharacterEventTitle]),
+      }
+    : undefined,
+);
 const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
   items.map(({ id, name, rarity }) => ({ id, isFeatured, name, rarity }));
 // What the open banner can draw, the highest rarity first and its featured items first of each rarity
@@ -184,14 +194,19 @@ const wish = (count: number) => {
     <WishScreen
       v-model:banner-kind="bannerKind"
       :back-label="gameText[GameTextKey.Back]"
+      :banner-card
       :banner-kinds
       :banner-labels
       :currencies
+      :details-label="gameText[GameTextKey.WishDetails]"
       :fate-points
+      :history-label="gameText[GameTextKey.WishHistory]"
       :path-label="isWeaponWish ? gameText[GameTextKey.WishEpitomizedPath] : ''"
       :pool
+      :probability-label="gameText[GameTextKey.WishProbabilityUp]"
       :purchases
       :results
+      :shop-label="gameText[GameTextKey.Shop]"
       :sets
       :title="gameText[GameTextKey.Wish]"
       @buy="buyFate()"
