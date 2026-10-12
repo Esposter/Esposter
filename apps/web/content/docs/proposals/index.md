@@ -16,6 +16,7 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [achievements roadmap](/docs/achievement/roadmap)
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
+- [shared roadmap](/docs/shared/roadmap)
 
 The list is which areas keep a roadmap, not which have work open — a mature area's roadmap often reads "no open work", and an area with none has never needed one. `ls */roadmap.md` answers the first question and the page itself answers the second.
 
