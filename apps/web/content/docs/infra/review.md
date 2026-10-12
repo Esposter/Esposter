@@ -110,7 +110,7 @@ The workflow starts only by dispatch until its first run is verified. The push t
 
 ## CI on the queue
 
-A review does not gate on CI. A window's review completes and `main` moves, whatever CI says at that point. A red typecheck or lint on a session's push is that session's to fix, on `ai/queue`, before the next push. A red that reaches `main` was red on `ai/queue` first, so it is fixed there and reaches `main` with the next window. Nothing repairs `main` directly.
+A review does not gate on CI. A window's review completes and `main` moves, whatever CI says at that point. A red typecheck or lint on a session's push is that session's to fix, on `ai/queue`, before the next push. A red on `main` came from the queue, where its fix lands and then travels with the next window; `main` is never repaired in place.
 
 ## Key files
 

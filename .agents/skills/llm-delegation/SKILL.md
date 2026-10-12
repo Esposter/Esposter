@@ -61,9 +61,9 @@ Ask the lowest tier first, and let it hand up what it cannot answer. A tier that
 - A judgement over prose or over a diff — is this concern real, how severe is this finding, which label does this issue take — is Jev's, when its answer is one of a fixed set and the state fits in the request.
 - Only what must open files it cannot be handed, or must write, is a session.
 
-## A headless session delegates in the foreground, and only the drain does
+## A headless session delegates in the foreground
 
-The review run is the one headless session that delegates: its `haiku` reviewers and its fixer are subagents of it (`/docs/infra/review`). Foreground is forced by the shape: a `claude -p` session has no next turn in which to read a backgrounded result. The subagent tier is named per call.
+No headless session delegates today: the review's reviewers and its fixer are separate `claude -p` sessions its script launches, never subagents of one (`apps/web/content/docs/infra/review.md`). One that does delegate waits on each subagent, since a `claude -p` session has no next turn in which to read a backgrounded result, and names the subagent tier per call.
 
 ## A deterministic tier does not have to know whether it applies
 

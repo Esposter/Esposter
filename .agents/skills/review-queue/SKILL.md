@@ -56,7 +56,7 @@ A rebase conflict is always one of the agent's own commits meeting what `ai/queu
 
 ## CI on the queue and on main
 
-A red typecheck or lint on a session's push is that session's to fix on `ai/queue`, reproduced with that one check, then pushed as a commit behind the red. A red that reaches `main` was red on `ai/queue` first, so it is fixed there, in the same way. Nothing repairs `main` directly, and no session pushes it.
+Whoever pushed a red typecheck or lint fixes it: reproduce it with that one check and push the fix behind it. The review never waits on CI, and `main` is never repaired in place (`apps/web/content/docs/infra/review.md`, "CI on the queue").
 
 ## Findings the review defers
 

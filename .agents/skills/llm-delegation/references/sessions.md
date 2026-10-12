@@ -13,4 +13,4 @@ The roles are `ReviewSessionRole` (`scripts/src/models/review/ReviewSessionRole.
 
 No session launches unconditionally. A run that starts a session to discover there was nothing to do has already spent the window it was protecting, so a deterministic check comes first: no owed commits means no reviewers, and no findings means no fixer (`scripts/src/services/review/runReview.ts`).
 
-A session that hits Claude's usage limit leaves no marker. The run stops where it stands, `main` does not move, and the next push resumes it, so nothing downstream depends on a gate having answered.
+A session that hits Claude's usage limit leaves no marker. Its window stays owed for a later run, so nothing downstream depends on a gate having answered.
