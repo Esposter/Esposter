@@ -3,13 +3,17 @@ import type { CharacterAvatar } from "#src/models/avatar/CharacterAvatar";
 import type { CharacterMaterialOptions } from "genshin-engine";
 import type { Texture } from "three";
 
-import { AVATAR_TEXTURE_FOLDER, AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
+import { createAvatarTexture } from "#src/services/character/avatar/createAvatarTexture";
+import {
+  AVATAR_COLOUR_TEXTURE_SLOT,
+  AVATAR_TEXTURE_FOLDER,
+  AVATAR_TEXTURE_SLOTS,
+} from "#src/services/character/avatar/constants";
 import { createCharacterAvatar } from "#src/services/character/avatar/createCharacterAvatar";
 import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "#src/services/scene/constants";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { createPmxTexture } from "genshin-engine";
 
 // One file of a component as the host serves it, rejected when its fetch fails or does not answer in time
 const fetchFile = async (url: string): Promise<Response> => {
@@ -37,10 +41,13 @@ export const readCharacterAvatar = async (
     const textures = manifest.materials[materialName]?.textures ?? {};
     return AVATAR_TEXTURE_SLOTS.map((slot) => textures[slot]).filter((file) => file !== undefined);
   });
+  const colourFiles = new Set(
+    [...drawnMaterials].map((materialName) => manifest.materials[materialName]?.textures[AVATAR_COLOUR_TEXTURE_SLOT]),
+  );
   const textureFileEntries = await Promise.all(
     Array.from(new Set(textureFiles), async (file): Promise<[string, Texture]> => {
       const blob = await (await fetchFile(`${componentUrl}/${AVATAR_TEXTURE_FOLDER}/${file}`)).blob();
-      return [file, await createPmxTexture(blob)];
+      return [file, await createAvatarTexture(blob, colourFiles.has(file))];
     }),
   );
   return createCharacterAvatar(manifest, buffer, new Map(textureFileEntries), options);

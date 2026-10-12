@@ -6,6 +6,8 @@ import { MmdBoneName } from "genshin-engine";
 export const AVATAR_COMPONENT = "playergirl";
 // The export folder of a component's textures, which each texture slot's file is read from: the route serves a file
 // Below the component's assets by its export folder, as a witness's meshes and textures are
+// The one slot a texture is a colour in. Every other slot is data, read as it is stored
+export const AVATAR_COLOUR_TEXTURE_SLOT = "_MainTex";
 export const AVATAR_TEXTURE_FOLDER = "Texture2D";
 // The texture slots a material's shading reads, by the game's property names
 export const AVATAR_TEXTURE_SLOTS = [
