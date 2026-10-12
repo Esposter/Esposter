@@ -1,7 +1,6 @@
 {
   "burst.hits.0.gauge": { "source": "Wiki" },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ChargedAttack" },
   "frames.ozTickInterval": { "cause": "Unclassified", "value": 59 },
   "frames.ozDuration": { "cause": "Unclassified", "value": 600 },
   "frames.evernightRavenOzExtension": { "cause": "Unclassified", "value": 120 },
@@ -73,6 +72,5 @@
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 21 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "burst.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
 }

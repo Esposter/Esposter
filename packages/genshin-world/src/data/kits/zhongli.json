@@ -684,6 +684,5 @@
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 3032 }
-  },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  }
 }

@@ -1,43 +1,12 @@
 {
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
-  "burst.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalBurst" },
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5024937810560445 }
-  },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ChargedAttack" },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5024937810560445 }
-  },
-  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5024937810560445 }
-  },
-  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5024937810560445 }
-  },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5024937810560445 }
-  },
-  "normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5024937810560445 }
-  },
-  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.area": {
     "cause": "Unclassified",
@@ -54,9 +23,6 @@
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 6 },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.isAimed": { "cause": "DiffersFromSource" },
-  "skill.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "burst.hits.0.gauge": { "cause": "DiffersFromSource" }
+  "chargedAttack.isAimed": { "cause": "DiffersFromSource" }
 }

@@ -4,18 +4,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.65265424380441 }
-  },
-  "chargedAttack.hits.1.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.65265424380441 }
-  },
-  "chargedAttack.hits.2.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.65265424380441 }
-  },
   "frames.dragonBreathInterval.length": { "cause": "Unclassified", "value": 2 },
   "frames.dragonBreathInterval.0": { "cause": "Unclassified", "value": 145 },
   "frames.dragonBreathInterval.1": { "cause": "Unclassified", "value": 150 },

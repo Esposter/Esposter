@@ -112,9 +112,5 @@
   "skillCooldownSeconds": { "cause": "DiffersFromSource", "value": { "index": 7, "proudSkillGroupId": 8832 } },
   "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 },
   "hits.thorn.gauge": { "cause": "DiffersFromSource" },
-  "hits.snappyMark.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "hits.snappyMark.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

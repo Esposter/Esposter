@@ -50,10 +50,6 @@
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.9000000000000004 }
   },
   "normalAttacks.2.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 93.48 },
-  "normalAttacks.3.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 5.585053606381854, "height": 2, "radius": 2.505538513813742 }
-  },
   "normalAttacks.3.hits.0.convertedArea": {
     "cause": "Unclassified",
     "value": { "angle": 5.585053606381854, "height": 2, "radius": 2.7055385138137416 }
@@ -96,10 +92,5 @@
   },
   "plunges.low.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 150 },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
-  "skillCharges": { "cause": "Unclassified", "value": 2 },
-  "hits.dash.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "hits.dash.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "hits.dash.2.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "hits.dash.3.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skillCharges": { "cause": "Unclassified", "value": 2 }
 }

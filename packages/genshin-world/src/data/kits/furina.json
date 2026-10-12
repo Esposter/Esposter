@@ -66,25 +66,9 @@
   "hits.ousiaBubble.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8932 } },
   "hits.ousiaBubble.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.ousiaBubble.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.802231253840411 }
-  },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.8 }
-  },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.4 }
-  },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.301162633521313 }
-  },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.arkheHitCooldownSeconds.length": { "cause": "Unclassified", "value": 2 },
   "parameters.arkheHitCooldownSeconds.0": {

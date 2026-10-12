@@ -54,10 +54,6 @@
   "burst.hits.5.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "burst.hits.5.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 9539 } },
   "burst.hits.5.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
-  "chargedAttack.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5024937810560445 }
-  },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.bolsteringBubblebalmBounces.length": { "cause": "Unclassified", "value": 5 },
@@ -131,18 +127,11 @@
   },
   "hits.bolsteringBubblebalmBounces.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.bolsteringBubblebalmBounces.4.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5024937810560445 }
-  },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 12 },
-  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 14 },
-  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 38 },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

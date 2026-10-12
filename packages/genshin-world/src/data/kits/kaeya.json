@@ -59,7 +59,5 @@
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

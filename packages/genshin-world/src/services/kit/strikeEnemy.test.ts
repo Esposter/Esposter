@@ -32,6 +32,9 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
+// Gcsim gives the Traveler's skill hit the Wind element; these reaction tests need the element-less hit the record held before.
+const elementlessSkillHit = (): KitHit => ({ ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: undefined });
+
 const NEVER_CRITICAL = (): number => 1;
 
 describe(strikeEnemy, () => {
@@ -172,13 +175,7 @@ describe(strikeEnemy, () => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy();
-    strikeEnemy(
-      enemyTables,
-      enemy,
-      takeOne(TRAVELER_KIT.elementalSkill.hits, 0),
-      createCombatant(Element.Pyro),
-      NEVER_CRITICAL,
-    );
+    strikeEnemy(enemyTables, enemy, elementlessSkillHit(), createCombatant(Element.Pyro), NEVER_CRITICAL);
 
     expect(enemy.elementalState.auras.has(AuraType.Pyro)).toBe(true);
     expect(
@@ -236,7 +233,7 @@ describe(strikeEnemy, () => {
       NEVER_CRITICAL,
     );
     const healthBeforeHydro = enemy.health;
-    const hydroHit = takeOne(TRAVELER_KIT.elementalSkill.hits, 0);
+    const hydroHit = elementlessSkillHit();
     const damage = getDamage({
       amplifyingMultiplier: 2,
       attackerLevel: LEVEL,
@@ -423,7 +420,7 @@ describe(strikeEnemy, () => {
     const enemy = createSturdyEnemy();
     enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
     const unreactedEnemy = createSturdyEnemy();
-    const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), poiseDamage: 0 };
+    const kitHit = { ...elementlessSkillHit(), poiseDamage: 0 };
     strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Electro), NEVER_CRITICAL);
     strikeEnemy(enemyTables, unreactedEnemy, kitHit, createCombatant(Element.Electro), NEVER_CRITICAL);
 
@@ -436,7 +433,7 @@ describe(strikeEnemy, () => {
     const enemy = createSturdyEnemy();
     enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
     enemy.elementalState.auras.set(AuraType.Freeze, { decayRate: 0, gauge: 1, isImmutable: false });
-    const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), poiseDamage: 0 };
+    const kitHit = { ...elementlessSkillHit(), poiseDamage: 0 };
     const hitDamage = getDamage({
       attackerLevel: LEVEL,
       defense,
@@ -464,7 +461,7 @@ describe(strikeEnemy, () => {
     const enemy = createSturdyEnemy();
     enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
     const combatant = createCombatant(Element.Electro);
-    const skillHit = takeOne(TRAVELER_KIT.elementalSkill.hits, 0);
+    const skillHit = elementlessSkillHit();
     const burstHit = takeOne(TRAVELER_KIT.elementalBurst.hits, 0);
     const hitDamage = (talentMultiplier: number): number =>
       getDamage({
@@ -497,13 +494,7 @@ describe(strikeEnemy, () => {
     enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
     const combatant = createCombatant(Element.Anemo);
 
-    const first = strikeEnemy(
-      enemyTables,
-      enemy,
-      takeOne(TRAVELER_KIT.elementalSkill.hits, 0),
-      combatant,
-      NEVER_CRITICAL,
-    );
+    const first = strikeEnemy(enemyTables, enemy, elementlessSkillHit(), combatant, NEVER_CRITICAL);
     const second = strikeEnemy(
       enemyTables,
       enemy,

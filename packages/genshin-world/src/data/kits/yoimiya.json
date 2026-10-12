@@ -144,6 +144,5 @@
   },
   "stances.niwabiFireDance.normalAttacks.4.hits.0.multiplier": { "cause": "Unclassified", "value": 1.4599598376 },
   "stances.niwabiFireDance.normalAttacks.4.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "stances.niwabiFireDance.normalAttacks.4.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "burst.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "stances.niwabiFireDance.normalAttacks.4.targeting": { "cause": "Unclassified", "value": "Strike" }
 }

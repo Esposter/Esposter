@@ -20,6 +20,5 @@
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 49 },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 },
-  "plungeCollision.element": { "cause": "DiffersFromSource" },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }
 }

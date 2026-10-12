@@ -200,7 +200,5 @@
   "parameters.talismanSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 3539 } },
   "parameters.talismanHealHealth": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3539 } },
   "parameters.talismanHealAttackShare": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 3539 } },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "burst.hits.0.internalCooldownTag": { "source": "Wiki" }
 }

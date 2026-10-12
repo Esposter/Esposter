@@ -140,17 +140,5 @@
   },
   "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unclassified", "value": 50 },
   "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 9432 } },
-  "hits.pressTamotoAttacks.0.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.pressTamotoAttacks.1.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.pressTamotoAttacks.2.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.pressTamotoAttacks.3.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.pressTamotoAttacks.4.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.holdTamotoAttacks.0.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.holdTamotoAttacks.1.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.holdTamotoAttacks.2.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.holdTamotoAttacks.3.isBlunt": { "cause": "DiffersFromSource" },
-  "hits.holdTamotoAttacks.4.isBlunt": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }
 }

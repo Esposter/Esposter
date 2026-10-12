@@ -1,6 +1,5 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "frames.firstSeamlessShieldRefresh": { "cause": "Unclassified", "value": 223 },
   "frames.seamlessShield": { "cause": "Unclassified", "value": 152 },
   "frames.seamlessShieldRefreshField": { "cause": "Unclassified", "value": 808 },
@@ -43,7 +42,6 @@
   },
   "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 13 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8232 } },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }

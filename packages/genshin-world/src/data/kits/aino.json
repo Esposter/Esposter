@@ -27,13 +27,7 @@
   "plunges.low.animationFrames": { "cause": "Unclassified", "value": 67 },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 36 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
-  "skill.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.2 }
-  },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 12132 } },
   "skill.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 12132 } },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "skill.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
   "hits.waterBall.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

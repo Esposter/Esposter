@@ -20,7 +20,5 @@
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8332 } },
-  "burst.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "hits.bogglecatTick.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8332 } }
 }

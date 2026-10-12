@@ -41,10 +41,6 @@
   "hits.duststalkerBolt.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.duststalkerBolt.multiplier": { "cause": "Unclassified", "value": 1 },
   "hits.duststalkerBolt.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.3 }
-  },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -180,12 +176,9 @@
     "value": { "index": 1, "proudSkillGroupId": 7132 }
   },
   "stances.pactswornPathclearer.skill.targeting": { "cause": "Unclassified", "value": "Skill" },
-  "stances.pactswornPathclearer.chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

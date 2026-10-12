@@ -14,22 +14,10 @@
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 8131 } },
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "frames.paintedDome": { "cause": "Unclassified", "value": 720 },
-  "plungeCollision.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Grass" },
   "plungeCollision.gauge": { "source": "Wiki" },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
-  },
-  "plunges.low.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
-  },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.paintedDome.normalAttacks.length": { "cause": "Unclassified", "value": 4 },
   "stances.paintedDome.normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 44 },

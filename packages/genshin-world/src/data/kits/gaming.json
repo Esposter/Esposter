@@ -15,20 +15,7 @@
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki" },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki" },
   "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki" },
-  "plungeCollision.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 37 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
-  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.0.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "burst.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }

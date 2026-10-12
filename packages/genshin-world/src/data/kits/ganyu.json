@@ -41,6 +41,5 @@
   "parameters.celestialShowerSeconds": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3739 } },
   "parameters.iceLotusSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3732 } },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
-  "skill.hits.0.multiplier": { "cause": "DiffersFromSource", "value": { "index": 0, "proudSkillGroupId": 3732 } },
-  "hits.celestialShower.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skill.hits.0.multiplier": { "cause": "DiffersFromSource", "value": { "index": 0, "proudSkillGroupId": 3732 } }
 }

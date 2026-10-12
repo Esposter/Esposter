@@ -28,6 +28,5 @@
   "normalAttacks.0.hits.0.internalCooldownTag": { "source": "Wiki" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "source": "Wiki" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "source": "Wiki" },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "hits.soundwave.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

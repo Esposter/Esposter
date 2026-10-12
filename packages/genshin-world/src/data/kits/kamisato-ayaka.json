@@ -1,16 +1,4 @@
 {
-  "chargedAttack.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
-  },
-  "chargedAttack.hits.1.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
-  },
-  "chargedAttack.hits.2.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
-  },
   "hits.frostflake.length": { "cause": "Unclassified", "value": 20 },
   "hits.frostflake.0.area": {
     "cause": "Unclassified",

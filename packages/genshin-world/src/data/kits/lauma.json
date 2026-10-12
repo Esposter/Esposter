@@ -1,8 +1,4 @@
 {
-  "chargedAttack.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.121576201698781 }
-  },
   "chargedAttackStamina": { "cause": "Unclassified", "value": 0 },
   "hitFields.hymnOfEternalRestLunarBloom.area": {
     "cause": "Unclassified",
@@ -99,20 +95,8 @@
   "hits.frostgroveSanctuaryTicks.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unclassified", "value": 1 },
   "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unclassified", "value": "LunarBloom" },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.06225774829855 }
-  },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.06225774829855 }
-  },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.121576201698781 }
-  },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.frostgroveSanctuaryResistanceDecrease": {
     "cause": "Unclassified",

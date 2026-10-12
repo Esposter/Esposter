@@ -83,7 +83,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.riptideBurst.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "hits.riptideBurst.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
   "hits.riptideBurst.multiplier": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 3331 } },
   "hits.riptideBurst.poiseDamage": { "cause": "Unclassified", "value": 60 },
@@ -129,10 +128,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.2 }
   },
   "stances.meleeStance.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 14 },
-  "stances.meleeStance.chargedAttack.hits.0.internalCooldownTag": {
-    "cause": "DiffersFromSource",
-    "value": "ChargedAttack"
-  },
   "stances.meleeStance.chargedAttack.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 8, "proudSkillGroupId": 3332 }
@@ -164,10 +159,6 @@
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.6 }
   },
   "stances.meleeStance.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 8 },
-  "stances.meleeStance.normalAttacks.0.hits.0.internalCooldownTag": {
-    "cause": "DiffersFromSource",
-    "value": "TartagliaFoulLegacy"
-  },
   "stances.meleeStance.normalAttacks.0.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 3332 }
@@ -181,10 +172,6 @@
     "value": { "angle": 4.71238898038469, "height": 2, "radius": 2.6 }
   },
   "stances.meleeStance.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 6 },
-  "stances.meleeStance.normalAttacks.1.hits.0.internalCooldownTag": {
-    "cause": "DiffersFromSource",
-    "value": "TartagliaFoulLegacy"
-  },
   "stances.meleeStance.normalAttacks.1.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 3332 }
@@ -198,10 +185,6 @@
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.6 }
   },
   "stances.meleeStance.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 16 },
-  "stances.meleeStance.normalAttacks.2.hits.0.internalCooldownTag": {
-    "cause": "DiffersFromSource",
-    "value": "TartagliaFoulLegacy"
-  },
   "stances.meleeStance.normalAttacks.2.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 3332 }
@@ -215,10 +198,6 @@
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.9 }
   },
   "stances.meleeStance.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 7 },
-  "stances.meleeStance.normalAttacks.3.hits.0.internalCooldownTag": {
-    "cause": "DiffersFromSource",
-    "value": "TartagliaFoulLegacy"
-  },
   "stances.meleeStance.normalAttacks.3.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 4, "proudSkillGroupId": 3332 }
@@ -232,10 +211,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.8000000000000003 }
   },
   "stances.meleeStance.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 7 },
-  "stances.meleeStance.normalAttacks.4.hits.0.internalCooldownTag": {
-    "cause": "DiffersFromSource",
-    "value": "TartagliaFoulLegacy"
-  },
   "stances.meleeStance.normalAttacks.4.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 5, "proudSkillGroupId": 3332 }
@@ -249,10 +224,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.6400549446402595 }
   },
   "stances.meleeStance.normalAttacks.5.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
-  "stances.meleeStance.normalAttacks.5.hits.0.internalCooldownTag": {
-    "cause": "DiffersFromSource",
-    "value": "TartagliaFoulLegacy"
-  },
   "stances.meleeStance.normalAttacks.5.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 6, "proudSkillGroupId": 3332 }
@@ -263,10 +234,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.7 }
   },
   "stances.meleeStance.normalAttacks.5.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 20 },
-  "stances.meleeStance.normalAttacks.5.hits.1.internalCooldownTag": {
-    "cause": "DiffersFromSource",
-    "value": "TartagliaFoulLegacy"
-  },
   "stances.meleeStance.normalAttacks.5.hits.1.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 7, "proudSkillGroupId": 3332 }
