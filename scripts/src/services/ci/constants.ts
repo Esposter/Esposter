@@ -3,6 +3,8 @@ export const CI_WORKFLOW_FILE = "CI.yaml";
 // The conclusions of a run that never reached a verdict: `ai/queue` keeps only the newest run waiting behind one in
 // Progress, so a run superseded while it waited is skipped or cancelled, and the run after it carries its commit too
 export const UNSETTLED_CONCLUSIONS: readonly string[] = ["cancelled", "skipped"];
+// The conclusions of a job that failed its run: a timed-out job is red as much as one that exited non-zero
+export const FAILED_JOB_CONCLUSIONS: readonly string[] = ["failure", "timed_out"];
 // The fields `gh run list --json` is asked for, matching `CiRun`
 export const CI_RUN_FIELDS = "conclusion,createdAt,databaseId,headSha,status,workflowName";
 // The runs read back from the branch to find the one that superseded the commit's own

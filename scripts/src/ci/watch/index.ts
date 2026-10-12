@@ -7,11 +7,13 @@ import { defineCommand } from "citty";
 await runCommand(
   defineCommand({
     meta: {
-      description: "Wait for the CI run covering ai/queue's tip and print its verdict; exits 1 on a red",
+      description:
+        "Wait for the CI run covering ai/queue's tip and print its verdict; exits 1 on a red, 2 with no verdict",
       name: "watch",
     },
     run: async () => {
-      if (!(await watchQueueRun())) process.exitCode = 1;
+      const verdict = await watchQueueRun();
+      if (verdict !== "pass") process.exitCode = verdict === "fail" ? 1 : 2;
     },
   }),
 );

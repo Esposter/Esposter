@@ -4,6 +4,7 @@ import {
   BRANCH_RUN_LIMIT,
   CI_RUN_FIELDS,
   CI_WORKFLOW_FILE,
+  FAILED_JOB_CONCLUSIONS,
   RUN_CREATION_ATTEMPTS,
   RUN_CREATION_WAIT,
   RUN_WATCH_INTERVAL_SECONDS,
@@ -94,8 +95,9 @@ const readCompletedRun = async (runId: string): Promise<{ conclusion: string; jo
 
 // Waits for the CI run that covers `ai/queue`'s tip and prints its verdict, with each failed job's error lines. A run
 // Superseded while it was watched carries no verdict, so the newer run after it, which builds on the tip too, is
-// Watched in its place. Returns whether the verdict is a pass, so a red exits non-zero and wakes the session that pushed
-export const watchQueueRun = async (): Promise<boolean> => {
+// Watched in its place. Returns the verdict, or `none` while no run carries one, which is not a red, so the watch exits
+// With its own code and only a red exits 1, waking the session that pushed
+export const watchQueueRun = async (): Promise<"fail" | "none" | "pass"> => {
   await runToolAsync("git", ["fetch", "-q", "origin", QUEUE_BRANCH]);
   const sha = (await runToolAsync("git", ["rev-parse", `origin/${QUEUE_BRANCH}`])).trim();
   let run = selectRunToWatch(await readCommitRun(sha), await readBranchRuns());
@@ -111,16 +113,16 @@ export const watchQueueRun = async (): Promise<boolean> => {
   }
   if (!run || !completedRun) {
     console.log(`No CI run with a verdict covers ${sha} yet`);
-    return false;
+    return "none";
   }
 
   const { conclusion, jobs } = completedRun;
   console.log(`CI run ${run.databaseId} for ${sha.slice(0, 10)}: ${conclusion}`);
-  const failedJobs = jobs.filter((job) => job.conclusion === "failure");
+  const failedJobs = jobs.filter((job) => FAILED_JOB_CONCLUSIONS.includes(job.conclusion));
   const failedLogs = await Promise.all(failedJobs.map(({ databaseId }) => readFailedJobLog(String(databaseId))));
   for (const [index, { name }] of failedJobs.entries()) {
     console.log(`\n✖ ${name}`);
     for (const line of getErrorLines(failedLogs[index] ?? "")) console.log(`  ${line}`);
   }
-  return conclusion === "success";
+  return conclusion === "success" ? "pass" : "fail";
 };
