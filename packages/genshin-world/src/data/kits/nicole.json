@@ -1,6 +1,0 @@
-{
-  "burst.hits.0.area": {
-    "cause": "TargetCentred",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 21.5 }
-  }
-}

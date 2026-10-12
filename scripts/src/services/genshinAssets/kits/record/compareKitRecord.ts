@@ -57,7 +57,13 @@ export const compareKitRecord = (
       committedEntry,
       value,
     );
-    if (entry !== undefined) overlay[path] = entry;
+    // A source choice names its value where the path's first candidate of that source is another value
+    const sourceChoice =
+      entry !== undefined && "source" in entry
+        ? sourceCandidateMap.get(path)?.find(({ provenance }) => provenance.source === entry.source)
+        : undefined;
+    const isValueNeeded = entry !== undefined && "source" in entry && !checkIsKitValueEqual(sourceChoice?.value, value);
+    if (entry !== undefined) overlay[path] = isValueNeeded ? { ...entry, value } : entry;
   };
   const candidateMap = mergeKitCandidates(
     getNamedListKitCandidates(publishedValueMap, talentGroupIdMap),

@@ -8,7 +8,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.soundwave.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.soundwave.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 10539 } },
   "hits.soundwave.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

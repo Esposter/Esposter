@@ -1,6 +1,9 @@
 {
   "burst.hits.length": { "source": "Gcsim" },
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
+  "burst.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5839 } },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 82 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 76 },

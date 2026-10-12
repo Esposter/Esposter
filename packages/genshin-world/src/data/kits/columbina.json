@@ -7,7 +7,6 @@
   "frames.skillDotFirstTick": { "cause": "Unclassified", "value": 138 },
   "frames.skillDotInterval": { "cause": "Unclassified", "value": 117 },
   "hits.skillDot.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 } },
-  "hits.skillDot.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.skillDot.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 12532 } },
   "hits.skillDot.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.skillDot.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },

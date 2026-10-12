@@ -37,7 +37,6 @@
   "hits.devourerOfAllSins.multiplier": { "cause": "Unclassified", "value": 3.1544 },
   "hits.devourerOfAllSins.poiseDamage": { "cause": "Unclassified", "value": 80 },
   "hits.ozSummon.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 } },
-  "hits.ozSummon.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
   "hits.ozSummon.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3132 } },
   "hits.ozSummon.poiseDamage": { "cause": "Unclassified", "value": 80 },
   "hits.thunderingRetribution.area": {

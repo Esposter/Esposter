@@ -59,15 +59,13 @@
   },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 16 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7132 } },
   "stances.pactswornPathclearer.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 65 },
   "stances.pactswornPathclearer.chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
   "stances.pactswornPathclearer.chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 }
   },
-  "stances.pactswornPathclearer.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
   "stances.pactswornPathclearer.chargedAttack.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 6, "proudSkillGroupId": 7139 }

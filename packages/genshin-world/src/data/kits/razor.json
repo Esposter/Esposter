@@ -103,18 +103,8 @@
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Electric" },
   "plungeCollision.gauge": { "source": "Wiki" },
   "skill.hits.length": { "cause": "Unclassified", "value": 1 },
-  "skill.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 4.1887902047863905, "height": 2, "radius": 3.4 }
-  },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 32 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2032 } },
   "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 140 },
   "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.0.action.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
-  },
-  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 55 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2032 } }
 }

@@ -494,7 +494,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.7 }
   },
-  "skillChain.followUps.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
+  "skillChain.followUps.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 35 },
   "skillChain.followUps.0.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 12332 }

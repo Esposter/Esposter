@@ -16,7 +16,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0 }
   },
-  "hits.bloodBlossom.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
+  "hits.bloodBlossom.hitmarkFrames": { "cause": "DiffersFromSource", "value": 1 },
   "hits.bloodBlossom.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 4632 } },
   "hits.bloodBlossom.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.animationFrames": { "cause": "DiffersFromSource", "value": 14 },
@@ -122,7 +122,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.8 }
   },
-  "stances.paramita.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 15 },
+  "stances.paramita.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 15 },
   "stances.paramita.normalAttacks.4.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 4, "proudSkillGroupId": 4631 }
@@ -132,7 +132,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.6687872655688287 }
   },
-  "stances.paramita.normalAttacks.4.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 26 },
+  "stances.paramita.normalAttacks.4.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 26 },
   "stances.paramita.normalAttacks.4.hits.1.multiplier": {
     "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 4631 }

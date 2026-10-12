@@ -53,7 +53,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.242640687119286 }
   },
-  "hits.arkhe.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
+  "hits.arkhe.hitmarkFrames": { "cause": "DiffersFromSource", "value": 30 },
   "hits.arkhe.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 8931 } },
   "hits.arkhe.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.ousiaBubble.area": {

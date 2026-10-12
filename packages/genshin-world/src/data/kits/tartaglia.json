@@ -60,7 +60,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hits.flashOfHavoc.hitmarkFrames": { "cause": "Unclassified", "value": 70 },
+  "hits.flashOfHavoc.hitmarkFrames": { "cause": "DiffersFromSource", "value": 70 },
   "hits.flashOfHavoc.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 3339 } },
   "hits.flashOfHavoc.poiseDamage": { "cause": "Unclassified", "value": 200 },
   "hits.riptideSlash.area": {
@@ -76,14 +76,14 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.riptideBlast.hitmarkFrames": { "cause": "Unclassified", "value": 48 },
+  "hits.riptideBlast.hitmarkFrames": { "cause": "DiffersFromSource", "value": 48 },
   "hits.riptideBlast.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3339 } },
   "hits.riptideBlast.poiseDamage": { "cause": "Unclassified", "value": 100 },
   "hits.riptideBurst.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.riptideBurst.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
+  "hits.riptideBurst.hitmarkFrames": { "cause": "DiffersFromSource", "value": 5 },
   "hits.riptideBurst.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 3331 } },
   "hits.riptideBurst.poiseDamage": { "cause": "Unclassified", "value": 60 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 17 },
@@ -103,7 +103,6 @@
     "value": { "index": 15, "proudSkillGroupId": 3332 }
   },
   "parameters.stanceCooldownSeconds": { "cause": "Unclassified", "value": { "index": 13, "proudSkillGroupId": 3332 } },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3332 } },
   "skillCooldownSeconds": { "cause": "Unclassified", "value": 1 },
   "stances.meleeStance.burst.animationFrames": { "cause": "Unclassified", "value": 103 },
@@ -158,7 +157,7 @@
     "cause": "Unclassified",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.6 }
   },
-  "stances.meleeStance.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 8 },
+  "stances.meleeStance.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 8 },
   "stances.meleeStance.normalAttacks.0.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 3332 }
@@ -171,7 +170,7 @@
     "cause": "Unclassified",
     "value": { "angle": 4.71238898038469, "height": 2, "radius": 2.6 }
   },
-  "stances.meleeStance.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 6 },
+  "stances.meleeStance.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 6 },
   "stances.meleeStance.normalAttacks.1.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 3332 }
@@ -184,7 +183,7 @@
     "cause": "Unclassified",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.6 }
   },
-  "stances.meleeStance.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 16 },
+  "stances.meleeStance.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 16 },
   "stances.meleeStance.normalAttacks.2.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 3332 }
@@ -197,7 +196,7 @@
     "cause": "Unclassified",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.9 }
   },
-  "stances.meleeStance.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 7 },
+  "stances.meleeStance.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 7 },
   "stances.meleeStance.normalAttacks.3.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 4, "proudSkillGroupId": 3332 }
@@ -210,7 +209,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.8000000000000003 }
   },
-  "stances.meleeStance.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 7 },
+  "stances.meleeStance.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 7 },
   "stances.meleeStance.normalAttacks.4.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 3332 }

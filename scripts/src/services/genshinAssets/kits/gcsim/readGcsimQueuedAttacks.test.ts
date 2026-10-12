@@ -1,3 +1,5 @@
+import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
+import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { describe, expect, test } from "vitest";
@@ -29,8 +31,38 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
-      { attackLine: undefined, attackName: "ai", delay: 55, delayLine: 7, file: "burst.go", line: 7 },
-      { attackLine: 9, attackName: undefined, delay: 30, delayLine: 12, file: "burst.go", line: 8 },
+      {
+        attackLine: undefined,
+        attackName: "ai",
+        delay: 55,
+        delayLine: 7,
+        file: "burst.go",
+        hitbox: {
+          center: GcsimHitboxCenter.Player,
+          file: "burst.go",
+          line: 7,
+          name: "NewCircleHitOnTarget",
+          radius: 6,
+          shape: GcsimHitboxShape.Circle,
+        },
+        line: 7,
+      },
+      {
+        attackLine: 9,
+        attackName: undefined,
+        delay: 30,
+        delayLine: 12,
+        file: "burst.go",
+        hitbox: {
+          center: GcsimHitboxCenter.Player,
+          file: "burst.go",
+          line: 10,
+          name: "NewCircleHitOnTarget",
+          radius: 6,
+          shape: GcsimHitboxShape.Circle,
+        },
+        line: 8,
+      },
     ]);
   });
 
@@ -128,5 +160,30 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([78]);
+  });
+
+  test("repeats a queue call in a loop whose bound is inclusive, `i <= 120`, once per value up to it", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package amber",
+          "",
+          "const burstStart = 40",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := 24; i <= 48; i += 24 {",
+          "\t\tc.Core.QueueAttackWithSnap(ai, snap, ap, burstStart+i)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      64, 88,
+    ]);
   });
 });

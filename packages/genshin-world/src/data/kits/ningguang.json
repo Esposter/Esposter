@@ -121,7 +121,7 @@
   "hits.starJadeShot.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "hits.starJadeShot.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 2731 } },
   "hits.chargedAttackGem.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "hits.chargedAttackGem.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
@@ -130,7 +130,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.jadeScreen.hitmarkFrames": { "cause": "Unclassified", "value": 17 },
+  "hits.jadeScreen.hitmarkFrames": { "cause": "DiffersFromSource", "value": 17 },
   "hits.jadeScreen.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2732 } },
   "normalAttacks.length": { "cause": "DiffersFromSource", "value": 2 },
   "normalAttacks.0.hits.length": { "cause": "DiffersFromSource", "value": 0 },

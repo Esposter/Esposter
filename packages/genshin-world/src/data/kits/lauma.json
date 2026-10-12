@@ -133,7 +133,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "skillHolds.0.variant.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 45 },
   "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11932 } },
   "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" }

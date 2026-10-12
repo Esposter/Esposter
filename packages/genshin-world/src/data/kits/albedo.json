@@ -95,7 +95,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.solarIsotoma.hitmarkFrames": { "cause": "Unclassified", "value": 25 },
   "hits.solarIsotoma.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3832 } },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

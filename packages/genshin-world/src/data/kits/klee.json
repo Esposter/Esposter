@@ -165,7 +165,7 @@
   "hits.sparklyExplosion.multiplier": { "cause": "Unclassified", "value": 5.55 },
   "hits.sparklyExplosion.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "hits.chargedAttackBomb.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 }
   },
   "hits.chargedAttackBomb.hitmarkFrames": { "cause": "Unclassified", "value": 72 },

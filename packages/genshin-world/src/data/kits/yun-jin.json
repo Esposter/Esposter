@@ -19,7 +19,7 @@
   "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 97 },
   "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 50 },
@@ -29,7 +29,7 @@
   "skillHolds.1.action.animationFrames": { "cause": "Unclassified", "value": 141 },
   "skillHolds.1.action.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.1.action.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 }
   },
   "skillHolds.1.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 93 },

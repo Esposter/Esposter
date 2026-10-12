@@ -13,14 +13,14 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 }
   },
-  "hits.detonatedCardamoms.0.hitmarkFrames": { "cause": "Unclassified", "value": 180 },
+  "hits.detonatedCardamoms.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 180 },
   "hits.detonatedCardamoms.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6139 } },
   "hits.detonatedCardamoms.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.detonatedCardamoms.1.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 }
   },
-  "hits.detonatedCardamoms.1.hitmarkFrames": { "cause": "Unclassified", "value": 180 },
+  "hits.detonatedCardamoms.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 180 },
   "hits.detonatedCardamoms.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6139 } },
   "hits.detonatedCardamoms.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -39,7 +39,6 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 4.71238898038469, "height": 2, "radius": 3 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6132 } },
   "skillHolds.length": { "cause": "DiffersFromSource", "value": 11 },
   "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 2 },
@@ -49,10 +48,6 @@
   },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 17 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 6132 } },
-  "skillHolds.0.action.hits.1.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.1 }
-  },
   "skillHolds.0.action.hits.1.element": { "cause": "Unclassified", "value": "Grass" },
   "skillHolds.0.action.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 48 },

@@ -2,22 +2,15 @@
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.eyeDelay": { "cause": "Unclassified", "value": 66 },
-  "hits.skill.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
-  "hits.skill.hitmarkFrames": { "cause": "Unclassified", "value": 51 },
   "hits.skill.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5232 } },
   "hits.skill.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.coordinatedAttack.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
-  "hits.coordinatedAttack.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
   "hits.coordinatedAttack.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5232 } },
   "hits.coordinatedAttack.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.musouNoHitotachi.area": {
-    "cause": "BoxAsCircle",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.230347012687302 }
-  },
-  "hits.musouNoHitotachi.hitmarkFrames": { "cause": "Unclassified", "value": 98 },
+  "hits.musouNoHitotachi.hitmarkFrames": { "cause": "DiffersFromSource", "value": 98 },
   "hits.musouNoHitotachi.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5239 } },
   "hits.musouNoHitotachi.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

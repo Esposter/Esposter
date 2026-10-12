@@ -27,10 +27,9 @@
   "stances.manifestFlame.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 60 },
   "stances.manifestFlame.chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
   "stances.manifestFlame.chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.324555320336759 }
   },
-  "stances.manifestFlame.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 28 },
   "stances.manifestFlame.chargedAttack.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 12032 }
@@ -103,7 +102,7 @@
   },
   "stances.manifestFlame.normalAttacks.3.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
   "stances.manifestFlame.normalAttacks.3.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "stances.manifestFlame.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 20 },
+  "stances.manifestFlame.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 20 },
   "stances.manifestFlame.normalAttacks.3.hits.0.internalCooldownTag": {
     "cause": "Unclassified",
     "value": "NormalAttack"
@@ -119,7 +118,7 @@
   },
   "stances.manifestFlame.normalAttacks.3.hits.1.element": { "cause": "Unclassified", "value": "Electric" },
   "stances.manifestFlame.normalAttacks.3.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
-  "stances.manifestFlame.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 29 },
+  "stances.manifestFlame.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 29 },
   "stances.manifestFlame.normalAttacks.3.hits.1.internalCooldownTag": {
     "cause": "Unclassified",
     "value": "NormalAttack"

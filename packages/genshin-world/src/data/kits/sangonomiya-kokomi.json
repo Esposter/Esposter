@@ -84,7 +84,7 @@
   "stances.ceremonialGarment.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 76 },
   "stances.ceremonialGarment.chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
@@ -97,7 +97,6 @@
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
   },
-  "stances.ceremonialGarment.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 48 },
   "stances.ceremonialGarment.chargedAttack.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 5431 }
@@ -108,7 +107,7 @@
   "stances.ceremonialGarment.normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 30 },
   "stances.ceremonialGarment.normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
@@ -131,7 +130,7 @@
   "stances.ceremonialGarment.normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 34 },
   "stances.ceremonialGarment.normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
@@ -154,7 +153,7 @@
   "stances.ceremonialGarment.normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 65 },
   "stances.ceremonialGarment.normalAttacks.2.hits.length": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },

@@ -1,13 +1,7 @@
 {
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 } },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5039 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.blazingBlessingInfusion": { "cause": "Unclassified", "value": 30 },
-  "hits.fieryCollapse.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.31038506929733 }
-  },
-  "hits.fieryCollapse.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
   "hits.fieryCollapse.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5039 } },
   "hits.fieryCollapse.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

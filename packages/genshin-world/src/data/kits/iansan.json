@@ -1,7 +1,6 @@
 {
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 }
   },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -21,10 +20,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.7313000567495327 }
   },
   "normalAttacks.2.hits.0.isBlunt": { "source": "Wiki" },
-  "skill.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.8 }
-  },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },

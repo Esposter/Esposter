@@ -12,11 +12,7 @@
   "frames.guoba": { "cause": "Unclassified", "value": 451 },
   "frames.pyronadoStart": { "cause": "Unclassified", "value": 56 },
   "hits.slowbakePyronadoTicks.length": { "cause": "Unclassified", "value": 12 },
-  "hits.slowbakePyronadoTicks.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
-  },
-  "hits.slowbakePyronadoTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 56 },
+  "hits.slowbakePyronadoTicks.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 56 },
   "hits.slowbakePyronadoTicks.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 2339 } },
   "hits.slowbakePyronadoTicks.0.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.slowbakePyronadoTicks.1.area": {
@@ -119,11 +115,7 @@
   "hits.slowbakePyronadoTicks.11.multiplier": { "cause": "Unclassified", "value": 1.12 },
   "hits.slowbakePyronadoTicks.11.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.pyronadoTicks.length": { "cause": "Unclassified", "value": 9 },
-  "hits.pyronadoTicks.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
-  },
-  "hits.pyronadoTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 56 },
+  "hits.pyronadoTicks.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 56 },
   "hits.pyronadoTicks.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 2339 } },
   "hits.pyronadoTicks.0.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.pyronadoTicks.1.area": {

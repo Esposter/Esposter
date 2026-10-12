@@ -93,10 +93,6 @@
   "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5332 } },
-  "skillHolds.0.action.hits.1.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
-  },
   "skillHolds.0.action.hits.1.element": { "cause": "Unclassified", "value": "Wind" },
   "skillHolds.0.action.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 48 },

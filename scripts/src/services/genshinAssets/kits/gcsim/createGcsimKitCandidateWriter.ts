@@ -59,7 +59,8 @@ export const createGcsimKitCandidateWriter = (
       if (hitmark !== undefined) add(`${path}.hitmarkFrames`, hitmark.value, toFile(hitmark.file), hitmark.line);
       if (areaHitbox !== undefined) {
         const area = toGcsimArea(areaHitbox, targetingArea);
-        if (area !== undefined) add(`${path}.area`, area.area, toFile(configFile), areaHitbox.line, area.cause);
+        if (area !== undefined)
+          add(`${path}.area`, area.area, toFile(areaHitbox.file ?? configFile), areaHitbox.line, area.cause);
       }
       if (talentLeaf !== undefined) {
         const { label, selector, type } = talentLeaf.reference;

@@ -17,7 +17,7 @@
   "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 69 },
   "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.5 }
   },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 34 },
@@ -28,7 +28,7 @@
   "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 35 },
   "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
   "normalAttacks.0.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
@@ -37,7 +37,7 @@
   "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 39 },
   "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 1 },
   "normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 6 },

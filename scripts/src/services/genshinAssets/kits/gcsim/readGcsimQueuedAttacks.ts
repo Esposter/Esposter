@@ -10,11 +10,18 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { readArgumentStarts } from "#src/services/genshinAssets/kits/gcsim/readArgumentStarts";
+import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
 // The damage delay's place among a queue call's arguments, the fourth in both of them
 const DELAY_ARGUMENT_INDEX = 3;
+// The attack pattern's place among a queue call's arguments, the second, or the third in `QueueAttackWithSnap`
+const HITBOX_ARGUMENT_INDEX_MAP = new Map([
+  ["QueueAttack", 1],
+  ["QueueAttackWithSnap", 2],
+]);
 // The most iterations a constant loop may take before its calls are read once, as a loop too long to expand
 const MAX_LOOP_ITERATIONS = 100;
 
@@ -26,24 +33,6 @@ interface ConstantLoop {
   values: number[];
   variable: string;
 }
-
-const skipNewlines = (tokens: readonly GoToken[], position: number): number => {
-  let cursor = position;
-  while (tokens[cursor]?.kind === GoTokenKind.Newline) cursor++;
-  return cursor;
-};
-
-// The first token of each argument of the call opening at the position, from its parenthesis to its closing one
-const readArgumentStarts = (tokens: readonly GoToken[], openingPosition: number): number[] => {
-  const starts: number[] = [];
-  let position = skipNewlines(tokens, openingPosition + 1);
-  while (tokens[position] !== undefined && !checkIsGoPunctuation(tokens[position], ")")) {
-    starts.push(position);
-    position = skipNewlines(tokens, parseGoExpression(tokens, position).end);
-    if (checkIsGoPunctuation(tokens[position], ",")) position = skipNewlines(tokens, position + 1);
-  }
-  return starts;
-};
 
 // The position of the `AttackInfo` literal an argument begins with, `info.AttackInfo{` or `combat.AttackInfo{`, else
 // Undefined
@@ -120,9 +109,10 @@ const readConstantLoop = (
   if (
     !checkIsGoPunctuation(tokens[start.end], ";") ||
     tokens[start.end + 1]?.text !== variable.text ||
-    !checkIsGoPunctuation(tokens[start.end + 2], "<")
+    !(checkIsGoPunctuation(tokens[start.end + 2], "<") || checkIsGoPunctuation(tokens[start.end + 2], "<="))
   )
     return undefined;
+  const isBoundInclusive = checkIsGoPunctuation(tokens[start.end + 2], "<=");
   const bound = parseGoExpression(tokens, start.end + 3);
   const stepStart = bound.end + 1;
   if (
@@ -145,7 +135,7 @@ const readConstantLoop = (
   )
     return undefined;
   const values: number[] = [];
-  for (let value = startValue; value < boundValue; value += stepValue) {
+  for (let value = startValue; isBoundInclusive ? value <= boundValue : value < boundValue; value += stepValue) {
     if (values.length === MAX_LOOP_ITERATIONS) return undefined;
     values.push(value);
   }
@@ -199,6 +189,8 @@ export const readGcsimQueuedAttacks = (
       if (attackStart === undefined) continue;
       const inlineAttackPosition = findInlineAttackPosition(tokens, attackStart);
       const delayExpression = delayStart === undefined ? undefined : parseGoExpression(tokens, delayStart).expression;
+      const hitboxStart = argumentStarts[HITBOX_ARGUMENT_INDEX_MAP.get(token.text) ?? -1];
+      const hitbox = hitboxStart === undefined ? undefined : readGoHitbox(tokens, hitboxStart, resolveName, file);
       const attackLine = inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line;
       const attackName =
         inlineAttackPosition === undefined
@@ -214,6 +206,7 @@ export const readGcsimQueuedAttacks = (
           delay: typeof delayValue === "number" ? delayValue : undefined,
           delayLine: tokens[delayStart ?? position]?.line ?? token.line,
           file,
+          hitbox,
           line: token.line,
         });
       }

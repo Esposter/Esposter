@@ -1,8 +1,7 @@
 {
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 } },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 10939 } },
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.5 }
   },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -12,7 +11,6 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 150 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10932 } },
   "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },

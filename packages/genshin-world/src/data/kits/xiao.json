@@ -84,13 +84,12 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "plunges.high.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 225 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
+  "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 46 },
   "plunges.low.animationFrames": { "cause": "Unclassified", "value": 62 },
   "plunges.low.hits.0.convertedArea": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
   "plunges.low.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 150 },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
   "skillCharges": { "cause": "Unclassified", "value": 2 }
 }

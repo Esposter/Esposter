@@ -1,6 +1,9 @@
 {
   "areas.icewhirls": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 18.5 } },
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 } },
+  "burst.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 }
+  },
   "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 90 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",

@@ -5,11 +5,7 @@
   "frames.seamlessShieldRefreshField": { "cause": "Unclassified", "value": 808 },
   "frames.seamlessShieldRefreshInterval": { "cause": "Unclassified", "value": 146 },
   "frames.firstSeamlessShield": { "cause": "Unclassified", "value": 233 },
-  "hits.spiritvein.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
-  "hits.spiritvein.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
+  "hits.spiritvein.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
   "hits.spiritvein.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 8239 } },
   "hits.spiritvein.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

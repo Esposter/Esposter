@@ -195,7 +195,6 @@
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.animationFrames": { "cause": "Unclassified", "value": 77 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 48 },
   "plunges.low.animationFrames": { "cause": "Unclassified", "value": 70 },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
   "skill.hits.length": { "source": "Gcsim" },

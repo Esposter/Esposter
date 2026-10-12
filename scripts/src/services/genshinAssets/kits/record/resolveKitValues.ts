@@ -9,6 +9,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
+import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -33,11 +34,18 @@ export const resolveKitValues = (
   };
   for (const [path, entry] of Object.entries(overlay))
     if ("source" in entry) {
-      const candidate =
-        sourceCandidateMap.get(path)?.find(({ provenance }) => provenance.source === entry.source) ??
-        getNamedHitKitCandidates(new Map([[path, entry.value]]), namedHitCandidateMap)
-          .get(path)
-          ?.find(({ provenance }) => provenance.source === entry.source);
+      // A choice carrying its value takes the candidate of that value, from the sources or from the join it names
+      const candidates =
+        entry.value === undefined
+          ? sourceCandidateMap.get(path)
+          : [
+              ...(sourceCandidateMap.get(path) ?? []),
+              ...(getNamedHitKitCandidates(new Map([[path, entry.value]]), namedHitCandidateMap).get(path) ?? []),
+            ];
+      const candidate = candidates?.find(
+        ({ provenance, value }) =>
+          provenance.source === entry.source && (entry.value === undefined || checkIsKitValueEqual(value, entry.value)),
+      );
       if (candidate === undefined)
         throw new InvalidOperationError(Operation.Read, path, `has no ${entry.source} value for the overlay to choose`);
       valueMap.set(path, candidate.value);

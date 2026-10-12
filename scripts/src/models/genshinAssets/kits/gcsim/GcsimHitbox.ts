@@ -9,6 +9,7 @@ export interface GcsimHitbox {
   box?: [number, number];
   center: GcsimHitboxCenter;
   fanAngle?: number;
+  file?: string;
   line: number;
   name: string;
   offset?: [number, number];
@@ -20,6 +21,7 @@ export const gcsimHitboxSchema: z.ZodType<GcsimHitbox> = z.object({
   box: z.tuple([z.number().nonnegative(), z.number().nonnegative()]).optional(),
   center: z.enum(GcsimHitboxCenter),
   fanAngle: z.number().positive().optional(),
+  file: z.string().optional(),
   line: z.int().positive(),
   name: z.string().min(1),
   offset: z.tuple([z.number(), z.number()]).optional(),

@@ -4,7 +4,7 @@ import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/Gcs
 
 // The `AttackInfo` a queue call fires: the literal written inline in its arguments, else the literal of its file assigned
 // The name it passes, the nearest one before the call or else the first after it
-const findQueuedAttack = (
+export const findQueuedAttack = (
   attacks: readonly GcsimAttack[],
   { attackLine, attackName, file, line }: GcsimQueuedAttack,
 ): GcsimAttack | undefined => {
