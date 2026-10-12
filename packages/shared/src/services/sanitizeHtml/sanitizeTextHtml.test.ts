@@ -68,6 +68,14 @@ describe(sanitizeTextHtml, () => {
     expect(sanitizeTextHtml(`<span style="position:fixed"></span>`)).toBe("<span></span>");
   });
 
+  test("keeps an !important declaration over a later normal one of its property, as the cascade does", () => {
+    expect.hasAssertions();
+
+    expect(sanitizeTextHtml(`<span style="color:red !important;color:blue"></span>`)).toBe(
+      `<span style="color:red!important"></span>`,
+    );
+  });
+
   // A class reaches the app's stylesheet, so markup must not borrow its utilities to lay a block over the page
   test("keeps only the classes the editor writes", () => {
     expect.hasAssertions();
