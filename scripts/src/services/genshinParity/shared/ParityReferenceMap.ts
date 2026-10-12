@@ -719,9 +719,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     seconds: 18,
   },
   // The English PC client's settings opened in the world at 1920 wide, on the Audio tab, its four volumes and its other
-  // Settings, scored whole like the Graphics tab's below: the pointer rests over Dynamic Range and Output Settings,
-  // Whose rims the page does not draw
+  // Settings, scored whole like the Graphics tab's below. The pointer rests on Output Settings, lit under it, while
+  // Dynamic Range keeps the rim of the row last pressed, which the page does not draw since its control is not backed.
+  // Approved by its mean difference as the Graphics tab is: with the rows' rims and shadow drawn, what FLIP still sees is
+  // The game's typeface, which Signika stands in for along every label's edge
   "settings-audio-rows": {
+    approval: { bar: 2, measure: ParityApprovalMeasure.MeanDifference },
     capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
     isBackdrop: true,
     plate: [
@@ -746,6 +749,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 67, width: 1324, x: 478, y: 629 },
       { height: 64, width: 1324, x: 478, y: 698 },
     ],
+    pointer: [1000, 663],
     props: { tab: "Audio" },
     screen: "MenuSettings",
     seconds: 178,

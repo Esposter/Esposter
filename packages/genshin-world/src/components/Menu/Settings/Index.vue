@@ -332,18 +332,29 @@ onMounted(() => {
 }
 
 /* The row's glass, lighter over its label and a tan panel under its value from 977 across, solved from the clip's rows
-   Over the world between them */
+   Over the world between them. Provisional: the faint shadow round its edge, read off the clip's column through a row
+   Against the world beside it */
 .row {
   position: relative;
   flex: none;
   height: calc(var(--unit) * 56);
   border-radius: calc(var(--unit) * 28);
   background: rgb(239 231 221 / 0.78);
+  box-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.15);
   color: #4b4d54;
   font-size: calc(var(--unit) * 27);
   font-weight: 600;
   letter-spacing: calc(var(--unit) * 1);
   overflow: hidden;
+}
+
+/* Provisional: the white rim a row takes under the pointer or the keyboard's focus, about 4 across and centred on its
+   Edge, read off the clip's rows lit one at a time from 176 to 179 seconds */
+.row:hover,
+.row:focus-within {
+  box-shadow:
+    0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.9),
+    inset 0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.6);
 }
 
 .label {
