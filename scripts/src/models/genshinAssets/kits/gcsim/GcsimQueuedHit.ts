@@ -1,0 +1,10 @@
+import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
+import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
+
+export interface GcsimQueuedHit {
+  attack: GcsimAttack;
+  delay: number;
+  file: string;
+  hitbox?: GcsimHitbox;
+  line: number;
+}
