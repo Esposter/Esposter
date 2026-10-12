@@ -5,8 +5,6 @@ import { ShaderProgramStage } from "#src/models/genshinAssets/materials/ShaderPr
 import { readSerializedShaderState } from "#src/services/genshinAssets/materials/readSerializedShaderState";
 import { readSerializedSubProgram } from "#src/services/genshinAssets/materials/readSerializedSubProgram";
 
-// Two words after a pass's tags are read past, zero in every pass of the uber shader
-const PASS_TRAILER_WORDS = 2;
 // A pass's stage lists in the order Unity writes them, vertex to domain and then ray tracing, which is read past
 const readStage = (cursor: BinaryCursor) => cursor.list(() => readSerializedSubProgram(cursor));
 // Reads a pass: its keyword names keyed by index, its state, whose name is the pass's own, its stage programs, then
@@ -38,7 +36,10 @@ export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord =
     cursor.string();
     cursor.string();
   });
-  cursor.skip(PASS_TRAILER_WORDS * 4);
+  // A pass's trailer is one zero word or two. Two only when the word after the first is zero too, else the next pass
+  // Starts at the second word, so it is read back
+  cursor.skip(4);
+  if (cursor.int32() !== 0) cursor.rewind(4);
   return {
     keywordNames,
     name,

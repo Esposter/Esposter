@@ -42,10 +42,12 @@ const subProgram = (blobIndex: number, gpuProgramType: number, keywordIndices: n
     int32(0),
     Buffer.alloc(TRAILER_BYTES),
   ]);
+// A pass's trailer is one zero word or two, as the game writes it, and two is the usual one
 const pass = (
   name: string,
   keywords: [string, number][],
   stages: { fragment: Buffer[]; geometry: Buffer[]; vertex: Buffer[] },
+  trailerWords: 1 | 2 = 2,
 ): Buffer =>
   Buffer.concat([
     list(keywords.map(([keyword, index]) => Buffer.concat([string(keyword), int32(index)]))),
@@ -64,8 +66,7 @@ const pass = (
     string(""),
     string(""),
     list([]),
-    int32(0),
-    int32(0),
+    ...Array.from({ length: trailerWords }, () => int32(0)),
   ]);
 // A program's container is its magic and some bytes of the game's own, and a blob chunk is its entry count, each entry's
 // Offset and length, then each program's header and container
@@ -92,6 +93,56 @@ const blobChunk = (programs: { code: Buffer; gpuProgramType: number }[]): Buffer
 };
 
 describe(parseSerializedShader, () => {
+  test("reads a pass whose trailer is one word, so the next pass starts right after it", () => {
+    expect.hasAssertions();
+
+    const blob = blobChunk([{ code: payload("vertex-a"), gpuProgramType: 16 }]);
+    const stages = { fragment: [], geometry: [], vertex: [subProgram(0, 16, [1])] };
+    const shader = Buffer.concat([
+      string(""),
+      list([]),
+      list([
+        Buffer.concat([
+          list([
+            pass(
+              "DEFERRED",
+              [
+                ["$Globals", 0],
+                ["DEFERRED_ON", 1],
+              ],
+              stages,
+              1,
+            ),
+            pass(
+              "FORWARD",
+              [
+                ["$Globals", 0],
+                ["FORWARD_ON", 1],
+              ],
+              stages,
+              2,
+            ),
+          ]),
+          list([]),
+          int32(0),
+        ]),
+      ]),
+      string("miHoYo/Test"),
+      string(""),
+      string(""),
+      list([]),
+      Buffer.alloc(4),
+      uint32List([4, 23]),
+      uint32List([0, blob.length]),
+      uint32List([blob.length, 0]),
+      uint32List([blob.length, 0]),
+      uint8List(blob),
+    ]);
+
+    const passes = parseSerializedShader(shader).subShaders[0]?.passes ?? [];
+    expect(passes.map(({ name }) => name)).toStrictEqual(["DEFERRED", "FORWARD"]);
+  });
+
   test("reads each pass's keyword names and resolves each stage's program code from its platform's blob chunk", () => {
     expect.hasAssertions();
 
