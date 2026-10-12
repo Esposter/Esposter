@@ -87,7 +87,7 @@ const readCitedArea = (
   return { area, line: cite?.line ?? lineIndex + 1 };
 };
 
-// The value a cited line gives: its one value equal to the cited value, or its first where none is. Inside a `for` loop,
+// The value a cited line gives: its one value equal to the cited value, or its first where none is. In a `for` loop,
 // An array of that line's value at each index of the loop, taken at the one expression position whose values equal the
 // Cited array, or at the first position where none does; a scalar citation takes the value equal to it, as outside one.
 // A cited entry of a run of hits takes the loop's element at its index, matched as the one value its hit is cited with
@@ -120,7 +120,7 @@ const readCitedValue = (
     const hitValues = valuesByIndex[hitIndex] ?? [];
     return hitValues.find((value) => checkIsKitValueEqual(value, citedValue)) ?? hitValues[0];
   }
-  // A scalar citation takes the loop's value equal to it, as a line outside one does, else the first index's first value
+  // A scalar citation takes the loop's value equal to it, as outside a loop does, else the first index's first value
   if (!Array.isArray(citedValue))
     return valuesByIndex.flat().find((value) => checkIsKitValueEqual(value, citedValue)) ?? valuesByIndex[0]?.[0];
   const positions = Array.from(
