@@ -34,7 +34,7 @@ const getScale = (d: string): number => {
 
 // Reads an SVG path's moveto, lineto, horizontal and vertical lines, quadratic and cubic curves, arcs and closes in
 // Either case, and returns them absolute: a relative command's operands are added to the current point it starts from
-export const parseSvgPath = (d: string, scale = getScale(d)): SvgPath => {
+export const parseSvgPath = (d: string, scale: number = getScale(d)): SvgPath => {
   const segments: SvgPathSegment[] = [];
   let index = 0;
   let command = "";
