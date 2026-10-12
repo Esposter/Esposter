@@ -8,23 +8,24 @@ import sharp from "sharp";
 const PALETTE_SAMPLE_SIZE = 64;
 
 // The linear colour of every texel of a set of diffuse textures, pooled, so a family's colour counts each texture's
-// Texels alike whatever its size
+// Texels alike whatever its size. A texel its alpha covers at zero is skipped, so a cut-out's transparent texels never
+// Colour the family, and a texture with fewer than three channels paints its texels grey, from its first channel
 export const readFamilyTexels = async (texturePaths: readonly string[]): Promise<Vector[]> => {
   const texels: Vector[] = [];
   for (const texturePath of texturePaths) {
     // oxlint-disable-next-line no-await-in-loop -- one texture is read at a time
     const { data, info } = await sharp(texturePath)
       .resize(PALETTE_SAMPLE_SIZE, PALETTE_SAMPLE_SIZE, { fit: "fill" })
-      .removeAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
+    const hasAlpha = info.channels === 2 || info.channels === 4;
+    const colourChannels = hasAlpha ? info.channels - 1 : info.channels;
     for (let texel = 0; texel < info.width * info.height; texel++) {
       const offset = texel * info.channels;
-      texels.push([
-        toLinear((data[offset] ?? 0) / BYTE),
-        toLinear((data[offset + 1] ?? 0) / BYTE),
-        toLinear((data[offset + 2] ?? 0) / BYTE),
-      ]);
+      if (hasAlpha && (data[offset + info.channels - 1] ?? 0) === 0) continue;
+      const colourAt = (channel: number) =>
+        toLinear((data[offset + Math.min(channel, colourChannels - 1)] ?? 0) / BYTE);
+      texels.push([colourAt(0), colourAt(1), colourAt(2)]);
     }
   }
   return texels;
