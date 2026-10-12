@@ -21,7 +21,7 @@ const { answer, isPending } = useDialogAnswer(isOpen);
     <UiForm p-3 flex flex-col gap-3 min-h-0 of-y-auto @submit="answer(() => execute())">
       <slot />
       <footer flex gap-2 justify-end>
-        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+        <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
         <UiButton :is-pending type="submit" :variant="submitVariant">{{ submitLabel }}</UiButton>
       </footer>
     </UiForm>
