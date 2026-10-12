@@ -1,6 +1,6 @@
 import type { RateLimiterOptions } from "#src/models/RateLimiterOptions";
 
-import * as z from "zod";
+import { z } from "zod";
 
 export const rateLimiterOptionsSchema: z.ZodType<RateLimiterOptions> = z.strictObject({
   intervalInMilliseconds: z

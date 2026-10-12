@@ -1,10 +1,9 @@
+import rateLimiter from "#src/runtime/server/middleware/rateLimiter";
+import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { H3Event } from "nitro/h3";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import rateLimiter from "#src/runtime/server/middleware/rateLimiter";
-import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
-
-vi.mock("#src/runtime/services/getSecurityRules", () => ({ getSecurityRules: vi.fn() }));
+vi.mock("#src/runtime/services/getSecurityRules", () => ({ getSecurityRules: vi.fn<typeof getSecurityRules>() }));
 
 describe(rateLimiter, () => {
   const INTERVAL_IN_MILLISECONDS = 60_000;

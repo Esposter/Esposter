@@ -15,8 +15,8 @@ import { getTypeTemplate } from "#src/services/getTypeTemplate";
 import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
 import { parseModuleOptions } from "#src/services/parseModuleOptions";
 import {
-  addServerHandler,
   addNitroPlugin,
+  addServerHandler,
   addServerTemplate,
   addTypeTemplate,
   createResolver,

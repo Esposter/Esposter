@@ -1,6 +1,6 @@
 import type { StrictTransportSecurity } from "#src/models/StrictTransportSecurity";
 
-import * as z from "zod";
+import { z } from "zod";
 
 export const strictTransportSecurityOptionsSchema: z.ZodType<StrictTransportSecurity> = z.strictObject({
   includeSubdomains: z.boolean(),

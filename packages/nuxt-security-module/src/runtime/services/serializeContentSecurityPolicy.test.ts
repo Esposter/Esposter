@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { serializeContentSecurityPolicy } from "#src/runtime/services/serializeContentSecurityPolicy";
+import { describe, expect, test } from "vitest";
 
 describe(serializeContentSecurityPolicy, () => {
   test("#432 a directive set to false is left out of the policy", () => {

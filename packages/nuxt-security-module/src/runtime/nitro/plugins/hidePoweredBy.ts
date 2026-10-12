@@ -1,8 +1,8 @@
-import { definePlugin } from "nitro";
 import type { NitroAppPlugin } from "nitro/types";
-import { isEvent } from "nitro/h3";
 
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
+import { definePlugin } from "nitro";
+import { isEvent } from "nitro/h3";
 
 // The framework's own `X-Powered-By` header is removed from the response, whatever casing the framework wrote it in.
 // Headers are compared without regard to case, so any casing of it is removed.

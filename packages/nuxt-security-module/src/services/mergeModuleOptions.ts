@@ -18,9 +18,9 @@ export const mergeModuleOptions = (defaults: ModuleOptions, overrides: Partial<M
 });
 
 const mergeHeaders = (
-  defaults: SecurityHeaders | false,
-  overrides: SecurityHeaders | false | undefined,
-): SecurityHeaders | false => {
+  defaults: false | SecurityHeaders,
+  overrides: false | SecurityHeaders | undefined,
+): false | SecurityHeaders => {
   if (overrides === false || defaults === false) return overrides ?? defaults;
   if (overrides === undefined) return defaults;
 
@@ -50,9 +50,9 @@ const mergeDirectives = (
 };
 
 const mergeFeatures = (
-  defaults: PermissionsPolicy | false | undefined,
-  overrides: PermissionsPolicy | false | undefined,
-): PermissionsPolicy | false | undefined => {
+  defaults: false | PermissionsPolicy | undefined,
+  overrides: false | PermissionsPolicy | undefined,
+): false | PermissionsPolicy | undefined => {
   if (overrides === false || defaults === false) return overrides ?? defaults;
   if (overrides === undefined) return defaults;
 

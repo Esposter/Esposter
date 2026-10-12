@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { insertContentSecurityPolicyMeta } from "#src/runtime/services/insertContentSecurityPolicyMeta";
+import { describe, expect, test } from "vitest";
 
 describe(insertContentSecurityPolicyMeta, () => {
   const POLICY = { "default-src": ["'self'"] };

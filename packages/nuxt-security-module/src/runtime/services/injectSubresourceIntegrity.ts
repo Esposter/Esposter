@@ -1,5 +1,5 @@
-import { rewriteHtmlTags } from "#src/runtime/services/rewriteHtmlTags";
 import { readHtmlTagAttribute } from "#src/runtime/services/readHtmlTagAttribute";
+import { rewriteHtmlTags } from "#src/runtime/services/rewriteHtmlTags";
 
 // The elements an integrity attribute is written onto, keyed by the attribute that names the resource.
 // They are also keyed by the `rel` a link must carry.

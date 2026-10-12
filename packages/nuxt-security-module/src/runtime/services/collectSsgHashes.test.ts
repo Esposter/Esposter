@@ -1,8 +1,7 @@
-import { describe, expect, test } from "vitest";
-
 import { CSP_HASH_ALGORITHM } from "#src/runtime/constants";
 import { collectSsgHashes } from "#src/runtime/services/collectSsgHashes";
 import { generateHash } from "#src/runtime/services/generateHash";
+import { describe, expect, test } from "vitest";
 
 describe(collectSsgHashes, () => {
   const OPTIONS = { exportToPresets: true, hashScripts: true, hashStyles: true, meta: true, nitroHeaders: true };

@@ -1,6 +1,6 @@
 import type { CorsHandlerOptions } from "#src/models/CorsHandlerOptions";
 
-import * as z from "zod";
+import { z } from "zod";
 
 const headerNameSchema = z.string().regex(/^[\w-]+$/u);
 

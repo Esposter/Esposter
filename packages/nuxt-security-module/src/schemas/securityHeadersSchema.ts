@@ -5,7 +5,7 @@ import { XFrameOptions } from "#src/models/XFrameOptions";
 import { contentSecurityPolicySchema } from "#src/schemas/contentSecurityPolicySchema";
 import { permissionsPolicySchema } from "#src/schemas/permissionsPolicySchema";
 import { strictTransportSecurityOptionsSchema } from "#src/schemas/strictTransportSecurityOptionsSchema";
-import * as z from "zod";
+import { z } from "zod";
 
 // A header sent as a string is written as given, so its value is any non-empty string
 const headerValueSchema = z.string().min(1);

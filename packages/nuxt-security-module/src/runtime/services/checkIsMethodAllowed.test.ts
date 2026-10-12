@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { checkIsMethodAllowed } from "#src/runtime/services/checkIsMethodAllowed";
+import { describe, expect, test } from "vitest";
 
 describe(checkIsMethodAllowed, () => {
   const METHODS = ["GET", "POST"];

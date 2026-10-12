@@ -1,6 +1,6 @@
 import type { BasicAuthOptions } from "#src/models/BasicAuthOptions";
 
-import * as z from "zod";
+import { z } from "zod";
 
 const pathSchema = z.string().startsWith("/");
 
