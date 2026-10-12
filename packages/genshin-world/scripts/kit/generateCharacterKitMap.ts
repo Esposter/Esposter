@@ -1,5 +1,5 @@
 import { KIT_MODULE_DIRECTORY } from "#scripts/kit/constants";
-import { globSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const GENERATED_DIRECTORY = join("src", "generated", "characterKitMap");
@@ -45,7 +45,10 @@ export const generateCharacterKitMap = (packageDirectory: string): void => {
     "};",
     "",
   ].join("\n");
+  // The folder is the generator's alone, so it is cleared first: a map a rename left behind (a cache restoring an older
+  // Build's folder in CI) would otherwise be built beside the current one, importing exports that no longer exist
   const generatedDirectory = join(packageDirectory, GENERATED_DIRECTORY);
+  rmSync(generatedDirectory, { force: true, recursive: true });
   mkdirSync(generatedDirectory, { recursive: true });
   writeFileSync(join(generatedDirectory, `${MAP_NAME}.ts`), text);
 };
