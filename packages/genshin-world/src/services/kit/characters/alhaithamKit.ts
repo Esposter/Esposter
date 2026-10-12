@@ -27,10 +27,6 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
-// Measured: gcsim (MIT) alhaitham/skill.go and burst.go, he holds up to three Mirrors, and Particular Field: Fetters of
-// Phenomena strikes four times plus twice per Mirror it consumes
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/alhaitham
-
 // Measured: gcsim (MIT) alhaitham/asc.go and cons.go, Ascension 1 makes a Mirror from a charged attack's or a plunge's hit
 // On an enemy once every 12 seconds, and Ascension 4 raises a Projection Attack's and the burst's DMG by 0.1% per Elemental
 // Mastery, to 100%. Constellation 2 gives 50 Elemental Mastery for 8 seconds for each Mirror made, up to four, Constellation
