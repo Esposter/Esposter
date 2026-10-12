@@ -21,7 +21,7 @@ export const updateContentSecurityPolicy = (
       if (!Array.isArray(value)) return [directive, value];
 
       const sources = value
-        .filter((source: string) => !isStaticNonce(source))
+        .filter((source: string) => !checkIsStaticNonce(source))
         .map((source: string) => (source === NONCE_PLACEHOLDER && nonce ? `'nonce-${nonce}'` : source))
         .filter((source) => source !== NONCE_PLACEHOLDER);
       if (SCRIPT_DIRECTIVES.has(directive)) sources.push(...hashes.script);
@@ -30,4 +30,4 @@ export const updateContentSecurityPolicy = (
     }),
   );
 
-const isStaticNonce = (source: string): boolean => source.startsWith("'nonce-") && source !== NONCE_PLACEHOLDER;
+const checkIsStaticNonce = (source: string): boolean => source.startsWith("'nonce-") && source !== NONCE_PLACEHOLDER;
