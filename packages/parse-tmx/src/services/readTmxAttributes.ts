@@ -14,8 +14,9 @@ type TMXNumberKind = AttributeKind.Number | AttributeKind.RequiredNumber;
 
 type TMXRequiredKind = AttributeKind.RequiredNumber | AttributeKind.RequiredString;
 
-// An attribute left out or written empty is absent rather than zero, since `Number("")` would read it as zero. A
-// String attribute written empty is kept, as the document wrote it.
+// An optional attribute left out, or a number written empty, is absent, since `Number("")` would read it as zero.
+// A required one is written as zero, or empty for a String, so the model's key is always there.
+// A String attribute written empty is kept, as the document wrote it.
 export const readTmxAttributes = <Table extends Record<string, AttributeKind>>(
   attributes: TMXAttributes,
   table: Table,
