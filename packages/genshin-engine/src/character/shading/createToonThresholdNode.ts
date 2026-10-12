@@ -1,15 +1,8 @@
+import type { ToonThresholdNodeInputs } from "#src/models/character/ToonThresholdNodeInputs";
 import type { Node } from "three/webgpu";
 
 import { NEUTRAL_LIGHT_MAP_GREEN, TOON_HIGH, TOON_LOW } from "#src/character/shading/constants";
 import { abs, float, select } from "three/tsl";
-
-export interface ToonThresholdNodeInputs {
-  isLightMapAo: boolean;
-  isVertexAo: boolean;
-  lightMapGreen: Node<"float">;
-  sunTerm: Node<"float">;
-  vertexAo: number;
-}
 
 // The TSL form of getToonThreshold: the lightmap's green remapped about the neutral middle, scaled by the vertex's
 // Occlusion where its flag is set, clamped at both ends and mixed with the sun term between them
