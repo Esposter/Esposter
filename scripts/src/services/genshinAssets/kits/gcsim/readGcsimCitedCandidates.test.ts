@@ -1,9 +1,11 @@
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
+import { expandKitOverlay } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -17,6 +19,8 @@ describe("readGcsimCitedCandidates", () => {
   const QUEUE_GO =
     "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttack(ai, area, 70, 70)\n\t}, 75)\n}\n";
   const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
+  const MULTILINE_GO =
+    "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tc.Core.Queue(\n\t\t\t10+i*5,\n\t\t)\n\t}\n}\n";
   const createGcsimDirectory = () => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
@@ -24,6 +28,7 @@ describe("readGcsimCitedCandidates", () => {
     writeFileSync(join(directory, "internal", "characters", FOLDER, "loop.go"), LOOP_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "area.go"), AREA_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "queue.go"), QUEUE_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "multiline.go"), MULTILINE_GO);
     return directory;
   };
 
@@ -154,5 +159,49 @@ describe("readGcsimCitedCandidates", () => {
       cause: KitProvisionalCause.DiffersFromSource,
       value: 150,
     });
+  });
+
+  test("a cited duration inside a queued block is cited as written, without the block's delay", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "frames.burstDuration": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 70 },
+    };
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("frames.burstDuration")?.[0]?.value,
+    ).toBe(70);
+  });
+
+  test("a cited run of hits matches the loop's element at each hit's index", () => {
+    expect.hasAssertions();
+    const overlay = expandKitOverlay<KitOverlayEntry>({
+      "hits.blossom.0-2.poiseDamage": { file: "loop.go", line: 5, source: KitSource.Gcsim, value: [10, 15, 20] },
+    });
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER);
+    expect(candidates.get("hits.blossom.1.poiseDamage")?.[0]?.value).toBe(15);
+    expect(candidates.get("hits.blossom.2.poiseDamage")?.[0]?.value).toBe(20);
+  });
+
+  test("a cited run of hits whose element a hit does not give reads as DiffersFromSource for that hit", () => {
+    expect.hasAssertions();
+    const overlay = expandKitOverlay<KitOverlayEntry>({
+      "hits.blossom.0-2.poiseDamage": { file: "loop.go", line: 5, source: KitSource.Gcsim, value: [10, 15, 21] },
+    });
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get(
+      "hits.blossom.2.poiseDamage",
+    );
+    expect(classifyKitValue(21, candidates ?? [], [], false)).toStrictEqual({
+      cause: KitProvisionalCause.DiffersFromSource,
+      value: 21,
+    });
+  });
+
+  test("a cited run of hits inside a loop's call spread over lines matches the loop's element at each hit's index", () => {
+    expect.hasAssertions();
+    const overlay = expandKitOverlay<KitOverlayEntry>({
+      "hits.blossom.0-2.poiseDamage": { file: "multiline.go", line: 6, source: KitSource.Gcsim, value: [10, 15, 20] },
+    });
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.blossom.1.poiseDamage")?.[0]?.value,
+    ).toBe(15);
   });
 });

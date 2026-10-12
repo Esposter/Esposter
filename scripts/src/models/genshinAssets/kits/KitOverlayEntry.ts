@@ -8,7 +8,7 @@ import { z } from "zod";
 // A value gcsim writes inline is cited by the file of its character's folder and the line it is on, which evaluates to it
 export type KitOverlayEntry =
   | { cause: KitProvisionalCause; value?: unknown }
-  | { file: string; line: number; source: KitSource.Gcsim; value?: unknown }
+  | { file: string; index?: number; line: number; source: KitSource.Gcsim; value?: unknown }
   | { source: KitSource.Gcsim | KitSource.Tables | KitSource.Wiki; value?: unknown };
 
 export const kitOverlayEntrySchema: z.ZodType<KitOverlayEntry> = z.union([

@@ -23,17 +23,23 @@ const readLoopCount = (bound: string, resolveName: (name: string) => GoValue | u
   return typeof value === "number" && Number.isInteger(value) && value >= 0 ? value : undefined;
 };
 
-// The `for` loop a line sits in, found by scanning up to the nearest line less indented than it, where the loop's header
-// Is a range over a whole count or a counting loop from zero. A line in no loop, or in a block that is not one, has none
+// The `for` loop a line sits in, found by scanning up to the nearest block opener above it, where the loop's header is a
+// Range over a whole count or a counting loop from zero. A less indented line that opens no block is the start of a
+// Statement the line continues across lines, so the scan goes on from its indent. A line in no loop, or in a block that is
+// Not one, has none
 export const readGcsimEnclosingLoop = (
   lines: readonly string[],
   lineIndex: number,
   resolveName: (name: string) => GoValue | undefined,
 ): GcsimLoop | undefined => {
-  const indent = countTabs(lines[lineIndex] ?? "");
+  let indent = countTabs(lines[lineIndex] ?? "");
   for (let position = lineIndex - 1; position >= 0; position--) {
     const line = lines[position] ?? "";
     if (line.trim() === "" || countTabs(line) >= indent) continue;
+    if (!line.trimEnd().endsWith("{")) {
+      indent = countTabs(line);
+      continue;
+    }
     const header = RANGE_HEADER_REGEX.exec(line) ?? COUNTING_HEADER_REGEX.exec(line);
     if (header === null) return undefined;
     const count = readLoopCount(header.groups?.bound ?? "", resolveName);

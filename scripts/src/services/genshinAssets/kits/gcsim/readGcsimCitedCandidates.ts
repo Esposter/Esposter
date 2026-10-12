@@ -13,44 +13,55 @@ import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/ch
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// The value a cited line gives: its one value equal to the cited value, or its first where none is, and inside a `for`
-// Loop, an array of that line's value at each index of the loop, taken at the one expression position whose values
-// Equal the cited array, or at the first position where none does
-const readCitedValue = (lines: readonly string[], lineIndex: number, citedValue: unknown, file: string): unknown => {
+// The record's hit field measured from the action's start, as BaseKitHitRecord's schema has it: the only field a queued
+// Block's delay is added to, since a duration, an interval or a count is cited as written whatever block its line is in
+const HITMARK_FIELD = "hitmarkFrames";
+
+// The value a cited line gives: its one value equal to the cited value, or its first where none is. Inside a `for` loop,
+// An array of that line's value at each index of the loop, taken at the one expression position whose values equal the
+// Cited array, or at the first position where none does. A cited entry of a run of hits takes the loop's element at its own
+// Index instead, matched as the one value its hit is cited with
+const readCitedValue = (
+  lines: readonly string[],
+  lineIndex: number,
+  citedValue: unknown,
+  file: string,
+  hitIndex: number | undefined,
+  isHitmark: boolean,
+): unknown => {
   const lineText = lines[lineIndex] ?? "";
   // An area is cited by the constructor on its line, whole, as its object is the one value of its line
   if (typeof citedValue === "object" && citedValue !== null && !Array.isArray(citedValue))
     return readGcsimCitedArea(lineText, file);
   const resolveName = createGcsimFileResolver(lines);
-  // A line inside a queued block is read at the time the block queues it, so the block's delay is added to its values
+  // A line inside a queued block is read at the time the block queues it, so a hitmark takes the block's delay
   const delay = readGcsimQueueDelay(lines, lineIndex, resolveName);
   if (delay === undefined) return undefined;
+  const shift = isHitmark ? delay : 0;
   const loop = readGcsimEnclosingLoop(lines, lineIndex, resolveName);
-  // A value the line gives as written is cited as written, and one only the queued block's delay makes is cited with it
-  const shifts = delay === 0 ? [0] : [0, delay];
   if (loop === undefined) {
-    const rawValues = readGcsimLineValues(lineText, resolveName);
-    for (const shift of shifts) {
-      const lineValues = rawValues.map((value) => value + shift);
-      const matching = lineValues.find((lineValue) => checkIsKitValueEqual(lineValue, citedValue));
-      if (matching !== undefined) return matching;
-    }
-    return rawValues.length === 0 ? undefined : (rawValues[0] ?? 0) + delay;
+    const values = readGcsimLineValues(lineText, resolveName).map((value) => value + shift);
+    return values.find((value) => checkIsKitValueEqual(value, citedValue)) ?? values[0];
   }
   if (loop.count === 0) return undefined;
-  const rawByIndex = Array.from({ length: loop.count }, (_value, index) =>
-    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))),
+  const valuesByIndex = Array.from({ length: loop.count }, (_value, index) =>
+    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))).map(
+      (value) => value + shift,
+    ),
   );
+  if (hitIndex !== undefined) {
+    const hitValues = valuesByIndex[hitIndex] ?? [];
+    return hitValues.find((value) => checkIsKitValueEqual(value, citedValue)) ?? hitValues[0];
+  }
   const positions = Array.from(
-    { length: Math.min(...rawByIndex.map((values) => values.length)) },
+    { length: Math.min(...valuesByIndex.map((values) => values.length)) },
     (_value, position) => position,
   );
-  for (const shift of shifts)
-    for (const position of positions) {
-      const array = rawByIndex.map((values) => (values[position] ?? Number.NaN) + shift);
-      if (checkIsKitValueEqual(array, citedValue)) return array;
-    }
-  const array = rawByIndex.map((values) => (values[0] === undefined ? undefined : values[0] + delay));
+  for (const position of positions) {
+    const array = valuesByIndex.map((values) => values[position] ?? Number.NaN);
+    if (checkIsKitValueEqual(array, citedValue)) return array;
+  }
+  const array = valuesByIndex.map((values) => values[0]);
   return array.every((value) => value !== undefined) ? array : undefined;
 };
 
@@ -67,7 +78,8 @@ export const readGcsimCitedCandidates = (
     if (!("file" in entry) || entry.value === undefined) continue;
     const file = `${GCSIM_CHARACTERS_PATH}/${folder}/${entry.file}`;
     const lines = readFileSync(join(gcsimDirectory, file), "utf8").split("\n");
-    const value = readCitedValue(lines, entry.line - 1, entry.value, file);
+    const isHitmark = path.endsWith(`.${HITMARK_FIELD}`);
+    const value = readCitedValue(lines, entry.line - 1, entry.value, file, entry.index, isHitmark);
     if (value === undefined) continue;
     addKitCandidate(candidateMap, path, { provenance: { file, line: entry.line, source: KitSource.Gcsim }, value });
   }

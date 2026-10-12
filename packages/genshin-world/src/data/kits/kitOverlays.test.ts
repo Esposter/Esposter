@@ -7,6 +7,7 @@ import { gameDataLock } from "#src/services/data/gameDataLock";
 import { readGameData } from "#src/services/data/readGameData";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { readGameDataObject } from "#src/services/data/readGameDataObject";
+import { expandKitOverlay } from "#src/services/kit/expandKitOverlay";
 import { toKebabCase } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { basename } from "node:path";
@@ -42,7 +43,7 @@ describe("kitOverlays", () => {
         assert.exists(characterId, overlayName);
         const record = await readGameDataEntry(GAME_DATA_LOCAL_BASE_URL, "kits", characterId, kitRecordSchema);
         // An entry naming a source chooses among the sources' values rather than holding one
-        return Object.entries(overlay)
+        return Object.entries(expandKitOverlay(overlay))
           .filter(([, entry]) => entry.cause !== undefined)
           .map(([valuePath, { value }]) => ({
             committed: [`${overlayName}:${valuePath}`, value],

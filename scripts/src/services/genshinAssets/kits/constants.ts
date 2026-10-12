@@ -21,7 +21,7 @@ export const GCSIM_AIM_CHARGE_LEVEL = 1;
 // A value's path in a kit's record: its keys and array indexes joined by dots, `normalAttacks.0.hits.1.poiseDamage`,
 // Where a last key of `length` is an array's length
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
-export const KIT_VALUE_PATH_REGEX: RegExp = /^[A-Za-z][A-Za-z0-9]*(?:\.(?:\d+|[A-Za-z][A-Za-z0-9]*))*$/u;
+export const KIT_VALUE_PATH_REGEX: RegExp = /^[A-Za-z][A-Za-z0-9]*(?:\.(?:\d+(?:-\d+)?|[A-Za-z][A-Za-z0-9]*))*$/u;
 export const KIT_LENGTH_KEY = "length";
 // Where gcsim's tag is cloned and the wiki's answers are kept between runs, outside the repository: the tag never
 // Moves, and a wiki page is read again only once its cached answer is deleted
