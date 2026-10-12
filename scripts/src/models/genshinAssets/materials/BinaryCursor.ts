@@ -1,5 +1,5 @@
-// A cursor over a shader's raw export, read in order as Unity serializes it: little-endian words, a string as its length,
-// Its bytes and a pad to four bytes, and a list as its count followed by its items
+// A cursor over a shader's raw export, read in order as Unity serializes it: little-endian words, a string as its
+// length, its bytes and a pad to four bytes, and a list as its count followed by its items
 export class BinaryCursor {
   readonly #data: Buffer;
   #position: number;

@@ -6,9 +6,9 @@ import type { GcsimTravel } from "#src/models/genshinAssets/kits/gcsim/GcsimTrav
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 
 // What the builder reads of one gcsim character folder at a ref: its folder, its config and the config's path, its
-// Package's constants by name, the frames each ability file animates by, its `AttackInfo` literals, its talent file's parameters by `<talent>|<label>`, the travel
-// Its projectiles land after by the hitmark constant they are released at, its queue calls, and the paths of its files
-// Below the folder
+// package's constants by name, the frames each ability file animates by, its `AttackInfo` literals, its talent file's
+// parameters by `<talent>|<label>`, the travel its projectiles land after by the hitmark constant they are released at,
+// its queue calls, and the paths of its files below the folder
 export interface GcsimCharacter {
   animationFrameNameMap: Map<string, string>;
   attacks: GcsimAttack[];

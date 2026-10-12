@@ -1,4 +1,4 @@
-// The stages a pass compiles a program for, in the order its serialized form lists them
+// The stages a pass compiles a program for
 export enum ShaderProgramStage {
   Domain = "Domain",
   Fragment = "Fragment",
