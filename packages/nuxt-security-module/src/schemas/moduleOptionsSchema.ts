@@ -10,7 +10,7 @@ import { ssgOptionsSchema } from "#src/schemas/ssgOptionsSchema";
 import * as z from "zod";
 
 // An unknown key is refused, so a misspelt option fails the build rather than being ignored
-export const moduleOptionsSchema = z.strictObject({
+export const moduleOptionsSchema: z.ZodType<ModuleOptions> = z.strictObject({
   allowedMethodsRestricter: z.union([allowedMethodsRestricterOptionsSchema, z.literal(false)]),
   basicAuth: z.union([basicAuthOptionsSchema, z.literal(false)]),
   contentSecurityPolicyReportOnly: z.boolean(),
@@ -23,4 +23,4 @@ export const moduleOptionsSchema = z.strictObject({
   requestSizeLimiter: z.union([requestSizeLimiterOptionsSchema, z.literal(false)]),
   sri: z.boolean(),
   ssg: z.union([ssgOptionsSchema, z.literal(false)]),
-}) satisfies z.ZodType<ModuleOptions>;
+});

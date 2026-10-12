@@ -9,15 +9,15 @@ import type { SsgOptions } from "#src/models/SsgOptions";
 export interface ModuleOptions {
   allowedMethodsRestricter: AllowedMethodsRestricterOptions | false;
   basicAuth: BasicAuthOptions | false;
+  contentSecurityPolicyReportOnly: boolean;
+  corsHandler: CorsHandlerOptions | false;
   // The whole module switched off, which registers no handler, plugin or header
   enabled: boolean;
-  corsHandler: CorsHandlerOptions | false;
-  contentSecurityPolicyReportOnly: boolean;
-  headers: SecurityHeaders | false;
+  headers: false | SecurityHeaders;
   hidePoweredBy: boolean;
   nonce: boolean;
-  rateLimiter: RateLimiterOptions | false;
-  requestSizeLimiter: RequestSizeLimiterOptions | false;
+  rateLimiter: false | RateLimiterOptions;
+  requestSizeLimiter: false | RequestSizeLimiterOptions;
   sri: boolean;
-  ssg: SsgOptions | false;
+  ssg: false | SsgOptions;
 }
