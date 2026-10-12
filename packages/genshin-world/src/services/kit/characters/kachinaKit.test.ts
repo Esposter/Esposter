@@ -10,7 +10,7 @@ describe(createKachinaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(KACHINA_KIT.normalAttacks[0].hits).talentMultiplier,
+      takeOne(takeOne(KACHINA_KIT.normalAttacks).hits).talentMultiplier,
       takeOne(KACHINA_KIT.chargedAttack.hits).talentMultiplier,
       KACHINA_KIT.plungeCollision.talentMultiplier,
       takeOne(KACHINA_KIT.lowPlunge.hits).talentMultiplier,
@@ -20,7 +20,7 @@ describe(createKachinaKitBehaviour, () => {
 
   test("her burst's hit is a share of her DEF, with no talent multiplier of its own", () => {
     expect.hasAssertions();
-    const [burstHit] = KACHINA_KIT.elementalBurst.hits;
+    const burstHit = takeOne(KACHINA_KIT.elementalBurst.hits);
     expect(burstHit.talentMultiplier).toBe(0);
     expect(burstHit.additiveBaseDamageBonus).toBeTypeOf("function");
   });
