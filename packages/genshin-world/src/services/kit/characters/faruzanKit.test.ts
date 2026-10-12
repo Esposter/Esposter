@@ -107,14 +107,7 @@ describe(createFaruzanKitBehaviour, () => {
     benchedParty.characterIdMemberMap.set(benchedCharacterId, createPartyMember());
     const field = castEffects(FARUZAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };
-    field?.onTick({
-      activeCombatant: createFaruzanCombatant(),
-      characterIdCombatantMap: new Map([[FARUZAN_CHARACTER_ID, createFaruzanCombatant()]]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: benchedParty,
-      tickIndex: 0,
-    });
+    field?.onTick(createKitTestContext(createFaruzanCombatant(), { kitEffectState, party: benchedParty }), 0);
 
     const buffedCharacterIds = kitEffectState.effects.flatMap((effect) =>
       effect.kind === "buff" ? [effect.characterId] : [],
