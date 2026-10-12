@@ -8,6 +8,7 @@ export interface ExcelWeaponRow {
   id: number;
   nameTextMapHash: number;
   rankLevel: number;
+  skillAffix: number[];
   weaponBaseExp: number;
   weaponPromoteId: number;
   weaponProp: { initValue?: number; propType: string; type: string }[];

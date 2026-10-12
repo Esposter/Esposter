@@ -1,10 +1,12 @@
 import type { ExcelProperty } from "#src/models/genshinAssets/stats/ExcelProperty";
 
-// One bonus of a set's affix, by its place among the set's piece counts, the first left out: the attributes it adds,
-// And the numbers its effect reads, padded with zeros to the table's width
+// One row of an affix group, by its place among the group's levels: the attributes it adds, the numbers its effect
+// Reads padded with zeros to the table's width, and the text that names it and describes it at that level
 export interface ExcelEquipAffixRow {
   addProps: ExcelProperty[];
+  descTextMapHash: number;
   id: number;
   level?: number;
+  nameTextMapHash: number;
   paramList: number[];
 }
