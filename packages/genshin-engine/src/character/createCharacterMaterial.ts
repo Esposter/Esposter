@@ -11,8 +11,8 @@ import { DoubleSide, FrontSide, Vector3 } from "three";
 import { float, texture, uv, vec4 } from "three/tsl";
 
 // One of a character's materials, shaded as the game's own character shader draws a body, its inputs taken from the PMX
-// Material: its diffuse is the main texture and its colour, its toon the ramp read as one row, its sphere the metal map,
-// And its specular and edge carry over. The regions and the lightmap take their defaults, as the shading page's inputs
+// Material: its diffuse is the main texture and its colour, its toon the ramp (its own read up its one column, a shared
+// One across its row), its sphere the metal map, and its specular and edge carry over. The regions and the lightmap take their defaults, as the shading page's inputs
 // Table sets out. A material is drawn opaque, writing its depth, unless its diffuse alpha is below one or its texture has
 // Clear texels, and then it is blended and drawn from both faces. Every opaque material is outlined, as the game outlines
 // Every character: one whose edge the file sets in that edge's colour and width, the colour tone-mapped as the body's is,
