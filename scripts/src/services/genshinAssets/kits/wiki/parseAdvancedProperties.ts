@@ -26,6 +26,7 @@ const readTemplateBody = (wikitext: string, start: number): string => {
 // Next: each row's `titleN`, `guN`, `icdtagN`, `poiseN` and `bluntN`, the first row's written with no number
 export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[] => {
   const properties: WikiAdvancedProperty[] = [];
+  let rowOffset = 0;
   for (
     let start = wikitext.indexOf(TEMPLATE_START);
     start !== -1;
@@ -42,7 +43,6 @@ export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[
       fieldMap.set(groups.field, parameter.slice(separator + 1).trim());
       fieldMaps.set(row, fieldMap);
     }
-    const rowOffset = properties.length;
     for (const [row, fieldMap] of [...fieldMaps].toSorted(([left], [right]) => left - right)) {
       const title = fieldMap.get("title");
       if (title === undefined) continue;
@@ -58,6 +58,8 @@ export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[
         title,
       });
     }
+    // The next template goes on from this one's last row, whether or not that row has a title
+    rowOffset += Math.max(0, ...fieldMaps.keys());
   }
   return properties;
 };

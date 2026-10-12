@@ -47,4 +47,17 @@ describe(parseAdvancedProperties, () => {
       { row: 2, title: "Swing DMG" },
     ]);
   });
+
+  test("numbers the next template on from its last row, a row the page leaves out included", () => {
+    expect.hasAssertions();
+
+    const gapped = "{{Advanced Properties\n|title = Swing DMG\n|title3 = Charge DMG\n}}";
+    const next = "{{Advanced Properties\n|title = Plunge DMG\n}}";
+
+    expect(parseAdvancedProperties(`${gapped}\n${next}`)).toStrictEqual([
+      { row: 1, title: "Swing DMG" },
+      { row: 3, title: "Charge DMG" },
+      { row: 4, title: "Plunge DMG" },
+    ]);
+  });
 });
