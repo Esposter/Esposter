@@ -42,8 +42,8 @@ const readTile = (getHeight: (x: number, z: number) => number) => {
   for (let row = 0; row < SIDE; row++)
     for (let column = 0; column < SIDE; column++) getHeight(column * STEP, row * STEP);
 };
-// A tile's heights over the hills a vertex reads, and with as many more hills or features, so the time each adds over
-// The hills reads what a feature costs a vertex against a hill
+// A tile's heights over the hills a vertex reads, and again with as many more hills or features, so the time each adds
+// over the hills reads what a feature costs a vertex against a hill
 describe(createTerrainShapeHeight, () => {
   test(`a tile's heights over ${HILL_COUNT} hills`, async ({ bench }) => {
     await bench.compare(
