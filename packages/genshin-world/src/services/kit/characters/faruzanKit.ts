@@ -190,8 +190,8 @@ export const createFaruzanKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     ]);
 
   // Prayerful Wind's Gift gives every member of the deployed team the Anemo DMG Bonus for its seconds
-  const addPrayerfulWindsGift = (kitEffectState: KitEffectState, { characterIdMemberMap }: Party): void => {
-    for (const characterId of characterIdMemberMap.keys())
+  const addPrayerfulWindsGift = (kitEffectState: KitEffectState, { deployedTeamIndex, teams }: Party): void => {
+    for (const characterId of teams[deployedTeamIndex]?.characterIds ?? [])
       addKitEffect(kitEffectState, {
         amount: burstTalentMultiplier(1),
         attribute: Attribute.AnemoDamageBonus,
