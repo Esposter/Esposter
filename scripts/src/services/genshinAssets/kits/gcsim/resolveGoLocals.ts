@@ -1,8 +1,8 @@
 // A local name in a constructor's arguments, bound in the function it is used in. The name is the identifier that is not
 // The field or call of another name, and not the left side of an assignment
 const LOCAL_NAME_REGEX = /(?<!\.)\b(?<name>[A-Za-z_]\w*)\b(?!\s*\()/gu;
-// An operator that binds looser than the one using the local, so a bound sum is wrapped to stay one operand
-const ARITHMETIC_OPERATOR_REGEX = /[-%*+/]/u;
+// An operator of any precedence in Go's binary set, so a bound expression holding one is wrapped to stay one operand
+const OPERATOR_REGEX = /[-!%&*+/<=>^|]/u;
 
 // The first and last line of the top-level function a line is in, or undefined where it is in none
 const readFunctionLines = (lines: readonly string[], lineIndex: number): [number, number] | undefined => {
@@ -67,7 +67,7 @@ export const resolveGoLocals = (text: string, lines: readonly string[], lineInde
       isResolved = false;
       return match;
     }
-    return ARITHMETIC_OPERATOR_REGEX.test(binding.expression) ? `(${binding.expression})` : binding.expression;
+    return OPERATOR_REGEX.test(binding.expression) ? `(${binding.expression})` : binding.expression;
   });
   return isResolved ? resolved : undefined;
 };

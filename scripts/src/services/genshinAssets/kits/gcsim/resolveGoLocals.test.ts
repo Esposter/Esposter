@@ -2,6 +2,7 @@ import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
+import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -93,6 +94,20 @@ describe("readGcsimCitedCandidates local aliases", () => {
         value: { angle: 2 * Math.PI, height: 2, radius: 10 },
       },
     ]);
+  });
+
+  // The alias's expression holds a bitwise or, which binds looser than `*`, so `r*2` is (1 | 2) * 2, not 1 | 2*2
+  test("a local bound to a bitwise expression is wrapped where it is spliced", () => {
+    expect.hasAssertions();
+    const lines = [
+      "package aino",
+      "",
+      "func burst() {",
+      "\tr := 1 | 2",
+      "\tap := combat.NewCircleHit(c.Core.Combat.Player(), nil, nil, r*2)",
+      "}",
+    ];
+    expect(resolveGoLocals("r*2", lines, 4)).toBe("(1 | 2)*2");
   });
 
   test("an alias assigned more than once gives no area, so nothing is guessed", () => {
