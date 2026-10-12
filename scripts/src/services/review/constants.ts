@@ -33,9 +33,11 @@ export const ReviewSessionRoleModelMap: Record<ReviewSessionRole, string> = {
   [ReviewSessionRole.Settler]: "haiku",
 };
 // The checks a fixer or a settler runs before it commits, since its commit lands on `ai/queue` with nothing else to stop a
-// Red: a fix that keeps a test green can still break a type or a docs rule
+// Red: a fix that keeps a test green can still break a type or a docs rule. The suites that read the whole tree run once
+// Before the first edit as well, since other work may already have left the tip red, and a session told only to keep a
+// Red suite green has no failure it can tell apart as its own.
 export const REVIEW_SESSION_CHECKS =
-  "Before committing, run the tests of the files you touched (`pnpm test <paths> --run` from the package that owns them), the workspace rules (`pnpm test src/workspace --run` from `scripts`), the docs suite (`pnpm test content/docs --run` from `apps/web`) when you touched a page, `pnpm typecheck` and `pnpm lint` in each package you touched, and every check a skill you loaded names for a change to those files, such as a run over a reader's real inputs, and keep them all green. A fix they refuse is not made.";
+  "Before your first edit, run the workspace rules (`pnpm test src/workspace --run` from `scripts`) and the docs suite (`pnpm test content/docs --run` from `apps/web`), and note what fails: other work may already have left them red. Before each commit, run both again, with the tests of the files you touched (`pnpm test <paths> --run` from the package that owns them), `pnpm typecheck` and `pnpm lint` in each package you touched, and every check a skill you loaded names for a change to those files, such as a run over a reader's real inputs. A failure the first run did not list is yours: fix it before committing, or leave that fix unmade. A failure it did list is not yours to fix.";
 // The commit a fixer or a settler makes for each fix, with the trailer that names the session that made it
 export const REVIEW_COMMIT_INSTRUCTION =
   "Commit each coherent fix by pathspec with a conventional message (`type(scope): what changed`) ending with the line:\nCo-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>";

@@ -17,10 +17,12 @@ export const getFixerPrompt = ({ base, end, findings }: FixerPromptInput): strin
 The findings, as the reviewers wrote them:
 ${JSON.stringify(indexedFindings, null, 2)}
 
+${REVIEW_SESSION_CHECKS}
+
 For each finding, in order:
 1. Open the file at the tip and settle the finding: refute it if the code disproves it or a later commit has already fixed it.
 2. Fix a real one at its root, following the \`code-review\` skill's \`references/fixing-findings.md\` and loading the skills the touched files need. Defer, rather than fix, a finding that needs a design decision, a new feature or a change beyond a mechanical ripple from the files it names.
-3. ${REVIEW_SESSION_CHECKS}
+3. Run the checks above before committing the fix.
 
 ${REVIEW_COMMIT_INSTRUCTION}
 Never push, never amend, and never touch a file no finding concerns.
