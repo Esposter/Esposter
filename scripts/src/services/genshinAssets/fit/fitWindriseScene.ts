@@ -9,6 +9,7 @@ import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
 import { fitSurfaceColours } from "#src/services/genshinAssets/fit/fitSurfaceColours";
 import { fitWindriseOak } from "#src/services/genshinAssets/fit/fitWindriseOak";
+import { readGroundLayerCells } from "#src/services/genshinAssets/fit/readGroundLayerCells";
 import { fitWindrisePaving } from "#src/services/genshinAssets/fit/fitWindrisePaving";
 import { fitWindrisePlants } from "#src/services/genshinAssets/fit/fitWindrisePlants";
 import { fitWindriseStatue } from "#src/services/genshinAssets/fit/fitWindriseStatue";
@@ -48,9 +49,13 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<GameData
       // The surfaces record holds the families its reader parses: the grass has no mesh in the exports to read. The
       // Ground's family also holds each of its layers' colours, which the tiles' own cells class
       surfaces: async () => {
-        const [groundLayers, groundLayerColours, surfaces] = await Promise.all([
-          fitGroundLayerField(DerivedAssetComponent.Windrise, GROUND_RADIUS, GROUND_LAYER_CELL_SIZE),
-          fitGroundLayerColours(DerivedAssetComponent.Windrise, GROUND_RADIUS),
+        const [tiles, origin] = await Promise.all([
+          readGroundLayerCells(DerivedAssetComponent.Windrise),
+          readWorldOrigin(DerivedAssetComponent.Windrise),
+        ]);
+        const groundLayers = fitGroundLayerField(tiles, origin, GROUND_RADIUS, GROUND_LAYER_CELL_SIZE);
+        const [groundLayerColours, surfaces] = await Promise.all([
+          fitGroundLayerColours(DerivedAssetComponent.Windrise, tiles, origin, GROUND_RADIUS),
           fitSurfaceColours(
             DerivedAssetComponent.Windrise,
             Object.fromEntries(

@@ -1,3 +1,4 @@
+import type { GroundLayerCellTile } from "#src/models/genshinAssets/fit/GroundLayerCellTile";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { TerrainSplatKind } from "#src/models/genshinAssets/world/TerrainSplatKind";
 import type { TerrainSplatLayer } from "#src/models/genshinAssets/world/TerrainSplatLayer";
@@ -15,9 +16,7 @@ const checkIsTerrainSplatKind = (kind: number): kind is TerrainSplatKind =>
 // Cells is painted in, the cells a side, row by row along the game's z with its x within a row, as its heights run. A
 // Cell's layer is its splat layer's kind's, but for the stone the game paints its roads in, which is the path: its cells
 // Run as thin lines along the roads its base maps show. A kind no tile was read holding is an error rather than a guess
-export const readGroundLayerCells = async (
-  component: DerivedAssetComponent,
-): Promise<{ cells: GroundLayer[]; column: number; name: string; resolution: number; row: number }[]> => {
+export const readGroundLayerCells = async (component: DerivedAssetComponent): Promise<GroundLayerCellTile[]> => {
   const tiles = await readTerrainSplats(component);
   const names = await readAssetNames(
     new Set(tiles.flatMap(({ splat }) => splat.layers.map(({ diffusePathId }) => diffusePathId))),

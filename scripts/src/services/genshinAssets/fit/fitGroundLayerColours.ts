@@ -1,3 +1,4 @@
+import type { GroundLayerCellTile } from "#src/models/genshinAssets/fit/GroundLayerCellTile";
 import type { SurfaceSample } from "#src/models/genshinAssets/fit/SurfaceSample";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Vector } from "#src/models/shared/Vector";
@@ -5,10 +6,8 @@ import type { GroundLayer } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
-import { readGroundLayerCells } from "#src/services/genshinAssets/fit/readGroundLayerCells";
 import { TERRAIN_BASE_MAP_SUFFIX, TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
-import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -20,12 +19,10 @@ import sharp from "sharp";
 // Texel stands on, gives none
 export const fitGroundLayerColours = async (
   component: DerivedAssetComponent,
+  tiles: GroundLayerCellTile[],
+  [originX, , originZ]: [number, number, number],
   terrainRadius: number,
 ): Promise<Partial<Record<GroundLayer, string>>> => {
-  const [tiles, [originX, , originZ]] = await Promise.all([
-    readGroundLayerCells(component),
-    readWorldOrigin(component),
-  ]);
   const textureDirectory = join(getComponentDirectory(component).assets, AssetType.Texture2D);
   const samples = new Map<GroundLayer, SurfaceSample[]>();
   for (const { cells, column, name, resolution, row } of tiles) {
