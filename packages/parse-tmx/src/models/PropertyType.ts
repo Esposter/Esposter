@@ -8,5 +8,3 @@ export enum PropertyType {
   Object = "object",
   String = "string",
 }
-
-export const PropertyTypes: readonly PropertyType[] = Object.values(PropertyType);

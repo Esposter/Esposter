@@ -7,7 +7,7 @@ import type { TMXFrame } from "#src/models/tmx/TMXFrame";
 import type { TMXReadContext } from "#src/models/tmx/TMXReadContext";
 
 import { AttributeKind } from "#src/models/AttributeKind";
-import { PropertyType, PropertyTypes } from "#src/models/PropertyType";
+import { PropertyType } from "#src/models/PropertyType";
 import { TMXMapParsed } from "#src/models/tmx/parsed/TMXMapParsed";
 import { TMXTagName } from "#src/models/tmx/TMXTagName";
 import { createTmxImage } from "#src/services/createTmxImage";
@@ -15,6 +15,7 @@ import { openTmxLayer } from "#src/services/openTmxLayer";
 import { openTmxLayerChild } from "#src/services/openTmxLayerChild";
 import { openTmxObjectChild } from "#src/services/openTmxObjectChild";
 import { openTmxProperties } from "#src/services/openTmxProperties";
+import { parseEnumAttribute } from "#src/services/parseEnumAttribute";
 import { readTmxAttributes } from "#src/services/readTmxAttributes";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -73,13 +74,8 @@ const createEmbeddedTileset = (attributes: TMXAttributes): TMXEmbeddedTilesetPar
 const parseTmxTagName = (name: string): TMXTagName | undefined =>
   Object.values(TMXTagName).find((tagName) => tagName === name);
 // A property without a type is a string, as Tiled writes it
-const parsePropertyType = (value: string | undefined): PropertyType => {
-  if (value === undefined) return PropertyType.String;
-  const propertyType = PropertyTypes.find((type) => type === value);
-  if (propertyType === undefined)
-    throw new InvalidOperationError(Operation.Read, parsePropertyType.name, `${value} is not a property type`);
-  return propertyType;
-};
+const parsePropertyType = (value: string | undefined): PropertyType =>
+  parseEnumAttribute(parsePropertyType.name, "property type", PropertyType, value) ?? PropertyType.String;
 
 // A document's root is a map, or a tileset on its own. An external tileset has no children to read, so it has no frame.
 const openTmxRoot = (name: string, attributes: TMXAttributes, context: TMXReadContext): TMXFrame | undefined => {

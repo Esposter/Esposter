@@ -11,8 +11,8 @@ import { TMXTagName } from "#src/models/tmx/TMXTagName";
 import { createTmxImage } from "#src/services/createTmxImage";
 import { openTmxLayer } from "#src/services/openTmxLayer";
 import { openTmxProperties } from "#src/services/openTmxProperties";
+import { parseEnumAttribute } from "#src/services/parseEnumAttribute";
 import { readTmxAttributes } from "#src/services/readTmxAttributes";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 type TMXLayerChildParent = Extract<
   TMXFrame,
@@ -27,19 +27,7 @@ const chunkAttributeKindMap = {
   y: AttributeKind.RequiredNumber,
 } as const;
 
-// An attribute holding one of an enum's values is read as that value, and any other value is refused by name. Zstandard
-// Is the one Tiled compression the enum leaves out, since no browser ships a decompressor for it
-const parseEnumAttribute = <T extends string>(
-  operation: string,
-  label: string,
-  enumObject: Record<string, T>,
-  value: string | undefined,
-): T | undefined => {
-  if (value === undefined) return undefined;
-  const enumValue = Object.values(enumObject).find((member) => member === value);
-  if (enumValue !== undefined) return enumValue;
-  throw new InvalidOperationError(Operation.Read, operation, `${value} is not a supported ${label}`);
-};
+// Zstandard is the one Tiled compression the enum leaves out, since no browser ships a decompressor for it
 const parseCompression = (value: string | undefined): Compression | undefined =>
   parseEnumAttribute(parseCompression.name, "compression", Compression, value);
 const parseEncoding = (value: string | undefined): Encoding | undefined =>
