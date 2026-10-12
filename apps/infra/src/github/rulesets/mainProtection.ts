@@ -3,10 +3,10 @@ import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
 // `main` is the reviewed prefix of `ai/queue`, moved only by the review workflow's fast-forward push, which runs
-// as the Admin repository role through `REVIEW_COLLECTOR_TOKEN`. Nothing else writes it: no pull request targets
+// As the Admin repository role through `REVIEW_COLLECTOR_TOKEN`. Nothing else writes it: no pull request targets
 // `main`, so there is no pull request rule, and Renovate, which lands on `ai/queue`, is no bypass actor. A
-// ruleset cannot name an individual user, so the Admin role is the only bypass. `deletion` and `nonFastForward`
-// keep `main` an ancestor of `ai/queue`, which the review's fast-forward needs.
+// Ruleset cannot name an individual user, so the Admin role is the only bypass. `deletion` and `nonFastForward`
+// Keep `main` an ancestor of `ai/queue`, which the review's fast-forward needs.
 // Required status checks live in queueStatusChecks, not here: bypass is granted per ruleset and never per rule.
 export const mainProtection: github.RepositoryRuleset = new github.RepositoryRuleset(
   "mainProtection",

@@ -14,11 +14,11 @@ export const repository: github.Repository = new github.Repository(
     allowRebaseMerge: false,
     // Squash is for an external contributor's pull request against ai/queue, which enters the queue as one
     // Commit carrying the pull request's title and body. Renovate's pull requests merge with a merge commit, which
-    // is what main's fast-forward carries onto ai/queue, so no ruleset requires a merge method.
+    // Is what main's fast-forward carries onto ai/queue, so no ruleset requires a merge method.
     allowSquashMerge: true,
     allowUpdateBranch: true,
     // Native auto-delete bypasses rulesets and would delete a long-lived branch that a pull request heads. Disabled
-    // here; the Delete Merged Branch workflow cleans up head branches while excluding long-lived branches (main, ai/queue).
+    // Here; the Delete Merged Branch workflow cleans up head branches while excluding long-lived branches (main, ai/queue).
     deleteBranchOnMerge: false,
     description: "A nice and casual place for posting random things.",
     hasDiscussions: true,

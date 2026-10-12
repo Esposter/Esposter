@@ -13,7 +13,7 @@ describe("constants", () => {
     // A GraphQL error wrapped in the tool's own error line, which the pattern still reads
     {
       isOutage: true,
-      message: "Invalid operation: Read, name: esposter, HTTP 502: Bad Gateway (https://api.github.com/graphql)",
+      message: "Invalid operation: Read, name: repository, HTTP 502: Bad Gateway (https://api.github.com/graphql)",
     },
     {
       isOutage: true,
