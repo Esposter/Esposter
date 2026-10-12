@@ -52,16 +52,34 @@ const getPassedName = (expression: GoExpression): string | undefined => {
   else return undefined;
 };
 
+// The numbers a file's locals are first given with `:=`, `windup := 0`, which a delay written in terms of a local reads, as
+// The local is its first value before a branch of the function changes it
+const readLocalNumberMap = (tokens: readonly GoToken[]): Map<string, number> => {
+  const localNumberMap = new Map<string, number>();
+  for (const [position, token] of tokens.entries()) {
+    const value = tokens[position + 2];
+    if (
+      token.kind === GoTokenKind.Identifier &&
+      checkIsGoPunctuation(tokens[position + 1], ":=") &&
+      value?.kind === GoTokenKind.Number &&
+      !localNumberMap.has(token.text)
+    )
+      localNumberMap.set(token.text, Number(value.text.replaceAll("_", "")));
+  }
+  return localNumberMap;
+};
+
 // Each `QueueAttack` and `QueueAttackWithSnap` call of a gcsim character's action files, its `AttackInfo` read from its
-// Inline literal or from the name it passes, and its damage delay read as the fourth argument, where the constants and
-// Literal numbers give it a value
+// Inline literal or from the name it passes, and its damage delay read as the fourth argument, where the constants, the
+// Locals' first numbers and literal numbers give it a value
 export const readGcsimQueuedAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
 ): GcsimQueuedAttack[] => {
-  const resolveName = (name: string) => constantMap.get(name)?.value;
   return sources.flatMap(({ path: file, source }) => {
     const tokens = tokenizeGo(source);
+    const localNumberMap = readLocalNumberMap(tokens);
+    const resolveName = (name: string) => constantMap.get(name)?.value ?? localNumberMap.get(name);
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.kind !== GoTokenKind.Identifier || !QUEUE_CALLEES.has(token.text)) continue;

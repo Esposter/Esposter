@@ -33,4 +33,29 @@ describe(readGcsimQueuedAttacks, () => {
       { attackLine: 9, attackName: undefined, delay: 30, delayLine: 12, file: "burst.go", line: 8 },
     ]);
   });
+
+  test("reads a queue call's delay written in terms of a local, its first number", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "charge.go",
+        source: [
+          "package neuvillette",
+          "",
+          "const shortChargeHitmark = 27",
+          "",
+          "func (c *char) chargeAttackShort() {",
+          "\twindup := 0",
+          "\tif c.Core.Player.CurrentState() == action.Idle {",
+          "\t\twindup = 14",
+          "\t}",
+          "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([27]);
+  });
 });

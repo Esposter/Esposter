@@ -7,6 +7,7 @@ import {
   NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES,
   NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES,
 } from "#src/services/genshinAssets/kits/constants";
+import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
@@ -19,10 +20,12 @@ import { STRIKE_TARGETING_AREA, WeaponType } from "genshin-world";
 // Drains no stamina, its hitmark and frames that level's in `aimedHitmarks` and `aimedFrames`, its area the `FullAim`
 // Hitbox and its multiplier `fullaim`'s. A claymore's with no frames takes the shared rule
 export const addGcsimChargedAttackCandidates = (
-  { add, addFrames, addHit, addNoActionFileRule, toFile }: GcsimKitCandidateWriter,
-  { attacks, config, constantMap, travelMap }: GcsimCharacter,
+  writer: GcsimKitCandidateWriter,
+  gcsim: GcsimCharacter,
   weaponType: WeaponType,
 ): void => {
+  const { add, addFrames, addHit, addNoActionFileRule, toFile } = writer;
+  const { attacks, config, constantMap, travelMap } = gcsim;
   const chargedAttack = attacks.find(({ attackTag }) => attackTag === GCSIM_CHARGED_ATTACK_TAG);
   const chargedHitmarks = findGcsimConstant(constantMap, "chargeHitmarks", "chargeHitmark");
   const chargedHitmarkValues = toGoNumbers(chargedHitmarks?.value);
@@ -73,6 +76,16 @@ export const addGcsimChargedAttackCandidates = (
       },
       STRIKE_TARGETING_AREA,
     );
+  } else {
+    // A charged attack no hitmark constant gives is fired by its queue call, as a bow's or a Mualani's inline one is
+    addFrames("chargedAttack.animationFrames", "chargeFrames");
+    addGcsimQueuedHits(writer, gcsim, {
+      abilityName: "charge",
+      attackTags: [GCSIM_CHARGED_ATTACK_TAG],
+      framesName: "chargeFrames",
+      path: "chargedAttack",
+      targetingArea: STRIKE_TARGETING_AREA,
+    });
   }
 
   if (
