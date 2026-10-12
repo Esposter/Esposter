@@ -42,9 +42,9 @@ import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
 // Place of its own parts, from the layout the shooting browser serves there, claimed by the fixture's
-// `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks, or else by the fixture's own
-// Claims. A tool sets the screen's props as it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on,
-// And renders a segment of the Login's music to score it
+// `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks. A tool sets the screen's props
+// As it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on, and renders a
+// Segment of the Login's music to score it
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
@@ -97,9 +97,9 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  // A component the fixture does not list is a typo in the tool's URL, never a reason to measure with the screen's claims
+  // A component the fixture does not list is a typo in the tool's URL, or a scene that claims none of its exports
   const getClaims = (witnessComponent: string) => {
-    const claims = witnessComponent ? screen.witnessComponents?.[witnessComponent] : screen;
+    const claims = screen.witnessComponents?.[witnessComponent];
     if (!claims)
       throw new InvalidOperationError(Operation.Read, witnessComponent, "not a witness component of the screen");
     return claims;

@@ -1,5 +1,5 @@
-import type { ScreenFixture } from "#parity/models/ScreenFixture";
 import type { WitnessClaim } from "#parity/models/witness/WitnessClaim";
+import type { WitnessClaims } from "#parity/models/witness/WitnessClaims";
 import type { ScenePlacement } from "genshin-engine";
 
 const findClaim = (claims: readonly [string, RegExp][], renderer: string): string | undefined =>
@@ -9,11 +9,7 @@ const findClaim = (claims: readonly [string, RegExp][], renderer: string): strin
 // Hands them over without the page loading a mesh
 export const claimWitnessRenderers = (
   placements: readonly Pick<ScenePlacement, "materials" | "mesh">[],
-  {
-    witnessFamilies = {},
-    witnessStandIns = {},
-    witnessUndrawn = {},
-  }: Pick<ScreenFixture, "witnessFamilies" | "witnessStandIns" | "witnessUndrawn">,
+  { witnessFamilies = {}, witnessStandIns = {}, witnessUndrawn = {} }: WitnessClaims,
 ): WitnessClaim[] => {
   const drawnClaims = [...Object.entries(witnessFamilies), ...Object.entries(witnessStandIns)];
   const undrawnClaims = Object.entries(witnessUndrawn);

@@ -33,8 +33,8 @@ export const props = {
   regionDataBaseUrl: "regions",
 };
 export const readyEvent = "ready";
-// Each capital's own claims on its region's exports, so no renderer of theirs falls to Windrise's families below, whose
-// Terrain tiles and common ruins their exports hold too
+// Windrise's claims on its exports, and each capital's own on its region's, so no renderer of theirs falls to
+// Windrise's families, whose terrain tiles and common ruins their exports hold too
 export const witnessComponents = {
   fontaine: { witnessFamilies: FontainePartFamilyMeshRegexMap, witnessUndrawn: FontaineUndrawnMeshRegexMap },
   inazuma: { witnessFamilies: InazumaPartFamilyMeshRegexMap, witnessUndrawn: InazumaUndrawnMeshRegexMap },
@@ -44,5 +44,5 @@ export const witnessComponents = {
   "nod-krai": { witnessFamilies: NodKraiPartFamilyMeshRegexMap, witnessUndrawn: NodKraiUndrawnMeshRegexMap },
   snezhnaya: { witnessFamilies: SnezhnayaPartFamilyMeshRegexMap, witnessUndrawn: SnezhnayaUndrawnMeshRegexMap },
   sumeru: { witnessFamilies: SumeruPartFamilyMeshRegexMap, witnessUndrawn: SumeruUndrawnMeshRegexMap },
+  windrise: { witnessFamilies: WindrisePartFamilyMeshRegexMap },
 };
-export const witnessFamilies = WindrisePartFamilyMeshRegexMap;
