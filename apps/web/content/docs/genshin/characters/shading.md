@@ -10,7 +10,7 @@ Lumine (the game's "PlayerGirl") is drawn by the game's own "Character_Base_Uber
 - **Exact:** read from a program, its register and constant use, or its keyword set. The program is named where it matters.
 - **Provisional:** the structure is read, but a name, a binding or a fitted number is not yet confirmed, and the reason is given.
 
-Hair and face are not derived yet. The open items are at the end.
+Hair and face are written in their sections. The open items are at the end.
 
 ## What her materials select
 
@@ -254,12 +254,14 @@ Nothing in the outline's equations has been fitted to a rendered outline, so no 
 
 ## The deferred lighting pass's character branch
 
-The pass is "Hidden/Internal-DeferredShading", in the block "00/00612967.blk", exported raw as one shader with 758 programs. Its character-keyed pixel programs ("DEFERRED_TOON_ON" with the character keywords) read a material byte from the G-buffer and branch on it.
+The pass is "Hidden/Internal-DeferredShading", in the block "00/00612967.blk", exported raw as one shader with 765 programs. The parser reads all of them since the pass trailer fix (its pass trailer is one word or two). Its character programs are the 34 pixel programs keyed by "HAS_CHARACTER_LIGHT". None of them carries "DEFERRED_TOON_ON", so the earlier pairing of that keyword with the character set was wrong.
 
-- The byte is read from one G-buffer channel, multiplied by 255, rounded, and its bit 6 cleared before it is compared (Exact on the arithmetic). Provisional on which target that channel belongs to, since the render-target binding is set by the game's C#, not by the shader.
-- The comparisons seen in one such program are against the sets {0, 1, 11, 13}, {6, 8, 13, 14}, {16, 18, 19, 24} and {23}, with a second test that the G-buffer's other channel lies in (0.45, 0.51) for the first set (Exact on the values, Provisional on which program a body pixel reaches).
-- If the body's "o0.w" is the channel the pass reads, region 2 arrives as "85" before the bit-6 clear, which gives "21". The sets above do not contain "21", so that mapping is not yet settled.
-- The pass's sun, ramp and ambient sum for a character pixel is not yet read, so no lit-colour equation for the deferred pass is claimed.
+Program 394 (keywords "ELEMENT_VIEW_ON", "HAS_CHARACTER_LIGHT", "MHY_SHADER_HIGH", DXBC) is the chosen base: the first of the fewest-keyword character sets.
+
+- The material byte is G-buffer channel t7.x, times 255, plus 0.5, as unsigned, with bit 6 cleared (Exact on the arithmetic). Which target that channel is bound to is Provisional, since the binding is set by the game's C#.
+- The character gate tests that byte against 20, 12 and 5 (Exact on the comparisons). A low nibble of channel t9 is tested against 15 separately. Which material each value names is Provisional.
+- The lit term the gate selects is C_branch = r6 * T10 * cb0[158].x + r14, where T10 is texture t10 at the pixel and r16 is r2 scaled by r3.w when the byte is not 20 (Exact on the arithmetic, Provisional on what r6 and r14 represent).
+- Not read: the light loops over the t23 index list (lines 641 to 928 and 933 to 1275), the shadow samples from t21 and t22, and the final output (lines 1292 to 1516), which is not yet traced to C_branch. So the sun, ramp and ambient sum for a character pixel is not written.
 
 ## Inputs, and where each comes from
 
@@ -280,8 +282,8 @@ The values in the Lumine column are the game's own, read from its material bytes
 
 - **The shade term's `z` and `w`.** Their expressions are read; their fitted values are not.
 - **The lit colour `C`.** The sum of the main colour, the ramp, the sun, the sky ambient, the specular and the rim is not yet assembled into one expression.
-- **Hair and face.** Hair uses the same ramp path without the metal gate; face uses "FACE_MAP_NEW_ON" and the face SDF. Neither is derived.
-- **The deferred pass's character branch.** The byte's target, and the mapping from the body's writes to the branch's sets, are not settled. The pass's light sum for a character pixel is not read.
+- **Hair and face constants.** The hair and face equations are written; the face's "v9.z" provenance is Provisional.
+- **The deferred pass's character branch.** The gate and C_branch are written; the light loops, the shadow terms and the final output are not traced, so the light sum is not written. The byte's target is Provisional.
 - **The register-to-texture binding.** The order the parameter table lists the textures is used for the bindings above; a check against a rendered frame is still to be made.
 
 Related: [drawing a character](/docs/genshin/characters/drawing), [derived assets](/docs/genshin/derived-assets), [game data formats](/docs/genshin/game-data-formats).
