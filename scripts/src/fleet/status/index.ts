@@ -1,5 +1,4 @@
 import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
-import { formatAge } from "#src/services/fleet/formatAge";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { formatFleetTable } from "#src/services/fleet/formatFleetTable";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
@@ -8,6 +7,7 @@ import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
 import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
 import { readFleetEntries } from "#src/services/fleet/readFleetEntries";
 import { readMachineHeartbeats } from "#src/services/fleet/readMachineHeartbeats";
+import { formatAge } from "#src/services/shared/formatAge";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 

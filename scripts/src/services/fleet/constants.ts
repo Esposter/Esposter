@@ -16,7 +16,6 @@ export const FLEET_IDENTITY_ARGUMENTS: readonly string[] = [
   "user.email=fleet@esposter.invalid",
 ];
 // A holder renews its claim, and a machine its heartbeat, on this interval
-export const MILLISECONDS_PER_MINUTE: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const RENEW_MILLISECONDS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
 // A claim unrenewed for this long is stale, and any machine may take it over
 export const STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");

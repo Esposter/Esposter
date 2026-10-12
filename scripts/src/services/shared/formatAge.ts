@@ -1,4 +1,4 @@
-import { MILLISECONDS_PER_MINUTE } from "#src/services/fleet/constants";
+import { MILLISECONDS_PER_MINUTE } from "#src/services/shared/constants";
 
 const MINUTES_PER_HOUR = 60;
 

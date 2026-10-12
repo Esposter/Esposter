@@ -2,9 +2,9 @@ import type { DependencyScoreReport } from "#src/models/dependencies/score/Depen
 import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 
 import { formatBytes } from "#src/services/dependencies/score/formatBytes";
-import { formatAge } from "#src/services/fleet/formatAge";
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";
+import { formatAge } from "#src/services/shared/formatAge";
 
 const YES = "yes";
 

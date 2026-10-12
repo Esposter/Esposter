@@ -3,10 +3,10 @@ import type { HoldFile } from "#src/models/resume/HoldFile";
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
 
 import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
-import { formatAge } from "#src/services/fleet/formatAge";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
 import { HOLD_DIED_ACTION, MISSED_CLAIM_ACTION, STALE_CLAIM_ACTION } from "#src/services/resume/constants";
+import { formatAge } from "#src/services/shared/formatAge";
 
 const MISS_LENGTH = 40;
 

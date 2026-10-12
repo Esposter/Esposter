@@ -38,6 +38,7 @@ export const MAX_WIKI_TITLES_PER_QUERY = 50;
 export const WIKI_FILE_CONCURRENCY = 8;
 // How long any request a script makes may take (`fetchJson`) — the npm registry and the GitHub API alike
 export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
+export const MILLISECONDS_PER_MINUTE: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the lockfile conflict
 // Resolver, the outdated report parses it, its benchmark reads it — and a literal repeated per
 // Consumer is one rename away from a script that reads a file that no longer exists.
