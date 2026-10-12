@@ -68,7 +68,7 @@ UnoCSS `presetAttributify` + `presetWind4` project-wide: static styles as elemen
 
 ## CI / CD — 10 / 10
 
-The workflows are CI, Bench, CodeQL (on `main` and weekly), Release (tags), Pulumi (infra preview on PRs), Delete Merged Branch, Claude warmup, the Review as a dispatched workflow running its own script, a reusable build, and one Azure Functions deployment whose branch picks the stack (develop → dev, main → prod).
+The workflows are CI, Bench, CodeQL (on `main` and weekly), Release (tags), Pulumi (infra preview on PRs), Delete Merged Branch, Claude warmup, the Review as a dispatched workflow running its own script, a reusable build, and one Azure Functions deployment whose branch picks the stack (ai/queue → dev, main → prod).
 
 CI builds every non-app package once via the reusable `build-packages` workflow, which every package-consuming job (`build`, `coverage`, and the `check` matrix that fans out `lint` and `typecheck`) gates on. Its `actions/cache` entry is keyed by content hash and shared repo-wide, so a CI build gives Bench a cache hit for free, and vice versa — the common app-only commit skips the build entirely. Tests run through one root `vitest.config.ts` `projects` config, so coverage runs as a `--shard` matrix with `--reporter=blob`, feeding a dependent `coverage-merge` job that recombines the blobs into one artifact.
 
