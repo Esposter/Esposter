@@ -1,10 +1,10 @@
 import { getShadingRegion } from "#src/character/shading/getShadingRegion";
 import { describe, expect, test } from "vitest";
 
-const allOn = { five: true, four: true, three: true, two: true };
-const allOff = { five: false, four: false, three: false, two: false };
-
 describe(getShadingRegion, () => {
+  const allOn = { five: true, four: true, three: true, two: true };
+  const allOff = { five: false, four: false, three: false, two: false };
+
   test("selects each region by its band of the lightmap's alpha, from the page's floors", () => {
     expect.hasAssertions();
 

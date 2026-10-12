@@ -2,10 +2,10 @@ import { getOutlineScale } from "#src/character/shading/getOutlineScale";
 import { Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
-const knotDepths = new Vector3(1, 2, 3);
-const knotScales = new Vector3(1, 2, 4);
-
 describe(getOutlineScale, () => {
+  const knotDepths = new Vector3(1, 2, 3);
+  const knotScales = new Vector3(1, 2, 4);
+
   test("interpolates the first knot pair below the middle knot's depth", () => {
     expect.hasAssertions();
 

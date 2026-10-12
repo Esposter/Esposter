@@ -1,9 +1,9 @@
 import { getToonThreshold } from "#src/character/shading/getToonThreshold";
 import { describe, expect, test } from "vitest";
 
-const base = { isLightMapAo: true, isVertexAo: false, lightMapGreen: 0.5, sunTerm: 0, vertexAo: 1 };
-
 describe(getToonThreshold, () => {
+  const base = { isLightMapAo: true, isVertexAo: false, lightMapGreen: 0.5, sunTerm: 0, vertexAo: 1 };
+
   test("is the sun term's half at the neutral green, the remap being zero there", () => {
     expect.hasAssertions();
 
