@@ -91,7 +91,7 @@ Two surfaces read the same index the other way, by target: the [delete-time refe
 ## Notes
 
 - **Resource Graph is eventually consistent; this index is not.** Azure keeps its index current from change notifications plus a periodic full scan, and documents that its data lags. Here the index authorizes, so the save itself keeps it in step and every failure leaves it cleared rather than behind — the cost being that a Program whose save failed after its blob landed rejects its survey's tokens until its next save.
-- **A resource is indexed by its saves, and the one backfill is the migration that created the table.** Each link is written by the save that writes the content holding it, so a Dashboard, Email or Program gets its links from the save that creates it. That migration wrote a `Survey` link from each existing `boundResourceId`, and nothing else was backfilled ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)).
+- **A resource is indexed by its saves, and the one backfill is the migration that created the table.** Each link is written by the save that writes the content holding it, so a Dashboard, Email or Program gets its links from the save that creates it. That migration wrote a `Survey` link from each resource's bound resource id, a column it then dropped, and nothing else was backfilled ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)).
 
 ## Sources
 
