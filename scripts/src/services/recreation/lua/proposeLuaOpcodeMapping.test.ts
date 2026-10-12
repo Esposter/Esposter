@@ -1,7 +1,7 @@
-import type { LuaOpcodeStatistic } from "#src/models/lua/LuaOpcodeStatistic";
+import type { LuaOpcodeStatistic } from "#src/models/recreation/lua/LuaOpcodeStatistic";
 
-import { LuaOpcode } from "#src/models/lua/LuaOpcode";
-import { proposeLuaOpcodeMapping } from "#src/services/lua/proposeLuaOpcodeMapping";
+import { LuaOpcode } from "#src/models/recreation/lua/LuaOpcode";
+import { proposeLuaOpcodeMapping } from "#src/services/recreation/lua/proposeLuaOpcodeMapping";
 import { describe, expect, test } from "vitest";
 
 const createStatistic = (statistic: Partial<LuaOpcodeStatistic> & Pick<LuaOpcodeStatistic, "opcode">) => ({

@@ -1,10 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
-import { LuaDialectName } from "#src/models/lua/LuaDialectName";
+import { LuaDialectName } from "#src/models/genshinAssets/lua/LuaDialectName";
 import { countSceneScriptElements } from "#src/services/genshinAssets/scene/countSceneScriptElements";
 import { exportSceneScript } from "#src/services/genshinAssets/scene/exportSceneScript";
 import { formatSceneScriptShape } from "#src/services/genshinAssets/scene/formatSceneScriptShape";
-import { readLuaDialect } from "#src/services/lua/readLuaDialect";
+import { GENSHIN_LUA_53 } from "#src/services/genshinAssets/lua/GENSHIN_LUA_53";
+import { STOCK_LUA_53 } from "#src/services/recreation/lua/STOCK_LUA_53";
 import { defineCommand } from "citty";
 
 export const sceneScriptsCommand: SubCommandsDef[string] = defineCommand({
@@ -27,7 +28,8 @@ export const sceneScriptsCommand: SubCommandsDef[string] = defineCommand({
     name: "scene-scripts",
   },
   run: async ({ args }) => {
-    const globals = await exportSceneScript(args.file, readLuaDialect(args.dialect));
+    const dialect = args.dialect === LuaDialectName.Stock ? STOCK_LUA_53 : GENSHIN_LUA_53;
+    const globals = await exportSceneScript(args.file, dialect);
     for (const [name, value] of Object.entries(globals))
       console.log(`${name}: ${countSceneScriptElements(value)} ${formatSceneScriptShape(value)}`);
   },

@@ -30,7 +30,6 @@ import { inventoryCommand } from "#src/services/genshinAssets/commands/inventory
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
 import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineCommand";
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
-import { luaDialectCommand } from "#src/services/genshinAssets/commands/luaDialectCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
@@ -47,6 +46,8 @@ import { reputationCommand } from "#src/services/genshinAssets/commands/reputati
 import { residentsCommand } from "#src/services/genshinAssets/commands/residentsCommand";
 import { sceneNpcBornCommand } from "#src/services/genshinAssets/commands/sceneNpcBornCommand";
 import { sceneScriptsCommand } from "#src/services/genshinAssets/commands/sceneScriptsCommand";
+import { GENSHIN_LUA_53 } from "#src/services/genshinAssets/lua/GENSHIN_LUA_53";
+import { createLuaDialectCommand } from "#src/services/recreation/commands/luaDialectCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
@@ -102,7 +103,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     residents: residentsCommand,
     "scene-npc-born": sceneNpcBornCommand,
     "scene-scripts": sceneScriptsCommand,
-    "lua-dialect": luaDialectCommand,
+    "lua-dialect": createLuaDialectCommand(GENSHIN_LUA_53),
     oculi: oculiCommand,
     crafting: craftingCommand,
     cooking: cookingCommand,
