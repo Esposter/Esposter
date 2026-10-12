@@ -4,6 +4,7 @@ import type { SerializedPassRecord } from "#src/models/genshinAssets/materials/S
 import { ShaderProgramStage } from "#src/models/genshinAssets/materials/ShaderProgramStage";
 import { readSerializedShaderState } from "#src/services/genshinAssets/materials/readSerializedShaderState";
 import { readSerializedSubProgram } from "#src/services/genshinAssets/materials/readSerializedSubProgram";
+import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
 
 // A pass's stage lists in the order Unity writes them, vertex to domain and then ray tracing, which is read past
 const readStage = (cursor: BinaryCursor) => cursor.list(() => readSerializedSubProgram(cursor));
@@ -32,10 +33,7 @@ export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord =
   cursor.string();
   cursor.string();
   cursor.string();
-  cursor.list(() => {
-    cursor.string();
-    cursor.string();
-  });
+  skipTagMap(cursor);
   // A pass's trailer is one zero word, or two when the second is zero too. Past the trailer come the subshader's tag
   // Count and LOD, and a subshader with no tags has a zero LOD in the game's shaders, so a nonzero word after a zero tag
   // Count is the next name and the trailer is one word

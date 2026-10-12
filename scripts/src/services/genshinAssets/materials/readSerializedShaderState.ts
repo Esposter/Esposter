@@ -1,5 +1,7 @@
 import type { BinaryCursor } from "#src/models/genshinAssets/materials/BinaryCursor";
 
+import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
+
 const RENDER_TARGET_COUNT = 8;
 const BLEND_VALUE_COUNT = 7;
 const STENCIL_OP_COUNT = 3;
@@ -15,12 +17,6 @@ const skipFloatValue = (cursor: BinaryCursor): void => {
 };
 const skipFloatValues = (cursor: BinaryCursor, count: number): void => {
   for (let index = 0; index < count; index++) skipFloatValue(cursor);
-};
-const skipTagMap = (cursor: BinaryCursor): void => {
-  cursor.list(() => {
-    cursor.string();
-    cursor.string();
-  });
 };
 // A pass's render state, its name first. Its blend, depth, stencil and fog values are each a float with a driving name,
 // Which are read past in the order Unity writes them, and the name is the pass's own identity

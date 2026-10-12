@@ -11,6 +11,7 @@ import { BinaryCursor } from "#src/models/genshinAssets/materials/BinaryCursor";
 import { ShaderProgramStage } from "#src/models/genshinAssets/materials/ShaderProgramStage";
 import { readSerializedBlobChunk } from "#src/services/genshinAssets/materials/readSerializedBlobChunk";
 import { readSerializedPass } from "#src/services/genshinAssets/materials/readSerializedPass";
+import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The blob's chunks by platform: Direct3D 11 for the earlier GPU program types, PlayStation 5 for the later ones, which
@@ -20,12 +21,6 @@ const PLATFORM_PS5 = 23;
 const PS5_GPU_PROGRAM_TYPE_MIN = 26;
 const PROPERTY_VALUE_BYTES = 16;
 
-const skipTagMap = (cursor: BinaryCursor): void => {
-  cursor.list(() => {
-    cursor.string();
-    cursor.string();
-  });
-};
 // A property of the shader: its name, description, attributes, type, flags, default value and texture defaults
 const skipProperty = (cursor: BinaryCursor): void => {
   cursor.string();
