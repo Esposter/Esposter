@@ -4,6 +4,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { fitHud } from "#src/services/genshinAssets/fit/fitHud";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
 import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround";
+import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
 import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseScene";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 
@@ -19,10 +20,22 @@ export const DerivedAssetFitMap: Partial<
   [DerivedAssetComponent.Inazuma]: (only = []) =>
     runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Inazuma, { x: -4942.86, z: 3135.69 }) }, only),
   [DerivedAssetComponent.Liyue]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Liyue, { x: -2392.4, z: -1562.44 }) }, only),
+    runFits(
+      {
+        ground: () => fitRegionGround(DerivedAssetComponent.Liyue, { x: -2392.4, z: -1562.44 }),
+        waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Liyue),
+      },
+      only,
+    ),
   [DerivedAssetComponent.Login]: fitLoginScene,
   [DerivedAssetComponent.Mondstadt]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Mondstadt, { x: 391.51, z: -517.41 }) }, only),
+    runFits(
+      {
+        ground: () => fitRegionGround(DerivedAssetComponent.Mondstadt, { x: 391.51, z: -517.41 }),
+        waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Mondstadt),
+      },
+      only,
+    ),
   [DerivedAssetComponent.Natlan]: (only = []) =>
     runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Natlan, { x: -4568.99, z: -10185.85 }) }, only),
   [DerivedAssetComponent.NodKrai]: (only = []) =>
