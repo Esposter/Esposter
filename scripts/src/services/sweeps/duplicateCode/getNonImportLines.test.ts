@@ -57,4 +57,18 @@ describe(getNonImportLines, () => {
 
     expect(getNonImportLines(`import a from "a.json" with {\n  type: "json" /* } */ }\nb`)).toStrictEqual(new Set([3]));
   });
+
+  test("does not close import attributes on a closing brace line inside a block comment spanning lines", () => {
+    expect.hasAssertions();
+
+    expect(getNonImportLines(`import a from "a.json" with {\n  /*\n  };\n  */ type: "json" };\nb`)).toStrictEqual(
+      new Set([5]),
+    );
+  });
+
+  test("does not close an import list on a from clause inside a block comment spanning lines", () => {
+    expect.hasAssertions();
+
+    expect(getNonImportLines(`import {\n  /*\n  from "x"\n  */ a,\n} from "a";\nb`)).toStrictEqual(new Set([6]));
+  });
 });
