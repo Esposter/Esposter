@@ -36,10 +36,15 @@ export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord =
     cursor.string();
     cursor.string();
   });
-  // A pass's trailer is one zero word or two. Two only when the word after the first is zero too, else the next pass
-  // Starts at the second word, so it is read back
+  // A pass's trailer is one zero word, or two when the second is zero too. Past the trailer come the subshader's tag
+  // Count and LOD, and a subshader with no tags has a zero LOD in the game's shaders, so a nonzero word after a zero tag
+  // Count is the next name and the trailer is one word
   cursor.skip(4);
-  if (cursor.int32() !== 0) cursor.rewind(4);
+  if (cursor.int32() === 0) {
+    const subShaderTagCount = cursor.int32();
+    const subShaderLod = cursor.int32();
+    cursor.rewind(subShaderTagCount === 0 && subShaderLod !== 0 ? 12 : 8);
+  } else cursor.rewind(4);
   return {
     keywordNames,
     name,

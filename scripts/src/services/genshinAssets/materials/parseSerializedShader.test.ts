@@ -144,6 +144,46 @@ describe(parseSerializedShader, () => {
     expect(passes.map(({ name }) => name)).toStrictEqual(["DEFERRED", "FORWARD"]);
   });
 
+  test("reads a subshader's last pass whose trailer is one word, since the name after a zero LOD is not a second trailer word", () => {
+    expect.hasAssertions();
+
+    const blob = blobChunk([{ code: payload("vertex-a"), gpuProgramType: 16 }]);
+    const stages = { fragment: [], geometry: [], vertex: [subProgram(0, 16, [1])] };
+    const shader = Buffer.concat([
+      string(""),
+      list([]),
+      list([
+        Buffer.concat([
+          list([
+            pass(
+              "DEFERRED",
+              [
+                ["$Globals", 0],
+                ["DEFERRED_ON", 1],
+              ],
+              stages,
+              1,
+            ),
+          ]),
+          list([]),
+          int32(0),
+        ]),
+      ]),
+      string("miHoYo/Test"),
+      string(""),
+      string(""),
+      list([]),
+      Buffer.alloc(4),
+      uint32List([4, 23]),
+      uint32List([0, blob.length]),
+      uint32List([blob.length, 0]),
+      uint32List([blob.length, 0]),
+      uint8List(blob),
+    ]);
+    const subShaders = parseSerializedShader(shader).subShaders;
+    expect(subShaders.map(({ passes }) => passes.map(({ name }) => name))).toStrictEqual([["DEFERRED"]]);
+  });
+
   test("reads each pass's keyword names and resolves each stage's program code from its platform's blob chunk", () => {
     expect.hasAssertions();
 
