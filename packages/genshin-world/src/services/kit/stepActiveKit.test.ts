@@ -169,8 +169,9 @@ describe(stepActiveKit, () => {
     };
     const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, kit)]);
     getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = kit.burstEnergyCost;
-    stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context);
-    const { position } = context.characterController;
+    const controls = createControls();
+    stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context, controls);
+    const { position } = controls.characterController;
     const castX = position.x;
     position.x += 10;
 
