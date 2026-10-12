@@ -3,6 +3,7 @@ import type { ComparatorToken } from "#src/models/semver/ComparatorToken";
 
 import { checkIsAnyPart } from "#src/services/semver/checkIsAnyPart";
 import { ANY_COMPARATOR_TEXT } from "#src/services/semver/constants";
+import { expandMajorBounds } from "#src/services/semver/expandMajorBounds";
 import { incrementNumericIdentifier } from "#src/services/semver/incrementNumericIdentifier";
 import { toBounds } from "#src/services/semver/toBounds";
 
@@ -13,8 +14,7 @@ export const expandTildeToken = (
 ): ComparatorText[] => {
   if (checkIsAnyPart(major)) return [ANY_COMPARATOR_TEXT];
 
-  if (checkIsAnyPart(minor))
-    return toBounds(`${major}.0.0${prereleaseSuffix}`, `${incrementNumericIdentifier(major)}.0.0-0`);
+  if (checkIsAnyPart(minor)) return expandMajorBounds(major, prereleaseSuffix);
 
   if (checkIsAnyPart(patch))
     return toBounds(`${major}.${minor}.0${prereleaseSuffix}`, `${major}.${incrementNumericIdentifier(minor)}.0-0`);
