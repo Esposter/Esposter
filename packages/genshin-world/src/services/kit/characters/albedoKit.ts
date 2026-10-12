@@ -10,10 +10,7 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 // Measured: gcsim v2.47.2 (MIT) albedo/skill.go, Abiogenesis: Solar Isotoma's field set 3 metres ahead of the body with a
 // Radius of 10, and each Transient Blossom set off by a hit on an enemy inside it once every 2 seconds
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/skill.go
-const SOLAR_ISOTOMA_AHEAD_METRES = 3;
-const SOLAR_ISOTOMA_RADIUS = 10;
 const SOLAR_ISOTOMA_ID = "albedo-solar-isotoma";
-const TRANSIENT_BLOSSOM_COOLDOWN_SECONDS = 2;
 const TRANSIENT_BLOSSOM_COOLDOWN_STATUS_ID = "albedo-transient-blossom-cooldown";
 
 export const ALBEDO_CHARACTER_ID = 10_000_038;
@@ -23,9 +20,17 @@ export const ALBEDO_CHARACTER_ID = 10_000_038;
 // Blossom at that enemy, priced by the DEF of the Albedo who cast the field, once every 2 seconds, and Rite of Progeniture:
 // Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma. His passives and constellations are not built, as
 // Their conditions and party buffs are not on the kit's effects
-export const createAlbedoKitBehaviour = ({ readHit, readHits, readParameter }: KitRecordReader): KitBehaviour => {
+export const createAlbedoKitBehaviour = ({
+  readHit,
+  readHits,
+  readParameter,
+  readSeconds,
+}: KitRecordReader): KitBehaviour => {
+  const solarIsotomaAheadMetres = readParameter("solarIsotomaAheadMetres");
+  const solarIsotomaRadius = readParameter("solarIsotomaRadius");
+  const solarIsotomaSeconds = readSeconds("solarIsotomaDuration");
+  const transientBlossomCooldownSeconds = readSeconds("transientBlossomCooldown");
   const solarIsotomaHit = readHit("solarIsotoma");
-  const solarIsotomaSeconds = readParameter("solarIsotomaSeconds");
   const transientBlossom = readHit("transientBlossom");
   const fatalBlossoms = readHits("fatalBlossoms");
   return {
@@ -47,12 +52,12 @@ export const createAlbedoKitBehaviour = ({ readHit, readHits, readParameter }: K
       const { position } = event.enemy;
       if (
         Math.hypot(position.x - solarIsotoma.body.position.x, position.z - solarIsotoma.body.position.z) >
-          SOLAR_ISOTOMA_RADIUS ||
+          solarIsotomaRadius ||
         !startKitCooldown(
           kitEffectState,
           characterId,
           TRANSIENT_BLOSSOM_COOLDOWN_STATUS_ID,
-          TRANSIENT_BLOSSOM_COOLDOWN_SECONDS,
+          transientBlossomCooldownSeconds,
         )
       )
         return;
@@ -63,7 +68,7 @@ export const createAlbedoKitBehaviour = ({ readHit, readHits, readParameter }: K
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         for (const effect of kitEffectState.effects)
           if (effect.kind === "summon" && effect.id === SOLAR_ISOTOMA_ID) effect.secondsRemaining = 0;
-        castKitSummon(kitEffectState, createAheadBody(body, SOLAR_ISOTOMA_AHEAD_METRES), combatant, [solarIsotomaHit], {
+        castKitSummon(kitEffectState, createAheadBody(body, solarIsotomaAheadMetres), combatant, [solarIsotomaHit], {
           id: SOLAR_ISOTOMA_ID,
           secondsRemaining: solarIsotomaSeconds,
           spawnSeconds: solarIsotomaHit.hitmarkSeconds,
