@@ -1,16 +1,9 @@
-<script lang="ts">
-import type { Texture } from "three";
-
-// Only a pack's own textures are decoded from a bitmap, so the world's ramps, shared by every model, are left alive
-const checkIsPackTexture = (texture: null | Texture | undefined): texture is Texture<ImageBitmap> =>
-  texture?.image instanceof ImageBitmap;
-</script>
-
 <script setup lang="ts">
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { LightUniforms, ToonNodeMaterial } from "genshin-engine";
 import type { BufferGeometry, DataTexture, SkinnedMesh } from "three";
 
+import { disposeCharacterMesh } from "#src/services/character/disposeCharacterMesh";
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
 
 interface Props {
@@ -24,23 +17,12 @@ const { characterPackReader, lightUniforms, rampTexture } = defineProps<Props>()
 const emit = defineEmits<{ error: [] }>();
 const mesh = shallowRef<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>();
 let isUnmounted = false;
-const disposeMesh = ({ geometry, material, skeleton }: SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>) => {
-  geometry.dispose();
-  skeleton.dispose();
-  for (const characterMaterial of material) characterMaterial.dispose();
-  // A texture several materials draw with is released once, its decoded image closed with it, which three leaves open
-  const packTextures = material.flatMap(({ gradientMap, map, sphereMap }) => [gradientMap, map, sphereMap]);
-  for (const texture of new Set(packTextures.filter((packTexture) => checkIsPackTexture(packTexture)))) {
-    texture.dispose();
-    texture.image.close();
-  }
-};
 // The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted, leaving what holds
 // The model to draw something in its place, and a model arriving after its character has gone is released at once
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
 readCharacterMesh(characterPackReader, { lightUniforms, rampTexture }).match(
   (characterMesh) => {
-    if (isUnmounted) disposeMesh(characterMesh);
+    if (isUnmounted) disposeCharacterMesh(characterMesh);
     else mesh.value = characterMesh;
   },
   (error) => {
@@ -51,7 +33,7 @@ readCharacterMesh(characterPackReader, { lightUniforms, rampTexture }).match(
 
 onUnmounted(() => {
   isUnmounted = true;
-  if (mesh.value) disposeMesh(mesh.value);
+  if (mesh.value) disposeCharacterMesh(mesh.value);
 });
 </script>
 
