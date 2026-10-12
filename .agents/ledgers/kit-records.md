@@ -50,7 +50,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `gorou`              | —                      |                                                                          |
 | `hu-tao`             | —                      |                                                                          |
 | `iansan`             | —                      |                                                                          |
-| `ifa`                | —                      |                                                                          |
+| `ifa`                | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `illuga`             | —                      |                                                                          |
 | `ineffa`             | —                      |                                                                          |
 | `jahoda`             | —                      |                                                                          |
