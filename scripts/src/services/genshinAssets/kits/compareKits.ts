@@ -13,10 +13,11 @@ import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/ge
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
 import { toGcsimFolderName } from "#src/services/genshinAssets/kits/gcsim/toGcsimFolderName";
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
-import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
+import { readKitOverlay, readKitOverlayFile } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
+import { seedKitOverlay } from "#src/services/genshinAssets/kits/record/seedKitOverlay";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { getResult } from "@esposter/shared";
 import { join } from "node:path";
@@ -118,7 +119,13 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     const overlayPath = join(KIT_OVERLAY_DIRECTORY, `${overlayName}.json`);
     const entries = Object.entries(overlay);
     // Written even when empty, as `{}`, so every kit keeps its file and its docs page's citation still resolves
-    writeJsonFile(overlayPath, overlay);
+    writeJsonFile(
+      overlayPath,
+      getResult(() => readKitOverlayFile(overlayName)).match(
+        (committedFile) => seedKitOverlay(committedFile, overlay),
+        () => overlay,
+      ),
+    );
     const kitKeys = entries.map(([, entry]) => ("source" in entry ? `chose ${entry.source}` : entry.cause));
     overlayKeys.push(...kitKeys);
     const kitRuleCauses = Object.values(built?.sources.values ?? {}).flatMap((provenance) =>
