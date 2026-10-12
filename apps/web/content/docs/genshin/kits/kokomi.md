@@ -19,4 +19,4 @@ Kokomi's kit is one module, `createKokomiKit`, on avatar 10000054: three strikes
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kokomi), MIT: Kokomi's strikes' hitmarks, cancel frames and projectile travel, the charged attack's frames, Bake-Kurage's ticks and radius, and Nereid's Ascension's hit, animation and ten-second garment.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kokomi), MIT: the kit's hitmarks, cancel frames and areas, projectile travel, the charged attack's frames, Bake-Kurage's ticks and radius, and Nereid's Ascension's hit, animation and ten-second garment.

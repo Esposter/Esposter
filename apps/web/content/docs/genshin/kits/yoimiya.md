@@ -5,7 +5,7 @@ description: Yoimiya's kit as built, with Niwabi Fire-Dance's Pyro infusion and 
 
 # Yoimiya
 
-Yoimiya's kit is one module, `createYoimiyaKit`, on avatar 10000049: five strikes, a fully charged shot, a collision and two plunges, Niwabi Fire-Dance's Pyro infusion, and Naganohara Meteor Swarm's initial hit. Her multipliers are read from proud skill groups 4931, 4932 and 4939; Niwabi Fire-Dance's seconds and cooldown, and the burst's cooldown and energy cost are read from the same groups. Her passives and constellations are not built, nor Aurous Blaze's explosion or the multiplier Niwabi Fire-Dance gives her Normal Attacks. The plunges' timing is provisional.
+Yoimiya's kit is one module, `createYoimiyaKit`, on avatar 10000049: five strikes, a fully charged shot, a collision and two plunges, Niwabi Fire-Dance's Pyro infusion, and Naganohara Meteor Swarm's initial hit. Her multipliers are read from proud skill groups 4931, 4932 and 4939; Niwabi Fire-Dance's seconds and cooldown, and the burst's cooldown and energy cost are read from the same groups. Her passives and constellations are unbuilt, nor Aurous Blaze's explosion or the multiplier Niwabi Fire-Dance gives her Normal Attacks. The plunges' timing is provisional.
 
 ## Decisions
 
@@ -19,4 +19,4 @@ Yoimiya's kit is one module, `createYoimiyaKit`, on avatar 10000049: five strike
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yoimiya), MIT: Yoimiya's strikes' hitmarks and cancel frames, the fully charged shot's frames, Niwabi Fire-Dance's animation, and Naganohara Meteor Swarm's initial hit and animation.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yoimiya), MIT: the kit's hitmarks, cancel frames and areas, the fully charged shot's frames, Niwabi Fire-Dance's animation, and Naganohara Meteor Swarm's initial hit and animation.

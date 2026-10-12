@@ -65,7 +65,7 @@ A confirmation that names one message, post or comment shows it, so the reader s
 | `app/components/Ui/ConfirmDialog.vue`                                | The shared dialog — Cancel first, the danger answer, the awaited `confirm`, the `confirmName` guard |
 | `app/composables/ui/useDialogAnswer.ts`                              | How every dialog that answers a write closes — at once when optimistic, on success when awaited     |
 | `app/components/Styled/EditFormDialog/ConfirmDeleteDialogButton.vue` | Edit-form entity delete — passes the entity name as `confirmName`                                   |
-| `app/components/Resource/RecycleBin/PurgeDialog.vue`                 | The one resource delete that is real, guarded by the resource's name                                |
+| `app/components/Resource/RecycleBin/PurgeDialog.vue`                 | The recycle bin's irreversible purge, guarded by the resource's name                                |
 
 ## Notes
 

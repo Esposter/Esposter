@@ -17,7 +17,7 @@ The sheet editor is the grid editor of the **Sheet resource** — a spreadsheet-
 - **Cell selection** — an Excel-style anchor/focus range selection (click, drag, Shift+click, Shift+Arrow) that keyboard copy/paste operates on. See [clipboard](/docs/resource/sheet/clipboard).
 - **View state is the sheet's own** — the page, search, sort, selected rows and columns, cell selection, find and replace, column filters and the outlier highlight are each keyed by the loaded resource's id, so the next sheet opened starts clean rather than inheriting them. How many rows a page holds and whether a copy carries headers are the reader's preferences and hold across sheets.
 
-The editor is mature. Open work: [roadmap](/docs/resource/sheet/roadmap). New ideas should be checked against [deferred](/docs/resource/sheet/deferred) and [rejected](/docs/resource/sheet/rejected) first.
+The editor is mature and has no open work. New ideas are checked against [deferred](/docs/resource/sheet/deferred) and [rejected](/docs/resource/sheet/rejected) first.
 
 ## Shipped log
 

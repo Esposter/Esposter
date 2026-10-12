@@ -5,7 +5,7 @@ description: Kuki's kit as built: four strikes, a charged attack, Grass Ring of 
 
 # Kuki
 
-Kuki's kit is one module, `createKukiKit`, on avatar 10000065: four strikes, a charged attack of two slashes, a collision and two plunges, Grass Ring of Sanctification with its ring and drain, and Gyoei Narukami Kariyama Rite's seven hits. Her multipliers are read from proud skill groups 6531, 6532 and 6539; the charged attack's stamina, the skill's duration and cooldown, and the burst's cooldown and energy cost are read from the same groups. The ring ticks every 90 frames from its 23rd, healing the active character by the table's share of her Max HP and flat amount and striking 2 frames after each tick, and the cast drains 30% of her health share, to no lower than 20%. Each burst hit is a share of her Max HP as flat damage. Ascension 4 and Constellations 1 and 2 are built. Ascension 1's healing bonus and Constellations 4 and 6 are not, as they read her current HP or an enemy's marks. The plunges' reaches and poise and the burst's seven hits are provisional.
+Kuki's kit is one module, `createKukiKit`, on avatar 10000065: four strikes, a charged attack of two slashes, a collision and two plunges, Grass Ring of Sanctification with its ring and drain, and Gyoei Narukami Kariyama Rite's seven hits. Her multipliers are read from proud skill groups 6531, 6532 and 6539; the charged attack's stamina, the burst's cooldown and energy cost, and the skill's duration and cooldown are read from the same groups. The ring ticks every 90 frames from its 23rd, healing the active character by the table's share of her Max HP and flat amount and striking 2 frames after each tick, and the cast drains 30% of her health share, to no lower than 20%. Each burst hit is a share of her Max HP as flat damage. Ascension 4 and Constellations 1 and 2 are built. Ascension 1's healing bonus and Constellations 4 and 6 are not, as they read her current HP or an enemy's marks. The plunges' reaches and poise and the burst's seven hits are provisional.
 
 ## Decisions
 
@@ -19,4 +19,4 @@ Kuki's kit is one module, `createKukiKit`, on avatar 10000065: four strikes, a c
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kuki), MIT: Kuki's strikes' hitmarks, cancel frames and reaches, the charged attack's slashes, Grass Ring of Sanctification's frames, ring, ticks and drain, Gyoei Narukami Kariyama Rite's frames and hits, and Ascension 4 and Constellations 1 and 2.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kuki), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's slashes, Grass Ring of Sanctification's frames, ring, ticks and drain, Gyoei Narukami Kariyama Rite's frames and hits, and Ascension 4 and Constellations 1 and 2.

@@ -49,7 +49,7 @@ Each effect is on the party, in the list a `KitEffectState` holds, so a switch l
 - **Buff** adds a stat bonus to the character's pricing for its seconds: a flat ATK adds to its attack and any other bonus to its attribute total. It is refreshed by one of its attribute from the same source on the same character, not stacked: a source names the effect that gives it, so two effects on one attribute run side by side, as Sprawling Greenery's two Elemental Mastery buffs do.
 - **Heal** is `healPartyMember`: a share of a standing member's max HP, never above all of it. A downed member stays down, as only a revive brings one back.
 - **Energy** is the party's `gainPartyEnergy`, which an enemy's drop calls through `collectKitEnergyDrops`.
-- **Field** is a circle placed where its character casts, for its seconds, with a tick on a schedule. Each tick runs while the body stands inside it, reading the character on the field and the team, and a tick's own buffs and infusions start at their full seconds.
+- **Field** is a circle placed where its character casts, for its seconds, with a tick on a schedule. Each tick runs while the body stands inside it, reading the character on the field and the team, and a tick's own buffs and infusions start at their full seconds. A field that ticks once and no more is a one-tick field.
 - **Summon** is an entity cast where its character stands, which lands its own hits on the seconds their hitmarks fall at, for its seconds. It is priced by the combatant that cast it, as it stood then, and its hits land from its own body, not the character's. A summon may travel: its body moves forward at its speed from its start on its clock, and its hits are reached from where it is then. A summon may follow the body on the field instead: its body stands where that body stands on each step, whoever is on the field, and its hits are reached from there. A summon whose seconds end on its last hitmark lives `SUMMON_LINGER_SECONDS` past it, so the step that lands its last hit still has it on the field however its clock and its seconds left round.
 - **A coordinated summon** is set going by the character on the field, whoever that is: as that character starts a normal attack, `coordinateKitSummons` runs each summon's `onNormalAttackStart` from that character's body and combatant, called by the character component beside the action's own start. Any other action sets none going, and the summon's hook decides what it casts.
 - **A shield** is set on the team by the character that casts it, for the seconds left of it, and is recast over the one that character already holds. It takes the damage the character on the field takes, whichever character cast it: an enemy's strike is taken by every live shield at once, each absorbing the full damage through the combat's `absorbShieldDamage` at the struck character's shield strength, and the character loses the least any of them passes on. The wiki gives the rule in its own words: "when the active character takes damage, damage is dealt to shield health first", and "When a character has more than one shield, the damage dealt by an enemy will affect every active shield simultaneously" ([Shield](https://genshin-impact.fandom.com/wiki/Shield)). A shield is dropped once its health is spent. A shield with an explosion goes off as it ends, whether its seconds run out, its health is spent or it is recast over.
@@ -95,8 +95,8 @@ flowchart TD
 - **ReactionTriggered** carries an enemy, the reactions a hit triggered on it and the combatant that dealt the hit. Thundering Retribution answers an Electro-related one the character on the field triggers while Oz stands.
 - **DamageTaken** carries an enemy, the hit as it struck, its kind of attack when it is one of its kit's own actions (`getKitAttackTag`), the combatant that dealt it, whether it was a CRIT hit and whether it defeated the enemy. The Talisman's heal, A Glimpse into Arcanum, Ascetics of Frost, Frozen Skies, and Riptide's application and every strike it sets off answer it.
 - **StatusTicked** carries an enemy and the status on it whose tick fell due. Hydrospout answers Riptide's.
-- **BurstUsed** carries the member that used its Elemental Burst and the burst's energy cost, sent as the burst starts and ahead of the burst's own start, as gcsim announces a burst before it plays.
-- **EnergyParticleCollected** carries the particles or orbs an enemy dropped: how many, which of the two, their element, none for a clear one, and the member on the field, who collects them. It is sent once the team has taken their energy, every standing member by the game's rule, the one on the field in full and the others a share by the party's size, as gcsim distributes a particle before announcing it. Every drop is collected where it falls, a strike's, a reaction's reach or an elemental tick's alike (`collectKitEnergyDrops`).
+- **BurstUsed** carries the member that used its Elemental Burst and the burst's energy cost, sent as the burst starts and ahead of the burst's own start, as gcsim announces a burst before it plays. Resolve's stacks from another member's burst answer it.
+- **EnergyParticleCollected** carries the particles or orbs an enemy dropped: how many, which of the two, their element, none for a clear one, and the member on the field, who collects them. It is sent once the team has taken their energy, every standing member by the game's rule, the one on the field in full and the others a share by the party's size, as gcsim distributes a particle before announcing it. Every drop is collected where it falls, a strike's, a reaction's reach or an elemental tick's alike (`collectKitEnergyDrops`). Wishes Unnumbered's Resolve answers it.
 
 ## Framework decisions
 
@@ -125,6 +125,16 @@ flowchart TD
 - **A skill's sweep reads full while more is left than the kit's own cooldown**, as a stance's end sets on Tartaglia's 1-second press cooldown.
 - **A Swirl's member is matched by its element from the deployed combatants.** The kit event context now carries every built combatant of the deployed team by id (`KitEventContext.characterIdCombatantMap`), so a passive reads each member's element as the Swirl's element is read.
 - **A field's Geo count reads the deployed team's combatants.** A field tick carries every built combatant of the deployed team by id, which Crunch counts its Geo members from, as gcsim counts the party when it loads. The effects step takes that map optionally, and an empty one counts no Geo characters.
+
+## Not built in the framework
+
+Each page names only what it alone lacks. These are the gaps every page shares, so each is stated once here.
+
+- **Particles are not built.** A skill's or burst's particles wait on a hit that gives particles, which nothing yet does, so an enemy's HP drop is the only energy a strike gives.
+- **The Hexerei team bonus is not built.** Every Hexerei kit and its constellations waits on it. gcsim turns them on by default, and the kits here follow the standard kit.
+- **A kit moves no enemy.** Pulls, knockbacks and holds that move or fix an enemy in place are not built.
+- **A hit is priced from its striker alone.** A kit reads no other member's buff into a hit, so a Quill or a banner that adds to another member's hits is not built.
+- **A character holds no aura.** Only an enemy holds elemental state in this package, so an aura on a party member is not built.
 
 ## Key files
 
@@ -211,6 +221,7 @@ flowchart TD
 | [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap               |
 | [Diluc](/docs/genshin/kits/diluc)                   | Searing Onslaught and Dawn                                           |
 | [Diona](/docs/genshin/kits/diona)                   | Icy Paws and Signature Mix's field                                   |
+| [Dori](/docs/genshin/kits/dori)                     | Alcazarzaray's Exactitude's Connector field and Troubleshooter Shot  |
 | [Eula](/docs/genshin/kits/eula)                     | Grimheart stacks, Icewhirls and Glacial Illumination                 |
 | [Faruzan](/docs/genshin/kits/faruzan)               | Wind Realm of Nasamjnin and the Dazzling Polyhedron                  |
 | [Fischl](/docs/genshin/kits/fischl)                 | Oz, Midnight Phantasmagoria and Thundering Retribution               |
@@ -230,9 +241,11 @@ flowchart TD
 | [Kokomi](/docs/genshin/kits/kokomi)                 | Bake-Kurage and Nereid's Ascension                                   |
 | [Kujou Sara](/docs/genshin/kits/kujou-sara)         | The Cover and its Ambush                                             |
 | [Kuki](/docs/genshin/kits/kuki)                     | Grass Ring of Sanctification                                         |
+| [Layla](/docs/genshin/kits/layla)                   | Nights of Formal Focus and Starlight Slug                            |
 | [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                        |
 | [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                     |
 | [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                            |
+| [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi              |
 | [Ningguang](/docs/genshin/kits/ningguang)           | Star Jades, Jade Screen and Starshatter                              |
 | [Noelle](/docs/genshin/kits/noelle)                 | Breastplate and Sweeping Time                                        |
 | [Qiqi](/docs/genshin/kits/qiqi)                     | Herald of Frost and Fortune-Preserving Talisman                      |
@@ -244,14 +257,17 @@ flowchart TD
 | [Sucrose](/docs/genshin/kits/sucrose)               | Astable Anemohypostasis Creation-6308 and Forbidden Creation         |
 | [Tartaglia](/docs/genshin/kits/tartaglia)           | The Ranged and Melee Stances and Riptide                             |
 | [Thoma](/docs/genshin/kits/thoma)                   | Blazing Blessing and Crimson Ooyoroi                                 |
+| [Tighnari](/docs/genshin/kits/tighnari)             | Vijnana-Phala Mine and Tanglevine Shaft with its secondary           |
 | [Traveler](/docs/genshin/kits/traveler)             | The Anemo form's attacks, Palm Vortex and Gust Surge                 |
 | [Venti](/docs/genshin/kits/venti)                   | Skyward Sonnet, Wind Domain and Stormeye                             |
+| [Wanderer](/docs/genshin/kits/wanderer)             | Hanega: Song of the Wind and Kyougen: Five Ceremonial Plays          |
 | [Xiangling](/docs/genshin/kits/xiangling)           | Guoba, Pyronado and Oil Meets Fire                                   |
 | [Xiao](/docs/genshin/kits/xiao)                     | Lemniscatic Wind Cycling and Bane of All Evil                        |
 | [Xingqiu](/docs/genshin/kits/xingqiu)               | Fatal Rainscreen and Raincutter                                      |
 | [Xinyan](/docs/genshin/kits/xinyan)                 | Sweeping Fervor and Riff Revolution                                  |
 | [Yae Miko](/docs/genshin/kits/yae-miko)             | Sesshou Sakura totems and Great Secret Art: Tenko Kenshin            |
 | [Yanfei](/docs/genshin/kits/yanfei)                 | Scarlet Seals, Signed Edict and Done Deal                            |
+| [Yaoyao](/docs/genshin/kits/yaoyao)                 | Yuegui radishes and Moonjade Descent                                 |
 | [Yelan](/docs/genshin/kits/yelan)                   | Lingering Lifeline and Depth-Clarion Dice                            |
 | [Yoimiya](/docs/genshin/kits/yoimiya)               | Niwabi Fire-Dance and Naganohara Meteor Swarm                        |
 | [Yun Jin](/docs/genshin/kits/yun-jin)               | Opening Flourish and Cliffbreaker's Banner                           |

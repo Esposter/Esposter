@@ -17,7 +17,7 @@ Diluc's kit is one module, `createDilucKit`, avatar 10000016: four strikes, a ch
 
 ## Provisional constants
 
-- **The charged attack's timing is provisional.** gcsim does not model it and the wiki's talent page gives no frames, so its slashes land at half a second and a second, and it ends at a second and a fifth. Its damage is the wiki's cyclic 68.8% and final 124.7%, and its poise the wiki's 60 and 120.
+- **The charged attack's timing is provisional.** gcsim does not model it, so the slashes are priced at half a second and a second, the attack ending at a second and a fifth. Its damage is the wiki's cyclic 68.8% and final 124.7%, its poise 60 and 120 from the wiki.
 
 ## Not built
 

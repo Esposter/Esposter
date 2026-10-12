@@ -13,7 +13,6 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [esbabbler roadmap](/docs/esbabbler/roadmap)
 - [posts roadmap](/docs/post/roadmap)
 - [resource roadmap](/docs/resource/roadmap)
-- [sheet editor roadmap](/docs/resource/sheet/roadmap)
 - [achievements roadmap](/docs/achievement/roadmap)
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)

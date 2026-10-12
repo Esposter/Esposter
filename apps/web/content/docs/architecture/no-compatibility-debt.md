@@ -21,8 +21,8 @@ The usual reason to keep a wrong name is that changing it is expensive. Here it 
   simplest shape no longer needs is deleted like any other code, never kept behind a forwarding wrapper for a caller
   outside the repository. The packages exist because this repository needed them factored out, not because they
   have an audience to keep faith with; every call site of every export lives inside its own package or inside
-  this monorepo, where the compiler finds them. Paying a major — which in lerna's fixed mode drags all eight to
-  the next whole number, including the ones that changed nothing — to protect a consumer nobody has is the same
+  this monorepo, where the compiler finds them. Paying a major — which in lerna's fixed mode drags every published
+  package to the next whole number, including the ones that changed nothing — to protect a consumer nobody has is the same
   cost argument this page refuses everywhere else. So a rename or a removal lands as a `refactor` like any other, and no
   commit carries a `BREAKING CHANGE:` footer for one. This is a statement about _these_ packages: it stops
   applying the day one of them is adopted somewhere that is not this repository.
