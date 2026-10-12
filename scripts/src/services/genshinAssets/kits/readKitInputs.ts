@@ -73,7 +73,7 @@ export const readKitInputs = async ({
     const pages = await readWikiTalentPages(tables.name, wikiCacheDirectory);
     if (pages.length === 0) notes.push("no wiki talent pages");
     const gcsimCandidateMap: Map<string, KitCandidate[]> =
-      gcsim === undefined ? new Map() : getGcsimKitCandidates(gcsim, tables, plungeFallback);
+      gcsim === undefined ? new Map() : getGcsimKitCandidates(gcsim, tables, plungeFallback, publishedRecord);
     const namedHitCandidateMap = gcsim === undefined ? new Map() : getGcsimNamedHitCandidates(gcsim, tables);
     if (gcsim !== undefined)
       for (const [path, constant] of Object.entries(GcsimExpectedPathConstantMap))

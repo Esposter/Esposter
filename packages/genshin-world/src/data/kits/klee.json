@@ -1,7 +1,6 @@
 {
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 99 },
   "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.burstStart": { "cause": "Unclassified", "value": 146 },
   "hits.bomb.length": { "cause": "Unclassified", "value": 3 },
   "hits.bomb.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 } },
   "hits.bomb.0.hitmarkFrames": { "cause": "Unclassified", "value": 26 },

@@ -10,8 +10,6 @@
   "frames.salonMemberIntervals.0": { "cause": "Unclassified", "value": 97.5858 },
   "frames.salonMemberIntervals.1": { "cause": "Unclassified", "value": 202.138 },
   "frames.salonMemberIntervals.2": { "cause": "Unclassified", "value": 313.859 },
-  "frames.singerInitialTick": { "cause": "Unclassified", "value": 63 },
-  "frames.singerInterval": { "cause": "Unclassified", "value": 120 },
   "frames.fanfareGainDelay": { "cause": "Unclassified", "value": 6 },
   "frames.fanfareDebounceStart": { "cause": "Unclassified", "value": 1 },
   "frames.fanfareDebounce": { "cause": "Unclassified", "value": 35 },

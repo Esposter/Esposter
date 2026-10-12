@@ -97,7 +97,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     const mainCandidateMap: Map<string, KitCandidate[]> =
       mainCharacter === undefined || mainPlungeFallback === undefined
         ? new Map()
-        : getGcsimKitCandidates(mainCharacter, tables, mainPlungeFallback);
+        : getGcsimKitCandidates(mainCharacter, tables, mainPlungeFallback, publishedRecord);
     const isTagPredated = gcsimFolder === undefined;
     if (isTagPredated) predatedNames.push(name);
     const { built, failures, overlay } = compareKitRecord(

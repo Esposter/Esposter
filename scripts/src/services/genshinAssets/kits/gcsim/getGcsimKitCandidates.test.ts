@@ -242,4 +242,44 @@ describe(getGcsimKitCandidates, () => {
 
     expect(candidateMap.get("burst.hits.length")?.map(({ value }) => value)).toStrictEqual([0]);
   });
+
+  test("joins a frames entry the record holds under a constant's name to that constant, and adds no path the record lacks", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        ["burstStart", toConstant(123)],
+        ["otherStart", toConstant(7)],
+      ]),
+      filePaths: [],
+      folder: "aino",
+      queuedAttacks: [],
+      talentFile: "aino.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Aino",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Catalyst,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim, { frames: { burstStart: 0 } });
+
+    expect(
+      ["frames.burstStart", "frames.otherStart", "parameters.burstStart"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[123], undefined, undefined]);
+  });
 });

@@ -1,7 +1,6 @@
 {
   "burst.hits.0.gauge": { "source": "Wiki" },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
-  "frames.ozTickInterval": { "cause": "Unclassified", "value": 59 },
   "frames.ozDuration": { "cause": "Unclassified", "value": 600 },
   "frames.evernightRavenOzExtension": { "cause": "Unclassified", "value": 120 },
   "frames.burstOzFirstTick": { "cause": "Unclassified", "value": 69 },
@@ -9,8 +8,6 @@
   "frames.herPilgrimageOfBleakHeal": { "cause": "Unclassified", "value": 114 },
   "frames.ozFirstTick": { "cause": "Unclassified", "value": 64 },
   "frames.ozSpawn": { "cause": "Unclassified", "value": 18 },
-  "frames.burstShortOzFirstTick": { "cause": "Unclassified", "value": 63 },
-  "frames.burstShortOzSpawn": { "cause": "Unclassified", "value": 1 },
   "hitFields.evernightRaven.element": { "cause": "Unclassified", "value": "Electric" },
   "hitFields.evernightRaven.gauge": { "cause": "Unclassified", "value": 1 },
   "hitFields.evernightRaven.hitmarkFrames": { "cause": "Unclassified", "value": 10 },
