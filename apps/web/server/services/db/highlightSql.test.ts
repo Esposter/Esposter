@@ -45,6 +45,14 @@ describe(highlightSql, () => {
     );
   });
 
+  test("a backslash escape in an E-string keeps its escaped quote inside the string", () => {
+    expect.hasAssertions();
+
+    expect(highlightSql(String.raw`select E'it\'s' from t`)).toBe(
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.string, String.raw`E'it\'s'`)} ${styleText(HighlightStyleMap.keyword, "from")} t`,
+    );
+  });
+
   test("a keyword inside a double-quoted identifier is not painted", () => {
     expect.hasAssertions();
 
