@@ -75,7 +75,7 @@ export const readWitnessTargets = async (
   names: readonly WitnessTargetName[],
   isScene = false,
   lightDirection?: Readonly<Vector>,
-) => {
+): Promise<Awaited<ReturnType<typeof readWitnessTargetsInCall>>> => {
   const { families, height, parts, width } = await readWitnessTargetsInCall(page, [], isScene, lightDirection);
   const targets: Partial<Record<WitnessTargetName, Float32Array>> = {};
   for (const name of names) {

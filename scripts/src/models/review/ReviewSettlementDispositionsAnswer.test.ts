@@ -2,7 +2,7 @@ import { reviewSettlementDispositionsAnswerSchema } from "#src/models/review/Rev
 import { ReviewSettlementOutcome } from "#src/models/review/ReviewSettlementOutcome";
 import { describe, expect, test } from "vitest";
 
-describe(reviewSettlementDispositionsAnswerSchema, () => {
+describe("reviewSettlementDispositionsAnswerSchema", () => {
   const reason = "r";
 
   test("accepts fixed, refuted and recorded", () => {
