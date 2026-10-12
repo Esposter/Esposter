@@ -22,4 +22,5 @@ export const hudInterfaceRectsSchema = z.object({
   [HudInterfaceRectName.MoveJoystickHead]: fittedInterfaceRectSchema,
   [HudInterfaceRectName.PlayerProfileButton]: fittedInterfaceRectSchema,
   [HudInterfaceRectName.TeamButtonContainer]: fittedInterfaceRectSchema,
+  [HudInterfaceRectName.TopPanel]: fittedInterfaceRectSchema,
 }) satisfies z.ZodType<HudInterfaceRects>;

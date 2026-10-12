@@ -13,4 +13,5 @@ export enum HudInterfaceRectName {
   MoveJoystickHead = "GrpMainPage/InputController/MoveJoystick_H4/GrpJoyStick/ImgJoyStickHead",
   PlayerProfileButton = "GrpMainPage/MapInfo/BtnPlayerProfile",
   TeamButtonContainer = "GrpMainPage/TeamBtnContainer",
+  TopPanel = "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpTopPanel",
 }

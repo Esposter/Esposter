@@ -1,3 +1,7 @@
+import { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
+import { InputAction } from "genshin-engine";
+import { GameTextKey } from "genshin-text";
+
 // The touch layout's stick at rest, measured off the mobile client's `hud-world-pickup` at 934 high: its group's centre
 // 215 canvas units in and 173 up from its area's foot, where the tree's own rect puts it 102 in and up, so the game
 // Places it as it runs; and only its head shows, a faint ring 47 units across of the head's 64
@@ -14,6 +18,20 @@ export const ACTION_BUTTON_BACKGROUND = "rgb(0 27 61 / 0.16)";
 export const STAMINA_METER_LOW_SHARE = 0.125;
 // The stamina each section of the meter holds, the arc cut at each multiple of it short of the pool
 export const STAMINA_METER_SECTION = 100;
+
+// The top right's shortcuts the world backs, in the game's order from the left, each the key that opens its screen and
+// The Paimon menu's icon for it, which is the same art: the game's Events and Battle Pass stand before them, and join
+// Once their screens are more than a placeholder
+export const HUD_SHORTCUTS: readonly { icon: MenuEntryIcon; inputAction: InputAction; labelKey: GameTextKey }[] = [
+  { icon: MenuEntryIcon.Wish, inputAction: InputAction.OpenWish, labelKey: GameTextKey.Wish },
+  {
+    icon: MenuEntryIcon.AdventurerHandbook,
+    inputAction: InputAction.OpenAdventurerHandbook,
+    labelKey: GameTextKey.AdventurerHandbook,
+  },
+  { icon: MenuEntryIcon.Inventory, inputAction: InputAction.OpenInventory, labelKey: GameTextKey.Inventory },
+  { icon: MenuEntryIcon.Character, inputAction: InputAction.OpenCharacter, labelKey: GameTextKey.Character },
+];
 
 // Provisional: Paimon's mark on the HUD button, traced by `genshin:parity trace` from the English PC client's world HUD
 // (the 90 pixel box at 100, 10), its path in that box's own pixels, the measure of its place still to come

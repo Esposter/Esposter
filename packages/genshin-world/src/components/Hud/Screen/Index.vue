@@ -21,6 +21,7 @@ import HudMinimap from "#src/components/Hud/Minimap/Index.vue";
 import HudPaimonButton from "#src/components/Hud/PaimonButton/Index.vue";
 import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
+import HudShortcuts from "#src/components/Hud/Shortcuts/Index.vue";
 import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import HudStick from "#src/components/Hud/Stick/Index.vue";
@@ -98,11 +99,12 @@ const emit = defineEmits<{ map: []; menu: [] }>();
 
 <template>
   <!-- The heads-up display over the world: only the pieces the world backs, each in its place. The Paimon button and
-       The minimap in the top left with the quest tracker under them, the party down the right, the member on the
-       Field's health at the bottom's middle, the skill and burst at the bottom right, the stamina meter where it places
-       Itself, and on a touch screen the stick at the bottom left, the touch layout's action buttons beside the skill and
-       Burst and the look's drag under them all. Everything between the pieces lets the pointer through to the world, and a press on a piece stays
-       The piece's, never reaching the world's input as an attack -->
+       The minimap in the top left with the quest tracker under them, the shortcuts in the top right, the party down the
+       Right, the member on the field's health at the bottom's middle, the skill and burst at the bottom right, the
+       Stamina meter where it places itself, and on a touch screen the stick at the bottom left, the touch layout's
+       Action buttons beside the skill and burst and the look's drag under them all. Everything between the pieces lets
+       The pointer through to the world, and a press on a piece stays the piece's, never reaching the world's input as
+       An attack -->
   <GameScreen class="hud" :is-touch @mousedown.stop>
     <HudTouch v-if="isTouch" :input />
     <!-- The page as the game's tree under `GrpMainPage` nests it: each piece a `GameRect` placed by its RectTransform
@@ -129,6 +131,10 @@ const emit = defineEmits<{ map: []; menu: [] }>();
             <HudMinimap :camera :catalogue :game-text :landmarks @open="emit('map')" />
           </GameRect>
         </GameRect>
+      </GameRect>
+      <!-- The top right's panel stands in two groups that each fill the page, so the page's rect is its parent's -->
+      <GameRect :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.TopPanel]">
+        <HudShortcuts :game-text :input />
       </GameRect>
       <div v-if="trackedQuest" class="quest">
         <HudQuest :game-text :input :mark="questMark" :quest="trackedQuest" :quest-progress :text-map="questTextMap" />

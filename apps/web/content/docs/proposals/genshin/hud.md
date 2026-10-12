@@ -30,7 +30,7 @@ The [HUD](/docs/genshin/hud) is built with its pieces and their looks, each but 
 
 ## What this does not propose
 
-- **The pieces of features the world lacks**: the chat and the top right's shortcuts.
+- **The pieces of features the world lacks**: the chat, the Events and Battle Pass shortcuts, the shortcuts' badges and the latency.
 - **The agent console's bar.** The console is hidden from the game until it is rebuilt in the game's style, which is its own page's.
 
 ## Key files
