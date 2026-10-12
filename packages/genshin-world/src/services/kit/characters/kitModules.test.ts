@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 
 describe("kit modules", () => {
   // What only a kit's record holds: a frame count turned into seconds, a talent's proud skill group and a parameter
-  // Read off its table. A module writing one back is holding a value the record should
+  // Read off its table. A module writing one back is holding a value the record should hold
   const RECORD_VALUE_PATTERNS = [
     /\/\s*(?:60\b|KIT_FRAMES_PER_SECOND\b)/u,
     /\bproudSkillGroupId\b/u,
