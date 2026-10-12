@@ -71,6 +71,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `lauma`              | —     |                                                                          |
 | `layla`              | —     |                                                                          |
 | `lisa`               | —     |                                                                          |
+| `lohen`              | —     |                                                                          |
 | `lynette`            | —     |                                                                          |
 | `lyney`              | —     |                                                                          |
 | `mavuika`            | —     |                                                                          |

@@ -430,6 +430,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Lauma](/docs/genshin/kits/lauma)                   | Three strikes, the charged attack and Hymn of Hunting                                                         |
 | [Layla](/docs/genshin/kits/layla)                   | Nights of Formal Focus and Starlight Slug                                                                     |
 | [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                                                                 |
+| [Lohen](/docs/genshin/kits/lohen)                   | Five strikes, the charged attack, the plunges and the six-hit burst; his skill not built                      |
 | [Lynette](/docs/genshin/kits/lynette)               | Enigmatic Feint and the Bogglecat Box of Magic Trick                                                          |
 | [Lyney](/docs/genshin/kits/lyney)                   | Bewildering Lights and the Prop Arrow's Grin-Malkin Hat                                                       |
 | [Mavuika](/docs/genshin/kits/mavuika)               | Four strikes, the charged attack and her plunges                                                              |
