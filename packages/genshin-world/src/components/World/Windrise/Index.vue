@@ -31,6 +31,7 @@ import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
 import WorldWildlife from "#src/components/World/Wildlife/Index.vue";
 import { useAreaWeather } from "#src/composables/useAreaWeather";
+import { useCharacterAvatar } from "#src/composables/useCharacterAvatar";
 import { useFloatingOrigin } from "#src/composables/useFloatingOrigin";
 import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
@@ -106,6 +107,8 @@ import {
 import { HemisphereLight, Scene } from "three";
 
 interface Props {
+  // The character on the field, whose game model the host's exports draw in place of the pack's when it is the Traveler
+  activeCharacterId: number;
   // The regions and their areas, whose outlines bring a region's data within reach and set the weather the camera
   // Stands in
   catalogue: Catalogue;
@@ -166,6 +169,7 @@ interface Props {
 }
 
 const {
+  activeCharacterId,
   catalogue,
   characterBody,
   characterLocomotion,
@@ -212,6 +216,10 @@ const hiddenLandmarkKinds = computed(() => [
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
+const drawnCharacterAvatar = useCharacterAvatar(sceneExportBaseUrl, () => activeCharacterId, {
+  lightUniforms,
+  rampTexture,
+});
 const { baseGround, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
 // The ground's quadtree, which the terrain streams and the grass reads, bounded by Windrise's ground, which every
 // Region's ground laid over it stands within, and the records each terrain worker computes its tiles over
@@ -538,8 +546,15 @@ onUnmounted(() => {
     <QuestBeam v-if="questTargetPosition" :origin :position="questTargetPosition" />
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
+      <primitive
+        v-if="drawnCharacterAvatar"
+        :object="drawnCharacterAvatar.model"
+        :rotation-y="Math.PI"
+        cast-shadow
+        receive-shadow
+      />
       <CharacterModel
-        v-if="characterPackReader && failedCharacterPackKey !== characterPackReader.key"
+        v-else-if="characterPackReader && failedCharacterPackKey !== characterPackReader.key"
         :key="characterPackReader.key"
         :character-pack-reader
         :light-uniforms

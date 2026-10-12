@@ -616,6 +616,7 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <WorldWindrise
         ref="windrise"
+        :active-character-id="getActiveCharacterId(party)"
         :catalogue
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-locomotion="locomotion"

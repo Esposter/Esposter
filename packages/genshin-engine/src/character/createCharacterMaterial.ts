@@ -34,6 +34,7 @@ export const createCharacterMaterial = ({
     toonIndex,
   },
   rampTexture,
+  shadingInputs: gameShadingInputs,
   sphereTexture,
   texture: diffuseTexture,
   toonTexture,
@@ -50,6 +51,7 @@ export const createCharacterMaterial = ({
     rampTexture: packToonTexture ?? (isToonShared ? getSharedToonRamp(toonIndex) : undefined) ?? rampTexture,
     shininess: specularity,
     specularColor,
+    ...gameShadingInputs,
   });
   const toned = getToneColour(
     new Vector3(red * edgeColor[0], green * edgeColor[1], blue * edgeColor[2]),

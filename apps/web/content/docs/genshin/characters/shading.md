@@ -281,6 +281,8 @@ Program 394 (keywords "ELEMENT_VIEW_ON", "HAS_CHARACTER_LIGHT", "MHY_SHADER_HIGH
 
 The values in the Lumine column are the game's own, read from its material bytes. They are not committed here as numbers; `inventory-values.txt` is the extracted record. A player's pack supplies only what its own file holds, so for a production pack the regions and the lightmap take their defaults.
 
+In development the Traveler's model reads these from the game's own values in `avatar.json`, not from a pack: the main texture, lightmap, metal map, packed shadow ramp and face map by their slots; the colours `_Color` and `_Color2` to `_Color5`, the metal colours and `_SpecularColor`; the floats `_Shininess`, `_SpecMulti`, `_LightArea` and `_FaceMapSoftness`; and the three `_UseLightMapColorAO`, `_UseVertexColorAO` and `_UseVertexRampWidth` switches. A value a material does not hold keeps its default. Two inputs are still at their default for the model: the region toggles, which are off, and the outline, which is the world's own (Provisional until the toggles' properties are read).
+
 ## Open
 
 - **The shade term's `z` and `w`.** Their expressions are read; their fitted values are not.

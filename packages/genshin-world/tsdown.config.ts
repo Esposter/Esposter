@@ -13,6 +13,8 @@ import { mergeConfig } from "tsdown";
 // The `build:prepare` hook replaces the base's rather than joining it, so it writes the barrels the base writes, and
 // Writes the kit map first, so the barrel lists it on a fresh clone too. The barrel leaves the kit modules out, since
 // The kit map loads each through an `import()` of its own as its character joins the party
+// The Traveler's game model is loaded on demand in development, so the barrel leaves its modules out and they stay a chunk
+const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(templateCompilerOptions), {
   entry: {
     characterPack: "src/characterPack.ts",
@@ -28,7 +30,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(te
   hooks: {
     "build:prepare": ({ options: { cwd } }) => {
       generateCharacterKitMap(cwd);
-      generateExports(cwd, "vue", [KIT_MODULE_DIRECTORY]);
+      generateExports(cwd, "vue", [KIT_MODULE_DIRECTORY, AVATAR_MODULE_DIRECTORY]);
     },
   },
 });

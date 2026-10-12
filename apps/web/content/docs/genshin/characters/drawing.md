@@ -24,27 +24,32 @@ The model [read from a pack](/docs/genshin/characters/pmx-reader) becomes one sk
 
 - **The game's characters do not darken in the rain.** A character's material takes none of the wetness the environment's toon material reads ([weather](/docs/genshin/weather)).
 - **A toon or sphere texture is read only where a material draws with it.** A model's shared toon ramps are generated, never read, so a release without any toon texture ships no file beyond its model and textures.
+- **In development the Traveler is drawn from the game's own model.** When the developer's exports hold `playergirl` with its `avatar.json` and `avatar.bin`, the world draws the Traveler from them in place of the pack: the bones at their rest pose, the humanoid bones named for the poser's MMD name map, and each material shaded from the game's values, read at runtime and never committed. Nothing reaches production, since the avatar's modules are a separate chunk the export index gates, and the model's facing is not yet checked by eye.
 - **The pose is procedural.** The game's own locomotion clips are not retargeted onto the MMD skeleton, so the Traveler's stance and cycles are the poser's own rather than the game's animation. Retargeting those clips is the roadmap's fidelity step ([roadmap](/docs/genshin/roadmap)).
 - **MMD's unit is reckoned, not measured.** Eight centimetres is the community's reckoning from a model's height. The scale the game draws a character at is measured from its own models, as the [proposal](/docs/proposals/genshin/characters) lists.
 - **Where the drawing departs from MMD's loader, on purpose.** The oracle for the pose and the mesh is three-stdlib's `MMDLoader`, since three's own examples no longer ship one. A pack does not carry MMD's shared toon bmps, so the world's ten ramps stand in for them, and the oracle reads a material's colours as linear where the drawing decodes the file's sRGB colours. The lighting is no longer MMD's: the drawing takes the game's shader, so the oracle is no longer its comparison, and a character's look is measured against a frame of the game ([Lumine's shading](/docs/genshin/characters/shading), [parity](/docs/genshin/parity)).
 
 ## Key files
 
-| File                                                                    | Role                                                                                              |
-| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
-| `packages/genshin-engine/src/character/createPmxMesh.ts`                | The skinned mesh: the geometry's groups, the skeleton, and the scale to metres                    |
-| `packages/genshin-engine/src/character/createPmxSkeleton.ts`            | Each bone nested and placed from its parent, and bound where it stands                            |
-| `packages/genshin-engine/src/character/pose/computeCharacterPose.ts`    | The standard bones' rotations for a state, a pure function                                        |
-| `packages/genshin-engine/src/character/pose/createCharacterPoser.ts`    | Drives the model's bones each frame, cross-fading between states                                  |
-| `packages/genshin-engine/src/character/createCharacterMaterial.ts`      | A PMX material as the game's shader: its inputs, its outline edge, its transparency and its draw  |
-| `packages/genshin-engine/src/character/createCharacterShadingInputs.ts` | The shading's inputs with each default the page sets out                                          |
-| `packages/genshin-engine/src/character/shading/`                        | The shading page's equations, each as a pure function and as a TSL node over shared constants     |
-| `packages/genshin-engine/src/character/getSharedToonRamp.ts`            | MMD's ten shared toon ramps, generated once in the world's own tones, a material's default ramp   |
-| `packages/genshin-engine/src/models/nodes/SharedToonOutlinePassNode.ts` | The outline pass, one shared material and one per distinct material edge, each width by its knots |
-| `packages/genshin-engine/src/character/createPmxTexture.ts`             | A texture decoded as the model samples it                                                         |
-| `packages/genshin-world/src/services/character/readCharacterMesh.ts`    | A pack's model and its textures into one mesh through its reader, as a Result                     |
-| `packages/genshin-world/src/components/Character/Model/Index.vue`       | Draws a character's model at its holder's origin, and releases it                                 |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`        | Stands the Traveler at Windrise's start point, drawn from the pack it is handed a reader of       |
+| File                                                                                | Role                                                                                                            |
+| :---------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/character/createPmxMesh.ts`                            | The skinned mesh: the geometry's groups, the skeleton, and the scale to metres                                  |
+| `packages/genshin-engine/src/character/createPmxSkeleton.ts`                        | Each bone nested and placed from its parent, and bound where it stands                                          |
+| `packages/genshin-engine/src/character/pose/computeCharacterPose.ts`                | The standard bones' rotations for a state, a pure function                                                      |
+| `packages/genshin-engine/src/character/pose/createCharacterPoser.ts`                | Drives the model's bones each frame, cross-fading between states                                                |
+| `packages/genshin-engine/src/character/createCharacterMaterial.ts`                  | A PMX material as the game's shader: its inputs, its outline edge, its transparency and its draw                |
+| `packages/genshin-world/src/composables/useCharacterAvatar.ts`                      | Reads the Traveler's game model once the export index holds it, and draws it while the Traveler is on the field |
+| `packages/genshin-world/src/services/character/avatar/readCharacterAvatar.ts`       | Fetches an avatar's manifest, its binary and each texture its drawn materials name, once each                   |
+| `packages/genshin-world/src/services/character/avatar/createCharacterAvatar.ts`     | Builds the skinned meshes over the binary's typed arrays, the rest-pose bones and the game's materials          |
+| `packages/genshin-world/src/services/character/avatar/createAvatarShadingInputs.ts` | The game's material values and textures as the shading's inputs, a missing one left to its default              |
+| `packages/genshin-engine/src/character/createCharacterShadingInputs.ts`             | The shading's inputs with each default the page sets out                                                        |
+| `packages/genshin-engine/src/character/shading/`                                    | The shading page's equations, each as a pure function and as a TSL node over shared constants                   |
+| `packages/genshin-engine/src/character/getSharedToonRamp.ts`                        | MMD's ten shared toon ramps, generated once in the world's own tones, a material's default ramp                 |
+| `packages/genshin-engine/src/models/nodes/SharedToonOutlinePassNode.ts`             | The outline pass, one shared material and one per distinct material edge, each width by its knots               |
+| `packages/genshin-engine/src/character/createPmxTexture.ts`                         | A texture decoded as the model samples it                                                                       |
+| `packages/genshin-world/src/services/character/readCharacterMesh.ts`                | A pack's model and its textures into one mesh through its reader, as a Result                                   |
+| `packages/genshin-world/src/components/Character/Model/Index.vue`                   | Draws a character's model at its holder's origin, and releases it                                               |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`                    | Stands the Traveler at Windrise's start point, drawn from the pack it is handed a reader of                     |
 
 ## Sources
 
