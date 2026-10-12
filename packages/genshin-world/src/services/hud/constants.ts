@@ -2,11 +2,10 @@ import { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
 import { InputAction } from "genshin-engine";
 import { GameTextKey } from "genshin-text";
 
-// The touch layout's stick at rest, measured off the mobile client's `hud-world-pickup` at 934 high: its group's centre
-// 215 canvas units in and 173 up from its area's foot, where the tree's own rect puts it 102 in and up, so the game
-// Places it as it runs; and only its head shows, a faint ring 47 units across of the head's 64
-export const TOUCH_STICK_REST_POSITION: [number, number] = [215, 173];
-export const TOUCH_STICK_REST_HEAD_SHARE: number = 47 / 64;
+// The touch layout's stick, held and at rest alike, measured on the mobile client's 16:9 recording (youtu.be/d9ZWM3cAlf0,
+// 6.1, 33 held frames), whose canvas has no inset: its group's centre 199.5 canvas units in and 172.5 up from its
+// Area's foot, where the tree's own rect puts it 102 in and up, so the game places it as it runs
+export const TOUCH_STICK_POSITION: [number, number] = [199.5, 172.5];
 // Provisional, until a recording of a drag is measured: the radians a pixel of a drag turns the look by
 export const TOUCH_LOOK_RADIANS_PER_PIXEL = 0.005;
 // The touch layout's action buttons' discs, a dark blue at a sixth over the world: inside the jump's, sprint's, skill's
