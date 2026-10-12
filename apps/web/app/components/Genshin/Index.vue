@@ -20,24 +20,24 @@ const isLoaded = ref(false);
 const isReady = ref(false);
 const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
-// A diagnostic only: while the loading screen shows, each step still unfinished when the warning time is up is logged by
-// Name, so a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too.
-// Nothing is skipped or fallen back to, so the world's absence stays as it was. The save's flag is only returned once
-// Those awaits settle, so until then the warning reads the save as not loaded
+// A diagnostic only: while the opening shows, each step still unfinished when the warning time is up is logged by name,
+// So a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too, and
+// Started again at the door, since the world's steps start only there and are named only once it is open. Nothing is
+// Skipped or fallen back to, so the world's absence stays as it was. The save's flag is only returned once those awaits
+// Settle, so until then the warning reads the save as not loaded
 let isSaveLoadedRef: Ref<boolean> | undefined;
-useTimeoutFn(
+const { start: startStallWarning } = useTimeoutFn(
   () => {
     if (!isOpeningShown.value) return;
-    for (const [step, isStepDone] of [
-      ["save", isSaveLoadedRef?.value ?? false],
-      ["world chunk", isLoaded.value],
-      ["world ready", isReady.value],
-    ] as const)
+    const steps: [string, boolean][] = [["save", isSaveLoadedRef?.value ?? false]];
+    if (isDoorOpened.value) steps.push(["world chunk", isLoaded.value], ["world ready", isReady.value]);
+    for (const [step, isStepDone] of steps)
       if (!isStepDone)
         console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on ${step}`);
   },
   Temporal.Duration.from({ seconds: LOADING_STALL_WARNING_SECONDS }).total("milliseconds"),
 );
+watch(isDoorOpened, () => startStallWarning(), { once: true });
 const gameText = await useGameText();
 // The account the page reads, whose hosted game data the opening reads its title logo and its login screen from
 const containerBaseUrl = useContainerBaseUrl();
