@@ -42,4 +42,28 @@ describe(stepKitSummon, () => {
 
     expect(secondStrikes.map(({ body: { position } }) => position)).toStrictEqual([{ x: -2, z: 1 }]);
   });
+
+  test("lands a hit whose hitmark is the cast on the first step only", () => {
+    expect.hasAssertions();
+    const hitArea = { angle: 2 * Math.PI, height: 2, radius: 2.5 };
+    const summon: KitSummon = {
+      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      combatant: {
+        ascension: 0,
+        attributes: computeCharacterAttributes([]),
+        characterId: TRAVELER_CHARACTER_ID,
+        constellationCount: 0,
+        elementalResonances: [],
+        kit: TRAVELER_KIT,
+        level: 90,
+      },
+      elapsedSeconds: 0,
+      hits: [{ hitArea, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1 }],
+      kind: "summon",
+      secondsRemaining: 2,
+    };
+
+    expect(stepKitSummon(summon, 1, { x: 0, z: 0 })).toHaveLength(1);
+    expect(stepKitSummon(summon, 1, { x: 0, z: 0 })).toHaveLength(0);
+  });
 });
