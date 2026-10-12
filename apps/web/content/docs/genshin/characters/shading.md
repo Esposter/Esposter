@@ -168,6 +168,28 @@ o5.x   = (floor(F) & 15) / 255              (the material's nibble, Exact on the
 
 `D` is "_DesaturateScale", read from the body's constant layout at byte 640, which is register 40's `x` (Exact by offset). `K` is "_ContrastScale", at byte 652, register 40's `w` (Exact by offset). `F` is the register 261 `x` field, which the layout names "_FlareType" (Exact on the value, Provisional on the name, since a "_FlareType" on a body would be unusual).
 
+## The hair
+
+The hair's base pixel program is 272 (DXBC), in the "BODY" pass. It has no metal branch, so its shade is the ramp path alone (Exact, read from the program's branch structure).
+
+### The hair's specular (pixel 272)
+
+The specular is the body's form, with the same gate and the same lightmap channels (Exact on the operators, and on the channel each term reads):
+
+```
+H    = normalize(V + L)                         (the half vector, as the body's)
+Spec = step(1 - Lm.b, pow(max(N . H, 1e-4), "_Shininess"))
+C_s  = Spec * Lm.r * "_SpecMulti" * "_SpecularColor" * tint * brightness
+```
+
+`Lm` is the "Hair_Lightmap" (the hair's program reads its red as the metal-free specular weight). Where the region is 1 the program takes "_Shininess", "_SpecMulti" and "_SpecularColor" from the base block (cb0[222] and cb0[220]); other regions take their own block. The hair's specular is added to the colour as `"_SpecualrInShaow" * C_s` (Exact).
+
+### The hair's ramp row
+
+The ramp row is the body's: `v_row(r) = 0.05 + 0.1 * (r - 1)`, and the second row `0.55 + 0.1 * (r - 1)` where the cool shadow is on (Exact on the constants, from the program's `mad` pairs). The hair's packed ramp is sampled from texture slot "t3" in this program, where the body's is "t4", so the slot order differs between programs (Exact on the slot number here). Its column is `1 - x` as the body's, which is not traced in this program (Provisional).
+
+Hair's equations are not fitted to a rendered frame, so no number is claimed.
+
 ## The outline
 
 The outline is the face's "OUTLINE" pass, whose base programs are vertex 958 (DXBC) and pixel 885 (DXIL). The width is set in the vertex program and the colour in the pixel program.
