@@ -1,5 +1,4 @@
 import type { CharacterAvatar } from "#src/models/avatar/CharacterAvatar";
-
 import type { Vector3 } from "three";
 
 import { updateFaceDraw } from "genshin-engine";

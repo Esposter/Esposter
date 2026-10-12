@@ -1,7 +1,6 @@
+import { createFaceDraw, updateFaceDraw } from "#src/character/shading/updateFaceDraw";
 import { Quaternion, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
-
-import { createFaceDraw, updateFaceDraw } from "#src/character/shading/updateFaceDraw";
 
 describe("updateFaceDraw", () => {
   // A root bone at the identity, whose Y and Z axes are the world's, so a light's dot products are its components
