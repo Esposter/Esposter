@@ -70,13 +70,15 @@ The fixer runs once over the issue's findings at the tip of `ai/queue`. Its comm
 
 A fix job that crashes leaves its issue open and whole, which is correct: the settle job takes it. The fixer never opens an issue.
 
+A fixer's or a settler's commit lands on `ai/queue` with nothing else to stop a red, so before committing each session runs its checks (`REVIEW_SESSION_CHECKS`): the tests of the files it touched, the docs suite when it touched a docs page, and the typecheck of each package it touched. A fix they refuse is not made. Tests alone let a fixer strip return types that `isolatedDeclarations` needs, and a settler write roadmap items past the docs suite's length rule.
+
 ### The settle job
 
 The settle job runs after the review and every fix job, whatever their outcome, so an open issue is never left without an owner. It lists every open `review` issue, oldest first, and settles them one at a time, since each settler lands its commits before the next starts.
 
 An issue whose `Run:` line names another run is left alone while that run's review job, or the issue's own fix job, has not completed, since a fixer may still be on it. The jobs are read by their names in `Review.yaml`. Another run's settle job holds nothing, since settle jobs never overlap, and a run that cannot be read holds nothing, so a deleted run never strands its issues. Otherwise one settler session settles the whole issue on a clean checkout of the queue's latest tip, so nothing an earlier settler left uncommitted or unlanded carries in, and each of its findings must reach a terminal state:
 
-- fixed, at its root, with the touched tests run;
+- fixed, at its root, with the session's checks run;
 - refuted, with the reason the code disproves it;
 - recorded, in the owning area's proposal or roadmap page, where the build loop takes it.
 

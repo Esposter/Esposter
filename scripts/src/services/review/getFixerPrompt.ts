@@ -1,5 +1,7 @@
 import type { ReviewFinding } from "#src/models/review/ReviewFinding";
 
+import { REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
+
 export interface FixerPromptInput {
   base: string;
   end: string;
@@ -18,7 +20,7 @@ ${JSON.stringify(indexedFindings, null, 2)}
 For each finding, in order:
 1. Open the file at the tip and settle the finding: refute it if the code disproves it or a later commit has already fixed it.
 2. Fix a real one at its root, following the \`code-review\` skill's \`references/fixing-findings.md\` and loading the skills the touched files need. Defer, rather than fix, a finding that needs a design decision, a new feature or a change beyond a mechanical ripple from the files it names.
-3. Run the tests of the files you touched (\`pnpm test <paths> --run\` from the package that owns them) and keep them green.
+3. ${REVIEW_SESSION_CHECKS}
 
 Commit each coherent fix by pathspec with a conventional message (\`type(scope): what changed\`) ending with the line:
 Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>

@@ -1,5 +1,7 @@
 import type { ReviewIssue } from "#src/models/review/ReviewIssue";
 
+import { REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
+
 // The settler's prompt for one review issue: the issue's body is its findings, which the prompt numbers from zero in the
 // Order the body lists them. Unlike the fixer, a settler may not defer: each finding ends fixed, refuted or recorded.
 export const getSettlerPrompt = ({
@@ -9,9 +11,11 @@ export const getSettlerPrompt = ({
 }: ReviewIssue): string => `You are the settler for review issue #${number} in this repository, \`${title}\`. The checkout is ai/queue's tip, installed and built; a file may have moved since the review read it.
 
 The issue's body is the findings the review owes. They are the bullets that open with a backtick, numbered from 0 in the order the body lists them. Each finding must end in exactly one of three terminal states, and none may be deferred:
-- fixed: fix it at its root, following the \`code-review\` skill's \`references/fixing-findings.md\` and loading the skills the touched files need. Run the tests of the files you touched (\`pnpm test <paths> --run\` from the package that owns them) and keep them green;
+- fixed: fix it at its root, following the \`code-review\` skill's \`references/fixing-findings.md\` and loading the skills the touched files need;
 - refuted: the code disproves it, and the reason says what does;
 - recorded: it needs a design decision or a feature. Write it into the owning area's proposal or roadmap page (the \`building-proposals\` and \`docs\` skills), so the build loop takes it. Never open an issue for it.
+
+${REVIEW_SESSION_CHECKS}
 
 Commit each coherent fix by pathspec with a conventional message (\`type(scope): what changed\`) ending with the line:
 Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>
