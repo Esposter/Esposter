@@ -3,7 +3,7 @@ title: Crafting
 description: Proposal — the crafting bench's place in the city, the one part left. The recipes, their rules, the instruction unlocks, the gadgets, the characters' crafting talents with their regional materials, the screen with its tabs and the save's crafting slice are built, as the crafting page records.
 model: claude-haiku-5-5
 needs: [game-exports]
-waiting: "the crafting bench's own place, from the city's streaming records the scene's extraction reads and does not read yet, since the official map marks no bench"
+waiting: "the crafting bench's own place, which the city's streaming records hold and the scene's extraction has not yet extracted, since the official map marks no bench"
 touches:
   [
     "packages/genshin-world/src/services/crafting/**",
@@ -28,7 +28,7 @@ The crafting bench, which the game calls alchemy, turns materials into better on
 - **The regional extra is the same tier of another series in the book's region.** A talent book's craft adds one book of the same tier as its first material (a Teachings for a Guide, a Guide for a Philosophies), from one of the region's other two series, picked by the seeded random source. The bonus names no tier of its own, so the first material's tier is read as "the base material's rarity". The series are the wiki's Character Talent Material page's grouping, and their chains are the recipe table's: Mondstadt, Liyue, Inazuma, Sumeru, Fontaine, Natlan and Nod-Krai. Snezhnaya's books take no craft at the bench, so none of them is an extra.
 - **A talent's bonus is drawn per craft.** Each of a count's crafts draws once from the world's seeded random source: a double adds one more result, and a refund gives back one of the recipe's first listed material. The crafter is chosen as the cook is, by the avatar id passed to the craft; a character with no talent crafts plainly.
 - **Crafted many at once.** A recipe is crafted as many times as the bag and wallet can pay for, checked whole before anything is spent, and refused whole where the bag has no room for every result. This is built.
-- **The bench is where the game puts one.** Each crafting bench stands where the city's streaming records place it, and is used through the [interaction](/docs/genshin/interaction) prompts. The official map marks no crafting bench, so the [spawned places](/docs/proposals/genshin/spawned-places) cannot place one and the streaming records are the one source; the scene's extraction reads them, and is not read yet.
+- **The bench is where the game puts one.** Each crafting bench stands where the city's streaming records place it, and is used through the [interaction](/docs/genshin/interaction) prompts. The official map marks no crafting bench, so the [spawned places](/docs/proposals/genshin/spawned-places) cannot place one and the streaming records are the one source; the scene's extraction reads them but has not yet extracted the bench's placement from them.
 - **The save holds the crafting as one slice.** `crafting` in `GenshinSave` holds the learned recipes, unique by id, and each recipe's crafted count by its id. The counts only grow, so a guest's merge keeps the larger count and unions the learned recipes, as the other grow-only slices do. The world owns both in `useWorldSave`, so a grant saves a change to either.
 - **Left to other pages.** The [crafting page](/docs/genshin/crafting) lists what it leaves out. The essential oils and the Xiao Lantern are quest items for the [quests](/docs/proposals/genshin/quests) page to settle.
 - **The screen's words are the game's own.** The title and the Craft button read the reconfirm page's title, the Crafting Performed line `UI_SYNTHESIS_PAGE_ITEM_COUNT`, the Crafting Materials heading `UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE`, the Required line `UI_COMMON_ITEM_NEED`, and the amount slider's name the cooking page's Quantity, as `GameTextKey` records them. Each recipe's name is the names chunk's entry for its `nameTextId`.
@@ -59,7 +59,7 @@ flowchart TD
 
 **Still to build, in order:**
 
-1. **The bench's place.** Waits on the city's streaming records, which the scene's extraction reads and does not read yet, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page. The screen's learned recipes and crafted counts are already the world's, held in `useWorldSave`, so the bench binds them with its `craftedCountMap` model and its `progress` prop.
+1. **The bench's place.** Waits on the city's streaming records: the scene's extraction reads them but has not yet extracted the bench's placement, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page. The screen's learned recipes and crafted counts are already the world's, held in `useWorldSave`, so the bench binds them with its `craftedCountMap` model and its `progress` prop.
 
 ## Data and measures
 
