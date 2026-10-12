@@ -116,7 +116,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `xilonen`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `xingqiu`            | —                      |                                                                          |
 | `xinyan`             | —                      |                                                                          |
-| `yae-miko`           | —                      |                                                                          |
+| `yae-miko`           | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `yanfei`             | —                      |                                                                          |
 | `yaoyao`             | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `yelan`              | —                      |                                                                          |
