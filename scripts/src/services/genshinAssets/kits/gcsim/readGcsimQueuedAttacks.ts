@@ -53,6 +53,9 @@ const getPassedName = (expression: GoExpression): string | undefined => {
   else return undefined;
 };
 
+// The number a Number token reads as, with its underscores dropped and its base kept, `1_000` or `0x1F`
+const readNumberToken = (token: GoToken): number => Number(token.text.replaceAll("_", ""));
+
 // The numbers a file's locals are first given with `:=`, `windup := 0`, which a delay written in terms of a local reads, as
 // The local is its first value before a branch of the function changes it. A local its declaration gives no number, a
 // `travel, ok := p["travel"]`, takes the first number it is assigned, a constant or a literal, `travel = 5` or
@@ -70,13 +73,13 @@ const readLocalNumberMap = (
       value?.kind === GoTokenKind.Number &&
       !localNumberMap.has(token.text)
     )
-      localNumberMap.set(token.text, Number(value.text.replaceAll("_", "")));
+      localNumberMap.set(token.text, readNumberToken(value));
   }
   for (const [position, token] of tokens.entries()) {
     const value = tokens[position + 2];
     const number =
       value?.kind === GoTokenKind.Number
-        ? Number(value.text.replaceAll("_", ""))
+        ? readNumberToken(value)
         : value?.kind === GoTokenKind.Identifier
           ? constantMap.get(value.text)?.value
           : undefined;
