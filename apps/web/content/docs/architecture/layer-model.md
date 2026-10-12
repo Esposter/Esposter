@@ -58,21 +58,8 @@ sequenceDiagram
   DB->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/Dashboard/{id}
 ```
 
-## Capability matrix
+## Capabilities
 
-`ResourceDefinitionMap` ([resources](/docs/architecture/resource)) is the authoritative declaration; this is the summary:
-
-| ResourceType | Publishable | DatasetProvider | FileAssets | Portable  | Blades beyond Overview/Editor |
-| ------------ | :---------: | :-------------: | :--------: | :-------: | ----------------------------- |
-| Blueprint    |             |                 |            |           |                               |
-| Dashboard    |     ✅      |                 |            |           |                               |
-| Email        |     ✅      |                 |     ✅     | ✅ export |                               |
-| Flowchart    |     ✅      |                 |            |           |                               |
-| Note         |     ✅      |                 |            |           |                               |
-| Program      |             |    ✅ status    |            |           | Setup, Status                 |
-| Sheet        |             |       ✅        |            |    ✅     | Data, Settings                |
-| Survey       |     ✅      |  ✅ responses   |     ✅     |           | Responses                     |
-| TodoList     |             |                 |            |           | Items, Calendar               |
-| Webpage      |     ✅      |                 |     ✅     |           |                               |
+Each resource type declares its capabilities in `capabilities` on its entry in `ResourceDefinitionMap` ([resources](/docs/architecture/resource)), which is the one place they are read from. `publishable` gives a type a versioned publish copy and a public read; `datasetProvider` lets it serve columns and rows to a dataset consumer; `fileAssets` lets its content reference uploaded files; `portable` gives it the file formats it can be imported from and exported to (`PortableFormatMap`). A capability a type does not declare is absent, not false.
 
 Outside the resource model: **Posts** (relational Postgres, social feed semantics), **Esbabbler** (distribution channel for published links), **Achievements** (the events layer itself), and **games/anime/fluid** (blob save state or none; achievements only). Single-blob-per-user save state (`useSave`, blob `${userId}/save`) remains only for genuinely one-per-user saves: clicker and dungeons.

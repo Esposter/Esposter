@@ -21,7 +21,7 @@ What content alone cannot answer is the reverse — which resources point at thi
 
 The primary key is `(sourceId, type, targetId)`, and `resourceLinks_target_index` on `(targetId, type)` is the reverse lookup.
 
-- **The role names what the target is used as, never who uses it.** The source row's own `type` already says that, so `ResourceLinkType` is `Dataset`, `Email` or `Survey`. The role is what keeps two links to one target apart: a Program whose audience is a Survey's responses holds a `Dataset` link to that survey, and only a `Survey` link means it issues the survey's participant tokens.
+- **The role names what the target is used as, never who uses it.** The source row's own `type` already says that, so the role is one of the `ResourceLinkType` values. The role is what keeps two links to one target apart: a Program whose audience is a Survey's responses holds a `Dataset` link to that survey, and only a `Survey` link means it issues the survey's participant tokens.
 - **`targetId` takes no foreign key.** It is projected from user-authored content on every save, so a `set null` on the target's deletion would have that content's next save write the dangling id back and fail on the constraint. A link to a deleted target stays, and its reader fails soft, as the content does.
 - **A soft delete keeps the links**, as it keeps the content: a recycle-binned Program still authorizes the tokens it already handed out. Purging the source cascades them away.
 
@@ -91,7 +91,7 @@ Two surfaces read the same index the other way, by target: the [delete-time refe
 ## Notes
 
 - **Resource Graph is eventually consistent; this index is not.** Azure keeps its index current from change notifications plus a periodic full scan, and documents that its data lags. Here the index authorizes, so the save itself keeps it in step and every failure leaves it cleared rather than behind — the cost being that a Program whose save failed after its blob landed rejects its survey's tokens until its next save.
-- **A resource is indexed by its saves, and nothing is backfilled.** The migration carried every Program's survey binding over as its `Survey` link, so token validation never lost one. The index shipped before any Dashboard, Email or Program held content, so every `Dataset` and `Email` link is written by the save that creates it ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)).
+- **A resource is indexed by its saves, and nothing is backfilled.** Each link is written by the save that writes the content holding it, so a Dashboard, Email or Program gets its links from the save that creates it ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)).
 
 ## Sources
 

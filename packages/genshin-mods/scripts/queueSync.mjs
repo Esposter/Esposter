@@ -1,7 +1,9 @@
-// The pulse's queue sync, run at each turn's end: runs `pnpm ai:queue:push` in the repository, appending its output to the
+// The pulse's queue sync, run at each turn's end: runs the repository's queue push, appending its output to the
 // Sync log and printing its last line, which a failed sync's toast shows. The push takes its own lock, so a turn ending
 // While one runs only queues one more. It does nothing outside the repository. The paths mirror the repository's scripts
-// Package, which a plugin cannot import
+// Package, which a plugin cannot import. The entry runs under this node through tsx and the workspace packages' source,
+// As the post-commit hook runs it: `pnpm run` refuses while a catalog edit waits for an install, and a package's `dist`
+// Is missing while its build runs
 import { spawn } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync } from "node:fs";
 import { homedir } from "node:os";
@@ -10,7 +12,9 @@ import { join } from "node:path";
 // oxlint-disable-next-line naming/no-site-name-literal -- the pulse is a plugin script shipped without @esposter/shared, so the folder is written out
 const QUEUE_DIRECTORY = join(homedir(), ".esposter", "queue");
 const LOG_PATH = join(QUEUE_DIRECTORY, "sync.log");
-const PUSH_SCRIPT = join("scripts", "src", "queue", "push", "index.ts");
+const SCRIPTS_DIRECTORY = "scripts";
+const PUSH_SCRIPT = join("src", "queue", "push", "index.ts");
+const TSX_CLI = join("node_modules", "tsx", "dist", "cli.mjs");
 
 // Spawned without a shell, as the watcher is, so the push's own exit code is the one read here
 const runPush = (repositoryRoot) =>
@@ -20,8 +24,8 @@ const runPush = (repositoryRoot) =>
       appendFileSync(LOG_PATH, chunk);
       for (const line of chunk.toString().split("\n")) if (line.trim() !== "") lastLine = line.trim();
     };
-    const child = spawn("pnpm", ["ai:queue:push"], {
-      cwd: repositoryRoot,
+    const child = spawn(process.execPath, ["--conditions=source", TSX_CLI, PUSH_SCRIPT], {
+      cwd: join(repositoryRoot, SCRIPTS_DIRECTORY),
       stdio: ["ignore", "pipe", "pipe"],
       windowsHide: true,
     });
@@ -33,9 +37,9 @@ const runPush = (repositoryRoot) =>
 
 // oxlint-disable-next-line no-restricted-properties -- the hook passes the repository root as its one argument, and a plugin ships without citty
 const [repositoryRoot] = process.argv.slice(2);
-if (repositoryRoot !== undefined && existsSync(join(repositoryRoot, PUSH_SCRIPT))) {
+if (repositoryRoot !== undefined && existsSync(join(repositoryRoot, SCRIPTS_DIRECTORY, PUSH_SCRIPT))) {
   mkdirSync(QUEUE_DIRECTORY, { recursive: true });
-  appendFileSync(LOG_PATH, `${new Date().toISOString()} pnpm ai:queue:push\n`);
+  appendFileSync(LOG_PATH, `${new Date().toISOString()} queue push\n`);
   const { exitCode, lastLine } = await runPush(repositoryRoot);
   console.log(lastLine === "" ? `exited with code ${exitCode}` : lastLine);
   process.exitCode = exitCode;

@@ -2240,6 +2240,9 @@ importers:
       rou3:
         specifier: 'catalog:'
         version: 1.0.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.5
     devDependencies:
       '@arethetypeswrong/core':
         specifier: 'catalog:'

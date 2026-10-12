@@ -5,7 +5,7 @@ description: The official Teyvat Interactive Map's statues and waypoints read in
 
 # Spawned places
 
-The game's servers spawn chests, Oculi, puzzles and camps, and the client's data does not place them, so the official Teyvat Interactive Map's public points stand in for them. This page is the first half of the [spawned places](/docs/proposals/genshin/spawned-places) proposal: the map's points read into the references folder, and its statues and waypoints fitted onto the scene's own transport points. Chests are the first kind published, into their own slices by the [chests](/docs/genshin/chests) page, and the puzzle mechanisms follow in slices of their own by the [puzzles](/docs/genshin/puzzles) page, and the plants and specialties by the [gathering](/docs/genshin/gathering) page. The Oculi are published here, in the [Oculi](#the-oculi) section, for the [statues of The Seven](/docs/proposals/genshin/statues-of-the-seven) proposal to read; each other kind's places land with the page that uses them.
+The game's servers spawn chests, Oculi, puzzles and camps, and the client's data does not place them, so the official Teyvat Interactive Map's public points stand in for them. This page is the built part of the [spawned places](/docs/proposals/genshin/spawned-places) proposal: the map's points read into the references folder, its statues and waypoints fitted onto the scene's transport points, and the Oculi published for the [statues of The Seven](/docs/genshin/statues-of-the-seven) page to read. The [chests](/docs/genshin/chests), [puzzles](/docs/genshin/puzzles) and [gathering](/docs/genshin/gathering) pages publish their own kinds from the same points.
 
 ## How it works
 
@@ -31,9 +31,9 @@ flowchart TD
 `pnpm -C scripts genshin:assets points-fit` fits one similarity to the whole map.
 
 - **The anchors are the statues and waypoints on the ground.** These are the map's labels for the Statue of The Seven and the Teleport Waypoint at layer zero. Its underground points are kept for their own floors and left out of the fit.
-- **The scene side is the scene's transport points.** The dump files a statue and a waypoint as one kind of point, which `readSceneTransportPoints` reads by the kind Windrise's statue holds. The fit reads them from the scene directly, so it does not wait on the waypoints that [exploring](/docs/proposals/genshin/exploring) will fit into region data.
+- **The scene side is the scene's transport points.** The dump files a statue and a waypoint as one kind of point, which `readSceneTransportPoints` reads by the kind Windrise's statue holds. The fit reads them from the scene directly, so it does not depend on the region data the [exploring](/docs/proposals/genshin/exploring) proposal fits.
 - **The match starts from every turn.** A start is taken at each of sixteen turns, each both as drawn and mirrored, at a scale of one, which is the map's own unit, carrying each set's median point onto the other's. The medians are not pulled by the far-off points one set holds and the other does not. Each start is refined over sixty passes. A pass pairs every carried point with its nearest scene point, one to one, within three residuals of the last fit and never closer than the bar, then solves the least-squares similarity on those pairs. The start that matches the most pairs wins, and the smaller residual breaks a tie.
-- **The bar is twenty game units.** A fit whose residual is over it is an error that names the residual, and writes nothing. The fitted residual sits near ten, so a fit twice that has matched the wrong points.
+- **The bar is twenty game units.** A fit whose residual is over it is an error that names the residual, and writes nothing. A clean match sits well under the bar, so a fit near it has matched the wrong points.
 
 The solved turn is a quarter turn mirrored (a turn of minus ninety degrees, the map's down running against the game's z axis), and the scale comes out within a few hundredths of one: the map's coordinate is one game unit.
 

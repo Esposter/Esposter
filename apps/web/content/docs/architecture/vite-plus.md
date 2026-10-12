@@ -9,7 +9,17 @@ description: What `vp` owns here — a traced task cache for the builds and the 
 
 ## The task cache
 
-The builds and the two whole-repository checks run as tasks of the root `vite.config.ts` — `build:packages`, `build:app`, `lint` and `typecheck` — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. How CI carries the cache, why a hit needs the install, and why the app build replays on the packages' built bytes are in [monorepo tooling](/docs/architecture/monorepo-tooling) under `## CI job shape`. Tasks are cached by default, so no `--cache` flag is written; it exists to cache a plain script. The same tasks cache locally, natively on a Windows host: an unchanged `vp run build:packages` replays in seconds where it builds in a minute.
+The builds and the two whole-repository checks run as tasks of the root `vite.config.ts` — `build:packages`, `build:app`, `lint` and `typecheck` — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
+
+```mermaid
+flowchart TD
+  T["vp run &lt;task&gt;"] --> M{"every file the recorded run read still matches?"}
+  M -->|"yes"| R["replay the recorded outputs"]
+  M -->|"no"| X["run the command under the tracer"]
+  X --> C["record what it read and wrote"]
+```
+
+How CI carries the cache, why a hit needs the install, and why the app build replays on the packages' built bytes are in [monorepo tooling](/docs/architecture/monorepo-tooling) under `## CI job shape`. Tasks are cached by default, so no `--cache` flag is written; it exists to cache a plain script. The same tasks cache locally, natively on a Windows host: an unchanged `vp run build:packages` replays in seconds where it builds in a minute.
 
 **A cached command is a task, never a script.** A script carries no cache settings, and a task may not share a script's name, so a script that needs caching moves into a task under its own name and the script is deleted — `build:packages`, `lint` and `typecheck` are `vp run <name>`, and the leaves `lint` and `typecheck` aggregate stay scripts. `build:app` is the one task with no script behind it: it wraps the app's own `build`, which stays the deploy entrypoint by name. A task that writes nothing anyone reads keeps no outputs, so its replay restores nothing and is the verdict alone.
 
@@ -23,7 +33,7 @@ The builds and the two whole-repository checks run as tasks of the root `vite.co
 
 **A directory listing is fingerprinted by every name in it**, and an input exclusion does not reach it ([vite-task 504](https://github.com/voidzero-dev/vite-task/issues/504)). A generated file that a fresh checkout lacks would therefore make every run miss; the package build's `dist` and generated barrels travel with the cache for that reason (`run-cached-task`'s `paths`).
 
-Before the cache gated anything, every probe was run against this tree: a source edit, a content edit, a `.vue` edit, and a file created where a build had looked for one. Each missed, or replayed only when nothing it read had changed. The native tools were probed on Linux as well, because the tracer there interposes on libc for a dynamically linked process and a read that skips libc goes unseen ([vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777)). The Go compiler `typecheck` loads in-process and tsgolint, the statically linked binary behind type-aware lint, both missed on an edit to a file only they read. A new native tool is probed the same way before a task caches it.
+Every cached task is probed against this tree before it is trusted: a source edit, a content edit, a `.vue` edit, and a file created where a build looks for one must each miss the cache, and only a run that read nothing changed may replay. Each missed, or replayed only when nothing it read had changed. The native tools were probed on Linux as well, because the tracer there interposes on libc for a dynamically linked process and a read that skips libc goes unseen ([vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777)). The Go compiler `typecheck` loads in-process and tsgolint, the statically linked binary behind type-aware lint, both missed on an edit to a file only they read. A new native tool is probed the same way before a task caches it.
 
 ## One copy of every tool
 

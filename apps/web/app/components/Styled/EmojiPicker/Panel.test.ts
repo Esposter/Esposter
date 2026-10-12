@@ -14,6 +14,7 @@ import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { getMockSasUrl } from "azure-mock";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -144,5 +145,59 @@ describe("styledEmojiPickerPanel", () => {
         .groupEmojisMap.get(EmojiGroup.AnimalsAndNature)
         ?.map(({ character }) => character),
     );
+  });
+
+  // The grid is one stop in the tab order, so Tab crosses it once rather than once per emoji, and the arrows walk from it
+  test("#258 the grid has one tab stop, on its first emoji", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(StyledEmojiPickerPanel);
+
+    expect(
+      component.findAll('button[data-index][tabindex="0"]').map((button) => button.attributes("data-index")),
+    ).toStrictEqual(["0"]);
+  });
+
+  // The arrows walk a cell and a row, Home and End go to a row's ends, and the focused button is named by its emoji,
+  // Which is what a screen reader announces. The grid is attached so focus lands on the cell it moves to
+  test("#258 arrow keys walk the grid by cell and by row, naming each focused emoji, with Home and End to a row's ends", async () => {
+    expect.hasAssertions();
+
+    const smileys = getEmojiIndex().groupEmojisMap.get(EmojiGroup.SmileysAndEmotion) ?? [];
+    const component = await mountSuspended(StyledEmojiPickerPanel, { attachTo: document.body });
+    const getCell = (index: number) => component.get(`button[data-index="${index}"]`);
+    const pressOn = async (index: number, key: string) => {
+      await getCell(index).trigger("keydown", { key });
+      await flushPromises();
+    };
+
+    await pressOn(0, "ArrowRight");
+    expect(document.activeElement).toBe(getCell(1).element);
+    expect(document.activeElement?.getAttribute("aria-label")).toBe(takeOne(smileys, 1).name);
+    await pressOn(1, "ArrowDown");
+    expect(document.activeElement).toBe(getCell(9).element);
+    await pressOn(9, "End");
+    expect(document.activeElement).toBe(getCell(15).element);
+    await pressOn(15, "Home");
+    expect(document.activeElement).toBe(getCell(8).element);
+    await pressOn(8, "ArrowLeft");
+    expect(document.activeElement).toBe(getCell(7).element);
+    await pressOn(7, "ArrowUp");
+    expect(document.activeElement).toBe(getCell(0).element);
+  });
+
+  // Enter is the button's own pick, handled on its keydown so a focused emoji picks without a click, and it stores the
+  // Pick as a recent the same way a click does
+  test("#258 Enter picks the focused emoji with its record and stores it as a recent", async () => {
+    expect.hasAssertions();
+
+    const emojiPickerStore = useEmojiPickerStore();
+    emojiPickerStore.skinTone = SkinTone.Medium;
+    const component = await mountSuspended(StyledEmojiPickerPanel, { attachTo: document.body });
+    await component.find("input").setValue("technologist");
+    await component.get('button[data-index="0"]').trigger("keydown", { key: "Enter" });
+
+    expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻", takeOne(searchEmojis("technologist"))]]);
+    expect(emojiPickerStore.recentEmojiSlugs).toStrictEqual(["technologist"]);
   });
 });

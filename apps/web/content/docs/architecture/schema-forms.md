@@ -43,7 +43,7 @@ A schema form engine is most of the work: generating a layout from the schema, r
 
 | Candidate                                                                       | Why it is or is not the one                                                                                                                                                                  |
 | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JSON Forms' core, chosen                                                        | Renders the JSON Schema the app already generates, framework-free, with every renderer registered by rank. Maintained by EclipseSource, with the largest user base of the Vue schema engines |
+| JSON Forms' core, chosen                                                        | Renders the JSON Schema the app already generates, framework-free, with every renderer registered by rank. Maintained by EclipseSource |
 | JSON Forms' Vue components and vanilla renderers, rejected                      | Written in the Options API, which the app compiles out; turning `vue.optionsApi` back on would be a whole-app cost paid for one dependency                                                   |
 | vjsf, replaced                                                                  | Bound to Vuetify as a peer dependency, so Vuetify could not leave while it stayed, and its fields could not wear the library's look                                                          |
 | [shadcn-vue's AutoForm](https://radix.shadcn-vue.com/docs/components/auto-form) | Walks the Zod schema itself, but it is copied into the repository rather than installed — a renderer of our own under another name — and it brings Reka UI and vee-validate beside Vuetify 0 |
@@ -51,7 +51,7 @@ A schema form engine is most of the work: generating a layout from the schema, r
 
 ## AJV is JSON Forms'
 
-JSON Forms' core imports AJV and builds an instance when a form mounts, even with its validation off, to match a union's variants. So AJV and its formats stay, as JSON Forms' own dependencies rather than the app's. Their CommonJS needs nothing of ours: rolldown wraps it in its own interop helper in the production build, and the dev pre-bundle names them through their importer (`configuration/vite.ts`). What went with vjsf is everything the app wrote on top: its validation keywords, its error-message and translation packages, the layout engine's `debug`, and the pre-bundle list vjsf published.
+JSON Forms' core imports AJV and builds an instance when a form mounts, even with its validation off, to match a union's variants. So AJV and its formats stay, as JSON Forms' own dependencies rather than the app's. Their CommonJS needs nothing of ours: rolldown wraps it in its own interop helper in the production build, and the dev pre-bundle names them through their importer (`configuration/vite.ts`). The app writes nothing on top of AJV: it carries no validation keywords of its own and no error-message or translation package.
 
 ## Key files
 

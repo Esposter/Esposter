@@ -47,9 +47,11 @@ const readDirtyMerge = (file: string, head: string, pushed: string, cwd: string)
 // Is the only reset that can run over another session's uncommitted work: it moves the branch and updates just the
 // Files that differ between the two commits, and it refuses rather than overwrite an edit. So an edit to a file the
 // Pushed commit changes is three-way merged onto the pushed tip first, and the reset runs with that file at HEAD's
-// Content. Where the merge conflicts, or a commit that landed since `base` touched the file, the sync refuses and
-// Changes nothing. The reset takes what landed during the push off the branch, so those commits are carried back on
-// Top; a pick that conflicts stops the carrying and stays reachable from the reflog.
+// Content. Where the merge conflicts, the sync refuses and changes nothing. A branch a commit landed on during the push
+// Is left where it is: the push that commit queued replays it, and a reset under it could only carry it back by a
+// Cherry-pick that another session's uncommitted edit can stop, leaving the commit on no branch at all. Only a commit
+// Landing between that check and the reset is carried back; a pick that conflicts stops the carrying, says so, and
+// Stays reachable from the reflog.
 export const syncCheckout = (pushed: string, base: string, cwd: string): void => {
   const synced = `synced ${QUEUE_BRANCH} onto ${pushed}`;
   if (checkIsAncestor(pushed, "HEAD", cwd)) {
@@ -58,14 +60,20 @@ export const syncCheckout = (pushed: string, base: string, cwd: string): void =>
   }
 
   const head = runGit(["rev-parse", "HEAD"], cwd).trim();
+  const landedCount = getNonEmptyLines(runGit(["rev-list", `${base}..${head}`], cwd)).length;
+  if (landedCount > 0) {
+    console.info(
+      `the checkout's branch waits: ${landedCount} commit(s) landed during the push, and the push they queued carries them`,
+    );
+    return;
+  }
+
   const pushedFiles = new Set(readChangedPaths([head, pushed], cwd));
-  const landedFiles = new Set(readChangedPaths([base, head], cwd));
   const editedFiles = readChangedPaths([head], cwd);
   const overlappingFiles = editedFiles.filter((editedFile) => pushedFiles.has(editedFile));
   const merges: DirtyMerge[] = [];
   for (const file of overlappingFiles) {
-    // A landed commit that touched the file would be carried back over the edit, and that carry would stop on it
-    const merge = landedFiles.has(file) ? undefined : readDirtyMerge(file, head, pushed, cwd);
+    const merge = readDirtyMerge(file, head, pushed, cwd);
     if (merge === undefined) {
       console.info(
         `the checkout's branch waits: ${file} has an uncommitted edit that cannot be synced over the push, nothing changed`,
