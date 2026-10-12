@@ -29,7 +29,6 @@ import {
   step,
   texture,
   uv,
-  vec2,
   vec3,
   vec4,
 } from "three/tsl";
