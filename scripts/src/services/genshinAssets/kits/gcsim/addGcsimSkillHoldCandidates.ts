@@ -5,7 +5,9 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 import { GCSIM_SKILL_HOLD_HITBOX_NAME, GCSIM_SKILL_HOLD_PREFIXES } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
+import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
+import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
@@ -15,7 +17,7 @@ import { SKILL_TARGETING_AREA } from "genshin-world";
 // State gcsim reads it at, so it gives no hits
 export const addGcsimSkillHoldCandidates = (
   { add, addFrames, addHit, toFile }: GcsimKitCandidateWriter,
-  { config, constantMap, travelMap }: GcsimCharacter,
+  { attacks, config, constantMap, queuedAttacks, travelMap }: GcsimCharacter,
 ): void => {
   const holds = GCSIM_SKILL_HOLD_PREFIXES.flatMap((prefix): GcsimHoldSource[] => {
     const hitmarks = findGcsimConstant(constantMap, `${prefix}Hitmarks`, `${prefix}Hitmark`);
@@ -40,19 +42,29 @@ export const addGcsimSkillHoldCandidates = (
     if (framesName !== undefined) addFrames(`${path}.animationFrames`, framesName);
     if (hitmarks?.values === undefined) continue;
     add(`${path}.hits.length`, hitmarks.values.length, toFile(hitmarks.file), hitmarks.line);
-    for (const [hitIndex, hitmark] of hitmarks.values.entries())
+    for (const [hitIndex, hitmark] of hitmarks.values.entries()) {
+      // The hold's attack is the one call firing at its hitmark, if one call alone does
+      const firedCalls = queuedAttacks.filter(({ delay, file }) => file === hitmarks.file && delay === hitmark);
+      const [firedCall] = firedCalls;
+      const firedAttack =
+        firedCalls.length === 1 && firedCall !== undefined ? findQueuedAttack(attacks, firedCall) : undefined;
       addHit(
         `${path}.hits.${hitIndex}`,
         {
           areaHitbox:
-            hitmarks.values.length === 1 ? findGcsimHitbox(config, "skill", GCSIM_SKILL_HOLD_HITBOX_NAME) : undefined,
+            firedCall?.hitbox ??
+            (hitmarks.values.length === 1 ? findGcsimHitbox(config, "skill", GCSIM_SKILL_HOLD_HITBOX_NAME) : undefined),
+          attack: firedAttack,
           hitmark: {
             file: hitmarks.file,
             line: hitmarks.line,
             value: getGcsimLandingFrames(travelMap, hitmarks.name, hitmark),
           },
+          talentLeaf:
+            firedAttack === undefined ? undefined : findGcsimTalentLeaf(config, firedAttack.talentVariable, [hitIndex]),
         },
         SKILL_TARGETING_AREA,
       );
+    }
   }
 };

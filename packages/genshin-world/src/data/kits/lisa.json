@@ -220,8 +220,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.2 }
   },
-  "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
-  "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 2 },
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 432 }

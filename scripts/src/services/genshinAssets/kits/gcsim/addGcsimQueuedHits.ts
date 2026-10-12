@@ -7,8 +7,8 @@ import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/find
 import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 
 // The hits of an ability with no hitmark constant, fired by its queue calls: each call of the file its frames are in
-// Firing its first literal, at its damage delay, joined to its multiplier by its place and to its hitbox where the
-// Ability's hitboxes are as many as its hits. A call firing another literal is a DoT's or a passive's, not one of its hits
+// Firing its first literal, at its damage delay, joined to its multiplier by its place and to its own hitbox, else to the
+// Ability's hitbox of its place where the ability's hitboxes are as many as its hits. A call firing another literal is a DoT's or a passive's, not one of its hits
 export const addGcsimQueuedHits = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
   gcsim: GcsimCharacter,
@@ -38,11 +38,11 @@ export const addGcsimQueuedHits = (
   const hitboxes = config.abilityHitboxesMap.get(abilityName) ?? [];
   const isHitboxJoined = hitboxes.length === queuedHits.length;
   add(`${path}.hits.length`, queuedHits.length, toFile(firstHit.file), firstHit.line);
-  for (const [hitIndex, { attack, delay, file: hitFile, line }] of queuedHits.entries())
+  for (const [hitIndex, { attack, delay, file: hitFile, hitbox, line }] of queuedHits.entries())
     addHit(
       `${path}.hits.${hitIndex}`,
       {
-        areaHitbox: isHitboxJoined ? hitboxes[hitIndex] : undefined,
+        areaHitbox: hitbox ?? (isHitboxJoined ? hitboxes[hitIndex] : undefined),
         attack,
         hitmark: { file: hitFile, line, value: delay },
         talentLeaf: findGcsimTalentLeaf(config, attack.talentVariable, [hitIndex]),

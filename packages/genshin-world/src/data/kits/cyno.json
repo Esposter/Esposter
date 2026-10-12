@@ -124,8 +124,8 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
-  "stances.pactswornPathclearer.normalAttacks.3.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
-  "stances.pactswornPathclearer.normalAttacks.3.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "stances.pactswornPathclearer.normalAttacks.3.hits.0.element": { "cause": "DiffersFromSource", "value": "Electric" },
+  "stances.pactswornPathclearer.normalAttacks.3.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
   "stances.pactswornPathclearer.normalAttacks.3.hits.0.multiplier": {
     "source": "Gcsim",

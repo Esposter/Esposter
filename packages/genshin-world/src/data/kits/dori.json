@@ -27,7 +27,10 @@
   "plungeCollision.gauge": { "source": "Wiki" },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 3 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 } },
+  "skill.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
   "skill.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 26 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6832 } },
   "skill.hits.1.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 } },

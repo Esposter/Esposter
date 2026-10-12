@@ -1,5 +1,6 @@
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
+import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 
 // The `AttackInfo` a queue call fires: the literal written inline in its arguments, else the literal of its file assigned
@@ -18,6 +19,7 @@ export interface GcsimQueuedHit {
   attack: GcsimAttack;
   delay: number;
   file: string;
+  hitbox?: GcsimHitbox;
   line: number;
 }
 
@@ -35,6 +37,6 @@ export const getGcsimQueuedHits = (
       attack?.attackTag !== undefined &&
       attackTags.includes(attack.attackTag) &&
       delay !== undefined
-      ? [{ attack, delay, file, line: delayLine }]
+      ? [{ attack, delay, file, hitbox: queuedAttack.hitbox, line: delayLine }]
       : [];
   });

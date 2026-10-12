@@ -209,8 +209,5 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19.25 }
   },
-  "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Grass" },
-  "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7832 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": { "index": 10, "proudSkillGroupId": 7832 } }
 }

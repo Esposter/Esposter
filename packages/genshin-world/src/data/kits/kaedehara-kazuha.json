@@ -83,6 +83,5 @@
   },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4732 } },
-  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 4732 } },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }
 }
