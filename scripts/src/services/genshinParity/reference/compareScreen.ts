@@ -8,6 +8,7 @@ import { getCaptureSoftness } from "#src/services/genshinParity/reference/getCap
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { readScoredMask } from "#src/services/genshinParity/reference/readScoredMask";
+import { readSilhouetteInks } from "#src/services/genshinParity/reference/readSilhouetteInks";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
 import {
@@ -88,7 +89,8 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   const { data } = await sharp(difference).greyscale().raw().toBuffer({ resolveWithObject: true });
   // The scored pixels are the reference's own rectangles and glyphs, its whole region when it names none, so a mask's
   // Leftover never counts
-  const scoredMask = await readScoredMask(referencePath, reference, region, region.width, region.height);
+  const silhouetteInks = await readSilhouetteInks(referencePath, reference.silhouettes ?? []);
+  const scoredMask = readScoredMask(reference, silhouetteInks, region, region.width, region.height);
   const cellMeans = Array.from({ length: GRID_SIZE * GRID_SIZE }, () => ({ count: 0, sum: 0 }));
   for (let index = 0; index < data.length; index++) {
     if (!scoredMask[index]) continue;
@@ -118,7 +120,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   // FLIP's error map read at the structure's raster, its mean taken over the scored pixels alone
   const flipHeight = Math.round((STRUCTURE_WIDTH / region.width) * region.height);
   const { errorMap } = await readFlipErrorMap(referenceRegion, shotRegion, STRUCTURE_WIDTH, flipHeight);
-  const flipMask = await readScoredMask(referencePath, reference, region, STRUCTURE_WIDTH, flipHeight);
+  const flipMask = readScoredMask(reference, silhouetteInks, region, STRUCTURE_WIDTH, flipHeight);
   const flipTotal = errorMap.reduce((sum, error, index) => sum + error * (flipMask[index] ?? 0), 0);
   const flip =
     flipTotal /

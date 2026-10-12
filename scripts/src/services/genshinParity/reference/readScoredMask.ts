@@ -1,32 +1,21 @@
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
+import type { ParitySilhouette } from "#src/models/genshinParity/shared/ParitySilhouette";
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
-import { splitGlyph } from "#src/services/genshinParity/shared/splitGlyph";
 import { computeScoredMask } from "#src/services/recreation/image/computeScoredMask";
-import sharp from "sharp";
 
 // The pixels a comparison scores, on a raster of the given size over the region, 1 where the middle of the raster pixel
 // Lies in one of the mask's rectangles or on the strokes of a glyph a silhouette holds, split from the reference's own
-// Pixels, so a name's strokes count and the terrain between them, which the page does not draw, never does. The whole
-// Region when the reference names neither
-export const readScoredMask = async (
-  referencePath: string,
+// Pixels by `readSilhouetteInks`, so a name's strokes count and the terrain between them, which the page does not draw,
+// Never does. The whole region when the reference names neither
+export const readScoredMask = (
   { mask, silhouettes = [] }: ParityReference,
+  inks: { isInk: Uint8Array; silhouette: ParitySilhouette }[],
   region: ImageRegion,
   width: number,
   height: number,
-): Promise<Uint8Array> => {
+): Uint8Array => {
   const rectangleMask = computeScoredMask(mask ?? (silhouettes.length > 0 ? [] : [region]), region, width, height);
-  const inks = await Promise.all(
-    silhouettes.map(async (silhouette) => {
-      const { data, info } = await sharp(referencePath)
-        .removeAlpha()
-        .extract({ height: silhouette.height, left: silhouette.x, top: silhouette.y, width: silhouette.width })
-        .raw()
-        .toBuffer({ resolveWithObject: true });
-      return { isInk: splitGlyph(data, info.channels, info.width, info.height, silhouette.ink), silhouette };
-    }),
-  );
   return rectangleMask.map((isScored, index) => {
     if (isScored) return 1;
     const x = region.x + (((index % width) + 0.5) / width) * region.width;
