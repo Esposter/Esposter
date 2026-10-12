@@ -1,3 +1,4 @@
+import { aiReady } from "./configuration/aiReady.ts";
 import { app } from "./configuration/app.ts";
 import { build } from "./configuration/build.ts";
 import { compatibilityDate } from "./configuration/compatibilityDate.ts";
@@ -21,11 +22,13 @@ import { routeRules } from "./configuration/routeRules.ts";
 import { runtimeConfig } from "./configuration/runtimeConfig.ts";
 import { security } from "./configuration/security.ts";
 import { site } from "./configuration/site.ts";
+import { skewProtection } from "./configuration/skewProtection.ts";
 import { typescript } from "./configuration/typescript.ts";
 import { vite } from "./configuration/vite.ts";
 
 export default defineNuxtConfig({
   $development: development,
+  aiReady,
   app,
   build,
   compatibilityDate,
@@ -48,6 +51,7 @@ export default defineNuxtConfig({
   runtimeConfig,
   security,
   site,
+  skewProtection,
   typescript,
   vite,
 });
