@@ -29,22 +29,27 @@ Each material sets a different set of keywords on the shader. These are read fro
 
 The close view's mesh is the body's LOD0 "Body" in block "04161624", 10,406 vertices in two submeshes (1,491 and 8,915), 12,660 triangles, with "Body_LOD1" to "Body_LOD3" beside it in the same block (Exact on the counts). Which LOD the game draws up close is Provisional: the prefab's root carries no LODGroup, and the renderer that binds each LOD is not yet identified. The textures are 1024 with a full 11-mip chain, and no other block holds a higher mip (Exact).
 
-### Which programs the sets select
+### The base programs
 
-Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its `programs.tsv` line. A material's program is one of the candidates below, each carrying that material's set and some engine-wide set (see the bullet above). The ranges are the candidates, not one choice.
+Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its `programs.tsv` line. Each material's base variant is one keyword set with a vertex and a pixel program, chosen by the rule in the Decisions below. The variant's two programs are:
 
-| Material | Pass      | Stage  | Candidates | Program indices                                                                                                                                                              |
-| :------- | :-------- | :----- | ---------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Body     | "BODY"    | Pixel  |        124 | 194-225, 274-277, 282-285, 290-313, 440-443, 458-461, 476-479, 484-487, 536-543, 1291-1302, 1311-1326, 1373-1374, 1377-1378, 1393-1396                                       |
-| Body     | "BODY"    | Vertex |         41 | 736-749, 754-761, 791-792, 794-795, 818-821, 1499-1507, 1518-1519                                                                                                            |
-| Hair     | "BODY"    | Pixel  |         60 | 266-273, 278-281, 286-289, 318-321, 326-329, 338-341, 350-353, 446-447, 450-451, 464-465, 468-469, 488-495, 1329-1330, 1333-1334, 1345-1346, 1357-1358, 1375-1376, 1379-1380 |
-| Hair     | "BODY"    | Vertex |          5 | 750-753, 1508                                                                                                                                                                |
-| Face     | "BODY"    | Pixel  |         68 | 426-433, 528-535, 546-553, 576-583, 600-607, 614-621, 1389-1392, 1399-1402, 1413-1416, 1429-1432, 1435-1438                                                                  |
-| Face     | "BODY"    | Vertex |         30 | 783-788, 812-817, 824-829, 834-837, 1515-1517, 1522-1524, 1526-1527                                                                                                          |
-| Face     | "OUTLINE" | Pixel  |         16 | 882-885, 902-909, 920-923                                                                                                                                                    |
-| Face     | "OUTLINE" | Vertex |         24 | 952-959, 970-977, 984-991                                                                                                                                                    |
+| Material | Pass      | Stage  | Program index | Container   |
+| :------- | :-------- | :----- | ------------: | :---------- |
+| Body     | "BODY"    | Pixel  |           460 | DXBC (SHEX) |
+| Body     | "BODY"    | Vertex |           795 | DXIL        |
+| Hair     | "BODY"    | Pixel  |           272 | DXBC (SHEX) |
+| Hair     | "BODY"    | Vertex |           753 | DXIL        |
+| Face     | "BODY"    | Pixel  |           432 | DXBC (SHEX) |
+| Face     | "BODY"    | Vertex |           788 | DXIL        |
+| Face     | "OUTLINE" | Pixel  |           885 | DXIL        |
+| Face     | "OUTLINE" | Vertex |           958 | DXBC (SHEX) |
 
-The hair and face candidates sit in the same "BODY" pass as the body's, since the material keywords alone tell the three apart; the face also has candidates in "OUTLINE", the outline drawn over the face. No single program is named per material yet: that choice needs the engine-wide set, and until it is made no candidate is disassembled, so no DXIL program has been run through `vkd3d-compiler`.
+Candidates before the choice: body 124 pixel and 41 vertex, hair 60 and 5, face 68 and 30, the face's outline 16 and 24 (Exact).
+
+## Decisions
+
+- **The base variant.** A material matches many candidate programs, because engine-wide keywords (shadows, fog, light probes and the like) are runtime state the material does not set. A candidate carrying another Lumine material's own keyword is not a candidate for it: "BACK_FACE_ON" and "FACE_MAP_NEW_ON" exclude the body, for instance. The base variant is the keyword set, among those with both a vertex and a pixel program, with the fewest keywords beyond the material's own set. Two sets tied on that count go to the one whose two programs are both DXBC (SHEX) over a DXIL one, and a tie past that goes to the lowest index. The equations are read from the base variant's pixel program, and its vertex program gives the outline's width and the vertex stage.
+- **An engine-wide keyword's addition is noted only where it touches the shade**, as one line under the equation it changes, such as a shadow keyword's attenuation factor. The equation itself is written once, never a second copy per keyword.
 
 ## The pass classes
 
