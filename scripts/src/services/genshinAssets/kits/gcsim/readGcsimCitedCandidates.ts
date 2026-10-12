@@ -11,6 +11,7 @@ import { createGcsimFileResolver } from "#src/services/genshinAssets/kits/gcsim/
 import { readGcsimLineValues } from "#src/services/genshinAssets/kits/gcsim/readGcsimLineValues";
 import { readGcsimQueueDelay } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay";
 import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/readGcsimTableCells";
+import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -57,7 +58,13 @@ const readCitedArea = (
   file: string,
   counter: number | undefined,
 ): undefined | { area: AttackArea; line: number } => {
-  const table = substituteGoTableCells(readConstructorText(lines, lineIndex), lines, counter);
+  const constructorText = readConstructorText(lines, lineIndex);
+  // The arguments are read with the locals they name resolved, the constructor's own name and its left side left as they are
+  const open = constructorText.indexOf("(");
+  if (open === -1) return undefined;
+  const argumentText = resolveGoLocals(constructorText.slice(open + 1), lines, lineIndex);
+  if (argumentText === undefined) return undefined;
+  const table = substituteGoTableCells(`${constructorText.slice(0, open + 1)}${argumentText}`, lines, counter);
   if (table === undefined) return undefined;
   const area = readGcsimCitedArea(table.text, file);
   if (area === undefined) return undefined;
