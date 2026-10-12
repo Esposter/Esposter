@@ -15,9 +15,12 @@ const getPath = (title: string) => join(REFERENCES_DIRECTORY, title.slice("File:
 // Video keeps its frames. The titles not yet held are asked of the API in batches as it takes them; a title the wiki
 // Does not hold, or a file its host does not serve, has no entry
 export const resolveWikiFiles = async (titles: readonly string[]): Promise<Map<string, string>> => {
-  const missingTitles = titles.filter((title) => !existsSync(getPath(title)));
+  const missingTitles = new Set(titles.filter((title) => !existsSync(getPath(title))));
+  const heldPaths = new Map(
+    titles.flatMap((title) => (missingTitles.has(title) ? [] : [[title, getPath(title)] as const])),
+  );
   const urlMaps = await Promise.all(
-    chunk(missingTitles, MAX_WIKI_TITLES_PER_QUERY).map((batch) => readWikiFileUrls(batch)),
+    chunk([...missingTitles], MAX_WIKI_TITLES_PER_QUERY).map((batch) => readWikiFileUrls(batch)),
   );
   await mkdir(REFERENCES_DIRECTORY, { recursive: true });
   await forEachConcurrently(
@@ -25,8 +28,10 @@ export const resolveWikiFiles = async (titles: readonly string[]): Promise<Map<s
     WIKI_FILE_CONCURRENCY,
     async ([title, url]) => {
       const file = await readWikiFile(url);
-      if (file) await writeFile(getPath(title), file);
+      if (!file) return;
+      await writeFile(getPath(title), file);
+      heldPaths.set(title, getPath(title));
     },
   );
-  return new Map(titles.flatMap((title) => (existsSync(getPath(title)) ? [[title, getPath(title)] as const] : [])));
+  return heldPaths;
 };
