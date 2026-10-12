@@ -95,7 +95,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `rosaria`            | —                      |                                                                          |
 | `sangonomiya-kokomi` | —                      |                                                                          |
 | `sayu`               | —                      |                                                                          |
-| `sethos`             | —                      |                                                                          |
+| `sethos`             | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `shenhe`             | —                      |                                                                          |
 | `shikanoin-heizou`   | —                      |                                                                          |
 | `sigewinne`          | —                      |                                                                          |
