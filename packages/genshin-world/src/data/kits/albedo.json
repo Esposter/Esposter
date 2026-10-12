@@ -49,5 +49,9 @@
   "hits.fatalBlossoms.0-6.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.fatalBlossoms.0-6.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
   "hits.fatalBlossoms.0-6.isBlunt": { "cause": "Unsourced", "value": true },
-  "hits.fatalBlossoms.0-6.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } }
+  "hits.fatalBlossoms.0-6.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
+  "frames.solarIsotomaDuration": { "cause": "Unsourced", "value": 1800 },
+  "frames.transientBlossomCooldown": { "cause": "Unsourced", "value": 120 },
+  "parameters.solarIsotomaAheadMetres": { "cause": "Unsourced", "value": 3 },
+  "parameters.solarIsotomaRadius": { "cause": "Unsourced", "value": 10 }
 }
