@@ -15,4 +15,10 @@ describe(formatAge, () => {
 
     expect(formatAge(125 * MINUTE)).toBe("2 h");
   });
+
+  test("reads a stamp ahead of the reader's clock as no age", () => {
+    expect.hasAssertions();
+
+    expect(formatAge(-30_000)).toBe("0 min");
+  });
 });
