@@ -1,12 +1,24 @@
 import type { LoadedWitness } from "#src/models/scene/LoadedWitness";
 import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
 import type { SceneLayout } from "genshin-engine";
-import type { BufferGeometry, Material, Texture } from "three";
+import type { BufferGeometry, InstancedMesh, Material, Texture } from "three";
 
 import { WitnessProperty } from "#src/models/scene/WitnessProperty";
-import { SCENE_TEXTURE_ANISOTROPY, SUBMESH_INDEX_REGEX } from "#src/services/scene/constants";
+import { MOVING_PART_FAMILIES, SCENE_TEXTURE_ANISOTROPY, SUBMESH_INDEX_REGEX } from "#src/services/scene/constants";
 import { createWitnessMaterial } from "#src/services/scene/createWitnessMaterial";
-import { Group, Mesh, MeshStandardMaterial, NoColorSpace, RepeatWrapping, SRGBColorSpace, TextureLoader } from "three";
+import { createInstancedMesh } from "genshin-engine";
+import {
+  Group,
+  Matrix4,
+  Mesh,
+  MeshStandardMaterial,
+  NoColorSpace,
+  Quaternion,
+  RepeatWrapping,
+  SRGBColorSpace,
+  TextureLoader,
+  Vector3,
+} from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
 // The slots whose textures are colours; every other slot holds data (a normal, a mask) and is read linearly
@@ -14,10 +26,13 @@ const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // A component's exports laid out as `genshin:assets witness` wrote them, each mesh turned from the export's axes into
 // Three's (the export negates x, three negates z, together half a turn about y) and drawn at every placement with the
 // Material each of its submeshes names, laid over one the host makes, in a group per family of the scene's parts its
-// Mesh's name falls in, each part named by its mesh; given families, a mesh none of them names is left out, and without
-// Them every mesh is drawn in one unnamed family. The meshes and textures are served beside the layout, by their export
-// Folders, and only those of the meshes drawn are loaded, each texture once however many slots name it: a capital's
-// Exports run to over a gigabyte, most of it in meshes no family draws
+// Mesh's name falls in; given families, a mesh none of them names is left out, and without them every mesh is drawn in
+// One unnamed family. A family's placements of one submesh in one material are one instanced mesh named by its mesh,
+// Set once, since they stand still: a capital places tens of thousands of parts, which the renderer would otherwise walk
+// And project in every pass of every frame. A moving family's parts each stand in a group named by its mesh instead,
+// For its scene to move. The meshes and textures are served beside the layout, by their export folders, and only those
+// Of the meshes drawn are loaded, each texture once however many slots name it: a capital's exports run to over a
+// Gigabyte, most of it in meshes no family draws
 export const loadWitness = async (
   layoutUrl: string,
   createMaterial: WitnessMaterialFactory,
@@ -79,24 +94,54 @@ export const loadWitness = async (
     witness.add(group);
     return group;
   };
+  // Each instanced mesh's placements, by its family, submesh and material
+  const instanceGroupMap = new Map<
+    string,
+    { family: string; geometry: BufferGeometry; material: Material; matrices: Matrix4[]; mesh: string }
+  >();
   for (const {
     family,
     placement: { materials, mesh, position, rotation, scale },
   } of drawnPlacements) {
+    const isMoving = MOVING_PART_FAMILIES.has(family);
     const part = new Group();
-    part.name = mesh;
+    const matrix = new Matrix4().compose(new Vector3(...position), new Quaternion(...rotation), new Vector3(...scale));
     for (const submesh of nameSubmeshesMap.get(mesh) ?? []) {
-      const material = materials[Number(SUBMESH_INDEX_REGEX.exec(submesh.name)?.groups?.index ?? 0)] ?? "";
-      const drawn = new Mesh(submesh.geometry, nameMaterialMap.get(material) ?? fallbackMaterial);
-      drawn.castShadow = true;
-      drawn.receiveShadow = true;
-      part.add(drawn);
+      const material =
+        nameMaterialMap.get(materials[Number(SUBMESH_INDEX_REGEX.exec(submesh.name)?.groups?.index ?? 0)] ?? "") ??
+        fallbackMaterial;
+      if (isMoving) {
+        const drawn = new Mesh(submesh.geometry, material);
+        drawn.castShadow = true;
+        drawn.receiveShadow = true;
+        part.add(drawn);
+        continue;
+      }
+      const key = `${family}/${submesh.geometry.uuid}/${material.uuid}`;
+      const instanceGroup = instanceGroupMap.get(key);
+      if (instanceGroup) instanceGroup.matrices.push(matrix);
+      else instanceGroupMap.set(key, { family, geometry: submesh.geometry, material, matrices: [matrix], mesh });
     }
-    part.position.set(...position);
-    part.quaternion.set(...rotation);
-    part.scale.set(...scale);
+    if (!isMoving) continue;
+    part.name = mesh;
+    part.applyMatrix4(matrix);
     getFamilyGroup(family).add(part);
   }
+  const instancedMeshes = Array.from(
+    instanceGroupMap.values(),
+    ({ family, geometry, material, matrices, mesh }): InstancedMesh => {
+      const instancedMesh = createInstancedMesh(geometry, material, matrices.length);
+      instancedMesh.name = mesh;
+      for (const [index, matrix] of matrices.entries()) instancedMesh.setMatrixAt(index, matrix);
+      instancedMesh.computeBoundingBox();
+      instancedMesh.computeBoundingSphere();
+      instancedMesh.castShadow = true;
+      instancedMesh.receiveShadow = true;
+      instancedMesh.matrixAutoUpdate = false;
+      getFamilyGroup(family).add(instancedMesh);
+      return instancedMesh;
+    },
+  );
   const geometries = [...nameSubmeshesMap.values()].flatMap((submeshes) =>
     submeshes.map(({ geometry }): BufferGeometry => geometry),
   );
@@ -107,6 +152,7 @@ export const loadWitness = async (
         ...nameMaterialMap.values(),
         fallbackMaterial,
         ...nameTextureMap.values(),
+        ...instancedMeshes,
       ])
         disposable.dispose();
     },

@@ -1,3 +1,5 @@
+import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
+
 // The user data key a scene marks each object of its own families with, by the family's name, so a witness tool draws
 // A family of ours into the same targets as the exports' it stands for
 export const SCENE_FAMILY_KEY = "sceneFamily";
@@ -14,5 +16,8 @@ export const LEAF_SHADER = "Shader #9134712319877186229";
 // The layout `genshin:assets witness` writes beside a component's exports, which the parity page's witness and the world
 // Under `nuxt dev` both draw them by
 export const WITNESS_LAYOUT_FILE_NAME = "witness.json";
+// The families whose parts a scene moves one by one, so the witness keeps a group per part of each: the login's walkway,
+// Whose pieces rise as the camera nears them. Every other family's parts stand still and are drawn as instances
+export const MOVING_PART_FAMILIES: ReadonlySet<string> = new Set<string>([LoginPartFamily.Walkway]);
 // The listing of the components a host serves the exports of, beside their folders
 export const SCENE_EXPORT_INDEX_PATH = "index.json";
