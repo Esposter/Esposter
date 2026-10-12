@@ -2,16 +2,23 @@ import { runReview } from "#src/services/review/runReview";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// `pnpm -C scripts ai:review [--from <sha> --to <sha>] [--dry-run]` — reviews what `ai/queue` holds past `main` in
-// amount-capped windows, or the range given, with haiku reviewers and one fixer (`services/review`). `--dry-run` prints
-// the window, its base and end, and its batches, and runs no session and pushes nothing.
+// `pnpm -C scripts ai:review [--from <sha> --to <sha>] [--dry-run]` — plans every window of what `ai/queue` holds past
+// `main`, or the range given, reviews all their batches in one pool with haiku reviewers, and advances `main` through
+// The passed prefix (`services/review`). With `--findings-directory`, each passed window's findings are written for
+// `ai:review:fix`. `--dry-run` prints every window and its batches, and runs no session and pushes nothing.
 await runCommand(
   defineCommand({
     args: {
       "dry-run": {
         default: false,
-        description: "Print the window and its batches, and run no session and push nothing",
+        description: "Print every window and its batches, and run no session and push nothing",
         type: "boolean",
+      },
+      "findings-directory": {
+        default: "",
+        description:
+          "The directory each passed window's findings are written to, as window-<index>.json; empty writes none",
+        type: "string",
       },
       from: {
         default: "",
@@ -21,11 +28,17 @@ await runCommand(
       to: { default: "", description: "The sha a range review ends at, with --from", type: "string" },
     },
     meta: {
-      description: "Review what ai/queue holds past main in amount-capped windows, and fix what the reviewers find",
+      description:
+        "Review what ai/queue holds past main in amount-capped windows, and advance main through the passed ones",
       name: "review",
     },
     run: async ({ args }) => {
-      await runReview({ from: args.from, isDryRun: args["dry-run"], to: args.to });
+      await runReview({
+        findingsDirectory: args["findings-directory"],
+        from: args.from,
+        isDryRun: args["dry-run"],
+        to: args.to,
+      });
     },
   }),
 );

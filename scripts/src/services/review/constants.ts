@@ -1,23 +1,25 @@
-// The workflow that runs this, and the one a run dispatches to continue itself. It is named by file, since a dispatch
-// Names a workflow by its file.
-export const REVIEW_WORKFLOW_FILE = "Review.yaml";
 // The label of the one issue a run opens for the findings it deferred: the triage role an agent can take
 export const REVIEW_DEFERRED_LABEL = "ready-for-agent";
 // How many times a push of the fixer's commits is attempted before the run gives up on them, since another session
 // Can land on `ai/queue` between the pull and the push
 export const LAND_ATTEMPTS = 4;
 
-// The amount one run reviews before `main` advances, which bounds a run's spend and wall clock: an amount, never a
-// Count per hour, which work outruns
+// The amount one window holds, so `main` advances in steps a single review can read: an amount, never a count per hour,
+// Which work outruns. A run plans every window owed at its start, each cut at this cap.
 export const REVIEW_WINDOW_FILE_CAP = 300;
+// The windows one run plans and reviews, since GitHub's matrix takes at most 256 jobs and each window with findings
+// Becomes one fix job. The windows past it wait for the next run, which a push to `ai/queue` starts.
+export const REVIEW_RUN_WINDOW_CAP = 256;
 // Kept small so haiku reads every file it is handed
 export const REVIEW_BATCH_FILE_CAP = 20;
 // Kept small so haiku reads every line it is handed
 export const REVIEW_BATCH_LINE_CAP = 1200;
 // Where one oversized file's diff is cut in the prompt, with a note to read the file for the rest
 export const REVIEW_DIFF_LINE_LIMIT = 3000;
-// Reviewers at once, within the subscription's rate
-export const REVIEW_CONCURRENCY = 5;
+// The `claude` sessions one runner holds at once, across every batch of every window in a run. It is how many sessions
+// A runner's memory holds, not a spend limit: `ubuntu-latest` for this public repository has 16 GB and four cores, and a
+// Session's node process is a few hundred megabytes. A starting value, to be measured against a real run.
+export const REVIEW_RUNNER_SESSION_CAP = 24;
 // The model every session runs
 export const REVIEW_MODEL = "haiku";
 // Wall clock for one reviewer, and for the fixer
@@ -30,7 +32,8 @@ export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 export const CLAUDE_EXEMPT_VARIABLE = "CLAUDE_CODE_OAUTH_TOKEN";
 // Every other variable whose name reads as a secret is dropped from a session's environment, since a session's prompt
 // Can carry text a reviewer read from the repository
-export const SECRET_VARIABLE_REGEX = /credential|key|password|secret|token/iu;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise leave out
+export const SECRET_VARIABLE_REGEX: RegExp = /credential|key|password|secret|token/iu;
 // Tools a reviewer may use, all read-only. Print mode denies every tool not listed, so Edit, Write and the rest are denied.
 export const REVIEWER_TOOLS: readonly string[] = [
   "Read",
@@ -44,7 +47,8 @@ export const REVIEWER_TOOLS: readonly string[] = [
 
 // Claude Code refusing to start prints its own sentence and exits non-zero. The phrase is bounded to its own line, so a
 // Review discussing "usage limit" in prose is not read as one (`runSession`'s `getIsLimited`).
-export const USAGE_LIMIT_REGEX = /(?:you've hit your \w+ limit|usage limit reached)\b[^\n]*\bresets?\b[^\n]*/iu;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise leave out
+export const USAGE_LIMIT_REGEX: RegExp = /(?:you've hit your \w+ limit|usage limit reached)\b[^\n]*\bresets?\b[^\n]*/iu;
 
 // The paths a review does not read, each with the reason the bot's path filters gave for it. Written as globs over the
 // Repository-relative path (`globToRegex`).

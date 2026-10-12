@@ -10,10 +10,7 @@ import { getReviewerPrompt } from "#src/services/review/getReviewerPrompt";
 import { parseReviewAnswer } from "#src/services/review/parseReviewAnswer";
 import { readBatchDiff } from "#src/services/review/readBatchDiff";
 import { runSession } from "#src/services/review/runSession";
-import { runGit } from "#src/services/shared/runGit";
 import { getResultAsync } from "@esposter/shared";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 
 // Asks a reviewer once more when its first answer fails, since a failure is most often a launch or a read that a second
 // Attempt clears. A usage limit is not retried: the second attempt would meet the same limit.
@@ -28,19 +25,22 @@ const askWithRetry = async (ask: () => Promise<ReviewFinding[]>): Promise<Review
   return ask();
 };
 
-// One reviewer over one batch, read-only, in a detached worktree at `end` that is removed once the reviewer answers. It
-// Reports an outcome rather than throwing, so one batch's failure does not end the others' reviews mid-flight.
-export const reviewBatch = async (base: string, end: string, files: ReviewFile[]): Promise<ReviewBatchOutcome> => {
+// One reviewer over one batch, read-only, in its window's worktree at `directory`, which the caller creates and removes.
+// It reports an outcome rather than throwing, so one batch's failure does not end the others' reviews mid-flight.
+export const reviewBatch = (
+  directory: string,
+  base: string,
+  end: string,
+  files: ReviewFile[],
+): Promise<ReviewBatchOutcome> => {
   const { diff, isDiffCut } = readBatchDiff(
     base,
     end,
     files.map(({ path }) => path),
   );
   const prompt = getReviewerPrompt({ base, diff, end, files: files.map(({ path }) => path), isDiffCut });
-  const directory = join(tmpdir(), `review-${crypto.randomUUID()}`);
-  runGit(["worktree", "add", "--detach", directory, end]);
 
-  const outcome = await getResultAsync(() =>
+  return getResultAsync(() =>
     askWithRetry(async () => {
       const output = await runSession({
         cwd: directory,
@@ -54,6 +54,4 @@ export const reviewBatch = async (base: string, end: string, files: ReviewFile[]
     (findings): ReviewBatchOutcome => ({ findings }),
     (error): ReviewBatchOutcome => ({ error }),
   );
-  runGit(["worktree", "remove", "--force", directory]);
-  return outcome;
 };

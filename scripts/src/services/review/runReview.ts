@@ -1,50 +1,30 @@
 import type { ReviewBatchOutcome } from "#src/models/review/ReviewBatchOutcome";
 import type { ReviewFinding } from "#src/models/review/ReviewFinding";
 import type { ReviewRange } from "#src/models/review/ReviewRange";
-import type { ReviewWindow } from "#src/models/review/ReviewWindow";
 
 import { ReviewMode } from "#src/models/review/ReviewMode";
-import { ReviewOutcome } from "#src/models/review/ReviewOutcome";
-import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimitedError";
-import { REVIEW_CONCURRENCY } from "#src/services/review/constants";
-import { createDeferredIssue } from "#src/services/review/createDeferredIssue";
-import { dispatchContinuation } from "#src/services/review/dispatchContinuation";
+import { ReviewWindowStatus } from "#src/models/review/ReviewWindowStatus";
+import { REVIEW_RUN_WINDOW_CAP } from "#src/services/review/constants";
 import { formatReviewWindow } from "#src/services/review/formatReviewWindow";
+import { getPassedWindowCount } from "#src/services/review/getPassedWindowCount";
+import { getReviewWindowStatus } from "#src/services/review/getReviewWindowStatus";
 import { advanceMain } from "#src/services/review/git/advanceMain";
-import { landCommits } from "#src/services/review/git/landCommits";
+import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { mergeMain } from "#src/services/review/git/mergeMain";
-import { readOwedShas } from "#src/services/review/readOwedShas";
-import { readReviewWindow } from "#src/services/review/readReviewWindow";
-import { resolveDispositions } from "#src/services/review/resolveDispositions";
-import { reviewBatch } from "#src/services/review/reviewBatch";
-import { runFixer } from "#src/services/review/runFixer";
+import { readReviewWindows } from "#src/services/review/readReviewWindows";
+import { reviewWindows } from "#src/services/review/reviewWindows";
+import { writeFixWindows } from "#src/services/review/writeFixWindows";
 import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
-import {
-  MAIN_BRANCH,
-  PNPM_ARGS,
-  PNPM_FILE,
-  QUEUE_BRANCH,
-  REMOTE_MAIN_REF,
-  REMOTE_QUEUE_REF,
-  REPOSITORY_ROOT,
-} from "#src/services/shared/constants";
-import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
+import { writeReviewWindowFindings } from "#src/services/review/writeReviewWindowFindings";
+import { MAIN_BRANCH, QUEUE_BRANCH, REMOTE_MAIN_REF, REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, getResultAsync, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { getResult, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 export interface ReviewRunInput {
+  findingsDirectory: string;
   from: string;
   isDryRun: boolean;
   to: string;
-}
-
-// What a window's pass leaves for the run to finish with: its summary, whether it pushed to the queue (a push starts the
-// Next run itself), and whether the run may continue at all (a limit or a rejected `main` ends it)
-interface ReviewPassResult {
-  isContinuable: boolean;
-  isQueuePushed: boolean;
-  summary: string[];
 }
 
 const getMode = (from: string, to: string): ReviewMode => {
@@ -54,17 +34,7 @@ const getMode = (from: string, to: string): ReviewMode => {
   return ReviewMode.Range;
 };
 
-const fetchRemote = (): void => {
-  runGit([
-    "fetch",
-    "--quiet",
-    "origin",
-    `+refs/heads/${MAIN_BRANCH}:refs/remotes/origin/${MAIN_BRANCH}`,
-    `+refs/heads/${QUEUE_BRANCH}:refs/remotes/origin/${QUEUE_BRANCH}`,
-  ]);
-};
-
-// The checkout is `ai/queue`'s tip, so a merge and the fixer's commits and their landing all start from the queue
+// The checkout is `ai/queue`'s tip, so a merge and its push start from the queue
 const checkoutQueue = (): void => {
   runGit(["checkout", "-B", QUEUE_BRANCH, REMOTE_QUEUE_REF]);
 };
@@ -75,128 +45,16 @@ const checkIsMainAncestor = (): boolean =>
     () => false,
   );
 
-const installDependencies = (): void => {
-  const { status } = spawnSync(PNPM_FILE, [...PNPM_ARGS, "install"], { cwd: REPOSITORY_ROOT, stdio: "inherit" });
-  if (status !== 0) throw new InvalidOperationError(Operation.Create, "pnpm install", `it exited with ${status}`);
-};
+const getFindings = (outcomes: ReviewBatchOutcome[]): ReviewFinding[] =>
+  outcomes.flatMap((outcome) => ("findings" in outcome ? outcome.findings : []));
 
-const getOutcomeError = (outcome: ReviewBatchOutcome): Error | undefined =>
-  "error" in outcome ? outcome.error : undefined;
+const getErrors = (outcomes: ReviewBatchOutcome[]): Error[] =>
+  outcomes.flatMap((outcome) => ("error" in outcome ? [outcome.error] : []));
 
-// Every batch reviewed, at most `REVIEW_CONCURRENCY` at once, in batch order. A batch's error is its outcome rather than a
-// Throw, so the others still finish and the pass decides what the failures mean.
-const reviewWindow = async ({ base, batches, end }: ReviewWindow): Promise<ReviewBatchOutcome[]> => {
-  const outcomes: ReviewBatchOutcome[] = [];
-  await forEachConcurrently(
-    batches.map((files, index) => ({ files, index })),
-    REVIEW_CONCURRENCY,
-    async ({ files, index }) => {
-      outcomes[index] = await getResultAsync(() => reviewBatch(base, end, files)).match(
-        (outcome): ReviewBatchOutcome => outcome,
-        (error): ReviewBatchOutcome => ({ error }),
-      );
-    },
-  );
-  return outcomes;
-};
-
-// A table cell's `|` would end the cell early
-const toCell = (text: string): string => text.replaceAll("|", String.raw`\|`);
-
-const getFindingRow = (finding: ReviewFinding, outcome: ReviewOutcome): string =>
-  `| \`${finding.file}:${finding.line}\` | ${finding.lane} | ${outcome} | ${toCell(finding.summary)} |`;
-
-// Reviews the window, advances `main` (steady mode), fixes what the reviewers found, lands the fixer's commits and opens
-// The issue for what was deferred. Each step's failure is handled where it stands, and the summary says what happened.
-const reviewWindowPass = async (range: ReviewRange, window: ReviewWindow): Promise<ReviewPassResult> => {
-  const summary = [
-    `## Review ${window.base.slice(0, 12)}..${window.end.slice(0, 12)}`,
-    "",
-    "```",
-    formatReviewWindow(window),
-    "```",
-  ];
-  const outcomes = await reviewWindow(window);
-
-  if (outcomes.some((outcome) => getOutcomeError(outcome) instanceof ReviewSessionLimitedError)) {
-    const resume = range.mode === ReviewMode.Range ? ` Resume with \`from=${window.base}\`.` : "";
-    const notice = `Claude's usage limit stopped the review, so ${MAIN_BRANCH} did not move and no continuation was dispatched.${resume}`;
-    console.info(notice);
-    return { isContinuable: false, isQueuePushed: false, summary: [...summary, "", notice] };
-  }
-  // A failed batch fails the run, and nothing has moved yet: `main` advances only after every batch answered
-  const failure = outcomes.map((outcome) => getOutcomeError(outcome)).find((error) => error !== undefined);
-  if (failure !== undefined) throw failure;
-
-  const findings = outcomes.flatMap((outcome) => ("findings" in outcome ? outcome.findings : []));
-  summary.push("", `${window.batches.length} batch(es) reviewed, ${findings.length} finding(s).`);
-
-  if (range.mode === ReviewMode.Steady) {
-    if (!advanceMain(window.end)) {
-      const notice = `${MAIN_BRANCH} was not advanced, because it moved meanwhile. The next run re-measures.`;
-      return { isContinuable: false, isQueuePushed: false, summary: [...summary, "", notice] };
-    }
-    summary.push(`${MAIN_BRANCH} advanced to ${window.end.slice(0, 12)}.`);
-  }
-  if (findings.length === 0) return { isContinuable: true, isQueuePushed: false, summary };
-
-  // The fixer runs in this checkout at the queue's tip, after `main` moved, so a slow fix holds nothing
-  installDependencies();
-  const fixer = await getResultAsync(() => runFixer(window.base, window.end, findings)).match(
-    (dispositions) => ({ dispositions, failureReason: "", isLimited: false }),
-    (error) =>
-      error instanceof ReviewSessionLimitedError
-        ? { dispositions: undefined, failureReason: "the fixer was limited by Claude's usage limit", isLimited: true }
-        : { dispositions: undefined, failureReason: `the fixer failed: ${error.message}`, isLimited: false },
-  );
-
-  const isAhead = runGit(["rev-list", "--count", `${REMOTE_QUEUE_REF}..HEAD`]).trim() !== "0";
-  const isLanded = isAhead ? landCommits() : true;
-  const isQueuePushed = isAhead && isLanded;
-  const dispositions = resolveDispositions(findings.length, fixer.dispositions, fixer.failureReason);
-  // A fix whose commit never reached the queue is not a fix
-  if (!isLanded)
-    for (const disposition of dispositions)
-      if (disposition.outcome === ReviewOutcome.Fixed)
-        Object.assign(disposition, { outcome: ReviewOutcome.Deferred, reason: "its commit did not land on ai/queue" });
-
-  summary.push("", "| Finding | Lane | Outcome | Summary |", "| --- | --- | --- | --- |");
-  for (const disposition of dispositions)
-    summary.push(getFindingRow(takeOne(findings, disposition.index), disposition.outcome));
-
-  const deferred = dispositions
-    .filter(({ outcome }) => outcome === ReviewOutcome.Deferred)
-    .map((disposition) => ({ disposition, finding: takeOne(findings, disposition.index) }));
-  if (deferred.length > 0) {
-    const issueUrl = createDeferredIssue(deferred, window.base, window.end);
-    summary.push("", `Deferred findings: ${issueUrl}`);
-  }
-  if (fixer.isLimited)
-    summary.push("", "The fixer was limited, so its findings were deferred. No continuation was dispatched.");
-  return { isContinuable: !fixer.isLimited, isQueuePushed, summary };
-};
-
-// The continuation a run owes. A range always continues over what is left of its range; a steady run continues only when
-// It pushed nothing, since a push starts the next run itself, and only when commits are still owed past `main`.
-const dispatchOwedContinuation = (
-  range: ReviewRange,
-  window: ReviewWindow,
-  isQueuePushed: boolean,
-): string | undefined => {
-  if (range.mode === ReviewMode.Range) {
-    const rest = { from: window.end, mode: ReviewMode.Range, to: range.to };
-    if (readOwedShas(rest).length === 0) return undefined;
-    dispatchContinuation({ from: window.end, to: range.to });
-    return `Dispatched the review again over ${window.end.slice(0, 12)}..${range.to.slice(0, 12)}.`;
-  }
-  if (isQueuePushed) return undefined;
-  fetchRemote();
-  if (readOwedShas(range).length === 0) return undefined;
-  dispatchContinuation();
-  return `Dispatched the review again, since commits are still owed past ${MAIN_BRANCH}.`;
-};
-
-export const runReview = async ({ from, isDryRun, to }: ReviewRunInput): Promise<void> => {
+// Plans every window owed, reviews all of their batches in one pool, then advances `main` through the passed prefix (steady
+// Mode) and hands each passed window's findings to a fixer job. A window that did not pass stops the prefix, so `main`
+// Never moves past a window no review read in full. The summary says what each window did.
+export const runReview = async ({ findingsDirectory, from, isDryRun, to }: ReviewRunInput): Promise<void> => {
   const mode = getMode(from, to);
   fetchRemote();
   if (!isDryRun) checkoutQueue();
@@ -217,20 +75,86 @@ export const runReview = async ({ from, isDryRun, to }: ReviewRunInput): Promise
     }
     mergeMain();
     runGit(["push", "origin", `HEAD:${QUEUE_BRANCH}`]);
+    writeFixWindows([]);
     writeReviewSummary([`${REMOTE_MAIN_REF} was merged into ${QUEUE_BRANCH}, and that push starts the next run.`]);
     return;
   }
 
-  const window = readReviewWindow(range);
-  if (window === undefined) {
+  // The cap bounds one run's matrix: the windows past it are planned again by the next run
+  const planned = readReviewWindows(range);
+  const windows = planned.slice(0, REVIEW_RUN_WINDOW_CAP);
+  if (windows.length === 0) {
     console.info("nothing owed");
+    writeFixWindows([]);
     return;
   }
-  console.info(formatReviewWindow(window));
+  console.info(`${planned.length} window(s) owed, ${windows.length} planned for this run`);
+  for (const [index, window] of windows.entries()) console.info(formatReviewWindow(window, index));
   if (isDryRun) return;
 
-  const pass = await reviewWindowPass(range, window);
-  const continuation = pass.isContinuable ? dispatchOwedContinuation(range, window, pass.isQueuePushed) : undefined;
-  if (continuation !== undefined) console.info(continuation);
-  writeReviewSummary(continuation === undefined ? pass.summary : [...pass.summary, "", continuation]);
+  const outcomesByWindow = await reviewWindows(windows);
+  const statuses = outcomesByWindow.map((outcomes) => getReviewWindowStatus(outcomes));
+  const passedCount = getPassedWindowCount(statuses);
+  const findingsByWindow = outcomesByWindow.map((outcomes) => getFindings(outcomes));
+
+  // Range mode never moves `main`. Steady mode moves it once, to the last passed window's end, and a rejected push means
+  // `main` moved meanwhile: those windows may be stale, so no fixer runs on them, and the next run re-measures
+  let mainNotice = `${MAIN_BRANCH} did not move, because no window passed.`;
+  let isMainMoved = false;
+  if (mode === ReviewMode.Range) mainNotice = `A range review never moves ${MAIN_BRANCH}.`;
+  else if (passedCount > 0) {
+    const { end } = takeOne(windows, passedCount - 1);
+    isMainMoved = advanceMain(end);
+    mainNotice = isMainMoved
+      ? `${MAIN_BRANCH} advanced to ${end.slice(0, 12)}.`
+      : `${MAIN_BRANCH} was not advanced, because it moved meanwhile. The next run re-measures, and no fixer runs on these windows.`;
+  }
+
+  const isFixable = mode === ReviewMode.Range || isMainMoved;
+  const fixWindowIndices = isFixable
+    ? findingsByWindow.flatMap((findings, index) => (index < passedCount && findings.length > 0 ? [index] : []))
+    : [];
+  if (findingsDirectory !== "")
+    for (const index of fixWindowIndices) {
+      const { base, end } = takeOne(windows, index);
+      writeReviewWindowFindings(findingsDirectory, index, { base, end, findings: takeOne(findingsByWindow, index) });
+    }
+  writeFixWindows(fixWindowIndices);
+
+  const summary = [
+    "## Review",
+    "",
+    "| Window | Range | Batches | Findings | Status |",
+    "| --- | --- | --- | --- | --- |",
+    ...windows.map(
+      ({ base, batches, end }, index) =>
+        `| ${index} | \`${base.slice(0, 12)}..${end.slice(0, 12)}\` | ${batches.length} | ${takeOne(findingsByWindow, index).length} | ${takeOne(statuses, index)} |`,
+    ),
+    "",
+    mainNotice,
+  ];
+  if (planned.length > windows.length)
+    summary.push(
+      `${planned.length - windows.length} window(s) past the cap of ${REVIEW_RUN_WINDOW_CAP} wait for the next run.`,
+    );
+  summary.push(
+    fixWindowIndices.length > 0 ? `Fixers run on window(s) ${fixWindowIndices.join(", ")}.` : "No fixer runs.",
+  );
+  // The first window that did not pass ends the prefix, and in range mode its base is where a resume starts
+  if (passedCount < windows.length) {
+    const { base } = takeOne(windows, passedCount);
+    const resume = mode === ReviewMode.Range ? ` Resume with \`from=${base}\`.` : "";
+    const cause =
+      takeOne(statuses, passedCount) === ReviewWindowStatus.Limited
+        ? `Claude's usage limit stopped window ${passedCount}`
+        : `window ${passedCount} did not pass`;
+    summary.push("", `${cause}, so the windows after it did not pass.${resume}`);
+  }
+  for (const [index, outcomes] of outcomesByWindow.entries())
+    for (const error of getErrors(outcomes)) summary.push(`- window ${index}: ${error.message}`);
+  writeReviewSummary(summary);
+
+  // Set after the outputs and files are written, so the run shows red while the passed prefix still advanced and its
+  // Fixers still run
+  if (statuses.includes(ReviewWindowStatus.Failed)) process.exitCode = 1;
 };
