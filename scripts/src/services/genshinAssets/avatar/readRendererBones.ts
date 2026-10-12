@@ -87,6 +87,9 @@ export interface RendererBone {
 // The layout's objects by the file and path ID of their transform, which a renderer's bones name
 export const getTransformKey = (file: string, transformId: string): string => `${file}|${transformId}`;
 
+// The layout's objects by the file and path ID of their game object, which a skinned renderer names
+export const getGameObjectKey = (file: string, gameObjectId: string): string => `${file}|${gameObjectId}`;
+
 // A transform's bone as the layout names it: its path from the rig's root down, and its scene object. A transform whose
 // Chain the dumps lose, or that does not reach the rig's root, has no path and is undefined
 const readBoneChain = (
