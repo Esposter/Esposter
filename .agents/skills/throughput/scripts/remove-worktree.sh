@@ -20,8 +20,8 @@ case "$OSTYPE" in
 esac
 git worktree remove "$1"
 git worktree prune
-# A branch whose tip `origin/ai/queue` once held has landed, even after the collector's rewrite gave its commits new
-# shas and `-d` would refuse it as unmerged; any other is left to `-d`, which refuses one holding unlanded commits
+# A branch whose tip `origin/ai/queue` once held has landed, even where `-d` would refuse it as unmerged into the
+# current branch; any other is left to `-d`, which refuses one holding unlanded commits
 if [ -n "$BRANCH" ]; then
   if [ "$(git merge-base --fork-point origin/ai/queue "$BRANCH" || true)" = "$(git rev-parse "$BRANCH")" ]; then
     git branch -D "$BRANCH"
