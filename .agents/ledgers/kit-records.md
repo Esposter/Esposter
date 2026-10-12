@@ -59,7 +59,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `kaedehara-kazuha`   | —                      |                                                                          |
 | `kaeya`              | —                      |                                                                          |
 | `kamisato-ayaka`     | —                      |                                                                          |
-| `kamisato-ayato`     | —                      |                                                                          |
+| `kamisato-ayato`     | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `kaveh`              | —                      |                                                                          |
 | `keqing`             | —                      |                                                                          |
 | `kinich`             | 2026-10-13 · Haiku 5.5 |                                                                          |
