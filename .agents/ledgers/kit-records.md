@@ -100,7 +100,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `shikanoin-heizou`   | —                      |                                                                          |
 | `sigewinne`          | —                      |                                                                          |
 | `skirk`              | —                      |                                                                          |
-| `sucrose`            | —                      |                                                                          |
+| `sucrose`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `tartaglia`          | —                      |                                                                          |
 | `thoma`              | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `tighnari`           | —                      |                                                                          |
