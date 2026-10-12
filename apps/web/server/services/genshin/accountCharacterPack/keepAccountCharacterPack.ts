@@ -19,7 +19,7 @@ import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { checkIsAlreadyStored, deleteStorageBlobs } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
-import { getResultAsync, noop, Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation, withFinalizerAsync } from "@esposter/shared";
 import { createHash } from "node:crypto";
 
 const getTotalSize = (packs: readonly AccountCharacterPackRecord[]): number =>
@@ -56,49 +56,50 @@ export const keepAccountCharacterPack = async (
   const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
   const uniqueFiles = [...new Map(files.map((file) => [file.sha256, file])).values()];
   const stagingBlobNames = uniqueFiles.map(({ sha256 }) => getAccountCharacterPackStagingBlobName(userId, sha256));
-  try {
-    const { etag, packs } = await readAccountCharacterPackManifest(containerClient, userId);
-    const nextPacks = [
-      ...packs.filter((pack) => pack.characterId !== characterId),
-      { characterId, files, modelName, packHash },
-    ];
-    if (getTotalSize([{ characterId, files, modelName, packHash }]) > MAX_CHARACTER_PACK_SIZE)
-      throw getInvalidOperationError(
-        Operation.Create,
-        String(characterId),
-        `is larger than ${MAX_CHARACTER_PACK_SIZE} bytes`,
-      );
-    if (getTotalSize(nextPacks) > MAX_ACCOUNT_CHARACTER_PACKS_SIZE)
-      throw getInvalidOperationError(
-        Operation.Create,
-        String(characterId),
-        "would take the account over its storage limit",
-      );
+  return withFinalizerAsync(
+    async () => {
+      const { etag, packs } = await readAccountCharacterPackManifest(containerClient, userId);
+      const nextPacks = [
+        ...packs.filter((pack) => pack.characterId !== characterId),
+        { characterId, files, modelName, packHash },
+      ];
+      if (getTotalSize([{ characterId, files, modelName, packHash }]) > MAX_CHARACTER_PACK_SIZE)
+        throw getInvalidOperationError(
+          Operation.Create,
+          String(characterId),
+          `is larger than ${MAX_CHARACTER_PACK_SIZE} bytes`,
+        );
+      if (getTotalSize(nextPacks) > MAX_ACCOUNT_CHARACTER_PACKS_SIZE)
+        throw getInvalidOperationError(
+          Operation.Create,
+          String(characterId),
+          "would take the account over its storage limit",
+        );
 
-    await Promise.all(
-      uniqueFiles.map(async ({ sha256, size }) => {
-        const stagingBlobName = getAccountCharacterPackStagingBlobName(userId, sha256);
-        // The length is checked before the bytes are read, so a staged blob larger than it was granted for is never downloaded.
-        // The download is conditioned on the etag that check read, so a blob replaced since then is refused rather than read
-        const stagedProperties = await getBlobProperties(containerClient, stagingBlobName);
-        if (stagedProperties === undefined || stagedProperties.contentLength !== size)
-          throw getInvalidOperationError(
-            Operation.Create,
-            String(characterId),
-            `holds a file not uploaded as ${sha256}`,
-          );
-        const bytes = await downloadBlobBytes(containerClient, stagingBlobName, { ifMatch: stagedProperties.etag });
-        if (bytes === undefined || createHash("sha256").update(bytes).digest("hex") !== sha256)
-          throw getInvalidOperationError(
-            Operation.Create,
-            String(characterId),
-            `holds a file not uploaded as ${sha256}`,
-          );
-        await storeFileIfAbsent(containerClient, sha256, bytes);
-      }),
-    );
-    await writeBlobState(containerClient, getAccountCharacterPacksBlobName(userId), JSON.stringify(nextPacks), etag);
-  } finally {
-    await releaseStagingBlobs(db, containerClient, stagingBlobNames);
-  }
+      await Promise.all(
+        uniqueFiles.map(async ({ sha256, size }) => {
+          const stagingBlobName = getAccountCharacterPackStagingBlobName(userId, sha256);
+          // The length is checked before the bytes are read, so a staged blob larger than it was granted for is never downloaded.
+          // The download is conditioned on the etag that check read, so a blob replaced since then is refused rather than read
+          const stagedProperties = await getBlobProperties(containerClient, stagingBlobName);
+          if (stagedProperties === undefined || stagedProperties.contentLength !== size)
+            throw getInvalidOperationError(
+              Operation.Create,
+              String(characterId),
+              `holds a file not uploaded as ${sha256}`,
+            );
+          const bytes = await downloadBlobBytes(containerClient, stagingBlobName, { ifMatch: stagedProperties.etag });
+          if (bytes === undefined || createHash("sha256").update(bytes).digest("hex") !== sha256)
+            throw getInvalidOperationError(
+              Operation.Create,
+              String(characterId),
+              `holds a file not uploaded as ${sha256}`,
+            );
+          await storeFileIfAbsent(containerClient, sha256, bytes);
+        }),
+      );
+      await writeBlobState(containerClient, getAccountCharacterPacksBlobName(userId), JSON.stringify(nextPacks), etag);
+    },
+    () => releaseStagingBlobs(db, containerClient, stagingBlobNames),
+  );
 };
