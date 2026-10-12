@@ -110,4 +110,19 @@ describe(createCharacterMaterial, () => {
     expect(solid.transparent).toBe(false);
     expect(solid.side).toBe(FrontSide);
   });
+
+  test("blends a material whose texture has clear texels", () => {
+    expect.hasAssertions();
+
+    const rampTexture = new Texture();
+    const clearTexels = createCharacterMaterial({
+      isTextureTransparent: true,
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: { ...pmxMaterial, isOutlined: false },
+      rampTexture,
+    });
+
+    expect(clearTexels.transparent).toBe(true);
+    expect(clearTexels.side).toBe(DoubleSide);
+  });
 });

@@ -5,6 +5,8 @@ import type { DataTexture, Texture } from "three";
 export interface CharacterMaterialOptions {
   lightUniforms: LightUniforms;
   pmxMaterial: PmxMaterial;
+  // Whether the diffuse texture has clear texels, which blends the material as a diffuse alpha below one does
+  isTextureTransparent?: boolean;
   // The world's ramp, which a material whose file names no toon ramp is lit on
   rampTexture: DataTexture;
   // The sphere map the material names, which a material naming none draws without

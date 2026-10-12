@@ -10,6 +10,7 @@ import {
   createPmxMesh,
   createPmxTexture,
   createPmxToonTexture,
+  hasTransparentTexels,
   parsePmx,
 } from "genshin-engine";
 
@@ -44,8 +45,17 @@ export const readCharacterMesh = (
     );
     if (missingTexturePaths.length > 0)
       console.warn(`The model draws untextured the textures its release lacks: ${missingTexturePaths.join(", ")}`);
+    const transparentTextureIndices = new Set(
+      pmxModel.materials
+        .map(({ textureIndex }) => textureIndex)
+        .filter((textureIndex) => {
+          const image = textures[textureIndex]?.image;
+          return image instanceof ImageBitmap && hasTransparentTexels(image);
+        }),
+    );
     const materials = pmxModel.materials.map((pmxMaterial) =>
       createCharacterMaterial({
+        isTextureTransparent: transparentTextureIndices.has(pmxMaterial.textureIndex),
         lightUniforms,
         pmxMaterial,
         rampTexture,

@@ -13,8 +13,8 @@ import { attribute, materialColor, normalView, texture, uv, vec2, vec3 } from "t
 // Names (MMD's shared ramps, or a texture of the model's), and the sun's specular highlight and the material's ambient
 // Light on top. A sphere map multiplies or adds to the colour as its file says, and the sky's rim lights its lit
 // Silhouette. Unlike the environment's toon material it takes no wetness, since the game's characters do not darken in
-// The rain. A material the file leaves wholly opaque writes its depth as it is drawn; one whose diffuse alpha is below one
-// Is blended and drawn from both faces, and writes no depth where it is clear. Only a material
+// The rain. A material is drawn opaque, writing its depth, unless its diffuse alpha is below one or its texture has clear
+// Texels, and then it is blended and drawn from both faces. Only a material
 // Whose edge the file sets is outlined, in that edge's colour and width. Its ambient is its full colour where its file names
 // No texture, and a fifth of it where one is named, as MMD's loader draws it
 export const createCharacterMaterial = ({
@@ -32,19 +32,21 @@ export const createCharacterMaterial = ({
     sphereMode,
     toonIndex,
   },
+  isTextureTransparent,
   rampTexture,
   sphereTexture,
   texture: diffuseTexture,
   toonTexture,
 }: CharacterMaterialOptions): ToonNodeMaterial => {
+  const isTransparent = opacity !== 1 || isTextureTransparent;
   const characterMaterial = new ToonNodeMaterial(
     {
       color: new Color().setRGB(red, green, blue, SRGBColorSpace),
       gradientMap: (isToonShared ? getSharedToonRamp(toonIndex) : toonTexture) ?? rampTexture,
       map: diffuseTexture ?? null,
       opacity,
-      side: isDoubleSided || opacity < 1 ? DoubleSide : FrontSide,
-      transparent: opacity !== 1,
+      side: isDoubleSided || isTransparent ? DoubleSide : FrontSide,
+      transparent: isTransparent,
       // A material left at no opacity, which a pack hides an alternate part with, is not drawn, so its depth hides nothing
       visible: opacity > 0,
     },
