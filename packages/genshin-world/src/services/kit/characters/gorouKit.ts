@@ -65,9 +65,8 @@ export const createGorouKitBehaviour = ({
   const bannerTickSeconds = readSeconds("bannerTick");
   const crystalCollapseFirstSeconds = readSeconds("crystalCollapseFirst");
   const crystalCollapseIntervalSeconds = readSeconds("crystalCollapseInterval");
-  const crystalCollapseHit = readHit("crystalCollapse", {
-    additiveBaseDamageBonus: createDefenseDamageBonus(BURST_DEFENSE_SHARE),
-  });
+  const burstDefenseDamageBonus = createDefenseDamageBonus(BURST_DEFENSE_SHARE);
+  const crystalCollapseHit = readHit("crystalCollapse", { additiveBaseDamageBonus: burstDefenseDamageBonus });
   // Crystal Collapse ticks for as long as the field lasts, each its interval after the last from the first's seconds
   // After the burst's hit
   const crystalCollapseHits = Array.from(
@@ -99,7 +98,7 @@ export const createGorouKitBehaviour = ({
 
   return {
     burst: {
-      hits: [{ additiveBaseDamageBonus: createDefenseDamageBonus(BURST_DEFENSE_SHARE) }],
+      hits: [{ additiveBaseDamageBonus: burstDefenseDamageBonus }],
       // Juuga takes the banner's place, so a banner standing is put out, and from Ascension 1 the party's DEF rises
       onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
         for (const effect of kitEffectState.effects)
