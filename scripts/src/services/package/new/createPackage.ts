@@ -23,7 +23,7 @@ export const createPackage = (options: CreatePackageOptions, root: string = REPO
   const edits = getPackageEdits(options);
   // Every edit is made in memory before any file is written, so an edit that throws leaves no half-created package
   const editedTexts = new Map<string, string>(
-    [...edits].map(([path, edit]): [string, string] => [
+    Array.from(edits, ([path, edit]): [string, string] => [
       path,
       formatText(path, edit(readFileSync(join(root, path), "utf8"))),
     ]),
