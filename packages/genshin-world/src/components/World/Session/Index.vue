@@ -276,8 +276,6 @@ const {
   setWallet,
   wallet,
 });
-// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
-// Whose rewards the bag has no room for drop at the tree
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { chestInteractables, openChestById } = useWorldChests({
   gameDataBaseUrl,
@@ -288,6 +286,8 @@ const { chestInteractables, openChestById } = useWorldChests({
   setWallet,
   wallet,
 });
+// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
+// Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
   frostbearingTreeProgress,
   gainWorldAdventureExp,
