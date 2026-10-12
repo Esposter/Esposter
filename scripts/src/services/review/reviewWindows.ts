@@ -11,10 +11,19 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // Every batch of every window in one pool, at most `REVIEW_RUNNER_SESSION_CAP` sessions at once, taken in window order so
-// The earliest windows finish first. Each batch's outcome lands in its window's list at its batch index, and a batch's
-// Error is its outcome, so the others still finish and the run decides what the failures mean.
-export const reviewWindows = async (windows: ReviewWindow[]): Promise<ReviewBatchOutcome[][]> => {
+// The earliest windows finish first. A batch not started by `deadline` (epoch milliseconds) is unreached rather than read.
+// Each batch's outcome lands in its window's list at its batch index, and a batch's error is its outcome, so the others
+// Still finish. `onWindowSettled` runs as each window's last batch lands, so the run acts on a window while the pool goes on.
+export const reviewWindows = async (
+  windows: ReviewWindow[],
+  deadline: number,
+  onWindowSettled: (windowIndex: number, outcomes: ReviewBatchOutcome[]) => void,
+): Promise<void> => {
   const outcomesByWindow = windows.map((): ReviewBatchOutcome[] => []);
+  const pendingByWindow = windows.map((window) => window.batches.length);
+  // A window with no batch has nothing to read, so it settles before the pool starts
+  for (const [windowIndex, pending] of pendingByWindow.entries()) if (pending === 0) onWindowSettled(windowIndex, []);
+
   const jobs: ReviewBatchJob[] = windows.flatMap((window, windowIndex) =>
     window.batches.map((files, batchIndex) => ({ batchIndex, files, windowIndex })),
   );
@@ -36,18 +45,21 @@ export const reviewWindows = async (windows: ReviewWindow[]): Promise<ReviewBatc
       forEachConcurrently(jobs, REVIEW_RUNNER_SESSION_CAP, async ({ batchIndex, files, windowIndex }) => {
         const { base, end } = takeOne(windows, windowIndex);
         // The directory's throw is caught as a rejection, which only an async call makes of it
-        // oxlint-disable-next-line typescript/require-await -- the async wrapper turns a synchronous throw into a rejection
-        const outcome = await getResultAsync(async () =>
-          reviewBatch(getDirectory(windowIndex, end), base, end, files),
-        ).match(
-          (reviewed): ReviewBatchOutcome => reviewed,
-          (error): ReviewBatchOutcome => ({ error }),
-        );
+        const outcome: ReviewBatchOutcome =
+          Date.now() >= deadline
+            ? { isUnreached: true }
+            : // oxlint-disable-next-line typescript/require-await -- the async wrapper turns a synchronous throw into a rejection
+              await getResultAsync(async () => reviewBatch(getDirectory(windowIndex, end), base, end, files)).match(
+                (reviewed): ReviewBatchOutcome => reviewed,
+                (error): ReviewBatchOutcome => ({ error }),
+              );
         takeOne(outcomesByWindow, windowIndex)[batchIndex] = outcome;
+        const pending = takeOne(pendingByWindow, windowIndex) - 1;
+        pendingByWindow[windowIndex] = pending;
+        if (pending === 0) onWindowSettled(windowIndex, takeOne(outcomesByWindow, windowIndex));
       }),
     () => {
       for (const directory of directories.values()) runGit(["worktree", "remove", "--force", directory]);
     },
   );
-  return outcomesByWindow;
 };

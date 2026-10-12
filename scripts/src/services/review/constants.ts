@@ -1,5 +1,13 @@
-// The label of the one issue a run opens for the findings it deferred: the triage role an agent can take
-export const REVIEW_DEFERRED_LABEL = "ready-for-agent";
+import { ReviewSessionRole } from "#src/models/review/ReviewSessionRole";
+
+// The label of the issues the review opens for the findings it owes. It is the review's own, outside the triage roles, so
+// No session or triage pass takes one: the settle job closes it.
+export const REVIEW_ISSUE_LABEL = "review";
+// The most findings one issue holds, so its body stays far under GitHub's 65,536-character body limit. A window with more
+// Is split over several issues, each its own part.
+export const REVIEW_ISSUE_FINDING_CAP = 25;
+// GitHub's limit on the jobs one matrix runs. The issues past it are not lost: they stay open, and the settle job takes them.
+export const REVIEW_FIX_MATRIX_CAP = 256;
 // How many times a push of the fixer's commits is attempted before the run gives up on them, since another session
 // Can land on `ai/queue` between the pull and the push
 export const LAND_ATTEMPTS = 4;
@@ -7,9 +15,6 @@ export const LAND_ATTEMPTS = 4;
 // The amount one window holds, so `main` advances in steps a single review can read: an amount, never a count per hour,
 // Which work outruns. A run plans every window owed at its start, each cut at this cap.
 export const REVIEW_WINDOW_FILE_CAP = 300;
-// The windows one run plans and reviews, since GitHub's matrix takes at most 256 jobs and each window with findings
-// Becomes one fix job. The windows past it wait for the next run, which a push to `ai/queue` starts.
-export const REVIEW_RUN_WINDOW_CAP = 256;
 // Kept small so haiku reads every file it is handed
 export const REVIEW_BATCH_FILE_CAP = 20;
 // Kept small so haiku reads every line it is handed
@@ -20,11 +25,20 @@ export const REVIEW_DIFF_LINE_LIMIT = 3000;
 // A runner's memory holds, not a spend limit: `ubuntu-latest` for this public repository has 16 GB and four cores, and a
 // Session's node process is a few hundred megabytes. A starting value, to be measured against a real run.
 export const REVIEW_RUNNER_SESSION_CAP = 24;
-// The model every session runs
-export const REVIEW_MODEL = "haiku";
-// Wall clock for one reviewer, and for the fixer
+// The model each role's session runs. Every role is haiku: the settler differs from the fixer in its mandate, which is to
+// Settle every finding rather than defer it, not in its model.
+export const ReviewSessionRoleModelMap: Record<ReviewSessionRole, string> = {
+  [ReviewSessionRole.Fixer]: "haiku",
+  [ReviewSessionRole.Reviewer]: "haiku",
+  [ReviewSessionRole.Settler]: "haiku",
+};
+// Wall clock for one reviewer, the fixer and the settler
 export const REVIEWER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 20 }).total("milliseconds");
 export const FIXER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 90 }).total("milliseconds");
+export const SETTLER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 120 }).total("milliseconds");
+// The wall clock of one run, from its start: once it has passed, no further batch starts, and the batches already started
+// Finish. The review job's timeout is GitHub's hosted maximum, 360 minutes, above it.
+export const REVIEW_RUN_DEADLINE: Temporal.Duration = Temporal.Duration.from({ minutes: 300 });
 
 // The Claude Code CLI, run through `pnpm dlx` so the session needs no install in the checkout
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";

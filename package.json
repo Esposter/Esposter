@@ -53,6 +53,7 @@
     "ai:resume": "pnpm -C scripts ai:resume",
     "ai:review": "pnpm -C scripts ai:review",
     "ai:review:fix": "pnpm -C scripts ai:review:fix",
+    "ai:review:settle": "pnpm -C scripts ai:review:settle",
     "ai:skills:extract": "pnpm -C scripts ai:skills:extract",
     "ai:sweep:constant-scope": "pnpm -C scripts ai:sweep:constant-scope",
     "ai:sweep:duplicate-code": "pnpm -C scripts ai:sweep:duplicate-code",

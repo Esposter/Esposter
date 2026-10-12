@@ -6,8 +6,8 @@ import { ReviewSessionRole } from "#src/models/review/ReviewSessionRole";
 import {
   CLAUDE_CODE_PACKAGE,
   CLAUDE_EXEMPT_VARIABLE,
-  REVIEW_MODEL,
   REVIEWER_TOOLS,
+  ReviewSessionRoleModelMap,
   SECRET_VARIABLE_REGEX,
   USAGE_LIMIT_REGEX,
 } from "#src/services/review/constants";
@@ -17,10 +17,11 @@ import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 
 // The arguments a role's session gets. A reviewer is print mode with only its read-only tools allowed, which denies every
-// Other tool, and the fixer skips its prompts since it edits and commits in its own checkout.
+// Other tool, and the fixer and the settler skip their prompts since they edit and commit in their own checkout.
 const ReviewSessionRoleArgumentsMap: Record<ReviewSessionRole, string[]> = {
   [ReviewSessionRole.Fixer]: ["--dangerously-skip-permissions"],
   [ReviewSessionRole.Reviewer]: ["--allowedTools", ...REVIEWER_TOOLS],
+  [ReviewSessionRole.Settler]: ["--dangerously-skip-permissions"],
 };
 
 // Every secret-shaped variable is dropped from the child, except the one that authenticates `claude` itself. A session
@@ -61,7 +62,7 @@ export const runSession = async ({ cwd, prompt, role, timeoutMs }: ReviewSession
       CLAUDE_CODE_PACKAGE,
       "-p",
       "--model",
-      REVIEW_MODEL,
+      ReviewSessionRoleModelMap[role],
       "--output-format",
       "json",
       ...ReviewSessionRoleArgumentsMap[role],

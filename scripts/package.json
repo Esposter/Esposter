@@ -49,6 +49,7 @@
     "ai:resume": "tsx src/resume/index.ts",
     "ai:review": "tsx src/review/index.ts",
     "ai:review:fix": "tsx src/reviewFix/index.ts",
+    "ai:review:settle": "tsx src/reviewSettle/index.ts",
     "ai:skills:extract": "tsx src/skills/extract/index.ts",
     "ai:sweep:constant-scope": "node src/sweeps/constantScope/index.ts",
     "ai:sweep:duplicate-code": "tsx src/sweeps/duplicateCode/index.ts",
