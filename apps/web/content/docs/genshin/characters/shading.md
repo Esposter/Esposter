@@ -27,6 +27,8 @@ Each material sets a different set of keywords on the shader. These are read fro
 - **The program is picked by the keywords that do exist.** For the body, the variant whose keyword set is `METAL_MAT`, `SHADOW_RAMP_ON` and `TOON_LIGHTMAP_ON`, with no other material keyword, is the one the body's material selects. Thirteen deferred pixel programs carry exactly that set, differing only in engine-wide keywords (`LOD_FADE_CROSSFADE`, `MHY_SKINMESH_ENABLE_VSSKINNING`, `ENABLE_PACK_NORMAL_ON` and the like). Exact on the set; Provisional on which engine-wide set the game draws Lumine with.
 - **The body's four texture slots** are `_MainTex`, `_LightMapTex`, `_MTMap` and `_PackedShadowRampTex`. The variant also samples `_MTSpecularRamp` and `_EyeMask`. Provisional: the register each slot is bound to is taken from the order the program's own parameter table lists the textures, which matches the sampling sites but is not yet checked against a binding.
 
+The close view's mesh is the body's LOD0 `Body` in block `04161624`, 10,406 vertices in two submeshes (1,491 and 8,915), 12,660 triangles, with `Body_LOD1` to `Body_LOD3` beside it in the same block (Exact on the counts). Which LOD the game draws up close is Provisional: the prefab's root carries no LODGroup, and the renderer that binds each LOD is not yet identified. The textures are 1024 with a full 11-mip chain, and no other block holds a higher mip (Exact).
+
 ## The pass classes
 
 The uber's 1,553 compiled programs, by their own output signatures (Exact):
