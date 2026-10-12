@@ -144,15 +144,22 @@ export enum GameTextKey {
   // Recipe names; a recipe's own id for the same words repeats the English of these
   ForgeEnhancementOreRefusal = "1106263200",
   ForgeFineEnhancementOreRefusal = "1652126048",
+  // The Amount line over the forge slider, "Amount: {0}"
+  ForgeAmount = "UI_FORGE_PAGE_ITEM_COUNT",
   // The forge screen's words: a recipe's forge time, the queue button with its count, a queue's state (idle, forging,
   // Forged so far and the Adventure Rank it unlocks at), the support character's title and the total forge time
   ForgeItemTime = "UI_FORGE_PAGE_ITEM_TIME",
+  ForgeMaterials = "UI_FORGE_PAGE_FOOD_ITEM_TITLE",
+  ForgeMaterialsTab = "UI_FORGE_PAGE_FORMULA_BUTTON",
   ForgeMysticEnhancementOreRefusal = "110208304",
+  // The forge's own text ids do not name "Obtain", so a finished queue takes the cooking screen's collect button
+  ForgeObtain = "UI_COOKING_FETCH_BUTTON",
   ForgeQueueButton = "UI_FORGE_PAGE_QUEUE_BUTTON",
   ForgeQueueForging = "UI_FORGE_PAGE_QUEUE_UNFINISH",
   ForgeQueueIdle = "UI_FORGE_PAGE_QUEUE_FREE",
   ForgeQueueLockLevel = "UI_FORGE_PAGE_QUEUE_LOCK_LEVEL",
   ForgeQueueProgress = "UI_FORGE_PAGE_QUEUE_PROGRESS",
+  ForgeStart = "UI_FORGE_PAGE_OK_BUTTON",
   ForgeSupportCharacter = "UI_FORGE_PAGE_AVATAR_TITLE",
   ForgeTimeRemaining = "UI_FLYING_ACTIVITY_TIME_RAMAIN",
   ForgeTitle = "UI_FORGE_PAGE_TITLE",

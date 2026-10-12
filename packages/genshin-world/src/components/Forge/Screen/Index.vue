@@ -18,24 +18,17 @@ interface ForgeQueueSlot {
 }
 
 interface Props {
-  // The amount slider's name for assistive tech, and the Materials tab's and buttons' words, which the game's text ids
-  // Do not yet name in genshin-text
-  amountLabel: string;
   // The most the selected recipe's queue holds
   amountMaximum: number;
-  closeLabel: string;
   // The wallet's coins
   coins: number;
   // The game's words in the reader's language
   gameText: GameText;
-  materialsLabel: string;
-  obtainLabel: string;
   // The forge queues, each open one or locked until its Adventure Rank
   queues: ForgeQueueSlot[];
   // The Materials tab's recipes, in the game's order: each one's forge time in seconds
   recipes: { forgeSeconds: number; id: number; isLearned: boolean; name: string }[];
   requiredCoins: number;
-  startLabel: string;
   // The total forge time of the selected recipe for its amount, in seconds
   totalSeconds: number;
 }
@@ -96,12 +89,12 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
       v-model:amount="amount"
       v-model:recipe-id="recipeId"
       v-model:tab="tab"
-      :amount-label
+      :amount-label="fillGameTextValues(gameText[GameTextKey.ForgeAmount], amount)"
       :amount-maximum
-      :close-label
+      :close-label="gameText[GameTextKey.Back]"
       :coins
-      :materials-label
-      :obtain-label
+      :materials-label="gameText[GameTextKey.ForgeMaterialsTab]"
+      :obtain-label="gameText[GameTextKey.ForgeObtain]"
       :queues="queueCells"
       :queues-label="
         fillGameTextValues(
@@ -119,7 +112,7 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
         }))
       "
       :required-coins
-      :start-label
+      :start-label="gameText[GameTextKey.ForgeStart]"
       :title="gameText[GameTextKey.ForgeTitle]"
       :total-time-label="fillGameTextValues(gameText[GameTextKey.ForgeTotalTime], formatForgeTime(totalSeconds))"
       @close="emit('close')"
