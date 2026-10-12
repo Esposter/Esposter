@@ -46,6 +46,7 @@
     "ai:fleet:profile": "pnpm -C scripts ai:fleet:profile",
     "ai:fleet:release": "pnpm -C scripts ai:fleet:release",
     "ai:fleet:status": "pnpm -C scripts ai:fleet:status",
+    "ai:gcsim:configs": "pnpm -C scripts ai:gcsim:configs",
     "ai:identifiers:rename": "pnpm -C scripts ai:identifiers:rename",
     "ai:machine:watch": "pnpm -C scripts ai:machine:watch",
     "ai:package:new": "pnpm -C scripts ai:package:new",

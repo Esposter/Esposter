@@ -51,6 +51,7 @@
     "ai:review:fix": "tsx src/reviewFix/index.ts",
     "ai:review:settle": "tsx src/reviewSettle/index.ts",
     "ai:skills:extract": "tsx src/skills/extract/index.ts",
+    "ai:gcsim:configs": "tsx src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts",
     "ai:sweep:constant-scope": "node src/sweeps/constantScope/index.ts",
     "ai:sweep:duplicate-code": "tsx src/sweeps/duplicateCode/index.ts",
     "ai:sweep:duplicate-prose": "node src/sweeps/duplicateProse/index.ts",

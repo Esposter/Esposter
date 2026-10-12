@@ -82,7 +82,7 @@ const parseValue = (text: string): unknown => (FLOW_START_REGEX.test(text) ? par
 
 // The subset of YAML gcsim's character configs are written in: block mappings and sequences by indentation, a sequence
 // Item opening a mapping or a sequence on its own line, flow collections, on a key's line or below it, plain and quoted
-// Scalars, and comments.
+// Scalars, wrapped over lines as YAML folds them, and comments.
 // Anything past that, an anchor, a tag or a block scalar, is refused rather than read wrong
 export const parseGcsimYaml = (yaml: string): unknown => {
   const lines: GcsimYamlLine[] = yaml.split("\n").flatMap((rawLine) => {
@@ -91,6 +91,23 @@ export const parseGcsimYaml = (yaml: string): unknown => {
     return trimmedText === "" ? [] : [{ indent: text.length - trimmedText.length, text: trimmedText }];
   });
   let index = 0;
+  // A value's continuation lines are the lines after it more indented than the line it starts on and neither a key nor a
+  // Sequence item; YAML folds them into the value with one space, so a plain scalar wrapped over lines reads as one
+  const readValue = (text: string, lineIndent: number): unknown => {
+    let folded = text;
+    for (
+      let line = lines[index];
+      line !== undefined &&
+      line.indent > lineIndent &&
+      !KEY_REGEX.test(line.text) &&
+      !SEQUENCE_ITEM_REGEX.test(line.text);
+      line = lines[index]
+    ) {
+      folded += ` ${line.text}`;
+      index++;
+    }
+    return parseValue(folded);
+  };
   const parseBlock = (indent: number): unknown => {
     const firstLine = lines[index];
     if (firstLine === undefined) return undefined;
@@ -116,7 +133,7 @@ export const parseGcsimYaml = (yaml: string): unknown => {
           items.push(parseBlock(indent + line.text.length - item.length));
         } else {
           index++;
-          items.push(parseValue(item));
+          items.push(readValue(item, indent));
         }
       }
       return items;
@@ -133,11 +150,23 @@ export const parseGcsimYaml = (yaml: string): unknown => {
       index++;
       if (groups.value === undefined) {
         const nextLine = lines[index];
+        // A plain scalar wrapped over the lines below its key, which the key's indent is the one it folds into
+        if (
+          nextLine !== undefined &&
+          nextLine.indent > indent &&
+          !FLOW_START_REGEX.test(nextLine.text) &&
+          !KEY_REGEX.test(nextLine.text) &&
+          !SEQUENCE_ITEM_REGEX.test(nextLine.text)
+        ) {
+          index++;
+          entries.push([groups.key, readValue(nextLine.text, indent)]);
+          continue;
+        }
         const isNested =
           nextLine !== undefined &&
           (nextLine.indent > indent || (nextLine.indent === indent && SEQUENCE_ITEM_REGEX.test(nextLine.text)));
         entries.push([groups.key, isNested ? parseBlock(nextLine.indent) : undefined]);
-      } else entries.push([groups.key, parseValue(groups.value)]);
+      } else entries.push([groups.key, readValue(groups.value, indent)]);
     }
     return Object.fromEntries(entries);
   };
