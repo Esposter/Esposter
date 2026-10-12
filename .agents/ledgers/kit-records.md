@@ -51,6 +51,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `hu-tao`             | —     |                                                                          |
 | `iansan`             | —     |                                                                          |
 | `ifa`                | —     |                                                                          |
+| `illuga`             | —     |                                                                          |
 | `ineffa`             | —     |                                                                          |
 | `jahoda`             | —     |                                                                          |
 | `jean`               | —     |                                                                          |
