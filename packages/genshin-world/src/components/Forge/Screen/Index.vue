@@ -2,6 +2,7 @@
 import type { ForgeQueueCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
+import { SECONDS_PER_MINUTE } from "#src/services/forging/constants";
 import { ForgeQueueState, ForgeScreen, ForgeTab, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -20,23 +21,23 @@ interface Props {
   // The amount slider's name for assistive tech, and the Materials tab's and buttons' words, which the game's text ids
   // Do not yet name in genshin-text
   amountLabel: string;
+  // The most the selected recipe's queue holds
+  amountMaximum: number;
   closeLabel: string;
+  // The wallet's coins
+  coins: number;
   // The game's words in the reader's language
   gameText: GameText;
   materialsLabel: string;
   obtainLabel: string;
-  // The wallet's coins
-  coins: number;
-  // The Materials tab's recipes, in the game's order: each one's forge time in seconds
-  recipes: { forgeSeconds: number; id: number; isLearned: boolean; name: string }[];
   // The forge queues, each open one or locked until its Adventure Rank
   queues: ForgeQueueSlot[];
+  // The Materials tab's recipes, in the game's order: each one's forge time in seconds
+  recipes: { forgeSeconds: number; id: number; isLearned: boolean; name: string }[];
   requiredCoins: number;
   startLabel: string;
   // The total forge time of the selected recipe for its amount, in seconds
   totalSeconds: number;
-  // The most the selected recipe's queue holds
-  amountMaximum: number;
 }
 
 const amount = defineModel<number>("amount", { default: 1 });
@@ -45,7 +46,6 @@ const tab = defineModel<ForgeTab>("tab", { default: ForgeTab.Materials });
 const { amountMaximum, coins, gameText, queues, recipes, requiredCoins, totalSeconds } = defineProps<Props>();
 const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 // A duration in the game's own shape: seconds under a minute, then whole minutes
-const SECONDS_PER_MINUTE = 60;
 const formatForgeTime = (seconds: number) =>
   seconds < SECONDS_PER_MINUTE ? `${seconds}s` : `${Math.floor(seconds / SECONDS_PER_MINUTE)}m`;
 // Each queue's words in the reader's language, from the state it holds
@@ -96,12 +96,12 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
       v-model:amount="amount"
       v-model:recipe-id="recipeId"
       v-model:tab="tab"
-      :amount-label="amountLabel"
-      :amount-maximum="amountMaximum"
-      :close-label="closeLabel"
+      :amount-label
+      :amount-maximum
+      :close-label
       :coins
-      :materials-label="materialsLabel"
-      :obtain-label="obtainLabel"
+      :materials-label
+      :obtain-label
       :queues="queueCells"
       :queues-label="
         fillGameTextValues(
@@ -118,8 +118,8 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
           name,
         }))
       "
-      :required-coins="requiredCoins"
-      :start-label="startLabel"
+      :required-coins
+      :start-label
       :title="gameText[GameTextKey.ForgeTitle]"
       :total-time-label="fillGameTextValues(gameText[GameTextKey.ForgeTotalTime], formatForgeTime(totalSeconds))"
       @close="emit('close')"
