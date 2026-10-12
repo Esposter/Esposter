@@ -155,6 +155,7 @@ export enum GameTextKey {
   ForgeQueueProgress = "UI_FORGE_PAGE_QUEUE_PROGRESS",
   ForgeSupportCharacter = "UI_FORGE_PAGE_AVATAR_TITLE",
   ForgeTimeRemaining = "UI_FLYING_ACTIVITY_TIME_RAMAIN",
+  ForgeTitle = "UI_FORGE_PAGE_TITLE",
   ForgeTotalTime = "UI_FORGE_PAGE_NEED_TIME",
   Fowl = "1695194124",
   Friends = "UI_FRIEND_TITLE",

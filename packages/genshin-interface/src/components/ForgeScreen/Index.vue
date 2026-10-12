@@ -60,7 +60,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
        left with the chosen one's amount and cost beside them, or the queues each holding an order that forges over real
        time and is obtained when it is done. Provisional: every place, size and colour here waits on the forge screen's
        passes against the public clip of the Wagner forge (references/forge-screen) and the owed order-queue recording -->
-  <TwoColumnScreen>
+  <TwoColumnScreen class="forge-screen">
     <header class="head">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
       <div class="tabs">
@@ -122,8 +122,160 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 </template>
 
 <style scoped>
-.head,
+/* Measured off the wiki-clip reference at 886 high, each as a unit of the game's 1080 high screen */
+.forge-screen {
+  color: #ece5d8;
+  font-family: "Signika", sans-serif;
+  font-weight: 600;
+}
+.title {
+  position: absolute;
+  top: calc(var(--unit) * 34);
+  left: calc(var(--unit) * 268);
+  margin: 0;
+  font-size: calc(var(--unit) * 29);
+  line-height: 1;
+}
+.coins {
+  position: absolute;
+  top: calc(var(--unit) * 41);
+  left: calc(var(--unit) * 1902);
+  margin: 0;
+  font-size: calc(var(--unit) * 27);
+  line-height: 1;
+}
+.close {
+  position: absolute;
+  top: calc(var(--unit) * 26);
+  left: calc(var(--unit) * 2122);
+  width: calc(var(--unit) * 66);
+  height: calc(var(--unit) * 66);
+  border: none;
+  border-radius: 50%;
+  background: #ece5d8;
+  color: #3b3b3b;
+  font-size: calc(var(--unit) * 36);
+  line-height: 1;
+}
+.tabs {
+  position: absolute;
+  top: calc(var(--unit) * 155);
+  left: calc(var(--unit) * 137);
+  display: flex;
+  gap: calc(var(--unit) * 2);
+  width: calc(var(--unit) * 741);
+  height: calc(var(--unit) * 61);
+}
+.tab {
+  flex: 1;
+  border: none;
+  background: rgb(20 28 38 / 0.55);
+  color: #ece5d8;
+  font-size: calc(var(--unit) * 27);
+}
+.tab[aria-pressed="true"] {
+  background: #ece5d8;
+  color: #3b3b3b;
+}
+.recipes {
+  position: absolute;
+  top: calc(var(--unit) * 252);
+  left: calc(var(--unit) * 134);
+  width: calc(var(--unit) * 750);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.recipes li + li {
+  margin-top: calc(var(--unit) * 9.7);
+}
+.recipe {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(var(--unit) * 114.6);
+  border: none;
+  background: rgb(20 28 38 / 0.55);
+  color: #ece5d8;
+  text-align: left;
+}
+.recipes li:first-child .recipe {
+  height: calc(var(--unit) * 123);
+}
+.recipe[aria-pressed="true"] {
+  outline: calc(var(--unit) * 2) solid #ffffff;
+  outline-offset: calc(var(--unit) * -2);
+  background: rgb(236 229 216 / 0.25);
+}
+.recipe:disabled {
+  opacity: 0.4;
+}
+.recipe-name {
+  position: absolute;
+  top: calc(var(--unit) * 28);
+  left: calc(var(--unit) * 141);
+  font-size: calc(var(--unit) * 29);
+  line-height: 1;
+}
+.recipe-time {
+  position: absolute;
+  top: calc(var(--unit) * 78);
+  left: calc(var(--unit) * 141);
+  font-size: calc(var(--unit) * 24);
+  line-height: 1;
+}
+.detail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.detail > * {
+  pointer-events: auto;
+  position: absolute;
+  margin: 0;
+}
+.total-time {
+  top: calc(var(--unit) * 146);
+  left: 50%;
+  translate: -50% 0;
+  font-size: calc(var(--unit) * 27);
+  line-height: 1;
+  white-space: nowrap;
+}
+.amount {
+  top: calc(var(--unit) * 590);
+  left: calc(var(--unit) * 1368);
+  width: calc(var(--unit) * 446);
+  height: calc(var(--unit) * 20);
+  accent-color: #ece5d8;
+}
+.required {
+  top: calc(var(--unit) * 987);
+  left: calc(var(--unit) * 1011);
+  font-size: calc(var(--unit) * 24);
+  line-height: 1;
+}
+.start {
+  top: calc(var(--unit) * 963);
+  left: calc(var(--unit) * 1883);
+  width: calc(var(--unit) * 277);
+  height: calc(var(--unit) * 73);
+  border: none;
+  border-radius: calc(var(--unit) * 36);
+  background: #ece5d8;
+  color: #3b3b3b;
+  font-size: calc(var(--unit) * 29);
+}
 .queues {
-  grid-column: 1 / -1;
+  position: absolute;
+  top: calc(var(--unit) * 252);
+  left: calc(var(--unit) * 134);
+  width: calc(var(--unit) * 1600);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 </style>
