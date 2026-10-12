@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -10,7 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createYelanKitBehaviour, YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -27,16 +26,7 @@ const createYelanCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
-// The effects an action's start adds, as the kit's effects hold them
-const castEffects = (action: KitAction): KitEffect[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.(createKitTestContext(createYelanCombatant(), { kitEffectState }));
-  return kitEffectState.effects;
-};
-
 describe(createYelanKitBehaviour, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -70,7 +60,9 @@ describe(createYelanKitBehaviour, () => {
 
   test("depth-Clarion Dice lasts 15 seconds from its hit, costs 70 energy and waves each second of it", () => {
     expect.hasAssertions();
-    const field = castEffects(YELAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(YELAN_KIT.elementalBurst, createYelanCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick(createKitTestContext(createYelanCombatant(), { kitEffectState }), 0);
     const throws = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
@@ -87,14 +79,13 @@ describe(createYelanKitBehaviour, () => {
     const strike = (effects: KitEffect[]): KitEffect[] => {
       const combatant = createYelanCombatant();
       const kitEffectState: KitEffectState = { effects };
-      lifelineHit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), {
-        body: kitBody,
-        combatant,
-        hit: lifelineHit,
-      });
+      const context = createKitTestContext(combatant, { kitEffectState });
+      lifelineHit.onStrike?.(context, { body: context.body, combatant, hit: lifelineHit });
       return kitEffectState.effects;
     };
-    const field = castEffects(YELAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(YELAN_KIT.elementalBurst, createYelanCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
 
     expect(strike([]).filter((effect) => effect.kind === "summon")).toStrictEqual([]);
     expect(strike(field ? [field] : []).filter((effect) => effect.kind === "summon")).toHaveLength(1);

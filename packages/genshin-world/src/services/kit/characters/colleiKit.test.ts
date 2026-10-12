@@ -1,6 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -10,7 +8,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { COLLEI_CHARACTER_ID, createColleiKitBehaviour } from "#src/services/kit/characters/colleiKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -26,12 +24,6 @@ const createColleiCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Bow,
 });
-
-const castEffects = (action: KitAction): KitEffect[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.(createKitTestContext(createColleiCombatant(), { kitEffectState }));
-  return kitEffectState.effects;
-};
 
 describe(createColleiKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -76,7 +68,9 @@ describe(createColleiKitBehaviour, () => {
 
   test("the Trump-Card Kitty explosion lands at 25 frames and its leap ticks from 68 frames, every 30", () => {
     expect.hasAssertions();
-    const field = castEffects(COLLEI_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(COLLEI_KIT.elementalBurst, createColleiCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick(
       createKitTestContext(createColleiCombatant(), { characterIdCombatantMap: new Map(), kitEffectState }),
@@ -92,7 +86,9 @@ describe(createColleiKitBehaviour, () => {
 
   test("the kitty's status runs 378 frames from its explosion, as gcsim gives it", () => {
     expect.hasAssertions();
-    const field = castEffects(COLLEI_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(COLLEI_KIT.elementalBurst, createColleiCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
 
     expect(Math.round((field?.secondsRemaining ?? 0) * 60)).toBe(403);
   });

@@ -1,6 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStance } from "#src/models/kit/KitStance";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -8,20 +6,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createWandererKitBehaviour, WANDERER_CHARACTER_ID } from "#src/services/kit/characters/wandererKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const WANDERER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, WANDERER_CHARACTER_ID);
 
 describe(createWandererKitBehaviour, () => {
-  // The effects an action's start adds to the team's, which its owner holds
-  const castAction = (action: KitAction): KitEffectState => {
-    const context = createKitTestContext(createWandererCombatant());
-    action.onStart?.(context);
-    return context.kitEffectState;
-  };
-
   const createWandererCombatant = (): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
@@ -67,7 +58,7 @@ describe(createWandererKitBehaviour, () => {
 
   test("hanega: Song of the Wind sets Windfavored for ten seconds, whose strikes take the skill's bonus", () => {
     expect.hasAssertions();
-    const stance = castAction(WANDERER_KIT.elementalSkill).effects.find(
+    const stance = castKitAction(WANDERER_KIT.elementalSkill, createWandererCombatant()).effects.find(
       (effect): effect is KitStance => effect.kind === "stance",
     );
     expect({

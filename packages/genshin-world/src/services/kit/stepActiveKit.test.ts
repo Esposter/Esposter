@@ -25,6 +25,7 @@ import { readOreHit } from "#src/services/gathering/readOreHit";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { createParty } from "#src/services/party/createParty";
@@ -55,18 +56,11 @@ const createCombatant = (characterId: number, kit: Kit): Combatant => ({
 
 // The combat state the kit on the field steps in, its party the characters given with the first on the field
 const createContext = (combatants: Combatant[], kitEffectState: KitEffectState = { effects: [] }): KitContext => ({
-  activeCombatant: takeOne(combatants),
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  characterIdCombatantMap: new Map(combatants.map((combatant) => [combatant.characterId, combatant])),
-  enemyMap: new Map(),
-  enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },
-  expiredEffects: [],
-  kitEffectState,
-  oreStrikes: [],
-  outbox: [],
-  party: createParty(combatants.map(({ characterId }) => characterId)),
-  random: () => 0,
-  strikes: [],
+  ...createKitTestContext(takeOne(combatants), {
+    characterIdCombatantMap: new Map(combatants.map((combatant) => [combatant.characterId, combatant])),
+    kitEffectState,
+    party: createParty(combatants.map(({ characterId }) => characterId)),
+  }),
 });
 
 // The combat state the kit on the field steps in with an enemy standing in its strikes' reach

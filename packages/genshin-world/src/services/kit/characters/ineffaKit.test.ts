@@ -12,7 +12,7 @@ import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createIneffaKitBehaviour, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -29,18 +29,11 @@ const createIneffaCombatant = (): Combatant => ({
   weaponType: WeaponType.Polearm,
 });
 
-// The effects an action's start adds to the effects given, as the kit's effects hold them
-const castEffects = (action: KitAction, effects: KitEffect[] = []): KitEffect[] => {
-  const kitEffectState: KitEffectState = { effects };
-  action.onStart?.(createKitTestContext(createIneffaCombatant(), { kitEffectState }));
-  return kitEffectState.effects;
-};
-
 describe(createIneffaKitBehaviour, () => {
   const BIRGITTA_ID = "birgitta";
   const castBirgitta = (action: KitAction, effects: KitEffect[] = []): KitSummon =>
     takeOne(
-      castEffects(action, effects).filter(
+      castKitAction(action, createIneffaCombatant(), { effects }).effects.filter(
         (effect): effect is KitSummon => effect.kind === "summon" && effect.id === BIRGITTA_ID,
       ),
     );
@@ -104,9 +97,9 @@ describe(createIneffaKitBehaviour, () => {
   test("her burst summons Birgitta again and ends the one on the field, as gcsim restarts her discharges", () => {
     expect.hasAssertions();
     const skillBirgitta = castBirgitta(INEFFA_KIT.elementalSkill);
-    const birgittas = castEffects(INEFFA_KIT.elementalBurst, [skillBirgitta]).filter(
-      (effect): effect is KitSummon => effect.kind === "summon" && effect.id === BIRGITTA_ID,
-    );
+    const birgittas = castKitAction(INEFFA_KIT.elementalBurst, createIneffaCombatant(), {
+      effects: [skillBirgitta],
+    }).effects.filter((effect): effect is KitSummon => effect.kind === "summon" && effect.id === BIRGITTA_ID);
 
     expect(skillBirgitta.secondsRemaining).toBe(0);
     expect(birgittas.map(({ spawnSeconds }) => Math.round((spawnSeconds ?? 0) * 60))).toStrictEqual([68, 111]);

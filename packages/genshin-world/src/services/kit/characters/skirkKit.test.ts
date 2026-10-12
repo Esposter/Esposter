@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitStance } from "#src/models/kit/KitStance";
@@ -11,7 +10,7 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createSkirkKitBehaviour, SKIRK_CHARACTER_ID } from "#src/services/kit/characters/skirkKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -25,16 +24,9 @@ const findField = (kitEffectState: KitEffectState): KitField | undefined =>
 describe(createSkirkKitBehaviour, () => {
   // The Seven-Phase Flash's state after its press, entered by the field's tick 19 frames on
   const enterSevenPhaseFlash = (combatant = createSkirkCombatant()): KitEffectState => {
-    const kitEffectState = castAction(SKIRK_KIT.elementalSkill, combatant);
+    const kitEffectState = castKitAction(SKIRK_KIT.elementalSkill, combatant);
     findField(kitEffectState)?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
     return kitEffectState;
-  };
-
-  // The effects an action's start adds to the team's, which its owner holds
-  const castAction = (action: KitAction, combatant = createSkirkCombatant()): KitEffectState => {
-    const context = createKitTestContext(combatant);
-    action.onStart?.(context);
-    return context.kitEffectState;
   };
 
   const createSkirkCombatant = (): Combatant => ({
@@ -82,7 +74,7 @@ describe(createSkirkKitBehaviour, () => {
 
   test("seven-phase Flash's press lands no hit and enters its state 19 frames on, through a task", () => {
     expect.hasAssertions();
-    const kitEffectState = castAction(SKIRK_KIT.elementalSkill);
+    const kitEffectState = castKitAction(SKIRK_KIT.elementalSkill, createSkirkCombatant());
     const field = findField(kitEffectState);
 
     expect({

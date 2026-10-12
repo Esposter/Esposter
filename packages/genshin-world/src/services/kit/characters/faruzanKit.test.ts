@@ -1,6 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -10,7 +8,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createFaruzanKitBehaviour, FARUZAN_CHARACTER_ID } from "#src/services/kit/characters/faruzanKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
@@ -28,13 +26,6 @@ const createFaruzanCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Bow,
 });
-
-// The effects an action's start adds, as the kit's effects hold them
-const castEffects = (action: KitAction): KitEffect[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.(createKitTestContext(createFaruzanCombatant(), { kitEffectState }));
-  return kitEffectState.effects;
-};
 
 describe(createFaruzanKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -72,7 +63,9 @@ describe(createFaruzanKitBehaviour, () => {
 
   test("the Dazzling Polyhedron's first Whirlwind Pulse comes 3 seconds after the cast, then every 2 seconds", () => {
     expect.hasAssertions();
-    const field = castEffects(FARUZAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(FARUZAN_KIT.elementalBurst, createFaruzanCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
 
     expect(field?.nextTickSeconds).toBe(3);
     expect(field?.tickIntervalSeconds).toBe(2);
@@ -81,7 +74,9 @@ describe(createFaruzanKitBehaviour, () => {
 
   test("a Whirlwind Pulse casts from its gadget's place, and the party gains Prayerful Wind's Anemo DMG Bonus", () => {
     expect.hasAssertions();
-    const field = castEffects(FARUZAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(FARUZAN_KIT.elementalBurst, createFaruzanCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick(createKitTestContext(createFaruzanCombatant(), { kitEffectState }), 0);
     const pulse = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
@@ -104,7 +99,9 @@ describe(createFaruzanKitBehaviour, () => {
     const benchedCharacterId = FARUZAN_CHARACTER_ID + 1;
     const benchedParty = createParty([FARUZAN_CHARACTER_ID]);
     benchedParty.characterIdMemberMap.set(benchedCharacterId, createPartyMember());
-    const field = castEffects(FARUZAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(FARUZAN_KIT.elementalBurst, createFaruzanCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick(createKitTestContext(createFaruzanCombatant(), { kitEffectState, party: benchedParty }), 0);
 

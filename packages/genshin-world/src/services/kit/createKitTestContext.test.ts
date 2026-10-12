@@ -1,5 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { createParty } from "#src/services/party/createParty";
 import { describe } from "vitest";
@@ -21,5 +23,15 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   strikes: [],
   ...context,
 });
+
+// The effects an action's start adds to the kit's state, which the action is run in and returned
+export const castKitAction = (
+  action: KitAction,
+  combatant: Combatant,
+  kitEffectState: KitEffectState = { effects: [] },
+): KitEffectState => {
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  return kitEffectState;
+};
 
 describe.todo("createKitTestContext");

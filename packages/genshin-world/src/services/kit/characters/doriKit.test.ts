@@ -1,7 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -9,7 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createDoriKitBehaviour, DORI_CHARACTER_ID } from "#src/services/kit/characters/doriKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -25,12 +22,6 @@ const createDoriCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Claymore,
 });
-
-const castEffects = (action: KitAction): KitEffect[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.(createKitTestContext(createDoriCombatant(), { kitEffectState }));
-  return kitEffectState.effects;
-};
 
 describe(createDoriKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -67,7 +58,9 @@ describe(createDoriKitBehaviour, () => {
 
   test("the Connector ticks every 24 frames from 28 frames, 32 times, in the circle ahead of the body", () => {
     expect.hasAssertions();
-    const field = castEffects(DORI_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(DORI_KIT.elementalBurst, createDoriCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
 
     expect(field?.radius).toBe(10);
     expect(Math.round((field?.nextTickSeconds ?? 0) * 60)).toBe(28);

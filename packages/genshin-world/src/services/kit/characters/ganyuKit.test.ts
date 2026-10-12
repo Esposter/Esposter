@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -11,7 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createGanyuKitBehaviour, GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -28,16 +27,9 @@ const createGanyuCombatant = (ascension = 0, constellationCount = 0): Combatant 
   weaponType: WeaponType.Bow,
 });
 
-// The effects an action's start adds, as the kit's effects hold them
-const castEffects = (action: KitAction, combatant = createGanyuCombatant()): KitEffect[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
-  return kitEffectState.effects;
-};
-
 // The buffs a field's tick gives the active character, from the field its caster of the given ascension cast
 const getTickBuffs = (ascension: number): KitEffect[] => {
-  const field = castEffects(GANYU_KIT.elementalBurst, createGanyuCombatant(ascension)).find(
+  const field = castKitAction(GANYU_KIT.elementalBurst, createGanyuCombatant(ascension)).effects.find(
     (effect): effect is KitField => effect.kind === "field",
   );
   const kitEffectState: KitEffectState = { effects: [] };
@@ -49,8 +41,6 @@ const getTickBuffs = (ascension: number): KitEffect[] => {
 };
 
 describe(createGanyuKitBehaviour, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -81,7 +71,8 @@ describe(createGanyuKitBehaviour, () => {
     const hit = takeOne(GANYU_KIT.chargedAttack.hits);
     const strike = (ascension: number): void => {
       const combatant = createGanyuCombatant(ascension);
-      hit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), { body: kitBody, combatant, hit });
+      const context = createKitTestContext(combatant, { kitEffectState });
+      hit.onStrike?.(context, { body: context.body, combatant, hit });
     };
 
     strike(0);
@@ -101,7 +92,9 @@ describe(createGanyuKitBehaviour, () => {
 
   test("the Ice Lotus explodes 373 frames after it is cast, when its taunt runs out", () => {
     expect.hasAssertions();
-    const taunt = castEffects(GANYU_KIT.elementalSkill).find((effect): effect is KitTaunt => effect.kind === "taunt");
+    const taunt = castKitAction(GANYU_KIT.elementalSkill, createGanyuCombatant()).effects.find(
+      (effect): effect is KitTaunt => effect.kind === "taunt",
+    );
 
     expect(taunt?.secondsRemaining).toBeCloseTo(373 / 60);
     expect(taunt?.explosion?.hitmarkSeconds).toBe(0);
@@ -109,7 +102,9 @@ describe(createGanyuKitBehaviour, () => {
 
   test("the Celestial Shower's field ticks every 18 frames, and each tick's hit lands 8 frames after it", () => {
     expect.hasAssertions();
-    const field = castEffects(GANYU_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
+    const field = castKitAction(GANYU_KIT.elementalBurst, createGanyuCombatant()).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick(
       createKitTestContext(createGanyuCombatant(), { characterIdCombatantMap: new Map(), kitEffectState }),

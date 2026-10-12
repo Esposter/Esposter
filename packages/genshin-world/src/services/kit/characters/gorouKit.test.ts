@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -11,7 +10,7 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createGorouKitBehaviour, GOROU_CHARACTER_ID } from "#src/services/kit/characters/gorouKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitField } from "#src/services/kit/effects/stepKitField";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
@@ -31,16 +30,10 @@ const createGorouCombatant = (characterId = GOROU_CHARACTER_ID): Combatant => ({
 });
 
 const checkIsField = (effect: KitEffect): effect is KitField => effect.kind === "field";
-// The effects an action's start adds, as the kit's effects hold them
-const castEffects = (action: KitAction, kitEffectState: KitEffectState = { effects: [] }): KitEffect[] => {
-  action.onStart?.(createKitTestContext(createGorouCombatant(), { kitEffectState }));
-  return kitEffectState.effects;
-};
-
 describe(createGorouKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
-    const crystalCollapse = castEffects(GOROU_KIT.elementalBurst).find(
+    const crystalCollapse = castKitAction(GOROU_KIT.elementalBurst, createGorouCombatant()).effects.find(
       (effect): effect is KitSummon => effect.kind === "summon",
     );
     const multipliers = [
@@ -61,7 +54,9 @@ describe(createGorouKitBehaviour, () => {
 
   test("the General's War Banner buffs the active character's DEF, and its Geo DMG from three Geo characters", () => {
     expect.hasAssertions();
-    const banner = castEffects(GOROU_KIT.elementalSkill).find((effect) => checkIsField(effect));
+    const banner = castKitAction(GOROU_KIT.elementalSkill, createGorouCombatant()).effects.find((effect) =>
+      checkIsField(effect),
+    );
     const combatant = createGorouCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
     banner?.onTick(
@@ -98,7 +93,9 @@ describe(createGorouKitBehaviour, () => {
 
   test("juuga's field moves with the body on the field", () => {
     expect.hasAssertions();
-    const field = castEffects(GOROU_KIT.elementalBurst).find((effect) => checkIsField(effect));
+    const field = castKitAction(GOROU_KIT.elementalBurst, createGorouCombatant()).effects.find((effect) =>
+      checkIsField(effect),
+    );
     if (field)
       stepKitField(
         field,
@@ -112,15 +109,15 @@ describe(createGorouKitBehaviour, () => {
   test("the General's War Banner is not placed while Juuga's field stands", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
-    castEffects(GOROU_KIT.elementalBurst, kitEffectState);
-    castEffects(GOROU_KIT.elementalSkill, kitEffectState);
+    castKitAction(GOROU_KIT.elementalBurst, createGorouCombatant(), kitEffectState);
+    castKitAction(GOROU_KIT.elementalSkill, createGorouCombatant(), kitEffectState);
 
     expect(kitEffectState.effects.filter((effect) => checkIsField(effect))).toHaveLength(1);
   });
 
   test("the crystal collapse's six ticks are set out at the cast, the first 2 seconds after it", () => {
     expect.hasAssertions();
-    const crystalCollapse = castEffects(GOROU_KIT.elementalBurst).find(
+    const crystalCollapse = castKitAction(GOROU_KIT.elementalBurst, createGorouCombatant()).effects.find(
       (effect): effect is KitSummon => effect.kind === "summon",
     );
 
