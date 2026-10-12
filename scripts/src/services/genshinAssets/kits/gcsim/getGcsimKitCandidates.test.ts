@@ -53,6 +53,46 @@ describe(getGcsimKitCandidates, () => {
     ).toStrictEqual([undefined, [1], undefined]);
   });
 
+  test("gives each level of a hold's hitmarks the hold's frames, one hold for each level", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        ["skillHoldFrames", toConstant(frames(80))],
+        ["skillHoldHitmarks", toConstant([[55, 55], [60]])],
+      ]),
+      filePaths: [],
+      folder: "razor",
+      queuedAttacks: [],
+      talentFile: "razor.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Razor",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Claymore,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      ["skillHolds.length", "skillHolds.0.action.animationFrames", "skillHolds.1.action.animationFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[2], [80], [80]]);
+  });
+
   test("reads a normal attack's strikes from a release list named otherwise, and its frames from the first state's list of strikes", () => {
     expect.hasAssertions();
 

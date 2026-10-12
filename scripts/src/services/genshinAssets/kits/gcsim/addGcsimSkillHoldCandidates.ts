@@ -25,6 +25,7 @@ export const addGcsimSkillHoldCandidates = (
     const levelHitmarks = Array.isArray(hitmarks?.value) ? hitmarks.value.filter((level) => Array.isArray(level)) : [];
     if (hitmarks !== undefined && levelHitmarks.length > 0)
       return levelHitmarks.map((level, levelIndex) => ({
+        framesName,
         hitmarks: { ...hitmarks, line: hitmarks.elementLines[levelIndex] ?? hitmarks.line, values: toGoNumbers(level) },
       }));
     const hitmarkValues = typeof hitmarks?.value === "number" ? [hitmarks.value] : undefined;
