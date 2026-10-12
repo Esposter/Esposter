@@ -43,7 +43,7 @@ const renderer = createGenshinRenderer(canvas);
 await renderer.init();
 const scene = new Scene();
 const camera = new PerspectiveCamera();
-const rampTexture = createRampTexture({ resolution: 64, softness: 0.08, terminator: 0.52 });
+const rampTexture = createRampTexture({ resolution: 64, shade: 0, softness: 0.08, terminator: 0.52 });
 const lightUniforms = createLightUniforms();
 scene.add(new Mesh(new TorusKnotGeometry(), createToonMaterial({ color: 0x9ed05a, lightUniforms, rampTexture })));
 const godraysLight = createGodraysLight(1024, 50);

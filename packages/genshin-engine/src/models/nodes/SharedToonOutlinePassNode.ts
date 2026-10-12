@@ -1,19 +1,26 @@
+import type { ToonEdge } from "#src/models/nodes/ToonEdge";
 import type { Material, NodeFrame, NodeMaterial, Renderer } from "three/webgpu";
 
+import { createOutlineMaterial } from "#src/models/nodes/createOutlineMaterial";
+import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
+import { float, vec4 } from "three/tsl";
 import { ToonOutlinePassNode } from "three/webgpu";
 
 // Three keys an outline material by the toon material it outlines and builds each one from scratch, though every one is
 // The same: the pass's own thickness, colour and alpha nodes, with nothing of the toon material read. So each toon
 // Material met for the first time paid a node build and often a pipeline mid-frame. One material serves them all, built
-// Once from the pass's nodes, and an object's skinned, instanced or morphed variant still compiles as its own pipeline
+// Once from the pass's nodes, and an object's skinned, instanced or morphed variant still compiles as its own pipeline.
+// A material with its own edge is outlined by one material per distinct edge, built once and shared the same way
 export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
-  declare _createMaterial: () => NodeMaterial;
   // One frame's draw answers every compile asked for before it
   #drawn?: PromiseWithResolvers<void>;
+  #edgeOutlineMaterials = new Map<string, NodeMaterial>();
   #outlineMaterial?: NodeMaterial;
 
-  // Every toon material is outlined by the one shared material, which three would build once per toon material given
-  _getOutlineMaterial(_originalMaterial: Material): NodeMaterial {
+  // A material with its own edge is outlined in that edge, and every other toon material by the one shared material
+  _getOutlineMaterial(originalMaterial: Material): NodeMaterial {
+    if (originalMaterial instanceof ToonNodeMaterial && originalMaterial.edge)
+      return this.#getEdgeOutlineMaterial(originalMaterial.edge);
     return this.#getSharedOutlineMaterial();
   }
 
@@ -38,11 +45,19 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     return undefined;
   }
 
-  #getSharedOutlineMaterial(): NodeMaterial {
-    // Three's own hook for building the outline material, which this pass answers once for every toon material
-    // oxlint-disable-next-line no-underscore-dangle -- three names its build hook _createMaterial
-    this.#outlineMaterial ??= this._createMaterial();
+  #getEdgeOutlineMaterial({ color, size }: ToonEdge): NodeMaterial {
+    const key = `${color.join()}:${size}`;
+    let edgeOutlineMaterial = this.#edgeOutlineMaterials.get(key);
+    if (edgeOutlineMaterial === undefined) {
+      const [red, green, blue, alpha] = color;
+      edgeOutlineMaterial = createOutlineMaterial(vec4(red, green, blue, alpha), this.thicknessNode.mul(float(size)));
+      this.#edgeOutlineMaterials.set(key, edgeOutlineMaterial);
+    }
+    return edgeOutlineMaterial;
+  }
 
+  #getSharedOutlineMaterial(): NodeMaterial {
+    this.#outlineMaterial ??= createOutlineMaterial(vec4(this.colorNode, this.alphaNode), this.thicknessNode);
     return this.#outlineMaterial;
   }
 }

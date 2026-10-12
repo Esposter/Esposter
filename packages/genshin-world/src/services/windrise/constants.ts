@@ -28,7 +28,7 @@ export const PLANT_DOME_SCALE: [number, number, number] = [0.4, 0.3, 0.4];
 // A plant prefab whose name holds this is a tree, drawn as the oak's impostor, and every other plant as a low dome
 export const TREE_PREFAB_NAME_PART = "Tree";
 // The ramp every material shades through: a narrow step, a little past the grazing angle
-export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.08, terminator: 0.52 };
+export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, shade: 0, softness: 0.08, terminator: 0.52 };
 // A haze thickest on the valley floor and gone a few hundred metres up, starting past the knoll so the oak stays clear
 export const FOG_DENSITY = 0.0024;
 export const FOG_HEIGHT_FALLOFF = 0.02;

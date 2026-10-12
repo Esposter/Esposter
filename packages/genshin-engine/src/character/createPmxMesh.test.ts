@@ -11,12 +11,17 @@ describe(createPmxMesh, () => {
     expect.hasAssertions();
 
     const pmxMaterial: PmxMaterial = {
+      ambientColor: [0, 0, 0],
       diffuseColor: [0, 0, 0, 0],
+      edgeColor: [0, 0, 0, 0],
+      edgeSize: 0,
       indexCount: 3,
       isDoubleSided: false,
       isOutlined: false,
       isToonShared: false,
       name: "",
+      specularColor: [0, 0, 0],
+      specularity: 0,
       sphereMode: PmxSphereMode.Disabled,
       sphereTextureIndex: -1,
       textureIndex: -1,
