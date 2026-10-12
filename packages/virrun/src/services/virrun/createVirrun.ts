@@ -10,8 +10,7 @@ import { resolvePrepareStep } from "#src/services/configuration/resolvePrepareSt
 import { persistWithCache } from "#src/services/exec/cache/persistWithCache";
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
-import { VIRRUN_SNAPSHOT_TEMP_PREFIXES } from "#src/services/exec/snapshot/constants";
-import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
+import { SETUP_COMMAND, VIRRUN_SNAPSHOT_TEMP_PREFIXES } from "#src/services/exec/snapshot/constants";
 import { createLease } from "#src/services/exec/snapshot/createLease";
 import { createPrepareLayer } from "#src/services/exec/snapshot/createPrepareLayer";
 import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";

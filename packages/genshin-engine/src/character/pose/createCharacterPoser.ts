@@ -1,4 +1,3 @@
-import type { CharacterPoseRotations } from "#src/models/character/CharacterPoseRotations";
 import type { Locomotion } from "#src/models/locomotion/Locomotion";
 import type { LocomotionPhase } from "#src/models/locomotion/LocomotionPhase";
 import type { Bone, SkinnedMesh } from "three";
@@ -37,8 +36,8 @@ const getCrossfadeWeight = (stateSeconds: number): number => {
 };
 
 // Drives a PMX model's standard bones from its body's state, once per frame. A state's pose cross-fades from the pose
-// the bones held when the state began, and a bone the model does not have is skipped. The rotations and the cross-fade
-// origin are allocated once, and the frame writes the bones in place, so no frame allocates a quaternion
+// The bones held when the state began, and a bone the model does not have is skipped. The rotations and the cross-fade
+// Origin are allocated once, and the frame writes the bones in place, so no frame allocates a quaternion
 export const createCharacterPoser = (skinnedMesh: SkinnedMesh): CharacterPoser => {
   const posedBones: PosedBone[] = [];
   for (const name of Object.values(MmdBoneName)) {

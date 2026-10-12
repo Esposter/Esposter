@@ -11,7 +11,7 @@ import { Operation } from "@esposter/shared";
 // One write target per file, each under the player's own staging name for its hash, so a file is uploaded whether or not
 // The account already keeps its bytes: the server reads what lands there before it refers to it. Each is held against the
 // Player's quota for its declared size, as a resource's staged save is
-export const generateAccountCharacterPackUploadSasUrls = async (
+export const generateAccountCharacterPackUploadSasUrls = (
   db: Context["db"],
   userId: string,
   { files }: GenerateCharacterPackUploadSasUrlsInput,

@@ -1,4 +1,6 @@
-import { type Object3D, SkinnedMesh } from "three";
+import type { Object3D } from "three";
+
+import { SkinnedMesh } from "three";
 
 // The first skinned mesh within an object, which is a PMX model's own mesh once its file has arrived
 export const findSkinnedMesh = (object: Object3D): SkinnedMesh | undefined => {

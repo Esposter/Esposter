@@ -5,6 +5,8 @@ import { describe, expect, test } from "vitest";
 
 describe(createLeafMaterial, () => {
   test("is never outlined, since the outline pass would draw a card's unmasked back face as a solid patch", () => {
+    expect.hasAssertions();
+
     const leafMaterial = createLeafMaterial({ lightUniforms: createLightUniforms(), rampTexture: new DataTexture() });
     expect({
       toonFlag: leafMaterial.isMeshToonMaterial,

@@ -10,7 +10,6 @@ import {
   POSE_SHOULDER_BREATH_RADIANS,
 } from "#src/character/pose/constants";
 import { MmdBoneName } from "#src/models/character/MmdBoneName";
-import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import { Quaternion, Vector3 } from "three";
 
 const TAU = Math.PI * 2;
@@ -25,8 +24,8 @@ const setBoneRotation = (rotation: Quaternion, xAngle: number, zAngle: number): 
   rotation.multiplyQuaternions(armXRotation, armZRotation);
 };
 // Writes each standard bone's rotation for the body's state: the arms lowered from the T, the chest and shoulders
-// breathing in every state, and a gait's legs, knees, arms and elbows swinging opposite, with the air's fixed stances
-// for the jump, the fall, the plunge and the glide. The PMX places 左 at +x, so a left arm's rest turns it down the other
+// Breathing in every state, and a gait's legs, knees, arms and elbows swinging opposite, with the air's fixed stances
+// For the jump, the fall, the plunge and the glide. The PMX places 左 at +x, so a left arm's rest turns it down the other
 // Way from a right one's. A state with no pose of its own stands idle
 export const computeCharacterPose = (
   { elapsed, state, stridePhase }: CharacterPoseInput,

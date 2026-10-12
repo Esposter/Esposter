@@ -18,7 +18,7 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   declare thicknessNode: Node<"float">;
   // One frame's draw answers every compile asked for before it
   #drawn?: PromiseWithResolvers<void>;
-  #edgeOutlineMaterials = new Map<string, NodeMaterial>();
+  readonly #edgeOutlineMaterials = new Map<string, NodeMaterial>();
   #outlineMaterial?: NodeMaterial;
 
   // A material with its own edge is outlined in that edge, and every other toon material by the one shared material
@@ -50,7 +50,7 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   }
 
   #getEdgeOutlineMaterial({ color, size }: ToonEdge): NodeMaterial {
-    const key = `${color.join()}:${size}`;
+    const key = `${color.join(",")}:${size}`;
     let edgeOutlineMaterial = this.#edgeOutlineMaterials.get(key);
     if (edgeOutlineMaterial === undefined) {
       const [red, green, blue, alpha] = color;

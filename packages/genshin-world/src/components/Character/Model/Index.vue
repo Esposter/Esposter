@@ -1,7 +1,15 @@
+<script lang="ts">
+import type { Texture } from "three";
+
+// Only a pack's own textures are decoded from a bitmap, so the world's ramps, shared by every model, are left alive
+const checkIsPackTexture = (texture: null | Texture | undefined): texture is Texture<ImageBitmap> =>
+  texture?.image instanceof ImageBitmap;
+</script>
+
 <script setup lang="ts">
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { LightUniforms, ToonNodeMaterial } from "genshin-engine";
-import type { BufferGeometry, DataTexture, SkinnedMesh, Texture } from "three";
+import type { BufferGeometry, DataTexture, SkinnedMesh } from "three";
 
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
 
@@ -20,12 +28,9 @@ const disposeMesh = ({ geometry, material, skeleton }: SkinnedMesh<BufferGeometr
   geometry.dispose();
   skeleton.dispose();
   for (const characterMaterial of material) characterMaterial.dispose();
-  // A texture several materials draw with is released once, its decoded image closed with it, which three leaves open.
-  // Only a pack's own textures are decoded from a bitmap, so the world's ramps, shared by every model, are left alive
-  const checkIsPackTexture = (texture: null | Texture | undefined): texture is Texture<ImageBitmap> =>
-    texture?.image instanceof ImageBitmap;
+  // A texture several materials draw with is released once, its decoded image closed with it, which three leaves open
   const packTextures = material.flatMap(({ gradientMap, map, sphereMap }) => [gradientMap, map, sphereMap]);
-  for (const texture of new Set(packTextures.filter(checkIsPackTexture))) {
+  for (const texture of new Set(packTextures.filter((packTexture) => checkIsPackTexture(packTexture)))) {
     texture.dispose();
     texture.image.close();
   }

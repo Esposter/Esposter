@@ -116,7 +116,7 @@ export const useCharacterPacks = ({
           console.error(error);
         },
       );
-      await getResultAsync(async () => removeAccountCharacterPack?.(characterId)).match(noop, (error) => {
+      await getResultAsync(() => Promise.resolve(removeAccountCharacterPack?.(characterId))).match(noop, (error) => {
         console.error(error);
       });
     },

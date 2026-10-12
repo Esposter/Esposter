@@ -8,6 +8,8 @@ import { ToonNodeMaterial } from "genshin-engine";
 import { DoubleSide, Texture } from "three";
 import { describe, expect, test } from "vitest";
 
+const createMaterialFactory: WitnessMaterialFactory = () => new ToonNodeMaterial({}, false);
+
 describe("createWitnessMaterial", () => {
   const DIFFUSE_NAME = "Stages_Unique_CyTree01_Leaf_Diffuse";
   const CUTOFF = 0.5;
@@ -20,9 +22,10 @@ describe("createWitnessMaterial", () => {
     shader: LEAF_SHADER,
     textures: { [WitnessProperty.MainTexture]: { name: DIFFUSE_NAME, offset: [0, 0], scale: [1, 1] } },
   });
-  const createMaterialFactory: WitnessMaterialFactory = () => new ToonNodeMaterial({}, false);
 
   test("cuts a leaf card by its diffuse texture's alpha alone, drawn from both sides", () => {
+    expect.hasAssertions();
+
     const material = createWitnessMaterial(
       createLeafFixture(),
       new Map([[DIFFUSE_NAME, new Texture()]]),

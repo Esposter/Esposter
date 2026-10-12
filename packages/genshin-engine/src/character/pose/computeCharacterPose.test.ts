@@ -40,7 +40,10 @@ describe(computeCharacterPose, () => {
   test("swings each leg against the arm on its own side, and bends a knee as its leg passes under the body", () => {
     expect.hasAssertions();
 
-    const { armSwingRadians, kneeBendRadians, legSwingRadians } = POSE_GAITS[LocomotionState.Walk]!;
+    const walkGait = POSE_GAITS[LocomotionState.Walk];
+    if (!walkGait) throw new Error("Walk has no gait");
+
+    const { armSwingRadians, kneeBendRadians, legSwingRadians } = walkGait;
     const forward = posedRotations(LocomotionState.Walk, Math.PI / 2);
     const passing = posedRotations(LocomotionState.Walk, 0);
 

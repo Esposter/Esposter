@@ -66,8 +66,8 @@ export const STANDARD_WISH_CHARACTER_IDS: readonly number[] = [
   10_000_044, 10_000_048, 10_000_077, 10_000_064,
 ];
 // The standard wish's five-star weapons by the game's ids, as the wiki lists them: Amos' Bow, Aquila Favonia, Lost Prayer to
-// the Sacred Winds, Primordial Jade Winged-Spear, Skyward Atlas, Skyward Blade, Skyward Harp, Skyward Pride, Skyward Spine
-// and Wolf's Gravestone
+// The Sacred Winds, Primordial Jade Winged-Spear, Skyward Atlas, Skyward Blade, Skyward Harp, Skyward Pride, Skyward Spine
+// And Wolf's Gravestone
 export const STANDARD_WISH_FIVE_STAR_WEAPON_IDS: readonly number[] = [
   15_502, 11_501, 14_502, 13_505, 14_501, 11_502, 15_501, 12_501, 13_502, 12_502,
 ];
