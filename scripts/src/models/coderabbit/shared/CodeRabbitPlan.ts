@@ -1,8 +1,0 @@
-export enum CodeRabbitPlan {
-  // The fourteen-day Advanced trial
-  AdvancedTrial = "AdvancedTrial",
-  // The paid $24/month tier
-  Essentials = "Essentials",
-  // The free tier for public repositories, whose file limit scales with the repository's popularity
-  OpenSource = "OpenSource",
-}

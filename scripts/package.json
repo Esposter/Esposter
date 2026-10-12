@@ -33,10 +33,6 @@
   "scripts": {
     "ai:ci:watch": "tsx src/ci/watch/index.ts",
     "ai:citations:sync": "node src/citations/sync/index.ts",
-    "ai:coderabbit:collect": "tsx src/coderabbit/collect/index.ts",
-    "ai:coderabbit:feedback": "tsx src/coderabbit/feedback/index.ts",
-    "ai:coderabbit:guard": "tsx src/coderabbit/guard/index.ts",
-    "ai:coderabbit:state": "tsx src/coderabbit/state/index.ts",
     "ai:dependencies:score": "tsx src/dependencies/score/index.ts",
     "ai:fleet:data": "tsx src/fleet/data/index.ts",
     "ai:fleet:claim": "tsx src/fleet/claim/index.ts",

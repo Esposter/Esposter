@@ -6,6 +6,9 @@ import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
+export const MAIN_BRANCH = "main";
+// The queue every change lands on, and the branch `main` is the reviewed prefix of
+export const QUEUE_BRANCH = "ai/queue";
 export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 // What a spawned `git` or `gh` may print: a paginated slurp of a long-lived pull request's comments, a log of
 // Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
@@ -30,8 +33,8 @@ export const MAX_WIKI_TITLES_PER_QUERY = 50;
 export const WIKI_FILE_CONCURRENCY = 8;
 // How long any request a script makes may take (`fetchJson`) — the npm registry and the GitHub API alike
 export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
-// `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the collector
-// Resolves its merge conflict, the outdated report parses it, its benchmark reads it — and a literal repeated per
+// `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the lockfile conflict
+// Resolver, the outdated report parses it, its benchmark reads it — and a literal repeated per
 // Consumer is one rename away from a script that reads a file that no longer exists.
 export const LOCKFILE = "pnpm-lock.yaml";
 // The empty tree, the same in every repository: a commit pointing at it carries its message alone, and as an attribute
@@ -50,13 +53,13 @@ export const NPM_LOCKFILE = "package-lock.json";
 // Is held where and why (`dependency-updates` skill), which is why the outdated report reads it too.
 export const RENOVATE_CONFIGURATION_FILE = "renovate.json";
 // ASCII control characters as the record and field separators of a `git log` output a script splits — the
-// Collector's answered commits, the ledger coverage's trailers — since a subject and a body are free text.
+// The sweep ledgers' commit trailers — since a subject and a body are free text.
 // Written as escapes because a tool rewriting the line would silently drop the characters themselves.
 export const RECORD_SEPARATOR = "\u001E";
 
 export const FIELD_SEPARATOR = "\u001F";
 // An ANSI SGR sequence — the colours a check prints to a terminal — as an escape for the same reason. Stripped
-// Wherever a script measures or quotes such output: the outdated report's column widths, the collector's log
+// Wherever a script measures or quotes such output: the outdated report's column widths, a failed check's log
 // Excerpt.
 // oxlint-disable-next-line no-control-regex, typescript/no-inferrable-types -- the escape is the sequence's opener; `isolatedDeclarations` demands the annotation
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;

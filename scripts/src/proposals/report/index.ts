@@ -10,8 +10,8 @@ timeCommand("ai:proposals:report");
 
 // `pnpm ai:proposals:report` — every open proposal sized from what its page already says, cheapest first, then the
 // Areas a ship has moved since their last product-review pass. Nothing it prints is kept anywhere by hand
-// (`building-proposals` skill, `references/choosing.md`). Both logs read the committer date: every commit reaches
-// `develop` by cherry-pick, which keeps its author date, so only the commit date follows history.
+// (`building-proposals` skill, `references/choosing.md`). Both logs read the committer date, the one a rebase onto the
+// Queue moves and an author date never does, so only the committer date follows history.
 for (const { blockerRoutes, hasKeyFiles, keyFileCount, path, signals } of readProposalSummaries()) {
   const size = hasKeyFiles ? `${keyFileCount} files` : "unsized";
   const costs = signals.length > 0 ? ` · ${signals.join(" · ")}` : "";

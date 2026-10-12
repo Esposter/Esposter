@@ -1,4 +1,4 @@
-import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { QUEUE_BRANCH } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";

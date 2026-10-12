@@ -1,7 +1,7 @@
-import { TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
-import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
+import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { readCrlfStoredPaths } from "#src/services/shared/readCrlfStoredPaths";
 import { runGit } from "#src/services/shared/runGit";
+import { setupFixtureRepository } from "#src/services/shared/setupFixtureRepository.test";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 

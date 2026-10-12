@@ -1,6 +1,6 @@
-import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { PARITY_BUILD_DIRECTORY, PARITY_BUILD_TASK } from "#src/services/genshinParity/shared/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { spawnPnpm } from "#src/services/shared/spawnPnpm";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Builds the parity page for production into its folder in the world package, through the root `vite.config.ts`'s

@@ -99,7 +99,7 @@ const mismatches = [
 ];
 
 const renovateRules = getRenovateRules(renovateJson);
-// A reference `renovate.json` switches off is one the bot never pins either — the collector's own workflow at a branch
+// A reference `renovate.json` switches off is one the bot never pins either — the review's own workflow at a branch
 const unpinnedReferences = referenceScan.unpinned.filter(
   ({ packageName }) => !getDisablingRule(packageName, renovateRules),
 );

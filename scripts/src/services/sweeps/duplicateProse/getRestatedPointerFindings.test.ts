@@ -2,8 +2,8 @@ import { getRestatedPointerFindings } from "#src/services/sweeps/duplicateProse/
 import { describe, expect, test } from "vitest";
 
 describe(getRestatedPointerFindings, () => {
-  const ARGUMENT = "the collector holds the overflow for the next window rather than hiding the work from review";
-  const OWNER_PATH = "apps/web/content/docs/infra/review-collector/index.md";
+  const ARGUMENT = "the queue holds the overflow for the next run rather than hiding the work from review";
+  const OWNER_PATH = "apps/web/content/docs/infra/review.md";
 
   test("reports a settled line restating a page it does not point at", () => {
     expect.hasAssertions();
@@ -11,12 +11,12 @@ describe(getRestatedPointerFindings, () => {
     expect(
       getRestatedPointerFindings([
         {
-          path: ".agents/skills/coderabbit/SKILL.md",
+          path: ".agents/skills/example/SKILL.md",
           text: `## Settled — do not re-propose\n\n- **Excluding files.** ${ARGUMENT}.\n`,
         },
-        { path: OWNER_PATH, text: `# Review Collector\n\nRejected: excluding files. ${ARGUMENT}.\n` },
+        { path: OWNER_PATH, text: `# Review\n\nRejected: excluding files. ${ARGUMENT}.\n` },
       ]).map(({ otherPath, path }) => `${path} → ${otherPath}`),
-    ).toStrictEqual([".agents/skills/coderabbit/SKILL.md → apps/web/content/docs/infra/review-collector/index.md"]);
+    ).toStrictEqual([".agents/skills/example/SKILL.md → apps/web/content/docs/infra/review.md"]);
   });
 
   test("allows a settled line sharing a run with the page it points at", () => {
@@ -25,10 +25,10 @@ describe(getRestatedPointerFindings, () => {
     expect(
       getRestatedPointerFindings([
         {
-          path: ".agents/skills/coderabbit/SKILL.md",
+          path: ".agents/skills/example/SKILL.md",
           text: `## Settled — do not re-propose\n\n- **Excluding files.** ${ARGUMENT} (\`${OWNER_PATH}\`).\n`,
         },
-        { path: OWNER_PATH, text: `# Review Collector\n\nRejected: excluding files. ${ARGUMENT}.\n` },
+        { path: OWNER_PATH, text: `# Review\n\nRejected: excluding files. ${ARGUMENT}.\n` },
       ]),
     ).toStrictEqual([]);
   });
@@ -38,8 +38,8 @@ describe(getRestatedPointerFindings, () => {
 
     expect(
       getRestatedPointerFindings([
-        { path: ".agents/skills/coderabbit/SKILL.md", text: `# CodeRabbit\n\n${ARGUMENT}.\n` },
-        { path: OWNER_PATH, text: `# Review Collector\n\n${ARGUMENT}.\n` },
+        { path: ".agents/skills/example/SKILL.md", text: `# Example\n\n${ARGUMENT}.\n` },
+        { path: OWNER_PATH, text: `# Review\n\n${ARGUMENT}.\n` },
       ]),
     ).toStrictEqual([]);
   });

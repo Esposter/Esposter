@@ -2,7 +2,6 @@ import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
 import { formatResumeRows } from "#src/services/resume/formatResumeRows";
 import { getHoldItems } from "#src/services/resume/getHoldItems";
 import { readClaimItems } from "#src/services/resume/readClaimItems";
-import { readCollectorItems } from "#src/services/resume/readCollectorItems";
 import { readHoldFiles } from "#src/services/resume/readHoldFiles";
 import { readPluginItems } from "#src/services/resume/readPluginItems";
 import { readQueueItems } from "#src/services/resume/readQueueItems";
@@ -34,7 +33,6 @@ await runCommand(
             throw error;
           },
         );
-      const collector = readResumeRow("collector", readCollectorItems);
       const rows = await Promise.all([
         tree,
         queue,
@@ -43,7 +41,6 @@ await runCommand(
         readResumeRow("holds", () => getHoldItems(readHoldFiles(), requireClaimedRefs())),
         readResumeRow("plugins", readPluginItems),
         readResumeRow("watcher", readWatcherItems),
-        collector,
       ]);
       for (const line of formatResumeRows(rows)) console.info(line);
       if (rows.some(({ error, items }) => error !== "" || items.some(({ action }) => action !== "")))

@@ -8,7 +8,7 @@ import {
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { spawn } from "node:child_process";
 
-// Asynchronous rather than the collector's `spawnPnpm`, because the registry checks run beside it and a
+// Asynchronous rather than `spawnPnpm`, because the registry checks run beside it and a
 // Synchronous child would hold their responses until it exited. The child owns its own timeout: on expiry it is
 // Killed and `close` reports the signal in place of a status. A promise settles once, so `error` followed by
 // `close` needs no guard.

@@ -92,22 +92,19 @@ Scope monorepo commits where helpful: `feat(db-schema): add createdAt to posts`.
 
 A contribution is a pull request from an `external/*` branch against `ai/queue`. A branch's name says whose it
 is — `external/` is the one prefix a collaborator may create, everything else is a maintainer's, the review
-pipeline's or Renovate's — and `ai/queue` is the pipeline's intake: never `main`, whose only pull request is the
-release, since CodeRabbit reviews every pull request against `main` on arrival and each one spends the hourly
-slot the release lives on. Why the names are the rule, and how the pipeline reviews your work once it is on the
+pipeline's or Renovate's — and `ai/queue` is the pipeline's intake: never `main`, which moves only when the review
+fast-forwards it to a reviewed commit. Why the names are the rule, and how the pipeline reviews your work once it is on the
 queue: [branch namespaces](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/infra/branch-namespaces.md).
 
 ```mermaid
 flowchart LR
-  E[external/my-feature<br/>off develop] -->|pull request| Q[(ai/queue)]
-  Q -->|squash merge by a maintainer<br/>title and body become the commit| C{{Review collector}}
-  C -->|a capped window| D[(develop)]
-  D -->|release pull request<br/>reviewed by CodeRabbit| M[(main)]
+  E[external/my-feature<br/>off ai/queue] -->|pull request| Q[(ai/queue)]
+  Q -->|squash merge by a maintainer<br/>title and body become the commit| R[Review]
+  R -->|window reviewed: fast-forward| M[(main)]
 ```
 
-1. Create a branch from `develop` under `external/` — `git checkout -b external/my-feature develop` — in the
-   repository if you have write access, else in your fork. `develop` never runs ahead of `ai/queue`, so the
-   pull request shows your commits alone.
+1. Create a branch from `ai/queue` under `external/` — `git checkout -b external/my-feature origin/ai/queue` — in the
+   repository if you have write access, else in your fork. The pull request then shows your commits alone.
 2. Make your changes and ensure all checks pass:
    ```bash
    vp run lint:fix && vp run typecheck && pnpm test <paths your change touched>

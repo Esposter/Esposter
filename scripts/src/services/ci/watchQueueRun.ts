@@ -3,6 +3,7 @@ import type { CiRun } from "#src/models/ci/CiRun";
 import {
   BRANCH_RUN_LIMIT,
   CI_RUN_FIELDS,
+  CI_WORKFLOW_FILE,
   RUN_CREATION_ATTEMPTS,
   RUN_CREATION_WAIT,
   RUN_WATCH_INTERVAL_SECONDS,
@@ -10,8 +11,8 @@ import {
 } from "#src/services/ci/constants";
 import { getErrorLines } from "#src/services/ci/getErrorLines";
 import { selectRunToWatch } from "#src/services/ci/selectRunToWatch";
-import { CI_WORKFLOW_FILE, QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { runToolAsync } from "#src/services/resume/runToolAsync";
+import { QUEUE_BRANCH } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResultAsync } from "@esposter/shared";
 import { setTimeout as sleep } from "node:timers/promises";

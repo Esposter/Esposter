@@ -1,8 +1,7 @@
-import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
-import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
-import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { listProducerCommits } from "#src/services/producerStamp/listProducerCommits";
+import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { runGit } from "#src/services/shared/runGit";
+import { setupFixtureRepository } from "#src/services/shared/setupFixtureRepository.test";
 import { describe, expect, test } from "vitest";
 
 describe(listProducerCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
@@ -11,14 +10,10 @@ describe(listProducerCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // Share a subject
   const producerPath = TEST_FILENAME;
 
-  test("lists from the replay of a stamp's commit the queue rewrote", () => {
+  test("lists the commits on a stamp's commit's ancestry since it", () => {
     expect.hasAssertions();
 
-    const rootSha = readSha("HEAD");
     const stampSha = commitFile(producerPath, "");
-    switchTo(rootSha);
-    commitFile(`${TEST_FILENAME}.ts`, "");
-    pickCommit(stampSha, getCwd());
     const laterSha = commitFile(producerPath, " ");
     const laterShortSha = runGit(["rev-parse", "--short", laterSha], getCwd()).trim();
 
@@ -28,7 +23,7 @@ describe(listProducerCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
   });
 
-  test("reads the recent window for a commit that shares a branch commit's subject but not its change", () => {
+  test("reads the recent window for a commit HEAD does not hold", () => {
     expect.hasAssertions();
 
     const rootSha = readSha("HEAD");

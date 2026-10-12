@@ -1,3 +1,5 @@
+// The workflow file a push to `ai/queue` runs, and the run `watchQueueRun` follows
+export const CI_WORKFLOW_FILE = "CI.yaml";
 // The conclusions of a run that never reached a verdict: `ai/queue` keeps only the newest run waiting behind one in
 // Progress, so a run superseded while it waited is skipped or cancelled, and the run after it carries its commit too
 export const UNSETTLED_CONCLUSIONS: readonly string[] = ["cancelled", "skipped"];

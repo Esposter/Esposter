@@ -1,8 +1,8 @@
-import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { REMOTE_QUEUE_REF } from "#src/services/fleet/constants";
 import { readComputeQueue } from "#src/services/fleet/readComputeQueue";
 import { readQueueFiles } from "#src/services/fleet/readQueueFiles";
+import { QUEUE_BRANCH } from "#src/services/shared/constants";
+import { setupFixtureRepository } from "#src/services/shared/setupFixtureRepository.test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";

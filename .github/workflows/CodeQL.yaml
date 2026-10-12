@@ -3,7 +3,7 @@ name: 🔎 CodeQL
 # That is the release and every renovate bump, and a full analysis per bump finds nothing a scan of the same tree
 # On `main` does not. So `main` is what is scanned, plus a weekly run, because a query pack published after the
 # Last release finds what the release's own scan could not have. An open alert on `main` is a red run here, which
-# The review collector answers as it answers a red CI (docs: infra/review-collector/repair).
+# A red here is fixed on `ai/queue` like any red CI (AGENTS.md, finishing step 6).
 
 on:
   push:
@@ -57,7 +57,7 @@ jobs:
 
   # `analyze` uploads its findings and exits 0 whatever they are, so an alert is a fact on the Security tab and
   # Nothing else. This gate reads them back for the ref just scanned and fails on any still open — a dismissed one
-  # Is a person's decision and stays green — so that an alert is a red run the collector's repairer answers, and the
+  # Is a person's decision and stays green — so that an alert is a red run fixed on `ai/queue`, and the
   # Failing step's log is the list it is handed. `analyze` waits for the upload's processing by default, so the
   # Alerts are current by the time this job starts.
   alerts:

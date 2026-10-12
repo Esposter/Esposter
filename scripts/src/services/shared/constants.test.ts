@@ -10,10 +10,10 @@ describe("constants", () => {
         "gh: No server is currently available to service your request. Sorry about that. Please try resubmitting your request and contact us if the problem persists. (HTTP 503)",
     },
     { isOutage: true, message: "HTTP 502: Bad Gateway (https://api.github.com/graphql)" },
-    // `readCheckStatus` throws `gh pr checks`'s line wrapped in its own error
+    // A GraphQL error wrapped in the tool's own error line, which the pattern still reads
     {
       isOutage: true,
-      message: "Invalid operation: Read, name: coderabbit, HTTP 502: Bad Gateway (https://api.github.com/graphql)",
+      message: "Invalid operation: Read, name: esposter, HTTP 502: Bad Gateway (https://api.github.com/graphql)",
     },
     {
       isOutage: true,

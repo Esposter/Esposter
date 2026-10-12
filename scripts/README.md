@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-The repository's own tooling — the workspace dependency graph, the outdated-dependency report, the custom oxlint plugins, the sweep scans, the CodeRabbit review tooling and the cross-platform launcher. It is the workspace's machinery rather than part of the product, which is why it sits at the repository root beside `.github/` and `.agents/` instead of under `apps/` or `packages/`.
+The repository's own tooling — the workspace dependency graph, the outdated-dependency report, the custom oxlint plugins, the sweep scans and the cross-platform launcher. It is the workspace's machinery rather than part of the product, which is why it sits at the repository root beside `.github/` and `.agents/` instead of under `apps/` or `packages/`.
 
 ## Table of Contents
 
@@ -22,7 +22,6 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `dependencyGraph/`      | Renders `dependency-graph.svg` from pnpm's resolved workspace edges, roles read off the edges rather than off a list                                                                                                                           |
 | `outdatedDependencies/` | Checks every manifest, image, action and runner against the catalog, the lockfile and its source, and prints the mismatches                                                                                                                    |
 | `oxlint/`               | The custom oxlint JS plugins `oxlint.config.ts` loads by path                                                                                                                                                                                  |
-| `coderabbit/`           | The review-feedback, probe, window and exclusion readers behind each `ai:coderabbit:*` script (`coderabbit` skill)                                                                                                                             |
 | `sweeps/`               | The find recipes behind each `ai:sweep:*` script, one per ledger scan (`sweeps` skill)                                                                                                                                                         |
 | `updateNode/`           | Bumps the node pin and hands installation to `vp env`                                                                                                                                                                                          |
 | `voiceMatch/`           | The reference selection — every character's story lines measured off the wiki, the most typical line chosen and its clone scored, generated into the plugin as one map (`apps/web/content/docs/infra/claude-interface/reference-selection.md`) |

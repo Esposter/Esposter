@@ -21,7 +21,7 @@ describe(runGit, () => {
   });
 
   // Git reads a repository selector from the environment ahead of the cwd, so a hook's exported one would run
-  // Every call of the collector — the fixture repository's commits included — against the wrong repository, and
+  // Every call of a script — the fixture repository's commits included — against the wrong repository, and
   // An ambient object store would leave the objects it writes there rather than in the repository it named
   test("answers about the cwd while the environment names another repository", () => {
     expect.hasAssertions();
