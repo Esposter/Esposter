@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MenuIconGlyph } from "#src/models/menu/MenuIconGlyph";
 
+import MenuGlyphPaths from "#src/components/Menu/GlyphPaths/Index.vue";
 import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 
 interface Props {
@@ -19,7 +20,7 @@ const { glyph } = defineProps<Props>();
     :style="getMenuGlyphStyle(glyph)"
     :viewBox="`0 0 ${glyph.width} ${glyph.height}`"
   >
-    <path v-for="(path, index) of glyph.paths" :key="index" :d="path" />
+    <MenuGlyphPaths :glyph />
   </svg>
 </template>
 

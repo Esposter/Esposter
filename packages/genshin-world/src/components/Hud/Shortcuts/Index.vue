@@ -2,6 +2,7 @@
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
+import MenuGlyphPaths from "#src/components/Menu/GlyphPaths/Index.vue";
 import { HUD_SHORTCUTS } from "#src/services/hud/constants";
 import { MenuEntryGlyphMap } from "#src/services/menu/MenuEntryGlyphMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
@@ -33,7 +34,7 @@ const shortcuts = HUD_SHORTCUTS.map(({ icon, inputAction, labelKey }) => ({
           :style="{ '--glyph-height': glyph.height, '--glyph-width': glyph.width }"
           :viewBox="`0 0 ${glyph.width} ${glyph.height}`"
         >
-          <path v-for="(path, index) of glyph.paths" :key="index" :d="path" />
+          <MenuGlyphPaths :glyph />
         </svg>
       </button>
     </li>

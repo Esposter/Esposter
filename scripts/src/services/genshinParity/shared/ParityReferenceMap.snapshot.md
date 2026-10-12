@@ -57,7 +57,7 @@ committed.
 | `map-overlay-jueyun` | `MapOverlay` | 56.51% | 0.123 | 38.80% | 0.7746 |
 | `mondstadt-city-location` | `WorldScreen` | 26.66% | 0.292 | 22.43% | 0.7549 |
 | `nasha-town-location` | `WorldScreen` | 29.69% | 0.238 | 24.60% | 0.7627 |
-| `paimon-menu` | `MenuPaimon` | 5.42% | 0.905 | 3.64% | 0.2244 |
+| `paimon-menu` | `MenuPaimon` | 5.16% | 0.904 | 3.48% | 0.2170 |
 | `people-of-the-springs-location` | `WorldScreen` | 25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
 | `quest-screen` | `QuestScreen` | 44.36% | 0.406 | 40.91% | 0.8054 |
