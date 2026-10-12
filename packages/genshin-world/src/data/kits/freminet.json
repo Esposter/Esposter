@@ -1,13 +1,13 @@
 {
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 86 },
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
+  "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 86 },
+  "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.4 }
   },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 42 },
-  "chargedAttack.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
+  "chargedAttack.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 46 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
