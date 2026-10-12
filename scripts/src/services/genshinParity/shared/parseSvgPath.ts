@@ -14,8 +14,9 @@ export interface SvgPathSegment {
 
 const COMMAND_REGEX = /[A-Za-z]/u;
 const FLAG_REGEX = /[01]/u;
-const NUMBER_REGEX = /[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/uy;
-const NUMBERS_REGEX = /[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/gu;
+const NUMBER_SOURCE = String.raw`[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?`;
+const NUMBER_REGEX = new RegExp(NUMBER_SOURCE, "uy");
+const NUMBERS_REGEX = new RegExp(NUMBER_SOURCE, "gu");
 const SEPARATOR_REGEX = /[\s,]/u;
 
 // The decimals a number needs once its exponent is written out, so 7e-3 needs three and 0.5 needs one
