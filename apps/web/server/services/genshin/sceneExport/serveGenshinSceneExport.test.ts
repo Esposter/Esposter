@@ -12,11 +12,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-// A component holding an avatar alone, with its manifest, its binary and a texture its manifest names
-const AVATAR_COMPONENT = `${TEST_FILENAME}-avatar`;
-const TEXTURE_PATH = `Texture2D/${TEST_FILENAME}.png`;
-
 describe(serveGenshinSceneExport, () => {
+  // A component holding an avatar alone, with its manifest, its binary and a texture its manifest names
+  const AVATAR_COMPONENT = `${TEST_FILENAME}-avatar`;
+  const TEXTURE_PATH = `Texture2D/${TEST_FILENAME}.png`;
   let directory = "";
 
   beforeEach(async () => {
