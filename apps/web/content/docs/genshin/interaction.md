@@ -26,6 +26,7 @@ flowchart TD
   ACT -->|"a drop"| PICK["A currency into the wallet, an item into the bag, the rest left on the ground"]
   ACT -->|"a resident"| TALK["Their talk begins"]
   F -->|"held, each repeat interval"| REP["Pick up the selected item, or the first item"]
+  P["A row pressed: a tap, or a click with the cursor shown"] -->|"selects its thing, taps Interact"| F
 ```
 
 - **Five kinds.** `InteractionKind` is what acting on a thing does, and so its row's icon: `PickUp` takes an item into the [inventory](/docs/genshin/inventory), `Open` opens a chest, `Talk` starts a character's dialogue, `Read` shows a book, a notice or a sign, and `Activate` unlocks a waypoint for the map. A row's words are the thing's own name in the reader's language. The kind lives in `genshin-interface` beside the prompt list that draws it, and an `Interactable` in the world is an `InteractionPrompt` with a place.
@@ -35,6 +36,7 @@ flowchart TD
 - **The window scrolls only as far as it must.** The list shows `INTERACTION_WINDOW_SIZE` rows. Each frame the window keeps the last frame's first row unless the selection has moved out of it, and then scrolls just far enough to show it again, never past the last row.
 - **The wheel steps the rows while more than one shows.** `stepInteractionSelection` moves the selection a row down the list for each notch of a positive step and up for a negative one, stopping at either end without wrapping. `useInteraction` takes the wheel's notches that way and spends them, so the camera does not zoom; with one row or none the wheel zooms the camera as before. The window follows in the same frame.
 - **A press acts on the selected row.** F acts once on the selected row: a drop is picked up, and a resident's row begins their talk, which the world opens as a screen over itself ([dialogue](/docs/genshin/dialogue)).
+- **A row presses itself.** Each row's pill is a button: a tap on a touch screen, or a click once Left Alt shows the cursor ([follow camera](/docs/genshin/follow-camera)), selects its thing (`selectInteractable`) and taps Interact (`tapActionKey`), so it acts as F on that row would, in the same frame's read of the input. A touch screen has no key, so its rows carry no cap and none is drawn selected: each pill stands in the cap's place, 52 high on a 74 pitch, as the English mobile client's pickup in `hud-world-pickup` measures.
 - **A held F repeats its pick up.** While Interact stays held after its press, `getHeldPickUp` is picked up once each `INTERACTION_HELD_REPEAT_SECONDS`: the selected row when it is an item, else the first item in the list. A repeat never opens, talks, reads or activates, since each of those leaves the world for a screen.
 - **F is the input's.** Pick Up and Interact are `InputAction.Interact` in the engine's `InputActionBindingMap`, on F, X on an Xbox controller and Square on a PlayStation one, as the game's defaults have them. Nothing listens for the key itself.
 - **The list is drawn over the world.** `Interaction/PromptList` draws the window's slice through `genshin-interface`'s `InteractionPrompts`, in the HUD's `prompts` slot, so it hides wherever the HUD does. The composable hands its prompts on only when their rows, selection or window changed, so a still player re-renders nothing.
@@ -82,7 +84,7 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 | `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD 139 units right of the centre                   |
 | `packages/genshin-world/src/components/Hud/Screen/Index.vue`                   | The `prompts` slot the list is drawn in                                             |
 | `packages/genshin-interface/src/models/InteractionKind.ts`                     | The five kinds of interaction                                                       |
-| `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`       | The prompt list's rows, the selected one marked with F                              |
+| `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`       | The rows as buttons, F's cap on the selected one, and none on touch                 |
 
 ## Notes
 

@@ -12,7 +12,8 @@ import { shallowRef } from "vue";
 
 // The prompts beside the character, read each frame from what is in reach of its body. The rows, the selection and the
 // Window are handed on only when one of them changed, so a still player re-renders nothing. A press acts on the selected
-// Row, and while Interact stays held each interval picks up what a held F picks up
+// Row, and while Interact stays held each interval picks up what a held F picks up. A row pressed itself is selected, as
+// The wheel selects one, so the Interact tapped with it acts on that row
 export const useInteraction = (getInteractables: () => Interactable[], body: Object3D) => {
   const interactionPrompts = shallowRef<InteractionPrompts>({ interactables: [], selectedId: "", windowStart: 0 });
   let heldSeconds = 0;
@@ -58,5 +59,9 @@ export const useInteraction = (getInteractables: () => Interactable[], body: Obj
     return getHeldPickUp(prompts);
   };
 
-  return { interactionPrompts, readInteraction };
+  const selectInteractable = (selectedId: string) => {
+    interactionPrompts.value = { ...interactionPrompts.value, selectedId };
+  };
+
+  return { interactionPrompts, readInteraction, selectInteractable };
 };

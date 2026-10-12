@@ -7,9 +7,15 @@ import { GameScreen, InteractionPrompts as InteractionPromptList } from "genshin
 interface Props {
   // The prompts beside the character, whose window of rows the list draws
   interactionPrompts: InteractionPrompts;
+  // Whether the rows are laid out for a touch screen, at its scale and with no key
+  isTouch: boolean;
 }
 
-const { interactionPrompts } = defineProps<Props>();
+const { interactionPrompts, isTouch } = defineProps<Props>();
+const emit = defineEmits<{
+  // A row pressed itself, which acts on it
+  press: [id: string];
+}>();
 const windowInteractables = computed(() =>
   interactionPrompts.interactables.slice(
     interactionPrompts.windowStart,
@@ -22,9 +28,14 @@ const windowInteractables = computed(() =>
   <!-- The window of the prompts beside the character, its cap's left edge 138 units right of the screen's centre and its
        rows centred on the screen's middle. A full-screen layer that lets the pointer through to the world, as the HUD
        it is drawn in does; it is also a screen root of its own, so the parity page draws it with a unit -->
-  <GameScreen class="prompt-list">
+  <GameScreen class="prompt-list" :is-touch>
     <div class="prompts">
-      <InteractionPromptList :prompts="windowInteractables" :selected-id="interactionPrompts.selectedId" />
+      <InteractionPromptList
+        :is-touch
+        :prompts="windowInteractables"
+        :selected-id="interactionPrompts.selectedId"
+        @press="(id) => emit('press', id)"
+      />
     </div>
   </GameScreen>
 </template>

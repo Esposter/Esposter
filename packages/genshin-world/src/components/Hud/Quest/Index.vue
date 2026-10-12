@@ -7,7 +7,7 @@ import type { GameText } from "genshin-text";
 
 import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
-import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
+import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { InputAction } from "genshin-engine";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -26,7 +26,6 @@ interface Props {
 }
 
 const { gameText, input, mark, quest, questProgress, textMap } = defineProps<Props>();
-const questNavigationCode = getActionKeyCode(InputAction.QuestNavigation);
 const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
 </script>
 
@@ -34,16 +33,7 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
   <!-- The HUD's quest tracker: the quest's title, the navigated objective's distance under it, named higher or lower
        With an arrow where it stands well above or below the character, and its step's line with how far its counted
        Objective has come. Pressing it navigates to the quest, as V does -->
-  <button
-    class="quest-tracker"
-    type="button"
-    @click="
-      () => {
-        input.press(questNavigationCode);
-        input.release(questNavigationCode);
-      }
-    "
-  >
+  <button class="quest-tracker" type="button" @click="tapActionKey(input, InputAction.QuestNavigation)">
     <span class="title">{{ textMap[quest.titleTextId] }}</span>
     <span v-if="mark" class="mark">
       <template v-if="Math.abs(mark.height) >= QUEST_MARK_MIN_HEIGHT">

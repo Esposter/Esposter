@@ -129,7 +129,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
         :parent="hudRect"
         :rect="interfaceRects[HudInterfaceRectName.TeamButtonContainer]"
       >
-        <HudParty :character-data-map :frame :input :name-text-map :party :traveler-name />
+        <HudParty :character-data-map :frame :input :is-touch :name-text-map :party :traveler-name />
       </GameRect>
       <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.HealthBarContainer]">
         <HudHealth :game-text :health="member.health" :level="member.level" :max-health="member.maxHealth" />

@@ -5,6 +5,7 @@ import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
 import HudGlyph from "#src/components/Hud/Glyph/Index.vue";
+import HudKeyCap from "#src/components/Hud/KeyCap/Index.vue";
 import { ACTION_BUTTON_BACKGROUND } from "#src/services/hud/constants";
 import { ElementBurstColorsMap } from "#src/services/hud/ElementBurstColorsMap";
 import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
@@ -48,8 +49,6 @@ const {
 } = defineProps<Props>();
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
-// A key's cap reads its letter, the physical code's own
-const getKeyCapText = (code: string) => code.replace(/^Key/u, "");
 const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
 // The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
 // Kit's own, as a stance's end sets
@@ -104,8 +103,8 @@ onUnmounted(() => {
       <span v-if="burstCooldown > 0" class="cooldown">{{ burstCooldown.toFixed(1) }}</span>
     </button>
     <template v-if="!isTouch">
-      <kbd class="key skill-key">{{ getKeyCapText(skillCode) }}</kbd>
-      <kbd class="key burst-key">{{ getKeyCapText(burstCode) }}</kbd>
+      <HudKeyCap class="key skill-key" :code="skillCode" />
+      <HudKeyCap class="key burst-key" :code="burstCode" />
     </template>
   </div>
 </template>
@@ -184,17 +183,6 @@ onUnmounted(() => {
 .key {
   position: absolute;
   bottom: calc(var(--unit) * 28.5);
-  display: grid;
-  width: calc(var(--unit) * 30);
-  height: calc(var(--unit) * 25);
-  place-items: center;
-  border-radius: calc(var(--unit) * 3);
-  background: #fdfdfd;
-  color: #2e2b30;
-  font-family: inherit;
-  font-size: calc(var(--unit) * 20);
-  font-weight: 700;
-  line-height: 1;
 }
 
 .skill-key {

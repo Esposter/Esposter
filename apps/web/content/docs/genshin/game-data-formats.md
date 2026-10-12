@@ -62,7 +62,7 @@ flowchart TD
 ### Interface
 
 - **A `RectTransform` exports with its `Transform` fields alone**, but its raw export's last 40 bytes are its anchor minimum, anchor maximum, anchored position, size and pivot, two floats each, and its raw and JSON files share their numbering, so the two join into a full layout record.
-- **The interface's canvas is 1600 by 900**, drawn 1.2 times at 1080 high: the server bar's top sits 128 plus half its 64 units up, which at 1.2 is the 192 pixels measured on the 1080 high recording. The mobile client's is 1280 by 720, so the same tree stands a quarter larger on the same screen: the HP bar's container reads 724 and 727 canvas units high on two phone recordings.
+- **The interface's canvas is 1600 by 900**, drawn 1.2 times at 1080 high: the server bar's top sits 128 plus half its 64 units up, which at 1.2 is the 192 pixels measured on the 1080 high recording. The mobile client's is 1280 by 720, so the same tree stands a quarter larger on the same screen: the HP bar's container puts the canvas 720 high on five phone recordings from 16:9 to 20:9, and 1280 wide on three tablets at 4:3 and 1.44:1, which the smaller axis fits.
 - **A layout group's children read zero**, since the group, a script, places them at run time; their spacing is measured off the recordings, and their anchoring is still their parent's.
 
 ### Animation clips

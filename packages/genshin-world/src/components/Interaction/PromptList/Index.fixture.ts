@@ -14,4 +14,5 @@ export const props = {
     selectedId: "0",
     windowStart: 0,
   },
+  isTouch: false,
 };

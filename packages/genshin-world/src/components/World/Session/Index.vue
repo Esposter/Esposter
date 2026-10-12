@@ -61,6 +61,7 @@ import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
+import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { TresCanvas } from "@tresjs/core";
@@ -418,7 +419,15 @@ const interactables = computed<Interactable[]>(() => {
     ...statues,
   ];
 });
-const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
+const { interactionPrompts, readInteraction, selectInteractable } = useInteraction(
+  () => interactables.value,
+  characterBody,
+);
+// A prompt's row pressed itself, by a tap or a click with the cursor shown: it is selected and Interact tapped
+const pressInteractable = (id: string) => {
+  selectInteractable(id);
+  tapActionKey(input, InputAction.Interact);
+};
 // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
 const beginTalk = (talkId: string) => {
   talk.value = talkMap.value.get(talkId);
@@ -684,7 +693,7 @@ defineExpose({ jumpTo, readCameraPosition });
       @menu="screenKind = ScreenKind.PaimonMenu"
     >
       <template #prompts>
-        <InteractionPromptList :interaction-prompts />
+        <InteractionPromptList :interaction-prompts :is-touch @press="(id) => pressInteractable(id)" />
         <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
       </template>
     </HudScreen>

@@ -4,13 +4,19 @@ import type { InteractionPrompt } from "#src/models/InteractionPrompt";
 import { INTERACTION_HOVER_MS, INTERACTION_KEY_LABEL } from "#src/services/constants";
 
 interface Props {
+  // Whether the rows are laid out for a touch screen, which has no key to press, so no row is the one it acts on
+  isTouch?: boolean;
   // The rows the list's window shows, nearest first
   prompts: InteractionPrompt[];
   // The row F acts on
   selectedId: string;
 }
 
-const { prompts, selectedId } = defineProps<Props>();
+const { isTouch = false, prompts, selectedId } = defineProps<Props>();
+const emit = defineEmits<{
+  // A row pressed itself, by a tap or by a click with the cursor shown, which acts on that row as F acts on the selected
+  press: [id: string];
+}>();
 const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
 </script>
 
@@ -18,20 +24,21 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   <!-- The prompts beside the character: a row for each thing in reach, its kind's icon before its name in a pill, and the
        Key's cap before the row F acts on, with the pointer that leads from it into the pill. Measured off the English
        PC client's three-row pickup at 1080 high: each pill 63 high on a 72 pitch, its left edge 59 past the cap's, the
-       cap 40 wide and 33 high, the icon 34 across -->
-  <ul class="interaction-prompts">
+       cap 40 wide and 33 high, the icon 34 across. Each pill is a button of its own, as the game lets a row be pressed
+       without the key -->
+  <ul class="interaction-prompts" :class="{ touch: isTouch }">
     <li
       v-for="{ id, kind, name } of prompts"
       :key="id"
       class="prompt"
-      :aria-current="id === selectedId || undefined"
+      :aria-current="(!isTouch && id === selectedId) || undefined"
       :data-kind="kind"
     >
-      <kbd class="key" aria-hidden="true">{{ id === selectedId ? INTERACTION_KEY_LABEL : "" }}</kbd>
-      <span class="pill">
+      <kbd v-if="!isTouch" class="key" aria-hidden="true">{{ id === selectedId ? INTERACTION_KEY_LABEL : "" }}</kbd>
+      <button class="pill" type="button" @click="emit('press', id)">
         <span class="icon" aria-hidden="true" />
         <span class="name">{{ name }}</span>
-      </span>
+      </button>
     </li>
   </ul>
 </template>
@@ -100,10 +107,27 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   position: relative;
   isolation: isolate;
   height: 100%;
-  padding-left: calc(var(--unit) * 12);
+  padding: 0 0 0 calc(var(--unit) * 12);
   align-items: center;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: inherit;
+  font: inherit;
   gap: calc(var(--unit) * 19);
+  pointer-events: auto;
   white-space: nowrap;
+}
+
+/* The touch layout, measured off the English mobile client's pickup at 934 high: no cap and no selected row, the pill
+   In the cap's place, each 52 high on a 74 pitch */
+.touch {
+  gap: calc(var(--unit) * 22);
+}
+
+.touch .prompt {
+  grid-template-columns: calc(var(--unit) * 318);
+  height: calc(var(--unit) * 52);
 }
 
 /* The pill's ground, measured off the English client's pickup over plain grass at 1080 high: slate rounded at the left,

@@ -20,9 +20,9 @@ export const GAME_CANVAS_UNIT = "calc(min(100cqh / 900, 100cqw / 1600) * var(--i
 // The screen's. The spare width is the window's own, whatever the interface's scale
 export const GAME_CANVAS_INSET = "min(var(--unit) * 71, (100cqw - min(100cqh * 16 / 9, 100cqw)) / 2)";
 // The mobile client draws its whole interface a quarter larger than the PC client, its canvas 1280 by 720 where the
-// PC's is 1600 by 900. Its HP bar, the 512 by 20 container at half scale, reads 329 pixels wide and 75 up on a phone
-// Recording 934 high and 202 wide and 46 up on another 576 high, 724 and 727 canvas units high, and the Paimon
-// Button, the quest toggle and the chat button stand 76.5 pixels in on the first, 71 of its screen units
+// PC's is 1600 by 900, fitted to the smaller axis as the PC's is. Its HP bar, the 512 by 20 container at half scale,
+// Puts the canvas 720 high on five phone recordings from 16:9 to 20:9 and 1280 wide on three tablets at 4:3 and
+// 1.44:1, and the Paimon button, the quest toggle and the chat button stand 71 of its screen units in
 export const MOBILE_INTERFACE_SCALE = 1.25;
 // The canvas as a rect of its own, the full screen's: a piece whose parent rect is this one is laid on the canvas
 export const GAME_CANVAS_RECT: CanvasRect = {
