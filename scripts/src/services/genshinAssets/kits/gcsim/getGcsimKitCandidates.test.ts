@@ -7,6 +7,7 @@ import { CombatTalent, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
+const frames = (animationFrames: number) => ({ animationFrames, hitmarkFrames: 0 });
 
 describe(getGcsimKitCandidates, () => {
   test("reads a press's and a hold's hitmarks listed one for each burst state as no hits, the hold still read", () => {
@@ -53,7 +54,6 @@ describe(getGcsimKitCandidates, () => {
   test("reads a normal attack's strikes from a release list named otherwise, and its frames from the first state's list of strikes", () => {
     expect.hasAssertions();
 
-    const frames = (animationFrames: number) => ({ animationFrames, hitmarkFrames: 0 });
     const gcsim: GcsimCharacter = {
       animationFrameNameMap: new Map(),
       attacks: [],

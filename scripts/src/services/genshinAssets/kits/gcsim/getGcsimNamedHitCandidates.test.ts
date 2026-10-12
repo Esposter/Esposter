@@ -7,59 +7,59 @@ import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/recor
 import { CombatTalent, Element, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const BURST_PROUD_SKILL_GROUP_ID = 2139;
-
-const gcsim: GcsimCharacter = {
-  animationFrameNameMap: new Map(),
-  attacks: [
-    {
-      attackTag: "attacks.AttackTagElementalBurst",
-      element: "attributes.Pyro",
-      fieldLineMap: { Element: 11 },
-      file: "burst.go",
-      internalCooldownTag: "attacks.ICDTagNone",
-      line: 10,
-      strikeType: "attacks.StrikeTypeBlunt",
-      talentVariable: "burst",
-    },
-  ],
-  config: {
-    abilityHitboxesMap: new Map(),
-    names: [],
-    talentVariables: [
-      {
-        leaves: [{ path: [0], reference: { label: "Arrow DMG", selector: 0, type: GcsimTalentType.Burst } }],
-        line: 1,
-        name: "burst",
-      },
-    ],
-  },
-  configFile: "config.yml",
-  constantMap: new Map(),
-  filePaths: [],
-  folder: "amber",
-  queuedAttacks: [],
-  talentFile: "amber.go",
-  talentParameterMap: new Map([["burst|Arrow DMG", { indexes: [0], line: 3 }]]),
-  travelMap: new Map(),
-};
-const tables: KitTables = {
-  characterId: 0,
-  labelMap: new Map(),
-  name: "Amber",
-  talentGroupIdMap: {
-    [CombatTalent.ElementalBurst]: BURST_PROUD_SKILL_GROUP_ID,
-    [CombatTalent.ElementalSkill]: 0,
-    [CombatTalent.NormalAttack]: 0,
-  },
-  talentMultiplierMap: {},
-  weaponType: WeaponType.Bow,
-};
-
 const multiplierMap = (proudSkillGroupId: number) =>
   new Map([["hits.fieryRainArrows.0.multiplier", { index: 0, proudSkillGroupId }]]);
 
 describe(getGcsimNamedHitCandidates, () => {
+  const BURST_PROUD_SKILL_GROUP_ID = 2139;
+
+  const gcsim: GcsimCharacter = {
+    animationFrameNameMap: new Map(),
+    attacks: [
+      {
+        attackTag: "attacks.AttackTagElementalBurst",
+        element: "attributes.Pyro",
+        fieldLineMap: { Element: 11 },
+        file: "burst.go",
+        internalCooldownTag: "attacks.ICDTagNone",
+        line: 10,
+        strikeType: "attacks.StrikeTypeBlunt",
+        talentVariable: "burst",
+      },
+    ],
+    config: {
+      abilityHitboxesMap: new Map(),
+      names: [],
+      talentVariables: [
+        {
+          leaves: [{ path: [0], reference: { label: "Arrow DMG", selector: 0, type: GcsimTalentType.Burst } }],
+          line: 1,
+          name: "burst",
+        },
+      ],
+    },
+    configFile: "config.yml",
+    constantMap: new Map(),
+    filePaths: [],
+    folder: "amber",
+    queuedAttacks: [],
+    talentFile: "amber.go",
+    talentParameterMap: new Map([["burst|Arrow DMG", { indexes: [0], line: 3 }]]),
+    travelMap: new Map(),
+  };
+  const tables: KitTables = {
+    characterId: 0,
+    labelMap: new Map(),
+    name: "Amber",
+    talentGroupIdMap: {
+      [CombatTalent.ElementalBurst]: BURST_PROUD_SKILL_GROUP_ID,
+      [CombatTalent.ElementalSkill]: 0,
+      [CombatTalent.NormalAttack]: 0,
+    },
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Bow,
+  };
+
   test("joins a named hit's multiplier to the one literal of its talent variable, and to none for another group", () => {
     expect.hasAssertions();
 
