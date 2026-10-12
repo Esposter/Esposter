@@ -226,7 +226,7 @@
   "parameters.crystalShrapnelSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 9132 } },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 31 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.animationFrames": { "cause": "Unclassified", "value": 41 },
+  "skill.animationFrames": { "cause": "DiffersFromSource", "value": 41 },
   "skill.hits.length": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.area": {
     "cause": "Unclassified",

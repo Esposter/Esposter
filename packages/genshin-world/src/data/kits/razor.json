@@ -102,7 +102,6 @@
   "parameters.wolfWithinSeconds": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 2039 } },
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Electric" },
   "plungeCollision.gauge": { "source": "Wiki" },
-  "skill.animationFrames": { "cause": "Unclassified", "value": 74 },
   "skill.hits.length": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.area": {
     "cause": "Unclassified",
@@ -113,7 +112,6 @@
   "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 32 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 2032 } },
   "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 140 },
-  "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 103 },
   "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.0.area": {
     "cause": "Unclassified",

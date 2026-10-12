@@ -7,21 +7,6 @@
   "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5639 } },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 96 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "hits.ambush.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 } },
-  "hits.ambush.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.ambush.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.ambush.hitmarkFrames": { "cause": "Unclassified", "value": 150 },
-  "hits.ambush.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5632 } },
-  "hits.ambush.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.darkWingsAmbush.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
-  },
-  "hits.darkWingsAmbush.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.darkWingsAmbush.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.darkWingsAmbush.hitmarkFrames": { "cause": "Unclassified", "value": 103 },
-  "hits.darkWingsAmbush.multiplier": { "cause": "Unclassified", "value": 0.37728 },
-  "hits.darkWingsAmbush.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.stormclusterTicks.length": { "cause": "Unclassified", "value": 6 },
   "hits.stormclusterTicks.0.area": {
     "cause": "TargetCentred",
@@ -101,6 +86,21 @@
     "value": { "index": 1, "proudSkillGroupId": 5639 }
   },
   "hits.stormclusterTicks.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.ambush.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 } },
+  "hits.ambush.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.ambush.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.ambush.hitmarkFrames": { "cause": "Unclassified", "value": 150 },
+  "hits.ambush.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5632 } },
+  "hits.ambush.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.darkWingsAmbush.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
+  },
+  "hits.darkWingsAmbush.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.darkWingsAmbush.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.darkWingsAmbush.hitmarkFrames": { "cause": "Unclassified", "value": 103 },
+  "hits.darkWingsAmbush.multiplier": { "cause": "Unclassified", "value": 0.37728 },
+  "hits.darkWingsAmbush.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

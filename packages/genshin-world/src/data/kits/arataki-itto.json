@@ -270,8 +270,6 @@
   },
   "actions.kesagiris.4.hits.4.poiseDamage": { "cause": "Unclassified", "value": 143.4 },
   "actions.kesagiris.4.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 131 },
   "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",

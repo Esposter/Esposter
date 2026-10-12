@@ -1,22 +1,6 @@
 {
   "burstEnergyCost": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 4839 } },
   "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.doneDealChargedAttackDamageBonus": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 4839 }
-  },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.element": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" },
   "hits.scarletSealChargedAttacks.length": { "cause": "Unclassified", "value": 5 },
   "hits.scarletSealChargedAttacks.0.area": {
     "cause": "TargetCentred",
@@ -82,5 +66,21 @@
     "cause": "Unclassified",
     "value": { "index": 7, "proudSkillGroupId": 4831 }
   },
-  "hits.scarletSealChargedAttacks.4.poiseDamage": { "cause": "Unclassified", "value": 80 }
+  "hits.scarletSealChargedAttacks.4.poiseDamage": { "cause": "Unclassified", "value": 80 },
+  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "parameters.doneDealChargedAttackDamageBonus": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 4839 }
+  },
+  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "plunges.high.hits.0.element": { "cause": "DiffersFromSource" },
+  "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
 }

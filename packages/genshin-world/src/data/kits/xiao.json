@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.hits.0.convertedArea": {
     "cause": "Unclassified",
     "value": { "angle": 3.490658503988659, "height": 2, "radius": 3.2 }

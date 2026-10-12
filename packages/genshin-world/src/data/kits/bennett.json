@@ -56,7 +56,6 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "skill.animationFrames": { "cause": "Unclassified", "value": 42 },
   "skill.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 4.71238898038469, "height": 2, "radius": 2.5 }

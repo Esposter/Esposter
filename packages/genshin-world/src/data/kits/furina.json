@@ -2,6 +2,14 @@
   "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8939 } },
   "burst.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "frames.salonMemberInitialTicks.length": { "cause": "Unclassified", "value": 3 },
+  "frames.salonMemberInitialTicks.0": { "cause": "Unclassified", "value": 72.3333 },
+  "frames.salonMemberInitialTicks.1": { "cause": "Unclassified", "value": 74.5 },
+  "frames.salonMemberInitialTicks.2": { "cause": "Unclassified", "value": 71.5926 },
+  "frames.salonMemberIntervals.length": { "cause": "Unclassified", "value": 3 },
+  "frames.salonMemberIntervals.0": { "cause": "Unclassified", "value": 97.5858 },
+  "frames.salonMemberIntervals.1": { "cause": "Unclassified", "value": 202.138 },
+  "frames.salonMemberIntervals.2": { "cause": "Unclassified", "value": 313.859 },
   "frames.singerInitialTick": { "cause": "Unclassified", "value": 63 },
   "frames.singerInterval": { "cause": "Unclassified", "value": 120 },
   "frames.fanfareGainDelay": { "cause": "Unclassified", "value": 6 },
@@ -11,32 +19,6 @@
   "frames.pneumaSummonDelay": { "cause": "Unclassified", "value": 10 },
   "frames.salon": { "cause": "Unclassified", "value": 1736 },
   "frames.fanfareStart": { "cause": "Unclassified", "value": 95 },
-  "frames.salonMemberInitialTicks.length": { "cause": "Unclassified", "value": 3 },
-  "frames.salonMemberInitialTicks.0": { "cause": "Unclassified", "value": 72.3333 },
-  "frames.salonMemberInitialTicks.1": { "cause": "Unclassified", "value": 74.5 },
-  "frames.salonMemberInitialTicks.2": { "cause": "Unclassified", "value": 71.5926 },
-  "frames.salonMemberIntervals.length": { "cause": "Unclassified", "value": 3 },
-  "frames.salonMemberIntervals.0": { "cause": "Unclassified", "value": 97.5858 },
-  "frames.salonMemberIntervals.1": { "cause": "Unclassified", "value": 202.138 },
-  "frames.salonMemberIntervals.2": { "cause": "Unclassified", "value": 313.859 },
-  "hits.arkhe.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.242640687119286 }
-  },
-  "hits.arkhe.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.arkhe.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
-  "hits.arkhe.multiplier": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 8931 } },
-  "hits.arkhe.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.ousiaBubble.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
-  },
-  "hits.ousiaBubble.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.ousiaBubble.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.ousiaBubble.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
-  "hits.ousiaBubble.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8932 } },
-  "hits.ousiaBubble.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.ousiaBubble.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
   "hits.salonMemberAttacks.length": { "cause": "Unclassified", "value": 3 },
   "hits.salonMemberAttacks.0.area": {
     "cause": "Unclassified",
@@ -67,6 +49,24 @@
   "hits.salonMemberAttacks.2.hitmarkFrames": { "cause": "Unclassified", "value": 41 },
   "hits.salonMemberAttacks.2.multiplier": { "cause": "Unclassified", "value": 0 },
   "hits.salonMemberAttacks.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.arkhe.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.242640687119286 }
+  },
+  "hits.arkhe.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.arkhe.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
+  "hits.arkhe.multiplier": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 8931 } },
+  "hits.arkhe.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.ousiaBubble.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.ousiaBubble.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.ousiaBubble.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.ousiaBubble.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
+  "hits.ousiaBubble.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8932 } },
+  "hits.ousiaBubble.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.ousiaBubble.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
   "normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.802231253840411 }
@@ -96,24 +96,6 @@
     "cause": "Unclassified",
     "value": { "index": 10, "proudSkillGroupId": 8931 }
   },
-  "parameters.singerHealFlatHealth": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 8932 } },
-  "parameters.singerHealMaxHealthShare": {
-    "cause": "Unclassified",
-    "value": { "index": 8, "proudSkillGroupId": 8932 }
-  },
-  "parameters.fanfareMax": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 8939 } },
-  "parameters.fanfareHealthSharePerPoint": {
-    "cause": "Unclassified",
-    "value": { "index": 2, "proudSkillGroupId": 8939 }
-  },
-  "parameters.fanfareDamageBonusPerPoint": {
-    "cause": "Unclassified",
-    "value": { "index": 4, "proudSkillGroupId": 8939 }
-  },
-  "parameters.fanfareIncomingHealingBonusPerPoint": {
-    "cause": "Unclassified",
-    "value": { "index": 5, "proudSkillGroupId": 8939 }
-  },
   "parameters.salonMemberDrainedMaxHealthShares.length": { "cause": "Unclassified", "value": 3 },
   "parameters.salonMemberDrainedMaxHealthShares.0": {
     "cause": "Unclassified",
@@ -140,8 +122,25 @@
     "cause": "Unclassified",
     "value": { "index": 4, "proudSkillGroupId": 8932 }
   },
+  "parameters.singerHealFlatHealth": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 8932 } },
+  "parameters.singerHealMaxHealthShare": {
+    "cause": "Unclassified",
+    "value": { "index": 8, "proudSkillGroupId": 8932 }
+  },
+  "parameters.fanfareMax": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 8939 } },
+  "parameters.fanfareHealthSharePerPoint": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 8939 }
+  },
+  "parameters.fanfareDamageBonusPerPoint": {
+    "cause": "Unclassified",
+    "value": { "index": 4, "proudSkillGroupId": 8939 }
+  },
+  "parameters.fanfareIncomingHealingBonusPerPoint": {
+    "cause": "Unclassified",
+    "value": { "index": 5, "proudSkillGroupId": 8939 }
+  },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.animationFrames": { "cause": "Unclassified", "value": 54 },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }

@@ -54,13 +54,6 @@
   "parameters.restoreEnergy": { "cause": "Unclassified", "value": { "index": 16, "proudSkillGroupId": 5239 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.internalCooldownTag": { "source": "Wiki" },
   "stances.musouIsshin.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 56 },
   "stances.musouIsshin.chargedAttack.hits.length": { "cause": "Unclassified", "value": 2 },
   "stances.musouIsshin.chargedAttack.hits.0.area": {
@@ -213,5 +206,12 @@
     "value": { "index": 9, "proudSkillGroupId": 5239 }
   },
   "stances.musouIsshin.normalAttacks.4.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "stances.musouIsshin.normalAttacks.4.targeting": { "cause": "Unclassified", "value": "Strike" }
+  "stances.musouIsshin.normalAttacks.4.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.3.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "chargedAttack.hits.0.internalCooldownTag": { "source": "Wiki" }
 }

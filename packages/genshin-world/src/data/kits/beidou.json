@@ -21,6 +21,15 @@
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 7, "proudSkillGroupId": 2431 } },
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "frames.baneOfEvil": { "cause": "Unclassified", "value": 90 },
+  "hitFields.lightningDischarge.element": { "cause": "Unclassified", "value": "Electric" },
+  "hitFields.lightningDischarge.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.lightningDischarge.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
+  "hitFields.lightningDischarge.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hitFields.lightningDischarge.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 2439 }
+  },
+  "hitFields.lightningDischarge.poiseDamage": { "cause": "Unclassified", "value": 50 },
   "hits.baneOfEvilTicks.length": { "cause": "Unclassified", "value": 30 },
   "hits.baneOfEvilTicks.0.area": {
     "cause": "Unclassified",
@@ -247,14 +256,5 @@
   "plungeCollision.element": { "cause": "Unclassified", "value": "Electric" },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 } },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 2432 } },
-  "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 100 },
-  "hitFields.lightningDischarge.element": { "cause": "Unclassified", "value": "Electric" },
-  "hitFields.lightningDischarge.gauge": { "cause": "Unclassified", "value": 1 },
-  "hitFields.lightningDischarge.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
-  "hitFields.lightningDischarge.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "hitFields.lightningDischarge.multiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 2439 }
-  },
-  "hitFields.lightningDischarge.poiseDamage": { "cause": "Unclassified", "value": 50 }
+  "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 100 }
 }

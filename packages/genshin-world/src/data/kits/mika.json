@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.initialHeal": { "cause": "Unclassified", "value": 51 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

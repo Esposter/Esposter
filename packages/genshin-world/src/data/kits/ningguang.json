@@ -1,6 +1,7 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 37 },
+  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 37 },
+  "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "frames.jadeScreen": { "cause": "Unclassified", "value": 1800 },
   "hits.piercingFragmentsStrikeGem.length": { "cause": "Unclassified", "value": 2 },
   "hits.piercingFragmentsStrikeGem.0.area": {
@@ -235,10 +236,9 @@
   "hits.jadeScreen.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 2732 } },
   "hits.jadeScreen.poiseDamage": { "cause": "Unclassified", "value": 133.2 },
   "normalAttacks.length": { "cause": "DiffersFromSource", "value": 2 },
-  "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 61 },
-  "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 0 },
-  "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 66 },
-  "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 0 },
+  "normalAttacks.0.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.animationFrames": { "cause": "DiffersFromSource", "value": 66 },
+  "normalAttacks.1.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.element": { "cause": "Unclassified", "value": "Rock" },
   "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
   "plunges.low.hits.0.element": { "cause": "Unclassified", "value": "Rock" },

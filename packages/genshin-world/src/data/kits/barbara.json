@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 75 },
   "chargedAttack.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.hits.0.healParty.flatHealth": { "cause": "Unclassified", "value": 288.8908 },

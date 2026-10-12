@@ -18,10 +18,10 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.65265424380441 }
   },
-  "frames.dragonBreathFirstHitmark": { "cause": "Unclassified", "value": 253 },
   "frames.dragonBreathInterval.length": { "cause": "Unclassified", "value": 2 },
   "frames.dragonBreathInterval.0": { "cause": "Unclassified", "value": 145 },
   "frames.dragonBreathInterval.1": { "cause": "Unclassified", "value": 150 },
+  "frames.dragonBreathFirstHitmark": { "cause": "Unclassified", "value": 253 },
   "hitFields.dragonBreath.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 20.024937810560445 }
