@@ -4,8 +4,15 @@ import type { SceneLayout } from "genshin-engine";
 import type { BufferGeometry, InstancedMesh, Material, Texture } from "three";
 
 import { WitnessProperty } from "#src/models/scene/WitnessProperty";
-import { MOVING_PART_FAMILIES, SCENE_TEXTURE_ANISOTROPY, SUBMESH_INDEX_REGEX } from "#src/services/scene/constants";
+import {
+  MOVING_PART_FAMILIES,
+  RIGID_PIECE_FAMILIES,
+  SCENE_TEXTURE_ANISOTROPY,
+  SUBMESH_INDEX_REGEX,
+} from "#src/services/scene/constants";
 import { createWitnessMaterial } from "#src/services/scene/createWitnessMaterial";
+import { readObjFaceVertices } from "#src/services/scene/readObjFaceVertices";
+import { splitRigidPieces } from "#src/services/scene/splitRigidPieces";
 import { createInstancedMesh } from "genshin-engine";
 import {
   Group,
@@ -23,6 +30,10 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
 // The slots whose textures are colours; every other slot holds data (a normal, a mask) and is read linearly
 const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
+// The skin of a mesh as its export's JSON holds it, the bones each vertex follows strongest first
+interface ExportedSkin {
+  m_Skin: { boneIndex: number[] }[];
+}
 // A component's exports laid out as `genshin:assets witness` wrote them, each mesh turned from the export's axes into
 // Three's (the export negates x, three negates z, together half a turn about y) and drawn at every placement with the
 // Material each of its submeshes names, laid over one the host makes, in a group per family of the scene's parts its
@@ -30,9 +41,9 @@ const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // One unnamed family. A family's placements of one submesh in one material are one instanced mesh named by its mesh,
 // Set once, since they stand still: a capital places tens of thousands of parts, which the renderer would otherwise walk
 // And project in every pass of every frame. A moving family's parts each stand in a group named by its mesh instead,
-// For its scene to move. The meshes and textures are served beside the layout, by their export folders, and only those
-// Of the meshes drawn are loaded, each texture once however many slots name it: a capital's exports run to over a
-// Gigabyte, most of it in meshes no family draws
+// For its scene to move, and a rigidly skinned family's in a group per piece its bones carry. The meshes and textures
+// Are served beside the layout, by their export folders, and only those of the meshes drawn are loaded, each texture
+// Once however many slots name it: a capital's exports run to over a gigabyte, most of it in meshes no family draws
 export const loadWitness = async (
   layoutUrl: string,
   createMaterial: WitnessMaterialFactory,
@@ -48,6 +59,9 @@ export const loadWitness = async (
     return familyEntries.length > 0 && family === undefined ? [] : [{ family: family ?? "", placement }];
   });
   const meshNames = [...new Set(drawnPlacements.map(({ placement: { mesh } }) => mesh))];
+  const rigidMeshNames = new Set(
+    drawnPlacements.flatMap(({ family, placement: { mesh } }) => (RIGID_PIECE_FAMILIES.has(family) ? [mesh] : [])),
+  );
   const drawnMaterialNames = new Set(drawnPlacements.flatMap(({ placement: { materials } }) => materials));
   const drawnMaterials = Object.entries(layout.materials).filter(([name]) => drawnMaterialNames.has(name));
   // Each texture by its name with the slot it is read for, the last slot naming it as the texture map keeps it
@@ -57,7 +71,24 @@ export const loadWitness = async (
   const objLoader = new OBJLoader();
   const textureLoader = new TextureLoader();
   const [meshes, textures] = await Promise.all([
-    Promise.all(meshNames.map((name) => objLoader.loadAsync(getUrl(`Mesh/${name}.obj`)))),
+    Promise.all(
+      meshNames.map(async (name) => {
+        if (!rigidMeshNames.has(name)) return { object: await objLoader.loadAsync(getUrl(`Mesh/${name}.obj`)) };
+        const [objResponse, skinResponse] = await Promise.all([
+          fetch(getUrl(`Mesh/${name}.obj`)),
+          fetch(getUrl(`Mesh/${name}.json`)),
+        ]);
+        const text = await objResponse.text();
+        const { m_Skin } = (await skinResponse.json()) as ExportedSkin;
+        return {
+          object: objLoader.parse(text),
+          rigidPieces: {
+            groupFaceVerticesMap: readObjFaceVertices(text),
+            vertexPieces: m_Skin.map(({ boneIndex: [bone = 0] }) => bone),
+          },
+        };
+      }),
+    ),
     Promise.all(
       Array.from(textureNameSlotMap, async ([name, slot]) => {
         const loaded = await textureLoader.loadAsync(getUrl(`Texture2D/${name}.png`));
@@ -77,11 +108,30 @@ export const loadWitness = async (
     drawnMaterials.map(([name, material]) => [name, createWitnessMaterial(material, nameTextureMap, createMaterial)]),
   );
   const fallbackMaterial = new MeshStandardMaterial();
+  // Each mesh's submeshes, a rigidly skinned one's split into its pieces, each piece by the bone carrying it
   const nameSubmeshesMap = new Map(
     meshNames.map((name, index) => {
-      const submeshes = (meshes[index]?.children ?? []).flatMap((child) => (child instanceof Mesh ? [child] : []));
-      for (const { geometry } of submeshes) geometry.rotateY(Math.PI);
-      return [name, submeshes] as const;
+      const { object, rigidPieces } = meshes[index] ?? {};
+      const submeshes = (object?.children ?? []).flatMap((child) => (child instanceof Mesh ? [child] : []));
+      return [
+        name,
+        submeshes.flatMap((submesh): { geometry: BufferGeometry; name: string; piece?: number }[] => {
+          const { geometry, name: submeshName } = submesh;
+          geometry.rotateY(Math.PI);
+          if (!rigidPieces) return [{ geometry, name: submeshName }];
+          const pieceGeometryMap = splitRigidPieces(
+            submesh,
+            rigidPieces.groupFaceVerticesMap.get(submeshName) ?? [],
+            rigidPieces.vertexPieces,
+          );
+          geometry.dispose();
+          return Array.from(pieceGeometryMap, ([piece, pieceGeometry]) => ({
+            geometry: pieceGeometry,
+            name: submeshName,
+            piece,
+          }));
+        }),
+      ] as const;
     }),
   );
   const witness = new Group();
@@ -116,7 +166,17 @@ export const loadWitness = async (
         drawn.castShadow = true;
         drawn.receiveShadow = true;
         part ??= new Group();
-        part.add(drawn);
+        if (submesh.piece === undefined) part.add(drawn);
+        else {
+          const pieceName = String(submesh.piece);
+          let piece = part.children.find(({ name }) => name === pieceName);
+          if (!piece) {
+            piece = new Group();
+            piece.name = pieceName;
+            part.add(piece);
+          }
+          piece.add(drawn);
+        }
         continue;
       }
       const key = `${family}/${submesh.geometry.uuid}/${material.uuid}`;

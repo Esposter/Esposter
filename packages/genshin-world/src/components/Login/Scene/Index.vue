@@ -31,6 +31,7 @@ import {
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
 import { getLoginDoorPosition } from "#src/services/login/door/getLoginDoorPosition";
+import { rideLoginWitnessDoor } from "#src/services/login/door/rideLoginWitnessDoor";
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { LoginPartFamilyMeshRegexMap } from "#src/services/login/LoginPartFamilyMeshRegexMap";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
@@ -98,7 +99,7 @@ import {
   StoneNodeMaterial,
   synthesizeCloudLayerTextures,
 } from "genshin-engine";
-import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4, Mesh } from "three";
+import { BatchedMesh, DirectionalLight, Euler, Group, HemisphereLight, Matrix4, Mesh } from "three";
 import {
   abs,
   color,
@@ -352,8 +353,27 @@ const doorPieces = doorPieceGeometries.map(({ frame, panel }) => {
   }
   return piece;
 });
+const ownDoorMeshes = doorPieces.flatMap(({ children }) => [...children]);
 const doorPieceGroup = new Group().add(...doorPieces);
 doorPieceGroup.userData[SCENE_FAMILY_KEY] = LoginPartFamily.Door;
+// Our door's turn, and where it stands so once it has risen, which the exported door's pieces are placed from
+const doorRotation: [number, number, number] = [0, Math.PI, 0];
+const doorRest = new Matrix4().makeRotationFromEuler(new Euler(...doorRotation)).setPosition(...doorRestPosition);
+// The exported door rises in our door's place: its pieces ride ours, which are drawn only while it is not exported
+watchImmediate(
+  () => [exportedParts.value, checkIsExported(LoginPartFamily.Door)] as const,
+  ([parts, isExported], _previous, onCleanup) => {
+    for (const mesh of ownDoorMeshes) mesh.visible = !isExported;
+    const family = parts?.children.find(({ name }) => name === LoginPartFamily.Door);
+    if (!family) return;
+    family.visible = false;
+    if (!isExported) return;
+    const copies = family.children.flatMap((part) => rideLoginWitnessDoor(part, doorPieces, doorRest));
+    onCleanup(() => {
+      for (const copy of copies) copy.removeFromParent();
+    });
+  },
+);
 // The metres the cloud sea's billows have scrolled toward the camera
 const cloudSeaScrolled = uniform(0);
 // The cloud sea as billows of the clouds' own two colours, lit tops over shaded hollows, which the fog then pales
@@ -425,8 +445,7 @@ onRender(({ delta: frameDelta }) => {
   // Once the door is due the walkway ends at it, and nothing past it is built
   const doorAheadOfCamera = doorRestPosition[2] + doorAhead.value - cameraZ.value;
   // The exported parts ride the glide with ours, off by whatever offset a witness tool sets them: their towers and
-  // Bridges the row, their walkway the walkway's copies, assembling as ours does, and their door ours as it rises,
-  // Standing only where ours does, so a frame of the title compares no door against none
+  // Bridges the row and their walkway the walkway's copies, assembling as ours does. Their door rides ours
   for (const group of exportedParts.value?.children ?? []) {
     const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
     group.position.set(x, y, z);
@@ -438,9 +457,6 @@ onRender(({ delta: frameDelta }) => {
         cameraZ: cameraZ.value,
         doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
       });
-    } else if (group.name === LoginPartFamily.Door) {
-      group.position.z += doorAhead.value;
-      group.visible = isDoorRising.value && checkIsExported(group.name);
     }
   }
   walkwayBatch.position.z = -walkwayScrolled;
@@ -556,12 +572,7 @@ onUnmounted(() => {
   <!-- Within the walkway's far end, on the copy the glide comes to rest on: the title's frames show no door at all. -->
   <!-- Until then it is drawn at no size and never culled, so its pipelines compile while the scene loads rather than -->
   <!-- Stalling the frame it rises on -->
-  <TresGroup
-    v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Door)"
-    :position="doorPosition"
-    :rotation="[0, Math.PI, 0]"
-    :scale="isDoorRising ? 1 : 0"
-  >
+  <TresGroup :position="doorPosition" :rotation="doorRotation" :scale="isDoorRising ? 1 : 0">
     <primitive :object="doorPieceGroup" />
   </TresGroup>
   <TresMesh
