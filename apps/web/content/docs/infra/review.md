@@ -70,7 +70,7 @@ The fixer runs once over the issue's findings at the tip of `ai/queue`. Its comm
 
 A fix job that crashes leaves its issue open and whole, which is correct: the settle job takes it. The fixer never opens an issue.
 
-A fixer's or a settler's commit lands on `ai/queue` with nothing else to stop a red, so before committing each session runs its checks (`REVIEW_SESSION_CHECKS`): the tests of the files it touched, the docs suites when it touched a page or a skill, and the typecheck of each package it touched. A fix they refuse is not made. Tests alone let a fixer strip return types that `isolatedDeclarations` needs, and a settler write roadmap items past the docs suite's length rule.
+A fixer's or a settler's commit lands on `ai/queue` with nothing else to stop a red, so before committing each session runs its checks (`REVIEW_SESSION_CHECKS`): the tests of the files it touched, the workspace rules, which read every page, skill and test file, the docs suite when it touched a page, and the typecheck of each package it touched. A fix they refuse is not made. Tests alone let a fixer strip return types that `isolatedDeclarations` needs, and a settler write roadmap items past the docs suite's length rule.
 
 ### The settle job
 
