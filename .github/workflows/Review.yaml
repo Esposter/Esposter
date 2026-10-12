@@ -1,8 +1,7 @@
 name: 🔍 Review
 
 # The review of what lands on `ai/queue`: haiku reviewers over amount-capped windows, a haiku fixer over their findings,
-# and `main` moved only by the review's fast-forward (`services/review`). The run's steps and the pins of its checkout,
-# install and cached build are `run-review-collector.yaml`'s.
+# and `main` moved only by the review's fast-forward (`services/review`).
 on:
   # No push trigger yet: the first run is dispatched by hand and verified before a push starts one.
   workflow_dispatch:
@@ -42,7 +41,7 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install the collector's projects
+      - name: 📦 Install the packages and scripts
         uses: ./.github/actions/install-projects
         with:
           filter: ./{packages/*,scripts}

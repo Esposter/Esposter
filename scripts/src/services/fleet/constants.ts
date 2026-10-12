@@ -1,12 +1,8 @@
-import { QUEUE_BRANCH } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
 export const FLEET_REMOTE = "origin";
-// The queue branch as origin holds it, which the fleet reads its entries from and a machine's last push is read off
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const REMOTE_QUEUE_REF: string = `origin/${QUEUE_BRANCH}`;
 export const CLAIM_REF_PREFIX = "refs/claims/";
 export const MACHINE_REF_PREFIX = "refs/machines/";
 // Where `git fetch` mirrors the remote's refs locally, so a read names the local mirror and never the remote

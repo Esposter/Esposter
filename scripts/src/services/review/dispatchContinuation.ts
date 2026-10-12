@@ -1,4 +1,5 @@
-import { QUEUE_BRANCH, REVIEW_WORKFLOW_FILE } from "#src/services/review/constants";
+import { REVIEW_WORKFLOW_FILE } from "#src/services/review/constants";
+import { QUEUE_BRANCH } from "#src/services/shared/constants";
 import { runGh } from "#src/services/shared/runGh";
 
 // Dispatches the review again on the queue, the one way a run wakes its own continuation while the workflow has no push

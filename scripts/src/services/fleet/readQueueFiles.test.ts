@@ -1,7 +1,6 @@
-import { REMOTE_QUEUE_REF } from "#src/services/fleet/constants";
 import { readComputeQueue } from "#src/services/fleet/readComputeQueue";
 import { readQueueFiles } from "#src/services/fleet/readQueueFiles";
-import { QUEUE_BRANCH } from "#src/services/shared/constants";
+import { QUEUE_BRANCH, REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { setupFixtureRepository } from "#src/services/shared/setupFixtureRepository.test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

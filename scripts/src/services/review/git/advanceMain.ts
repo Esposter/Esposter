@@ -1,4 +1,4 @@
-import { MAIN_BRANCH } from "#src/services/review/constants";
+import { MAIN_BRANCH } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 

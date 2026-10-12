@@ -1,4 +1,5 @@
-import { LAND_ATTEMPTS, QUEUE_BRANCH } from "#src/services/review/constants";
+import { LAND_ATTEMPTS } from "#src/services/review/constants";
+import { QUEUE_BRANCH } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 

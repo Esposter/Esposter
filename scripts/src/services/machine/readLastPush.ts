@@ -1,6 +1,6 @@
 import type { LastPush } from "#src/models/fleet/LastPush";
 
-import { REMOTE_QUEUE_REF } from "#src/services/fleet/constants";
+import { REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 

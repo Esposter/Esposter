@@ -6,7 +6,7 @@ import type { ReviewWindow } from "#src/models/review/ReviewWindow";
 import { ReviewMode } from "#src/models/review/ReviewMode";
 import { ReviewOutcome } from "#src/models/review/ReviewOutcome";
 import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimitedError";
-import { MAIN_BRANCH, MAIN_REF, QUEUE_BRANCH, QUEUE_REF, REVIEW_CONCURRENCY } from "#src/services/review/constants";
+import { REVIEW_CONCURRENCY } from "#src/services/review/constants";
 import { advanceMain } from "#src/services/review/git/advanceMain";
 import { landCommits } from "#src/services/review/git/landCommits";
 import { mergeMain } from "#src/services/review/git/mergeMain";
@@ -19,8 +19,16 @@ import { resolveDispositions } from "#src/services/review/resolveDispositions";
 import { reviewBatch } from "#src/services/review/reviewBatch";
 import { runFixer } from "#src/services/review/runFixer";
 import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
+import {
+  MAIN_BRANCH,
+  PNPM_ARGS,
+  PNPM_FILE,
+  QUEUE_BRANCH,
+  REMOTE_MAIN_REF,
+  REMOTE_QUEUE_REF,
+  REPOSITORY_ROOT,
+} from "#src/services/shared/constants";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
-import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, getResultAsync, takeOne } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
@@ -57,11 +65,11 @@ const fetchRemote = (): void => {
 
 // The checkout is `ai/queue`'s tip, so a merge and the fixer's commits and their landing all start from the queue
 const checkoutQueue = (): void => {
-  runGit(["checkout", "-B", QUEUE_BRANCH, QUEUE_REF]);
+  runGit(["checkout", "-B", QUEUE_BRANCH, REMOTE_QUEUE_REF]);
 };
 
 const isMainAncestor = (): boolean =>
-  getResult(() => runGit(["merge-base", "--is-ancestor", MAIN_REF, QUEUE_REF])).match(
+  getResult(() => runGit(["merge-base", "--is-ancestor", REMOTE_MAIN_REF, REMOTE_QUEUE_REF])).match(
     () => true,
     () => false,
   );
@@ -141,7 +149,7 @@ const reviewWindowPass = async (range: ReviewRange, window: ReviewWindow): Promi
         : { dispositions: undefined, failureReason: `the fixer failed: ${error.message}`, isLimited: false },
   );
 
-  const isAhead = runGit(["rev-list", "--count", `${QUEUE_REF}..HEAD`]).trim() !== "0";
+  const isAhead = runGit(["rev-list", "--count", `${REMOTE_QUEUE_REF}..HEAD`]).trim() !== "0";
   const isLanded = isAhead ? landCommits() : true;
   const isQueuePushed = isAhead && isLanded;
   const answered = resolveDispositions(findings.length, fixer.dispositions, fixer.failureReason);
@@ -197,7 +205,7 @@ export const runReview = async ({ from, isDryRun, to }: ReviewRunInput): Promise
   if (!isDryRun) checkoutQueue();
   const range: ReviewRange =
     mode === ReviewMode.Steady
-      ? { from: MAIN_REF, mode, to: QUEUE_REF }
+      ? { from: REMOTE_MAIN_REF, mode, to: REMOTE_QUEUE_REF }
       : {
           from: runGit(["rev-parse", "--verify", `${from}^{commit}`]).trim(),
           mode,
@@ -207,12 +215,12 @@ export const runReview = async ({ from, isDryRun, to }: ReviewRunInput): Promise
   // `main` pushed by hand past the queue is merged in first, and that push starts the next run
   if (mode === ReviewMode.Steady && !isMainAncestor()) {
     if (isDryRun) {
-      console.info(`${MAIN_BRANCH} has diverged from ${QUEUE_BRANCH}: a run merges ${MAIN_REF} into it first`);
+      console.info(`${MAIN_BRANCH} has diverged from ${QUEUE_BRANCH}: a run merges ${REMOTE_MAIN_REF} into it first`);
       return;
     }
     mergeMain();
     runGit(["push", "origin", `HEAD:${QUEUE_BRANCH}`]);
-    writeReviewSummary([`${MAIN_REF} was merged into ${QUEUE_BRANCH}, and that push starts the next run.`]);
+    writeReviewSummary([`${REMOTE_MAIN_REF} was merged into ${QUEUE_BRANCH}, and that push starts the next run.`]);
     return;
   }
 

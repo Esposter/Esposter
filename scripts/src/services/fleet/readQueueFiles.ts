@@ -1,6 +1,6 @@
 import type { QueueFile } from "#src/models/fleet/QueueFile";
 
-import { REMOTE_QUEUE_REF } from "#src/services/fleet/constants";
+import { REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";

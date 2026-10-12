@@ -1,8 +1,3 @@
-// The branch `main` is the reviewed prefix of, and the branch every session lands on
-export const MAIN_BRANCH = "main";
-export const QUEUE_BRANCH = "ai/queue";
-export const MAIN_REF = `origin/${MAIN_BRANCH}`;
-export const QUEUE_REF = `origin/${QUEUE_BRANCH}`;
 // The workflow that runs this, and the one a run dispatches to continue itself. It is named by file, since a dispatch
 // names a workflow by its file.
 export const REVIEW_WORKFLOW_FILE = "Review.yaml";
@@ -12,8 +7,8 @@ export const REVIEW_DEFERRED_LABEL = "ready-for-agent";
 // can land on `ai/queue` between the pull and the push
 export const LAND_ATTEMPTS = 4;
 
-// The amount one run reviews before `main` advances. It bounds a run's spend and wall clock, where CodeRabbit's limit
-// was a count per hour that let work outrun it.
+// The amount one run reviews before `main` advances, which bounds a run's spend and wall clock: an amount, never a
+// count per hour, which work outruns
 export const REVIEW_WINDOW_FILE_CAP = 300;
 // Kept small so haiku reads every file it is handed
 export const REVIEW_BATCH_FILE_CAP = 20;
