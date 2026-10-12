@@ -50,8 +50,8 @@
   "hits.fatalBlossoms.0-6.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
   "hits.fatalBlossoms.0-6.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.fatalBlossoms.0-6.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
-  "frames.solarIsotomaDuration": { "cause": "Unsourced", "value": 1800 },
-  "frames.transientBlossomCooldown": { "cause": "Unsourced", "value": 120 },
-  "parameters.solarIsotomaAheadMetres": { "cause": "Unsourced", "value": 3 },
-  "parameters.solarIsotomaRadius": { "cause": "Unsourced", "value": 10 }
+  "frames.solarIsotomaDuration": { "file": "skill.go", "line": 68, "source": "Gcsim", "value": 1800 },
+  "frames.transientBlossomCooldown": { "file": "skill.go", "line": 129, "source": "Gcsim", "value": 120 },
+  "parameters.solarIsotomaAheadMetres": { "file": "skill.go", "line": 52, "source": "Gcsim", "value": 3 },
+  "parameters.solarIsotomaRadius": { "file": "skill.go", "line": 53, "source": "Gcsim", "value": 10 }
 }
