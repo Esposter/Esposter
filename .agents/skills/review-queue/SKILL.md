@@ -37,7 +37,7 @@ An agent's commits never go through the main checkout. Each agent:
 3. **Lands the commits:**
 
 ```bash
-for attempt in 1 2 3 4; do git pull --rebase origin ai/queue && git push origin HEAD:ai/queue && break; done
+for attempt in 1 2 3 4; do git pull --rebase origin ai/queue || break; git push origin HEAD:ai/queue && break; done
 ```
 
 A rebase conflict stops the loop on the commit it stopped on, and the agent that made the commit settles it (`references/pull-conflicts.md`). Only a rejected push retries.
