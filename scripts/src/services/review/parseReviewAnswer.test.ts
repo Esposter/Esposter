@@ -3,9 +3,9 @@ import { ReviewLane } from "#src/models/review/ReviewLane";
 import { parseReviewAnswer } from "#src/services/review/parseReviewAnswer";
 import { describe, expect, test } from "vitest";
 
-const FINDING = { file: "a.ts", lane: ReviewLane.Correctness, line: 3, summary: "wrong", trigger: "given 0" };
-
 describe(parseReviewAnswer, () => {
+  const FINDING = { file: "a.ts", lane: ReviewLane.Correctness, line: 3, summary: "wrong", trigger: "given 0" };
+
   test("reads the answer out of the envelope's result", () => {
     expect.hasAssertions();
 

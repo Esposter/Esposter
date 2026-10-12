@@ -51,6 +51,7 @@
     "ai:package:new": "pnpm -C scripts ai:package:new",
     "ai:proposals:report": "pnpm -C scripts ai:proposals:report",
     "ai:resume": "pnpm -C scripts ai:resume",
+    "ai:review": "pnpm -C scripts ai:review",
     "ai:skills:extract": "pnpm -C scripts ai:skills:extract",
     "ai:sweep:constant-scope": "pnpm -C scripts ai:sweep:constant-scope",
     "ai:sweep:duplicate-code": "pnpm -C scripts ai:sweep:duplicate-code",

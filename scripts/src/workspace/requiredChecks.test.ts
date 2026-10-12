@@ -9,7 +9,7 @@ describe("requiredChecks", () => {
   // The branch ruleset requires each check by the name a CI job reports, and nothing else ties the two files: a
   // Context no job reports is never satisfied and blocks every merge, and a shard CI adds past the count is a check
   // The ruleset never asks for
-  const rulesetSource = readRepositoryFile("apps/infra/src/github/rulesets/developMainStatusChecks.ts");
+  const rulesetSource = readRepositoryFile("apps/infra/src/github/rulesets/queueStatusChecks.ts");
   const workflowSource = [".github/workflows/CI.yaml", ".github/workflows/build-packages.yaml"]
     .map((path) => readRepositoryFile(path))
     .join("\n");

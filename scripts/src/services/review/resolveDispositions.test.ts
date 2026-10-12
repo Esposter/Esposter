@@ -2,9 +2,9 @@ import { ReviewOutcome } from "#src/models/review/ReviewOutcome";
 import { resolveDispositions } from "#src/services/review/resolveDispositions";
 import { describe, expect, test } from "vitest";
 
-const FAILURE_REASON = "the fixer failed";
-
 describe(resolveDispositions, () => {
+  const FAILURE_REASON = "the fixer failed";
+
   test("defers every finding when the fixer failed", () => {
     expect.hasAssertions();
 

@@ -3,9 +3,9 @@ import type { ReviewCommit } from "#src/models/review/ReviewCommit";
 import { getWindowCommitCount } from "#src/services/review/getWindowCommitCount";
 import { describe, expect, test } from "vitest";
 
-const FILE_CAP = 2;
-
 describe(getWindowCommitCount, () => {
+  const FILE_CAP = 2;
+
   test("takes the longest prefix whose union of files stays under the cap", () => {
     expect.hasAssertions();
 

@@ -3,10 +3,10 @@ import type { ReviewFile } from "#src/models/review/ReviewFile";
 import { packBatches } from "#src/services/review/packBatches";
 import { describe, expect, test } from "vitest";
 
-const FILE_CAP = 2;
-const LINE_CAP = 10;
-
 describe(packBatches, () => {
+  const FILE_CAP = 2;
+  const LINE_CAP = 10;
+
   test("closes a batch before the file cap", () => {
     expect.hasAssertions();
 
