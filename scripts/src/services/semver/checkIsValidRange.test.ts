@@ -4,10 +4,7 @@ import { describe, expect, test } from "vitest";
 describe(checkIsValidRange, () => {
   test.each([
     ["1.0.0 - 2.0.0"],
-    ["1.0.0 - 2.0.0"],
     ["1 - 2"],
-    ["1 - 2"],
-    ["1.0 - 2.0"],
     ["1.0 - 2.0"],
     ["1.0.0"],
     [">=*"],
@@ -48,7 +45,6 @@ describe(checkIsValidRange, () => {
     ["~> 1"],
     ["~1.0"],
     ["~ 1.0"],
-    ["~1"],
     ["~1.x"],
     ["~1.2"],
     ["~1.2.x"],
@@ -129,7 +125,6 @@ describe(checkIsValidRange, () => {
   });
 
   test.each([
-    ["1.x.5"],
     ["1.*.5"],
     ["1.x.5 || 2.x"],
     ["x.1"],
