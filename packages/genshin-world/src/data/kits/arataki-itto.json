@@ -284,25 +284,21 @@
   "chargedAttack.hits.0.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "chargedAttackStamina": { "cause": "Unclassified", "value": { "index": 7, "proudSkillGroupId": 5731 } },
   "frames.royalDescent": { "cause": "Unclassified", "value": 795 },
-  "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 41 },
   "normalAttacks.0.hits.0.convertedArea": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.3 }
   },
   "normalAttacks.0.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 82.9 },
-  "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 51 },
   "normalAttacks.1.hits.0.convertedArea": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.3 }
   },
   "normalAttacks.1.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 77.9 },
-  "normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 57 },
   "normalAttacks.2.hits.0.convertedArea": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.3 }
   },
   "normalAttacks.2.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 98.3 },
-  "normalAttacks.3.animationFrames": { "cause": "Unclassified", "value": 83 },
   "normalAttacks.3.hits.0.convertedArea": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.580273550544841 }

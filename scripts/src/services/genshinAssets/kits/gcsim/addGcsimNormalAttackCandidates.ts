@@ -1,5 +1,6 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
+import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
@@ -8,13 +9,20 @@ import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/ge
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
 
-// The normal attacks: each strike's hitmarks from `attackHitmarks`, its animation from `attackFrames`, and its hits'
-// Areas from the `N<strike>` or `N<strike>-<hit>` hitboxes
+// A strike's frames from `attackFrames`, one per strike, or one list per state of the strikes, the first state's read
+const readStrikeFrames = (value: GoValue | undefined, strikeIndex: number): GoValue | undefined => {
+  if (!Array.isArray(value)) return undefined;
+  const strikeList = Array.isArray(value[0]) ? value[0] : value;
+  return strikeList[strikeIndex];
+};
+
+// The normal attacks: each strike's hitmarks from `attackHitmarks` or the release list `attackReleases`, its animation
+// From `attackFrames`, and its hits' areas from the `N<strike>` or `N<strike>-<hit>` hitboxes
 export const addGcsimNormalAttackCandidates = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
   { attacks, config, constantMap, travelMap }: GcsimCharacter,
 ): void => {
-  const normalHitmarks = findGcsimConstant(constantMap, "attackHitmarks");
+  const normalHitmarks = findGcsimConstant(constantMap, "attackHitmarks", "attackReleases");
   if (normalHitmarks === undefined || !Array.isArray(normalHitmarks.value)) return;
   const attack = attacks.find(({ talentVariable }) => talentVariable === "attack");
   const normalFrames = findGcsimConstant(constantMap, "attackFrames");
@@ -26,7 +34,7 @@ export const addGcsimNormalAttackCandidates = (
     const hitmarks = toGoNumbers(strikeHitmarks) ?? [];
     const hitmarkLine = normalHitmarks.elementLines[strikeIndex] ?? normalHitmarks.line;
     add(`${path}.hits.length`, hitmarks.length, toFile(normalHitmarks.file), hitmarkLine);
-    const strikeFrames = Array.isArray(normalFrames?.value) ? normalFrames.value[strikeIndex] : undefined;
+    const strikeFrames = readStrikeFrames(normalFrames?.value, strikeIndex);
     if (
       normalFrames !== undefined &&
       strikeFrames !== undefined &&

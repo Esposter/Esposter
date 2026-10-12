@@ -23,44 +23,11 @@
     "value": { "index": 14, "proudSkillGroupId": 8431 }
   },
   "hitFields.pyrotechnicStrike.poiseDamage": { "cause": "Unclassified", "value": 90 },
-  "normalAttacks.length": { "cause": "Unclassified", "value": 4 },
-  "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 32 },
-  "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
-  "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 34 },
-  "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 1 },
-  "normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
-  "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 22 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 86 },
-  "normalAttacks.2.hits.length": { "cause": "Unclassified", "value": 2 },
-  "normalAttacks.2.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
-  "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
-  "normalAttacks.2.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
+  "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.animationFrames": { "cause": "Unclassified", "value": 66 },
-  "normalAttacks.3.hits.length": { "cause": "Unclassified", "value": 1 },
-  "normalAttacks.3.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
-  "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
   "plunges.high.animationFrames": { "cause": "Unclassified", "value": 68 },

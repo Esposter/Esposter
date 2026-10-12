@@ -51,6 +51,53 @@ describe(getGcsimKitCandidates, () => {
     ).toStrictEqual([undefined, [1], undefined]);
   });
 
+  test("reads a normal attack's strikes from a release list named otherwise, and its frames from the first state's list of strikes", () => {
+    expect.hasAssertions();
+
+    const frames = (animationFrames: number) => ({ animationFrames, hitmarkFrames: 0 });
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([
+        [
+          "attackFrames",
+          toConstant([
+            [frames(30), frames(40)],
+            [frames(50), frames(60)],
+          ]),
+        ],
+        ["attackReleases", toConstant([[11], [6]])],
+      ]),
+      filePaths: [],
+      folder: "itto",
+      queuedAttacks: [],
+      talentFile: "itto.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Itto",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Claymore,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      ["normalAttacks.length", "normalAttacks.1.animationFrames", "normalAttacks.1.hits.length"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[2], [60], [1]]);
+  });
+
   test("reads a burst's hits from its queue calls, each at the damage delay its call passes, where it has no hitmark constant", () => {
     expect.hasAssertions();
 
