@@ -33,11 +33,11 @@ const formatCounts = (countMap: ReadonlyMap<string, number>): string =>
     .map(([key, count]) => `${key} ${count}`)
     .join(", ") || "none";
 
-// Builds every kit module as it stands against its sources, seeds each character's overlay with what the build needs to
+// Builds every kit's published record against its sources, seeds each character's overlay with what the build needs to
 // Reproduce it, and returns the report: the gap, each value the committed overlay left the build short of, by kit; the
 // Overlay's entries by kit and by cause; the shared causes the rules applied; the values read past the licence line by
-// Kit; the characters the tag predates; what failed by kit; and each value a module reads that no record holds. gcsim's
-// Current branch is read in memory only, to tell a value read past the licence line from one that differs
+// Kit; the characters the tag predates; and what failed by kit. gcsim's current branch is read in memory only, to tell
+// A value read past the licence line from one that differs
 export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]> => {
   const mainCharacterMap = await readGcsimMainCharacters([
     ...new Set([
@@ -53,22 +53,12 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
   const overlayKeys: string[] = [];
   const ruleCauses: string[] = [];
   const gapLines: string[] = [];
-  const unreadLines: string[] = [];
   let gapCount = 0;
-  for (const {
-    gcsimFolder,
-    moduleRecord,
-    name,
-    notes,
-    overlayName,
-    sourceCandidateMap,
-    tables,
-    unreadSites,
-  } of inputs) {
+  for (const { gcsimFolder, name, notes, overlayName, publishedRecord, sourceCandidateMap, tables } of inputs) {
     const { gapPaths, overlayFailures } = getResult(() =>
       buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName)),
     ).match(
-      ({ record }) => ({ gapPaths: getMismatchedKitPaths(record, moduleRecord), overlayFailures: [] }),
+      ({ record }) => ({ gapPaths: getMismatchedKitPaths(record, publishedRecord), overlayFailures: [] }),
       (error) => ({
         gapPaths: [],
         overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
@@ -76,7 +66,6 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     );
     gapCount += gapPaths.length;
     if (gapPaths.length > 0) gapLines.push(`  ${name} (${gapPaths.length})`);
-    if (unreadSites.length > 0) unreadLines.push(`  ${name}: ${unreadSites.join("; ")}`);
     const mainFolder = gcsimFolder ?? findGcsimFolder(mainCharacterMap, name);
     const mainCharacter = mainFolder === undefined ? undefined : mainCharacterMap.get(mainFolder);
     const mainCandidateMap: Map<string, KitCandidate[]> =
@@ -86,7 +75,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     const isTagPredated = gcsimFolder === undefined;
     if (isTagPredated) predatedNames.push(name);
     const { built, failures, overlay } = compareKitRecord(
-      moduleRecord,
+      publishedRecord,
       sourceCandidateMap,
       mainCandidateMap,
       isTagPredated,
@@ -125,7 +114,5 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     `Predated by the tag: ${predatedNames.join(", ") || "none"}`,
     `Failures by kit: ${failureLines.length === 0 ? "none" : ""}`,
     ...failureLines,
-    `Read by a module and held by no record: ${unreadLines.length === 0 ? "none" : ""}`,
-    ...unreadLines,
   ];
 };
