@@ -1,3 +1,5 @@
+import { UNDRAWN_STAGE_PLANES_MESH_REGEX } from "#src/services/constants";
+
 // The rest of Liyue Harbor's exports, which the world does not draw yet, one entry a kind of mesh: with the families,
 // Every renderer of the capital's witness is claimed
 export const LiyueUndrawnMeshRegexMap: Record<string, RegExp> = {
@@ -12,7 +14,7 @@ export const LiyueUndrawnMeshRegexMap: Record<string, RegExp> = {
   plot: /^Area_Ly_(?:Plot|Stairs)_/u,
   props: /^(?:Area_(?:Common_Prop|Ly_Props?|MdProps)|Indoor_Ly_Prop|Stages_Props)_/u,
   rocks: /^(?:Area_Ly_(?:Rock|Stone)_|Stages_MDSRock)/u,
-  stagePlanes: /^Stages_(?:DecalCube|Plane)_/u,
+  stagePlanes: UNDRAWN_STAGE_PLANES_MESH_REGEX,
   trees: /^(?:Area_Ly_Tree_|Stages_(?:CyTree|Deadwood))/u,
   water: /^Area_Ly_Water_/u,
 };

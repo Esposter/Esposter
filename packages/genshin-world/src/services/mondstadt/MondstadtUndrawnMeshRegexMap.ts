@@ -1,3 +1,5 @@
+import { UNDRAWN_STAGE_PLANES_MESH_REGEX } from "#src/services/constants";
+
 // The rest of Mondstadt City's exports, which the world does not draw yet, one entry a kind of mesh: with the families,
 // Every renderer of the capital's witness is claimed
 export const MondstadtUndrawnMeshRegexMap: Record<string, RegExp> = {
@@ -9,5 +11,5 @@ export const MondstadtUndrawnMeshRegexMap: Record<string, RegExp> = {
   plants: /^(?:Grass_Reed_|Stages_(?:Deadbush|LYLvy|MdLGrass|SGrass))/u,
   props: /^(?:Area_(?:Common_Prop|Md_Prop|ManorProps|MdProps)|Indoor_MdProps|Stages_Props)_/u,
   rocks: /^Stages_MDSRock/u,
-  stagePlanes: /^Stages_(?:DecalCube|Plane)_/u,
+  stagePlanes: UNDRAWN_STAGE_PLANES_MESH_REGEX,
 };
