@@ -14,7 +14,7 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 - [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) — failed deliveries land in a blob container whose writes push-trigger an automatic, attempt-capped replay.
 - [Observability](/docs/infra/observability) — why App Insights and Log Analytics are deliberately not provisioned, and what the estate relies on instead.
 - [Pulumi source of truth](/docs/infra/pulumi-source-of-truth) — Function App runtime settings managed in Pulumi.
-- [Review collector](/docs/infra/review-collector) — the event-triggered collector that drains CodeRabbit findings, cuts windows from `ai/queue` onto `develop`, sends what claims no review straight to `main`, and merges each release the moment its one review completes — never waiting on a person.
+- [Review](/docs/infra/review) — how what lands on `ai/queue` is reviewed: read-only haiku reviewers over amount-capped windows, one haiku fixer, and `main` advanced to each reviewed window — replacing CodeRabbit and the review collector.
 - [Typed decisions](/docs/infra/typed-decisions) — which tier answers a gate, a severity or a triage, and why the cheapest session is the one never spawned.
 - [Roadmap](/docs/infra/roadmap) — open items (key-auth-gated hardening); every item links its proposal.
 - [Deferred](/docs/infra/deferred) — ideas waiting on a trigger.
@@ -38,8 +38,8 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Event Grid dead-letter** — a deadletter container and a capped replay that its writes push-trigger. → [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter)
 - **Observability removal** — deleted App Insights, Log Analytics, smart-detector rules, and scheduled-query alerts (dev + prod) to stay in the free tier; the `$0.01` budget guard is the cost ceiling. → [Observability](/docs/infra/observability)
 - **Pulumi source of truth** — adopted the Function Apps' runtime app settings into Pulumi; secrets flow from ESC. → [Pulumi source of truth](/docs/infra/pulumi-source-of-truth)
-- **Review collector** — no step waits on a person; the only Azure-side cost is the collector token as a Pulumi-managed secret. → [Review collector](/docs/infra/review-collector)
-- **Typed decisions** — the drain's finding order and issue triage run on a typed-decision model rather than a session. → [Typed decisions](/docs/infra/typed-decisions)
+- **Review** — CodeRabbit and the review collector replaced by one workflow in which no step waits on a person, and whose every limit is an amount rather than a time. → [Review](/docs/infra/review)
+- **Typed decisions** — issue triage runs on a typed-decision model rather than a session. → [Typed decisions](/docs/infra/typed-decisions)
 - **Branch namespaces** — a branch's name is the whole convention for who may create and push it, enforced by rulesets. → [Branch namespaces](/docs/infra/branch-namespaces)
 - **Every GitHub default declared** — the repository's Actions surface lives in the provider beside its refs, and CodeQL scans `main`. → [Azure Pulumi layout](/docs/infra/azure-pulumi-layout)
 - **Claude interface** — a persona plugin and spoken replies for one workspace package; the desktop stage stays two proposals behind a gate of use. → [Claude interface](/docs/infra/claude-interface)

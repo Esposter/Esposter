@@ -38,17 +38,15 @@ Say which order you used when the window was wide enough to need one. A round is
 
 ## Never slice an over-cap branch by path
 
-When a reviewer (CodeRabbit, a cloud review) refuses a diff as too large, the tempting workaround is a throwaway branch off the base holding one subsystem's files, reviewed on its own.
+When a reviewer refuses a diff as too large, the tempting workaround is a throwaway branch off the base holding one subsystem's files, reviewed on its own.
 
 **It does not work, and it fails in the direction that wastes the most attention**: the slice is one tree's subsystem sitting on another tree's everything-else, so every reference crossing the cut reads as a defect. A deleted field looks un-migrated, a moved module looks missing, a composable whose consumers live in the other half looks like it broke all of them — each arrives as a confident, well-argued major finding with a step-by-step proof, and each is an artifact of the cut.
 
 Split by **history**, not by path: stack real branches so each one's base contains everything before it, and every reference resolves against a tree that actually exists. When the caps refuse even that, the answer is a smaller PR, not a synthetic branch. A local `typecheck` settles the compile-time half of this class in one pass and costs nothing — every reference that stopped resolving across the cut — so run it against the real branch before reviewing a slice. What it cannot see is the other half: dynamic lookups, data contracts, anything only a run exercises. The suite covers those, and neither is a reason to review a synthetic tree.
 
-## Always an independent second pass over the whole PR
+## Read the whole range, not the newest commit
 
-This review is a **separate check that runs in addition to CodeRabbit, never instead of it** — the point is redundant coverage, so what one reviewer misses the other catches. CodeRabbit reviews each release once and routinely misses findings.
-
-So when the ask is "review the PR" (not just "review my last change"), read the **entire PR diff**, not only the newest commit — including files CodeRabbit already saw and ones an earlier local round already passed. Scoping the second pass to just the new changes defeats the redundancy. Run it after CodeRabbit has finished (check its state per the `coderabbit` skill, `references/in-flight-reviews.md`) so both passes are complete before the PR is considered reviewed.
+When the ask is "review the PR" or a range (not just "review my last change"), read the **entire diff**, not only the newest commit — including files an earlier round already passed. Scoping a pass to the new changes skips exactly the files an earlier round could have missed.
 
 ## Reporting
 

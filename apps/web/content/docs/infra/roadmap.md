@@ -10,8 +10,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 ## Open
 
 - [ ] [Dependency admission](/docs/architecture/dependency-admission) — the heavy engines by the client bytes `pnpm ai:dependencies:score --sort bundle` reads from the app's real build: the survey creator, mermaid, three, apexcharts and mathjs each weighed for a lighter engine, a later load or neither; the two PDF viewers stay ([PDF viewer consolidation](/docs/architecture/rejected/pdf-viewer-consolidation)), and GrapesJS is answered by the [page builder](/docs/proposals/resource/page-builder)
-- [ ] [Agent console](/docs/proposals/infra/agent-console) — past terminal parity and the shipped connecting (host installer, session windows, device pairing, remote connections) and the Code tab's shell pane: repository files, diff comments, side chat, effort level and session titles, so a day's work needs no terminal; Anthropic-hosted sessions on the reader's own API key; then the Genshin theme, the views (the collector harbour) and the terminal-mirror driver
-- [ ] [Review session](/docs/proposals/infra/review-session) — CodeRabbit replaced by a pull-request workflow running an opus review session with `.coderabbit.yaml`'s settings carried over, its findings a pull request review the drain already answers and its verdict a check the gate reads; the rate-limit, skip and plan-cap machinery deleted after a shadow run
+- [ ] [Agent console](/docs/proposals/infra/agent-console) — past terminal parity and the shipped connecting (host installer, session windows, device pairing, remote connections) and the Code tab's shell pane: repository files, diff comments, side chat, effort level and session titles, so a day's work needs no terminal; Anthropic-hosted sessions on the reader's own API key; then the Genshin theme, the views and the terminal-mirror driver
 
 ## Blocked (the character voice still switched on after two weeks of daily use)
 

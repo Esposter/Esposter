@@ -25,7 +25,7 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 
 **Every file in the window is in scope, whatever its extension** — prose included. A docs page, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
-**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (the `skill-authoring` skill, `references/enforced-rules.md`), and CodeRabbit already sweeps every pull request broadly and unverified, reasoning from names and asserting semantics this repo does not have (the `coderabbit` skill). What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
+**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (the `skill-authoring` skill, `references/enforced-rules.md`), What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
 
 ## Load only the rules the window needs
 

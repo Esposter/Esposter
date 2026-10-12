@@ -62,12 +62,12 @@ sequenceDiagram
 
 ## Views
 
-A view is an entry in `AgentConsoleViewMap`: a name, an icon, a lazily loaded component, and optionally the command a repository declares for its data ([collector harbour](/docs/proposals/infra/agent-console/collector-harbour)). The map is the only place a view is known, so adding one is one component and one line, and a theme shows whichever views the person has open. This tier is for the app's own panels that have to live in the scene; anything a third party writes goes through MCP Apps.
+A view is an entry in `AgentConsoleViewMap`: a name, an icon, a lazily loaded component, and optionally the command a repository declares for its data. The map is the only place a view is known, so adding one is one component and one line, and a theme shows whichever views the person has open. This tier is for the app's own panels that have to live in the scene; anything a third party writes goes through MCP Apps.
 
 ## Scope and order
 
 1. **The MCP Apps host.** After the SDK driver is proven, since it rides on the driver's tool results.
-2. **The view registry**, with the first view that needs it — the collector harbour, which builds it.
+2. **The view registry**, built with the first view that needs one.
 
 ```text
 apps/web/app/components/AgentConsole/Pane/

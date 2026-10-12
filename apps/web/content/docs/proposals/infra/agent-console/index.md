@@ -12,7 +12,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) is one page of t
 
 - **Every view keeps the world's budget.** A view builds only what is in view and rebuilds only what a change touched, the rules the [Genshin engine](/docs/genshin/engine-architecture) keeps, so no cost grows with the repository behind it.
 - **The look is behind a theme.** The default theme is the world with no character. A theme may add a palette, a scene in the world, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
-- **Views are separate from themes.** A view is a panel any theme can show, such as the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
+- **Views are separate from themes.** A view is a panel any theme can show, so a repository's tooling is visualised whatever the console is dressed as.
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).
 - **The world is Genshin's.** The console's world is the [Genshin](/docs/proposals/genshin) recreation, built by its own program; the voxel world's open world, building, map, day, sound, atelier and codebase city are [rejected](/docs/infra/rejected) with it.
 - **A second driver, for sessions the SDK cannot hold.** A session a terminal already runs is attached to from the outside ([terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)).
@@ -30,7 +30,7 @@ flowchart LR
     W[Genshin world and panels] --> T{Theme}
     T -->|default| N[Notifications]
     T -->|Genshin| G[Palette, scene, avatar, voice]
-    W --> V[Views: harbour]
+    W --> V[Views]
     W --> X[Side pane: app routes, MCP Apps]
   end
   subgraph Host[agent-console-server]
@@ -77,14 +77,14 @@ sequenceDiagram
 | [Wish banner](/docs/proposals/infra/agent-console/wish-banner)                             | Genshin theme — the session's character arriving through a wish               |
 | [Element ambience](/docs/proposals/infra/agent-console/element-ambience)                   | Genshin theme — a backdrop in the element, moved by the spoken line           |
 | [Spatial chat](/docs/proposals/infra/agent-console/spatial-chat)                           | a theme option — the conversation placed in the scene                         |
-| [Collector harbour](/docs/proposals/infra/agent-console/collector-harbour)                 | view — the review collector's branches as a river                             |
+
+                  |
 
 ## Scope and order
 
 1. **One day's work in the console alone**, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison) and closed where it recurs. [Anthropic-hosted sessions](/docs/proposals/infra/agent-console/anthropic-hosted-sessions) come after the connecting pages of the [console](/docs/infra/claude-interface/agent-console). The Code tab's lean core closes the returns the comparison predicts: [repository files](/docs/proposals/infra/agent-console/repository-files) and [side chat](/docs/proposals/infra/agent-console/side-chat) come next, with [effort level](/docs/proposals/infra/agent-console/effort-level) and [session titles](/docs/proposals/infra/agent-console/session-titles) as small changes to the composer and the sessions tab.
 2. **The Genshin theme**: persona, voice, wish banner, then the ambience, all inside the world.
-3. **Views**: the collector harbour.
-4. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
+3. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
 
 ## What this does not propose
 

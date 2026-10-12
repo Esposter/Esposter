@@ -67,5 +67,5 @@ What the terminal shows and does, and where the console carries each part, is [t
 
 ## Notes
 
-- The Genshin theme's palette, voice, scene and reactions, the views (the collector harbour), the terminal-mirror driver and the MCP Apps tier of [extensions](/docs/proposals/infra/agent-console/extensions) are still [proposals](/docs/proposals/infra/agent-console). The default theme is the world every one of them is measured against.
+- The Genshin theme's palette, voice, scene and reactions, the views, the terminal-mirror driver and the MCP Apps tier of [extensions](/docs/proposals/infra/agent-console/extensions) are still [proposals](/docs/proposals/infra/agent-console). The default theme is the world every one of them is measured against.
 - Cost is what the SDK reports for the session's query since the host opened it. A session resumed in a new host process starts that count again, as a new terminal process does.
