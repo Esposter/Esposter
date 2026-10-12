@@ -23,6 +23,7 @@ import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
+import HudStick from "#src/components/Hud/Stick/Index.vue";
 import HudTouch from "#src/components/Hud/Touch/Index.vue";
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
 import { GameRect, GameScreen } from "genshin-interface";
@@ -99,14 +100,22 @@ const emit = defineEmits<{ map: []; menu: [] }>();
   <!-- The heads-up display over the world: only the pieces the world backs, each in its place. The Paimon button and
        The minimap in the top left with the quest tracker under them, the party down the right, the member on the
        Field's health at the bottom's middle, the skill and burst at the bottom right, the stamina meter where it places
-       Itself, and on a touch screen the touch layout's action buttons beside the skill and burst and the touch controls
-       Under them all. Everything between the pieces lets the pointer through to the world, and a press on a piece stays
+       Itself, and on a touch screen the stick at the bottom left, the touch layout's action buttons beside the skill and
+       Burst and the look's drag under them all. Everything between the pieces lets the pointer through to the world, and a press on a piece stays
        The piece's, never reaching the world's input as an attack -->
   <GameScreen class="hud" :is-touch @mousedown.stop>
     <HudTouch v-if="isTouch" :input />
     <!-- The page as the game's tree under `GrpMainPage` nests it: each piece a `GameRect` placed by its RectTransform
          inside its game parent's -->
     <GameRect #default="{ rect: hudRect }" :rect="interfaceRects[HudInterfaceRectName.MainPage]">
+      <GameRect
+        v-if="isTouch"
+        #default="{ rect: inputControllerRect }"
+        :parent="hudRect"
+        :rect="interfaceRects[HudInterfaceRectName.InputController]"
+      >
+        <HudStick :input :interface-rects :parent="inputControllerRect" />
+      </GameRect>
       <GameRect #default="{ rect: mapInfoRect }" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.MapInfo]">
         <GameRect :parent="mapInfoRect" :rect="interfaceRects[HudInterfaceRectName.PlayerProfileButton]">
           <HudPaimonButton :game-text @press="emit('menu')" />

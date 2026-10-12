@@ -1,7 +1,9 @@
-// Provisional: the game's touch layout, measured off a recording of its mobile client. How far a thumb moves from where
-// It landed to push the on-screen stick all the way, in CSS pixels, since a thumb's reach is a distance on the glass
-// That CSS pixels follow on a phone, and the radians a pixel of a drag across the right half turns the look by
-export const TOUCH_STICK_REACH = 60;
+// The touch layout's stick at rest, measured off the mobile client's `hud-world-pickup` at 934 high: its group's centre
+// 215 canvas units in and 173 up from its area's foot, where the tree's own rect puts it 102 in and up, so the game
+// Places it as it runs; and only its head shows, a faint ring 47 units across of the head's 64
+export const TOUCH_STICK_REST_POSITION: [number, number] = [215, 173];
+export const TOUCH_STICK_REST_HEAD_SHARE: number = 47 / 64;
+// Provisional, until a recording of a drag is measured: the radians a pixel of a drag turns the look by
 export const TOUCH_LOOK_RADIANS_PER_PIXEL = 0.005;
 // The touch layout's action buttons' discs, a dark blue at a sixth over the world: inside the jump's, sprint's, skill's
 // And attack's discs on `hud-world-pickup` the scene reads 0.84, 0.88 and 0.91 of itself just outside them, red to blue
