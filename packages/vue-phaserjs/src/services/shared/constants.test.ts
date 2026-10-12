@@ -3,7 +3,7 @@ import { Animations } from "phaser";
 import { describe, expect, test } from "vitest";
 
 describe("constants", () => {
-  test("ANIMATION_COMPLETE_EVENT_PREFIX is the prefix Phaser names its completion events with", () => {
+  test("the animation completion prefix is the one Phaser names its completion events with", () => {
     expect.hasAssertions();
 
     expect(ANIMATION_COMPLETE_EVENT_PREFIX).toBe(Animations.Events.ANIMATION_COMPLETE_KEY);

@@ -16,7 +16,7 @@ import { describe, test } from "vitest";
 describe(nonce, () => {
   test("a rendered page's nonce and SRI attributes", async ({ bench }) => {
     const app = createNitroApp();
-    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+    createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
     nonce(app.nitroApp);
     createSubresourceIntegrityPlugin(PAGE_SRI_HASHES)(app.nitroApp);
 

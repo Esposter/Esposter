@@ -7,10 +7,10 @@ const OPERATOR_REGEX = /[-!%&*+/<=>^|]/u;
 // The first and last line of the top-level function a line is in, or undefined where it is in none
 const readFunctionLines = (lines: readonly string[], lineIndex: number): [number, number] | undefined => {
   let start = lineIndex;
-  while (start >= 0 && !/^func /u.test(lines[start] ?? "")) start--;
+  while (start >= 0 && !(lines[start] ?? "").startsWith("func ")) start--;
   if (start < 0) return undefined;
   let end = lineIndex;
-  while (end < lines.length && !/^\}/u.test(lines[end] ?? "")) end++;
+  while (end < lines.length && !(lines[end] ?? "").startsWith("}")) end++;
   return [start, end];
 };
 
@@ -22,7 +22,7 @@ interface GoBinding {
 }
 
 // The bindings and assignments of a name in a function's lines: each `name := expr`, `var name = expr` or `name = expr`,
-// and each other place a name is bound, such as a range or a second declaration, which gives no expression
+// And each other place a name is bound, such as a range or a second declaration, which gives no expression
 const readBindings = (lines: readonly string[], [start, end]: [number, number], name: string): GoBinding[] => {
   const bindings: GoBinding[] = [];
   const assignmentRegex = new RegExp(`(?<![.\\w])${name}\\s*(?<operator>:=|=(?!=))\\s*(?<expression>[^\\n]*)`, "u");

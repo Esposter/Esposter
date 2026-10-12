@@ -53,7 +53,7 @@ const getNearbyPackageNames = (importLines: ImportLine[], index: number): Set<st
 const escapeRegExp = (text: string): string => text.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
 
 // Every package whose imported name is called or read from within the window of a cast. The lookbehind stands in for `\b`,
-// which a name starting with `$` never satisfies beside a space
+// Which a name starting with `$` never satisfies beside a space
 const getCalledPackageNames = (lines: string[], importLines: ImportLine[], index: number): Set<string> => {
   const windowText = lines.slice(Math.max(0, index - SHIM_LINE_WINDOW), index + SHIM_LINE_WINDOW + 1).join("\n");
   return new Set(

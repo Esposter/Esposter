@@ -12,6 +12,12 @@ import { getRecordRowLines } from "#src/services/sweeps/duplicateCode/getRecordR
 import { getOrCreate } from "@esposter/shared";
 import { relative, sep } from "node:path";
 
+// Each file is read once per reader however many clones it is in
+const memoize = <TValue>(read: (sourceId: string) => TValue) => {
+  const sourceIdValueMap = new Map<string, TValue>();
+  return (sourceId: string) => getOrCreate(sourceIdValueMap, sourceId, () => read(sourceId));
+};
+
 // Each reader gives the data lines of a file: one kind of non-logic read as data, a declaration or wiring, the rows of an
 // Enum-keyed record, or the numeric and colour rows of a table. A clone free of code under any reader is a copy of that
 // Non-logic alone, where a file's code under a reader is every line that is neither an import nor one of its data lines
@@ -29,11 +35,6 @@ export const getDuplicateCodeFindings = (
   readSource: (sourceId: string) => string,
   readPluginRoot: (sourceId: string) => string | undefined = () => undefined,
 ): DuplicateCodeFinding[] => {
-  // Each file is read once per reader however many clones it is in
-  const memoize = <TValue>(read: (sourceId: string) => TValue) => {
-    const sourceIdValueMap = new Map<string, TValue>();
-    return (sourceId: string) => getOrCreate(sourceIdValueMap, sourceId, () => read(sourceId));
-  };
   const readNonImportLines = memoize((sourceId) => getNonImportLines(readSource(sourceId)));
   const readLeadingImportLines = memoize((sourceId) => getLeadingImportLines(readSource(sourceId)));
   const readPluginRootOnce = memoize(readPluginRoot);

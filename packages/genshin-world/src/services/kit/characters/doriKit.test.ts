@@ -6,7 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createDoriKitBehaviour, DORI_CHARACTER_ID } from "#src/services/kit/characters/doriKit";
-import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

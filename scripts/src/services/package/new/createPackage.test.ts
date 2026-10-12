@@ -226,7 +226,9 @@ describe(createPackage, () => {
         { description: "A demo library.", kind: PackageKind.Library, name: "demo-library", register: false },
         root,
       ),
-    ).toThrow();
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: package, no row matches ^\\| \\[\`packages\\/]`,
+    );
     expect(existsSync(join(root, "packages/demo-library"))).toBe(false);
   });
 });

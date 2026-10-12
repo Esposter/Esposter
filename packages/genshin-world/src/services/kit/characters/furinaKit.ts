@@ -183,6 +183,42 @@ const startEndlessWaltz = (
 // Attack, or Pneuma's Singer of Many Waters, which heals the character on the field. Let the People Rejoice starts its
 // Fanfare, which each change to a member's HP feeds. Ascensions 1 and 4 and Constellations 1, 2's Fanfare and 4 are built;
 // Constellation 2's Max HP, 3, 5 and 6 are not
+// A field a member or the Singer casts where she stands, following her body, and ticking on its own schedule
+const castFollowingField = (
+  kitEffectState: KitEffectState,
+  combatant: Combatant,
+  { x, z }: GroundPoint,
+  {
+    delaySeconds,
+    id,
+    initialTickSeconds,
+    intervalSeconds,
+    onTick,
+    secondsRemaining,
+  }: {
+    delaySeconds: number;
+    id: string;
+    initialTickSeconds: number;
+    intervalSeconds: number;
+    onTick: (tick: KitContext, field: KitField) => void;
+    secondsRemaining: number;
+  },
+): void => {
+  const field = castKitField(
+    kitEffectState,
+    combatant.characterId,
+    { x, z },
+    {
+      id,
+      isFollowing: true,
+      nextTickSeconds: delaySeconds + initialTickSeconds,
+      onTick: (tick) => onTick(tick, field),
+      secondsRemaining,
+      tickIntervalSeconds: intervalSeconds,
+    },
+  );
+};
+
 export const createFurinaKitBehaviour = ({
   kit,
   readFrames,
@@ -275,41 +311,6 @@ export const createFurinaKitBehaviour = ({
     });
   };
 
-  // A field a member or the Singer casts where she stands, following her body, and ticking on its own schedule
-  const castFollowingField = (
-    kitEffectState: KitEffectState,
-    combatant: Combatant,
-    { x, z }: GroundPoint,
-    {
-      delaySeconds,
-      id,
-      initialTickSeconds,
-      intervalSeconds,
-      onTick,
-      secondsRemaining,
-    }: {
-      delaySeconds: number;
-      id: string;
-      initialTickSeconds: number;
-      intervalSeconds: number;
-      onTick: (tick: KitContext, field: KitField) => void;
-      secondsRemaining: number;
-    },
-  ): void => {
-    const field = castKitField(
-      kitEffectState,
-      combatant.characterId,
-      { x, z },
-      {
-        id,
-        isFollowing: true,
-        nextTickSeconds: delaySeconds + initialTickSeconds,
-        onTick: (tick) => onTick(tick, field),
-        secondsRemaining,
-        tickIntervalSeconds: intervalSeconds,
-      },
-    );
-  };
   const castSalonMember = (
     kitEffectState: KitEffectState,
     combatant: Combatant,

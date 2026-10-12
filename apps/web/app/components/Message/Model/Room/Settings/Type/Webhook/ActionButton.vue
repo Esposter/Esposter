@@ -12,7 +12,9 @@ interface Props {
 }
 
 const { action, id } = defineProps<Props>();
-const selectedId = useWebhookDialogStore().getSelectedId(action);
+const webhookDialogStore = useWebhookDialogStore();
+const { getSelectedId } = webhookDialogStore;
+const selectedId = getSelectedId(action);
 const { label, meaning } = WebhookDialogActionMetaMap[action];
 </script>
 

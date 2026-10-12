@@ -8,6 +8,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
+const overlayFor = (path: string): KitOverlay => ({
+  [path]: { file: "burst.go", line: 5, source: KitSource.Gcsim, value: { angle: 2 * Math.PI, height: 2, radius: 4 } },
+});
+
 describe("readGcsimCitedCandidates local aliases", () => {
   const FOLDER = "aino";
   const createGcsimDirectory = (source: string) => {
@@ -16,9 +20,6 @@ describe("readGcsimCitedCandidates local aliases", () => {
     writeFileSync(join(directory, "internal", "characters", FOLDER, "burst.go"), source);
     return directory;
   };
-  const overlayFor = (path: string): KitOverlay => ({
-    [path]: { file: "burst.go", line: 5, source: KitSource.Gcsim, value: { angle: 2 * Math.PI, height: 2, radius: 4 } },
-  });
   // The alias is bound once, `player := c.Core.Combat.Player()`, before the constructor that reads it
   const SINGLE_GO = [
     "package aino",

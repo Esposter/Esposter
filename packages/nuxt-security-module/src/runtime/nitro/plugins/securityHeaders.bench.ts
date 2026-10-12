@@ -16,7 +16,7 @@ import { describe, test } from "vitest";
 describe(securityHeaders, () => {
   test("a page's response", async ({ bench }) => {
     const app = createNitroApp();
-    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+    createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
     nonce(app.nitroApp);
     securityHeaders(app.nitroApp);
 

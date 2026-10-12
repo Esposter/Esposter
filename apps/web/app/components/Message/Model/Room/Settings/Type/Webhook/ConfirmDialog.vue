@@ -15,7 +15,9 @@ const { action, roomId } = defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { items } = storeToRefs(webhookStore);
 const { deleteWebhook, rotateToken } = webhookStore;
-const selectedId = useWebhookDialogStore().getSelectedId(action);
+const webhookDialogStore = useWebhookDialogStore();
+const { getSelectedId } = webhookDialogStore;
+const selectedId = getSelectedId(action);
 const write = action === WebhookDialogAction.Delete ? deleteWebhook : rotateToken;
 const { isOpen, item: webhook } = useSingletonDialog(selectedId, () =>
   items.value.find(({ id }) => id === selectedId.value),

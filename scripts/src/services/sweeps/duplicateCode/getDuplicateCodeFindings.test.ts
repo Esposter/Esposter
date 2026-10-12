@@ -152,7 +152,7 @@ describe(getDuplicateCodeFindings, () => {
   test("reads each file's plugin root once however many clones it is in", () => {
     expect.hasAssertions();
 
-    const readSpy = vi.fn(readPluginRoot);
+    const readSpy = vi.fn<typeof readPluginRoot>(readPluginRoot);
     getDuplicateCodeFindings(
       [
         createClone(1, 2, "packages/first/src/a.ts", "packages/first/src/b.ts"),
