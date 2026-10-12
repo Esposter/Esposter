@@ -1,19 +1,10 @@
 import type { PmxMaterial } from "#src/models/character/PmxMaterial";
 
 import { createCharacterMaterial } from "#src/character/createCharacterMaterial";
-import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { createLightUniforms } from "#src/nodes/createLightUniforms";
 import { DataTexture, DoubleSide, FrontSide } from "three";
-import { diffuseColor } from "three/tsl";
 import { describe, expect, test } from "vitest";
-
-// Whether a node is the target or reads it through its operands, so a test can find a term inside a material's graph
-const reaches = (node: unknown, target: unknown): boolean => {
-  if (node === target) return true;
-  if (!(node instanceof Object)) return false;
-  return ["aNode", "bNode", "node"].some((key) => key in node && reaches(Reflect.get(node, key), target));
-};
 
 describe(createCharacterMaterial, () => {
   const pmxMaterial: PmxMaterial = {
@@ -34,81 +25,75 @@ describe(createCharacterMaterial, () => {
     toonIndex: 2,
   };
 
-  test("lights a shared toon on its own generated ramp, and outlines it in its edge", () => {
+  test("is shaded by its own output rather than three's lights, and outlines it in its edge with the body's knot widths", () => {
     expect.hasAssertions();
 
-    const rampTexture = new DataTexture();
     const characterMaterial = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
       pmxMaterial,
-      rampTexture,
+      rampTexture: new DataTexture(),
     });
 
-    expect(characterMaterial.gradientMap).toBe(getSharedToonRamp(2));
-    expect(characterMaterial.edge).toStrictEqual({ color: [0, 0, 0, 1], size: 1 });
+    expect(characterMaterial.lights).toBe(false);
+    expect(characterMaterial.outputNode).not.toBeNull();
+    expect(characterMaterial.edge).toStrictEqual({
+      color: [0, 0, 0, 1],
+      size: 1,
+      widthKnots: { depths: [1, 2, 3], scales: [1, 1, 1] },
+    });
     expect(characterMaterial.isMeshToonNodeMaterial).toBe(true);
-    expect(characterMaterial.colorNode).toBeNull();
-    expect(characterMaterial.sphereMap).toBeUndefined();
   });
 
-  test("lights a material whose toon is a texture of its model on that texture, and multiplies its sphere map", () => {
+  test("takes its edge's colour as the material's colour under its edge, toned", () => {
     expect.hasAssertions();
 
-    const toonTexture = new DataTexture();
+    const characterMaterial = createCharacterMaterial({
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: { ...pmxMaterial, diffuseColor: [0.5, 0.5, 0.5, 1], edgeColor: [1, 0, 0, 1] },
+      rampTexture: new DataTexture(),
+    });
+
+    expect(characterMaterial.edge?.color).toStrictEqual([0.5, 0, 0, 1]);
+  });
+
+  test("draws its sphere as the metal map where its mode names one, and sets it for release", () => {
+    expect.hasAssertions();
+
     const sphereTexture = new DataTexture();
     const characterMaterial = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
-      pmxMaterial: {
-        ...pmxMaterial,
-        isOutlined: false,
-        isToonShared: false,
-        sphereMode: PmxSphereMode.Multiply,
-        sphereTextureIndex: 1,
-      },
+      pmxMaterial: { ...pmxMaterial, isOutlined: false, sphereMode: PmxSphereMode.Multiply, sphereTextureIndex: 1 },
       rampTexture: new DataTexture(),
       sphereTexture,
-      toonTexture,
     });
 
-    expect(characterMaterial.gradientMap).toBe(toonTexture);
+    expect(characterMaterial.sphereMap).toBe(sphereTexture);
     expect(characterMaterial.edge).toBeUndefined();
-    expect(characterMaterial.isMeshToonNodeMaterial).toBe(false);
-    expect(characterMaterial.sphereMap).toBe(sphereTexture);
-    expect(characterMaterial.colorNode).not.toBeNull();
   });
 
-  test("draws its sub-texture as a sphere map on the coordinates of the vertex's own extra vector", () => {
-    expect.hasAssertions();
-
-    const sphereTexture = new DataTexture();
-    const characterMaterial = createCharacterMaterial({
-      lightUniforms: createLightUniforms(),
-      pmxMaterial: {
-        ...pmxMaterial,
-        isOutlined: false,
-        isToonShared: false,
-        sphereMode: PmxSphereMode.AdditionalUv,
-        sphereTextureIndex: 1,
-      },
-      rampTexture: new DataTexture(),
-      sphereTexture,
-      toonTexture: new DataTexture(),
-    });
-
-    expect(characterMaterial.sphereMap).toBe(sphereTexture);
-    expect(characterMaterial.colorNode).not.toBeNull();
-  });
-
-  test("tints its ambient by its diffuse colour, so the light it adds keeps the material's own colour", () => {
+  test("keeps the sphere off a material whose mode is disabled", () => {
     expect.hasAssertions();
 
     const characterMaterial = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
       pmxMaterial: { ...pmxMaterial, isOutlined: false },
       rampTexture: new DataTexture(),
+      sphereTexture: new DataTexture(),
     });
 
-    expect(reaches(characterMaterial.emissiveNode, diffuseColor)).toBe(true);
+    expect(characterMaterial.sphereMap).toBeUndefined();
+  });
+
+  test("is drawn at no opacity as hidden, so its depth hides nothing", () => {
+    expect.hasAssertions();
+
+    const characterMaterial = createCharacterMaterial({
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: { ...pmxMaterial, diffuseColor: [1, 1, 1, 0], isOutlined: false },
+      rampTexture: new DataTexture(),
+    });
+
+    expect(characterMaterial.visible).toBe(false);
   });
 
   test("blends a partly transparent material and draws it from both faces, and draws a solid one from its front", () => {
@@ -135,12 +120,11 @@ describe(createCharacterMaterial, () => {
   test("blends a material whose texture has clear texels", () => {
     expect.hasAssertions();
 
-    const rampTexture = new DataTexture();
     const clearTexels = createCharacterMaterial({
       isTextureTransparent: true,
       lightUniforms: createLightUniforms(),
       pmxMaterial: { ...pmxMaterial, isOutlined: false },
-      rampTexture,
+      rampTexture: new DataTexture(),
     });
 
     expect(clearTexels.transparent).toBe(true);

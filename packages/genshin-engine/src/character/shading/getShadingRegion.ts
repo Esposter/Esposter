@@ -1,11 +1,6 @@
-import { REGION_FLOORS } from "#src/character/shading/constants";
+import type { ShadingRegionToggles } from "#src/models/character/ShadingRegionToggles";
 
-export interface ShadingRegionToggles {
-  five: boolean;
-  four: boolean;
-  three: boolean;
-  two: boolean;
-}
+import { REGION_FLOORS } from "#src/character/shading/constants";
 
 // The region a pixel takes from its lightmap's alpha: regions two to five each need the alpha to reach their band and
 // Their toggle to be set, and every other pixel is region one
