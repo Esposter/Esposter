@@ -3,8 +3,9 @@ import type { TMXExternalTilesetParsed } from "parse-tmx";
 import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { getFilename } from "@/util/file/getFilename";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
+import { outputFile } from "@@/scripts/services/outputFile";
+import { TILED_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
 import { PROPERTY_TYPES_DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
-import { outputFile } from "@@/scripts/tiled/services/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 
 export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {
@@ -18,6 +19,7 @@ export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[])
   }
 
   await outputFile(
+    TILED_ROOT_DIRECTORY,
     `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.Enum}/${enumName}.ts`,
     createEnumString(enumName, [...tilesetKeys]),
   );

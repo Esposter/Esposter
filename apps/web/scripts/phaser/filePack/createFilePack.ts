@@ -1,8 +1,8 @@
 import type { Types } from "phaser";
 
 import { trimFileExtension } from "@/util/file/trimFileExtension";
-import { ContentTypePhaserMethodMap } from "@@/scripts/phaser/constants";
-import { outputFile } from "@@/scripts/phaser/services/outputFile";
+import { ContentTypePhaserMethodMap, PHASER_ROOT_DIRECTORY } from "@@/scripts/phaser/constants";
+import { outputFile } from "@@/scripts/services/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 import { BlobServiceClient } from "@azure/storage-blob";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
@@ -37,10 +37,10 @@ export const createFilePack = async () => {
     }
 
   await Promise.all([
-    outputFile(`${enumName}.ts`, createEnumString(enumName, [...fileKeys])),
+    outputFile(PHASER_ROOT_DIRECTORY, `${enumName}.ts`, createEnumString(enumName, [...fileKeys])),
     (async () => {
       const { code } = await format("files.json", JSON.stringify(files), formatterConfiguration);
-      await outputFile("files.json", code);
+      await outputFile(PHASER_ROOT_DIRECTORY, "files.json", code);
     })(),
   ]);
 };
