@@ -10,7 +10,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | Unit                 | Swept                  | Notes                                                                    |
 | -------------------- | ---------------------- | ------------------------------------------------------------------------ |
 | `aino`               | 2026-10-12 · Haiku 5.5 |                                                                          |
-| `albedo`             | —                      |                                                                          |
+| `albedo`             | 2026-10-12 · Haiku 5.5 |                                                                          |
 | `alhaitham`          | —                      |                                                                          |
 | `aloy`               | —                      |                                                                          |
 | `amber`              | —                      |                                                                          |
