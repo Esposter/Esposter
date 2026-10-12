@@ -20,14 +20,18 @@ export const createPackage = (options: CreatePackageOptions, root: string = REPO
     throw new InvalidOperationError(Operation.Create, "package", "--register applies only to a nuxt-module");
 
   const files = getPackageFiles(options, getLernaVersion(root));
+  const edits = getPackageEdits(options);
+  // Every edit is made in memory before any file is written, so an edit that throws leaves no half-created package
+  const editedTexts = new Map<string, string>(
+    [...edits].map(([path, edit]): [string, string] => [
+      path,
+      formatText(path, edit(readFileSync(join(root, path), "utf8"))),
+    ]),
+  );
   for (const [path, text] of files) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), formatText(path, text));
   }
-  const edits = getPackageEdits(options);
-  for (const [path, edit] of edits) {
-    const absolutePath = join(root, path);
-    writeFileSync(absolutePath, formatText(path, edit(readFileSync(absolutePath, "utf8"))));
-  }
+  for (const [path, text] of editedTexts) writeFileSync(join(root, path), text);
   return [...files.keys(), ...edits.keys()];
 };

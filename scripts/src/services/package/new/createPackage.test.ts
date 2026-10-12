@@ -12,7 +12,7 @@ import {
 import { createPackage } from "#src/services/package/new/createPackage";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { describe, expect, onTestFinished, test } from "vitest";
@@ -213,5 +213,20 @@ describe(createPackage, () => {
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: package, --register applies only to a nuxt-module]`,
     );
+  });
+
+  test("an edit that finds no anchor throws before any package file is written, so a retry is not refused", () => {
+    expect.hasAssertions();
+
+    const root = createFixtureRoot();
+    writeFileSync(join(root, README_FILE), "# Nothing to anchor to\n");
+
+    expect(() =>
+      createPackage(
+        { description: "A demo library.", kind: PackageKind.Library, name: "demo-library", register: false },
+        root,
+      ),
+    ).toThrow();
+    expect(existsSync(join(root, "packages/demo-library"))).toBe(false);
   });
 });
