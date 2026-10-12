@@ -40,7 +40,7 @@ import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { readFile, rm, writeFile } from "node:fs/promises";
@@ -274,20 +274,25 @@ const readDrawableMaterials = async (
   for (const block of blocks)
     // oxlint-disable-next-line no-await-in-loop -- AnimeStudio exports one block at a time
     await exportBlockBySource(block, [AssetType.Material], AnimeStudioExportType.Raw, rawDirectory);
-  const entries = await Promise.all(
-    materials.map(async (material): Promise<[string, DrawableMaterial]> => {
-      const key = toObjectKey(material.file, material.pathId);
+  const materialValues = await readMaterialValues(
+    materials.map((material) => {
       const folderName = join(basename(material.block, ".blk"), AssetType.Material, material.file);
       const name = readName(names, material);
-      const rawPath = join(rawDirectory, folderName, `${name}.dat`);
-      const { colors, floats, keywords, textures } = await readMaterialValues(
-        join(jsonDirectory, folderName, `${name}.json`),
-        rawPath,
-      );
-      return [key, { colors, floats, keywords, textures: resolveTextures(textures, material.file, cabMap) }];
+      return {
+        jsonPath: join(jsonDirectory, folderName, `${name}.json`),
+        rawPath: join(rawDirectory, folderName, `${name}.dat`),
+      };
     }),
   );
-  return new Map(entries);
+  return new Map(
+    materials.map(({ file, pathId }, index): [string, DrawableMaterial] => {
+      const { colors, floats, keywords, textures } = takeOne(materialValues, index);
+      return [
+        toObjectKey(file, pathId),
+        { colors, floats, keywords, textures: resolveTextures(textures, file, cabMap) },
+      ];
+    }),
+  );
 };
 
 // The texture each slot points at, through the file its material lies in. An empty slot's pointer names none

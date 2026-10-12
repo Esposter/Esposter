@@ -6,7 +6,7 @@ import { annotateProgramConstants } from "#src/services/genshinAssets/materials/
 import { decompileDxbcDirectory } from "#src/services/genshinAssets/materials/decompileDxbcDirectory";
 import { disassembleDxbcDirectory } from "#src/services/genshinAssets/materials/disassembleDxbcDirectory";
 import { parseShaderConstantLayouts } from "#src/services/genshinAssets/materials/parseShaderConstantLayouts";
-import { parseShaderPropertyNames } from "#src/services/genshinAssets/materials/parseShaderPropertyNames";
+import { parseShaderProperties } from "#src/services/genshinAssets/materials/parseShaderProperties";
 import { readShaderPrograms } from "#src/services/genshinAssets/materials/readShaderPrograms";
 import {
   ANIMESTUDIO_UNPARSED_SUFFIX,
@@ -71,7 +71,7 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
       const programDirectory = join(directory, blockName, basename(file, ".dat"));
       // oxlint-disable-next-line no-await-in-loop -- its programs are written into the folder it disassembles
       await mkdir(programDirectory, { recursive: true });
-      const propertyNames = parseShaderPropertyNames(data);
+      const propertyNames = parseShaderProperties(data).map(({ name }) => name);
       const { named, programs } = readShaderPrograms(data);
       // oxlint-disable-next-line no-await-in-loop -- as above
       await Promise.all([

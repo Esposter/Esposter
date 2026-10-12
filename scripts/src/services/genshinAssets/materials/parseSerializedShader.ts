@@ -11,6 +11,7 @@ import { BinaryCursor } from "#src/models/genshinAssets/materials/BinaryCursor";
 import { ShaderProgramStage } from "#src/models/genshinAssets/materials/ShaderProgramStage";
 import { readSerializedBlobChunk } from "#src/services/genshinAssets/materials/readSerializedBlobChunk";
 import { readSerializedPass } from "#src/services/genshinAssets/materials/readSerializedPass";
+import { readShaderProperty } from "#src/services/genshinAssets/materials/readShaderProperty";
 import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -19,19 +20,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 const PLATFORM_D3D11 = 4;
 const PLATFORM_PS5 = 23;
 const PS5_GPU_PROGRAM_TYPE_MIN = 26;
-const PROPERTY_VALUE_BYTES = 16;
 
-// A property of the shader: its name, description, attributes, type, flags, default value and texture defaults
-const skipProperty = (cursor: BinaryCursor): void => {
-  cursor.string();
-  cursor.string();
-  cursor.list(() => cursor.string());
-  cursor.int32();
-  cursor.uint32();
-  cursor.skip(PROPERTY_VALUE_BYTES);
-  cursor.string();
-  cursor.int32();
-};
 const readSubShader = (cursor: BinaryCursor): SerializedSubShaderRecord => {
   const passes = cursor.list(() => readSerializedPass(cursor));
   skipTagMap(cursor);
@@ -43,7 +32,7 @@ const readSubShader = (cursor: BinaryCursor): SerializedSubShaderRecord => {
 export const parseSerializedShader = (data: Buffer): SerializedShader => {
   const cursor = new BinaryCursor(data);
   cursor.string();
-  cursor.list(() => skipProperty(cursor));
+  cursor.list(() => readShaderProperty(cursor));
   const subShaders = cursor.list(() => readSubShader(cursor));
   const name = cursor.string();
   cursor.string();

@@ -13,7 +13,10 @@ export const readComponentMaterials = async (component: DerivedAssetComponent): 
   const directory = join(getComponentDirectory(component).assets, AssetType.Material);
   if (!existsSync(directory)) return [];
   const names = (await readdir(directory)).filter((name) => name.endsWith(".json"));
-  return Promise.all(
-    names.map((name) => readMaterialValues(join(directory, name), join(directory, `${basename(name, ".json")}.dat`))),
+  return readMaterialValues(
+    names.map((name) => ({
+      jsonPath: join(directory, name),
+      rawPath: join(directory, `${basename(name, ".json")}.dat`),
+    })),
   );
 };
