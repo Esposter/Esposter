@@ -301,6 +301,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 
 ### Next
 
+- [ ] **The load's ready reading, taken at the ready signal.** [Load budget](/docs/genshin/load-budget) reads ready and the requests after `openParityPage`'s network-idle wait, so a fetch issued after ready and finished in the idle window counts toward `readyMs`, `requests` and `gameDataBytes`. Decide whether the parity open takes the readings at ready, which would change every command sharing the open, then re-record `requests: 132` from production runs on the budget's machine.
 - [ ] **The kits' sources win.** [Character kits](/docs/genshin/kits) settles each overlay entry marked `DiffersFromSource` in a commit of its own: the kit's suite takes the source's value, cited, and the record moves under `--only`.
 - [ ] **Seat the challenger NPCs, so a duel opens from a fresh save.** [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation) needs Marjorie and Ellin, whose decks are built, seated on a region's resident row; the duel is on the [as-built page](/docs/genshin/genius-invokation).
 - [ ] **The Traveler's skeleton on the game's own clips.** [Drawing a character](/docs/genshin/characters/drawing) retargets the game's locomotion clips, ACL-decoded, onto the MMD skeleton in place of the procedural poses; it runs under `nuxt dev` only, where the exported clips are read.
