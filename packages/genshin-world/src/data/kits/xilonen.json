@@ -5,9 +5,9 @@
   "normalAttacks.1.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_DEFENSE" },
-  "plunges.high.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_DEFENSE" },
-  "plunges.low.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_DEFENSE" },
+  "plungeCollision.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_DEFENSE" },
+  "plunges.high.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_DEFENSE" },
+  "plunges.low.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_DEFENSE" },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_DEFENSE" }
+  "skill.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_DEFENSE" }
 }
