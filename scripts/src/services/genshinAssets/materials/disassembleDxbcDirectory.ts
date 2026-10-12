@@ -41,6 +41,8 @@ $count
 // Where a machine without Windows' compiler library gets its disassembler: `vkd3d-compiler` from Wine's vkd3d project,
 // Named by VKD3D_COMPILER or found on PATH
 const VKD3D_ARGUMENTS = ["-x", "dxbc-tpf", "-b", "d3d-asm"];
+// A program's disassembly past this is a failure the run should stop on, not a program to skip
+const VKD3D_MAX_BUFFER = 64 * 1024 ** 2;
 // Every DXBC program in a folder disassembled beside it, returning how many were. Windows reads them through
 // D3DDisassemble; elsewhere `vkd3d-compiler` disassembles each one, and a program it cannot read is left without its assembly
 export const disassembleDxbcDirectory = (directory: string): number =>
@@ -59,7 +61,7 @@ const disassembleWithVkd3d = (directory: string): number => {
     const { error, status, stdout } = spawnSync(
       process.env.VKD3D_COMPILER ?? "vkd3d-compiler",
       [...VKD3D_ARGUMENTS, join(directory, name)],
-      { encoding: "utf8", maxBuffer: 1024 ** 2 },
+      { encoding: "utf8", maxBuffer: VKD3D_MAX_BUFFER },
     );
     // A missing compiler throws, since no program can then be read; a program it cannot read is skipped
     if (error) throw error;
