@@ -19,7 +19,7 @@ gcsim has no folder for Zibai at v2.47.2, so no value comes from gcsim. Her reco
 ## Not built
 
 - **Her skill's Lunar Phase Shift is waiting on its record.** Its four-strike sequence, its charged attack, the Spirit Steed's Stride and its Lunar Phase Shift duration are separate table labels the kit does not read yet, so her skill plays its 0.85-second animation and deals no hit.
-- **Her passives wait on their hooks.** Zibai's passives read her Lunar Phase Shift state and the party's stacks, which no kit reads yet.
+- **Her passives are not read yet.** No kit reads them, so her passives add nothing to the record.
 
 ## Key files
 

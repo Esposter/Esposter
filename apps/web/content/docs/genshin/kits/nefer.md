@@ -19,7 +19,7 @@ gcsim has no folder for Nefer at v2.47.2, so no value comes from gcsim. Her reco
 ## Not built
 
 - **Her Phantasm Performance is waiting on its record.** Her Shadow Dance and its Phantasm Performance hits (the Nefer and Shades strikes, and their charges) are separate table labels the kit does not read yet, so her skill plays its 0.6-second animation and deals the two hits above, not the performance.
-- **Her passives wait on their hooks.** Nefer's passives read the Shadow Dance state and the party's Ascension of Shade, which no kit reads yet.
+- **Her passives are not read yet.** No kit reads them, so her passives add nothing to the record.
 
 ## Key files
 
