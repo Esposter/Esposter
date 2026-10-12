@@ -17,16 +17,17 @@ interface LandmarkVolume {
 // A landmark's triangles merged into one geometry in the root's frame, each mesh's positions transformed once and its
 // Index offset past the vertices of the meshes before it, or nothing where it has no mesh yet
 const buildLandmarkGeometry = (landmark: Object3D, rootInverse: Matrix4): BufferGeometry | undefined => {
-  const meshes: Mesh[] = [];
+  const meshes: { mesh: Mesh; meshCornerCount: number }[] = [];
   let vertexCount = 0;
   let cornerCount = 0;
   landmark.traverse((object) => {
     if (!(object instanceof Mesh)) return;
     const position = object.geometry.getAttribute("position");
     const index = object.geometry.getIndex();
-    meshes.push(object);
+    const meshCornerCount = Math.floor((index ? index.count : position.count) / 3) * 3;
+    meshes.push({ mesh: object, meshCornerCount });
     vertexCount += position.count;
-    cornerCount += Math.floor((index ? index.count : position.count) / 3) * 3;
+    cornerCount += meshCornerCount;
   });
   if (cornerCount === 0) return undefined;
   const positions = new Float32Array(vertexCount * 3);
@@ -35,7 +36,7 @@ const buildLandmarkGeometry = (landmark: Object3D, rootInverse: Matrix4): Buffer
   const vertex = new Vector3();
   let vertexOffset = 0;
   let cornerOffset = 0;
-  for (const mesh of meshes) {
+  for (const { mesh, meshCornerCount } of meshes) {
     matrix.multiplyMatrices(rootInverse, mesh.matrixWorld);
     const position = mesh.geometry.getAttribute("position");
     const index = mesh.geometry.getIndex();
@@ -44,7 +45,6 @@ const buildLandmarkGeometry = (landmark: Object3D, rootInverse: Matrix4): Buffer
         .fromBufferAttribute(position, vertexIndex)
         .applyMatrix4(matrix)
         .toArray(positions, (vertexOffset + vertexIndex) * 3);
-    const meshCornerCount = Math.floor((index ? index.count : position.count) / 3) * 3;
     for (let corner = 0; corner < meshCornerCount; corner++)
       corners[cornerOffset + corner] = vertexOffset + (index ? index.getX(corner) : corner);
     vertexOffset += position.count;
