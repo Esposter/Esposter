@@ -83,7 +83,7 @@ export const createCharacterShadingNode = (
     ).r;
   const shade =
     kind === CharacterMaterialKind.Face
-      ? createFaceShadeNode(inputs.faceMap, inputs.faceSoftness)
+      ? createFaceShadeNode(inputs.faceMap, inputs.faceSoftness, inputs.faceDraw)
       : inputs.isCoolShadow
         ? mix(sampleRamp(RAMP_ROW_BASE), sampleRamp(COOL_RAMP_ROW_BASE), inputs.coolShadowTone)
         : sampleRamp(RAMP_ROW_BASE);

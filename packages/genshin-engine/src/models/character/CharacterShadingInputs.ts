@@ -1,4 +1,5 @@
 import type { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
+import type { FaceDraw } from "#src/models/character/FaceDraw";
 import type { RampLayout } from "#src/models/character/RampLayout";
 import type { ShadingRegionToggles } from "#src/models/character/ShadingRegionToggles";
 import type { Texture, Vector3Tuple } from "three";
@@ -18,7 +19,9 @@ export interface CharacterShadingInputs {
   // The emission's colour and scale, "_EmissionColor_MHY" and "_EmissionScaler"
   emissionColor: Vector3Tuple;
   emissionScaler: number;
-  // The face map, read by the face kind, and its softness "_FaceMapSoftness"
+  // The face's draw, its threshold and flip set each frame from the light, and the face map, read by the face kind, with
+  // Its softness "_FaceMapSoftness"
+  faceDraw: FaceDraw;
   faceMap?: Texture;
   faceSoftness: number;
   // Whether a cool shadow is on, "_CoolShadowColorOrTex"

@@ -3,6 +3,8 @@ import type { AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/consta
 import type { CharacterMaterialKind, CharacterShadingInputs } from "genshin-engine";
 import type { Texture, Vector3Tuple, Vector4Tuple } from "three";
 
+import { createFaceDraw } from "genshin-engine";
+
 type AvatarTextureSlot = (typeof AVATAR_TEXTURE_SLOTS)[number];
 
 // A switch the material holds as a float, one or zero, or none where it holds no such switch
@@ -28,6 +30,10 @@ export const createAvatarShadingInputs = (
   const nameFloatMap = new Map(Object.entries(floats));
   const inputs: Partial<CharacterShadingInputs> = {
     color,
+    faceDraw: createFaceDraw({
+      flipFactor: nameFloatMap.get("_FaceFlipFactor"),
+      rotateOffset: nameFloatMap.get("_FaceMapRotateOffset"),
+    }),
     faceMap: slotTextureMap.get("_FaceMapTex"),
     faceSoftness: nameFloatMap.get("_FaceMapSoftness"),
     isLightMapAo: readSwitch(nameFloatMap, "_UseLightMapColorAO"),

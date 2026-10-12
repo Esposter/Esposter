@@ -41,6 +41,7 @@ const createFixture = () => {
         name: "Body",
         normals: { length: 9, offset: 36 },
         positions: { length: 9, offset: 0 },
+        rootBone: 1,
         submeshes: [{ count: 3, material: "Body", start: 0 }],
         tangents: { length: 12, offset: 72 },
         uvs: { length: 6, offset: 120 },

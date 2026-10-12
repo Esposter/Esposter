@@ -41,6 +41,7 @@ The model [read from a pack](/docs/genshin/characters/pmx-reader) becomes one sk
 | `packages/genshin-world/src/composables/useCharacterAvatar.ts`                      | Reads the Traveler's game model once the export index holds it, and draws it while the Traveler is on the field |
 | `packages/genshin-world/src/services/character/avatar/readCharacterAvatar.ts`       | Fetches an avatar's manifest, its binary and each texture its drawn materials name, once each                   |
 | `packages/genshin-world/src/services/character/avatar/alignArmRest.ts`              | Turns each arm to the pack's rest direction after the bind, leaving the mesh bound where it was modelled        |
+| `packages/genshin-world/src/services/character/avatar/updateAvatarFaces.ts`         | Sets each face's threshold and flip from the main light and the face's root bone, once a frame                  |
 | `packages/genshin-world/src/services/character/avatar/createAvatarTexture.ts`       | Reads the game's textures flipped to its UVs, with sRGB only on the colour slot                                 |
 | `packages/genshin-world/src/services/character/avatar/createCharacterAvatar.ts`     | Builds the skinned meshes over the binary's typed arrays, the rest-pose bones and the game's materials          |
 | `packages/genshin-world/src/services/character/avatar/createAvatarShadingInputs.ts` | The game's material values and textures as the shading's inputs, a missing one left to its default              |

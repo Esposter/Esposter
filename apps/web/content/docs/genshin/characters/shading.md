@@ -195,31 +195,48 @@ Hair's equations are not fitted to a rendered frame, so no number is claimed.
 
 ## The face
 
-The face's base pixel program is 432 (DXBC), in the "BODY" pass, with "FACE_MAP_NEW_ON" set. Its shadow comes from the face map, not the ramp, and the light it compares against is the same light as the body's (Exact, read from the program's sampling sites).
+The face is not shaded on the body's ramp. Its shadow is its face map compared with a threshold that turns with the light, and both the threshold and the flip of the face map are set once a frame on the CPU from the light and the face's root bone. The shadow colour is set per pixel, and the shadow colour's equations are below.
 
-### The light direction
+### The light's angle to the root bone
 
-The program chooses the light by the same flag as the body's: where "mhy_CharacterOverrideLightDir" has its "w" above 0.5 it uses that vector (or "mhy_CharacterOverrideLightDirInShadow" where the vertex's flag is set), and otherwise "mhy_AvatarLightDir" (Exact on the selection):
-
-```
-L = (CharacterOverride.w > 0.5) ? (InShadow flag ? CharacterOverrideInShadow : CharacterOverride).xyz
-                                : mhy_AvatarLightDir.xyz
-```
-
-### The shadow map's lookup against the light
-
-The face map "t2" is sampled at the vertex's coordinates `v9.xy`, and its texel is compared against the vertex's depth term `v9.z` over a window of "_FaceMapSoftness" (Exact on the window and the smooth step; Provisional on `v9.z`'s meaning, read from its use as the threshold):
+Let `L` be the main light's direction, the same the body is lit by, and let `A` and `B` be the root bone's local Y and Z axes in world space, the root bone's world rotation applied to the unit vectors `(0, 1, 0)` and `(0, 0, 1)`. Then with `a = L · A` and `b = L · B`:
 
 ```
-s   = max("_FaceMapSoftness", 1e-6)
-lo  = clamp(v9.z - s, 1e-4, 0.9989)
-hi  = min(v9.z + s, 0.9999)
-F   = smoothstep(0, 1, saturate((T_face - lo) / (hi - lo)))
+angle = -atan2(b, a)                       in degrees, when a ≠ 0
+angle = +90 if b < 0, otherwise -90        when a = 0
+t     = |angle| / 180
 ```
 
-The lit colour's N . L is the body's `dp3(N, L)`, and the face's toon term is the same `dp2(z, |z|)` remap as the body's `z`, with the face's own vertex AO (Exact on the operators).
+### The threshold
 
-The face's equations are not fitted to a rendered frame, and `v9.z` is not traced to its vertex source, so no number is claimed.
+With `lo = max(_FaceMapRotateOffset, 0)` and `hi = min(_FaceMapRotateOffset + 1, 1)`:
+
+```
+s         = saturate((t - lo) / (hi - lo))
+threshold = clamp(s * s * (3 - 2s), 1e-4, 0.9999)
+```
+
+A light straight along the root's Y axis gives the minimum, `1e-4`, and a light from the opposite side gives the maximum, `0.9999`. The threshold stands where the page's depth term stood, and is what the face map's texel is compared against.
+
+### The flip
+
+`flip = angle > 0`, unless `_FaceFlipFactor` decides it: above one half the flip is on, below minus one half it is off. The face map is then sampled at the raw UV, with its u mirrored where the flip is on:
+
+```
+uv = (flip ? 1 - uv.x : uv.x, uv.y)
+```
+
+### The shadow's lookup
+
+With the face map's texel `T` at that UV, the softness window `s = max(_FaceMapSoftness, 1e-6)`, and the threshold above:
+
+```
+lo = clamp(threshold - s, 1e-4, 0.9989)
+hi = min(threshold + s, 0.9999)
+F  = smoothstep(0, 1, saturate((T - lo) / (hi - lo)))
+```
+
+A face with no face map is lit, so `F` is one.
 
 ## The outline
 
@@ -287,7 +304,7 @@ In development the Traveler's model reads these from the game's own values in `a
 
 - **The shade term's `z` and `w`.** Their expressions are read; their fitted values are not.
 - **The lit colour `C`.** The sum of the main colour, the ramp, the sun, the sky ambient, the specular and the rim is not yet assembled into one expression.
-- **Hair and face constants.** The hair and face equations are written; the face's "v9.z" provenance is Provisional.
+- **Hair constants.** The hair equations are written; the face's threshold and flip are read from the game's own light and root bone.
 - **The deferred pass's character branch.** The gate and C_branch are written; the light loops, the shadow terms and the final output are not traced, so the light sum is not written. The byte's target is Provisional.
 - **The metal gate.** The body variant read for the emission and the specular uses no metal constant, so the "Lm.r > 0.9" gate and the matcap are not confirmed by it; they stay Provisional until a variant that reads "_MTMap" is traced.
 - **The register-to-texture binding.** The order the parameter table lists the textures is used for the bindings above; a check against a rendered frame is still to be made.

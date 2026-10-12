@@ -17,8 +17,6 @@ export const DESATURATION_WEIGHTS: readonly [number, number, number] = [0.0397, 
 // Provisional: the page's values for the light area and the band width are not fitted, so these stand in until they are
 export const DEFAULT_LIGHT_AREA = 1;
 export const DEFAULT_RAMP_WIDTH = 0.5;
-// The face's vertex depth term, read as a threshold but not yet traced to its vertex source, so it stands at the middle
-export const FACE_DEPTH_TERM = 0.5;
 // The lightmap of a material that names none: red 0, so no metal and no specular, green the neutral middle, and alpha 0
 // So region one
 export const FLAT_LIGHT_MAP: Readonly<[number, number, number, number]> = [0, NEUTRAL_LIGHT_MAP_GREEN, 0, 0];

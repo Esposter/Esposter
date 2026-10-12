@@ -42,6 +42,7 @@ import { useSky } from "#src/composables/useSky";
 import { useSunShadow } from "#src/composables/useSunShadow";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { updateAvatarFaces } from "#src/services/character/avatar/updateAvatarFaces";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
@@ -284,6 +285,7 @@ const sightUniforms = createSightUniforms();
 const { onBeforeRender } = useLoop();
 const { advance } = useTres();
 onBeforeRender(() => {
+  if (drawnCharacterAvatar.value) updateAvatarFaces(drawnCharacterAvatar.value, lightUniforms.sunDirection.value);
   sightScene.position.set(-origin.x, 0, -origin.z);
   if (!elementalSight) return;
   sightUniforms.origin.value.set(elementalSight.origin.x - origin.x, elementalSight.origin.z - origin.z);

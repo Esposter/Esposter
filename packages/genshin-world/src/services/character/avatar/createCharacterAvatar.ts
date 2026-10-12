@@ -3,7 +3,8 @@ import type { AvatarMaterial } from "#src/models/avatar/AvatarMaterial";
 import type { AvatarMesh } from "#src/models/avatar/AvatarMesh";
 import type { AvatarView } from "#src/models/avatar/AvatarView";
 import type { CharacterAvatar } from "#src/models/avatar/CharacterAvatar";
-import type { CharacterMaterialOptions, PmxMaterial, ToonNodeMaterial } from "genshin-engine";
+import type { CharacterAvatarFace } from "#src/models/avatar/CharacterAvatarFace";
+import type { CharacterMaterialOptions, FaceDraw, PmxMaterial, ToonNodeMaterial } from "genshin-engine";
 import type { Texture } from "three";
 
 import { alignArmRest } from "#src/services/character/avatar/alignArmRest";
@@ -31,6 +32,12 @@ const getMaterialKind = (materialName: string): CharacterMaterialKind => {
   return CharacterMaterialKind.Body;
 };
 
+// A material as the builder keeps it: the shaded material, and the face draw of a face, which the frame's light sets
+interface AvatarMaterialRecord {
+  faceDraw?: FaceDraw;
+  material: ToonNodeMaterial;
+}
+
 // One of the game's materials, shaded by the game's own inputs. Its PMX side is the plain one the shading reads for what
 // The game's values do not give: an opaque body, outlined by the world's own outline, with no sphere map or toon of its own
 const createAvatarMaterial = (
@@ -38,7 +45,7 @@ const createAvatarMaterial = (
   avatarMaterial: AvatarMaterial,
   { lightUniforms, rampTexture, textureFileMap }: AvatarMaterialOptions,
   indexCount: number,
-): ToonNodeMaterial => {
+): AvatarMaterialRecord => {
   const slotTextureMap = new Map<AvatarTextureSlot, Texture>();
   for (const slot of AVATAR_TEXTURE_SLOTS) {
     const file = avatarMaterial.textures[slot];
@@ -62,13 +69,18 @@ const createAvatarMaterial = (
     textureIndex: -1,
     toonIndex: -1,
   };
-  return createCharacterMaterial({
-    lightUniforms,
-    pmxMaterial,
-    rampTexture,
-    shadingInputs: createAvatarShadingInputs(avatarMaterial, getMaterialKind(materialName), slotTextureMap),
-    texture: slotTextureMap.get("_MainTex"),
-  });
+  const kind = getMaterialKind(materialName);
+  const shadingInputs = createAvatarShadingInputs(avatarMaterial, kind, slotTextureMap);
+  return {
+    faceDraw: kind === CharacterMaterialKind.Face ? shadingInputs.faceDraw : undefined,
+    material: createCharacterMaterial({
+      lightUniforms,
+      pmxMaterial,
+      rampTexture,
+      shadingInputs,
+      texture: slotTextureMap.get("_MainTex"),
+    }),
+  };
 };
 
 // A mesh's attributes read as views on the binary, each one a typed array over its bytes and not a copy of them
@@ -127,11 +139,12 @@ export const createCharacterAvatar = (
     else boneList[parent]?.add(bone);
   }
   const skeleton = new Skeleton(boneList);
-  const characterMaterialNameMaterialMap = new Map<string, ToonNodeMaterial>();
+  const characterMaterialNameMaterialMap = new Map<string, AvatarMaterialRecord>();
+  const faces: CharacterAvatarFace[] = [];
   const skinnedMeshes = meshes.map((mesh) => {
-    const meshMaterials = mesh.submeshes.map(({ count, material: materialName }) => {
-      const cachedMaterial = characterMaterialNameMaterialMap.get(materialName);
-      if (cachedMaterial) return cachedMaterial;
+    const records = mesh.submeshes.map(({ count, material: materialName }) => {
+      const cachedRecord = characterMaterialNameMaterialMap.get(materialName);
+      if (cachedRecord) return cachedRecord;
       const avatarMaterial = materials[materialName];
       if (!avatarMaterial)
         throw new InvalidOperationError(
@@ -139,16 +152,16 @@ export const createCharacterAvatar = (
           materialName,
           "is drawn by a mesh but the export does not hold it",
         );
-      const characterMaterial = createAvatarMaterial(
-        materialName,
-        avatarMaterial,
-        { ...options, textureFileMap },
-        count,
-      );
-      characterMaterialNameMaterialMap.set(materialName, characterMaterial);
-      return characterMaterial;
+      const record = createAvatarMaterial(materialName, avatarMaterial, { ...options, textureFileMap }, count);
+      characterMaterialNameMaterialMap.set(materialName, record);
+      return record;
     });
-    return new SkinnedMesh(createAvatarGeometry(mesh, buffer), meshMaterials);
+    const root = boneList[mesh.rootBone];
+    for (const draw of new Set(records.map(({ faceDraw }) => faceDraw))) if (draw && root) faces.push({ draw, root });
+    return new SkinnedMesh(
+      createAvatarGeometry(mesh, buffer),
+      records.map(({ material }) => material),
+    );
   });
   const [firstMesh] = skinnedMeshes;
   const model = new Group();
@@ -166,5 +179,5 @@ export const createCharacterAvatar = (
     }
   }
   model.add(...skinnedMeshes);
-  return { model, skinnedMeshes };
+  return { faces, model, skinnedMeshes };
 };

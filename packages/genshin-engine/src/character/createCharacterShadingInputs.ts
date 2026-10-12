@@ -2,6 +2,7 @@ import type { CharacterShadingInputs } from "#src/models/character/CharacterShad
 import type { Texture, Vector3Tuple } from "three";
 
 import { DEFAULT_LIGHT_AREA, DEFAULT_RAMP_WIDTH } from "#src/character/shading/constants";
+import { createFaceDraw } from "#src/character/shading/updateFaceDraw";
 import { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
 import { RampLayout } from "#src/models/character/RampLayout";
 
@@ -23,6 +24,7 @@ export const createCharacterShadingInputs = (overrides: CharacterShadingOverride
     desaturateScale: 0,
     emissionColor: BLACK,
     emissionScaler: 1,
+    faceDraw: createFaceDraw(),
     faceSoftness: 0,
     isCoolShadow: false,
     isEmissionFromAlpha: false,
