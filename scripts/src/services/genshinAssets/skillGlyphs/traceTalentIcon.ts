@@ -24,17 +24,13 @@ export const traceTalentIcon = async (path: string, { pale, white }: GlyphTones)
     readWhiteShares(enlarged.clone(), size),
     readWhiteShares(enlarged.clone().blur(TALENT_ICON_TRACE_SCALE), size),
   ]);
-  const unitsPerPixel = GLYPH_SIZE / size;
   const tracePath = (splitShares: Float32Array, split: number) =>
     traceMask(
       Uint8Array.from(splitShares, (share) => Number(share > split)),
       size,
       size,
-    )
-      .join(" ")
-      .replaceAll(/\d+(?:\.\d+)?/gu, (coordinate) =>
-        String(Number((Number(coordinate) * unitsPerPixel).toFixed(GLYPH_PATH_DECIMALS))),
-      );
+      { decimals: GLYPH_PATH_DECIMALS, unitsPerPixel: GLYPH_SIZE / size },
+    ).join(" ");
   const [markSplit = 0, whiteSplit] = getToneSplits(shares);
   if (whiteSplit === undefined) return [{ opacity: white, path: tracePath(shares, markSplit) }];
   return [

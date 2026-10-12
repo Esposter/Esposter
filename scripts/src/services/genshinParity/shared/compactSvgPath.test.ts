@@ -17,18 +17,28 @@ describe(compactSvgPath, () => {
   test("writes an arc's flags as written and its radii and rotation unchanged", () => {
     expect.hasAssertions();
 
-    expect(compactSvgPath("M 0 0 A 5 5 0 0 1 10 10 Z")).toBe("m0 0a5 5 0 0 1 10 10z");
+    expect(compactSvgPath("M 0 0 A 5 5 0 0 1 10 10 Z")).toBe("M0 0a5 5 0 0 1 10 10z");
   });
 
-  test("writes a moveto's repeated pairs as the lineto they imply and a line along an axis as one operand", () => {
+  test("opens absolute, so paths joined into one d keep their places", () => {
     expect.hasAssertions();
 
-    expect(compactSvgPath("M 0 0 5 5 L 5 0 H 0")).toBe("m0 0 5 5v-5h-5");
+    const paths = ["M 10 10 L 20 10 L 20 20 Z", "M 50 50 L 60 50 L 60 60 Z"];
+
+    expect(parseSvgPath(paths.map((path) => compactSvgPath(path)).join(" "), SCALE)).toStrictEqual(
+      parseSvgPath(paths.join(" "), SCALE),
+    );
+  });
+
+  test("writes a later moveto's repeated pairs as the lineto they imply and a line along an axis as one operand", () => {
+    expect.hasAssertions();
+
+    expect(compactSvgPath("M 0 0 Z M 1 1 2 2 L 2 1 H 1")).toBe("M0 0zm1 1 1 1v-1h-1");
   });
 
   test("writes an excerpt of a traced mark at its shortest, with no space before a minus sign or a point after a point", () => {
     expect.hasAssertions();
 
-    expect(compactSvgPath(EXCERPT)).toBe("m573.5 114 .5 1.5-8 13-17 35v2l-7 14");
+    expect(compactSvgPath(EXCERPT)).toBe("M573.5 114l.5 1.5-8 13-17 35v2l-7 14");
   });
 });

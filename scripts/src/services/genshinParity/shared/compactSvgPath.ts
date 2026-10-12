@@ -95,7 +95,8 @@ const checkImplicit = (previousLetter: string, letter: string): boolean =>
   letter !== "m" && letter !== "z" && (letter === previousLetter || (previousLetter === "m" && letter === "l"));
 
 // The same geometry in SVG's shortest form: relative commands, implicit letters, and a line along an axis written as
-// One operand
+// One operand. Only the opening moveto stays absolute, so paths joined into one `d` keep their places: a relative one
+// Would start from wherever the path before it closed
 export const compactSvgPath = (d: string): string => {
   const { scale, segments } = parseSvgPath(d);
   const tokens: Token[] = [];
@@ -105,7 +106,9 @@ export const compactSvgPath = (d: string): string => {
   let startY = 0;
   let previousLetter = "";
   for (const segment of segments) {
-    const [letter, operands] = toRelative(segment, scale, cursorX, cursorY);
+    const [relativeLetter, operands] = toRelative(segment, scale, cursorX, cursorY);
+    // From the origin a relative pair is the absolute one, so the opening moveto changes its letter alone
+    const letter = tokens.length === 0 && relativeLetter === "m" ? "M" : relativeLetter;
     if (!checkImplicit(previousLetter, letter)) tokens.push({ text: letter, type: SvgPathTokenType.Letter });
     tokens.push(...operands);
     previousLetter = letter;
