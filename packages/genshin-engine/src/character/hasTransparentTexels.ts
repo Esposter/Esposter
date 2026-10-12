@@ -5,6 +5,9 @@ export const hasTransparentTexels = (image: ImageBitmap): boolean => {
   if (!context) return false;
   context.drawImage(image, 0, 0);
   const { data } = context.getImageData(0, 0, image.width, image.height);
-  for (let alphaIndex = 3; alphaIndex < data.length; alphaIndex += 4) if (data[alphaIndex] < 255) return true;
+  for (let alphaIndex = 3; alphaIndex < data.length; alphaIndex += 4) {
+    const alpha = data[alphaIndex];
+    if (alpha !== undefined && alpha < 255) return true;
+  }
   return false;
 };
