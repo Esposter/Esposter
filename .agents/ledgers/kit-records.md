@@ -53,13 +53,13 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `ifa`                | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `illuga`             | —                      |                                                                          |
 | `ineffa`             | 2026-10-13 · Haiku 5.5 |                                                                          |
-| `jahoda`             | 2026-10-13 · Haiku 5.5 |                                                                          |
+| `jahoda`             | —                      |                                                                          |
 | `jean`               | —                      |                                                                          |
 | `kachina`            | —                      |                                                                          |
 | `kaedehara-kazuha`   | —                      |                                                                          |
 | `kaeya`              | —                      |                                                                          |
 | `kamisato-ayaka`     | —                      |                                                                          |
-| `kamisato-ayato`     | 2026-10-13 · Haiku 5.5 |                                                                          |
+| `kamisato-ayato`     | —                      |                                                                          |
 | `kaveh`              | —                      |                                                                          |
 | `keqing`             | —                      |                                                                          |
 | `kinich`             | 2026-10-13 · Haiku 5.5 |                                                                          |
@@ -69,7 +69,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `kuki-shinobu`       | —                      |                                                                          |
 | `lan-yan`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `lauma`              | —                      |                                                                          |
-| `layla`              | 2026-10-13 · Haiku 5.5 |                                                                          |
+| `layla`              | —                      |                                                                          |
 | `linnea`             | —                      |                                                                          |
 | `lisa`               | —                      |                                                                          |
 | `lohen`              | —                      |                                                                          |
@@ -116,7 +116,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `xilonen`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `xingqiu`            | —                      |                                                                          |
 | `xinyan`             | —                      |                                                                          |
-| `yae-miko`           | 2026-10-13 · Haiku 5.5 |                                                                          |
+| `yae-miko`           | —                      |                                                                          |
 | `yanfei`             | —                      |                                                                          |
 | `yaoyao`             | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `yelan`              | —                      |                                                                          |
