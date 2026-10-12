@@ -192,7 +192,9 @@ describe("styledEmojiPickerPanel", () => {
     const component = await mountSuspended(StyledEmojiPickerPanel, { attachTo: document.body });
     const getCell = (index: number) => component.get(`button[data-index="${index}"]`);
     for (let index = 0; index < 15; index++) {
+      // oxlint-disable-next-line no-await-in-loop -- Each press moves the tab stop the next press starts from
       await getCell(index).trigger("keydown", { key: "ArrowRight" });
+      // oxlint-disable-next-line no-await-in-loop -- The focus move settles before the next press reads it
       await flushPromises();
     }
     await component.find("input").setValue("technologist");
