@@ -53,4 +53,4 @@ These need the English PC client at 1080 high, published screenshots and recordi
 
 ## Reference
 
-- `quest-open.mkv` — J pressed in the open world, the quest screen opening, a Q step to the next tab, then J closing it, 60 frames a second; the open, close and tab timings are read off it. Partly found 2026-10-11: the wiki's `File:Quest Screen.png`; still sought: the still shows the screen's layout only; the open, close and tab timings are read off motion, which the still cannot give. The 1080p file is from the 2026 wiki revision.
+- `quest-open.mkv` — J pressed in the open world, the quest screen opening, a Q step to the next tab, then J closing it, 60 frames a second; the open, close and tab timings are read off it. Partly found 2026-10-11: the wiki's `File:Quest Screen.png`, and the 6.3 Quest Overview showcase `captures/yt-2_e7S_J9yAA-quest-overview.mp4`, J opening the screen over the world about 1.9 seconds in with no quest in progress; still sought: the still shows the screen's layout only; the open, close and tab timings are read off motion, which the still cannot give. The 1080p file is from the 2026 wiki revision.
