@@ -35,7 +35,7 @@ export const ReviewSessionRoleModelMap: Record<ReviewSessionRole, string> = {
 // The checks a fixer or a settler runs before it commits, since its commit lands on `ai/queue` with nothing else to stop a
 // Red: a fix that keeps a test green can still break a type or a docs rule
 export const REVIEW_SESSION_CHECKS =
-  "Before committing, run the tests of the files you touched (`pnpm test <paths> --run` from the package that owns them), the workspace rules (`pnpm test src/workspace --run` from `scripts`), the docs suite (`pnpm test content/docs --run` from `apps/web`) when you touched a page, and `pnpm typecheck` in each package you touched, and keep them all green. A fix they refuse is not made.";
+  "Before committing, run the tests of the files you touched (`pnpm test <paths> --run` from the package that owns them), the workspace rules (`pnpm test src/workspace --run` from `scripts`), the docs suite (`pnpm test content/docs --run` from `apps/web`) when you touched a page, and `pnpm typecheck` and `pnpm lint` in each package you touched, and keep them all green. A fix they refuse is not made.";
 // Wall clock for one reviewer, the fixer and the settler
 export const REVIEWER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 20 }).total("milliseconds");
 export const FIXER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 90 }).total("milliseconds");
