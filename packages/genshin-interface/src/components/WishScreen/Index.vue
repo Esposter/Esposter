@@ -71,9 +71,8 @@ const emit = defineEmits<{ buy: []; close: []; dismiss: []; wish: [count: number
 // The Details popup the Details button opens over the screen
 const isDetailsOpen = ref(false);
 const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeatured && rarity === 5));
-const bannerLabelText = computed(
-  () => bannerKind.value && bannerLabels[bannerKind.value].map(({ text }) => text).join(""),
-);
+const getBannerLabel = (kind: BannerKind) => bannerLabels[kind].map(({ text }) => text).join("");
+const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(bannerKind.value));
 </script>
 
 <template>
@@ -89,7 +88,7 @@ const bannerLabelText = computed(
       <li v-for="kind of bannerKinds" :key="kind">
         <GameButton
           class="banner"
-          :aria-label="bannerLabels[kind].map(({ text }) => text).join('')"
+          :aria-label="getBannerLabel(kind)"
           :aria-pressed="kind === bannerKind"
           :kind="GameButtonKind.Row"
           @click="bannerKind = kind"
