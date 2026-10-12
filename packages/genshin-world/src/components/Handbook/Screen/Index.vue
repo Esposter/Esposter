@@ -37,7 +37,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 <template>
   <!-- The Adventurer Handbook, which F1 opens: an open book whose tabs run down its left edge and whose Experience page
-       Shows the chapter's investigations. Every box is measured from the English client's wiki screenshot at 1080 high,
+       shows the chapter's investigations. Every box is measured from the English client's wiki screenshot at 1080 high,
        one reference pixel per 0.6243 units, so each piece lands where the game draws it at any window size -->
   <GameScreen class="handbook-screen">
     <div class="frame">
