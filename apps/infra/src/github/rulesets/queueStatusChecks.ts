@@ -4,21 +4,22 @@ import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
 // Required status checks live in their own ruleset so that Renovate is not a bypass actor for them.
-// Renovate bypasses the pull request requirement in developMainProtection so branch automerge can push
-// Straight to the base branch, but its updates must still land green. Bypass is granted per ruleset and
-// Never per rule, so the two cannot share one.
+// Renovate bypasses oneWriterRefs so its merges can land on ai/queue, but its updates must still land green.
+// Bypass is granted per ruleset and never per rule, so the two cannot share one.
+// The up-to-date requirement is off: ai/queue moves every few minutes, so a requirement that a PR be current
+// with it would starve a Renovate PR. A Renovate PR merges once its own head is green.
 // The sharded Coverage matrix is required shard by shard as well as through its `Merge Coverage` fan-in.
 // GitHub scores a skipped required check as passing, so a fan-in job that a failing shard can skip is not a
 // Gate at all — it merges a red suite. Coverage-merge therefore runs under `!cancelled()` and fails on any
 // Failed dependency; the per-shard contexts stay as the belt to its braces, since they are what holds if that
 // Job is ever edited back into a skip.
-export const developMainStatusChecks: github.RepositoryRuleset = new github.RepositoryRuleset(
-  "developMainStatusChecks",
+export const queueStatusChecks: github.RepositoryRuleset = new github.RepositoryRuleset(
+  "queueStatusChecks",
   {
     bypassActors: [GitHubAdminRepositoryRoleBypassActor],
-    conditions: { refName: { excludes: [], includes: ["refs/heads/develop", "refs/heads/main"] } },
+    conditions: { refName: { excludes: [], includes: ["refs/heads/ai/queue"] } },
     enforcement: "active",
-    name: "develop & main status checks",
+    name: "ai/queue status checks",
     repository: repository.name,
     rules: {
       // Contexts are the CI.yaml job names — the `check` matrix contributes one per entry — except
@@ -39,10 +40,10 @@ export const developMainStatusChecks: github.RepositoryRuleset = new github.Repo
           { context: "Format" },
           { context: "Typecheck" },
         ],
-        strictRequiredStatusChecksPolicy: true,
+        strictRequiredStatusChecksPolicy: false,
       },
     },
     target: "branch",
   },
-  { protect: true },
+  { aliases: [{ name: "developMainStatusChecks" }], protect: true },
 );
