@@ -1,10 +1,10 @@
 import type { PmxBone } from "#src/models/character/PmxBone";
 
-import { Bone, Matrix4, Skeleton } from "three";
+import { Bone, Skeleton } from "three";
 
 // A PMX model's bones as three's skeleton. The file places every bone in the model's space and three each from its
-// Parent, so a bone stands where it does less where its parent does; the model's rest pose turns no bone, so each is
-// Bound by the step back from where it stands. A bone with no parent is a root, left for the mesh to hold
+// Parent, so a bone stands where it does less where its parent does. Its inverse is taken by the mesh that binds it,
+// Where the mesh stands once scaled, so the rest pose skins every vertex where the file has it
 export const createPmxSkeleton = (pmxBones: readonly PmxBone[]): Skeleton => {
   const bones = pmxBones.map(({ name, parentIndex, position: [x, y, z] }) => {
     const bone = new Bone();
@@ -19,6 +19,5 @@ export const createPmxSkeleton = (pmxBones: readonly PmxBone[]): Skeleton => {
     if (bone && parent) parent.add(bone);
   }
 
-  const boneInverses = pmxBones.map(({ position: [x, y, z] }) => new Matrix4().makeTranslation(-x, -y, -z));
-  return new Skeleton(bones, boneInverses);
+  return new Skeleton(bones);
 };

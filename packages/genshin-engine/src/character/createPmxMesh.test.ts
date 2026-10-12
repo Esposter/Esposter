@@ -6,6 +6,9 @@ import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { Matrix4, MeshBasicMaterial, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
+// Rounds away the float noise of a matrix product, and turns a negative zero into zero for the comparison
+const roundToTen = (value: number): number => Math.round(value * 1e6) / 1e6 + 0;
+
 describe(createPmxMesh, () => {
   test("places each bone from its parent, binds it where it stands, and draws each material's triangles in turn", () => {
     expect.hasAssertions();
@@ -59,9 +62,9 @@ describe(createPmxMesh, () => {
     ]);
     expect(bones.map(({ parent }) => parent)).toStrictEqual([mesh, bones[0]]);
     expect(bones.map(({ position }) => position)).toStrictEqual([new Vector3(1, 1, 1), new Vector3(1, 1, 1)]);
-    expect(boneInverses).toStrictEqual([
-      new Matrix4().makeTranslation(-1, -1, -1),
-      new Matrix4().makeTranslation(-2, -2, -2),
-    ]);
+    // Each bone's rest skin, its world times its inverse, is the identity: a vertex the file places stays where it is
+    expect(
+      bones.map((bone, index) => bone.matrixWorld.clone().multiply(boneInverses[index]).elements.map(roundToTen)),
+    ).toStrictEqual([new Matrix4().elements.map(roundToTen), new Matrix4().elements.map(roundToTen)]);
   });
 });
