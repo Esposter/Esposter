@@ -3,7 +3,6 @@ import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import type { RosterRenderer } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 
 import { readAvatarRoster } from "#src/services/genshinAssets/avatar/readAvatarRoster";
-import { getTransformKey } from "#src/services/genshinAssets/avatar/readRendererBones";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { describe, expect, test } from "vitest";
 
@@ -56,12 +55,12 @@ describe(readAvatarRoster, () => {
     const face = sceneObject("Face", "cab-a", "3", "2");
     const other = sceneObject("Body", "cab-b", "4");
     const objectMap = new Map(
-      [root, body, face, other].map((object) => [getTransformKey(object.file, object.transformId), object]),
+      [root, body, face, other].map((object) => [toObjectKey(object.file, object.transformId), object]),
     );
 
     const roster = readAvatarRoster(
       [renderer("Face", face), renderer("Body", body), renderer("Body_LOD1", body), renderer("Body", other)],
-      getTransformKey(root.file, root.transformId),
+      toObjectKey(root.file, root.transformId),
       objectMap,
       new Set(),
     );
@@ -76,12 +75,12 @@ describe(readAvatarRoster, () => {
     const effect = sceneObject("EffectMesh", "cab-a", "3", "1");
     const brow = sceneObject("Brow", "cab-a", "4", "1");
     const objectMap = new Map(
-      [root, body, effect, brow].map((object) => [getTransformKey(object.file, object.transformId), object]),
+      [root, body, effect, brow].map((object) => [toObjectKey(object.file, object.transformId), object]),
     );
 
     const roster = readAvatarRoster(
       [renderer("Body", body, 1), renderer("EffectMesh", effect, 0), renderer("Brow", brow)],
-      getTransformKey(root.file, root.transformId),
+      toObjectKey(root.file, root.transformId),
       objectMap,
       new Set(),
     );
@@ -96,7 +95,7 @@ describe(readAvatarRoster, () => {
     const effect = sceneObject("EffectMesh", "cab-a", "3", "1");
     const face = sceneObject("Face", "cab-a", "4", "1");
     const objectMap = new Map(
-      [root, body, effect, face].map((object) => [getTransformKey(object.file, object.transformId), object]),
+      [root, body, effect, face].map((object) => [toObjectKey(object.file, object.transformId), object]),
     );
 
     const roster = readAvatarRoster(
@@ -105,7 +104,7 @@ describe(readAvatarRoster, () => {
         renderer("EffectMesh", effect, undefined, ["mat-shell"]),
         renderer("Face", face, undefined, ["mat-body", "mat-shell"]),
       ],
-      getTransformKey(root.file, root.transformId),
+      toObjectKey(root.file, root.transformId),
       objectMap,
       new Set([toObjectKey("cab-a", "mat-body"), toObjectKey("cab-a", "mat-hair")]),
     );

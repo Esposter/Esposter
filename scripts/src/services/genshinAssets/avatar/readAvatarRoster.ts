@@ -2,7 +2,6 @@ import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedOb
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import type { SkinnedRenderer } from "#src/services/genshinAssets/avatar/readRendererBones";
 
-import { getTransformKey } from "#src/services/genshinAssets/avatar/readRendererBones";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 
 // A skinned renderer whose mesh resolves, with the name the asset index gives that mesh and the scene object its game
@@ -20,8 +19,8 @@ const LOD_SUFFIX_REGEX = /_LOD\d+$/u;
 const checkInTree = (object: SceneObject, rootKey: string, objectMap: ReadonlyMap<string, SceneObject>): boolean => {
   let current: SceneObject | undefined = object;
   while (current) {
-    if (getTransformKey(current.file, current.transformId) === rootKey) return true;
-    current = objectMap.get(getTransformKey(current.parentFile || current.file, current.parentId));
+    if (toObjectKey(current.file, current.transformId) === rootKey) return true;
+    current = objectMap.get(toObjectKey(current.parentFile || current.file, current.parentId));
   }
   return false;
 };

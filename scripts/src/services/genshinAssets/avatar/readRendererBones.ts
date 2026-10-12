@@ -9,6 +9,7 @@ import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { RIG_ROOT_BONE_NAME } from "#src/services/genshinAssets/avatar/constants";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
+import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -84,12 +85,6 @@ export interface RendererBone {
   path: string;
 }
 
-// The layout's objects by the file and path ID of their transform, which a renderer's bones name
-export const getTransformKey = (file: string, transformId: string): string => `${file}|${transformId}`;
-
-// The layout's objects by the file and path ID of their game object, which a skinned renderer names
-export const getGameObjectKey = (file: string, gameObjectId: string): string => `${file}|${gameObjectId}`;
-
 // A transform's bone as the layout names it: its path from the rig's root down, and its scene object. A transform whose
 // Chain the dumps lose, or that does not reach the rig's root, has no path and is undefined
 const readBoneChain = (
@@ -98,11 +93,11 @@ const readBoneChain = (
   objectMap: ReadonlyMap<string, SceneObject>,
 ): RendererBone | undefined => {
   const chain: SceneObject[] = [];
-  let object = objectMap.get(getTransformKey(file, transformId));
+  let object = objectMap.get(toObjectKey(file, transformId));
   while (object) {
     chain.unshift(object);
     if (object.name === RIG_ROOT_BONE_NAME) break;
-    object = objectMap.get(getTransformKey(object.parentFile || object.file, object.parentId));
+    object = objectMap.get(toObjectKey(object.parentFile || object.file, object.parentId));
   }
   const leaf = chain.at(-1);
   if (chain[0]?.name !== RIG_ROOT_BONE_NAME || !leaf) return undefined;

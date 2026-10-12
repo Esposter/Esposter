@@ -19,8 +19,6 @@ import { mirrorAvatarRotation } from "#src/services/genshinAssets/avatar/mirrorA
 import { readAvatarRig } from "#src/services/genshinAssets/avatar/readAvatarRig";
 import { readAvatarRoster } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 import {
-  getGameObjectKey,
-  getTransformKey,
   readRendererBones,
   readRendererRootBone,
   readSkinnedRenderers,
@@ -59,7 +57,7 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
   const rig = await exportRig(source.block, source.name, directory.root);
   const cabMap = parseCabMap(await readFile(CAB_MAP_PATH));
   const { objects } = await readComponentLayout(component);
-  const objectMap = new Map(objects.map((object) => [getTransformKey(object.file, object.transformId), object]));
+  const objectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.transformId), object]));
   const [modelRoot] = DerivedAssetComponentMap[component].roots;
   const rootObjects = objects.filter(
     ({ gameObjectId, name }) => gameObjectId === modelRoot?.pathId && name === modelRoot.name,
@@ -67,7 +65,7 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
   const [rootObject] = rootObjects;
   if (rootObjects.length !== 1 || !rootObject)
     throw new InvalidOperationError(Operation.Read, component, "has no single model root in its layout");
-  const gameObjectMap = new Map(objects.map((object) => [getGameObjectKey(object.file, object.gameObjectId), object]));
+  const gameObjectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.gameObjectId), object]));
   const renderers = await readSkinnedRenderers(directory.layout, cabMap);
   const meshNames = await readObjectNames(
     renderers.flatMap(({ mesh }) => (mesh ? [mesh] : [])),
@@ -94,14 +92,14 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
             ...skinned,
             mesh,
             name,
-            object: gameObjectMap.get(getGameObjectKey(skinned.file, skinned.renderer.m_GameObject.m_PathID)),
+            object: gameObjectMap.get(toObjectKey(skinned.file, skinned.renderer.m_GameObject.m_PathID)),
           },
         ]
       : [];
   });
   const roster = readAvatarRoster(
     candidates,
-    getTransformKey(rootObject.file, rootObject.transformId),
+    toObjectKey(rootObject.file, rootObject.transformId),
     objectMap,
     texturedKeys,
   );
