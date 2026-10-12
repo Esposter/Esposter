@@ -7,9 +7,9 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7332 } },
   "skillHolds.0.action.animationFrames": { "cause": "DiffersFromSource", "value": 362 },
-  "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 332 },
+  "skillHolds.0.action.hits.length": { "cause": "Unsourced", "value": 1 },
+  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 332 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 7332 } },
-  "skillHolds.0.minimumHeldSeconds": { "cause": "Unclassified", "value": 5 },
+  "skillHolds.0.minimumHeldSeconds": { "cause": "Unsourced", "value": 5 },
   "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
 }
