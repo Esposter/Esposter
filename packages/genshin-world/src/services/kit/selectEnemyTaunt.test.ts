@@ -1,40 +1,20 @@
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_AGGRO_RANGE } from "#src/services/enemy/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTaunt } from "#src/services/kit/effects/createKitTaunt.test";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const createTaunt = (x: number, health: number): KitTaunt => ({
+  ...createKitTaunt(health, 5),
   body: { facing: 0, height: 0, position: { x, z: 0 } },
-  combatant: {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 90,
-  },
-  explosion: {
-    hitArea: { angle: 2 * Math.PI, height: 2, radius: 3 },
-    hitmarkSeconds: 0,
-    poiseDamage: 260,
-    talentMultiplier: 1.232,
-  },
-  health,
-  kind: "taunt",
-  secondsRemaining: 5,
 });
 
 describe(selectEnemyTaunt, () => {

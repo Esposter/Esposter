@@ -119,7 +119,7 @@ export const createRaidenKitBehaviour = ({
   const restoreEnergy = readParameter("restoreEnergy");
   const musouIsshinSeconds = readParameter("musouIsshinSeconds");
   // Musou Isshin's strikes and charged attack are Elemental Burst DMG, gcsim's AttackTagElementalBurst in
-  // Raiden/attack.go's swordAttack and raiden/charge.go's swordCharge
+  // `raiden/attack.go`'s swordAttack and `raiden/charge.go`'s swordCharge
   const musouIsshin = readStance("musouIsshin");
   // A Musou Isshin attack with each multiplier raised by the Resolve stacks the burst spent and each DMG Bonus the Eye's,
   // If she held it as she cast
