@@ -5,9 +5,9 @@ import { Currency } from "#src/models/inventory/Currency";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
-import { BannerKind } from "genshin-interface";
 import { BEGINNERS_WISH_LIMIT, INITIAL_WISH_PITY } from "#src/services/wish/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
+import { BannerKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);

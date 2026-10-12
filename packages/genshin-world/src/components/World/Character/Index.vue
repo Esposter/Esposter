@@ -5,7 +5,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterPoser, FollowCamera, InputState, LandmarkCollider, Locomotion } from "genshin-engine";
-import type { Object3D } from "three";
+import type { Object3D, SkinnedMesh } from "three";
 
 import { Element } from "#src/models/Element";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
@@ -35,7 +35,7 @@ import {
   LocomotionState,
   STAMINA_MAX,
 } from "genshin-engine";
-import { PerspectiveCamera, SkinnedMesh, Vector3 } from "three";
+import { PerspectiveCamera, Vector3 } from "three";
 import { onBeforeUnmount } from "vue";
 
 interface Props {

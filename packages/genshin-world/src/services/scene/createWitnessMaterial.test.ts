@@ -1,11 +1,10 @@
+import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
 import type { SceneMaterial } from "genshin-engine";
 
-import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
-
-import { ToonNodeMaterial } from "genshin-engine";
 import { WitnessProperty } from "#src/models/scene/WitnessProperty";
 import { LEAF_SHADER } from "#src/services/scene/constants";
 import { createWitnessMaterial } from "#src/services/scene/createWitnessMaterial";
+import { ToonNodeMaterial } from "genshin-engine";
 import { DoubleSide, Texture } from "three";
 import { describe, expect, test } from "vitest";
 
