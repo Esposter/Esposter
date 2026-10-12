@@ -9,8 +9,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { XINYAN_CHARACTER_ID } from "#src/services/kit/characters/xinyanKit";
-import { createXinyanKit } from "#src/services/kit/characters/xinyanKit";
+import { createXinyanKit, XINYAN_CHARACTER_ID } from "#src/services/kit/characters/xinyanKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -77,7 +76,7 @@ describe(createXinyanKit, () => {
     expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
-  test("Sweeping Fervor's shield steps up at the second and third enemy it strikes, one fewer from Ascension 1", () => {
+  test("sweeping Fervor's shield steps up at the second and third enemy it strikes, one fewer from Ascension 1", () => {
     expect.hasAssertions();
     const shieldLevelAfter = (ascension: number, strikeCount: number): number | undefined =>
       castSkill(createXinyanCombatant(ascension), strikeCount).effects.find(
@@ -88,7 +87,7 @@ describe(createXinyanKit, () => {
     expect([shieldLevelAfter(1, 1), shieldLevelAfter(1, 2)]).toStrictEqual([2, 3]);
   });
 
-  test("Rave's shield is its flat HP plus its share of DEF at level 3", () => {
+  test("rave's shield is its flat HP plus its share of DEF at level 3", () => {
     expect.hasAssertions();
     const combatant = createXinyanCombatant();
     // A recast shield ends the one it replaces without removing it yet, so the newest one is the standing shield

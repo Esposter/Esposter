@@ -1,9 +1,9 @@
 import type { LuaDialect } from "#src/models/recreation/lua/LuaDialect";
 
 import { SCENE_SCRIPT_PRODUCER_PATHS } from "#src/services/genshinAssets/scene/constants";
+import { writeProducerStamp } from "#src/services/producerStamp/writeProducerStamp";
 import { evaluateLuaDataChunk } from "#src/services/recreation/lua/evaluateLuaDataChunk";
 import { readLengthPrefixedChunk } from "#src/services/recreation/lua/readLengthPrefixedChunk";
-import { writeProducerStamp } from "#src/services/producerStamp/writeProducerStamp";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { join, parse } from "node:path";
 

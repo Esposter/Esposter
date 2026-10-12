@@ -292,12 +292,14 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     poiseDamage: DOT_POISE_DAMAGE,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, XINYAN_BURST_GROUP_ID, TALENT_START_LEVEL, 1),
   };
-  const riffDotHits: KitHit[] = BURST_DOT_HITMARK_FRAMES.map((frames) =>
-    Object.assign({}, riffDotHit, { hitmarkSeconds: frames / 60 }),
-  );
-  const constellationPulseHits: KitHit[] = CONSTELLATION_PULSE_HITMARK_FRAMES.map((frames) =>
-    Object.assign({}, createShieldDotHit(talentMultiplierMap), { hitmarkSeconds: frames / 60 }),
-  );
+  const riffDotHits: KitHit[] = BURST_DOT_HITMARK_FRAMES.map((frames) => ({
+    ...riffDotHit,
+    hitmarkSeconds: frames / 60,
+  }));
+  const constellationPulseHits: KitHit[] = CONSTELLATION_PULSE_HITMARK_FRAMES.map((frames) => ({
+    ...createShieldDotHit(talentMultiplierMap),
+    hitmarkSeconds: frames / 60,
+  }));
 
   return {
     burstCooldownSeconds: getTalentMultiplier(talentMultiplierMap, XINYAN_BURST_GROUP_ID, TALENT_START_LEVEL, 2),

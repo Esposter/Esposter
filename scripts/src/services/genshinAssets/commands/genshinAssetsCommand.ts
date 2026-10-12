@@ -46,8 +46,6 @@ import { reputationCommand } from "#src/services/genshinAssets/commands/reputati
 import { residentsCommand } from "#src/services/genshinAssets/commands/residentsCommand";
 import { sceneNpcBornCommand } from "#src/services/genshinAssets/commands/sceneNpcBornCommand";
 import { sceneScriptsCommand } from "#src/services/genshinAssets/commands/sceneScriptsCommand";
-import { GENSHIN_LUA_53 } from "#src/services/genshinAssets/lua/GENSHIN_LUA_53";
-import { createLuaDialectCommand } from "#src/services/recreation/commands/luaDialectCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
@@ -59,6 +57,8 @@ import { transPointsCommand } from "#src/services/genshinAssets/commands/transPo
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
 import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
+import { GENSHIN_LUA_53 } from "#src/services/genshinAssets/lua/GENSHIN_LUA_53";
+import { createLuaDialectCommand } from "#src/services/recreation/commands/luaDialectCommand";
 import { defineCommand } from "citty";
 
 // The derived assets' tool, one subcommand a step (apps/web/content/docs/genshin/derived-assets.md)

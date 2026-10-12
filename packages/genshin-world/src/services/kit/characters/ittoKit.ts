@@ -15,7 +15,7 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Itto's proud skill groups, read at his talent level, as the game's tables give them and gcsim v2.47.2 (MIT)
-// zz_aratakiitto.dm.go labels them. The attack group holds the four strikes at 0 to 3, the Saichimonji Slash at 4, the
+// Zz_aratakiitto.dm.go labels them. The attack group holds the four strikes at 0 to 3, the Saichimonji Slash at 4, the
 // Arataki Kesagiri combo's and final slashes at 5 and 6, the plunges' collision at 8, and the low and high plunges at 9
 // And 10. The skill group holds Masatsu Zetsugi's damage at 0 and its cooldown at 4. The burst group holds the ATK bonus
 // Per DEF at 1, its cooldown at 4 and its energy cost at 5

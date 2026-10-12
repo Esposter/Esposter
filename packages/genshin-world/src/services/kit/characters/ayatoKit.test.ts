@@ -80,7 +80,7 @@ describe(createAyatoKit, () => {
     });
   });
 
-  test("Kamisato Art: Kyouka's water illusion hits at its 35-frame delay, and Soukai Kanka lasts six seconds", () => {
+  test("kamisato Art: Kyouka's water illusion hits at its 35-frame delay, and Soukai Kanka lasts six seconds", () => {
     expect.hasAssertions();
     const kitEffectState = castAction(AYATO_KIT.elementalSkill);
     const illusionHit = takeOne(AYATO_KIT.elementalSkill.hits);
@@ -108,7 +108,7 @@ describe(createAyatoKit, () => {
     expect(stacks).toStrictEqual([0, 1, 2]);
   });
 
-  test("Namisen stacks stop at four, or five from Constellation 2", () => {
+  test("namisen stacks stop at four, or five from Constellation 2", () => {
     expect.hasAssertions();
     const stacksAfterStrikes = (constellationCount: number): number => {
       const combatant = createAyatoCombatant(0, constellationCount);
@@ -130,7 +130,7 @@ describe(createAyatoKit, () => {
     });
   });
 
-  test("Ascension 1 sets two stacks as Kyouka is cast and the most as its water illusion explodes", () => {
+  test("ascension 1 sets two stacks as Kyouka is cast and the most as its water illusion explodes", () => {
     expect.hasAssertions();
     const combatant = createAyatoCombatant(1);
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
@@ -154,7 +154,7 @@ describe(createAyatoKit, () => {
     });
   });
 
-  test("Constellation 6 sets off two extra Shunsuiken strikes of 450% on the first enemy struck once Kyouka is cast", () => {
+  test("constellation 6 sets off two extra Shunsuiken strikes of 450% on the first enemy struck once Kyouka is cast", () => {
     expect.hasAssertions();
     const combatant = createAyatoCombatant(0, 6);
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
@@ -177,7 +177,7 @@ describe(createAyatoKit, () => {
     ]);
   });
 
-  test("Suiyuu's field follows the body and strikes from its first tick at 101 frames, every 30 frames", () => {
+  test("suiyuu's field follows the body and strikes from its first tick at 101 frames, every 30 frames", () => {
     expect.hasAssertions();
     const kitEffectState = castAction(AYATO_KIT.elementalBurst);
     const field = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
