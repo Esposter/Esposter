@@ -60,7 +60,7 @@ Whoever pushed a red typecheck or lint fixes it: reproduce it with that one chec
 
 ## Findings the review defers
 
-When the review's fixer cannot settle a finding, it goes into one issue labelled for an agent, using the label `.agents/triage-labels.md` gives for work an agent can take. That issue is picked up like any other: fixed in a worktree, landed on `ai/queue` by the loop above, and then reviewed in a later window.
+When the review's fixer cannot settle a finding, it goes into one issue labelled for an agent, using the label `.agents/triage-labels.md` gives for work an agent can take. That issue is picked up like any other: fixed in a worktree, landed on `ai/queue` by the loop above, and then reviewed in a later window. The commit that settles its last finding carries `Closes #<number>`, which closes the issue on the push, since `ai/queue` is the default branch.
 
 ## Deep Dives
 

@@ -76,7 +76,7 @@ Every session draws on the same Claude account as a person's working session, so
 - **Renovate targets `ai/queue` and merges by pull request.** Its bumps enter through the queue like a session's commits, so they are reviewed like any other change instead of landing on `main` unread. A branch automerge is a fast-forward, which a base moving every few minutes starves, so Renovate's pull requests merge through GitHub's auto-merge once their required checks pass.
 - **Reviewers are read-only, in a worktree at the window's end.** A reviewer reads the code exactly as it will be on `main`, cannot change it, and cannot reach GitHub. The session's answer is the only thing it hands back, parsed against a typed schema, and a malformed answer fails that one session.
 - **One fixer.** Fixes are made by a single session in order, so no two fixers race over the same files and the fixes stay in the order their findings were read.
-- **Deferred findings go to one issue per run.** A finding the fixer cannot settle is a person's to see, but it does not hold the queue. One issue lists them, so the run does not open a stream of issues, and the issue is labelled as work an agent can take.
+- **Deferred findings go to one issue per run.** A finding the fixer cannot settle is a later session's, and it does not hold the queue. One issue lists them, so the run does not open a stream of issues, and the issue is labelled as work an agent can take.
 - **The reviewers never touch GitHub.** The script does every push, issue and summary under its own token. The session gets nothing but its own Claude credential, so a finding's text, which came from code under review, cannot direct a push.
 
 ## Constants
