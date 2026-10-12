@@ -27,6 +27,6 @@ Only when an area's lifecycle is complete move to the next area. Depth over brea
 
 Docs sessions produce **specs, not code**: the deliverable of ideation/triage is the complete proposal set. Implementation happens later in separate sessions (possibly a different model) that pick up one proposal, build it, then rewrite the proposal as an as-built feature page — the loop the `building-proposals` skill owns. A proposal must therefore be self-contained enough for a cold implementation session to execute without this conversation's context.
 
-## Commits, not windows
+## Commits, not review windows
 
-A docs sweep is never sized to a review window — the collector cuts windows at the file cap (`coderabbit` skill, `references/file-cap.md`). Commit by area and by step (feature pages, then decision pages), never by squeezing several topics into one file: the single-responsibility rule always wins over file count. A large deletion (retiring an old tree) is its own commit.
+A docs sweep is never sized to a review window — the review cuts its windows at a file cap (the `review-queue` skill). Commit by area and by step (feature pages, then decision pages), never by squeezing several topics into one file: the single-responsibility rule always wins over file count. A large deletion (retiring an old tree) is its own commit.

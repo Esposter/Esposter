@@ -17,7 +17,7 @@ Read when a risk has no owner in `references/owasp-top-10.md`, when a defence is
   - https://top10.owasp.org/2025/A10_2025-Mishandling_of_Exceptional_Conditions/
 - OWASP API Security Top 10 (2023) — https://api-security.owasp.org/editions/2023/en/0x11-t10/ — tRPC is an API. Object-level and property-level authorization, and unrestricted resource consumption, are the entries a procedure hits most.
 - OWASP ASVS 5.0 — https://owasp.org/www-project-application-security-verification-standard — the requirement-level checklist to read when a whole subsystem (auth, uploads, sessions) is being designed rather than reviewed.
-- OWASP Top 10 CI/CD Security Risks — https://owasp.org/www-project-top-10-ci-cd-security-risks — for `.github/`, the collector and Renovate.
+- OWASP Top 10 CI/CD Security Risks — https://owasp.org/www-project-top-10-ci-cd-security-risks — for `.github/`, the review workflow and Renovate.
 - OWASP Top 10 for LLM Applications — https://genai.owasp.org/llm-top-10/ — for the agent console and anything that hands text to a model with tools.
 - CWE Top 25 — https://cwe.mitre.org/top25/ — the weakness ids a finding can cite.
 

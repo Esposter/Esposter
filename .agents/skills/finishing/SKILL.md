@@ -9,7 +9,7 @@ Working is not finished. This page answers one question: **what this change owes
 
 ## Settled — do not re-propose
 
-- **Gating the audit on the change being finished.** It is asked most often mid-change, as a reminder; a row the window cannot answer yet is `not yet`, and refusing the whole table over it would make the one moment it is most useful the one moment it does nothing.
+- **Gating the audit on the change being finished.** It is asked most often mid-change, as a reminder; a row the diff cannot answer yet is `not yet`, and refusing the whole table over it would make the one moment it is most useful the one moment it does nothing.
 - **A third lane inside `code-review`.** The review lanes settle code by reading it; most rows here have no diff to read at all — an unwritten test, an unswept ledger row, a diagram nobody updated — and folding them in would give the review skill a second topic, which is a split rather than a lane (the `skill-authoring` skill, `references/splitting-a-skill.md`).
 - **Restating a row's rule here.** Every row is a pointer by construction; the moment one explains its owner's rule there are two copies of it, and this is the page that goes stale first (the `skill-authoring` skill, `references/one-owner-per-topic.md`).
 - **A row for the checks.** The touched tests are mechanical, run once after all the edits going out together, and the rest are CI's — all of it owned by `running-checks`, so an audit row for them would be a second place to forget them.
@@ -18,15 +18,15 @@ Working is not finished. This page answers one question: **what this change owes
 
 The order of the ritual, and the commit and push that close it, are `AGENTS.md`'s "Finishing a change". This is the audit inside its review, test and docs steps — the ones before the tests.
 
-**It runs at any point, and it is a reminder before it is a gate.** Asked mid-change it reports what is owed so far and marks the rows the window cannot answer yet as `not yet` — never a refusal to run, and never a demand that the change be finished first. Asked at the end it is the same table with every row answered. Run it unprompted at the end of a change; run it on request whenever.
+**It runs at any point, and it is a reminder before it is a gate.** Asked mid-change it reports what is owed so far and marks the rows the diff cannot answer yet as `not yet` — never a refusal to run, and never a demand that the change be finished first. Asked at the end it is the same table with every row answered. Run it unprompted at the end of a change; run it on request whenever.
 
-**Scope the audit to the same window a review would take** (the `code-review` skill, `references/diff-window.md`). A row is asked of that window, never of the repository.
+**Scope the audit to the same diff a review would take** (the `code-review` skill, `references/diff-window.md`). A row is asked of that diff, never of the repository.
 
 ## The audit
 
 | The change may owe                                                     | Ask                                                                                                  | Owner                                           |
 | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| **A review, both lanes**                                               | quality and correctness over the window                                                              | `code-review`                                   |
+| **A review, both lanes**                                               | quality and correctness over the diff                                                                | `code-review`                                   |
 | **A regression test** — and the deletion of the ones it made redundant | what earns a test at all, and what no longer does                                                    | `testing`, `test-values`                        |
 | **A refactor the change exposed**                                      | the twin helper, the constant restated in two files, the special case that belonged in the mechanism | `code-review` quality lane, `file-organization` |
 | **Placement and cost**                                                 | where the work runs and how it is shaped, not how fast the unit is                                   | `runtime-efficiency`                            |

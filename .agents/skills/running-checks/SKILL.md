@@ -7,9 +7,7 @@ description: Apply when about to run pnpm typecheck, lint, lint:fix, test, forma
 
 **CI runs the checks; a session runs only the tests of what it touched.** Every push to `ai/queue` runs typecheck,
 lint, format and the whole suite. The session watches its push's run in the background and fixes a red typecheck
-or lint job itself, in a commit behind the push (`AGENTS.md`, "Finishing a change", step 6); only a red that
-reaches `main` is the collector's repair — its regenerators first, then a session
-(`apps/web/content/docs/infra/review-collector/repair.md`). The pre-commit hook only formats what is staged and
+or lint job itself, in a commit behind the push (`AGENTS.md`, "Finishing a change", step 6). The pre-commit hook only formats what is staged and
 runs no check (`.githooks/pre-commit`). The command and its directory are the `package-scripts` skill's; this page is
 which checks a session runs and how it waits on them.
 
@@ -62,7 +60,7 @@ the session to fix it. A wave of agents landing one after another is watched onc
 ## A check CI owns, run locally
 
 Only to answer a red: a session whose push turned a typecheck or lint job red, a session asked to fix a failed CI
-job, or the repair's own session, runs that one check as CI runs it, to reproduce the red and prove the fix. The
+job, runs that one check as CI runs it, to reproduce the red and prove the fix. The
 failed job's log (`gh run view <id> --log-failed`) names the package whose typecheck failed, the root's own
 included, and the reproduction is `pnpm typecheck` from that package rather than the whole repository; a lint red is
 reproduced by `vp run lint:fix` from the repo root, the one scope matching CI's

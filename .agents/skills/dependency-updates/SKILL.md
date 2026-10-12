@@ -11,7 +11,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Settled — do not re-propose
 
-- **A confirmation gate before `pnpm refresh:lockfile`** (step 3 of `references/bumping-by-hand.md`). Its process kill is the precondition the delete needs on Windows, everything it ends is a restartable process of this repo's own, and a pass runs unattended — a gate turns it into one that stops to ask a question whose answer is yes. The trade is written at that step, and a review finding asking for the gate is answered with this line (the `coderabbit` skill's Settled list).
+- **A confirmation gate before `pnpm refresh:lockfile`** (step 3 of `references/bumping-by-hand.md`). Its process kill is the precondition the delete needs on Windows, everything it ends is a restartable process of this repo's own, and a pass runs unattended — a gate turns it into one that stops to ask a question whose answer is yes. The trade is written at that step, and a review finding asking for the gate is answered with this line.
 - **Raising `minimumReleaseAge` above `0`, in pnpm or Renovate.** Being on the freshest version is the point, and a quarantine turns one clean pass into a partial one (`references/renovate.md`).
 - **Lifting or lowering `:prConcurrentLimit10`, or honouring `:prHourlyLimit2`.** The hourly limit only delays a decided bump; ten branches in flight bounds one run against the shared runners (`references/renovate.md`).
 - **Splitting a hand pass into one commit per major.** A pass is one commit whose body carries a section per major; the split bought a per-package revert this repo never performs and cost a hand-reconciled lockfile per commit (`references/major-upgrades.md` §5).

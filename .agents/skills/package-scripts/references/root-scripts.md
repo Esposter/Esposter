@@ -27,7 +27,7 @@ not something knip can see, and `apps/web`'s unrendered-component test is.
 
 `pnpm lint:workflows` is actionlint over `.github/workflows`, and part of `lint`: the fork published as
 `@kjanat/actionlint`, run with ShellCheck and pyflakes off so no host's `PATH` changes the verdict. Why each of
-those, and why a broken workflow is this check's to catch rather than the collector's, is
+those, and why a broken workflow is this check's to catch, is
 `apps/web/content/docs/architecture/monorepo-tooling.md` ("Workflow lint").
 
 The `ai:<domain>:<verb>` entries are the scripts no human types, named by audience — the rule is the

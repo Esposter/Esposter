@@ -1,6 +1,6 @@
 ---
 name: git
-description: Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows. Esposter's git workflow — the session commits on ai/queue by pathspec in a shared checkout and the collector writes develop and main; never git stash, never --amend, never a push into a running review, and a pnpm-lock.yaml conflict regenerated, never hand-resolved.
+description: Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows. Esposter's git workflow — the session commits on ai/queue by pathspec in a shared checkout and the review fast-forwards main onto it; never git stash, never --amend, and a pnpm-lock.yaml conflict regenerated, never hand-resolved.
 ---
 
 # Git Conventions
@@ -24,15 +24,14 @@ A heredoc piped to `-F -` from Bash, a single-quoted here-string from PowerShell
 - **No command over the whole index in a shared checkout.** `git add .`, `git add -N .`, `git reset -- .` and `git restore --staged .` reach every peer's staged entry as well as your own; one `git reset -- .` dropped a peer's staged data file on 2026-10-09. Name your paths. The ward's whole-index guard (`packages/genshin-mods/src/services/ward/`) refuses these forms with a Bash deny while another session edits the checkout.
 - **A rename that only changes case needs `git -c core.ignorecase=false` on every command that names the path** — Windows checks out with `core.ignorecase=true`, so `git add` and a pathspec `git commit` refuse the new spelling as "did not match any file", and a commit that does land leaves the old spelling behind as a staged `A` that `git -c core.ignorecase=false rm --cached` clears. `git mv` alone stages the move correctly; the pathspec commit after it is where the flag is needed.
 - **Never use `git stash`** — a failed/forgotten pop loses in-progress changes. To inspect prior committed state, use `git show HEAD:path/to/file` or `git diff HEAD`. To set work aside, make a WIP commit.
-- **Never push into a running CodeRabbit review** — on any PR against `main` a person opened, check the review state first; pushing mid-review cancels it, burns a slot, and loses the in-progress findings for good. The command and the states that mean "running" are the `coderabbit` skill's (`references/in-flight-reviews.md`). The release PR is not the session's to push at all ("Branch Hygiene").
 
 ## Pushing
 
-An agent lands its commits on **`ai/queue`** from its own worktree by the `review-queue` skill's loop, a pull and then a plain push retried only on a rejected push, because the collector rewrites the queue after every window. The `review-queue` skill owns the loop, the worktree and the rebase's conflicts. A branch with a PR a person opened against `main` is pushed once per coherent chunk, since every push there starts a review.
+An agent lands its commits on **`ai/queue`** from its own worktree by the `review-queue` skill's loop, a `git pull --rebase` and then a push retried only on a rejected push. The `review-queue` skill owns the loop, the worktree and the rebase's conflicts.
 
 ## Branch Hygiene
 
-**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases the collector merges once their one review completes, plus the collector's express lane. A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's — and a collaborator's work enters as a pull request against `ai/queue` squash-merged by a maintainer, never one against `main` (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike — in a `git worktree` rather than checked out over work in progress), and delete it after merging; a commit that must reach `main` ahead of its window carries the `review-queue` skill's `Express:` trailer.
+**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review fast-forwards `main` to a commit on `ai/queue`, so `main` is always an ancestor of `ai/queue`, and nothing pushes `main` by hand (`review-queue` skill). A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike — in a `git worktree` rather than checked out over work in progress), and delete it after merging.
 
 ## Merging `main` and the Lockfile
 
@@ -40,7 +39,7 @@ Resolve `pnpm-workspace.yaml` first, keeping the higher version on every conflic
 
 ## Verify Once Per Sitting
 
-The touched tests run **once, after all the edits going out together** (the `package-scripts` skill, `references/check-suite.md`), in the background — once per sitting, however many commits and queue pushes carry it — and the rest are CI's on each push (the `running-checks` skill). Commits stay per coherent chunk regardless, and a fix either one calls for is its own commit behind the unit — never folded into it, because the collector cuts windows at commit boundaries and every cut should be green on its own. A per-chunk run is re-invalidated by the next chunk going out with it; a push to `ai/queue` waits for nothing, since it starts no review.
+The touched tests run **once, after all the edits going out together** (the `package-scripts` skill, `references/check-suite.md`), in the background — once per sitting, however many commits and queue pushes carry it — and the rest are CI's on each push (the `running-checks` skill). Commits stay per coherent chunk regardless, and a fix either one calls for is its own commit behind the unit — never folded into it, because the review cuts its windows at commit boundaries and every cut should be green on its own. A per-chunk run is re-invalidated by the next chunk going out with it; a push to `ai/queue` waits for nothing, since it starts no review.
 
 ## Reference pages
 

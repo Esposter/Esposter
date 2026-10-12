@@ -2,8 +2,6 @@
 
 | Unit                                                                                                                                                                | Swept                 | Notes |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ----- |
-| `scripts/src/services/coderabbit/collect`                                                                                                                           | 2026-10-05 · Opus 5.5 |       |
-| `scripts/src/services/coderabbit` — `feedback`, `shared`                                                                                                            | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/sweeps` — the scans                                                                                                                           | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`                                                                                                       | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/outdatedDependencies`                                                                                                                         | 2026-10-05 · Opus 5.5 |       |

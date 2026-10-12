@@ -10,7 +10,6 @@ meant to **run** the block.
 
 | Unit                                           | Swept                 | Notes                                                                          |
 | ---------------------------------------------- | --------------------- | ------------------------------------------------------------------------------ |
-| `.agents/skills/coderabbit/references/*.md`    | 2026-10-05 · Opus 5.5 | feedback became `ai:coderabbit:feedback`; the emergency-path pages are gone    |
 | `.agents/skills/*/references/*.md`, `SKILL.md` | 2026-10-05 · Opus 5.5 |                                                                                |
 | `.agents/ledgers/*.md`                         | 2026-10-05 · Opus 5.5 | a grep pipeline is one command — the find recipes are mostly already compliant |
 | `apps/web/content/docs/**/*.md`, root markdown | 2026-10-05 · Opus 5.5 |                                                                                |

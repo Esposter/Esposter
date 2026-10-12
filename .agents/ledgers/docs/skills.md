@@ -12,7 +12,6 @@
 | `claude-permissions`      | 2026-10-05 · Opus 5.5  |       |
 | `cli`                     | 2026-10-05 · Opus 5.5  |       |
 | `code-review`             | 2026-10-05 · Opus 5.5  |       |
-| `coderabbit`              | 2026-10-05 · Opus 5.5  |       |
 | `context-efficiency`      | 2026-10-05 · Opus 5.5  |       |
 | `dependency-absorption`   | 2026-10-05 · Opus 5.5  |       |
 | `dependency-updates`      | 2026-10-05 · Opus 5.5  |       |

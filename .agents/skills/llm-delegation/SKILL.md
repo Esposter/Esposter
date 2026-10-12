@@ -5,7 +5,7 @@ description: Apply when deciding whether work runs in the main session or a suba
 
 # LLM Delegation — The Cheapest Thing That Can Answer
 
-The scarce resource is one shared Claude Code account limit. The main session, every subagent and every headless session the collector spawns draw on the same window (`apps/web/content/docs/infra/review-collector/drain.md`), and the window weighs a token by the family that spent it. Work moved down a tier is not a saving on a bill: it is a window a session can still run in.
+The scarce resource is one shared Claude Code account limit. The main session, every subagent and every headless session automation spawns draw on the same window, and the window weighs a token by the family that spent it. Work moved down a tier is not a saving on a bill: it is a window a session can still run in.
 
 ## Settled — do not re-propose
 
@@ -63,13 +63,13 @@ Ask the lowest tier first, and let it hand up what it cannot answer. A tier that
 
 ## A headless session delegates in the foreground, and only the drain does
 
-The drain session is the one headless session that delegates. Its fixes may go to `haiku` subagents, as `apps/web/content/docs/infra/review-collector/drain.md` sets out. Foreground is forced by the shape: a `claude -p` session has no next turn in which to read a backgrounded result. The subagent tier is named per call, and the runner's environment leaves `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` unset (`apps/web/content/docs/infra/review-collector/runner/index.md`).
+The review run is the one headless session that delegates: its `haiku` reviewers and its fixer are subagents of it (`/docs/infra/review`). Foreground is forced by the shape: a `claude -p` session has no next turn in which to read a backgrounded result. The subagent tier is named per call.
 
 ## A deterministic tier does not have to know whether it applies
 
 The usual reason a mechanical answer is skipped is that nothing can tell in advance whether it fits, so the question goes up to be classified and the tier above spends its whole turn deciding which command to run. Where the repository already holds a verifier for the result, invert it: produce the mechanical answer, then ask the verifier. The classification never happens, and the roster of cases it would have needed is never written and never drifts.
 
-Two conditions. The verifier has to be cheap against the tier above it — a check suite against a slice of the window is the trade the collector's repair makes (`apps/web/content/docs/infra/review-collector/repair.md`). And a failed attempt has to restore exactly the state the tier above would have found, or the cheap path has made the expensive one harder instead.
+Two conditions. The verifier has to be cheap against the tier above it. And a failed attempt has to restore exactly the state the tier above would have found, or the cheap path has made the expensive one harder instead.
 
 ## Jev — the typed decision tier
 
