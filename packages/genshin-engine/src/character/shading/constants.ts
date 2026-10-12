@@ -17,6 +17,9 @@ export const DESATURATION_WEIGHTS: readonly [number, number, number] = [0.0397, 
 // Provisional: the page's values for the light area and the band width are not fitted, so these stand in until they are
 export const DEFAULT_LIGHT_AREA = 1;
 export const DEFAULT_RAMP_WIDTH = 0.5;
+// The face threshold's bounds, a face lit straight on at the minimum and one turned fully from the light at the maximum
+export const MINIMUM_FACE_THRESHOLD = 1e-4;
+export const MAXIMUM_FACE_THRESHOLD = 0.9999;
 // The lightmap of a material that names none: red 0, so no metal and no specular, green the neutral middle, and alpha 0
 // So region one
 export const FLAT_LIGHT_MAP: Readonly<[number, number, number, number]> = [0, NEUTRAL_LIGHT_MAP_GREEN, 0, 0];
