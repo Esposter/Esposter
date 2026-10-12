@@ -63,7 +63,7 @@ catalog:
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.29.2
   "@huggingface/transformers": ^4.3.1
-  "@iconify-json/lucide": ^1.2.142
+  "@iconify-json/lucide": ^1.2.143
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
@@ -76,7 +76,7 @@ catalog:
   "@modelcontextprotocol/sdk": ^1.32.1
   "@nuxt/content": ^3.16.1
   "@nuxt/eslint": ^1.17.0
-  "@nuxt/fonts": ^0.14.0
+  "@nuxt/fonts": ^1.0.1
   "@nuxt/image": ^2.1.0
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to ranges, with the Renovate rule that holds the
   # Aliases, once Nuxt 5 reaches `latest`: until then it ships only as nightly packages
@@ -94,7 +94,7 @@ catalog:
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.268.0
   "@standard-schema/spec": ^1.1.0
-  "@takumi-rs/core": ^2.14.0
+  "@takumi-rs/core": ^2.15.0
   "@tensorflow/tfjs": ^4.22.0
   "@tiptap/core": ^3.31.4
   "@tiptap/extension-code-block-lowlight": ^3.31.4
@@ -148,7 +148,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   "@xterm/addon-fit": ^0.11.0
   "@xterm/xterm": ^6.0.0
-  apexcharts: ^8.0.0
+  apexcharts: ^8.1.0
   better-auth: ^1.7.7
   bowser: ^2.14.1
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
@@ -186,7 +186,7 @@ catalog:
   grid-engine: ^2.52.1
   grid-layout-plus: ^1.1.1
   h3: ^2.0.2
-  happy-dom: ^20.14.6
+  happy-dom: ^21.0.1
   imagetracerjs: ^1.2.6
   js-beautify: ^2.0.3
   jscpd: ^5.4.1
@@ -264,7 +264,7 @@ catalog:
   vue: ^3.5.43
   vue-codemirror: ^6.1.1
   vue-eslint-parser: ^10.4.1
-  vue-pdf-embed: ^2.1.6
+  vue-pdf-embed: ^2.1.7
   vue-router: ^5.4.0
   # @TODO: https://github.com/vuejs/language-tools/issues/6237 — back to a caret, with the Renovate rule that holds it
   # dropped, once a release fixes it: 3.3.12 reports `Property 'value' does not exist` on imported refs used in templates
@@ -273,7 +273,7 @@ catalog:
   web-push: ^3.6.7
   write-excel-file: ^4.1.1
   ws: ^8.22.0
-  zod: ^4.6.5
+  zod: ^4.6.6
 catalogMode: strict
 
 cleanupUnusedCatalogs: true
