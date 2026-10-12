@@ -1,7 +1,20 @@
 {
+  "burst.animationFrames": { "cause": "Unclassified", "value": 50 },
+  "burst.hits.length": { "cause": "Unclassified", "value": 1 },
+  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
+  "burst.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
+  "burst.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
+  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": 3.8057 },
+  "burst.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_DEFENSE" },
+  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 102 },
+  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
+  "chargedAttack.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.4 }
+  },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 24 },
   "normalAttacks.length": { "cause": "Unclassified", "value": 4 },
   "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 160 },
-  "normalAttacks.0.targeting": { "cause": "Unclassified", "value": "Strike" },
   "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
   "normalAttacks.0.hits.0.area": {
     "cause": "Unclassified",
@@ -9,7 +22,6 @@
   },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 12 },
   "normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 186 },
-  "normalAttacks.1.targeting": { "cause": "Unclassified", "value": "Strike" },
   "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 2 },
   "normalAttacks.1.hits.0.area": {
     "cause": "Unclassified",
@@ -22,7 +34,6 @@
   },
   "normalAttacks.1.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
   "normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 198 },
-  "normalAttacks.2.targeting": { "cause": "Unclassified", "value": "Strike" },
   "normalAttacks.2.hits.length": { "cause": "Unclassified", "value": 1 },
   "normalAttacks.2.hits.0.area": {
     "cause": "Unclassified",
@@ -30,53 +41,30 @@
   },
   "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
   "normalAttacks.3.animationFrames": { "cause": "Unclassified", "value": 206 },
-  "normalAttacks.3.targeting": { "cause": "Unclassified", "value": "Strike" },
   "normalAttacks.3.hits.length": { "cause": "Unclassified", "value": 1 },
   "normalAttacks.3.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.35 }
   },
   "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 21 },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 102 },
-  "chargedAttack.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
-  "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.4 }
-  },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 24 },
   "plungeCollision.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 18 },
-  "plunges.low.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "plunges.low.hits.length": { "cause": "Unclassified", "value": 1 },
-  "plunges.low.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
-  },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 45 },
   "plunges.high.animationFrames": { "cause": "Unclassified", "value": 102 },
-  "plunges.high.targeting": { "cause": "Unclassified", "value": "Strike" },
   "plunges.high.hits.length": { "cause": "Unclassified", "value": 1 },
   "plunges.high.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
+  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 18 },
+  "plunges.low.hits.length": { "cause": "Unclassified", "value": 1 },
+  "plunges.low.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+  },
+  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 45 },
   "skill.animationFrames": { "cause": "Unclassified", "value": 48 },
-  "skill.targeting": { "cause": "Unclassified", "value": "Skill" },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
-  "skillHolds.length": { "cause": "Unclassified", "value": 0 },
-  "burst.animationFrames": { "cause": "Unclassified", "value": 50 },
-  "burst.targeting": { "cause": "Unclassified", "value": "Skill" },
-  "burst.hits.length": { "cause": "Unclassified", "value": 1 },
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
-  "burst.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "burst.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": 3.8057 },
-  "burst.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_DEFENSE" },
-  "burst.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 }
+  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }

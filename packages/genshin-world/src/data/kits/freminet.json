@@ -44,7 +44,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "skill.animationFrames": { "cause": "Unclassified", "value": 46 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.5 } },
   "skill.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
   "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 29 },

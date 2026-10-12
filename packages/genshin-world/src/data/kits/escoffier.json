@@ -1,8 +1,6 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 1 },
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 } },
-  "burst.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 92 },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 11239 } },
+  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 92 },
+  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.830635970943632 }
@@ -242,14 +240,17 @@
   "parameters.alignedIntervalSeconds": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 11232 } },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 23 },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 11232 } },
+  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
+  "skill.hits.0.element": { "cause": "DiffersFromSource" },
+  "skill.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "burst.hits.0.element": { "cause": "DiffersFromSource" },
+  "burst.hits.0.gauge": { "cause": "DiffersFromSource" }
 }

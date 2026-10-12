@@ -78,6 +78,6 @@
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 21 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "burst.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }

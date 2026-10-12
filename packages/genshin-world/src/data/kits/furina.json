@@ -142,5 +142,5 @@
   },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
 }

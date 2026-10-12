@@ -23,6 +23,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "razor",
+      queuedAttacks: [],
       talentFile: "razor.go",
       talentParameterMap: new Map(),
       travelMap: new Map(),
@@ -48,6 +49,50 @@ describe(getGcsimKitCandidates, () => {
     ).toStrictEqual([undefined, [1], undefined]);
   });
 
+  test("reads a burst's hits from its queue calls, each at the damage delay its call passes, where it has no hitmark constant", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 6,
+          variableName: "ai",
+        },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["burstFrames", { elementLines: {}, file: "burst.go", line: 1, value: 90 }]]),
+      filePaths: [],
+      folder: "jean",
+      queuedAttacks: [{ attackName: "ai", delay: 55, delayLine: 7, file: "burst.go", line: 7 }],
+      talentFile: "zz_jean.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Jean",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[1], [55]]);
+  });
+
   test("reads a skill's frames from the first state of its list of frames", () => {
     expect.hasAssertions();
 
@@ -58,6 +103,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["skillFrames", toConstant([{ animationFrames: 50 }, { animationFrames: 80 }])]]),
       filePaths: [],
       folder: "mona",
+      queuedAttacks: [],
       talentFile: "mona.go",
       talentParameterMap: new Map(),
       travelMap: new Map(),
@@ -91,6 +137,7 @@ describe(getGcsimKitCandidates, () => {
       ]),
       filePaths: [],
       folder: "navia",
+      queuedAttacks: [],
       talentFile: "navia.go",
       talentParameterMap: new Map(),
       travelMap: new Map(),
@@ -122,6 +169,7 @@ describe(getGcsimKitCandidates, () => {
       constantMap: new Map([["burstFrames", toConstant({ animationFrames: 90 })]]),
       filePaths: [],
       folder: "barbara",
+      queuedAttacks: [],
       talentFile: "barbara.go",
       talentParameterMap: new Map(),
       travelMap: new Map(),

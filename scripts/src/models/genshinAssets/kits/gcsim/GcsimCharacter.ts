@@ -1,12 +1,14 @@
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
+import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 import type { GcsimTalentParameter } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentParameter";
 import type { GcsimTravel } from "#src/models/genshinAssets/kits/gcsim/GcsimTravel";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 
 // What the builder reads of one gcsim character folder at a ref: its folder, its config and the config's path, its
 // Package's constants by name, its `AttackInfo` literals, its talent file's parameters by `<talent>|<label>`, the travel
-// Its projectiles land after by the hitmark constant they are released at, and the paths of its files below the folder
+// Its projectiles land after by the hitmark constant they are released at, its queue calls, and the paths of its files
+// Below the folder
 export interface GcsimCharacter {
   attacks: GcsimAttack[];
   config: GcsimConfig;
@@ -14,6 +16,7 @@ export interface GcsimCharacter {
   constantMap: Map<string, GoConstant>;
   filePaths: string[];
   folder: string;
+  queuedAttacks: GcsimQueuedAttack[];
   talentFile: string;
   talentParameterMap: Map<string, GcsimTalentParameter>;
   travelMap: Map<string, GcsimTravel>;

@@ -21,6 +21,15 @@ const getRootName = (expression: GoExpression): string | undefined => {
 const getName = (expression: GoExpression | undefined): string | undefined =>
   expression?.kind === GoExpressionKind.Identifier ? expression.name : undefined;
 
+// The name a literal at the position is assigned with `:=`, `ai := info.AttackInfo{`, read back past its qualified type
+const readAssignedName = (tokens: readonly GoToken[], position: number): string | undefined => {
+  let start = position;
+  while (checkIsGoPunctuation(tokens[start - 1], ".") && tokens[start - 2]?.kind === GoTokenKind.Identifier) start -= 2;
+  return checkIsGoPunctuation(tokens[start - 1], ":=") && tokens[start - 2]?.kind === GoTokenKind.Identifier
+    ? tokens[start - 2]?.text
+    : undefined;
+};
+
 // The locals of a file that name a slice of another name, `for i, mult := range attack[c.NormalCounter]` or
 // `mult := attack[0]`, each by the name it is rooted in
 const readAliases = (tokens: readonly GoToken[]): Map<string, string> => {
@@ -90,6 +99,7 @@ export const readGcsimAttacks = (
         strikeType: getName(fieldMap.get("StrikeType")?.expression),
         talentVariable:
           multiplierField === undefined ? undefined : resolveAlias(getRootName(multiplierField.expression)),
+        variableName: readAssignedName(tokens, position),
       });
     }
     return attacks;

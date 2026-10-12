@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 }
@@ -42,17 +42,15 @@
   "parameters.gardenOfPuritySeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 6639 } },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 } },
-  "skill.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 6632 } },
+  "skill.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 35 },
+  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.3.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "skill.hits.0.internalCooldownTag": { "source": "Wiki" }
 }

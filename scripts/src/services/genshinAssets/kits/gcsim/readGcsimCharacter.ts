@@ -5,6 +5,7 @@ import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
 import { readGcsimConfig } from "#src/services/genshinAssets/kits/gcsim/readGcsimConfig";
+import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { readGcsimTalentParameters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters";
 import { readGcsimTravels } from "#src/services/genshinAssets/kits/gcsim/readGcsimTravels";
 import { selectGcsimGenderConstants } from "#src/services/genshinAssets/kits/gcsim/selectGcsimGenderConstants";
@@ -34,6 +35,7 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
     constantMap,
     filePaths: [...fileMap.keys()],
     folder,
+    queuedAttacks: readGcsimQueuedAttacks(goSources, constantMap),
     talentFile,
     talentParameterMap: readGcsimTalentParameters(talentSource),
     travelMap: readGcsimTravels(goSources),

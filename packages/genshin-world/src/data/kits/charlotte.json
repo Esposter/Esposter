@@ -1,13 +1,10 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 1 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "burst.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.5 }
   },
-  "burst.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "burst.hits.0.gauge": { "cause": "Unclassified", "value": 2 },
-  "burst.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 53 },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 8839 } },
+  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.snappyMark": { "cause": "Unclassified", "value": 408 },
   "frames.thornHitmark": { "cause": "Unclassified", "value": 97 },

@@ -849,7 +849,7 @@
   "parameters.shieldMaxHealthShare": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 3032 } },
   "parameters.shieldSeconds": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 3032 } },
   "plungeCollision.element": { "cause": "Unclassified", "value": "Rock" },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
   "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },

@@ -8,7 +8,9 @@ import {
 } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
+import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
+import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
@@ -16,11 +18,43 @@ import { SKILL_TARGETING_AREA } from "genshin-world";
 // Their frames from `<slot>Frames` or the press's or tap's, and each hit by its place among the slot's talent
 // Multipliers and the ability's hitboxes, where they are as many as its hitmarks. A skill of one hit with no hitbox for
 // Each takes the `E-Tap` or `E-Press` hitbox. A press's `Hitmarks` listing numbers is its hitmark in each state gcsim
-// Reads it at, so it gives no hits. A burst with no attack under its tag is a buff, a heal or a drain, and gives none
-export const addGcsimSkillAndBurstCandidates = (
-  { add, addFrames, addHit, toFile }: GcsimKitCandidateWriter,
-  { attacks, config, constantMap, travelMap }: GcsimCharacter,
+// Reads it at, so it gives no hits. A burst with no attack under its tag is a buff, a heal or a drain, and gives none. A
+// Slot with no hitmark constant is hit by its queue calls, each at its damage delay, through `addQueuedSlotHits`
+// The hits a slot's queue calls fire, each joined to its multiplier by its place and to its hitbox where the hitboxes are
+// As many as the hits
+const addQueuedSlotHits = (
+  writer: GcsimKitCandidateWriter,
+  gcsim: GcsimCharacter,
+  slot: string,
+  attackTags: readonly string[],
 ): void => {
+  const { add, addHit, toFile } = writer;
+  const { config, constantMap } = gcsim;
+  const framesFile = findGcsimConstant(constantMap, `${slot}Frames`)?.file;
+  const fileHits = framesFile === undefined ? [] : getGcsimQueuedHits(gcsim, attackTags, framesFile);
+  const [firstHit] = fileHits;
+  if (firstHit === undefined) return;
+  // The slot's hits are the calls firing its first literal: a call firing another is a DoT's or a passive's, not one of its hits
+  const queuedHits = fileHits.filter(({ attack }) => attack === firstHit.attack);
+  const hitboxes = config.abilityHitboxesMap.get(slot) ?? [];
+  const isHitboxJoined = hitboxes.length === queuedHits.length;
+  add(`${slot}.hits.length`, queuedHits.length, toFile(firstHit.file), firstHit.line);
+  for (const [hitIndex, { attack, delay, file, line }] of queuedHits.entries())
+    addHit(
+      `${slot}.hits.${hitIndex}`,
+      {
+        areaHitbox: isHitboxJoined ? hitboxes[hitIndex] : undefined,
+        attack,
+        hitmark: { file, line, value: delay },
+        talentLeaf: findGcsimTalentLeaf(config, attack.talentVariable, [hitIndex]),
+      },
+      SKILL_TARGETING_AREA,
+    );
+};
+
+export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter): void => {
+  const { add, addFrames, addHit, toFile } = writer;
+  const { attacks, config, constantMap, travelMap } = gcsim;
   for (const [slot, attackTags, pressNames, pressHitboxNames] of [
     ["skill", GCSIM_SKILL_ATTACK_TAGS, ["skillPress", "skillTap"], GCSIM_SKILL_PRESS_HITBOX_NAMES],
     ["burst", GCSIM_BURST_ATTACK_TAGS, [], []],
@@ -41,7 +75,11 @@ export const addGcsimSkillAndBurstCandidates = (
       if (burstFrames !== undefined) add("burst.hits.length", 0, toFile(burstFrames.file), burstFrames.line);
       continue;
     }
-    if (hitmarks === undefined || hitmarkValues === undefined || isPressStateList) continue;
+    if (hitmarks === undefined) {
+      addQueuedSlotHits(writer, gcsim, slot, attackTags);
+      continue;
+    }
+    if (hitmarkValues === undefined || isPressStateList) continue;
     const slotLeaves = [...new Set(slotAttacks.map(({ talentVariable }) => talentVariable))].flatMap(
       (variable) => config.talentVariables.find(({ name }) => name === variable)?.leaves ?? [],
     );

@@ -1,7 +1,8 @@
 // One `AttackInfo` literal of a gcsim character's action files, its fields as written: the talent variable its
 // Multiplier reads, through any loop or local naming it, its attack and ICD tags, strike type and element by their
 // Gcsim names, and its durability and poise where they evaluate to a number, else the variable the poise indexes by the
-// Attack's place in its string. The line is the literal's, and each field keeps its own
+// Attack's place in its string. The line is the literal's, and each field keeps its own. The name the literal is assigned
+// To with `:=`, which a call passes it by
 export interface GcsimAttack {
   attackTag?: string;
   durability?: number;
@@ -14,4 +15,5 @@ export interface GcsimAttack {
   poiseDamageVariable?: string;
   strikeType?: string;
   talentVariable?: string;
+  variableName?: string;
 }

@@ -38,6 +38,7 @@ describe(readGcsimAttacks, () => {
         poiseDamageVariable: undefined,
         strikeType: "attacks.StrikeTypeSpear",
         talentVariable: "attack",
+        variableName: "ai",
       },
     ]);
   });

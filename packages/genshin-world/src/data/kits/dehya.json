@@ -1,6 +1,6 @@
 {
   "burst.animationFrames": { "cause": "Unclassified", "value": 105 },
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 300 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",

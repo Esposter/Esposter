@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
   "frames.firstSeamlessShieldRefresh": { "cause": "Unclassified", "value": 223 },
   "frames.seamlessShield": { "cause": "Unclassified", "value": 152 },

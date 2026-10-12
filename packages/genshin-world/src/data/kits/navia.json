@@ -227,17 +227,12 @@
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 31 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 41 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.681081512988468 }
   },
-  "skill.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 20 },
-  "skill.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
+  "skill.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 20 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": 4.7376 },
-  "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 150 },
   "skillCharges": { "cause": "Unclassified", "value": 2 },
   "skillHolds.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 72 },

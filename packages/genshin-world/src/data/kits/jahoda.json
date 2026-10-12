@@ -35,7 +35,7 @@
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.animationFrames": { "cause": "Unclassified", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "skillChain.followUps.length": { "cause": "Unclassified", "value": 1 },
   "skillChain.followUps.0.animationFrames": { "cause": "Unclassified", "value": 48 },
   "skillChain.followUps.0.hits.length": { "cause": "Unclassified", "value": 0 },
