@@ -24,6 +24,7 @@ export const createCharacterShadingInputs = (overrides: CharacterShadingOverride
     emissionScaler: 1,
     faceSoftness: 0,
     isCoolShadow: false,
+    isEmissionFromAlpha: false,
     isLightMapAo: true,
     isVertexAo: false,
     isVertexRampWidth: false,

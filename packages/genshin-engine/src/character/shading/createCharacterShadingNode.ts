@@ -5,6 +5,7 @@ import type { Node } from "three/webgpu";
 
 import {
   COOL_RAMP_ROW_BASE,
+  EMISSION_ALPHA_FLOOR,
   FLAT_LIGHT_MAP,
   MINIMUM_RAMP_WIDTH_VERTEX,
   RAMP_ROW_BASE,
@@ -35,9 +36,9 @@ import {
 const toVec3 = ([red, green, blue]: Vector3Tuple): Node<"vec3"> => vec3(red, green, blue);
 
 // The character's colour as the game's shader draws it, the TSL form of the shading page: the region's tint on the main
-// Texture, lit on the shadow ramp row of its region, its emission lerped in by the lightmap's green, its specular step,
-// The metal matcap where the lightmap's red passes the gate, and the output tone. A face is shaded by its face map in
-// Place of the ramp, and a hair takes the body's path without the metal branch
+// Texture, lit on the shadow ramp row of its region, its emission lerped in by the main texture's alpha, its specular
+// Step, the metal matcap where the lightmap's red passes the gate, and the output tone. A face is shaded by its face map
+// In place of the ramp, and a hair takes the body's path without the metal branch
 export const createCharacterShadingNode = (
   inputs: CharacterShadingInputs,
   { sunDirection }: Pick<LightUniforms, "sunDirection">,
@@ -59,8 +60,8 @@ export const createCharacterShadingNode = (
     (current, [regionNumber, regionColor]) => select(region.equal(float(regionNumber)), toVec3(regionColor), current),
     toVec3(color),
   );
-  const mainColour = inputs.mainTexture ? texture(inputs.mainTexture, uv()).rgb : vec3(1);
-  const materialColour = mainColour.mul(tint);
+  const mainSample = inputs.mainTexture ? texture(inputs.mainTexture, uv()) : vec4(1);
+  const materialColour = mainSample.rgb.mul(tint);
 
   const sunTerm = normalView.dot(sunDirectionView).saturate();
   const threshold = createToonThresholdNode({
@@ -85,7 +86,11 @@ export const createCharacterShadingNode = (
         : sampleRamp(RAMP_ROW_BASE);
   const lit = materialColour.mul(shade).mul(brightness);
   const emitted = materialColour.mul(toVec3(emissionColor)).mul(emissionScaler);
-  const shaded = mix(lit, emitted, lightMap.g);
+  // The emission's factor is the main texture's alpha, past its floor, where the material draws its emission from it
+  const emissionMask = inputs.isEmissionFromAlpha
+    ? select(mainSample.a.greaterThan(EMISSION_ALPHA_FLOOR), mainSample.a, float(0))
+    : float(0);
+  const shaded = mix(lit, emitted, emissionMask);
 
   const halfVector = sunDirectionView.add(positionViewDirection).normalize();
   const highlight = max(normalView.dot(halfVector), float(1e-5)).pow(inputs.shininess);

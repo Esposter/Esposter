@@ -22,6 +22,8 @@ export interface CharacterShadingInputs {
   faceSoftness: number;
   // Whether a cool shadow is on, "_CoolShadowColorOrTex"
   isCoolShadow: boolean;
+  // Whether the emission is drawn where the main texture's alpha is, "_MainTexAlphaUse" set to two, and none elsewhere
+  isEmissionFromAlpha: boolean;
   // Whether the lightmap's green is the threshold's occlusion, "_UseLightMapColorAO"
   isLightMapAo: boolean;
   // Whether the vertex's ambient occlusion scales the threshold, and its value, "_UseVertexColorAO"

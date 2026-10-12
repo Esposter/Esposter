@@ -5,6 +5,8 @@ export const RAMP_ROW_BASE = 0.05;
 export const COOL_RAMP_ROW_BASE = 0.55;
 export const RAMP_ROW_STEP = 0.1;
 export const NEUTRAL_LIGHT_MAP_GREEN = 0.5;
+// The main texture's alpha above which its emission is drawn, where the material draws its emission from that alpha
+export const EMISSION_ALPHA_FLOOR = 0.01;
 export const TOON_LOW = 0.05;
 export const TOON_HIGH = 0.95;
 export const MINIMUM_RAMP_WIDTH_VERTEX = 0.01;

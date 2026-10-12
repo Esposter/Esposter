@@ -72,7 +72,7 @@ The body's pixel program writes six targets, and the lit colour is built from th
 ### Inputs (per pixel)
 
 - `N`: the interpolated normal, flipped by the front-face flag. Exact.
-- `Lm`: "_LightMapTex". Its red is a metal mask and the specular's weight, its green a shadow threshold, its blue the specular's gate, and its alpha the region. Exact on the channel uses (the blue is read in the specular's comparison, the non-metal branch).
+- `Lm`: "_LightMapTex". Its red is the specular's weight (Exact: the specular term multiplies by it) and the source of the metal mask (Provisional, see the metal gate), its green the toon threshold only, its blue the specular's gate, and its alpha the region. The green is not read by the emission (Exact).
 - `M`: "_MainTex", with alpha `a_M`.
 
 ### The region
@@ -146,10 +146,13 @@ The non-metal branch builds the lit colour from these terms, in the order the pr
 Mc   = M.rgb * tint                        (tint: "_Color" for region 1, "_Color2" to "_Color5" for the others)
 Lit  = Mc * S * "_ES_CharacterMainLightBrightness"
 Em   = Mc * "_EmissionColor_MHY" * "_EmissionScaler"   (the region's own colour and scaler)
-C0   = lerp(Lit, Em, Lm.g)
+E    = ("_MainTexAlphaUse" == 2 and a_M > 0.01) ? a_M : 0
+C0   = lerp(Lit, Em, E)
 Spec = step(1 - Lm.b, pow(max(N . H, 1e-5), "_Shininess")) * Lm.r * "_SpecularColor" * "_SpecMulti"
 C    = C0 + "_SpecualrInShaow" * Spec * brightness
 ```
+
+The emission's factor `E` is the main texture's alpha, gated, and not the lightmap's green. The program adds a dissolve term to it, which is zero while "_DissolveValue" is zero, and the body's values set "_MainTexAlphaUse" to two (Exact on the gate and the factor's form; Provisional on whether a pack's diffuse alpha ever holds the emission). A material whose alpha use is not two has no emission at all, so a pack that does not set it draws its lit colour alone.
 
 `H` is the half vector of the view and the light, and `N` is "v7" (Exact on its form). The specular's own weight is "_SpecualrInShaow", added, not an attenuation of the specular. The light factor `f` is "min(2 * _LightColor0.w, 1)" where "mhy_AvatarLightDir.w" exceeds 0.5, and 1 otherwise, and it scales the specular and the lit colour in the branch that tests it (Provisional on its meaning). The rim and hit terms ("_ElementRimColor", "_HitColor") are added after this (Provisional on the order). The outputs use `C` through the desaturation below.
 
@@ -284,6 +287,7 @@ The values in the Lumine column are the game's own, read from its material bytes
 - **The lit colour `C`.** The sum of the main colour, the ramp, the sun, the sky ambient, the specular and the rim is not yet assembled into one expression.
 - **Hair and face constants.** The hair and face equations are written; the face's "v9.z" provenance is Provisional.
 - **The deferred pass's character branch.** The gate and C_branch are written; the light loops, the shadow terms and the final output are not traced, so the light sum is not written. The byte's target is Provisional.
+- **The metal gate.** The body variant read for the emission and the specular uses no metal constant, so the "Lm.r > 0.9" gate and the matcap are not confirmed by it; they stay Provisional until a variant that reads "_MTMap" is traced.
 - **The register-to-texture binding.** The order the parameter table lists the textures is used for the bindings above; a check against a rendered frame is still to be made.
 
 Related: [drawing a character](/docs/genshin/characters/drawing), [derived assets](/docs/genshin/derived-assets), [game data formats](/docs/genshin/game-data-formats).
