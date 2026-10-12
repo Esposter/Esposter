@@ -1,7 +1,6 @@
 import type { AvatarRigNode } from "#src/models/genshinAssets/avatar/AvatarRigNode";
 import type { DumpedMesh } from "#src/models/genshinAssets/avatar/DumpedMesh";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { ExportedMaterial } from "#src/models/genshinAssets/shared/ExportedMaterial";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
@@ -35,11 +34,9 @@ import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/Der
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
-import { readMaterialKeywords } from "#src/services/genshinAssets/shared/readMaterialKeywords";
+import { readMaterialValues } from "#src/services/genshinAssets/shared/readMaterialValues";
 import { readObjectNames } from "#src/services/genshinAssets/shared/readObjectNames";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
-import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
-import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialValues";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
@@ -284,12 +281,9 @@ const readDrawableMaterials = async (
       const folderName = join(basename(material.block, ".blk"), AssetType.Material, material.file);
       const name = readName(names, material);
       const rawPath = join(rawDirectory, folderName, `${name}.dat`);
-      const { colors, floats, keywords, textures } = toMaterialValues(
-        parseMachineJson<ExportedMaterial>(
-          await readFile(join(jsonDirectory, folderName, `${name}.json`), "utf8"),
-          reviveSourcePathId,
-        ),
-        existsSync(rawPath) ? readMaterialKeywords(await readFile(rawPath)) : [],
+      const { colors, floats, keywords, textures } = await readMaterialValues(
+        join(jsonDirectory, folderName, `${name}.json`),
+        rawPath,
       );
       return [key, { colors, floats, keywords, textures: resolveTextures(textures, material.file, cabMap) }];
     }),
