@@ -96,7 +96,7 @@ export const POSTGRES_KEYWORDS = [
 
 // Each token kind's colour in the dev query log, in the terminal's named colours so its own theme decides the shades.
 // Picked to read on a dark terminal's default palette: plain blue is too dark to read there, so a quoted name, a
-// Table or a column, is green as the log showed it before, a function call bright blue, and a string cyan.
+// Table or a column, is green, a function call bright blue, and a string cyan.
 // Brackets and operators are left plain
 export const HighlightStyleMap = {
   comment: ["gray", "italic"],
