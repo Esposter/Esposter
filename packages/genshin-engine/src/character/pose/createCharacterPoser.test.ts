@@ -6,31 +6,6 @@ import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import { Bone, Quaternion, Skeleton, SkinnedMesh, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
-const LOCOMOTION: Locomotion = {
-  capsuleHeight: 2,
-  capsuleRadius: 0.5,
-  climbJumpHeight: 1,
-  climbJumpSeconds: 1,
-  climbSpeed: 1,
-  dashSeconds: 1,
-  dashSpeed: 1,
-  drownSeconds: 1,
-  glideForwardSpeed: 1,
-  glideMinHeight: 1,
-  glideSinkSpeed: 1,
-  gravity: 10,
-  jumpHeight: 1,
-  maxFallSpeed: 5,
-  maxWalkableSlope: 1,
-  plungeSpeed: 1,
-  runSpeed: 6,
-  sprintSpeed: 1,
-  stepHeight: 0.5,
-  swimDashSpeed: 1,
-  swimDepth: 1,
-  swimSpeed: 1,
-  walkSpeed: 1,
-};
 // A chain of two bones, the upper's rest and the head's rest given by the caller, the head held on the upper
 const createChain = (upperRest: Quaternion, headRest: Quaternion, names: [string, string]): SkinnedMesh => {
   const [upperName, headName] = names;
@@ -57,6 +32,31 @@ const getWorldRotation = (mesh: SkinnedMesh, name: string): Quaternion =>
   mesh.skeleton.getBoneByName(name)?.getWorldQuaternion(new Quaternion()) ?? new Quaternion();
 
 describe(createCharacterPoser, () => {
+  const LOCOMOTION: Locomotion = {
+    capsuleHeight: 2,
+    capsuleRadius: 0.5,
+    climbJumpHeight: 1,
+    climbJumpSeconds: 1,
+    climbSpeed: 1,
+    dashSeconds: 1,
+    dashSpeed: 1,
+    drownSeconds: 1,
+    glideForwardSpeed: 1,
+    glideMinHeight: 1,
+    glideSinkSpeed: 1,
+    gravity: 10,
+    jumpHeight: 1,
+    maxFallSpeed: 5,
+    maxWalkableSlope: 1,
+    plungeSpeed: 1,
+    runSpeed: 6,
+    sprintSpeed: 1,
+    stepHeight: 0.5,
+    swimDashSpeed: 1,
+    swimDepth: 1,
+    swimSpeed: 1,
+    walkSpeed: 1,
+  };
   test("poses a bone in its rest frame, so a rotated rest holds the same pose as an identity one", () => {
     expect.hasAssertions();
 
