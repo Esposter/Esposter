@@ -4,7 +4,7 @@ import { createCharacterMaterial } from "#src/character/createCharacterMaterial"
 import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { createLightUniforms } from "#src/nodes/createLightUniforms";
-import { DoubleSide, FrontSide, Texture } from "three";
+import { DataTexture, DoubleSide, FrontSide } from "three";
 import { describe, expect, test } from "vitest";
 
 const pmxMaterial: PmxMaterial = {
@@ -29,7 +29,7 @@ describe(createCharacterMaterial, () => {
   test("lights a shared toon on its own generated ramp, and outlines it in its edge", () => {
     expect.hasAssertions();
 
-    const rampTexture = new Texture();
+    const rampTexture = new DataTexture();
     const characterMaterial = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
       pmxMaterial,
@@ -46,8 +46,8 @@ describe(createCharacterMaterial, () => {
   test("lights a material whose toon is a texture of its model on that texture, and multiplies its sphere map", () => {
     expect.hasAssertions();
 
-    const toonTexture = new Texture();
-    const sphereTexture = new Texture();
+    const toonTexture = new DataTexture();
+    const sphereTexture = new DataTexture();
     const characterMaterial = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
       pmxMaterial: {
@@ -57,7 +57,7 @@ describe(createCharacterMaterial, () => {
         sphereMode: PmxSphereMode.Multiply,
         sphereTextureIndex: 1,
       },
-      rampTexture: new Texture(),
+      rampTexture: new DataTexture(),
       sphereTexture,
       toonTexture,
     });
@@ -72,7 +72,7 @@ describe(createCharacterMaterial, () => {
   test("draws its sub-texture as a sphere map on the coordinates of the vertex's own extra vector", () => {
     expect.hasAssertions();
 
-    const sphereTexture = new Texture();
+    const sphereTexture = new DataTexture();
     const characterMaterial = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
       pmxMaterial: {
@@ -82,9 +82,9 @@ describe(createCharacterMaterial, () => {
         sphereMode: PmxSphereMode.AdditionalUv,
         sphereTextureIndex: 1,
       },
-      rampTexture: new Texture(),
+      rampTexture: new DataTexture(),
       sphereTexture,
-      toonTexture: new Texture(),
+      toonTexture: new DataTexture(),
     });
 
     expect(characterMaterial.sphereMap).toBe(sphereTexture);
@@ -93,7 +93,7 @@ describe(createCharacterMaterial, () => {
   test("blends a partly transparent material and draws it from both faces, and draws a solid one from its front", () => {
     expect.hasAssertions();
 
-    const rampTexture = new Texture();
+    const rampTexture = new DataTexture();
     const translucent = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
       pmxMaterial: { ...pmxMaterial, diffuseColor: [1, 1, 1, 0.5], isOutlined: false },
@@ -114,7 +114,7 @@ describe(createCharacterMaterial, () => {
   test("blends a material whose texture has clear texels", () => {
     expect.hasAssertions();
 
-    const rampTexture = new Texture();
+    const rampTexture = new DataTexture();
     const clearTexels = createCharacterMaterial({
       isTextureTransparent: true,
       lightUniforms: createLightUniforms(),
