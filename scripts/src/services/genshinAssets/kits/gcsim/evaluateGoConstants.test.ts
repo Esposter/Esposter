@@ -63,4 +63,30 @@ describe(evaluateGoConstants, () => {
       ]),
     );
   });
+
+  test("evaluates an index named by iota as the spec's place in its const group", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package ningguang",
+      "",
+      "const (",
+      "\tattackTypeLeft attackType = iota",
+      "\tattackTypeRight",
+      "\tattackTypeTwirl",
+      ")",
+      "",
+      "var attackFrames [][]int",
+      "",
+      "func init() {",
+      "\tattackFrames = make([][]int, 3)",
+      "\tattackFrames[attackTypeRight] = frames.InitAbilSlice(9)",
+      "}",
+      "",
+    ].join("\n");
+
+    expect(evaluateGoConstants([{ path: "attack.go", source }]).get("attackFrames")?.value).toHaveProperty("1", {
+      animationFrames: 9,
+    });
+  });
 });

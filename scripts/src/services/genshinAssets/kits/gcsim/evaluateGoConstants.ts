@@ -28,7 +28,14 @@ const skipToNewline = (tokens: readonly GoToken[], start: number): number => {
 export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, GoConstant> => {
   const declarationMap = new Map<string, GoDeclaration>();
   const elementAssignments: GoElementAssignment[] = [];
-  const readDeclarationSpec = (tokens: readonly GoToken[], start: number, file: string): number => {
+  // A const group's spec with no expression of its own repeats the last one the group gave, as Go does
+  const readDeclarationSpec = (
+    tokens: readonly GoToken[],
+    start: number,
+    file: string,
+    iota: number,
+    group?: { expression?: GoExpression },
+  ): number => {
     const names: string[] = [];
     let position = start;
     while (tokens[position]?.kind === GoTokenKind.Identifier) {
@@ -43,12 +50,19 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
       !checkIsGoPunctuation(tokens[position], "=")
     )
       position = checkIsGoPunctuation(tokens[position], "[") ? skipGoBrackets(tokens, position) : position + 1;
-    if (!checkIsGoPunctuation(tokens[position], "=")) return position + 1;
+    if (!checkIsGoPunctuation(tokens[position], "=")) {
+      const repeated = group?.expression;
+      if (repeated !== undefined)
+        for (const name of names)
+          declarationMap.set(name, { expression: repeated, file, iota, line: tokens[start]?.line ?? 0 });
+      return position + 1;
+    }
     position++;
     for (const name of names) {
       const line = tokens[position]?.line ?? 0;
       const { end, expression } = parseGoExpression(tokens, position);
-      declarationMap.set(name, { expression, file, line });
+      declarationMap.set(name, { expression, file, iota, line });
+      if (group !== undefined) group.expression = expression;
       position = checkIsGoPunctuation(tokens[end], ",") ? end + 1 : end;
     }
     return skipToNewline(tokens, position);
@@ -88,13 +102,17 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
       else if (DECLARATION_KEYWORDS.has(token.text) && checkIsGoPunctuation(tokens[position + 1], "(")) {
         const end = skipGoBrackets(tokens, position + 1);
         position += 2;
+        // Each spec of a group is one index, which the spec's `iota` counts
+        let iota = 0;
+        // Only a const group repeats its expressions, a var group's specs with none having no value
+        const group: { expression?: GoExpression } | undefined = token.text === "const" ? {} : undefined;
         while (position < end - 1)
-          position =
-            tokens[position]?.kind === GoTokenKind.Identifier
-              ? readDeclarationSpec(tokens, position, file)
-              : position + 1;
+          if (tokens[position]?.kind === GoTokenKind.Identifier) {
+            position = readDeclarationSpec(tokens, position, file, iota, group);
+            iota++;
+          } else position++;
         position = end;
-      } else if (DECLARATION_KEYWORDS.has(token.text)) position = readDeclarationSpec(tokens, position + 1, file);
+      } else if (DECLARATION_KEYWORDS.has(token.text)) position = readDeclarationSpec(tokens, position + 1, file, 0);
       else if (token.text === "func") {
         const isInit = tokens[position + 1]?.text === "init" && checkIsGoPunctuation(tokens[position + 2], "(");
         while (position < tokens.length && !checkIsGoPunctuation(tokens[position], "{")) position++;
@@ -111,7 +129,10 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
     if (declaration === undefined) return undefined;
     // Marked first, so a name its own value reaches reads as having none
     valueMap.set(name, undefined);
-    const value = evaluateGoExpression(declaration.expression, resolveName);
+    const { iota } = declaration;
+    const value = evaluateGoExpression(declaration.expression, (operand) =>
+      operand === "iota" && iota !== undefined ? iota : resolveName(operand),
+    );
     valueMap.set(name, value);
     return value;
   };
