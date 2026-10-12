@@ -2,14 +2,15 @@ import type { CharacterPackReader } from "#src/models/character/CharacterPackRea
 import type { CharacterMaterialOptions, ToonNodeMaterial } from "genshin-engine";
 import type { BufferGeometry, SkinnedMesh } from "three";
 
+import { getCharacterMaterialTextureIndices } from "#src/services/character/getCharacterMaterialTextureIndices";
 import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { createCharacterMaterial, createPmxMesh, createPmxTexture, parsePmx } from "genshin-engine";
 
-// A character's model from its pack: the PMX read, then every texture a material draws with read and decoded once,
-// Each material drawn on the toon ramp. A texture no material draws with, a toon ramp or a sphere map the world's own
-// Light stands in for, is never read. A texture the pack does not hold draws its material untextured, logged once for the
-// Model, and a file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all
+// A character's model from its pack: the PMX read, then every texture a material draws with read and decoded once: its
+// Texture, its sphere map and its toon ramp where the file names one in the model's list. A material's shared toon ramp
+// Is the world's own, so no file of it is read. A texture the pack does not hold draws its material without it, logged
+// Once for the model, and a file the pack lists that fails to arrive rejects, so the model is drawn whole or not at all
 export const readCharacterMesh = (
   characterPackReader: CharacterPackReader,
   { lightUniforms, rampTexture }: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,
@@ -19,7 +20,7 @@ export const readCharacterMesh = (
     if (modelBlob === undefined)
       throw new InvalidOperationError(Operation.Read, CHARACTER_MODEL_PATH, "is no file of the pack");
     const pmxModel = parsePmx(await modelBlob.arrayBuffer());
-    const drawnTextureIndices = new Set(pmxModel.materials.map(({ textureIndex }) => textureIndex));
+    const drawnTextureIndices = new Set(pmxModel.materials.flatMap(getCharacterMaterialTextureIndices));
     const missingTexturePaths: string[] = [];
     const textures = await Promise.all(
       pmxModel.textures.map(async (path, textureIndex) => {
@@ -35,7 +36,14 @@ export const readCharacterMesh = (
     if (missingTexturePaths.length > 0)
       console.warn(`The model draws untextured the textures its release lacks: ${missingTexturePaths.join(", ")}`);
     const materials = pmxModel.materials.map((pmxMaterial) =>
-      createCharacterMaterial({ lightUniforms, pmxMaterial, rampTexture, texture: textures[pmxMaterial.textureIndex] }),
+      createCharacterMaterial({
+        lightUniforms,
+        pmxMaterial,
+        rampTexture,
+        sphereTexture: textures[pmxMaterial.sphereTextureIndex],
+        texture: textures[pmxMaterial.textureIndex],
+        toonTexture: pmxMaterial.isToonShared ? undefined : textures[pmxMaterial.toonIndex],
+      }),
     );
     return createPmxMesh(pmxModel, materials);
   });

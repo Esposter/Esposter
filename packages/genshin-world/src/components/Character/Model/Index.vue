@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { LightUniforms, ToonNodeMaterial } from "genshin-engine";
-import type { BufferGeometry, DataTexture, SkinnedMesh } from "three";
+import type { BufferGeometry, DataTexture, SkinnedMesh, Texture } from "three";
 
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
 
@@ -20,10 +20,14 @@ const disposeMesh = ({ geometry, material, skeleton }: SkinnedMesh<BufferGeometr
   geometry.dispose();
   skeleton.dispose();
   for (const characterMaterial of material) characterMaterial.dispose();
-  // A texture several materials draw with is released once, its decoded image closed with it, which three leaves open
-  for (const texture of new Set(material.map(({ map }) => map).filter((map) => map !== null))) {
+  // A texture several materials draw with is released once, its decoded image closed with it, which three leaves open.
+  // Only a pack's own textures are decoded from a bitmap, so the world's ramps, shared by every model, are left alive
+  const isPackTexture = (texture: Texture | null | undefined): texture is Texture =>
+    texture?.image instanceof ImageBitmap;
+  const packTextures = material.flatMap(({ gradientMap, map, sphereMap }) => [gradientMap, map, sphereMap]);
+  for (const texture of new Set(packTextures.filter(isPackTexture))) {
     texture.dispose();
-    if (texture.image instanceof ImageBitmap) texture.image.close();
+    texture.image.close();
   }
 };
 // The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted, leaving what holds
