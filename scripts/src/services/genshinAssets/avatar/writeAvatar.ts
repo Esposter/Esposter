@@ -10,7 +10,8 @@ import type { AvatarBone, AvatarManifest, AvatarMaterial } from "genshin-world/s
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { buildAvatarMesh } from "#src/services/genshinAssets/avatar/buildAvatarMesh";
 import { AVATAR_SOURCE_MAP } from "#src/services/genshinAssets/avatar/constants";
-import { mirrorAvatarPoint, mirrorAvatarRotation } from "#src/services/genshinAssets/avatar/mirrorAvatarAxes";
+import { mirrorAvatarPoint } from "#src/services/genshinAssets/avatar/mirrorAvatarPoint";
+import { mirrorAvatarRotation } from "#src/services/genshinAssets/avatar/mirrorAvatarRotation";
 import { readAvatarRig } from "#src/services/genshinAssets/avatar/readAvatarRig";
 import {
   getTransformKey,
