@@ -8,7 +8,12 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import {
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+  UNBOUNDED_FIELD_RADIUS,
+} from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -155,7 +160,7 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           onTick: ({ kitEffectState: tickEffectState }) => {
             addKitEffect(tickEffectState, createKitSummon(body, combatant, [leapHit]));
           },
-          radius: LEAP_HIT_AREA.radius,
+          radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining: EXPLOSION_HITMARK_FRAMES / 60 + TRUMP_CARD_KITTY_SECONDS,
           tickIndex: 0,
           tickIntervalSeconds: LEAP_TICK_INTERVAL_FRAMES / 60,

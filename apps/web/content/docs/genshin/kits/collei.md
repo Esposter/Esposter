@@ -11,8 +11,8 @@ Not yet built: Sprout (Ascension 1) and the Cuilein-Anbar Zone's extension (Asce
 
 ## Decisions
 
-- **Trump-Card Kitty's leap runs 378 frames from its explosion, as gcsim gives it.** The table's duration reads 6 seconds, and gcsim's 6.3 is shipped until a recording settles it. The field is the leap's circle of radius 4 round the spot the kitty was cast at, and its ticks land from there, at 68 frames and every 30 after it.
-- **The leap's ticks are priced by the kitty's combatant as it stood at the cast.** gcsim snapshots the explosion's attack for each tick, so a tick reads the same stats as the cast.
+- **Trump-Card Kitty's leap runs 378 frames from its explosion, as gcsim gives it.** The table's duration reads 6 seconds, and gcsim's 6.3 is shipped until a recording settles it. The field has no edge, as a schedule that runs wherever the body stands, and each of its ticks lands the leap's circle of radius 4 round the spot the kitty was cast at, at 68 frames and every 30 after it.
+- **The leap's ticks are priced by the kitty's combatant with the team's buffs as each tick lands.** A summon is priced as its hits land, as Xiangling's Pyronado is. gcsim snapshots the explosion's attack for each tick, so a tick there reads the stats of the cast; that snapshot is not built.
 
 ## Key files
 
