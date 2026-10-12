@@ -1,9 +1,11 @@
 import type { AvatarRigNode } from "#src/models/genshinAssets/avatar/AvatarRigNode";
 import type { DumpedMesh } from "#src/models/genshinAssets/avatar/DumpedMesh";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { ExportedMaterial } from "#src/models/genshinAssets/shared/ExportedMaterial";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
+import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 import type { AvatarRig } from "#src/services/genshinAssets/avatar/readAvatarRig";
 import type { RosterRenderer } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 import type { RendererBone } from "#src/services/genshinAssets/avatar/readRendererBones";
@@ -32,10 +34,12 @@ import {
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
-import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
-import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
+import { readMaterialKeywords } from "#src/services/genshinAssets/shared/readMaterialKeywords";
 import { readObjectNames } from "#src/services/genshinAssets/shared/readObjectNames";
+import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
+import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
+import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialValues";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
@@ -71,12 +75,18 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
     renderers.flatMap(({ mesh }) => (mesh ? [mesh] : [])),
     cabMap,
   );
-  const materialRefs = renderers.flatMap(({ materials }) =>
-    materials.flatMap((material) => (material ? [material] : [])),
-  );
+  const materialRefs = renderers
+    .filter(({ mesh }) => mesh && meshNames.has(toObjectKey(mesh.file, mesh.pathId)))
+    .flatMap(({ materials }) => materials.flatMap((material) => (material ? [material] : [])));
   const materialNames = await readObjectNames(materialRefs, cabMap);
-  const componentMaterials = await readComponentMaterials(component);
-  const texturedMaterials = readTexturedObjectKeys(materialNames, componentMaterials);
+  const materialsDirectory = join(directory.root, "avatar-materials");
+  const drawableMaterials = await withFinalizerAsync(
+    () => readDrawableMaterials(materialRefs, materialNames, cabMap, materialsDirectory),
+    () => rm(materialsDirectory, { force: true, recursive: true }),
+  );
+  const texturedKeys = new Set(
+    [...drawableMaterials].filter(([, { textures }]) => "_MainTex" in textures).map(([key]) => key),
+  );
   const candidates = renderers.flatMap((skinned): RosterRenderer[] => {
     const { mesh } = skinned;
     const name = mesh ? meshNames.get(toObjectKey(mesh.file, mesh.pathId)) : undefined;
@@ -95,7 +105,7 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
     candidates,
     getTransformKey(rootObject.file, rootObject.transformId),
     objectMap,
-    texturedMaterials,
+    texturedKeys,
   );
   if (roster.length === 0)
     throw new InvalidOperationError(Operation.Read, source.name, "has no enabled LOD0 renderer under its model root");
@@ -127,10 +137,11 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
     ...drawn.flatMap(({ bones }) => bones),
     ...drawn.map(({ rootBone }) => rootBone),
   ]);
-  const materials = await readMaterials(
+  const materials = await writeMaterials(
     component,
+    cabMap,
     materialNames,
-    componentMaterials,
+    drawableMaterials,
     drawn.flatMap(({ materials: refs, mesh }) =>
       refs.slice(0, mesh.m_SubMeshes.length).flatMap((ref) => (ref ? [ref] : [])),
     ),
@@ -176,17 +187,6 @@ const readMeshDumps = async (
     }),
   );
   return new Map(entries);
-};
-
-// The keys of the materials that have a main texture, which a renderer must all have to be drawn
-const readTexturedObjectKeys = (
-  names: ReadonlyMap<string, string>,
-  componentMaterials: readonly MaterialValues[],
-): Set<string> => {
-  const texturedNames = new Set(
-    componentMaterials.filter(({ textures }) => "_MainTex" in textures).map(({ name }) => name),
-  );
-  return new Set([...names].filter(([, name]) => texturedNames.has(name)).map(([key]) => key));
 };
 
 // The rig of the Avatar asset, exported from its block into a folder beside the component's exports and removed once read
@@ -253,34 +253,127 @@ const addedNode = (object: SceneObject, parent: number, name: string): AvatarBon
 const leafName = (path: string): string => path.slice(path.lastIndexOf("/") + 1);
 const depth = (path: string): number => path.split("/").length;
 
-// The materials the meshes draw with, by name, with each one's values and its texture files by slot
-const readMaterials = async (
-  component: DerivedAssetComponent,
+// A drawable material read as its values from the folder of the CAB it lies in, its texture slots resolved to the textures
+// Their pointers name through that same file
+interface DrawableMaterial {
+  colors: MaterialValues["colors"];
+  floats: MaterialValues["floats"];
+  keywords: string[];
+  textures: Record<string, ResolvedObject>;
+}
+
+const readDrawableMaterials = async (
+  materials: readonly ResolvedObject[],
   names: ReadonlyMap<string, string>,
-  componentMaterials: readonly MaterialValues[],
+  cabMap: ReadonlyMap<string, CabEntry>,
+  exportDirectory: string,
+): Promise<Map<string, DrawableMaterial>> => {
+  // A type's export moves its files into place by name, so the JSON and the raw bytes each take a folder of their own
+  const jsonDirectory = join(exportDirectory, "json");
+  const rawDirectory = join(exportDirectory, "raw");
+  const blocks = new Set(materials.map(({ block }) => block));
+  for (const block of blocks)
+    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio exports one block at a time
+    await exportBlockBySource(block, [AssetType.Material], AnimeStudioExportType.Json, jsonDirectory);
+  for (const block of blocks)
+    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio exports one block at a time
+    await exportBlockBySource(block, [AssetType.Material], AnimeStudioExportType.Raw, rawDirectory);
+  const entries = await Promise.all(
+    materials.map(async (material): Promise<[string, DrawableMaterial]> => {
+      const key = toObjectKey(material.file, material.pathId);
+      const folderName = join(basename(material.block, ".blk"), AssetType.Material, material.file);
+      const name = readName(names, material);
+      const rawPath = join(rawDirectory, folderName, `${name}.dat`);
+      const { colors, floats, keywords, textures } = toMaterialValues(
+        parseMachineJson<ExportedMaterial>(
+          await readFile(join(jsonDirectory, folderName, `${name}.json`), "utf8"),
+          reviveSourcePathId,
+        ),
+        existsSync(rawPath) ? readMaterialKeywords(await readFile(rawPath)) : [],
+      );
+      return [key, { colors, floats, keywords, textures: resolveTextures(textures, material.file, cabMap) }];
+    }),
+  );
+  return new Map(entries);
+};
+
+// The texture each slot points at, through the file its material lies in. An empty slot's pointer names none
+const resolveTextures = (
+  textures: MaterialValues["textures"],
+  file: string,
+  cabMap: ReadonlyMap<string, CabEntry>,
+): Record<string, ResolvedObject> =>
+  Object.fromEntries(
+    Object.entries(textures).flatMap(([slot, pointer]): [string, ResolvedObject][] => {
+      const texture = resolveObjectPointer(cabMap, file, pointer);
+      return texture ? [[slot, texture]] : [];
+    }),
+  );
+
+// The name an object is exported under, which the asset index must give it
+const readName = (names: ReadonlyMap<string, string>, object: ResolvedObject): string => {
+  const name = names.get(toObjectKey(object.file, object.pathId));
+  if (name === undefined)
+    throw new InvalidOperationError(Operation.Read, object.pathId, "has no name in the asset index");
+  return name;
+};
+
+// Two different objects under one name share one exported file, so it is an error, never one of them picked over the other
+const assertUniqueNames = (
+  objects: readonly ResolvedObject[],
+  names: ReadonlyMap<string, string>,
+  kind: string,
+): void => {
+  const keyOfName = new Map<string, string>();
+  for (const object of objects) {
+    const key = toObjectKey(object.file, object.pathId);
+    const name = readName(names, object);
+    const other = keyOfName.get(name);
+    if (other !== undefined && other !== key)
+      throw new InvalidOperationError(Operation.Read, name, `names two different ${kind}s`);
+    keyOfName.set(name, key);
+  }
+};
+
+// The materials the meshes draw with, keyed by their names, each with its values and the texture files its slots point at
+const writeMaterials = async (
+  component: DerivedAssetComponent,
+  cabMap: ReadonlyMap<string, CabEntry>,
+  names: ReadonlyMap<string, string>,
+  drawable: ReadonlyMap<string, DrawableMaterial>,
   references: readonly ResolvedObject[],
 ): Promise<Record<string, AvatarMaterial>> => {
-  const usedNames = new Set(references.flatMap((ref) => names.get(toObjectKey(ref.file, ref.pathId)) ?? []));
-  const used = componentMaterials.filter(({ name }) => usedNames.has(name));
-  const textureNames = await readAssetNames(
-    new Set(used.flatMap(({ textures }) => Object.values(textures).map(({ pathId }) => pathId))),
+  const textureDirectory = join(getComponentDirectory(component).assets, AssetType.Texture2D);
+  const used = [
+    ...new Map(references.map((reference) => [toObjectKey(reference.file, reference.pathId), reference])).values(),
+  ];
+  const materialOf = (reference: ResolvedObject): DrawableMaterial => {
+    const material = drawable.get(toObjectKey(reference.file, reference.pathId));
+    if (!material) throw new InvalidOperationError(Operation.Read, reference.pathId, "is a drawn material never read");
+    return material;
+  };
+  const textures = used.flatMap((reference) => Object.values(materialOf(reference).textures));
+  const textureNames = await readObjectNames(textures, cabMap);
+  assertUniqueNames(textures, textureNames, "texture");
+  // The manifest keys its materials by name, so two drawn materials under one name are an error, never one overwriting the other
+  assertUniqueNames(used, names, "material");
+  return Object.fromEntries(
+    used.map((reference): [string, AvatarMaterial] => {
+      const { colors, floats, keywords, textures: slots } = materialOf(reference);
+      return [
+        readName(names, reference),
+        {
+          colors,
+          floats,
+          keywords,
+          textures: Object.fromEntries(
+            Object.entries(slots).flatMap(([slot, texture]) => {
+              const file = `${readName(textureNames, texture)}.png`;
+              return existsSync(join(textureDirectory, file)) ? [[slot, file]] : [];
+            }),
+          ),
+        },
+      ];
+    }),
   );
-  const texturesDirectory = join(getComponentDirectory(component).assets, AssetType.Texture2D);
-  const materials = Object.fromEntries(
-    used.map(({ colors, floats, keywords, name, textures }): [string, AvatarMaterial] => [
-      name,
-      {
-        colors,
-        floats,
-        keywords,
-        textures: Object.fromEntries(
-          Object.entries(textures).flatMap(([slot, { pathId }]) => {
-            const file = `${textureNames.get(pathId) ?? ""}.png`;
-            return existsSync(join(texturesDirectory, file)) ? [[slot, file]] : [];
-          }),
-        ),
-      },
-    ]),
-  );
-  return materials;
 };
