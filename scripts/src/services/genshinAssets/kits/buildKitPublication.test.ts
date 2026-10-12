@@ -35,6 +35,11 @@ describe(buildKitPublication, () => {
       [{ provenance: { file: "kit.go", line: index + 1, source: KitSource.Gcsim } as const, value }],
     ]),
   );
+  const talentGroupIdMap = {
+    [CombatTalent.ElementalBurst]: 1,
+    [CombatTalent.ElementalSkill]: 1,
+    [CombatTalent.NormalAttack]: 1,
+  };
   // A kit built from those values with no overlay, published as they build it or yet to be published
   const createInput = (characterId: number, isPublished: boolean): KitInput => ({
     characterId,
@@ -42,17 +47,15 @@ describe(buildKitPublication, () => {
     namedHitCandidateMap: new Map(),
     notes: [],
     overlayName: "",
-    ...(isPublished && { publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map()).record }),
+    ...(isPublished && {
+      publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), talentGroupIdMap).record,
+    }),
     sourceCandidateMap: SOURCE_CANDIDATE_MAP,
     tables: {
       characterId,
       labelMap: new Map(),
       name: String(characterId),
-      talentGroupIdMap: {
-        [CombatTalent.ElementalBurst]: 1,
-        [CombatTalent.ElementalSkill]: 1,
-        [CombatTalent.NormalAttack]: 1,
-      },
+      talentGroupIdMap,
       talentMultiplierMap: {},
       weaponType: WeaponType.Sword,
     },

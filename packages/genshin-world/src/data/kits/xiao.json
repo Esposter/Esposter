@@ -96,7 +96,6 @@
   },
   "plunges.low.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 150 },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "skillCharges": { "cause": "Unclassified", "value": 2 },
   "hits.dash.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "hits.dash.1.internalCooldownTag": { "cause": "DiffersFromSource" },

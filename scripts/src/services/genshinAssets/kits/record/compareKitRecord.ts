@@ -3,8 +3,10 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
+import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitRecord } from "genshin-world";
 
+import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
@@ -28,6 +30,7 @@ export const compareKitRecord = (
   isTagPredated: boolean,
   committedOverlay: KitOverlay,
   namedHitCandidateMap: NamedHitCandidateMap,
+  talentGroupIdMap: KitTables["talentGroupIdMap"],
 ): KitComparison => {
   const publishedValueMap = flattenKitValues(publishedRecord);
   const overlay: KitOverlay = {};
@@ -41,15 +44,16 @@ export const compareKitRecord = (
     if (entry !== undefined) overlay[path] = entry;
   };
   const candidateMap = mergeKitCandidates(
+    getNamedListKitCandidates(publishedValueMap, talentGroupIdMap),
     sourceCandidateMap,
     getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
     getRuleKitCandidates(publishedValueMap),
   );
   for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
-  const resolved = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap);
+  const resolved = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap);
   for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())
     if (!publishedValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
-  return getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap)).match(
+  return getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap)).match(
     (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, publishedRecord), overlay }),
     (error): KitComparison => ({ failures: [error.message], overlay }),
   );

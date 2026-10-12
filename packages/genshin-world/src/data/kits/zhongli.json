@@ -681,7 +681,6 @@
   "parameters.shieldMaxHealthShare": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 3032 } },
   "parameters.shieldSeconds": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 3032 } },
   "plungeCollision.element": { "cause": "Unclassified", "value": "Rock" },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 3032 }

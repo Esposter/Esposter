@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 99 },
   "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "frames.burstStart": { "cause": "Unclassified", "value": 146 },
@@ -175,6 +174,5 @@
   "normalAttacks.1.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.burstSeconds": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 2939 } },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
   "skillCharges": { "cause": "Unclassified", "value": 2 }
 }

@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "burstCooldownSeconds": { "cause": "DiffersFromSource", "value": 20 },
   "burstEnergyCost": { "cause": "DiffersFromSource", "value": 80 },
   "frames.glacialWaltz": { "cause": "Unclassified", "value": 534 },

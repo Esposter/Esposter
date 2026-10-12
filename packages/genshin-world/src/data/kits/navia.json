@@ -1,4 +1,5 @@
 {
+  "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 12.257650672131263 }
@@ -223,6 +224,7 @@
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 31 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 41 },
+  "skill.hits.length": { "source": "Gcsim" },
   "skill.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.681081512988468 }

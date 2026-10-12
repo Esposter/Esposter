@@ -130,7 +130,6 @@
   },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 76 },
   "stances.ceremonialGarment.chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
   "stances.ceremonialGarment.chargedAttack.hits.0.area": {

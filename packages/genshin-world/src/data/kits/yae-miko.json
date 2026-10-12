@@ -1,4 +1,5 @@
 {
+  "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5839 } },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 82 },
@@ -83,6 +84,8 @@
   "plunges.low.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.element": { "cause": "DiffersFromSource" },
+  "burst.hits.0.gauge": { "cause": "DiffersFromSource" },
   "hits.tenkoThunderbolts.0.element": { "cause": "DiffersFromSource" },
   "hits.tenkoThunderbolts.0.gauge": { "cause": "DiffersFromSource" },
   "hits.tenkoThunderbolts.1.element": { "cause": "DiffersFromSource" },
@@ -97,8 +100,6 @@
   "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.element": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "burst.hits.0.element": { "cause": "DiffersFromSource" },
-  "burst.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plungeCollision.element": { "cause": "DiffersFromSource" },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }
 }

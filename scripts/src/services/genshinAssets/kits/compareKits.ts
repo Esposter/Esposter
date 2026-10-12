@@ -71,7 +71,9 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     }
     const { committedOverlay, gapPaths, overlayFailures } = getResult(() => readKitOverlay(overlayName)).match(
       (overlay) =>
-        getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap)).match(
+        getResult(() =>
+          buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, tables.talentGroupIdMap),
+        ).match(
           ({ record }) => ({
             committedOverlay: overlay,
             gapPaths: getMismatchedKitPaths(record, publishedRecord),
@@ -106,6 +108,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       isTagPredated,
       committedOverlay,
       namedHitCandidateMap,
+      tables.talentGroupIdMap,
     );
     const overlayPath = join(KIT_OVERLAY_DIRECTORY, `${overlayName}.json`);
     const entries = Object.entries(overlay);

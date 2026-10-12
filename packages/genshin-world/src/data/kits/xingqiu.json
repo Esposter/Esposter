@@ -58,6 +58,5 @@
   "normalAttacks.4.hits.1.multiplier": { "source": "Tables" },
   "parameters.raincutterSeconds": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 2539 } },
   "parameters.rainSwordsSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 2532 } },
-  "plungeCollision.element": { "cause": "Unclassified", "value": "Water" },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+  "plungeCollision.element": { "cause": "Unclassified", "value": "Water" }
 }

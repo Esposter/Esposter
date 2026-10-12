@@ -77,6 +77,5 @@
   "parameters.burstHealthShare": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 1439 } },
   "parameters.regenerationFlatHeal": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 1432 } },
   "parameters.regenerationHealthShare": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 1432 } },
-  "parameters.melodyLoopSeconds": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 1432 } },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+  "parameters.melodyLoopSeconds": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 1432 } }
 }

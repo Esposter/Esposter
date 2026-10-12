@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 37 },
   "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "frames.jadeScreen": { "cause": "Unclassified", "value": 1800 },

@@ -1,4 +1,5 @@
 {
+  "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 23.267156809750926 }

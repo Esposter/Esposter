@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
   "frames.baronBunnySeconds": { "cause": "Unclassified", "value": 529 },
   "hits.fieryRainArrows.length": { "cause": "Unclassified", "value": 18 },

@@ -111,6 +111,5 @@
   },
   "plungeCollision.element": { "cause": "Unclassified", "value": "Water" },
   "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "plunges.low.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+  "plunges.low.hits.0.element": { "cause": "Unclassified", "value": "Water" }
 }

@@ -1,11 +1,13 @@
-// Why a value of a kit's record is not yet read from a source. `BoxAsCircle`, `NoActionFile`, `NoPoiseSource`,
-// `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the builder applies by rule, so a kit's
-// Overlay names only the ones that are its own
+// Why a value of a kit's record is not yet read from a source. `BoxAsCircle`, `NamedHitList`, `NoActionFile`,
+// `NoPoiseSource`, `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the builder applies by rule,
+// So a kit's overlay names only the ones that are its own
 export enum KitProvisionalCause {
   // A box is priced as the circle to its farthest corner, until an area holds a box
   BoxAsCircle = "BoxAsCircle",
   // A source gives another value, and the kit keeps its own until a commit settles it
   DiffersFromSource = "DiffersFromSource",
+  // A talent whose hits its module spawns as a named list keeps its own hits list empty
+  NamedHitList = "NamedHitList",
   // A plunge gcsim has no file for borrows Bennett's areas and the kits' standard frames, and a claymore's charged
   // Attack it has no file for the frames the kits share
   NoActionFile = "NoActionFile",
