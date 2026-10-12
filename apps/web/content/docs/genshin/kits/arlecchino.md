@@ -11,7 +11,7 @@ Arlecchino's kit is its record and one behaviour module, `createArlecchinoKitBeh
 
 - **Each strike's reach is its box or circle's offset plus its radius.** gcsim places each hitbox at an offset from her body, so its reach from her is the offset's length plus the radius, the same pricing the box helper uses. The fan of her second strike is priced at its 2.6 radius and 0.5 offset, with its 300 degree sweep kept.
 - **The fourth strike's two hits are both 3 in the attack group.** They land at 24 and 35 frames within its 55-frame animation, as gcsim has them.
-- **The charged attack is a circle of radius 4 one metre ahead of her,** priced at 4.9 metres, hitting at 37 frames of its 60-frame animation. It costs the table's 25 stamina.
+- **The charged attack is a circle of radius 4 0.9 metres ahead of her,** priced at 4.9 metres, hitting at 37 frames of its 60-frame animation. It costs the table's 25 stamina.
 - **The plunges are gcsim's.** The low and high plunges land at 47 and 48 frames, with circles of radius 3 and 5 one metre ahead, and poise 100 and 150. The collision is a circle of radius 1, queued 41 frames into a plunge, as gcsim queues it.
 - **Cleave is priced conservatively.** Its circle sits 4.5 metres past the target, so its reach from the target is 10.5 metres, the offset plus its radius of 6. The question is on the roadmap.
 - **Balemoon Rising hits once at 110 frames of its 146,** a circle of radius 6.5 six metres ahead, priced at 12.5 metres, with 3.704 of the table's multiplier, a gauge of 1, and the table's cooldown of 15 seconds on 60 energy.

@@ -16,7 +16,7 @@ Ororon's kit is its record and one behaviour module, `createOroronKitBehaviour`,
 
 ## Decisions
 
-- **The strikes and the Spirit Orb's hit land 10 frames after gcsim's hitmarks.** gcsim queues each arrow and orb to travel 10 frames to its target, so each lands at its hitmark plus the travel, as the bow kits' do.
+- **The strikes and the Spirit Orb's hit land 10 frames after gcsim's hitmarks.** gcsim queues each arrow and orb to travel 10 frames to its target, so each lands at its hitmark plus the travel, as Aloy's, Collei's and Ganyu's bow kits do. Sigewinne's shot does not, a question on the roadmap.
 - **The soundwave field ticks from the cast, not after it.** gcsim's first tick falls 60 frames after the burst starts, and each tick's hit lands on it. Constellation 4 makes the tick 45 frames apart.
 - **Constellation 2's stacks are one buff refreshed by each hit.** Its 8% starts with the burst and gains 8% for each enemy the ritual or a soundwave strikes, to 32%, and keeps the burst's nine seconds rather than restarting them on each hit.
 - **Ascension 4 counts its three triggers on the Spirit Orb's status.** The status starts at the orb's hit and runs 15 seconds, and each trigger gives 3 energy to the active character and to Ororon, then a second's cooldown before the next, as gcsim's internal cooldown gives it.
