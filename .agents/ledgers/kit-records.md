@@ -43,7 +43,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `faruzan`            | —                      |                                                                          |
 | `fischl`             | —                      |                                                                          |
 | `flins`              | —                      |                                                                          |
-| `freminet`           | —                      |                                                                          |
+| `freminet`           | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `furina`             | —                      |                                                                          |
 | `gaming`             | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `ganyu`              | —                      |                                                                          |
