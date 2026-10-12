@@ -11,12 +11,14 @@ import { MeshToonNodeMaterial } from "three/webgpu";
 export class ToonNodeMaterial extends MeshToonNodeMaterial {
   edge?: ToonEdge;
   emissiveNode: Node | null = null;
+  readonly isMeshToonMaterial: boolean;
   override readonly isMeshToonNodeMaterial: boolean;
   sphereMap?: Texture;
 
   constructor(parameters: MeshToonNodeMaterialParameters, isOutlined: boolean, edge?: ToonEdge) {
     super(parameters);
     this.edge = edge;
+    this.isMeshToonMaterial = isOutlined;
     this.isMeshToonNodeMaterial = isOutlined;
   }
 }

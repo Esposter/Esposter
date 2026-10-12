@@ -20,7 +20,8 @@ export const createLeafMaterial = (
   toonMaterialOptions: ToonMaterialOptions,
   windUniforms?: WindUniforms,
 ): ToonNodeMaterial => {
-  const leafMaterial = createToonMaterial(toonMaterialOptions);
+  // Not outlined: the outline pass draws a card's back face inflated and unmasked, a solid patch in the outline colour
+  const leafMaterial = createToonMaterial({ ...toonMaterialOptions, isOutlined: false });
   leafMaterial.opacityNode = createLeafShapeNode();
   leafMaterial.alphaTest = LEAF_ALPHA_TEST;
   leafMaterial.side = DoubleSide;
