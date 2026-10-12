@@ -9,10 +9,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 // Random enemy within 10 metres of the body. Ascension 1's faster and wider balls wait on the Moonsign, which the kit
 // Does not hold yet
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/aino
-const BURST_SECONDS = 14.2;
-const BURST_AREA_RADIUS = 10;
 const ASCENSION_4 = 4;
-const ASCENSION_4_MASTERY_SHARE = 0.5;
 
 export const AINO_CHARACTER_ID = 10_000_121;
 
@@ -23,15 +20,18 @@ export const AINO_CHARACTER_ID = 10_000_121;
 // Burst lasts, which waits on a hook that reads another member's hits; Constellation 1's Elemental Mastery on the active
 // Member and Constellation 4's energy on the skill's hits, which the kit does not hold yet; and Aino's passives.
 // Musecatcher's hold is not built, as gcsim does not implement it either
-export const createAinoKitBehaviour = ({ readHit, readSeconds }: KitRecordReader): KitBehaviour => {
+export const createAinoKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
+  const masteryShare = readParameter("ascension4MasteryShare");
   const waterBall = readHit("waterBall", {
     additiveBaseDamageBonus: (combatant) =>
       combatant.ascension >= ASCENSION_4
-        ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * ASCENSION_4_MASTERY_SHARE
+        ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * masteryShare
         : 0,
   });
   const burstFirstTickSeconds = readSeconds("burstStart");
   const burstTickIntervalSeconds = readSeconds("waterBallInterval");
+  const burstSeconds = readSeconds("burstDuration");
+  const burstRadius = readParameter("burstRadius");
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
@@ -40,8 +40,8 @@ export const createAinoKitBehaviour = ({ readHit, readSeconds }: KitRecordReader
           nextTickSeconds: burstFirstTickSeconds,
           onTick: ({ kitEffectState: tickKitEffectState }) =>
             castKitSummon(tickKitEffectState, { facing, height, position: burstField.centre }, combatant, [waterBall]),
-          radius: BURST_AREA_RADIUS,
-          secondsRemaining: burstFirstTickSeconds + BURST_SECONDS,
+          radius: burstRadius,
+          secondsRemaining: burstFirstTickSeconds + burstSeconds,
           tickIntervalSeconds: burstTickIntervalSeconds,
         });
       },
