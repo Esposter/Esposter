@@ -5,7 +5,7 @@ import { createAvatarBinary } from "#src/services/genshinAssets/avatar/writeAvat
 import { describe, expect, test } from "vitest";
 
 describe(buildAvatarMesh, () => {
-  test("mirrors the axes across z, turns each triangle to keep its face, and maps joints to rig nodes", () => {
+  test("mirrors the axes across x, turns each triangle to keep its face, and maps joints to rig nodes", () => {
     expect.hasAssertions();
 
     const binary = createAvatarBinary();
@@ -33,7 +33,7 @@ describe(buildAvatarMesh, () => {
       Type: new (buffer: ArrayBufferLike, byteOffset: number, length: number) => T,
     ): T => new Type(buffer.buffer, buffer.byteOffset + view.offset, view.length);
 
-    expect([...read(built.positions, Float32Array)]).toStrictEqual([1, 2, -3, 4, 5, -6, 7, 8, -9]);
+    expect([...read(built.positions, Float32Array)]).toStrictEqual([-1, 2, 3, -4, 5, 6, -7, 8, 9]);
     expect([...read(built.indices, Uint16Array)]).toStrictEqual([0, 2, 1]);
     expect([...read(built.joints, Uint16Array)].slice(0, 4)).toStrictEqual([7, 5, 5, 5]);
     expect(built.submeshes).toStrictEqual([{ count: 3, material: "Hair", start: 0 }]);

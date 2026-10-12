@@ -10,6 +10,7 @@ import type { AvatarBone, AvatarManifest, AvatarMaterial } from "genshin-world/s
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { buildAvatarMesh } from "#src/services/genshinAssets/avatar/buildAvatarMesh";
 import { AVATAR_SOURCE_MAP } from "#src/services/genshinAssets/avatar/constants";
+import { mirrorAvatarPoint, mirrorAvatarRotation } from "#src/services/genshinAssets/avatar/mirrorAvatarAxes";
 import { readAvatarRig } from "#src/services/genshinAssets/avatar/readAvatarRig";
 import {
   getTransformKey,
@@ -22,8 +23,6 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
-import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
-import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -134,8 +133,8 @@ const buildSkeleton = (
   const nodes: AvatarBone[] = rigNodes.map(({ parent, path, position, rotation, scale }) => ({
     name: leafName(path),
     parent,
-    position: toRightHanded(position),
-    rotation: toRightHandedRotation(rotation),
+    position: mirrorAvatarPoint(position),
+    rotation: mirrorAvatarRotation(rotation),
     scale,
   }));
   const paths = rigNodes.map(({ path }) => path);
@@ -155,8 +154,8 @@ const buildSkeleton = (
 const addedNode = (object: SceneObject, parent: number, name: string): AvatarBone => ({
   name,
   parent,
-  position: toRightHanded(object.position),
-  rotation: toRightHandedRotation(object.rotation),
+  position: mirrorAvatarPoint(object.position),
+  rotation: mirrorAvatarRotation(object.rotation),
   scale: object.scale,
 });
 const leafName = (path: string): string => path.slice(path.lastIndexOf("/") + 1);
