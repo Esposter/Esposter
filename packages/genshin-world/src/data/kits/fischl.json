@@ -1,40 +1,79 @@
 {
+  "areas.ozAttack": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 16 } },
   "burst.hits.0.gauge": { "source": "Wiki" },
-  "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ChargedAttack" },
-  "normalAttacks.0.hits.0.area": {
+  "frames.ozTickInterval": { "cause": "Unclassified", "value": 59 },
+  "frames.arrowTravel": { "cause": "Unclassified", "value": 10 },
+  "frames.ozDuration": { "cause": "Unclassified", "value": 600 },
+  "frames.evernightRavenExtra": { "cause": "Unclassified", "value": 120 },
+  "frames.burstOzFirstTick": { "cause": "Unclassified", "value": 69 },
+  "frames.burstOzSpawn": { "cause": "Unclassified", "value": 113 },
+  "frames.heal": { "cause": "Unclassified", "value": 114 },
+  "frames.ozFirstTick": { "cause": "Unclassified", "value": 64 },
+  "frames.ozSpawn": { "cause": "Unclassified", "value": 18 },
+  "frames.burstShortOzFirstTick": { "cause": "Unclassified", "value": 63 },
+  "frames.burstShortOzSpawn": { "cause": "Unclassified", "value": 1 },
+  "hitFields.evernightRaven.element": { "cause": "Unclassified", "value": "Electric" },
+  "hitFields.evernightRaven.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.evernightRaven.hitmarkFrames": { "cause": "Unclassified", "value": 10 },
+  "hitFields.evernightRaven.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hitFields.evernightRaven.multiplier": { "cause": "Unclassified", "value": 0.3 },
+  "hitFields.evernightRaven.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.herPilgrimageOfBleak.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.herPilgrimageOfBleak.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.herPilgrimageOfBleak.gauge": { "cause": "Unclassified", "value": 2 },
+  "hits.herPilgrimageOfBleak.hitmarkFrames": { "cause": "Unclassified", "value": 8 },
+  "hits.herPilgrimageOfBleak.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.herPilgrimageOfBleak.multiplier": { "cause": "Unclassified", "value": 2.22 },
+  "hits.herPilgrimageOfBleak.poiseDamage": { "cause": "Unclassified", "value": 500 },
+  "hits.devourerOfAllSins.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 18 }
+  },
+  "hits.devourerOfAllSins.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.devourerOfAllSins.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.devourerOfAllSins.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
+  "hits.devourerOfAllSins.multiplier": { "cause": "Unclassified", "value": 3.1544 },
+  "hits.devourerOfAllSins.poiseDamage": { "cause": "Unclassified", "value": 80 },
+  "hits.ozSummon.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 } },
+  "hits.ozSummon.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.ozSummon.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.ozSummon.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
+  "hits.ozSummon.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3132 } },
+  "hits.ozSummon.poiseDamage": { "cause": "Unclassified", "value": 80 },
+  "hits.thunderingRetribution.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5 }
+  },
+  "hits.thunderingRetribution.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.thunderingRetribution.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.thunderingRetribution.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
+  "hits.thunderingRetribution.multiplier": { "cause": "Unclassified", "value": 0.8 },
+  "hits.thunderingRetribution.poiseDamage": { "cause": "Unclassified", "value": 40 },
+  "hits.gazeOfTheDeep.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
   },
+  "hits.gazeOfTheDeep.hitmarkFrames": { "cause": "Unclassified", "value": 10 },
+  "hits.gazeOfTheDeep.multiplier": { "cause": "Unclassified", "value": 0.22 },
+  "hits.gazeOfTheDeep.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 15 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 11 },
-  "normalAttacks.2.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 24 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "normalAttacks.3.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 26 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "normalAttacks.4.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 21 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
+  "parameters.ozAttackTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 3132 }
+  },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 },
   "burst.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }

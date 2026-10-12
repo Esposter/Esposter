@@ -1,6 +1,6 @@
 {
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.cancelFrames": { "cause": "Unclassified", "value": 55 },
+  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 55 },
   "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",

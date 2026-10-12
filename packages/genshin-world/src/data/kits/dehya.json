@@ -1,7 +1,7 @@
 {
-  "burst.cancelFrames": { "cause": "Unclassified", "value": 105 },
+  "burst.animationFrames": { "cause": "Unclassified", "value": 105 },
   "burst.hits.length": { "cause": "Unclassified", "value": 0 },
-  "chargedAttack.cancelFrames": { "cause": "Unclassified", "value": 300 },
+  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 300 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }

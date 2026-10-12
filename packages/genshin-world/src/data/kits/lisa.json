@@ -1,8 +1,313 @@
 {
+  "areas.lightningRose": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.0.multiplier": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.cancelFrames": { "cause": "DiffersFromSource", "value": 79 },
+  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 79 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 56 },
+  "frames.lightningRoseFirstTick": { "cause": "Unclassified", "value": 119 },
+  "frames.lightningRoseTickInterval": { "cause": "Unclassified", "value": 30 },
+  "frames.lightningRose": { "cause": "Unclassified", "value": 1019 },
+  "hits.discharges.length": { "cause": "Unclassified", "value": 30 },
+  "hits.discharges.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.0.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.0.hitmarkFrames": { "cause": "Unclassified", "value": 119 },
+  "hits.discharges.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.0.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.1.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.1.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.1.hitmarkFrames": { "cause": "Unclassified", "value": 149 },
+  "hits.discharges.1.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.1.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.1.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.2.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.2.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.2.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.2.hitmarkFrames": { "cause": "Unclassified", "value": 179 },
+  "hits.discharges.2.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.2.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.2.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.3.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.3.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.3.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.3.hitmarkFrames": { "cause": "Unclassified", "value": 209 },
+  "hits.discharges.3.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.3.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.3.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.4.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.4.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.4.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.4.hitmarkFrames": { "cause": "Unclassified", "value": 239 },
+  "hits.discharges.4.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.4.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.4.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.5.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.5.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.5.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.5.hitmarkFrames": { "cause": "Unclassified", "value": 269 },
+  "hits.discharges.5.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.5.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.5.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.6.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.6.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.6.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.6.hitmarkFrames": { "cause": "Unclassified", "value": 299 },
+  "hits.discharges.6.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.6.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.6.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.7.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.7.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.7.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.7.hitmarkFrames": { "cause": "Unclassified", "value": 329 },
+  "hits.discharges.7.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.7.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.7.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.8.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.8.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.8.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.8.hitmarkFrames": { "cause": "Unclassified", "value": 359 },
+  "hits.discharges.8.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.8.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.8.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.9.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.9.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.9.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.9.hitmarkFrames": { "cause": "Unclassified", "value": 389 },
+  "hits.discharges.9.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.9.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.9.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.10.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.10.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.10.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.10.hitmarkFrames": { "cause": "Unclassified", "value": 419 },
+  "hits.discharges.10.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.10.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.10.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.11.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.11.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.11.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.11.hitmarkFrames": { "cause": "Unclassified", "value": 449 },
+  "hits.discharges.11.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.11.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.11.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.12.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.12.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.12.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.12.hitmarkFrames": { "cause": "Unclassified", "value": 479 },
+  "hits.discharges.12.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.12.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.12.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.13.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.13.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.13.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.13.hitmarkFrames": { "cause": "Unclassified", "value": 509 },
+  "hits.discharges.13.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.13.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.13.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.14.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.14.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.14.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.14.hitmarkFrames": { "cause": "Unclassified", "value": 539 },
+  "hits.discharges.14.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.14.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.14.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.15.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.15.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.15.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.15.hitmarkFrames": { "cause": "Unclassified", "value": 569 },
+  "hits.discharges.15.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.15.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.15.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.16.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.16.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.16.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.16.hitmarkFrames": { "cause": "Unclassified", "value": 599 },
+  "hits.discharges.16.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.16.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.16.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.17.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.17.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.17.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.17.hitmarkFrames": { "cause": "Unclassified", "value": 629 },
+  "hits.discharges.17.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.17.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.17.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.18.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.18.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.18.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.18.hitmarkFrames": { "cause": "Unclassified", "value": 659 },
+  "hits.discharges.18.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.18.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.18.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.19.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.19.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.19.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.19.hitmarkFrames": { "cause": "Unclassified", "value": 689 },
+  "hits.discharges.19.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.19.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.19.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.20.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.20.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.20.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.20.hitmarkFrames": { "cause": "Unclassified", "value": 719 },
+  "hits.discharges.20.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.20.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.20.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.21.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.21.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.21.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.21.hitmarkFrames": { "cause": "Unclassified", "value": 749 },
+  "hits.discharges.21.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.21.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.21.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.22.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.22.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.22.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.22.hitmarkFrames": { "cause": "Unclassified", "value": 779 },
+  "hits.discharges.22.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.22.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.22.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.23.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.23.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.23.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.23.hitmarkFrames": { "cause": "Unclassified", "value": 809 },
+  "hits.discharges.23.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.23.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.23.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.24.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.24.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.24.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.24.hitmarkFrames": { "cause": "Unclassified", "value": 839 },
+  "hits.discharges.24.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.24.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.24.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.25.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.25.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.25.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.25.hitmarkFrames": { "cause": "Unclassified", "value": 869 },
+  "hits.discharges.25.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.25.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.25.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.26.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.26.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.26.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.26.hitmarkFrames": { "cause": "Unclassified", "value": 899 },
+  "hits.discharges.26.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.26.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.26.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.27.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.27.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.27.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.27.hitmarkFrames": { "cause": "Unclassified", "value": 929 },
+  "hits.discharges.27.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.27.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.27.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.28.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.28.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.28.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.28.hitmarkFrames": { "cause": "Unclassified", "value": 959 },
+  "hits.discharges.28.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.28.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.28.poiseDamage": { "cause": "Unclassified", "value": 10 },
+  "hits.discharges.29.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  },
+  "hits.discharges.29.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.discharges.29.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.discharges.29.hitmarkFrames": { "cause": "Unclassified", "value": 989 },
+  "hits.discharges.29.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hits.discharges.29.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 439 } },
+  "hits.discharges.29.poiseDamage": { "cause": "Unclassified", "value": 10 },
   "normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
@@ -19,29 +324,47 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
   },
-  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 } },
-  "skill.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
-  "skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 22 },
-  "skill.hits.0.internalCooldownTag": { "cause": "Unclassified", "value": "LisaElectroDamage" },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 432 } },
-  "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 18 },
-  "skillHolds.length": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.0.action.cancelFrames": { "cause": "Unclassified", "value": 143 },
-  "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
+  "parameters.dischargesTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 439 }
+  },
+  "skill.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
   "skillHolds.0.action.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.2 }
   },
   "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
   "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 2 },
-  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 117 },
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 432 }
   },
   "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unclassified", "value": 150 },
+  "skillHolds.0.action.hits.0.stackedHit.multipliers.length": { "cause": "Unclassified", "value": 4 },
+  "skillHolds.0.action.hits.0.stackedHit.multipliers.0": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 432 }
+  },
+  "skillHolds.0.action.hits.0.stackedHit.multipliers.1": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 432 }
+  },
+  "skillHolds.0.action.hits.0.stackedHit.multipliers.2": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 432 }
+  },
+  "skillHolds.0.action.hits.0.stackedHit.multipliers.3": {
+    "cause": "Unclassified",
+    "value": { "index": 3, "proudSkillGroupId": 432 }
+  },
+  "skillHolds.0.action.hits.0.stackedHit.poiseDamages.length": { "cause": "Unclassified", "value": 4 },
+  "skillHolds.0.action.hits.0.stackedHit.poiseDamages.0": { "cause": "Unclassified", "value": 150 },
+  "skillHolds.0.action.hits.0.stackedHit.poiseDamages.1": { "cause": "Unclassified", "value": 195 },
+  "skillHolds.0.action.hits.0.stackedHit.poiseDamages.2": { "cause": "Unclassified", "value": 240 },
+  "skillHolds.0.action.hits.0.stackedHit.poiseDamages.3": { "cause": "Unclassified", "value": 300 },
   "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 432 } },
   "skillHolds.0.minimumHeldSeconds": { "cause": "Unclassified", "value": 1.9 },
   "skillMaximumHeldSeconds": { "cause": "Unclassified", "value": 4 },

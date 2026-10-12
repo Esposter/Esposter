@@ -8,6 +8,22 @@
   "burst.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 34 },
   "burst.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5939 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "frames.burst": { "cause": "Unclassified", "value": 72 },
+  "hitFields.iris.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
+  },
+  "hitFields.iris.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.iris.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
+  "hitFields.iris.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 5939 } },
+  "hitFields.iris.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.irisCheck.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
+  },
+  "hits.irisCheck.hitmarkFrames": { "cause": "Unclassified", "value": 34 },
+  "hits.irisCheck.multiplier": { "cause": "Unclassified", "value": 0 },
+  "hits.irisCheck.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.3430749027719964 }
@@ -39,7 +55,7 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.cancelFrames": { "cause": "Unclassified", "value": 39 },
+  "skill.animationFrames": { "cause": "Unclassified", "value": 39 },
   "skill.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.838388161361178 }
@@ -47,7 +63,7 @@
   "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5932 } },
   "skillHolds.length": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.0.action.cancelFrames": { "cause": "Unclassified", "value": 39 },
+  "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 39 },
   "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.0.area": {
     "cause": "Unclassified",

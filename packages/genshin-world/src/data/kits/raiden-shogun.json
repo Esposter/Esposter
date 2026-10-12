@@ -1,6 +1,43 @@
 {
+  "actionFields.musouIsshinActionsChargedAttack.animationFrames": { "cause": "Unclassified", "value": 56 },
+  "actionFields.musouIsshinActionsChargedAttack.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "areas.musouIsshinCharged": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.744855630597913 }
+  },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "frames.burstHitmark": { "cause": "Unclassified", "value": 98 },
+  "frames.eyeDelay": { "cause": "Unclassified", "value": 66 },
+  "hitFields.hit.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hitFields.hit.element": { "cause": "Unclassified", "value": "Electric" },
+  "hitFields.hit.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.hit.internalCooldownTag": { "cause": "Unclassified", "value": "NormalAttack" },
+  "hitFields.hit.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hitFields.burst.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.230347012687302 }
+  },
+  "hitFields.burst.element": { "cause": "Unclassified", "value": "Electric" },
+  "hitFields.burst.gauge": { "cause": "Unclassified", "value": 2 },
+  "hitFields.burst.hitmarkFrames": { "cause": "Unclassified", "value": 98 },
+  "hitFields.burst.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.skill.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
+  "hits.skill.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.skill.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.skill.hitmarkFrames": { "cause": "Unclassified", "value": 51 },
+  "hits.skill.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5232 } },
+  "hits.skill.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.coordinatedAttack.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+  },
+  "hits.coordinatedAttack.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.coordinatedAttack.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.coordinatedAttack.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
+  "hits.coordinatedAttack.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hits.coordinatedAttack.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 5232 } },
+  "hits.coordinatedAttack.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -16,6 +53,25 @@
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
   "normalAttacks.3.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "parameters.resolveAttackBonus": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 5239 } },
+  "parameters.musouIsshinActionsChargedAttackStamina": {
+    "cause": "Unclassified",
+    "value": { "index": 12, "proudSkillGroupId": 5239 }
+  },
+  "parameters.eyeBurstDamageBonus": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 5232 } },
+  "parameters.burstEnergyCost": { "cause": "Unclassified", "value": { "index": 19, "proudSkillGroupId": 5239 } },
+  "parameters.elementalBurstOnStartTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 5239 }
+  },
+  "parameters.elementalBurstOnStartTalentMultiplier2": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 5239 }
+  },
+  "parameters.musouIsshinSeconds": { "cause": "Unclassified", "value": { "index": 17, "proudSkillGroupId": 5239 } },
+  "parameters.eyeSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 5232 } },
+  "parameters.resolveStackGain": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 5239 } },
+  "parameters.restoreEnergy": { "cause": "Unclassified", "value": { "index": 16, "proudSkillGroupId": 5239 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
