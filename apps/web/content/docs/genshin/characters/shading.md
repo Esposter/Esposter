@@ -24,10 +24,27 @@ Each material sets a different set of keywords on the shader. These are read fro
 | Hair     | "SHADOW_RAMP_ON", "TOON_LIGHTMAP_ON", "TOON_SPECULAR_ON"                              |
 
 - **"TOON_SPECULAR_ON" is not a keyword the shader defines.** None of the uber's variants lists it, so no program is selected by it. The specular is gated by the material's own floats instead ("_UseSpecular", "_Shininess", "_SpecMulti").
-- **The program is picked by the keywords that do exist.** For the body, the variant whose keyword set is "METAL_MAT", "SHADOW_RAMP_ON" and "TOON_LIGHTMAP_ON", with no other material keyword, is the one the body's material selects. Thirteen deferred pixel programs carry exactly that set, differing only in engine-wide keywords ("LOD_FADE_CROSSFADE", "MHY_SKINMESH_ENABLE_VSSKINNING", "ENABLE_PACK_NORMAL_ON" and the like). Exact on the set; Provisional on which engine-wide set the game draws Lumine with.
+- **The program is picked by the keywords that do exist.** The uber's programs are named by pass, stage and keyword set (`readShaderPrograms`). A body's variant is one whose material keywords are exactly "METAL_MAT", "SHADOW_RAMP_ON" and "TOON_LIGHTMAP_ON", and no program has only those: every candidate also carries engine-wide keywords ("LOD_FADE_CROSSFADE", "MHY_SKINMESH_ENABLE_VSSKINNING", "ENABLE_PACK_NORMAL_ON" and the like). The candidates fall into 76 engine-wide sets. Exact on the material match; Provisional on which engine-wide set the game draws Lumine with, since it is set at runtime and is not in the program's bytes.
 - **The body's four texture slots** are "_MainTex", "_LightMapTex", "_MTMap" and "_PackedShadowRampTex". The variant also samples "_MTSpecularRamp" and "_EyeMask". Provisional: the register each slot is bound to is taken from the order the program's own parameter table lists the textures, which matches the sampling sites but is not yet checked against a binding.
 
 The close view's mesh is the body's LOD0 "Body" in block "04161624", 10,406 vertices in two submeshes (1,491 and 8,915), 12,660 triangles, with "Body_LOD1" to "Body_LOD3" beside it in the same block (Exact on the counts). Which LOD the game draws up close is Provisional: the prefab's root carries no LODGroup, and the renderer that binds each LOD is not yet identified. The textures are 1024 with a full 11-mip chain, and no other block holds a higher mip (Exact).
+
+### Which programs the sets select
+
+Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its `programs.tsv` line. A material's program is one of the candidates below, each carrying that material's set and some engine-wide set (see the bullet above). The ranges are the candidates, not one choice.
+
+| Material | Pass      | Stage  | Candidates | Program indices                                                                                                                                                              |
+| :------- | :-------- | :----- | ---------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Body     | "BODY"    | Pixel  |        124 | 194-225, 274-277, 282-285, 290-313, 440-443, 458-461, 476-479, 484-487, 536-543, 1291-1302, 1311-1326, 1373-1374, 1377-1378, 1393-1396                                       |
+| Body     | "BODY"    | Vertex |         41 | 736-749, 754-761, 791-792, 794-795, 818-821, 1499-1507, 1518-1519                                                                                                            |
+| Hair     | "BODY"    | Pixel  |         60 | 266-273, 278-281, 286-289, 318-321, 326-329, 338-341, 350-353, 446-447, 450-451, 464-465, 468-469, 488-495, 1329-1330, 1333-1334, 1345-1346, 1357-1358, 1375-1376, 1379-1380 |
+| Hair     | "BODY"    | Vertex |          5 | 750-753, 1508                                                                                                                                                                |
+| Face     | "BODY"    | Pixel  |         68 | 426-433, 528-535, 546-553, 576-583, 600-607, 614-621, 1389-1392, 1399-1402, 1413-1416, 1429-1432, 1435-1438                                                                  |
+| Face     | "BODY"    | Vertex |         30 | 783-788, 812-817, 824-829, 834-837, 1515-1517, 1522-1524, 1526-1527                                                                                                          |
+| Face     | "OUTLINE" | Pixel  |         16 | 882-885, 902-909, 920-923                                                                                                                                                    |
+| Face     | "OUTLINE" | Vertex |         24 | 952-959, 970-977, 984-991                                                                                                                                                    |
+
+The hair and face candidates sit in the same "BODY" pass as the body's, since the material keywords alone tell the three apart; the face also has candidates in "OUTLINE", the outline drawn over the face. No single program is named per material yet: that choice needs the engine-wide set, and until it is made no candidate is disassembled, so no DXIL program has been run through `vkd3d-compiler`.
 
 ## The pass classes
 
