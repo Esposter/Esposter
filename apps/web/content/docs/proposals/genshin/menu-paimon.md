@@ -68,4 +68,4 @@ packages/genshin-world/src/components/Menu/Paimon/Index.reference.ts
 
 ## Reference
 
-- `menu-paimon-current.png` — the Paimon menu on the current build at 1080 high with no screen open; the one still held is the 1.3 build's, which lacks the entries the current build adds. Partly found 2026-10-11: the wiki's `File:Paimon Menu Version 1.3.png`; still sought: A current-build Paimon menu at 1080 high with no screen open. The still is the 1.3 build, which lacks the entries the current build adds.
+- `menu-paimon-current.png` — the Paimon menu on the current build at 1080 high with no screen open; the one still held is the 1.3 build's, which lacks the entries the current build adds. Partly found 2026-10-11: the wiki's `File:Paimon Menu Version 1.3.png`; still sought: A current-build Paimon menu at 1080 high with no screen open.
