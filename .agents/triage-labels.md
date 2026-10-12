@@ -11,3 +11,5 @@ The skills speak in terms of five canonical triage roles. This tracker's label s
 | `wontfix`         | Will not be actioned                     |
 
 A label whose string ever diverges from its role name gets a second column here; until then there is nothing to map.
+
+`review` is not a triage role. It is the review's own label on the issues it owes until its settle job closes them, so triage never applies or removes it.

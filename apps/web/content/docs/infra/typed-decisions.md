@@ -5,7 +5,7 @@ description: A judgement whose answer is one of a fixed set is read by a typed-d
 
 # Typed decisions
 
-The pipeline's scarce resource is not money, it is **one shared Claude Code account window**. Every headless session the [review](/docs/infra/review) spawns — a reviewer, a fixer — comes out of the same allowance a person's session draws on, which is why a review run stops where it stands when the limit runs out and resumes on the next push.
+The pipeline's scarce resource is not money, it is **one shared Claude Code account window**. Every headless session the [review](/docs/infra/review) spawns — a reviewer, a fixer, a settler — comes out of the same allowance a person's session draws on, which is why a review run stops where it stands when the limit runs out and resumes on the next push.
 
 So the cheapest session is the one never spawned. A judgement whose answer is one of a fixed set, and whose inputs the pipeline already holds, goes to a **typed-decision model** (TypeSafe's Jev, through `@typesafe-ai/sdk`) first. It returns a typed value and a probability rather than text, so there is nothing to parse and no way for it to answer outside the set it was given.
 

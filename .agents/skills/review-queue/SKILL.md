@@ -1,6 +1,6 @@
 ---
 name: review-queue
-description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a finding the review deferred is picked up, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, each agent's commits made in its own worktree and landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
+description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, each agent's commits made in its own worktree and landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
 ---
 
 # Review Queue
@@ -58,9 +58,11 @@ A rebase conflict is always one of the agent's own commits meeting what `ai/queu
 
 Whoever pushed a red typecheck or lint fixes it: reproduce it with that one check and push the fix behind it. The review never waits on CI, and `main` is never repaired in place (`apps/web/content/docs/infra/review.md`, "CI on the queue").
 
-## Findings the review defers
+## Review issues
 
-When the review's fixer cannot settle a finding, it goes into one issue labelled for an agent, using the label `.agents/triage-labels.md` gives for work an agent can take. That issue is picked up like any other: fixed in a worktree, landed on `ai/queue` by the loop above, and then reviewed in a later window. The commit that settles its last finding carries `Closes #<number>`, which closes the issue on the push, since `ai/queue` is the default branch.
+The review opens an issue labelled `review` for each finding it owes, and the review's settle job closes it once every finding is fixed, refuted or recorded (`apps/web/content/docs/infra/review.md`). A session never takes a `review` issue, and triage never applies or removes its label: it is the review's own. A session's commit that settles one of its findings does not close the issue, so no commit carries a `Closes #<number>` for it.
+
+A review run that goes red is a session's to read. Its step summary names the window, the issue or the settler that failed, and the next commit fixes it (`apps/web/content/docs/architecture/engineering-loops.md`, "What runs next", item 2).
 
 ## Deep Dives
 

@@ -2,12 +2,13 @@
 
 Read when automation launches a headless session: its one launcher, its two roles and the gate that must be able to decline each spawn.
 
-`scripts/src/services/review/runSession.ts` is the one launcher. It takes a role and a prompt and never picks a model: every session runs on `REVIEW_MODEL` (`scripts/src/services/review/constants.ts`), the unversioned alias, as every subagent does. Its wall clock is `REVIEWER_TIMEOUT_MS` or `FIXER_TIMEOUT_MS` from the same file.
+`scripts/src/services/review/runSession.ts` is the one launcher. It takes a role and a prompt, and the role's model comes from `ReviewSessionRoleModelMap` (`scripts/src/services/review/constants.ts`). Every role is haiku, the unversioned alias. Its wall clock is `REVIEWER_TIMEOUT_MS`, `FIXER_TIMEOUT_MS` or `SETTLER_TIMEOUT_MS` from the same file, by role.
 
 The roles are `ReviewSessionRole` (`scripts/src/models/review/ReviewSessionRole.ts`):
 
-- **Reviewer**, one per batch, read-only. Print mode allows only the tools in `REVIEWER_TOOLS`, so every edit is denied.
-- **Fixer**, one per window with findings, each in its own fix job with no concurrency group, so a window's fixer runs beside the next review. It may edit and commit, and it never touches GitHub; the script lands its commits.
+- **Reviewer**, per batch. `REVIEWER_TOOLS` is the whole tool list in print mode, which denies every edit.
+- **Fixer**, per issue, in its own fix job. Its answer may leave a finding open, and the script carries the commits across.
+- **Settler**, per open issue, run one at a time in the settle job. Its answer must dispose of every finding, and the script closes the issue after the commits land.
 
 ## Every spawn owes a gate that can decline it
 

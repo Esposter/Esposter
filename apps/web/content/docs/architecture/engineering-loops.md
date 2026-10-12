@@ -32,8 +32,8 @@ flowchart TD
     QUEUE --> REVIEW["review — haiku reviewers over each window of ai/queue"]
     REVIEW -->|"main fast-forwards to the window's end"| CI
     REVIEW -->|"fixer fixes the findings on ai/queue"| QUEUE
-    REVIEW -->|"findings the fixer defers"| REVIEWISSUE["one GitHub issue per run"]
-    REVIEWISSUE -->|"an agent picks it up"| FINISH
+    REVIEW -->|"a passed window's findings"| REVIEWISSUE["a review issue per chunk of findings"]
+    REVIEWISSUE -->|"the settle job: fixed, refuted or recorded"| REVIEW
   end
 
   subgraph health ["Code-health loop"]
@@ -71,7 +71,6 @@ flowchart TD
 | A settled convention that old code predates                | `sweeps` skill, one ledger per convention                                                              |
 | Making something faster or cheaper                         | `runtime-efficiency` skill for where the work runs, `bench` skill for measuring it                     |
 | A convention learned or corrected                          | `skill-authoring` skill                                                                                |
-| A finding a review defers to an issue                      | the issue the review opens, then the loop its role names (`review-queue` skill)                        |
 | A dependency update                                        | `dependency-updates` skill                                                                             |
 | A GitHub issue                                             | `pnpm ai:triage:label`, then the loop its role names                                                   |
 
@@ -92,7 +91,7 @@ A loop that finds as much on one pass as it did on the last is not converging. T
 A session that finishes a unit of work does not stop to ask whether to go on. It takes up the first of these that exists, runs it to its own stop rule, commits and pushes it, and reads the list again, until the list is empty or the user redirects it. Each one is read off a command rather than a list someone keeps:
 
 1. **This machine's leftovers.** `pnpm ai:resume` lists what an earlier session left on this machine: uncommitted paths, unpushed commits, worktrees, its own stale claims, dead holds, missing plugins. Each one is finished, recorded or released before anything else, since every later step builds on the tree and the claims they hold (`resuming` skill).
-2. **Something red.** A failing review run, or a review issue for findings the fixer deferred (`review-queue` skill), since every later piece of work lands on top of it. A review's findings are not on this list otherwise: the fixer works them on `ai/queue` itself.
+2. **Something red.** A failing review run (`review-queue` skill), since every later piece of work lands on top of it.
 3. **This repository's follow-ups**, when the follow-ups plugin is installed: the owner wrote each one down, or accepted a session writing it, so it outranks work a session would pick for itself. The plugin's drain skill works them one change at a time to its own stop rule ([TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups)).
 4. **An area owed a product-review pass**, as `pnpm ai:proposals:report` lists it, so the specs match the shipped surface before anything is built from them.
 5. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).

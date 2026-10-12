@@ -337,18 +337,18 @@ AI sessions commit faster than any reviewer reads, so nothing between a commit a
 person. Each session pushes the one permanent `ai/queue` branch with `pnpm ai:queue:push`. A GitHub Actions workflow
 then reviews what landed there: it takes the commits `main` does not have yet in windows of at most 300 changed files,
 has headless Haiku reviewers read each window in batches of files they can read whole, and fast-forwards `main` to the
-window's last commit. A fixer session then fixes what the reviewers found and lands its commits on `ai/queue`, and the
-findings it defers become one issue. The design and the figures live in
+window's last commit. Each window that passes opens an issue for its findings. A fixer session then fixes what it can and
+lands its commits on `ai/queue`, and a settler session settles what the fixer left open, so every finding ends fixed,
+refuted or recorded. The design and the figures live in
 [the review docs](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/infra/review.md).
 
 ```mermaid
 flowchart LR
   S[AI sessions] -->|pnpm ai:queue:push| Q[(ai/queue)]
   Q -->|window of commits| R[Haiku reviewers]
-  R -->|window reviewed: fast-forward| M[(main)]
-  R -->|findings| F[Fixer]
-  F -->|fixed commits| Q
-  F -->|deferred findings| I[Issue]
+  R -->|window passed: fast-forward| M[(main)]
+  R -->|findings| I[Review issue]
+  I -->|fixer, then settler: commits| Q
 ```
 
 ## <a name="packages">📦 Packages</a>
