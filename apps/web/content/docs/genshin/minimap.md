@@ -1,6 +1,6 @@
 ---
 title: Minimap
-description: The HUD's corner map, as the game keeps one in play. The map's one drawing of the catalogue, cut to a circle round the character and turned with the view so the way it faces is always up, with the pointer at its centre. Pressing it opens the map, as M does.
+description: The HUD's corner map, as the game keeps one in play. The map's one drawing of the catalogue, cut to a circle round the character with north up, under the game's own marks placed by its interface tree, the N at the top of the rim, the view's fan and the character's arrow. Pressing it opens the map, as M does.
 ---
 
 # Minimap
@@ -11,31 +11,35 @@ In the world, the game keeps a small round map in the top left of its heads-up d
 
 ```mermaid
 flowchart LR
-  CAM["The character's ground point and the view's yaw, read each frame they change"] --> TURN["The drawing turned by the yaw and moved under the centre"]
-  DRAW["Map/Drawing: the filled areas' outlines and the unlocked jump landmarks"] --> TURN
-  TURN --> CUT["Cut to a circle a fixed number of metres across"]
-  CUT --> MINI["The minimap, the pointer at its centre facing up"]
+  CAM["The character's place and facing and the view's yaw, read as they change"] --> MOVE["The drawing moved under the centre, north up"]
+  DRAW["Map/Drawing: the filled areas' outlines and the unlocked jump landmarks"] --> MOVE
+  MOVE --> CUT["Cut to a circle a fixed number of metres across, fading out at its rim"]
+  CAM --> MARKS["The fan turned by the view's yaw, the arrow by the character's facing"]
+  CUT --> MINI["The minimap, the N at the top of its rim"]
+  MARKS --> MINI
   MINI -->|"pressed"| MAP["The map opens"]
 ```
 
 - **The map's drawing, not a second one.** `Hud/Minimap` draws `Map/Drawing` with the unlocked landmarks the map holds, so a landmark the map gains, or an area a statue fills in, appears on the minimap with no change of its own ([map unlocking](/docs/genshin/map-unlocking)).
-- **It turns with the view.** The drawing is moved so the character's ground point sits at the centre and turned by the camera's yaw, so the way the view faces is always up, and the pointer at the centre never turns. The circle shows `MINIMAP_RADIUS` metres each way.
-- **Read once a frame, handed on when it moves.** The world screen reads the character's body's ground point in world metres and the camera's yaw once a frame, and hands the HUD a new reading only when one of them moved, so a still player re-renders nothing.
+- **North stays up.** The drawing is only moved, so the character's ground point sits at the centre, and never turned: on the English PC client's world HUD and the Chinese client's recording over open sea alike, the N holds the top of the rim while the fan and the arrow turn. The circle shows `MINIMAP_RADIUS` metres each way.
+- **The tree places every piece.** The back fills `GrpBackMap`'s rect, and the marks stand in `GrpMap`'s, which the game scales by 0.6 about its corner: `MarkSouth`'s `ImgSouth`, which the game names its south and draws as an N, five units under the top of a circle 24 units in from the group's edge; `MarkSightFan`, scaled by 1.25 about its foot at the centre; and `MarkLocalAvatar` at the centre. The stills agree with the tree: the rim's ring stands 107 pixels from the centre at 1080 high, `GrpBackMap`'s half of 180 units at the 1.2 pixels a unit spans there.
+- **The fan is the view, the arrow is the character.** The fan, a quarter turn wide, turns with the camera's yaw, and the cyan arrow at the centre with the way the character faces, so a character walking toward the camera points its arrow down.
+- **Read once a frame, handed on when it moves.** The world screen reads the character's body's ground point in world metres, the camera's yaw and the body's facing once a frame, and hands the HUD a new reading only when one of them moved, so a still player re-renders nothing.
 - **One button.** The minimap is a button named for the map in the game's words; pressing it opens the map, as M does. The drawing inside it is hidden from a screen reader and takes no pointer of its own.
 
 ## Key files
 
-| File                                                            | Role                                                                  |
-| :-------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`   | The drawing cut to a circle round the character, turned with the view |
-| `packages/genshin-world/src/components/Map/Drawing/Index.vue`   | The one drawing it shares with the map                                |
-| `packages/genshin-world/src/components/Map/Pointer/Index.vue`   | The pointer at its centre                                             |
-| `packages/genshin-world/src/services/map/constants.ts`          | The metres it shows, and the marks' share of them                     |
-| `packages/genshin-world/src/components/World/Session/Index.vue` | Reads the character's ground point and the view's yaw for it          |
+| File                                                            | Role                                                                                 |
+| :-------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`   | The drawing cut to a circle round the character, north up, and its marks             |
+| `packages/genshin-world/src/components/Map/Drawing/Index.vue`   | The one drawing it shares with the map                                               |
+| `packages/genshin-world/src/models/hud/HudInterfaceRectName.ts` | The tree's rects its back and its marks stand in                                     |
+| `packages/genshin-world/src/services/map/constants.ts`          | The metres it shows, and the marks' share of them                                    |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Reads the character's ground point, the view's yaw and the character's facing for it |
 
 ## Notes
 
-- **Its look is provisional.** Its size, rim, the metres it shows, its icons and whether its rim carries a north mark are measured off a recording of the English PC client's world HUD, which is not yet found ([roadmap](/docs/genshin/roadmap)); until then each is marked provisional in its file.
+- **What is measured, and what stands in.** Its size and every mark's place are the tree's. Its thin light ring, the drawing's fade over the rim's outer sixth, the fan's white and the arrow's cyan are measured at 1080 high on the references below. The N's serif capital and the arrow's notched head are written from their measures, since the recordings draw them too small to trace, and the metres it shows are not yet read. The terrain is the game's painted art, kept out of the repository, so the drawing stands on the map's own ground, `MAP_GROUND`, as the overlay's does. Each of these is marked provisional in its file.
 
 ## Sources
 
@@ -43,4 +47,6 @@ flowchart LR
 
 ## Reference
 
+- `hud-world-keys.png` and `hud-stamina-climb.png` — the English PC client's world HUD at 1080 high, the [HUD](/docs/genshin/hud)'s references, which show the ring over olive ground and over a flat sky.
+- `bili-av251752644-stamina.mp4` — the Chinese client's play, its minimap over open sea from 488 to 496 seconds, where the fan, the ring, the fill and the N are each read on a flat ground.
 - `oculus-minimap.mkv` — walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, and the moment its sound plays, 30 seconds at most; the distance at which the mark shows and the sound's start are read from it. The sound's start is replaced by the audio pass. The distance at which the mark shows stays on the recording. On the wiki and YouTube, none found (searched 2026-10-11).

@@ -443,9 +443,9 @@ const character = useTemplateRef("character");
 const isHudHidden = ref(false);
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
-// The character's ground point in world metres and the yaw the view faces, for the map and the minimap, read each frame
-// And handed on only when it moved, so a still player re-renders nothing
-const mapCamera = shallowRef<MapCamera>({ x: 0, yaw: 0, z: 0 });
+// The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
+// The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
+const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
 const cameraEuler = new Euler();
 // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
 // Refilling, and once it is full the meter fades out where it stood
@@ -455,9 +455,10 @@ useRafFn(() => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
   if (!activeCamera) return;
   const { x, y, z } = characterBody.position;
+  const { y: facing } = characterBody.rotation;
   const { y: yaw } = cameraEuler.setFromQuaternion(activeCamera.quaternion, "YXZ");
-  if (x !== mapCamera.value.x || yaw !== mapCamera.value.yaw || z !== mapCamera.value.z)
-    mapCamera.value = { x, yaw, z };
+  const { facing: lastFacing, x: lastX, yaw: lastYaw, z: lastZ } = mapCamera.value;
+  if (x !== lastX || yaw !== lastYaw || z !== lastZ || facing !== lastFacing) mapCamera.value = { facing, x, yaw, z };
   const stamina = character.value?.stamina.value ?? STAMINA_MAX;
   if (stamina >= STAMINA_MAX && hudFrame.stamina >= STAMINA_MAX) return;
   hudFrame.stamina = stamina;

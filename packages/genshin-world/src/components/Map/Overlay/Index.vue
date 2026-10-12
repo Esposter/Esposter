@@ -20,6 +20,7 @@ import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtS
 import { computeZoomShare } from "#src/services/map/computeZoomShare";
 import {
   MAP_DRAG_THRESHOLD_PIXELS,
+  MAP_GROUND,
   MAP_LABEL_SHARE,
   MAP_OVERLAY_MARK_SHARE,
   MAP_PROGRESS_OFFSET_SHARE,
@@ -257,7 +258,7 @@ onMounted(() => {
 /* Provisional: the colours and the zoom slider's place measured off the English PC client's map over Jueyun Karst at
    1080 high; the map's terrain is the game's painted art, which is not drawn here */
 .map-overlay {
-  background: #111317;
+  background: v-bind(MAP_GROUND);
 }
 
 /* Provisional: the player's pointer sits 45 units right of and 50 units under the screen's centre in the reference, so

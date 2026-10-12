@@ -5,9 +5,12 @@ export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [LandmarkKind.Statue
 // Provisional: the game's own arrival point for each statue, its scene point's transport place. How far in front of a
 // Landmark a jump lands, in metres, clear of a statue's plinth
 export const JUMP_STANDOFF_DISTANCE = 8;
-// Provisional: the minimap measured off a recording of the English PC client's world HUD. The metres from the
-// Minimap's centre to its rim
+// Provisional: the metres from the minimap's centre to its rim, not yet read off the game's minimap against the world
 export const MINIMAP_RADIUS = 120;
+// Provisional: the ground the map's drawing stands on where the game paints its terrain, which is not drawn here, read
+// Off the English PC client's map over Jueyun Karst at 1080 high. The overlay and the minimap each stand it under the
+// Drawing, so the two views show the world alike
+export const MAP_GROUND = "#111317";
 // Provisional: the map's marks measured off the game's map with the HUD's reference. A mark's radius is a share of the
 // Extent a view shows, so it is drawn one size at any view's scale
 export const MAP_MARK_SHARE = 0.02;

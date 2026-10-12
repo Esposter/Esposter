@@ -44,7 +44,8 @@ const characterIdSkillGlyphsMap = new Map(
 
 export const isBackdrop = true;
 export const props = {
-  camera: { x: 0, yaw: 0, z: 0 },
+  // The reference's arrow points down, the character facing the camera, which looks north
+  camera: { facing: Math.PI, x: 0, yaw: 0, z: 0 },
   catalogue: await readCatalogue(GAME_DATA_LOCAL_BASE_URL),
   characterDataMap,
   characterIdSkillGlyphsMap,

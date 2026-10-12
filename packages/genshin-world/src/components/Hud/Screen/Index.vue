@@ -127,9 +127,15 @@ const emit = defineEmits<{ map: []; menu: [] }>();
           :parent="mapInfoRect"
           :rect="interfaceRects[HudInterfaceRectName.MiniMap]"
         >
-          <GameRect :parent="miniMapRect" :rect="interfaceRects[HudInterfaceRectName.BackMap]">
-            <HudMinimap :camera :catalogue :game-text :landmarks @open="emit('map')" />
-          </GameRect>
+          <HudMinimap
+            :camera
+            :catalogue
+            :game-text
+            :interface-rects
+            :landmarks
+            :parent="miniMapRect"
+            @open="emit('map')"
+          />
         </GameRect>
       </GameRect>
       <!-- The top right's panel stands in two groups that each fill the page, so the page's rect is its parent's -->
