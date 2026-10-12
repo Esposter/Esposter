@@ -27,6 +27,23 @@ describe("createAvatarShadingInputs", () => {
     expect(faceDraw?.rotateOffset).toBe(0);
   });
 
+  test("reads the ramp width the material gives, and leaves the shading's default where it gives none", () => {
+    expect.assertions(2);
+    const { rampWidth } = createAvatarShadingInputs(
+      { colors: {}, floats: { _ShadowRampWidth: 0.8 }, keywords: [], textures: {} },
+      CharacterMaterialKind.Body,
+      new Map(),
+    );
+    const { rampWidth: missingRampWidth } = createAvatarShadingInputs(
+      { colors: {}, floats: {}, keywords: [], textures: {} },
+      CharacterMaterialKind.Body,
+      new Map(),
+    );
+
+    expect(rampWidth).toBe(0.8);
+    expect(missingRampWidth).toBeUndefined();
+  });
+
   test("reads each region's first and cool shadow colour, white where the material holds none", () => {
     expect.assertions(2);
     const inputs = createAvatarShadingInputs(

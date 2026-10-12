@@ -85,6 +85,7 @@ export const createAvatarShadingInputs = (
     outlineOffset: readOutlineOffset(nameFloatMap),
     outlineScales: readKnots(colors, "_OutlineWidthAdjustScales"),
     rampTexture: slotTextureMap.get("_PackedShadowRampTex"),
+    rampWidth: nameFloatMap.get("_ShadowRampWidth"),
     // A region the material holds no colour for takes the material's own, as a region with no tint of its own does
     regionTints: {
       five: readColour(colors, "_Color5") ?? color,
