@@ -104,7 +104,8 @@ export const loadWitness = async (
     placement: { materials, mesh, position, rotation, scale },
   } of drawnPlacements) {
     const isMoving = MOVING_PART_FAMILIES.has(family);
-    const part = new Group();
+    // Only a moving part is a group of its own, so an instanced placement allocates none
+    let part: Group | undefined;
     const matrix = new Matrix4().compose(new Vector3(...position), new Quaternion(...rotation), new Vector3(...scale));
     for (const submesh of nameSubmeshesMap.get(mesh) ?? []) {
       const material =
@@ -114,6 +115,7 @@ export const loadWitness = async (
         const drawn = new Mesh(submesh.geometry, material);
         drawn.castShadow = true;
         drawn.receiveShadow = true;
+        part ??= new Group();
         part.add(drawn);
         continue;
       }
@@ -122,7 +124,7 @@ export const loadWitness = async (
       if (instanceGroup) instanceGroup.matrices.push(matrix);
       else instanceGroupMap.set(key, { family, geometry: submesh.geometry, material, matrices: [matrix], mesh });
     }
-    if (!isMoving) continue;
+    if (part === undefined) continue;
     part.name = mesh;
     part.applyMatrix4(matrix);
     getFamilyGroup(family).add(part);
