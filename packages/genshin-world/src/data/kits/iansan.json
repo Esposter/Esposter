@@ -5,10 +5,6 @@
   },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttackStamina": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 11031 } },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 4.537856055185257, "height": 2, "radius": 2.15 }
-  },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.area": {
     "cause": "Unsourced",
