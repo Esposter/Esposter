@@ -22,8 +22,8 @@ export const ALOY_CHARACTER_ID = 10_000_062;
 // Give Cryo infusion for the table's seconds of Rushing Ice. Her Coil and Rushing Ice normal attack bonuses are not built,
 // As no kit step reads a normal attack's DMG bonus from the team's effects. Her constellations are not built, as the game
 // Cannot activate them
-export const createAloyKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {
-  const rushingIceSeconds = readParameter("rushingIceSeconds");
+export const createAloyKitBehaviour = ({ readSeconds }: KitRecordReader): KitBehaviour => {
+  const rushingIceSeconds = readSeconds("rushingIceDuration");
   // Each Chillwater Bomblet that lands counts a coil stack, and the fourth gives Rushing Ice, which holds off any more coils
   // Until it ends. Provisional: gcsim counts a bomblet once for all the enemies it strikes, where this counts each one
   const addCoilStack = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {

@@ -11,6 +11,7 @@ Aloy's kit is its record and one behaviour module, `createAloyKitBehaviour`, ava
 
 - **Aloy's strikes, fully charged shot, Freeze Bomb, Chillwater Bomblets and burst deal 0 poise.** Provisional, as gcsim gives none, so `aloyKit.ts` stands each hit at 0; her plunge reaches and 0.4-second landing are the stand-ins other kits use.
 - **Each Chillwater Bomblet adds one coil stack per enemy it strikes, and Freeze Bomb and each bomblet give 1U of Cryo.** gcsim counts a bomblet once for all its enemies and gives Freeze Bomb no gauge, so `aloyKit.ts` counts each enemy and reads 1U as Ganyu's Cryo hits do.
+- **The Chillwater Bomblets' hitmarks and Freeze Bomb's hit count are `Unsourced`.** gcsim fires each bomblet at "skillRelease+travel+delay+((i+1)*6)" at skill.go line 101, which no reader evaluates because "travel" and "delay" are parameters with defaults, not single-assignment names, so their hitmarks stay hand-set at 31 and 37 frames. The three hits are one bomb and "bomblets" at 2 by default (skill.go line 52), so the count of 3 stays hand-set too.
 
 ## Key files
 
