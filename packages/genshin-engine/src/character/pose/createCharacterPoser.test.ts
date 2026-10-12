@@ -57,6 +57,7 @@ describe(createCharacterPoser, () => {
     swimSpeed: 1,
     walkSpeed: 1,
   };
+
   test("poses a bone in its rest frame, so a rotated rest holds the same pose as an identity one", () => {
     expect.hasAssertions();
 
