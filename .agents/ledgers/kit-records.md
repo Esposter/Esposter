@@ -29,7 +29,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `citlali`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `clorinde`           | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `collei`             | 2026-10-13 · Haiku 5.5 |                                                                          |
-| `columbina`          | —                      | her page's poise bullet names the deleted framework proposal's poise gap |
+| `columbina`          | 2026-10-13 · Haiku 5.5 | her page's poise bullet names the deleted framework proposal's poise gap |
 | `cyno`               | —                      |                                                                          |
 | `dahlia`             | —                      |                                                                          |
 | `dehya`              | —                      |                                                                          |
