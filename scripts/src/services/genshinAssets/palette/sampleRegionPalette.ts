@@ -30,6 +30,11 @@ export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDa
     }
     // oxlint-disable-next-line no-await-in-loop -- one field's textures are read at a time
     const texels = await readFamilyTexels(texturePaths);
+    // Where every texel is transparent the field has no colour to read, so it is left provisional as one with no texture is
+    if (texels.length === 0) {
+      notes.push(`${region} ${field}: no opaque texel in its families' diffuse textures, left provisional`);
+      continue;
+    }
     const { linear, spread, texelCount } = computeDominantColour(texels);
     const hex = `#${linear
       .map((channel) =>
