@@ -14,6 +14,8 @@ describe("readGcsimCitedCandidates", () => {
   const ASC_GO = "package aino\n\nfunc tick() {\n\tadd(1.5 * 60)\n}\n";
   const AREA_GO =
     "package albedo\n\nfunc burst() {\n\tcombat.NewCircleHitOnTargetFanAngle(c.Core.Combat.Player(), nil, 8, 120)\n}\n";
+  const QUEUE_GO =
+    "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttack(ai, area, 70, 70)\n\t}, 75)\n}\n";
   const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
   const createGcsimDirectory = () => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
@@ -21,6 +23,7 @@ describe("readGcsimCitedCandidates", () => {
     writeFileSync(join(directory, "internal", "characters", FOLDER, "asc.go"), ASC_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "loop.go"), LOOP_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "area.go"), AREA_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "queue.go"), QUEUE_GO);
     return directory;
   };
 
@@ -120,6 +123,36 @@ describe("readGcsimCitedCandidates", () => {
     expect(classifyKitValue({ angle, height: 2, radius: 9 }, candidates, [], false)).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: { angle, height: 2, radius: 9 },
+    });
+  });
+
+  test("a cited line inside a queued block gives its value plus the block's delay", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.burst.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 145 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get(
+      "hits.burst.hitmarkFrames",
+    )?.[0];
+    expect(candidate?.value).toBe(145);
+    expect(candidate?.provenance).toStrictEqual({
+      file: "internal/characters/aino/queue.go",
+      line: 5,
+      source: KitSource.Gcsim,
+    });
+  });
+
+  test("a cited hitmark the queued block does not give reads as DiffersFromSource, with the block's own hitmark", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.burst.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 150 },
+    };
+    const candidates =
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.burst.hitmarkFrames") ?? [];
+    expect(candidates[0]?.value).toBe(145);
+    expect(classifyKitValue(150, candidates, [], false)).toStrictEqual({
+      cause: KitProvisionalCause.DiffersFromSource,
+      value: 150,
     });
   });
 });

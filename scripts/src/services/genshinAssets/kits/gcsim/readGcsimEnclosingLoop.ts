@@ -16,23 +16,27 @@ const COUNTING_HEADER_REGEX =
 const countTabs = (line: string): number => line.length - line.trimStart().length;
 
 // The count an expression of a loop's bound evaluates to, a whole number from zero, or none where the bound is not one
-const readLoopCount = (bound: string): number | undefined => {
+const readLoopCount = (bound: string, resolveName: (name: string) => GoValue | undefined): number | undefined => {
   const tokens = tokenizeGo(bound);
   const { expression } = parseGoExpression(tokens, 0);
-  const value: GoValue | undefined = evaluateGoExpression(expression, () => undefined);
+  const value: GoValue | undefined = evaluateGoExpression(expression, resolveName);
   return typeof value === "number" && Number.isInteger(value) && value >= 0 ? value : undefined;
 };
 
 // The `for` loop a line sits in, found by scanning up to the nearest line less indented than it, where the loop's header
 // Is a range over a whole count or a counting loop from zero. A line in no loop, or in a block that is not one, has none
-export const readGcsimEnclosingLoop = (lines: readonly string[], lineIndex: number): GcsimLoop | undefined => {
+export const readGcsimEnclosingLoop = (
+  lines: readonly string[],
+  lineIndex: number,
+  resolveName: (name: string) => GoValue | undefined,
+): GcsimLoop | undefined => {
   const indent = countTabs(lines[lineIndex] ?? "");
   for (let position = lineIndex - 1; position >= 0; position--) {
     const line = lines[position] ?? "";
     if (line.trim() === "" || countTabs(line) >= indent) continue;
     const header = RANGE_HEADER_REGEX.exec(line) ?? COUNTING_HEADER_REGEX.exec(line);
     if (header === null) return undefined;
-    const count = readLoopCount(header.groups?.bound ?? "");
+    const count = readLoopCount(header.groups?.bound ?? "", resolveName);
     return count === undefined ? undefined : { count, index: header.groups?.index ?? "" };
   }
   return undefined;

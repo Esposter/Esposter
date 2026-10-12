@@ -6,7 +6,9 @@ import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/add
 import { GCSIM_CHARACTERS_PATH } from "#src/services/genshinAssets/kits/constants";
 import { readGcsimCitedArea } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedArea";
 import { readGcsimEnclosingLoop } from "#src/services/genshinAssets/kits/gcsim/readGcsimEnclosingLoop";
+import { createGcsimFileResolver } from "#src/services/genshinAssets/kits/gcsim/readGcsimFileConstant";
 import { readGcsimLineValues } from "#src/services/genshinAssets/kits/gcsim/readGcsimLineValues";
+import { readGcsimQueueDelay } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -19,14 +21,20 @@ const readCitedValue = (lines: readonly string[], lineIndex: number, citedValue:
   // An area is cited by the constructor on its line, whole, as its object is the one value of its line
   if (typeof citedValue === "object" && citedValue !== null && !Array.isArray(citedValue))
     return readGcsimCitedArea(lineText, file);
-  const loop = readGcsimEnclosingLoop(lines, lineIndex);
+  const resolveName = createGcsimFileResolver(lines);
+  // A line inside a queued block is read at the time the block queues it, so the block's delay is added to its values
+  const delay = readGcsimQueueDelay(lines, lineIndex, resolveName);
+  if (delay === undefined) return undefined;
+  const loop = readGcsimEnclosingLoop(lines, lineIndex, resolveName);
   if (loop === undefined) {
-    const lineValues = readGcsimLineValues(lineText);
+    const lineValues = readGcsimLineValues(lineText, resolveName).map((value) => value + delay);
     return lineValues.find((lineValue) => checkIsKitValueEqual(lineValue, citedValue)) ?? lineValues[0];
   }
   if (loop.count === 0) return undefined;
   const valuesByIndex = Array.from({ length: loop.count }, (_value, index) =>
-    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : undefined)),
+    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))).map(
+      (value) => value + delay,
+    ),
   );
   const positions = Array.from(
     { length: Math.min(...valuesByIndex.map((values) => values.length)) },
