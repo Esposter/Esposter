@@ -1,6 +1,6 @@
 ---
 title: HUD
-description: Proposal — what the heads-up display still lacks past its built pieces and looks: the quest tracker's rect, Paimon's mark's place and fill, and the shares and re-measures the roadmap holds for manual verification.
+description: Proposal — what the heads-up display still lacks past its built pieces and looks: the quest tracker's rect and the shares and re-measures the roadmap holds for manual verification.
 model: claude-opus-5-5
 needs: [game-install, game-exports]
 touches:
@@ -26,7 +26,6 @@ The [HUD](/docs/genshin/hud) is built with its pieces and their looks, each but 
 **This adds, in order:**
 
 1. **The re-measure of the composite**: `world-hud-hidden.mkv` re-measures the composite later and gates nothing.
-2. **Paimon's mark's place and fill**, provisional until measured, since its ink is the whole head as the trace splits it.
 
 ## What this does not propose
 

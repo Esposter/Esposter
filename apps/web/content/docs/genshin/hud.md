@@ -70,7 +70,7 @@ flowchart TD
 - **A piece presses what its key does.** A HUD piece the player presses holds its action's own key in the world's input, as the touch controls do (`getActionKeyCode`), so a press passes the same checks as the key: the tracker presses V.
 - **It hides as the game's does.** The backslash, bound to the input's `HideInterface` action as the game's Hide UI key is ([controls](/docs/genshin/controls)), hides and shows it. Every menu, the map and a talk hide it too, as does photo mode, through the screen's own behaviour ([screens](/docs/genshin/screens)).
 - **The world stays reachable through it.** The HUD's root lets every pointer through to the world, and only its pieces take one, so a click on the world between them still locks the pointer and turns the camera. A mouse press on a piece stops at the HUD's root, so the world's input never reads it as an attack.
-- **The Paimon button is named for a screen reader.** It shows a mark alone, so it carries Paimon's name in the game's words.
+- **The Paimon button is the emblem bare.** As the game draws it, Paimon's emblem stands over the world with no disc, in its five tones traced a layer each off `hud-world-keys` (`PAIMON_EMBLEM_LAYERS`), spanning the width of the game's rect for the button with its cape hanging below. It shows the emblem alone, so it carries Paimon's name in the game's words for a screen reader.
 
 ## Key files
 

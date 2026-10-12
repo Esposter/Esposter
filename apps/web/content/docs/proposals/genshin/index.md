@@ -72,7 +72,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | Page                                                         | What it adds                                                                                                                              |
 | :----------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
 | [Follow camera](/docs/proposals/genshin/follow-camera)       | a notch's zoom and the ease read off a recording, the camera's settings, and how far photo mode may go                                    |
-| [HUD](/docs/proposals/genshin/hud)                           | the HUD's fitted places, its pieces' measured looks, and Paimon's mark                                                                    |
+| [HUD](/docs/proposals/genshin/hud)                           | the HUD's fitted places and its pieces' measured looks                                                                                    |
 | [Characters](/docs/proposals/genshin/characters)             | the game's characters from HoYoverse's official models                                                                                    |
 | [Party](/docs/proposals/genshin/party)                       | Party Setup's screen and Quick Setup, the next-member and game-over screens, Elemental Resonance's remains, the party kept between visits |
 | [Character screen](/docs/proposals/genshin/character-screen) | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending                                        |
