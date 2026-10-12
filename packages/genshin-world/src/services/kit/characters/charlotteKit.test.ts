@@ -7,19 +7,17 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { CHARLOTTE_CHARACTER_ID, createCharlotteKit } from "#src/services/kit/characters/charlotteKit";
+import { CHARLOTTE_CHARACTER_ID, createCharlotteKitBehaviour } from "#src/services/kit/characters/charlotteKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const CHARLOTTE_KIT = createCharlotteKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CHARLOTTE_CHARACTER_ID]),
-);
+const CHARLOTTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHARLOTTE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
-describe(createCharlotteKit, () => {
+describe(createCharlotteKitBehaviour, () => {
   const createCharlotteCombatant = (): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([

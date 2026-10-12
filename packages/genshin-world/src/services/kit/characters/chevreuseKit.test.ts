@@ -9,15 +9,13 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { CHEVREUSE_CHARACTER_ID, createChevreuseKit } from "#src/services/kit/characters/chevreuseKit";
+import { CHEVREUSE_CHARACTER_ID, createChevreuseKitBehaviour } from "#src/services/kit/characters/chevreuseKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const CHEVREUSE_KIT = createChevreuseKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CHEVREUSE_CHARACTER_ID]),
-);
+const CHEVREUSE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHEVREUSE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createChevreuseCombatant = (): Combatant => ({
@@ -30,7 +28,7 @@ const createChevreuseCombatant = (): Combatant => ({
   level: 90,
 });
 
-describe(createChevreuseKit, () => {
+describe(createChevreuseKitBehaviour, () => {
   const combatant = createChevreuseCombatant();
   const holdLevel = takeOne(CHEVREUSE_KIT.elementalSkillHolds ?? []);
 

@@ -7,14 +7,14 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { BAIZHU_CHARACTER_ID, createBaizhuKit } from "#src/services/kit/characters/baizhuKit";
+import { BAIZHU_CHARACTER_ID, createBaizhuKitBehaviour } from "#src/services/kit/characters/baizhuKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const BAIZHU_KIT = createBaizhuKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BAIZHU_CHARACTER_ID]));
+const BAIZHU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BAIZHU_CHARACTER_ID);
 
-describe(createBaizhuKit, () => {
+describe(createBaizhuKitBehaviour, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };

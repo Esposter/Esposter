@@ -10,12 +10,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { BENNETT_CHARACTER_ID, createBennettKit } from "#src/services/kit/characters/bennettKit";
+import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
 import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
@@ -24,7 +24,7 @@ import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const BENNETT_KIT = createBennettKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BENNETT_CHARACTER_ID]));
+const BENNETT_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BENNETT_CHARACTER_ID);
 
 const readFirstFieldTick = (
   combatant: Combatant,

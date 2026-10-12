@@ -1,11 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createFlinsKit, FLINS_CHARACTER_ID } from "#src/services/kit/characters/flinsKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createFlinsKitBehaviour, FLINS_CHARACTER_ID } from "#src/services/kit/characters/flinsKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const FLINS_KIT = createFlinsKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FLINS_CHARACTER_ID]));
+const FLINS_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FLINS_CHARACTER_ID);
 
-describe(createFlinsKit, () => {
+describe(createFlinsKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and burst's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

@@ -5,13 +5,13 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { CHIORI_CHARACTER_ID, createChioriKit } from "#src/services/kit/characters/chioriKit";
+import { CHIORI_CHARACTER_ID, createChioriKitBehaviour } from "#src/services/kit/characters/chioriKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const CHIORI_KIT = createChioriKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CHIORI_CHARACTER_ID]));
+const CHIORI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHIORI_CHARACTER_ID);
 
 const createChioriCombatant = (defense: number): Combatant => ({
   ascension: 0,
@@ -30,7 +30,7 @@ const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
   return context.kitEffectState.effects.filter((effect) => effect.kind === "summon");
 };
 
-describe(createChioriKit, () => {
+describe(createChioriKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups, to gcsim's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

@@ -7,13 +7,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { ALOY_CHARACTER_ID, createAloyKit } from "#src/services/kit/characters/aloyKit";
+import { ALOY_CHARACTER_ID, createAloyKitBehaviour } from "#src/services/kit/characters/aloyKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const ALOY_KIT = createAloyKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ALOY_CHARACTER_ID]));
+const ALOY_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALOY_CHARACTER_ID);
 
 const createAloyCombatant = (): Combatant => ({
   ascension: 0,
@@ -28,7 +28,7 @@ const createAloyCombatant = (): Combatant => ({
 
 const bombletHits = (): KitHit[] => ALOY_KIT.elementalSkill.hits.slice(1);
 
-describe(createAloyKit, () => {
+describe(createAloyKitBehaviour, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads each talent multiplier from her proud skill groups", () => {

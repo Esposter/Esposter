@@ -1,11 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createDurinKit, DURIN_CHARACTER_ID } from "#src/services/kit/characters/durinKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createDurinKitBehaviour, DURIN_CHARACTER_ID } from "#src/services/kit/characters/durinKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const DURIN_KIT = createDurinKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DURIN_CHARACTER_ID]));
+const DURIN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DURIN_CHARACTER_ID);
 
-describe(createDurinKit, () => {
+describe(createDurinKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and burst's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

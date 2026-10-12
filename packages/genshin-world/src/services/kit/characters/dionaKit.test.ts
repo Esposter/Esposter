@@ -6,12 +6,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createDionaKit, DIONA_CHARACTER_ID } from "#src/services/kit/characters/dionaKit";
+import { createDionaKitBehaviour, DIONA_CHARACTER_ID } from "#src/services/kit/characters/dionaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const DIONA_KIT = createDionaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DIONA_CHARACTER_ID]));
+const DIONA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DIONA_CHARACTER_ID);
 
 const createDionaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -33,7 +33,7 @@ const castShield = (action: KitAction, combatant = createDionaCombatant()): KitS
   return shield;
 };
 
-describe(createDionaKit, () => {
+describe(createDionaKitBehaviour, () => {
   const holdAction = DIONA_KIT.elementalSkillHolds?.[0]?.action;
 
   test("the hold's shield is the tap's shield times the hold's bonus", () => {

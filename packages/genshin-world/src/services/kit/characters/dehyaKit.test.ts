@@ -1,13 +1,13 @@
 import type { KitAction } from "#src/models/kit/KitAction";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createDehyaKit, DEHYA_CHARACTER_ID } from "#src/services/kit/characters/dehyaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createDehyaKitBehaviour, DEHYA_CHARACTER_ID } from "#src/services/kit/characters/dehyaKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const DEHYA_KIT = createDehyaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DEHYA_CHARACTER_ID]));
+const DEHYA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DEHYA_CHARACTER_ID);
 
-describe(createDehyaKit, () => {
+describe(createDehyaKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

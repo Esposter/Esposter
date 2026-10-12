@@ -13,18 +13,17 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createFischlKit, FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
+import { createFischlKitBehaviour, FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const FISCHL_KIT = createFischlKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FISCHL_CHARACTER_ID]));
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const FISCHL_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FISCHL_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const createFischlCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -57,7 +56,7 @@ const castStandingOz = (combatant: Combatant): KitEffectState => {
   return kitEffectState;
 };
 
-describe(createFischlKit, () => {
+describe(createFischlKitBehaviour, () => {
   const travelerCombatant: Combatant = {
     ...createFischlCombatant(),
     characterId: TRAVELER_CHARACTER_ID,

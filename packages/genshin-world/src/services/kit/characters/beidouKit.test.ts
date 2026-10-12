@@ -5,15 +5,15 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { BEIDOU_CHARACTER_ID, createBeidouKit } from "#src/services/kit/characters/beidouKit";
+import { BEIDOU_CHARACTER_ID, createBeidouKitBehaviour } from "#src/services/kit/characters/beidouKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const BEIDOU_KIT = createBeidouKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BEIDOU_CHARACTER_ID]));
+const BEIDOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BEIDOU_CHARACTER_ID);
 
 const createBeidouCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
@@ -28,7 +28,7 @@ const createBeidouCombatant = (constellationCount: number): Combatant => ({
   level: 90,
 });
 
-describe(createBeidouKit, () => {
+describe(createBeidouKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createBeidouCombatant(0));

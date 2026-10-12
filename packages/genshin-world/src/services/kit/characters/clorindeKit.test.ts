@@ -1,11 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { CLORINDE_CHARACTER_ID, createClorindeKit } from "#src/services/kit/characters/clorindeKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { CLORINDE_CHARACTER_ID, createClorindeKitBehaviour } from "#src/services/kit/characters/clorindeKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const CLORINDE_KIT = createClorindeKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CLORINDE_CHARACTER_ID]));
+const CLORINDE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CLORINDE_CHARACTER_ID);
 
-describe(createClorindeKit, () => {
+describe(createClorindeKitBehaviour, () => {
   test("reads the burst's cooldown and cost, the charged attack's stamina and the strikes' multipliers from her proud skill groups", () => {
     expect.hasAssertions();
 
