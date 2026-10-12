@@ -5,7 +5,7 @@ description: How what lands on ai/queue is reviewed — read in small batches by
 
 # Review
 
-Working sessions push one permanent branch, `ai/queue`, and nothing else reaches the default branch except through a review. The review is a single GitHub workflow. It reads the commits `main` does not yet have, cuts them into windows of a bounded size, reads each window in small batches with headless haiku sessions, and then fast-forwards `main` to the window's last commit. A second haiku session fixes what the reviewers found. Nothing waits on a person, and no step is timed: a run's spend is bounded by how many files it reads.
+Working sessions push one permanent branch, `ai/queue`, which is the default branch, and nothing reaches `main` except through a review. The review is a single GitHub workflow. It reads the commits `main` does not yet have, cuts them into windows of a bounded size, reads each window in small batches with headless haiku sessions, and then fast-forwards `main` to the window's last commit. A second haiku session fixes what the reviewers found. Nothing waits on a person, and no step is timed: a run's spend is bounded by how many files it reads.
 
 ## Why it replaced CodeRabbit
 
@@ -72,7 +72,8 @@ Every session draws on the same Claude account as a person's working session, so
 - **Limits are amounts, never time.** The window, the batch and the reviewer count are each bounded by how much is read, so a run's cost is known before it starts and nothing depends on how many reviews happened in the last hour. A time limit is what CodeRabbit imposed and what the backlog outran.
 - **No pull requests, no `develop`, no express lane, no repair.** A pull request is a review slot the bot must spend, and a `develop` branch is a second place the reviewed prefix would have to be kept. Every commit is reviewed in its window, however small, so there is no lane that skips review, and a red `main` is fixed on `ai/queue` first, as the CI section below sets out.
 - **`main` is the reviewed prefix of `ai/queue`.** Only the review's fast-forward moves `main`, so `main` is always an ancestor of `ai/queue`, and what `main` holds is exactly what a review has read.
-- **Renovate targets `ai/queue`.** Its bumps enter through the queue like a session's commits, so they are reviewed like any other change instead of landing on `main` unread.
+- **`ai/queue` is the default branch.** GitHub dispatches and schedules a workflow only from the default branch's copy of its file, and `main` holds only what a review has passed, so a review workflow on `ai/queue` alone could never be dispatched. Renovate also reads its config from the default branch.
+- **Renovate targets `ai/queue` and merges by pull request.** Its bumps enter through the queue like a session's commits, so they are reviewed like any other change instead of landing on `main` unread. A branch automerge is a fast-forward, which a base moving every few minutes starves, so Renovate's pull requests merge through GitHub's auto-merge once their required checks pass.
 - **Reviewers are read-only, in a worktree at the window's end.** A reviewer reads the code exactly as it will be on `main`, cannot change it, and cannot reach GitHub. The session's answer is the only thing it hands back, parsed against a typed schema, and a malformed answer fails that one session.
 - **One fixer.** Fixes are made by a single session in order, so no two fixers race over the same files and the fixes stay in the order their findings were read.
 - **Deferred findings go to one issue per run.** A finding the fixer cannot settle is a person's to see, but it does not hold the queue. One issue lists them, so the run does not open a stream of issues, and the issue is labelled as work an agent can take.
@@ -119,7 +120,8 @@ A review does not gate on CI. A window's review completes and `main` moves, what
 | `scripts/src/review/index.ts`                    | the entry point, `pnpm -C scripts ai:review`, with `--from`, `--to` and `--dry-run` |
 | `scripts/src/models/review/ReviewFinding.ts`     | the typed finding a reviewer answers with: file, line, lane, summary and trigger    |
 | `scripts/src/models/review/ReviewDisposition.ts` | the typed disposition a fixer answers with: finding index, outcome and reason       |
-| `renovate.json`                                  | `baseBranchPatterns` names `ai/queue`, so Renovate's bumps enter through the queue  |
+| `renovate.json`                                  | Renovate's pull requests, against the default branch `ai/queue`, auto-merged        |
+| `apps/infra/src/github/branchDefault.ts`         | `ai/queue` as the default branch, which the workflow dispatches from                |
 | `.agents/skills/code-review/SKILL.md`            | the review every reviewer runs, with its two lanes and its standing rules           |
 | `.agents/skills/review-queue/SKILL.md`           | the session's side: committing and landing on `ai/queue`                            |
 | `.agents/triage-labels.md`                       | the label the deferred-findings issue carries                                       |
