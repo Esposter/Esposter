@@ -29,6 +29,6 @@ A batch leaves nothing to sweep but the branches and worktrees an older batch ma
 
 ## A batch that rebuilds the review
 
-The review runs the code on `ai/queue`, so a batch committing a change to the review's code would run each half-wired step against GitHub the moment it is pushed. While such a batch commits, the review's workflow is disabled (`gh workflow disable Review.yaml`). It is enabled again once the change is reviewed, fixed and pushed. Running the review by hand is the `review-queue` skill's to describe.
+The review runs the code on `ai/queue`, so a batch committing a change to the review's code would run each half-wired step against GitHub the moment it is pushed. While such a batch commits, the review's workflow is disabled (`gh workflow disable Review.yaml`). It is enabled again once the change is reviewed, fixed and pushed. Running the review by hand is its dispatch with the `from` and `to` inputs, documented in `apps/web/content/docs/infra/review.md`.
 
 - **A new wave is a new inline script.** Re-invoking a workflow by its `scriptPath` reruns that same wave, with its own agents and labels, whatever `args` it is handed. Passing an older wave's path to start a different one launches a duplicate of the older wave. Write each new wave's script inline, and use `scriptPath` only to resume or re-run that very script.

@@ -29,4 +29,4 @@ Docs sessions produce **specs, not code**: the deliverable of ideation/triage is
 
 ## Commits, not review windows
 
-A docs sweep is never sized to a review window — the review cuts its windows at a file cap (the `review-queue` skill). Commit by area and by step (feature pages, then decision pages), never by squeezing several topics into one file: the single-responsibility rule always wins over file count. A large deletion (retiring an old tree) is its own commit.
+A docs sweep is never sized to a review window — the review cuts its windows at a file cap (`apps/web/content/docs/infra/review.md`, step 4). Commit by area and by step (feature pages, then decision pages), never by squeezing several topics into one file: the single-responsibility rule always wins over file count. A large deletion (retiring an old tree) is its own commit.
