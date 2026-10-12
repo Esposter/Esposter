@@ -2,15 +2,15 @@ import type { CharacterPackReader } from "#src/models/character/CharacterPackRea
 import type { CharacterMaterialOptions, ToonNodeMaterial } from "genshin-engine";
 import type { BufferGeometry, SkinnedMesh } from "three";
 
-import { getCharacterMaterialTextureIndices } from "#src/services/character/getCharacterMaterialTextureIndices";
 import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
+import { getCharacterMaterialTextureIndices } from "#src/services/character/getCharacterMaterialTextureIndices";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import {
+  checkTransparentTexels,
   createCharacterMaterial,
   createPmxMesh,
   createPmxTexture,
   createPmxToonTexture,
-  hasTransparentTexels,
   parsePmx,
 } from "genshin-engine";
 
@@ -50,7 +50,7 @@ export const readCharacterMesh = (
         .map(({ textureIndex }) => textureIndex)
         .filter((textureIndex) => {
           const image = textures[textureIndex]?.image;
-          return image instanceof ImageBitmap && hasTransparentTexels(image);
+          return image instanceof ImageBitmap && checkTransparentTexels(image);
         }),
     );
     const materials = pmxModel.materials.map((pmxMaterial) =>

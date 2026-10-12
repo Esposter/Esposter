@@ -1,6 +1,6 @@
 // Whether any texel of a texture is less than fully opaque. A material whose texture has such texels is blended, as a
 // Material whose diffuse alpha is below one is, since its clear texels would otherwise be drawn as opaque black holes
-export const hasTransparentTexels = (image: ImageBitmap): boolean => {
+export const checkTransparentTexels = (image: ImageBitmap): boolean => {
   const context = new OffscreenCanvas(image.width, image.height).getContext("2d", { willReadFrequently: true });
   if (!context) return false;
   context.drawImage(image, 0, 0);
