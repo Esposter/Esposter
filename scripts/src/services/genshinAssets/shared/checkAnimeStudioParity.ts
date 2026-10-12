@@ -5,8 +5,7 @@ import {
   PARITY_REFERENCE_BLOCKS,
   PARITY_TYPE_EXPORT_ARGUMENTS,
 } from "#src/services/genshinAssets/shared/constants";
-import { checkIsGameRunning } from "#src/services/genshinParity/shared/checkIsGameRunning";
-import { GAME_EXECUTABLE_NAME } from "#src/services/genshinParity/shared/constants";
+import { assertAnimeStudioReady } from "#src/services/recreation/animeStudio/assertAnimeStudioReady";
 import { readAnimeStudioExceptions } from "#src/services/recreation/animeStudio/readAnimeStudioExceptions";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
@@ -77,12 +76,7 @@ export const checkAnimeStudioParity = (cliPath: string, directory: string, skipP
       `${reason}; pass --skip-parity to build without the parity check`,
     );
   }
-  if (checkIsGameRunning())
-    throw new InvalidOperationError(
-      Operation.Read,
-      GAME_EXECUTABLE_NAME,
-      "is running: close the game before AnimeStudio reads its blocks",
-    );
+  assertAnimeStudioReady({ ...GENSHIN_ANIMESTUDIO_OPTIONS, executablePath: cliPath });
   for (const { block, types } of PARITY_REFERENCE_BLOCKS) checkParityBlock(cliPath, block, types, directory);
   rmSync(join(directory, PARITY_DIRECTORY_NAME), { force: true, recursive: true });
 };
