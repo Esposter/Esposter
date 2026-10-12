@@ -30,7 +30,7 @@ export const createAinoKitBehaviour = ({ readHit, readSeconds }: KitRecordReader
         ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * ASCENSION_4_MASTERY_SHARE
         : 0,
   });
-  const burstFirstTickSeconds = readSeconds("waterBallFirstFall");
+  const burstFirstTickSeconds = readSeconds("burstStart");
   const burstTickIntervalSeconds = readSeconds("waterBallInterval");
   return {
     burst: {

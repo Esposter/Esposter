@@ -4,6 +4,8 @@ import type { KitRecord } from "genshin-world";
 
 import { readPublishedGameDataEntries } from "#src/services/gameData/readPublishedGameDataEntries";
 import { readPublishedGameDataIndex } from "#src/services/gameData/readPublishedGameDataIndex";
+import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
+import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { checkIsGcsimValueGiven } from "#src/services/genshinAssets/kits/checkIsGcsimValueGiven";
 import { GCSIM_PLUNGE_FALLBACK_FOLDER, GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
@@ -66,6 +68,7 @@ export const readKitInputs = async ({
     const tables = tablesMap.get(characterId);
     if (tables === undefined) throw new InvalidOperationError(Operation.Read, String(characterId), "has no tables");
     const notes: string[] = [];
+    const overlayName = toKebabCase(tables.name);
     const gcsimFolder = findGcsimFolder(tagCharacterMap, tables.name);
     const gcsim = gcsimFolder === undefined ? undefined : tagCharacterMap.get(gcsimFolder);
     if (gcsim === undefined) notes.push(`no gcsim folder at ${GCSIM_TAG}`);
@@ -73,7 +76,14 @@ export const readKitInputs = async ({
     const pages = await readWikiTalentPages(tables.name, wikiCacheDirectory);
     if (pages.length === 0) notes.push("no wiki talent pages");
     const gcsimCandidateMap: Map<string, KitCandidate[]> =
-      gcsim === undefined ? new Map() : getGcsimKitCandidates(gcsim, tables, plungeFallback, publishedRecord);
+      gcsim === undefined
+        ? new Map()
+        : getGcsimKitCandidates(
+            gcsim,
+            tables,
+            plungeFallback,
+            getKitBagPaths(publishedRecord ?? {}, readKitOverlay(overlayName)),
+          );
     const namedHitCandidateMap = gcsim === undefined ? new Map() : getGcsimNamedHitCandidates(gcsim, tables);
     if (gcsim !== undefined)
       for (const [path, constant] of Object.entries(GcsimExpectedPathConstantMap))
@@ -91,7 +101,7 @@ export const readKitInputs = async ({
       name: tables.name,
       namedHitCandidateMap,
       notes,
-      overlayName: toKebabCase(tables.name),
+      overlayName,
       ...(publishedRecord && { publishedRecord }),
       sourceCandidateMap,
       tables,

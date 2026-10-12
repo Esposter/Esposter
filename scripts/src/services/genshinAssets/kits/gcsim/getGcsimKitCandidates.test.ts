@@ -243,7 +243,7 @@ describe(getGcsimKitCandidates, () => {
     expect(candidateMap.get("burst.hits.length")?.map(({ value }) => value)).toStrictEqual([0]);
   });
 
-  test("joins a frames entry the record holds under a constant's name to that constant, and adds no path the record lacks", () => {
+  test("joins a frames path the kit holds under a constant's name to that constant, and adds no path the kit lacks", () => {
     expect.hasAssertions();
 
     const gcsim: GcsimCharacter = {
@@ -274,7 +274,7 @@ describe(getGcsimKitCandidates, () => {
       talentMultiplierMap: {},
       weaponType: WeaponType.Catalyst,
     };
-    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim, { frames: { burstStart: 0 } });
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim, new Set(["frames.burstStart"]));
 
     expect(
       ["frames.burstStart", "frames.otherStart", "parameters.burstStart"].map((path) =>

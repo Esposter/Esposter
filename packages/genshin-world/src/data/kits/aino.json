@@ -9,7 +9,6 @@
   "chargedAttack.hits.0.element": { "cause": "NoActionFile", "value": "Water" },
   "chargedAttack.hits.0.gauge": { "cause": "NoActionFile", "value": 1 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 24 },
-  "frames.waterBallFirstFall": { "cause": "Unclassified", "value": 123 },
   "frames.waterBallInterval": { "cause": "Unclassified", "value": 90 },
   "hits.waterBall.area": {
     "cause": "Unclassified",

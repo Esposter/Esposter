@@ -12,6 +12,7 @@ import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsi
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
 import { toGcsimFolderName } from "#src/services/genshinAssets/kits/gcsim/toGcsimFolderName";
+import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
 import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
@@ -97,7 +98,12 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     const mainCandidateMap: Map<string, KitCandidate[]> =
       mainCharacter === undefined || mainPlungeFallback === undefined
         ? new Map()
-        : getGcsimKitCandidates(mainCharacter, tables, mainPlungeFallback, publishedRecord);
+        : getGcsimKitCandidates(
+            mainCharacter,
+            tables,
+            mainPlungeFallback,
+            getKitBagPaths(publishedRecord, committedOverlay),
+          );
     const isTagPredated = gcsimFolder === undefined;
     if (isTagPredated) predatedNames.push(name);
     const { built, failures, overlay } = compareKitRecord(

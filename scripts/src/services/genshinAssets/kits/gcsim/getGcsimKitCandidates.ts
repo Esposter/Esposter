@@ -1,6 +1,5 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type { KitRecord } from "genshin-world";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { addGcsimNamedConstantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimNamedConstantCandidates";
@@ -17,12 +16,12 @@ import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/
 // Fields and its talent parameter joined through the config's `talents` and the talent file's labels, and each hit's
 // Area from the config's hitboxes by their names. A plunge with no file of its own, or a claymore's charged attack,
 // Takes the shared rule: its frames are the ones the kits share, and a plunge borrows the fallback character's areas.
-// A frames or parameters bag entry the published record holds under one of the character's constants' names takes that constant
+// A frames or parameters bag path the kit holds under one of the character's constants' names takes that constant
 export const getGcsimKitCandidates = (
   gcsim: GcsimCharacter,
   tables: KitTables,
   plungeFallback: GcsimCharacter,
-  publishedRecord: Pick<KitRecord, "frames" | "parameters"> = {},
+  bagPaths: ReadonlySet<string> = new Set(),
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   const writer = createGcsimKitCandidateWriter(candidateMap, gcsim, tables);
@@ -31,6 +30,6 @@ export const getGcsimKitCandidates = (
   addGcsimPlungeCandidates(writer, gcsim, plungeFallback);
   addGcsimSkillAndBurstCandidates(writer, gcsim);
   addGcsimSkillHoldCandidates(writer, gcsim);
-  addGcsimNamedConstantCandidates(writer, gcsim, publishedRecord);
+  addGcsimNamedConstantCandidates(writer, gcsim, bagPaths);
   return candidateMap;
 };
