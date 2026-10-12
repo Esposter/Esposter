@@ -10,7 +10,7 @@ describe(createNeferKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(NEFER_KIT.normalAttacks[0].hits).talentMultiplier,
+      takeOne(takeOne(NEFER_KIT.normalAttacks).hits).talentMultiplier,
       takeOne(NEFER_KIT.chargedAttack.hits).talentMultiplier,
       NEFER_KIT.plungeCollision.talentMultiplier,
       takeOne(NEFER_KIT.lowPlunge.hits).talentMultiplier,

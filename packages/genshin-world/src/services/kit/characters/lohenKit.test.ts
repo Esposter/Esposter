@@ -10,7 +10,7 @@ describe(createLohenKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(LOHEN_KIT.normalAttacks[0].hits).talentMultiplier,
+      takeOne(takeOne(LOHEN_KIT.normalAttacks).hits).talentMultiplier,
       takeOne(LOHEN_KIT.chargedAttack.hits).talentMultiplier,
       LOHEN_KIT.plungeCollision.talentMultiplier,
       takeOne(LOHEN_KIT.lowPlunge.hits).talentMultiplier,

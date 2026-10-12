@@ -10,7 +10,7 @@ describe(createZibaiKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(ZIBAI_KIT.normalAttacks[0].hits).talentMultiplier,
+      takeOne(takeOne(ZIBAI_KIT.normalAttacks).hits).talentMultiplier,
       takeOne(ZIBAI_KIT.chargedAttack.hits).talentMultiplier,
       ZIBAI_KIT.plungeCollision.talentMultiplier,
       takeOne(ZIBAI_KIT.lowPlunge.hits).talentMultiplier,

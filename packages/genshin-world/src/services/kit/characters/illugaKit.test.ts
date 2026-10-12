@@ -10,7 +10,7 @@ describe(createIllugaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(ILLUGA_KIT.normalAttacks[0].hits).talentMultiplier,
+      takeOne(takeOne(ILLUGA_KIT.normalAttacks).hits).talentMultiplier,
       takeOne(ILLUGA_KIT.chargedAttack.hits).talentMultiplier,
       ILLUGA_KIT.plungeCollision.talentMultiplier,
       takeOne(ILLUGA_KIT.lowPlunge.hits).talentMultiplier,

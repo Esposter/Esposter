@@ -10,7 +10,7 @@ describe(createLinneaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([
-      takeOne(LINNEA_KIT.normalAttacks[0].hits).talentMultiplier,
+      takeOne(takeOne(LINNEA_KIT.normalAttacks).hits).talentMultiplier,
       takeOne(LINNEA_KIT.chargedAttack.hits).talentMultiplier,
       LINNEA_KIT.plungeCollision.talentMultiplier,
       takeOne(LINNEA_KIT.lowPlunge.hits).talentMultiplier,
