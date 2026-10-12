@@ -66,18 +66,19 @@ const C6_ICD_SECONDS = 0.4;
 const C6_STACKS_PER_TRIGGER = 4;
 const C6_STACKS_MAX = 8;
 
+// A share of his Elemental Mastery taken as flat DMG from Ascension 4
+const createElementalMasteryShareBonus =
+  (share: number) =>
+  (combatant: Combatant): number =>
+    combatant.ascension >= ASCENSION_4 ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * share : 0;
+
 // Pactsworn's normal attacks take 150% of his Elemental Mastery as flat DMG from Ascension 4
-const getPactswornNormalAttackBonus = (combatant: Combatant): number =>
-  combatant.ascension >= ASCENSION_4
-    ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] *
-      ELEMENTAL_MASTERY_SHARE_ASCENSION_4_NORMAL_ATTACK
-    : 0;
+const getPactswornNormalAttackBonus = createElementalMasteryShareBonus(
+  ELEMENTAL_MASTERY_SHARE_ASCENSION_4_NORMAL_ATTACK,
+);
 
 // A Duststalker Bolt takes 250% of his Elemental Mastery as flat DMG from Ascension 4
-const getDuststalkerBoltBonus = (combatant: Combatant): number =>
-  combatant.ascension >= ASCENSION_4
-    ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * ELEMENTAL_MASTERY_SHARE_ASCENSION_4_BOLT
-    : 0;
+const getDuststalkerBoltBonus = createElementalMasteryShareBonus(ELEMENTAL_MASTERY_SHARE_ASCENSION_4_BOLT);
 
 // Day of the Jackal's stacks are set to four at the burst and raised by four at each Judication, to eight at most
 const addDayOfTheJackal = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>
