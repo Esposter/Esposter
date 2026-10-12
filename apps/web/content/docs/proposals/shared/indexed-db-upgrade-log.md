@@ -1,6 +1,6 @@
 ---
 title: IndexedDB upgrade failure logged once
-description: A throwing upgrade callback is logged by the open and again by the transaction's abort, so one failure prints twice; the layer that owns the single log is the open.
+description: A throwing upgrade callback is logged by the open and again by the transaction's abort, so one failure prints twice; which layer owns the single log is open.
 model: claude-haiku-5-5
 ---
 
