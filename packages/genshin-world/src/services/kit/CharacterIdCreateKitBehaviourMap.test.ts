@@ -1,12 +1,12 @@
-import { CharacterIdCreateKitMap } from "#src/generated/characterKitMap/CharacterIdCreateKitMap";
+import { CharacterIdCreateKitBehaviourMap } from "#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap";
 import { describe, expect, test } from "vitest";
 
-describe("generated character kit map", () => {
+describe("generated character kit behaviour map", () => {
   const CHARACTER_ID_SUFFIX = "_CHARACTER_ID";
 
   const CREATE_KIT_PREFIX = "create";
 
-  const CREATE_KIT_SUFFIX = "Kit";
+  const CREATE_KIT_SUFFIX = "KitBehaviour";
 
   test("holds every kit module keyed by the character id it declares, with no duplicate ids", () => {
     expect.hasAssertions();
@@ -23,13 +23,13 @@ describe("generated character kit map", () => {
     expect(declaredIds).toHaveLength(kitModules.length);
     expect(new Set(declaredIds).size).toBe(declaredIds.length);
     expect(
-      Object.keys(CharacterIdCreateKitMap)
+      Object.keys(CharacterIdCreateKitBehaviourMap)
         .map(Number)
         .toSorted((firstId, secondId) => firstId - secondId),
     ).toStrictEqual(declaredIds.toSorted((firstId, secondId) => firstId - secondId));
   });
 
-  test("loads each character id's own module's create function", async () => {
+  test("loads each character id's own module's behaviour", async () => {
     expect.hasAssertions();
 
     const kitModules = Object.values(
@@ -44,7 +44,7 @@ describe("generated character kit map", () => {
       const characterId = idName ? kitModule[idName] : undefined;
       expect(characterId).toBeTypeOf("number");
       // oxlint-disable-next-line no-await-in-loop -- each module is already loaded by the glob, so the loads cost nothing to serialise
-      await expect(CharacterIdCreateKitMap[Number(characterId)]?.()).resolves.toBe(
+      await expect(CharacterIdCreateKitBehaviourMap[Number(characterId)]?.()).resolves.toBe(
         createName ? kitModule[createName] : undefined,
       );
     }

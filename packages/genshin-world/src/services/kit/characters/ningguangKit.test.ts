@@ -8,20 +8,17 @@ import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { createNingguangKit, NINGGUANG_CHARACTER_ID } from "#src/services/kit/characters/ningguangKit";
+import { createNingguangKitBehaviour, NINGGUANG_CHARACTER_ID } from "#src/services/kit/characters/ningguangKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const NINGGUANG_KIT = createNingguangKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NINGGUANG_CHARACTER_ID]),
-);
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const NINGGUANG_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NINGGUANG_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const createNingguangCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
@@ -44,7 +41,7 @@ const landStrikes = (strikes: KitStrike[], context: KitContext): void => {
   for (const strike of strikes) strike.hit.onStrike?.(context, strike);
 };
 
-describe(createNingguangKit, () => {
+describe(createNingguangKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createNingguangCombatant(0, 0));

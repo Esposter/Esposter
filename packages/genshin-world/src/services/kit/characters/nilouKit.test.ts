@@ -14,22 +14,22 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
-import { createNilouKit, NILOU_CHARACTER_ID } from "#src/services/kit/characters/nilouKit";
+import { createNilouKitBehaviour, NILOU_CHARACTER_ID } from "#src/services/kit/characters/nilouKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const NILOU_KIT = createNilouKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NILOU_CHARACTER_ID]));
+const NILOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NILOU_CHARACTER_ID);
 
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const findField = (kitEffectState: KitEffectState): KitField | undefined =>
   kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
 
-describe(createNilouKit, () => {
+describe(createNilouKitBehaviour, () => {
   // The passive bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
   const getPassiveBonusPairs = (constellationCount: number): [Attribute, number][] =>
     (NILOU_KIT.getPassiveBonuses?.(createNilouCombatant(constellationCount), 1) ?? []).map(({ amount, attribute }) => [

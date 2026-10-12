@@ -1,11 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createSethosKit, SETHOS_CHARACTER_ID } from "#src/services/kit/characters/sethosKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createSethosKitBehaviour, SETHOS_CHARACTER_ID } from "#src/services/kit/characters/sethosKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const SETHOS_KIT = createSethosKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SETHOS_CHARACTER_ID]));
+const SETHOS_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SETHOS_CHARACTER_ID);
 
-describe(createSethosKit, () => {
+describe(createSethosKitBehaviour, () => {
   test("reads the skill's cooldown, the burst's cooldown and cost, and the strikes' multipliers from his proud skill groups", () => {
     expect.hasAssertions();
 

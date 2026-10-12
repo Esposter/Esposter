@@ -14,14 +14,14 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
 import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
-import { createSucroseKit, SUCROSE_CHARACTER_ID } from "#src/services/kit/characters/sucroseKit";
+import { createSucroseKitBehaviour, SUCROSE_CHARACTER_ID } from "#src/services/kit/characters/sucroseKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const SUCROSE_KIT = createSucroseKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SUCROSE_CHARACTER_ID]));
+const SUCROSE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SUCROSE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createSucroseCombatant = (ascension = 0, constellationCount = 0, elementalMastery = 0): Combatant => ({
@@ -47,7 +47,7 @@ const castEffects = (combatant: Combatant): KitEffect[] => {
   return context.kitEffectState.effects;
 };
 
-describe(createSucroseKit, () => {
+describe(createSucroseKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

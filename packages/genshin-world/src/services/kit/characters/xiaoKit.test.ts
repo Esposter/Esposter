@@ -8,19 +8,18 @@ import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { createXiaoKit, XIAO_CHARACTER_ID } from "#src/services/kit/characters/xiaoKit";
+import { createXiaoKitBehaviour, XIAO_CHARACTER_ID } from "#src/services/kit/characters/xiaoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const XIAO_KIT = createXiaoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [XIAO_CHARACTER_ID]));
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const XIAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XIAO_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const createXiaoCombatant = (ascension: number): Combatant => ({
   ascension,
@@ -38,7 +37,7 @@ const stepEffects = (seconds: number, context: KitContext): KitStrike[] =>
     stepKitTestEffects(FIXED_STEP_SECONDS, context),
   ).flat();
 
-describe(createXiaoKit, () => {
+describe(createXiaoKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createXiaoCombatant(0));

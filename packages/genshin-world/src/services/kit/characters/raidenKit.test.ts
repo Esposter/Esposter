@@ -16,16 +16,16 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
-import { createRaidenKit, RAIDEN_CHARACTER_ID } from "#src/services/kit/characters/raidenKit";
+import { createRaidenKitBehaviour, RAIDEN_CHARACTER_ID } from "#src/services/kit/characters/raidenKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const RAIDEN_KIT = createRaidenKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [RAIDEN_CHARACTER_ID]));
+const RAIDEN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, RAIDEN_CHARACTER_ID);
 
 const createRaidenCombatant = (): Combatant => ({
   ascension: 0,
@@ -54,7 +54,7 @@ const castBurst = (stacks: number): { kitEffectState: KitEffectState; stance?: K
   };
 };
 
-describe(createRaidenKit, () => {
+describe(createRaidenKitBehaviour, () => {
   test("the burst spends resolve's stacks into musou no hitotachi and each musou isshin strike", () => {
     expect.hasAssertions();
     const { kitEffectState, stance } = castBurst(1);

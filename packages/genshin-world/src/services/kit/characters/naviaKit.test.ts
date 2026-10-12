@@ -9,13 +9,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createNaviaKit, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
+import { createNaviaKitBehaviour, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const NAVIA_KIT = createNaviaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NAVIA_CHARACTER_ID]));
+const NAVIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NAVIA_CHARACTER_ID);
 
 const createNaviaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -49,7 +49,7 @@ const shredAt = (constellationCount: number) => getBlastHit().enemyStatus?.(crea
 const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
   action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
 
-describe(createNaviaKit, () => {
+describe(createNaviaKitBehaviour, () => {
   // The Crystal Shrapnel a shot leaves after five cannon hits, from a constellation count
   const shrapnelAfterShot = (constellationCount: number): number => {
     const combatant = createNaviaCombatant(constellationCount);

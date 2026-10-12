@@ -9,13 +9,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createYunjinKit, YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
+import { createYunjinKitBehaviour, YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const YUNJIN_KIT = createYunjinKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YUNJIN_CHARACTER_ID]));
+const YUNJIN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YUNJIN_CHARACTER_ID);
 
 const createYunjinCombatant = (): Combatant => ({
   ascension: 0,
@@ -37,7 +37,7 @@ const castStart = (action: KitAction, combatant = createYunjinCombatant()): KitE
   return context.kitEffectState;
 };
 
-describe(createYunjinKit, () => {
+describe(createYunjinKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

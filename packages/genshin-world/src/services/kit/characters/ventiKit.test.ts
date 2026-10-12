@@ -4,16 +4,16 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createVentiKit, VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
+import { createVentiKitBehaviour, VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const VENTI_KIT = createVentiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [VENTI_CHARACTER_ID]));
+const VENTI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, VENTI_CHARACTER_ID);
 
 const createVentiCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
@@ -25,7 +25,7 @@ const createVentiCombatant = (ascension: number, constellationCount: number): Co
   level: 90,
 });
 
-describe(createVentiKit, () => {
+describe(createVentiKitBehaviour, () => {
   test("reads each talent multiplier from his proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createVentiCombatant(0, 0));

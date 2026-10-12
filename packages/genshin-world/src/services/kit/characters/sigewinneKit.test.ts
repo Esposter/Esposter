@@ -5,17 +5,15 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createSigewinneKit, SIGEWINNE_CHARACTER_ID } from "#src/services/kit/characters/sigewinneKit";
+import { createSigewinneKitBehaviour, SIGEWINNE_CHARACTER_ID } from "#src/services/kit/characters/sigewinneKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
-const SIGEWINNE_KIT = createSigewinneKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SIGEWINNE_CHARACTER_ID]),
-);
+const SIGEWINNE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SIGEWINNE_CHARACTER_ID);
 
 const createSigewinneCombatant = (health: number): Combatant => ({
   ascension: 0,
@@ -34,7 +32,7 @@ const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
   return context.kitEffectState.effects.filter((effect) => effect.kind === "summon");
 };
 
-describe(createSigewinneKit, () => {
+describe(createSigewinneKitBehaviour, () => {
   test("reads her strikes, Fully-Charged Aimed Shot and plunges from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

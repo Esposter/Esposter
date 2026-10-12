@@ -8,12 +8,11 @@ import { getCharacterAttributeLines } from "#src/services/character/getCharacter
 import { readStatTables } from "#src/services/character/readStatTables";
 import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
 import { createCombatant } from "#src/services/kit/createCombatant";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createCombatant, () => {
   test("carries the element and the kind of weapon its row of the roster gives it", () => {

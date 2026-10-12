@@ -1,12 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createYaoyaoKit, YAOYAO_CHARACTER_ID } from "#src/services/kit/characters/yaoyaoKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createYaoyaoKitBehaviour, YAOYAO_CHARACTER_ID } from "#src/services/kit/characters/yaoyaoKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const YAOYAO_KIT = createYaoyaoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YAOYAO_CHARACTER_ID]));
+const YAOYAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAOYAO_CHARACTER_ID);
 
-describe(createYaoyaoKit, () => {
+describe(createYaoyaoKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

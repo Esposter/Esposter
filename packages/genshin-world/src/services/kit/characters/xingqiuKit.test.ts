@@ -6,20 +6,19 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createXingqiuKit, XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
+import { createXingqiuKitBehaviour, XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const XINGQIU_KIT = createXingqiuKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [XINGQIU_CHARACTER_ID]));
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const XINGQIU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XINGQIU_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const createXingqiuCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
@@ -45,7 +44,7 @@ const createTravelerCombatant = (): Combatant => ({
   level: 90,
 });
 
-describe(createXingqiuKit, () => {
+describe(createXingqiuKitBehaviour, () => {
   const body = { x: 0, z: 0 };
 
   test("reads each talent multiplier from his proud skill groups, to the wiki's two decimal places", () => {

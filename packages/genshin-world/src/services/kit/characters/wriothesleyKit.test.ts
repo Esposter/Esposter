@@ -1,14 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { createWriothesleyKit, WRIOTHESLEY_CHARACTER_ID } from "#src/services/kit/characters/wriothesleyKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createWriothesleyKitBehaviour, WRIOTHESLEY_CHARACTER_ID } from "#src/services/kit/characters/wriothesleyKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const WRIOTHESLEY_KIT = createWriothesleyKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [WRIOTHESLEY_CHARACTER_ID]),
-);
+const WRIOTHESLEY_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, WRIOTHESLEY_CHARACTER_ID);
 
-describe(createWriothesleyKit, () => {
+describe(createWriothesleyKitBehaviour, () => {
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill group", () => {
     expect.hasAssertions();
     const multipliers = [

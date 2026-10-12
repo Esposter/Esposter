@@ -7,13 +7,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createYaeMikoKit, YAE_MIKO_CHARACTER_ID } from "#src/services/kit/characters/yaeMikoKit";
+import { createYaeMikoKitBehaviour, YAE_MIKO_CHARACTER_ID } from "#src/services/kit/characters/yaeMikoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const YAE_MIKO_KIT = createYaeMikoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YAE_MIKO_CHARACTER_ID]));
+const YAE_MIKO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAE_MIKO_CHARACTER_ID);
 
 const getTotemLevels = (effects: KitEffect[]): number[] =>
   effects
@@ -31,7 +31,7 @@ const createYaeMikoCombatant = (): Combatant => ({
   weaponType: WeaponType.Catalyst,
 });
 
-describe(createYaeMikoKit, () => {
+describe(createYaeMikoKitBehaviour, () => {
   const combatant = createYaeMikoCombatant();
   // Casts the skill, or the burst, into the effects the team holds, as the kit's start adds them
   const castSkill = (effects: KitEffect[]): KitEffect[] => {
