@@ -23,4 +23,12 @@ describe(readLedgerVerdicts, () => {
       ]),
     );
   });
+
+  test("skips a row whose verdict cell is empty rather than storing its padding", () => {
+    expect.hasAssertions();
+
+    const ledger = "| `alpha` | — |  | a reason |";
+
+    expect(readLedgerVerdicts(ledger)).toStrictEqual(new Map());
+  });
 });
