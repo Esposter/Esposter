@@ -5,7 +5,7 @@ import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldDat
 import { readFile } from "node:fs/promises";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<typeof readFile>() }));
+vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
 vi.mock(import("#src/services/genshinAssets/shared/readObjMesh"), () => ({ readObjMesh: vi.fn<typeof readObjMesh>() }));
 vi.mock(import("#src/services/genshinAssets/shared/writeWorldData"), () => ({
   writeWorldData: vi.fn<typeof writeWorldData>(),
