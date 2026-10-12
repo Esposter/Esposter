@@ -20,6 +20,8 @@ interface ForgeQueueSlot {
 interface Props {
   // The most the selected recipe's queue holds
   amountMaximum: number;
+  // The items the selected recipe forges each time
+  yieldCount: number;
   // The wallet's coins
   coins: number;
   // The game's words in the reader's language
@@ -36,7 +38,8 @@ interface Props {
 const amount = defineModel<number>("amount", { required: true });
 const recipeId = defineModel<number>("recipeId", { required: true });
 const tab = defineModel<ForgeTab>("tab", { required: true });
-const { amountMaximum, coins, gameText, queues, recipes, requiredCoins, totalSeconds } = defineProps<Props>();
+const { amountMaximum, coins, gameText, queues, recipes, requiredCoins, totalSeconds, yieldCount } =
+  defineProps<Props>();
 const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 // A duration in the game's own shape: seconds under a minute, then whole minutes
 const formatForgeTime = (seconds: number) =>
@@ -93,6 +96,7 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
       :amount-maximum
       :close-label="gameText[GameTextKey.Back]"
       :coins
+      :materials-box-label="gameText[GameTextKey.ForgeMaterials]"
       :materials-label="gameText[GameTextKey.ForgeMaterialsTab]"
       :obtain-label="gameText[GameTextKey.ForgeObtain]"
       :queues="queueCells"
@@ -113,6 +117,8 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
       "
       :required-coins
       :start-label="gameText[GameTextKey.ForgeStart]"
+      :support-label="gameText[GameTextKey.ForgeSupportCharacter]"
+      :yield-count="yieldCount"
       :title="gameText[GameTextKey.ForgeTitle]"
       :total-time-label="fillGameTextValues(gameText[GameTextKey.ForgeTotalTime], formatForgeTime(totalSeconds))"
       @close="emit('close')"

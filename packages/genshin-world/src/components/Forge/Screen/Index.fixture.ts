@@ -22,4 +22,5 @@ export const props = {
   requiredCoins: 25,
   tab: ForgeTab.Materials,
   totalSeconds: 15,
+  yieldCount: 1,
 };

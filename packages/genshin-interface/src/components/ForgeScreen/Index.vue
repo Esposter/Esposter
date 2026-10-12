@@ -23,6 +23,9 @@ interface Props {
   queues: ForgeQueueCell[];
   // The Forge Queues tab's label with its open queues, the game's "Forge Queues (1/3)"
   queuesLabel: string;
+  // The Materials box's heading, and the support character's, in the game's words
+  materialsBoxLabel: string;
+  supportLabel: string;
   // The Materials tab's recipe list, in the game's order
   recipes: ForgeRecipeCell[];
   // The coins the selected recipe costs for its amount
@@ -32,6 +35,8 @@ interface Props {
   title: string;
   // The Materials tab's total forge time for the amount, in the game's words
   totalTimeLabel: string;
+  // The items the selected recipe forges each time, drawn under its large icon
+  yieldCount: number;
 }
 
 const amount = defineModel<number>("amount", { default: 1 });
@@ -42,6 +47,7 @@ const {
   amountMaximum,
   closeLabel,
   coins,
+  materialsBoxLabel,
   materialsLabel,
   obtainLabel,
   queues,
@@ -49,8 +55,10 @@ const {
   recipes,
   requiredCoins,
   startLabel,
+  supportLabel,
   title,
   totalTimeLabel,
+  yieldCount,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 </script>
@@ -99,6 +107,20 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
           type="range"
         />
         <p class="total-time">{{ totalTimeLabel }}</p>
+        <div class="item-icon">
+          <span class="item-count">{{ yieldCount }}</span>
+        </div>
+        <p class="amount-label">{{ amountLabel }}</p>
+        <section class="materials-box">
+          <header class="materials-head">
+            <p class="materials-title">{{ materialsBoxLabel }}</p>
+            <p class="support-title">{{ supportLabel }}</p>
+          </header>
+          <span class="slot slot-first" />
+          <span class="slot slot-second" />
+          <span class="slot slot-third" />
+          <span class="support-portrait" />
+        </section>
         <p class="required">{{ requiredCoins }}</p>
         <button class="start" type="button" @click="emit('start')">{{ startLabel }}</button>
       </div>
@@ -277,5 +299,91 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.item-icon {
+  position: absolute;
+  top: calc(var(--unit) * 265.7);
+  left: calc(var(--unit) * 1505.4);
+  width: calc(var(--unit) * 170.7);
+  height: calc(var(--unit) * 209.7);
+  background: #5b5a5f;
+}
+.item-count {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: calc(var(--unit) * 34.1);
+  background: #e9e3dc;
+  color: #3b3b3b;
+  font-size: calc(var(--unit) * 26.8);
+  line-height: calc(var(--unit) * 34.1);
+  text-align: center;
+}
+.amount-label {
+  top: calc(var(--unit) * 551);
+  left: calc(var(--unit) * 1589.5);
+  translate: -50% 0;
+  color: #ece5d8;
+  font-size: calc(var(--unit) * 26.8);
+  line-height: 1;
+  white-space: nowrap;
+}
+.materials-box {
+  top: calc(var(--unit) * 658.2);
+  left: calc(var(--unit) * 1025.1);
+  width: calc(var(--unit) * 1130);
+  height: calc(var(--unit) * 268.2);
+  background: #545d6a;
+}
+.materials-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--unit) * 48.8);
+  background: #464c5f;
+}
+.materials-head p {
+  position: absolute;
+  top: calc(var(--unit) * 15.8);
+  margin: 0;
+  font-size: calc(var(--unit) * 26.8);
+  line-height: 1;
+  white-space: nowrap;
+}
+.materials-title {
+  left: calc(var(--unit) * 42.7);
+}
+.support-title {
+  right: calc(var(--unit) * 41.4);
+}
+.slot {
+  position: absolute;
+  top: calc(var(--unit) * 79.2);
+  height: calc(var(--unit) * 170.7);
+  border: calc(var(--unit) * 2.4) solid rgb(255 255 255 / 0.12);
+  background: rgb(20 28 38 / 0.25);
+}
+.slot-first {
+  left: calc(var(--unit) * 163.3);
+  width: calc(var(--unit) * 141.4);
+}
+.slot-second {
+  left: calc(var(--unit) * 340.1);
+  width: calc(var(--unit) * 134.1);
+}
+.slot-third {
+  left: calc(var(--unit) * 508.3);
+  width: calc(var(--unit) * 134.1);
+}
+.support-portrait {
+  position: absolute;
+  top: calc(var(--unit) * 79.2);
+  left: calc(var(--unit) * 825.2);
+  width: calc(var(--unit) * 141.4);
+  height: calc(var(--unit) * 170.7);
+  background: #8d7a5c;
 }
 </style>

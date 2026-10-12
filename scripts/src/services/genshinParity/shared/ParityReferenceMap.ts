@@ -235,8 +235,27 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Paimon Menu Exit Prompt.png",
   },
   // The English PC client's forge on the Materials tab with an Enhancement Ore at amount five, at 32 seconds of the public
-  // Recording of the forge, letterboxed to its 886 high frame: scored whole, its blurred scene drawn by nothing here
-  "forge-screen": { capture: "yt-AVnbm8fESr0-forge-screen.mp4", screen: "ForgeScreen", seconds: 32 },
+  // Recording of the forge, letterboxed to its 886 high frame: scored whole over its blurred scene, the game's own pieces
+  // (the tabs, the recipe list, the item and its amount, the Materials box, the foot) filled from round them
+  "forge-screen": {
+    capture: "yt-AVnbm8fESr0-forge-screen.mp4",
+    isBackdrop: true,
+    plate: [
+      { height: 75, width: 300, x: 120, y: 10 },
+      { height: 70, width: 300, x: 1495, y: 15 },
+      { height: 60, width: 615, x: 110, y: 125 },
+      { height: 560, width: 620, x: 110, y: 205 },
+      { height: 36, width: 270, x: 1170, y: 118 },
+      { height: 178, width: 146, x: 1232, y: 215 },
+      { height: 70, width: 600, x: 1000, y: 450 },
+      { height: 236, width: 934, x: 838, y: 536 },
+      { height: 70, width: 945, x: 830, y: 785 },
+      { height: 60, width: 590, x: 125, y: 790 },
+      { height: 28, width: 275, x: 1645, y: 858 },
+    ],
+    screen: "ForgeScreen",
+    seconds: 32,
+  },
   // The public frame of the card game's duel board at 1080 high from the English PC client, cut from 400 seconds of a
   // Walkthrough, the frame at 407 seconds in the Action Phase: both sides' characters, the dice column and the hand. A
   // Video's frame, so its art is not drawn and only its tints, words and places are scored

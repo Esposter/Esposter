@@ -9,6 +9,7 @@ export const props = {
   amountMaximum: 19,
   closeLabel: "Back",
   coins: 375_527,
+  materialsBoxLabel: "Materials",
   materialsLabel: "Materials",
   obtainLabel: "Obtain",
   queues: [
@@ -31,8 +32,10 @@ export const props = {
   ],
   requiredCoins: 25,
   startLabel: "Start",
+  supportLabel: "Support Character",
   tab: ForgeTab.Materials,
   title: "Forge",
   totalTimeLabel: "Total Forge Time: 15s",
+  yieldCount: 1,
 };
 export const variants = { queues: { tab: ForgeTab.Queues } };
