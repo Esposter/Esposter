@@ -1,10 +1,12 @@
 import type { SceneMaterial } from "genshin-engine";
 
+import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
+
+import { ToonNodeMaterial } from "genshin-engine";
 import { WitnessProperty } from "#src/models/scene/WitnessProperty";
 import { LEAF_SHADER } from "#src/services/scene/constants";
 import { createWitnessMaterial } from "#src/services/scene/createWitnessMaterial";
 import { DoubleSide, Texture } from "three";
-import { MeshBasicNodeMaterial } from "three/webgpu";
 import { describe, expect, test } from "vitest";
 
 const DIFFUSE_NAME = "Stages_Unique_CyTree01_Leaf_Diffuse";
@@ -20,7 +22,7 @@ const createLeafFixture = (): SceneMaterial => ({
   textures: { [WitnessProperty.MainTexture]: { name: DIFFUSE_NAME, offset: [0, 0], scale: [1, 1] } },
 });
 
-const createMaterialFactory = () => new MeshBasicNodeMaterial();
+const createMaterialFactory: WitnessMaterialFactory = () => new ToonNodeMaterial({}, false);
 
 describe("createWitnessMaterial", () => {
   test("cuts a leaf card by its diffuse texture's alpha alone, drawn from both sides", () => {
