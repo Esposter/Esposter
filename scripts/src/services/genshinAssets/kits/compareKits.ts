@@ -118,13 +118,11 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     );
     const overlayPath = join(KIT_OVERLAY_DIRECTORY, `${overlayName}.json`);
     const entries = Object.entries(overlay);
-    // Written even when empty, as `{}`, so every kit keeps its file and its docs page's citation still resolves
-    writeJsonFile(
-      overlayPath,
-      getResult(() => readKitOverlayFile(overlayName)).match(
-        (committedFile) => seedKitOverlay(committedFile, overlay),
-        () => overlay,
-      ),
+    // Written even when empty, as `{}`, so every kit keeps its file and its docs page's citation still resolves. A committed
+    // File that fails to read is left as it is, since the overlay was rebuilt from nothing and would drop its entries
+    getResult(() => readKitOverlayFile(overlayName)).match(
+      (committedFile) => writeJsonFile(overlayPath, seedKitOverlay(committedFile, overlay)),
+      () => undefined,
     );
     const kitKeys = entries.map(([, entry]) => ("source" in entry ? `chose ${entry.source}` : entry.cause));
     overlayKeys.push(...kitKeys);
