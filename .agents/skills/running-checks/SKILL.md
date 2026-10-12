@@ -8,7 +8,8 @@ description: Apply when about to run pnpm typecheck, lint, lint:fix, test, forma
 **CI runs the checks; a session runs only the tests of what it touched.** Every push to `ai/queue` runs typecheck,
 lint, format and the whole suite. The session watches its push's run in the background and fixes a red typecheck
 or lint job itself, in a commit behind the push (`AGENTS.md`, "Finishing a change", step 6). The pre-commit hook only formats what is staged and
-runs no check (`.githooks/pre-commit`). The command and its directory are the `package-scripts` skill's; this page is
+runs no check (`.githooks/pre-commit`); it re-adds each staged file whole from the working copy, so a partial stage of
+a file commits all of it, and a commit is split by file or with the other hunks kept out of the working copy. The command and its directory are the `package-scripts` skill's; this page is
 which checks a session runs and how it waits on them.
 
 ## Settled — do not re-propose
