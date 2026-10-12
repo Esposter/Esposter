@@ -1,0 +1,48 @@
+import type { SerializedBlobProgram } from "#src/models/genshinAssets/materials/SerializedBlobProgram";
+
+import { BinaryCursor } from "#src/models/genshinAssets/materials/BinaryCursor";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+
+const DXBC_MAGIC = "DXBC";
+// A container's magic follows a short prefix of the game's own, so it is searched for within this many leading bytes
+const DXBC_SEARCH_BYTES = 32;
+// A program's version is clamped to this as AnimeStudio does, and its header holds a checksum of twelve bytes after its
+// GPU program type, and a four-byte field from this version on
+const VERSION_CLAMP = 201_806_140;
+const VERSION_WITH_HEADER_FIELD = 201_608_170;
+const VERSION_WITH_LOCAL_KEYWORDS_MIN = 201_806_140;
+const VERSION_WITH_LOCAL_KEYWORDS_MAX = 202_012_090;
+const HEADER_CHECKSUM_BYTES = 12;
+const HEADER_FIELD_BYTES = 4;
+const ENTRY_LENGTH_BYTES = 4;
+
+const readContainer = (payload: Buffer): Buffer => {
+  if (payload.length === 0) return payload;
+  const magicOffset = payload.indexOf(DXBC_MAGIC);
+  if (magicOffset === -1 || magicOffset >= DXBC_SEARCH_BYTES)
+    throw new InvalidOperationError(Operation.Read, readSerializedBlobChunk.name, "a program holds no DXBC container");
+  return payload.subarray(magicOffset);
+};
+
+const readSerializedBlobProgram = (chunk: Buffer, offset: number): SerializedBlobProgram => {
+  const program = new BinaryCursor(chunk, offset);
+  const version = Math.min(program.int32(), VERSION_CLAMP);
+  const gpuProgramType = program.int32();
+  program.skip(HEADER_CHECKSUM_BYTES);
+  if (version >= VERSION_WITH_HEADER_FIELD) program.skip(HEADER_FIELD_BYTES);
+  program.list(() => program.string());
+  if (version >= VERSION_WITH_LOCAL_KEYWORDS_MIN && version < VERSION_WITH_LOCAL_KEYWORDS_MAX)
+    program.list(() => program.string());
+  return { code: readContainer(program.uint8List()), gpuProgramType };
+};
+
+// A platform's blob chunk, read from its entry count: each entry's offset in the chunk, which is the entry's blob index
+export const readSerializedBlobChunk = (chunk: Buffer): SerializedBlobProgram[] => {
+  const cursor = new BinaryCursor(chunk);
+  const offsets = cursor.list(() => {
+    const offset = cursor.int32();
+    cursor.skip(ENTRY_LENGTH_BYTES);
+    return offset;
+  });
+  return offsets.map((offset) => readSerializedBlobProgram(chunk, offset));
+};
