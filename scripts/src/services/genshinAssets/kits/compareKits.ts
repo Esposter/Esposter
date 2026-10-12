@@ -60,13 +60,24 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       failureLines.push(`  ${name}: has no published kit to compare`);
       continue;
     }
-    const { gapPaths, overlayFailures } = getResult(() =>
-      buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName)),
-    ).match(
-      ({ record }) => ({ gapPaths: getMismatchedKitPaths(record, publishedRecord), overlayFailures: [] }),
+    const { committedOverlay, gapPaths, overlayFailures } = getResult(() => readKitOverlay(overlayName)).match(
+      (committedOverlay) =>
+        getResult(() => buildKitRecord(sourceCandidateMap, committedOverlay)).match(
+          ({ record }) => ({
+            committedOverlay,
+            gapPaths: getMismatchedKitPaths(record, publishedRecord),
+            overlayFailures: [],
+          }),
+          (error) => ({
+            committedOverlay,
+            gapPaths: [],
+            overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
+          }),
+        ),
       (error) => ({
+        committedOverlay: {},
         gapPaths: [],
-        overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
+        overlayFailures: [`the committed overlay fails to read: ${error.message.split("\n")[0]}`],
       }),
     );
     gapCount += gapPaths.length;
@@ -84,6 +95,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       sourceCandidateMap,
       mainCandidateMap,
       isTagPredated,
+      committedOverlay,
     );
     const overlayPath = join(KIT_OVERLAY_DIRECTORY, `${overlayName}.json`);
     const entries = Object.entries(overlay);

@@ -1,6 +1,7 @@
 import type { KitComparison } from "#src/models/genshinAssets/kits/build/KitComparison";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 import type { KitRecord } from "genshin-world";
 
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
@@ -8,6 +9,7 @@ import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
+import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
 import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
@@ -15,21 +17,23 @@ import { getResult } from "@esposter/shared";
 
 // The overlay a kit's published record needs for its sources to reproduce it, each entry classified: first every value
 // The record holds, against its sources and the rules over the record's own actions and hits, then every value the
-// Build would still give that the record lacks. The build from the overlay is then checked value by value against it
+// Build would still give that the record lacks. The build from the overlay is then checked value by value against it.
+// A cause the committed overlay holds is kept while its value stands, as keepCommittedKitCause keeps it
 export const compareKitRecord = (
   publishedRecord: KitRecord,
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   mainCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   isTagPredated: boolean,
+  committedOverlay: KitOverlay,
 ): KitComparison => {
   const publishedValueMap = flattenKitValues(publishedRecord);
   const overlay: KitOverlay = {};
   const classify = (path: string, value: unknown, candidateMap: ReadonlyMap<string, KitCandidate[]>) => {
-    const entry = classifyKitValue(
+    const committedEntry: KitOverlayEntry | undefined = committedOverlay[path];
+    const entry = keepCommittedKitCause(
+      classifyKitValue(value, candidateMap.get(path) ?? [], mainCandidateMap.get(path) ?? [], isTagPredated),
+      committedEntry,
       value,
-      candidateMap.get(path) ?? [],
-      mainCandidateMap.get(path) ?? [],
-      isTagPredated,
     );
     if (entry !== undefined) overlay[path] = entry;
   };
