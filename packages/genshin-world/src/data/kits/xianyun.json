@@ -1,5 +1,5 @@
 {
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
+  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 } },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9339 } },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 66 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -9,11 +9,11 @@
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 68 },
+  "plunges.high.animationFrames": { "file": "plunge.go", "line": 68, "source": "Gcsim", "value": 68 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 65 },
+  "plunges.low.animationFrames": { "file": "plunge.go", "line": 78, "source": "Gcsim", "value": 65 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 } },
+  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 } },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }
