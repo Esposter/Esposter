@@ -46,12 +46,10 @@ export const readCharacterMesh = (
     if (missingTexturePaths.length > 0)
       console.warn(`The model draws untextured the textures its release lacks: ${missingTexturePaths.join(", ")}`);
     const transparentTextureIndices = new Set(
-      pmxModel.materials
-        .map(({ textureIndex }) => textureIndex)
-        .filter((textureIndex) => {
-          const image = textures[textureIndex]?.image;
-          return image instanceof ImageBitmap && checkTransparentTexels(image);
-        }),
+      [...new Set(pmxModel.materials.map(({ textureIndex }) => textureIndex))].filter((textureIndex) => {
+        const image = textures[textureIndex]?.image;
+        return image instanceof ImageBitmap && checkTransparentTexels(image);
+      }),
     );
     const materials = pmxModel.materials.map((pmxMaterial) =>
       createCharacterMaterial({
