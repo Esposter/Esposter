@@ -3,12 +3,12 @@ import type { CharacterAvatar } from "#src/models/avatar/CharacterAvatar";
 import type { CharacterMaterialOptions } from "genshin-engine";
 import type { Texture } from "three";
 
-import { createAvatarTexture } from "#src/services/character/avatar/createAvatarTexture";
 import {
   AVATAR_COLOUR_TEXTURE_SLOT,
   AVATAR_TEXTURE_FOLDER,
   AVATAR_TEXTURE_SLOTS,
 } from "#src/services/character/avatar/constants";
+import { createAvatarTexture } from "#src/services/character/avatar/createAvatarTexture";
 import { createCharacterAvatar } from "#src/services/character/avatar/createCharacterAvatar";
 import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "#src/services/scene/constants";
@@ -42,7 +42,10 @@ export const readCharacterAvatar = async (
     return AVATAR_TEXTURE_SLOTS.map((slot) => textures[slot]).filter((file) => file !== undefined);
   });
   const colourFiles = new Set(
-    [...drawnMaterials].map((materialName) => manifest.materials[materialName]?.textures[AVATAR_COLOUR_TEXTURE_SLOT]),
+    Array.from(
+      drawnMaterials,
+      (materialName) => manifest.materials[materialName]?.textures[AVATAR_COLOUR_TEXTURE_SLOT],
+    ),
   );
   const textureFileEntries = await Promise.all(
     Array.from(new Set(textureFiles), async (file): Promise<[string, Texture]> => {
