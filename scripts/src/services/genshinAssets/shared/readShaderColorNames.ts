@@ -5,6 +5,7 @@ import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStu
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { parseShaderProperties } from "#src/services/genshinAssets/materials/parseShaderProperties";
 import { CAB_MAP_PATH, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
+import { createBlockOffsetFileFinder } from "#src/services/genshinAssets/shared/createBlockOffsetFileFinder";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
@@ -23,7 +24,7 @@ const GAMMA_FLAG = 32;
 export const readShaderColorNames = async (
   shaderPathIds: ReadonlySet<string>,
 ): Promise<Map<string, ShaderColorNames>> => {
-  const pathIdNamesMap = new Map<string, { colorNames: Set<string>; vectorNames: Set<string> }>();
+  const pathIdNamesMap = new Map<string, { [Key in keyof ShaderColorNames]: Set<string> }>();
   if (shaderPathIds.size === 0) return pathIdNamesMap;
   const [cabMapBytes, shaders] = await Promise.all([
     readFile(CAB_MAP_PATH),
@@ -32,8 +33,7 @@ export const readShaderColorNames = async (
       GENSHIN_ANIMESTUDIO_OPTIONS,
     ),
   ]);
-  const blockOffsetFileMap = new Map<string, string>();
-  for (const [file, { block, offset }] of parseCabMap(cabMapBytes)) blockOffsetFileMap.set(`${block}|${offset}`, file);
+  const findFile = createBlockOffsetFileFinder(parseCabMap(cabMapBytes));
   const directory = await mkdtemp(join(tmpdir(), "shader-properties-"));
   return withFinalizerAsync(
     async () => {
@@ -43,7 +43,7 @@ export const readShaderColorNames = async (
           isUnparsed: true,
         });
       for (const { block, offset, pathId } of shaders) {
-        const file = blockOffsetFileMap.get(`${block}|${offset}`);
+        const file = findFile(block, offset);
         if (file === undefined)
           throw new InvalidOperationError(
             Operation.Read,
