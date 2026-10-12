@@ -94,6 +94,13 @@ vi.mock(import("module"), () => ({
     ).toStrictEqual([]);
   });
 
+  // The destructuring is not a candidate, so it stays at module scope and reads `cfg` there, which pins `cfg` out too
+  test("keeps a constant a module-scope destructuring reads at module scope", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`const cfg = { url: "" };\nconst { url } = cfg;`)).toStrictEqual([]);
+  });
+
   // The awaited fixture cannot move in, so neither can what its initializer reads, nor what that reads in turn
   test("skips the constants a top-level await reads, transitively", () => {
     expect.hasAssertions();

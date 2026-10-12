@@ -58,6 +58,8 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
           const line = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
           candidates.push({ initializer, line, name: declaration.name.text });
         }
+        // A destructuring stays at module scope and reads its initializer there, so what it reads stays too
+        else if (initializer) pinningNodes.push(initializer);
       }
 
   // A pinned constant pins what its own initializer reads, so the set is closed to a fixed point
