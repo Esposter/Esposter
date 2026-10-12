@@ -39,10 +39,11 @@ const generateComponentBarrel = (sourceDirectory: string): void => {
   );
 };
 
-// A module under a lazy directory is left out so the entry does not load it: the package reaches it through an `import()`
-// Of its own, which a barrel line would undo by statically importing the module into the entry.
-const generateSourceBarrel = (sourceDirectory: string, lazyDirectories: string[]): void => {
-  const specifiers = globSync("**/*.ts", { cwd: sourceDirectory })
+// The `src`-relative modules the source barrel lists, which a sweep reads as the barrel's own list without the build having
+// Written it. A module under a lazy directory is left out so the entry does not load it: the package reaches it through an
+// `import()` of its own, which a barrel line would undo by statically importing the module into the entry.
+export const getSourceSpecifiers = (sourceDirectory: string, lazyDirectories: string[]): string[] =>
+  globSync("**/*.ts", { cwd: sourceDirectory })
     .map((path) => path.replaceAll("\\", "/"))
     .filter(
       (path) =>
@@ -52,9 +53,15 @@ const generateSourceBarrel = (sourceDirectory: string, lazyDirectories: string[]
         !lazyDirectories.some((directory) => path.startsWith(`${directory}/`)) &&
         checkHasExport(join(sourceDirectory, path)),
     );
+
+const generateSourceBarrel = (sourceDirectory: string, lazyDirectories: string[]): void => {
   // Each module keeps its `.ts` extension, which a bundler takes as it is and which node's own resolution — the one the
   // App's configuration loads and typechecks under — requires of a relative import
-  writeBarrel(sourceDirectory, specifiers, (specifier) => `export * from "./${specifier}";`);
+  writeBarrel(
+    sourceDirectory,
+    getSourceSpecifiers(sourceDirectory, lazyDirectories),
+    (specifier) => `export * from "./${specifier}";`,
+  );
 };
 // In order: the Vue answer writes the component barrel first, because the source barrel then lists it like any other
 // Module

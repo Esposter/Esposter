@@ -3,17 +3,17 @@ import type { SharedExportFinding } from "#src/models/sweeps/sharedExportConsume
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { MINIMUM_CONSUMER_PACKAGES } from "#src/services/sweeps/sharedExportConsumers/constants";
-import { getBarrelPaths } from "#src/services/sweeps/sharedExportConsumers/getBarrelPaths";
 import { getConsumerPackagePaths } from "#src/services/sweeps/sharedExportConsumers/getConsumerPackagePaths";
 import { getExportNames } from "#src/services/sweeps/sharedExportConsumers/getExportNames";
 import { getIdentifiers } from "#src/services/sweeps/sharedExportConsumers/getIdentifiers";
 import { getPackageIdentifiersMap } from "#src/services/sweeps/sharedExportConsumers/getPackageIdentifiersMap";
 import { getPackagePath } from "#src/services/sweeps/sharedExportConsumers/getPackagePath";
+import { getSourceSpecifiers } from "@esposter/configuration";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const SHARED_PACKAGE_PATH = "packages/shared";
-const SHARED_BARREL_PATH = `${SHARED_PACKAGE_PATH}/src/index.ts`;
+const SHARED_SOURCE_PREFIX = `${SHARED_PACKAGE_PATH}/src/`;
 
 const readSource = (path: string): readonly [string, string] =>
   [path, readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")] as const;
@@ -23,7 +23,12 @@ const readSource = (path: string): readonly [string, string] =>
 // The threshold, and the rule is about packages, not files. The dead check is kept only for the files the barrel
 // Re-exports, which knip's default run skips as entry exports; knip reports the rest's unused exports itself.
 export const readSharedExportFindings = (): SharedExportFinding[] => {
-  const barrelPaths = getBarrelPaths(readSource(SHARED_BARREL_PATH)[1]);
+  // The modules the package's barrel lists, read from the same rule that writes it, since the barrel itself is build output
+  const barrelPaths = new Set(
+    getSourceSpecifiers(resolve(REPOSITORY_ROOT, SHARED_PACKAGE_PATH, "src"), []).map(
+      (specifier) => `${SHARED_SOURCE_PREFIX}${specifier}`,
+    ),
+  );
   const sharedFiles = readSweepFilePaths(`${SHARED_PACKAGE_PATH}/src/*.ts`)
     .filter((path) => !path.endsWith("index.ts"))
     .map((path) => readSource(path));
