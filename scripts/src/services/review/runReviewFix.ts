@@ -6,7 +6,6 @@ import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimit
 import { createDeferredIssue } from "#src/services/review/createDeferredIssue";
 import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { landCommits } from "#src/services/review/git/landCommits";
-import { installDependencies } from "#src/services/review/installDependencies";
 import { resolveDispositions } from "#src/services/review/resolveDispositions";
 import { runFixer } from "#src/services/review/runFixer";
 import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
@@ -26,7 +25,6 @@ const getFindingRow = (finding: ReviewFinding, outcome: ReviewOutcome): string =
 export const runReviewFix = async ({ base, end, findings }: ReviewWindowFindings): Promise<void> => {
   const summary = [`## Fix ${base.slice(0, 12)}..${end.slice(0, 12)}`, "", `${findings.length} finding(s) to fix.`];
   fetchRemote();
-  installDependencies();
   const fixer = await getResultAsync(() => runFixer(base, end, findings)).match(
     (dispositions) => ({ dispositions, failureReason: "", isLimited: false }),
     (error) =>
