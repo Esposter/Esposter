@@ -2,6 +2,7 @@ import type { AvatarRigNode } from "#src/models/genshinAssets/avatar/AvatarRigNo
 import type { DumpedMesh } from "#src/models/genshinAssets/avatar/DumpedMesh";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { DumpedPointer } from "#src/models/genshinAssets/shared/DumpedPointer";
+import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import type { AvatarRig } from "#src/services/genshinAssets/avatar/readAvatarRig";
 import type { RendererBone } from "#src/services/genshinAssets/avatar/readRendererBones";
@@ -71,10 +72,10 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
       object: gameObjectMap.get(`${skinned.file}|${skinned.renderer.m_GameObject.m_PathID}`),
     })),
   );
-  const texturedMaterials = await readTexturedMaterialPathIds(
-    component,
-    skinnedRenderers.flatMap(({ renderer }) => renderer.m_Materials),
-  );
+  const skinnedMaterialRefs = skinnedRenderers.flatMap(({ renderer }) => renderer.m_Materials);
+  const materialNames = await readAssetNames(new Set(skinnedMaterialRefs.map(({ m_PathID }) => m_PathID)));
+  const componentMaterials = await readComponentMaterials(component);
+  const texturedMaterials = readTexturedMaterialPathIds(materialNames, componentMaterials);
   const roster = readAvatarRoster(
     skinnedRenderers,
     getTransformKey(rootObject.file, rootObject.transformId),
@@ -99,8 +100,10 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
     ...drawn.map(({ rootBone }) => rootBone),
   ]);
   const nodeOfHash = new Map(paths.map((path, node) => [crc32(path), node]));
-  const { materials, names } = await readMaterials(
+  const materials = await readMaterials(
     component,
+    materialNames,
+    componentMaterials,
     drawn.flatMap(({ materialRefs, mesh }) => materialRefs.slice(0, mesh.m_SubMeshes.length)),
   );
   for (const { mesh, name } of drawn) {
@@ -118,7 +121,7 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
         name,
         mesh,
         mesh.m_BoneNameHashes.map((hash) => nodeOfHash.get(hash) ?? ANIMATOR_ROOT_NODE),
-        materialRefs.map(({ m_PathID }) => names.get(m_PathID) ?? ""),
+        materialRefs.map(({ m_PathID }) => materialNames.get(m_PathID) ?? ""),
         paths.indexOf(rootBone.path),
         binary,
       ),
@@ -194,26 +197,25 @@ const leafName = (path: string): string => path.slice(path.lastIndexOf("/") + 1)
 const depth = (path: string): number => path.split("/").length;
 
 // The path IDs of the referenced materials that have a main texture, which a renderer must all have to be drawn
-const readTexturedMaterialPathIds = async (
-  component: DerivedAssetComponent,
-  references: readonly DumpedPointer[],
-): Promise<Set<string>> => {
-  const names = await readAssetNames(new Set(references.map(({ m_PathID }) => m_PathID)));
+const readTexturedMaterialPathIds = (
+  names: ReadonlyMap<string, string>,
+  componentMaterials: readonly MaterialValues[],
+): Set<string> => {
   const texturedNames = new Set(
-    (await readComponentMaterials(component)).filter(({ textures }) => "_MainTex" in textures).map(({ name }) => name),
+    componentMaterials.filter(({ textures }) => "_MainTex" in textures).map(({ name }) => name),
   );
   return new Set([...names].filter(([, name]) => texturedNames.has(name)).map(([pathId]) => pathId));
 };
 
-// The materials the meshes draw with, by name, with each one's values and its texture files by slot, and the name of
-// Each material by path ID so a submesh finds its own
+// The materials the meshes draw with, by name, with each one's values and its texture files by slot
 const readMaterials = async (
   component: DerivedAssetComponent,
+  names: ReadonlyMap<string, string>,
+  componentMaterials: readonly MaterialValues[],
   references: readonly DumpedPointer[],
-): Promise<{ materials: Record<string, AvatarMaterial>; names: Map<string, string> }> => {
-  const names = await readAssetNames(new Set(references.map(({ m_PathID }) => m_PathID)));
-  const usedNames = new Set(names.values());
-  const used = (await readComponentMaterials(component)).filter(({ name }) => usedNames.has(name));
+): Promise<Record<string, AvatarMaterial>> => {
+  const usedNames = new Set(references.flatMap(({ m_PathID }) => names.get(m_PathID) ?? []));
+  const used = componentMaterials.filter(({ name }) => usedNames.has(name));
   const textureNames = await readAssetNames(
     new Set(used.flatMap(({ textures }) => Object.values(textures).map(({ pathId }) => pathId))),
   );
@@ -234,5 +236,5 @@ const readMaterials = async (
       },
     ]),
   );
-  return { materials, names };
+  return materials;
 };
