@@ -71,7 +71,7 @@ export const createCharacterMaterial = ({
     isOutlined
       ? {
           color: [toned.x, toned.y, toned.z, edgeColor[3]],
-          isVertexWeighted: shadingInputs.isOutlineVertexWeighted ?? false,
+          isVertexWeighted: shadingInputs.isOutlineVertexWeighted,
           offset: shadingInputs.outlineOffset,
           size: edgeSize,
           widthKnots: { depths: shadingInputs.outlineDepths, scales: shadingInputs.outlineScales },

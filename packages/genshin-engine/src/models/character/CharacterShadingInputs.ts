@@ -34,7 +34,7 @@ export interface CharacterShadingInputs {
   // Whether the lightmap's green is the threshold's occlusion, "_UseLightMapColorAO"
   isLightMapAo: boolean;
   // Whether the vertex colour's alpha scales the outline's width, as the game's outline reads it
-  isOutlineVertexWeighted?: boolean;
+  isOutlineVertexWeighted: boolean;
   // Whether the vertex's ambient occlusion scales the threshold, and its value, "_UseVertexColorAO"
   isVertexAo: boolean;
   // Whether the vertex's ramp weight scales the band, "_UseVertexRampWidth", and its value
