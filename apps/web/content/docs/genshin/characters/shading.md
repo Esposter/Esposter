@@ -190,6 +190,34 @@ The ramp row is the body's: `v_row(r) = 0.05 + 0.1 * (r - 1)`, and the second ro
 
 Hair's equations are not fitted to a rendered frame, so no number is claimed.
 
+## The face
+
+The face's base pixel program is 432 (DXBC), in the "BODY" pass, with "FACE_MAP_NEW_ON" set. Its shadow comes from the face map, not the ramp, and the light it compares against is the same light as the body's (Exact, read from the program's sampling sites).
+
+### The light direction
+
+The program chooses the light by the same flag as the body's: where "mhy_CharacterOverrideLightDir" has its "w" above 0.5 it uses that vector (or "mhy_CharacterOverrideLightDirInShadow" where the vertex's flag is set), and otherwise "mhy_AvatarLightDir" (Exact on the selection):
+
+```
+L = (CharacterOverride.w > 0.5) ? (InShadow flag ? CharacterOverrideInShadow : CharacterOverride).xyz
+                                : mhy_AvatarLightDir.xyz
+```
+
+### The shadow map's lookup against the light
+
+The face map "t2" is sampled at the vertex's coordinates `v9.xy`, and its texel is compared against the vertex's depth term `v9.z` over a window of "_FaceMapSoftness" (Exact on the window and the smooth step; Provisional on `v9.z`'s meaning, read from its use as the threshold):
+
+```
+s   = max("_FaceMapSoftness", 1e-6)
+lo  = clamp(v9.z - s, 1e-4, 0.9989)
+hi  = min(v9.z + s, 0.9999)
+F   = smoothstep(0, 1, saturate((T_face - lo) / (hi - lo)))
+```
+
+The lit colour's N . L is the body's `dp3(N, L)`, and the face's toon term is the same `dp2(z, |z|)` remap as the body's `z`, with the face's own vertex AO (Exact on the operators).
+
+The face's equations are not fitted to a rendered frame, and `v9.z` is not traced to its vertex source, so no number is claimed.
+
 ## The outline
 
 The outline is the face's "OUTLINE" pass, whose base programs are vertex 958 (DXBC) and pixel 885 (DXIL). The width is set in the vertex program and the colour in the pixel program.
