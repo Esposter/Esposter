@@ -3,5 +3,5 @@ import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSk
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 
 // The game's skill depots by their IDs, each one a character's sets of skills
-export const readSkillDepotMap = (): Map<ExcelSkillDepotRow["id"], ExcelSkillDepotRow> =>
+export const readSkillDepotMap = () =>
   new Map(readExcelTable<ExcelSkillDepotRow>("AvatarSkillDepotExcelConfigData").map((row) => [row.id, row]));
