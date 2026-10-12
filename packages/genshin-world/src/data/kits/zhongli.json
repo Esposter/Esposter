@@ -683,6 +683,5 @@
   "normalAttacks.4.hits.3.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 3031 } },
   "parameters.shieldFlatHealth": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 3032 } },
   "parameters.shieldMaxHealthShare": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 3032 } },
-  "parameters.shieldSeconds": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 3032 } },
-  "plungeCollision.element": { "cause": "Unclassified", "value": "Rock" }
+  "parameters.shieldSeconds": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 3032 } }
 }

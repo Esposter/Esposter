@@ -1055,6 +1055,5 @@
   "skillHolds.10.minimumHeldSeconds": { "cause": "Unclassified", "value": 10 },
   "skillHolds.0.action.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }

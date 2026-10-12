@@ -75,11 +75,7 @@
     "value": { "index": 8, "proudSkillGroupId": 5439 }
   },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 60 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 60 },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 76 },
   "stances.ceremonialGarment.chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
@@ -175,8 +171,5 @@
   "stances.ceremonialGarment.normalAttacks.2.targeting": { "cause": "Unclassified", "value": "Strike" },
   "stances.ceremonialGarment.skill.animationFrames": { "cause": "Unclassified", "value": 61 },
   "stances.ceremonialGarment.skill.hits.length": { "cause": "Unclassified", "value": 0 },
-  "stances.ceremonialGarment.skill.targeting": { "cause": "Unclassified", "value": "Skill" },
-  "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "stances.ceremonialGarment.skill.targeting": { "cause": "Unclassified", "value": "Skill" }
 }

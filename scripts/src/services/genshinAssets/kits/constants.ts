@@ -51,8 +51,6 @@ export const GCSIM_SKILL_HOLD_HITBOX_NAME = "E-Hold";
 export const GCSIM_SKILL_PRESS_HITBOX_NAMES: readonly string[] = ["E-Tap", "E-Press"];
 // The file a gcsim character's own plunges are in
 export const GCSIM_PLUNGE_FILE = "plunge.go";
-// A plunge gcsim has no file for ends this many frames after it lands, the standard the kits' borrowed plunges share
-export const NO_ACTION_FILE_PLUNGE_ANIMATION_FRAMES = 24;
 // A claymore's charged attack gcsim has no file for lands its spin and its final blow at these frames and ends at the
 // Next, as the kits without one share Diluc's
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES: readonly number[] = [30, 60];

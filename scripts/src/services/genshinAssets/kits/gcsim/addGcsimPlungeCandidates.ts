@@ -2,7 +2,7 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
-import { GCSIM_PLUNGE_FILE, NO_ACTION_FILE_PLUNGE_ANIMATION_FRAMES } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_PLUNGE_FILE } from "#src/services/genshinAssets/kits/constants";
 import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
@@ -12,17 +12,33 @@ import { posix } from "node:path";
 
 // The plunges: each landing's hitmark and frames from `lowPlungeHitmark` and `lowPlungeFrames` and their high twins,
 // Its area from the `Low_Plunge` or `High_Plunge` hitbox, and the collision's from `Plunge`. With no plunge file, the
-// Shared rule, its areas the fallback character's
+// Fallback character's, Bennett's, give each landing's frames and hit and the collision's, each cited at its file and
+// Line as NoActionFile, and the areas are the fallback's too
 export const addGcsimPlungeCandidates = (
   { add, addFrames, addHit, addNoActionFileRule, toFile }: GcsimKitCandidateWriter,
   gcsim: GcsimCharacter,
   plungeFallback: GcsimCharacter,
+  donorWriter: GcsimKitCandidateWriter,
 ): void => {
   const { attacks, config, constantMap, filePaths } = gcsim;
   const plungeFile = filePaths.find((path) => posix.basename(path) === GCSIM_PLUNGE_FILE);
   const hasPlungeFile = plungeFile !== undefined;
   const plungeSource = hasPlungeFile ? gcsim : plungeFallback;
   const fallbackConfigFile = toFile(plungeFallback.configFile, plungeFallback.folder);
+  // A hit of the donor's, its attack and hitmark both read from the fallback character's plunge file
+  const addDonorHit = (path: string, talentVariable: string, hitmarkName: string) => {
+    const hitmark = findGcsimConstant(plungeFallback.constantMap, hitmarkName);
+    donorWriter.addHit(
+      path,
+      {
+        attack: plungeFallback.attacks.find((attack) => attack.talentVariable === talentVariable),
+        ...(typeof hitmark?.value === "number" && {
+          hitmark: { file: hitmark.file, line: hitmark.line, value: hitmark.value },
+        }),
+      },
+      STRIKE_TARGETING_AREA,
+    );
+  };
   for (const [plunge, prefix, hitboxName] of [
     [KitPlunge.Low, "low", "Low_Plunge"],
     [KitPlunge.High, "high", "High_Plunge"],
@@ -47,8 +63,8 @@ export const addGcsimPlungeCandidates = (
       );
     } else {
       addNoActionFileRule(`${path}.hits.length`, 1);
-      addNoActionFileRule(`${path}.animationFrames`, NO_ACTION_FILE_PLUNGE_ANIMATION_FRAMES);
-      addNoActionFileRule(`${path}.hits.0.hitmarkFrames`, 0);
+      donorWriter.addFrames(`${path}.animationFrames`, `${prefix}PlungeFrames`);
+      addDonorHit(`${path}.hits.0`, `${prefix}Plunge`, `${prefix}PlungeHitmark`);
       if (hitbox?.radius !== undefined)
         add(
           `${path}.hits.0.area`,
@@ -59,8 +75,8 @@ export const addGcsimPlungeCandidates = (
         );
     }
   }
-  const collisionHitbox = findGcsimHitbox(plungeSource.config, "plunge", "Plunge");
   if (hasPlungeFile) {
+    const collisionHitbox = findGcsimHitbox(config, "plunge", "Plunge");
     const collisionHitmark = findGcsimConstant(constantMap, "collisionHitmark");
     addHit(
       "plungeCollision",
@@ -74,12 +90,16 @@ export const addGcsimPlungeCandidates = (
       },
       STRIKE_TARGETING_AREA,
     );
-  } else if (collisionHitbox?.radius !== undefined)
-    add(
-      "plungeCollision.area",
-      createCircleReach(0, collisionHitbox.radius),
-      fallbackConfigFile,
-      collisionHitbox.line,
-      KitProvisionalCause.NoActionFile,
-    );
+  } else {
+    addDonorHit("plungeCollision", "collision", "collisionHitmark");
+    const collisionHitbox = findGcsimHitbox(plungeSource.config, "plunge", "Plunge");
+    if (collisionHitbox?.radius !== undefined)
+      add(
+        "plungeCollision.area",
+        createCircleReach(0, collisionHitbox.radius),
+        fallbackConfigFile,
+        collisionHitbox.line,
+        KitProvisionalCause.NoActionFile,
+      );
+  }
 };

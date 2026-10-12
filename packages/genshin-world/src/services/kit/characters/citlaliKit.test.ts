@@ -48,9 +48,9 @@ describe(createCitlaliKitBehaviour, () => {
     expect(CITLALI_KIT.burstCooldownSeconds).toBe(15);
   });
 
-  test("the low plunge and the high plunge read their proud multipliers at zero seconds", () => {
+  test("the low plunge and the high plunge land at Bennett's hitmarks, 36 and 38 frames", () => {
     expect.hasAssertions();
-    expect(takeOne(CITLALI_KIT.lowPlunge.hits).hitmarkSeconds).toBe(0);
-    expect(takeOne(CITLALI_KIT.highPlunge.hits).hitmarkSeconds).toBe(0);
+    expect(takeOne(CITLALI_KIT.lowPlunge.hits).hitmarkSeconds).toBe(36 / 60);
+    expect(takeOne(CITLALI_KIT.highPlunge.hits).hitmarkSeconds).toBe(38 / 60);
   });
 });

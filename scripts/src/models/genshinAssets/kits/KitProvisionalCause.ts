@@ -8,7 +8,7 @@ export enum KitProvisionalCause {
   DiffersFromSource = "DiffersFromSource",
   // A talent whose hits its module spawns as a named list keeps its own hits list empty
   NamedHitList = "NamedHitList",
-  // A plunge gcsim has no file for borrows Bennett's areas and the kits' standard frames, and a claymore's charged
+  // A plunge gcsim has no file for borrows Bennett's plunge frames, hits and areas, and a claymore's charged
   // Attack it has no file for the frames the kits share
   NoActionFile = "NoActionFile",
   // A hit neither gcsim nor the wiki gives poise for deals none

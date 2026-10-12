@@ -9,12 +9,7 @@
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 }
 }

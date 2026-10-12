@@ -17,12 +17,7 @@
   "normalAttacks.3.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.manifestFlameSeconds": { "cause": "Unclassified", "value": { "index": 8, "proudSkillGroupId": 12032 } },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 68 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 67 },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 36 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "stances.manifestFlame.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 60 },
   "stances.manifestFlame.chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
@@ -147,6 +142,5 @@
     "value": { "index": 4, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.normalAttacks.4.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "stances.manifestFlame.normalAttacks.4.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "stances.manifestFlame.normalAttacks.4.targeting": { "cause": "Unclassified", "value": "Strike" }
 }

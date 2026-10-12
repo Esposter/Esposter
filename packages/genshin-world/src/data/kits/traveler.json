@@ -14,6 +14,5 @@
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 64.8 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 61 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 732 } },
-  "skillCooldownSeconds": { "cause": "Unclassified", "value": 5 },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "skillCooldownSeconds": { "cause": "Unclassified", "value": 5 }
 }

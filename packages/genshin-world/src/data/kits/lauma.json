@@ -110,17 +110,7 @@
     "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 11932 }
   },
-  "plungeCollision.element": { "cause": "Unclassified", "value": "Grass" },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 68 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource", "value": true },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 150 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 67 },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 36 },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource", "value": true },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
   "skill.hits.length": { "source": "Gcsim" },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11932 } },
   "skillHolds.0.action.animationFrames": { "cause": "Unclassified", "value": 42 },
@@ -133,7 +123,5 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11932 } },
-  "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" }
+  "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11932 } }
 }

@@ -71,11 +71,7 @@
     "value": { "index": 5, "proudSkillGroupId": 5339 }
   },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 60 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 60 },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 2 },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -1180,6 +1176,5 @@
   "skillMaximumHeldSeconds": { "cause": "Unclassified", "value": 10 },
   "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }

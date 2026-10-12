@@ -87,8 +87,5 @@
   "hits.sprintPhantom.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.sprintPhantom.0.hitmarkFrames": { "cause": "Unclassified", "value": 120 },
   "hits.sprintPhantom.0.multiplier": { "cause": "Unclassified", "value": 0.664 },
-  "hits.sprintPhantom.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "plungeCollision.element": { "cause": "Unclassified", "value": "Water" },
-  "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "plunges.low.hits.0.element": { "cause": "Unclassified", "value": "Water" }
+  "hits.sprintPhantom.0.poiseDamage": { "cause": "Unclassified", "value": 0 }
 }

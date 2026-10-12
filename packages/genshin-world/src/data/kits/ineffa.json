@@ -26,6 +26,5 @@
   "parameters.shieldSeconds": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 11632 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11632 } },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }

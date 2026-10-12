@@ -2,11 +2,13 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { CombatTalent, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
+const plungeConstant = (value: GoValue, line: number) => ({ elementLines: {}, file: "plunge.go", line, value });
 const frames = (animationFrames: number) => ({ animationFrames, hitmarkFrames: 0 });
 
 describe(getGcsimKitCandidates, () => {
@@ -281,5 +283,53 @@ describe(getGcsimKitCandidates, () => {
         candidateMap.get(path)?.map(({ value }) => value),
       ),
     ).toStrictEqual([[123], undefined, undefined]);
+  });
+
+  test("borrows a plunge with no file of its own from the fallback's plunge file, cited as NoActionFile", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map(),
+      filePaths: [],
+      folder: "aino",
+      queuedAttacks: [],
+      talentFile: "aino.go",
+      talentParameterMap: new Map(),
+      travelMap: new Map(),
+    };
+    const fallback: GcsimCharacter = {
+      ...gcsim,
+      constantMap: new Map([
+        ["lowPlungeFrames", plungeConstant(frames(67), 38)],
+        ["lowPlungeHitmark", plungeConstant(36, 21)],
+      ]),
+      folder: "bennett",
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Aino",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Claymore,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, fallback);
+
+    expect([
+      candidateMap
+        .get("plunges.low.animationFrames")
+        ?.map(({ provenance, value }) => [value, "cause" in provenance ? provenance.cause : undefined]),
+      candidateMap
+        .get("plunges.low.hits.0.hitmarkFrames")
+        ?.map(({ provenance, value }) => [value, "cause" in provenance ? provenance.cause : undefined]),
+    ]).toStrictEqual([[[67, KitProvisionalCause.NoActionFile]], [[36, KitProvisionalCause.NoActionFile]]]);
   });
 });

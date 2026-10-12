@@ -9,10 +9,5 @@
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 150 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
-  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10932 } },
-  "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10932 } }
 }

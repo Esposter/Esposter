@@ -30,9 +30,10 @@ export const createGcsimKitCandidateWriter = (
   candidateMap: Map<string, KitCandidate[]>,
   { configFile, constantMap, folder, talentFile, talentParameterMap }: GcsimCharacter,
   { talentGroupIdMap }: KitTables,
+  defaultCause?: KitProvisionalCause,
 ): GcsimKitCandidateWriter => {
   const toFile = (name: string, from = folder) => `${GCSIM_CHARACTERS_PATH}/${from}/${name}`;
-  const add = (path: string, value: unknown, file: string, line: number, cause?: KitProvisionalCause) =>
+  const add = (path: string, value: unknown, file: string, line: number, cause = defaultCause) =>
     addKitCandidate(candidateMap, path, {
       provenance: { ...(cause && { cause }), file, line: Math.max(line, 1), source: KitSource.Gcsim },
       value,

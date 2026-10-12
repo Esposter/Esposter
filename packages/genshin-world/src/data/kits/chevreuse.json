@@ -47,6 +47,5 @@
   "skillHolds.0.variant.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 19 },
   "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 9032 } },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }

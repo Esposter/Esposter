@@ -136,8 +136,5 @@
   "normalAttacks.0.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.animationFrames": { "cause": "DiffersFromSource", "value": 66 },
   "normalAttacks.1.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.element": { "cause": "Unclassified", "value": "Rock" },
-  "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "plunges.low.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
 }

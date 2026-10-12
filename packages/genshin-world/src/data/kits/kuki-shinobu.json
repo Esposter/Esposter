@@ -238,6 +238,5 @@
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }

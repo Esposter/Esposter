@@ -27,13 +27,5 @@
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
-  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 68 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource", "value": true },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 150 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 67 },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 36 },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource", "value": true },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8432 } }
 }

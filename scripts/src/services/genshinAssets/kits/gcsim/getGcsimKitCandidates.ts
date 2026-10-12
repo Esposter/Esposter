@@ -2,6 +2,7 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { addGcsimChargedAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates";
 import { addGcsimNamedConstantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimNamedConstantCandidates";
 import { addGcsimNormalAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates";
@@ -27,7 +28,13 @@ export const getGcsimKitCandidates = (
   const writer = createGcsimKitCandidateWriter(candidateMap, gcsim, tables);
   addGcsimNormalAttackCandidates(writer, gcsim);
   addGcsimChargedAttackCandidates(writer, gcsim, tables.weaponType);
-  addGcsimPlungeCandidates(writer, gcsim, plungeFallback);
+  const plungeFallbackWriter = createGcsimKitCandidateWriter(
+    candidateMap,
+    plungeFallback,
+    tables,
+    KitProvisionalCause.NoActionFile,
+  );
+  addGcsimPlungeCandidates(writer, gcsim, plungeFallback, plungeFallbackWriter);
   addGcsimSkillAndBurstCandidates(writer, gcsim);
   addGcsimSkillHoldCandidates(writer, gcsim);
   addGcsimNamedConstantCandidates(writer, gcsim, bagPaths);

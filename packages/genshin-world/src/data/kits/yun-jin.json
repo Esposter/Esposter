@@ -39,6 +39,5 @@
   "skillHolds.1.minimumHeldSeconds": { "cause": "Unclassified", "value": 1 },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "burst.hits.0.internalCooldownTag": { "source": "Wiki" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "burst.hits.0.internalCooldownTag": { "source": "Wiki" }
 }

@@ -6,6 +6,7 @@ import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedH
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitRecord } from "genshin-world";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
@@ -52,6 +53,17 @@ export const compareKitRecord = (
       return;
     }
     const committedEntry: KitOverlayEntry | undefined = committedOverlay[path];
+    // A value the borrowed plunge's donor gives, where the kit holds no reason of its own, takes the donor's value, so the
+    // Published one a rule gave is replaced rather than pinned
+    const donor = candidateMap.get(path)?.[0]?.provenance;
+    const isUnreasonedDonorValue =
+      donor?.source === KitSource.Gcsim &&
+      "cause" in donor &&
+      donor.cause === KitProvisionalCause.NoActionFile &&
+      (committedEntry === undefined ||
+        !("cause" in committedEntry) ||
+        committedEntry.cause === KitProvisionalCause.Unclassified);
+    if (isUnreasonedDonorValue) return;
     const entry = keepCommittedKitCause(
       classifyKitValue(value, candidateMap.get(path) ?? [], mainCandidateMap.get(path) ?? [], isTagPredated),
       committedEntry,
