@@ -1,3 +1,4 @@
+import { compactSvgPath } from "#src/services/genshinParity/shared/compactSvgPath";
 import { SPECK_SHARE } from "#src/services/genshinParity/shared/constants";
 import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
 import ImageTracer from "imagetracerjs";
@@ -27,8 +28,7 @@ export const traceMask = (isInk: Uint8Array, width: number, height: number): str
       roundcoords: 2,
     },
   );
-  return Array.from(
-    traced.matchAll(/<path[^>]*fill="rgb\(0,0,0\)"[^>]*\sd="(?<d>[^"]+)"/gu),
-    ({ groups }) => groups?.d?.trim() ?? "",
+  return Array.from(traced.matchAll(/<path[^>]*fill="rgb\(0,0,0\)"[^>]*\sd="(?<d>[^"]+)"/gu), ({ groups }) =>
+    compactSvgPath(groups?.d?.trim() ?? ""),
   ).filter(Boolean);
 };
