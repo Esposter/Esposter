@@ -3,6 +3,7 @@ import type { CharacterPoseRotations } from "#src/models/character/CharacterPose
 
 import {
   POSE_AIR_STANCES,
+  POSE_ARM_BEND_RADIANS,
   POSE_ARM_LOWER_RADIANS,
   POSE_BREATH_SECONDS,
   POSE_CHEST_BREATH_RADIANS,
@@ -36,7 +37,7 @@ export const computeCharacterPose = (
   const air = POSE_AIR_STANCES[state];
   const armLower = air?.armLowerRadians ?? POSE_ARM_LOWER_RADIANS;
   const lean = gait?.leanRadians ?? air?.leanRadians ?? 0;
-  const armBend = gait?.armBendRadians ?? 0.2;
+  const armBend = gait?.armBendRadians ?? POSE_ARM_BEND_RADIANS;
   const sinPhase = Math.sin(stridePhase);
   const cosPhase = Math.cos(stridePhase);
   // The left leg swings forward as the stride's sine rises, the right leg half a stride behind it, and each arm opposite

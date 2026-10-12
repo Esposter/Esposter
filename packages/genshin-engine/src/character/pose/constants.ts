@@ -9,6 +9,9 @@ export const POSE_SHOULDER_BREATH_RADIANS = 0.02;
 // How far the arms come down from the T, in radians from horizontal: the relaxed idle, with the arms out a little
 // Provisional: read off the same wiki frame, since neither reference holds the Traveler's relaxed stance cleanly
 export const POSE_ARM_LOWER_RADIANS = 1.2;
+// How far the elbows bend in a state with no gait, in radians
+// Provisional: a stance's elbow is read off the same wiki frame as the arms, not yet off the game's clips
+export const POSE_ARM_BEND_RADIANS = 0.2;
 // How many seconds a state's pose takes to cross-fade from the one before it
 export const POSE_CROSSFADE_SECONDS = 0.25;
 // The gaits: how far one full stride covers in metres, which sets its frequency from the state's speed, and how far its
