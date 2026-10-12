@@ -15,7 +15,7 @@ export const toWeaponPassive = (
     passiveNameTextId: String(firstRankRow.nameTextMapHash),
     passiveRankDescriptionTextIds: rankRows.map(({ descTextMapHash }) => String(descTextMapHash)),
     passiveRankParams: rankRows.map(({ paramList }) =>
-      Array.from({ length: width }, (_, index) => paramList[index] ?? 0),
+      Array.from({ length: width }, (_value, index) => paramList[index] ?? 0),
     ),
   };
 };
