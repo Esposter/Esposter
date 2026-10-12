@@ -22,12 +22,18 @@ import { SKILL_TARGETING_AREA } from "genshin-world";
 // slot with no hitmark constant is hit by its queue calls, each at its damage delay, through `addGcsimQueuedHits`
 export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter, gcsim: GcsimCharacter): void => {
   const { add, addFrames, addHit, toFile } = writer;
-  const { attacks, config, constantMap, travelMap } = gcsim;
+  const { animationFrameNameMap, attacks, config, constantMap, travelMap } = gcsim;
   for (const [slot, attackTags, pressNames, pressHitboxNames] of [
     ["skill", GCSIM_SKILL_ATTACK_TAGS, ["skillPress", "skillTap"], GCSIM_SKILL_PRESS_HITBOX_NAMES],
     ["burst", GCSIM_BURST_ATTACK_TAGS, [], []],
   ] as const) {
-    addFrames(`${slot}.animationFrames`, `${slot}Frames`, ...pressNames.map((pressName) => `${pressName}Frames`));
+    const animationFrameName = animationFrameNameMap.get(`${slot}.go`);
+    addFrames(
+      `${slot}.animationFrames`,
+      `${slot}Frames`,
+      ...pressNames.map((pressName) => `${pressName}Frames`),
+      ...(animationFrameName === undefined ? [] : [animationFrameName]),
+    );
     const hitmarks = findGcsimConstant(
       constantMap,
       `${slot}Hitmarks`,

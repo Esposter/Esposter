@@ -3,6 +3,7 @@ import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 
 import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
+import { readGcsimAnimationFrameNames } from "#src/services/genshinAssets/kits/gcsim/readGcsimAnimationFrameNames";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
 import { readGcsimConfig } from "#src/services/genshinAssets/kits/gcsim/readGcsimConfig";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
@@ -29,6 +30,7 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
   const [configFile = GCSIM_CONFIG_FILE, configSource = ""] =
     [...fileMap].find(([path]) => posix.basename(path) === GCSIM_CONFIG_FILE) ?? [];
   return {
+    animationFrameNameMap: readGcsimAnimationFrameNames(goSources),
     attacks: readGcsimAttacks(goSources, constantMap),
     config: readGcsimConfig(configSource),
     configFile,

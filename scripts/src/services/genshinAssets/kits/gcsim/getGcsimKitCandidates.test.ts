@@ -13,6 +13,8 @@ describe(getGcsimKitCandidates, () => {
     expect.hasAssertions();
 
     const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      animationFrameNameMap: new Map(),
       attacks: [],
       config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
       configFile: "config.yml",
@@ -53,6 +55,7 @@ describe(getGcsimKitCandidates, () => {
     expect.hasAssertions();
 
     const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
       attacks: [
         {
           attackTag: "attacks.AttackTagElementalBurst",
@@ -97,6 +100,8 @@ describe(getGcsimKitCandidates, () => {
     expect.hasAssertions();
 
     const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      animationFrameNameMap: new Map(),
       attacks: [],
       config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
       configFile: "config.yml",
@@ -129,6 +134,8 @@ describe(getGcsimKitCandidates, () => {
     expect.hasAssertions();
 
     const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      animationFrameNameMap: new Map(),
       attacks: [],
       config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
       configFile: "config.yml",
@@ -163,6 +170,8 @@ describe(getGcsimKitCandidates, () => {
     expect.hasAssertions();
 
     const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      animationFrameNameMap: new Map(),
       attacks: [],
       config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
       configFile: "config.yml",
