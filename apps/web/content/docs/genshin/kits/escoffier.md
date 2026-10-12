@@ -36,4 +36,4 @@ The framework holds no way for an enemy's status to read the party's elements, a
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/escoffier), MIT, at main: the strikes and the charged attack as the index gives them, the plunges, Low-Temperature Cooking with Frosty Parfait and the Surging Blade, Scoring Cuts, Rehab Diet and the constellations.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/escoffier), MIT, at main: the strikes' and the charged attack's hitmarks, cancels and reaches, the plunges, Low-Temperature Cooking with Frosty Parfait and the Surging Blade, Scoring Cuts, Rehab Diet and the constellations.

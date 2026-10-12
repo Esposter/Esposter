@@ -33,4 +33,4 @@ Ifa's kit is built around the Nightsoul Blessing, so most of it waits on the Nig
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ifa), MIT, at v2.47.2: the strikes and the charged attack as the index gives them, the plunge and its collision, the skill's blessing, Compound Sedation Field and its marks, and the passives and constellations the hook waits on.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ifa), MIT, at v2.47.2: the strikes' and the charged attack's hitmarks, cancels and reaches, the plunge and its collision, the skill's blessing, Compound Sedation Field and its marks, and the passives and constellations the hook waits on.

@@ -9,7 +9,7 @@ Columbina's kit is its record and one behaviour module, `createColumbinaKitBehav
 
 Her skill and burst deal their multiplier on her max HP, as gcsim's `UseHP` gives them, so their talent multiplier is zero and the share of max HP is each hit's flat damage. A press while the DoT runs restarts its duration rather than stacking a second field, as gcsim restarts its status and keeps its ticks.
 
-gcsim sources: `columbina/attack.go`, `charge.go`, `skill.go` and `burst.go`, with the table data in gcsim's Columbina data file.
+gcsim sources: her attack, charge, skill and burst files, with the table data in gcsim's Columbina data file.
 
 ## Decisions
 

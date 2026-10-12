@@ -22,7 +22,6 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 - **Ascension 4's DMG and the Prayer's 20% DMG Bonus on the team's normal attacks are not built.** The hook is a party buff read by another member's normal attack, as `getStrikeDamageBonus` reads only the kit's own strikes.
 - **Constellation 2's Max HP of 20% is not built.** `getBuffedCombatant` adds a buff to the attribute total, and the Max HP the shield and the damage read is derived once in `computeCharacterAttributes`, so the buff does not reach it. The hook is a Max HP buff that the pricing re-derives.
 - **Constellation 4's shorter hold cooldown is not built.** gcsim sets the charged hold's cooldown to the tap's 6 seconds, but a hold's cooldown is one number on the kit, and `getSkillCooldownMultiplier` reads no hold. The hook is a hold cooldown read from the holder's constellations.
-- **Constellations 3 and 5 are not built.** Their talent levels are the index's gap, so the kit reads each group at its start level.
 
 ## Key files
 
