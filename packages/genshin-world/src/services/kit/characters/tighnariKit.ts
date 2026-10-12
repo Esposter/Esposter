@@ -8,9 +8,9 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
-import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Tighnari's proud skill groups, read at his talent level. The attack group holds his four strikes at 0, 1, 2 and 3, the

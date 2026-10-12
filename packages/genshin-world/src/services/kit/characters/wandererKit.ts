@@ -179,6 +179,7 @@ export const createWandererKit = (talentMultiplierMap: TalentMultiplierMap): Kit
     hits: [
       {
         element: Element.Anemo,
+        gauge: 1,
         hitArea: SKILL_HIT_AREA,
         hitmarkSeconds: SKILL_HITMARK_FRAMES / 60,
         poiseDamage: 0,
