@@ -7,14 +7,18 @@ export type DeepOmit<T, TKey extends PropertyKey> = T extends DeepOmitKeptValue
   : T extends readonly unknown[]
     ? { [K in keyof T]: DeepOmit<T[K], TKey> }
     : T extends object
-      ? {
-          [P in keyof T as P extends symbol ? never : P extends TKey ? never : P]: DeepOmit<T[P], TKey>;
-        }
+      ? // An open object type such as `object` has no keys to walk, so it is kept as it is
+        Record<string, unknown> extends T
+        ? T
+        : {
+            [P in keyof T as P extends symbol ? never : P extends TKey ? never : P]: DeepOmit<T[P], TKey>;
+          }
       : T;
 
 // The built-ins `omitDeep` keeps by reference, since each has internal slots a key walk would destroy
 type DeepOmitKeptValue =
   | ArrayBufferView
+  | Blob
   | Date
   | FunctionLike
   | Map<unknown, unknown>

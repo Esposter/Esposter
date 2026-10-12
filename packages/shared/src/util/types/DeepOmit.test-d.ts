@@ -102,4 +102,16 @@ describe("deepOmit type", () => {
       b: Set<string>;
     }>();
   });
+
+  test("keeps Blob by reference, so its size is not omitted", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<DeepOmit<{ f: Blob }, "size">>().toEqualTypeOf<{ f: Blob }>();
+  });
+
+  test("keeps an open object type such as object as it is", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<DeepOmit<{ id: string; meta: object }, "id">>().toEqualTypeOf<{ meta: object }>();
+  });
 });

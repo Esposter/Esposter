@@ -8,4 +8,4 @@ Compiler: `typescript@6.0.3-bridge.18.tsgo.7.0.2`
 
 | case            | types | instantiations |
 | --------------- | ----- | -------------- |
-| DeepOmitFixture | 121   | 238            |
+| DeepOmitFixture | 123   | 255            |
