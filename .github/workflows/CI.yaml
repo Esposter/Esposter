@@ -189,7 +189,7 @@ jobs:
         run: pnpm format:check
 
   # Each entry's `name` is the check context the branch ruleset requires
-  # (`apps/infra/src/github/rulesets/developMainStatusChecks.ts`)
+  # (`apps/infra/src/github/rulesets/queueStatusChecks.ts`)
   check:
     name: ${{ matrix.name }}
     needs: build-packages

@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "automergeType": "branch",
+  "automergeType": "pr",
+  "baseBranchPatterns": ["ai/queue"],
   "configMigration": true,
   "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
   "extends": [
@@ -15,7 +16,7 @@
   "packageRules": [
     { "automerge": true, "matchUpdateTypes": ["minor", "patch"] },
     {
-      "description": "Every automerging minor and patch update shares one branch, so a move of `main` rebases one branch and starts one CI run rather than one per dependency on the shared runners. `rebaseWhen: \"conflicted\"` is not the answer: a branch automerge is a fast-forward and `main` requires its checks up to date, so Renovate raises a PR for a person on every stale branch instead. Later rules naming a `groupName` keep their own branch.",
+      "description": "Every automerging minor and patch update is one group, so one branch and one CI run cover them rather than one per dependency on the shared runners. Each automerge is a pull request into `ai/queue` that merges once its own required checks pass. Later rules naming a `groupName` keep their own branch.",
       "groupName": "non-major dependencies",
       "matchUpdateTypes": ["minor", "patch"]
     },

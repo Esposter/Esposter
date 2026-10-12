@@ -1,12 +1,13 @@
 name: 🚀 Deploy Function App
-# One workflow deploys `@esposter/functions` to both stacks: a push to `develop` ships the dev function app, a
+# One workflow deploys `@esposter/functions` to both stacks: a push to `ai/queue` ships the dev function app, a
 # push to `main` the prod one, and the branch is the only thing that picks the two resource names below — so
-# there is no second copy for a prod-only edit to drift from.
+# there is no second copy for a prod-only edit to drift from. `main` moves only by the review's fast-forward, so
+# its push deploys what the review has passed.
 
 on:
   push:
     branches:
-      - develop
+      - ai/queue
       - main
 
 # Serialize deploys per branch but never cancel an in-flight deploy — a half-applied
@@ -23,8 +24,8 @@ permissions:
 # The maps are keyed by the branches `on.push` lists, so a branch added there without a row here fails on an
 # empty name at the first `az` call rather than deploying anywhere.
 env:
-  FUNCTION_APP_NAME: ${{ fromJSON('{"develop":"dev-func-esposter-001","main":"prod-func-esposter-001"}')[github.ref_name] }}
-  STORAGE_ACCOUNT_NAME: ${{ fromJSON('{"develop":"devstesposter001","main":"prodstesposter001"}')[github.ref_name] }}
+  FUNCTION_APP_NAME: ${{ fromJSON('{"ai/queue":"dev-func-esposter-001","main":"prod-func-esposter-001"}')[github.ref_name] }}
+  STORAGE_ACCOUNT_NAME: ${{ fromJSON('{"ai/queue":"devstesposter001","main":"prodstesposter001"}')[github.ref_name] }}
   OUTPUT_DIRECTORY: dist
   ZIP_FILE_NAME: release.zip
 
