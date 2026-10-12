@@ -35,6 +35,14 @@ const { characterDataMap, frame, input, isTouch, nameTextMap, party, travelerNam
 const switchCooldownShare = computed(() =>
   Math.max(0, 1 - (frame.seconds - party.switchedSeconds) / PARTY_SWITCH_COOLDOWN_SECONDS),
 );
+// The deployed team in slot order, each member with the input action its slot's key taps
+const deployedMembers = computed(() =>
+  getDeployedCharacterIds(party).map((characterId, index) => ({
+    action: takeOne(PARTY_MEMBER_INPUT_ACTIONS, index),
+    characterId,
+    index,
+  })),
+);
 const getName = (characterId: number): string => {
   if (characterId === TRAVELER_CHARACTER_ID && travelerName) return travelerName;
   const nameTextId = characterDataMap.get(characterId)?.nameTextId ?? "";
@@ -49,7 +57,7 @@ const getName = (characterId: number): string => {
        HUD's own; a member who is down is greyed, and after a switch every other row darkens by the share of the
        Cooldown left. A press on a row taps its slot's key, as the number keys do -->
   <ol class="party" :class="{ touch: isTouch }">
-    <li v-for="(characterId, index) of getDeployedCharacterIds(party)" :key="characterId">
+    <li v-for="{ action, characterId, index } of deployedMembers" :key="characterId">
       <button
         class="member"
         :class="{ active: index === party.activeIndex, down: checkIsCharacterDown(party, characterId) }"
@@ -58,19 +66,14 @@ const getName = (characterId: number): string => {
           '--shade': index === party.activeIndex ? 0 : switchCooldownShare,
         }"
         type="button"
-        @click="tapActionKey(input, takeOne(PARTY_MEMBER_INPUT_ACTIONS, index))"
+        @click="tapActionKey(input, action)"
       >
         <span class="details">
           <span class="name">{{ getName(characterId) }}</span>
           <span v-if="index !== party.activeIndex" class="hp" aria-hidden="true"><span class="fill" /></span>
         </span>
         <span class="portrait" aria-hidden="true" />
-        <HudKeyCap
-          v-if="!isTouch"
-          class="key"
-          aria-hidden="true"
-          :code="getActionKeyCode(takeOne(PARTY_MEMBER_INPUT_ACTIONS, index))"
-        />
+        <HudKeyCap v-if="!isTouch" class="key" aria-hidden="true" :code="getActionKeyCode(action)" />
       </button>
     </li>
   </ol>
