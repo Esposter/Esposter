@@ -13,7 +13,7 @@ The scarce resource is one shared Claude Code account limit. The main session, e
 - **A frontier text model as the cheap classification tier** — a small model prompted to "reply with one word". It samples text, so it can emit a value outside the set, and it then owes a parse, a validator and a retry path; a typed decision cannot leave its own domain and needs none of them.
 - **A subagent with no `model`.** It inherits the main session's family, so a lookup is priced at the thinker's rate and also re-read in the main context — the one delegation that costs more than doing the work in place.
 - **A subagent on any family but haiku** — opus or sonnet, for a spec, a lane, or work that felt judgement-heavy. The user banned it on 2026-10-12, after one session briefed about twenty lanes on opus and then sonnet against the two tiers below while its haiku runners landed theirs for a fraction of the tokens. The `genshin-mods` delegation guard refuses the launch, a fork with it (`apps/web/content/docs/infra/claude-interface/genshin-mods/delegation.md`).
-- **Naming a model version where it chooses what runs** — in a skill, a doc, a workflow script, a delegation prompt or `SessionRoleModelMap`. Families ship new versions every few weeks and the project always wants the latest, so only the unversioned alias (`haiku`, `opus`) is written. A record of which model _did_ something keeps its version — a proposal's `model:` (the `docs` skill, `references/page-frontmatter.md`), a ledger's `Swept` cell written from the trailers.
+- **Naming a model version where it chooses what runs** — in a skill, a doc, a workflow script, a delegation prompt or the review session launcher's model constant. Families ship new versions every few weeks and the project always wants the latest, so only the unversioned alias (`haiku`, `opus`) is written. A record of which model _did_ something keeps its version — a proposal's `model:` (the `docs` skill, `references/page-frontmatter.md`), a ledger's `Swept` cell written from the trailers.
 
 ## In a session — the main session thinks, subagents run
 
@@ -75,9 +75,9 @@ Two conditions. The verifier has to be cheap against the tier above it. And a fa
 
 `choice`, `noul` and `score`, every question about one state in one call, confidence gating the escalation rather than the answer, and every call through `scripts/src/services/jev/readAnswers.ts` (`references/jev.md`).
 
-## A headless session's model is a property of its role, and every spawn owes a gate
+## A headless session's model is one constant, and every spawn owes a gate
 
-A session's model is read off `SessionRoleModelMap` for its role, and no session launches without a deterministic check, a typed decision or a recorded marker able to decline it (`references/sessions.md`).
+Every headless session runs on the one review model constant, and no session launches without a deterministic check, a typed decision or a recorded marker able to decline it (`references/sessions.md`).
 
 ## Design for agents
 

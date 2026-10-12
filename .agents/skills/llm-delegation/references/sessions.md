@@ -1,13 +1,16 @@
 # Headless Sessions
 
-Read when automation launches a headless session: which model its role takes, and the gate that must be able to decline it.
+Read when automation launches a headless session: its one launcher, its two roles and the gate that must be able to decline each spawn.
 
-Each headless session the automation launches is one role, and its model is read off `SessionRoleModelMap` (`scripts/src/services/coderabbit/collect/constants.ts`) at the call site rather than off one constant every role shares. The map is total over the roles, so a role added does not compile until it has been priced, and a role moved to another family — another vendor's — is one line. `scripts/src/services/coderabbit/collect/runSession.ts` is the one launcher, and it takes the model rather than picking it.
+`scripts/src/services/review/runSession.ts` is the one launcher. It takes a role and a prompt and never picks a model: every session runs on `REVIEW_MODEL` (`scripts/src/services/review/constants.ts`), the unversioned alias, as every subagent does. Its wall clock is `REVIEWER_TIMEOUT_MS` or `FIXER_TIMEOUT_MS` from the same file.
 
-**Every role runs on haiku, as every subagent does** (the `llm-delegation` skill's Settled list). The reconciliation roles are proved by the tree they left rather than trusted, and the carry role's rules are written into its prompt. The headroom is still bought first at the gate below, where a question skips its session entirely.
+The roles are `ReviewSessionRole` (`scripts/src/models/review/ReviewSessionRole.ts`):
+
+- **Reviewer**, one per batch, read-only. Print mode allows only the tools in `REVIEWER_TOOLS`, so every edit is denied.
+- **Fixer**, one per run and only when findings exist. It may edit and commit, and it never touches GitHub; the script lands its commits.
 
 ## Every spawn owes a gate that can decline it
 
-No session is launched unconditionally. Before the spawn stands one of three gates, in this order of preference: a deterministic check that the work exists at all (`scripts/src/services/coderabbit/collect/resolveLockfileConflicts.ts`), a typed decision that answers the question without one (`scripts/src/services/triage/readTriageLabel.ts`), or a recorded marker from an earlier run that this run re-applies rather than re-deciding (the session limit marker, `scripts/src/services/coderabbit/collect/readSessionLimitResetMs.ts`). A run that spawns a session to discover there was nothing to do has already spent the window it was protecting.
+No session launches unconditionally. A run that starts a session to discover there was nothing to do has already spent the window it was protecting, so a deterministic check comes first: no owed commits means no reviewers, and no findings means no fixer (`scripts/src/services/review/runReview.ts`).
 
-A gate that cannot decide is not a gate that failed. It hands the case up, and the tier above runs exactly as it did before the gate existed — which is also what an unconfigured checkout gets, so nothing downstream may depend on a gate having answered.
+A session that hits Claude's usage limit leaves no marker. The run stops where it stands, `main` does not move, and the next push resumes it, so nothing downstream depends on a gate having answered.
