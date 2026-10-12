@@ -5,6 +5,7 @@ import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { createLightUniforms } from "#src/nodes/createLightUniforms";
 import { DataTexture, DoubleSide, FrontSide } from "three";
+import { diffuseColor } from "three/tsl";
 import { describe, expect, test } from "vitest";
 
 const pmxMaterial: PmxMaterial = {
@@ -23,6 +24,13 @@ const pmxMaterial: PmxMaterial = {
   sphereTextureIndex: -1,
   textureIndex: -1,
   toonIndex: 2,
+};
+
+// Whether a node is the target or reads it through its operands, so a test can find a term inside a material's graph
+const reaches = (node: unknown, target: unknown): boolean => {
+  if (node === target) return true;
+  if (!(node instanceof Object)) return false;
+  return ["aNode", "bNode", "node"].some((key) => key in node && reaches(Reflect.get(node, key), target));
 };
 
 describe(createCharacterMaterial, () => {
@@ -90,6 +98,19 @@ describe(createCharacterMaterial, () => {
     expect(characterMaterial.sphereMap).toBe(sphereTexture);
     expect(characterMaterial.colorNode).not.toBeNull();
   });
+
+  test("tints its ambient by its diffuse colour, so the light it adds keeps the material's own colour", () => {
+    expect.hasAssertions();
+
+    const characterMaterial = createCharacterMaterial({
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: { ...pmxMaterial, isOutlined: false },
+      rampTexture: new DataTexture(),
+    });
+
+    expect(reaches(characterMaterial.emissiveNode, diffuseColor)).toBe(true);
+  });
+
   test("blends a partly transparent material and draws it from both faces, and draws a solid one from its front", () => {
     expect.hasAssertions();
 

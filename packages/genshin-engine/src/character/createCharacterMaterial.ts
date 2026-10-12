@@ -1,13 +1,12 @@
 import type { CharacterMaterialOptions } from "#src/models/character/CharacterMaterialOptions";
 
-import { TEXTURED_AMBIENT_SHARE } from "#src/character/constants";
 import { createSpecularNode } from "#src/character/createSpecularNode";
 import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import { createRimNode } from "#src/nodes/createRimNode";
 import { Color, DoubleSide, FrontSide, SRGBColorSpace } from "three";
-import { attribute, materialColor, normalView, texture, uv, vec2, vec3 } from "three/tsl";
+import { attribute, diffuseColor, materialColor, normalView, texture, uv, vec2, vec3 } from "three/tsl";
 
 // One of a character's materials, as its file sets it: its diffuse colour under its texture, lit on the toon ramp its file
 // Names (MMD's shared ramps, or a texture of the model's), and the sun's specular highlight and the material's ambient
@@ -15,8 +14,8 @@ import { attribute, materialColor, normalView, texture, uv, vec2, vec3 } from "t
 // Silhouette. Unlike the environment's toon material it takes no wetness, since the game's characters do not darken in
 // The rain. A material is drawn opaque, writing its depth, unless its diffuse alpha is below one or its texture has clear
 // Texels, and then it is blended and drawn from both faces. Only a material
-// Whose edge the file sets is outlined, in that edge's colour and width. Its ambient is its full colour where its file names
-// No texture, and a fifth of it where one is named, as MMD's loader draws it
+// Whose edge the file sets is outlined, in that edge's colour and width. Its ambient is tinted by its diffuse colour, the
+// Texture included, so a material lit by its ambient keeps its own colour rather than washing out to the light's
 export const createCharacterMaterial = ({
   lightUniforms,
   pmxMaterial: {
@@ -68,6 +67,6 @@ export const createCharacterMaterial = ({
   }
   characterMaterial.emissiveNode = createRimNode(lightUniforms)
     .add(createSpecularNode(lightUniforms, specularColor, specularity))
-    .add(vec3(ambientRed, ambientGreen, ambientBlue).mul(diffuseTexture ? TEXTURED_AMBIENT_SHARE : 1));
+    .add(diffuseColor.rgb.mul(vec3(ambientRed, ambientGreen, ambientBlue)));
   return characterMaterial;
 };
