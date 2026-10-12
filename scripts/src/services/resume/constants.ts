@@ -1,6 +1,5 @@
 // A pending path is grouped by this many leading path segments
 export const TREE_GROUP_SEGMENT_COUNT = 2;
-export const QUEUE_REMOTE_REF = "origin/ai/queue";
 export const TREE_ACTION = "finish, commit or record each; never discard";
 export const QUEUE_PUSH_ACTION = "git pull --rebase origin ai/queue && git push origin HEAD:ai/queue";
 export const STALE_CLAIM_ACTION = "resume it from its handoff, or release with --miss naming what is left";
