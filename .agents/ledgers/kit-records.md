@@ -69,7 +69,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `kuki-shinobu`       | —                      |                                                                          |
 | `lan-yan`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `lauma`              | —                      |                                                                          |
-| `layla`              | —                      |                                                                          |
+| `layla`              | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `linnea`             | —                      |                                                                          |
 | `lisa`               | —                      |                                                                          |
 | `lohen`              | —                      |                                                                          |
