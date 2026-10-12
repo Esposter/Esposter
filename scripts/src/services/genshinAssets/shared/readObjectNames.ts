@@ -1,13 +1,12 @@
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 
-import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
+import { readIndexedNames } from "#src/services/genshinAssets/shared/readIndexedNames";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
-import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 
 // The name of each object by its file and path ID, as the asset index names it. The index holds a file's offset in its
 // Block rather than the file, so an indexed row is matched to its file through the CAB map's offset of each file
-export const readObjectNames = async (
+export const readObjectNames = (
   objects: readonly ResolvedObject[],
   cabMap: ReadonlyMap<string, CabEntry>,
 ): Promise<Map<string, string>> => {
@@ -16,14 +15,11 @@ export const readObjectNames = async (
   const blockOffsetFileMap = new Map<string, string>();
   for (const [file, { block, offset }] of cabMap)
     if (blocks.has(block)) blockOffsetFileMap.set(`${block}|${offset}`, file);
-  const indexed = await readIndexedAssets(
+  return readIndexedNames(
     ({ block, pathId }) => blocks.has(block) && pathIds.has(pathId),
-    GENSHIN_ANIMESTUDIO_OPTIONS,
+    ({ block, offset, pathId }) => {
+      const file = blockOffsetFileMap.get(`${block}|${offset}`);
+      return file ? toObjectKey(file, pathId) : undefined;
+    },
   );
-  const names = new Map<string, string>();
-  for (const { block, name, offset, pathId } of indexed) {
-    const file = blockOffsetFileMap.get(`${block}|${offset}`);
-    if (file) names.set(toObjectKey(file, pathId), name);
-  }
-  return names;
 };
