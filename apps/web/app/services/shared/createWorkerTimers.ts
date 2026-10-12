@@ -27,10 +27,20 @@ export const createWorkerTimers = (worker: Pick<Worker, "addEventListener" | "po
     worker.postMessage(request);
   };
 
-  const schedule = (method: TimerMethod.SetInterval | TimerMethod.SetTimeout, callback: () => void, delayMs = 0) => {
+  const schedule = <TArgs extends unknown[]>(
+    method: TimerMethod.SetInterval | TimerMethod.SetTimeout,
+    callback: (...args: TArgs) => void,
+    args: TArgs,
+    delayMs = 0,
+  ) => {
     lastId += 1;
     const id = lastId;
-    pendingTimers.set(id, { callback, isInterval: method === TimerMethod.SetInterval });
+    pendingTimers.set(id, {
+      callback: () => {
+        callback(...args);
+      },
+      isInterval: method === TimerMethod.SetInterval,
+    });
     post({ delayMs, id, method } satisfies TimerRequest);
     return id;
   };
@@ -49,20 +59,8 @@ export const createWorkerTimers = (worker: Pick<Worker, "addEventListener" | "po
       clear(TimerMethod.ClearTimeout, id);
     },
     setInterval: <TArgs extends unknown[]>(callback: (...args: TArgs) => void, delayMs?: number, ...args: TArgs) =>
-      schedule(
-        TimerMethod.SetInterval,
-        () => {
-          callback(...args);
-        },
-        delayMs,
-      ),
+      schedule(TimerMethod.SetInterval, callback, args, delayMs),
     setTimeout: <TArgs extends unknown[]>(callback: (...args: TArgs) => void, delayMs?: number, ...args: TArgs) =>
-      schedule(
-        TimerMethod.SetTimeout,
-        () => {
-          callback(...args);
-        },
-        delayMs,
-      ),
+      schedule(TimerMethod.SetTimeout, callback, args, delayMs),
   };
 };
