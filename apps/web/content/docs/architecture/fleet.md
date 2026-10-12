@@ -72,7 +72,7 @@ A checkout pushes on each commit to `ai/queue` and at each turn's end, the event
 
 ## Game data is never shared through a service
 
-No export or recording is ever committed, published or sent to a hosted service. A machine's first route to the game data is the game itself, downloaded from HoYoverse's official CDN and extracted locally, so it needs no other machine. A copy between machines on the local network is the faster route, and it runs only over SSH, authenticated and encrypted. A machine off the network never holds the game exports, so it takes only the entries that need no game data. The copy's procedure and the folders it moves are the throughput skill's `references/fleet.md`.
+No export or recording is ever committed, published or sent to a hosted service. A machine's first route to the game data is the game itself, downloaded from HoYoverse's official CDN and extracted locally, so it needs no other machine. A copy between machines on the local network is the faster route, and it runs only over SSH, authenticated and encrypted. A machine off the network gets its game exports the same way, from the CDN, so until it holds them it takes only the entries that need no game data. The copy's procedure and the folders it moves are the throughput skill's `references/fleet.md`.
 
 ## Key files
 
