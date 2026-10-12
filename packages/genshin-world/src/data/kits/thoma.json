@@ -1,49 +1,46 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5039 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.blazingBlessingInfusion": { "cause": "Unclassified", "value": 30 },
+  "frames.blazingBlessingInfusion": { "cause": "Unsourced", "value": 30 },
   "hits.fieryCollapse.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5039 } },
-  "hits.fieryCollapse.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.fieryCollapse.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.blazingBlessingMaxShieldMaxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 4, "proudSkillGroupId": 5032 }
   },
   "parameters.blazingBlessingMaxShieldFlatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 5, "proudSkillGroupId": 5032 }
   },
   "parameters.fieryCollapseShieldMaxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5039 }
   },
   "parameters.fieryCollapseShieldFlatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 5039 }
   },
-  "parameters.fieryCollapseShieldSeconds": {
-    "cause": "Unclassified",
-    "value": { "index": 4, "proudSkillGroupId": 5039 }
-  },
+  "parameters.fieryCollapseShieldSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 5039 } },
   "parameters.fieryCollapseIntervalSeconds": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 5, "proudSkillGroupId": 5039 }
   },
-  "parameters.crimsonOoyoroiSeconds": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 5039 } },
+  "parameters.crimsonOoyoroiSeconds": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 5039 } },
   "parameters.blazingBlessingShieldMaxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5032 }
   },
   "parameters.blazingBlessingShieldFlatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5032 }
   },
   "parameters.blazingBlessingShieldSeconds": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 5032 }
   },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
