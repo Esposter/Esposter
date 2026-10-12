@@ -49,6 +49,7 @@ Candidates before the choice: body 124 pixel and 41 vertex, hair 60 and 5, face 
 ## Decisions
 
 - **The base variant.** A material matches many candidate programs, because engine-wide keywords (shadows, fog, light probes and the like) are runtime state the material does not set. A candidate carrying another Lumine material's own keyword is not a candidate for it: "BACK_FACE_ON" and "FACE_MAP_NEW_ON" exclude the body, for instance. The base variant is the keyword set, among those with both a vertex and a pixel program, with the fewest keywords beyond the material's own set. Two sets tied on that count go to the one whose two programs are both DXBC (SHEX) over a DXIL one, and a tie past that goes to the lowest index. The equations are read from the base variant's pixel program, and its vertex program gives the outline's width and the vertex stage.
+- **A pack's light area and band width are derived, not fitted.** A pack's toon is drawn for MMD's lookup, which reads it down its whole column at `0.5 + 0.5 * (N . L)`. Under the flat lightmap the threshold runs linearly in `N . L` from `z(-1)` to `z(1)`, so the defaults take the light area `W = z(1) = (0.5 + 0.5 + 0.4975) / 2` and the band width `w = 0.4975 / W`, and the column is then MMD's exactly, the clamp never reached. A pack is drawn as its own toon was authored, and no material value is copied.
 - **An engine-wide keyword's addition is noted only where it touches the shade**, as one line under the equation it changes, such as a shadow keyword's attenuation factor. The equation itself is written once, never a second copy per keyword.
 
 ## The pass classes
@@ -119,9 +120,10 @@ u  = 1 - x          (0 where the program's "v8.w" exceeds 1e-5)
 S  = "_PackedShadowRampTex".sample(u, 1 - v_row(r)).rgb
 ```
 
-`z` is the toon threshold, with its three branches read from the program's compare chain (Exact on the form, Provisional on the vertex inputs "v1.x" as the vertex colour's AO and "v9.w" as the sun term):
+`z` is the toon threshold, with its three branches read from the program's compare chain (Exact on the form, Provisional on the vertex input "v1.x" as the vertex colour's AO). The sun term `N_v` is a half Lambert with a scale just under a half (Exact): the body's program takes it per pixel from its shading normal and the light's direction, and the vertex programs that hand it to the hair's write the same form:
 
 ```
+N_v = 0.4975 * (N . L) + 0.5
 L  = (_UseLightMapColorAO > 0.001) ? Lm.g : 0.5
 Q  = 2 * (L - 0.5) * |L - 0.5| + 0.5
 Q' = (_UseVertexColorAO != 0) ? Q * AO_v : Q

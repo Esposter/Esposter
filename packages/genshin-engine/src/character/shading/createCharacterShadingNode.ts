@@ -8,6 +8,8 @@ import {
   COOL_RAMP_ROW_BASE,
   EMISSION_ALPHA_FLOOR,
   FLAT_LIGHT_MAP,
+  HALF_LAMBERT_OFFSET,
+  HALF_LAMBERT_SCALE,
   MINIMUM_RAMP_WIDTH_VERTEX,
   RAMP_ROW_BASE,
   RAMP_ROW_STEP,
@@ -77,7 +79,7 @@ export const createCharacterShadingNode = (
   const mainSample = inputs.mainTexture ? texture(inputs.mainTexture, uv()) : vec4(1);
   const materialColour = mainSample.rgb.mul(tint);
 
-  const sunTerm = normalView.dot(sunDirectionView).saturate();
+  const sunTerm = normalView.dot(sunDirectionView).mul(HALF_LAMBERT_SCALE).add(HALF_LAMBERT_OFFSET);
   const threshold = createToonThresholdNode({
     isLightMapAo: inputs.isLightMapAo,
     isVertexAo: inputs.isVertexAo,

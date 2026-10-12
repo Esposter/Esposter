@@ -14,9 +14,15 @@ export const MINIMUM_OUTLINE_KNOT_SPAN = 0.001;
 export const OUTLINE_PROJECTION_SCALE = 2.414;
 export const OUTLINE_WIDTH_SCALE = 0.41425;
 export const DESATURATION_WEIGHTS: readonly [number, number, number] = [0.0397, 0.458, 0.0061];
-// Provisional: the page's values for the light area and the band width are not fitted, so these stand in until they are
-export const DEFAULT_LIGHT_AREA = 1;
-export const DEFAULT_RAMP_WIDTH = 0.5;
+// The sun term is the half Lambert the body's program takes of the normal and the light, its scale just under a half
+export const HALF_LAMBERT_SCALE = 0.4975;
+export const HALF_LAMBERT_OFFSET = 0.5;
+// A pack's toon is drawn for MMD's lookup, which reads it down its whole column as the normal turns from the light to
+// Away from it. Under the flat lightmap the threshold runs from its value facing away to its value facing the light,
+// So the light area is the latter and the band spans the whole run: the column is then MMD's one half plus half the
+// Cosine, exactly
+export const DEFAULT_LIGHT_AREA: number = (NEUTRAL_LIGHT_MAP_GREEN + HALF_LAMBERT_OFFSET + HALF_LAMBERT_SCALE) / 2;
+export const DEFAULT_RAMP_WIDTH: number = HALF_LAMBERT_SCALE / DEFAULT_LIGHT_AREA;
 // The face threshold's bounds, a face lit straight on at the minimum and one turned fully from the light at the maximum
 export const MINIMUM_FACE_THRESHOLD = 1e-4;
 export const MAXIMUM_FACE_THRESHOLD = 0.9999;
