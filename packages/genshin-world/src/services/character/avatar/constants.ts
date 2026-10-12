@@ -2,8 +2,9 @@ import { MmdBoneName } from "genshin-engine";
 
 // The export component holding the Traveler's game model, which the scene draws in place of the pack's, in development
 export const AVATAR_COMPONENT = "playergirl";
-// The folder of a component's textures, beside its manifest and binary, which each texture slot's file is read from
-export const AVATAR_TEXTURE_FOLDER = "assets/Texture2D";
+// The export folder of a component's textures, which each texture slot's file is read from: the route serves a file
+// Below the component's assets by its export folder, as a witness's meshes and textures are
+export const AVATAR_TEXTURE_FOLDER = "Texture2D";
 // The texture slots a material's shading reads, by the game's property names
 export const AVATAR_TEXTURE_SLOTS = [
   "_FaceMapTex",
