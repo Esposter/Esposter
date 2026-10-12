@@ -10,13 +10,13 @@ import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKazuhaKit, KAZUHA_CHARACTER_ID } from "#src/services/kit/characters/kazuhaKit";
+import { createKazuhaKitBehaviour, KAZUHA_CHARACTER_ID } from "#src/services/kit/characters/kazuhaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const KAZUHA_KIT = createKazuhaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KAZUHA_CHARACTER_ID]));
+const KAZUHA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAZUHA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createKazuhaCombatant = (constellationCount = 0): Combatant => ({
@@ -34,7 +34,7 @@ const getSkillCooldownSeconds = (constellationCount: number): number =>
   KAZUHA_KIT.skillCooldownSeconds *
   (KAZUHA_KIT.getSkillCooldownMultiplier?.(createKitTestContext(createKazuhaCombatant(constellationCount))) ?? 1);
 
-describe(createKazuhaKit, () => {
+describe(createKazuhaKitBehaviour, () => {
   test("constellation 1 takes a tenth off Chihayaburu's cooldown", () => {
     expect.hasAssertions();
 

@@ -6,14 +6,14 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createLynetteKit, LYNETTE_CHARACTER_ID } from "#src/services/kit/characters/lynetteKit";
+import { createLynetteKitBehaviour, LYNETTE_CHARACTER_ID } from "#src/services/kit/characters/lynetteKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const LYNETTE_KIT = createLynetteKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LYNETTE_CHARACTER_ID]));
+const LYNETTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LYNETTE_CHARACTER_ID);
 
-describe(createLynetteKit, () => {
+describe(createLynetteKitBehaviour, () => {
   // The effects the burst's start adds to the team's, which its owner holds
   const castBurst = (): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };

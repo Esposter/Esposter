@@ -11,13 +11,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createKujouSaraKit, KUJOU_SARA_CHARACTER_ID } from "#src/services/kit/characters/kujouSaraKit";
+import { createKujouSaraKitBehaviour, KUJOU_SARA_CHARACTER_ID } from "#src/services/kit/characters/kujouSaraKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const SARA_KIT = createKujouSaraKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KUJOU_SARA_CHARACTER_ID]));
+const SARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KUJOU_SARA_CHARACTER_ID);
 
 const createSaraCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -43,7 +43,7 @@ const castEffects = (
   return kitEffectState.effects;
 };
 
-describe(createKujouSaraKit, () => {
+describe(createKujouSaraKitBehaviour, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads each talent multiplier from its proud skill groups", () => {

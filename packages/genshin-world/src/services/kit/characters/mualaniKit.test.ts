@@ -1,14 +1,14 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createMualaniKit, MUALANI_CHARACTER_ID } from "#src/services/kit/characters/mualaniKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createMualaniKitBehaviour, MUALANI_CHARACTER_ID } from "#src/services/kit/characters/mualaniKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const MUALANI_KIT = createMualaniKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [MUALANI_CHARACTER_ID]));
+const MUALANI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MUALANI_CHARACTER_ID);
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
-describe(createMualaniKit, () => {
+describe(createMualaniKitBehaviour, () => {
   test("reads her three strikes, charged attack and plunges from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

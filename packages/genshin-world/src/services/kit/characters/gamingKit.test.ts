@@ -1,12 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createGamingKit, GAMING_CHARACTER_ID } from "#src/services/kit/characters/gamingKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createGamingKitBehaviour, GAMING_CHARACTER_ID } from "#src/services/kit/characters/gamingKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const GAMING_KIT = createGamingKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [GAMING_CHARACTER_ID]));
+const GAMING_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GAMING_CHARACTER_ID);
 
-describe(createGamingKit, () => {
+describe(createGamingKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

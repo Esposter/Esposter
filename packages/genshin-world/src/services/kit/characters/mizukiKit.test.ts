@@ -1,11 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createMizukiKit, MIZUKI_CHARACTER_ID } from "#src/services/kit/characters/mizukiKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createMizukiKitBehaviour, MIZUKI_CHARACTER_ID } from "#src/services/kit/characters/mizukiKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const MIZUKI_KIT = createMizukiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [MIZUKI_CHARACTER_ID]));
+const MIZUKI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MIZUKI_CHARACTER_ID);
 
-describe(createMizukiKit, () => {
+describe(createMizukiKitBehaviour, () => {
   test("reads each talent multiplier, cooldown and cost from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

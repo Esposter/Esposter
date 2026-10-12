@@ -1,11 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createNahidaKit, NAHIDA_CHARACTER_ID } from "#src/services/kit/characters/nahidaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createNahidaKitBehaviour, NAHIDA_CHARACTER_ID } from "#src/services/kit/characters/nahidaKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const NAHIDA_KIT = createNahidaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NAHIDA_CHARACTER_ID]));
+const NAHIDA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NAHIDA_CHARACTER_ID);
 
-describe(createNahidaKit, () => {
+describe(createNahidaKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

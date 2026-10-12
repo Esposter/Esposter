@@ -1,12 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { createFreminetKit, FREMINET_CHARACTER_ID } from "#src/services/kit/characters/freminetKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createFreminetKitBehaviour, FREMINET_CHARACTER_ID } from "#src/services/kit/characters/freminetKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const FREMINET_KIT = createFreminetKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FREMINET_CHARACTER_ID]));
+const FREMINET_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FREMINET_CHARACTER_ID);
 
-describe(createFreminetKit, () => {
+describe(createFreminetKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

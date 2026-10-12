@@ -9,14 +9,14 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createKukiKit, KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
+import { createKukiKitBehaviour, KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const KUKI_KIT = createKukiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KUKI_CHARACTER_ID]));
+const KUKI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KUKI_CHARACTER_ID);
 
 const createKukiCombatant = (ascension = 0, constellationCount = 0, elementalMastery = 0): Combatant => ({
   ascension,
@@ -47,7 +47,7 @@ const ringSeconds = (constellationCount: number): number =>
     .filter((effect): effect is KitField => effect.kind === "field")
     .find((field) => Number.isFinite(field.tickIntervalSeconds))?.secondsRemaining ?? 0;
 
-describe(createKukiKit, () => {
+describe(createKukiKitBehaviour, () => {
   test("reads the strikes', charged slashes' and plunges' multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

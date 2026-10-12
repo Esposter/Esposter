@@ -10,14 +10,14 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createGorouKit, GOROU_CHARACTER_ID } from "#src/services/kit/characters/gorouKit";
+import { createGorouKitBehaviour, GOROU_CHARACTER_ID } from "#src/services/kit/characters/gorouKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitField } from "#src/services/kit/effects/stepKitField";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const GOROU_KIT = createGorouKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [GOROU_CHARACTER_ID]));
+const GOROU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GOROU_CHARACTER_ID);
 
 const createGorouCombatant = (characterId = GOROU_CHARACTER_ID): Combatant => ({
   ascension: 0,
@@ -38,7 +38,7 @@ const castEffects = (action: KitAction, kitEffectState: KitEffectState = { effec
   return kitEffectState.effects;
 };
 
-describe(createGorouKit, () => {
+describe(createGorouKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const crystalCollapse = castEffects(GOROU_KIT.elementalBurst).find(

@@ -6,13 +6,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createJahodaKit, JAHODA_CHARACTER_ID } from "#src/services/kit/characters/jahodaKit";
+import { createJahodaKitBehaviour, JAHODA_CHARACTER_ID } from "#src/services/kit/characters/jahodaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const JAHODA_KIT = createJahodaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [JAHODA_CHARACTER_ID]));
+const JAHODA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, JAHODA_CHARACTER_ID);
 
 const createJahodaCombatant = (): Combatant => ({
   ascension: 0,
@@ -25,7 +25,7 @@ const createJahodaCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
-describe(createJahodaKit, () => {
+describe(createJahodaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

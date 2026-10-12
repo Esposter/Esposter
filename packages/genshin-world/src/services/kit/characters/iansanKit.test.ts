@@ -1,11 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createIansanKit, IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createIansanKitBehaviour, IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const IANSAN_KIT = createIansanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [IANSAN_CHARACTER_ID]));
+const IANSAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IANSAN_CHARACTER_ID);
 
-describe(createIansanKit, () => {
+describe(createIansanKitBehaviour, () => {
   test("reads each talent multiplier, cooldown and cost from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

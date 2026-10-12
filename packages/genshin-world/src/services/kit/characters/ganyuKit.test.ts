@@ -10,13 +10,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createGanyuKit, GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
+import { createGanyuKitBehaviour, GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const GANYU_KIT = createGanyuKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [GANYU_CHARACTER_ID]));
+const GANYU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GANYU_CHARACTER_ID);
 
 const createGanyuCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -49,7 +49,7 @@ const getTickBuffs = (ascension: number): KitEffect[] => {
   return kitEffectState.effects.filter((effect) => effect.kind === "buff");
 };
 
-describe(createGanyuKit, () => {
+describe(createGanyuKitBehaviour, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads each talent multiplier from its proud skill groups", () => {
