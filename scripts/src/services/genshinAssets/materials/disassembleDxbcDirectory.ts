@@ -1,5 +1,6 @@
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
+import { readdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 // Windows' own shader compiler library disassembles a DXBC program into its assembly text, so nothing is installed:
 // PowerShell binds `D3DDisassemble` and writes each `<name>.dxbc` in the folder beside it as `<name>.asm`, printing
@@ -37,13 +38,34 @@ foreach ($file in Get-ChildItem -LiteralPath '${directory.replaceAll("'", "''")}
 }
 $count
 `;
-// Every DXBC program in a folder disassembled beside it, returning how many were
-export const disassembleDxbcDirectory = (directory: string): number => {
-  if (process.platform !== "win32")
-    throw new InvalidOperationError(Operation.Read, directory, "disassembling DXBC needs Windows' d3dcompiler_47");
+// Where a machine without Windows' compiler library gets its disassembler: `vkd3d-compiler` from Wine's vkd3d project,
+// named by VKD3D_COMPILER or found on PATH
+const VKD3D_ARGUMENTS = ["-x", "dxbc-tpf", "-b", "d3d-asm"];
+// Every DXBC program in a folder disassembled beside it, returning how many were. Windows reads them through
+// D3DDisassemble; elsewhere `vkd3d-compiler` disassembles each one, and a program it cannot read is left without its assembly
+export const disassembleDxbcDirectory = (directory: string): number =>
+  process.platform === "win32" ? disassembleWithD3d(directory) : disassembleWithVkd3d(directory);
+const disassembleWithD3d = (directory: string): number => {
   const output = execFileSync("powershell", ["-NoProfile", "-Command", createScript(directory)], {
     encoding: "utf8",
     maxBuffer: 1024 ** 2,
   });
   return Number(output.trim());
+};
+const disassembleWithVkd3d = (directory: string): number => {
+  let count = 0;
+  for (const name of readdirSync(directory)) {
+    if (!name.endsWith(".dxbc")) continue;
+    const { error, status, stdout } = spawnSync(
+      process.env.VKD3D_COMPILER ?? "vkd3d-compiler",
+      [...VKD3D_ARGUMENTS, join(directory, name)],
+      { encoding: "utf8", maxBuffer: 1024 ** 2 },
+    );
+    // A missing compiler throws, since no program can then be read; a program it cannot read is skipped
+    if (error) throw error;
+    if (status !== 0) continue;
+    writeFileSync(join(directory, name.replace(/\.dxbc$/, ".asm")), stdout);
+    count++;
+  }
+  return count;
 };
