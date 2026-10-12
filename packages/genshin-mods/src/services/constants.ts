@@ -69,5 +69,8 @@ export const DELEGATION_NUDGE =
 export const IDLE_LINE_PREFIX = "machine idle:";
 // The repository's watcher, which the pulse runs as its child and reads the lines of
 export const MACHINE_WATCHER_SCRIPT = "scripts/src/machine/watch/index.ts";
+// How long after its watcher exits a session starts one again, so a session whose watcher found another's lock held takes
+// Over the watching once that watcher's session ends
+export const MACHINE_WATCHER_RETRY_MILLISECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const IDLE_WAKE_PROMPT: string = `The machine has gone idle, with room for more runs. Run \`pnpm ai:fleet:fill\`, then launch one background haiku agent per brief it printed, the brief as the prompt, then report what started. If it printed "nothing ready", report that and stop.`;
