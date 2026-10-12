@@ -5,7 +5,7 @@ import type { Texture, Vector3Tuple, Vector4Tuple } from "three";
 
 import { createFaceDraw } from "genshin-engine";
 
-type AvatarTextureSlot = (typeof AVATAR_TEXTURE_SLOTS)[number];
+type AvatarTextureSlot = (typeof AVATAR_TEXTURE_SLOTS)[number]["slot"];
 
 // A switch the material holds as a float, one or zero, or none where it holds no such switch
 const readSwitch = (nameFloatMap: ReadonlyMap<string, number>, name: string): boolean | undefined => {

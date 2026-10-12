@@ -24,7 +24,7 @@ interface AvatarMaterialOptions extends Pick<CharacterMaterialOptions, "lightUni
   textureFileMap: ReadonlyMap<string, Texture>;
 }
 
-type AvatarTextureSlot = (typeof AVATAR_TEXTURE_SLOTS)[number];
+type AvatarTextureSlot = (typeof AVATAR_TEXTURE_SLOTS)[number]["slot"];
 
 // A material's value by its name, read with the name as a key so the names keep their underscores
 const readMaterialValue = <T>(values: Readonly<Record<string, T>>, name: string): T | undefined => values[name];
@@ -51,7 +51,7 @@ const createAvatarMaterial = (
   indexCount: number,
 ): AvatarMaterialRecord => {
   const slotTextureMap = new Map<AvatarTextureSlot, Texture>();
-  for (const slot of AVATAR_TEXTURE_SLOTS) {
+  for (const { slot } of AVATAR_TEXTURE_SLOTS) {
     const file = avatarMaterial.textures[slot];
     const texture = file === undefined ? undefined : textureFileMap.get(file);
     if (texture) slotTextureMap.set(slot, texture);

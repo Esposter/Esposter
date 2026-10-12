@@ -3,11 +3,7 @@ import type { CharacterAvatar } from "#src/models/avatar/CharacterAvatar";
 import type { CharacterMaterialOptions } from "genshin-engine";
 import type { Texture } from "three";
 
-import {
-  AVATAR_COLOUR_TEXTURE_SLOT,
-  AVATAR_TEXTURE_FOLDER,
-  AVATAR_TEXTURE_SLOTS,
-} from "#src/services/character/avatar/constants";
+import { AVATAR_TEXTURE_FOLDER, AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
 import { createAvatarTexture } from "#src/services/character/avatar/createAvatarTexture";
 import { createCharacterAvatar } from "#src/services/character/avatar/createCharacterAvatar";
 import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
@@ -39,13 +35,14 @@ export const readCharacterAvatar = async (
   const drawnMaterials = new Set(manifest.meshes.flatMap(({ submeshes }) => submeshes.map(({ material }) => material)));
   const textureFiles = [...drawnMaterials].flatMap((materialName) => {
     const textures = manifest.materials[materialName]?.textures ?? {};
-    return AVATAR_TEXTURE_SLOTS.map((slot) => textures[slot]).filter((file) => file !== undefined);
+    return AVATAR_TEXTURE_SLOTS.map(({ slot }) => textures[slot]).filter((file) => file !== undefined);
   });
+  // A file is a colour where any slot holding it is a colour slot, so one texture decodes one way for every material
   const colourFiles = new Set(
-    Array.from(
-      drawnMaterials,
-      (materialName) => manifest.materials[materialName]?.textures[AVATAR_COLOUR_TEXTURE_SLOT],
-    ),
+    [...drawnMaterials].flatMap((materialName) => {
+      const textures = manifest.materials[materialName]?.textures ?? {};
+      return AVATAR_TEXTURE_SLOTS.filter(({ isColour }) => isColour).map(({ slot }) => textures[slot]);
+    }),
   );
   const textureFileEntries = await Promise.all(
     Array.from(new Set(textureFiles), async (file): Promise<[string, Texture]> => {
