@@ -98,6 +98,7 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // _02, the tallest near the town, are halls 45 and 66 metres high) matches it with confidence; the pose cannot run
   // Here (no parity page on localhost:3011)
   [DerivedAssetComponent.NodKrai]: {},
+  [DerivedAssetComponent.PlayerGirl]: {},
   // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
   // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports

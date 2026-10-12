@@ -66,6 +66,12 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.Mondstadt]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Natlan]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.NodKrai]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
+  // Lumine, the player's girl avatar: her model prefab in the character block, rooted at its game object, so `extract`
+  // Walks her skinned renderers and their materials the way it walks a scene's. No parity screen draws her yet
+  [DerivedAssetComponent.PlayerGirl]: {
+    roots: [{ block: "00/02666572.blk", name: "Avatar_Girl_Sword_PlayerGirl_Model", pathId: "7275937277578795946" }],
+    screen: "",
+  },
   [DerivedAssetComponent.Snezhnaya]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Sumeru]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the

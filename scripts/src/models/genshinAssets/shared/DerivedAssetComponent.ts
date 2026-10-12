@@ -8,6 +8,7 @@ export enum DerivedAssetComponent {
   Mondstadt = "mondstadt",
   Natlan = "natlan",
   NodKrai = "nod-krai",
+  PlayerGirl = "playergirl",
   Snezhnaya = "snezhnaya",
   Sumeru = "sumeru",
   Windrise = "windrise",
