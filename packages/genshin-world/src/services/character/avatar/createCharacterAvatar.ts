@@ -6,7 +6,12 @@ import type { CharacterAvatar } from "#src/models/avatar/CharacterAvatar";
 import type { CharacterMaterialOptions, PmxMaterial, ToonNodeMaterial } from "genshin-engine";
 import type { Texture } from "three";
 
-import { AVATAR_HUMANOID_MMD_NAME_MAP, AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
+import { alignArmRest } from "#src/services/character/avatar/alignArmRest";
+import {
+  AVATAR_HUMANOID_MMD_NAME_MAP,
+  AVATAR_TEXTURE_SLOTS,
+  PACK_ARM_REST_CHAINS,
+} from "#src/services/character/avatar/constants";
 import { createAvatarShadingInputs } from "#src/services/character/avatar/createAvatarShadingInputs";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CharacterMaterialKind, createCharacterMaterial, PmxSphereMode } from "genshin-engine";
@@ -151,6 +156,14 @@ export const createCharacterAvatar = (
     firstMesh.add(...rootBones);
     firstMesh.bind(skeleton);
     for (const skinnedMesh of skinnedMeshes.slice(1)) skinnedMesh.bind(skeleton, firstMesh.bindMatrix);
+    // The arms are turned after the bind, so the mesh stays bound where it was modelled and the rest the poser writes moves
+    for (const { direction, lowerArm, upperArm } of PACK_ARM_REST_CHAINS) {
+      const upperArmIndex = humanoid[upperArm];
+      const lowerArmIndex = humanoid[lowerArm];
+      const upperArmBone = upperArmIndex === undefined ? undefined : boneList[upperArmIndex];
+      const lowerArmBone = lowerArmIndex === undefined ? undefined : boneList[lowerArmIndex];
+      if (upperArmBone && lowerArmBone) alignArmRest(upperArmBone, lowerArmBone, direction);
+    }
   }
   model.add(...skinnedMeshes);
   return { model, skinnedMeshes };

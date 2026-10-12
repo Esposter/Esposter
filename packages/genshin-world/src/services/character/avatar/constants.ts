@@ -1,3 +1,5 @@
+import type { Vector3Tuple } from "three";
+
 import { MmdBoneName } from "genshin-engine";
 
 // The export component holding the Traveler's game model, which the scene draws in place of the pack's, in development
@@ -36,3 +38,18 @@ export const AVATAR_HUMANOID_MMD_NAME_MAP: Partial<Record<string, MmdBoneName>> 
   RightUpperLeg: MmdBoneName.RightLeg,
   Spine: MmdBoneName.Upper,
 };
+// Each arm chain of the pack's rest, the humanoid names of its upper arm and lower arm and the direction its upper arm
+// Rests in, from its shoulder to its elbow, in the pack's own axes. Measured from Lumine's pack, whose 左腕 to 左ひじ and
+// 右腕 to 右ひじ are the PMX file's own bones, so the model's arms rest where the pack's do, and the poser's deltas hold
+export const PACK_ARM_REST_CHAINS: readonly { direction: Vector3Tuple; lowerArm: string; upperArm: string }[] = [
+  {
+    direction: [0.7619042486102005, -0.647386881314609, -0.019802571839794402],
+    lowerArm: "LeftLowerArm",
+    upperArm: "LeftUpperArm",
+  },
+  {
+    direction: [-0.7619042486102005, -0.647386881314609, -0.019802571839794402],
+    lowerArm: "RightLowerArm",
+    upperArm: "RightUpperArm",
+  },
+];
