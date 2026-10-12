@@ -13,6 +13,7 @@ import {
 } from "#src/character/shading/constants";
 import { createFaceShadeNode } from "#src/character/shading/createFaceShadeNode";
 import { createRampColumnNode } from "#src/character/shading/createRampColumnNode";
+import { createRampUvNode } from "#src/character/shading/createRampUvNode";
 import { createShadingRegionNode } from "#src/character/shading/createShadingRegionNode";
 import { createToneNode } from "#src/character/shading/createToneNode";
 import { createToonThresholdNode } from "#src/character/shading/createToonThresholdNode";
@@ -41,7 +42,7 @@ const toVec3 = ([red, green, blue]: Vector3Tuple): Node<"vec3"> => vec3(red, gre
 // In place of the ramp, and a hair takes the body's path without the metal branch
 export const createCharacterShadingNode = (
   inputs: CharacterShadingInputs,
-  { sunDirection }: Pick<LightUniforms, "sunDirection">,
+  { lightColor, sunDirection }: Pick<LightUniforms, "lightColor" | "sunDirection">,
 ): Node<"vec3"> => {
   const { brightness, color, emissionColor, emissionScaler, kind, metalTexture, regionTints, regionToggles } = inputs;
   const sunDirectionView = cameraViewMatrix.mul(vec4(sunDirection, 0)).xyz.normalize();
@@ -75,16 +76,21 @@ export const createCharacterShadingNode = (
     ? max(float(2).mul(inputs.vertexRampWidth), float(MINIMUM_RAMP_WIDTH_VERTEX)).mul(inputs.rampWidth)
     : float(inputs.rampWidth);
   const column = createRampColumnNode(threshold, inputs.lightArea, rampWidth);
-  // A region's row is its base plus a step per region past one, read from the ramp's bottom up
+  // A region's row is its base plus a step per region past one, and the ramp's layout reads it as its own coordinate
   const sampleRamp = (rowBase: number): Node<"float"> =>
-    texture(inputs.rampTexture, vec2(column, float(1).sub(float(rowBase).add(region.sub(1).mul(RAMP_ROW_STEP))))).r;
+    texture(
+      inputs.rampTexture,
+      createRampUvNode(inputs.rampLayout, column, float(rowBase).add(region.sub(1).mul(RAMP_ROW_STEP))),
+    ).r;
   const shade =
     kind === CharacterMaterialKind.Face
       ? createFaceShadeNode(inputs.faceMap, inputs.faceSoftness)
       : inputs.isCoolShadow
         ? mix(sampleRamp(RAMP_ROW_BASE), sampleRamp(COOL_RAMP_ROW_BASE), inputs.coolShadowTone)
         : sampleRamp(RAMP_ROW_BASE);
-  const lit = materialColour.mul(shade).mul(brightness);
+  // The lit colour and the specular carry the hour's light colour, as the game's carry its main light's, and the emission
+  // Does not
+  const lit = materialColour.mul(shade).mul(brightness).mul(lightColor);
   const emitted = materialColour.mul(toVec3(emissionColor)).mul(emissionScaler);
   // The emission's factor is the main texture's alpha, past its floor, where the material draws its emission from it
   const emissionMask = inputs.isEmissionFromAlpha
@@ -97,7 +103,8 @@ export const createCharacterShadingNode = (
   const specular = step(float(1).sub(lightMap.b), highlight)
     .mul(lightMap.r)
     .mul(toVec3(inputs.specularColor))
-    .mul(inputs.specularMultiplier);
+    .mul(inputs.specularMultiplier)
+    .mul(lightColor);
   const lightColour = shaded.add(specular.mul(inputs.specularInShadow).mul(brightness));
 
   const coloured =

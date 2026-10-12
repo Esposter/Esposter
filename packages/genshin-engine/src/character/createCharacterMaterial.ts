@@ -5,6 +5,7 @@ import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
 import { createCharacterShadingNode } from "#src/character/shading/createCharacterShadingNode";
 import { getToneColour } from "#src/character/shading/getToneColour";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
+import { RampLayout } from "#src/models/character/RampLayout";
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import { DoubleSide, FrontSide, Vector3 } from "three";
 import { float, texture, uv, vec4 } from "three/tsl";
@@ -13,8 +14,10 @@ import { float, texture, uv, vec4 } from "three/tsl";
 // Material: its diffuse is the main texture and its colour, its toon the ramp read as one row, its sphere the metal map,
 // And its specular and edge carry over. The regions and the lightmap take their defaults, as the shading page's inputs
 // Table sets out. A material is drawn opaque, writing its depth, unless its diffuse alpha is below one or its texture has
-// Clear texels, and then it is blended and drawn from both faces. A material whose edge the file sets is outlined in that
-// Edge's colour and width, the colour tone-mapped as the body's is, and a material left at no opacity is not drawn
+// Clear texels, and then it is blended and drawn from both faces. Every opaque material is outlined, as the game outlines
+// Every character: one whose edge the file sets in that edge's colour and width, the colour tone-mapped as the body's is,
+// And one whose file sets none, as an official release's do, by the world's own outline. A material left at no opacity
+// Is not drawn
 export const createCharacterMaterial = ({
   isTextureTransparent,
   lightUniforms,
@@ -37,11 +40,14 @@ export const createCharacterMaterial = ({
 }: CharacterMaterialOptions): ToonNodeMaterial => {
   const isTransparent = opacity !== 1 || isTextureTransparent;
   const color: [number, number, number] = [red, green, blue];
+  const packToonTexture = isToonShared ? undefined : toonTexture;
   const shadingInputs = createCharacterShadingInputs({
     color,
     mainTexture: diffuseTexture,
     metalTexture: sphereTexture && sphereMode !== PmxSphereMode.Disabled ? sphereTexture : undefined,
-    rampTexture: (isToonShared ? getSharedToonRamp(toonIndex) : toonTexture) ?? rampTexture,
+    // A pack's own toon is one column read down its rows, where the shared ramps and the world's are one row across
+    rampLayout: packToonTexture ? RampLayout.Vertical : RampLayout.Horizontal,
+    rampTexture: packToonTexture ?? (isToonShared ? getSharedToonRamp(toonIndex) : undefined) ?? rampTexture,
     shininess: specularity,
     specularColor,
   });
@@ -59,7 +65,7 @@ export const createCharacterMaterial = ({
       // A material left at no opacity, which a pack hides an alternate part with, is not drawn, so its depth hides nothing
       visible: opacity > 0,
     },
-    isOutlined,
+    isOutlined || !isTransparent,
     isOutlined
       ? {
           color: [toned.x, toned.y, toned.z, edgeColor[3]],

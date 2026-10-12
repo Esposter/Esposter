@@ -71,6 +71,26 @@ describe(createCharacterMaterial, () => {
     expect(characterMaterial.edge).toBeUndefined();
   });
 
+  test("outlines a solid material whose file sets no edge by the world's outline, and leaves a transparent one bare", () => {
+    expect.hasAssertions();
+
+    const rampTexture = new DataTexture();
+    const solid = createCharacterMaterial({
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: { ...pmxMaterial, isOutlined: false },
+      rampTexture,
+    });
+    const translucent = createCharacterMaterial({
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: { ...pmxMaterial, diffuseColor: [1, 1, 1, 0.5], isOutlined: false },
+      rampTexture,
+    });
+
+    expect(solid.isMeshToonMaterial).toBe(true);
+    expect(solid.edge).toBeUndefined();
+    expect(translucent.isMeshToonMaterial).toBe(false);
+  });
+
   test("keeps the sphere off a material whose mode is disabled", () => {
     expect.hasAssertions();
 

@@ -3,6 +3,7 @@ import type { Texture, Vector3Tuple } from "three";
 
 import { DEFAULT_LIGHT_AREA, DEFAULT_RAMP_WIDTH } from "#src/character/shading/constants";
 import { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
+import { RampLayout } from "#src/models/character/RampLayout";
 
 // The inputs of a material the caller supplies, each one it has; every other takes the default the page sets out
 export type CharacterShadingOverrides = Partial<CharacterShadingInputs> & { rampTexture: Texture };
@@ -34,6 +35,7 @@ export const createCharacterShadingInputs = (overrides: CharacterShadingOverride
     metalLightColor: WHITE,
     outlineDepths: [1, 2, 3],
     outlineScales: [1, 1, 1],
+    rampLayout: RampLayout.Horizontal,
     rampWidth: DEFAULT_RAMP_WIDTH,
     regionTints: { five: color, four: color, three: color, two: color },
     regionToggles: { five: false, four: false, three: false, two: false },
