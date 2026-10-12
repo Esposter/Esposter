@@ -37,6 +37,9 @@ interface ParityReferenceBase {
   // Over a scene: the world between them stays the frame's own, so every piece is scored over what lies behind it. The
   // Scored region alone when absent
   plate?: ImageRegion[];
+  // The pixel, in the reference's own, the recording's pointer rests at, which the shot moves the page's pointer to, so a
+  // Piece the game lights under the pointer is lit in both
+  pointer?: [number, number];
   // The reprojection, in the reference's pixels, `pose --write` holds its solved camera to in place of the camera pass's
   // Gate, for a reference whose rigid landmarks cannot reach that gate; the reason is written beside the entry
   poseBar?: number;

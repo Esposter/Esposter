@@ -70,6 +70,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   const [shotPath = ""] = await shootScreen({
     backdropPath,
     height,
+    pointer: reference.pointer,
     props: reference.props,
     screen: reference.screen,
     width,

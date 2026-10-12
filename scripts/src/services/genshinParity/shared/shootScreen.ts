@@ -11,6 +11,7 @@ import { join } from "node:path";
 // Fixture's motion props) is held at each one in turn, so it is shot frame by frame at exact moments rather than raced
 export const shootScreen = async ({
   motion = ParityMotion.Props,
+  pointer,
   screen,
   timesMs = [],
   ...options
@@ -21,6 +22,7 @@ export const shootScreen = async ({
   const paths = await withFinalizerAsync(
     async () => {
       const shotPaths: string[] = [];
+      if (pointer) await page.mouse.move(...pointer);
       if (timesMs.length === 0) {
         const path = join(SHOTS_DIRECTORY, `${screen}.png`);
         await page.screenshot({ animations: "disabled", path });
