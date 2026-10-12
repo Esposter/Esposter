@@ -7,7 +7,7 @@ description: The runs owed on the Genshin parity work, one page per area, each i
 
 Runs owed with every call already made: the exact command, what it reads, what it writes, and the measure that says it worked. A run that meets its measure commits what it wrote and leaves the queue; one that misses goes back as a call, never run again with a value guessed.
 
-Each area's page holds its items under **Queue**, the runnable ones, and under **Waiting**, the items whose input does not exist yet, each naming what it waits on. The format of an item and how a runner takes one are in the `genshin-parity` skill's `references/compute-queue.md`. Within a region the passes run in the order its page lists them, each waiting on the one before it, so an item names on its line only a blocker beyond that order, such as an extraction, a palette or a base ground. A region's frame score waits on every pass.
+Each area's page holds its items under **Queue**, the runnable ones, and under **Waiting**, the items whose input does not exist yet, each naming what it waits on. The format of an item and how a runner takes one are in the `genshin-parity` skill's `references/compute-queue.md`. Within a region the passes run in the order its page lists them, and an item waits only on the earlier passes its measure reads, so it names on its line each of those and any blocker beyond the order, such as an extraction, a palette or a base ground. A region's frame score waits on every pass.
 
 The fleet reads every page here except this one, and an id that two pages share is an error. A runner's release deletes its item's line from its area's page.
 
