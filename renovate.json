@@ -1,7 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "automergeType": "pr",
-  "baseBranchPatterns": ["ai/queue"],
   "configMigration": true,
   "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
   "extends": [
