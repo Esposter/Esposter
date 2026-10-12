@@ -67,4 +67,25 @@ describe(readGcsimAttacks, () => {
       readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ variableName }) => variableName),
     ).toStrictEqual(["a1AttackInfo", "skillAttackInfo"]);
   });
+
+  test("leaves a literal a closure returns unnamed, rather than naming it by the closure's result type", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package dehya",
+          "",
+          "func (c *char) skill() {",
+          "\tc.Core.X(func() info.AttackInfo { return info.AttackInfo{AttackTag: attacks.AttackTagNormal} })",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ variableName }) => variableName),
+    ).toStrictEqual([undefined]);
+  });
 });
