@@ -5,7 +5,13 @@ import type { BufferGeometry, SkinnedMesh } from "three";
 import { getCharacterMaterialTextureIndices } from "#src/services/character/getCharacterMaterialTextureIndices";
 import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-import { createCharacterMaterial, createPmxMesh, createPmxTexture, parsePmx } from "genshin-engine";
+import {
+  createCharacterMaterial,
+  createPmxMesh,
+  createPmxTexture,
+  createPmxToonTexture,
+  parsePmx,
+} from "genshin-engine";
 
 // A character's model from its pack: the PMX read, then every texture a material draws with read and decoded once: its
 // Texture, its sphere map and its toon ramp where the file names one in the model's list. A material's shared toon ramp
@@ -21,6 +27,9 @@ export const readCharacterMesh = (
       throw new InvalidOperationError(Operation.Read, CHARACTER_MODEL_PATH, "is no file of the pack");
     const pmxModel = parsePmx(await modelBlob.arrayBuffer());
     const drawnTextureIndices = new Set(pmxModel.materials.flatMap(getCharacterMaterialTextureIndices));
+    const toonTextureIndices = new Set(
+      pmxModel.materials.filter(({ isToonShared }) => !isToonShared).map(({ toonIndex }) => toonIndex),
+    );
     const missingTexturePaths: string[] = [];
     const textures = await Promise.all(
       pmxModel.textures.map(async (path, textureIndex) => {
@@ -30,7 +39,7 @@ export const readCharacterMesh = (
           missingTexturePaths.push(path);
           return undefined;
         }
-        return createPmxTexture(textureBlob);
+        return toonTextureIndices.has(textureIndex) ? createPmxToonTexture(textureBlob) : createPmxTexture(textureBlob);
       }),
     );
     if (missingTexturePaths.length > 0)

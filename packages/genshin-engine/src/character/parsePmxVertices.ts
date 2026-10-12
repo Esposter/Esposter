@@ -19,6 +19,7 @@ export const parsePmxVertices = (reader: PmxReader): PmxVertices => {
   const positions = new Float32Array(vertexCount * 3);
   const normals = new Float32Array(vertexCount * 3);
   const uvs = new Float32Array(vertexCount * 2);
+  const subUvs = new Float32Array(vertexCount * 2);
   const skinIndices = new Uint16Array(vertexCount * 4);
   const skinWeights = new Float32Array(vertexCount * 4);
   for (let vertex = 0; vertex < vertexCount; vertex++) {
@@ -26,8 +27,12 @@ export const parsePmxVertices = (reader: PmxReader): PmxVertices => {
     reader.readMirroredVector3Into(normals, vertex * 3);
     uvs[vertex * 2] = reader.readFloat32();
     uvs[vertex * 2 + 1] = reader.readFloat32();
-    // Its extra vectors, four floats each
-    reader.skip(reader.additionalVectorCount * 16);
+    // Its extra vectors, four floats each, of which the first is the sub-texture's coordinates and the rest are passed over
+    if (reader.additionalVectorCount > 0) {
+      subUvs[vertex * 2] = reader.readFloat32();
+      subUvs[vertex * 2 + 1] = reader.readFloat32();
+      reader.skip(reader.additionalVectorCount * 16 - 8);
+    }
     const skinOffset = vertex * 4;
     const weightDeform: PmxWeightDeform = reader.readUint8();
     const boneCount = PmxWeightDeformBoneCountMap[weightDeform];
@@ -44,5 +49,5 @@ export const parsePmxVertices = (reader: PmxReader): PmxVertices => {
     reader.skip(4);
   }
 
-  return { normals, positions, skinIndices, skinWeights, uvs };
+  return { normals, positions, skinIndices, skinWeights, subUvs, uvs };
 };

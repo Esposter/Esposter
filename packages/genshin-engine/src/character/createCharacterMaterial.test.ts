@@ -4,7 +4,7 @@ import { createCharacterMaterial } from "#src/character/createCharacterMaterial"
 import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { createLightUniforms } from "#src/nodes/createLightUniforms";
-import { Texture } from "three";
+import { DoubleSide, FrontSide, Texture } from "three";
 import { describe, expect, test } from "vitest";
 
 const pmxMaterial: PmxMaterial = {
@@ -67,5 +67,47 @@ describe(createCharacterMaterial, () => {
     expect(characterMaterial.isMeshToonNodeMaterial).toBe(false);
     expect(characterMaterial.sphereMap).toBe(sphereTexture);
     expect(characterMaterial.colorNode).not.toBeNull();
+  });
+
+  test("draws its sub-texture as a sphere map on the coordinates of the vertex's own extra vector", () => {
+    expect.hasAssertions();
+
+    const sphereTexture = new Texture();
+    const characterMaterial = createCharacterMaterial({
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: {
+        ...pmxMaterial,
+        isOutlined: false,
+        isToonShared: false,
+        sphereMode: PmxSphereMode.AdditionalUv,
+        sphereTextureIndex: 1,
+      },
+      rampTexture: new Texture(),
+      sphereTexture,
+      toonTexture: new Texture(),
+    });
+
+    expect(characterMaterial.sphereMap).toBe(sphereTexture);
+    expect(characterMaterial.colorNode).not.toBeNull();
+  });
+  test("blends a partly transparent material and draws it from both faces, and draws a solid one from its front", () => {
+    expect.hasAssertions();
+
+    const rampTexture = new Texture();
+    const translucent = createCharacterMaterial({
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: { ...pmxMaterial, diffuseColor: [1, 1, 1, 0.5], isOutlined: false },
+      rampTexture,
+    });
+    const solid = createCharacterMaterial({
+      lightUniforms: createLightUniforms(),
+      pmxMaterial: { ...pmxMaterial, isOutlined: false },
+      rampTexture,
+    });
+
+    expect(translucent.transparent).toBe(true);
+    expect(translucent.side).toBe(DoubleSide);
+    expect(solid.transparent).toBe(false);
+    expect(solid.side).toBe(FrontSide);
   });
 });

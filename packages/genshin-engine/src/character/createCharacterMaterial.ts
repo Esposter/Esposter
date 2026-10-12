@@ -1,20 +1,22 @@
 import type { CharacterMaterialOptions } from "#src/models/character/CharacterMaterialOptions";
 
+import { TEXTURED_AMBIENT_SHARE } from "#src/character/constants";
 import { createSpecularNode } from "#src/character/createSpecularNode";
 import { getSharedToonRamp } from "#src/character/getSharedToonRamp";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import { createRimNode } from "#src/nodes/createRimNode";
 import { Color, DoubleSide, FrontSide, SRGBColorSpace } from "three";
-import { diffuseColor, materialColor, matcapUV, texture, vec3 } from "three/tsl";
+import { attribute, materialColor, normalView, texture, uv, vec2, vec3 } from "three/tsl";
 
 // One of a character's materials, as its file sets it: its diffuse colour under its texture, lit on the toon ramp its file
 // Names (MMD's shared ramps, or a texture of the model's), and the sun's specular highlight and the material's ambient
 // Light on top. A sphere map multiplies or adds to the colour as its file says, and the sky's rim lights its lit
 // Silhouette. Unlike the environment's toon material it takes no wetness, since the game's characters do not darken in
-// The rain. Every material is blended in the model's own order and writes its depth, as MMD draws one, so a texel the
-// Texture leaves clear shows what the materials before it drew; a material with both faces drawn is drawn from behind as
-// Well, and only one whose edge the file sets is outlined, in that edge's colour and width
+// The rain. A material the file leaves wholly opaque writes its depth as it is drawn; one whose diffuse alpha is below one
+// Is blended and drawn from both faces, and writes no depth where it is clear. Only a material
+// Whose edge the file sets is outlined, in that edge's colour and width. Its ambient is its full colour where its file names
+// No texture, and a fifth of it where one is named, as MMD's loader draws it
 export const createCharacterMaterial = ({
   lightUniforms,
   pmxMaterial: {
@@ -41,22 +43,29 @@ export const createCharacterMaterial = ({
       gradientMap: (isToonShared ? getSharedToonRamp(toonIndex) : toonTexture) ?? rampTexture,
       map: diffuseTexture ?? null,
       opacity,
-      side: isDoubleSided ? DoubleSide : FrontSide,
-      transparent: true,
+      side: isDoubleSided || opacity < 1 ? DoubleSide : FrontSide,
+      transparent: opacity !== 1,
       // A material left at no opacity, which a pack hides an alternate part with, is not drawn, so its depth hides nothing
       visible: opacity > 0,
     },
     isOutlined,
     isOutlined ? { color: edgeColor, size: edgeSize } : undefined,
   );
-  if (sphereTexture && sphereMode !== PmxSphereMode.Disabled && sphereMode !== PmxSphereMode.AdditionalUv) {
+  if (sphereTexture && sphereMode !== PmxSphereMode.Disabled) {
     characterMaterial.sphereMap = sphereTexture;
-    const sphere = texture(sphereTexture, matcapUV).rgb;
-    characterMaterial.colorNode =
-      sphereMode === PmxSphereMode.Multiply ? materialColor.mul(sphere) : materialColor.add(sphere);
+    // MMD reads its sphere map through the normal's view-space x and y, the file's top the surface that faces up, and a
+    // Sub-texture through the vertex's own coordinates. The colour node replaces three's, the material colour under its
+    // Texture, so that texture is drawn into it here
+    const sphereUv = vec2(normalView.x, normalView.y.negate()).mul(0.5).add(0.5);
+    const sphere = texture(
+      sphereTexture,
+      sphereMode === PmxSphereMode.AdditionalUv ? attribute("subUv", "vec2") : sphereUv,
+    ).rgb;
+    const diffuse = diffuseTexture ? materialColor.mul(texture(diffuseTexture, uv()).rgb) : materialColor;
+    characterMaterial.colorNode = sphereMode === PmxSphereMode.Add ? diffuse.add(sphere) : diffuse.mul(sphere);
   }
   characterMaterial.emissiveNode = createRimNode(lightUniforms)
     .add(createSpecularNode(lightUniforms, specularColor, specularity))
-    .add(diffuseColor.rgb.mul(vec3(ambientRed, ambientGreen, ambientBlue)));
+    .add(vec3(ambientRed, ambientGreen, ambientBlue).mul(diffuseTexture ? TEXTURED_AMBIENT_SHARE : 1));
   return characterMaterial;
 };

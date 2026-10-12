@@ -12,6 +12,6 @@ export const getCharacterMaterialTextureIndices = ({
   toonIndex,
 }: PmxMaterial): number[] => [
   textureIndex,
-  ...(sphereMode === PmxSphereMode.Multiply || sphereMode === PmxSphereMode.Add ? [sphereTextureIndex] : []),
+  ...(sphereMode === PmxSphereMode.Disabled ? [] : [sphereTextureIndex]),
   ...(isToonShared ? [] : [toonIndex]),
 ];

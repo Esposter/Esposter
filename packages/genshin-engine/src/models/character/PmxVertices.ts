@@ -6,5 +6,6 @@ export interface PmxVertices {
   positions: Float32Array;
   skinIndices: Uint16Array;
   skinWeights: Float32Array;
+  subUvs: Float32Array;
   uvs: Float32Array;
 }

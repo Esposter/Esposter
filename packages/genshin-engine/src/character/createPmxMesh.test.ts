@@ -47,6 +47,7 @@ describe(createPmxMesh, () => {
         positions: new Float32Array(),
         skinIndices: new Uint16Array(),
         skinWeights: new Float32Array(),
+        subUvs: new Float32Array(),
         uvs: new Float32Array(),
       },
     };

@@ -255,6 +255,7 @@ describe(parsePmx, () => {
         positions: Float32Array.of(0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1),
         skinIndices: Uint16Array.of(1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0),
         skinWeights: Float32Array.of(1, 0, 0, 0, 0.25, 0.75, 0, 0, 0.5, 0.5, 0, 0, 0.25, 0.75, 0, 0),
+        subUvs: Float32Array.of(0, 0, 0, 0, 0, 0, 0, 0),
         uvs: Float32Array.of(0, 1, 0, 1, 0, 1, 0, 1),
       },
     });
