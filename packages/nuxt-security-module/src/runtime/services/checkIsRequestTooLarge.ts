@@ -7,8 +7,8 @@ import { FILE_UPLOAD_CONTENT_TYPE, SIZE_LIMITED_METHODS } from "#src/runtime/con
 // A request with no declared length is not refused here, as there is nothing to compare
 export const checkIsRequestTooLarge = (
   method: string,
-  contentLength: string | null,
-  contentType: string | null,
+  contentLength: null | string,
+  contentType: null | string,
   { maxRequestSizeInBytes, maxUploadFileRequestInBytes }: RequestSizeLimiterOptions,
 ): boolean => {
   if (!SIZE_LIMITED_METHODS.includes(method) || contentLength === null) return false;

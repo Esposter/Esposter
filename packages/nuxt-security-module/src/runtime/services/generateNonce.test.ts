@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { generateNonce } from "#src/runtime/services/generateNonce";
+import { describe, expect, test } from "vitest";
 
 describe(generateNonce, () => {
   test("every request gets its own nonce, base64 of the nonce's bytes", () => {

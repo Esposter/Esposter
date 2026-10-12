@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
+import { describe, expect, test } from "vitest";
 
 describe(getDefaultModuleOptions, () => {
   const DEV_SERVER_URL = "http://localhost:3000";

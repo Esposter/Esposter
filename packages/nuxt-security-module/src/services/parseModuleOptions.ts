@@ -1,7 +1,7 @@
 import type { ModuleOptions } from "#src/models/ModuleOptions";
 
 import { moduleOptionsSchema } from "#src/schemas/moduleOptionsSchema";
-import * as z from "zod";
+import { z } from "zod";
 
 // Every option group is a union whose first branch is its object and whose second is `false`.
 // The `false` branch's complaint hides the object's, so a union is read through its first branch

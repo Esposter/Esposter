@@ -1,4 +1,3 @@
-import { definePlugin } from "nitro";
 import type { NitroAppPlugin } from "nitro/types";
 
 import { CONTENT_SECURITY_POLICY_REPORT_ONLY_HEADER_NAME, SECURITY_HEADER_NAMES } from "#src/runtime/constants";
@@ -6,6 +5,7 @@ import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { getSecurityState } from "#src/runtime/services/getSecurityState";
 import { serializeSecurityHeaders } from "#src/runtime/services/serializeSecurityHeaders";
 import { updateContentSecurityPolicy } from "#src/runtime/services/updateContentSecurityPolicy";
+import { definePlugin } from "nitro";
 
 const CONTENT_SECURITY_POLICY_HEADER_NAME = SECURITY_HEADER_NAMES.contentSecurityPolicy;
 

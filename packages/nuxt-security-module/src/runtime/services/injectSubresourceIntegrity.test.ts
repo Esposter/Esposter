@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { injectSubresourceIntegrity } from "#src/runtime/services/injectSubresourceIntegrity";
+import { describe, expect, test } from "vitest";
 
 describe(injectSubresourceIntegrity, () => {
   const HASHES = { "/app.js": "sha384-app", "/favicon.ico": "sha384-icon" };

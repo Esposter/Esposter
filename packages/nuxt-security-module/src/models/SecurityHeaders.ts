@@ -9,15 +9,15 @@ import type { XFrameOptions } from "#src/models/XFrameOptions";
 export interface SecurityHeaders {
   contentSecurityPolicy?: ContentSecurityPolicy | false;
   crossOriginEmbedderPolicy?: CrossOriginEmbedderPolicy | false;
-  crossOriginOpenerPolicy?: string | false;
-  crossOriginResourcePolicy?: string | false;
-  originAgentCluster?: string | false;
-  permissionsPolicy?: PermissionsPolicy | false;
-  referrerPolicy?: string | false;
+  crossOriginOpenerPolicy?: false | string;
+  crossOriginResourcePolicy?: false | string;
+  originAgentCluster?: false | string;
+  permissionsPolicy?: false | PermissionsPolicy;
+  referrerPolicy?: false | string;
   strictTransportSecurity?: false | StrictTransportSecurity;
-  xContentTypeOptions?: string | false;
-  xDNSPrefetchControl?: string | false;
-  xDownloadOptions?: string | false;
-  xFrameOptions?: XFrameOptions | false;
-  xPermittedCrossDomainPolicies?: string | false;
+  xContentTypeOptions?: false | string;
+  xDNSPrefetchControl?: false | string;
+  xDownloadOptions?: false | string;
+  xFrameOptions?: false | XFrameOptions;
+  xPermittedCrossDomainPolicies?: false | string;
 }

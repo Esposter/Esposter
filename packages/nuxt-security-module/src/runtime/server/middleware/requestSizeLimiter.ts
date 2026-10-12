@@ -1,10 +1,9 @@
 import type { Middleware } from "nitro/h3";
 
+import { checkIsRequestTooLarge } from "#src/runtime/services/checkIsRequestTooLarge";
+import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { defineMiddleware } from "nitro";
 import { HTTPError } from "nitro/h3";
-
-import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
-import { checkIsRequestTooLarge } from "#src/runtime/services/checkIsRequestTooLarge";
 
 // A request whose declared body is over its limit is refused with `413` before any handler reads it
 const requestSizeLimiter: Middleware = defineMiddleware((event) => {

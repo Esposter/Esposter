@@ -5,7 +5,7 @@ import { getBasicAuthCredentials } from "#src/runtime/services/getBasicAuthCrede
 
 // The request is authorised when its credentials are the configured name and password.
 // Each is compared without leaking how much of it matched.
-export const checkIsBasicAuthorized = (authorization: string | null, { name, pass }: BasicAuthOptions): boolean => {
+export const checkIsBasicAuthorized = (authorization: null | string, { name, pass }: BasicAuthOptions): boolean => {
   const credentials = getBasicAuthCredentials(authorization);
   return (
     credentials !== undefined &&

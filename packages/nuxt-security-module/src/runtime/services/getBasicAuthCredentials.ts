@@ -8,7 +8,7 @@ const BASE64_REGEX = /^[\d+/A-Za-z]*={0,2}$/u;
 // The name and password a `Basic` authorization header carries, `undefined` for any other scheme or a malformed value.
 // The password may hold colons, so the name ends at the first one.
 // The credentials are UTF-8, as the client encodes them
-export const getBasicAuthCredentials = (authorization: string | null): { name: string; pass: string } | undefined => {
+export const getBasicAuthCredentials = (authorization: null | string): undefined | { name: string; pass: string } => {
   if (!authorization?.startsWith(`${BASIC_AUTHORIZATION_SCHEME} `)) return undefined;
 
   const encoded = authorization.slice(BASIC_AUTHORIZATION_SCHEME.length + 1).trim();

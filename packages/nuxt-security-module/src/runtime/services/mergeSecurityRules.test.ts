@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { mergeSecurityRules } from "#src/runtime/services/mergeSecurityRules";
+import { describe, expect, test } from "vitest";
 
 describe(mergeSecurityRules, () => {
   test("the first rules to set a key win, so the most specific route keeps its value", () => {

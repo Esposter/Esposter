@@ -1,7 +1,6 @@
-import { describe, expect, test } from "vitest";
-
-import { getDefaultSecurityHeaders } from "#src/services/getDefaultSecurityHeaders";
 import { serializeSecurityHeaders } from "#src/runtime/services/serializeSecurityHeaders";
+import { getDefaultSecurityHeaders } from "#src/services/getDefaultSecurityHeaders";
+import { describe, expect, test } from "vitest";
 
 describe(serializeSecurityHeaders, () => {
   const DEFAULT_HEADERS = getDefaultSecurityHeaders(false);

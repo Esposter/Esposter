@@ -7,7 +7,7 @@ import { rateLimiterOptionsSchema } from "#src/schemas/rateLimiterOptionsSchema"
 import { requestSizeLimiterOptionsSchema } from "#src/schemas/requestSizeLimiterOptionsSchema";
 import { securityHeadersSchema } from "#src/schemas/securityHeadersSchema";
 import { ssgOptionsSchema } from "#src/schemas/ssgOptionsSchema";
-import * as z from "zod";
+import { z } from "zod";
 
 // An unknown key is refused, so a misspelt option fails the build rather than being ignored
 export const moduleOptionsSchema: z.ZodType<ModuleOptions> = z.strictObject({

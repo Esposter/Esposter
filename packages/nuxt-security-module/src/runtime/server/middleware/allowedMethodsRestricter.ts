@@ -1,10 +1,9 @@
 import type { Middleware } from "nitro/h3";
 
-import { defineMiddleware } from "nitro";
-import { HTTPError } from "nitro/h3";
-
 import { checkIsMethodAllowed } from "#src/runtime/services/checkIsMethodAllowed";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
+import { defineMiddleware } from "nitro";
+import { HTTPError } from "nitro/h3";
 
 // A request whose method is not listed is refused with `405` before any handler runs
 const allowedMethodsRestricter: Middleware = defineMiddleware((event) => {
