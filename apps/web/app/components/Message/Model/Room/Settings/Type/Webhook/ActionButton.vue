@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { WebhookInMessage } from "@esposter/db-schema";
 
-import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
+import type { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { WebhookDialogActionMetaMap } from "@/services/message/room/WebhookDialogActionMetaMap";
 import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
@@ -12,9 +12,7 @@ interface Props {
 }
 
 const { action, id } = defineProps<Props>();
-const webhookDialogStore = useWebhookDialogStore();
-const { deletingId, rotatingId } = storeToRefs(webhookDialogStore);
-const selectedId = action === WebhookDialogAction.Delete ? deletingId : rotatingId;
+const selectedId = useWebhookDialogStore().getSelectedId(action);
 const { label, meaning } = WebhookDialogActionMetaMap[action];
 </script>
 

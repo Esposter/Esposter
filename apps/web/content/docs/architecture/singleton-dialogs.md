@@ -53,14 +53,15 @@ Where the parent owns the lookup because it passes the item down as a prop (the 
 
 ## Key files
 
-| File                                                                                 | Role                                                                                         |
-| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| `app/composables/useSingletonDialog.ts`                                              | Writable `v-model` computed over a target ref — open while set, close resets to `""` or `[]` |
-| `app/store/message/dialog.ts`                                                        | Message dialog targets (`deletingRowKey`, `pinningRowKey`)                                   |
-| `app/store/message/room/dialog.ts`                                                   | Room dialog state (`settingsRoomId`, `isEditRoomDialogOpen`)                                 |
-| `app/store/message/roomCategoryDialog.ts`, `app/store/message/room/webhookDialog.ts` | Category / webhook delete targets                                                            |
-| `app/store/post/dialog.ts`, `app/store/post/comment/dialog.ts`                       | Post / comment delete targets                                                                |
-| `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts`  | Sheet table editor chart/edit/delete targets                                                 |
-| `app/components/Post/ConfirmDeleteDialog.vue`                                        | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)                      |
-| `app/components/Resource/Sheet/Row/EditDialog.vue`                                   | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)                  |
-| `app/components/Message/Model/Room/Settings/Dialog.vue`                              | Fullscreen settings dialog driven by `settingsRoomId`                                        |
+| File                                                                                | Role                                                                                         |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `app/composables/useSingletonDialog.ts`                                             | Writable `v-model` computed over a target ref — open while set, close resets to `""` or `[]` |
+| `app/store/message/dialog.ts`                                                       | Message dialog targets (`deletingRowKey`, `pinningRowKey`)                                   |
+| `app/store/message/room/dialog.ts`                                                  | Room dialog state (`settingsRoomId`, `isEditRoomDialogOpen`)                                 |
+| `app/store/message/roomCategoryDialog.ts`                                           | Category delete target                                                                       |
+| `app/store/message/room/webhookDialog.ts`                                           | Webhook delete and rotate targets, one ref per action read through `getSelectedId(action)`   |
+| `app/store/post/dialog.ts`, `app/store/post/comment/dialog.ts`                      | Post / comment delete targets                                                                |
+| `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts` | Sheet table editor chart/edit/delete targets                                                 |
+| `app/components/Post/ConfirmDeleteDialog.vue`                                       | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)                      |
+| `app/components/Resource/Sheet/Row/EditDialog.vue`                                  | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)                  |
+| `app/components/Message/Model/Room/Settings/Dialog.vue`                             | Fullscreen settings dialog driven by `settingsRoomId`                                        |
