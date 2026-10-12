@@ -27,6 +27,18 @@ describe(annotateProgramConstants, () => {
     ]);
   });
 
+  test("names the registers of an assembly written in vkd3d's casing", () => {
+    expect.hasAssertions();
+
+    const layouts = [[{ ...vector, byteOffset: 0, name: "_Tint" }]];
+
+    expect(
+      annotateProgramConstants("dcl_constantBuffer cb0[3], immediateIndexed\nmov r0.xyz, cb0[0].xyzx", layouts).split(
+        "\n",
+      )[0],
+    ).toBe("// cb0[0].xyz: _Tint");
+  });
+
   test("leaves a program no layout covers as it is", () => {
     expect.hasAssertions();
 
