@@ -7,10 +7,10 @@ export interface FixerPromptInput {
 }
 
 // The fixer's prompt, its text verbatim from the review spec. Each finding is handed over with its index, since the
-// fixer answers by index.
+// Fixer answers by index.
 export const getFixerPrompt = ({ base, end, findings }: FixerPromptInput): string => {
   const indexedFindings = findings.map((finding, index) => ({ index, ...finding }));
-  return `You are the fixer for an automated review of the commit range ${base}..${end} in the Esposter repository. The checkout is ai/queue's tip, installed and built; a file may have moved since ${end}.
+  return `You are the fixer for an automated review of the commit range ${base}..${end} in this repository. The checkout is ai/queue's tip, installed and built; a file may have moved since ${end}.
 
 The findings, as the reviewers wrote them:
 ${JSON.stringify(indexedFindings, null, 2)}

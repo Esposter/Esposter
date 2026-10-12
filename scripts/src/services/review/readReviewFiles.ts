@@ -1,6 +1,6 @@
 import type { ReviewFile } from "#src/models/review/ReviewFile";
 
-import { isExcludedPath } from "#src/services/review/isExcludedPath";
+import { checkIsExcludedPath } from "#src/services/review/checkIsExcludedPath";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
@@ -10,6 +10,6 @@ export const readReviewFiles = (base: string, end: string): ReviewFile[] =>
   getNonEmptyLines(runGit(["diff", "--numstat", "--no-renames", base, end])).flatMap((line) => {
     const [added = "", deleted = "", ...pathParts] = line.split("\t");
     const path = pathParts.join("\t");
-    if (added === "-" || deleted === "-" || isExcludedPath(path)) return [];
+    if (added === "-" || deleted === "-" || checkIsExcludedPath(path)) return [];
     return [{ lines: Number(added) + Number(deleted), path }];
   });

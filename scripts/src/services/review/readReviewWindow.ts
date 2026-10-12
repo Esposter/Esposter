@@ -19,7 +19,7 @@ const toPathOrder = (left: ReviewFile, right: ReviewFile): number => {
 };
 
 // The window a run reviews: the longest prefix of the commits owed that stays under the file cap, its base the first
-// commit's first parent, and its files packed into batches. `undefined` when nothing is owed.
+// Commit's first parent, and its files packed into batches. `undefined` when nothing is owed.
 export const readReviewWindow = (range: ReviewRange): ReviewWindow | undefined => {
   const shas = readOwedShas(range);
   if (shas.length === 0) return undefined;
@@ -34,8 +34,8 @@ export const readReviewWindow = (range: ReviewRange): ReviewWindow | undefined =
   return {
     base,
     batches: packBatches(files, REVIEW_BATCH_FILE_CAP, REVIEW_BATCH_LINE_CAP),
+    commitShas: windowCommits.map(({ sha }) => sha),
     end,
     owedAfter: shas.length - commitCount,
-    commitShas: windowCommits.map(({ sha }) => sha),
   };
 };

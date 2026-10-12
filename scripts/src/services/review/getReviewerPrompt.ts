@@ -9,13 +9,13 @@ export interface ReviewerPromptInput {
 }
 
 // The reviewer's prompt, its text verbatim from the review spec. The diff is cut at `REVIEW_DIFF_LINE_LIMIT`, and a cut
-// one is followed by a note to read the file for the rest, since a reviewer that does not know it saw a fragment reports
-// the fragment as the whole.
+// One is followed by a note to read the file for the rest, since a reviewer that does not know it saw a fragment reports
+// The fragment as the whole.
 export const getReviewerPrompt = ({ base, diff, end, files, isDiffCut }: ReviewerPromptInput): string => {
   const cutNote = isDiffCut
     ? `\nThe diff above is cut at ${REVIEW_DIFF_LINE_LIMIT} lines. Read the files in your batch at ${end} for the rest before you report anything about them.\n`
     : "";
-  return `You are an automated code reviewer for the Esposter repository, reviewing one batch of the commit range ${base}..${end}. Your tools are read-only and the checkout is at ${end}. Nothing you write reaches a person: your findings go to a fixer session as JSON.
+  return `You are an automated code reviewer for this repository, reviewing one batch of the commit range ${base}..${end}. Your tools are read-only and the checkout is at ${end}. Nothing you write reaches a person: your findings go to a fixer session as JSON.
 
 Your batch is these files, whose diff over the range is below:
 ${files.join("\n")}
