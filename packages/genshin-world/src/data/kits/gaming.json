@@ -15,7 +15,6 @@
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki" },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki" },
   "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki" },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 37 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }

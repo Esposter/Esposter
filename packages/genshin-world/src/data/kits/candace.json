@@ -29,7 +29,6 @@
     "value": { "index": 1, "proudSkillGroupId": 7239 }
   },
   "parameters.maxWaveCount": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 7239 } },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 36 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 7232 } },

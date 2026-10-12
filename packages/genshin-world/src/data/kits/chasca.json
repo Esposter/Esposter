@@ -14,7 +14,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 44 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.animationFrames": { "cause": "Unclassified", "value": 80 },
   "plunges.high.hits.0.area": {

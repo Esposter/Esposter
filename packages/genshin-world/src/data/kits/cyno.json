@@ -57,7 +57,6 @@
     "cause": "Unclassified",
     "value": { "index": 4, "proudSkillGroupId": 7132 }
   },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7132 } },
   "stances.pactswornPathclearer.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 65 },

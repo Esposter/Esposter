@@ -123,7 +123,6 @@
     "cause": "Unclassified",
     "value": { "index": 5, "proudSkillGroupId": 8939 }
   },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "hits.arkhe.gauge": { "cause": "DiffersFromSource" }

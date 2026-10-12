@@ -16,7 +16,6 @@
   "frames.paintedDome": { "cause": "Unclassified", "value": 720 },
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Grass" },
   "plungeCollision.gauge": { "source": "Wiki" },
-  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.paintedDome.normalAttacks.length": { "cause": "Unclassified", "value": 4 },

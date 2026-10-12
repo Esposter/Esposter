@@ -60,17 +60,21 @@ export const addGcsimPlungeCandidates = (
     }
   }
   const collisionHitbox = findGcsimHitbox(plungeSource.config, "plunge", "Plunge");
-  if (hasPlungeFile)
+  if (hasPlungeFile) {
+    const collisionHitmark = findGcsimConstant(constantMap, "collisionHitmark");
     addHit(
       "plungeCollision",
       {
         areaHitbox: collisionHitbox,
         attack: attacks.find(({ talentVariable }) => talentVariable === "collision"),
+        ...(typeof collisionHitmark?.value === "number" && {
+          hitmark: { file: collisionHitmark.file, line: collisionHitmark.line, value: collisionHitmark.value },
+        }),
         talentLeaf: findGcsimTalentLeaf(config, "collision", []),
       },
       STRIKE_TARGETING_AREA,
     );
-  else if (collisionHitbox?.radius !== undefined)
+  } else if (collisionHitbox?.radius !== undefined)
     add(
       "plungeCollision.area",
       createCircleReach(0, collisionHitbox.radius),
