@@ -58,7 +58,7 @@ A generated `.ts` is source and is formatted as source — the generator emits t
 
 ## Review
 
-A regenerated folder is the emptiest thing a reviewer can read: hundreds of files carrying numbers a script derived, with the one thing worth judging — the generator — in the same window or an earlier one. Those files count toward their window's file cap like any other, so a regeneration can fill a window on its own. The generator's own change is a separate commit that is reviewed in full.
+A regenerated folder is the emptiest thing a reviewer can read: hundreds of files carrying numbers a script derived, with the one thing worth judging — the generator. The review drops every `generated/` path before it packs a window (`EXCLUDED_PATH_PATTERNS`, and step 5 of [the review](/docs/infra/review)), so the folder neither counts toward a window's file cap nor reaches a reviewer, and a regeneration never fills a window on its own. The generator's own change is a separate commit that is reviewed in full.
 
 ## Key files
 
