@@ -303,7 +303,7 @@ Nothing in the outline's equations has been fitted to a rendered outline, so no 
 
 ## The deferred lighting pass's character branch
 
-The pass is "Hidden/Internal-DeferredShading", in the block "00/00612967.blk", exported raw as one shader with 765 programs. The parser reads all of them since the pass trailer fix (its pass trailer is one word or two). Its character programs are the 34 pixel programs keyed by "HAS_CHARACTER_LIGHT". None of them carries "DEFERRED_TOON_ON", so the earlier pairing of that keyword with the character set was wrong.
+The pass is "Hidden/Internal-DeferredShading", in the block "00/00612967.blk", exported raw as one shader with 765 programs. The parser reads all of them, its pass trailer being one word or two. Its character programs are the 34 pixel programs keyed by "HAS_CHARACTER_LIGHT". None of them carries "DEFERRED_TOON_ON", so that keyword marks no character program and does not pair with the character set.
 
 Program 394 (keywords "ELEMENT_VIEW_ON", "HAS_CHARACTER_LIGHT", "MHY_SHADER_HIGH", DXBC) is the chosen base: the first of the fewest-keyword character sets.
 
