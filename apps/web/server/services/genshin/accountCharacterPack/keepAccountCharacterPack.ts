@@ -59,11 +59,9 @@ export const keepAccountCharacterPack = async (
   return withFinalizerAsync(
     async () => {
       const { etag, packs } = await readAccountCharacterPackManifest(containerClient, userId);
-      const nextPacks = [
-        ...packs.filter((pack) => pack.characterId !== characterId),
-        { characterId, files, modelName, packHash },
-      ];
-      if (getTotalSize([{ characterId, files, modelName, packHash }]) > MAX_CHARACTER_PACK_SIZE)
+      const pack = { characterId, files, modelName, packHash };
+      const nextPacks = [...packs.filter((otherPack) => otherPack.characterId !== characterId), pack];
+      if (getTotalSize([pack]) > MAX_CHARACTER_PACK_SIZE)
         throw getInvalidOperationError(
           Operation.Create,
           String(characterId),
@@ -82,13 +80,10 @@ export const keepAccountCharacterPack = async (
           // The length is checked before the bytes are read, so a staged blob larger than it was granted for is never downloaded.
           // The download is conditioned on the etag that check read, so a blob replaced since then is refused rather than read
           const stagedProperties = await getBlobProperties(containerClient, stagingBlobName);
-          if (stagedProperties === undefined || stagedProperties.contentLength !== size)
-            throw getInvalidOperationError(
-              Operation.Create,
-              String(characterId),
-              `holds a file not uploaded as ${sha256}`,
-            );
-          const bytes = await downloadBlobBytes(containerClient, stagingBlobName, { ifMatch: stagedProperties.etag });
+          const bytes =
+            stagedProperties?.contentLength === size
+              ? await downloadBlobBytes(containerClient, stagingBlobName, { ifMatch: stagedProperties.etag })
+              : undefined;
           if (bytes === undefined || createHash("sha256").update(bytes).digest("hex") !== sha256)
             throw getInvalidOperationError(
               Operation.Create,
