@@ -1,6 +1,9 @@
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { GroundPoint } from "genshin-engine";
+
+import { landKitHits } from "#src/services/kit/landKitHits";
 
 // A summon's clock run on by a step: a following summon's body stands where the body on the field stands, and a
 // Travelling summon's body moves forward over the seconds it has been travelling. Then each hit from its next to land on
@@ -29,10 +32,7 @@ export const stepKitSummon = (
   }
   const { attackTag, combatant, hits, target } = summon;
   // A hit whose hitmark is the cast itself falls at the seconds the first step begins at, so it lands on that step
-  for (
-    let hit = hits[summon.nextHitIndex];
-    hit && hit.hitmarkSeconds <= summon.elapsedSeconds;
-    hit = hits[++summon.nextHitIndex]
-  )
-    strikes.push({ attackTag, body: summon.body, combatant, hit, target });
+  const landedHits: KitHit[] = [];
+  summon.nextHitIndex = landKitHits(hits, summon.nextHitIndex, summon.elapsedSeconds, landedHits);
+  for (const hit of landedHits) strikes.push({ attackTag, body: summon.body, combatant, hit, target });
 };
