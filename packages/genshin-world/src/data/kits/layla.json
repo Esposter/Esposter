@@ -2,18 +2,18 @@
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.starlightSlugStart": { "cause": "Unclassified", "value": 36 },
-  "frames.starlightSlugDuration": { "cause": "Unclassified", "value": 755 },
+  "frames.starlightSlugStart": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 36 },
+  "frames.starlightSlugDuration": { "cause": "Unsourced", "value": 755 },
   "frames.starlightSlugTickInterval": { "cause": "Unclassified", "value": 90 },
   "hits.starlightSlugStrike.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.5 }
   },
   "hits.starlightSlugStrike.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.starlightSlugStrike.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.starlightSlugStrike.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.starlightSlugStrike.hitmarkFrames": { "cause": "Unclassified", "value": 42 },
-  "hits.starlightSlugStrike.multiplier": { "cause": "Unclassified", "value": 0 },
-  "hits.starlightSlugStrike.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.starlightSlugStrike.multiplier": { "cause": "Unsourced", "value": 0 },
+  "hits.starlightSlugStrike.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7431 } },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 7431 } },
@@ -21,19 +21,19 @@
   "normalAttacks.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 7431 } },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.nightsOfFormalFocusShieldFlatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 7432 }
   },
   "parameters.nightsOfFormalFocusShieldMaxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 7432 }
   },
   "parameters.nightsOfFormalFocusShieldSeconds": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 4, "proudSkillGroupId": 7432 }
   },
   "parameters.starlightSlugMaxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 7439 }
   },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
