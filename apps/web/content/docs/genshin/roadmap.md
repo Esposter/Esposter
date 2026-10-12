@@ -294,6 +294,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **The health notice's face.** [Localized opening](/docs/proposals/genshin/localized-opening) needs an open face nearer the game's, measured as the current face was chosen.
 - [ ] **A current mainland recording.** [Localized opening](/docs/proposals/genshin/localized-opening) needs a current build's launch to settle the title splash and age rating.
 - [ ] **The day frame's letterbox.** [Recreation passes](/docs/proposals/genshin/recreation-passes) needs a day recording at full height to confirm its masked top and bottom rows.
+- [ ] **The variant separator's one source.** [Parity](/docs/genshin/parity) needs `scripts` to read the interface's `FIXTURE_VARIANT_SEPARATOR` rather than restate it, which is a decision: a workspace dependency from the scripts package on `genshin-interface`, or the constant moved to a package both read.
 
 ## World
 
