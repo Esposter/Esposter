@@ -20,6 +20,8 @@ export const DEFAULT_RAMP_WIDTH = 0.5;
 // The face threshold's bounds, a face lit straight on at the minimum and one turned fully from the light at the maximum
 export const MINIMUM_FACE_THRESHOLD = 1e-4;
 export const MAXIMUM_FACE_THRESHOLD = 0.9999;
+// The window's floor stays below this, so its top is always above it and the division never closes on zero
+export const MAXIMUM_WINDOW_FLOOR = 0.9989;
 // The lightmap of a material that names none: red 0, so no metal and no specular, green the neutral middle, and alpha 0
 // So region one
 export const FLAT_LIGHT_MAP: Readonly<[number, number, number, number]> = [0, NEUTRAL_LIGHT_MAP_GREEN, 0, 0];
