@@ -1,8 +1,8 @@
 import type { CharacterPoseRotations } from "#src/models/character/CharacterPoseRotations";
 
 import { computeCharacterPose } from "#src/character/pose/computeCharacterPose";
-import { createCharacterPoseRotations } from "#src/character/pose/createCharacterPoseRotations";
 import { POSE_ARM_LOWER_RADIANS, POSE_GAITS } from "#src/character/pose/constants";
+import { createCharacterPoseRotations } from "#src/character/pose/createCharacterPoseRotations";
 import { MmdBoneName } from "#src/models/character/MmdBoneName";
 import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import { Quaternion, Vector3 } from "three";
@@ -22,7 +22,7 @@ const expectRotation = (rotation: Quaternion, expected: Quaternion): void => {
 };
 const posedRotations = (state: LocomotionState, stridePhase: number): CharacterPoseRotations => {
   const rotations = createCharacterPoseRotations();
-  computeCharacterPose({ elapsed: 0, stridePhase, state }, rotations);
+  computeCharacterPose({ elapsed: 0, state, stridePhase }, rotations);
   return rotations;
 };
 

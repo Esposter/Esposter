@@ -1,8 +1,6 @@
 import type { CharacterPoseInput } from "#src/models/character/CharacterPoseInput";
 import type { CharacterPoseRotations } from "#src/models/character/CharacterPoseRotations";
 
-import { MmdBoneName } from "#src/models/character/MmdBoneName";
-import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import {
   POSE_AIR_STANCES,
   POSE_ARM_LOWER_RADIANS,
@@ -11,6 +9,8 @@ import {
   POSE_GAITS,
   POSE_SHOULDER_BREATH_RADIANS,
 } from "#src/character/pose/constants";
+import { MmdBoneName } from "#src/models/character/MmdBoneName";
+import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import { Quaternion, Vector3 } from "three";
 
 const TAU = Math.PI * 2;
@@ -29,7 +29,7 @@ const setBoneRotation = (rotation: Quaternion, xAngle: number, zAngle: number): 
 // for the jump, the fall, the plunge and the glide. The PMX places 左 at +x, so a left arm's rest turns it down the other
 // Way from a right one's. A state with no pose of its own stands idle
 export const computeCharacterPose = (
-  { elapsed, stridePhase, state }: CharacterPoseInput,
+  { elapsed, state, stridePhase }: CharacterPoseInput,
   rotations: CharacterPoseRotations,
 ): void => {
   const breath = Math.sin((elapsed * TAU) / POSE_BREATH_SECONDS);

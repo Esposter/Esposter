@@ -17,6 +17,7 @@ import { attribute, diffuseColor, materialColor, normalView, texture, uv, vec2, 
 // Whose edge the file sets is outlined, in that edge's colour and width. Its ambient is tinted by its diffuse colour, the
 // Texture included, so a material lit by its ambient keeps its own colour rather than washing out to the light's
 export const createCharacterMaterial = ({
+  isTextureTransparent,
   lightUniforms,
   pmxMaterial: {
     ambientColor: [ambientRed, ambientGreen, ambientBlue],
@@ -31,7 +32,6 @@ export const createCharacterMaterial = ({
     sphereMode,
     toonIndex,
   },
-  isTextureTransparent,
   rampTexture,
   sphereTexture,
   texture: diffuseTexture,

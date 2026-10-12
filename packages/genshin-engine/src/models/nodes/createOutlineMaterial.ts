@@ -1,8 +1,8 @@
 import type { Node } from "three/webgpu";
 
 import { BackSide } from "three";
-import { NodeMaterial } from "three/webgpu";
 import { cameraProjectionMatrix, float, modelViewMatrix, normalize, normalLocal, positionLocal, vec4 } from "three/tsl";
+import { NodeMaterial } from "three/webgpu";
 
 // An outline's material: the mesh pushed out along its normal by the thickness, in screen space so its width holds, and
 // drawn from behind in the colour given. Three builds the same material per toon material, which the outline pass

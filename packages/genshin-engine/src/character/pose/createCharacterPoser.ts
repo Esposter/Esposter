@@ -4,19 +4,19 @@ import type { LocomotionPhase } from "#src/models/locomotion/LocomotionPhase";
 import type { Bone, SkinnedMesh } from "three";
 
 import { advanceStridePhase } from "#src/character/pose/advanceStridePhase";
-import { POSE_CROSSFADE_SECONDS, POSE_GAITS } from "#src/character/pose/constants";
 import { computeCharacterPose } from "#src/character/pose/computeCharacterPose";
+import { POSE_CROSSFADE_SECONDS, POSE_GAITS } from "#src/character/pose/constants";
 import { createCharacterPoseRotations } from "#src/character/pose/createCharacterPoseRotations";
 import { MmdBoneName } from "#src/models/character/MmdBoneName";
 import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 
+export interface CharacterPoser {
+  update: (update: CharacterPoseUpdate) => void;
+}
 export interface CharacterPoseUpdate {
   delta: number;
   locomotion: Locomotion;
   phase: LocomotionPhase;
-}
-export interface CharacterPoser {
-  update: (update: CharacterPoseUpdate) => void;
 }
 interface PosedBone {
   bone: Bone;
@@ -60,7 +60,7 @@ export const createCharacterPoser = (skinnedMesh: SkinnedMesh): CharacterPoser =
       const gait = POSE_GAITS[state];
       if (gait)
         stridePhase = advanceStridePhase(stridePhase, getGaitSpeed(state, locomotion), gait.strideMetres, delta);
-      computeCharacterPose({ elapsed, stridePhase, state }, rotations);
+      computeCharacterPose({ elapsed, state, stridePhase }, rotations);
       const weight = getCrossfadeWeight(stateSeconds);
       for (const { bone, name } of posedBones) bone.quaternion.copy(fromRotations[name]).slerp(rotations[name], weight);
     },

@@ -32,14 +32,6 @@ const SPRINT_GAIT: PoseGait = {
 // A dash runs on the sprint's gait, at its own speed
 export const POSE_GAITS: Partial<Record<LocomotionState, PoseGait>> = {
   [LocomotionState.Dash]: SPRINT_GAIT,
-  [LocomotionState.Walk]: {
-    armBendRadians: 0.3,
-    armSwingRadians: 0.3,
-    kneeBendRadians: 0.4,
-    leanRadians: 0,
-    legSwingRadians: 0.35,
-    strideMetres: 1.2,
-  },
   [LocomotionState.Run]: {
     armBendRadians: 0.9,
     armSwingRadians: 0.7,
@@ -49,6 +41,14 @@ export const POSE_GAITS: Partial<Record<LocomotionState, PoseGait>> = {
     strideMetres: 2.6,
   },
   [LocomotionState.Sprint]: SPRINT_GAIT,
+  [LocomotionState.Walk]: {
+    armBendRadians: 0.3,
+    armSwingRadians: 0.3,
+    kneeBendRadians: 0.4,
+    leanRadians: 0,
+    legSwingRadians: 0.35,
+    strideMetres: 1.2,
+  },
 };
 // The airborne poses, each a fixed stance: how far the arms are lowered, how far the body leans forward and how much
 // The knees bend. A glide spreads its arms wide and leans into the glider
