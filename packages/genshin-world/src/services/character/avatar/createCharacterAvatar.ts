@@ -26,6 +26,9 @@ interface AvatarMaterialOptions extends Pick<CharacterMaterialOptions, "lightUni
 
 type AvatarTextureSlot = (typeof AVATAR_TEXTURE_SLOTS)[number];
 
+// A material's value by its name, read with the name as a key so the names keep their underscores
+const readMaterialValue = <T>(values: Readonly<Record<string, T>>, name: string): T | undefined => values[name];
+
 // A material's kind is its name's suffix in the export: the face and the hair are drawn as their own kinds, the rest as a body
 const getMaterialKind = (materialName: string): CharacterMaterialKind => {
   if (materialName.endsWith("Face")) return CharacterMaterialKind.Face;
@@ -55,13 +58,13 @@ const createAvatarMaterial = (
   }
   // The game's outline is the material's own edge, in its colour and its width, so the avatar's material carries both
   // The outline's colour is the material's colour times the outline's, so the diffuse carries the colour
-  const materialColour = avatarMaterial.colors._Color ?? [1, 1, 1, 1];
-  const outlineColour = avatarMaterial.colors._OutlineColor ?? [0, 0, 0, 1];
+  const materialColour = readMaterialValue(avatarMaterial.colors, "_Color") ?? [1, 1, 1, 1];
+  const outlineColour = readMaterialValue(avatarMaterial.colors, "_OutlineColor") ?? [0, 0, 0, 1];
   const pmxMaterial: PmxMaterial = {
     ambientColor: [0, 0, 0],
     diffuseColor: [materialColour[0], materialColour[1], materialColour[2], 1],
     edgeColor: outlineColour,
-    edgeSize: (avatarMaterial.floats._OutlineWidth ?? 0) * AVATAR_OUTLINE_WIDTH_FACTOR,
+    edgeSize: (readMaterialValue(avatarMaterial.floats, "_OutlineWidth") ?? 0) * AVATAR_OUTLINE_WIDTH_FACTOR,
     indexCount,
     isDoubleSided: false,
     isOutlined: true,
@@ -161,8 +164,11 @@ export const createCharacterAvatar = (
       characterMaterialNameMaterialMap.set(materialName, record);
       return record;
     });
+    // A face's draw is one per material, shared by every mesh that draws the material, so it is set once from the root of
+    // The first mesh that draws it, rather than once per mesh, whose roots would each set it in turn
     const root = boneList[mesh.rootBone];
-    for (const draw of new Set(records.map(({ faceDraw }) => faceDraw))) if (draw && root) faces.push({ draw, root });
+    for (const draw of new Set(records.map(({ faceDraw }) => faceDraw)))
+      if (draw && root && !faces.some((face) => face.draw === draw)) faces.push({ draw, root });
     return new SkinnedMesh(
       createAvatarGeometry(mesh, buffer),
       records.map(({ material }) => material),
