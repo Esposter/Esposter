@@ -1,9 +1,10 @@
 name: 🔍 Review
 
-# The review of what lands on `ai/queue`: haiku reviewers over amount-capped windows, a haiku fixer over their findings,
-# and `main` moved only by the review's fast-forward (`services/review`).
+# The review of what lands on `ai/queue`: haiku reviewers over every window owed, one fixer per window with findings, and
+# `main` moved only by the review's fast-forward through the passed prefix (`services/review`, `apps/web/content/docs/infra/review.md`).
 on:
-  # No push trigger yet: the first run is dispatched by hand and verified before a push starts one.
+  push:
+    branches: [ai/queue]
   workflow_dispatch:
     inputs:
       from:
@@ -15,20 +16,23 @@ on:
         required: false
         type: string
 
-# A range runs in its own group, so a push-triggered run never replaces its pending continuation.
-concurrency:
-  group: review-${{ inputs.from && 'range' || 'queue' }}
-  cancel-in-progress: false
-
 permissions:
   contents: read
-  actions: write
 
 jobs:
   review:
     name: Review
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    # The review job alone holds the group: one run reviews and one waits behind it, so the next review starts as soon as
+    # this one ends, while this run's fixers are still working. A newer waiting run replaces an older one, which is
+    # harmless, since every run reviews everything owed at its start.
+    concurrency:
+      group: review-${{ inputs.from && 'range' || 'queue' }}
+      cancel-in-progress: false
+    # Bounded by one pool of every batch of every window, which the runner's memory and the GitHub job limit set
+    timeout-minutes: 120
+    outputs:
+      fix_windows: ${{ steps.review.outputs.fix_windows }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -68,6 +72,7 @@ jobs:
         uses: ./.github/actions/trust-workspace
 
       - name: 🔍 Review
+        id: review
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
@@ -75,4 +80,78 @@ jobs:
           TO: ${{ inputs.to }}
         run: |
           gh auth setup-git
-          pnpm -C scripts ai:review --from "$FROM" --to "$TO"
+          pnpm -C scripts ai:review --from "$FROM" --to "$TO" --findings-directory "$RUNNER_TEMP/review-findings"
+
+      # Runs even when the review failed a window, so the passed windows' findings still reach their fixers
+      - name: 📤 Upload findings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: review-findings
+          path: ${{ runner.temp }}/review-findings
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # One fix job per window with findings, in a matrix of this run. No concurrency group: each fixer lands its commits on
+  # `ai/queue` by pull and push, and a fixer's commit that cannot land is deferred, not retried past its own attempts.
+  fix:
+    name: Fix window ${{ matrix.window }}
+    needs: review
+    if: ${{ !cancelled() && needs.review.outputs.fix_windows != '' && needs.review.outputs.fix_windows != '[]' }}
+    runs-on: ubuntu-latest
+    # Bounded by the one fixer session the job runs, its own wall clock limit being 90 minutes
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        window: ${{ fromJSON(needs.review.outputs.fix_windows) }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ai/queue
+          fetch-depth: 0
+          token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install the packages and scripts
+        uses: ./.github/actions/install-projects
+
+      - name: 🏗️ Build packages
+        uses: ./.github/actions/run-cached-task
+        with:
+          task: build:packages
+          paths: |
+            packages/*/dist
+            packages/*/src/index.ts
+            packages/*/src/components/index.ts
+          save: false
+
+      - name: 🆔 Identify the fixer
+        run: |
+          git config user.name "Q16solver"
+          git config user.email "Q16solver@users.noreply.github.com"
+          git config core.fileMode false
+          echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
+          git rm -r -q --cached . && git reset -q --hard
+
+      - name: 🤝 Trust the workspace
+        uses: ./.github/actions/trust-workspace
+
+      - name: 📥 Download findings
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: review-findings
+          path: ${{ runner.temp }}/review-findings
+
+      - name: 🔧 Fix
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          WINDOW: ${{ matrix.window }}
+        run: |
+          gh auth setup-git
+          pnpm -C scripts ai:review:fix --findings "$RUNNER_TEMP/review-findings/window-$WINDOW.json"
