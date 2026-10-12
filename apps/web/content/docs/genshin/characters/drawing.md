@@ -9,6 +9,7 @@ The model [read from a pack](/docs/genshin/characters/pmx-reader) becomes one sk
 
 - **One skinned mesh.** `createPmxMesh` builds one geometry with a group for each material's run of triangles, in the file's order, which is the order MMD draws them in. Each bone is nested under its parent and placed from it, bound by the step back from where it stands, since the rest pose turns no bone. MMD's unit is scaled into the world's metres by `PMX_UNIT_METRES`.
 - **The toon ramp, the rim and the outline.** `createCharacterMaterial` lights each material with three's toon lighting over the world's ramp, its colour the material's diffuse under its texture, with the sky's rim on its lit silhouette as every surface takes it. The outline pass picks a material by its toon flag, so only a material whose edge the file sets is outlined, as MMD draws an edge.
+- **Posed from the body's state.** Nothing in the file drives the skeleton, so `createCharacterPoser` poses its standard bones by MMD's Japanese names, found in the skeleton and skipped where a model lacks one. Each frame `computeCharacterPose` turns them from the controller's state: the arms come down from the T, the chest and shoulders breathe, a walk, run or sprint swings the legs and arms opposite each other, a jump, a fall or a glide holds a fixed stance, and a state's pose cross-fades from the one before. A gait's stride is `advanceStridePhase`, a full turn for each stride the state's speed covers, so the feet keep pace with the ground they cross. Its angles are provisional, not yet measured against a still or a capture, and the stance and cycles are procedural rather than the game's clips.
 - **Blended in the model's own order.** Every material is blended and writes its depth, as MMD draws one, so a texel the texture leaves clear shows what the materials before it drew. A material set to draw both faces is drawn from behind as well.
 - **Textures as the model samples them.** `createPmxTexture` decodes a texture unpremultiplied and unconverted, leaving the blend and the colour space to three, and unflipped, since a PMX model's texture coordinates run from the image's top left. Past its edges it repeats.
 - **It faces where its holder faces.** `CharacterModel` stands the model at the origin of whatever holds it, turned half round to face -z, as a yaw of none does. The [character controller](/docs/genshin/character-controller)'s body faces the same way, so whatever moves the body moves the model by holding it.
@@ -18,6 +19,7 @@ The model [read from a pack](/docs/genshin/characters/pmx-reader) becomes one sk
 
 - **The game's characters do not darken in the rain.** A character's material takes none of the wetness the environment's toon material reads ([weather](/docs/genshin/weather)).
 - **The world's ramp replaces the model's toon ramp, and sphere maps are not drawn.** The toon and sphere references are read so a later pass can draw them, and are never fetched.
+- **The pose is procedural.** The game's own locomotion clips are not retargeted onto the MMD skeleton, so the Traveler's stance and cycles are the poser's own rather than the game's animation. Retargeting those clips is the roadmap's fidelity step ([roadmap](/docs/genshin/roadmap)).
 - **MMD's unit is reckoned, not measured.** Eight centimetres is the community's reckoning from a model's height. The scale the game draws a character at is measured from its own models, as the [proposal](/docs/proposals/genshin/characters) lists.
 
 ## Key files
@@ -26,6 +28,8 @@ The model [read from a pack](/docs/genshin/characters/pmx-reader) becomes one sk
 | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
 | `packages/genshin-engine/src/character/createPmxMesh.ts`             | The skinned mesh: the geometry's groups, the skeleton, and the scale to metres              |
 | `packages/genshin-engine/src/character/createPmxSkeleton.ts`         | Each bone nested and placed from its parent, and bound where it stands                      |
+| `packages/genshin-engine/src/character/pose/computeCharacterPose.ts` | The standard bones' rotations for a state, a pure function                                  |
+| `packages/genshin-engine/src/character/pose/createCharacterPoser.ts` | Drives the model's bones each frame, cross-fading between states                            |
 | `packages/genshin-engine/src/character/createCharacterMaterial.ts`   | The toon ramp, the rim and the outline where the edge is set                                |
 | `packages/genshin-engine/src/character/createPmxTexture.ts`          | A texture decoded as the model samples it                                                   |
 | `packages/genshin-world/src/services/character/readCharacterMesh.ts` | A pack's model and its textures into one mesh through its reader, as a Result               |

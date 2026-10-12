@@ -4,7 +4,7 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
-import type { FollowCamera, InputState, LandmarkCollider, Locomotion } from "genshin-engine";
+import type { CharacterPoser, FollowCamera, InputState, LandmarkCollider, Locomotion } from "genshin-engine";
 import type { Object3D } from "three";
 
 import { Element } from "#src/models/Element";
@@ -24,16 +24,18 @@ import { useLoop, useTres } from "@tresjs/core";
 import { useEventListener } from "@vueuse/core";
 import {
   createCharacterController,
+  createCharacterPoser,
   createFixedStepLoop,
   createFollowCamera,
   createGroundQuery,
+  findSkinnedMesh,
   FOLLOW_CAMERA_DEFAULT_SETTINGS,
   FOLLOW_CAMERA_PIVOT_SHARE,
   InputAction,
   LocomotionState,
   STAMINA_MAX,
 } from "genshin-engine";
-import { PerspectiveCamera, Vector3 } from "three";
+import { PerspectiveCamera, SkinnedMesh, Vector3 } from "three";
 import { onBeforeUnmount } from "vue";
 
 interface Props {
@@ -99,6 +101,9 @@ const characterController = createCharacterController({
   staminaMaximum: STAMINA_MAX,
 });
 let followCamera: FollowCamera | undefined;
+// The poser of the body's model, which is found again once the model arrives or is taken away, as a pack switch does
+let poser: CharacterPoser | undefined;
+let posedMesh: SkinnedMesh | undefined;
 // The kit of the character on the field, which starts over when a switch brings another on
 let kitState = createKitState();
 let kitCharacterId: number | undefined;
@@ -164,6 +169,13 @@ const pivot = new Vector3();
 // Move the body, and the body is drawn and the camera follows it at its place between its last two steps, by how far
 // The frame has come into the next. A held body stays drawn where it stands, and only an orbit turns its camera
 onBeforeRender(({ delta }) => {
+  const skinnedMesh = findSkinnedMesh(body);
+  if (skinnedMesh !== posedMesh) {
+    posedMesh = skinnedMesh;
+    poser = skinnedMesh && createCharacterPoser(skinnedMesh);
+  }
+  // The model is posed from the body's state, whether it moves, stands or is held, before it is drawn
+  poser?.update({ delta, locomotion, phase: characterController.phase });
   const activeCamera = camera.value;
   const isFollowing = (!isHeld || isOrbiting) && activeCamera instanceof PerspectiveCamera;
   if (isFollowing) {
