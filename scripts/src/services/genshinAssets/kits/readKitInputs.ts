@@ -6,6 +6,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { readPublishedGameDataEntries } from "#src/services/gameData/readPublishedGameDataEntries";
 import { readPublishedGameDataIndex } from "#src/services/gameData/readPublishedGameDataIndex";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
+import { checkIsGcsimValueGiven } from "#src/services/genshinAssets/kits/checkIsGcsimValueGiven";
 import { GCSIM_PLUNGE_FALLBACK_FOLDER, GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsimFolder";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
@@ -75,8 +76,7 @@ export const readKitInputs = async ({
       gcsim === undefined ? new Map() : getGcsimKitCandidates(gcsim, tables, plungeFallback);
     if (gcsim !== undefined)
       for (const [path, constant] of Object.entries(GcsimExpectedPathConstantMap))
-        if (gcsimCandidateMap.get(path)?.some(({ provenance }) => provenance.source === KitSource.Gcsim) !== true)
-          notes.push(`gcsim gives no ${constant}`);
+        if (!checkIsGcsimValueGiven(gcsimCandidateMap.get(path))) notes.push(`gcsim gives no ${constant}`);
     const tableCandidateMap = getTableKitCandidates(tables);
     const gcsimTableCandidateMap = mergeKitCandidates(gcsimCandidateMap, tableCandidateMap);
     const sourceCandidateMap = mergeKitCandidates(
