@@ -349,6 +349,7 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 
 ## Open
 
+- **The 18 bones the body names and no dump holds.** Of the Body mesh's 78 bone hashes, 60 are the full paths of a dumped bone and 18 are not. The 18 are not among the Body renderer's 114 bones (all in one CAB, none null), not among the Avatar's 156 path-table entries, and not one or two levels under any dumped path of the component's layout (Exact on those searches). They carry 769 hair vertices, 618 of them wholly, and 1303 body vertices wholly, so the body's rest depends on bones this export lacks. The writer draws them at the animator root, which the eye check accepts for the body. The mesh has no blend shape to shorten the hair, so the long back hair the game does not show is unexplained until the 18 transforms are found.
 - **The colour space of each texture** is settled by the per-slot rule above, Provisional until a frame confirms it.
 - **The shade term's `z` and `w`.** Their expressions are read; their fitted values are not.
 - **The lit colour `C`.** The sum of the main colour, the ramp, the sun, the sky ambient, the specular and the rim is not yet assembled into one expression.
