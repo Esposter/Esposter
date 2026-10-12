@@ -1,7 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindings";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const createClone = (startLine: number, endLine: number, sourceIdA = "a", sourceIdB = "b") => {
   const duplication = (sourceId: string) => ({
@@ -147,5 +147,21 @@ describe(getDuplicateCodeFindings, () => {
       { lines: 3, paths: ["a:1", "b:1"] },
       { lines: 2, paths: ["a:1", "b:1"] },
     ]);
+  });
+
+  test("reads each file's plugin root once however many clones it is in", () => {
+    expect.hasAssertions();
+
+    const readSpy = vi.fn(readPluginRoot);
+    getDuplicateCodeFindings(
+      [
+        createClone(1, 2, "packages/first/src/a.ts", "packages/first/src/b.ts"),
+        createClone(3, 4, "packages/first/src/a.ts", "packages/first/src/b.ts"),
+      ],
+      () => `const a = 0;\nconst b = 1;\nconst c = 2;\nconst d = 3;`,
+      readSpy,
+    );
+
+    expect(readSpy).toHaveBeenCalledTimes(2);
   });
 });

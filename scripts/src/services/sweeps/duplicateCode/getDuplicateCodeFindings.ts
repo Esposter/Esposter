@@ -4,23 +4,18 @@ import type { DuplicateCodeFinding } from "#src/models/sweeps/duplicateCode/Dupl
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { checkIsRangeFree } from "#src/services/sweeps/duplicateCode/checkIsRangeFree";
 import { checkIsRegisterFile } from "#src/services/sweeps/duplicateCode/checkIsRegisterFile";
+import { getDataRowLines } from "#src/services/sweeps/duplicateCode/getDataRowLines";
+import { getDeclarationLines } from "#src/services/sweeps/duplicateCode/getDeclarationLines";
 import { getLeadingImportLines } from "#src/services/sweeps/duplicateCode/getLeadingImportLines";
-import { getNonDataRowLines } from "#src/services/sweeps/duplicateCode/getNonDataRowLines";
-import { getNonDeclarationLines } from "#src/services/sweeps/duplicateCode/getNonDeclarationLines";
 import { getNonImportLines } from "#src/services/sweeps/duplicateCode/getNonImportLines";
-import { getNonRecordRowLines } from "#src/services/sweeps/duplicateCode/getNonRecordRowLines";
+import { getRecordRowLines } from "#src/services/sweeps/duplicateCode/getRecordRowLines";
 import { getOrCreate } from "@esposter/shared";
 import { relative, sep } from "node:path";
 
-// Each reader gives the code lines of a file once one kind of non-logic is read as data. A clone free of code under
-// Any reader is a copy of that non-logic alone: imports, a declaration or wiring, the rows of an enum-keyed record, or
-// The numeric and colour rows of a table.
-const NON_LOGIC_LINE_READERS: ((text: string) => Set<number>)[] = [
-  getNonImportLines,
-  getNonDeclarationLines,
-  getNonRecordRowLines,
-  getNonDataRowLines,
-];
+// Each reader gives the data lines of a file: one kind of non-logic read as data, a declaration or wiring, the rows of an
+// Enum-keyed record, or the numeric and colour rows of a table. A clone free of code under any reader is a copy of that
+// Non-logic alone, where a file's code under a reader is every line that is neither an import nor one of its data lines
+const DATA_LINE_READERS: ((text: string) => Set<number>)[] = [getDeclarationLines, getRecordRowLines, getDataRowLines];
 
 const getPath = ({ sourceId, start }: DuplicateCodeClone["duplicationA"]) =>
   `${relative(REPOSITORY_ROOT, sourceId).split(sep).join("/")}:${start.line}`;
@@ -34,18 +29,27 @@ export const getDuplicateCodeFindings = (
   readSource: (sourceId: string) => string,
   readPluginRoot: (sourceId: string) => string | undefined = () => undefined,
 ): DuplicateCodeFinding[] => {
-  const readNonLogicLinesReaders = NON_LOGIC_LINE_READERS.map((readNonLogicLines) => {
-    const sourceIdNonLogicLinesMap = new Map<string, Set<number>>();
-    return (sourceId: string) =>
-      getOrCreate(sourceIdNonLogicLinesMap, sourceId, () => readNonLogicLines(readSource(sourceId)));
-  });
-  const leadingImportLinesMap = new Map<string, Set<number>>();
-  const readLeadingImportLines = (sourceId: string) =>
-    getOrCreate(leadingImportLinesMap, sourceId, () => getLeadingImportLines(readSource(sourceId)));
+  // Each file is read once per reader however many clones it is in
+  const memoize = <TValue>(read: (sourceId: string) => TValue) => {
+    const sourceIdValueMap = new Map<string, TValue>();
+    return (sourceId: string) => getOrCreate(sourceIdValueMap, sourceId, () => read(sourceId));
+  };
+  const readNonImportLines = memoize((sourceId) => getNonImportLines(readSource(sourceId)));
+  const readLeadingImportLines = memoize((sourceId) => getLeadingImportLines(readSource(sourceId)));
+  const readPluginRootOnce = memoize(readPluginRoot);
+  const readCodeLinesReaders = [
+    readNonImportLines,
+    ...DATA_LINE_READERS.map((readDataLines) =>
+      memoize((sourceId) => {
+        const dataLines = readDataLines(readSource(sourceId));
+        return new Set([...readNonImportLines(sourceId)].filter((line) => !dataLines.has(line)));
+      }),
+    ),
+  ];
   const findings: DuplicateCodeFinding[] = [];
   for (const { duplicationA, duplicationB } of clones) {
-    const pluginRootA = readPluginRoot(duplicationA.sourceId);
-    const pluginRootB = readPluginRoot(duplicationB.sourceId);
+    const pluginRootA = readPluginRootOnce(duplicationA.sourceId);
+    const pluginRootB = readPluginRootOnce(duplicationB.sourceId);
     if (pluginRootA && pluginRootB && pluginRootA !== pluginRootB) continue;
     if (
       checkIsRegisterFile(duplicationA.sourceId, pluginRootA) &&
@@ -64,10 +68,10 @@ export const getDuplicateCodeFindings = (
     )
       continue;
 
-    const isNonLogic = readNonLogicLinesReaders.some(
-      (readNonLogicLines) =>
-        checkIsRangeFree(duplicationA.start.line, duplicationA.end.line, readNonLogicLines(duplicationA.sourceId)) &&
-        checkIsRangeFree(duplicationB.start.line, duplicationB.end.line, readNonLogicLines(duplicationB.sourceId)),
+    const isNonLogic = readCodeLinesReaders.some(
+      (readCodeLines) =>
+        checkIsRangeFree(duplicationA.start.line, duplicationA.end.line, readCodeLines(duplicationA.sourceId)) &&
+        checkIsRangeFree(duplicationB.start.line, duplicationB.end.line, readCodeLines(duplicationB.sourceId)),
     );
     if (isNonLogic) continue;
 
