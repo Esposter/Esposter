@@ -2,24 +2,23 @@ import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
-import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
+import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const FOLDER = "aino";
-const ASC_GO = "package aino\n\nfunc tick() {\n\tadd(1.5 * 60)\n}\n";
-
-const createGcsimDirectory = () => {
-  const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
-  mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
-  writeFileSync(join(directory, "internal", "characters", FOLDER, "asc.go"), ASC_GO);
-  return directory;
-};
-
 describe("readGcsimCitedCandidates", () => {
+  const FOLDER = "aino";
+  const ASC_GO = "package aino\n\nfunc tick() {\n\tadd(1.5 * 60)\n}\n";
+  const createGcsimDirectory = () => {
+    const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
+    mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "asc.go"), ASC_GO);
+    return directory;
+  };
+
   test("a cited line that evaluates to the value gives a Gcsim candidate with that file and line", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = {
