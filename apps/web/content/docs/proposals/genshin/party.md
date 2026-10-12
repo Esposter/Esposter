@@ -53,7 +53,7 @@ packages/genshin-world/src/components/Party/Screen/Index.vue
    - The affliction durations: Fervent Flames' Cryo, Soothing Water's Pyro, High Voltage's Hydro and Shattering Ice's Electro, each affecting the party member for 40% less time. The party members hold no elemental state and enemies' strikes apply none to them, so there is no duration to shorten. An aura's decay rate is set in `applyAura` with no party context, so the resonances must reach `applyElement` first.
    - High Voltage's Electro particle, 100% on Superconduct, Stellar-Conduct, Overloaded, Electro-Charged, Lunar-Charged, Quicken, Aggravate and Hyperbloom, on a 5 second cooldown. No reaction gives a particle yet, since an enemy drops energy only at its health thresholds, and no cooldown is kept for the team.
    - Enduring Rock's Moondrift clause. A Moondrift formed by Lunar-Crystallize nearby gives the same DMG and Geo RES as a shield does, and Moonsign is not built.
-   - Sprawling Greenery's Lunar-Bloom, which is not a reaction here yet, and its Hyperbloom and Burgeon, which a Dendro Core's reactions give and no strike triggers yet.
+   - Sprawling Greenery's Hyperbloom and Burgeon, which a Dendro Core's reactions give and no strike triggers yet.
 4. **The party kept between visits**, as the save's party slice the Decisions describe, which the account and the browser keep as they keep the rest of the save.
 
 ## Key files
