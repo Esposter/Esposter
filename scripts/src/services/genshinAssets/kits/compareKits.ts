@@ -16,9 +16,8 @@ import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay"
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { writeKitOverlay } from "#src/services/genshinAssets/kits/writeKitOverlay";
 import { getResult } from "@esposter/shared";
-import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 const countBy = (keys: readonly string[]): Map<string, number> => {
@@ -112,8 +111,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     );
     const overlayPath = join(KIT_OVERLAY_DIRECTORY, `${overlayName}.json`);
     const entries = Object.entries(overlay);
-    if (entries.length > 0) writeJsonFile(overlayPath, overlay);
-    else if (existsSync(overlayPath)) rmSync(overlayPath);
+    writeKitOverlay(overlayPath, overlay);
     const kitKeys = entries.map(([, entry]) => ("source" in entry ? `chose ${entry.source}` : entry.cause));
     overlayKeys.push(...kitKeys);
     const kitRuleCauses = Object.values(built?.sources.values ?? {}).flatMap((provenance) =>
