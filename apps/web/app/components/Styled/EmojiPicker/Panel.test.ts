@@ -183,7 +183,22 @@ describe("styledEmojiPickerPanel", () => {
     await pressOn(8, "ArrowLeft");
     expect(document.activeElement).toBe(getCell(7).element);
     await pressOn(7, "ArrowUp");
-    expect(document.activeElement).toBe(getCell(0).element);
+    expect(document.activeElement).toBe(getCell(7).element);
+  });
+
+  test("a new result list starts its tab stop at its first emoji", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(StyledEmojiPickerPanel, { attachTo: document.body });
+    const getCell = (index: number) => component.get(`button[data-index="${index}"]`);
+    for (let index = 0; index < 15; index++) {
+      await getCell(index).trigger("keydown", { key: "ArrowRight" });
+      await flushPromises();
+    }
+    await component.find("input").setValue("technologist");
+    await flushPromises();
+
+    expect(getCell(0).attributes("tabindex")).toBe("0");
   });
 
   // Enter is the button's own pick, handled on its keydown so a focused emoji picks without a click, and it stores the
