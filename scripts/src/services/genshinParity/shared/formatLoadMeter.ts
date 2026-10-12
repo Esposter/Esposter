@@ -130,7 +130,8 @@ export const formatLoadMeter = (
     .map(([kind, count]) => `${count} ${kind}`)
     .join(", ");
   return {
-    isOver: rows.some(({ isOver }) => isOver) || crossingMeter.isOver,
+    isOver:
+      rows.some(({ isOver }) => isOver) || crossingMeter.isOver || bench.measures.some(({ isFailed }) => isFailed),
     lines: [
       ...rows.map(({ line }) => line),
       "",
