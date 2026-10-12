@@ -111,7 +111,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `wanderer`           | —                      |                                                                          |
 | `wriothesley`        | —                      |                                                                          |
 | `xiangling`          | —                      |                                                                          |
-| `xianyun`            | —                      |                                                                          |
+| `xianyun`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `xiao`               | —                      |                                                                          |
 | `xilonen`            | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `xingqiu`            | —                      |                                                                          |
