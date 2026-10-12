@@ -5,9 +5,10 @@ import { DEFAULT_PARTY_TEAM_COUNT, PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/se
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A party as the game starts one: its four default teams, the first deployed with these characters and its first
-// Member on the field, each of them standing at full HP, a switch allowed at once, and no Verdant Dew, Lunar-Charged
-// Cloud or Lunar-Crystallize. The deployed team needs someone on the field, so it is refused empty as well as past a team's rules
+// A party as the game starts one: its four default teams, the first deployed with these characters and its first member
+// On the field, each of them standing at full HP, a switch allowed at once, and no Verdant Dew, Lunar-Charged cloud or
+// Lunar-Crystallize. The deployed team needs someone on the field, so it is refused empty as well as past a team's
+// Rules
 export const createParty = (characterIds: number[]): Party => {
   if (characterIds.length === 0 || !checkIsPartyTeam(characterIds))
     throw new InvalidOperationError(

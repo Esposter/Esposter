@@ -38,14 +38,14 @@ import { takeOne } from "@esposter/shared";
 // The team's effects that run out, the statuses on the enemies that fall due and a burst that starts are sent to the
 // Deployed team's kits, the party's Verdant Dew gathers and its Moondrifts run down, the Crystallize shards in reach of
 // The body are picked up, the ticks the enemies' elements brought since, the party's Lunar-Charged cloud and the
-// Moondrift Harmony hits due strike and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses as
-// Its stance, if it holds one, plays them, a skill or burst that starts Lights Ascendant Gleam, an action that starts
-// Turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands strikes
-// The Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy rolling for
-// Its Energy, the ores an Overloaded's explosion reached are struck, and the changes to the members' HP are sent last.
-// A character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until they
-// Arrive. The body and every list the step fills are the context's and the controls' own, written in place and emptied
-// By their length, so a step where nothing lands allocates nothing
+// Moondrift Harmony hits due strike and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses
+// As its stance, if it holds one, plays them, a skill or burst that starts Lights Ascendant Gleam, an action that
+// Starts turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands
+// Strikes the Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy
+// Rolling for its Energy, the ores an Overloaded's explosion reached are struck, and the changes to the members' HP are
+// Sent last. A character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until
+// They arrive. The body and every list the step fills are the context's and the controls' own, written in place and
+// Emptied by their length, so a step where nothing lands allocates nothing
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -104,8 +104,8 @@ export const stepActiveKit = (
     landedHits,
     context,
   );
-  // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
-  // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
+  // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body.
+  // An aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
   let target: Enemy | undefined;
   if (action?.isAimed && isAimHeld) {
     characterController.face(aimYaw);
@@ -126,7 +126,8 @@ export const stepActiveKit = (
   if (isBurst) emitKitEvent({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed }, context);
   if (action && (isBurst || getKitSkillActions(kit).includes(action)))
     lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
-  // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body has moved
+  // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body
+  // Has moved
   action?.onStart?.({ ...context, body: copyKitBody(body) }, target);
   if (action) coordinateKitSummons(action, context);
   // The ores are struck by the hits as the kit gives them, before an infusion copies them
@@ -138,8 +139,9 @@ export const stepActiveKit = (
       if (firstHit && (landedHits.includes(firstHit) || strikes.some(({ hit }) => hit === firstHit)))
         emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
     }
-  // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their infusions,
-  // And the step's own hits from the turned body and the character on the field, infused by the infusion it started with
+  // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their
+  // Infusions, and the step's own hits from the turned body and the character on the field, infused by the infusion it
+  // Started with
   for (const strike of strikes) {
     const strikeInfusion = getKitInfusion(kitEffectState.effects, strike.combatant.characterId);
     if (strikeInfusion !== undefined) strike.hit = infuseKitHit(strike.hit, strikeInfusion);
@@ -159,8 +161,8 @@ export const stepActiveKit = (
   // The ores the step's reactions reached are struck once every strike has landed, from where each reaction landed
   for (const oreStrike of oreStrikes) strikeOre(oreStrike.body, oreStrike.hit);
   oreStrikes.length = 0;
-  // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in it,
-  // And a change a kit makes as it hears one is sent at the next step
+  // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in
+  // It, and a change a kit makes as it hears one is sent at the next step
   const { healthChanges } = party;
   const sentCount = healthChanges.length;
   for (let index = 0; index < sentCount; index++)

@@ -28,18 +28,19 @@ import { getLunarReactionType } from "#src/services/combat/aura/getLunarReaction
 import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged";
 
 // An element's attack on a target at a gauge, written into its auras in place, and the reactions it triggers. It tries
-// Its reactions in the game's order, each consuming its auras by its coefficient times what is left of the trigger,
-// And each recorded once however many auras it meets. An immutable aura takes its share of the trigger but is never
+// Its reactions in the game's order, each consuming its auras by its coefficient times what is left of the trigger, and
+// Each recorded once however many auras it meets. An immutable aura takes its share of the trigger but is never
 // Consumed, so what is left goes on to the auras beside it. A Burning already lit is refreshed, not triggered again,
 // And Pyro and Electro meet only the Freeze over a hidden Hydro. What is left, meeting nothing more it consumes, stays
-// As an aura: an attack's taxed and decaying by its gauge, and a self aura, an element put on with no attack, whole
-// And lasting its source's seconds at its source's rate, never decaying where those are Infinity. Electro coming to
-// Lie beside Hydro starts Electro-Charged, which ticks at once. Crystallize triggers once a second, however many auras
-// It could meet. A reaction the attacking party's Moonsign turns Lunar is recorded as its Lunar form, consuming as the
+// As an aura: an attack's taxed and decaying by its gauge, and a self aura, an element put on with no attack, whole and
+// Lasting its source's seconds at its source's rate, never decaying where those are Infinity. Electro coming to lie
+// Beside Hydro starts Electro-Charged, which ticks at once. Crystallize triggers once a second, however many auras it
+// Could meet. A reaction the attacking party's Moonsign turns Lunar is recorded as its Lunar form, consuming as the
 // Reaction it replaces does, and a Lunar-Crystallize, under no cooldown, keeps the sources of the Hydro it consumed.
 // Where the Moonsign turns Electro-Charged Lunar, each Electro or Hydro that leaves the two lying together, with no
 // Freeze over them, triggers Lunar-Charged instead, which ticks nothing of its own, as gcsim (MIT)
-// Pkg/reactable/lunarcharged.go has each application trigger it. The aura an application leaves keeps its source's share
+// `pkg/reactable/lunarcharged.go` has each application trigger it. The aura an application leaves keeps its source's
+// Share
 export const applyElement = (
   state: ElementalState,
   element: Element,

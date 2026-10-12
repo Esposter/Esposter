@@ -23,14 +23,14 @@ import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreen
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 
-// A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each priced
-// By its combatant as its buffs and the kit's own DMG Bonus against that enemy raise it, its Electro or Pyro first
-// Setting off the Dendro Cores in its area. Its element reacts, and a direct Lunar hit is priced, as the deployed team's
-// Moonsign gives. Each enemy struck drops its energy to the team, collected by the member on the field, and the
-// Strike's bubbles, heals, Crystallize shards, Moondrifts, Dendro Cores, the party's Lunar answers and reactions follow, the reactions it
-// Triggered and the damage the enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it
-// Reaches, each reaction that landed with a reach reaches the enemies round its own, whose energy and reactions follow
-// In turn. The strikes given keep only those that struck an enemy, written in place
+// A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each
+// Priced by its combatant as its buffs and the kit's own DMG Bonus against that enemy raise it, its Electro or Pyro
+// First setting off the Dendro Cores in its area. Its element reacts, and a direct Lunar hit is priced, as the deployed
+// Team's Moonsign gives. Each enemy struck drops its energy to the team, collected by the member on the field, and the
+// Strike's bubbles, heals, Crystallize shards, Moondrifts, Dendro Cores, the party's Lunar answers and reactions
+// Follow, the reactions it triggered and the damage the enemy took sent to the deployed team's kits. Once the strike
+// Has landed on every enemy it reaches, each reaction that landed with a reach reaches the enemies round its own, whose
+// Energy and reactions follow in turn. The strikes given keep only those that struck an enemy, written in place
 export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): void => {
   const { characterIdCombatantMap, enemyMap, enemyTables, kitEffectState, party, random } = context;
   let struckCount = 0;
