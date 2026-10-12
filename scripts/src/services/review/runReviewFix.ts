@@ -5,7 +5,7 @@ import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimit
 import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { landCommits } from "#src/services/review/git/landCommits";
 import { formatReviewFinding } from "#src/services/review/issues/formatReviewFinding";
-import { renderOutcomeComment } from "#src/services/review/issues/renderOutcomeComment";
+import { renderOutcomeComment, renderOutcomeTable } from "#src/services/review/issues/renderOutcomeComment";
 import { renderReviewIssueBody } from "#src/services/review/issues/renderReviewIssueBody";
 import { runGhWithBody } from "#src/services/review/issues/runGhWithBody";
 import { resolveDispositions } from "#src/services/review/resolveDispositions";
@@ -45,8 +45,7 @@ export const runReviewFix = async ({ base, end, findings, issue }: ReviewIssueFi
     outcome: disposition.outcome,
     reason: disposition.reason,
   }));
-  summary.push("", "| Finding | Outcome | Reason |", "| --- | --- | --- |");
-  for (const { finding, outcome, reason } of rows) summary.push(`| ${finding} | ${outcome} | ${reason} |`);
+  summary.push("", renderOutcomeTable(rows));
 
   const openFindings = dispositions
     .filter(({ outcome }) => outcome === ReviewOutcome.Deferred)
