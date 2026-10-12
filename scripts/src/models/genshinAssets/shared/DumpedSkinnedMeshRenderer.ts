@@ -5,4 +5,5 @@ import type { DumpedPointer } from "#src/models/genshinAssets/shared/DumpedPoint
 export interface DumpedSkinnedMeshRenderer extends DumpedMeshRenderer {
   m_Bones: DumpedPointer[];
   m_Mesh: DumpedPointer;
+  m_RootBone: DumpedPointer;
 }

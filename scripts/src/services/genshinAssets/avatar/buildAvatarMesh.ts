@@ -5,12 +5,13 @@ import type { AvatarMesh, AvatarSubmesh } from "genshin-world/sceneExport";
 // The export's mesh in three's axes and in the binary's arrays. The axes mirror across x as the exports do, so a
 // Triangle's winding turns the other way, and each one is written with its last two indices swapped to keep its face
 // Toward the viewer. A tangent's w turns with the mirror too. A vertex's joints index the rig through `nodeOfMeshBone`,
-// The rig node each of the mesh's own bones is
+// The rig node each of the mesh's own bones is, and the rig node of the renderer's root bone
 export const buildAvatarMesh = (
   name: string,
   mesh: DumpedMesh,
   nodeOfMeshBone: readonly number[],
   submeshMaterials: readonly string[],
+  rootBone: number,
   binary: AvatarBinary,
 ): AvatarMesh => {
   const vertexCount = mesh.m_VertexCount;
@@ -44,6 +45,7 @@ export const buildAvatarMesh = (
     name,
     normals: binary.add(normals),
     positions: binary.add(positions),
+    rootBone,
     submeshes,
     tangents: binary.add(tangents),
     uvs: binary.add(new Float32Array(mesh.m_UV0)),

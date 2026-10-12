@@ -15,6 +15,7 @@ import { readAvatarRig } from "#src/services/genshinAssets/avatar/readAvatarRig"
 import {
   getTransformKey,
   readRendererBones,
+  readRendererRootBone,
   readSkinnedRenderers,
 } from "#src/services/genshinAssets/avatar/readRendererBones";
 import { createAvatarBinary } from "#src/services/genshinAssets/avatar/writeAvatarBinary";
@@ -60,13 +61,21 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
       const mesh = parseMachineJson<DumpedMesh>(
         await readFile(join(directory.assets, AssetType.Mesh, `${name}.json`), "utf8"),
       );
-      return { bones: readRendererBones(skinned, objectMap), materialRefs: skinned.renderer.m_Materials, mesh, name };
+      const rootBone = readRendererRootBone(skinned, objectMap);
+      if (!rootBone) throw new InvalidOperationError(Operation.Read, name, "has a root bone outside the rig");
+      return {
+        bones: readRendererBones(skinned, objectMap),
+        materialRefs: skinned.renderer.m_Materials,
+        mesh,
+        name,
+        rootBone,
+      };
     }),
   );
-  const { nodes, paths } = buildSkeleton(
-    rig.nodes,
-    drawn.flatMap(({ bones }) => bones),
-  );
+  const { nodes, paths } = buildSkeleton(rig.nodes, [
+    ...drawn.flatMap(({ bones }) => bones),
+    ...drawn.map(({ rootBone }) => rootBone),
+  ]);
   const nodeOfHash = new Map(paths.map((path, node) => [crc32(path), node]));
   const { materials, names } = await readMaterials(
     component,
@@ -82,12 +91,13 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
     bones: nodes,
     humanoid: rig.humanoid,
     materials,
-    meshes: drawn.map(({ materialRefs, mesh, name }) =>
+    meshes: drawn.map(({ materialRefs, mesh, name, rootBone }) =>
       buildAvatarMesh(
         name,
         mesh,
         mesh.m_BoneNameHashes.map((hash) => nodeOfHash.get(hash) ?? ANIMATOR_ROOT_NODE),
         materialRefs.map(({ m_PathID }) => names.get(m_PathID) ?? ""),
+        paths.indexOf(rootBone.path),
         binary,
       ),
     ),

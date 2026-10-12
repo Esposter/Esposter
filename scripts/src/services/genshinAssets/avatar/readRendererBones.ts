@@ -57,22 +57,38 @@ export interface RendererBone {
 // The layout's objects by the file and path ID of their transform, which a renderer's bones name
 export const getTransformKey = (file: string, transformId: string): string => `${file}|${transformId}`;
 
-// Every bone of a renderer the layout holds up to the rig's root, its path built from the names of the transforms from
-// That root down. A bone whose transform the dumps lost is left out, since its path cannot be read, and the rig places
-// The bones it holds without one
+// A transform's bone as the layout names it: its path from the rig's root down, and its scene object. A transform whose
+// Chain the dumps lose, or that does not reach the rig's root, has no path and is undefined
+const readBoneChain = (
+  file: string,
+  transformId: string,
+  objectMap: ReadonlyMap<string, SceneObject>,
+): RendererBone | undefined => {
+  const chain: SceneObject[] = [];
+  let object = objectMap.get(getTransformKey(file, transformId));
+  while (object) {
+    chain.unshift(object);
+    if (object.name === RIG_ROOT_BONE_NAME) break;
+    object = objectMap.get(getTransformKey(object.parentFile || object.file, object.parentId));
+  }
+  const leaf = chain.at(-1);
+  if (chain[0]?.name !== RIG_ROOT_BONE_NAME || !leaf) return undefined;
+  return { object: leaf, path: chain.map(({ name }) => name).join("/") };
+};
+
+// Every bone of a renderer the layout holds up to the rig's root. A bone whose transform the dumps lost is left out, since
+// Its path cannot be read, and the rig places the bones it holds without one
 export const readRendererBones = (
   { file, renderer }: SkinnedRenderer,
   objectMap: ReadonlyMap<string, SceneObject>,
 ): RendererBone[] =>
   renderer.m_Bones.flatMap(({ m_PathID }): RendererBone[] => {
-    const chain: SceneObject[] = [];
-    let object = objectMap.get(getTransformKey(file, m_PathID));
-    while (object) {
-      chain.unshift(object);
-      if (object.name === RIG_ROOT_BONE_NAME) break;
-      object = objectMap.get(getTransformKey(object.parentFile || object.file, object.parentId));
-    }
-    const leaf = chain.at(-1);
-    if (chain[0]?.name !== RIG_ROOT_BONE_NAME || !leaf) return [];
-    return [{ object: leaf, path: chain.map(({ name }) => name).join("/") }];
+    const bone = readBoneChain(file, m_PathID, objectMap);
+    return bone ? [bone] : [];
   });
+
+// The renderer's root bone, the transform its pose is taken relative to, which the face's light is read against
+export const readRendererRootBone = (
+  { file, renderer }: SkinnedRenderer,
+  objectMap: ReadonlyMap<string, SceneObject>,
+): RendererBone | undefined => readBoneChain(file, renderer.m_RootBone.m_PathID, objectMap);

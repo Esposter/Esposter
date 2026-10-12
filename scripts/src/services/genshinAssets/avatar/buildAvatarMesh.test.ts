@@ -26,7 +26,7 @@ describe(buildAvatarMesh, () => {
       m_Vertices: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     };
 
-    const built = buildAvatarMesh("Body", mesh, [5, 7], ["Hair"], binary);
+    const built = buildAvatarMesh("Body", mesh, [5, 7], ["Hair"], 5, binary);
     const buffer = binary.toBuffer();
     const read = <T extends Float32Array | Uint16Array>(
       view: { length: number; offset: number },

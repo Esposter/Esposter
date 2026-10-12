@@ -10,6 +10,8 @@ export interface AvatarMesh {
   name: string;
   normals: AvatarView;
   positions: AvatarView;
+  // The rig node of the renderer's root bone, the transform the face's light is read against
+  rootBone: number;
   submeshes: AvatarSubmesh[];
   tangents: AvatarView;
   uvs: AvatarView;
