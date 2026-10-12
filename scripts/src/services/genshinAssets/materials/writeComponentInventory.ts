@@ -106,12 +106,17 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
     for (const shader of await readNames(join(directory.shaders, block))) {
       const shaderDirectory = join(directory.shaders, block, shader);
       // oxlint-disable-next-line no-await-in-loop -- one shader's folder is read at a time
-      const [files, properties] = await Promise.all([
+      const [files, properties, programs] = await Promise.all([
         readdir(shaderDirectory),
         readFile(join(shaderDirectory, "properties.txt"), "utf8"),
+        readFile(join(shaderDirectory, "programs.tsv"), "utf8"),
       ]);
       const programCount = files.filter((file) => file.endsWith(".asm")).length;
       lines.push(`- ${block}/${shader}: ${programCount} programs; ${properties.split("\n").join(" ")}`);
+      for (const line of programs.split("\n").filter(Boolean)) {
+        const [index, pass, stage, keywords] = line.split("\t");
+        lines.push(`  - ${index}: ${pass ? `${pass}, ${stage}: ${keywords || "no keywords"}` : "unnamed"}`);
+      }
     }
   const path = join(directory.root, "inventory.md");
   await writeFile(path, `${lines.join("\n")}\n`);

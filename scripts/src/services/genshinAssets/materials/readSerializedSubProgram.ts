@@ -10,6 +10,8 @@ const UAV_BYTES = 12;
 const SAMPLER_BYTES = 8;
 const STRUCT_HEADER_BYTES = 16;
 const PARAMETER_FLAG_BYTES = 2;
+// The GPU program types the game's enum defines, from its unknown type through PS5's ray-tracing-less NGGC type
+const MAX_GPU_PROGRAM_TYPE = 32;
 // Skips a parameter list whose records are read past for the keyword lookup: each record is its fixed words, then an
 // Aligned pair of small fields where a parameter carries them
 const skipAlignedParameters = (cursor: BinaryCursor, wordBytes: number, flagBytes: number): void => {
@@ -49,8 +51,17 @@ export const readSerializedSubProgram = (cursor: BinaryCursor): SerializedSubPro
   const globalKeywordIndices = cursor.uint16List();
   const localKeywordIndices = cursor.uint16List();
   cursor.int8();
-  const gpuProgramType = cursor.int8();
+  let gpuProgramType = cursor.int8();
   cursor.align();
+  // A record whose GPU program type is unknown or outside the enum is read again, with a keyword list between its tier
+  // and its type, as AnimeStudio reads it for this game alone
+  if (gpuProgramType <= 0 || gpuProgramType > MAX_GPU_PROGRAM_TYPE) {
+    cursor.rewind(4);
+    cursor.uint16List();
+    cursor.int8();
+    gpuProgramType = cursor.int8();
+    cursor.align();
+  }
   skipAlignedParameters(cursor, VECTOR_OR_MATRIX_PARAMETER_BYTES, PARAMETER_FLAG_BYTES);
   skipAlignedParameters(cursor, VECTOR_OR_MATRIX_PARAMETER_BYTES, PARAMETER_FLAG_BYTES);
   skipAlignedParameters(cursor, TEXTURE_PARAMETER_BYTES, PARAMETER_FLAG_BYTES);

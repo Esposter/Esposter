@@ -27,7 +27,7 @@ flowchart TD
 
 - **Each variant's program is a plain DXBC container** inside the shader's raw export (`--types Shader:Export --export_type Raw`), found by its magic and its own stated size (`parseDxbcPrograms`). Windows' `d3dcompiler_47` disassembles it (`disassembleDxbcDirectory`), and elsewhere `vkd3d-compiler` does. Every variant is also compiled for DirectX 12 as DXIL, which that disassembler cannot read; its DirectX 11 twin says the same.
 - **A shader is exported nameless**, as `Shader #<path ID>` in the asset map. The property names it declares lead its raw export and tell it apart (`parseShaderPropertyNames`), and its own name (`Hidden/Internal-DeferredShading`, `miHoYo/Scene/Login Base`) is a string of the same export, which names it without the parser.
-- **A shader's serialized form names its programs.** Its raw export is Unity's serialized shader: each subshader's passes, each pass's keyword names keyed by index (its variants' keyword sets are these indices), and each stage's program variants, each with a blob index, a GPU program type and the keyword indices that select it. The blob that follows the subshaders is one chunk per platform, each entry at the blob index. `parseSerializedShader` reads all of it, and the uber shader's 3,980 variant records resolve to its 1,553 compiled programs, the rest pointing at empty containers. A container is DXBC with a SHEX part (693, which disassemble) or DXIL with a DXIL part (860, which do not). Each variant's keyword names matched the blob's own keyword strings in every case checked on the uber, though the parser reads only the pass's list. A pass is named by its render state.
+- **A shader's serialized form names its programs.** Its raw export is Unity's serialized shader: each subshader's passes, each pass's keyword names keyed by index (a variant's keyword set is these indices), and each stage's program variants, each with a blob index, a GPU program type and the keyword indices that select it. The blob that follows the subshaders is one chunk per platform, and each variant's blob index selects its entry in its platform's chunk. `parseSerializedShader` reads that form, and `readShaderPrograms` names each carved program by its pass, stage and keyword set. The uber shader's 3,980 variant records resolve to its 1,553 compiled programs, the rest pointing at empty containers. A container is DXBC with a SHEX part (693, which disassemble) or DXIL with a DXIL part (860, which do not). The reader follows the layout on 256 of the 448 raw shader exports in the game's blocks; the others fail on a layout it does not yet follow (among them `Hidden/Internal-DeferredShading`), and their programs stay carved by magic and unnamed.
 - **A constant buffer's layout is a run of records beside the programs.** A record is its name's length, its name padded to four bytes, then six 32-bit fields: an index, its rows, its columns, a flag, its array length, and last its byte offset. The offset comes last: read as the field before the name, it puts two parameters in one register. Every variant carries its own layout, listing only the parameters it reads, so a program is matched to the layout whose parameters share no byte, name every register it reads and end within the buffer it declares (`parseShaderConstantLayouts`, `annotateProgramConstants`). A name's length is read from its own field, since a name ending on a four-byte boundary runs into the next field's bytes when one of them is a word character.
 - **Some shaders do not parse in AnimeStudio**, among them the login stone's (`miHoYo/Scene/Login Base`) and the cloud layer's. A type filter with no suffix parses every object before exporting it, and drops one it refuses even from a raw export; the `:Export` suffix writes the objects' bytes unparsed, and their programs read like any other's.
 - **A scene's stone shader writes the G-buffer and lights nothing.** Its light is the deferred pass's, `Hidden/Internal-DeferredShading` in the block `DEFERRED_SHADING_BLOCK` names, which `shaders` reads beside every component's own; a material value is only right once the pass that reads its G-buffer channel is.
@@ -137,25 +137,26 @@ The things that each cost a search to find, to reach for first:
 
 ## Key files
 
-| File                                                                         | Role                                                                    |
-| :--------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/materials/parseSerializedShader.ts`      | A shader's passes, keyword names and stage programs from its raw export |
-| `scripts/src/services/genshinAssets/materials/parseDxbcPrograms.ts`          | A shader's compiled programs carved out of its raw export               |
-| `scripts/src/services/genshinAssets/materials/parseShaderConstantLayouts.ts` | A shader's constant buffer layouts                                      |
-| `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts`   | A program headed by what its registers hold                             |
-| `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`              | A material's values, textures and shader                                |
-| `scripts/src/services/genshinAssets/shared/readMaterialKeywords.ts`          | A material's shader keywords from its raw bytes                         |
-| `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`               | Transforms, meshes and the materials each renderer draws                |
-| `scripts/src/services/genshinAssets/music/parseWwiseNode.ts`                 | A bank node's or bus's volumes, bus, parent and curves                  |
-| `scripts/src/services/genshinAssets/music/readGameMixVolumes.ts`             | How loud the game's mix plays a sound or a music track                  |
-| `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`    | Everything a component's export holds, as a report                      |
-| `scripts/src/services/genshinAssets/world/parseStreamingPlacements.ts`       | The open world's placements out of a StreamGen blob                     |
-| `scripts/src/services/genshinAssets/world/parseTerrainHeights.ts`            | A terrain tile's heightfield out of its TerrainData                     |
-| `scripts/src/services/genshinAssets/world/parseTerrainSplat.ts`              | A terrain tile's splat layers and cell map out of its TerrainData       |
-| `scripts/src/services/genshinAssets/world/parseLodInfoMap.ts`                | Each LOD-grouped prefab's finest level, by its world id                 |
-| `scripts/src/services/genshinAssets/world/readPrefabBlocks.ts`               | The blocks a prefab's game object may stand in                          |
-| `scripts/src/services/genshinAssets/music/parseAudioPackageHeader.ts`        | A Wwise package's banks and sounds                                      |
-| `scripts/src/services/genshinAssets/music/parseMusicHierarchy.ts`            | The banks' tracks, segments and playlists                               |
+| File                                                                         | Role                                                                        |
+| :--------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/materials/parseSerializedShader.ts`      | A shader's passes, keyword names and stage programs from its raw export     |
+| `scripts/src/services/genshinAssets/materials/readShaderPrograms.ts`         | A shader's programs named by pass, stage and keyword set, or carved unnamed |
+| `scripts/src/services/genshinAssets/materials/parseDxbcPrograms.ts`          | A shader's compiled programs carved out of its raw export                   |
+| `scripts/src/services/genshinAssets/materials/parseShaderConstantLayouts.ts` | A shader's constant buffer layouts                                          |
+| `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts`   | A program headed by what its registers hold                                 |
+| `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`              | A material's values, textures and shader                                    |
+| `scripts/src/services/genshinAssets/shared/readMaterialKeywords.ts`          | A material's shader keywords from its raw bytes                             |
+| `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`               | Transforms, meshes and the materials each renderer draws                    |
+| `scripts/src/services/genshinAssets/music/parseWwiseNode.ts`                 | A bank node's or bus's volumes, bus, parent and curves                      |
+| `scripts/src/services/genshinAssets/music/readGameMixVolumes.ts`             | How loud the game's mix plays a sound or a music track                      |
+| `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`    | Everything a component's export holds, as a report                          |
+| `scripts/src/services/genshinAssets/world/parseStreamingPlacements.ts`       | The open world's placements out of a StreamGen blob                         |
+| `scripts/src/services/genshinAssets/world/parseTerrainHeights.ts`            | A terrain tile's heightfield out of its TerrainData                         |
+| `scripts/src/services/genshinAssets/world/parseTerrainSplat.ts`              | A terrain tile's splat layers and cell map out of its TerrainData           |
+| `scripts/src/services/genshinAssets/world/parseLodInfoMap.ts`                | Each LOD-grouped prefab's finest level, by its world id                     |
+| `scripts/src/services/genshinAssets/world/readPrefabBlocks.ts`               | The blocks a prefab's game object may stand in                              |
+| `scripts/src/services/genshinAssets/music/parseAudioPackageHeader.ts`        | A Wwise package's banks and sounds                                          |
+| `scripts/src/services/genshinAssets/music/parseMusicHierarchy.ts`            | The banks' tracks, segments and playlists                                   |
 
 ## Sources
 

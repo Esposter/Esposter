@@ -47,6 +47,10 @@ export class BinaryCursor {
     return Array.from({ length: count }, readItem);
   }
 
+  rewind(length: number): void {
+    this.#position -= length;
+  }
+
   skip(length: number): void {
     this.#position += length;
   }
