@@ -72,7 +72,7 @@ The body's pixel program writes six targets, and the lit colour is built from th
 ### Inputs (per pixel)
 
 - `N`: the interpolated normal, flipped by the front-face flag. Exact.
-- `Lm`: "_LightMapTex". Its red is a metal mask, its green a shadow threshold, its blue unused by the body, and its alpha the region. Exact on the channel uses; Provisional on the blue channel being unused, which is read from the absence of a use.
+- `Lm`: "_LightMapTex". Its red is a metal mask and the specular's weight, its green a shadow threshold, its blue the specular's gate, and its alpha the region. Exact on the channel uses (the blue is read in the specular's comparison, the non-metal branch).
 - `M`: "_MainTex", with alpha `a_M`.
 
 ### The region
@@ -110,21 +110,48 @@ Both are sampled at `1 - v`, so a region's row is read from the ramp's own botto
 
 ### The shade term
 
+The ramp is sampled at a column `u` and a row `v`, read from the program's sampling sites (Exact):
+
 ```
-W  = _LightArea
+W  = "_LightArea"
 x  = clamp((W - z) / W / w, 0, 1)
-S  = _PackedShadowRampTex.sample((1 - x), (1 - v_row(r))).rgb
+u  = 1 - x          (0 where the program's "v8.w" exceeds 1e-5)
+S  = "_PackedShadowRampTex".sample(u, 1 - v_row(r)).rgb
 ```
 
-Exact on the form of `x` as a fraction of "_LightArea" and on the sample's coordinate given `x` and `v_row`. Provisional on `z` and `w`: `z` is a toon threshold built from the lightmap's green channel, the vertex-colour AO and the normal's dot with the sun, and `w` is "_ShadowRampWidth", scaled by "_UseVertexRampWidth". Their exact expressions are read but not yet fitted, so no numeric value is claimed.
+`z` is the toon threshold, with its three branches read from the program's compare chain (Exact on the form, Provisional on the vertex inputs "v1.x" as the vertex colour's AO and "v9.w" as the sun term):
+
+```
+L  = (_UseLightMapColorAO > 0.001) ? Lm.g : 0.5
+Q  = 2 * (L - 0.5) * |L - 0.5| + 0.5
+Q' = (_UseVertexColorAO != 0) ? Q * AO_v : Q
+z  = 0 if Q' < 0.05;  1 if Q' > 0.95;  else (Q' + N_v) / 2
+```
+
+`w` is "_ShadowRampWidth", scaled by the vertex's ramp weight when "_UseVertexRampWidth" is set (Exact):
+
+```
+w = (_UseVertexRampWidth != 0) ? max(2 * v1.y, 0.01) * "_ShadowRampWidth" : "_ShadowRampWidth"
+```
+
+Where the cool shadow is on ("_CoolShadowColorOrTex"), the row is read twice, at the first and second row, and mixed by "_ES_CharacterColorTone" (Exact on the mix; the rows are the two equations above).
+
+The shade term is not yet fitted to a numeric value, so no number is claimed for `z` or `w`.
 
 ### The lit colour (partly open)
 
-The program combines the main colour, the ramp, the sun, the sky ambient, the specular and the rim into the lit colour `C`. What is read so far:
+The non-metal branch builds the lit colour from these terms, in the order the program applies them (Exact on each term and its operator, Provisional on the light factor and the hit terms):
 
-- The region's tint multiplies the main texture where the region's "_UseMaterial" toggle is set (Exact on the toggle's use, Provisional on the blend's mode, which "_MainTexTintBlendMode" selects).
-- The specular term is "_SpecularColor" times "_SpecMulti" times a Blinn-style term with exponent "_Shininess", attenuated in shadow by "_SpecualrInShaow" (Exact on the terms and their names; Provisional on the attenuation's form).
-- `C` is not assembled into one expression yet. The final assembly is the open item below.
+```
+Mc   = M.rgb * tint                        (tint: "_Color" for region 1, "_Color2" to "_Color5" for the others)
+Lit  = Mc * S * "_ES_CharacterMainLightBrightness"
+Em   = Mc * "_EmissionColor_MHY" * "_EmissionScaler"   (the region's own colour and scaler)
+C0   = lerp(Lit, Em, Lm.g)
+Spec = step(1 - Lm.b, pow(max(N . H, 1e-5), "_Shininess")) * Lm.r * "_SpecularColor" * "_SpecMulti"
+C    = C0 + "_SpecualrInShaow" * Spec * brightness
+```
+
+`H` is the half vector of the view and the light, and `N` is "v7" (Exact on its form). The specular's own weight is "_SpecualrInShaow", added, not an attenuation of the specular. The light factor `f` is "min(2 * _LightColor0.w, 1)" where "mhy_AvatarLightDir.w" exceeds 0.5, and 1 otherwise, and it scales the specular and the lit colour in the branch that tests it (Provisional on its meaning). The rim and hit terms ("_ElementRimColor", "_HitColor") are added after this (Provisional on the order). The outputs use `C` through the desaturation below.
 
 ### The outputs (Exact)
 
