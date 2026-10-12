@@ -20,6 +20,7 @@ export const DerivedAssetSoundEffectMap: Record<
   [DerivedAssetComponent.Mondstadt]: {},
   [DerivedAssetComponent.Natlan]: {},
   [DerivedAssetComponent.NodKrai]: {},
+  [DerivedAssetComponent.PlayerGirl]: {},
   [DerivedAssetComponent.Snezhnaya]: {},
   [DerivedAssetComponent.Sumeru]: {},
   [DerivedAssetComponent.Windrise]: {},
