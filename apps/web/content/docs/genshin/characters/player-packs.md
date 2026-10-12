@@ -84,7 +84,7 @@ sequenceDiagram
   participant S as Server
   participant C as genshin-assets (private)
   B->>S: generateCharacterPackUploadSasUrls(files: sha256, size)
-  S-->>B: a write grant per file, to staging/{userId}/{sha256}
+  S-->>B: a write grant per file, to character-packs/staging/{userId}/{sha256}
   B->>C: upload each file to its grant
   B->>S: keepCharacterPack(pack: files, packHash)
   S->>C: read each staged file, check size and hash
