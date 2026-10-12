@@ -45,5 +45,5 @@ export const queueStatusChecks: github.RepositoryRuleset = new github.Repository
     },
     target: "branch",
   },
-  { aliases: [{ name: "developMainStatusChecks" }], protect: true },
+  { protect: true },
 );

@@ -19,5 +19,5 @@ export const mainProtection: github.RepositoryRuleset = new github.RepositoryRul
     rules: { deletion: true, nonFastForward: true, update: true },
     target: "branch",
   },
-  { aliases: [{ name: "developMainProtection" }], protect: true },
+  { protect: true },
 );
