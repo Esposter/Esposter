@@ -9,83 +9,6 @@
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.fatalBlossoms.length": { "file": "burst.go", "line": 78, "source": "Gcsim", "value": 7 },
-  "hits.fatalBlossoms.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
-  },
-  "hits.fatalBlossoms.0.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.0.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.fatalBlossoms.0.hitmarkFrames": { "cause": "Unsourced", "value": 145 },
-  "hits.fatalBlossoms.0.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
-  "hits.fatalBlossoms.0.isBlunt": { "cause": "Unsourced", "value": true },
-  "hits.fatalBlossoms.0.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
-  "hits.fatalBlossoms.0.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
-  "hits.fatalBlossoms.1.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
-  },
-  "hits.fatalBlossoms.1.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.1.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.fatalBlossoms.1.hitmarkFrames": { "cause": "Unsourced", "value": 150 },
-  "hits.fatalBlossoms.1.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
-  "hits.fatalBlossoms.1.isBlunt": { "cause": "Unsourced", "value": true },
-  "hits.fatalBlossoms.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
-  "hits.fatalBlossoms.1.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
-  "hits.fatalBlossoms.2.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
-  },
-  "hits.fatalBlossoms.2.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.2.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.fatalBlossoms.2.hitmarkFrames": { "cause": "Unsourced", "value": 155 },
-  "hits.fatalBlossoms.2.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
-  "hits.fatalBlossoms.2.isBlunt": { "cause": "Unsourced", "value": true },
-  "hits.fatalBlossoms.2.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
-  "hits.fatalBlossoms.2.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
-  "hits.fatalBlossoms.3.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
-  },
-  "hits.fatalBlossoms.3.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.3.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.fatalBlossoms.3.hitmarkFrames": { "cause": "Unsourced", "value": 160 },
-  "hits.fatalBlossoms.3.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
-  "hits.fatalBlossoms.3.isBlunt": { "cause": "Unsourced", "value": true },
-  "hits.fatalBlossoms.3.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
-  "hits.fatalBlossoms.3.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
-  "hits.fatalBlossoms.4.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
-  },
-  "hits.fatalBlossoms.4.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.4.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.fatalBlossoms.4.hitmarkFrames": { "cause": "Unsourced", "value": 165 },
-  "hits.fatalBlossoms.4.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
-  "hits.fatalBlossoms.4.isBlunt": { "cause": "Unsourced", "value": true },
-  "hits.fatalBlossoms.4.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
-  "hits.fatalBlossoms.4.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
-  "hits.fatalBlossoms.5.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
-  },
-  "hits.fatalBlossoms.5.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.5.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.fatalBlossoms.5.hitmarkFrames": { "cause": "Unsourced", "value": 170 },
-  "hits.fatalBlossoms.5.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
-  "hits.fatalBlossoms.5.isBlunt": { "cause": "Unsourced", "value": true },
-  "hits.fatalBlossoms.5.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
-  "hits.fatalBlossoms.5.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
-  "hits.fatalBlossoms.6.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
-  },
-  "hits.fatalBlossoms.6.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.6.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.fatalBlossoms.6.hitmarkFrames": { "cause": "Unsourced", "value": 175 },
-  "hits.fatalBlossoms.6.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
-  "hits.fatalBlossoms.6.isBlunt": { "cause": "Unsourced", "value": true },
-  "hits.fatalBlossoms.6.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
-  "hits.fatalBlossoms.6.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
   "hits.transientBlossom.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.4 }
@@ -110,5 +33,21 @@
   "plunges.low.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "hits.fatalBlossoms.0-6.hitmarkFrames": {
+    "file": "burst.go",
+    "line": 96,
+    "source": "Gcsim",
+    "value": [145, 150, 155, 160, 165, 170, 175]
+  },
+  "hits.fatalBlossoms.0-6.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
+  "hits.fatalBlossoms.0-6.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
+  },
+  "hits.fatalBlossoms.0-6.element": { "cause": "Unsourced", "value": "Rock" },
+  "hits.fatalBlossoms.0-6.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.fatalBlossoms.0-6.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
+  "hits.fatalBlossoms.0-6.isBlunt": { "cause": "Unsourced", "value": true },
+  "hits.fatalBlossoms.0-6.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } }
 }
