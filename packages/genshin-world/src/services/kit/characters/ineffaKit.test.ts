@@ -36,15 +36,16 @@ const castEffects = (action: KitAction, effects: KitEffect[] = []): KitEffect[] 
   action.onStart?.(createKitTestContext(createIneffaCombatant(), { kitEffectState }));
   return kitEffectState.effects;
 };
-const BIRGITTA_ID = "birgitta";
-const castBirgitta = (action: KitAction, effects: KitEffect[] = []): KitSummon =>
-  takeOne(
-    castEffects(action, effects).filter(
-      (effect): effect is KitSummon => effect.kind === "summon" && effect.id === BIRGITTA_ID,
-    ),
-  );
 
 describe(createIneffaKitBehaviour, () => {
+  const BIRGITTA_ID = "birgitta";
+  const castBirgitta = (action: KitAction, effects: KitEffect[] = []): KitSummon =>
+    takeOne(
+      castEffects(action, effects).filter(
+        (effect): effect is KitSummon => effect.kind === "summon" && effect.id === BIRGITTA_ID,
+      ),
+    );
+
   test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [
