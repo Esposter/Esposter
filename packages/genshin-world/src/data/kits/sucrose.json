@@ -1,6 +1,6 @@
 {
   "areas.absorbCheck": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.7677669529663689 }
   },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
@@ -10,22 +10,19 @@
   "frames.burstTickInterval": { "cause": "Unclassified", "value": 113 },
   "frames.absorbCheckFirst": { "cause": "Unclassified", "value": 136 },
   "frames.absorbCheckInterval": { "cause": "Unclassified", "value": 18 },
-  "hits.burstTick.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 } },
-  "hits.burstTick.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
+  "hits.burstTick.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 } },
+  "hits.burstTick.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.burstTick.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4339 } },
-  "hits.burstTick.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.burstTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.forbiddenCreationAbsorbedMultiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 4339 }
   },
-  "parameters.forbiddenCreationSeconds": {
-    "cause": "Unclassified",
-    "value": { "index": 2, "proudSkillGroupId": 4339 }
-  },
+  "parameters.forbiddenCreationSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 4339 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 10 },
   "plunges.high.animationFrames": { "cause": "DiffersFromSource", "value": 24 },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
