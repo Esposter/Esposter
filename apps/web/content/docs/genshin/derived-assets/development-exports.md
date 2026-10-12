@@ -36,7 +36,7 @@ The app hands the world screen and the game's opening the route's address in dev
 flowchart TD
   WANT["the components the scene wants: Windrise and the regions in reach, or the login"] --> HELD{"in the route's index, and a family of theirs in the scene's map?"}
   HELD -->|no| OURS["our stand-ins alone"]
-  HELD -->|yes| LOAD["loadWitness: the meshes of the drawn families, each texture once, a still family's parts instanced"]
+  HELD -->|yes| LOAD["loadWitness: the drawn families' meshes, each texture once"]
   LOAD --> MAT["each exported material over the scene's own"]
   MAT --> DRAW["drawn in the world's group, in place of ours of each family they hold"]
   DRAW --> HIDE["a landmark within a family's extent that its kind stands in for: hidden, still mounted"]
