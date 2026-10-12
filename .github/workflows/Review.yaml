@@ -1,0 +1,79 @@
+name: 🔍 Review
+
+# The review of what lands on `ai/queue`: haiku reviewers over amount-capped windows, a haiku fixer over their findings,
+# and `main` moved only by the review's fast-forward (`services/review`). The run's steps and the pins of its checkout,
+# install and cached build are `run-review-collector.yaml`'s.
+on:
+  # No push trigger yet: the first run is dispatched by hand and verified before a push starts one.
+  workflow_dispatch:
+    inputs:
+      from:
+        description: "A range review starts after this sha; with `to`, it reviews `from..to` and never moves main"
+        required: false
+        type: string
+      to:
+        description: "A range review ends at this sha"
+        required: false
+        type: string
+
+# A range runs in its own group, so a push-triggered run never replaces its pending continuation.
+concurrency:
+  group: review-${{ inputs.from && 'range' || 'queue' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  review:
+    name: Review
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ai/queue
+          fetch-depth: 0
+          token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install the collector's projects
+        uses: ./.github/actions/install-projects
+        with:
+          filter: ./{packages/*,scripts}
+
+      - name: 🏗️ Build packages
+        uses: ./.github/actions/run-cached-task
+        with:
+          task: build:packages
+          paths: |
+            packages/*/dist
+            packages/*/src/index.ts
+            packages/*/src/components/index.ts
+          save: false
+
+      - name: 🆔 Identify the reviewer
+        run: |
+          git config user.name "Q16solver"
+          git config user.email "Q16solver@users.noreply.github.com"
+          git config core.fileMode false
+          echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
+          git rm -r -q --cached . && git reset -q --hard
+
+      - name: 🤝 Trust the workspace
+        uses: ./.github/actions/trust-workspace
+
+      - name: 🔍 Review
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          FROM: ${{ inputs.from }}
+          TO: ${{ inputs.to }}
+        run: |
+          gh auth setup-git
+          pnpm -C scripts ai:review --from "$FROM" --to "$TO"
