@@ -17,10 +17,15 @@ const { emojis, skinTone } = defineProps<Props>();
 // Crossing from one emoji to the next reports the leave before the enter, which Vue renders as one update
 defineEmits<{ hover: [emoji?: PickableEmoji]; select: [emoji: PickableEmoji] }>();
 const grid = useTemplateRef("grid");
-// The emoji holding the one tab stop, by its place in the grid. A search can shorten the list under it, so it
-// Stops at the last emoji rather than pointing past the end
-const focusedIndex = ref(0);
-const tabStopIndex = computed(() => Math.min(focusedIndex.value, emojis.length - 1));
+// The emoji holding the one tab stop, by its place in the grid. A new list starts its tab stop at its first emoji, so a
+// Search does not carry the stop over to whatever happens to sit at the same place in the results
+const tabStopIndex = ref(0);
+watch(
+  () => emojis,
+  () => {
+    tabStopIndex.value = 0;
+  },
+);
 const rows = computed(() =>
   chunk(
     emojis.map((emoji, index) => ({ emoji, index })),
@@ -34,14 +39,17 @@ const getNextIndex = (event: KeyboardEvent, index: number) => {
   const rowStartIndex = Math.floor(index / EMOJI_GRID_COLUMN_COUNT) * EMOJI_GRID_COLUMN_COUNT;
 
   switch (event.key) {
+    // A row below that lacks this column stops at the last emoji, and no row below leaves the focus where it is
     case "ArrowDown":
-      return Math.min(index + EMOJI_GRID_COLUMN_COUNT, lastIndex);
+      return rowStartIndex + EMOJI_GRID_COLUMN_COUNT <= lastIndex
+        ? Math.min(index + EMOJI_GRID_COLUMN_COUNT, lastIndex)
+        : undefined;
     case "ArrowLeft":
       return index > 0 ? index - 1 : undefined;
     case "ArrowRight":
       return index < lastIndex ? index + 1 : undefined;
     case "ArrowUp":
-      return Math.max(index - EMOJI_GRID_COLUMN_COUNT, 0);
+      return rowStartIndex > 0 ? index - EMOJI_GRID_COLUMN_COUNT : undefined;
     case "End":
       return Math.min(rowStartIndex + EMOJI_GRID_COLUMN_COUNT - 1, lastIndex);
     case "Home":
@@ -56,7 +64,7 @@ const onGridKeydown = useGridKeyboard({
   getNextCell: getNextIndex,
   root: grid,
   setFocusedCell: (index) => {
-    focusedIndex.value = index;
+    tabStopIndex.value = index;
   },
 });
 </script>
