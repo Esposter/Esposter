@@ -7,7 +7,7 @@ export interface DumpedMesh {
   m_Normals: number[];
   m_Skin: { boneIndex: number[]; weight: number[] }[];
   m_SubMeshes: { indexCount: number }[];
-  m_Tangents: number[];
+  m_Tangents?: number[];
   m_UV0: number[];
   m_VertexCount: number;
   m_Vertices: number[];
