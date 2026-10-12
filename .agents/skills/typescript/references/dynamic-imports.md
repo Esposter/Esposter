@@ -7,7 +7,9 @@ and the two exceptions.
 **Never `await import(...)` for code-splitting** — always a static top-level `import`. The build already
 chunk-splits per component, so a nested dynamic import only hides the dependency and, in dev, defers Vite's
 discovery until first use, which can trigger a mid-session re-optimization leaving chunks on stale dep hashes.
-Only touch `optimizeDeps` when the dependency's own docs instruct it.
+Only touch `optimizeDeps` when the dependency's own docs instruct it, or when a lazily mounted tree is what the optimiser
+finds mid-session: `apps/web/configuration/vite.ts` lists the Genshin world's and the login's imports for that, since a
+lazy component's own imports are found only as it mounts and each late find re-runs the optimiser.
 
 Two exceptions: a library-mandated lazy-loader contract, and a heavy dependency whose only entry point is a
 module the app always loads — a codec behind a format map, a devtool behind a settings panel, a character's kit behaviour behind the kit behaviour map. Per-component
