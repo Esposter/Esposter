@@ -10,11 +10,11 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
 import { createShenheKit } from "#src/services/kit/characters/shenheKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const SHENHE_KIT = createShenheKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SHENHE_CHARACTER_ID]));
 

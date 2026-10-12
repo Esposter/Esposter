@@ -13,9 +13,9 @@ import { applyReactionInternalCooldown } from "#src/services/combat/internalCool
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
+import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
-import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 
 const checkIsElectroCharged = ({ reactionType }: Reaction): boolean =>
   reactionType === TransformativeReactionType.ElectroCharged;
@@ -30,7 +30,6 @@ const strikeOwnedTicks = (
   context: KitStrikeContext,
 ): void => {
   if (!combatant || reactions.length === 0) return;
-  const { characterIdCombatantMap, party } = context;
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
   const { reachingReactions, transformativeDamage } = priceEnemyReactions(kind, enemy, reactions, combatant, undefined);
@@ -47,8 +46,11 @@ const strikeOwnedTicks = (
       ) * getTransformativeDamage(reactionType, level, elementalMastery, getEnemyResistance(kind, enemy, element));
     reachingReactions.push({ element, reactionType, spreadGauge });
   }
-  for (const energyDrop of damageEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage: 0 }))
-    gainPartyEnergy(party, energyDrop, combatant.element, characterIdCombatantMap);
+  collectKitEnergyDrops(
+    damageEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage: 0 }),
+    combatant.element,
+    context,
+  );
   landKitReactionReaches(
     reachingReactions.map((reaction): [Enemy, TransformativeReaction] => [enemy, reaction]),
     combatant,

@@ -1,25 +1,14 @@
 import type { ProcedureRegistration } from "#src/models/ProcedureRegistration";
 import type { ProcedureResolverOptions } from "#src/models/ProcedureResolverOptions";
 import type { TRPCMswRoot } from "#src/models/TRPCMswRoot";
-import type { StandardSchemaV1 } from "@standard-schema/spec";
 import type { AnyTRPCRouter, TRPCProcedureType } from "@trpc/server";
 
 import { toResolverOptions } from "#src/services/toResolverOptions";
 import { exhaustiveGuard } from "@esposter/shared";
-import { StandardSchemaV1Error, TRPCError } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 
-// A tRPC input is a Standard Schema or a plain function, the two forms the public `.input()` accepts
-type InputParser = ((value: unknown) => unknown) | StandardSchemaV1;
-
-const parseInput = async (parser: InputParser, value: unknown): Promise<void> => {
-  if (typeof parser === "function") {
-    await parser(value);
-    return;
-  }
-
-  const result = await parser["~standard"].validate(value);
-  if (result.issues) throw new StandardSchemaV1Error(result.issues);
-};
+// A tRPC input parser as the procedure builder's own `.input()` takes it, a Standard Schema or a plain function
+type InputParser<TContext extends object> = Parameters<TRPCMswRoot<TContext>["procedure"]["input"]>[0];
 
 // Each procedure reads its resolver when it is called rather than when the router is built, so a resolver a test
 // Replaces answers the next call even on a WebSocket connection whose router was built before it. tRPC joins
@@ -33,14 +22,13 @@ export const createMockRouter = <TContext extends object>(
   router(
     Object.fromEntries(
       procedureTypes.entries().map(([path, type]) => {
-        // The real procedure's parsers only judge the input: a rejection is the BAD_REQUEST the server answers with, and
-        // The resolver still receives the input as the transformer decoded it
-        const parsers: InputParser[] = inputRouter?._def.procedures[path]?._def.inputs ?? [];
-        const procedure = baseProcedure.input(async (value) => {
-          // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the server's input middlewares run in turn and stop at the first rejection
-          for (const parser of parsers) await parseInput(parser, value);
-          return value;
-        });
+        // The real procedure's own `.input()` calls, so tRPC parses the input as the server does: a rejection is the
+        // BAD_REQUEST the server answers with, and the resolver gets what the parsers return, combined as tRPC does
+        const parsers: InputParser<TContext>[] = inputRouter?._def.procedures[path]?._def.inputs ?? [];
+        const procedure = parsers.reduce<TRPCMswRoot<TContext>["procedure"]>(
+          (builder, parser) => builder.input(parser) as TRPCMswRoot<TContext>["procedure"],
+          baseProcedure,
+        );
         const createNotFoundError = () =>
           new TRPCError({ code: "NOT_FOUND", message: `No "${type}"-procedure on path "${path}"` });
 

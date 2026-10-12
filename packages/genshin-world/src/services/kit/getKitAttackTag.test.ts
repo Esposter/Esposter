@@ -3,9 +3,9 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

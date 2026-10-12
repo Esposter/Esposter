@@ -76,4 +76,5 @@ packages/genshin-world/src/services/kit/characters/
 - [Normal Attack](https://genshin-impact.fandom.com/wiki/Normal_Attack), Genshin Impact Wiki: which weapons deal their element, and a catalyst's and a bow's attacks.
 - [Elemental Skill](https://genshin-impact.fandom.com/wiki/Elemental_Skill) and [Elemental Burst](https://genshin-impact.fandom.com/wiki/Elemental_Burst), Genshin Impact Wiki: the skill's cooldown, charges and press or hold, and the burst's energy cost and cooldown.
 - [Elemental Gauge Theory: Character Data](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Character_Data), Genshin Impact Wiki: each ability's gauge, and each attack's tag and group.
+- [Hu Tao](https://genshin-impact.fandom.com/wiki/Hu_Tao), Genshin Impact Wiki: Spirit Soother's heal under half HP, Blood Blossom, and her Constellations 4 and 6.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the skill and skill depot tables the sets are read from, the proud skill table the multipliers are read from, and the ability configs whose scrambled names rule out reading behaviour from them.

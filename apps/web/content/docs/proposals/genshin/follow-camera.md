@@ -19,7 +19,7 @@ The [follow camera](/docs/genshin/follow-camera) stands behind the character tod
 ## Decisions
 
 - **What the camera profile cannot say is read off one recording.** The profile holds the zoom's input ratio and the radius's lerp-back ratios, but the Zoom module eases a velocity and what the game computes from each ratio lives in code no dump holds. So the wheel's step and the eye's return are measured on `follow-camera.mkv`, the clip the roadmap owes, as the eye's distance over time. Its reset before a flat horizon tells whether the game levels the camera or tilts it down by the default elevation the profile's first words hold, and its tilt from level to straight down whether the arm lengthens as the profile's radius added at the steepest elevation says.
-- **The game's settings for this camera.** Its horizontal and vertical sensitivity, its default distance between 4.5 and 6.0, which the camera returns to after a zoom, after combat and after a teleport, and whether its pitch follows the slope as the character climbs or descends, are read from the [menu screens](/docs/proposals/genshin/menu-screens)' Settings, each with the game's range and default. The default distance is metres of the arm: its span is the profile's setting adjustment and its top the profile's furthest radius on foot.
+- **The game's settings for this camera.** Its horizontal and vertical sensitivity, its default distance between 4.5 and 6.0, which the camera returns to after a zoom, after combat and after a teleport, and whether its pitch follows the slope as the character climbs or descends, are read from the [menu screens](/docs/proposals/genshin/menu-settings)' Settings, each with the game's range and default. The default distance is metres of the arm: its span is the profile's setting adjustment and its top the profile's furthest radius on foot.
 - **A sensitivity turns the look in proportion to it.** The wiki gives each sensitivity's range, 1 to 5, and no curve, so the look's radians a pixel are scaled by the setting over the middle of that range, 3, which turns the camera as it turns today.
 - **Photo mode's range is the game's, solved off recordings.** Photo mode moves its camera round the character by the game's two sliders, one horizontal and one vertical, and its zoom, within the game's range. Until a recording solves that range, photo mode shares the follow camera's range, a provisional call the [as-built page](/docs/genshin/follow-camera) records.
 
@@ -45,7 +45,7 @@ flowchart TD
 **This adds, in order:**
 
 1. **The recording.** `follow-camera.mkv` on the roadmap's References sought list, each of the four readings above kept in the character's reference and written over its provisional constant. Photo mode's sliders and zoom at their ends, `photo-mode-range.mkv`, solve its range.
-2. **The settings' rows on the Settings screen**, and the slope's pitch, once the [menu screens](/docs/proposals/genshin/menu-screens) build its Controls tab. The defaults the camera starts at are read off that tab's export, which replaces `FOLLOW_CAMERA_DEFAULT_SETTINGS`' provisional values.
+2. **The settings' rows on the Settings screen**, and the slope's pitch, once the [menu screens](/docs/proposals/genshin/menu-settings) build its Controls tab. The defaults the camera starts at are read off that tab's export, which replaces `FOLLOW_CAMERA_DEFAULT_SETTINGS`' provisional values.
 
 The camera is approved by its own measure: at each reading of the recording, the eye's distance and its ease match the camera's within the reading's noise.
 

@@ -192,11 +192,11 @@ describe(createAyatoKit, () => {
     const tickSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect({
+      hitmarkFrames: Math.round(takeOne(tickSummon?.hits ?? []).hitmarkSeconds * 60),
       isFollowing: field?.isFollowing,
       nextTickFrames: Math.round((field?.nextTickSeconds ?? 0) * 60),
       tickIntervalFrames: Math.round((field?.tickIntervalSeconds ?? 0) * 60),
-      hitmarkFrames: Math.round(takeOne(tickSummon?.hits ?? []).hitmarkSeconds * 60),
-    }).toStrictEqual({ isFollowing: true, nextTickFrames: 101, tickIntervalFrames: 30, hitmarkFrames: 38 });
+    }).toStrictEqual({ hitmarkFrames: 38, isFollowing: true, nextTickFrames: 101, tickIntervalFrames: 30 });
   });
 
   test("leaving the field ends Soukai Kanka and clears the Namisen stacks", () => {

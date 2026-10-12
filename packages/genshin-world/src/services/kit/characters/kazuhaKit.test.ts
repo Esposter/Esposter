@@ -8,9 +8,9 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { KAZUHA_CHARACTER_ID } from "#src/services/kit/characters/kazuhaKit";
 import { createKazuhaKit } from "#src/services/kit/characters/kazuhaKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const KAZUHA_KIT = createKazuhaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KAZUHA_CHARACTER_ID]));
 

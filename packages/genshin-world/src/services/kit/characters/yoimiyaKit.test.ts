@@ -8,9 +8,9 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
 import { createYoimiyaKit } from "#src/services/kit/characters/yoimiyaKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const YOIMIYA_KIT = createYoimiyaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YOIMIYA_CHARACTER_ID]));
 

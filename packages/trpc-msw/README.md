@@ -62,7 +62,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `TRPCMswOptions`           | `t`, `endpoint`, and optionally `router`, `webSocketUrl`, `createContext`, `allowMethodOverride` and `onUnhandledProcedure`     |
 | `UnhandledProcedureAction` | `Error` (default) answers an unregistered procedure with tRPC's `NOT_FOUND`; `Bypass` passes the request on to the next handler |
 
-Pass your real `router` and every call is first judged by that procedure's own input parsers (Standard Schema validators, or plain functions), so a client sending what your server would reject gets the same `BAD_REQUEST` instead of a mocked answer; the resolver still receives the input as decoded. A resolver receives what a real one does — `ctx`, `input`, `path`, `signal` — and returns the procedure's output before the transformer, which runs on the way out as it does on the server. A thrown `TRPCError` reaches the client through your error formatter.
+Pass your real `router` and every call is first judged by that procedure's own input parsers (Standard Schema validators, or plain functions), so a client sending what your server would reject gets the same `BAD_REQUEST` instead of a mocked answer; the resolver receives what those parsers return, as it does on the server. A resolver receives what a real one does — `ctx`, `input`, `path`, `signal` — and returns the procedure's output before the transformer, which runs on the way out as it does on the server. A thrown `TRPCError` reaches the client through your error formatter.
 
 ### Commands
 

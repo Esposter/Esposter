@@ -11,11 +11,12 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { noop, takeOne } from "@esposter/shared";
 import {
   createCharacterController,
@@ -105,6 +106,18 @@ describe(stepActiveKit, () => {
       },
       { effect: status, kind: KitEventKind.EffectExpired },
       { action: takeOne(TRAVELER_KIT.normalAttacks), kind: KitEventKind.NormalAttackLanded },
+    ]);
+  });
+
+  test("sends the team's kits a burst as it starts, with the member that used it and its energy cost", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = TRAVELER_KIT.burstEnergyCost;
+    stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      { characterId: TRAVELER_CHARACTER_ID, energyCost: TRAVELER_KIT.burstEnergyCost, kind: KitEventKind.BurstUsed },
     ]);
   });
 

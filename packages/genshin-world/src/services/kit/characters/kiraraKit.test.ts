@@ -9,10 +9,10 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { KIRARA_CHARACTER_ID } from "#src/services/kit/characters/kiraraKit";
 import { createKiraraKit } from "#src/services/kit/characters/kiraraKit";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const KIRARA_KIT = createKiraraKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KIRARA_CHARACTER_ID]));
 

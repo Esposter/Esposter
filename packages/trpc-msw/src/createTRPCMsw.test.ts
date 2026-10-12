@@ -1,7 +1,8 @@
+import type { StandardSchemaV1 } from "@standard-schema/spec";
+
 import { createTRPCMsw } from "#src/createTRPCMsw";
 import { UnhandledProcedureAction } from "#src/models/UnhandledProcedureAction";
 import { takeOne } from "@esposter/shared";
-import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { createTRPCClient, createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from "@trpc/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { http, HttpResponse } from "msw";
@@ -61,6 +62,7 @@ describe(createTRPCMsw, () => {
     readAuthorization: t.procedure.query(() => ""),
     registeredLater: t.procedure.query(() => ""),
     standard: t.procedure.input(standardValidator).query(() => ""),
+    transformed: t.procedure.input(z.object({ id: z.string().transform((id) => id.trim()) })).query(() => ""),
     unregistered: t.procedure.query(() => ""),
     upload: t.procedure.input(z.instanceof(FormData)).mutation(() => ""),
     write: t.procedure.mutation(() => undefined),
@@ -121,9 +123,18 @@ describe(createTRPCMsw, () => {
     trpc.nested.deep.read.query(read);
 
     // @ts-expect-error The input the real parser exists to reject
-    await expect(client.nested.deep.read.query({ id: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCClientError: formatted Invalid input: expected string, received number]`,
-    );
+    await expect(client.nested.deep.read.query({ id: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCClientError: formatted [
+        {
+          "expected": "string",
+          "code": "invalid_type",
+          "path": [
+            "id"
+          ],
+          "message": "Invalid input: expected string, received number"
+        }
+      ]]
+    `);
     expect(read).not.toHaveBeenCalled();
   });
 
@@ -147,6 +158,16 @@ describe(createTRPCMsw, () => {
       `[TRPCClientError: formatted id must be a string]`,
     );
     expect(read).not.toHaveBeenCalled();
+  });
+
+  test("hands the resolver what a transforming parser returns, not the input the client sent", async () => {
+    expect.hasAssertions();
+
+    const read = vi.fn<(options: { input: { id: string } }) => string>(() => "");
+    trpc.transformed.query(read);
+    await client.transformed.query({ id: " 1 " });
+
+    expect(takeOne(read.mock.calls)[0].input).toStrictEqual({ id: "1" });
   });
 
   test("runs chained parsers in order, each after the one before it resolves", async () => {

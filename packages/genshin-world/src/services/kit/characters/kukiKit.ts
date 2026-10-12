@@ -1,7 +1,7 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
-import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitField } from "#src/models/kit/KitField";
@@ -148,16 +148,16 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Stood at the cast, with its heal from the caster's Max HP and its Elemental Mastery at Ascension 4
   const createRing = (body: KitBody, combatant: Combatant): KitField => {
     const ringTickHit: KitHit = {
+      additiveBaseDamageBonus: (striker) =>
+        striker.ascension >= ASCENSION_4
+          ? ASCENSION_4_DAMAGE_ELEMENTAL_MASTERY_SHARE * getElementalMastery(striker)
+          : 0,
       element: Element.Electro,
       gauge: 1,
       hitArea: SKILL_HIT_AREA,
       hitmarkSeconds: RING_TICK_HITMARK_FRAMES / 60,
       poiseDamage: 0,
       talentMultiplier: skillTalentMultiplier(1),
-      additiveBaseDamageBonus: (striker) =>
-        striker.ascension >= ASCENSION_4
-          ? ASCENSION_4_DAMAGE_ELEMENTAL_MASTERY_SHARE * getElementalMastery(striker)
-          : 0,
     };
     const ringSeconds =
       getTalentMultiplier(talentMultiplierMap, KUKI_SKILL_GROUP_ID, TALENT_START_LEVEL, 5) +
