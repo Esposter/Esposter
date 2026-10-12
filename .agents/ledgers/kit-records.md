@@ -35,7 +35,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `dehya`              | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `diluc`              | —                      |                                                                          |
 | `diona`              | —                      |                                                                          |
-| `dori`               | —                      |                                                                          |
+| `dori`               | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `durin`              | —                      |                                                                          |
 | `emilie`             | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `escoffier`          | —                      |                                                                          |
