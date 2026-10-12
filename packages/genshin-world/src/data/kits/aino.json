@@ -9,7 +9,7 @@
   "chargedAttack.hits.0.element": { "cause": "NoActionFile", "value": "Water" },
   "chargedAttack.hits.0.gauge": { "cause": "NoActionFile", "value": 1 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 24 },
-  "frames.waterBallInterval": { "cause": "Unclassified", "value": 90 },
+  "frames.waterBallInterval": { "file": "asc.go", "line": 10, "source": "Gcsim", "value": 90 },
   "hits.waterBall.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 }

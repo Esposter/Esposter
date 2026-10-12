@@ -4,6 +4,7 @@ import type { KitRecord } from "genshin-world";
 
 import { readPublishedGameDataEntries } from "#src/services/gameData/readPublishedGameDataEntries";
 import { readPublishedGameDataIndex } from "#src/services/gameData/readPublishedGameDataIndex";
+import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
 import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
@@ -75,15 +76,13 @@ export const readKitInputs = async ({
     // oxlint-disable-next-line no-await-in-loop -- one category request at a time, which the wiki asks of a client
     const pages = await readWikiTalentPages(tables.name, wikiCacheDirectory);
     if (pages.length === 0) notes.push("no wiki talent pages");
-    const gcsimCandidateMap: Map<string, KitCandidate[]> =
+    const overlay = readKitOverlay(overlayName);
+    const gcsimCandidateMap: Map<string, KitCandidate[]> = mergeKitCandidates(
       gcsim === undefined
         ? new Map()
-        : getGcsimKitCandidates(
-            gcsim,
-            tables,
-            plungeFallback,
-            getKitBagPaths(publishedRecord ?? {}, readKitOverlay(overlayName)),
-          );
+        : getGcsimKitCandidates(gcsim, tables, plungeFallback, getKitBagPaths(publishedRecord ?? {}, overlay)),
+      gcsimFolder === undefined ? new Map() : readGcsimCitedCandidates(overlay, gcsimDirectory, gcsimFolder),
+    );
     const namedHitCandidateMap = gcsim === undefined ? new Map() : getGcsimNamedHitCandidates(gcsim, tables);
     if (gcsim !== undefined)
       for (const [path, constant] of Object.entries(GcsimExpectedPathConstantMap))

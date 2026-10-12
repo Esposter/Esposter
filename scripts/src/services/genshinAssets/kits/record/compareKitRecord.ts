@@ -13,6 +13,7 @@ import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidate
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
@@ -53,6 +54,18 @@ export const compareKitRecord = (
       return;
     }
     const committedEntry: KitOverlayEntry | undefined = committedOverlay[path];
+    // A cited value whose line still gives it keeps its citation as it is
+    if (
+      committedEntry !== undefined &&
+      "file" in committedEntry &&
+      (candidateMap.get(path) ?? []).some(
+        (candidate) =>
+          checkIsCitedBy(candidate.provenance, committedEntry) && checkIsKitValueEqual(candidate.value, value),
+      )
+    ) {
+      overlay[path] = committedEntry;
+      return;
+    }
     // A value the borrowed plunge's donor gives, where the kit holds no reason of its own, takes the donor's value, so the
     // Published one a rule gave is replaced rather than pinned
     const donor = candidateMap.get(path)?.[0]?.provenance;

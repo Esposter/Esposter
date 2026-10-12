@@ -9,6 +9,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
+import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -44,7 +45,9 @@ export const resolveKitValues = (
             ];
       const candidate = candidates?.find(
         ({ provenance, value }) =>
-          provenance.source === entry.source && (entry.value === undefined || checkIsKitValueEqual(value, entry.value)),
+          provenance.source === entry.source &&
+          (entry.value === undefined || checkIsKitValueEqual(value, entry.value)) &&
+          (!("file" in entry) || checkIsCitedBy(provenance, entry)),
       );
       if (candidate === undefined)
         throw new InvalidOperationError(Operation.Read, path, `has no ${entry.source} value for the overlay to choose`);
