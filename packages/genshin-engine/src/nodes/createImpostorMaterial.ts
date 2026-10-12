@@ -42,9 +42,7 @@ export const createImpostorMaterial = ({
       .add(forward.mul(bakedNormal.z)),
   ).normalize();
   impostorMaterial.colorNode = albedo.rgb.mul(createWetDarkeningNode(lightUniforms));
-  impostorMaterial.opacityNode = albedo.a;
-  impostorMaterial.alphaTest = IMPOSTOR_ALPHA_TEST;
-  impostorMaterial.maskNode = createDitherFadeNode(fade);
+  impostorMaterial.maskNode = albedo.a.greaterThan(IMPOSTOR_ALPHA_TEST).and(createDitherFadeNode(fade));
   impostorMaterial.side = DoubleSide;
   return impostorMaterial;
 };

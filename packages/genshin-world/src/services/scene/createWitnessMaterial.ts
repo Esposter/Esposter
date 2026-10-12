@@ -44,10 +44,8 @@ export const createWitnessMaterial = (
   if (shader === LEAF_SHADER) {
     material.userData.isLeafCard = true;
     material.side = DoubleSide;
-    if (diffuse) {
-      material.opacityNode = texture(diffuse).a;
-      material.alphaTest = floats[WitnessProperty.Cutoff] ?? 0;
-    }
+    // The cut is a mask node: the alpha test on the opacity node left the cards' background drawn
+    if (diffuse) material.maskNode = texture(diffuse).a.greaterThan(floats[WitnessProperty.Cutoff] ?? 0);
   }
   const normal = getTexture(WitnessProperty.NormalMap);
   if (normal) material.normalNode = normalMap(texture(normal));
