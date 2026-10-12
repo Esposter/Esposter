@@ -1,3 +1,5 @@
+import type { KitStrike } from "#src/models/kit/KitStrike";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CharacterIdCreateKitMap } from "#src/generated/characterKitMap/CharacterIdCreateKitMap";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -9,6 +11,7 @@ import { replayScriptedMinute } from "#src/services/kit/replayScriptedMinute.tes
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 // The strike log is read off the strikes each step hands the enemies, the strike itself left to run as it does
@@ -17,63 +20,55 @@ vi.mock(import("#src/services/kit/strikeKitEnemies"), async (importOriginal) => 
   return { strikeKitEnemies: vi.fn<typeof actual.strikeKitEnemies>(actual.strikeKitEnemies) };
 });
 
-describe(stepActiveKit, () => {
-  test("replays each kit alone and the proof party through the scripted minute to the strikes they land today", async () => {
-    expect.hasAssertions();
-    // Every kit module's character, and the Traveler, whose kit is the fallback
-    const characterIds = [...Object.keys(CharacterIdCreateKitMap).map(Number), TRAVELER_CHARACTER_ID];
-    const [talentMultiplierMap, statTables, enemyTables] = await Promise.all([
-      readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, characterIds),
-      readStatTables(GAME_DATA_LOCAL_BASE_URL),
-      readEnemyTables(GAME_DATA_LOCAL_BASE_URL),
-    ]);
-    // Each team's strike log over the minute in combat: its strikes' count and, by attack tag, the sum of their
-    // Multipliers
-    const rows = [...characterIds.map((characterId) => [characterId]), PROOF_PARTY_CHARACTER_IDS].map(
-      (teamCharacterIds) => {
-        vi.mocked(strikeKitEnemies).mockClear();
-        replayScriptedMinute({
-          characterIds: teamCharacterIds,
-          enemyTables,
-          isInCombat: true,
-          statTables,
-          talentMultiplierMap,
-        });
-        const strikes = vi.mocked(strikeKitEnemies).mock.calls.flatMap(([stepStrikes]) => stepStrikes);
-        const attackTagMultiplierMap = new Map<string, number>();
-        for (const { attackTag = "untagged", hit } of strikes)
-          attackTagMultiplierMap.set(attackTag, (attackTagMultiplierMap.get(attackTag) ?? 0) + hit.talentMultiplier);
-        return {
-          attackTagMultiplierMap,
-          name: teamCharacterIds
-            .map((characterId) => (CharacterIdCreateKitMap[characterId] ?? createTravelerKit).name)
-            .join(", "),
-          strikeCount: strikes.length,
-        };
-      },
-    );
-    const attackTags = [
-      ...new Set(rows.flatMap(({ attackTagMultiplierMap }) => [...attackTagMultiplierMap.keys()])),
-    ].toSorted();
-    const table = [
-      `| Kit | Strikes | ${attackTags.join(" | ")} |`,
-      `| :-- | --: | ${attackTags.map(() => "--:").join(" | ")} |`,
-      ...rows.map(
-        ({ attackTagMultiplierMap, name, strikeCount }) =>
-          `| ${name} | ${strikeCount} | ${attackTags.map((attackTag) => attackTagMultiplierMap.get(attackTag)?.toFixed(4) ?? "").join(" | ")} |`,
-      ),
-    ];
+// A strike log's digest: its strikes' count and, by attack tag, the sum of their multipliers
+const toReplayDigest = (strikes: KitStrike[]): string => {
+  const attackTagMultiplierMap = new Map<string, number>();
+  for (const { attackTag = "untagged", hit } of strikes)
+    attackTagMultiplierMap.set(attackTag, (attackTagMultiplierMap.get(attackTag) ?? 0) + hit.talentMultiplier);
+  const attackTags = [...attackTagMultiplierMap.keys()].toSorted();
+  return [
+    `| Strikes | ${attackTags.join(" | ")} |`,
+    `| --: | ${attackTags.map(() => "--:").join(" | ")} |`,
+    `| ${strikes.length} | ${attackTags.map((attackTag) => attackTagMultiplierMap.get(attackTag)?.toFixed(4)).join(" | ")} |`,
+    "",
+  ].join("\n");
+};
 
-    await expect(
-      [
-        "# Replay digests",
-        "",
-        "Each kit alone, then the proof party, through the scripted minute (`replayScriptedMinute.test.ts`): the strikes",
-        "each lands and, by attack tag, the sum of their multipliers. Written by `stepActiveKit.replay.test.ts`.",
-        "",
-        ...table,
-        "",
-      ].join("\n"),
-    ).toMatchFileSnapshot("stepActiveKit.replay.snapshot.md");
-  });
+describe(stepActiveKit, () => {
+  // Every kit module's character, its digest beside its module, the Traveler, whose kit is the fallback, and the proof
+  // Party, whose digest is beside this test. One test a team, so each stays a minute of one team's steps
+  const teams: [string, number[], string][] = [
+    ...Object.entries(CharacterIdCreateKitMap).flatMap(([characterId, createKit]) =>
+      createKit
+        ? [
+            [
+              createKit.name,
+              [Number(characterId)],
+              `characters/${uncapitalize(createKit.name.replace(/^create/u, ""))}.replay.snapshot.md`,
+            ] satisfies [string, number[], string],
+          ]
+        : [],
+    ),
+    [createTravelerKit.name, [TRAVELER_CHARACTER_ID], "travelerKit.replay.snapshot.md"],
+    ["the proof party", PROOF_PARTY_CHARACTER_IDS, "stepActiveKit.replay.snapshot.md"],
+  ];
+  const tablesPromise = Promise.all([
+    readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [...new Set(teams.flatMap(([, characterIds]) => characterIds))]),
+    readStatTables(GAME_DATA_LOCAL_BASE_URL),
+    readEnemyTables(GAME_DATA_LOCAL_BASE_URL),
+  ]);
+
+  test.each(teams)(
+    "replays %s through the scripted minute to the strikes it lands today",
+    async (_name, characterIds, snapshotPath) => {
+      expect.hasAssertions();
+
+      const [talentMultiplierMap, statTables, enemyTables] = await tablesPromise;
+      replayScriptedMinute({ characterIds, enemyTables, isInCombat: true, statTables, talentMultiplierMap });
+
+      await expect(
+        toReplayDigest(vi.mocked(strikeKitEnemies).mock.calls.flatMap(([stepStrikes]) => stepStrikes)),
+      ).toMatchFileSnapshot(snapshotPath);
+    },
+  );
 });
