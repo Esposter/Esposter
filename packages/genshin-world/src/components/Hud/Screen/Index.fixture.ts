@@ -1,13 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { GameDataset } from "#src/models/data/GameDataset";
+import { SkillGlyphsLoaderMap } from "#src/generated/skillGlyphs/SkillGlyphsLoaderMap";
 import { Element } from "#src/models/Element";
-import { skillGlyphsSchema } from "#src/models/hud/SkillGlyphs";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { CHONGYUN_CHARACTER_ID } from "#src/services/kit/characters/chongyunKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
@@ -39,15 +37,7 @@ const characterIdSkillGlyphsMap = new Map(
   await Promise.all(
     [VENTI_CHARACTER_ID, CHONGYUN_CHARACTER_ID].map(
       async (characterId) =>
-        [
-          characterId,
-          await readGameDataEntry(
-            GAME_DATA_LOCAL_BASE_URL,
-            GameDataset.SkillGlyphs,
-            String(characterId),
-            skillGlyphsSchema,
-          ),
-        ] as const,
+        [characterId, await SkillGlyphsLoaderMap[characterId]?.(GAME_DATA_LOCAL_BASE_URL)] as const,
     ),
   ),
 );
