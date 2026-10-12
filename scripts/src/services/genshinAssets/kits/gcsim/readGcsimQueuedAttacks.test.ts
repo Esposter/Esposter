@@ -200,6 +200,37 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads a hexadecimal literal a local is defaulted to as its whole number, `travel = 0x5`", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package aloy",
+          "",
+          "const (",
+          "\tskillRelease = 20",
+          ")",
+          "",
+          "func (c *char) skill(p map[string]int) {",
+          '\ttravel, ok := p["travel"]',
+          "\tif !ok {",
+          "\t\ttravel = 0x5",
+          "\t}",
+          "\tfor i := 0; i < 2; i++ {",
+          "\t\tc.Core.QueueAttack(ai, ap, skillRelease, skillRelease+travel+((i+1)*6), cb)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      31, 37,
+    ]);
+  });
+
   test("repeats a queue call in a loop whose bound is inclusive, `i <= 120`, once per value up to it", () => {
     expect.hasAssertions();
 

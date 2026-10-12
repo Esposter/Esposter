@@ -3,7 +3,7 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 
 const TOKEN_REGEX =
-  /(?<comment>\/\/[^\n]*|\/\*[\s\S]*?\*\/)|(?<newline>\n)|(?<space>[ \t\r]+)|(?<string>"(?:\\.|[^"\\])*"|`[^`]*`|'(?:\\.|[^'\\])*')|(?<number>(?:\d[\d_]*(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)|(?<identifier>[A-Za-z_]\w*)|(?<punctuation>:=|==|!=|<=|>=|&&|\|\||\+\+|--|[-+*/%=<>!&|^()[\]{},.:;])/gu;
+  /(?<comment>\/\/[^\n]*|\/\*[\s\S]*?\*\/)|(?<newline>\n)|(?<space>[ \t\r]+)|(?<string>"(?:\\.|[^"\\])*"|`[^`]*`|'(?:\\.|[^'\\])*')|(?<number>0[xX][\da-fA-F_]+|0[bB][01_]+|0[oO][0-7_]+|(?:\d[\d_]*(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)|(?<identifier>[A-Za-z_]\w*)|(?<punctuation>:=|==|!=|<=|>=|&&|\|\||\+\+|--|[-+*/%=<>!&|^()[\]{},.:;])/gu;
 
 // A Go source file's tokens, comments and spaces left out and each line end kept, since a line end ends a statement
 export const tokenizeGo = (source: string): GoToken[] => {
