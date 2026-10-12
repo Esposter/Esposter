@@ -14,3 +14,4 @@ description: The utilities in @esposter/shared that replaced a dependency, and w
 - [IndexedDB](/docs/shared/indexed-db) — the typed IndexedDB wrapper, replacing `idb`.
 - [Media types](/docs/shared/mime-types) — the extension and media type lookup over `mime-db`, replacing `mime-types`.
 - [HTML sanitiser](/docs/shared/sanitize-html) — `sanitizeHtml` over parse5, replacing `sanitize-html`.
+- [Roadmap](/docs/shared/roadmap) — open decisions in the shared utilities, each linked to its proposal.
