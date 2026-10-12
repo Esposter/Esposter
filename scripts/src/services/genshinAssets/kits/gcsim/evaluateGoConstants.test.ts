@@ -5,6 +5,47 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe(evaluateGoConstants, () => {
+  test("gives a char field its one literal write, and none for a field the package's struct does not declare, a field written twice or one scaled by op=", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "amber.go",
+        source: [
+          "package amber",
+          "",
+          "type char struct {",
+          "\t*tmpl.Character",
+          "\tburstRadius float64",
+          "\tarrowRange  float64",
+          "\tspreadRange float64",
+          "\tcounter     int",
+          "}",
+          "",
+          "func (c *char) Init() {",
+          "\tc.burstRadius = 2",
+          "\tc.arrowRange = 4",
+          "\tc.arrowRange = 5",
+          "\tc.spreadRange *= 1.3",
+          "\tc.NormalCounter = 0",
+          "\tif c.NormalCounter == 2 {",
+          "\t\tc.counter = 1",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const constantMap = evaluateGoConstants(sources);
+
+    expect(constantMap.get("c.burstRadius")).toStrictEqual({ elementLines: {}, file: "amber.go", line: 12, value: 2 });
+    expect([
+      constantMap.get("c.arrowRange"),
+      constantMap.get("c.spreadRange"),
+      constantMap.get("c.NormalCounter"),
+    ]).toStrictEqual([undefined, undefined, undefined]);
+  });
+
   test("reads Xiangling's attack.go as gcsim writes it, the frames her init sets one strike at a time", () => {
     expect.hasAssertions();
 

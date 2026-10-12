@@ -6,6 +6,7 @@ import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
+import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
@@ -14,6 +15,92 @@ import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBra
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const DECLARATION_KEYWORDS = new Set(["const", "var"]);
+
+// One write to a `c.<field>` of a character's package: its value when it is a literal number, or no value for an
+// Increment, a compound `op=` or any other write
+interface FieldWrite {
+  file: string;
+  line: number;
+  value?: number;
+}
+
+const ARITHMETIC_OPERATORS = new Set(["%", "&", "*", "+", "-", "/", "<", ">", "^", "|"]);
+
+// The fields a character package's own `char` struct declares, read from its top-level lines. An embedded type such as
+// `*tmpl.Character` declares none, as its fields are written outside the package
+const readCharFields = (tokens: readonly GoToken[], charFieldSet: Set<string>): void => {
+  for (const [position, token] of tokens.entries()) {
+    if (
+      token.kind !== GoTokenKind.Identifier ||
+      token.text !== "type" ||
+      tokens[position + 1]?.text !== "char" ||
+      tokens[position + 2]?.text !== "struct" ||
+      !checkIsGoPunctuation(tokens[position + 3], "{")
+    )
+      continue;
+    const end = skipGoBrackets(tokens, position + 3) - 1;
+    let depth = 0;
+    let isLineStart = true;
+    for (let cursor = position + 4; cursor < end; cursor++) {
+      const current = tokens[cursor];
+      if (current === undefined) break;
+      if (current.kind === GoTokenKind.Newline) {
+        isLineStart = true;
+        continue;
+      }
+      if (
+        checkIsGoPunctuation(current, "(") ||
+        checkIsGoPunctuation(current, "[") ||
+        checkIsGoPunctuation(current, "{")
+      )
+        depth++;
+      else if (
+        checkIsGoPunctuation(current, ")") ||
+        checkIsGoPunctuation(current, "]") ||
+        checkIsGoPunctuation(current, "}")
+      )
+        depth--;
+      else if (isLineStart && depth === 0 && current.kind === GoTokenKind.Identifier) {
+        // A line's names run `a, b int`, and a name followed by a dot is an embedded package's selector, not a field
+        let names = cursor;
+        charFieldSet.add(current.text);
+        while (checkIsGoPunctuation(tokens[names + 1], ",") && tokens[names + 2]?.kind === GoTokenKind.Identifier) {
+          names += 2;
+          charFieldSet.add(tokens[names]?.text ?? "");
+        }
+      }
+      if (current.kind !== GoTokenKind.Newline) isLineStart = false;
+    }
+  }
+};
+
+// Each write to a field of `c` in a file: a literal `=` gives its value, an increment or `op=` gives none, and a read like
+// `c.field == 2` is no write at all
+const readFieldWrites = (tokens: readonly GoToken[], file: string, fieldWriteMap: Map<string, FieldWrite[]>): void => {
+  for (const [position, token] of tokens.entries()) {
+    if (token.kind !== GoTokenKind.Identifier || token.text !== "c" || checkIsGoPunctuation(tokens[position - 1], "."))
+      continue;
+    const field = tokens[position + 2];
+    if (!checkIsGoPunctuation(tokens[position + 1], ".") || field?.kind !== GoTokenKind.Identifier) continue;
+    const writes = fieldWriteMap.get(field.text) ?? [];
+    const operator = tokens[position + 3];
+    const line = token.line;
+    if (checkIsGoPunctuation(operator, "++") || checkIsGoPunctuation(operator, "--"))
+      writes.push({ file, line, value: undefined });
+    else if (checkIsGoPunctuation(operator, "=")) {
+      const { end, expression } = parseGoExpression(tokens, position + 4);
+      const isLiteral = expression.kind === GoExpressionKind.Number && tokens[end]?.kind === GoTokenKind.Newline;
+      writes.push({ file, line, value: isLiteral ? expression.value : undefined });
+    } else if (
+      operator?.kind === GoTokenKind.Punctuation &&
+      ARITHMETIC_OPERATORS.has(operator.text) &&
+      checkIsGoPunctuation(tokens[position + 4], "=")
+    )
+      writes.push({ file, line, value: undefined });
+    else continue;
+    fieldWriteMap.set(field.text, writes);
+  }
+};
 
 const skipToNewline = (tokens: readonly GoToken[], start: number): number => {
   let position = start;
@@ -28,6 +115,8 @@ const skipToNewline = (tokens: readonly GoToken[], start: number): number => {
 export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, GoConstant> => {
   const declarationMap = new Map<string, GoDeclaration>();
   const elementAssignments: GoElementAssignment[] = [];
+  const fieldWriteMap = new Map<string, FieldWrite[]>();
+  const charFieldSet = new Set<string>();
   // A const group's spec with no expression of its own repeats the last one the group gave, as Go does
   const readDeclarationSpec = (
     tokens: readonly GoToken[],
@@ -95,6 +184,8 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
   };
   for (const { path: file, source } of sources) {
     const tokens = tokenizeGo(source);
+    readFieldWrites(tokens, file, fieldWriteMap);
+    readCharFields(tokens, charFieldSet);
     let position = 0;
     while (position < tokens.length) {
       const token = tokens[position];
@@ -157,6 +248,14 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
     if (target === undefined || lastIndex === undefined) continue;
     target[lastIndex] = value;
     if (indexValues.length === 1 && constant.file === file) constant.elementLines[lastIndex] = line;
+  }
+  // A field of the package's own `char` struct written once, by a literal `=`, is that constant, cited at the write
+  // Any other write, an increment, an `op=`, a second write or a non-literal one, gives it none
+  // A field the struct does not declare, the embedded template's, is never resolved
+  for (const [field, writes] of fieldWriteMap) {
+    const [only] = writes;
+    if (!charFieldSet.has(field) || writes.length !== 1 || only?.value === undefined) continue;
+    constantMap.set(`c.${field}`, { elementLines: {}, file: only.file, line: only.line, value: only.value });
   }
   return constantMap;
 };
