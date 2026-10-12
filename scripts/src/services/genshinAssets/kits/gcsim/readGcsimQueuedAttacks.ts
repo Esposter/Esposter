@@ -3,6 +3,7 @@ import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
+import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
@@ -14,6 +15,17 @@ import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
 // The damage delay's place among a queue call's arguments, the fourth in both of them
 const DELAY_ARGUMENT_INDEX = 3;
+// The most iterations a constant loop may take before its calls are read once, as a loop too long to expand
+const MAX_LOOP_ITERATIONS = 100;
+
+// A `for` loop of constant bounds, `for delay := burstStart; delay < 12*60+burstStart; delay += 90 {`, its variable's
+// Values and the braces of its body
+interface ConstantLoop {
+  bodyEnd: number;
+  bodyStart: number;
+  values: number[];
+  variable: string;
+}
 
 const skipNewlines = (tokens: readonly GoToken[], position: number): number => {
   let cursor = position;
@@ -53,8 +65,12 @@ const getPassedName = (expression: GoExpression): string | undefined => {
 };
 
 // The numbers a file's locals are first given with `:=`, `windup := 0`, which a delay written in terms of a local reads, as
-// The local is its first value before a branch of the function changes it
-const readLocalNumberMap = (tokens: readonly GoToken[]): Map<string, number> => {
+// The local is its first value before a branch of the function changes it. A local its declaration gives no number, a
+// `travel, ok := p["travel"]`, takes the first constant it is assigned, `travel = tickTravel` in the branch that defaults it
+const readLocalNumberMap = (
+  tokens: readonly GoToken[],
+  constantMap: ReadonlyMap<string, GoConstant>,
+): Map<string, number> => {
   const localNumberMap = new Map<string, number>();
   for (const [position, token] of tokens.entries()) {
     const value = tokens[position + 2];
@@ -66,20 +82,114 @@ const readLocalNumberMap = (tokens: readonly GoToken[]): Map<string, number> => 
     )
       localNumberMap.set(token.text, Number(value.text.replaceAll("_", "")));
   }
+  for (const [position, token] of tokens.entries()) {
+    const value = tokens[position + 2];
+    const constant = value?.kind === GoTokenKind.Identifier ? constantMap.get(value.text)?.value : undefined;
+    if (
+      token.kind === GoTokenKind.Identifier &&
+      checkIsGoPunctuation(tokens[position + 1], "=") &&
+      !checkIsGoPunctuation(tokens[position - 1], ".") &&
+      typeof constant === "number" &&
+      !localNumberMap.has(token.text)
+    )
+      localNumberMap.set(token.text, constant);
+  }
   return localNumberMap;
 };
 
+// The position of the brace closing the one opening at the position, else Undefined
+const findClosingBrace = (tokens: readonly GoToken[], openingPosition: number): number | undefined => {
+  let depth = 0;
+  for (let position = openingPosition; position < tokens.length; position++)
+    if (checkIsGoPunctuation(tokens[position], "{")) depth++;
+    else if (checkIsGoPunctuation(tokens[position], "}") && --depth === 0) return position;
+  return undefined;
+};
+
+// The `for` loop opening at the position when it counts a variable from a constant start up to a constant bound in
+// Constant steps, its values and its body's braces, else Undefined
+const readConstantLoop = (
+  tokens: readonly GoToken[],
+  forPosition: number,
+  resolveName: (name: string) => GoValue | undefined,
+): ConstantLoop | undefined => {
+  const variable = tokens[forPosition + 1];
+  if (variable?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[forPosition + 2], ":="))
+    return undefined;
+  const start = parseGoExpression(tokens, forPosition + 3);
+  if (
+    !checkIsGoPunctuation(tokens[start.end], ";") ||
+    tokens[start.end + 1]?.text !== variable.text ||
+    !checkIsGoPunctuation(tokens[start.end + 2], "<")
+  )
+    return undefined;
+  const bound = parseGoExpression(tokens, start.end + 3);
+  const stepStart = bound.end + 1;
+  if (
+    !checkIsGoPunctuation(tokens[bound.end], ";") ||
+    tokens[stepStart]?.text !== variable.text ||
+    !checkIsGoPunctuation(tokens[stepStart + 1], "+") ||
+    !checkIsGoPunctuation(tokens[stepStart + 2], "=")
+  )
+    return undefined;
+  const step = parseGoExpression(tokens, stepStart + 3);
+  if (!checkIsGoPunctuation(tokens[step.end], "{")) return undefined;
+  const [startValue, boundValue, stepValue] = [start, bound, step].map(({ expression }) =>
+    evaluateGoExpression(expression, resolveName),
+  );
+  if (
+    typeof startValue !== "number" ||
+    typeof boundValue !== "number" ||
+    typeof stepValue !== "number" ||
+    stepValue <= 0
+  )
+    return undefined;
+  const values: number[] = [];
+  for (let value = startValue; value < boundValue; value += stepValue) {
+    if (values.length === MAX_LOOP_ITERATIONS) return undefined;
+    values.push(value);
+  }
+  const bodyEnd = findClosingBrace(tokens, step.end);
+  return bodyEnd === undefined ? undefined : { bodyEnd, bodyStart: step.end, values, variable: variable.text };
+};
+
+// Each constant loop of a file, read at its `for` keyword
+const readConstantLoops = (
+  tokens: readonly GoToken[],
+  resolveName: (name: string) => GoValue | undefined,
+): ConstantLoop[] => {
+  const loops: ConstantLoop[] = [];
+  for (const [position, token] of tokens.entries()) {
+    if (token.kind !== GoTokenKind.Identifier || token.text !== "for") continue;
+    const loop = readConstantLoop(tokens, position, resolveName);
+    if (loop !== undefined) loops.push(loop);
+  }
+  return loops;
+};
+
+// The variable values of every iteration a position is in, one map each, of its enclosing constant loops taken together
+const readIterations = (loops: readonly ConstantLoop[], position: number): Map<string, number>[] =>
+  loops
+    .filter(({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd)
+    .reduce<Map<string, number>[]>(
+      (iterations, { values, variable }) =>
+        iterations.flatMap((iteration) => values.map((value) => new Map(iteration).set(variable, value))),
+      [new Map()],
+    );
+
 // Each `QueueAttack` and `QueueAttackWithSnap` call of a gcsim character's action files, its `AttackInfo` read from its
 // Inline literal or from the name it passes, and its damage delay read as the fourth argument, where the constants, the
-// Locals' first numbers and literal numbers give it a value
+// Locals' first numbers and literal numbers give it a value. A call in a loop of constant bounds is read once per
+// Iteration, its delay with the loop's variable taking that iteration's value
 export const readGcsimQueuedAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
 ): GcsimQueuedAttack[] =>
   sources.flatMap(({ path: file, source }) => {
     const tokens = tokenizeGo(source);
-    const localNumberMap = readLocalNumberMap(tokens);
+    const localNumberMap = readLocalNumberMap(tokens, constantMap);
     const resolveName = (name: string) => constantMap.get(name)?.value ?? localNumberMap.get(name);
+    const loops = readConstantLoops(tokens, resolveName);
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.kind !== GoTokenKind.Identifier || !QUEUE_CALLEES.has(token.text)) continue;
@@ -89,18 +199,24 @@ export const readGcsimQueuedAttacks = (
       if (attackStart === undefined) continue;
       const inlineAttackPosition = findInlineAttackPosition(tokens, attackStart);
       const delayExpression = delayStart === undefined ? undefined : parseGoExpression(tokens, delayStart).expression;
-      const delayValue = delayExpression === undefined ? undefined : evaluateGoExpression(delayExpression, resolveName);
-      queuedAttacks.push({
-        attackLine: inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line,
-        attackName:
-          inlineAttackPosition === undefined
-            ? getPassedName(parseGoExpression(tokens, attackStart).expression)
-            : undefined,
-        delay: typeof delayValue === "number" ? delayValue : undefined,
-        delayLine: tokens[delayStart ?? position]?.line ?? token.line,
-        file,
-        line: token.line,
-      });
+      const attackLine = inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line;
+      const attackName =
+        inlineAttackPosition === undefined
+          ? getPassedName(parseGoExpression(tokens, attackStart).expression)
+          : undefined;
+      for (const iteration of readIterations(loops, position)) {
+        const resolveIteration = (name: string) => iteration.get(name) ?? resolveName(name);
+        const delayValue =
+          delayExpression === undefined ? undefined : evaluateGoExpression(delayExpression, resolveIteration);
+        queuedAttacks.push({
+          attackLine,
+          attackName,
+          delay: typeof delayValue === "number" ? delayValue : undefined,
+          delayLine: tokens[delayStart ?? position]?.line ?? token.line,
+          file,
+          line: token.line,
+        });
+      }
     }
     return queuedAttacks;
   });

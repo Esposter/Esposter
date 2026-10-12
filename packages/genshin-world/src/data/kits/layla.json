@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.starlightSlugStart": { "cause": "Unclassified", "value": 36 },

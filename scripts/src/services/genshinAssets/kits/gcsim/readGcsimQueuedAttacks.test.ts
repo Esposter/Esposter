@@ -58,4 +58,75 @@ describe(readGcsimQueuedAttacks, () => {
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([27]);
   });
+
+  test("repeats a queue call in a loop of constant bounds once per iteration, its delay with the loop's variable", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package layla",
+          "",
+          "const (",
+          "\tburstStart = 36",
+          "\ttravel = 22",
+          ")",
+          "",
+          "func (c *char) burst() {",
+          "\tfor delay := burstStart; delay < 12*60+burstStart; delay += 90 {",
+          "\t\tc.Core.Tasks.Add(func() {",
+          "\t\t\tc.Core.QueueAttack(ai, ap, 56, 56+travel, cb)",
+          "\t\t}, delay)",
+          "\t}",
+          "\tfor step := 0; step < 3; step += 10 {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, step+5, cb)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+
+    expect(queuedAttacks.map(({ delay, line }) => [line, delay])).toStrictEqual([
+      [11, 78],
+      [11, 78],
+      [11, 78],
+      [11, 78],
+      [11, 78],
+      [11, 78],
+      [11, 78],
+      [11, 78],
+      [15, 5],
+    ]);
+  });
+
+  test("reads a queue call's delay written in terms of a local its declaration gives no number, from the constant it is defaulted to", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package layla",
+          "",
+          "const (",
+          "\ttickRelease = 56",
+          "\ttickTravel  = 22",
+          ")",
+          "",
+          "func (c *char) burst(p map[string]int) {",
+          '\ttravel, ok := p["travel"]',
+          "\tif !ok {",
+          "\t\ttravel = tickTravel",
+          "\t}",
+          "\tc.Core.QueueAttack(ai, ap, tickRelease, tickRelease+travel, cb)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([78]);
+  });
 });
