@@ -5,12 +5,20 @@
   },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttackStamina": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 11031 } },
+  "normalAttacks.0.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 4.537856055185257, "height": 2, "radius": 2.15 }
+  },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.7313000567495327 }
+  },
   "normalAttacks.2.hits.0.isBlunt": { "source": "Wiki" },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
