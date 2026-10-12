@@ -9,6 +9,10 @@ Lynette's kit is its record and one behaviour module, `createLynetteKitBehaviour
 
 Not built yet: Enigmatic Feint's hold, its Shadowsign and release strike, which need a hold whose hit lands at the held time; its aligned attack, the Surging Blade, which lands only off a ten-second cooldown; the Bogglecat Box's vivid shots, which absorb an enemy's Cryo, Pyro, Hydro or Electro and need an absorb check that a kit's field cannot make; the heal and HP drain on Enigmatic Feint, which read her own HP; and her Ascension and Constellation passives.
 
+## Decisions
+
+- **The Bogglecat Box's tick timings, area, hitmark and poise are `Unsourced`.** gcsim gives the box's 754 frames at `burst.go` line 13, but no literal gives its first tick at 122 frames or its interval of 59, so both stand as published and their causes say so. The tick's area of six metres round the box, its zero hitmark and its zero poise have no literal either. Its multiplier is gcsim's, joined to proud skill group 8339 at index 1.
+
 ## Key files
 
 | File                                                               | Role                                                                                                                                                                    |
@@ -17,4 +21,4 @@ Not built yet: Enigmatic Feint's hold, its Shadowsign and release strike, which 
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/lynette), MIT: Lynette's strikes' hitmarks, cancel frames and boxes, the charged attack, the plunges and their collision, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit, Bogglecat Box and its tick timings.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/lynette), MIT: Lynette's strikes' hitmarks, cancel frames and boxes, the charged attack, the plunges and their collision, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit and the Bogglecat Box's 754-frame duration.
