@@ -35,29 +35,28 @@ const { characterDataMap, frame, input, isTouch, nameTextMap, party, travelerNam
 const switchCooldownShare = computed(() =>
   Math.max(0, 1 - (frame.seconds - party.switchedSeconds) / PARTY_SWITCH_COOLDOWN_SECONDS),
 );
-// The deployed team in slot order, each member with the input action its slot's key taps
-const deployedMembers = computed(() =>
-  getDeployedCharacterIds(party).map((characterId, index) => ({
-    action: takeOne(PARTY_MEMBER_INPUT_ACTIONS, index),
-    characterId,
-    index,
-  })),
-);
 const getName = (characterId: number): string => {
   if (characterId === TRAVELER_CHARACTER_ID && travelerName) return travelerName;
   const nameTextId = characterDataMap.get(characterId)?.nameTextId ?? "";
   return nameTextMap?.[nameTextId] || "";
 };
+// The rows, a member each in slot order with the input action its slot's key taps: every deployed member for the keys,
+// And on a touch screen all but the member on the field, whose row the mobile client leaves out
+const rows = computed(() =>
+  getDeployedCharacterIds(party)
+    .map((characterId, index) => ({ action: takeOne(PARTY_MEMBER_INPUT_ACTIONS, index), characterId, index }))
+    .filter(({ index }) => !isTouch || index !== party.activeIndex),
+);
 </script>
 
 <template>
-  <!-- The deployed team down the right, a row a member in slot order, centred in the game's container for it: the
-       Member's name over its HP bar before a round portrait and, for the keys, its slot's key. The member on the field
-       Has its name and portrait stand forward on a band, a pointer after the name and no bar, its health being the
-       HUD's own; a member who is down is greyed, and after a switch every other row darkens by the share of the
-       Cooldown left. A press on a row taps its slot's key, as the number keys do -->
+  <!-- The deployed team down the right, a row a member in slot order, centred about a fixed point of the game's
+       Container for it: the member's name over its HP bar before a round portrait and, for the keys, its slot's key.
+       For the keys the member on the field has its name and portrait stand forward on a band, a pointer after the name
+       And no bar, its health being the HUD's own; a member who is down is greyed, and after a switch every other row
+       Darkens by the share of the cooldown left. A press on a row taps its slot's key, as the number keys do -->
   <ol class="party" :class="{ touch: isTouch }">
-    <li v-for="{ action, characterId, index } of deployedMembers" :key="characterId">
+    <li v-for="{ action, characterId, index } of rows" :key="characterId">
       <button
         class="member"
         :class="{ active: index === party.activeIndex, down: checkIsCharacterDown(party, characterId) }"
@@ -80,12 +79,14 @@ const getName = (characterId: number): string => {
 </template>
 
 <style scoped>
-/* Measured off the English PC client's world HUD at 1080 high and the mobile client's at 934, each at its own scale:
-   The rows on a 77.5 canvas unit pitch, four filling `TeamBtnContainer`'s 310 and centred in it, where one row on the PC
-   Client and three on the mobile client stand. A name 22 units high over a bar 69 by 5, 19 before the portrait, 56
-   Across; the keys' cap 21 past the portrait and 33 in from the container's right edge, and the touch layout's
-   Portrait 50 in with no cap. The field member's name and portrait stand 20 units forward. Provisional: the band and
-   The pointer that mark it, the grey of a member who is down and the darkening after a switch */
+/* Measured by script off five recordings of the English PC client's keys at 1080 high and four of the mobile client:
+   The PC client's rows of one, two and four members centre within a quarter pixel of one another, 71.25 canvas units
+   Above `TeamBtnContainer`'s middle, on an 80 unit pitch; the mobile client's centre on its middle, on a 76 unit pitch.
+   For the keys, a name 22 units high over a bar 69 by 5, 19 before the portrait, 56 across, and the slot's cap 21
+   Past it and 33 in from the container's right edge; on touch, no cap, the portrait centred 60 canvas units in and the
+   Bar 58 wide 9 before it, its left end 155 in. The field member's name and portrait stand 20 units forward.
+   Provisional: the band and the pointer that mark it, the grey of a member who is down and the darkening after a
+   Switch */
 .party {
   display: flex;
   height: 100%;
@@ -94,13 +95,22 @@ const getName = (characterId: number): string => {
   flex-direction: column;
   justify-content: center;
   list-style: none;
+  translate: 0 calc(var(--canvas-unit) * -71.25);
 }
 
 .party > li {
   display: flex;
-  height: calc(var(--canvas-unit) * 77.5);
+  height: calc(var(--canvas-unit) * 80);
   justify-content: flex-end;
   align-items: center;
+}
+
+.touch {
+  translate: none;
+}
+
+.touch > li {
+  height: calc(var(--canvas-unit) * 76);
 }
 
 .member {
@@ -122,7 +132,8 @@ const getName = (characterId: number): string => {
 }
 
 .touch .member {
-  padding-right: calc(var(--unit) * 50);
+  padding-right: calc(var(--canvas-unit) * 32);
+  gap: calc(var(--canvas-unit) * 9);
 }
 
 /* The member on the field's name and portrait step forward, its cap staying in line with the rest */
@@ -183,6 +194,10 @@ const getName = (characterId: number): string => {
   overflow: hidden;
   border-radius: calc(var(--unit) * 2.5);
   background: rgb(0 0 0 / 0.4);
+}
+
+.touch .hp {
+  width: calc(var(--canvas-unit) * 58);
 }
 
 .fill {
