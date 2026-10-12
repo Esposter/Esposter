@@ -17,7 +17,8 @@ export const buildAvatarMesh = (
   const vertexCount = mesh.m_VertexCount;
   const positions = mirrorXyz(mesh.m_Vertices, 3);
   const normals = mirrorXyz(mesh.m_Normals, 3);
-  const tangents = mirrorXyz(mesh.m_Tangents, 4);
+  // A mesh the dump gives no tangents, as the effect mesh is, carries zeros: the avatar's shading reads no normal map
+  const tangents = mesh.m_Tangents ? mirrorXyz(mesh.m_Tangents, 4) : new Float32Array(vertexCount * 4);
   const joints = new Uint16Array(vertexCount * 4);
   const weights = new Float32Array(vertexCount * 4);
   for (const [vertex, { boneIndex, weight }] of mesh.m_Skin.entries())

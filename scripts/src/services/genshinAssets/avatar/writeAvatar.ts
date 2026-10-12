@@ -13,6 +13,7 @@ import { AVATAR_SOURCE_MAP } from "#src/services/genshinAssets/avatar/constants"
 import { mirrorAvatarPoint } from "#src/services/genshinAssets/avatar/mirrorAvatarPoint";
 import { mirrorAvatarRotation } from "#src/services/genshinAssets/avatar/mirrorAvatarRotation";
 import { readAvatarRig } from "#src/services/genshinAssets/avatar/readAvatarRig";
+import { readAvatarRoster } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 import {
   getTransformKey,
   readRendererBones,
@@ -21,6 +22,7 @@ import {
 } from "#src/services/genshinAssets/avatar/readRendererBones";
 import { createAvatarBinary } from "#src/services/genshinAssets/avatar/writeAvatarBinary";
 import { GENSHIN_ANIMESTUDIO_OPTIONS, INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
@@ -43,35 +45,47 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
   if (!source) throw new InvalidOperationError(Operation.Create, component, "has no game model to write as an avatar");
   const directory = getComponentDirectory(component);
   const rig = await exportRig(source.block, source.name, directory.root);
-  const meshIds = new Map(
+  const meshNames = new Map(
     (
       await readIndexedAssets(
-        ({ block, name, type }) => block === source.block && type === AssetType.Mesh && source.meshes.includes(name),
+        ({ block, type }) => block === source.block && type === AssetType.Mesh,
         GENSHIN_ANIMESTUDIO_OPTIONS,
       )
-    ).map(({ name, pathId }) => [name, pathId]),
+    ).map(({ name, pathId }) => [pathId, name]),
   );
   const { objects } = await readComponentLayout(component);
   const objectMap = new Map(objects.map((object) => [getTransformKey(object.file, object.transformId), object]));
-  const renderersMap = await readSkinnedRenderers(directory.layout, new Set(meshIds.values()));
+  const [modelRoot] = DerivedAssetComponentMap[component].roots;
+  const rootObjects = objects.filter(
+    ({ gameObjectId, name }) => gameObjectId === modelRoot?.pathId && name === modelRoot.name,
+  );
+  const [rootObject] = rootObjects;
+  if (rootObjects.length !== 1 || !rootObject)
+    throw new InvalidOperationError(Operation.Read, component, "has no single model root in its layout");
+  const gameObjectMap = new Map(objects.map((object) => [`${object.file}|${object.gameObjectId}`, object]));
+  const renderersMap = await readSkinnedRenderers(directory.layout, new Set(meshNames.keys()));
+  const roster = readAvatarRoster(
+    [...renderersMap].flatMap(([pathId, skinnedRenderers]) =>
+      skinnedRenderers.map((skinned) => ({
+        ...skinned,
+        name: meshNames.get(pathId) ?? "",
+        object: gameObjectMap.get(`${skinned.file}|${skinned.renderer.m_GameObject.m_PathID}`),
+      })),
+    ),
+    getTransformKey(rootObject.file, rootObject.transformId),
+    objectMap,
+  );
+  if (roster.length === 0)
+    throw new InvalidOperationError(Operation.Read, source.name, "has no enabled LOD0 renderer under its model root");
   const drawn = await Promise.all(
-    source.meshes.map(async (name) => {
-      const pathId = meshIds.get(name);
-      if (!pathId) throw new InvalidOperationError(Operation.Read, name, `is not in block ${source.block}`);
-      const [skinned] = renderersMap.get(pathId) ?? [];
-      if (!skinned) throw new InvalidOperationError(Operation.Read, name, "is drawn by no skinned renderer");
+    roster.map(async (skinned) => {
+      const { name, renderer } = skinned;
       const mesh = parseMachineJson<DumpedMesh>(
         await readFile(join(directory.assets, AssetType.Mesh, `${name}.json`), "utf8"),
       );
       const rootBone = readRendererRootBone(skinned, objectMap);
       if (!rootBone) throw new InvalidOperationError(Operation.Read, name, "has a root bone outside the rig");
-      return {
-        bones: readRendererBones(skinned, objectMap),
-        materialRefs: skinned.renderer.m_Materials,
-        mesh,
-        name,
-        rootBone,
-      };
+      return { bones: readRendererBones(skinned, objectMap), materialRefs: renderer.m_Materials, mesh, name, rootBone };
     }),
   );
   const { nodes, paths } = buildSkeleton(rig.nodes, [
