@@ -35,6 +35,7 @@ const startAction = (action: KitAction): KitEffectState => {
     combatant: createLyneyCombatant(),
     kitEffectState,
     party: createParty([LYNEY_CHARACTER_ID]),
+    random: () => 0,
   });
   return kitEffectState;
 };

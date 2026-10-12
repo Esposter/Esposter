@@ -211,8 +211,8 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Tick ahead of each tick still to come
     elementalBurst: {
       hits: [slashHit],
-      onStart: ({ body, combatant, kitEffectState, party }) => {
-        addInfusion({ body, combatant, kitEffectState, party });
+      onStart: ({ body, combatant, kitEffectState, party, random }) => {
+        addInfusion({ body, combatant, kitEffectState, party, random });
         const whirlwind = createKitSummon(body, combatant, tickHits);
         let isAbsorbed = false;
         const absorbField: KitField = {

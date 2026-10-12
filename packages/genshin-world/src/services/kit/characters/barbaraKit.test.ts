@@ -57,6 +57,7 @@ describe(createBarbaraKit, () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
     const context = { activeCombatant: combatant, body, party };
     const regenerationHealthShare = (385.18774 + 0.04 * MAX_HEALTH) / MAX_HEALTH;
@@ -96,6 +97,7 @@ describe(createBarbaraKit, () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
     const isStrikeHealed = healKitParty(
       party,
@@ -130,6 +132,7 @@ describe(createBarbaraKit, () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
     const context = { activeCombatant: combatant, body, party };
     stepKitEffects(kitEffectState, 76 / 60, context);
@@ -175,12 +178,12 @@ describe(createBarbaraKit, () => {
       const party = createParty([BARBARA_CHARACTER_ID, JEAN_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
       const kitBody = { facing: 0, height: 0, position: body };
-      BARBARA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      BARBARA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       stepKitEffects(kitEffectState, 3 / 60, { activeCombatant: combatant, body, party });
 
-      expect(BARBARA_KIT.getSkillCooldownMultiplier?.({ body: kitBody, combatant, kitEffectState, party })).toBe(
-        cooldownMultiplier,
-      );
+      expect(
+        BARBARA_KIT.getSkillCooldownMultiplier?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 }),
+      ).toBe(cooldownMultiplier);
       expect(kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual(buffs);
     },
   );

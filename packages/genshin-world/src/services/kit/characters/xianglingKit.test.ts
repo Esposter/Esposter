@@ -36,8 +36,8 @@ describe(createXianglingKit, () => {
     const combatant = createXianglingCombatant(0, 0);
     const party = createParty([XIANGLING_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
-    XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     // Guoba's first breath lands at 126 frames and the Pyronado's first tick at 56, its next falling at 129
     const summonStrikes = stepKitEffects(kitEffectState, 2.12, { activeCombatant: combatant, body, party });
     const multipliers = [
@@ -78,7 +78,7 @@ describe(createXianglingKit, () => {
       const combatant = createXianglingCombatant(ascension, constellationCount);
       const party = createParty([XIANGLING_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       const breaths = stepKitEffects(kitEffectState, 8, { activeCombatant: combatant, body, party });
 
       expect(
@@ -108,7 +108,7 @@ describe(createXianglingKit, () => {
     const combatant = createXianglingCombatant(ascension, 0);
     const party = createParty([XIANGLING_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     // Guoba disappears at 451 frames, 1.3 metres ahead, past the pepper's reach of the body
     stepKitEffects(kitEffectState, 7.6, { activeCombatant: combatant, body, party });
     stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body: { x: 0, z: -1.3 }, party });
@@ -127,7 +127,7 @@ describe(createXianglingKit, () => {
       const party = createParty([XIANGLING_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
       const movedBody = { x: 3, z: 4 };
-      XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       const ticks = stepKitEffects(kitEffectState, 15, { activeCombatant: combatant, body: movedBody, party });
 
       expect(ticks.map(({ body: { position }, hit }) => [position, hit.element])).toStrictEqual(
@@ -148,7 +148,7 @@ describe(createXianglingKit, () => {
       const party = createParty([XIANGLING_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
       for (const strike of XIANGLING_KIT.normalAttacks)
-        strike.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+        strike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       const explosions = stepKitEffects(kitEffectState, 3, { activeCombatant: combatant, body, party });
 
       expect(explosions.map(({ hit }) => [hit.element, hit.hitmarkSeconds, hit.talentMultiplier])).toStrictEqual(
@@ -177,7 +177,7 @@ describe(createXianglingKit, () => {
       const combatant = createXianglingCombatant(0, constellationCount);
       const party = createParty([XIANGLING_CHARACTER_ID, JEAN_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body, party });
 
       expect(kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual(buffs);

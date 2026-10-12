@@ -36,6 +36,7 @@ const castAction = (action: KitAction): KitEffectState => {
     combatant: createLaylaCombatant(),
     kitEffectState,
     party: createParty([LAYLA_CHARACTER_ID]),
+    random: () => 0,
   });
   return kitEffectState;
 };

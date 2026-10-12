@@ -61,7 +61,7 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStri
       for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
       healKitStriker(party, pricedCombatant, hit);
-      hit.onStrike?.({ body, combatant, kitEffectState, party });
+      hit.onStrike?.({ body, combatant, kitEffectState, party, random });
       if (!isPartyHealed)
         isPartyHealed = healKitParty(
           party,

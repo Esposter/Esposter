@@ -71,6 +71,7 @@ describe(createChevreuseKit, () => {
       combatant,
       kitEffectState,
       party: createParty([CHEVREUSE_CHARACTER_ID]),
+      random: () => 0,
     });
 
     expect({ afterOverload, afterSpend: checkIsOvercharged(), meltOnly }).toStrictEqual({

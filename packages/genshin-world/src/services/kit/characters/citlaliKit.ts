@@ -48,7 +48,7 @@ const SKILL_HIT_AREA = createCircleReach(0, 6);
 // Measured: gcsim (MIT, main) citlali/burst.go, Ice Storm's animation at 113 frames and its hit at 118 as a circle of
 // Radius 6.5 round the target. The burst's energy cost and cooldown come from the proud group. Its skulls are not built: each
 // Is summoned on an enemy within 7 of Citlali and lands at a random time from 87 to 117 frames after its hit, which the
-// Framework's fixed hitmarks cannot place, so they wait on the timed-hit hook
+// Burst's start can draw, but the start reads no enemies but its target, so they wait on it reading them
 const BURST_FRAMES = 113;
 const BURST_HITMARK_FRAMES = 118;
 const BURST_HIT_AREA = createCircleReach(0, 6.5);

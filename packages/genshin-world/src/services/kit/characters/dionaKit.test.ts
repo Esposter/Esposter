@@ -30,7 +30,13 @@ describe(createDionaKit, () => {
   // The shield an action's start sets on the team
   const castShield = (action: KitAction, combatant = createDionaCombatant()): KitShield => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([DIONA_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([DIONA_CHARACTER_ID]),
+      random: () => 0,
+    });
     const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
     if (!shield) throw new Error("Icy Paws sets no shield");
     return shield;

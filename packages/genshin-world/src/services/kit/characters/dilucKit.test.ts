@@ -68,6 +68,7 @@ describe("diluc kit", () => {
       combatant: createCombatant(3),
       kitEffectState,
       party: createParty([DILUC_CHARACTER_ID]),
+      random: () => 0,
     });
     expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
       { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 8 },
@@ -79,6 +80,7 @@ describe("diluc kit", () => {
       combatant: createCombatant(4),
       kitEffectState,
       party: createParty([DILUC_CHARACTER_ID]),
+      random: () => 0,
     });
     expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
       { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 12 },
@@ -121,6 +123,7 @@ describe("diluc kit", () => {
           combatant: DILUC_COMBATANT,
           kitEffectState: { effects: [] },
           party: createParty([DILUC_CHARACTER_ID]),
+          random: () => 0,
         },
       );
     };
@@ -170,6 +173,7 @@ describe("diluc kit", () => {
       combatant: createCombatant(0),
       kitEffectState,
       party: createParty([DILUC_CHARACTER_ID]),
+      random: () => 0,
     });
     const phoenix = takeOne(kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"));
     expect(phoenix.body.position.z).toBeCloseTo(-1, 5);

@@ -50,6 +50,7 @@ describe("amber kit", () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
 
     // Landing and the eight seconds after it leave the bunny standing until its timer runs out
@@ -70,6 +71,7 @@ describe("amber kit", () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
 
     const arrows = stepKitEffects(kitEffectState, 4, { activeCombatant: combatant, body, party });

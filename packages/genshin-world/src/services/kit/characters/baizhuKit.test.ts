@@ -35,6 +35,7 @@ const castAction = (action: KitAction): KitEffectState => {
     combatant: createBaizhuCombatant(),
     kitEffectState,
     party: createParty([BAIZHU_CHARACTER_ID]),
+    random: () => 0,
   });
   return kitEffectState;
 };

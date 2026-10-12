@@ -37,7 +37,13 @@ describe(createKukiKit, () => {
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createKukiCombatant()): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([KUKI_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([KUKI_CHARACTER_ID]),
+      random: () => 0,
+    });
     return kitEffectState.effects;
   };
   const castSummon = (action: KitAction): KitSummon | undefined =>

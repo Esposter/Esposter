@@ -34,7 +34,13 @@ describe(createZhongliKit, () => {
   // The summons an action's start casts, as the kit's effects hold them
   const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([ZHONGLI_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([ZHONGLI_CHARACTER_ID]),
+      random: () => 0,
+    });
     return kitEffectState.effects.filter((effect) => effect.kind === "summon");
   };
 
@@ -98,6 +104,7 @@ describe(createZhongliKit, () => {
           combatant,
           kitEffectState,
           party: createParty([ZHONGLI_CHARACTER_ID]),
+          random: () => 0,
         });
         stepKitEffects(kitEffectState, 1, context);
       }
@@ -118,9 +125,16 @@ describe(createZhongliKit, () => {
       combatant,
       kitEffectState,
       party: createParty([ZHONGLI_CHARACTER_ID]),
+      random: () => 0,
     });
     stepKitEffects(kitEffectState, 1, context);
-    holdAction.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([ZHONGLI_CHARACTER_ID]) });
+    holdAction.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([ZHONGLI_CHARACTER_ID]),
+      random: () => 0,
+    });
     const cutStrikes = stepKitEffects(kitEffectState, 0.8, context).filter(({ hit }) => hit.enemyStatus);
     const shieldHealth = kitEffectState.effects.find((effect) => effect.kind === "shield")?.health;
     const summonCount = kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
@@ -155,6 +169,7 @@ describe(createZhongliKit, () => {
         combatant,
         kitEffectState,
         party: createParty([ZHONGLI_CHARACTER_ID]),
+        random: () => 0,
       });
       const meteor = takeOne(kitEffectState.effects.filter((effect) => effect.kind === "summon"));
 

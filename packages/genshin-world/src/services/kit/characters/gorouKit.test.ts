@@ -38,7 +38,7 @@ describe(createGorouKit, () => {
   const party = createParty([GOROU_CHARACTER_ID]);
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, kitEffectState: KitEffectState = { effects: [] }): KitEffect[] => {
-    action.onStart?.({ body: kitBody, combatant: createGorouCombatant(), kitEffectState, party });
+    action.onStart?.({ body: kitBody, combatant: createGorouCombatant(), kitEffectState, party, random: () => 0 });
     return kitEffectState.effects;
   };
 

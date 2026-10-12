@@ -42,7 +42,13 @@ describe(createOroronKit, () => {
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createOroronCombatant()): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([ORORON_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([ORORON_CHARACTER_ID]),
+      random: () => 0,
+    });
     return kitEffectState.effects;
   };
 
@@ -130,10 +136,17 @@ describe(createOroronKit, () => {
       combatant,
       kitEffectState,
       party: createParty([ORORON_CHARACTER_ID]),
+      random: () => 0,
     });
     const ritualHit = takeOne(ORORON_KIT.elementalBurst.hits);
     const amounts = [0, 1, 2, 3].map(() => {
-      ritualHit.onStrike?.({ body: kitBody, combatant, kitEffectState, party: createParty([ORORON_CHARACTER_ID]) });
+      ritualHit.onStrike?.({
+        body: kitBody,
+        combatant,
+        kitEffectState,
+        party: createParty([ORORON_CHARACTER_ID]),
+        random: () => 0,
+      });
       return kitEffectState.effects.find((effect) => effect.kind === "buff")?.amount;
     });
 
@@ -145,7 +158,13 @@ describe(createOroronKit, () => {
     const combatant = createOroronCombatant(4);
     const kitEffectState: KitEffectState = { effects: [] };
     const party = createParty([ORORON_CHARACTER_ID]);
-    takeOne(ORORON_KIT.elementalSkill.hits).onStrike?.({ body: kitBody, combatant, kitEffectState, party });
+    takeOne(ORORON_KIT.elementalSkill.hits).onStrike?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party,
+      random: () => 0,
+    });
     getPartyMember(party, ORORON_CHARACTER_ID).energy = 0;
     const normalAttackEvent: KitDamageTakenEvent = {
       attackTag: AttackTag.NormalAttack,

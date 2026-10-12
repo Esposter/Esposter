@@ -58,11 +58,12 @@ describe(createXingqiuKit, () => {
       combatant,
       kitEffectState: skillKitEffectState,
       party: createParty([XINGQIU_CHARACTER_ID]),
+      random: () => 0,
     });
     // Fatal Rainscreen's hits land at 12 and 31 frames, ahead of the Rain Swords' first Hydro at 44
     const rainscreenStrikes = stepKitEffects(skillKitEffectState, 0.6, context);
     const burstKitEffectState: KitEffectState = { effects: [] };
-    const burstStart = { body: kitBody, combatant, kitEffectState: burstKitEffectState, party };
+    const burstStart = { body: kitBody, combatant, kitEffectState: burstKitEffectState, party, random: () => 0 };
     XINGQIU_KIT.elementalBurst.onStart?.(burstStart);
     coordinateKitSummons(takeOne(XINGQIU_KIT.normalAttacks), burstStart);
     // The Rain Swords' first Hydro lands at 19 frames, and the first wave's two swords at 20
@@ -92,7 +93,7 @@ describe(createXingqiuKit, () => {
     const party = createParty([XINGQIU_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const movedBody = { x: 3, z: 4 };
-    XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     const strikes = stepKitEffects(kitEffectState, 15, { activeCombatant: combatant, body: movedBody, party });
 
     expect(strikes.map(({ body: { position }, hit }) => [position, hit.element, hit.talentMultiplier])).toStrictEqual([
@@ -125,9 +126,9 @@ describe(createXingqiuKit, () => {
       const party = createParty([XINGQIU_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
       const context = { activeCombatant: travelerCombatant, body, party };
-      const travelerStart = { body: kitBody, combatant: travelerCombatant, kitEffectState, party };
+      const travelerStart = { body: kitBody, combatant: travelerCombatant, kitEffectState, party, random: () => 0 };
       const normalAttack = takeOne(TRAVELER_KIT.normalAttacks);
-      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       const waves = Array.from({ length: swordCounts.length }, () => {
         coordinateKitSummons(normalAttack, travelerStart);
         const strikes = stepKitEffects(kitEffectState, 0.5, context);
@@ -158,8 +159,8 @@ describe(createXingqiuKit, () => {
       const combatant = createXingqiuCombatant(0, constellationCount);
       const party = createParty([XINGQIU_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
-      XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+      XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       const strikes = stepKitEffects(kitEffectState, 0.6, { activeCombatant: combatant, body, party });
 
       expect(
@@ -181,9 +182,9 @@ describe(createXingqiuKit, () => {
       const kitEffectState: KitEffectState = { effects: [] };
       const context = { activeCombatant: createTravelerCombatant(), body, party };
       getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare = 0.5;
-      XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       stepKitEffects(kitEffectState, 10, context);
-      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       // The skill's Rain Swords would end at 15 seconds, and the burst at 10 stands them until 25
       stepKitEffects(kitEffectState, 5.5, context);
       const lengthenedHealthShare = getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare;

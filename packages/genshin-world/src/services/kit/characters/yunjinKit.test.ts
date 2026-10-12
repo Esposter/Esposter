@@ -35,7 +35,13 @@ describe(createYunjinKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const castStart = (action: KitAction, combatant = createYunjinCombatant()): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([YUNJIN_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([YUNJIN_CHARACTER_ID]),
+      random: () => 0,
+    });
     return kitEffectState;
   };
 

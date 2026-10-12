@@ -58,13 +58,19 @@ describe(createRazorKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = { activeCombatant: combatant, body, party };
     for (let press = 0; press < 4; press++)
-      RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
 
     expect(kitEffectState.effects.flatMap((effect) => (effect.kind === "buff" ? [effect.amount] : []))).toStrictEqual([
       0.2 * 3,
     ]);
 
-    takeOne(RAZOR_KIT.elementalSkillHolds ?? []).action.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    takeOne(RAZOR_KIT.elementalSkillHolds ?? []).action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party,
+      random: () => 0,
+    });
     stepKitEffects(kitEffectState, 54 / 60, context);
 
     expect(partyMember.energy).toBe(0);
@@ -87,7 +93,7 @@ describe(createRazorKit, () => {
       const partyMember = getPartyMember(party, RAZOR_CHARACTER_ID);
       partyMember.skillCooldownSeconds = 6;
       const kitEffectState: KitEffectState = { effects: [] };
-      RAZOR_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+      RAZOR_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
       stepKitEffects(kitEffectState, 33 / 60, { activeCombatant: combatant, body, party });
 
       expect(partyMember.skillCooldownSeconds).toBe(cooldownSeconds);
@@ -102,11 +108,11 @@ describe(createRazorKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = { activeCombatant: combatant, body, party };
     const firstStrike = takeOne(RAZOR_KIT.normalAttacks);
-    RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
-    RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
-    RAZOR_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    RAZOR_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     stepKitEffects(kitEffectState, 33 / 60, context);
-    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     const soulCompanionStrikes = stepKitEffects(kitEffectState, 1, context);
 
     expect(partyMember.energy).toBe(10);
@@ -119,7 +125,7 @@ describe(createRazorKit, () => {
       ...context,
       activeCombatant: { ...combatant, characterId: BARBARA_CHARACTER_ID },
     });
-    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
 
     expect(kitEffectState.effects).toStrictEqual([]);
   });
@@ -137,6 +143,7 @@ describe(createRazorKit, () => {
         combatant,
         kitEffectState: { effects: [] },
         party: createParty([RAZOR_CHARACTER_ID]),
+        random: () => 0,
       }),
     ).toBe(cooldownMultiplier);
   });
@@ -161,7 +168,7 @@ describe(createRazorKit, () => {
       const context = { activeCombatant: combatant, body, party };
       const firstStrike = takeOne(RAZOR_KIT.normalAttacks);
       const strikes = [1, 10, 1].flatMap((stepSeconds) => {
-        firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+        firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
         return stepKitEffects(kitEffectState, stepSeconds, context);
       });
 

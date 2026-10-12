@@ -64,6 +64,7 @@ describe("lisa kit", () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
 
     const discharges = stepKitEffects(kitEffectState, 17, { activeCombatant: combatant, body, party });
@@ -107,6 +108,7 @@ describe("lisa kit", () => {
       combatant: createLisaCombatant(),
       kitEffectState: { effects: [] },
       party: createParty([LISA_CHARACTER_ID]),
+      random: () => 0,
     };
     const idleInput: KitInput = {
       height: 0,

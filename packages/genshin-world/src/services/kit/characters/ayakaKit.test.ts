@@ -59,6 +59,7 @@ describe(createAyakaKit, () => {
         combatant,
         kitEffectState,
         party: createParty([AYAKA_CHARACTER_ID]),
+        random: () => 0,
       });
       const strikes = stepKitEffects(kitEffectState, 7, {
         activeCombatant: combatant,
@@ -86,6 +87,7 @@ describe(createAyakaKit, () => {
       combatant,
       kitEffectState,
       party: createParty([AYAKA_CHARACTER_ID]),
+      random: () => 0,
     };
     const kitState = createKitState();
     AYAKA_KIT.onSprint?.(context, kitState);

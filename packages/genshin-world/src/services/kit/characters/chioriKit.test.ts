@@ -29,7 +29,13 @@ describe(createChioriKit, () => {
   // The summons an action's start casts, as the kit's effects hold them
   const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([CHIORI_CHARACTER_ID]) });
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([CHIORI_CHARACTER_ID]),
+      random: () => 0,
+    });
     return kitEffectState.effects.filter((effect) => effect.kind === "summon");
   };
 

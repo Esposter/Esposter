@@ -71,6 +71,7 @@ describe(createAloyKit, () => {
         combatant: createAloyCombatant(),
         kitEffectState,
         party: createParty([ALOY_CHARACTER_ID]),
+        random: () => 0,
       });
 
     for (let index = 0; index < 3; index++) strike();

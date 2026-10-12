@@ -442,12 +442,12 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         talentMultiplier: skillMultiplier(0),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ body, combatant, kitEffectState, random }) =>
       addKitEffect(
         kitEffectState,
         createDelayedField(body, combatant.characterId, mirrorFrames / 60, (tick) =>
           gainMirrors(
-            { body, combatant, kitEffectState: tick.kitEffectState, party: tick.party },
+            { body, combatant, kitEffectState: tick.kitEffectState, party: tick.party, random },
             getSkillMirrorGain(tick.kitEffectState.effects, combatant.characterId),
           ),
         ),
@@ -471,7 +471,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
 
   const elementalBurst: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState, party }) => {
+    onStart: ({ body, combatant, kitEffectState, party, random }) => {
       const { characterId, constellationCount } = combatant;
       const consumed = getMirrorCount(kitEffectState.effects, characterId);
       addKitEffect(
@@ -497,7 +497,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       if (generated <= 0) return;
       addKitEffect(kitEffectState, {
         ...createDelayedField(body, characterId, BURST_MIRROR_REGEN_FRAMES / 60, (tick) => {
-          gainMirrors({ body, combatant, kitEffectState: tick.kitEffectState, party: tick.party }, generated);
+          gainMirrors({ body, combatant, kitEffectState: tick.kitEffectState, party: tick.party, random }, generated);
           if (constellationCount >= CONSTELLATION_4)
             addKitEffect(tick.kitEffectState, {
               amount: CONSTELLATION_4_DENDRO_DAMAGE_BONUS_PER_MIRROR * generated,

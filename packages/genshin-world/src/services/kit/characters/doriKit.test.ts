@@ -36,6 +36,7 @@ describe(createDoriKit, () => {
       combatant: createDoriCombatant(),
       kitEffectState,
       party: createParty([DORI_CHARACTER_ID]),
+      random: () => 0,
     });
     return kitEffectState.effects;
   };

@@ -56,6 +56,7 @@ describe(createTartagliaKit, () => {
       combatant,
       kitEffectState,
       party: createParty([TARTAGLIA_CHARACTER_ID]),
+      random: () => 0,
     });
     return {
       kitEffectState,
@@ -86,6 +87,7 @@ describe(createTartagliaKit, () => {
       combatant: createTartagliaCombatant(),
       kitEffectState: rangedBurstEffectState,
       party: createParty([TARTAGLIA_CHARACTER_ID]),
+      random: () => 0,
     });
     const multipliers = [
       ...TARTAGLIA_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
@@ -122,6 +124,7 @@ describe(createTartagliaKit, () => {
       combatant,
       kitEffectState,
       party: createParty([TARTAGLIA_CHARACTER_ID]),
+      random: () => 0,
     });
 
     expect(stance?.secondsRemaining).toBe(0);
@@ -158,6 +161,7 @@ describe(createTartagliaKit, () => {
       combatant,
       kitEffectState,
       party: createParty([TARTAGLIA_CHARACTER_ID]),
+      random: () => 0,
     });
     TARTAGLIA_KIT.onKitEvent?.(
       {
@@ -272,6 +276,7 @@ describe(createTartagliaKit, () => {
       combatant,
       kitEffectState: context.kitEffectState,
       party: createParty([TARTAGLIA_CHARACTER_ID]),
+      random: () => 0,
       target,
     });
     const flashOfHavoc = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");

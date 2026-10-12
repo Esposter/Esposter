@@ -39,7 +39,7 @@ const createAlhaithamCombatant = (ascension = 0, constellationCount = 0): Combat
 // The effects an action's start adds to the team's, which its owner holds
 const castAction = (action: KitAction, combatant = createAlhaithamCombatant()): KitEffectState => {
   const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+  action.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
   return kitEffectState;
 };
 
@@ -126,7 +126,7 @@ describe(createAlhaithamKit, () => {
     const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
     tickField(kitEffectState, 15, combatant);
     const hit = getFirstStrikeHit();
-    const strike = { body: kitBody, combatant, kitEffectState, party };
+    const strike = { body: kitBody, combatant, kitEffectState, party, random: () => 0 };
     hit.onStrike?.(strike);
     hit.onStrike?.(strike);
     const summons = kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
@@ -142,7 +142,7 @@ describe(createAlhaithamKit, () => {
     const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
     tickField(kitEffectState, 15, combatant);
     const mirrorsBeforeBurst = readMirrors(kitEffectState);
-    ALHAITHAM_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
+    ALHAITHAM_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
     const burstSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect({

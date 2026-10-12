@@ -70,6 +70,7 @@ describe(createJeanKit, () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
     const context = { activeCombatant: combatant, body, party };
 
@@ -113,6 +114,7 @@ describe(createJeanKit, () => {
       combatant,
       kitEffectState,
       party,
+      random: () => 0,
     });
     stepKitEffects(kitEffectState, 40 / 60, { activeCombatant: combatant, body, party });
 
@@ -172,6 +174,7 @@ describe(createJeanKit, () => {
         combatant: createJeanCombatant(0, constellationCount),
         kitEffectState,
         party: createParty([JEAN_CHARACTER_ID]),
+        random: () => 0,
       };
       for (let step = 0; step < 12; step++)
         stepKit(kitState, JEAN_KIT, input, partyMember, stamina, 0.1, landedHits, context);

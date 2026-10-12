@@ -35,6 +35,7 @@ const castAction = (action: KitAction): KitEffectState => {
     combatant: createWandererCombatant(),
     kitEffectState,
     party: createParty([WANDERER_CHARACTER_ID]),
+    random: () => 0,
   });
   return kitEffectState;
 };

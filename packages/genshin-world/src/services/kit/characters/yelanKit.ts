@@ -41,7 +41,7 @@ const YELAN_STRIKES = [
 ];
 
 // Measured: gcsim (MIT, main) yelan/aimed.go, the fully charged Aimed Shot's animation at 96 frames and its arrow at 86,
-// Travelling 10 frames. Breakthrough Barb is not built, as the 34% roll that gives it is a random draw a kit does not take
+// Travelling 10 frames. Breakthrough Barb, the 34% roll each Lingering Lifeline hit takes for it, is not built
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/yelan/aimed.go
 const FULL_CHARGE_FRAMES = 96;
 const FULL_CHARGE_HITMARK_FRAMES = 86 + ARROW_TRAVEL_FRAMES;
