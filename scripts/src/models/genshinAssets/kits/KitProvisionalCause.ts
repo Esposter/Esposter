@@ -19,9 +19,9 @@ export enum KitProvisionalCause {
   TargetCentred = "TargetCentred",
   // No source gives the value, and no cause is known yet
   Unclassified = "Unclassified",
+  // A hold's threshold with no table or wiki figure is half a second, Bennett's first Charge Level's
+  UnmeasuredHold = "UnmeasuredHold",
   // A value the published record holds that no source gives and no module comment explains; the published value
   // Stands
   Unsourced = "Unsourced",
-  // A hold's threshold with no table or wiki figure is half a second, Bennett's first Charge Level's
-  UnmeasuredHold = "UnmeasuredHold",
 }

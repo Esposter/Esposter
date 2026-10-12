@@ -16,8 +16,8 @@ import { GameLanguage } from "genshin-text";
 import {
   archiveBookSchema,
   archiveEntrySchema,
-  archiveViewpointSchema,
   ArchiveSection,
+  archiveViewpointSchema,
   GameDataset,
   travelLogEntrySchema,
 } from "genshin-world";

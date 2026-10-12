@@ -105,7 +105,7 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
         // Each spec of a group is one index, which the spec's `iota` counts
         let iota = 0;
         // Only a const group repeats its expressions, a var group's specs with none having no value
-        const group: { expression?: GoExpression } | undefined = token.text === "const" ? {} : undefined;
+        const group: undefined | { expression?: GoExpression } = token.text === "const" ? {} : undefined;
         while (position < end - 1)
           if (tokens[position]?.kind === GoTokenKind.Identifier) {
             position = readDeclarationSpec(tokens, position, file, iota, group);

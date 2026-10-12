@@ -4,10 +4,10 @@ import type { SceneLayout } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { computeWaterfallSheet } from "#src/services/genshinAssets/fit/computeWaterfallSheet";
+import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";

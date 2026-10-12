@@ -234,13 +234,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuExit",
     wikiTitle: "File:Paimon Menu Exit Prompt.png",
   },
+  // The English PC client's forge on the Materials tab with an Enhancement Ore at amount five, at 32 seconds of the public
+  // Recording of the forge, letterboxed to its 886 high frame: scored whole, its blurred scene drawn by nothing here
+  "forge-screen": { capture: "yt-AVnbm8fESr0-forge-screen.mp4", screen: "ForgeScreen", seconds: 32 },
   // The public frame of the card game's duel board at 1080 high from the English PC client, cut from 400 seconds of a
   // Walkthrough, the frame at 407 seconds in the Action Phase: both sides' characters, the dice column and the hand. A
   // Video's frame, so its art is not drawn and only its tints, words and places are scored
   "gcg-duel-board": { capture: "gcg-yt-tvboQ_ZWO_I-400-410.mp4", screen: "GcgScreen", seconds: 7 },
-  // The English PC client's forge on the Materials tab with an Enhancement Ore at amount five, at 32 seconds of the public
-  // Recording of the forge, letterboxed to its 886 high frame: scored whole, its blurred scene drawn by nothing here
-  "forge-screen": { capture: "yt-AVnbm8fESr0-forge-screen.mp4", screen: "ForgeScreen", seconds: 32 },
   // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
   // Book's tabs are placed while its pages wait on what they track
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
@@ -836,6 +836,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     seconds: 360,
   },
+  // The English PC client's wish screen on the Character Event banner, Born of Ocean Swell open, at 78 seconds of the public
+  // 1080p recording, once its banner has settled; scored whole, its sky backdrop drawn by the screen's own blurred art
+  "wish-screen": { capture: "yt-uhCW3MZTgL8.mp4", screen: "WishScreen", seconds: 78 },
   // The English PC client's World Level dialog at 1080 high from a public tutorial's recording, its frame at 5 seconds,
   // The dialog open over the dimmed menu. Scored over the dialog's frame, which is opaque. The recording is an older
   // Build's, whose help text reads World Level 5 and "reduce" where the current text map reads 3 and "decrease"
@@ -845,7 +848,4 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuWorldLevelDialog",
     seconds: 5,
   },
-  // The English PC client's wish screen on the Character Event banner, Born of Ocean Swell open, at 78 seconds of the public
-  // 1080p recording, once its banner has settled; scored whole, its sky backdrop drawn by the screen's own blurred art
-  "wish-screen": { capture: "yt-uhCW3MZTgL8.mp4", screen: "WishScreen", seconds: 78 },
 };

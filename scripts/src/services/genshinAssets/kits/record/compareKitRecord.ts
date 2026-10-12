@@ -9,8 +9,8 @@ import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
-import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
+import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
 import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
 import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
 import { getResult } from "@esposter/shared";
