@@ -2,7 +2,6 @@ import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-export const FLEET_REMOTE = "origin";
 export const CLAIM_REF_PREFIX = "refs/claims/";
 export const MACHINE_REF_PREFIX = "refs/machines/";
 // Where `git fetch` mirrors the remote's refs locally, so a read names the local mirror and never the remote

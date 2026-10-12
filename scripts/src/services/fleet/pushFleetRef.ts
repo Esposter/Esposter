@@ -1,7 +1,7 @@
 import { FleetPushOutcome } from "#src/models/fleet/FleetPushOutcome";
-import { FLEET_REMOTE } from "#src/services/fleet/constants";
 import { readRemoteSha } from "#src/services/fleet/readRemoteSha";
 import { runFleetRefGit } from "#src/services/fleet/runFleetRefGit";
+import { REMOTE_NAME } from "#src/services/shared/constants";
 import { getResult } from "@esposter/shared";
 
 // Points `ref` on the remote at `sha`. `expectedSha` is the commit the push replaces, sent as an explicit lease, and
@@ -11,7 +11,7 @@ import { getResult } from "@esposter/shared";
 // Cannot be asked nothing is known, so either way the push's own error is thrown
 export const pushFleetRef = (ref: string, sha: string, expectedSha: string | undefined): FleetPushOutcome => {
   const lease = expectedSha === undefined ? [] : [`--force-with-lease=${ref}:${expectedSha}`];
-  return getResult(() => runFleetRefGit(["push", "--quiet", ...lease, FLEET_REMOTE, `${sha}:${ref}`])).match(
+  return getResult(() => runFleetRefGit(["push", "--quiet", ...lease, REMOTE_NAME, `${sha}:${ref}`])).match(
     () => FleetPushOutcome.Pushed,
     (pushError) =>
       getResult(() => readRemoteSha(ref)).match(
