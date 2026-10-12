@@ -106,7 +106,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `tighnari`           | —                      |                                                                          |
 | `traveler`           | —                      |                                                                          |
 | `varesa`             | —                      |                                                                          |
-| `varka`              | —                      |                                                                          |
+| `varka`              | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `venti`              | —                      |                                                                          |
 | `wanderer`           | —                      |                                                                          |
 | `wriothesley`        | —                      |                                                                          |
