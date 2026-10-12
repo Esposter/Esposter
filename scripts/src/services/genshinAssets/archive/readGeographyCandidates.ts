@@ -4,8 +4,8 @@ import type { ViewpointCandidate } from "#src/models/genshinAssets/archive/Viewp
 import { VIEW_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 
-// The viewpoints the Geography section lists, each in the codex's order and named by its own row, with the group and config
-// Id the scene group record places it by
+// The viewpoints the Geography section lists, each in the codex's order and named by its own row, with the group and
+// Config id the scene group record places it by
 export const readGeographyCandidates = (): ViewpointCandidate[] =>
   readExcelTable<ExcelViewCodexRow>(VIEW_CODEX_TABLE_NAME)
     .filter(({ isDisuse }) => !isDisuse)
