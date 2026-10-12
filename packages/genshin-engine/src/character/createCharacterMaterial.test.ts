@@ -8,24 +8,6 @@ import { DataTexture, DoubleSide, FrontSide } from "three";
 import { diffuseColor } from "three/tsl";
 import { describe, expect, test } from "vitest";
 
-const pmxMaterial: PmxMaterial = {
-  ambientColor: [0.5, 0.5, 0.5],
-  diffuseColor: [1, 1, 1, 1],
-  edgeColor: [0, 0, 0, 1],
-  edgeSize: 1,
-  indexCount: 3,
-  isDoubleSided: false,
-  isOutlined: true,
-  isToonShared: true,
-  name: "",
-  specularColor: [0, 0, 0],
-  specularity: 1,
-  sphereMode: PmxSphereMode.Disabled,
-  sphereTextureIndex: -1,
-  textureIndex: -1,
-  toonIndex: 2,
-};
-
 // Whether a node is the target or reads it through its operands, so a test can find a term inside a material's graph
 const reaches = (node: unknown, target: unknown): boolean => {
   if (node === target) return true;
@@ -34,6 +16,24 @@ const reaches = (node: unknown, target: unknown): boolean => {
 };
 
 describe(createCharacterMaterial, () => {
+  const pmxMaterial: PmxMaterial = {
+    ambientColor: [0.5, 0.5, 0.5],
+    diffuseColor: [1, 1, 1, 1],
+    edgeColor: [0, 0, 0, 1],
+    edgeSize: 1,
+    indexCount: 3,
+    isDoubleSided: false,
+    isOutlined: true,
+    isToonShared: true,
+    name: "",
+    specularColor: [0, 0, 0],
+    specularity: 1,
+    sphereMode: PmxSphereMode.Disabled,
+    sphereTextureIndex: -1,
+    textureIndex: -1,
+    toonIndex: 2,
+  };
+
   test("lights a shared toon on its own generated ramp, and outlines it in its edge", () => {
     expect.hasAssertions();
 

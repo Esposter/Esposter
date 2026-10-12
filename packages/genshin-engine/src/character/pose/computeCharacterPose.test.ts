@@ -8,12 +8,13 @@ import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import { Quaternion, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
-const AXIS_X = new Vector3(1, 0, 0);
-const AXIS_Z = new Vector3(0, 0, 1);
 const turnAbout = (axis: Vector3, angle: number): Quaternion => new Quaternion().setFromAxisAngle(axis, angle);
 // A bone's rotation as its X turn after its Z turn, the order the pose composes them in
 const turnAfter = (xAngle: number, zAngle: number): Quaternion =>
-  new Quaternion().multiplyQuaternions(turnAbout(AXIS_X, xAngle), turnAbout(AXIS_Z, zAngle));
+  new Quaternion().multiplyQuaternions(
+    turnAbout(new Vector3(1, 0, 0), xAngle),
+    turnAbout(new Vector3(0, 0, 1), zAngle),
+  );
 // Quaternions compare component by component, since a turn by zero leaves a signed zero that a strict comparison splits
 const expectRotation = (rotation: Quaternion, expected: Quaternion): void => {
   const expectedComponents = expected.toArray();
