@@ -45,14 +45,12 @@ export const readTmxDocument = (xmlString: string, context: TMXReadContext): TMX
     const frame = stack.pop();
     if (frame) closeTmxFrame(frame);
   };
-  parser.ontext = (text) => {
+  const appendText = (text: string): void => {
     const frame = stack.at(-1);
     if (frame) frame.text += text;
   };
-  parser.oncdata = (text) => {
-    const frame = stack.at(-1);
-    if (frame) frame.text += text;
-  };
+  parser.ontext = appendText;
+  parser.oncdata = appendText;
   parser.write(xmlString.replace(BYTE_ORDER_MARK_REGEX, "")).close();
 
   return root;

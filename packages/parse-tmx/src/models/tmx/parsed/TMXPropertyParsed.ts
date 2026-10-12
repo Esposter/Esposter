@@ -2,7 +2,7 @@ import type { TMXPropertiesParsed } from "#src/models/tmx/parsed/TMXPropertiesPa
 
 export interface TMXPropertyParsed {
   name: string;
-  // The properties of a class-typed property, which holds nested properties in place of a value
+  // The properties nested under a class-typed property, which leaves its value empty
   properties?: TMXPropertiesParsed;
   value: boolean | number | string;
 }

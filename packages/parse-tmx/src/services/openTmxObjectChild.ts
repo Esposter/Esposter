@@ -13,7 +13,7 @@ import { readTmxAttributes } from "#src/services/readTmxAttributes";
 
 type TMXObjectChildParent = Extract<TMXFrame, { tag: TMXTagName.Object | TMXTagName.Objectgroup }>;
 
-const NUMBER_REGEX = /^[+-]?\d+(?<decimal>\.\d+)?$/u;
+const NUMBER_REGEX = /^[+-]?\d+(?:\.\d+)?$/u;
 const objectAttributeKindMap = {
   gid: AttributeKind.Number,
   height: AttributeKind.RequiredNumber,
@@ -36,12 +36,14 @@ const createObject = (attributes: TMXAttributes): TMXObjectParsed => {
   return gid ? { ...shaped, flips: parseFlips(gid), gid: parseTileId(gid) } : { ...shaped, gid };
 };
 
-// The `points` of a polygon or polyline: pairs written `x,y` and separated by spaces
+// The `points` of a polygon or polyline: pairs written `x,y` and separated by spaces, and none when there are none to read
 const parsePoints = (points: string): [number, number][] =>
-  points.split(" ").map((point) => {
-    const [x = "", y = ""] = point.split(",");
-    return [Number(x), Number(y)];
-  });
+  points === ""
+    ? []
+    : points.split(" ").map((point) => {
+        const [x = "", y = ""] = point.split(",");
+        return [Number(x), Number(y)];
+      });
 
 // The value of an attribute that carries no type of its own, such as a text object's styling: a number where the text
 // Reads as one, a boolean where it reads as one, and a string otherwise

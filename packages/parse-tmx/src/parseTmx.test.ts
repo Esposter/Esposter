@@ -138,6 +138,23 @@ describe(parseTmx, () => {
     ]);
   });
 
+  test("reads a polygon with no points as having none", async () => {
+    expect.hasAssertions();
+
+    const tmxParsed = await parseTmx(
+      `<map><objectgroup id="1" name="objects"><object id="2" x="0" y="0"><polygon/></object></objectgroup></map>`,
+    );
+
+    expect(tmxParsed.match((parsedTmx) => parsedTmx.map.layers, throwError)).toStrictEqual([
+      {
+        id: 1,
+        name: "objects",
+        objects: [{ height: 0, id: 2, name: "", points: [], shape: "polygon", type: "", width: 0, x: 0, y: 0 }],
+        type: "objectgroup",
+      },
+    ]);
+  });
+
   test("translates each cell's flips when asked", async () => {
     expect.hasAssertions();
 
