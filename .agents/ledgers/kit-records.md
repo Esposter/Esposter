@@ -83,7 +83,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `navia`              | —                      |                                                                          |
 | `nefer`              | —                      |                                                                          |
 | `neuvillette`        | —                      |                                                                          |
-| `nicole`             | —                      |                                                                          |
+| `nicole`             | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `nilou`              | —                      |                                                                          |
 | `ningguang`          | —                      |                                                                          |
 | `noelle`             | —                      |                                                                          |
