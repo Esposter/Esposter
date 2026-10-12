@@ -19,8 +19,8 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { reviveParty } from "#src/services/party/reviveParty";
 
-// Herald of Frost's regeneration ticks every 4.5 seconds from the press's hitmark, four times in all with the first, as
-// Gcsim v2.47.2 (MIT) qiqi/skill.go gives it
+// Herald of Frost's regeneration ticks every 4.5 seconds from the press's hitmark, four times in all with the first,
+// As gcsim v2.47.2 (MIT) qiqi/skill.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/skill.go
 const REGENERATION_TICK_SECONDS = 4.5;
 // The Fortune-Preserving Talisman on an enemy: damage it takes from the character on the field heals that character, at
