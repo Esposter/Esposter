@@ -1,18 +1,18 @@
 {
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.dragonBreathInterval.length": { "cause": "Unclassified", "value": 2 },
+  "frames.dragonBreathInterval.length": { "cause": "Unsourced", "value": 2 },
   "frames.dragonBreathInterval.0": { "cause": "Unclassified", "value": 145 },
   "frames.dragonBreathInterval.1": { "cause": "Unclassified", "value": 150 },
-  "frames.dragonBreathFirstHitmark": { "cause": "Unclassified", "value": 253 },
+  "frames.dragonBreathFirstHitmark": { "file": "burst.go", "line": 22, "source": "Gcsim", "value": 253 },
   "hitFields.dragonBreath.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 20.024937810560445 }
   },
   "hitFields.dragonBreath.element": { "cause": "Unclassified", "value": "Grass" },
-  "hitFields.dragonBreath.gauge": { "cause": "Unclassified", "value": 1 },
-  "hitFields.dragonBreath.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "hitFields.dragonBreath.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 10139 } },
-  "hitFields.dragonBreath.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hitFields.dragonBreath.gauge": { "cause": "Unsourced", "value": 1 },
+  "hitFields.dragonBreath.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
+  "hitFields.dragonBreath.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 10139 } },
+  "hitFields.dragonBreath.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
 }
