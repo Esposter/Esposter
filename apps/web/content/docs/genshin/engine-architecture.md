@@ -23,7 +23,7 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
   | `camera`     | the follow camera behind a body, pulled in by what stands between, and the free camera's flight, held above the ground                              |
   | `collision`  | what a moving thing meets: the ground under it, the water's surface, and the landmarks' meshes a capsule is pushed out of and a sphere cast against |
   | `locomotion` | the character's body through the game's movement states, and the stamina they spend                                                                 |
-  | `character`  | an MMD model read from its PMX file, and drawn as one skinned mesh on the toon ramp                                                                 |
+  | `character`  | an MMD model read from its PMX file, and drawn as one skinned mesh in the game's character shader                                                   |
   | `streaming`  | which tiles are wanted, asked for coarsest first, and a cache that frees the least wanted                                                           |
   | `terrain`    | height tiles, the CDLOD selection and mesh, and the ground material                                                                                 |
   | `atmosphere` | the sky, its clouds and the light state they produce                                                                                                |

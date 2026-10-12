@@ -73,7 +73,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Bosses](/docs/genshin/bosses)                             | a normal boss back five seconds after its Trounce Blossom's claim, and the weekly claims counted from the Monday 04:00 reset in the reader's zone                                |
 | [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy, and the Traveler's kit's hits                                             |
 | [Character kits](/docs/genshin/kits)                       | each playable character's skill sets from the game's tables, the Traveler's kit in its own module reading its multipliers from the proud skill table                             |
-| [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms                                                                                   |
+| [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn in the game's character shader, with their terms                                                                     |
 | [Character attributes](/docs/genshin/character-attributes) | the roster, weapons and artifacts from the game's tables, and a character's attributes summed as the game sums them                                                              |
 | [Artifact enhancement](/docs/genshin/artifact-enhancement) | an artifact rolled from its slot's pool and the rarity's minor affixes, enhanced with Artifact EXP at a Mora a point, and locked against fodder                                  |
 | [Weapon enhancement](/docs/genshin/weapon-enhancement)     | a weapon levelled from ores and fodder at Mora, ascended at each phase's cap, and refined from a copy or a material, its passive waiting on the kits                             |
@@ -151,7 +151,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - The map on M with its jump list, a jump fading to black and back, the HUD's shell with its minimap, and the touch controls.
 - Map unlocking's statues: resonating with a Statue of The Seven on F fills its area in on the map and minimap, and only the unlocked statues are jumps and places to revive.
 - Enemies: kinds read from the game's tables, an AI on the fixed step, camps, respawn and drops, drawn as capsules.
-- Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
+- Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest in the game's character shader.
 - Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
 - The party switched on 1 to 4, the character screen on C, and a character's attributes summed from the game's own tables.
 - An artifact rolled by the game's pools and the wiki's weights, enhanced with Artifact EXP at a Mora a point, its fodder and its locks as the game keeps them.

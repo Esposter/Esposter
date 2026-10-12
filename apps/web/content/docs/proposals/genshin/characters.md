@@ -14,7 +14,7 @@ touches:
 
 # Characters
 
-This page builds on [characters](/docs/genshin/characters) as built: the engine reads a character's official model pack, draws it at rest on the toon ramp at its holder's origin, and holds it on the [character controller](/docs/genshin/character-controller)'s body, which it stands and faces with. What is left is the character's motion, its scale and where its terms are shown.
+This page builds on [characters](/docs/genshin/characters) as built: the engine reads a character's official model pack, draws it at rest in the game's character shader at its holder's origin, and holds it on the [character controller](/docs/genshin/character-controller)'s body, which it stands and faces with. What is left is the character's motion, its scale and where its terms are shown.
 
 ## Decisions
 
