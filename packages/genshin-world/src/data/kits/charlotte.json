@@ -9,18 +9,8 @@
   "burst.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 53 },
   "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 8839 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.kameraTick.length": { "cause": "Unclassified", "value": 8 },
-  "frames.kameraTick.0": { "cause": "Unclassified", "value": 95 },
-  "frames.kameraTick.1": { "cause": "Unclassified", "value": 119 },
-  "frames.kameraTick.2": { "cause": "Unclassified", "value": 143 },
-  "frames.kameraTick.3": { "cause": "Unclassified", "value": 166 },
-  "frames.kameraTick.4": { "cause": "Unclassified", "value": 179 },
-  "frames.kameraTick.5": { "cause": "Unclassified", "value": 203 },
-  "frames.kameraTick.6": { "cause": "Unclassified", "value": 226 },
-  "frames.kameraTick.7": { "cause": "Unclassified", "value": 249 },
   "frames.snappyMark": { "cause": "Unclassified", "value": 408 },
   "frames.thornHitmark": { "cause": "Unclassified", "value": 97 },
-  "frames.burstHitmark": { "cause": "Unclassified", "value": 53 },
   "hits.kamera.length": { "cause": "Unclassified", "value": 8 },
   "hits.kamera.0.area": {
     "cause": "Unclassified",
@@ -111,23 +101,14 @@
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.chargedAttackOnStart": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 8831 } },
-  "parameters.elementalBurstOnStartFlatHealth": {
+  "parameters.spiritbreathThornCooldownSeconds": {
     "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 8839 }
+    "value": { "index": 9, "proudSkillGroupId": 8831 }
   },
-  "parameters.elementalBurstOnStartAttackShare": {
-    "cause": "Unclassified",
-    "value": { "index": 0, "proudSkillGroupId": 8839 }
-  },
-  "parameters.elementalBurstOnStartOnTick": {
-    "cause": "Unclassified",
-    "value": { "index": 4, "proudSkillGroupId": 8839 }
-  },
-  "parameters.elementalBurstOnStartOnTick2": {
-    "cause": "Unclassified",
-    "value": { "index": 3, "proudSkillGroupId": 8839 }
-  },
+  "parameters.stillPhotoFlatHealth": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 8839 } },
+  "parameters.stillPhotoAttackShare": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8839 } },
+  "parameters.kameraFlatHealth": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 8839 } },
+  "parameters.kameraAttackShare": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 8839 } },
   "plungeCollision.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

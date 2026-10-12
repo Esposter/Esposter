@@ -1,11 +1,11 @@
 {
   "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "NormalAttack" },
-  "frames.burstFirstRefresh": { "cause": "Unclassified", "value": 223 },
-  "frames.burstShield": { "cause": "Unclassified", "value": 152 },
-  "frames.refreshFieldSecondsRemaining": { "cause": "Unclassified", "value": 808 },
-  "frames.burstRefreshInterval": { "cause": "Unclassified", "value": 146 },
-  "frames.burstFirstShield": { "cause": "Unclassified", "value": 233 },
+  "frames.firstSeamlessShieldRefresh": { "cause": "Unclassified", "value": 223 },
+  "frames.seamlessShield": { "cause": "Unclassified", "value": 152 },
+  "frames.seamlessShieldRefreshField": { "cause": "Unclassified", "value": 808 },
+  "frames.seamlessShieldRefreshInterval": { "cause": "Unclassified", "value": 146 },
+  "frames.firstSeamlessShield": { "cause": "Unclassified", "value": 233 },
   "hits.spiritvein.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
@@ -15,22 +15,19 @@
   "hits.spiritvein.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.spiritvein.multiplier": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 8239 } },
   "hits.spiritvein.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.shieldExplosion.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
-  "hits.shieldExplosion.element": { "cause": "Unclassified", "value": "Grass" },
-  "hits.shieldExplosion.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.shieldExplosion.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
-  "hits.shieldExplosion.multiplier": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 8239 } },
-  "hits.shieldExplosion.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.shieldHealth": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8239 } },
-  "parameters.shieldHealth2": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 8239 } },
+  "parameters.seamlessShieldMaxHealthShare": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 8239 }
+  },
+  "parameters.seamlessShieldFlatHealth": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 8239 }
+  },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.animationFrames": { "cause": "Unclassified", "value": 68 },

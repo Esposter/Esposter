@@ -49,13 +49,16 @@
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.4.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.5.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.elementalBurstVariantCheckIsActive": {
+  "parameters.spiritSootherLowHealthShare": {
     "cause": "Unclassified",
     "value": { "index": 6, "proudSkillGroupId": 4639 }
   },
-  "parameters.lostHealthShare": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 4632 } },
+  "parameters.guideToAfterlifeHealthCost": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 4632 }
+  },
   "parameters.paramitaSeconds": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 4632 } },
-  "parameters.elementalSkillOnStartAmount": {
+  "parameters.paramitaMaxHealthAttackShare": {
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 4632 }
   },

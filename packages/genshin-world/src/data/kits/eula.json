@@ -31,16 +31,6 @@
   "hits.shatteredLightfall.isBlunt": { "cause": "Unclassified", "value": true },
   "hits.shatteredLightfall.multiplier": { "cause": "Unclassified", "value": 1.83524 },
   "hits.shatteredLightfall.poiseDamage": { "cause": "Unclassified", "value": 180 },
-  "hits.burstInitial.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 }
-  },
-  "hits.burstInitial.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.burstInitial.gauge": { "cause": "Unclassified", "value": 2 },
-  "hits.burstInitial.hitmarkFrames": { "cause": "Unclassified", "value": 100 },
-  "hits.burstInitial.isBlunt": { "cause": "Unclassified", "value": true },
-  "hits.burstInitial.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5139 } },
-  "hits.burstInitial.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 4.71238898038469, "height": 2, "radius": 2 }
@@ -57,16 +47,19 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
-  "parameters.explodeBase": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 5139 } },
-  "parameters.explodePerStack": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 5139 } },
+  "parameters.lightfallSwordBaseMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 5139 }
+  },
+  "parameters.lightfallSwordStackMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 5139 }
+  },
   "parameters.grimheartSeconds": { "cause": "Unclassified", "value": { "index": 12, "proudSkillGroupId": 5132 } },
   "parameters.shredPhysicalResistance": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 5132 } },
   "parameters.shredResistance": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 5132 } },
   "parameters.shredSecondsPerStack": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 5132 } },
-  "parameters.icewhirlsTalentMultiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 2, "proudSkillGroupId": 5132 }
-  },
+  "parameters.icewhirlMultiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 5132 } },
   "plungeCollision.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }

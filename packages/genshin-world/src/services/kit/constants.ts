@@ -3,6 +3,8 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { LocomotionState } from "genshin-engine";
 
+// The frames in a second of a kit's record, whose every count of frames is divided by it once, as its kit is built
+export const KIT_FRAMES_PER_SECOND = 60;
 // The reach a kit's strikes, and a sword's attacks, target within: 5 metres and 6 high, the wiki's targeting reach
 export const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
 // The reach a kit's skill, burst and plunges target within: 15 metres and 10 high, the wiki's

@@ -21,11 +21,10 @@
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 1631 } },
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.dilucBurstHitmark": { "cause": "Unclassified", "value": 100 },
   "frames.dawnTickInterval": { "cause": "Unclassified", "value": 12 },
-  "hitFields.dawnPhoenix.gauge": { "cause": "Unclassified", "value": 2 },
-  "hitFields.dawnPhoenix.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "hitFields.dawnPhoenix.poiseDamage": { "cause": "Unclassified", "value": 100 },
+  "hitFields.dawnPhoenixHit.gauge": { "cause": "Unclassified", "value": 2 },
+  "hitFields.dawnPhoenixHit.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hitFields.dawnPhoenixHit.poiseDamage": { "cause": "Unclassified", "value": 100 },
   "normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2 }
@@ -42,14 +41,8 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.2 }
   },
-  "parameters.tickHitsTalentMultiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 1639 }
-  },
-  "parameters.dawnPhoenixTalentMultiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 2, "proudSkillGroupId": 1639 }
-  },
+  "parameters.dawnTickMultiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 1639 } },
+  "parameters.dawnExplosionMultiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 1639 } },
   "plungeCollision.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }

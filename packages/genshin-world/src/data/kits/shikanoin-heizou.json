@@ -8,22 +8,11 @@
   "burst.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 34 },
   "burst.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5939 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.burst": { "cause": "Unclassified", "value": 72 },
-  "hitFields.iris.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
-  },
-  "hitFields.iris.gauge": { "cause": "Unclassified", "value": 1 },
-  "hitFields.iris.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
-  "hitFields.iris.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 5939 } },
-  "hitFields.iris.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.irisCheck.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
-  },
-  "hits.irisCheck.hitmarkFrames": { "cause": "Unclassified", "value": 34 },
-  "hits.irisCheck.multiplier": { "cause": "Unclassified", "value": 0 },
-  "hits.irisCheck.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.iris.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
+  "hits.iris.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.iris.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
+  "hits.iris.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 5939 } },
+  "hits.iris.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.3430749027719964 }

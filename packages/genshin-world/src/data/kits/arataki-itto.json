@@ -285,15 +285,7 @@
   "chargedAttack.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 5731 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "chargedAttackStamina": { "cause": "Unclassified", "value": { "index": 7, "proudSkillGroupId": 5731 } },
-  "frames.seconds.length": { "cause": "Unclassified", "value": 5 },
-  "frames.seconds.0": { "cause": "Unclassified", "value": 109 },
-  "frames.seconds.1": { "cause": "Unclassified", "value": 144 },
-  "frames.seconds.2": { "cause": "Unclassified", "value": 173 },
-  "frames.seconds.3": { "cause": "Unclassified", "value": 202 },
-  "frames.seconds.4": { "cause": "Unclassified", "value": 231 },
-  "frames.skill": { "cause": "Unclassified", "value": 42 },
-  "frames.skillHitmark": { "cause": "Unclassified", "value": 14 },
-  "frames.burst": { "cause": "Unclassified", "value": 795 },
+  "frames.royalDescent": { "cause": "Unclassified", "value": 795 },
   "normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 41 },
   "normalAttacks.0.hits.0.convertedArea": {
     "cause": "Unclassified",
@@ -318,15 +310,9 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.580273550544841 }
   },
   "normalAttacks.3.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 124.5 },
-  "parameters.elementalSkillOnStartHealth": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 5732 }
-  },
-  "parameters.elementalSkillOnStartSecondsRemaining": {
-    "cause": "Unclassified",
-    "value": { "index": 2, "proudSkillGroupId": 5732 }
-  },
-  "parameters.elementalBurstOnStartAmount": {
+  "parameters.ushiHealthShare": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 5732 } },
+  "parameters.ushiSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 5732 } },
+  "parameters.royalDescentDefenseShare": {
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 5739 }
   },

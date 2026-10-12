@@ -191,8 +191,14 @@
     "value": { "index": 1, "proudSkillGroupId": 3532 }
   },
   "normalAttacks.4.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
-  "parameters.regenerationTick": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 3532 } },
-  "parameters.regenerationTick2": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3532 } },
+  "parameters.heraldOfFrostRegenerationHealth": {
+    "cause": "Unclassified",
+    "value": { "index": 3, "proudSkillGroupId": 3532 }
+  },
+  "parameters.heraldOfFrostRegenerationAttackShare": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 3532 }
+  },
   "parameters.skillSeconds": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 3532 } },
   "parameters.talismanSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 3539 } },
   "parameters.talismanHealHealth": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3539 } },

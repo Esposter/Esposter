@@ -1,15 +1,13 @@
 {
-  "areas.ozAttack": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 16 } },
   "burst.hits.0.gauge": { "source": "Wiki" },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ChargedAttack" },
   "frames.ozTickInterval": { "cause": "Unclassified", "value": 59 },
-  "frames.arrowTravel": { "cause": "Unclassified", "value": 10 },
   "frames.ozDuration": { "cause": "Unclassified", "value": 600 },
-  "frames.evernightRavenExtra": { "cause": "Unclassified", "value": 120 },
+  "frames.evernightRavenOzExtension": { "cause": "Unclassified", "value": 120 },
   "frames.burstOzFirstTick": { "cause": "Unclassified", "value": 69 },
   "frames.burstOzSpawn": { "cause": "Unclassified", "value": 113 },
-  "frames.heal": { "cause": "Unclassified", "value": 114 },
+  "frames.herPilgrimageOfBleakHeal": { "cause": "Unclassified", "value": 114 },
   "frames.ozFirstTick": { "cause": "Unclassified", "value": 64 },
   "frames.ozSpawn": { "cause": "Unclassified", "value": 18 },
   "frames.burstShortOzFirstTick": { "cause": "Unclassified", "value": 63 },
@@ -61,6 +59,16 @@
   "hits.gazeOfTheDeep.hitmarkFrames": { "cause": "Unclassified", "value": 10 },
   "hits.gazeOfTheDeep.multiplier": { "cause": "Unclassified", "value": 0.22 },
   "hits.gazeOfTheDeep.poiseDamage": { "cause": "Unclassified", "value": 30 },
+  "hits.ozAttack.area": {
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16 }
+  },
+  "hits.ozAttack.element": { "cause": "Unclassified", "value": "Electric" },
+  "hits.ozAttack.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.ozAttack.hitmarkFrames": { "cause": "Unclassified", "value": 10 },
+  "hits.ozAttack.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hits.ozAttack.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 3132 } },
+  "hits.ozAttack.poiseDamage": { "cause": "Unclassified", "value": 10 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 15 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 11 },
@@ -70,10 +78,6 @@
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
   "normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 21 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 12.9 },
-  "parameters.ozAttackTalentMultiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 0, "proudSkillGroupId": 3132 }
-  },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 },
   "burst.hits.0.isBlunt": { "cause": "DiffersFromSource" }
 }
