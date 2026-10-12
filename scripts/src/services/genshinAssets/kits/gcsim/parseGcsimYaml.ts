@@ -70,6 +70,9 @@ const parseFlow = (text: string): unknown => {
     }
     const start = position;
     while (position < text.length && !FLOW_DELIMITER_REGEX.test(text[position] ?? "")) position++;
+    // A value with no characters, at a delimiter or the end of the text, would leave every loop above where it found it
+    if (position === start)
+      throw new InvalidOperationError(Operation.Read, parseGcsimYaml.name, `unreadable flow collection "${text}"`);
     return parseScalar(text.slice(start, position).trim());
   };
   return readValue();
@@ -138,5 +141,9 @@ export const parseGcsimYaml = (yaml: string): unknown => {
     }
     return Object.fromEntries(entries);
   };
-  return parseBlock(lines[0]?.indent ?? 0);
+  const document = parseBlock(lines[0]?.indent ?? 0);
+  const unreadLine = lines[index];
+  if (unreadLine !== undefined)
+    throw new InvalidOperationError(Operation.Read, parseGcsimYaml.name, `unreadable line "${unreadLine.text}"`);
+  return document;
 };

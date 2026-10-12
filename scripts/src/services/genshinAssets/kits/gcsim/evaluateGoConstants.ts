@@ -147,14 +147,14 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
     const indexValues = indexes.map((index) => evaluateGoExpression(index, resolveName));
     if (constant === undefined || value === undefined || !Array.isArray(constant.value)) continue;
     if (!indexValues.every((index) => typeof index === "number")) continue;
-    let target: GoValue[] = constant.value;
+    // An intermediate level the package never made leaves no slice to assign into, so the assignment is skipped
+    let target: GoValue[] | undefined = constant.value;
     for (const index of indexValues.slice(0, -1)) {
-      const element = target[index];
-      if (!Array.isArray(element)) break;
-      target = element;
+      const element: GoValue | undefined = target?.[index];
+      target = Array.isArray(element) ? element : undefined;
     }
     const lastIndex = indexValues.at(-1);
-    if (lastIndex === undefined) continue;
+    if (target === undefined || lastIndex === undefined) continue;
     target[lastIndex] = value;
     if (indexValues.length === 1 && constant.file === file) constant.elementLines[lastIndex] = line;
   }

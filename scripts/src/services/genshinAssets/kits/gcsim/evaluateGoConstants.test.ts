@@ -89,4 +89,22 @@ describe(evaluateGoConstants, () => {
       animationFrames: 9,
     });
   });
+
+  test("leaves an element unset when its intermediate slice was never made, rather than writing into the outer slice", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package ningguang",
+      "",
+      "var frames [][]int",
+      "",
+      "func init() {",
+      "\tframes = make([][]int, 5)",
+      "\tframes[2][0] = 7",
+      "}",
+      "",
+    ].join("\n");
+
+    expect(evaluateGoConstants([{ path: "attack.go", source }]).get("frames")?.value).toStrictEqual([]);
+  });
 });
