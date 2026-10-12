@@ -2,6 +2,7 @@ import type { ActiveKitStepContext } from "#src/models/kit/ActiveKitStepContext"
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitStatus } from "#src/models/kit/KitStatus";
@@ -119,6 +120,28 @@ describe(stepActiveKit, () => {
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
       { characterId: TRAVELER_CHARACTER_ID, energyCost: TRAVELER_KIT.burstEnergyCost, kind: KitEventKind.BurstUsed },
     ]);
+  });
+
+  test("hands a burst's start a copy of the body, so a field it casts keeps the place it began from", () => {
+    expect.hasAssertions();
+    const startBodies: KitBody[] = [];
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      elementalBurst: {
+        ...TRAVELER_KIT.elementalBurst,
+        onStart: ({ body }) => {
+          startBodies.push(body);
+        },
+      },
+    };
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, kit)]);
+    getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = kit.burstEnergyCost;
+    stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context);
+    const { position } = context.characterController;
+    const castX = position.x;
+    position.x += 10;
+
+    expect(startBodies[0]?.position.x).toBe(castX);
   });
 
   test("plays a stance's actions in place of the kit's while the stance holds", () => {

@@ -11,6 +11,7 @@ import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { readOreHits } from "#src/services/gathering/readOreHits";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
+import { copyKitBody } from "#src/services/kit/copyKitBody";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
@@ -124,7 +125,8 @@ export const stepActiveKit = (
   // A burst is sent to the team's kits as it starts, ahead of its own start, as gcsim announces a burst before it plays
   if (action && (action === kit.elementalBurst || action === kit.elementalBurstVariant?.action))
     emit({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed });
-  action?.onStart?.({ body: kitBody, combatant, kitEffectState, party, target });
+  // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body has moved
+  action?.onStart?.({ body: copyKitBody(kitBody), combatant, kitEffectState, party, target });
   if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState, party });
   for (const oreHit of landedOreHits) strikeOre(kitBody, oreHit);
   for (const normalAttack of kit.normalAttacks) {
