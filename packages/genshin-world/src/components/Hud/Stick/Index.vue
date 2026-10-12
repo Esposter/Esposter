@@ -77,7 +77,8 @@ onUnmounted(() => {
 <template>
   <!-- The touch layout's stick, in the game's tree under `MoveJoystick_H4`: the area a thumb lands in to move, the
        Bottom left of the screen and the strip over it, and the group that stands still, held or not, as the mobile
-       Client's does on three recordings (16:9, 19.5:9 and 20:9), measured in canvas units on the 16:9 one. Its head is
+       Client's does on three recordings (16:9, 19.5:9 and 20:9). Its place is measured on the 16:9 one alone: a wider
+       Phone's stands further in, which the group does not follow. Its head is
        A faint ring with four chevrons that never travels; a push shows as a mark on a quarter of the rim turned to its
        Direction, a thin teal arc nearer the head while the character walks, and while it runs a cyan arc with an arrow
        At the rim, inside the back's faint dark ring. Provisional: the chevrons' shape, the back's stroke and the
