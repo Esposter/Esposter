@@ -1,7 +1,8 @@
 name: 🔍 Review
 
-# The review of what lands on `ai/queue`: haiku reviewers over every window owed, one fixer per window with findings, and
-# `main` moved only by the review's fast-forward through the passed prefix (`services/review`, `apps/web/content/docs/infra/review.md`).
+# The review of what lands on `ai/queue`: haiku reviewers over every window owed, one review issue per chunk of a passed
+# window's findings, one fixer per issue, and a settle job that settles what the fixers left open. `main` moves only by the
+# review's fast-forward through the passed prefix (`services/review`, `apps/web/content/docs/infra/review.md`).
 on:
   push:
     branches: [ai/queue]
@@ -29,10 +30,16 @@ jobs:
     concurrency:
       group: review-${{ inputs.from && 'range' || 'queue' }}
       cancel-in-progress: false
-    # Bounded by one pool of every batch of every window, which the runner's memory and the GitHub job limit set
-    timeout-minutes: 120
+    # Bounded by the run's deadline (`REVIEW_RUN_DEADLINE`, 300 minutes), which leaves the batches past it for the next run
+    # and lets the batches started before it finish. 360 minutes is GitHub's hosted maximum.
+    timeout-minutes: 360
+    # `actions: write` is for the one dispatch that continues a backlog the deadline left. The group folds that dispatch into
+    # any run already waiting. A run stopped by a usage limit or a failure does not dispatch: the next push resumes it.
+    permissions:
+      actions: write
+      contents: read
     outputs:
-      fix_windows: ${{ steps.review.outputs.fix_windows }}
+      fix_issues: ${{ steps.review.outputs.fix_issues }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -82,7 +89,7 @@ jobs:
           gh auth setup-git
           pnpm -C scripts ai:review --from "$FROM" --to "$TO" --findings-directory "$RUNNER_TEMP/review-findings"
 
-      # Runs even when the review failed a window, so the passed windows' findings still reach their fixers
+      # Runs even when the review failed a window, so the issues already opened still reach their fixers
       - name: 📤 Upload findings
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -92,19 +99,19 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  # One fix job per window with findings, in a matrix of this run. No concurrency group: each fixer lands its commits on
-  # `ai/queue` by pull and push, and a fixer's commit that cannot land is deferred, not retried past its own attempts.
+  # One fix job per review issue of this run, in a matrix. No concurrency group: each fixer lands its commits on `ai/queue`
+  # by pull and push, and a fixer that crashes leaves its issue open and whole for the settle job.
   fix:
-    name: Fix window ${{ matrix.window }}
+    name: Fix issue #${{ matrix.issue }}
     needs: review
-    if: ${{ !cancelled() && needs.review.outputs.fix_windows != '' && needs.review.outputs.fix_windows != '[]' }}
+    if: ${{ !cancelled() && needs.review.outputs.fix_issues != '' && needs.review.outputs.fix_issues != '[]' }}
     runs-on: ubuntu-latest
     # Bounded by the one fixer session the job runs, its own wall clock limit being 90 minutes
     timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
-        window: ${{ fromJSON(needs.review.outputs.fix_windows) }}
+        issue: ${{ fromJSON(needs.review.outputs.fix_issues) }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -151,7 +158,65 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-          WINDOW: ${{ matrix.window }}
+          ISSUE: ${{ matrix.issue }}
         run: |
           gh auth setup-git
-          pnpm -C scripts ai:review:fix --findings "$RUNNER_TEMP/review-findings/window-$WINDOW.json"
+          pnpm -C scripts ai:review:fix --findings "$RUNNER_TEMP/review-findings/issue-$ISSUE.json"
+
+  # Settles every review issue still open once the fixers are done: the ones this run's fixers left, the ones past the
+  # fix matrix's cap, and the ones a crashed fixer left whole. One settler session per issue, oldest first, on the queue's tip.
+  settle:
+    name: Settle review issues
+    needs: [review, fix]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    # Bounded by GitHub's hosted maximum for the whole job, since it settles every open issue in turn. Each settler session
+    # has its own wall clock limit of 120 minutes, and an issue the job does not reach stays open for the next run.
+    timeout-minutes: 360
+    # The settlers land their commits one at a time, so a second settle job waits behind the first rather than racing it
+    concurrency:
+      group: review-settle
+      cancel-in-progress: false
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ai/queue
+          fetch-depth: 0
+          token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install the packages and scripts
+        uses: ./.github/actions/install-projects
+
+      - name: 🏗️ Build packages
+        uses: ./.github/actions/run-cached-task
+        with:
+          task: build:packages
+          paths: |
+            packages/*/dist
+            packages/*/src/index.ts
+            packages/*/src/components/index.ts
+          save: false
+
+      - name: 🆔 Identify the settler
+        run: |
+          git config user.name "Q16solver"
+          git config user.email "Q16solver@users.noreply.github.com"
+          git config core.fileMode false
+          echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
+          git rm -r -q --cached . && git reset -q --hard
+
+      - name: 🤝 Trust the workspace
+        uses: ./.github/actions/trust-workspace
+
+      - name: ⚖️ Settle
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+        run: |
+          gh auth setup-git
+          pnpm -C scripts ai:review:settle
