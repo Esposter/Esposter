@@ -1,3 +1,4 @@
+import { MmdBoneName } from "#src/models/character/MmdBoneName";
 import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 
 // The seconds one breath takes, and how far the chest and the shoulders lift on it, in radians
@@ -63,3 +64,7 @@ export const POSE_AIR_STANCES: Partial<Record<LocomotionState, PoseAirStance>> =
   [LocomotionState.Jump]: { armLowerRadians: 0.9, kneeBendRadians: 0.3, leanRadians: 0.05 },
   [LocomotionState.Plunge]: { armLowerRadians: 0.5, kneeBendRadians: 0, leanRadians: 0.6 },
 };
+// The model's bone names when it is a PMX model, which holds each standard bone under its MMD name
+export const MMD_BONE_NAME_MAP: Record<MmdBoneName, string> = Object.fromEntries(
+  Object.values(MmdBoneName).map((name) => [name, name]),
+);
