@@ -1,4 +1,5 @@
 import type { CharacterShadingInputs } from "#src/models/character/CharacterShadingInputs";
+import type { ShadingRegionColours } from "#src/models/character/ShadingRegionColours";
 import type { LightUniforms } from "#src/models/nodes/LightUniforms";
 import type { Vector3Tuple } from "three";
 import type { Node } from "three/webgpu";
@@ -18,7 +19,6 @@ import { createShadingRegionNode } from "#src/character/shading/createShadingReg
 import { createToneNode } from "#src/character/shading/createToneNode";
 import { createToonThresholdNode } from "#src/character/shading/createToonThresholdNode";
 import { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
-import type { ShadingRegionColours } from "#src/models/character/ShadingRegionColours";
 import {
   cameraViewMatrix,
   float,
@@ -90,13 +90,13 @@ export const createCharacterShadingNode = (
     : float(inputs.rampWidth);
   const column = createRampColumnNode(threshold, inputs.lightArea, rampWidth);
   // A region's row is its base plus a step per region past one, and the ramp's layout reads it as its own coordinate
-  const sampleRamp = (rowBase: number): Node<"float"> =>
+  const sampleRamp = (rowBase: number): Node<"vec3"> =>
     texture(
       inputs.rampTexture,
       createRampUvNode(inputs.rampLayout, column, float(rowBase).add(region.sub(1).mul(RAMP_ROW_STEP))),
-    ).r;
+    ).rgb;
   // A face keeps its shadow colour where its face map has it lit, so it is never black: the shadow colour is mixed toward
-  // White by the face map's lit fraction. A body's shade is its ramp's value, as a grey
+  // White by the face map's lit fraction. A body's shade is its ramp's colour, read down the row its region takes
   const shade =
     kind === CharacterMaterialKind.Face
       ? mix(
@@ -104,11 +104,9 @@ export const createCharacterShadingNode = (
           vec3(1),
           createFaceShadeNode(inputs.faceMap, inputs.faceSoftness, inputs.faceDraw),
         )
-      : vec3(
-          inputs.isCoolShadow
-            ? mix(sampleRamp(RAMP_ROW_BASE), sampleRamp(COOL_RAMP_ROW_BASE), inputs.coolShadowTone)
-            : sampleRamp(RAMP_ROW_BASE),
-        );
+      : inputs.isCoolShadow
+        ? mix(sampleRamp(RAMP_ROW_BASE), sampleRamp(COOL_RAMP_ROW_BASE), inputs.coolShadowTone)
+        : sampleRamp(RAMP_ROW_BASE);
   // The lit colour and the specular carry the hour's light colour, as the game's carry its main light's, and the emission
   // Does not
   const lit = materialColour.mul(shade).mul(brightness).mul(lightColor);
