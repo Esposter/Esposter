@@ -60,7 +60,12 @@ const readCharFields = (tokens: readonly GoToken[], charFieldSet: Set<string>): 
         checkIsGoPunctuation(current, "}")
       )
         depth--;
-      else if (isLineStart && depth === 0 && current.kind === GoTokenKind.Identifier) {
+      else if (
+        isLineStart &&
+        depth === 0 &&
+        current.kind === GoTokenKind.Identifier &&
+        !checkIsGoPunctuation(tokens[cursor + 1], ".")
+      ) {
         // A line's names run `a, b int`, and a name followed by a dot is an embedded package's selector, not a field
         let names = cursor;
         charFieldSet.add(current.text);
@@ -69,7 +74,7 @@ const readCharFields = (tokens: readonly GoToken[], charFieldSet: Set<string>): 
           charFieldSet.add(tokens[names]?.text ?? "");
         }
       }
-      if (current.kind !== GoTokenKind.Newline) isLineStart = false;
+      isLineStart = false;
     }
   }
 };

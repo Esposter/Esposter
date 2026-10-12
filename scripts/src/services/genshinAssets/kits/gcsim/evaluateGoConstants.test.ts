@@ -20,6 +20,7 @@ describe(evaluateGoConstants, () => {
           "\tarrowRange  float64",
           "\tspreadRange float64",
           "\tcounter     int",
+          "\ttmpl.Character",
           "}",
           "",
           "func (c *char) Init() {",
@@ -31,6 +32,7 @@ describe(evaluateGoConstants, () => {
           "\tif c.NormalCounter == 2 {",
           "\t\tc.counter = 1",
           "\t}",
+          "\tc.tmpl = 3",
           "}",
         ].join("\n"),
       },
@@ -38,12 +40,13 @@ describe(evaluateGoConstants, () => {
 
     const constantMap = evaluateGoConstants(sources);
 
-    expect(constantMap.get("c.burstRadius")).toStrictEqual({ elementLines: {}, file: "amber.go", line: 12, value: 2 });
+    expect(constantMap.get("c.burstRadius")).toStrictEqual({ elementLines: {}, file: "amber.go", line: 13, value: 2 });
     expect([
       constantMap.get("c.arrowRange"),
       constantMap.get("c.spreadRange"),
       constantMap.get("c.NormalCounter"),
-    ]).toStrictEqual([undefined, undefined, undefined]);
+      constantMap.get("c.tmpl"),
+    ]).toStrictEqual([undefined, undefined, undefined, undefined]);
   });
 
   test("reads Xiangling's attack.go as gcsim writes it, the frames her init sets one strike at a time", () => {
