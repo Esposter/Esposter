@@ -334,7 +334,7 @@ pnpm graph:gen
 ### Review
 
 AI sessions commit faster than any reviewer reads, so nothing between a commit and a reviewed release waits on a
-person. Each session pushes the one permanent `ai/queue` branch with `pnpm ai:queue:push`. A GitHub Actions workflow
+person. Each session lands its commits on the one permanent `ai/queue` branch with `git pull --rebase origin ai/queue` and `git push origin HEAD:ai/queue`. A GitHub Actions workflow
 then reviews what landed there: it takes the commits `main` does not have yet in windows of at most 300 changed files,
 has headless Haiku reviewers read each window in batches of files they can read whole, and fast-forwards `main` to the
 window's last commit. Each window that passes opens an issue for its findings. A fixer session then fixes what it can and
@@ -344,7 +344,7 @@ refuted or recorded. The design and the figures live in
 
 ```mermaid
 flowchart LR
-  S[AI sessions] -->|pnpm ai:queue:push| Q[(ai/queue)]
+  S[AI sessions] -->|git push to ai/queue| Q[(ai/queue)]
   Q -->|window of commits| R[Haiku reviewers]
   R -->|window passed: fast-forward| M[(main)]
   R -->|findings| I[Review issue]
