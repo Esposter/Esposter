@@ -13,8 +13,7 @@ const EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION = 1;
 const EVERY_ARROW_FINDS_ITS_TARGET_CRITICAL_RATE = 0.1;
 
 // Ascension 1's CRIT Rate on Fiery Rain, priced by the combatant that cast it
-const getFieryRainCombatant = (combatant: Combatant): Combatant => {
-  if (combatant.ascension < EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION) return combatant;
+const addEveryArrowCriticalRate = (combatant: Combatant): Combatant => {
   const { attributeTotalMap } = combatant.attributes;
   return {
     ...combatant,
@@ -50,15 +49,15 @@ export const createAmberKitBehaviour = ({
 
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        const hasEveryArrowFindsItsTarget = combatant.ascension >= EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION;
         castKitSummon(
           kitEffectState,
           body,
-          getFieryRainCombatant(combatant),
-          combatant.ascension >= EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION
-            ? everyArrowFindsItsTargetFieryRainArrows
-            : fieryRainArrows,
-        ),
+          hasEveryArrowFindsItsTarget ? addEveryArrowCriticalRate(combatant) : combatant,
+          hasEveryArrowFindsItsTarget ? everyArrowFindsItsTargetFieryRainArrows : fieryRainArrows,
+        );
+      },
     },
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
