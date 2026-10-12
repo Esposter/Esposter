@@ -4,6 +4,7 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
+import { readGoNumberToken } from "#src/services/genshinAssets/kits/gcsim/readGoNumberToken";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 
 const BinaryOperatorPrecedenceMap: Partial<Record<string, number>> = { "%": 2, "*": 2, "+": 1, "-": 1, "/": 2 };
@@ -57,7 +58,7 @@ export const parseGoExpression = (
     if (token === undefined) return UNKNOWN_EXPRESSION;
     else if (token.kind === GoTokenKind.Number) {
       position++;
-      return { kind: GoExpressionKind.Number, value: Number(token.text.replaceAll("_", "")) };
+      return { kind: GoExpressionKind.Number, value: readGoNumberToken(token) };
     } else if (token.kind === GoTokenKind.String) {
       position++;
       return { kind: GoExpressionKind.String, value: token.text.slice(1, -1) };
