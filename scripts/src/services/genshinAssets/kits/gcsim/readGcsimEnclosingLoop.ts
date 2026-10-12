@@ -2,6 +2,7 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { readLessIndentedLines } from "#src/services/genshinAssets/kits/gcsim/readLessIndentedLines";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 export interface GcsimLoop {
@@ -12,8 +13,6 @@ export interface GcsimLoop {
 const RANGE_HEADER_REGEX = /^\s*for\s+(?<index>\w+)\s*:=\s*range\s+(?<bound>.+?)\s*\{\s*$/u;
 const COUNTING_HEADER_REGEX =
   /^\s*for\s+(?<index>\w+)\s*:=\s*0\s*;\s*\k<index>\s*<\s*(?<bound>.+?)\s*;\s*\k<index>\s*\+\+\s*\{\s*$/u;
-
-const countTabs = (line: string): number => line.length - line.trimStart().length;
 
 // The count an expression of a loop's bound evaluates to, a whole number from zero, or none where the bound is not one
 const readLoopCount = (bound: string, resolveName: (name: string) => GoValue | undefined): number | undefined => {
@@ -32,14 +31,8 @@ export const readGcsimEnclosingLoop = (
   lineIndex: number,
   resolveName: (name: string) => GoValue | undefined,
 ): GcsimLoop | undefined => {
-  let indent = countTabs(lines[lineIndex] ?? "");
-  for (let position = lineIndex - 1; position >= 0; position--) {
-    const line = lines[position] ?? "";
-    if (line.trim() === "" || countTabs(line) >= indent) continue;
-    if (!line.trimEnd().endsWith("{")) {
-      indent = countTabs(line);
-      continue;
-    }
+  for (const line of readLessIndentedLines(lines, lineIndex)) {
+    if (!line.trimEnd().endsWith("{")) continue;
     const header = RANGE_HEADER_REGEX.exec(line) ?? COUNTING_HEADER_REGEX.exec(line);
     if (header === null) return undefined;
     const count = readLoopCount(header.groups?.bound ?? "", resolveName);

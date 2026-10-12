@@ -1,13 +1,13 @@
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
+import { countTabs } from "#src/services/genshinAssets/kits/gcsim/countTabs";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { readLessIndentedLines } from "#src/services/genshinAssets/kits/gcsim/readLessIndentedLines";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const QUEUE_OPEN_REGEX = /Tasks\.Add\(func\(\)\s*\{\s*$/u;
 const QUEUE_CLOSE_REGEX = /^\}\s*,\s*(?<delay>.+?)\s*\)\s*$/u;
-
-const countTabs = (line: string): number => line.length - line.trimStart().length;
 
 // The delay a `Tasks.Add(func() {` block gives the lines inside it, from its closing `}, delay)` line at the block's own
 // Indent, the first such line below the cited one. Undefined where that closing gives no number
@@ -37,13 +37,9 @@ export const readGcsimQueueDelay = (
   resolveName: (name: string) => GoValue | undefined,
 ): number | undefined => {
   let delay = 0;
-  let indent = countTabs(lines[lineIndex] ?? "");
-  for (let position = lineIndex - 1; position >= 0; position--) {
-    const line = lines[position] ?? "";
-    if (line.trim() === "" || countTabs(line) >= indent) continue;
-    indent = countTabs(line);
+  for (const line of readLessIndentedLines(lines, lineIndex)) {
     if (!QUEUE_OPEN_REGEX.test(line)) continue;
-    const closingDelay = readClosingDelay(lines, lineIndex, indent, resolveName);
+    const closingDelay = readClosingDelay(lines, lineIndex, countTabs(line), resolveName);
     if (closingDelay === undefined) return undefined;
     delay += closingDelay;
   }
