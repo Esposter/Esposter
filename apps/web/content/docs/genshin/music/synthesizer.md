@@ -12,7 +12,7 @@ The synthesizer is `genshin-engine`'s audio module. It plays each note of a [voi
 - **Each note is an oscillator over the instrument's harmonics.** A note's partials are sounded at the instrument's measured overtone amplitudes, through one gain following the instrument's attack, decay and release envelope.
 - **The noise is a looped buffer built in the spectrum.** `computeNoiseSamples` builds the buffer over the engine's `transformFourier`, with every band in the one transform: each band is flat between its half octaves at the level the instrument gives it. So no band leaks into another, and the loop has no seam.
 - **The envelope's end is worked out, not held.** The envelope's value at the note's end is computed and scheduled, rather than held with `cancelAndHoldAtTime`, which Firefox lacks.
-- **Every note reads the noise from the loop's clock.** A note reads its instrument's noise buffer from where the clock stands in the loop, and all buffers share one phase per band. The notes sounding at once therefore play one noise in step, and their amplitudes add.
+- **Every note reads the noise from the loop's clock.** A note reads its instrument's noise buffer from where the clock stands in the loop, and all buffers share one phase per band. The notes sounding at once therefore play one noise in step, and their amplitudes add, which overfills the lowest band: a known defect, with the remedies that did not ship, under [music](/docs/genshin/music#not-yet).
 
 ## The player
 
