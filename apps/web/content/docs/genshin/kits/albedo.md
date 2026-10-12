@@ -10,7 +10,7 @@ Albedo's kit is its record and one behaviour module, `createAlbedoKitBehaviour`,
 ## Decisions
 
 - **Transient Blossoms trigger on a hit inside the Solar Isotoma, once every 2 seconds.** gcsim's field strikes on damage in its area behind one 2-second internal cooldown, and here the hit's enemy must stand within the field's radius of 10, the tick landing at that enemy a frame later. The tick's multiple is of DEF, so its hit takes no ATK, and the Fatal Blossoms come with the burst while the field stands.
-- **Fatal Blossoms take their hitmarks from one cited array, and their area is `Unsourced`.** gcsim queues the seven blossoms in a loop of `maxBlossoms` at line 96, `fatalBlossomHitmark+i*5`, inside the burst's queue with `burstHitmark` as its delay, so the overlay cites `hits.fatalBlossoms.0-6.hitmarkFrames` as one array of 145 to 175 by element. Their area is a circle of 3 on the blossom's own centre, which the hitbox reader does not resolve, and their element, gauge, cooldown tag, blunt flag and multiplier are shared by the run and `Unsourced` with the same reason.
+- **Fatal Blossoms take their hitmarks from one cited array, and their area is `Unsourced`.** gcsim queues the seven blossoms in a loop of "maxBlossoms" at line 96, `fatalBlossomHitmark+i*5`, inside the burst's queue with `burstHitmark` as its delay, so the overlay cites `hits.fatalBlossoms.0-6.hitmarkFrames` as one array of 145 to 175 by element. Their area is a circle of 3 on the blossom's own centre, which the hitbox reader does not resolve, and their element, gauge, cooldown tag, blunt flag and multiplier are shared by the run and `Unsourced` with the same reason.
 
 ## Key files
 
