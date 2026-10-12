@@ -2,7 +2,6 @@ import type { QueueFile } from "#src/models/fleet/QueueFile";
 
 import { MAX_BUFFER_BYTES, REMOTE_QUEUE_REF, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
-import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { execFileSync } from "node:child_process";
 
@@ -17,7 +16,8 @@ export const readQueueFiles = (
   ref: string = REMOTE_QUEUE_REF,
   cwd: string = REPOSITORY_ROOT,
 ): QueueFile[] => {
-  const paths = getNonEmptyLines(runGit(["ls-tree", "-r", "--name-only", ref, "--", directory], cwd));
+  // `-z` names each path raw and NUL-ended, where a plain listing quotes and octal-escapes a non-ASCII one
+  const paths = runGit(["ls-tree", "-r", "-z", "--name-only", ref, "--", directory], cwd).split("\0").filter(Boolean);
   const output = execFileSync("git", ["cat-file", "--batch"], {
     cwd,
     env: getGitEnv(),
