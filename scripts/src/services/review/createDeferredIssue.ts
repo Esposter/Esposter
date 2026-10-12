@@ -18,7 +18,7 @@ const getDeferredBody = (
     ({ disposition, finding }) =>
       `- \`${finding.file}:${finding.line}\` (${finding.lane}): ${finding.summary}\n  - Trigger: ${finding.trigger}\n  - Why deferred: ${disposition.reason}`,
   );
-  return `The automated review of \`${base}..${end}\` deferred these findings, for a person or a later session to settle.\n\n${items.join("\n")}`;
+  return `The automated review of \`${base}..${end}\` deferred these findings, for a later session to settle.\n\n${items.join("\n")}`;
 };
 
 // One issue per run for the findings it deferred, labelled for an agent to take. The body goes through a file, since
