@@ -13,6 +13,7 @@ import {
 import { createWitnessMaterial } from "#src/services/scene/createWitnessMaterial";
 import { readObjFaceVertices } from "#src/services/scene/readObjFaceVertices";
 import { splitRigidPieces } from "#src/services/scene/splitRigidPieces";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createInstancedMesh } from "genshin-engine";
 import {
   Group,
@@ -74,10 +75,14 @@ export const loadWitness = async (
     Promise.all(
       meshNames.map(async (name) => {
         if (!rigidMeshNames.has(name)) return { object: await objLoader.loadAsync(getUrl(`Mesh/${name}.obj`)) };
-        const [objResponse, skinResponse] = await Promise.all([
-          fetch(getUrl(`Mesh/${name}.obj`)),
-          fetch(getUrl(`Mesh/${name}.json`)),
-        ]);
+        const objUrl = getUrl(`Mesh/${name}.obj`);
+        const [objResponse, skinResponse] = await Promise.all([fetch(objUrl), fetch(getUrl(`Mesh/${name}.json`))]);
+        if (!objResponse.ok)
+          throw new InvalidOperationError(
+            Operation.Read,
+            objUrl,
+            `HTTP ${objResponse.status} ${objResponse.statusText}`,
+          );
         const text = await objResponse.text();
         const { m_Skin } = (await skinResponse.json()) as ExportedSkin;
         return {
