@@ -3,7 +3,6 @@ title: Ground detail
 description: Proposal — the ground's fine detail at the game's own scale. Every surface's detail carries its own texture's metres per texel, measured off the faces the texture is read over, in place of one constant every texture shared; the ground's layers then take the detail of their own textures, each at its repeat over its size, once the surface pass's structure asks for it.
 model: claude-opus-5-5
 needs: [game-exports]
-waiting: "the surface pass run with each detail at its own scale and the ground in its layers ({windrise-surface-detail}, the Windrise compute queue), whose Ground structure decides the third step"
 ---
 
 # Ground detail
@@ -19,7 +18,7 @@ The [ground paint](/docs/genshin/ground-paint) page paints each layer in a pair 
 ## Scope
 
 1. [x] Every surface's detail carries its texture's metres per texel, measured by the surface fit, and the shared constant goes.
-2. [ ] The surface pass reads the Ground's structure with its layers drawn, and every family's with its detail at its own scale.
+2. [x] The surface pass reads the Ground's structure with its layers drawn, and every family's with its detail at its own scale. Its reading, the decision input for the third step: the Ground's structure reads 17.9274 share against a gate of 0.0300 (the run's own sampling floor, not the 0.0430 the queue item names), so the structure misses and the third step is built, not rejected. Its scale-by-scale diagnostic is 0.984 0.969 0.942 0.902 0.847, finest first, and the Ground colour reads 2.9857 ΔE against 2.3000, also failing. The Statue, Paving and Oak structures read 0.5459, 0.3068 and 0.2522 against 0.0701, 0.2183 and 0.0223.
 3. [ ] Windrise's splat layers' diffuse textures exported, each layer's detail fitted off its texture at its repeat over its width into the ground surface's layers, and drawn on the terrain by the layers' weights. Open: how the weights reach the material, as vertex attributes morphed with the colour or as the detail of the layer weighing most, since every layer's octaves summed costs five noise calls a layer for each pixel.
 4. [ ] Each other region's ground in its own layers: its field from its tiles' cells, its colours from its base maps and its detail from its layers' textures. Only Windrise's component exports its tiles' base maps, so each region's colours wait on its own.
 

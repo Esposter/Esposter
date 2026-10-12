@@ -33,3 +33,11 @@
 | Shape | windrise-statue-day Oak envelope outline | 24.7152 | 9.9858 | px | no |
 | Shape | windrise-statue-day Oak envelope depth | 0.1410 | 0.0631 | share | no |
 | Shape | windrise-statue-day Oak envelope normal | 23.5909 | 15.3528 | degrees | no |
+| Surface | windrise-statue-day Statue colour | 1.0699 | 2.3000 | ΔE | yes |
+| Surface | windrise-statue-day Statue structure | 0.5459 | 0.0701 | share | no |
+| Surface | windrise-statue-day Oak colour | 4.5051 | 2.3000 | ΔE | no |
+| Surface | windrise-statue-day Oak structure | 0.2522 | 0.0223 | share | no |
+| Surface | windrise-statue-day Paving colour | 0.4635 | 2.3000 | ΔE | yes |
+| Surface | windrise-statue-day Paving structure | 0.3068 | 0.2183 | share | no |
+| Surface | windrise-statue-day Ground colour | 2.9857 | 2.3000 | ΔE | no |
+| Surface | windrise-statue-day Ground structure | 17.9274 | 0.0300 | share | no |

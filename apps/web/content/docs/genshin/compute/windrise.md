@@ -7,8 +7,6 @@ description: Windrise, the first scene: the great oak's shape, the surface's pas
 
 ## Queue
 
-- [ ] `[page]` {windrise-surface-detail} needs game-exports, parity-page — **Windrise: the surface pass read with each detail at its own texture's scale and the ground in its layers.** Run `pnpm -C scripts genshin:parity passes windrise --pass Surface`. Reads `~/Esposter/genshin-parity/references/windrise-statue-day.png` and `extracted/windrise/`, our families drawn over the `windrise/surfaces` and `windrise/ground-layers` records. Writes the Surface rows of `scripts/src/services/genshinParity/passes/snapshots/windrise.snapshot.md`, the step-2 tick of [ground detail](/docs/proposals/genshin/ground-detail) and its `waiting:` line, deleted. Bar: the pass completes and writes every Windrise Surface row; the Ground's structure against its gate of 0.0430 is the reading ground detail's third step is decided on, built if it misses and rejected if it holds, so either reading lands.
-
 ## Waiting
 
 - [ ] `[page]` {windrise-oak-shape} needs game-exports, parity-page — **Windrise: the great oak's envelope against its export.** Build first, then run `pnpm -C scripts genshin:parity passes windrise --pass Shape`. Reads the same reference and exports, our oak built from `createTreeSpeciesOptionsMap`'s great oak over the `windrise/oak` record. Writes nothing; prints each family's readings. Bar: the `Oak envelope` outline, depth and normal each within the floor the exports' own halves read beside it, the per-card `Oak` readings diagnostics ([scene derivation](/docs/genshin/scene-derivation), Decisions). — blocked: the crown's and the buried roots' outline is not drawn, so the outline cannot reach its floor.
