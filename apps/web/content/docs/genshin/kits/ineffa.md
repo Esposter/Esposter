@@ -30,5 +30,5 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/ineffa), MIT, at main: the strikes and the charged attack as the index gives them, Cleaning Mode and its shield and Birgitta, Cyclonic Exterminator, the Moonsign Benediction, and the Lunar-Charged passives and constellations not yet built.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ineffa), MIT, at v2.47.2: the strikes and the charged attack as the index gives them, Cleaning Mode and its shield and Birgitta, Cyclonic Exterminator, the Moonsign Benediction, and the Lunar-Charged passives and constellations not yet built.
 - [Hosted game data](/docs/genshin/hosted-game-data): proud skill groups 11631, 11632 and 11639, with the skill-kit record behind her cooldowns and energy cost.

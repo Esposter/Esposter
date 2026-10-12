@@ -205,7 +205,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Razor's Claw and Thunder** — `razor-claw-and-thunder.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits).
 - [ ] **Venti's Skyward Sonnet hold** — `venti-skyward-sonnet.mkv`, waits on [character kits](/docs/proposals/genshin/character-kits).
 - [ ] **Domain entry fade** — `domain-entry.mkv`, waits on [domains](/docs/proposals/genshin/domains).
-- [ ] **World map** — `world-map.mkv`, waits on [world map](/docs/genshin/world-map). Partly found 2026-10-11: https://www.youtube.com/watch?v=gN1IURjDuWo at 0–30 s (`captures/yt-gN1IURjDuWo-world-map.mp4`); still sought: a waypoint chosen on the map and Teleport pressed on the panel it opens; the zoom slider ends are only shown as the map zooms.
+- [ ] **World map** — `world-map.mkv`, waits on [world map](/docs/genshin/world-map). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Abyss chamber clock** — `spiral-abyss-chamber.mkv`, waits on [spiral abyss](/docs/proposals/genshin/spiral-abyss).
 - [ ] **Abyss floor five halves** — `spiral-abyss-two-halves.mkv`, waits on [spiral abyss](/docs/proposals/genshin/spiral-abyss).
 - [ ] **Interaction reach** — `interaction-reach.mkv`, waits on [interaction](/docs/genshin/interaction).
@@ -213,7 +213,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Pickup list** — `pickup-scroll.mkv`, waits on [interaction](/docs/genshin/interaction).
 - [x] `prompt-scroll.mkv` — **Prompt scroll**, found as `captures/yt-UBNImta_dWs-prompt-scroll.mp4` (https://www.youtube.com/watch?v=UBNImta_dWs, 0–25 s), a near one: the 2020 build, with the wheel not run back up. Read by [interaction](/docs/genshin/compute/interaction).
 - [ ] **Prompt selection** — `prompt-select.mkv`, waits on [interaction](/docs/genshin/interaction). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Quest screen** — `quest-open.mkv`, waits on [quests](/docs/proposals/genshin/quests). Partly found 2026-10-11: the wiki's `File:Quest Screen.png`, and the 6.3 Quest Overview showcase `captures/yt-2_e7S_J9yAA-quest-overview.mp4`, J opening the screen over the world about 1.9 seconds in with no quest in progress; still sought: the still shows the screen's layout only; the open, close and tab timings are read off motion, which the still cannot give. The 1080p file is from the 2026 wiki revision.
+- [ ] **Quest screen** — `quest-open.mkv`, waits on [quests](/docs/proposals/genshin/quests). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Multi-objective quest step** — `quest-multi-objective.mkv`, waits on [quests](/docs/genshin/quests).
 - [x] `world-weather-turn.mkv` — **Weather turn**, found as `captures/world-weather-turn.mkv` (https://www.youtube.com/watch?v=MjM6WR-9ijs, 144–175 s), a near one: a thunderstorm over a grassy hill clearing to sun on a fixed camera with no HUD, 1280 by 720 at 29.97 frames a second, rain to about 8 s and clear from about 16 s. Read by [weather](/docs/proposals/genshin/weather).
 - [ ] **Weather schedule** — `world-weather-schedule.mkv`, waits on [weather](/docs/proposals/genshin/weather).
@@ -223,11 +223,11 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Movement** — `world-movement.mkv`, waits on [character controller](/docs/genshin/character-controller).
 - [ ] **Follow camera** — `follow-camera.mkv`, waits on [follow camera](/docs/proposals/genshin/follow-camera).
 - [ ] **Photo mode range** — `photo-mode-range.mkv`, waits on [follow camera](/docs/proposals/genshin/follow-camera).
-- [ ] **Dialogue auto-skip** — `dialogue-auto-skip.mkv`, waits on [dialogue](/docs/genshin/dialogue). Partly found 2026-10-11: https://www.youtube.com/watch?v=uGtyP02Ie2Q at 0–40 s (`captures/yt-uGtyP02Ie2Q-0-40.mp4`); still sought: skip being pressed, with its look and keys. No source in the clip shows the Skip button pressed. No still of a talk with Skip pressed: the Dialogue, Auto Play and Settings articles have no whole-screen image. Also still sought: a line with no voice-over held whole under auto-play until the next begins, for its hold. Searched 2026-10-11 on YouTube: PM26QZHjraQ's lines under auto-play are Katheryne's voiced ones, y53hoUs8MK0's are clicked through, each made whole and gone within a fifth of a second, and 7WzdUObSfII shows the mobile setting for talk bubbles.
+- [ ] **Dialogue auto-skip** — `dialogue-auto-skip.mkv`, waits on [dialogue](/docs/genshin/dialogue). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Camp wake** — `world-camp.mkv`, waits on [enemies](/docs/genshin/enemies).
 - [ ] **Traveler's attacks** — `world-attacks.mkv`, waits on [combat](/docs/proposals/genshin/combat).
-- [ ] **Quit prompt** — `menu-quit-prompt.mkv`, waits on [menu quit prompt](/docs/proposals/genshin/menu-quit-prompt). Searched 2026-10-11 on the wiki, YouTube and Bilibili with "genshin impact how to exit game PC", "genshin impact quit game paimon menu", "genshin impact exit game button PC paimon menu logout", "genshin impact 'exit to desktop' continue game", "genshin impact exit to login interface", "genshin impact how to quit game 2025", "genshin impact how to log out PC 2025", "genshin impact switch account PC 2026", "genshin impact exit to desktop button" and "原神 退出游戏 返回登录界面", none found with the current three buttons. The nearest is https://www.youtube.com/watch?v=kIDee7nyD0w at 26–28 s (`captures/yt-kIDee7nyD0w-menu-quit-prompt.mp4`), the 2024 build's prompt with two buttons, a whole frame at 1080p and 30 frames a second.
-- [ ] **Paimon menu, current build** — `menu-paimon-current.png`, waits on [Paimon menu](/docs/proposals/genshin/menu-paimon). Partly found 2026-10-11: the wiki's `File:Paimon Menu Version 1.3.png`; still sought: A current-build Paimon menu at 1080 high with no screen open. The still is the 1.3 build, which lacks the entries the current build adds.
+- [ ] **Quit prompt** — `menu-quit-prompt.mkv`, waits on [menu quit prompt](/docs/proposals/genshin/menu-quit-prompt). Searched 2026-10-11, none found: the searches are on [the Paimon menu's compute page](/docs/genshin/compute/paimon).
+- [ ] **Paimon menu, current build** — `menu-paimon-current.png`, waits on [Paimon menu](/docs/proposals/genshin/menu-paimon). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Character screen** — `menu-character.mkv`, waits on [character screen](/docs/proposals/genshin/character-screen).
 - [ ] **Profile tab** — `character-profile.png`, waits on [character screen](/docs/proposals/genshin/character-screen).
 - [ ] **Mobile touch controls** — `mobile-touch.png`, waits on [touch controls](/docs/genshin/touch-controls).
@@ -261,12 +261,12 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Campfire elements** — `campfire-elements.mkv`, waits on [cooking](/docs/proposals/genshin/cooking).
 - [ ] **Forge order queue** — `forge-order-queue.mkv`, waits on [forging](/docs/proposals/genshin/forging).
 - [ ] **Forge refusal** — `forge-refusal.mkv`, waits on [forging](/docs/proposals/genshin/forging).
-- [ ] **Achievements screen** — `achievements-screen.mkv`, waits on [achievements](/docs/proposals/genshin/achievements). Partly found 2026-10-11: the wiki's `File:Achievements.png`; still sought: A video of the Achievements screen opened from the Paimon menu on a category with a finished achievement and one with none, 20 seconds at most. The still is 1600x878 and older, with no hidden row in view.
+- [ ] **Achievements screen** — `achievements-screen.mkv`, waits on [achievements](/docs/proposals/genshin/achievements). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Realm stores fill** — `realm-store-start.png`, `realm-store-hour.png`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot).
 - [ ] **Trust queues** — `trust-queues.mkv`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot).
 - [ ] **Realm load** — `realm-load.png`, waits on [Serenitea Pot](/docs/proposals/genshin/serenitea-pot).
-- [ ] **Archive screen** — `archive-screen.mkv`, waits on [Archive](/docs/proposals/genshin/archive). Partly found 2026-10-11: the wiki's `File:Archive Menu Home 1.png`; still sought: A video of the Archive opened from the Paimon menu with a section's tab and one open entry in view, 30 seconds at most. The still is the Archive's home, not an open section.
-- [ ] **Book reader** — `book-reader.mkv`, waits on [Archive](/docs/proposals/genshin/archive). Partly found 2026-10-11: the wiki's `File:Archive Menu Books.png`; still sought: A video of a book opened from the Archive's Books tab, its title and a page in view, 30 seconds at most. The still gives the reader's places and look, not its motion.
+- [ ] **Archive screen** — `archive-screen.mkv`, waits on [Archive](/docs/proposals/genshin/archive). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
+- [ ] **Book reader** — `book-reader.mkv`, waits on [Archive](/docs/proposals/genshin/archive). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Japanese launch** — `japanese-launch.mkv`, waits on [localized opening](/docs/proposals/genshin/localized-opening).
 - [ ] **Korean launch** — `korean-launch.mkv`, waits on [localized opening](/docs/proposals/genshin/localized-opening).
 

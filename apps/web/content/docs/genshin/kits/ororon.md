@@ -31,4 +31,4 @@ Ororon's kit is its record and one behaviour module, `createOroronKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/ororon), MIT, at main: Ororon's strikes' hitmarks and cancels, the Aimed Shot's and the Spirit Orb's frames, Dark Voices' Echo's ritual, soundwave and field, and Ascension 4's and Constellations 2 and 4's values.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ororon), MIT, at v2.47.2: Ororon's strikes' hitmarks and cancels, the Aimed Shot's and the Spirit Orb's frames, Dark Voices' Echo's ritual, soundwave and field, and Ascension 4's and Constellations 2 and 4's values.

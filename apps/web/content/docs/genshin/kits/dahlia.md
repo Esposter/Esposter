@@ -31,5 +31,5 @@ The framework holds no Benison stacks and no attack-speed buff for the party, so
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/dahlia), MIT, at main: the strikes' and the charged attack's hitmarks, cancels and reaches, the skill's tap and hold, the burst and its shield, and the Benison and attack-speed states the hooks wait on.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dahlia), MIT, at v2.47.2: hitmarks, cancels and reaches for the strikes and the charged attack, the skill's tap and hold, the burst and its shield, and the Benison and attack-speed states the hooks wait on.
 - [Hosted game data](/docs/genshin/hosted-game-data): the proud skill groups 11531, 11532 and 11539 and the skill-kit record.

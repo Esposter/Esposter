@@ -24,7 +24,6 @@ Skirk's kit is its record and one behaviour module, `createSkirkKitBehaviour`, o
 - **Havoc: Extinction's bonus is not built.** Its next ten normal attacks gain DMG Bonus from the void rifts absorbed when it was cast, for 12.5 seconds, and it waits on the rifts.
 - **The Seven-Phase Flash's plunges are not built.** gcsim gives the stance its own plunge multipliers, at the skill group's indices 9 to 11, and `KitStance` holds no plunge to play in place of the kit's.
 - **Constellations 1, 2, 4 and 6 stay unbuilt.** Constellation 1 hits 5 times when a void rift is absorbed, Constellation 2 adds 10 points and 70% ATK to the Seven-Phase Flash, Constellation 4 raises ATK by Ascension 4's stacks, and Constellation 6 strikes on each normal attack in the stance while it holds rifts. They wait on the rifts and points above.
-- **Constellations 3 and 5 are not built.** Their talent levels are the index's gap, so the kit reads each group at its start level.
 - **Ascension 1 and 4 are not built.** Ascension 1 makes the void rifts above, and Ascension 4 gives ATK by the stacks of a Hydro or Cryo party member's hits on an enemy, which no kit event reports.
 - **The talent passive is not built.** A team of only Hydro and Cryo members with both present sets gcsim's passive tag on each of them, a tag no kit reads yet, so the passive waits on a party-wide tag the members' hits read.
 

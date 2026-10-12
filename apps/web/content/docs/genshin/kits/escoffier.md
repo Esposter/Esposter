@@ -30,10 +30,10 @@ The framework holds no way for an enemy's status to read the party's elements, a
 
 ## Key files
 
-| File                                                                 | Role                                                                                                                   |
-| :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/escoffierKit.ts` | `createEscoffierKitBehaviour`, Escoffier's kit as built, with the Cryo RES shred and her constellations on their hooks |
+| File                                                                 | Role                                                                                                                     |
+| :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/escoffierKit.ts` | `createEscoffierKitBehaviour`, Escoffier's kit as built, with the Cryo RES shred and her constellations waiting on hooks |
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/escoffier), MIT, at main: the strikes' and the charged attack's hitmarks, cancels and reaches, the plunges, Low-Temperature Cooking with Frosty Parfait and the Surging Blade, Scoring Cuts, Rehab Diet and the constellations.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/escoffier), MIT, at v2.47.2: the hitmarks, cancels and reaches of the strikes and the charged attack, the plunges, Low-Temperature Cooking with Frosty Parfait and the Surging Blade, Scoring Cuts, Rehab Diet and the constellations.

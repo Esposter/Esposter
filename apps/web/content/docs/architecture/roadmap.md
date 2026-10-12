@@ -5,7 +5,7 @@ description: Open cross-cutting work — each item a decision or a feature the b
 
 # Roadmap
 
-Open work for the cross-cutting standards on this section, each item a decision or a feature. Ideas parked behind a revisit trigger live in [deferred](/docs/architecture/deferred) instead.
+Open work for the cross-cutting standards on this section, each item a decision or a feature. An idea waiting on a revisit trigger is parked in [deferred](/docs/architecture/deferred).
 
 ## Open
 
