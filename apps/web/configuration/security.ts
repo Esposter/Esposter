@@ -81,6 +81,6 @@ export const security: NuxtConfig["security"] = {
   },
   rateLimiter: false,
   requestSizeLimiter: { maxRequestSizeInBytes: MAX_REQUEST_SIZE, maxUploadFileRequestInBytes: MAX_FILE_REQUEST_SIZE },
-  // The module has no XSS validator: its filter rejects ordinary text a message carries and passes a script once
-  // `escapeHtml` is off, as the `xss` filter measured before the app stopped depending on it. Rich text is sanitised at its Zod boundary instead
+  // The module has no XSS validator: its filter rejects ordinary text a message carries, and passes a script once
+  // `escapeHtml` is off. Rich text is sanitised at its Zod boundary instead
 };

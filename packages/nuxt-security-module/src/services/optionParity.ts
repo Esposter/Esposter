@@ -150,7 +150,7 @@ export const OPTION_PARITY: OptionParity[] = [
   },
   { note: "Same default: off", ours: "strict", upstream: "strict", verdict: OptionParityVerdict.Ported },
   {
-    note: "The module has no XSS validator. Its filter rejects ordinary text and passes a script once `escapeHtml` is off, as the app measured it while it depended on `xss`. OWASP's XSS Prevention Cheat Sheet calls for output encoding rather than input filtering, and rich text is sanitised at its Zod boundary, which owns it",
+    note: "The module has no XSS validator. Its filter rejects ordinary text and passes a script once `escapeHtml` is off. OWASP's XSS Prevention Cheat Sheet calls for output encoding rather than input filtering, and rich text is sanitised at its Zod boundary, which owns it",
     upstream: "xssValidator",
     verdict: OptionParityVerdict.OutOfScope,
   },
