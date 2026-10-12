@@ -11,6 +11,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { ELECTRO_REACTION_TYPES } from "#src/services/kit/constants";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
@@ -25,17 +26,6 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 const UNDONE_BE_THY_SINFUL_HEX_ASCENSION = 4;
 const THUNDERING_RETRIBUTION_COOLDOWN_STATUS_ID = "fischl-thundering-retribution-cooldown";
 const THUNDERING_RETRIBUTION_COOLDOWN_SECONDS = 0.5;
-// The reactions that are Electro-related whatever element they swirl or crystallize, as the wiki counts Quicken and
-// Aggravate and not Spread. https://genshin-impact.fandom.com/wiki/Undone_Be_Thy_Sinful_Hex
-const ELECTRO_REACTION_TYPES = new Set<ReactionType>([
-  ReactionType.Aggravate,
-  ReactionType.ElectroCharged,
-  ReactionType.Hyperbloom,
-  ReactionType.Overloaded,
-  ReactionType.Quicken,
-  ReactionType.Superconduct,
-]);
-
 // Gaze of the Deep, from one constellation: while Oz is not on the field, each of Fischl's normal attacks fires a
 // Coordinated attack along with it. https://genshin-impact.fandom.com/wiki/Gaze_of_the_Deep
 const GAZE_OF_THE_DEEP_CONSTELLATION = 1;

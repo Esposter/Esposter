@@ -14,6 +14,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { ELECTRO_REACTION_TYPES } from "#src/services/kit/constants";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -58,14 +59,6 @@ const C2_ELECTRO_DAMAGE_BONUS_PER_STACK = 0.1;
 const C4_STATUS_ID = "cyno-c4";
 const C4_STACKS_MAX = 5;
 const C4_ENERGY = 3;
-const C4_REACTION_TYPES: ReadonlySet<ReactionType> = new Set([
-  ReactionType.Aggravate,
-  ReactionType.ElectroCharged,
-  ReactionType.Hyperbloom,
-  ReactionType.Overloaded,
-  ReactionType.Quicken,
-  ReactionType.Superconduct,
-]);
 const C6_STATUS_ID = "cyno-c6";
 const C6_ICD_STATUS_ID = "cyno-c6-icd";
 const C6_SECONDS = 8;
@@ -97,7 +90,7 @@ const findJudicationField = (effects: readonly KitEffect[], characterId: number)
       effect.kind === "field" && effect.characterId === characterId && effect.id === JUDICATION_FIELD_ID,
   );
 const checkIsC4Reaction = ({ element, reactionType }: Reaction): boolean =>
-  C4_REACTION_TYPES.has(reactionType) || (reactionType === ReactionType.Swirl && element === Element.Electro);
+  ELECTRO_REACTION_TYPES.has(reactionType) || (reactionType === ReactionType.Swirl && element === Element.Electro);
 
 export const CYNO_CHARACTER_ID = 10_000_071;
 
