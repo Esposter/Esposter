@@ -1,5 +1,5 @@
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
-import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
+import type { AchievementName, UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
 import { achievementPointsSummation } from "#server/services/achievement/achievementPointsSummation";
 import { buildPointsLeaderboard } from "#server/services/achievement/buildPointsLeaderboard";
@@ -10,6 +10,7 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { readUserAchievementsInputSchema } from "#shared/models/db/achievement/ReadUserAchievementsInput";
 import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
+import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { HIDDEN_ACHIEVEMENT_DESCRIPTION } from "#shared/services/achievement/constants";
 import {
   achievementsInAchievement,
@@ -46,6 +47,29 @@ export const achievementRouter = router({
         },
       ]),
     ) as typeof AchievementDefinitionMap;
+  }),
+  // The share of registered users who have unlocked each achievement, as a percentage. Every definition is keyed, so
+  // One nobody has earned reads 0 rather than being absent
+  readAchievementRarities: standardRateLimitedProcedure.query<Record<AchievementName, number>>(async ({ ctx }) => {
+    const [{ totalUsers }] = await ctx.db.select({ totalUsers: count() }).from(usersInAuth);
+    const unlockCounts = await ctx.db
+      .select({ achievementName: achievementsInAchievement.name, unlockCount: count() })
+      .from(userAchievementsInAchievement)
+      .innerJoin(
+        achievementsInAchievement,
+        eq(achievementsInAchievement.id, userAchievementsInAchievement.achievementId),
+      )
+      .where(isNotNull(userAchievementsInAchievement.unlockedAt))
+      .groupBy(achievementsInAchievement.name);
+    const unlockCountMap = new Map(
+      unlockCounts.map(({ achievementName, unlockCount }) => [achievementName, unlockCount]),
+    );
+    return Object.fromEntries(
+      achievementDefinitions.map(({ name }) => [
+        name,
+        ((unlockCountMap.get(name) ?? 0) / Math.max(totalUsers, 1)) * 100,
+      ]),
+    ) as Record<AchievementName, number>;
   }),
   readPointsLeaderboard: standardRateLimitedProcedure.query<PointsLeaderboard>(async ({ ctx }) => {
     const userTotals = await ctx.db

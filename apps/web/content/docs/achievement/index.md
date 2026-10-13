@@ -14,6 +14,6 @@ Achievements reward activity across every Esposter product — posts, likes, mes
 - **Conditions** — an optional predicate tree evaluated against the mutation's raw input: `Property` (dot-path + binary operators / regex / palindrome / custom `Operation` callback), `Time` windows read in the sender's own time zone, composed with `And`/`Or`. This is what powers input-dependent achievements ("50 comments under 50 characters") and the games' save-payload milestones ([clicker](/docs/clicker/game-loop-and-saves), [dungeons](/docs/dungeons/saves-and-settings)).
 - **Hidden achievements** — `isHidden` definitions read as `???` until the viewer unlocks them.
 
-See [unlock pipeline](/docs/achievement/unlock-pipeline) for how a mutation becomes a toast, and [points leaderboard](/docs/achievement/points-leaderboard) for the global ranking by total unlocked points.
+See [unlock pipeline](/docs/achievement/unlock-pipeline) for how a mutation becomes a toast, and [points leaderboard](/docs/achievement/points-leaderboard) for the global ranking by total unlocked points, and [rarity](/docs/achievement/rarity) for the share of users who have unlocked each one.
 
 Open work: [roadmap](/docs/achievement/roadmap). Decided ideas: [rejected](/docs/achievement/rejected).

@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockUser, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
@@ -14,10 +14,12 @@ import {
   roomsInMessage,
   SpecialAchievementName,
   UserAchievementInAchievementRelations,
+  usersInAuth,
   WebpageAchievementName,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
+import { count } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("achievementRouter", () => {
@@ -117,6 +119,23 @@ describe("achievementRouter", () => {
     expect(leaderboardEntry.user.id).toBe(getMockSession().user.id);
     expect(leaderboardEntry.rank).toBe(1);
     expect(leaderboard.myEntry).toStrictEqual(leaderboardEntry);
+  });
+
+  test("readAchievementRarities reports the share of users who have unlocked each achievement", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.webpage.createResource({ name });
+    await caller.webpage.saveResourceContent({
+      content: new WebpageEditor(),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await createMockUser(mockContext.db);
+    const [{ totalUsers }] = await mockContext.db.select({ totalUsers: count() }).from(usersInAuth);
+    const achievementRarities = await caller.achievement.readAchievementRarities();
+
+    expect(achievementRarities[WebpageAchievementName.WebDeveloper]).toBe((1 / totalUsers) * 100);
+    expect(achievementRarities[SpecialAchievementName.EmojiLover]).toBe(0);
   });
 
   test("onUpdateAchievement emits every achievement the save moved", async () => {

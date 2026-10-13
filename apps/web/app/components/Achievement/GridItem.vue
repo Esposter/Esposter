@@ -2,17 +2,21 @@
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
+import { RARE_ACHIEVEMENT_THRESHOLD } from "@/services/achievement/constants";
 import { prettify } from "@/util/text/prettify";
 
 interface Props {
   achievementDefinition: AchievementDefinitionEntry;
+  // The share of registered users who have unlocked it, as a percentage, once the rarity read has landed
+  rarity?: number;
   userAchievement?: UserAchievementWithDefinition;
 }
 
-const { achievementDefinition, userAchievement } = defineProps<Props>();
+const { achievementDefinition, rarity, userAchievement } = defineProps<Props>();
 const displayName = computed(() => prettify(achievementDefinition.name));
 const amount = computed(() => userAchievement?.amount ?? 0);
 const targetAmount = computed(() => achievementDefinition.amount ?? 1);
+const isRare = computed(() => rarity !== undefined && rarity < RARE_ACHIEVEMENT_THRESHOLD);
 </script>
 
 <template>
@@ -39,6 +43,9 @@ const targetAmount = computed(() => achievementDefinition.amount ?? 1);
       </div>
     </div>
     <p text-muted>{{ achievementDefinition.description }}</p>
+    <p v-if="rarity !== undefined" text-sm text-muted>
+      {{ Math.round(rarity * 10) / 10 }}% of users<span v-if="isRare" text-warning> · Rare</span>
+    </p>
     <div flex-1 />
     <p v-if="userAchievement?.unlockedAt" text-sm text-success>
       Unlocked <NuxtTime :datetime="userAchievement.unlockedAt" day="numeric" month="numeric" year="numeric" />
