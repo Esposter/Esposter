@@ -1,3 +1,4 @@
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser } from "@esposter/db-schema";
 
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
@@ -21,9 +22,15 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a
   // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
   // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
-  const { getSlice, items, ...restData } = useCursorPaginationDataMap<PublicUser>(() => roomStore.scopedRoomId);
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<MemberInRoom>(() => roomStore.scopedRoomId);
+  // Sorted the way the server pages them, on the same display name and id, so a loaded page reads in the order the
+  // Cursor advances through it
   const members = computed(() =>
-    items.value.toSorted((firstMember, secondMember) => EN_US_COMPARATOR.compare(firstMember.name, secondMember.name)),
+    items.value.toSorted(
+      (firstMember, secondMember) =>
+        EN_US_COMPARATOR.compare(firstMember.displayName, secondMember.displayName) ||
+        EN_US_COMPARATOR.compare(firstMember.id, secondMember.id),
+    ),
   );
   // Single source of truth for resolving a member id to its room display name (nickname over global name),
   // Falling back to the raw id for actors/targets no longer in the loaded member list.
