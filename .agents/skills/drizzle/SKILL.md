@@ -10,6 +10,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - **A hand-kept registry, or a test that a registry is complete** — `pnpm registry:gen` writes both from the folders, so a declaration is registered by existing and there is nothing left to check (`references/schema-registration.md`).
 - **A table or an enum in `public`** — every one lives in the schema of the product area that owns it (`references/schemas-and-names.md`).
 - **A table writing its own copy of a column group the others share** — rejected: the user decided parallel tables share their columns ("modularize parallel things... especially if it's similar business logic"). The reason an earlier revision kept each table's block, that a builder carries the first table's identity, is wrong: `setName` names a builder from its key and a built column keeps its builder's config, so the answer is a factory, not a copy (`references/table-definition.md`).
+- **Following `drizzle-kit`'s own skills (`pnpm-drizzle-kit-*`) where they differ from this one** — they describe the tool in general, `push` and CLI-applied migrations included; here `db:gen` is the only generator and the app applies migrations at startup, so where the two disagree this skill wins (`references/migrations.md`).
 - **A bare table export (`rooms`, `users`)** — it collides with a local of the same name, a row type or a library's name (livekit's `Room`, the `UserStatus` enum); the `In<Schema>` suffix is derived, never chosen, and `schema.test.ts` holds it.
 
 ## Deep dives

@@ -8,6 +8,7 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 ## Settled — do not re-propose
 
 - **A rule for the procedure builder** — which of the three a route takes is a policy question about the route's data; the decidable rules are the `trpc-procedure` plugin's (`scripts/src/oxlint/trpcProcedure.ts`).
+- **Following tRPC's own skills (`pnpm-@trpc+*`) where they differ from this one** — they cover every adapter and client setup in general; this repo's server and client wiring is the `trpc-nuxt-module` package's, and where the two disagree this skill wins.
 - **A rule that the client path mirrors the file path** — needs both trees, so it would be a test walking them rather than a lint rule.
 
 ## Deep dives
