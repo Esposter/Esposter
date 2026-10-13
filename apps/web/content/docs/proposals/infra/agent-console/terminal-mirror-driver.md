@@ -40,6 +40,8 @@ packages/agent-console-server/src/services/drivers/terminalMirror/
 ## Notes
 
 - The SDK driver costs nothing only while SDK use stays inside the subscription. That is re-read at every Claude Code billing change, and if it moves, this driver keeps the console free at the price of the controls a channel cannot reach.
+- **Blocked on the channel.** The prompt and verdict path is the [chat channel](/docs/proposals/infra/channel-chat), which is unbuilt: `packages/genshin-persona` has no `.mcp.json` and no channel server, so there is no seam to write a prompt into. The build stops there and the driver is built after that proposal ships.
+- **A channel reaches only a session launched with it.** The channel flag is set on the terminal's invocation, so a session a terminal started without it cannot be pushed into, and "a session a terminal already runs" is true only of sessions started with the flag. The tail half, read-only, does not need the channel and could be built first if the page wants events from unflagged sessions.
 
 ## Sources
 
