@@ -100,6 +100,10 @@ Every session draws on the same Claude account as a person's working session, so
 
 `pnpm -C scripts ai:review --dry-run`, with an optional `--from` and `--to`, prints every window the run plans, with its base and end, and its batches with their file and line counts. It runs no session and pushes nothing, so a plan's size can be checked before a run spends on it.
 
+### Running it by hand
+
+The workflow is a caller, not the only one: `pnpm ai:review` run from a checkout is the same review, and `main` moves the same way. Its sessions are `claude -p` processes, so they spend whichever account Claude Code is logged into on that machine — switching account there is how a run is put on another account's limit — and its fast-forward is a push under the machine's own git credentials, which the owner's role lets past the `ai/**` rulesets. Nothing else changes: a run racing the workflow's is safe, since `main` only ever takes a fast-forward that is never forced, and whichever push is rejected stops advancing for the rest of its run. `--findings-directory` writes each opened issue's findings for `pnpm ai:review:fix`, and `pnpm ai:review:settle` carries the open issues to their terminal states, as the workflow's fix and settle jobs do. A push to `main` by hand, outside any review, is the diverged-main case above: the next run merges it back into `ai/queue`.
+
 ## Sessions and their models
 
 Every session is haiku, and the launcher takes its model from `ReviewSessionRoleModelMap`, so a role's model is one entry in one map. The three roles differ in their mandate, not their model:
