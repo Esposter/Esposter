@@ -11,7 +11,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 - **A root `build:<app>` script per app.** A root script that only delegates to a package is a second definition of the line at the call site; what earns a root script its line is `apps/web/content/docs/architecture/monorepo-tooling.md`, "Recursive script orchestration".
 - **Majoring the published packages because an export was renamed or removed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves every public package to the next whole number; a rename or a removal ships as the `refactor` it is, and a package is kept at its smallest form rather than its oldest surface (`apps/web/content/docs/architecture/no-compatibility-debt.md`).
-- **Splitting the release into a local `lerna version` and a CI publish** through npm's trusted publishing. It buys an attestation nobody here asks for, at the price of a release path in two places and a per-package registration that fails closed on every new package; one script run locally is the whole release (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Lerna Lite").
+- **Publishing a release from a developer's machine.** The release is the nightly `Release.yaml` run: `pnpm release:version` versions on `ai/queue`, and `pnpm release` publishes at the tag through npm's trusted publishing. No person runs either (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Lerna Lite").
 
 ## `apps/web`
 
@@ -19,7 +19,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 ## Root Scripts — `references/root-scripts.md`
 
-`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's, `references/running-the-suite.md`), `build:packages` for the libraries as a set, `pnpm release` for the whole release, and `pnpm lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
+`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's, `references/running-the-suite.md`), `build:packages` for the libraries as a set, `pnpm release:version` and `pnpm release` for the nightly release CI runs, and `pnpm lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
 
 ## A `.ts` script runs under `node` where it can, `tsx` where it cannot — `references/typescript-scripts.md`
 
