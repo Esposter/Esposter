@@ -1,8 +1,9 @@
 name: 🚀 Release
 
-# The nightly release. `version` versions and tags the day's merges on ai/queue and pushes the commit and its tag, `npm` publishes
-# the tagged packages through trusted publishing, and `release` makes the GitHub release that `host-installer` and `publish`
-# complete. A night with no commit since the last tag is skipped by `check`, and every later job is skipped with it.
+# The nightly release, of main: only what a review has passed ships. `version` versions and tags main's new commits and pushes
+# the commit and its tag to main, then starts a review run, whose diverged-main step merges the version commit into ai/queue.
+# `npm` publishes the tagged packages through trusted publishing, and `release` makes the GitHub release that `host-installer`
+# and `publish` complete. A night with no commit on main since the last tag is skipped by `check`, and every later job with it.
 on:
   schedule:
     # Nightly, at 15:16 UTC
@@ -26,7 +27,7 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ai/queue
+          ref: main
           fetch-depth: 0
           persist-credentials: false
 
@@ -41,8 +42,8 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # The push goes through the collector's token, not the workflow's: `one-writer refs` rules out the workflow token on `ai/**`.
-  # Mirrors the fix jobs of `Review.yaml`, which push to ai/queue the same way
+  # The push goes through the collector's token, not the workflow's: main's ruleset lets only the Admin role update it, the
+  # Role the review's fast-forward pushes with
   version:
     name: Version and tag
     needs: check
@@ -56,7 +57,7 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ai/queue
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           persist-credentials: false
@@ -78,8 +79,9 @@ jobs:
       - name: 🏷️ Version
         run: pnpm release:version
 
-      # Lerna tagged the version commit before the push, so after a rebase the tag is re-pointed at the rebased commit. A
-      # conflicting rebase fails the step, since only the commit's author can settle it
+      # Lerna tagged the version commit before the push, so after a rebase onto a main the review has just moved, the tag is
+      # Re-pointed at the rebased commit. A conflicting rebase fails the step, since only the commit's author can settle it.
+      # Once pushed, a review run is started, which finds main diverged and merges it into ai/queue
       - name: 📤 Push the version
         id: push
         env:
@@ -88,15 +90,16 @@ jobs:
           gh auth setup-git
           tag="$(git describe --tags --abbrev=0)"
           for attempt in 1 2 3 4 5; do
-            git pull --rebase origin ai/queue
+            git pull --rebase origin main
             git tag -fa "$tag" -m "$tag"
-            if git push origin HEAD:ai/queue && git push origin "refs/tags/$tag"; then
+            if git push origin HEAD:main && git push origin "refs/tags/$tag"; then
               echo "tag=$tag" >> "$GITHUB_OUTPUT"
+              gh workflow run Review.yaml --ref ai/queue --repo "$GITHUB_REPOSITORY"
               exit 0
             fi
-            echo "Push attempt $attempt was rejected, retrying on the new tip of ai/queue." >&2
+            echo "Push attempt $attempt was rejected, retrying on the new tip of main." >&2
           done
-          echo "Could not push $tag to ai/queue after 5 attempts." >&2
+          echo "Could not push $tag to main after 5 attempts." >&2
           exit 1
 
   # Publishes at the tag `version` pushed, so the packages on npm are the tree the tag names. No NPM_TOKEN: lerna-lite exchanges

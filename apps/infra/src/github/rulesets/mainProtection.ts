@@ -2,11 +2,11 @@ import GitHubAdminRepositoryRoleBypassActor from "#src/github/constants/GitHubAd
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
-// `main` is the reviewed prefix of `ai/queue`, moved only by the review workflow's fast-forward push, which runs
-// As the Admin repository role through `REVIEW_COLLECTOR_TOKEN`. Nothing else writes it: no pull request targets
-// `main`, so there is no pull request rule, and Renovate, which lands on `ai/queue`, is no bypass actor. A
-// Ruleset cannot name an individual user, so the Admin role is the only bypass. `deletion` and `nonFastForward`
-// Keep `main` an ancestor of `ai/queue`, which the review's fast-forward needs.
+// `main` is the reviewed prefix of `ai/queue`, moved by the review workflow's fast-forward push and by the nightly
+// Release's version commit, both as the Admin repository role through `REVIEW_COLLECTOR_TOKEN`; the release then starts a
+// Review run, which merges that commit back into `ai/queue`. Nothing else writes it: no pull request targets `main`, so
+// There is no pull request rule, and Renovate, which lands on `ai/queue`, is no bypass actor. A Ruleset cannot name an
+// Individual user, so the Admin role is the only bypass. `deletion` and `nonFastForward` keep `main`'s history whole.
 // Required status checks live in queueStatusChecks, not here: bypass is granted per ruleset and never per rule.
 export const mainProtection: github.RepositoryRuleset = new github.RepositoryRuleset(
   "mainProtection",
