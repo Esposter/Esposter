@@ -2,8 +2,9 @@ import type { Meta } from "#server/models/trpc/Meta";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
 
 import { getMcpTools } from "#server/services/mcp/getMcpTools";
+import { publicProcedure, router } from "#server/trpc";
 import { trpcRouter } from "#server/trpc/routers";
-import { McpScopes } from "#shared/models/auth/McpScope";
+import { McpScope, McpScopes } from "#shared/models/auth/McpScope";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -59,6 +60,19 @@ describe(getMcpTools, () => {
         ],
       }
     `);
+  });
+
+  // A procedure the owner alone performs is never a tool, even one that also declares its scope
+  test("never lists a human-only procedure", () => {
+    expect.hasAssertions();
+
+    const humanOnlyRouter = router({
+      purge: publicProcedure
+        .meta({ humanOnly: "Nothing restores it", mcp: { description: "Purge", scope: McpScope.Resources } })
+        .mutation<void>(() => undefined),
+    });
+
+    expect(getMcpTools(humanOnlyRouter)).toStrictEqual([]);
   });
 
   // Turning the dots to underscores would merge `a_b.c` with `a.b_c`, and a client lists the one name twice

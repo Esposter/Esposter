@@ -9,7 +9,7 @@ A Claude Code session, or any other MCP client, reaches Esposter through one end
 
 ## Opting a procedure in
 
-The tRPC root declares a meta type with one optional key, and a procedure that should be a tool says so:
+The tRPC root declares a meta type whose optional `mcp` key makes a procedure a tool, and a procedure that should be a tool says so:
 
 ```ts
 readThings: standardAuthedProcedure
@@ -66,6 +66,7 @@ A key reaches only the kinds of work it was made for. `McpScope` holds them — 
 - **A key's scopes are its better-auth permissions**, the plugin's per-key record of resource to actions, kept as `{ mcp: [...] }`. The plugin sets permissions only from the server, so a key is created by `user.createApiKey`, which calls the plugin's `createApiKey` with the scopes the owner ticked and the caller's own id. A key with no scope is refused at the input, since it would reach nothing.
 - **Deny by default.** The route reads the verified key's permissions through `getApiKeyScopes`, which answers the scopes only when the record parses as this app writes it. No permissions, an unknown scope or any other shape reads as none, so a key made by the plugin's own create route, which takes no permissions from a client, reaches no tool.
 - **Checked in one place.** `createMcpServer` keeps only the tools of the key's scopes, for listing and for calling alike, and every call an agent makes passes through it. A tool outside them is not listed, and calling it by name is the same unknown-tool error as a name that was never a tool, so a key learns nothing of what lies beyond its scopes. The procedure's own guards run after, as for the browser: a key reaches only its owner's resources however its scopes read.
+- **The owner's alone.** A procedure whose reversal nothing can undo declares `humanOnly` beside its meta, with the reason it is never served. `getMcpTools` skips it whatever `mcp` says, so it is never a tool and never callable by name. Publishing and moving to the recycle bin stay agent tools, since a revision, the bin or an unpublish can undo them.
 
 ## Attribution
 

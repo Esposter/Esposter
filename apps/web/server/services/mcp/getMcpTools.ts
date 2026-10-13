@@ -12,8 +12,8 @@ import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 export const getMcpTools = (router: AnyRouter): McpTool[] =>
   Object.entries<AnyProcedure>(router._def.procedures).flatMap(([path, { _def }]) => {
     // A built procedure types its meta as unknown; the root declares it as `Meta`
-    const { mcp } = (_def.meta ?? {}) as Meta;
-    if (!mcp || _def.type === "subscription") return [];
+    const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
+    if (!mcp || humanOnly || _def.type === "subscription") return [];
     // One object input, defaulted or not, which `getMcpTools.test.ts` holds for every procedure that opts in, since a
     // Tool's input schema must be an object
     const [input] = _def.inputs;

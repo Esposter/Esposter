@@ -26,12 +26,16 @@ import { createEntity, getEntity, getEntityWithEtag, updateEntity } from "@espos
 import { AzureEntityType, AzureTable, ResourceType, SurveyResponseEntity } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
+// A respondent's procedures answer for the person filling the survey in, never for the owner acting on it
+const RESPONDENT_PROCEDURE_REASON = "A respondent's procedure, not the owner's act";
+
 export const surveyRouter = router({
   // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
   // See ResourceDefinitionMap
   ...createResourceProcedures(ResourceType.Survey, { transformPublishedContent: transformPublishedBlobUrls }),
   createSurveyResponse: slowRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
+    .meta({ humanOnly: RESPONDENT_PROCEDURE_REASON })
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
       const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(
         ctx.db,
@@ -43,16 +47,17 @@ export const surveyRouter = router({
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
-  deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id").mutation<void>(
-    async ({ ctx, input: { rowKey } }) => {
+  deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id")
+    .meta({ humanOnly: "Deletes a respondent's answer outright, data the owner holds on someone else's behalf" })
+    .mutation<void>(async ({ ctx, input: { rowKey } }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       // Existence is proven before deleting so a second delete of the same key errors rather than silently passing
       await requireSurveyResponse(surveyResponseClient, ctx.resource.id, rowKey);
       await surveyResponseClient.deleteEntity(ctx.resource.id, rowKey);
-    },
-  ),
+    }),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
+    .meta({ humanOnly: RESPONDENT_PROCEDURE_REASON })
     .query<SurveyResponseEntity | undefined>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
       const resolvedParticipantToken = await resolveSurveyResponseRead(ctx.db, partitionKey, participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
@@ -80,6 +85,7 @@ export const surveyRouter = router({
   ).query<ReadSurveyResponsesCountResult>(({ ctx }) => readSurveyResponsesCount(ctx.resource.id)),
   updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
+    .meta({ humanOnly: RESPONDENT_PROCEDURE_REASON })
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
       const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(
         ctx.db,

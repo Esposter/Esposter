@@ -150,8 +150,9 @@ export const resourceRouter = router({
       return newResource;
     },
   ),
-  purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true).mutation<ResourceInResource>(
-    async ({ ctx, input: { id } }) => {
+  purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true)
+    .meta({ humanOnly: "The one delete nothing restores, so the owner alone performs it" })
+    .mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
       // Purge is the only place these partitions are destroyed, since delete is soft
       const tableClients = await Promise.all(
@@ -166,8 +167,7 @@ export const resourceRouter = router({
         title: ResourceOperationTitleMap[ResourceOperationType.Purged](ctx.resource.name),
       });
       return ctx.resource;
-    },
-  ),
+    }),
   readActivities: getOwnerProcedure(undefined, readActivitiesInputSchema, "id").query<
     CursorPaginationData<ResourceActivityEntity>
   >(async ({ input: { cursor, id, limit } }) => {
