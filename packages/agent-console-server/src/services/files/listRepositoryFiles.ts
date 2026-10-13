@@ -1,6 +1,6 @@
 import { REPOSITORY_WALK_IGNORED_NAMES } from "#src/services/files/constants";
 import { getResultAsync } from "@esposter/shared";
-import { execFile } from "node:child_process";
+import { execFile } from "@esposter/shared-node/child-process";
 import { readdir } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
 import { promisify } from "node:util";
