@@ -98,7 +98,7 @@ Ship this only alongside those, or not at all — a paid tier without a way out 
 
 Price and packaging are not settled here and should not be: the mechanism is one map from tier to allowance, so the number of tiers and what each holds is a product decision that costs one line each to change.
 
-The provider secret is the first credential in the repo whose leak has a direct financial consequence, which makes it a keyless-auth-shaped concern rather than an ordinary env var ([keyless auth hardening](/docs/proposals/infra/keyless-auth-hardening)).
+The provider secret is the first credential in the repo whose leak has a direct financial consequence, so it is held in Key Vault with the other keys rather than in an ordinary env var, the stance [keyless auth hardening](/docs/infra/rejected/keyless-auth-hardening) was rejected to keep.
 
 ## Sources
 

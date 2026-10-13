@@ -31,7 +31,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 ## A04 Cryptographic Failures
 
 - Is a secret or bearer token (a webhook token, a share id) made from a cryptographic source, never `Math.random`, and is it compared as a whole value?
-- Does a credential reach the code through the secret store, never a literal or a committed env file (the `pulumi-infra` skill, and `apps/web/content/docs/proposals/infra/keyless-auth-hardening.md` for where it is heading)?
+- Does a credential reach the code through the secret store, never a literal or a committed env file (the `pulumi-infra` skill, and `apps/web/content/docs/infra/rejected/keyless-auth-hardening.md` for why keys stay in configuration and Key Vault)?
 - Is a signed url short-lived and scoped to one blob (`apps/web/content/docs/architecture/file-uploads.md`)?
 
 ## A05 Injection

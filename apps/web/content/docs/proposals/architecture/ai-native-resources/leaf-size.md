@@ -12,10 +12,10 @@ Built on the [agent content tools](/docs/architecture/agent-content-tools), whos
 
 **Today:** a value at the pointer that is a plain object or an array past the cap is answered its members' sizes (an object by key, a page by index). Any other value past the cap is answered `memberSizes: {}`.
 
-**This adds**, once the shape is decided:
+**This adds:**
 
 1. **A size for a leaf** — the result of a read past the cap at a non-container pointer carries the value's JSON size, so the reply names what it withheld rather than an empty set of members.
-2. **The contract** — the decision is the field's name and whether a string's `length` joins its size, on the agent-facing `ReadResourceContentResult` and in the tool's description, since an agent reads both.
+2. **The contract** — the agent-facing field is `size`, the singular of the existing `memberSizes`, on a leaf's `ReadResourceContentResult` and in the tool's description, since an agent reads both. A string's length counts toward its size, because the size is what an agent pays to read the value.
 
 Once the field exists, the test file gains a case for the leaf's answer, beside the object and array cases; no test pins the empty answer today.
 
@@ -30,5 +30,5 @@ Once the field exists, the test file gains a case for the leaf's answer, beside 
 
 ## Notes
 
-- Raised by a review of the read's answers; recorded rather than fixed because the result's shape is an agent-facing contract, which is a decision and not a mechanical fix.
+- The field's shape is settled as above: `size` beside the existing `memberSizes`, a string's length included.
 - A reply that truncates the string instead is rejected: it is the document the read refuses to hand over whole.

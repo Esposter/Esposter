@@ -17,7 +17,7 @@ Flowchart joins `PortableResourceType` with two export-only formats in `Portable
 - **Background** follows the theme at export time, with the dot grid removed, so a dark-theme export does not arrive as dark boxes on a white page.
 - The file is named after the resource.
 
-The capture uses `html-to-image`, the library Vue Flow's own screenshot example uses. It is a new dependency, so it goes through [dependency admission](/docs/architecture/dependency-admission) in the change that adds it, loaded with a dynamic `import()` inside the export so the editor's own chunk does not grow.
+The capture is not a library. The DOM-to-PNG and DOM-to-SVG capture, with its styles inlined and its fonts embedded, is absorbed by us into the lowest shared package that needs it, as [dependency admission](/docs/architecture/dependency-admission) decides for a dependency this size, so no `html-to-image` is added. If the build finds that capture engine-sized, the proposal is revised with the gate's reason recorded before the build goes further. It is loaded with a dynamic `import()` inside the export so the editor's own chunk does not grow.
 
 ## What is deliberately not in it
 
@@ -32,8 +32,6 @@ The capture uses `html-to-image`, the library Vue Flow's own screenshot example 
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Flowchart declares `portable`                |
 | `apps/web/app/services/resource/PortableFormatMap.ts`           | the PNG and SVG export formats for Flowchart |
 | `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | mounts the export canvas for a Flowchart     |
-| `apps/web/package.json`                                         | gains `html-to-image`                        |
-| `pnpm-workspace.yaml`                                           | the catalog entry for `html-to-image`        |
 
 The files it creates:
 

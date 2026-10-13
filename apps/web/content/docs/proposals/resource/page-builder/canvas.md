@@ -2,9 +2,12 @@
 title: Canvas
 description: Proposal — the page builder's canvas, a same-origin frame that Vue draws the document into, with its overlays, and the pointer, keyboard and layers paths that select and move nodes.
 model: claude-opus-5-5
+waiting: "resource/page-builder/document-model, which defines the typed nodes and patches the canvas draws and edits"
 ---
 
 # Canvas
+
+Built on the [document model](/docs/proposals/resource/page-builder/document-model), which holds the typed nodes the canvas renders and the patches its commands issue.
 
 ## The canvas
 
@@ -56,6 +59,13 @@ flowchart TD
 **Text editing.** Enter on a selected text node, in the tree or the canvas, mounts TipTap on that node inside the frame and moves focus into it; Escape leaves the text and returns focus to the tree row. Inside the text, TipTap's own keys and undo apply; leaving it commits one history entry. Composition and paste are ProseMirror's, which reads an input method's text and pasted markup through its schema rather than through `execCommand` — where GrapesJS's IME and Word-paste defects above come from.
 
 The canvas itself is one tab stop named after the page. With focus in it, Up and Down select the previous and next node in document order, Enter edits, and Escape selects the parent — the same commands as the tree, so neither surface is the only way to do anything.
+
+## Key files
+
+| File                                            | Role after the change                                                                     |
+| :---------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `apps/web/app/composables/ui/useCommands.ts`    | every pointer and keyboard action registered as a command, listed in the shortcuts dialog |
+| `apps/web/app/composables/ui/useContextMenu.ts` | the right-click menu the node toolbar's overflow `Item` list also feeds                   |
 
 ## Sources
 

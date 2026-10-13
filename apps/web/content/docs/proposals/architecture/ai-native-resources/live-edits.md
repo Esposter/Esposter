@@ -10,7 +10,7 @@ model: claude-opus-5-5
 
 ## One subscription for every type
 
-`createResourceProcedures` already generates `onSaveResourceContent` for every type, filtered so a device never hears its own save. The blade shell runs the open resource's through `useResourceRouter` for as long as the resource is open, so a type needs no entry anywhere, and the map and the TodoList's own subscribable go.
+`createResourceProcedures` already generates `onSaveResourceContent` for every type, filtered so a device never hears its own save. One generic subscription, run by the explorer (`Explorer/Index.vue`) for whichever resource is open, serves every type, so a type needs no entry anywhere, and the per-type subscribables go: `ResourceSubscribablesMap` and the TodoList's own `useTodoListSubscribables`.
 
 The stream carries the new content version and the writing device rather than the content. The content is re-read through the reload stage a restore already runs, so a large Sheet arrives by the large-documents path rather than over the socket, and one path adopts whatever wrote the blob.
 
@@ -27,7 +27,7 @@ The TodoList saves each edit as it happens, so it rarely holds an unwritten one,
 An editor holding an unwritten edit overwrites nothing in either direction. The notice comes the moment the other save lands, naming the device — an agent by its key's name from the owner's key list — with two answers:
 
 - **Take theirs** adopts as above and drops the local edit.
-- **Keep mine** saves the local document at the new version, replacing the other write, which stays in version history.
+- **Keep mine** re-saves the local document through the existing save mutation at the newer version, replacing the other write, which stays in version history.
 
 Until it is answered, the store's stale latch holds autosave, as it does after a refused save today. What changes is the timing and the choice: the latch is raised when the other save lands rather than at the person's next save, and a reload that drops their edit is no longer the only way out. After Keep mine, an agent's next pinned patch is stale and it reads again; an unpinned one reapplies over the owner's document under its tests.
 

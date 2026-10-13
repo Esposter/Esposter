@@ -2,9 +2,12 @@
 title: Performance and proof
 description: Proposal — the page builder's performance targets and the tests that hold them, and how the editors' output is proved against the published page, since no saved document exists to compare against.
 model: claude-opus-5-5
+waiting: "resource/page-builder/document-model, which defines the typed nodes and patches the benches and proofs run over"
 ---
 
 # Performance and proof
+
+Built on the [document model](/docs/proposals/resource/page-builder/document-model), whose nodes and patches are what every bench and proof here measures.
 
 ## Performance
 

@@ -18,6 +18,7 @@ Ideas we decided against. Check here before proposing — never re-argue a decid
 - [Console scheduled tasks](/docs/infra/rejected/console-scheduled-tasks) — prompts run on a timer; `/loop` and routines already schedule work, and unattended turns spend the work's limits.
 - [Console customize panel](/docs/infra/rejected/console-customize-panel) — managing connectors, skills and plugins; they are Claude Code's own settings, and the palette already lists them.
 - [Console environment editor](/docs/infra/rejected/console-environment-editor) — the variables a session runs with; it runs in the host's environment, and a store beside it is a second home for secrets.
+- [Keyless auth hardening](/docs/infra/rejected/keyless-auth-hardening) — a service principal in place of the app's keys, so storage shared-key and local auth could be switched off; keyless auth means Entra identity, and that means hosting on Azure, which the app does not do.
 - [CDN in front of Railway](/docs/infra/rejected/cdn-in-front-of-railway) — a CDN proxying the app to cut egress; a second service to run, where compressing our own assets saves most of it.
 - [LiveKit stack trim](/docs/infra/rejected/livekit-stack-trim) — dropping Redis and develop's LiveKit to lower Railway usage; the setup waits on Railway routing UDP, and the saving never reaches the bill.
 - [Console session shortcuts](/docs/infra/rejected/console-session-shortcuts) — the Code tab's keys to start, close and cycle sessions; the browser keeps them, so a page cannot.

@@ -46,6 +46,8 @@ flowchart TD
 2. **The voice**, from the resident synthesizer, once the palette has shipped and the console has a line source.
 3. **The scene and reactions**: the wish banner, then the element ambience, then spatial chat as an option. Each one is built as its own sub-spec.
 
+The element colours are the palette's source, and they live in one place. They move out of `packages/genshin-persona/src/services/ElementColorMap.ts` into [genshin-text](/docs/genshin/game-text), keyed by element: the colour is how the game's interface paints the element's name, which `genshin-text` already owns through `splitGameTextColors`, and the package depends only on `@esposter/shared`, is published, and is already a dependency of the web app. genshin-persona cannot take a workspace dependency, so it takes the map from npm through its own `package-lock`. There is one copy and no duplicate, and the nameplate's colour fallback reads it from there.
+
 The palette is not built yet, so nothing in the console changes and the Genshin theme keeps the avatar alone. The console itself is unmounted while `/genshin` is the game alone, so the palette's look has no place to be judged until that changes; the user's eyes check it then.
 
 ## Key files
@@ -58,6 +60,7 @@ The palette is not built yet, so nothing in the console changes and the Genshin 
 
 ```text
 apps/web/app/components/AgentConsole/Theme/Genshin/
+packages/genshin-text/src/services/ElementColorMap.ts   ← the element colours, keyed by element
 ```
 
 ## Notes
