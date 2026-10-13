@@ -38,37 +38,32 @@ const readOutlineOffset = (
     : { blockBChannel: nameFloatMap.get("_OutlineOffsetBlockBChannel") ?? 0, size: size * 0.01 };
 };
 
-// A material's colours for each region, the region one's by the name the game gives it and the later regions' by its
-// Number after it, the fallback where the material holds none
+// A value for each region, read by the name the game gives it: the region one's by the bare name and the later regions' by
+// Its number after it
+const readRegionValues = <T>(
+  name: string,
+  readValue: (valueName: string) => T,
+): Record<keyof ShadingRegionColours, T> => ({
+  five: readValue(`${name}5`),
+  four: readValue(`${name}4`),
+  one: readValue(name),
+  three: readValue(`${name}3`),
+  two: readValue(`${name}2`),
+});
+
+// A material's colours for each region, the fallback where the material holds none
 const readRegionColors = (
   colors: Readonly<Record<string, Vector4Tuple>>,
   name: string,
   fallback: Vector3Tuple = WHITE,
-): ShadingRegionColours => {
-  const regionColor = (suffix: string): Vector3Tuple => readColour(colors, `${name}${suffix}`) ?? fallback;
-  return {
-    five: regionColor("5"),
-    four: regionColor("4"),
-    one: regionColor(""),
-    three: regionColor("3"),
-    two: regionColor("2"),
-  };
-};
+): ShadingRegionColours => readRegionValues(name, (valueName) => readColour(colors, valueName) ?? fallback);
 
-// A material's floats for each region, named as its colours are, zero where the material holds none
+// A material's floats for each region, zero where the material holds none
 const readRegionFloats = (
   nameFloatMap: ReadonlyMap<string, number>,
   name: string,
-): Record<keyof ShadingRegionColours, number> => {
-  const regionFloat = (suffix: string): number => nameFloatMap.get(`${name}${suffix}`) ?? 0;
-  return {
-    five: regionFloat("5"),
-    four: regionFloat("4"),
-    one: regionFloat(""),
-    three: regionFloat("3"),
-    two: regionFloat("2"),
-  };
-};
+): Record<keyof ShadingRegionColours, number> =>
+  readRegionValues(name, (valueName) => nameFloatMap.get(valueName) ?? 0);
 
 // A material's shading inputs as the game's own values give them, the values by property name and the textures by the
 // Slot they are read from. An input the material does not hold is left out, so the shading takes its default for it
