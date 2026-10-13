@@ -2,7 +2,7 @@ import type { PinnedTool } from "#src/models/shared/PinnedTool";
 
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { getResultAsync, InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { createHash } from "node:crypto";
 import { globSync } from "node:fs";
 import { mkdir, mkdtemp, rename, rm, writeFile } from "node:fs/promises";

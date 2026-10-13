@@ -1,6 +1,6 @@
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 
 // Runs FFmpeg quiet but for errors, overwriting what it writes, and blocking, since the tool does one thing at a time.
 // A wall-clock limit ends a run that FFmpeg's own `-t` would not: window capture counts only the frames the window

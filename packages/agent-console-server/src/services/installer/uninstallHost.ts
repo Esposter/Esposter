@@ -1,6 +1,6 @@
 import { HOST_DIRECTORY_ENVIRONMENT_VARIABLE, HOST_SCHEME_REGISTRY_KEY } from "#src/services/installer/constants";
 import { getHostInstallDirectory } from "#src/services/installer/getHostInstallDirectory";
-import { execFileSync, spawn } from "node:child_process";
+import { execFileSync, spawn } from "@esposter/shared-node/child-process";
 
 // Everything the install left: the link scheme now, and the installed files once this process has exited, since a
 // Running executable cannot delete itself on Windows — a detached PowerShell waits a moment, then removes the folder.
@@ -18,7 +18,6 @@ export const uninstallHost = (): void => {
       detached: true,
       env: { ...process.env, [HOST_DIRECTORY_ENVIRONMENT_VARIABLE]: getHostInstallDirectory() },
       stdio: "ignore",
-      windowsHide: true,
     },
   ).unref();
 };

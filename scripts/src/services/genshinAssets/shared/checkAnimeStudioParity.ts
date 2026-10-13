@@ -8,7 +8,7 @@ import {
 import { assertAnimeStudioReady } from "#src/services/recreation/animeStudio/assertAnimeStudioReady";
 import { readAnimeStudioExceptions } from "#src/services/recreation/animeStudio/readAnimeStudioExceptions";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { dirname, join, parse } from "node:path";
 

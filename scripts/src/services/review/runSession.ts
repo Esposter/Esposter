@@ -13,7 +13,7 @@ import {
 } from "#src/services/review/constants";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { spawn, spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "@esposter/shared-node/child-process";
 import { once } from "node:events";
 
 // The arguments a role's session gets. A reviewer is print mode with only its read-only tools allowed, which denies every
@@ -39,7 +39,7 @@ const killTree = (child: ChildProcess): void => {
   const { pid } = child;
   if (pid === undefined) return;
   if (process.platform === "win32") {
-    spawnSync("taskkill", ["/PID", String(pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
+    spawnSync("taskkill", ["/PID", String(pid), "/T", "/F"], { stdio: "ignore" });
     return;
   }
   // The group's id is its leader's pid, negated to name the group rather than the process

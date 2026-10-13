@@ -1,6 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";

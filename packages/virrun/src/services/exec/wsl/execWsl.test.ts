@@ -8,7 +8,9 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
-vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({
+  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
+}));
 
 describe(execWsl, () => {
   beforeEach(() => {
@@ -28,7 +30,6 @@ describe(execWsl, () => {
       encoding: "buffer",
       stdio: "pipe",
       timeout: WSL_PROBE_TIMEOUT_MS,
-      windowsHide: true,
     });
   });
 

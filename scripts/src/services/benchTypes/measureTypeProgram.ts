@@ -3,7 +3,7 @@ import type { TypeBenchCounts } from "#src/models/benchTypes/TypeBenchCounts";
 import { TSC_PATH } from "#src/services/benchTypes/constants";
 import { parseCompilerCounts } from "#src/services/benchTypes/parseCompilerCounts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { writeFileSync } from "node:fs";
 
 const DIAGNOSTIC_REGEX = /error TS\d+/u;

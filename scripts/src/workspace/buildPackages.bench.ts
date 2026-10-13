@@ -1,7 +1,7 @@
 import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "vitest";

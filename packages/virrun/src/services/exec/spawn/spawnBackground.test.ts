@@ -25,8 +25,9 @@ describe(spawnBackground, () => {
 
     // The regression this guards: `detached` makes win32 ignore windowsHide and flash an empty console
     // (nodejs#21825). toHaveBeenCalledExactlyOnceWith matches the options object exactly, so this fails if a
-    // `detached` (or any other) key is ever reintroduced — the shape must stay stdio-ignore + windowsHide.
-    expect(spawnResolved).toHaveBeenCalledExactlyOnceWith("", [], { stdio: "ignore", windowsHide: true });
+    // `detached` (or any other) key is ever reintroduced — the shape must stay stdio-ignore. The window hiding is the
+    // Shared wrapper's, applied where the child is spawned.
+    expect(spawnResolved).toHaveBeenCalledExactlyOnceWith("", [], { stdio: "ignore" });
   });
 
   test("swallows the async error and unrefs so the parent can exit while it runs", () => {

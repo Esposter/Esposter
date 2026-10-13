@@ -1,5 +1,5 @@
 import { GAME_EXECUTABLE_NAME } from "#src/services/genshinParity/shared/constants";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 
 // Whether the game is running now, by Windows' own list of processes under its executable's name. The game has no build
 // For any other platform, so elsewhere it is never running and its copied files are always free to read

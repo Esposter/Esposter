@@ -6,7 +6,7 @@ import {
 } from "#src/services/installer/constants";
 import { getHostInstallDirectory } from "#src/services/installer/getHostInstallDirectory";
 import { SITE_NAME } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, win32 } from "node:path";
 import { getAssetKeys, getRawAsset } from "node:sea";

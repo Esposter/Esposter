@@ -3,7 +3,7 @@ import type { QueueFile } from "#src/models/fleet/QueueFile";
 import { MAX_BUFFER_BYTES, REMOTE_QUEUE_REF, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
 import { runGit } from "#src/services/shared/runGit";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 
 const NEWLINE_BYTE = 0x0a;
 

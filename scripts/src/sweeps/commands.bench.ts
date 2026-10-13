@@ -1,7 +1,7 @@
 import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
-import { execSync } from "node:child_process";
+import { execSync } from "@esposter/shared-node/child-process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { test } from "vitest";

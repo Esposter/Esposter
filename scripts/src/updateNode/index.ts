@@ -11,7 +11,7 @@ import { setManifestNodeVersion } from "#src/services/updateNode/setManifestNode
 import { WORKSPACE_FILE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 

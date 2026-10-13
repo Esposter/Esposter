@@ -6,7 +6,9 @@ import { describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
-vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({
+  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
+}));
 
 // The probe shells out to bwrap on Linux and through wsl.exe on win32; drive each outcome through the mocked
 // Child_process to pin the verdict mapping directly, without depending on the host's real overlay capability.

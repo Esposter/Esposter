@@ -12,7 +12,7 @@ import { downloadVerifiedFile } from "@@/scripts/zstd/services/downloadVerifiedF
 import { extractArchive } from "@@/scripts/zstd/services/extractArchive";
 import { readZigRelease } from "@@/scripts/zstd/services/readZigRelease";
 import { withFinalizerAsync } from "@esposter/shared";
-import { execFile } from "node:child_process";
+import { execFile } from "@esposter/shared-node/child-process";
 import { mkdir, mkdtemp, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";

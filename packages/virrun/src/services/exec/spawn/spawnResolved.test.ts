@@ -15,7 +15,7 @@ const { resolveCmdCommand, spawn } = vi.hoisted(() => ({
 vi.mock(import("#src/services/exec/spawn/resolveCmdCommand"), () => ({
   resolveCmdCommand: resolveCmdCommand as unknown as typeof baseResolveCmdCommand,
 }));
-vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
 
 const createChild = (): ChildProcess => new EventEmitter() as unknown as ChildProcess;
 

@@ -1,5 +1,5 @@
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 
 // Any audio FFmpeg reads, a recording's or a decoded sound's, as one channel of 32-bit samples at a rate, its channels
 // Averaged, from `startFrame` counted at the audio's own rate on, since FFmpeg resamples only after its filters

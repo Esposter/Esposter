@@ -7,7 +7,9 @@ import { describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
-vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({
+  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
+}));
 
 describe(probeOsBackendChecks, () => {
   const stubPlatform = setupPlatformStub();

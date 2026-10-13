@@ -1,4 +1,4 @@
-import { execFileSync, spawnSync } from "node:child_process";
+import { execFileSync, spawnSync } from "@esposter/shared-node/child-process";
 import { readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

@@ -1,6 +1,6 @@
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 
 // One row of a capture, two of its pixel rows averaged into a line of grey, every frame as the capture holds it with
 // Its own time in seconds, read off FFmpeg's frame log, since a recording's frames need not come at an even rate

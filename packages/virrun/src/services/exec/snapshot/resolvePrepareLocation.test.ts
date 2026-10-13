@@ -8,7 +8,7 @@ import {
 import { resolvePrepareLocation } from "#src/services/exec/snapshot/resolvePrepareLocation";
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";

@@ -7,7 +7,7 @@ import {
   VITE_BIN_PATH,
 } from "#src/services/genshinParity/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 import { createServer } from "node:net";
 
 export interface ParityServer {

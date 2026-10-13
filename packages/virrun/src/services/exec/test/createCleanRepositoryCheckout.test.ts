@@ -1,5 +1,5 @@
 import { createHomeCacheTemporaryDirectory } from "#src/services/exec/test/createHomeCacheTemporaryDirectory.test";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { describe } from "vitest";
 
 // Clones the repo's committed HEAD into a fresh directory with NO node_modules/.nuxt/.virrun (all gitignored, so a

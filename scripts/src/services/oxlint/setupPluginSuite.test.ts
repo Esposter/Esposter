@@ -1,6 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";

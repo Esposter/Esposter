@@ -4,7 +4,7 @@ import { getUtilityClampedCommand } from "#src/services/machine/getUtilityClampe
 import { assertAnimeStudioReady } from "#src/services/recreation/animeStudio/assertAnimeStudioReady";
 import { getAnimeStudioArgs } from "#src/services/recreation/animeStudio/getAnimeStudioArgs";
 import { judgeAnimeStudioRun } from "#src/services/recreation/animeStudio/judgeAnimeStudioRun";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { dirname } from "node:path";
 
 // Runs AnimeStudio's command line from its own folder, since it keeps its CAB map beside its working directory, blocking

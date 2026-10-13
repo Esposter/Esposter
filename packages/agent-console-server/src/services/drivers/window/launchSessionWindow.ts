@@ -2,7 +2,7 @@ import type { SessionWindowLaunch } from "#src/models/window/SessionWindowLaunch
 
 import { SESSION_SECRET_ENVIRONMENT_VARIABLE, SESSION_SUBCOMMAND } from "#src/services/drivers/window/constants";
 import { SITE_NAME } from "@esposter/shared";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 import { isSea } from "node:sea";
 
 const SESSION_COMMAND_ENVIRONMENT_VARIABLE_PREFIX = `${SITE_NAME.toUpperCase()}_SESSION_COMMAND_`;

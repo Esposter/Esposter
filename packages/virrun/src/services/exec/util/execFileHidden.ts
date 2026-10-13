@@ -4,11 +4,11 @@ import { ExecFileError } from "#src/models/exec/util/ExecFileError";
 import { ExecFileOutputStream } from "#src/models/exec/util/ExecFileOutputStream";
 import { readExecFileOutput } from "#src/services/exec/util/readExecFileOutput";
 import { getResult } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 
-// Run a sync child process capturing its stdout, hidden from the win32 console (see spawnHidden for why). Defaults the
-// Near-universal `encoding: "utf8"` + `stdio: "pipe"` capture shape so probes only spell out what differs; windowsHide
-// Is forced on. Returns stdout as a string.
+// Run a sync child process capturing its stdout, hidden from the win32 console by the shared wrapper. Defaults the
+// Near-universal `encoding: "utf8"` + `stdio: "pipe"` capture shape so probes only spell out what differs. Returns stdout
+// As a string.
 //
 // The spawn always captures in `buffer` and the streams are decoded here, one per stream, because Node's single
 // `encoding` option decodes stdout and stderr alike — which silently destroys the failure message of any child that
@@ -30,7 +30,6 @@ export const execFileHidden = (
         ...(input === undefined ? {} : { input: Buffer.from(input, encoding) }),
         encoding: "buffer",
         stdio,
-        windowsHide: true,
       }),
   ).match(
     (stdout) => stdout?.toString(encoding) ?? "",

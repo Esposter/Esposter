@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { availableParallelism, platform } from "node:os";
 
 // The performance cores of an Apple silicon Mac, which a map's shards are sized to. Elsewhere there is no such count to

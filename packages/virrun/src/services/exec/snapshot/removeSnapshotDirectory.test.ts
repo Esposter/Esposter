@@ -17,7 +17,9 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
-vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({
+  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
+}));
 
 describe(removeSnapshotDirectory, () => {
   // A snapshot leaf on the distro's ext4 (`/home/user/.virrun/snapshots/<hash>/upper`); `h` is a stand-in hash.
@@ -30,7 +32,7 @@ describe(removeSnapshotDirectory, () => {
     expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
       WSL_EXECUTABLE,
       ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDirectory],
-      { encoding: "buffer", stdio: "pipe", timeout: timeoutMs, windowsHide: true },
+      { encoding: "buffer", stdio: "pipe", timeout: timeoutMs },
     );
   };
 

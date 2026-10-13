@@ -1,6 +1,6 @@
 import { GAME_EXECUTABLE_NAME } from "#src/services/genshinParity/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { basename, extname } from "node:path";
 
 const PROCESS_NAME = basename(GAME_EXECUTABLE_NAME, extname(GAME_EXECUTABLE_NAME));

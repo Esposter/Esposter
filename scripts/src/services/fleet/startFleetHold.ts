@@ -1,6 +1,6 @@
 import { HOLDS_DIRECTORY } from "#src/services/fleet/constants";
 import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 import { closeSync, mkdirSync, openSync } from "node:fs";
 import { join } from "node:path";
 
@@ -14,7 +14,6 @@ export const startFleetHold = (id: string, worker: string): void => {
     cwd: REPOSITORY_ROOT,
     detached: true,
     stdio: ["ignore", logDescriptor, logDescriptor],
-    windowsHide: true,
   });
   child.on("error", (error) => console.error(`could not start the hold for ${id}: ${error.message}`));
   child.unref();

@@ -4,7 +4,7 @@ import { getUtilityClampedCommand } from "#src/services/machine/getUtilityClampe
 import { assertAnimeStudioReady } from "#src/services/recreation/animeStudio/assertAnimeStudioReady";
 import { getAnimeStudioArgs } from "#src/services/recreation/animeStudio/getAnimeStudioArgs";
 import { judgeAnimeStudioRun } from "#src/services/recreation/animeStudio/judgeAnimeStudioRun";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 import { dirname } from "node:path";
 
 // Runs AnimeStudio as `runAnimeStudio` does, with the same verdict on its run, but without blocking, so the shards of

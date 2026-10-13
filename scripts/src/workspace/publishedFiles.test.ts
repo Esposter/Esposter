@@ -2,7 +2,7 @@ import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/cons
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { NON_SOURCE_SUFFIXES } from "@esposter/configuration";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 

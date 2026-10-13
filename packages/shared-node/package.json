@@ -1,17 +1,18 @@
 {
   "name": "@esposter/shared-node",
   "version": "4.0.0",
-  "private": true,
-  "description": "Node-only shared tooling (benchmark reporting) reused across packages.",
+  "description": "Node-only shared tooling: hidden-window child processes, and benchmark reporting reused across packages.",
   "keywords": [
     "benchmark",
+    "child-process",
     "monorepo",
     "node",
     "reporting",
     "shared",
     "tooling",
     "typescript",
-    "vitest"
+    "vitest",
+    "windows"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared-node#readme",
   "bugs": {
@@ -36,6 +37,10 @@
       "source": "./src/services/constants.ts",
       "default": "./dist/bench.js"
     },
+    "./child-process": {
+      "source": "./src/childProcess.ts",
+      "default": "./dist/child-process.js"
+    },
     "./reporter": {
       "source": "./src/services/BenchmarkMarkdownReporter.ts",
       "default": "./dist/reporter.js"
@@ -45,9 +50,11 @@
   "publishConfig": {
     "exports": {
       "./bench": "./dist/bench.js",
+      "./child-process": "./dist/child-process.js",
       "./reporter": "./dist/reporter.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",
@@ -68,5 +75,10 @@
   },
   "peerDependencies": {
     "vitest": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
   }
 }

@@ -13,7 +13,7 @@ import { readRemoteManifest } from "#src/services/fleet/data/readRemoteManifest"
 import { selectChangedFiles } from "#src/services/fleet/data/selectChangedFiles";
 import { waitForExit } from "#src/services/fleet/data/waitForExit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 import { mkdir } from "node:fs/promises";
 import { join, posix } from "node:path";
 import { pipeline } from "node:stream/promises";

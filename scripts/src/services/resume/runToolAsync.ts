@@ -1,6 +1,6 @@
 import { MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
-import { execFile } from "node:child_process";
+import { execFile } from "@esposter/shared-node/child-process";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);

@@ -2,7 +2,7 @@ import { getClipArguments } from "#src/services/recreation/video/getClipArgument
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { resolveYtDlp } from "#src/services/recreation/video/resolveYtDlp";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdir } from "node:fs/promises";
 
 // One section of a public video downloaded with yt-dlp into the directory, returning the file's path. Blocking, like the

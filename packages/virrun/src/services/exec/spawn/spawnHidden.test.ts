@@ -12,7 +12,7 @@ const { spawn, spawnResolved } = vi.hoisted(() => ({
 vi.mock(import("#src/services/exec/spawn/spawnResolved"), () => ({
   spawnResolved: spawnResolved as unknown as typeof baseSpawnResolved,
 }));
-vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
 
 describe(spawnHidden, () => {
   const file = "";
@@ -23,21 +23,12 @@ describe(spawnHidden, () => {
     spawn.mockReset();
   });
 
-  test("forwards file and args and forces windowsHide on top of the caller options", () => {
+  test("forwards file, args and the caller options to spawnResolved unchanged", () => {
     expect.hasAssertions();
 
     spawnHidden(file, args, { stdio: "ignore" });
 
-    expect(spawnResolved).toHaveBeenCalledExactlyOnceWith(file, args, { stdio: "ignore", windowsHide: true });
-  });
-
-  test("#143 a caller cannot re-show the window by passing windowsHide false", () => {
-    expect.hasAssertions();
-
-    spawnHidden(file, args, { stdio: "ignore", windowsHide: false });
-
-    // Spread last, windowsHide overrides the caller's false — the exact-match proves the window stays hidden.
-    expect(spawnResolved).toHaveBeenCalledExactlyOnceWith(file, args, { stdio: "ignore", windowsHide: true });
+    expect(spawnResolved).toHaveBeenCalledExactlyOnceWith(file, args, { stdio: "ignore" });
   });
 
   // A shell's exit code 1 reads as the command missing when it goes through spawnResolved, so a shell string bypasses it
@@ -47,6 +38,6 @@ describe(spawnHidden, () => {
     spawnHidden(file, args, { shell: true });
 
     expect(spawnResolved).not.toHaveBeenCalled();
-    expect(spawn).toHaveBeenCalledExactlyOnceWith(file, args, { shell: true, windowsHide: true });
+    expect(spawn).toHaveBeenCalledExactlyOnceWith(file, args, { shell: true });
   });
 });

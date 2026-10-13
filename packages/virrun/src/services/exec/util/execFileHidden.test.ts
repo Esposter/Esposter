@@ -7,7 +7,9 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
-vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({
+  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
+}));
 
 // The shape Node raises for a failed spawn: an Error carrying the child's UNDECODED stderr, since the spawn always
 // Captures in `buffer`. wsl.exe writes its own diagnostics as UTF-16LE, which the wrapper detects from the bytes.
@@ -29,11 +31,7 @@ describe(execFileHidden, () => {
     execFileSync.mockReturnValue(Buffer.from("a"));
 
     expect(execFileHidden("a", ["b"])).toBe("a");
-    expect(execFileSync).toHaveBeenCalledExactlyOnceWith("a", ["b"], {
-      encoding: "buffer",
-      stdio: "pipe",
-      windowsHide: true,
-    });
+    expect(execFileSync).toHaveBeenCalledExactlyOnceWith("a", ["b"], { encoding: "buffer", stdio: "pipe" });
   });
 
   test("decodes stdout with the caller's encoding, never handing it to the spawn", () => {
@@ -42,14 +40,10 @@ describe(execFileHidden, () => {
     execFileSync.mockReturnValue(Buffer.from("a", "utf16le"));
 
     expect(execFileHidden("a", ["b"], { encoding: "utf16le" })).toBe("a");
-    expect(execFileSync).toHaveBeenCalledExactlyOnceWith("a", ["b"], {
-      encoding: "buffer",
-      stdio: "pipe",
-      windowsHide: true,
-    });
+    expect(execFileSync).toHaveBeenCalledExactlyOnceWith("a", ["b"], { encoding: "buffer", stdio: "pipe" });
   });
 
-  test("callers override stdio/timeout but never windowsHide", () => {
+  test("callers override stdio and timeout", () => {
     expect.hasAssertions();
 
     execFileHidden("a", ["b"], { stdio: "inherit", timeout: 1 });
@@ -58,7 +52,6 @@ describe(execFileHidden, () => {
       encoding: "buffer",
       stdio: "inherit",
       timeout: 1,
-      windowsHide: true,
     });
   });
 
@@ -71,7 +64,6 @@ describe(execFileHidden, () => {
       encoding: "buffer",
       input: Buffer.from("a"),
       stdio: "pipe",
-      windowsHide: true,
     });
   });
 

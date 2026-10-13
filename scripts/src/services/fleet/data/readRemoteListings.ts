@@ -7,7 +7,7 @@ import { getSshArguments } from "#src/services/fleet/data/getSshArguments";
 import { parseDirectoryListing } from "#src/services/fleet/data/parseDirectoryListing";
 import { waitForExit } from "#src/services/fleet/data/waitForExit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 import { createInterface } from "node:readline";
 
 // The peer's files in each of the directories, one line per directory and streamed, so the peer's listing never

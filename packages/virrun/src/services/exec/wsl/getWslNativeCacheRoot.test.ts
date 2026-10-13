@@ -18,7 +18,9 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
-vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({
+  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
+}));
 // The distro list is the `-l -q` call; everything else is the `echo $HOME` call.
 const mockWsl = (distro: string, home: string) =>
   execFileSync.mockImplementation((_file, args) => (args?.includes("-l") ? distro : home));

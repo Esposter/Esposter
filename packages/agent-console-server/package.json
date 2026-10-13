@@ -78,6 +78,7 @@
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@types/node": "catalog:",
     "@types/ws": "catalog:",
     "citty": "catalog:",

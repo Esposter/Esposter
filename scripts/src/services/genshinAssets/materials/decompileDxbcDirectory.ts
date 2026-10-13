@@ -6,7 +6,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS } from "#src/services/shared/constants";
 import { resolvePinnedTool } from "#src/services/shared/resolvePinnedTool";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { readdir } from "node:fs/promises";
 
 // Every DXBC program in a folder decompiled to HLSL beside it, `<name>.hlsl`, by 3Dmigoto's pinned command-line

@@ -5,7 +5,7 @@ import { assertAnimeStudioReady } from "#src/services/recreation/animeStudio/ass
 import { getAnimeStudioArgs } from "#src/services/recreation/animeStudio/getAnimeStudioArgs";
 import { waitForFreeMemory } from "#src/services/recreation/animeStudio/waitForFreeMemory";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 import { constants, setPriority } from "node:os";
 import { dirname } from "node:path";
 

@@ -18,7 +18,7 @@ import {
 } from "#src/services/recreation/animeStudio/constants";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import {
   copyFileSync,
   existsSync,

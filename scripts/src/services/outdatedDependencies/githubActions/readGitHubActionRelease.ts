@@ -4,7 +4,7 @@ import type { Release } from "#src/models/outdatedDependencies/shared/Release";
 import { getLatestCompatibleTag } from "#src/services/outdatedDependencies/tag/getLatestCompatibleTag";
 import { FETCH_TIMEOUT_MS, MAX_BUFFER_BYTES } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
-import { execFile } from "node:child_process";
+import { execFile } from "@esposter/shared-node/child-process";
 import { promisify } from "node:util";
 
 const TAG_REF_REGEX = /^(?<sha>[\da-f]{40})\trefs\/tags\/(?<tag>[^^\s]+)(?<peeled>\^\{\})?$/u;

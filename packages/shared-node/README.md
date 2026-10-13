@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Node-only shared tooling for Esposter — benchmark reporting reused across packages. Server/build environment only; never import in browser code.
+Node-only shared tooling for Esposter — hidden-window child processes and benchmark reporting reused across packages. Server/build environment only; never import in browser code.
 
 ## Table of Contents
 
@@ -17,7 +17,15 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What's Included
 
-The benchmark reporting toolkit consumed by the repo's `vitest bench` runs (see the `bench` skill).
+The hidden-window child process wrappers, and the benchmark reporting toolkit consumed by the repo's `vitest bench` runs (see the `bench` skill).
+
+`@esposter/shared-node/child-process` exports `spawn`, `spawnSync`, `execFile`, `execFileSync` and `execSync` with node's own names and types. Each forces `windowsHide: true` last, so a console child never opens its own terminal window on Windows, including from a windowless parent such as a Claude Code hook. Import these instead of `node:child_process`; the repo's lint rule enforces it.
+
+```ts
+import { spawnSync } from "@esposter/shared-node/child-process";
+
+spawnSync("pnpm", ["install"], { stdio: "inherit" });
+```
 
 | Export                                                                                           | Description                                                                      |
 | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |

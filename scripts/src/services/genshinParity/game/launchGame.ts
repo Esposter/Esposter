@@ -1,5 +1,5 @@
 import { GAME_EXECUTABLE_PATH } from "#src/services/genshinParity/shared/constants";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 
 // The game asks for elevation on every start, so it is started through the shell's elevation prompt, which the user
 // Answers; the tool returns at once and never waits on the game

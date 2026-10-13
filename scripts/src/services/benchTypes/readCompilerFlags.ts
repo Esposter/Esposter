@@ -3,7 +3,7 @@ import type { TypeBenchShowConfig } from "#src/models/benchTypes/TypeBenchShowCo
 import { EMPTY_TYPE_ROOTS_DIRECTORY, TSC_PATH } from "#src/services/benchTypes/constants";
 import { toCompilerFlags } from "#src/services/benchTypes/toCompilerFlags";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdirSync } from "node:fs";
 
 // The package's resolved options, read from `--showConfig` so an extends chain is followed rather than re-read here

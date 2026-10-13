@@ -6,7 +6,7 @@ import {
   PNPM_OUTDATED_TIMEOUT_MS,
 } from "#src/services/outdatedDependencies/pnpm/constants";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 
 // Asynchronous rather than `spawnPnpm`, because the registry checks run beside it and a
 // Synchronous child would hold their responses until it exited. The child owns its own timeout: on expiry it is

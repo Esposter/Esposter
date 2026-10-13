@@ -6,7 +6,7 @@ import { getSearchArguments } from "#src/services/recreation/video/getSearchArgu
 import { parseSearchCandidates } from "#src/services/recreation/video/parseSearchCandidates";
 import { resolveYtDlp } from "#src/services/recreation/video/resolveYtDlp";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 
 // The public videos a query finds on a site, the first count of them, read from yt-dlp's JSON lines without downloading
 export const searchVideos = async (site: VideoSite, count: number, query: string): Promise<SearchCandidate[]> => {

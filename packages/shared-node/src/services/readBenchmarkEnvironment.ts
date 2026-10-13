@@ -1,5 +1,5 @@
+import { execSync } from "#src/services/childProcess/execSync";
 import { getResult, GIBIBYTE, normalizeString } from "@esposter/shared";
-import { execSync } from "node:child_process";
 import { arch, cpus, platform, release, totalmem } from "node:os";
 
 // The commit the numbers were produced on — provenance so a results file can be tied back to the code that

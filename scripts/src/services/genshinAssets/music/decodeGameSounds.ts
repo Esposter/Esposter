@@ -2,7 +2,7 @@ import { parseSoundBankSounds } from "#src/services/genshinAssets/music/parseSou
 import { readFileRange } from "#src/services/genshinAssets/music/readFileRange";
 import { readGameAudioPackages } from "#src/services/genshinAssets/music/readGameAudioPackages";
 import { resolveVgmstream } from "#src/services/genshinAssets/music/resolveVgmstream";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { existsSync } from "node:fs";
 import { mkdir, open, rename, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";

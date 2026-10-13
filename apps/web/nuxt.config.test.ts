@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { pathToFileURL } from "node:url";
 import { describe, expect, test } from "vitest";
 

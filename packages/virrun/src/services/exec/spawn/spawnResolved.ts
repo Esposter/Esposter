@@ -6,7 +6,7 @@ import { escapeCmdCommand } from "#src/services/exec/spawn/escapeCmdCommand";
 import { hookCmdNotFound } from "#src/services/exec/spawn/hookCmdNotFound";
 import { resolveCmdCommand } from "#src/services/exec/spawn/resolveCmdCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawn } from "node:child_process";
+import { spawn } from "@esposter/shared-node/child-process";
 import { normalize } from "node:path";
 
 // Spawns a command the way node does off win32. On win32 the command is found through PATH and PATHEXT first, so a

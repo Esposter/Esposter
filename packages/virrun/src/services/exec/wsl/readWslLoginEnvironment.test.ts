@@ -23,7 +23,9 @@ const { execFileSync, hasSandboxNode } = vi.hoisted(() => ({
   hasSandboxNode: { value: true },
 }));
 
-vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({
+  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
+}));
 // The persisted tier's validity check reads the distro over a UNC, which no test host can answer for a fixture path —
 // And off win32 resolving that UNC would spawn wsl.exe through the very execFileSync mock above. Drive the verdict
 // Instead, so each case states whether the captured node install is still there.

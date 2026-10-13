@@ -48,8 +48,8 @@ const RESTRICTED_GLOBALS = [
   { message: POLLING_MESSAGE, name: "waitUntil" },
   USE_UI_STYLE_GLOBAL,
 ];
-// Banned in every tree; the Vuetify 0 bans hold everywhere but the UI library and the packages
-const RESTRICTED_IMPORT_PATHS = [
+// Banned in every tree, the child process ones aside: the Vuetify 0 bans hold everywhere but the UI library and the packages
+const OTHER_RESTRICTED_IMPORT_PATHS = [
   {
     importNames: ["randomUUID"],
     message:
@@ -65,6 +65,15 @@ const RESTRICTED_IMPORT_PATHS = [
   { importNames: ["useRoute"], message: USE_ROUTE_MESSAGE, name: "vue-router" },
   { importNames: ["inject", "provide"], message: CONTEXT_MESSAGE, name: "vue" },
 ];
+// A console child of a windowless parent, or any `detached` child, opens its own terminal window on Windows unless
+// `windowsHide` is set. The wrappers force it, so every child process goes through them; a type import stays free.
+const CHILD_PROCESS_MESSAGE =
+  "Import the hidden-window wrappers from `@esposter/shared-node/child-process` — a child process spawned without `windowsHide` opens its own terminal window on Windows.";
+const CHILD_PROCESS_IMPORT_PATHS = [
+  { allowTypeImports: true, message: CHILD_PROCESS_MESSAGE, name: "child_process" },
+  { allowTypeImports: true, message: CHILD_PROCESS_MESSAGE, name: "node:child_process" },
+];
+const RESTRICTED_IMPORT_PATHS = [...OTHER_RESTRICTED_IMPORT_PATHS, ...CHILD_PROCESS_IMPORT_PATHS];
 const VUETIFY_IMPORT_PATH = { message: VUETIFY_MESSAGE, name: "@vuetify/v0" };
 const VUETIFY_IMPORT_PATTERN = { group: ["@vuetify/v0/*"], message: VUETIFY_MESSAGE };
 const WORKSPACE_LIBRARY_IMPORT_PATTERN = {
@@ -256,6 +265,21 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "no-restricted-imports": [
           "error",
           { paths: RESTRICTED_IMPORT_PATHS, patterns: [PACKAGE_ALIAS_IMPORT_PATTERN, PACKAGE_RELATIVE_IMPORT_PATTERN] },
+        ],
+      },
+    },
+    {
+      // The wrappers are the one place node's child_process is imported, and genshin-persona's source keeps it: its runtime
+      // Installs from its own package-lock.json and depends on no workspace package, so it joins the ban once shared-node is
+      // On npm. Its `mod` tree is left to the mod override, which bans relative specifiers the engine would refuse.
+      files: ["packages/shared-node/src/services/childProcess/*.ts", "packages/genshin-persona/src/**/*.ts"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            paths: OTHER_RESTRICTED_IMPORT_PATHS,
+            patterns: [PACKAGE_ALIAS_IMPORT_PATTERN, PACKAGE_RELATIVE_IMPORT_PATTERN],
+          },
         ],
       },
     },

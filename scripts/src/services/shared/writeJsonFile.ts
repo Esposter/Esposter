@@ -4,7 +4,7 @@ import {
   OXFMT_CONFIGURATION_PATH,
   REPOSITORY_ROOT,
 } from "#src/services/shared/constants";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 

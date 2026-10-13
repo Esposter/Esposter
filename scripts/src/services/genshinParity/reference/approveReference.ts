@@ -15,7 +15,7 @@ import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferen
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

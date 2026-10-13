@@ -1,5 +1,5 @@
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
-import { execFileSync } from "node:child_process";
+import { execFileSync } from "@esposter/shared-node/child-process";
 
 // Any audio FFmpeg reads as two channels of 32-bit samples at a rate, left then right, a single channel heard in both
 export const readStereoSamples = async (path: string, sampleRate: number): Promise<[Float32Array, Float32Array]> => {

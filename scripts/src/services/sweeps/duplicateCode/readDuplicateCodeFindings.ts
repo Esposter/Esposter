@@ -13,7 +13,7 @@ import {
 import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindings";
 import { getPluginRoot } from "#src/services/sweeps/duplicateCode/getPluginRoot";
 import { InvalidOperationError, jsonDateParse, Operation, withFinalizer } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
+import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
