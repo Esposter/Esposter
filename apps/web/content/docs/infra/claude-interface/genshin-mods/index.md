@@ -1,23 +1,23 @@
 ---
 title: Genshin mods
-description: A Claude Code plugin of mods — five drawn as one band above the prompt in the session character's colour, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed), and pulse (keeps the machine watcher running and wakes an idle session with the next fleet work), each switched by its own command, a delegation guard that refuses any subagent not on haiku and nudges a run of lookups toward a haiku agent, a disk-scan guard that refuses a Bash scan from a root or a home folder, and a whole-index guard that refuses a git command over the whole index while another session shares the checkout.
+description: A Claude Code plugin of mods — five drawn as one band above the prompt in the session character's colour, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed), and pulse (keeps the machine watcher running), each switched by its own command, a delegation guard that refuses any subagent not on haiku and nudges a run of lookups toward a haiku agent, a disk-scan guard that refuses a Bash scan from a root or a home folder, and a whole-index guard that refuses a git command over the whole index while another session shares the checkout.
 ---
 
 # Genshin mods
 
 Claude Code loads **mods**: plugins whose hooks are a TypeScript module the engine runs in-process, so a plugin can draw a band above the prompt, show toasts, register commands, ask a question, rewrite a tool call before it runs and read the session's usage. `genshin-mods` carries these, each one answering something this repository's sessions do every day: several sessions share one checkout, long turns work through task lists, the context of a long session is what costs, and a run of lookups belongs to a subagent. How any mod is written here, and the engine rules that shape every file of this one, is the [Claude Code mods](/docs/architecture/claude-mods) standard.
 
-| Mod                                                                        | What it does                                                                                                                       |
-| :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| [Waypoints](/docs/infra/claude-interface/genshin-mods/waypoints)           | After each answer, up to three next steps the session suggests, one press each                                                     |
-| [Resin](/docs/infra/claude-interface/genshin-mods/resin)                   | The cache's countdown, the context, the limits and the cost, with warm, compact and a one-click handoff                            |
-| [Veil](/docs/infra/claude-interface/genshin-mods/veil)                     | Recording mode: emails, amounts, phone numbers and secrets shown as placeholders while the model reads them                        |
-| [Commission](/docs/infra/claude-interface/genshin-mods/commission)         | A goal's task list, how far it is and how long it has run                                                                          |
-| [Ward](/docs/infra/claude-interface/genshin-mods/ward)                     | A question before editing a file another session changed in the last half hour                                                     |
-| [Pulse](/docs/infra/claude-interface/genshin-mods/pulse)                   | Keeps the machine watcher running and wakes an idle session with the next fleet work once the machine has idled for twenty minutes |
-| [Delegation guard](/docs/infra/claude-interface/genshin-mods/delegation)   | Refuses a subagent not on haiku, and after every third lookup in a row, a note to hand the chain to a haiku agent                  |
-| [Disk-scan guard](/docs/infra/claude-interface/genshin-mods/disk-scan)     | Refuses a Bash `find`, `du`, `grep -r` or `ls -R` that starts at a root or a home folder, naming where to look                     |
-| [Whole-index guard](/docs/infra/claude-interface/genshin-mods/whole-index) | Refuses a git command over the whole index (`git add .`, `git stash`, `git clean`) while another session shares the checkout       |
+| Mod                                                                        | What it does                                                                                                                 |
+| :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| [Waypoints](/docs/infra/claude-interface/genshin-mods/waypoints)           | After each answer, up to three next steps the session suggests, one press each                                               |
+| [Resin](/docs/infra/claude-interface/genshin-mods/resin)                   | The cache's countdown, the context, the limits and the cost, with warm, compact and a one-click handoff                      |
+| [Veil](/docs/infra/claude-interface/genshin-mods/veil)                     | Recording mode: emails, amounts, phone numbers and secrets shown as placeholders while the model reads them                  |
+| [Commission](/docs/infra/claude-interface/genshin-mods/commission)         | A goal's task list, how far it is and how long it has run                                                                    |
+| [Ward](/docs/infra/claude-interface/genshin-mods/ward)                     | A question before editing a file another session changed in the last half hour                                               |
+| [Pulse](/docs/infra/claude-interface/genshin-mods/pulse)                   | Keeps the machine watcher running from any session with the plugin                                                           |
+| [Delegation guard](/docs/infra/claude-interface/genshin-mods/delegation)   | Refuses a subagent not on haiku, and after every third lookup in a row, a note to hand the chain to a haiku agent            |
+| [Disk-scan guard](/docs/infra/claude-interface/genshin-mods/disk-scan)     | Refuses a Bash `find`, `du`, `grep -r` or `ls -R` that starts at a root or a home folder, naming where to look               |
+| [Whole-index guard](/docs/infra/claude-interface/genshin-mods/whole-index) | Refuses a git command over the whole index (`git add .`, `git stash`, `git clean`) while another session shares the checkout |
 
 ## How to use it
 

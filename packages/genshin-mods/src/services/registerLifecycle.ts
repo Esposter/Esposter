@@ -6,7 +6,6 @@ import type { EnabledMods } from "../../types";
 
 import {
   CACHE_WARNING_MS,
-  IDLE_WAKE_PROMPT,
   MACHINE_WATCHER_RETRY_MILLISECONDS,
   MACHINE_WATCHER_SCRIPT,
   RESERVE_SECTION_ID,
@@ -16,8 +15,6 @@ import {
 } from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
-import { getPulseWake } from "./pulse/getPulseWake";
-import { takeWatcherLines } from "./pulse/takeWatcherLines";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
 import { getCacheWarningDelayMs } from "./resin/getCacheWarningDelayMs";
 import { getReserveSummary } from "./resin/getReserveSummary";
@@ -84,24 +81,19 @@ const suggestWaypoints = async ($: EngineInterface) => {
   if (answer.isAnswered) await update($, waypointsAtom, () => parseWaypoints(answer.text));
 };
 
-// Starts the machine watcher as this session's child and reads what it prints as each chunk arrives. Its idle line wakes the
-// Session with the next fleet work, unless a turn runs or a usage reserve winds down then. The watcher prints the idle line
-// Again on each reminder it keeps while the machine stays idle, so the reminder is what wakes an idle session again. A
-// Watcher exits at once while another session's holds the machine's lock, so each exit starts the watcher again after a
-// Wait, and the session that outlives the one watching takes the watching over
+// Keeps the machine watcher running as this session's child. The watcher writes the machine's state, holds its lock and
+// Pushes its heartbeat, so its output is read only to keep the child's pipe drained. A watcher exits at once while another
+// Session's holds the machine's lock, so each exit starts the watcher again after a wait, and the session that outlives the
+// One watching takes the watching over
 const watchPulse = async ($: EngineInterface) => {
   if (!(await read($, enabledModsAtom)).pulse) return;
 
   const cwd = await $.session.cwd();
   if (!(await $.fs.exists(`${cwd}/${MACHINE_WATCHER_SCRIPT}`))) return;
 
-  let pending = "";
-  for await (const chunk of $.process.spawn({ argv: ["pnpm", "ai:machine:watch"], cwd })) {
-    const taken = takeWatcherLines(pending, chunk.text);
-    pending = taken.pending;
-    const { isWindDown } = await read($, reserveWindowAtom);
-    const wakeOptions = { isTurnRunning, isWindDown };
-    if (taken.lines.some((line) => getPulseWake(line, wakeOptions))) await $.prompt.submit({ text: IDLE_WAKE_PROMPT });
+  // oxlint-disable-next-line no-underscore-dangle -- The chunks are discarded, and the binding is only the loop's syntax
+  for await (const _chunk of $.process.spawn({ argv: ["pnpm", "ai:machine:watch"], cwd })) {
+    // The watcher's output is discarded, since nothing in the session reads it
   }
 
   $.clock.after(MACHINE_WATCHER_RETRY_MILLISECONDS, () => {

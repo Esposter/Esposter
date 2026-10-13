@@ -14,7 +14,7 @@ A Claude Code plugin of mods: five drawn as one band above the prompt, in the se
 - **Ward** — before an edit to a file another session changed in the last half hour, a question: proceed, move to a worktree, or cancel.
 - **Delegation guard** — every subagent launch not on haiku refused, a fork included, and after every third lookup in a row with no decision between them, a note on that call's result that the chain goes to a haiku agent as one bounded question.
 - **Disk-scan guard** — a Bash `find`, `du`, `grep -r` or `ls -R` that starts at `/`, a drive, `~` or a home folder is refused, with the known place to look for the file.
-- **Pulse** — keeps the machine watcher running from any session with the plugin, and wakes an idle session with the next fleet work once the machine has been under 80% CPU and GPU for twenty minutes, then again every thirty minutes while it stays idle.
+- **Pulse** — keeps the machine watcher running from any session with the plugin, so its heartbeat and the machine's state keep being written.
 - **Whole-index guard** — while another session edits this checkout, a Bash `git add .`, `git add -A`, `git reset` with no path, `git stash`, `git checkout .` or `git clean` is refused, with the path-scoped form to use instead.
 
 ## Table of Contents
@@ -57,7 +57,7 @@ Each mod is switched by its own slash command; bare, it flips, and the choice is
 | `/resin [on \| off]`      | Shows the cache, context, limits and cost row and its warning toast                                                             |
 | `/veil [on \| off]`       | Turns recording mode on or off; off by default                                                                                  |
 | `/commission [on \| off]` | Shows the goal meter while a turn works through a task list                                                                     |
-| `/pulse [on \| off]`      | Keeps the machine watcher running and wakes an idle session with the next fleet work, or stops                                  |
+| `/pulse [on \| off]`      | Keeps the machine watcher running, or stops                                                                                     |
 | `/ward [on \| off]`       | Asks before an edit to a file another session just changed, and refuses a whole-index git command while one shares the checkout |
 
 With the band focused (a click or `ctrl+x tab`), `w`, `c` and `h` warm, compact and hand off, `1` to `3` send a waypoint and `g` opens or closes the whole task list.

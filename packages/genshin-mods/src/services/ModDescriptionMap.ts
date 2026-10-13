@@ -3,7 +3,7 @@ import type { EnabledMods } from "../../types";
 // Each mod's command, `/<name> [on|off]`, as the menu describes it
 export const ModDescriptionMap: Record<keyof EnabledMods, string> = {
   commission: "Show a goal's task list, how far it is and how long it has run.",
-  pulse: "Wake an idle session with the next fleet work, and keep the machine watcher running.",
+  pulse: "Keep the machine watcher running.",
   resin: "Show the cache, context, limits and cost, with warm, compact and handoff.",
   veil: "Recording mode: show emails, amounts, phone numbers and secrets as placeholders.",
   ward: "Ask before editing a file another session changed in the last half hour, and refuse a whole-index git command while one shares the checkout.",

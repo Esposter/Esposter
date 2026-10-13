@@ -42,7 +42,6 @@ A machine's profile is `~/.esposter/machine.json`, written by `pnpm ai:fleet:pro
 - `id`, the name the machine's claims and heartbeat carry. A new profile takes the hostname.
 - `areas`, the areas the user lent the machine for. A new profile is lent every area. An area a machine was not lent is never worked, however idle it is.
 - `capabilities`, read off the machine each run: its operating system, `game-install` when the game's asset blocks are present, `game-exports` when the parity exports exist, and `media-engine` where FFmpeg lists Direct3D acceleration. `parity-page` is not detected, so the user sets it, and a capability the user set is kept.
-- `fillTarget` and `fillKinds`, how many live claims `pnpm ai:fleet:fill` keeps on the machine and the kinds it takes, in order. The coordinating machine keeps a small unit-only share, so the compute lanes go to the machines with the most headroom.
 
 The profile's `id` and `areas` are never overwritten once the user has set them.
 

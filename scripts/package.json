@@ -36,7 +36,6 @@
     "ai:dependencies:score": "tsx src/dependencies/score/index.ts",
     "ai:fleet:data": "tsx src/fleet/data/index.ts",
     "ai:fleet:claim": "tsx src/fleet/claim/index.ts",
-    "ai:fleet:fill": "tsx src/fleet/fill/index.ts",
     "ai:fleet:hold": "tsx src/fleet/hold/index.ts",
     "ai:fleet:next": "tsx src/fleet/next/index.ts",
     "ai:fleet:profile": "tsx src/fleet/profile/index.ts",

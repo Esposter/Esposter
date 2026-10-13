@@ -6,16 +6,13 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 ## A machine
 
-- **A machine is a checkout of its own with one main Claude session on it.** Its session fans work out to its own `haiku` agents, as many as its watcher's idle lines allow.
+- **A machine is a checkout of its own with one main Claude session on it.** Its session fans work out to its own `haiku` agents, each taking an entry it claims with `pnpm ai:fleet:next`.
 - **Its profile is `~/.esposter/machine.json`:**
   - `id`;
   - `areas`, the areas the user lent it for (the MacBook's is `["genshin"]`, and `["*"]` is everything);
-  - `capabilities`: its OS, plus `game-install`, `game-exports`, `parity-page` and `media-engine` as it holds them;
-  - `fillTarget` and `fillKinds`, the live claims `pnpm ai:fleet:fill` keeps here and the kinds it takes, in order.
+  - `capabilities`: its OS, plus `game-install`, `game-exports`, `parity-page` and `media-engine` as it holds them.
 
-  `pnpm ai:fleet:profile` writes what it detects and keeps what the user set, and takes `--fill-target` and `--fill-kinds` to set the fill share.
-
-- **A machine's share of the fleet is its profile's `fillTarget` and `fillKinds`:** the coordinating machine keeps a small unit-only share, and the machine with the most headroom takes the compute lanes.
+  `pnpm ai:fleet:profile` writes what it detects and keeps what the user set.
 
 - **An area the user did not lend is never worked**, however idle the machine is.
 
@@ -26,7 +23,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
   - `needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
   - `waiting: "<blocker>"`, set while the unit cannot be built yet, such as on another unit or on data that is not extracted; a waiting unit is never offered, and `pnpm ai:fleet:status` lists it with its blocker;
   - `touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at its first wildcard, so a glob names whole folders: `Forge*/**` names a `Forge` folder and misses the sibling "ForgeScreen". A long list may wrap over the lines below its key, as the formatter writes it.
-- **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
+- **A machine takes its own next entry.** Its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
   - its area is lent;
   - it is not waiting on a blocker;
@@ -39,7 +36,6 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **A fresh worktree installs frozen, and its first `pnpm` command installs again.** `pnpm i --frozen-lockfile` keeps the lockfile as committed. The first `pnpm` command after it installs again, as `autoDedupe` leaves a frozen install looking outdated, and that install moves the nightly aliases to their newest build: the moved lockfile is committed as its own `chore(deps)`, as the `resuming` skill says.
 - **A lane that runs no app installs only its own closure.** The app's install is the one that costs minutes, mostly its `nuxt prepare` postinstall, and a parity or scripts lane never touches `apps/web`. Its setup is the same two installs, filtered to the lane's packages and their dependencies: `pnpm i --frozen-lockfile --prefer-offline --filter @esposter/scripts... --filter genshin-world... --filter genshin-interface... --filter genshin-persona...`, then `pnpm i --offline` with the same filters. Against the full install, a fresh worktree takes a small fraction of the time and of the disk. The lane's dists are then built with `vp run build:packages`, a cold build of the set costs minutes once; `pnpm -C scripts genshin:parity passes windrise --pass Layout` passed against the worktree's page, and `pnpm exec` passes the stale-install check. An app lane (one that runs `apps/web`) keeps the full two installs above, with no filter: `pnpm i --frozen-lockfile --prefer-offline && pnpm i --offline`.
 - **Its packages are built with vp's task runner, in dependency order.** `vp run build:packages` builds every package, each as its own task after the packages it depends on, so no list of packages is kept to drift. A package whose inputs are unchanged replays its `dist` from the cache of that worktree's checkout. The build skill owns the task.
-- **A machine keeps its live claims at its target with `pnpm ai:fleet:fill`.** It counts its live holds, claims the next entry of each kind in turn (units, then the cpu and page lanes) until it reaches its target, which is the profile's `fillTarget` when set and otherwise its logical cores capped at twenty, and starts each claim's hold detached. It prints one brief per new claim, for a haiku agent to take as its prompt, and `nothing ready` when it claims none.
 - **The coordinator writes entries and settles calls.** It never assigns work by message and never waits on a machine's report, so the fleet grows without its cost growing.
 
 ## A claim is a ref
@@ -55,7 +51,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 - **Each machine's watcher runs as a child of the session the pulse mod starts, not as a Monitor in each session.** `pnpm ai:machine:watch` is the same command on every OS, and it pushes `refs/machines/<id>` every ten minutes with the machine's CPU, GPU, free memory and platform. A heartbeat push that stalls is killed at the same bound and tried again at the next interval.
 - **`pnpm ai:fleet:status` is the coordinator's whole view:** every machine's last sample, and every claim with its holder and age.
-- **A machine messages the coordinator only for a miss, a failure, or a call it cannot make.** Its idle lines are its own signal to claim.
+- **A machine messages the coordinator only for a miss, a failure, or a call it cannot make.**
 
 ## Sync
 

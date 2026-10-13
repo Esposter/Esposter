@@ -54,8 +54,3 @@ export const COMPUTE_QUEUE_WAITING_HEADING = "## Waiting";
 export const WORKER_NAME_REGEX: RegExp = /^[\w-]+$/u;
 // A proposal unit's id is its page's path under the proposals folder, its separators doubled
 export const UNIT_ID_SEPARATOR = "--";
-// The most claims `fill` keeps on one machine, however many logical cores it has
-export const FLEET_FILL_MAX_TARGET = 20;
-// The standing rules every agent brief ends on, the same for a queue item and a unit
-export const FILL_RULES_LINE =
-  "Rules: read `.agents/skills/genshin-parity/references/compute-queue.md` for a lane item, or `building-proposals` for a unit; commit by pathspec and land with the `review-queue` skill's loop; release with --miss naming what is left.";

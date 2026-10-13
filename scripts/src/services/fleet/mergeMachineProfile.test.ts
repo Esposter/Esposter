@@ -1,4 +1,3 @@
-import { FillKind } from "#src/models/fleet/FillKind";
 import { mergeMachineProfile } from "#src/services/fleet/mergeMachineProfile";
 import { describe, expect, test } from "vitest";
 
@@ -33,20 +32,5 @@ describe(mergeMachineProfile, () => {
       capabilities: [],
       id: "pc",
     });
-  });
-
-  test("sets the fill target and kinds a run is given over the saved ones, and keeps the saved ones otherwise", () => {
-    expect.hasAssertions();
-
-    const savedProfile = { areas: ["*"], capabilities: [], fillKinds: [FillKind.Unit], fillTarget: 1, id: "pc" };
-
-    expect(mergeMachineProfile(savedProfile, [], "pc", { fillTarget: 0 })).toStrictEqual({
-      areas: ["*"],
-      capabilities: [],
-      fillKinds: [FillKind.Unit],
-      fillTarget: 0,
-      id: "pc",
-    });
-    expect(mergeMachineProfile(savedProfile, [], "pc")).toStrictEqual(savedProfile);
   });
 });

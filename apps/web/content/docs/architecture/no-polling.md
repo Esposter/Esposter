@@ -18,7 +18,6 @@ Periodic _work_ on a fixed cadence is not polling: the clicker game tick, the au
 A sync on a timer is polling even when the period is minutes: a timer that asks whether the remote moved is the same check as one that asks whether a test flipped. The queue is driven by the events that move the remote instead:
 
 - **A commit starts nothing.** Landing a commit on `ai/queue` is not a trigger: the agent lands its commits with its own loop (the `review-queue` skill), an explicit action it takes when it has something to land, and nothing polls for the commits it has not yet landed.
-- **The idle wake reacts to a line.** The plugin starts the machine watcher as its child and reads its output as each chunk arrives. The watcher prints a line starting with `machine idle:` when the machine goes idle and again on each reminder while it stays idle; the plugin submits the wake prompt on that line, unless a turn runs or a usage reserve winds down.
 - **The cache warning is one timer.** The prompt cache goes cold at a known instant. Each turn's end arms one timer for that instant, computed from the request that last read or wrote the cache; the timer warns once for that request and stands down while a turn runs.
 
 If a dependency genuinely exposes no signal — no promise, no event, no webhook — that is an integration-design problem to fix at the boundary (add the completion handle, subscribe to the service's events), never a license to poll around it.
