@@ -1,11 +1,11 @@
 import type { ParseSortByToSql } from "#server/models/pagination/sorting/ParseSortByToSql";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Column, SQL } from "drizzle-orm";
+import type { SQL, SQLWrapper } from "drizzle-orm";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { asc, desc } from "drizzle-orm";
 
-export const parseSortByToSql: ParseSortByToSql = <TColumns extends Record<string, Column>>(
+export const parseSortByToSql: ParseSortByToSql = <TColumns extends Record<string, SQLWrapper>>(
   columns: TColumns,
   sortBy: SortItem<keyof TColumns & string>[],
 ): SQL[] =>

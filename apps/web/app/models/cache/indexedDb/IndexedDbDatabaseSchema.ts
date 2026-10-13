@@ -1,10 +1,11 @@
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { CompositeKey } from "@esposter/azure";
-import type { MessageEntity, PublicUser, RoomInMessage } from "@esposter/db-schema";
+import type { MessageEntity, RoomInMessage } from "@esposter/db-schema";
 import type { DatabaseSchema, ItemMetadata } from "@esposter/shared";
 
 export interface IndexedDbDatabaseSchema extends DatabaseSchema {
-  [IndexedDbStoreName.Members]: IndexedDbStoreSchema<PublicUser>;
+  [IndexedDbStoreName.Members]: IndexedDbStoreSchema<MemberInRoom>;
   [IndexedDbStoreName.Messages]: IndexedDbStoreSchema<MessageEntity>;
   [IndexedDbStoreName.Rooms]: IndexedDbStoreSchema<RoomInMessage>;
 }

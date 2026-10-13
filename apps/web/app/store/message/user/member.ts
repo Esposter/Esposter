@@ -77,7 +77,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Sorted, so a write through it would land on the copy `toSorted` produced rather than the room's own rows
   const getRoomOperationData = (roomId: string) =>
     createOperationData(getSlice(roomId).items, ["id"], DerivedDatabaseEntityType.Member);
-  const storeCreateMember = (roomId: string, member: PublicUser) => {
+  const storeCreateMember = (roomId: string, member: MemberInRoom) => {
     storeUser(member);
     getRoomOperationData(roomId).createMember(member);
     getMemberCountsRef(roomId).value.count++;

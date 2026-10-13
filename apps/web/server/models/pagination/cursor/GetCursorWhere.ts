@@ -1,5 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Column, SQL } from "drizzle-orm";
+import type { SQL, SQLWrapper } from "drizzle-orm";
 import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
 
 export interface GetCursorWhere {
@@ -11,7 +11,7 @@ export interface GetCursorWhere {
   ): SQL;
   // A selection rather than a table, for a sort key that is an expression computed in the query, such as a
   // Display name resolved from a join, which has no column of its own to compare a cursor against
-  <TColumns extends Record<string, Column | SQL>>(
+  <TColumns extends Record<string, SQLWrapper>>(
     columns: TColumns,
     serializedCursors: string,
     sortBy: SortItem<keyof TColumns & string>[],

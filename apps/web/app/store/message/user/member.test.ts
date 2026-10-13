@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+
 import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
@@ -9,7 +11,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe(useMemberStore, () => {
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
-  const member = createUser();
+  const user = createUser();
+  const member: MemberInRoom = { ...user, displayName: user.name };
   const role = createRoomRole({ roomId });
 
   beforeEach(() => {

@@ -1,13 +1,13 @@
 import type { GetCursorWhere } from "#server/models/pagination/cursor/GetCursorWhere";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { BinaryOperator, Column, SQL } from "drizzle-orm";
+import type { BinaryOperator, SQLWrapper } from "drizzle-orm";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
 import { exhaustiveGuard, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 
-export const getCursorWhere: GetCursorWhere = <TColumns extends Record<string, Column | SQL>>(
+export const getCursorWhere: GetCursorWhere = <TColumns extends Record<string, SQLWrapper>>(
   columns: TColumns,
   serializedCursors: string,
   sortBy: SortItem<keyof TColumns & string>[],
@@ -33,12 +33,12 @@ export const getCursorWhere: GetCursorWhere = <TColumns extends Record<string, C
         default:
           exhaustiveGuard(order);
       }
-      return and(
-        ...sortBy
-          .slice(0, index)
-          .map(({ key: previousKey }) => eq(takeOne(columns, previousKey), getCursorValue(previousKey))),
-        operator(takeOne(columns, key), getCursorValue(key)),
-      );
+      const previousConditions = sortBy.slice(0, index).map(({ key: previousKey }) => {
+        const previousColumn: SQLWrapper = takeOne(columns, previousKey);
+        return eq(previousColumn, getCursorValue(previousKey));
+      });
+      const column: SQLWrapper = takeOne(columns, key);
+      return and(...previousConditions, operator(column, getCursorValue(key)));
     }),
   );
   if (!where) throw new InvalidOperationError(Operation.Read, getCursorWhere.name, serializedCursors);

@@ -263,7 +263,9 @@ export const baseRoomRouter = router({
       // One subscription spans every room the client is in, so the room the event happened in travels with it.
       // Dropping it leaves the client to infer which room a join belongs to, and the only thing it can infer
       // From is the room that happens to be open
-      yield { roomId, user };
+      // A user who has just joined holds no nickname: leaving removes the membership that carried one, so the name
+      // The room shows for them is their global name
+      yield { roomId, user: { ...user, displayName: user.name } };
     }
   }),
   onLeaveRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {

@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
-import type { PublicUser } from "@esposter/db-schema";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
@@ -19,12 +19,13 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(useMemberCache, () => {
   let memberCount: ComputedRef<number>;
   let memberCountsByTopRole: ComputedRef<MemberCountByTopRole[]>;
-  let members: Ref<PublicUser[]>;
+  let members: Ref<MemberInRoom[]>;
   let getMemberCountsRef: ReturnType<typeof useMemberStore>["getMemberCountsRef"];
-  let initializeCursorPaginationData: (data: CursorPaginationData<PublicUser>) => void;
+  let initializeCursorPaginationData: (data: CursorPaginationData<MemberInRoom>) => void;
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
   const user = createUser();
+  const member: MemberInRoom = { ...user, displayName: user.name };
   const mountCache = async (initialRouteId: string = partitionKey) => {
     await mountSuspended(
       defineComponent({
@@ -39,7 +40,7 @@ describe(useMemberCache, () => {
           onUnmounted(() => {
             for (const roomId of [initialRouteId, secondPartitionKey])
               getMemberCountsRef(roomId).value = new MemberCounts();
-            initializeCursorPaginationData(new CursorPaginationData<PublicUser>());
+            initializeCursorPaginationData(new CursorPaginationData<MemberInRoom>());
           });
         },
       }),
@@ -61,7 +62,7 @@ describe(useMemberCache, () => {
   test("populates store from cache when switching rooms offline", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MemberIndexedDbStoreConfiguration, [user], secondPartitionKey);
+    await writeIndexedDb(MemberIndexedDbStoreConfiguration, [member], secondPartitionKey);
     await mountCache();
     // Both totals are server-computed, so the room left behind is the last thing that set them. Neither can be
     // Refetched offline, and the room being switched into must not inherit either

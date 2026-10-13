@@ -643,8 +643,8 @@ describe("roomRouter", () => {
     });
     // The room travels with the member: the client subscribes for every room it is in at once, so a payload
     // Without it can only be applied to the room that happens to be open. Every member receives it, so the member
-    // Rides along as what anyone may see of them
-    expect(data).toStrictEqual({ roomId: newRoom.id, user });
+    // Rides along as what anyone may see of them, with the name the room shows for them: a new member has no nickname
+    expect(data).toStrictEqual({ roomId: newRoom.id, user: { ...user, displayName: user?.name } });
   });
 
   test("leaves", async () => {
