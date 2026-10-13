@@ -42,6 +42,6 @@ describe(fillGameDataMirror, () => {
         mirrorDirectory,
       ),
     ).resolves.toBe(3);
-    expect((await readdir(mirrorDirectory)).toSorted()).toStrictEqual(Array.from(jsonMap.keys()).toSorted());
+    expect((await readdir(mirrorDirectory)).toSorted()).toStrictEqual([...jsonMap.keys()].toSorted());
   });
 });
