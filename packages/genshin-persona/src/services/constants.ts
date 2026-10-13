@@ -233,7 +233,7 @@ export const TYPESAFE_KEY_FALLBACK_ENVIRONMENT_VARIABLE = "TYPESAFE_API_KEY";
 // One attempt and a short ceiling: the lore pick sits in the session-start path and has the birthday pick behind it
 export const LORE_PICK_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 8 }).total("milliseconds");
 export const LORE_PICK_INSTRUCTIONS =
-  "Which character should keep the person company in today's session? Each option is described by how that character talks and carries themselves. Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. Every character is a fair pick; the choice is a preference, not a rule.";
+  "Which character should keep the person company in today's session? Each option is described by how that character talks and carries themselves. Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. The state lists the characters the person met in recent sessions and the date of each; weigh them as you see fit. Every character is a fair pick; the choice is a preference, not a rule.";
 // The welcome's bar chart of the tier's answer: the choice and the nearest runners-up, one row each, the bar scaled to
 // The longest of them
 export const LORE_CHART_ROWS = 4;

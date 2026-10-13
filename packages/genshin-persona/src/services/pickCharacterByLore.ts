@@ -6,7 +6,9 @@ import { drawLoreChoice } from "#src/services/drawLoreChoice";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { getLorePickRequest } from "#src/services/getLorePickRequest";
 import { getMoment } from "#src/services/getMoment";
+import { pruneStalePickRecords } from "#src/services/pruneStalePickRecords";
 import { readCardedRoster } from "#src/services/readCardedRoster";
+import { readPickRecords } from "#src/services/readPickRecords";
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 
 // The one place the plugin waits on a network, one attempt with a short ceiling: a start that cannot reach the
@@ -22,7 +24,8 @@ export const pickCharacterByLore = async (
 ): Promise<LorePick> => {
   const client = new TypeSafeClient({ apiKey: key, retry: { maxRetries: 0 }, timeout: LORE_PICK_TIMEOUT_MS });
   const cardedRoster = await readCardedRoster(roster);
-  const request = getLorePickRequest(cardedRoster, today, getMoment());
+  const recentPicks = pruneStalePickRecords(readPickRecords(), today.toString());
+  const request = getLorePickRequest(cardedRoster, today, getMoment(), recentPicks);
   const [result] = await Promise.allSettled([client.systemOne(request)]);
   if (result?.status !== "fulfilled") return { failure: String(result?.reason) };
 

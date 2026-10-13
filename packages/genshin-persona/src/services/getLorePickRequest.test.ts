@@ -1,5 +1,6 @@
 import type { CardedCharacter } from "#src/models/CardedCharacter";
 import type { Moment } from "#src/models/Moment";
+import type { PickRecord } from "#src/models/PickRecord";
 import type { PersonaCard } from "#src/models/PersonaCard";
 
 import english from "#src/localizations/english";
@@ -45,7 +46,7 @@ describe(getLorePickRequest, () => {
   test("describes a carded character by their habits and one without by the game's own line", () => {
     expect.hasAssertions();
 
-    const { questions } = getLorePickRequest([carded, uncarded, untitled], today, moment);
+    const { questions } = getLorePickRequest([carded, uncarded, untitled], today, moment, []);
 
     expect(questions.character).toStrictEqual({
       criteria: { name: personaCard.habits.join(HABIT_SEPARATOR), uncarded: character.description, untitled: null },
@@ -57,10 +58,33 @@ describe(getLorePickRequest, () => {
   test("states the facts code knows for certain, with the birthday measured from today", () => {
     expect.hasAssertions();
 
-    const { state } = getLorePickRequest([carded], today, moment);
+    const { state } = getLorePickRequest([carded], today, moment, []);
 
     expect(state).toStrictEqual({
       characters: [{ ...facts, birthday: getBirthdayNote(birthday, today, english) }],
+      recentPicks: [],
+      today: { date: today.toString(), ...moment },
+    });
+  });
+
+  test("states the characters met in recent sessions with the date each was met", () => {
+    expect.hasAssertions();
+
+    const recentPicks: PickRecord[] = [
+      {
+        displayName: "displayName",
+        element: "element",
+        isoDate: today.toString(),
+        name: "name",
+        sessionId: "sessionId",
+      },
+    ];
+
+    const { state } = getLorePickRequest([carded], today, moment, recentPicks);
+
+    expect(state).toStrictEqual({
+      characters: [{ ...facts, birthday: getBirthdayNote(birthday, today, english) }],
+      recentPicks: [{ date: today.toString(), name: "name" }],
       today: { date: today.toString(), ...moment },
     });
   });
