@@ -167,6 +167,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `mathjs`                                | —                     | Keep — engine     | the expression engine                                                                                  |
 | `mermaid`                               | —                     | Keep — engine     | the diagram engine                                                                                     |
 | `mime-db`                               | —                     | Keep — data       | the IANA-derived dataset our `@esposter/shared` lookup reads, which changes without us                 |
+| `minimark`                              | —                     | Keep — framework  | `nuxt-ai-ready`'s content lookup imports `minimark/stringify`; knip cannot see the virtual module      |
 | `minisearch`                            | —                     | Keep — engine     | the search index                                                                                       |
 | `mocked-exports`                        | —                     | Keep — hold       | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
 | `msw`                                   | —                     | Keep — tooling    | request mocking                                                                                        |

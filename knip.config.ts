@@ -23,6 +23,9 @@ const knipConfiguration: KnipConfig = {
         // Driver, which loads `lru-cache` without declaring it, so the app declares it and nothing in the app imports
         // It; without it `nuxt prepare` installs it itself and rewrites the catalog under CI's install (nuxt/scripts)
         "lru-cache",
+        // @TODO: no upstream issue — `nuxt-ai-ready`'s virtual `content-lookup` module imports `minimark/stringify` without
+        // Declaring it, so the app declares it and nothing in the app imports it (harlan-zw/nuxt-ai-ready)
+        "minimark",
         // @TODO: no upstream issue — `@nuxt/nitro-server` aliases `bufferutil` to `mocked-exports/proxy`, which Nitro 3
         // Resolves from the app, so nothing in the app imports it (nuxt/nuxt)
         "mocked-exports",
