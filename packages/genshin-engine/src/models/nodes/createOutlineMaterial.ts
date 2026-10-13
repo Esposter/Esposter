@@ -8,7 +8,7 @@ import {
   normalize,
   normalLocal,
   positionLocal,
-  transformedNormalView,
+  tangentLocal,
   vec3,
   vec4,
 } from "three/tsl";
@@ -33,9 +33,11 @@ export const createOutlineMaterial = (colorNode: Node<"vec4">, thicknessNode: No
 };
 
 // The game's outline material, moved as its vertex program moves a vertex, in view space before the projection: the vertex
-// Goes along its ray from the eye by the offset, then its xy along the view normal's screen direction by the width
-// (Exact on both forms, as the program's operators read them). The width is the program's own, so it is not scaled by
-// The scene's thickness
+// Goes along its ray from the eye by the offset, then its xy along the view tangent's screen direction by the width
+// (Exact on both forms, as the program's operators read them). The game keeps a vertex's outline normal in its tangent, and
+// The tangent is carried to view space by the model view matrix itself, since three's view normal and tangent turn
+// Inward on a back side, which would push the outline into the body. The width is the program's own, so it is not scaled
+// By the scene's thickness
 export const createGameOutlineMaterial = (
   colorNode: Node<"vec4">,
   widthNode: Node<"float">,
@@ -46,7 +48,8 @@ export const createGameOutlineMaterial = (
   material.side = BackSide;
   const viewPosition = modelViewMatrix.mul(vec4(positionLocal, 1)).xyz;
   const offsetPosition = viewPosition.add(normalize(viewPosition).mul(offsetNode));
-  const pushDirection = normalize(vec3(transformedNormalView.xy, float(0.01))).xy;
+  const viewTangent = modelViewMatrix.mul(vec4(tangentLocal, 0)).xyz;
+  const pushDirection = normalize(vec3(viewTangent.xy, float(0.01))).xy;
   const pushedPosition = vec3(offsetPosition.xy.add(pushDirection.mul(widthNode)), offsetPosition.z);
   material.vertexNode = cameraProjectionMatrix.mul(vec4(pushedPosition, 1));
   material.colorNode = colorNode;
