@@ -48,6 +48,7 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
 ## Notes
 
 - Recent picks are the one part that changes the terminal's behaviour too, and it needs no console, so it ships first and on its own.
+- Built so far: item 3, the recent picks in the lore request's state, as [character pick](/docs/infra/claude-interface/persona-plugin/character-pick). Items 1 and 2 are open: the console has no scene part yet, and the rates panel needs the chart rows reaching the console, which is the decision the next pass makes.
 - A pinned character skips the draw, and so skips the banner: the nameplate appears without the fall.
 
 ## Sources
