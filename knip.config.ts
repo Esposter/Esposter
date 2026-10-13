@@ -2,7 +2,7 @@ import type { KnipConfig } from "knip";
 
 const knipConfiguration: KnipConfig = {
   exclude: ["types"],
-  ignoreBinaries: ["lint", "pwsh", "reg", "tasklist", "typecheck"],
+  ignoreBinaries: ["lint", "pwsh", "typecheck"],
   ignoreExportsUsedInFile: true,
   workspaces: {
     ".": { entry: ["virrun.config.ts"], ignoreDependencies: ["@esposter/shared-node", "@lerna-lite/publish"] },
@@ -66,6 +66,9 @@ const knipConfiguration: KnipConfig = {
     },
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
     "packages/shared": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
+    // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is
+    // Optional on purpose
+    "packages/shared-node": { ignoreDependencies: ["vitest"] },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
     scripts: {
       // The shell wrapper starts the slot gate by its path, so nothing imports it
