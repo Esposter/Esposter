@@ -19,21 +19,24 @@ describe("nuxt-security-module rateLimiter", () => {
   test("#83 #196 a forwarded address the client writes does not change its key, so it cannot spend a fresh count", async () => {
     expect.hasAssertions();
 
-    // The module's route rules, resolved the way its Nitro plugin resolves them at startup. The plugin's only
-    // Dependency on the app is the hook it calls, which has no listener here
+    // The module's route rules, resolved the way its Nitro plugin resolves them on the first request. The plugin's only
+    // Dependencies on the app are the request hook it registers and the routeRules hook it calls, which has no listener here
+    let resolveRoutes = (): Promise<void> => Promise.resolve();
     const routeRulesPlugin = createRouteRulesPlugin({
       "/**": {
         enabled: true,
         rateLimiter: { intervalInMilliseconds: INTERVAL_IN_MILLISECONDS, tokensPerInterval: TOKENS_PER_INTERVAL },
       },
     });
-    routeRulesPlugin({ hooks: { callHook: () => Promise.resolve() } } as unknown as Parameters<
-      typeof routeRulesPlugin
-    >[0]);
-    // The plugin resolves its routes once its hook settles, which a macrotask waits out without a timer
-    await new Promise((resolve) => {
-      setImmediate(resolve);
-    });
+    routeRulesPlugin({
+      hooks: {
+        callHook: () => Promise.resolve(),
+        hook: (_name: string, handler: () => Promise<void>) => {
+          resolveRoutes = handler;
+        },
+      },
+    } as unknown as Parameters<typeof routeRulesPlugin>[0]);
+    await resolveRoutes();
 
     // A real h3 app serves the module's middleware, and the handler behind it answers a request that passes
     const app = new H3();
