@@ -7,9 +7,11 @@ export interface McpAppResource {
   meta: Record<string, unknown>;
 }
 
-// One MCP Apps widget, read from the server the session's CLI dialed. The contents are untrusted third-party HTML,
-// so only a ui:// resource of an HTML type is accepted, and its own _meta (the csp and permissions the app declares)
-// travels with it for the host to enforce
+/**
+ * One MCP Apps widget, read from the server the session's CLI dialed. The contents are untrusted third-party HTML,
+ * so only a ui:// resource of an HTML type is accepted, and its own _meta (the csp and permissions the app declares)
+ * travels with it for the host to enforce
+ */
 export const readMcpAppResource = async (
   query: Pick<Query, "readMcpResource">,
   serverName: string,
@@ -23,5 +25,6 @@ export const readMcpAppResource = async (
   if (content?.text === undefined || !content.mimeType?.startsWith("text/html"))
     throw new InvalidOperationError(Operation.Read, uri, "the server returned no HTML for the app");
 
+  // oxlint-disable-next-line no-underscore-dangle -- `_meta` is the MCP wire field name the SDK types
   return { html: content.text, meta: content._meta ?? {} };
 };

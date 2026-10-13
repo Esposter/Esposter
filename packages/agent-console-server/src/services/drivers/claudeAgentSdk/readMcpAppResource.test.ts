@@ -26,8 +26,10 @@ describe(readMcpAppResource, () => {
 
     const readMcpResource = vi.fn<Query["readMcpResource"]>();
 
-    await expect(readMcpAppResource({ readMcpResource }, serverName, "file://calendar/month")).rejects.toThrowError(
-      InvalidOperationError,
+    await expect(
+      readMcpAppResource({ readMcpResource }, serverName, "file://calendar/month"),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "file://calendar/month", "an MCP app is read from a ui:// resource only").message}]`,
     );
     expect(readMcpResource).not.toHaveBeenCalled();
   });
@@ -39,8 +41,8 @@ describe(readMcpAppResource, () => {
       .fn<Query["readMcpResource"]>()
       .mockResolvedValue({ contents: [{ mimeType: "application/json", text: "{}", uri }] });
 
-    await expect(readMcpAppResource({ readMcpResource }, serverName, uri)).rejects.toThrowError(
-      new InvalidOperationError(Operation.Read, uri, "the server returned no HTML for the app"),
+    await expect(readMcpAppResource({ readMcpResource }, serverName, uri)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, uri, "the server returned no HTML for the app").message}]`,
     );
   });
 });

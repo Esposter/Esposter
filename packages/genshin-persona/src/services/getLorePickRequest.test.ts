@@ -1,7 +1,7 @@
 import type { CardedCharacter } from "#src/models/CardedCharacter";
 import type { Moment } from "#src/models/Moment";
-import type { PickRecord } from "#src/models/PickRecord";
 import type { PersonaCard } from "#src/models/PersonaCard";
+import type { PickRecord } from "#src/models/PickRecord";
 
 import english from "#src/localizations/english";
 import { HABIT_SEPARATOR, LORE_PICK_INSTRUCTIONS } from "#src/services/constants";
