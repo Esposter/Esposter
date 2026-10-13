@@ -4,7 +4,7 @@ import type { MachineState } from "#src/models/machine/MachineState";
 import { RENEW_MILLISECONDS } from "#src/services/fleet/constants";
 import { pushMachineHeartbeat } from "#src/services/fleet/pushMachineHeartbeat";
 import { readMachineProfile } from "#src/services/fleet/readMachineProfile";
-import { checkIsWatching } from "#src/services/machine/checkIsWatching";
+import { claimMachineWatch } from "#src/services/machine/claimMachineWatch";
 import { LAUNCHD_PROCESS_ID, SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
 import { formatMachineFigures } from "#src/services/machine/formatMachineFigures";
 import { getCpuPercentage } from "#src/services/machine/getCpuPercentage";
@@ -14,8 +14,8 @@ import { getMachineState } from "#src/services/machine/getMachineState";
 import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
 import { readGpuPercentage } from "#src/services/machine/readGpuPercentage";
 import { readLastPush } from "#src/services/machine/readLastPush";
-import { readMachineState } from "#src/services/machine/readMachineState";
 import { readProcesses } from "#src/services/machine/readProcesses";
+import { releaseMachineWatch } from "#src/services/machine/releaseMachineWatch";
 import { selectOrphans } from "#src/services/machine/selectOrphans";
 import { sweepOrphans } from "#src/services/machine/sweepOrphans";
 import { writeMachineState } from "#src/services/machine/writeMachineState";
@@ -26,11 +26,12 @@ import { setTimeout as sleep } from "node:timers/promises";
 // Watches the machine, one reading a minute, printing a line only when the state changes or an idle or tight state's
 // Reminder falls due, and writing each reading to the state file the genshin-mods pulse reads (the throughput skill)
 export const watchMachine = async (): Promise<void> => {
-  // The session starts one watcher, and a watcher already keeping the state file is left to keep it
-  if (checkIsWatching(readMachineState(), process.pid, Temporal.Now.instant().epochMilliseconds)) {
+  // The session starts one watcher, and a watcher already holding the machine's claim is left to keep it
+  if (!claimMachineWatch()) {
     console.info("the machine watcher is already running");
     return;
   }
+  process.once("exit", releaseMachineWatch);
   const cpuAverages: number[] = [];
   let previousTotals: CpuTotals = getCpuTotals(cpus());
   let lastState: MachineState | undefined;

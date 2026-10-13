@@ -11,7 +11,6 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 - [ ] [Dependency admission](/docs/architecture/dependency-admission) — the heavy engines by the client bytes `pnpm ai:dependencies:score --sort bundle` reads from the app's real build: the survey creator, mermaid, three, apexcharts and mathjs each weighed for a lighter engine, a later load or neither; the two PDF viewers stay ([PDF viewer consolidation](/docs/architecture/rejected/pdf-viewer-consolidation)), and GrapesJS is answered by the [page builder](/docs/proposals/resource/page-builder)
 - [ ] [Agent console](/docs/proposals/infra/agent-console) — past terminal parity and the shipped connecting (host installer, session windows, device pairing, remote connections) and the Code tab's shell pane: repository files, diff comments, side chat, effort level and session titles, so a day's work needs no terminal; Anthropic-hosted sessions on the reader's own API key; then the Genshin theme, the views and the terminal-mirror driver
-- [ ] [Machine watcher lock](/docs/proposals/infra/machine-watcher-lock) — two watchers started together both pass the already-running check, since the state file is written only after the first minute's sample; choose the claim that makes the check atomic, a lock file or a state write at start, then build it
 
 ## Blocked (the character voice still switched on after two weeks of daily use)
 

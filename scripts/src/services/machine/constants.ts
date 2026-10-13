@@ -34,3 +34,8 @@ export const MACHINE_STATE_DIRECTORY: string = join(homedir(), `.${SITE_NAME.toL
 export const MACHINE_STATE_PATH: string = join(MACHINE_STATE_DIRECTORY, "state.json");
 export const MACHINE_STATE_NEXT_PATH: string = join(MACHINE_STATE_DIRECTORY, "state.next.json");
 export const MACHINE_STATE_STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 3 }).total("milliseconds");
+// The watcher's claim on the machine, the one file a second watcher checks. It holds the watcher's process id, is created
+// Exclusively and removed on exit, and is taken over only once that process is gone. The takeover lock lets one starter
+// At a time take over a stale claim
+export const MACHINE_LOCK_PATH: string = join(MACHINE_STATE_DIRECTORY, "watcher.lock");
+export const MACHINE_LOCK_TAKEOVER_PATH: string = join(MACHINE_STATE_DIRECTORY, "watcher.lock.takeover");

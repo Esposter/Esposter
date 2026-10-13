@@ -45,13 +45,13 @@ Pulse is on by default, and `/pulse off` stops it; `/pulse on` turns it back on,
 
 ## Key files
 
-| File                                                           | Role                                                                      |
-| :------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`      | Session start starts the watcher and reads its lines                      |
-| `packages/genshin-mods/src/services/pulse/getPulseWake.ts`     | The wake decision, a pure function over one watcher line and the session  |
-| `packages/genshin-mods/src/services/pulse/takeWatcherLines.ts` | Splits the watcher's chunks into whole lines, holding a partial one       |
-| `packages/genshin-mods/src/services/constants.ts`              | The idle line's prefix, the watcher's script path and the wake prompt     |
-| `scripts/src/services/machine/watchMachine.ts`                 | The watcher's loop, which refuses to start while another watcher is alive |
-| `scripts/src/services/machine/checkIsWatching.ts`              | Whether another watcher's reading is fresh and its process alive          |
-| `scripts/src/services/machine/writeMachineState.ts`            | The watcher's write of its reading, renamed over the file it replaces     |
-| `scripts/src/services/resume/getWatcherItems.ts`               | The `watcher` row of `pnpm ai:resume`                                     |
+| File                                                           | Role                                                                                                            |
+| :------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`      | Session start starts the watcher and reads its lines                                                            |
+| `packages/genshin-mods/src/services/pulse/getPulseWake.ts`     | The wake decision, a pure function over one watcher line and the session                                        |
+| `packages/genshin-mods/src/services/pulse/takeWatcherLines.ts` | Splits the watcher's chunks into whole lines, holding a partial one                                             |
+| `packages/genshin-mods/src/services/constants.ts`              | The idle line's prefix, the watcher's script path and the wake prompt                                           |
+| `scripts/src/services/machine/watchMachine.ts`                 | The watcher's loop, which refuses to start while another watcher holds the claim                                |
+| `scripts/src/services/machine/claimMachineWatch.ts`            | The watcher's claim, `watcher.lock`, taken before its first sample and taken over only once its process is gone |
+| `scripts/src/services/machine/writeMachineState.ts`            | The watcher's write of its reading, renamed over the file it replaces                                           |
+| `scripts/src/services/resume/getWatcherItems.ts`               | The `watcher` row of `pnpm ai:resume`                                                                           |
