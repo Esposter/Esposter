@@ -278,7 +278,7 @@ V.xy += normalize(vec3(T_view.xy, 0.01)).xy * W     (V the view-space position, 
 
 The push is along the vertex's tangent, not its normal (Exact on the input): the program carries its NORMAL input only to the lit normal it hands on, and its TANGENT, skinned and taken to view space by the object and view matrices, is the direction it pushes along. The game keeps each vertex's outline direction in its tangent.
 
-`T_w` is the blue channel of texture "t0" sampled at the vertex's second texture coordinate, at lod 0 (Exact on the channel and the lod; Provisional on the texture's name, which the slot table does not yet give). `v1.w` is the vertex's colour alpha, so a vertex with none is not pushed out at all.
+`T_w` is the blue channel of texture "t0" sampled at the vertex's second texture coordinate, at lod 0 (Exact on the channel and the lod; Provisional on the texture's name, which the slot table does not yet give). The GPU-skinned variants, which read their bone palette from "t0" by the vertex's bone indices ("_VSSKinningParam"), read no width texture and have no `T_w` (Exact); both kinds push along the tangent. `v1.w` is the vertex's colour alpha, so a vertex with none is not pushed out at all.
 
 The offset comes first, along the ray from the eye, not along the normal (Exact):
 
@@ -289,7 +289,7 @@ V += normalize(V) * "_MaxOutlineZOffset" * 0.01 * f
 
 A flag of zero with a blue of a half offsets nothing, so a face vertex is not pushed out by it. "_OutLineZOffset" (cb0[31].x) biases the clip depth where a facing test is negative; it is not built, and the outline's depth is the projection's.
 
-The code (`createGameOutlineMaterial`, `getGameOutlineOffset`, `createAvatarShadingInputs`) takes the knots, the vertex weight, the offset and the flag from the game, in the program's view-space form: the push is the skinned tangent carried to view space by the model view matrix, since three's view normal and tangent turn inward on the back side the outline draws, the offset is the pure equation `getGameOutlineOffset`, and the width is `"_OutlineWidth" * 0.41425` weighted by the alpha, with `T_w` taken as 1 since no texture is read, and "_OutlineCorrectionWidth" taken as 1 where a material holds none. The pack's outline is the world's own, unchanged, in clip space.
+The code (`createGameOutlineMaterial`, `getGameOutlineOffset`, `createAvatarShadingInputs`) takes the knots, the vertex weight, the offset and the flag from the game, in the program's view-space form: the push is the skinned tangent carried to view space by the model view matrix, since three's view normal and tangent turn inward on the back side the outline draws, the offset is the pure equation `getGameOutlineOffset`, and the width is `"_OutlineWidth" * 0.41425` weighted by the alpha, with no `T_w`, as the GPU-skinned variants draw it, and "_OutlineCorrectionWidth" taken as 1 where a material holds none. The pack's outline is the world's own, unchanged, in clip space.
 
 ### The colour (pixel 885)
 
