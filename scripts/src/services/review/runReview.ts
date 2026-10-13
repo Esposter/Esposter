@@ -13,6 +13,7 @@ import { getNewlyPassedWindowIndices } from "#src/services/review/getNewlyPassed
 import { getPassedWindowCount } from "#src/services/review/getPassedWindowCount";
 import { getReviewWindowStatus } from "#src/services/review/getReviewWindowStatus";
 import { advanceMain } from "#src/services/review/git/advanceMain";
+import { assertCheckoutIsDisposable } from "#src/services/review/git/assertCheckoutIsDisposable";
 import { checkoutQueue } from "#src/services/review/git/checkoutQueue";
 import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { mergeMain } from "#src/services/review/git/mergeMain";
@@ -65,7 +66,10 @@ const getWindowRow = (
 export const runReview = async ({ findingsDirectory, from, isDryRun, to }: ReviewRunInput): Promise<void> => {
   const mode = getMode(from, to);
   fetchRemote();
-  if (!isDryRun) checkoutQueue();
+  if (!isDryRun) {
+    assertCheckoutIsDisposable();
+    checkoutQueue();
+  }
   const range: ReviewRange =
     mode === ReviewMode.Steady
       ? { from: REMOTE_MAIN_REF, mode, to: REMOTE_QUEUE_REF }

@@ -7,6 +7,7 @@ import { checkIsHeldByLiveRun } from "#src/services/review/checkIsHeldByLiveRun"
 import { REVIEW_SETTLE_DEADLINE } from "#src/services/review/constants";
 import { dispatchReview } from "#src/services/review/dispatchReview";
 import { getRunJobs } from "#src/services/review/getRunJobs";
+import { assertCheckoutIsDisposable } from "#src/services/review/git/assertCheckoutIsDisposable";
 import { checkoutQueue } from "#src/services/review/git/checkoutQueue";
 import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { landCommits } from "#src/services/review/git/landCommits";
@@ -64,6 +65,8 @@ export const runReviewSettle = async (): Promise<void> => {
   const rows = ["## Settle", "", "| Issue | Fixed | Recorded | Refuted | Result |", "| --- | --- | --- | --- | --- |"];
   let isLimited = false;
   let isPastDeadline = false;
+  fetchRemote();
+  assertCheckoutIsDisposable();
   for (const issue of listReviewIssues()) {
     if (isLimited) break;
     if (Date.now() >= deadline) {
