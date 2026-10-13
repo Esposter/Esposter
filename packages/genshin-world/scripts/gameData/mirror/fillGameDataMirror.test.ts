@@ -33,7 +33,7 @@ describe(fillGameDataMirror, () => {
     const indexJson = JSON.stringify({ 0: getHash(entryJson) });
     const jsonMap = new Map([objectJson, entryJson, indexJson].map((json) => [getHash(json), json]));
     vi.mocked(downloadGameDataObject).mockImplementation((url) =>
-      Promise.resolve(jsonMap.get(basename(url, ".json")) ?? ""),
+      Promise.resolve(Buffer.from(jsonMap.get(basename(url, ".json")) ?? "")),
     );
 
     await expect(
@@ -42,8 +42,6 @@ describe(fillGameDataMirror, () => {
         mirrorDirectory,
       ),
     ).resolves.toBe(3);
-    expect((await readdir(mirrorDirectory)).toSorted()).toStrictEqual(
-      Array.from(jsonMap.keys(), (hash) => `${hash}.json`).toSorted(),
-    );
+    expect((await readdir(mirrorDirectory)).toSorted()).toStrictEqual(Array.from(jsonMap.keys()).toSorted());
   });
 });

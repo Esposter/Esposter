@@ -1,6 +1,5 @@
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { SITE_NAME } from "@esposter/shared";
-import { homedir } from "node:os";
+import { CACHE_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
 // The one gcsim tag the builder reads, its last MIT release. Every later tag is under gcsim's own licence, so its
@@ -25,8 +24,8 @@ export const KIT_VALUE_PATH_REGEX: RegExp = /^[A-Za-z][A-Za-z0-9]*(?:\.(?:\d+(?:
 export const KIT_LENGTH_KEY = "length";
 // Where gcsim's tag is cloned and the wiki's answers are kept between runs, outside the repository: the tag never
 // Moves, and a wiki page is read again only once its cached answer is deleted
-export const GCSIM_CACHE_DIRECTORY: string = join(homedir(), SITE_NAME, "cache", `gcsim-${GCSIM_TAG}`);
-export const WIKI_CACHE_DIRECTORY: string = join(homedir(), SITE_NAME, "cache", "genshin-wiki");
+export const GCSIM_CACHE_DIRECTORY: string = join(CACHE_ROOT, `gcsim-${GCSIM_TAG}`);
+export const WIKI_CACHE_DIRECTORY: string = join(CACHE_ROOT, "genshin-wiki");
 export const WIKI_API_URL = "https://genshin-impact.fandom.com/api.php";
 // The attack tags gcsim writes each kit slot's hits with
 export const GCSIM_CHARGED_ATTACK_TAG = "attacks.AttackTagExtra";

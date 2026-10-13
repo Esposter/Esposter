@@ -51,12 +51,13 @@ jobs:
         uses: ./.github/actions/verify-package-builds
       # The coverage shards only restore the hosted game data's mirror, under the lock's hash. A lock no cache holds yet
       # is filled here, every object and index entry it names, and the cache action saves it under that key as this job
-      # ends, before any shard starts. The fill runs on the built `@esposter/shared`, so it follows the build
+      # ends, before any shard starts. The fill runs on the built `@esposter/shared` and `@esposter/shared-node`, so it
+      # follows the build
       - name: ♻️ Look up the game data mirror
         id: game-data-mirror
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: packages/genshin-world/node_modules/.cache/game-data
+          path: ~/Esposter/cache/content
           key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
           lookup-only: true
 

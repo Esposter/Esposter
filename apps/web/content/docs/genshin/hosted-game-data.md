@@ -134,7 +134,7 @@ flowchart TD
   Fetch -->|"HTTP error or timeout"| Failure["rejects: the memo drops it, the caller logs it, and the gate keeps the world shut"]
 ```
 
-A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`, or `readPublishedGameDataEntries` for some of an index's entries), never through genshin-world's build, which a step running under `tsx` may load stale. A world data file a fit or a parity loop reads is read through the lock first (`readWorldData`): the record the lock names under its path less `.json`, and the file the package keeps only where the lock names nothing, as for the region data and the authored sources.
+A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`, or `readPublishedGameDataEntries` for some of an index's entries), never through genshin-world's build, which a step running under `tsx` may load stale. Every such read goes through the machine-wide content cache (`readPublishedGameDataObject`), so the dev account serves an object once per machine however many steps, loops and worktrees read it. A world data file a fit or a parity loop reads is read through the lock first (`readWorldData`): the record the lock names under its path less `.json`, and the file the package keeps only where the lock names nothing, as for the region data and the authored sources.
 
 ## Updating
 
@@ -180,7 +180,7 @@ flowchart TD
 
 ## Tests
 
-No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from a content-addressed mirror, `GAME_DATA_MIRROR_DIRECTORY` under the package's own node_modules cache. The parity page and the browser suite reach the same mirror through a Vite middleware on the same path. A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name; a worker that loses the race to write it has written the same bytes.
+No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from the mirror: the machine-wide content cache, `CONTENT_CACHE_DIRECTORY` (`~/Esposter/cache/content`) from `@esposter/shared-node/cache`, which the `scripts` package's reads share. The parity page and the browser suite reach the same mirror through a Vite middleware on the same path. A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name; a worker that loses the race to write it has written the same bytes.
 
 CI keys the mirror on the lock's hash. The `build-packages` job looks the key up, and when no cache holds it, `pnpm game-data:mirror` downloads every object and index entry the lock names and the cache action saves it under that key as the job ends; each coverage shard only restores it, so a run fetches nothing until the lock moves. The name text's suite reads every record the lock names outside the text datasets, so it sets a sixty-second timeout that a cold local mirror's first run fits inside.
 
@@ -189,13 +189,13 @@ flowchart TD
   Suite["a suite or fixture reads under /game-data"] --> Route{"who answers"}
   Route -->|vitest| Fetch["setupGameDataFetch: the stubbed fetch"]
   Route -->|"parity page, browser suite"| Middleware["gameDataMirrorPlugin: the Vite middleware"]
-  Fetch --> Mirror{"the mirror holds the hash?"}
+  Fetch --> Mirror{"the content cache holds the hash?"}
   Middleware --> Mirror
   Mirror -->|yes| Serve["the stored JSON"]
   Mirror -->|no| Download["download from the dev account, decode the zstd frame"]
   Download --> Hash{"bytes hash to the name?"}
-  Hash -->|no| Refuse["throws: the mirror keeps nothing"]
-  Hash -->|yes| Store["temp file, rename into the mirror"]
+  Hash -->|no| Refuse["throws: the cache keeps nothing"]
+  Hash -->|yes| Store["temp file, rename into the cache"]
   Store --> Serve
   Lock["the lock's hash"] --> Cached{"a CI cache under it?"}
   Cached -->|no| Fill["build-packages fills every object and entry, saved as the job ends"]
@@ -228,10 +228,11 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 - **Publishing goes to both accounts in one call.** A dry run stores nothing, so there is no per-account dry run.
 - **A key scope sits under a dataset.** A bare dataset passed as a key is refused, since it would replace its whole dataset with one record.
 - **The lock's keys type the readers' keys,** `keyof` over the committed lock, though the declarations then carry the lock's key names.
-- **The suites' base imports nothing.** `GAME_DATA_LOCAL_BASE_URL` has a module of its own, because the fixtures that pass it run in the browser through the parity page; the mirror's directory and its source address sit in a Node-only module beside the mirror.
+- **The suites' base imports nothing.** `GAME_DATA_LOCAL_BASE_URL` has a module of its own, because the fixtures that pass it run in the browser through the parity page; the mirror's source address sits in a Node-only module beside the mirror.
 - **The mirror is the package's own tooling,** under `packages/genshin-world/scripts`, reached by `#scripts/*` and never shipped. Neither it nor the `scripts` package can import the other's tooling, so each writes the dev account's address.
+- **Every reader on a machine shares one content cache, keyed by hash alone.** A cache under a checkout's `node_modules` starts empty in every worktree and every ephemeral run, and the `scripts` package's reads once had no cache at all, so the parity and fit loops fetched the whole set again and again and turned the dev account's read operations into its largest cost. An object's name is the hash of its bytes, so the cache needs no namespace: the suites, the parity page and the scripts share one copy without agreeing on anything but the hash, and a hit never goes stale. Nothing evicts it, since a republish adds only the objects that changed.
 - **The mirror checks the bytes it downloaded.** The account stores the compact JSON the publisher hashed, so the downloaded bytes hash to their name with no re-serialization.
-- **CI's mirror is filled once, ahead of the shards.** A shard reads a subset of what the lock names, so a shard's save would key that subset as the whole; the one fill reads every object and index entry, and the shards only restore it. It runs in `build-packages`, the one job every shard waits on, under Node with no `tsx`, on the built `@esposter/shared`.
+- **CI's mirror is filled once, ahead of the shards.** A shard reads a subset of what the lock names, so a shard's save would key that subset as the whole; the one fill reads every object and index entry, and the shards only restore it. It runs in `build-packages`, the one job every shard waits on, under Node with no `tsx`, on the built `@esposter/shared` and `@esposter/shared-node`.
 - **A world data file is read from its published record first.** The fits and the parity loops publish rather than write, so the record the lock names is the freshest copy, and a parity loop that refits `login/music` reads its own last publish.
 - **The fits run one at a time.** A fit holds the thread while it computes, so when the fits ran together, a record another fit was fetching outwaited its ten-second timeout. They share the one thread either way, so running them in turn costs only the reads they overlapped.
 - **A fit returns what a builder returns:** its notes and its records by key (`GameDataBuild`), which the fit command publishes as any step does.
@@ -314,7 +315,10 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 | `packages/genshin-world/src/composables/useWorldArchive.ts`                           | Reads a volume's body in the game language when the reader opens it                                                       |
 | `packages/genshin-world/src/data/achievements/achievementCount.json`                  | The one data file bundled besides the lock, the save schema's bound                                                       |
 | `packages/genshin-world/scripts/gameData/constants.ts`                                | `GAME_DATA_LOCAL_BASE_URL`, the base every suite and fixture reads from                                                   |
-| `packages/genshin-world/scripts/gameData/mirror/readMirroredGameDataObject.ts`        | One object from the mirror, downloaded and checked against its hash on a miss                                             |
+| `packages/shared-node/src/services/cache/readContentAddressedObject.ts`               | One object from the machine-wide content cache, downloaded and checked against its hash on a miss                         |
+| `packages/shared-node/src/services/cache/constants.ts`                                | `CACHE_ROOT` and `CONTENT_CACHE_DIRECTORY`, the folders every checkout on a machine shares                                |
+| `packages/genshin-world/scripts/gameData/mirror/readMirroredGameDataObject.ts`        | One object's JSON through the content cache, filled from the dev account                                                  |
+| `scripts/src/services/gameData/readPublishedGameDataObject.ts`                        | The scripts' read of one published object, through the same content cache                                                 |
 | `packages/genshin-world/scripts/gameData/mirror/setupGameDataFetch.ts`                | The suites' fetch route to the mirror                                                                                     |
 | `packages/genshin-world/scripts/gameData/mirror/gameDataMirrorPlugin.ts`              | The parity page's and the browser suite's middleware to the mirror                                                        |
 | `packages/genshin-world/scripts/gameData/mirror/fillGameDataMirror.ts`                | Reads every object and index entry a lock reaches into the mirror                                                         |

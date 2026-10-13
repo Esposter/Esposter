@@ -2,8 +2,6 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
 import { KIBIBYTE } from "@esposter/configuration";
-import { SITE_NAME } from "@esposter/shared";
-import { homedir } from "node:os";
 import { join } from "node:path";
 
 export const MAIN_BRANCH = "main";
@@ -26,10 +24,6 @@ export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
 // Was, and it is wrong the first time the file counting it moves a directory. The walk-up to the manifest survives
 // That move.
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
-// The one folder every checkout shares for the tools it downloads, pinned and checked. A worktree sits outside the
-// Checkout whose `node_modules` held them, so a cache there would be fetched again per worktree. Each tool derives its
-// Own folder from this root.
-export const TOOL_CACHE_ROOT: string = join(homedir(), SITE_NAME, "cache");
 // The repository's own formatter, run as its binary over each JSON file a script writes. Its configuration is the root's,
 // And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is kept.
 export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, "node_modules", "oxfmt", "bin", "oxfmt");

@@ -1,7 +1,7 @@
 {
   "name": "@esposter/shared-node",
   "version": "4.1.0",
-  "description": "Node-only shared tooling: hidden-window child processes, and benchmark reporting reused across packages.",
+  "description": "Node-only shared tooling: the machine-wide download cache, hidden-window child processes, and benchmark reporting reused across packages.",
   "keywords": [
     "benchmark",
     "child-process",
@@ -37,6 +37,10 @@
       "source": "./src/services/constants.ts",
       "default": "./dist/bench.js"
     },
+    "./cache": {
+      "source": "./src/cache.ts",
+      "default": "./dist/cache.js"
+    },
     "./child-process": {
       "source": "./src/childProcess.ts",
       "default": "./dist/child-process.js"
@@ -50,6 +54,7 @@
   "publishConfig": {
     "exports": {
       "./bench": "./dist/bench.js",
+      "./cache": "./dist/cache.js",
       "./child-process": "./dist/child-process.js",
       "./reporter": "./dist/reporter.js",
       "./package.json": "./package.json"

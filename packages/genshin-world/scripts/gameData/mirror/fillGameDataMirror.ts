@@ -1,15 +1,16 @@
 import type { GameDataLock } from "#src/models/data/GameDataLock";
 
-import { GAME_DATA_MIRROR_DIRECTORY, MAX_CONCURRENT_MIRROR_DOWNLOADS } from "#scripts/gameData/mirror/constants";
+import { MAX_CONCURRENT_MIRROR_DOWNLOADS } from "#scripts/gameData/mirror/constants";
 import { readMirroredGameDataObject } from "#scripts/gameData/mirror/readMirroredGameDataObject";
 import { gameDataIndexSchema } from "#src/models/data/GameDataIndex";
 import { settleAll } from "@esposter/shared";
+import { CONTENT_CACHE_DIRECTORY } from "@esposter/shared-node/cache";
 
 // Every object a lock reaches, read into the mirror: each index, then its entries and the lock's own objects, so a
 // Mirror saved after it holds every record a suite can read. Resolves to how many distinct objects the mirror holds
 export const fillGameDataMirror = async (
   lock: GameDataLock,
-  mirrorDirectory: string = GAME_DATA_MIRROR_DIRECTORY,
+  mirrorDirectory: string = CONTENT_CACHE_DIRECTORY,
 ): Promise<number> => {
   const indexHashes = new Set(Object.values(lock.indexes));
   const entryHashes = (
