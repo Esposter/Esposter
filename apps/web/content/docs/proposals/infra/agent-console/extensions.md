@@ -66,7 +66,7 @@ A view is an entry in `AgentConsoleViewMap`: a name, an icon, a lazily loaded co
 
 ## Scope and order
 
-1. **The MCP Apps host.** After the SDK driver is proven, since it rides on the driver's tool results.
+1. **The MCP Apps host.** After the SDK driver is proven, since it rides on the driver's tool results. The server read is in place as `readMcpAppResource`, which returns the HTML and the app's own `_meta` and refuses anything that is not a `ui://` HTML resource. Still to build: the command that carries the read to the page, the window driver's answer to it, the sandbox proxy and the `McpApp.vue` frame.
 2. **The view registry**, built with the first view that needs one.
 
 ```text
@@ -80,7 +80,7 @@ packages/agent-console-server/src/services/
 
 ## Notes
 
-- Whether the SDK passes a tool result's `_meta` through, and whether the host can read a `ui://` resource from a server the session itself started, are the two probes the MCP Apps tier rests on; if the host cannot, it connects to the same server from the session's own configuration.
+- Both probes the MCP Apps tier rests on are answered by the SDK, so the host does not dial servers itself. The tool's `ui://` reference is read from the session's `mcpServerStatus()` tool list, whose `_meta` carries the MCP Apps members the CLI validated, and the widget is read with `query.readMcpResource(serverName, uri)` from the server the CLI already connected. Both need the CLI's advertised capabilities (`mcp_tool_ui_meta_v1`, `mcp_read_resource_v1`), and an SDK-type server is refused, so an in-process server's widget is not reachable this way.
 - The same-origin frame is the cheapest tier only because the console lives in the app; a tool that must work outside Esposter is an MCP App even when a route would do, so it is written once for every host.
 - The sandbox proxy needs an origin of its own. Serving it from the host's loopback on a second port keeps it off the app's origin, and is the open part of the tier's design.
 
