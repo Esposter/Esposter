@@ -1,7 +1,7 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 
 import { getInvalidBlueprintError } from "#server/services/blueprint/getInvalidBlueprintError";
-import { mapBlueprintEntryContentStrings } from "#server/services/blueprint/mapBlueprintEntryContentStrings";
+import { mapBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
 import { blueprintEntrySchema } from "#shared/models/resource/blueprint/BlueprintEntry";
 import { BLUEPRINT_ENTRY_TOKEN_REGEX } from "#shared/services/resource/blueprint/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";

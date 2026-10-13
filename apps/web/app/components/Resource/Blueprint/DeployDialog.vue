@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
 
+import { blueprintEntrySchema } from "#shared/models/resource/blueprint/BlueprintEntry";
+import {
+  BLUEPRINT_ENTRY_TOKEN_REGEX,
+  BLUEPRINT_PARAMETER_TOKEN_REGEX,
+} from "#shared/services/resource/blueprint/constants";
+import { mapBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
+import { substituteBlueprintParameterTokens } from "#shared/services/resource/blueprint/substituteBlueprintParameterTokens";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -37,6 +44,34 @@ watch(isOpen, (newIsOpen) => {
   );
   deployments.value = [];
 });
+// What each entry will be created as, resolved from the fields as they are typed by the same substitution deploy runs
+const parameterValueMap = computed(() => new Map(Object.entries(parameterValues.value)));
+const deployReviews = computed(() =>
+  blueprint.value.entries.map((entry) => {
+    const name = substituteBlueprintParameterTokens(entry.name, parameterValueMap.value);
+    const bindingKeys = new Set<string>();
+    mapBlueprintEntryContentStrings(entry, (value) =>
+      value.replace(BLUEPRINT_ENTRY_TOKEN_REGEX, (match, key: string) => {
+        bindingKeys.add(key);
+        return match;
+      }),
+    );
+    const undeclaredTokens = name.match(BLUEPRINT_PARAMETER_TOKEN_REGEX) ?? [];
+    const isNameEmpty = !blueprintEntrySchema.shape.name.safeParse(name).success;
+    const notes: string[] = [];
+    if (bindingKeys.size > 0) notes.push(`binds ${[...bindingKeys].join(", ")}`);
+    if (undeclaredTokens.length > 0) notes.push(`undeclared ${undeclaredTokens.join(", ")}`);
+    if (isNameEmpty) notes.push("no name: a parameter it uses is empty");
+    return {
+      description: notes.join(" · "),
+      icon: ResourceDefinitionMap[entry.type].icon,
+      isNameEmpty,
+      key: entry.key,
+      title: isNameEmpty ? entry.key : name,
+    };
+  }),
+);
+const isDeployBlocked = computed(() => deployReviews.value.some(({ isNameEmpty }) => isNameEmpty));
 const deploy = async () => {
   const resourceValue = resource.value;
   if (!resourceValue) return;
@@ -76,9 +111,25 @@ const deploy = async () => {
         />
         <p v-if="description" text-muted>{{ description }}</p>
       </div>
+      <!-- Each entry is a row leading with its type's mark, the name it will be created with after it -->
+      <div v-if="deployReviews.length > 0" flex flex-col gap-1>
+        <p>Creates {{ deployReviews.length }} {{ pluralize("resource", deployReviews.length) }}:</p>
+        <ul flex flex-col>
+          <li v-for="{ description, icon, key, title } of deployReviews" :key>
+            <UiItemContent :description :icon :title />
+          </li>
+        </ul>
+      </div>
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :is-pending="isDeployPending" type="submit" :variant="UiButtonVariant.Accent"> Deploy </UiButton>
+        <UiButton
+          :disabled="isDeployBlocked"
+          :is-pending="isDeployPending"
+          type="submit"
+          :variant="UiButtonVariant.Accent"
+        >
+          Deploy
+        </UiButton>
       </footer>
     </UiForm>
     <div v-else p-3 flex flex-col gap-3>

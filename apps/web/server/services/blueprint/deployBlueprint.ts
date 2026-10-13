@@ -2,14 +2,14 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 
-import { mapBlueprintEntryContentStrings } from "#server/services/blueprint/mapBlueprintEntryContentStrings";
 import { sortBlueprintEntriesTopologically } from "#server/services/blueprint/sortBlueprintEntriesTopologically";
 import { substituteBlueprintEntryAliasTokens } from "#server/services/blueprint/substituteBlueprintEntryAliasTokens";
-import { substituteBlueprintParameterTokens } from "#server/services/blueprint/substituteBlueprintParameterTokens";
 import { validateBlueprintEntries } from "#server/services/blueprint/validateBlueprintEntries";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { withResourceRollback } from "#server/services/resource/withResourceRollback";
+import { mapBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
+import { substituteBlueprintParameterTokens } from "#shared/services/resource/blueprint/substituteBlueprintParameterTokens";
 
 // Every entry is validated against its type's contentSchema before anything is created, then created
 // Dependencies-first so an entry's `{{entry:key}}` references resolve to real ids. A mid-deploy failure deletes

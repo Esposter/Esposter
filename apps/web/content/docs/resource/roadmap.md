@@ -16,7 +16,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Dataset CSV export](/docs/proposals/resource/dataset-csv-export) — one Export CSV for every dataset provider without an export of its own, survey responses first, answers neutralised as formulas
 - [ ] [Program survey mode check](/docs/proposals/resource/program-survey-mode-check) — warn when the bound survey is Anonymous, which drops every participant token
 - [ ] [Program email invites](/docs/proposals/resource/program-email-invites) — the bound email exported per participant with their tokened link, and again for those still awaiting
-- [ ] [Blueprint deploy review](/docs/proposals/resource/blueprint-deploy-review) — the Deploy dialog lists every resource it will create under its resolved name before creating any
 - [ ] [Note images](/docs/proposals/resource/note-images) — upload, paste or drop an image into a Note as its own file asset, with alt text; the published view draws only asset urls
 - [ ] [Note tables](/docs/proposals/resource/note-tables) — Notion's simple table: text cells, a header row, and a table menu for rows and columns
 - [ ] [Note Markdown portability](/docs/proposals/resource/note-markdown-portability) — import and export a Note as a `.md` file

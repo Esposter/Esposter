@@ -1,4 +1,4 @@
-import { substituteBlueprintParameterTokens } from "#server/services/blueprint/substituteBlueprintParameterTokens";
+import { substituteBlueprintParameterTokens } from "#shared/services/resource/blueprint/substituteBlueprintParameterTokens";
 import { describe, expect, test } from "vitest";
 
 describe(substituteBlueprintParameterTokens, () => {

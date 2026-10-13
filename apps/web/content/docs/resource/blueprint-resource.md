@@ -43,7 +43,7 @@ flowchart LR
 
 - **Blueprints of blueprints**: an entry may itself be `type: Blueprint` — deploying creates the child Blueprint resource with its manifest as content, like any other entry (it is **not** recursively deployed; recursive composition is a [deferred](/docs/resource/deferred) candidate, not v1). A `Blueprint` entry's content is therefore **opaque to the outer deploy**: its `{{entry:*}}` and `{{parameter:*}}` tokens name the child's own entries and parameters, so nothing walks into it — no dependency edges, no substitution, no id rewriting on capture. One helper (`mapBlueprintEntryContentStrings`) owns that decision and every content pass goes through it, so a new pass cannot be written that forgets.
 
-- **Blades**: Overview and the **Editor** — the manifest edited as schema-validated JSON (the escape hatch, since [capture](/docs/resource/blueprint-capture) is the primary authoring path), with **Save** and a **Deploy** command opening the parameter form dialog (plain text fields generated from `parameters`, defaults prefilled). The manifest saves on Save alone, not on a timer like the canvas editors, so leaving the blade with unsaved text asks first, and Deploy — which always runs the saved manifest — is disabled until the text on screen is saved.
+- **Blades**: Overview and the **Editor** — the manifest edited as schema-validated JSON (the escape hatch, since [capture](/docs/resource/blueprint-capture) is the primary authoring path), with **Save** and a **Deploy** command opening the parameter form dialog (plain text fields generated from `parameters`, defaults prefilled). The manifest saves on Save alone, not on a timer like the canvas editors, so leaving the blade with unsaved text asks first, and Deploy — which always runs the saved manifest — is disabled until the text on screen is saved. Under the fields the dialog lists every entry as the name it will be created with, resolved live from the fields by the same substitution deploy runs; an undeclared `{{parameter:…}}` is marked on its row without blocking, since deploy leaves it as its literal text, and a name left empty disables Deploy with its row saying so. An entry whose content holds `{{entry:…}}` shows the link as `binds <key>`.
 
 ## Procedures
 
@@ -57,16 +57,16 @@ Its twin, [`captureBlueprint`](/docs/resource/blueprint-capture), joins the same
 
 ## Key files
 
-| File                                                          | Role                                             |
-| ------------------------------------------------------------- | ------------------------------------------------ |
-| `packages/db-schema` `ResourceType.Blueprint` + migration     | new type value                                   |
-| `apps/web/shared/models/resource/blueprint/`                  | manifest schema (entries, parameters)            |
-| `apps/web/shared/services/resource/blueprint/`                | token grammar (constants, entry-token builder)   |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`  | Blueprint entry                                  |
-| `apps/web/server/trpc/routers/blueprint.ts`                   | factory + `deployBlueprint` + `captureBlueprint` |
-| `apps/web/server/services/blueprint/`                         | substitution, validation, topo-sort, cleanup     |
-| `apps/web/app/components/Resource/Blueprint/Editor.vue`       | manifest editor blade                            |
-| `apps/web/app/components/Resource/Blueprint/DeployDialog.vue` | parameter form + created-resources result        |
+| File                                                          | Role                                                     |
+| ------------------------------------------------------------- | -------------------------------------------------------- |
+| `packages/db-schema` `ResourceType.Blueprint` + migration     | new type value                                           |
+| `apps/web/shared/models/resource/blueprint/`                  | manifest schema (entries, parameters)                    |
+| `apps/web/shared/services/resource/blueprint/`                | token grammar, and the resolvers dialog and deploy share |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`  | Blueprint entry                                          |
+| `apps/web/server/trpc/routers/blueprint.ts`                   | factory + `deployBlueprint` + `captureBlueprint`         |
+| `apps/web/server/services/blueprint/`                         | substitution, validation, topo-sort, cleanup             |
+| `apps/web/app/components/Resource/Blueprint/Editor.vue`       | manifest editor blade                                    |
+| `apps/web/app/components/Resource/Blueprint/DeployDialog.vue` | parameter form + created-resources result                |
 
 ## Notes
 
@@ -77,3 +77,8 @@ Its twin, [`captureBlueprint`](/docs/resource/blueprint-capture), joins the same
 - Deployed resources are ordinary resources with no live link back to the blueprint — editing the blueprint never mutates past deployments (exactly ARM's template/deployment split).
 - The canonical motivating manifest: **survey funnel wave** — audience Sheet + Identified Survey + tokened Email + Program + funnel Dashboard, one `client` parameter in names and email subject. Deploy per client; each wave lands fully wired.
 - **Agentic by design.** A manifest is pure schema-validated JSON deployed through ordinary procedures — the ideal unit for AI authoring: an agent emits a manifest, the platform validates it against every entry type's contentSchema, and deploy is the only side-effectful step. Every schema decision here (explicit tokens, no hidden state, validation before creation) keeps that path open: whatever creates resources — human, form, or model — goes through this same front door.
+
+## Sources
+
+- [Microsoft Learn — Deploy resources with Azure portal](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-portal) — values entered, reviewed under Review + create, then created.
+- [Microsoft Learn — Parameters in ARM templates](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/parameters) — parameter values resolved before any deployment operation starts, and a default used when no value is given.
