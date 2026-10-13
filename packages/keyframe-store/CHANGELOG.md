@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **keyframe-store:** the stored-bytes snapshot follows the encoder's output, which the library now writes at 67472 bytes against 63503 before ([61cc28c](https://github.com/Esposter/Esposter/commit/61cc28c58d75b3356389cd6e5f9f0974535f4441))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 **Note:** Version bump only for package keyframe-store

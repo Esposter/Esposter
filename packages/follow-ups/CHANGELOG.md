@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* follow-ups and the persona's runtime install spawn hidden, and follow-ups joins the persona's exemption ([766c8b7](https://github.com/Esposter/Esposter/commit/766c8b790b508e9c429e725faf61d8da1e7d4f07))
+
+### Features
+
+* **agent-access:** API keys carry scopes, reads are marked read-only, and an agent's writes name its key ([43ca303](https://github.com/Esposter/Esposter/commit/43ca303b54fe0e3c559d8956b0570e50de0eefe0))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 **Note:** Version bump only for package @esposter/follow-ups

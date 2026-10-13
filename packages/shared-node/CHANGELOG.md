@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* CI's lint, format and stale tests on ai/queue ([00520ac](https://github.com/Esposter/Esposter/commit/00520ac43384d6d2fe66858df17cbe7030d993f4))
+* **shared-node:** the execFile wrapper keeps node's promisified form, and the repository file list spawns hidden ([1c177ee](https://github.com/Esposter/Esposter/commit/1c177ee7f2a8717f0710c619b1dd4c6d9ea4fa15))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 **Note:** Version bump only for package @esposter/shared-node

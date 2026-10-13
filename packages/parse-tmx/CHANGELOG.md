@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **parse-tmx:** a polygon with no points has none, and the text handlers share one append ([ca95262](https://github.com/Esposter/Esposter/commit/ca95262151db6f41b56793f591cd3b4b246a1afc))
+* vitest returns to the root and the app, vue-tsc to the app, and the release script returns, with the lockfile refreshed ([7487b02](https://github.com/Esposter/Esposter/commit/7487b02f3d2ab52795c969af78c67f5ea0b013a2))
+* **xml2js:** the rewrite matches the upstream package's surface and fixes what its audit found ([9b18c9b](https://github.com/Esposter/Esposter/commit/9b18c9ba69e13534fea91ef489d02ad355b17ec6)), closes [#682](https://github.com/Esposter/Esposter/issues/682) [#719](https://github.com/Esposter/Esposter/issues/719) [#593](https://github.com/Esposter/Esposter/issues/593) [#721](https://github.com/Esposter/Esposter/issues/721) [#313](https://github.com/Esposter/Esposter/issues/313) [#330](https://github.com/Esposter/Esposter/issues/330) [#197](https://github.com/Esposter/Esposter/issues/197) [#18](https://github.com/Esposter/Esposter/issues/18) [#245](https://github.com/Esposter/Esposter/issues/245) [#627](https://github.com/Esposter/Esposter/issues/627) [#630](https://github.com/Esposter/Esposter/issues/630) [#700](https://github.com/Esposter/Esposter/issues/700) [#536](https://github.com/Esposter/Esposter/issues/536) [#47](https://github.com/Esposter/Esposter/issues/47) [#48](https://github.com/Esposter/Esposter/issues/48) [#76](https://github.com/Esposter/Esposter/issues/76) [#159](https://github.com/Esposter/Esposter/issues/159) [#379](https://github.com/Esposter/Esposter/issues/379) [#130](https://github.com/Esposter/Esposter/issues/130) [#600](https://github.com/Esposter/Esposter/issues/600) [#321](https://github.com/Esposter/Esposter/issues/321) [#218](https://github.com/Esposter/Esposter/issues/218)
+
+### Performance Improvements
+
+* **parse-tmx:** the CSV decoder reads each character once, and base64 gids are read through a DataView ([22df25a](https://github.com/Esposter/Esposter/commit/22df25a2a76e6ac4d56f8c970554aab56bc73add))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 **Note:** Version bump only for package parse-tmx

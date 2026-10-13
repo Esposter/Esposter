@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Features
+
+* **pitch-transcription:** the MIDI file is written by the package itself, and @tonejs/midi is removed ([bd23e89](https://github.com/Esposter/Esposter/commit/bd23e89441f7a655191cb3adf2546cfac3386e07))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 ### Bug Fixes

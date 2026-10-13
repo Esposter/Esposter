@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **db-schema:** the metadata intersection and the social imports sorted as the perfectionist rules order them ([31547ad](https://github.com/Esposter/Esposter/commit/31547ad0028872edc0a0457e7d6fcf2e49dcdb7a))
+* **db-schema:** the user's accounts relation takes the key better-auth's adapter derives for a join to many ([1abd29f](https://github.com/Esposter/Esposter/commit/1abd29fa4446de54e84dd02de4e706060db7d6ab))
+* **esbabbler:** a cursor can key on an expression, and a display name has one ([8e5ee02](https://github.com/Esposter/Esposter/commit/8e5ee023400fe659c2e55a640fe1123ffd1da41c))
+* **scripts:** the review fixers' lint reds, and the functions and db-schema size snapshots off a fresh build ([e34f33f](https://github.com/Esposter/Esposter/commit/e34f33f06fa4c5a8e17dc08a99a0469d027f56d0))
+
+### Features
+
+* **agent-access:** API keys carry scopes, reads are marked read-only, and an agent's writes name its key ([43ca303](https://github.com/Esposter/Esposter/commit/43ca303b54fe0e3c559d8956b0570e50de0eefe0))
+* **esbabbler:** a member's permission overrides are a table, with the migration that creates it ([7e58f58](https://github.com/Esposter/Esposter/commit/7e58f58c4bb147889b33b86b80cca211f173f547))
+* **esbabbler:** an override's change reaches the room, and the override read and events are the role path's ([59e1d91](https://github.com/Esposter/Esposter/commit/59e1d91851f40cab69eb567e15384f2a97149ad7))
+* **genshin-world:** the save's slices and the Genshin container, each system's slice beside its model ([c67c0cc](https://github.com/Esposter/Esposter/commit/c67c0cc0cd5ca684323872ba92ea6a9e391e1f88))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 ### Bug Fixes

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* the review fixers' oxlint reds across thirty files ([c941591](https://github.com/Esposter/Esposter/commit/c94159170bc330a6b884c34bff6d06b50db06246))
+* the typecheck reds CI reached once its setup passed ([a59adbd](https://github.com/Esposter/Esposter/commit/a59adbd950b96d5fb6bef9874c3d157ec6f9ad69))
+* **vue-phaserjs:** type the animation completion event instead of suppressing it ([a9f65e1](https://github.com/Esposter/Esposter/commit/a9f65e1812dc070dadb606ca58b9ca4e5baaade9))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 ### Features

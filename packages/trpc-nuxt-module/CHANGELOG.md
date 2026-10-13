@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **nuxt-security-module:** module.ts loads natively without an enum, so Nuxt stops falling back to jiti ([6d0f07e](https://github.com/Esposter/Esposter/commit/6d0f07e2b193ea8ebd4c0c15cb52a25845609c81))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 * feat(trpc-nuxt-module)!: serve through Nitro 3 and h3 2.x ([92ae0e9](https://github.com/Esposter/Esposter/commit/92ae0e90ddc507dc682fc5904cc59fb09b6337e9)), closes [#227](https://github.com/Esposter/Esposter/issues/227) [#175](https://github.com/Esposter/Esposter/issues/175)

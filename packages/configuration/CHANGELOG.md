@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **configuration:** a build removes the barrels its exports answer does not write, so a package that stops generating one keeps no stale copy ([56694e0](https://github.com/Esposter/Esposter/commit/56694e04ab77c27f46cb240a52f8758dc3d826fa)), closes [vite-task#504](https://github.com/vite-task/issues/504)
+* **configuration:** a chunk module is a root of the declaration program, so rolldown-plugin-dts builds one program rather than one per chunk ([69335ed](https://github.com/Esposter/Esposter/commit/69335edd2e4f5353be6a3e5d0863e485ed495598))
+* **configuration:** a Nuxt module's entries leave out every non-source file the barrels do, so a benchmark fixture beside a runtime file is no export ([f93dbc2](https://github.com/Esposter/Esposter/commit/f93dbc21da3614dd15674f38caa4d36848abfb63))
+* **configuration:** a type bench is no source, so the barrel and the declaration build leave it out, and @esposter/shared stops publishing its benches ([1f621b0](https://github.com/Esposter/Esposter/commit/1f621b07850e7eacd30a7581a8f7f31a8680af25))
+* **configuration:** playwright is a devDependency of the package whose browser provider loads it, not of the two genshin packages that run the suite ([b7e61e3](https://github.com/Esposter/Esposter/commit/b7e61e3af59bb8ea0f09a9ee30d73ed2c3cf5493))
+* **configuration:** the bundle size snapshot is refreshed from a fresh build ([56b7a9c](https://github.com/Esposter/Esposter/commit/56b7a9c3c32ba5bc89cc46202fe8a2eb780af9af))
+* **shared:** Operation and MentionType are enums again, the erasable-only Nuxt module base is gone ([6f6e834](https://github.com/Esposter/Esposter/commit/6f6e8341b26388d42b6105f602970a442dbf37b6))
+* the reds CI's next run found, the lint, the docs, the graph and the Functions bundle ([56d625b](https://github.com/Esposter/Esposter/commit/56d625b33ea7c02f128f22f414751d83b9ec4aa3))
+
+### Features
+
+* **configuration:** a chunk module is outside the barrel, so its one dynamic import stays a chunk ([b3e9df2](https://github.com/Esposter/Esposter/commit/b3e9df23318989665aed2914e5136fdc6230834d))
+* **configuration:** lint enforces the ban on await import ([7d5f577](https://github.com/Esposter/Esposter/commit/7d5f577e323679bcbb6ce36c97f09d6ca42bc6ee))
+* **configuration:** the barrel leaves out the directories a package loads on demand ([afd8fd3](https://github.com/Esposter/Esposter/commit/afd8fd336e5d45eb9d8eb284c2567cd11dc635c6))
+* **configuration:** the HTML tag names and element attributes the scoped-styles ban reads are our own typed constants ([566da3a](https://github.com/Esposter/Esposter/commit/566da3a847c332f708c6fc139095c036ec8288a5))
+* **genshin:** the Profile tab and the book reader read their records from the hosted game data, not the bundle ([1be8bee](https://github.com/Esposter/Esposter/commit/1be8beefaca7cd3631ce5e463211f530f85fbc30))
+* **web:** nuxt dev brings the app's packages up to date once at start through the build cache, and no tsdown watcher runs ([6b96b18](https://github.com/Esposter/Esposter/commit/6b96b18503a758fe29137a180da2aaf855d54735))
+
+### Performance Improvements
+
+* **genshin-world:** a kit's module loads only as its character joins the party ([f0e780f](https://github.com/Esposter/Esposter/commit/f0e780f9b7d1a20a11c17396634941a840283a82))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 ### Bug Fixes

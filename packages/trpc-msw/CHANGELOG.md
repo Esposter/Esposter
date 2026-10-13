@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **trpc-msw:** the mock procedure takes its input through the real procedure's own parsers, so the resolver receives what a transforming parser returns ([1819c59](https://github.com/Esposter/Esposter/commit/1819c599f67a1dd524e2127a514c1873d9c043a9))
+* **trpc-msw:** the mock router judges input through the Standard Schema interface, not tRPC's unstable core ([#37](https://github.com/Esposter/Esposter/issues/37)) ([339546f](https://github.com/Esposter/Esposter/commit/339546f1cc31e79609ac4e720f795eb30c19ff4a))
+* **trpc-msw:** the mock router parses input through tRPC's public .input(), so its rejection body is the server's ([472f052](https://github.com/Esposter/Esposter/commit/472f0529d59e4bdad5f353a7b7210b664839386d))
+
+### Performance Improvements
+
+* **trpc-msw:** the HTTP router is built once, and rebuilt only when a path is first registered ([9510b37](https://github.com/Esposter/Esposter/commit/9510b3799256166cb3bc21ae0fe0a095d6f29e54))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 ### Bug Fixes

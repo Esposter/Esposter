@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **db:** the RBAC permissions module orders its named imports as perfectionist does ([f5bf153](https://github.com/Esposter/Esposter/commit/f5bf153ab6b175974b7e3d3e89f923ac661cbe1c))
+* **db:** the readJsonBlob test's upload mock answers with an upload response and reads the stored size writeJsonBlob returns ([4ff046c](https://github.com/Esposter/Esposter/commit/4ff046cfda6107e749102f31397fff24757f2170))
+* **web,db,azure-mock:** a blob-state read is one download, so its ETag and its body come off the same response ([81513e6](https://github.com/Esposter/Esposter/commit/81513e605e036871b60d78ad3d536168a834e12e))
+
+### Features
+
+* **db:** a JSON blob write takes conditions and returns its ETag, the one a conditional save checks ([7b977ac](https://github.com/Esposter/Esposter/commit/7b977ac698beafb26188e2184447cabaa457f5ae))
+* **db:** the game data's storage primitives, a compressed JSON object written create-only or conditionally, and listed blobs ([d7c34e2](https://github.com/Esposter/Esposter/commit/d7c34e24f73d80f126aaff5e1037fbabd1f6b15f))
+* **esbabbler:** a member's overrides fold into their permissions, and ManageRoles writes and removes them ([756eb6a](https://github.com/Esposter/Esposter/commit/756eb6aad19199ed11cb75d238a3848f09b8f320))
+* **scripts:** genshin:characters publish stores each official pack create-only under its content hash in both accounts, then its record and the lock ([4b0e8f8](https://github.com/Esposter/Esposter/commit/4b0e8f88bb2ea7b2276b4c035f650239983a9213))
+* **shared:** extension and media type lookup is ours, over mime-db ([a514ad8](https://github.com/Esposter/Esposter/commit/a514ad89bf12b777aa3cd7faf87002bbe75c99b6))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 ### Features

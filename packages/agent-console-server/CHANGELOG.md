@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **agent-console-server:** clear the lint reds in the MCP app reader and the persona test imports ([3424d59](https://github.com/Esposter/Esposter/commit/3424d59be9d84d616c4dc5c8f4f10a6c9ffcd5f9))
+* **agent-console:** the file commands sort where the lint rules put them ([f9184d9](https://github.com/Esposter/Esposter/commit/f9184d9fd04466c012a799bf10b697f4e78ba897))
+* CI's oxlint errors on ai/queue ([f9871f1](https://github.com/Esposter/Esposter/commit/f9871f14256b9a6d37573dcdc9ed5752b1ede448))
+* **deps:** turn off lockfile.includeResolutionSettings and refresh the bundle size snapshots ([493f044](https://github.com/Esposter/Esposter/commit/493f044b69acd31d7a389e1f9c9479c566adcba4)), closes [pnpm/pnpm#16674](https://github.com/pnpm/pnpm/issues/16674)
+* **shared-node:** the execFile wrapper keeps node's promisified form, and the repository file list spawns hidden ([1c177ee](https://github.com/Esposter/Esposter/commit/1c177ee7f2a8717f0710c619b1dd4c6d9ea4fa15))
+
+### Features
+
+* **agent-console:** @ mentions a session's file, and a read-only view opens one ([7dcf7e5](https://github.com/Esposter/Esposter/commit/7dcf7e5f2e86aebfa7156f2b440d582a4b2dac2e))
+* **agent-console:** a session's MCP app widget is read from the server the CLI dialed ([823be4b](https://github.com/Esposter/Esposter/commit/823be4beb5589d7d017acaf4b54bc318708e2228))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 **Note:** Version bump only for package agent-console-server

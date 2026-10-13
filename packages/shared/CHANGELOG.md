@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **configuration:** a type bench is no source, so the barrel and the declaration build leave it out, and @esposter/shared stops publishing its benches ([1f621b0](https://github.com/Esposter/Esposter/commit/1f621b07850e7eacd30a7581a8f7f31a8680af25))
+* **nuxt-security-module:** module.ts loads natively without an enum, so Nuxt stops falling back to jiti ([6d0f07e](https://github.com/Esposter/Esposter/commit/6d0f07e2b193ea8ebd4c0c15cb52a25845609c81))
+* **shared:** a style's !important declaration keeps its value over a later normal one of its property ([c07a0cb](https://github.com/Esposter/Esposter/commit/c07a0cbe3c15e4e771016328d19b05519d26aad3))
+* **shared:** an upgrade's done is made before its callback runs, so a read after the transaction settles still settles ([93be592](https://github.com/Esposter/Esposter/commit/93be592800c900eb2f704902ce003ca85c14c1c6))
+* **shared:** checkIsDeepEqual compares prototypes, shared buffers by their bytes, and blobs by identity ([6dd3589](https://github.com/Esposter/Esposter/commit/6dd358971902253b9f8bb03d031339c17e561cb9))
+* **shared:** DeepOmit keeps Blob by reference and an open object type as it is ([f753a31](https://github.com/Esposter/Esposter/commit/f753a310640b5dab4e2e7f7ed0238559a7086f04))
+* **shared:** DeepOmit walks an all-optional object instead of keeping it ([d6d6302](https://github.com/Esposter/Esposter/commit/d6d63021856d21544d2cb4bb5662be704825e951))
+* **shared:** Operation and MentionType are enums again, the erasable-only Nuxt module base is gone ([6f6e834](https://github.com/Esposter/Esposter/commit/6f6e8341b26388d42b6105f602970a442dbf37b6))
+* the reds CI's next run found, the lint, the docs, the graph and the Functions bundle ([56d625b](https://github.com/Esposter/Esposter/commit/56d625b33ea7c02f128f22f414751d83b9ec4aa3))
+
+### Features
+
+* **db:** the game data's storage primitives, a compressed JSON object written create-only or conditionally, and listed blobs ([d7c34e2](https://github.com/Esposter/Esposter/commit/d7c34e24f73d80f126aaff5e1037fbabd1f6b15f))
+* **esbabbler:** text spoilers, ||text|| and /spoiler hide text behind a click-to-reveal bar ([bb8f90a](https://github.com/Esposter/Esposter/commit/bb8f90aafbbfaf4048a5c03a1fb7632147bd2c05))
+* **scripts:** pnpm bench:types counts each type bench's cases in the repo's own compiler ([9a14d5c](https://github.com/Esposter/Esposter/commit/9a14d5c953a3f52b27da3fab302b40f6bf85e801))
+* **shared:** a typed event emitter over an event map replaces eventemitter3's surface the app uses ([e94b3e2](https://github.com/Esposter/Esposter/commit/e94b3e2e19973f98dd8ce967db10e439903f921e))
+* **shared:** checkIsDeepEqual replaces fast-deep-equal with the ES6 cases in one build ([468322c](https://github.com/Esposter/Esposter/commit/468322c4ea7223db3f395b37ed38ef74e09b3e69))
+* **shared:** dedent is absorbed into @esposter/shared, its escapes cooked on static text only ([e2bcc12](https://github.com/Esposter/Esposter/commit/e2bcc12bfbceb56ef9fd635bd0cea71b543e235a)), closes [#34](https://github.com/Esposter/Esposter/issues/34) [#90](https://github.com/Esposter/Esposter/issues/90) [#95](https://github.com/Esposter/Esposter/issues/95) [#109](https://github.com/Esposter/Esposter/issues/109) [#110](https://github.com/Esposter/Esposter/issues/110) [#112](https://github.com/Esposter/Esposter/issues/112) [#113](https://github.com/Esposter/Esposter/issues/113)
+* **shared:** extension and media type lookup is ours, over mime-db ([a514ad8](https://github.com/Esposter/Esposter/commit/a514ad89bf12b777aa3cd7faf87002bbe75c99b6))
+* **shared:** omitDeep replaces lodash-omitdeep, and DeepOmit keeps readonly arrays, tuples and built-ins ([cddc7ca](https://github.com/Esposter/Esposter/commit/cddc7cac0f82462cbe6e40edca444902cf3418c1))
+* **shared:** sanitize HTML on parse5 under a policy of our own ([c809c61](https://github.com/Esposter/Esposter/commit/c809c61016111677af5b69806b1abed74e4a0fcb))
+* **shared:** the profanity check is ours, an English word list and a whole-word matcher absorbed from @2toad/profanity ([ef476ed](https://github.com/Esposter/Esposter/commit/ef476ed725bd21d86d4cd6a8b54fcf53fda37150))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 **Note:** Version bump only for package @esposter/shared

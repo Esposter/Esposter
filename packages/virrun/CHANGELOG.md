@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* CI's lint, format and stale tests on ai/queue ([00520ac](https://github.com/Esposter/Esposter/commit/00520ac43384d6d2fe66858df17cbe7030d993f4))
+* **virrun:** only an argv bound for cmd.exe is refused a line break, so the WSL sandbox spawns again ([6fb259d](https://github.com/Esposter/Esposter/commit/6fb259de1c58ef5f40d1ec784bfa6fc6fb105311))
+
+### Features
+
+* **shared:** dedent is absorbed into @esposter/shared, its escapes cooked on static text only ([e2bcc12](https://github.com/Esposter/Esposter/commit/e2bcc12bfbceb56ef9fd635bd0cea71b543e235a)), closes [#34](https://github.com/Esposter/Esposter/issues/34) [#90](https://github.com/Esposter/Esposter/issues/90) [#95](https://github.com/Esposter/Esposter/issues/95) [#109](https://github.com/Esposter/Esposter/issues/109) [#110](https://github.com/Esposter/Esposter/issues/110) [#112](https://github.com/Esposter/Esposter/issues/112) [#113](https://github.com/Esposter/Esposter/issues/113)
+* **virrun:** the win32 argv spawn is our own, resolving PATHEXT and escaping for cmd.exe ([5414eaf](https://github.com/Esposter/Esposter/commit/5414eaf7418cd4810d119239d406eecb135f6dac)), closes [#160](https://github.com/Esposter/Esposter/issues/160) [#158](https://github.com/Esposter/Esposter/issues/158) [#171](https://github.com/Esposter/Esposter/issues/171) [#179](https://github.com/Esposter/Esposter/issues/179)
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 ### Bug Fixes

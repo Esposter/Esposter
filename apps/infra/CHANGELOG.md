@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **infra:** the renamed rulesets carry no aliases, their state renamed in place instead ([e7520e6](https://github.com/Esposter/Esposter/commit/e7520e6f33d5466ea1f5e921741f29d2ef89ef0d))
+* **infra:** the ruleset and repository comments capitalize every line, the queue files import their constants once, and the outage test names no product ([a55f101](https://github.com/Esposter/Esposter/commit/a55f1014d9493e51fe444e4e4854df7294be48e4))
+* **scripts:** the review opens a window's issues before main passes it, and each settler starts clean ([8c5ddd3](https://github.com/Esposter/Esposter/commit/8c5ddd340462962d45ff2a93dd0dc2542ef52f02))
+* **scripts:** the review's tests hold their constants in the describe, the root manifest runs ai:review, requiredChecks reads the queue's ruleset, and the infra size snapshot follows the build ([e30b703](https://github.com/Esposter/Esposter/commit/e30b703d9ab7e025087fb43f998e0285e2460996))
+
+### Features
+
+* **ci:** the review's fix matrix runs per issue, and a settle job settles the issues the fixers leave open ([08f26f7](https://github.com/Esposter/Esposter/commit/08f26f7ed7c91d6636289d320e02d170f0c437b5))
+* **infra:** a review label for the issues the review owes, and the functions bundle size and vendored zod follow the bump ([f0e1b78](https://github.com/Esposter/Esposter/commit/f0e1b7876a8c625bcc8c0d7ba02f2f54422dc065))
+* **infra:** ai/queue is the default branch, so the review dispatches and Renovate targets it unconfigured ([339a20d](https://github.com/Esposter/Esposter/commit/339a20d6526e8c085cd53164a3ef50db23ebdc54))
+* **infra:** the dev blob CORS admits the develop deployment origin with the localhost rule's methods and headers, and the develop Function App's BASE_URL reads the same DevelopDeploymentOrigin constant ([86877e9](https://github.com/Esposter/Esposter/commit/86877e90700d01d2f38992892c0b2f4c475b6eba))
+* **infra:** the owner's principal gets Storage Blob Data Contributor on app-assets on both accounts, for the keyless game-data publish ([71586ff](https://github.com/Esposter/Esposter/commit/71586ff92c948172c69d4bdc5ef4230ecc51ba60))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 ### Bug Fixes

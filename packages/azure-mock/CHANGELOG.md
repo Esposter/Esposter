@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
+
+### Bug Fixes
+
+* **web,db,azure-mock:** a blob-state read is one download, so its ETag and its body come off the same response ([81513e6](https://github.com/Esposter/Esposter/commit/81513e605e036871b60d78ad3d536168a834e12e))
+
+### Features
+
+* **db:** the game data's storage primitives, a compressed JSON object written create-only or conditionally, and listed blobs ([d7c34e2](https://github.com/Esposter/Esposter/commit/d7c34e24f73d80f126aaff5e1037fbabd1f6b15f))
+* **genshin-world:** the save's slices and the Genshin container, each system's slice beside its model ([c67c0cc](https://github.com/Esposter/Esposter/commit/c67c0cc0cd5ca684323872ba92ea6a9e391e1f88))
+
 # [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
 
 **Note:** Version bump only for package azure-mock
