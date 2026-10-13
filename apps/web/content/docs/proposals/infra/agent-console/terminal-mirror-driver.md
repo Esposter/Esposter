@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Terminal-mirror driver
 
-The [agent console](/docs/infra/claude-interface/agent-console) works sessions through the [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver), which opens and holds each query itself. Two cases are beyond it. One is a session a terminal started before the host was running, which the host cannot hold because the terminal already does. The other is a moment when SDK use stops being covered by the subscription. The terminal-mirror driver covers both. It attaches to a session a terminal runs, reads it from the outside, and speaks to it through a [channel](/docs/proposals/infra/channel-chat). It is one more implementation of the same `Driver` interface, so the page does not change for it.
+The [agent console](/docs/infra/claude-interface/agent-console) works sessions through the [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver), which opens and holds each query itself. Two cases are beyond it. One is a session a terminal started before the host was running, with the channel flag, which the host cannot hold because the terminal already does. The other is a moment when SDK use stops being covered by the subscription. The terminal-mirror driver covers both. It attaches to a session a terminal runs, reads it from the outside, and speaks to it through a [channel](/docs/proposals/infra/channel-chat). It is one more implementation of the same `Driver` interface, so the page does not change for it.
 
 ## How it works
 
@@ -41,7 +41,7 @@ packages/agent-console-server/src/services/drivers/terminalMirror/
 
 - The SDK driver costs nothing only while SDK use stays inside the subscription. That is re-read at every Claude Code billing change, and if it moves, this driver keeps the console free at the price of the controls a channel cannot reach.
 - **Blocked on the channel.** The prompt and verdict path is the [chat channel](/docs/proposals/infra/channel-chat), which is unbuilt: `packages/genshin-persona` has no `.mcp.json` and no channel server, so there is no seam to write a prompt into. The driver is built after that proposal ships, and no read-only tail is built ahead of it: the transcript tail and the channel are one driver, since the prompt and verdict path is the channel server itself.
-- **A channel reaches only a session launched with it.** The channel flag is set on the terminal's invocation, so a session a terminal started without it cannot be pushed into, and "a session a terminal already runs" is true only of sessions started with the flag. Sessions started without the flag are out of this driver's reach, and the read-only tail is not a way round that.
+- **A channel reaches only a session launched with it.** A session a terminal started without the [channel flag](/docs/proposals/infra/channel-chat) is out of this driver's reach, and the read-only tail is not a way round that.
 
 ## Sources
 
