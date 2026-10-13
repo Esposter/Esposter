@@ -35,7 +35,7 @@ An agent lands its commits on **`ai/queue`** from its own worktree by the `revie
 
 ## Merging `main` and the Lockfile
 
-Resolve `pnpm-workspace.yaml` first, keeping the higher version on every conflict — no `pnpm` runs while its markers stand — then delete `pnpm-lock.yaml` and `pnpm i`; never hand-resolve the lock, and never merge `main` or `develop` into `ai/queue` (`references/lockfile-merges.md`).
+Resolve `pnpm-workspace.yaml` first, keeping the higher version on every conflict — no `pnpm` runs while its markers stand — then delete `pnpm-lock.yaml` and `pnpm i`; never hand-resolve the lock, and never merge `main` into `ai/queue` by hand — the review's diverged-main step is the one merge (`references/lockfile-merges.md`).
 
 ## Verify Once Per Sitting
 
