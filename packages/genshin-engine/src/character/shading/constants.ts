@@ -12,7 +12,10 @@ export const TOON_HIGH = 0.95;
 export const MINIMUM_RAMP_WIDTH_VERTEX = 0.01;
 export const MINIMUM_OUTLINE_KNOT_SPAN = 0.001;
 export const OUTLINE_PROJECTION_SCALE = 2.414;
+// The game's outline width is its "_OutlineWidth" times this, as its vertex program reads the width
 export const OUTLINE_WIDTH_SCALE = 0.41425;
+// The share of the main texture an outline is drawn toward, by its region's intensity
+export const OUTLINE_MAIN_TEXTURE_SHARE = 0.2;
 export const DESATURATION_WEIGHTS: readonly [number, number, number] = [0.0397, 0.458, 0.0061];
 // The sun term is the half Lambert the body's program takes of the normal and the light, its scale just under a half
 export const HALF_LAMBERT_SCALE = 0.4975;

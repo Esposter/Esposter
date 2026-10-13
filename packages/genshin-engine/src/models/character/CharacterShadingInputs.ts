@@ -1,5 +1,6 @@
 import type { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
 import type { FaceDraw } from "#src/models/character/FaceDraw";
+import type { OutlineRegions } from "#src/models/character/OutlineRegions";
 import type { RampLayout } from "#src/models/character/RampLayout";
 import type { ShadingRegionColours } from "#src/models/character/ShadingRegionColours";
 import type { ShadingRegionToggles } from "#src/models/character/ShadingRegionToggles";
@@ -55,6 +56,8 @@ export interface CharacterShadingInputs {
   outlineDepths: Vector3Tuple;
   // The outline's offset along the view ray, from the game's "_MaxOutlineZOffset", where a game model has one
   outlineOffset?: { blockBChannel: number; size: number };
+  // A game model's outline colours by region, read per pixel; a pack's outline is its edge's one colour
+  outlineRegions?: OutlineRegions;
   outlineScales: Vector3Tuple;
   // The packed shadow ramp "_PackedShadowRampTex", read as its row, and the layout it is read by: the game's and the
   // World's shared ramps are rows, and a pack's own toon is a column

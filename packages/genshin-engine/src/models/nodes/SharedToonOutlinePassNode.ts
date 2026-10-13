@@ -59,12 +59,11 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   }
 
   #getEdgeOutlineMaterial({ color, isVertexWeighted, offset, size, widthKnots }: ToonEdge): NodeMaterial {
-    const key = `${color.join(",")}:${size}:${widthKnots.depths.join(",")}:${widthKnots.scales.join(",")}:${isVertexWeighted}:${offset?.size}:${offset?.blockBChannel}`;
+    const key = `${Array.isArray(color) ? color.join(",") : color.id}:${size}:${widthKnots.depths.join(",")}:${widthKnots.scales.join(",")}:${isVertexWeighted}:${offset?.size}:${offset?.blockBChannel}`;
     let edgeOutlineMaterial = this.#edgeOutlineMaterials.get(key);
     if (edgeOutlineMaterial === undefined) {
-      const [red, green, blue, alpha] = color;
       const scale = createOutlineScaleNode(widthKnots.depths, widthKnots.scales);
-      const edgeColour = vec4(red, green, blue, alpha);
+      const edgeColour = Array.isArray(color) ? vec4(...color) : color;
       // A game edge is pushed as the game's program pushes it: its own width, weighted by the vertex colour's alpha, and
       // Its offset along the ray from the vertex's blue, which the program reads per vertex
       edgeOutlineMaterial = isVertexWeighted

@@ -4,8 +4,6 @@ import { MmdBoneName } from "genshin-engine";
 export const AVATAR_COMPONENT = "playergirl";
 // The export folder of a component's textures, which each texture slot's file is read from: the route serves a file
 // Below the component's assets by its export folder, as a witness's meshes and textures are
-// The game's outline width is its "_OutlineWidth" times this factor, as its vertex program reads the width (Exact)
-export const AVATAR_OUTLINE_WIDTH_FACTOR = 0.41425;
 export const AVATAR_TEXTURE_FOLDER = "Texture2D";
 // The texture slots a material's shading reads, by the game's property names. A colour slot's texture decodes as sRGB, since
 // The shading multiplies its colour in the space the colour lives in; a data slot's texture is read as it is stored, since

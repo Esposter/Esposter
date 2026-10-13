@@ -20,6 +20,7 @@ import { createRampUvNode } from "#src/character/shading/createRampUvNode";
 import { createShadingRegionNode } from "#src/character/shading/createShadingRegionNode";
 import { createToneNode } from "#src/character/shading/createToneNode";
 import { createToonThresholdNode } from "#src/character/shading/createToonThresholdNode";
+import { selectRegionNode } from "#src/character/shading/selectRegionNode";
 import { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
 import {
   cameraViewMatrix,
@@ -39,18 +40,8 @@ import {
 const toVec3 = ([red, green, blue]: Vector3Tuple): Node<"vec3"> => vec3(red, green, blue);
 
 // A colour by the region a pixel is in: the first region's colour, unless a later region's is selected
-const selectRegionColor = (region: Node<"float">, colors: ShadingRegionColours): Node<"vec3"> => {
-  const regionColorEntries: [number, Vector3Tuple][] = [
-    [2, colors.two],
-    [3, colors.three],
-    [4, colors.four],
-    [5, colors.five],
-  ];
-  return regionColorEntries.reduce<Node<"vec3">>(
-    (current, [regionNumber, regionColor]) => select(region.equal(float(regionNumber)), toVec3(regionColor), current),
-    toVec3(colors.one),
-  );
-};
+const selectRegionColor = (region: Node<"float">, colors: ShadingRegionColours): Node<"vec3"> =>
+  selectRegionNode(region, (regionName) => toVec3(colors[regionName]));
 
 // The shadow colour a pixel is shaded by: its region's first shadow colour, mixed toward its cool shadow colour by the
 // Cool tone where the cool shadow is on

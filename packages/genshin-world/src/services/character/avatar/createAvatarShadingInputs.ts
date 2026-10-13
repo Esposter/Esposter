@@ -15,6 +15,7 @@ const readSwitch = (nameFloatMap: ReadonlyMap<string, number>, name: string): bo
 
 // A colour the material holds, as the three components the shading reads, or none where it holds no such colour
 const WHITE: Vector3Tuple = [1, 1, 1];
+const BLACK: Vector3Tuple = [0, 0, 0];
 const readColour = (colors: Readonly<Record<string, Vector4Tuple>>, name: string): undefined | Vector3Tuple => {
   const colour = colors[name];
   return colour && [colour[0], colour[1], colour[2]];
@@ -37,16 +38,35 @@ const readOutlineOffset = (
     : { blockBChannel: nameFloatMap.get("_OutlineOffsetBlockBChannel") ?? 0, size: size * 0.01 };
 };
 
-// A material's shading colours for each region, the region one's by the name the game gives it and the later regions' by
-// Its number after it, white where the material holds none
-const readRegionColors = (colors: Readonly<Record<string, Vector4Tuple>>, name: string): ShadingRegionColours => {
-  const regionColor = (suffix: string): Vector3Tuple => readColour(colors, `${name}${suffix}`) ?? WHITE;
+// A material's colours for each region, the region one's by the name the game gives it and the later regions' by its
+// Number after it, the fallback where the material holds none
+const readRegionColors = (
+  colors: Readonly<Record<string, Vector4Tuple>>,
+  name: string,
+  fallback: Vector3Tuple = WHITE,
+): ShadingRegionColours => {
+  const regionColor = (suffix: string): Vector3Tuple => readColour(colors, `${name}${suffix}`) ?? fallback;
   return {
     five: regionColor("5"),
     four: regionColor("4"),
     one: regionColor(""),
     three: regionColor("3"),
     two: regionColor("2"),
+  };
+};
+
+// A material's floats for each region, named as its colours are, zero where the material holds none
+const readRegionFloats = (
+  nameFloatMap: ReadonlyMap<string, number>,
+  name: string,
+): Record<keyof ShadingRegionColours, number> => {
+  const regionFloat = (suffix: string): number => nameFloatMap.get(`${name}${suffix}`) ?? 0;
+  return {
+    five: regionFloat("5"),
+    four: regionFloat("4"),
+    one: regionFloat(""),
+    three: regionFloat("3"),
+    two: regionFloat("2"),
   };
 };
 
@@ -83,6 +103,10 @@ export const createAvatarShadingInputs = (
     metalTexture: slotTextureMap.get("_MTMap"),
     outlineDepths: readKnots(colors, "_OutlineWidthAdjustZs"),
     outlineOffset: readOutlineOffset(nameFloatMap),
+    outlineRegions: {
+      colors: readRegionColors(colors, "_OutlineColor", BLACK),
+      intensities: readRegionFloats(nameFloatMap, "_OutLineIntensity"),
+    },
     outlineScales: readKnots(colors, "_OutlineWidthAdjustScales"),
     rampTexture: slotTextureMap.get("_PackedShadowRampTex"),
     rampWidth: nameFloatMap.get("_ShadowRampWidth"),

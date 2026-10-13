@@ -7,14 +7,10 @@ import type { CharacterAvatarFace } from "#src/models/avatar/CharacterAvatarFace
 import type { CharacterMaterialOptions, FaceDraw, PmxMaterial, ToonNodeMaterial } from "genshin-engine";
 import type { Texture } from "three";
 
-import {
-  AVATAR_HUMANOID_MMD_NAME_MAP,
-  AVATAR_OUTLINE_WIDTH_FACTOR,
-  AVATAR_TEXTURE_SLOTS,
-} from "#src/services/character/avatar/constants";
+import { AVATAR_HUMANOID_MMD_NAME_MAP, AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
 import { createAvatarShadingInputs } from "#src/services/character/avatar/createAvatarShadingInputs";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { CharacterMaterialKind, createCharacterMaterial, PmxSphereMode } from "genshin-engine";
+import { CharacterMaterialKind, createCharacterMaterial, OUTLINE_WIDTH_SCALE, PmxSphereMode } from "genshin-engine";
 import { Bone, BufferAttribute, BufferGeometry, Group, Skeleton, SkinnedMesh } from "three";
 
 interface AvatarMaterialOptions extends Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture"> {
@@ -54,15 +50,15 @@ const createAvatarMaterial = (
     const texture = file === undefined ? undefined : textureFileMap.get(file);
     if (texture) slotTextureMap.set(slot, texture);
   }
-  // The game's outline is the material's own edge, in its colour and its width, so the avatar's material carries both
-  // The outline's colour is the material's colour times the outline's, so the diffuse carries the colour
+  // The game's outline is the material's own edge, in its width; its colour is read per pixel from the material's
+  // Regions, which the shading inputs carry, so the edge gives only its alpha
   const materialColour = readMaterialValue(avatarMaterial.colors, "_Color") ?? [1, 1, 1, 1];
   const outlineColour = readMaterialValue(avatarMaterial.colors, "_OutlineColor") ?? [0, 0, 0, 1];
   const pmxMaterial: PmxMaterial = {
     ambientColor: [0, 0, 0],
     diffuseColor: [materialColour[0], materialColour[1], materialColour[2], 1],
     edgeColor: outlineColour,
-    edgeSize: (readMaterialValue(avatarMaterial.floats, "_OutlineWidth") ?? 0) * AVATAR_OUTLINE_WIDTH_FACTOR,
+    edgeSize: (readMaterialValue(avatarMaterial.floats, "_OutlineWidth") ?? 0) * OUTLINE_WIDTH_SCALE,
     indexCount,
     isDoubleSided: false,
     isOutlined: true,

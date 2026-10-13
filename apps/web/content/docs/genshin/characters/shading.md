@@ -293,17 +293,20 @@ The code (`createGameOutlineMaterial`, `getGameOutlineOffset`, `createAvatarShad
 
 ### The colour (pixel 885)
 
-The outline's colour is the material's colour times the outline colour, then mixed toward a shade colour by a mask (Exact on the first product and the mix's form; Provisional on the shade colour's source and on the mask):
+The outline's colour is its region's, drawn toward a fifth of the main texture by its region's intensity (Exact on every operator):
 
 ```
-Oc = "_Color" * "_OutlineColor"                  (the default region's branch)
-Sh = 0.2 * T_s                                   (T_s the rgb of texture "t1" at the pixel's coordinates)
-C  = Oc + m * (Sh - Oc)                          (m the region's mask, read from the layout as a per-region value)
+Oc = "_OutlineColor"                       (no "_UseMaterial2" to "_UseMaterial5" on)
+Oc = "_Color{k}" * "_OutlineColor{k}"      (any on; k the region, selected as the body's region(A) is)
+I  = "_OutLineIntensity{k}"                (k one where none is on)
+C  = Oc + I * (0.2 * T_m - Oc)             (T_m the rgb of the main texture at the pixel's coordinates)
 ```
+
+The region's `A` is the alpha of texture "t1" at the main texture's coordinates, taken as the lightmap's, as the body's is (Provisional on the texture's name). `T_m` is texture "t0" at "_MainTex_ST"'s coordinates, the sample the pixel's alpha clip reads. With no region on, `Oc` is the colour the vertex program hands on: "_OutlineColor", or the vertex's colour where "_OutlineVertexColorPassthrough" is set.
 
 The output colour uses the same tone form as the body's "o1": `O1 = 0.5 + (C_d - 0.5) * (1 + K)` with `C_d` the desaturation of `C`, where "_DesaturateScale" and "_ContrastScale" are read from the same registers as the body's (Exact).
 
-The code takes `Oc` as the outline colour for every pixel, tone-mapped as the body's is, and does not yet read the shade texture, the mask, or the regions' "_OutlineColor2" to "5": the mix toward the shade is not built, so an outline here is one flat colour.
+The code (`createOutlineColorNode`) draws a game model's outline by these per pixel, toned as the body is; the vertex colour passthrough is not built, every material here holding it off. A pack's outline is its edge's one colour times its diffuse, toned the same way.
 
 Nothing in the outline's equations has been fitted to a rendered outline, so no number is claimed for its width or colour.
 
@@ -333,7 +336,7 @@ Program 394 (keywords "ELEMENT_VIEW_ON", "HAS_CHARACTER_LIGHT", "MHY_SHADER_HIGH
 
 The values in the Lumine column are the game's own, read from its material bytes. They are not committed here as numbers; `inventory-values.txt` is the extracted record. A player's pack supplies only what its own file holds, so for a production pack the regions and the lightmap take their defaults.
 
-In development the Traveler's model reads these from the game's own values in `avatar.json`, not from a pack: the main texture, lightmap, metal map, packed shadow ramp and face map by their slots; the colours `_Color` and `_Color2` to `_Color5`, the metal colours and `_SpecularColor`; the floats `_Shininess`, `_SpecMulti`, `_LightArea`, `_ShadowRampWidth` and `_FaceMapSoftness`; the three `_UseLightMapColorAO`, `_UseVertexColorAO` and `_UseVertexRampWidth` switches; and the region toggles `_UseMaterial2` to `_UseMaterial5`. A value a material does not hold keeps its default, and a toggle it does not hold is off. The outline reads the game's own edge colour, width, width knots and offset, as "The outline" section sets out; its region colours are not yet read.
+In development the Traveler's model reads these from the game's own values in `avatar.json`, not from a pack: the main texture, lightmap, metal map, packed shadow ramp and face map by their slots; the colours `_Color` and `_Color2` to `_Color5`, the metal colours and `_SpecularColor`; the floats `_Shininess`, `_SpecMulti`, `_LightArea`, `_ShadowRampWidth` and `_FaceMapSoftness`; the three `_UseLightMapColorAO`, `_UseVertexColorAO` and `_UseVertexRampWidth` switches; and the region toggles `_UseMaterial2` to `_UseMaterial5`. A value a material does not hold keeps its default, and a toggle it does not hold is off. The outline reads the game's own width, width knots and offset, and its region colours and intensities, "_OutlineColor" to "_OutlineColor5" and "_OutLineIntensity" to "_OutLineIntensity5", as "The outline" section sets out.
 
 ### Brightness, fog and tone (read off the body's program)
 

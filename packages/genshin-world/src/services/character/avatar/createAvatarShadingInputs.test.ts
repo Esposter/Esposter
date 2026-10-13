@@ -19,6 +19,10 @@ describe("createAvatarShadingInputs", () => {
       coolShadowMultiplyColors: WHITE_REGIONS,
       isOutlineVertexWeighted: true,
       kind: CharacterMaterialKind.Face,
+      outlineRegions: {
+        colors: { five: [0, 0, 0], four: [0, 0, 0], one: [0, 0, 0], three: [0, 0, 0], two: [0, 0, 0] },
+        intensities: { five: 0, four: 0, one: 0, three: 0, two: 0 },
+      },
       regionTints: { five: [0.5, 0.25, 1], four: [0.5, 0.25, 1], three: [0.5, 0.25, 1], two: [0.5, 0.25, 1] },
       regionToggles: { five: false, four: false, three: false, two: false },
       shadowMultiplyColors: WHITE_REGIONS,
