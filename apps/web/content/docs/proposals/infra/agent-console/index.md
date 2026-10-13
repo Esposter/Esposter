@@ -67,7 +67,7 @@ sequenceDiagram
 | Page                                                                                       | What it settles                                                               |
 | :----------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
 | [Anthropic-hosted sessions](/docs/proposals/infra/agent-console/anthropic-hosted-sessions) | sessions Anthropic runs on the reader's API key, as one more connection       |
-| [Repository files](/docs/proposals/infra/agent-console/repository-files)                   | @ to mention a file in the composer, and any named path opened read-only      |
+| [Repository files](/docs/proposals/infra/agent-console/repository-files)                   | a file path a reply or a tool call names, opened in the read-only file view   |
 | [Side chat](/docs/proposals/infra/agent-console/side-chat)                                 | a question beside the session on a discarded fork, adding nothing back        |
 | [Effort level](/docs/proposals/infra/agent-console/effort-level)                           | an effort select beside the model select, showing the level the session is at |
 | [Session titles](/docs/proposals/infra/agent-console/session-titles)                       | renaming a session by its title, saved in its own transcript                  |
