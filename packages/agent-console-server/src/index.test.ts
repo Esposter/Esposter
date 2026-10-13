@@ -9,10 +9,10 @@ describe("agent-console-server", () => {
     expect.hasAssertions();
 
     expect(getFileSizeReport(resolve(distDirectory, "index.js"))).toMatchInlineSnapshot(
-      `"index.js: 11.84 KB (12122 bytes)"`,
+      `"index.js: 12.40 KB (12698 bytes)"`,
     );
     expect(getFileSizeReport(resolve(distDirectory, "contracts.js"))).toMatchInlineSnapshot(
-      `"contracts.js: 3.36 KB (3438 bytes)"`,
+      `"contracts.js: 3.47 KB (3555 bytes)"`,
     );
   });
 
@@ -20,10 +20,10 @@ describe("agent-console-server", () => {
     expect.hasAssertions();
 
     expect(getFileSizeReport(resolve(distDirectory, "index.d.ts"))).toMatchInlineSnapshot(
-      `"index.d.ts: 43.57 KB (44613 bytes)"`,
+      `"index.d.ts: 44.99 KB (46067 bytes)"`,
     );
     expect(getFileSizeReport(resolve(distDirectory, "contracts.d.ts"))).toMatchInlineSnapshot(
-      `"contracts.d.ts: 9.20 KB (9423 bytes)"`,
+      `"contracts.d.ts: 9.57 KB (9795 bytes)"`,
     );
   });
 });

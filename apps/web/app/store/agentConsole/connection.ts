@@ -18,6 +18,7 @@ import { getRemoteHostname } from "@/services/agentConsole/getRemoteHostname";
 import { reactToEvents } from "@/services/agentConsole/reactToEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleShellStore } from "@/store/agentConsole/shell";
@@ -58,6 +59,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const { storeEvents, storeSessionReset, storeSessions } = agentConsoleSessionStore;
   const agentConsoleShellStore = useAgentConsoleShellStore();
   const { storeShellOpened, storeShellOutput, storeShellsClosed } = agentConsoleShellStore;
+  const agentConsoleFileStore = useAgentConsoleFileStore();
+  const { storeFiles, storeOpenedFile } = agentConsoleFileStore;
   const connections = useLocalStorage<Connection[]>(LocalStorageKey.AgentConsoleConnections, []);
   const { getDataRef: getStatusRef } = useDataMap("", ConnectionStatus.Connecting);
   const pairing = shallowRef<Pairing>();
@@ -103,6 +106,12 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         openingCommandIds.delete(serverMessage.commandId);
         // oxlint-disable-next-line error-alert/no-raw-error-alert -- a host's command error is not a tRPC rejection, so no error link has shown it
         createAlert(serverMessage.message, "error");
+        break;
+      case ServerMessageType.FileContent:
+        storeOpenedFile(serverMessage);
+        break;
+      case ServerMessageType.Files:
+        storeFiles(serverMessage.files);
         break;
       case ServerMessageType.Events: {
         const addedEvents = storeEvents(serverMessage.sessionId, serverMessage.events);

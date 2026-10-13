@@ -4,6 +4,8 @@ export enum ServerMessageType {
   Authenticated = "Authenticated",
   CommandError = "CommandError",
   Events = "Events",
+  FileContent = "FileContent",
+  Files = "Files",
   HostStopping = "HostStopping",
   Paired = "Paired",
   Proof = "Proof",

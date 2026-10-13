@@ -1,6 +1,8 @@
 import type { AuthenticatedMessage } from "#src/models/server/AuthenticatedMessage";
 import type { CommandErrorMessage } from "#src/models/server/CommandErrorMessage";
 import type { EventsMessage } from "#src/models/server/EventsMessage";
+import type { FileContentMessage } from "#src/models/server/FileContentMessage";
+import type { FilesMessage } from "#src/models/server/FilesMessage";
 import type { HostStoppingMessage } from "#src/models/server/HostStoppingMessage";
 import type { PairedMessage } from "#src/models/server/PairedMessage";
 import type { ProofMessage } from "#src/models/server/ProofMessage";
@@ -14,6 +16,8 @@ import type { ShellOutputMessage } from "#src/models/server/ShellOutputMessage";
 import { authenticatedMessageSchema } from "#src/models/server/AuthenticatedMessage";
 import { commandErrorMessageSchema } from "#src/models/server/CommandErrorMessage";
 import { eventsMessageSchema } from "#src/models/server/EventsMessage";
+import { fileContentMessageSchema } from "#src/models/server/FileContentMessage";
+import { filesMessageSchema } from "#src/models/server/FilesMessage";
 import { hostStoppingMessageSchema } from "#src/models/server/HostStoppingMessage";
 import { pairedMessageSchema } from "#src/models/server/PairedMessage";
 import { proofMessageSchema } from "#src/models/server/ProofMessage";
@@ -29,6 +33,8 @@ export type ServerMessage =
   | AuthenticatedMessage
   | CommandErrorMessage
   | EventsMessage
+  | FileContentMessage
+  | FilesMessage
   | HostStoppingMessage
   | PairedMessage
   | ProofMessage
@@ -44,6 +50,8 @@ export const serverMessageSchema: z.ZodDiscriminatedUnion<
     typeof authenticatedMessageSchema,
     typeof commandErrorMessageSchema,
     typeof eventsMessageSchema,
+    typeof fileContentMessageSchema,
+    typeof filesMessageSchema,
     typeof hostStoppingMessageSchema,
     typeof pairedMessageSchema,
     typeof proofMessageSchema,
@@ -59,6 +67,8 @@ export const serverMessageSchema: z.ZodDiscriminatedUnion<
   authenticatedMessageSchema,
   commandErrorMessageSchema,
   eventsMessageSchema,
+  fileContentMessageSchema,
+  filesMessageSchema,
   hostStoppingMessageSchema,
   pairedMessageSchema,
   proofMessageSchema,

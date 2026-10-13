@@ -181,6 +181,7 @@ onConsoleFocusRequest(async () => {
               <AgentConsolePanelNewSession v-if="!currentSessionId" />
               <template v-else>
                 <!-- Keeps a few lines of the conversation however short the console is: past that the panel scrolls -->
+                <AgentConsolePanelFile />
                 <AgentConsolePanelConversation flex-1 min-h-32 />
                 <!-- A request waiting on a verdict stays open until it has one, as the terminal's prompt does -->
                 <AgentConsolePanelPermission

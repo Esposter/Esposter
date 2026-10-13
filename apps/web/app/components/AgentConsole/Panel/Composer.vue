@@ -7,6 +7,7 @@ import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeM
 import { readAttachment } from "@/services/agentConsole/readAttachment";
 import { toSlashCommand } from "@/services/agentConsole/toSlashCommand";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
+import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { CommandType, PermissionMode, SessionState } from "agent-console-server/contracts";
@@ -35,6 +36,26 @@ const commandMenuItems = computed(() => {
       })) ?? []
   );
 });
+const agentConsoleFileStore = useAgentConsoleFileStore();
+const { files } = storeToRefs(agentConsoleFileStore);
+// An @ with no space after it is a file being mentioned; the file list is asked of the host as the menu opens
+const mentionQuery = computed(() => composerText.value.match(/(?:^|\s)@(\S*)$/u)?.[1]);
+const isMentioning = computed(() => mentionQuery.value !== undefined);
+const mentionMenuItems = computed(() => {
+  const query = mentionQuery.value?.toLowerCase() ?? "";
+  return files.value
+    .filter((path) => path.toLowerCase().includes(query))
+    .slice(0, 50)
+    .map((path) => ({ title: path, value: path }));
+});
+const suggestionItems = computed(() => (isMentioning.value ? mentionMenuItems.value : commandMenuItems.value));
+const suggestionLabel = computed(() => (isMentioning.value ? "Files" : "Slash commands"));
+watch(isMentioning, (newIsMentioning) => {
+  if (newIsMentioning) sendCommand({ sessionId: currentSessionId.value, type: CommandType.ListFiles });
+});
+const selectSuggestion = (value: string) => {
+  composerText.value = isMentioning.value ? composerText.value.replace(/@\S*$/u, `@${value} `) : `/${value} `;
+};
 const modelMenuItems = computed(
   () =>
     capabilities.value?.models.map(({ displayName, value }) => ({
@@ -109,7 +130,7 @@ const submit = () => {
         v-model="composerText"
         aria-label="Message Claude"
         max-h="[40dvh]"
-        placeholder="Message Claude — / for commands, paste or drop a file"
+        placeholder="Message Claude — / for commands, @ for files, paste or drop a file"
         rows="1"
         autofocus
         px-2
@@ -130,13 +151,9 @@ const submit = () => {
       <!-- eslint-enable vuejs-accessibility/no-autofocus -->
       <UiSuggestions
         :field="prompt ?? undefined"
-        :items="commandMenuItems"
-        label="Slash commands"
-        @select="
-          (name) => {
-            composerText = `/${name} `;
-          }
-        "
+        :items="suggestionItems"
+        :label="suggestionLabel"
+        @select="selectSuggestion"
       />
       <div flex flex-wrap gap-2 items-center>
         <UiSelect v-model="model" :items="modelMenuItems" label="Model" />

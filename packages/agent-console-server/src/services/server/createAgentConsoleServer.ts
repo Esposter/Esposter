@@ -29,6 +29,7 @@ import { answerHttpRequest } from "#src/services/server/answerHttpRequest";
 import { createEventLog } from "#src/services/server/createEventLog";
 import { createPairingCodes } from "#src/services/server/createPairingCodes";
 import { handleCommand } from "#src/services/server/handleCommand";
+import { handleFileCommand } from "#src/services/server/handleFileCommand";
 import { handleShellCommand } from "#src/services/server/handleShellCommand";
 import { sendServerMessage } from "#src/services/server/sendServerMessage";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
@@ -148,6 +149,12 @@ export const createAgentConsoleServer = async ({
               shellId,
               type: ServerMessageType.ShellOpened,
             });
+        }, sendCommandError);
+        return;
+      case CommandType.ListFiles:
+      case CommandType.ReadFile:
+        await getResultAsync(() => handleFileCommand(driver, command)).match((message) => {
+          sendServerMessage(webSocket, message);
         }, sendCommandError);
         return;
       default:
