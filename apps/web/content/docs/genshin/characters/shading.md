@@ -302,7 +302,7 @@ I  = "_OutLineIntensity{k}"                (k one where none is on)
 C  = Oc + I * (0.2 * T_m - Oc)             (T_m the rgb of the main texture at the pixel's coordinates)
 ```
 
-The region's `A` is the alpha of texture "t1" at the main texture's coordinates, taken as the lightmap's, as the body's is (Provisional on the texture's name). `T_m` is texture "t0" at "_MainTex_ST"'s coordinates, the sample the pixel's alpha clip reads. With no region on, `Oc` is the colour the vertex program hands on: "_OutlineColor", or the vertex's colour where "_OutlineVertexColorPassthrough" is set.
+The region's `A` is the alpha of texture "t1" at the main texture's coordinates, taken as the lightmap's, as the body's is (Provisional on the texture's name). `T_m` is texture "t0" at the pixel's own coordinates, the sample the pixel's alpha clip reads. The code does not apply "_MainTex_ST" to it (Provisional: whether the game's values are the identity for these materials is not settled). With no region on, `Oc` is the colour the vertex program hands on: "_OutlineColor", or the vertex's colour where "_OutlineVertexColorPassthrough" is set.
 
 The output colour uses the same tone form as the body's "o1": `O1 = 0.5 + (C_d - 0.5) * (1 + K)` with `C_d` the desaturation of `C`, where "_DesaturateScale" and "_ContrastScale" are read from the same registers as the body's (Exact).
 
