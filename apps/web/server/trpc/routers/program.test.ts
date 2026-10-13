@@ -14,12 +14,15 @@ import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/c
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
 import { createSurvey } from "#server/trpc/routers/createSurvey.test";
 import { datasetRouter } from "#server/trpc/routers/dataset";
+import { emailRouter } from "#server/trpc/routers/email";
 import { programRouter } from "#server/trpc/routers/program";
 import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
+import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { createEntity, getTopNEntities } from "@esposter/db";
@@ -32,7 +35,7 @@ import {
   SurveyResponseEntity,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, RoutePath, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -54,6 +57,7 @@ describe("programRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["program"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;
+  let emailCaller: DecorateRouterRecord<TRPCRouter["email"]>;
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
@@ -87,6 +91,7 @@ describe("programRouter", () => {
     mockContext = getMockContext();
     caller = getCaller();
     datasetCaller = createCallerFactory(datasetRouter)(mockContext);
+    emailCaller = createCallerFactory(emailRouter)(mockContext);
     resourceCaller = createCallerFactory(resourceRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
@@ -412,5 +417,85 @@ describe("programRouter", () => {
     const remainingParticipants = await readStoredParticipants(program.id);
 
     expect(remainingParticipants).toStrictEqual([]);
+  });
+
+  // A program whose email is captured with the survey link the invite button writes, so every test reads one bound email
+  const createInviteProgram = async (emailHtml: (surveyPath: string) => string, audienceKeyValues = ["a", "b"]) => {
+    const survey = await createSurvey(surveyCaller, name, { model, settings: identifiedSettings });
+    const surveyPath = RoutePath.View(ResourceType.Survey, survey.id);
+    const sheet = await createAudienceSheet(sheetCaller, name, audienceKeyValues);
+    const email = await emailCaller.createResource({ name });
+    await emailCaller.saveResourceContent({
+      content: new EmailEditor({ html: emailHtml(surveyPath) }),
+      contentVersion: email.contentVersion,
+      id: email.id,
+    });
+    const program = await caller.createResource({ name });
+    const programResource: ProgramResource = {
+      audience: { id: sheet.id, type: DatasetProviderType.Sheet },
+      emailId: email.id,
+      keyColumn: AUDIENCE_KEY_COLUMN,
+      surveyId: survey.id,
+    };
+    await caller.saveResourceContent({
+      content: programResource,
+      contentVersion: program.contentVersion,
+      id: program.id,
+    });
+    return { program, survey };
+  };
+  const sortByKeyValue = <T extends { keyValue: string }>(items: T[]) =>
+    items.toSorted((a, b) => a.keyValue.localeCompare(b.keyValue));
+
+  test("invites refuse an email with no link to the survey, before reading the audience", async () => {
+    expect.hasAssertions();
+
+    const { program } = await createInviteProgram(() => "<p>No link</p>");
+
+    await expect(
+      caller.readProgramInvites({ id: program.id, scope: ProgramInviteScope.All }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Read, name: Resource, the email has no link to the survey]`,
+    );
+  });
+
+  test("invites hand each participant their own token with the audience row", async () => {
+    expect.hasAssertions();
+
+    const { program } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Take the survey</a>`);
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
+    const { invites, unmatchedCount, emailHtml } = await caller.readProgramInvites({
+      id: program.id,
+      scope: ProgramInviteScope.All,
+    });
+
+    expect(unmatchedCount).toBe(0);
+    expect(emailHtml).toContain("Take the survey");
+    expect(sortByKeyValue(invites.map(({ keyValue, token }) => ({ keyValue, token })))).toStrictEqual(
+      sortByKeyValue(participants),
+    );
+    expect(sortByKeyValue(invites).map(({ row }) => row[AUDIENCE_KEY_COLUMN])).toStrictEqual(["a", "b"]);
+  });
+
+  test("reminders carry only the participants still awaiting a response", async () => {
+    expect.hasAssertions();
+
+    const { program, survey } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Go</a>`);
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
+    const responderToken = takeOne(participants.filter(({ keyValue }) => keyValue === "a")).token;
+    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+    await createEntity(
+      surveyResponseClient,
+      new SurveyResponseEntity({
+        participantToken: responderToken,
+        partitionKey: survey.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    );
+    const { invites } = await caller.readProgramInvites({ id: program.id, scope: ProgramInviteScope.Awaiting });
+
+    expect(invites.map(({ keyValue, token }) => ({ keyValue, token }))).toStrictEqual(
+      participants.filter(({ token }) => token !== responderToken),
+    );
   });
 });

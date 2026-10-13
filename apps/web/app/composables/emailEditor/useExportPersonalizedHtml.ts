@@ -1,8 +1,12 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
+import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
 import { pluralize } from "#shared/util/text/pluralize";
+import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
+import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
+import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useResourceStore } from "@/store/resource";
@@ -26,7 +30,18 @@ export const useExportPersonalizedHtml = () => {
       return;
     }
 
-    const count = exportPersonalizedHtml(editorValue, resourceValue, rows);
+    // Asset urls are absolutized so the downloaded artifact points back at the app instead of resolving relative
+    // To wherever the file was opened. They only load where the request carries the owner's session cookie, so a
+    // File opened straight off disk shows broken images — durable public asset urls are the email-sending follow-on
+    const html = getEmailHtml(editorValue).replaceAll(
+      RESOURCE_ASSET_URL_REGEX,
+      (url) => `${window.location.origin}${url}`,
+    );
+    const filename = sanitizeFilename(resourceValue.name);
+    const count = exportPersonalizedHtml(
+      filename,
+      Object.fromEntries(rows.map((row, index) => [`${filename}-${index + 1}`, substituteMergeFields(html, row)])),
+    );
     createAlert(`Exported ${count} personalized ${pluralize("email", count)}`, "success");
   };
 };

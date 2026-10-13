@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
@@ -94,6 +95,44 @@ describe("resourceProgramStatus", () => {
       `${resource.name}-participants.csv`,
       createParticipantLinksCsv(keyColumn, surveyId, participants, window.location.origin),
       MimeType.Csv,
+    );
+  });
+
+  // The invites are read server-side, since only the server holds each participant's token and audience row, and the
+  // Zip is the file the owner sends each person, so it names the invites rather than an empty set
+  test("exports each invited participant's personalized email as one zip", async () => {
+    expect.hasAssertions();
+
+    const token = crypto.randomUUID();
+    const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
+    trpcMsw.program.readResourceContent.query(() => ({
+      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      emailId: crypto.randomUUID(),
+      keyColumn,
+      surveyId,
+    }));
+    // The click's last call is the invite read, so the test holds until it lands rather than ending with it in flight
+    const { promise: isInviteRead, resolve: onInviteRead } = Promise.withResolvers<void>();
+    trpcMsw.program.readProgramInvites.query(() => {
+      onInviteRead();
+      return {
+        emailHtml: `<a href="${surveyPath}">Take it</a>`,
+        invites: [{ keyValue, row: { [keyColumn]: keyValue }, token }],
+        unmatchedCount: 0,
+      };
+    });
+    setStatus(false);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+    const inviteButton = component.findAll("button").find((button) => button.text() === "Export invites");
+    assert.exists(inviteButton);
+    await inviteButton.trigger("click");
+    await isInviteRead;
+    await flushPromises();
+
+    expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
+      `${resource.name}-invites.zip`,
+      expect.any(Uint8Array),
+      "application/zip",
     );
   });
 });

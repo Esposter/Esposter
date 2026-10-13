@@ -1,24 +1,29 @@
 <script setup lang="ts">
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { ProgramInvites } from "#shared/models/resource/program/ProgramInvites";
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { downloadFile } from "@/services/app/downloadFile";
 import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
+import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
+import { createProgramInviteFiles } from "@/services/resource/program/createProgramInviteFiles";
+import { getMissingProgramInviteBindings } from "@/services/resource/program/getMissingProgramInviteBindings";
 import { ProgramStatusHeaders } from "@/services/resource/program/ProgramStatusHeaders";
 import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { useProgramStore } from "@/store/resource/program";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { NotificationSeverity } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { NotificationSeverity, ResourceType } from "@esposter/db-schema";
+import { getResultAsync, RoutePath } from "@esposter/shared";
 
 const { currentRoute } = useRouter();
 const { $trpc } = useNuxtApp();
@@ -44,6 +49,54 @@ const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) 
 const respondedPercentage = computed(() =>
   statusRows.value.length > 0 ? Math.round((respondedCount.value / statusRows.value.length) * 100) : 0,
 );
+const exportInviteFiles = (scope: ProgramInviteScope, { emailHtml, invites, unmatchedCount }: ProgramInvites) => {
+  const isReminder = scope === ProgramInviteScope.Awaiting;
+  // A participant past the audience read's cap has no row to fill, so the file is never sent without them named
+  if (unmatchedCount > 0)
+    createNotification({
+      severity: NotificationSeverity.Warning,
+      title: `${unmatchedCount} ${pluralize("participant", unmatchedCount)} past the audience read limit ${unmatchedCount === 1 ? "was" : "were"} not exported`,
+    });
+  if (invites.length === 0) {
+    createNotification({
+      severity: NotificationSeverity.Warning,
+      title: isReminder
+        ? "Every participant has responded, so there are no reminders to export"
+        : "No participant has an audience row to invite",
+    });
+    return;
+  }
+  const { surveyId } = programResource.value;
+  const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
+  const filename = `${sanitizeFilename(resource.value?.name ?? "")}-${isReminder ? "reminders" : "invites"}`;
+  const count = exportPersonalizedHtml(filename, createProgramInviteFiles(emailHtml, surveyPath, invites));
+  createNotification({
+    severity: NotificationSeverity.Success,
+    title: `${count} ${pluralize(isReminder ? "reminder" : "invite", count)} ready`,
+  });
+};
+const exportInvites = async (scope: ProgramInviteScope) => {
+  // Each binding an invite reads is named when missing, rather than exporting an empty zip
+  const missingBindings = getMissingProgramInviteBindings(programResource.value);
+  if (missingBindings.length > 0) {
+    createNotification({
+      severity: NotificationSeverity.Warning,
+      title: `Bind ${missingBindings.join(", ")} on the Setup blade before exporting invites`,
+    });
+    return;
+  }
+  if (statusRows.value.length === 0) {
+    createNotification({
+      severity: NotificationSeverity.Warning,
+      title: "Generate participants before exporting invites",
+    });
+    return;
+  }
+  await getResultAsync(() => $trpc.program.readProgramInvites.query({ id: id.value, scope })).match(
+    (programInvites) => exportInviteFiles(scope, programInvites),
+    createErrorNotification,
+  );
+};
 const readStatus = async () => {
   await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((programStatus) => {
     isRespondedPartial.value = programStatus.isRespondedPartial;
@@ -99,6 +152,8 @@ await readStatus();
       <p text-sm text-muted flex-1 min-w-0 truncate>
         {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded
       </p>
+      <UiButton @click="exportInvites(ProgramInviteScope.All)">Export invites</UiButton>
+      <UiButton @click="exportInvites(ProgramInviteScope.Awaiting)">Export reminders</UiButton>
       <UiButton :is-pending="isGeneratePending" :variant="UiButtonVariant.Accent" @click="generateParticipants()">
         Generate participants
       </UiButton>
