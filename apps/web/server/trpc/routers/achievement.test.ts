@@ -131,7 +131,7 @@ describe("achievementRouter", () => {
       id: newResource.id,
     });
     await createMockUser(mockContext.db);
-    const [{ totalUsers }] = await mockContext.db.select({ totalUsers: count() }).from(usersInAuth);
+    const { totalUsers } = takeOne(await mockContext.db.select({ totalUsers: count() }).from(usersInAuth));
     const achievementRarities = await caller.achievement.readAchievementRarities();
 
     expect(achievementRarities[WebpageAchievementName.WebDeveloper]).toBe((1 / totalUsers) * 100);
