@@ -36,11 +36,6 @@
       ]
     },
     {
-      "allowedVersions": "<0.3.0",
-      "description": "nuxt-ai-ready writes `import ... from \"minimark/stringify\"` into the app's own virtual module whenever `@nuxt/content` is installed, yet declares no dependency on `minimark`; it reaches the app only as `@nuxt/content`'s, which pnpm does not hoist, so `apps/web` lists it directly on the line `@nuxt/content` writes its trees in. Move the cap with `@nuxt/content`'s own `minimark` range, and drop the dependency and this rule once nuxt-ai-ready declares `minimark` itself.",
-      "matchPackageNames": ["minimark"]
-    },
-    {
       "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once — a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",
       "enabled": false,
       "matchPackageNames": ["typescript", "typescript-native-bridge"]

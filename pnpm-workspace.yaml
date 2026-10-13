@@ -201,7 +201,7 @@ catalog:
   mathjs: ^15.2.0
   mermaid: ^12.1.0
   mime-db: ^1.54.0
-  minimark: ^0.2.0
+  minimark: ^1.0.0
   minisearch: ^7.2.0
   # @TODO: no upstream issue — `@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, its own
   # Dependency, which Nitro 3 resolves from the app rather than from Nuxt (nuxt/nuxt)
