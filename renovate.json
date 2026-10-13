@@ -41,6 +41,11 @@
       "matchPackageNames": ["typescript", "typescript-native-bridge"]
     },
     {
+      "description": "`grapesjs` 0.23.7 was published without its JavaScript: the tarball ships `dist/index.d.ts` and no `grapes.mjs` or `grapes.min.js`, so it typechecks while every import of it fails to resolve, so it is pinned exactly to 0.23.6. Drop this rule and restore the catalog caret once a release ships its bundles again.",
+      "enabled": false,
+      "matchPackageNames": ["grapesjs"]
+    },
+    {
       "description": "`vue-tsc` 3.3.12 reports `Property 'value' does not exist` on an imported ref used inside a template function (https://github.com/vuejs/language-tools/issues/6237), so it is pinned exactly to 3.3.11. Drop this rule and restore the catalog caret once a release fixes the issue.",
       "enabled": false,
       "matchPackageNames": ["vue-tsc"]

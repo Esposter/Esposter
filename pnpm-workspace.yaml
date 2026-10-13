@@ -172,7 +172,7 @@ catalog:
   fake-indexeddb: ^6.2.5
   fast-check: ^4.10.2
   fflate: ^0.8.3
-  grapesjs: ^0.23.7
+  grapesjs: 0.23.6
   grapesjs-mjml: ^1.0.8
   grapesjs-parser-postcss: ^1.0.3
   grapesjs-plugin-export: ^1.0.12
