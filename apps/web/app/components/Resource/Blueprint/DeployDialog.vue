@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
 
-import { blueprintEntrySchema } from "#shared/models/resource/blueprint/BlueprintEntry";
-import {
-  BLUEPRINT_ENTRY_TOKEN_REGEX,
-  BLUEPRINT_PARAMETER_TOKEN_REGEX,
-} from "#shared/services/resource/blueprint/constants";
-import { mapBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
-import { substituteBlueprintParameterTokens } from "#shared/services/resource/blueprint/substituteBlueprintParameterTokens";
+import { buildBlueprintDeployReviews } from "#shared/services/resource/blueprint/buildBlueprintDeployReviews";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -44,33 +38,8 @@ watch(isOpen, (newIsOpen) => {
   );
   deployments.value = [];
 });
-// What each entry will be created as, resolved from the fields as they are typed by the same substitution deploy runs
-const parameterValueMap = computed(() => new Map(Object.entries(parameterValues.value)));
-const deployReviews = computed(() =>
-  blueprint.value.entries.map((entry) => {
-    const name = substituteBlueprintParameterTokens(entry.name, parameterValueMap.value);
-    const bindingKeys = new Set<string>();
-    mapBlueprintEntryContentStrings(entry, (value) =>
-      value.replace(BLUEPRINT_ENTRY_TOKEN_REGEX, (match, key: string) => {
-        bindingKeys.add(key);
-        return match;
-      }),
-    );
-    const undeclaredTokens = name.match(BLUEPRINT_PARAMETER_TOKEN_REGEX) ?? [];
-    const isNameEmpty = !blueprintEntrySchema.shape.name.safeParse(name).success;
-    const notes: string[] = [];
-    if (bindingKeys.size > 0) notes.push(`binds ${[...bindingKeys].join(", ")}`);
-    if (undeclaredTokens.length > 0) notes.push(`undeclared ${undeclaredTokens.join(", ")}`);
-    if (isNameEmpty) notes.push("no name: a parameter it uses is empty");
-    return {
-      description: notes.join(" · "),
-      icon: ResourceDefinitionMap[entry.type].icon,
-      isNameEmpty,
-      key: entry.key,
-      title: isNameEmpty ? entry.key : name,
-    };
-  }),
-);
+// What each entry will be created as, resolved from the fields as they are typed
+const deployReviews = computed(() => buildBlueprintDeployReviews(blueprint.value.entries, parameterValues.value));
 const isDeployBlocked = computed(() => deployReviews.value.some(({ isNameEmpty }) => isNameEmpty));
 const deploy = async () => {
   const resourceValue = resource.value;
