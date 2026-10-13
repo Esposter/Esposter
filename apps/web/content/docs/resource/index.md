@@ -69,6 +69,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dashboard chart interaction](/docs/resource/dashboard-chart-interaction) — the ApexCharts v6 investigation surface on visuals: linked highlighting, shareable view state, annotations
 - [Email personalization](/docs/resource/email-personalization) — merge fields, survey invite blocks, personalized HTML export
 - [Dataset row-cap warning](/docs/resource/dataset-row-cap-warning) — "showing N of M" wherever a dataset read hits the 1000-row cap
+- [Dataset CSV export](/docs/resource/dataset-csv-export) — Export CSV on any dataset-serving resource: survey answers with question titles as headers, formula cells neutralised
 - [Email preview text](/docs/resource/email-preview-text) — the inbox line under the subject, written into the MJML as its `mj-preview`
 - [Email web view](/docs/resource/email-web-view) — Email is Publishable: save-time HTML capture, `/view/Email/[id]` browser copy
 - [Flowchart connectors](/docs/resource/flowchart-connectors) — arrowheads, right-angled paths, edge labels and a panel for a selected edge

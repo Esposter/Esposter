@@ -20,7 +20,7 @@ import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("datasetRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(datasetRouter);
@@ -52,14 +52,19 @@ describe("datasetRouter", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     MockTableDatabase.clear();
   });
 
   const setupSurvey = () => createSurvey(surveyCaller, name, { model });
+  // A survey response's submission time is its save time, so the clock is pinned to the epoch
+  const submittedAt = new Date(0).toISOString();
+  const submittedAtColumn = { name: "submittedAt", title: "Submitted", type: ColumnType.Date };
 
   test("reads survey responses dataset", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0 });
     const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
       model: { a: 0, b: true, c: "" },
@@ -69,11 +74,12 @@ describe("datasetRouter", () => {
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.columns).toStrictEqual([
+      submittedAtColumn,
       { name: "a", type: ColumnType.Number },
       { name: "b", type: ColumnType.Boolean },
       { name: "c", type: ColumnType.String },
     ]);
-    expect(dataset.rows).toStrictEqual([{ a: 0, b: true, c: "" }]);
+    expect(dataset.rows).toStrictEqual([{ submittedAt, a: 0, b: true, c: "" }]);
     expect(dataset.totalRows).toBe(1);
   });
 
@@ -106,6 +112,7 @@ describe("datasetRouter", () => {
   test("fills missing answers with null", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0 });
     const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
       model: { a: 0 },
@@ -114,21 +121,44 @@ describe("datasetRouter", () => {
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
-    expect(dataset.rows).toStrictEqual([{ a: 0, b: null, c: null }]);
+    expect(dataset.rows).toStrictEqual([{ submittedAt, a: 0, b: null, c: null }]);
   });
 
-  test("flattens non-primitive answers to json", async () => {
+  test("joins checkbox answers into one cell, with non-string items as json", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0 });
     const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
-      model: { c: ["", " "] },
+      model: { c: ["red", { other: "blue" }] },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
-    expect(dataset.rows).toStrictEqual([{ a: null, b: null, c: JSON.stringify(["", " "]) }]);
+    expect(dataset.rows).toStrictEqual([
+      { submittedAt, a: null, b: null, c: `red; ${JSON.stringify({ other: "blue" })}` },
+    ]);
+  });
+
+  test("reserves the submission column name a question takes", async () => {
+    expect.hasAssertions();
+
+    const questionModel = JSON.stringify({ pages: [{ elements: [{ name: "submittedAt", type: "text" }] }] });
+    vi.useFakeTimers({ now: 0 });
+    const newSurvey = await createSurvey(surveyCaller, name, { model: questionModel });
+    await surveyCaller.createSurveyResponse({
+      model: { submittedAt: "answer" },
+      partitionKey: newSurvey.id,
+      rowKey: crypto.randomUUID(),
+    });
+    const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
+
+    expect(dataset.columns).toStrictEqual([
+      { name: "submittedAt_", title: "Submitted", type: ColumnType.Date },
+      { name: "submittedAt", type: ColumnType.String },
+    ]);
+    expect(dataset.rows).toStrictEqual([{ submittedAt_: submittedAt, submittedAt: "answer" }]);
   });
 
   test("fails read survey responses with wrong user", async () => {

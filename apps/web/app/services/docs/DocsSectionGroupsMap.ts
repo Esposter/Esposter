@@ -189,6 +189,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "webpage-plugin-custom-code",
       "webpage-plugin-forms",
       "dataset-row-cap-warning",
+      "dataset-csv-export",
     ],
   },
   virrun: {
