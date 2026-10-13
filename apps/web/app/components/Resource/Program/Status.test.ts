@@ -12,7 +12,7 @@ import { createProgramInviteHtml } from "@/services/resource/program/createProgr
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { strToU8, unzipSync } from "fflate";
@@ -129,7 +129,8 @@ describe("resourceProgramStatus", () => {
     await isInviteRead;
     await flushPromises();
 
-    const [[fileName, invitesZip, mimeType]] = vi.mocked(downloadFile).mock.calls;
+    const [fileName, invitesZip, mimeType] = takeOne(vi.mocked(downloadFile).mock.calls);
+    assert.instanceOf(invitesZip, Uint8Array);
 
     expect([fileName, mimeType]).toStrictEqual([`${resource.name}-invites.zip`, "application/zip"]);
     expect(unzipSync(invitesZip)).toStrictEqual({
