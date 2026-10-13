@@ -13,7 +13,7 @@ import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { AzureContainer, ResourceType, SnapshotChannel } from "@esposter/db-schema";
-import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
+import { ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -214,5 +214,33 @@ describe("webpageRouter", () => {
       expect(publishedContent.content.html).toContain(getResourceAssetUrl(clonedBlobName));
     expect(publishedContent.content.html).not.toContain(url);
     expect(publishedContent.content.html).not.toContain(publishedUrl);
+  });
+
+  test("clones the share image with the rest of the published content", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
+    const resourceAssets = MockContainerDatabase.get(AzureContainer.ResourceAssets) ?? new Map<string, Buffer>();
+    resourceAssets.set(blobName, Buffer.alloc(1));
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, resourceAssets);
+    const url = getResourceAssetUrl(blobName);
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ imageUrl: url }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    const clonedBlobNames = [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])].filter(
+      (publishedBlobPath) =>
+        publishedBlobPath.startsWith(`${newResource.id}/${SnapshotChannel.Published}/`) &&
+        publishedBlobPath.endsWith(`${ID_SEPARATOR}a`),
+    );
+
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+
+    // The published share image names the clone, never the working copy's blob the owner may replace
+    expect(clonedBlobNames).toHaveLength(1);
+    expect(publishedContent.content.imageUrl).toBe(getResourceAssetUrl(takeOne(clonedBlobNames)));
   });
 });

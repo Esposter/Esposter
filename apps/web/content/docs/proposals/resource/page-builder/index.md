@@ -115,7 +115,7 @@ The small-plugin absorption stops now: every module it produces is deleted at th
 
 ## Notes
 
-- [Webpage social preview](/docs/proposals/resource/webpage-social-preview) puts a description and a share image on the Webpage content. Landing it before the cutover writes fields the cutover deletes; after it, they are root props.
+- [Webpage social preview](/docs/resource/webpage-social-preview) shipped its description and share image on the Webpage content. The cutover moves those two fields to root props.
 - A Video or Map embed is a third-party frame, and the security config names no `frame-src`, so `default-src 'self'` refuses those frames in the canvas and inside the published view's frame, which inherits the app's policy — reading the policy says the current blocks embed nothing that loads. Phase 2 confirms it in the browser, and the two types ship either with the providers' origins named or as uploaded video only.
 - An external image loads in the canvas and on the published page only from the hosts the image whitelist names, for the same reason, so the image field offers upload first and says why a pasted address from elsewhere shows nothing.
 - [Program email invites](/docs/proposals/resource/program-email-invites) gets simpler: the compile it needs per participant is a server call rather than a live editor.

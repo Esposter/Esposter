@@ -50,6 +50,21 @@ describe(useWebpageEditorStore, () => {
     expect(savedContentIds).toStrictEqual([content.id]);
   });
 
+  test("carries the share preview across an editor save", async () => {
+    expect.hasAssertions();
+
+    const description = "A short share description";
+    const imageUrl = "/api/resource-assets/files/share.png";
+    content = new WebpageEditor({ description, imageUrl });
+    const webpageEditorStore = useWebpageEditorStore();
+    const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
+    await readWebpageEditor();
+    await saveWebpageEditor(projectData, render);
+
+    expect(webpageEditorStore.webpageEditor.description).toBe(description);
+    expect(webpageEditorStore.webpageEditor.imageUrl).toBe(imageUrl);
+  });
+
   test("skips the store echo that follows the load", async () => {
     expect.hasAssertions();
 

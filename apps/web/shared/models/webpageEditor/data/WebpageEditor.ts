@@ -2,7 +2,11 @@ import type { ToData } from "@esposter/shared";
 
 import { AGrapesJsEditor, grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
 import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "#shared/services/grapesjs/constants";
-import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
+import {
+  MAX_RESOURCE_CONTENT_SIZE,
+  RESOURCE_ASSETS_URL_PREFIX,
+  WEBPAGE_DESCRIPTION_MAX_LENGTH,
+} from "#shared/services/resource/constants";
 import { css, html } from "@esposter/shared";
 import { z } from "zod";
 
@@ -11,6 +15,10 @@ export class WebpageEditor extends AGrapesJsEditor {
   // The published webpage without loading GrapesJS
   css?: string;
   html?: string;
+  // The share preview the published page unfurls with, over the site's own. The image is one of the webpage's file
+  // Assets, so publishing clones it with the rest of the content
+  description = "";
+  imageUrl = "";
   pages: unknown[] = [
     {
       component: html`
@@ -743,5 +751,7 @@ export const webpageEditorSchema = z
     ...grapesJsEditorSchema.shape,
     css: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
     html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
+    description: z.string().max(WEBPAGE_DESCRIPTION_MAX_LENGTH),
+    imageUrl: z.literal("").or(z.string().startsWith(RESOURCE_ASSETS_URL_PREFIX)),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<WebpageEditor>>;

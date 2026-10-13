@@ -68,5 +68,13 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
       title: "Calendar",
     },
   ],
-  [ResourceType.Webpage]: [],
+  // The share preview a published page unfurls with, after the built-in Editor as a Sheet's Settings follows its Data
+  [ResourceType.Webpage]: [
+    {
+      component: defineAsyncComponent(() => import("@/components/Resource/Webpage/Settings.vue")),
+      icon: "i-mdi:cog",
+      slug: ResourceBladeSlug.Settings,
+      title: "Settings",
+    },
+  ],
 };

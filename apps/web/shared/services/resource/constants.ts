@@ -48,3 +48,6 @@ export const EMPTY_NOTE_DOC: JSONContent = { content: [{ type: "paragraph" }], t
 // The most ids one consumer read takes. A query's input rides its URL, and a few hundred ids would pass the server's
 // Header limit, so a larger selection is read a chunk at a time
 export const READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH = 100;
+// The most characters a webpage's share description takes. It is the meta description a search result shows under
+// The title, and the Open Graph description a shared link unfurls with, both of which cut anything longer
+export const WEBPAGE_DESCRIPTION_MAX_LENGTH = 160;
