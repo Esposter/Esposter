@@ -20,6 +20,7 @@ describe("createAvatarShadingInputs", () => {
       isOutlineVertexWeighted: true,
       kind: CharacterMaterialKind.Face,
       regionTints: { five: [0.5, 0.25, 1], four: [0.5, 0.25, 1], three: [0.5, 0.25, 1], two: [0.5, 0.25, 1] },
+      regionToggles: { five: false, four: false, three: false, two: false },
       shadowMultiplyColors: WHITE_REGIONS,
       shininess: 10,
     });
@@ -42,6 +43,17 @@ describe("createAvatarShadingInputs", () => {
 
     expect(rampWidth).toBe(0.8);
     expect(missingRampWidth).toBeUndefined();
+  });
+
+  test("turns on each later region the material turns on", () => {
+    expect.assertions(1);
+    const { regionToggles } = createAvatarShadingInputs(
+      { colors: {}, floats: { _UseMaterial2: 1, _UseMaterial3: 1, _UseMaterial4: 0 }, keywords: [], textures: {} },
+      CharacterMaterialKind.Body,
+      new Map(),
+    );
+
+    expect(regionToggles).toStrictEqual({ five: false, four: false, three: true, two: true });
   });
 
   test("reads each region's first and cool shadow colour, white where the material holds none", () => {

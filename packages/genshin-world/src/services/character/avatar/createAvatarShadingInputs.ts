@@ -93,6 +93,13 @@ export const createAvatarShadingInputs = (
       three: readColour(colors, "_Color3") ?? color,
       two: readColour(colors, "_Color2") ?? color,
     },
+    // A later region is the lightmap's to select only where the material turns it on, "_UseMaterial2" to "_UseMaterial5"
+    regionToggles: {
+      five: readSwitch(nameFloatMap, "_UseMaterial5") ?? false,
+      four: readSwitch(nameFloatMap, "_UseMaterial4") ?? false,
+      three: readSwitch(nameFloatMap, "_UseMaterial3") ?? false,
+      two: readSwitch(nameFloatMap, "_UseMaterial2") ?? false,
+    },
     shadowMultiplyColors: readRegionColors(colors, "_FirstShadowMultColor"),
     shininess: nameFloatMap.get("_Shininess"),
     specularColor: readColour(colors, "_SpecularColor"),
