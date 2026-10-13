@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-11T04:14:45.778Z
-- Commit: 8800f100c9
+- Date: 2026-10-13T03:45:02.387Z
+- Commit: 87118e9173
 - Node: v26.11.1
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: win32 10.0.26300 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## <anonymous> > a rendered page's nonce and SRI attributes
 
 | task                            | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| native — a page's markup copied | 1.00×   | 0.0018    | ±13.69% | 0.0088   | 200     |
-| a page's markup rewritten       | 0.18×   | 0.0103    | ±3.81%  | 0.0215   | 200     |
+| native — a page's markup copied | 1.00×   | 0.0085    | ±87.00% | 0.0417   | 200     |
+| a page's markup rewritten       | 0.012×  | 0.7256    | ±5.33%  | 1.6557   | 200     |

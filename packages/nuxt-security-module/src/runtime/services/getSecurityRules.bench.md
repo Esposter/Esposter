@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-11T04:14:45.778Z
-- Commit: 8800f100c9
+- Date: 2026-10-13T03:45:02.387Z
+- Commit: 87118e9173
 - Node: v26.11.1
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: win32 10.0.26300 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## getSecurityRules > a request's route rules
 
 | task                             | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| native — matching the path alone | 1.00×   | 0.0024    | ±21.99% | 0.0104   | 2000    |
-| rules of a request's path        | 0.52×   | 0.0046    | ±12.02% | 0.0148   | 2000    |
+| native — matching the path alone | 1.00×   | 0.0049    | ±20.78% | 0.0195   | 2000    |
+| rules of a request's path        | 0.48×   | 0.0103    | ±4.16%  | 0.0544   | 2000    |

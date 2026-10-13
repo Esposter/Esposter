@@ -9,23 +9,23 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-11T04:25:56.285Z
-- Commit: 9c43b701e0
+- Date: 2026-10-13T03:45:02.387Z
+- Commit: 87118e9173
 - Node: v26.11.1
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: win32 10.0.26300 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## server middleware chain > the app's options
 
 | task                              | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| native — creating the event alone | 1.00×   | 0.0034    | ±18.92% | 0.0104   | 2000    |
-| a request through the app's chain | 0.31×   | 0.0110    | ±5.73%  | 0.0425   | 2000    |
+| native — creating the event alone | 1.00×   | 0.0089    | ±19.85% | 0.0283   | 2000    |
+| a request through the app's chain | 0.26×   | 0.0335    | ±3.94%  | 0.1283   | 2000    |
 
 ## server middleware chain > most features off
 
 | task                                             | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------------------------------------------------ | ------- | --------- | ------ | -------- | ------- |
-| native — creating the event alone                | 1.00×   | 0.0026    | ±3.06% | 0.0104   | 2000    |
-| a request through a chain with most features off | 0.42×   | 0.0062    | ±5.09% | 0.0208   | 2000    |
+| native — creating the event alone                | 1.00×   | 0.0053    | ±4.13% | 0.0223   | 2000    |
+| a request through a chain with most features off | 0.33×   | 0.0162    | ±8.56% | 0.0629   | 2000    |

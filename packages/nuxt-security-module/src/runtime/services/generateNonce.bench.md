@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-11T04:14:45.778Z
-- Commit: 8800f100c9
+- Date: 2026-10-13T03:45:02.387Z
+- Commit: 87118e9173
 - Node: v26.11.1
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: win32 10.0.26300 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## generateNonce > a nonce
 
-| task                        | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| --------------------------- | ------- | --------- | ------ | -------- | ------- |
-| native — random bytes alone | 1.00×   | 0.0021    | ±8.77% | 0.0113   | 2000    |
-| a CSP nonce                 | 0.64×   | 0.0033    | ±6.56% | 0.0074   | 2000    |
+| task                        | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| --------------------------- | ------- | --------- | ------- | -------- | ------- |
+| native — random bytes alone | 1.00×   | 0.0035    | ±5.39%  | 0.0140   | 2000    |
+| a CSP nonce                 | 0.48×   | 0.0074    | ±10.43% | 0.0203   | 2000    |

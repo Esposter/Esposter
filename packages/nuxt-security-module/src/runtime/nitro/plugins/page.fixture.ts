@@ -75,7 +75,7 @@ export const PAGE_HEADERS: SecurityHeaders = {
 
 // The route table the module resolves at startup: the default for every path, and three routes that narrow it
 export const PAGE_ROUTE_RULES: Record<string, SecurityRules> = {
-  "/**": { headers: PAGE_HEADERS, nonce: true, sri: true },
+  "/**": { enabled: true, headers: PAGE_HEADERS, nonce: true, sri: true },
   "/api/**": { nonce: false },
   "/auth/**": { headers: { xFrameOptions: XFrameOptions.Deny } },
   "/docs/**": { headers: { xFrameOptions: XFrameOptions.SameOrigin } },

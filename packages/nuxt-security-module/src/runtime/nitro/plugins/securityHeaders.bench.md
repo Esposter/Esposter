@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-11T04:14:45.778Z
-- Commit: 8800f100c9
+- Date: 2026-10-13T03:45:02.387Z
+- Commit: 87118e9173
 - Node: v26.11.1
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: win32 10.0.26300 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## <anonymous> > a page's response
 
 | task                                    | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| native — serializing the page's headers | 1.00×   | 0.0083    | ±26.81% | 0.0195   | 500     |
-| headers applied to a response           | 0.86×   | 0.0096    | ±5.70%  | 0.0346   | 500     |
+| native — serializing the page's headers | 1.00×   | 0.0168    | ±29.40% | 0.0579   | 500     |
+| headers applied to a response           | 0.15×   | 0.1137    | ±7.00%  | 0.3579   | 500     |

@@ -15,7 +15,7 @@ describe(createRouteRulesPlugin, () => {
 
     const app = createNitroApp();
     // The module's plugins are registered before the app's own server plugins, so the hook has its listener only after this plugin's setup
-    createRouteRulesPlugin({ ...PAGE_ROUTE_RULES, "/**": { ...PAGE_ROUTE_RULES["/**"], enabled: true } })(app.nitroApp);
+    createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
     securityHeaders(app.nitroApp);
     app.nitroApp.hooks.hook(ROUTE_RULES_HOOK, (routeRules) => {
       routeRules["/docs/**"] = {
