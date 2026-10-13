@@ -6,6 +6,7 @@ export enum SlashCommandType {
   Roll = "Roll",
   Schedule = "Schedule",
   Shrug = "Shrug",
+  Spoiler = "Spoiler",
   TableFlip = "TableFlip",
   Topic = "Topic",
   Unflip = "Unflip",

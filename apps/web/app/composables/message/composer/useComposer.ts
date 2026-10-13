@@ -42,12 +42,14 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   const codeBlockExtension = useCodeBlockExtension();
   const emojiExtension = useEmojiExtension();
   const customEmojiExtension = useCustomEmojiExtension();
+  const spoilerExtension = useSpoilerExtension();
   // The mention extension restyles itself from the theme, so the stack is a computed rather than a fixed array
   const extensions = computed(() => [
     keyboardExtension,
     codeBlockExtension,
     emojiExtension,
     customEmojiExtension,
+    spoilerExtension,
     MentionExtension,
   ]);
   return { checkIsInputValid, extensions, sendComposerMessage, uploadFiles: useUploadFiles(target) };

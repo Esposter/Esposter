@@ -1,5 +1,6 @@
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 
+import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
@@ -55,6 +56,9 @@ export const useExecuteSlashCommand = () => {
         break;
       case SlashCommandType.Shrug:
         message = `${command.parameterValues.text}¯\\_(ツ)_/¯`;
+        break;
+      case SlashCommandType.Spoiler:
+        message = `<span data-spoiler>${escapeHtml(command.parameterValues.text)}</span>`;
         break;
       case SlashCommandType.TableFlip:
         message = `(╯°□°）╯︵ ┻━┻`;

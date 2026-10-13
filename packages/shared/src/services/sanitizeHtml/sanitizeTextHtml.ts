@@ -5,6 +5,7 @@ import {
   MENTION_ITEM_TYPE_ATTRIBUTE,
   MENTION_LABEL_ATTRIBUTE,
   MENTION_TYPE_ATTRIBUTE,
+  SPOILER_ATTRIBUTE,
 } from "#src/services/message/constants";
 import { DEFAULT_ALLOWED_TAGS } from "#src/services/sanitizeHtml/constants";
 import { sanitizeHtml } from "#src/services/sanitizeHtml/sanitizeHtml";
@@ -23,6 +24,7 @@ export const sanitizeTextHtml = (html: string): string =>
         MENTION_ITEM_TYPE_ATTRIBUTE,
         MENTION_LABEL_ATTRIBUTE,
         MENTION_TYPE_ATTRIBUTE,
+        SPOILER_ATTRIBUTE,
         "style",
       ],
       ul: ["data-type"],

@@ -18,6 +18,12 @@ describe(getMessageNotificationBody, () => {
     expect(getMessageNotificationBody(context, "<p>a</p><p>b</p>")).toBe("a");
   });
 
+  test("masks a spoiler's text", () => {
+    expect.hasAssertions();
+
+    expect(getMessageNotificationBody(context, `<p>a <span data-spoiler="">secret</span></p>`)).toBe("a ▇▇▇▇");
+  });
+
   test("extracts text from plain-text webhook content without a paragraph wrapper", () => {
     expect.hasAssertions();
 

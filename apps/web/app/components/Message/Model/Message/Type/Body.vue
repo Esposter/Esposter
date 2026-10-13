@@ -2,6 +2,7 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { SPOILER_SELECTOR } from "@esposter/shared";
 
 interface Props extends Pick<MessageComponentProps, "isPreview" | "message"> {
   messageHtml: string;
@@ -9,6 +10,13 @@ interface Props extends Pick<MessageComponentProps, "isPreview" | "message"> {
 
 defineSlots<{ default?: () => VNode; prepend?: () => VNode }>();
 const { isPreview = false, message, messageHtml } = defineProps<Props>();
+
+// A click, Enter or Space on a spoiler reveals it, and again hides it. The attribute lives on the rendered
+// Element only, so a re-render of the message clears it
+const toggleSpoiler = (event: Event) => {
+  if (!(event.target instanceof Element)) return;
+  event.target.closest(SPOILER_SELECTOR)?.toggleAttribute("data-revealed");
+};
 </script>
 
 <template>
@@ -22,6 +30,9 @@ const { isPreview = false, message, messageHtml } = defineProps<Props>();
           class="rich-text-content"
           min-w-0
           break-words
+          @click="toggleSpoiler"
+          @keydown.enter="toggleSpoiler"
+          @keydown.space.prevent="toggleSpoiler"
           v-html="messageHtml"
         />
         <span v-if="message.isEdited" text-sm text-muted>(edited)</span>

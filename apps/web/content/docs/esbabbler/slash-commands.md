@@ -15,6 +15,7 @@ Triggered by `/` in the message input. The TipTap suggestion API powers the pick
 | `/me`        | Immediate client | `message` (required) | Posts `*message*` (italic emphasis)                                                       |
 | `/roll`      | Immediate client | —                    | Posts `🎲 Rolled a **N**` (1–100)                                                         |
 | `/shrug`     | Immediate client | `text` (optional)    | Posts `text¯\_(ツ)_/¯`                                                                    |
+| `/spoiler`   | Immediate client | `text` (required)    | Posts `text` behind a spoiler bar, revealed by a click                                    |
 | `/tableflip` | Immediate client | —                    | Posts `(╯°□°）╯︵ ┻━┻`                                                                    |
 | `/unflip`    | Immediate client | —                    | Posts `┬─┬ノ( º _ ºノ)`                                                                   |
 | `/topic`     | Immediate tRPC   | `text` (optional)    | Calls `room.updateRoom` to set/clear the topic                                            |
@@ -28,7 +29,7 @@ Adding a command touches three places (per the registry pattern): the `SlashComm
 
 All execution happens in `useExecuteSlashCommand` via a `switch` on `SlashCommandType` — the definition is static metadata only, with no `execute()` method. Three execution paths:
 
-- **Client-only** (`Flip`, `Me`, `Roll`, `Shrug`, `TableFlip`, `Unflip`) — build the `sendMessage` input inline and fall through to the normal `sendMessage`.
+- **Client-only** (`Flip`, `Me`, `Roll`, `Shrug`, `Spoiler`, `TableFlip`, `Unflip`) — build the `sendMessage` input inline and fall through to the normal `sendMessage`.
 - **Server call** (`Topic`) — call a tRPC mutation directly (`room.updateRoom`), no message posted by the command itself.
 - **Dialog** (`Poll`, `Remind`, `Schedule`) — open a dialog that owns its own submit, so richer inputs use normal form controls instead of inline parameter chips.
 

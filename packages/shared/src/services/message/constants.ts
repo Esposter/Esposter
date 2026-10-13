@@ -15,3 +15,8 @@ export const MENTION_EVERYONE_ID = "@everyone";
 // Message is rendered. See /docs/esbabbler/emoji
 export const CUSTOM_EMOJI_ID_ATTRIBUTE = "data-custom-emoji-id";
 export const CUSTOM_EMOJI_NAME_ATTRIBUTE = "data-custom-emoji-name";
+// A spoiler is a span the editor writes around text a reader must click to read. The attribute is what the
+// Sanitizer keeps, what the reader's click finds, and what a push body masks
+export const SPOILER_ATTRIBUTE = "data-spoiler";
+// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs
+export const SPOILER_SELECTOR: string = `span[${SPOILER_ATTRIBUTE}]`;

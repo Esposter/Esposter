@@ -135,6 +135,13 @@ p:empty::before {
 /* Sizes the reset takes away, links in the link colour, code in the mono face whatever the body reads in, and a quote */
 /* Behind a rule in the edge colour */
 .rich-text-content {
+  span[data-spoiler]:not([data-revealed]) {
+    background-color: var(--ui-muted);
+    border-radius: 0.25rem;
+    color: transparent;
+    cursor: pointer;
+  }
+
   ul,
   ol {
     padding: 0 1rem;

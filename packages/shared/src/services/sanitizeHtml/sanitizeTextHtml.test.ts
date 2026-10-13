@@ -24,6 +24,14 @@ describe(sanitizeTextHtml, () => {
     expect(mention.getAttribute(MENTION_TYPE_ATTRIBUTE)).toStrictEqual(MENTION_TYPE);
   });
 
+  test("keeps a spoiler's marker", () => {
+    expect.hasAssertions();
+
+    expect(sanitizeTextHtml(`<p><span data-spoiler="">text</span></p>`)).toBe(
+      `<p><span data-spoiler="">text</span></p>`,
+    );
+  });
+
   test("keeps a task item's checkbox, read-only with its ticked state", () => {
     expect.hasAssertions();
 

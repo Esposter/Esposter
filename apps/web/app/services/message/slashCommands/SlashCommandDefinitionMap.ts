@@ -53,6 +53,13 @@ export const SlashCommandDefinitionMap = {
     title: "Shrug",
     type: SlashCommandType.Shrug,
   },
+  [SlashCommandType.Spoiler]: {
+    description: "Hides text behind a bar a reader clicks to reveal",
+    icon: "i-mdi:eye-off-outline",
+    parameters: [{ description: "The text to hide", isRequired: true, name: "text" }],
+    title: "Spoiler",
+    type: SlashCommandType.Spoiler,
+  },
   [SlashCommandType.TableFlip]: {
     description: "Appends (╯°□°）╯︵ ┻━┻ to your message",
     icon: "i-mdi:emoticon-angry-outline",
