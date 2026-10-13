@@ -97,5 +97,5 @@ Azure service at any point.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it.
 - **TodoList to a todo product** — Microsoft To Do's lean core over the TodoList: task rows, completion, quick add, importance, manual order, steps, print list and recurrence, each an optional field or a view so no stored list needed a backfill.
 - **TodoList agent follow-ups** — Claude Code sessions capture the follow-ups they leave into the TodoList and drain them, over one MCP endpoint any procedure opts into and an API key table in `auth`; no new Azure service and no model inside the app.
-- **Webpage social preview** — the Webpage's Settings blade sets the description and share image its published page unfurls with, over the site's own.
+- **[Webpage social preview](/docs/resource/webpage-social-preview)** — the Webpage's Settings blade sets the description and share image its published page unfurls with, over the site's own.
 - **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, the notifications bell, and version history re-based onto content-addressed keyframes and deltas in a workspace package of its own.
