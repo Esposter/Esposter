@@ -150,6 +150,7 @@
     "marked": "catalog:",
     "mathjs": "catalog:",
     "mermaid": "catalog:",
+    "minimark": "catalog:",
     "minisearch": "catalog:",
     "node-html-parser": "catalog:",
     "parse-tmx": "workspace:*",

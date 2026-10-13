@@ -632,6 +632,9 @@ catalogs:
     mime-db:
       specifier: ^1.54.0
       version: 1.54.0
+    minimark:
+      specifier: ^0.2.0
+      version: 0.2.0
     minisearch:
       specifier: ^7.2.0
       version: 7.2.0
@@ -1257,6 +1260,9 @@ importers:
       mermaid:
         specifier: 'catalog:'
         version: 12.1.0
+      minimark:
+        specifier: 'catalog:'
+        version: 0.2.0
       minisearch:
         specifier: 'catalog:'
         version: 7.2.0
