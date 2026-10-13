@@ -269,10 +269,15 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
     },
     {
-      // The wrappers are the one place node's child_process is imported, and genshin-persona's source keeps it: its runtime
-      // Installs from its own package-lock.json and depends on no workspace package, so it joins the ban once shared-node is
-      // On npm. Its `mod` tree is left to the mod override, which bans relative specifiers the engine would refuse.
-      files: ["packages/shared-node/src/services/childProcess/*.ts", "packages/genshin-persona/src/**/*.ts"],
+      // The wrappers are the one place node's child_process is imported, and two plugins keep it, each passing
+      // `windowsHide` itself: genshin-persona's source installs from its own package-lock.json, and follow-ups installs as
+      // A pinned snapshot, neither with a workspace dependency, so each joins the ban once shared-node is on npm.
+      // Persona's `mod` tree is left to the mod override, which bans relative specifiers the engine would refuse.
+      files: [
+        "packages/shared-node/src/services/childProcess/*.ts",
+        "packages/genshin-persona/src/**/*.ts",
+        "packages/follow-ups/scripts/**/*.ts",
+      ],
       rules: {
         "no-restricted-imports": [
           "error",

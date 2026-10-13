@@ -18,7 +18,7 @@ const { cwd, session_id: sessionId } = (typeof hookInput === "object" && hookInp
   unknown
 >;
 if (listId && typeof sessionId === "string" && typeof cwd === "string") {
-  const { stdout } = spawnSync("git", ["remote", "get-url", "origin"], { cwd, encoding: "utf8" });
+  const { stdout } = spawnSync("git", ["remote", "get-url", "origin"], { cwd, encoding: "utf8", windowsHide: true });
   const additionalContext = getSessionContext({
     listId,
     repository: getRepository(stdout ?? ""),

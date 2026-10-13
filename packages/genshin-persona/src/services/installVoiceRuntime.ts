@@ -21,6 +21,7 @@ export const installVoiceRuntime = (): boolean => {
     cwd: RUNTIME_DIRECTORY,
     shell: true,
     stdio: "inherit",
+    windowsHide: true,
   });
   return status === 0;
 };
