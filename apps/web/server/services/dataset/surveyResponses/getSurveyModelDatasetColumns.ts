@@ -31,9 +31,9 @@ export const getSurveyModelDatasetColumns = (surveyModel: Record<string, unknown
 
   const columns: DatasetColumn[] = [];
   for (const element of flattenElements(surveyModel.pages)) {
-    const { name, type } = element;
+    const { name, title, type } = element;
     if (!name || !type || PresentationElementTypes.has(type)) continue;
-    columns.push({ name, type: getColumnType(element) });
+    columns.push({ name, type: getColumnType(element), ...(title && { title }) });
   }
   return columns;
 };

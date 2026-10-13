@@ -7,6 +7,7 @@ import { checkHasCapability } from "#shared/services/resource/checkHasCapability
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { exportDatasetCsv } from "@/services/dataset/exportDatasetCsv";
 import { useResourceStore } from "@/store/resource";
 import { RoutePath } from "@esposter/shared";
 
@@ -31,6 +32,10 @@ const ids = computed(() => [resource.id]);
 // No editor at all — the header is the one surface every type has. See /docs/resource/resource-snapshots
 const { openVersionHistory } = useVersionHistoryRoute();
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
+// A dataset a portable export already covers keeps that export, so the CSV command is for the rest
+const isDatasetExportable = computed(
+  () => checkHasCapability(resource.type, "datasetProvider") && !checkHasCapability(resource.type, "portable"),
+);
 // One command per format, named by its verb and the format, the first opening its group: a submenu is a second
 // Aim the pointer has to hold, where a flat group is read at a glance
 const createFormatItems = (
@@ -79,6 +84,16 @@ const items = computed<Item[]>(() => [
     : []),
   ...createFormatItems("Import", UiIconMeaning.Upload, importFormats.value, ({ import: run }) => run),
   ...createFormatItems("Export", UiIconMeaning.Download, exportFormats.value, ({ export: run }) => run),
+  ...(isDatasetExportable.value
+    ? [
+        {
+          isGroupStart: true,
+          meaning: UiIconMeaning.Download,
+          onClick: () => exportDatasetCsv(resource),
+          title: "Export CSV",
+        },
+      ]
+    : []),
   {
     isDanger: true,
     isGroupStart: true,
