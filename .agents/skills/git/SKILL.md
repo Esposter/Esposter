@@ -31,7 +31,7 @@ An agent lands its commits on **`ai/queue`** from its own worktree by the `revie
 
 ## Branch Hygiene
 
-**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review fast-forwards `main` to a commit on `ai/queue`, so `main` is an ancestor of `ai/queue` unless someone pushed `main` by hand; the review then merges `origin/main` into `ai/queue` itself, and a conflict fails the run (`apps/web/content/docs/infra/review.md`, step 2). Nothing pushes `main` by hand (`review-queue` skill). A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike — in a `git worktree` rather than checked out over work in progress), and delete it after merging.
+**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** Only the review moves `main`, and it brings a diverged `main` back into the queue itself (`apps/web/content/docs/infra/review.md`, step 2). Nothing pushes `main` by hand (`review-queue` skill). A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike — in a `git worktree` rather than checked out over work in progress), and delete it after merging.
 
 ## Merging `main` and the Lockfile
 
