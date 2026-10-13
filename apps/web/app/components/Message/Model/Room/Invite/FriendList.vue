@@ -9,6 +9,7 @@ import { searchItems } from "@/services/search/searchItems";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useInviteStore } from "@/store/message/room/invite";
 import { useFriendStore } from "@/store/message/user/friend";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
@@ -99,11 +100,11 @@ const { data: roomMembers, refresh: readRoomMembers } = useQuery(
   { isLazy: true },
 );
 const memberIdSet = computed(() => new Set((roomMembers.value ?? []).map(({ id }) => id)));
-const readFriends = useReadFriends();
-
-onMounted(async () => {
-  await readFriends();
-  if (friends.value.length > 0) await readRoomMembers();
+// The list shows skeleton rows rather than its empty state while the first read of the friends is on its way
+const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
+  onSuccess: () => {
+    if (friends.value.length > 0) getSynchronizedFunction(readRoomMembers)();
+  },
 });
 </script>
 
@@ -130,6 +131,12 @@ onMounted(async () => {
           </UiButton>
         </template>
       </MessageFriendsUserListItem>
+    </ul>
+    <ul v-else-if="isFriendsPending" aria-busy="true" flex flex-col>
+      <li v-for="i in 3" :key="i" ui-row>
+        <UiSkeleton shrink-0 size-6 />
+        <UiSkeleton flex-1 h-4 />
+      </li>
     </ul>
     <UiEmptyState
       v-else
