@@ -16,14 +16,12 @@ const listGitFiles = async (cwd: string): Promise<string[]> => {
 
 const walkFiles = async (root: string, directory: string): Promise<string[]> => {
   const entries = await readdir(directory, { withFileTypes: true });
-  const nested = await Promise.all(
-    entries.map(async (entry) => {
-      if (entry.isDirectory())
-        return REPOSITORY_WALK_IGNORED_NAMES.has(entry.name) ? [] : walkFiles(root, join(directory, entry.name));
-      return entry.isFile() ? [relative(root, join(directory, entry.name))] : [];
-    }),
+  const files = entries.filter((entry) => entry.isFile()).map((entry) => relative(root, join(directory, entry.name)));
+  const subdirectories = entries.filter(
+    (entry) => entry.isDirectory() && !REPOSITORY_WALK_IGNORED_NAMES.has(entry.name),
   );
-  return nested.flat();
+  const nested = await Promise.all(subdirectories.map((entry) => walkFiles(root, join(directory, entry.name))));
+  return [...files, ...nested.flat()];
 };
 
 // Forward slashes whichever the platform, so a path the page shows and mentions is the same on every machine

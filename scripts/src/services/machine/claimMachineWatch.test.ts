@@ -5,10 +5,11 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock("#src/services/machine/constants", async (importOriginal) => {
+vi.mock(import("#src/services/machine/constants"), async (importOriginal) => {
   const { join } = await import("node:path");
   const { tmpdir } = await import("node:os");
-  const directory = join(tmpdir(), `esposter-machine-watch-${process.pid}`);
+  const { SITE_NAME } = await import("@esposter/shared");
+  const directory = join(tmpdir(), `${SITE_NAME.toLowerCase()}-machine-watch-${process.pid}`);
   return {
     ...(await importOriginal<typeof import("#src/services/machine/constants")>()),
     MACHINE_LOCK_PATH: join(directory, "watcher.lock"),

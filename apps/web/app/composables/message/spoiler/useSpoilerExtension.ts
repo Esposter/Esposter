@@ -2,11 +2,11 @@ import { SPOILER_ATTRIBUTE } from "@esposter/shared";
 import { Mark, markInputRule, mergeAttributes } from "@tiptap/vue-3";
 
 // A mark over text a reader must click to read. Typing `||text||` marks the text as the closing bars are typed,
-// and Ctrl+Shift+S toggles the mark over the selection. The mark carries no attributes: the reveal is client
+// And Ctrl+Shift+S toggles the mark over the selection. The mark carries no attributes: the reveal is client
 // State, so nothing about it is written into the message
 const SpoilerMark = Mark.create({
   addInputRules() {
-    return [markInputRule({ find: /\|\|([^|]+)\|\|$/u, type: this.type })];
+    return [markInputRule({ find: /\|\|(?<text>[^|]+)\|\|$/u, type: this.type })];
   },
 
   addKeyboardShortcuts() {

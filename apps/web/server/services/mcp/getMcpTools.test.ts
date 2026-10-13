@@ -15,8 +15,8 @@ describe(getMcpTools, () => {
     expect.hasAssertions();
 
     // Read as any router, whose record is flat as it is at runtime, where the type nests the sub-routers
-    const router: AnyRouter = trpcRouter;
-    const invalidPaths = Object.entries<AnyProcedure>(router._def.procedures)
+    const anyRouter: AnyRouter = trpcRouter;
+    const invalidPaths = Object.entries<AnyProcedure>(anyRouter._def.procedures)
       .filter(([, { _def }]) => {
         const { mcp } = (_def.meta ?? {}) as Meta;
         const [input] = _def.inputs;

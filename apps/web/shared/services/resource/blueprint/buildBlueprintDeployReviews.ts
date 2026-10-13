@@ -10,7 +10,7 @@ import { substituteBlueprintParameterTokens } from "#shared/services/resource/bl
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 
 // What each entry will be created as, resolved from the parameter values by the same substitution deploy runs,
-// so the review cannot show a name deploy would not create. An empty name blocks the deploy and is shown by its alias
+// So the review cannot show a name deploy would not create. An empty name blocks the deploy and is shown by its alias
 export const buildBlueprintDeployReviews = (entries: BlueprintEntry[], parameterValues: Record<string, string>) => {
   const parameterValueMap = new Map(Object.entries(parameterValues));
 

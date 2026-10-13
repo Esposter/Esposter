@@ -8,12 +8,14 @@ import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import { downloadFile } from "@/services/app/downloadFile";
 import { useSession } from "@/services/auth/authClient.test";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
+import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { strToU8, unzipSync } from "fflate";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/app/downloadFile"), () => ({ downloadFile: vi.fn<typeof downloadFile>() }));
@@ -105,6 +107,8 @@ describe("resourceProgramStatus", () => {
 
     const token = crypto.randomUUID();
     const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
+    const emailHtml = `<a href="${surveyPath}">Take it</a>`;
+    const invite = { keyValue, row: { [keyColumn]: keyValue }, token };
     trpcMsw.program.readResourceContent.query(() => ({
       audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
       emailId: crypto.randomUUID(),
@@ -115,11 +119,7 @@ describe("resourceProgramStatus", () => {
     const { promise: isInviteRead, resolve: onInviteRead } = Promise.withResolvers<void>();
     trpcMsw.program.readProgramInvites.query(() => {
       onInviteRead();
-      return {
-        emailHtml: `<a href="${surveyPath}">Take it</a>`,
-        invites: [{ keyValue, row: { [keyColumn]: keyValue }, token }],
-        unmatchedCount: 0,
-      };
+      return { emailHtml, invites: [invite], unmatchedCount: 0 };
     });
     setStatus(false);
     const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
@@ -129,10 +129,11 @@ describe("resourceProgramStatus", () => {
     await isInviteRead;
     await flushPromises();
 
-    expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
-      `${resource.name}-invites.zip`,
-      expect.any(Uint8Array),
-      "application/zip",
-    );
+    const [[fileName, invitesZip, mimeType]] = vi.mocked(downloadFile).mock.calls;
+
+    expect([fileName, mimeType]).toStrictEqual([`${resource.name}-invites.zip`, "application/zip"]);
+    expect(unzipSync(invitesZip)).toStrictEqual({
+      [`${keyValue}.html`]: strToU8(createProgramInviteHtml(emailHtml, surveyPath, invite)),
+    });
   });
 });

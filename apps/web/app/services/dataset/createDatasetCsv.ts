@@ -6,11 +6,11 @@ import { escapeUntrustedCsvCell } from "@/services/resource/sheet/csv/escapeUntr
 
 const toCellText = (value: ColumnValue | undefined): string =>
   value === null || value === undefined ? "" : String(value);
+const escapeCell = (text: string) => escapeUntrustedCsvCell(text, CsvDelimiter.Comma);
 
 // A file prints each column's title where it has one. Every cell is neutralised as a formula, header included, since
-// the rows can hold text an anonymous respondent typed and a spreadsheet opens the file as the owner
+// The rows can hold text an anonymous respondent typed and a spreadsheet opens the file as the owner
 export const createDatasetCsv = ({ columns, rows }: Dataset): string => {
-  const escapeCell = (text: string) => escapeUntrustedCsvCell(text, CsvDelimiter.Comma);
   const headerRow = columns.map(({ name, title }) => escapeCell(title ?? name)).join(CsvDelimiter.Comma);
   const dataRows = rows.map((row) =>
     columns.map(({ name }) => escapeCell(toCellText(row[name]))).join(CsvDelimiter.Comma),

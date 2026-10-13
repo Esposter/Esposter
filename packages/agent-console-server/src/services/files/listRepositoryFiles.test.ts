@@ -22,6 +22,6 @@ describe(listRepositoryFiles, () => {
     writeFileSync(join(cwd, "src", "index.ts"), "");
     writeFileSync(join(cwd, "node_modules", "dependency.js"), "");
 
-    expect(await listRepositoryFiles(cwd)).toStrictEqual(["src/index.ts"]);
+    await expect(listRepositoryFiles(cwd)).resolves.toStrictEqual(["src/index.ts"]);
   });
 });

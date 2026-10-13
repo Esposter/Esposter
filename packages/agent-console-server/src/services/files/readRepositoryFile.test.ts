@@ -23,7 +23,7 @@ describe(readRepositoryFile, () => {
 
     writeFileSync(join(cwd, "notes.md"), "hello");
 
-    expect(await readRepositoryFile(cwd, "notes.md")).toStrictEqual({ content: "hello", notice: "" });
+    await expect(readRepositoryFile(cwd, "notes.md")).resolves.toStrictEqual({ content: "hello", notice: "" });
   });
 
   test("refuses a path that leaves the working directory", async () => {
@@ -41,7 +41,7 @@ describe(readRepositoryFile, () => {
 
     writeFileSync(join(cwd, "image.bin"), Buffer.from([0, 1, 2]));
 
-    expect(await readRepositoryFile(cwd, "image.bin")).toStrictEqual({
+    await expect(readRepositoryFile(cwd, "image.bin")).resolves.toStrictEqual({
       content: "",
       notice: "The file is not text, so it cannot be shown.",
     });
@@ -52,7 +52,7 @@ describe(readRepositoryFile, () => {
 
     writeFileSync(join(cwd, "large.txt"), "a".repeat(REPOSITORY_FILE_MAX_BYTE_LENGTH + 1));
 
-    expect(await readRepositoryFile(cwd, "large.txt")).toStrictEqual({
+    await expect(readRepositoryFile(cwd, "large.txt")).resolves.toStrictEqual({
       content: "",
       notice: "The file is too large to show.",
     });

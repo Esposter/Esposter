@@ -13,13 +13,14 @@ import { useAlertStore } from "@/store/alert";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The data a dataset-serving resource shows, as one CSV of the same read a Dashboard binding takes. A capped read
-// says so in an alert, since a file of the first rows would otherwise pass for the whole dataset
+// Says so in an alert, since a file of the first rows would otherwise pass for the whole dataset
 export const exportDatasetCsv = async (resource: ResourceInResource) => {
   const type = DatasetProviderTypeResourceTypeMap[resource.type];
   if (!type) return;
 
   const { $trpc } = useNuxtApp();
-  const { createAlert } = useAlertStore();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   await getResultAsync(async () => {
     const dataset = await $trpc.dataset.readDataset.query({ id: resource.id, type });
     const truncation = getDatasetTruncation(dataset);

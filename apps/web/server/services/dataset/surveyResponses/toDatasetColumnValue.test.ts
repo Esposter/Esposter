@@ -11,6 +11,8 @@ describe(toDatasetColumnValue, () => {
   test("writes a Date as its ISO string", () => {
     expect.hasAssertions();
 
-    expect(toDatasetColumnValue(new Date("2026-01-02T03:04:05.000Z"))).toBe("2026-01-02T03:04:05.000Z");
+    const date = new Date(0);
+
+    expect(toDatasetColumnValue(date)).toBe(date.toISOString());
   });
 });
