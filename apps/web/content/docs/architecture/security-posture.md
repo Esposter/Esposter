@@ -50,13 +50,13 @@ The module's `sri` is left at its default, so every script the page loads carrie
 
 `requestSizeLimiter` is wired to `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`, the same constants that bound the tRPC body and the upload SAS. Those values and the upload path they govern are documented in [file uploads](/docs/architecture/file-uploads) — this config is only where the module is told about them.
 
-### The messages route override
+### The user-content route override
 
 `connect-src` and `media-src` are written in the security config as well, since `default-src 'self'` would otherwise cover them: `connect-src` names the Azure container, the LiveKit socket and its HTTPS region lookup, Web PubSub, and the two hosts `@livekit/track-processors` fetches its wasm and segmenter model from; `media-src` names the container and `blob:`. Each entry carries its reason beside it in `configuration/security.ts`, and `configuration/security.test.ts` pins them.
 
-`server/plugins/security.ts` hooks `nuxt-security-module:routeRules` and widens `img-src` to include `https:` under the messages route, merged over whatever rules already apply via `defu`. Members post arbitrary image links to each other, and an allowlist cannot enumerate the web; every other route keeps the narrow whitelist, so the widening is scoped to exactly the surface that needs it.
+`server/plugins/security.ts` hooks `nuxt-security-module:routeRules` and widens `img-src` to include `https:` under the messages and resource explorer routes, merged over whatever rules already apply via `defu`. Members post arbitrary image links to each other, in a message or inside a resource's page or email, and an allowlist cannot enumerate the web; every other route keeps the narrow whitelist, so the widening is scoped to exactly the surface that needs it.
 
-The accepted cost is a privacy one, and it is accepted rather than unnoticed: a rendered image is a request the viewer's browser makes to whatever origin the poster chose, so that origin learns every viewer's IP address and the moment they opened the room. Nothing mitigates it today. The only real fix is proxying message images through the app, which trades the leak for bandwidth, a cache and a fetch-side SSRF surface — worth revisiting when rooms hold people who do not already trust each other, not before.
+The accepted cost is a privacy one, and it is accepted rather than unnoticed: a rendered image is a request the viewer's browser makes to whatever origin the poster chose, so that origin learns every viewer's IP address and the moment they opened the room or the resource. Nothing mitigates it today. The only real fix is proxying message images through the app, which trades the leak for bandwidth, a cache and a fetch-side SSRF surface — worth revisiting when rooms hold people who do not already trust each other, not before.
 
 ## Deliberately off
 
@@ -67,13 +67,13 @@ The accepted cost is a privacy one, and it is accepted rather than unnoticed: a 
 
 Paths relative to `apps/web`.
 
-| File                                          | Role                                                                 |
-| --------------------------------------------- | -------------------------------------------------------------------- |
-| `configuration/modules.ts`                    | registers `nuxt-security-module` in the production module list only  |
-| `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features      |
-| `configuration/development.ts`                | the dev-only `img-src` entries for the DevTools button and tab icons |
-| `server/plugins/security.ts`                  | per-route CSP override widening `img-src` under the messages route   |
-| `configuration/routeRules.ts`                 | the embedder policy on built scripts, so a dedicated worker starts   |
-| `configuration/experimental.ts`               | the entry import map off, so a chunk's name changes with its bytes   |
-| `shared/services/app/ImageSourceWhitelist.ts` | the shared list of permitted image origins                           |
-| `shared/services/app/constants.ts`            | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                       |
+| File                                          | Role                                                                    |
+| --------------------------------------------- | ----------------------------------------------------------------------- |
+| `configuration/modules.ts`                    | registers `nuxt-security-module` in the production module list only     |
+| `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features         |
+| `configuration/development.ts`                | the dev-only `img-src` entries for the DevTools button and tab icons    |
+| `server/plugins/security.ts`                  | per-route CSP override widening `img-src` under the user-content routes |
+| `configuration/routeRules.ts`                 | the embedder policy on built scripts, so a dedicated worker starts      |
+| `configuration/experimental.ts`               | the entry import map off, so a chunk's name changes with its bytes      |
+| `shared/services/app/ImageSourceWhitelist.ts` | the shared list of permitted image origins                              |
+| `shared/services/app/constants.ts`            | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                          |
