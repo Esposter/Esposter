@@ -1,6 +1,6 @@
-import type { Driver } from "#src/models/driver/Driver";
 import type { ListFilesCommand } from "#src/models/command/ListFilesCommand";
 import type { ReadFileCommand } from "#src/models/command/ReadFileCommand";
+import type { Driver } from "#src/models/driver/Driver";
 import type { ServerMessage } from "#src/models/server/ServerMessage";
 
 import { CommandType } from "#src/models/command/CommandType";
