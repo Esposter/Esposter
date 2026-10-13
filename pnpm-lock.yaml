@@ -1898,6 +1898,9 @@ importers:
 
   packages/genshin-persona:
     dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: 'catalog:'
+        version: 1.32.1(supports-color@8.1.1)(zod@4.6.7)
       '@typesafe-ai/sdk':
         specifier: ^0.6.0
         version: 0.6.0

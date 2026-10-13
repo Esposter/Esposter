@@ -24,6 +24,7 @@
   },
   "files": [
     ".claude-plugin",
+    ".mcp.json",
     "hooks",
     "output-styles",
     "runtime",
@@ -54,6 +55,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "catalog:",
     "@typesafe-ai/sdk": "^0.6.0",
     "@wasm-audio-decoders/ogg-vorbis": "^0.1.20",
     "citty": "^0.2.2",

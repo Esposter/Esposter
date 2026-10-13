@@ -18,6 +18,10 @@ The second half of the desktop stage is input: a line typed at the character rat
 2. **Two-way replies.** The character's spoken lines reach the viewer through the existing pipeline; the plain half of an answer reaches the page through a reply tool the server exposes, which the server's instructions tell the model to call when the ask came from the channel.
 3. **A permission answered on the model.** The server declares the permission relay, so a tool approval the terminal would ask for is a bubble on the model with two choices, and a tap on either is the verdict.
 
+## Status
+
+Built: the channel server (`scripts/channel.ts`, declared by `.mcp.json`) serving the chat page on the loopback under a printed token, typed lines pushed into the session as `desk` channel events, and the `reply` tool pushing the plain answer to the page. The page's header carries no nameplate: the server starts with the session, not with the session's id, so there is no session record to read it from; the header stays until the start hook hands the server its character. Not built, waiting on [the viewer as the stage](/docs/proposals/infra/viewer-stage), which is unbuilt: the spoken lines' viewer sink, the permission relay (the server declares no `claude/channel/permission` yet), and the viewer's tap probe.
+
 ## The facts this rests on
 
 - Channels are a research preview. They need a claude.ai login or a Console key, so this machine qualifies; Pro and Max users without an organization skip the enterprise switch entirely and opt in per session.

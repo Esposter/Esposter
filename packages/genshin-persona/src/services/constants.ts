@@ -239,3 +239,5 @@ export const LORE_PICK_INSTRUCTIONS =
 export const LORE_CHART_ROWS = 4;
 export const LORE_CHART_WIDTH = 20;
 export const LORE_CHART_GLYPH = "▇";
+// The longest line the chat page posts to the session, in characters
+export const MAX_CHANNEL_LINE_LENGTH = 4000;

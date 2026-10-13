@@ -1,0 +1,1 @@
+{ "mcpServers": { "genshin-persona": { "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/channel.mjs"] } } }
