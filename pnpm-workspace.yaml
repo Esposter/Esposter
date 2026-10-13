@@ -306,3 +306,14 @@ overrides:
   vite-plus>vitest: "catalog:"
 
 shellEmulator: true
+permissions:
+  "@nuxtjs/seo":
+    skills: true
+  "@trpc/client":
+    skills: true
+  "@trpc/server":
+    skills: true
+  drizzle-kit:
+    skills: true
+  phaser:
+    skills: true
