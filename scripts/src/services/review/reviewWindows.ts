@@ -6,7 +6,7 @@ import { REVIEW_RUNNER_SESSION_CAP } from "#src/services/review/constants";
 import { reviewBatch } from "#src/services/review/reviewBatch";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { runGit } from "#src/services/shared/runGit";
-import { getResultAsync, takeOne, withFinalizerAsync } from "@esposter/shared";
+import { getResult, getResultAsync, noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -58,8 +58,13 @@ export const reviewWindows = async (
         pendingByWindow[windowIndex] = pending;
         if (pending === 0) onWindowSettled(windowIndex, takeOne(outcomesByWindow, windowIndex));
       }),
+    // A worktree Windows still holds a file of is left behind with a warning rather than failing the run: by the
+    // Finalizer, main has already moved, and `git worktree prune` drops its entry once the directory is gone
     () => {
-      for (const directory of directories.values()) runGit(["worktree", "remove", "--force", directory]);
+      for (const directory of directories.values())
+        getResult(() => runGit(["worktree", "remove", "--force", directory])).match(noop, (error) => {
+          console.warn(`could not remove the review worktree ${directory}: ${error.message}`);
+        });
     },
   );
 };
