@@ -16,6 +16,7 @@ Shared models in `apps/web/shared/models/dataset/` (one type + schema per file, 
 ```ts
 interface DatasetColumn {
   name: string;
+  title?: string; // the header a file prints in place of the name
   type: DatasetColumnType; // ColumnType minus Computed — a computed column is served as the type it yields
 }
 
@@ -63,7 +64,7 @@ flowchart LR
 
 Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `DatasetProviderType` → the provider and the resource type it reads, one provider per folder. `readDataset` is the only way into a provider: it resolves the reference to a resource the caller owns, of that type, before the provider runs — so a provider is handed an owned resource and has no auth check of its own to forget. Each provider owns its column/row derivation:
 
-- **`readSurveyResponsesDataset`** — columns from the survey model's questions (name + question-type → `ColumnType` mapping); rows flattened from `SurveyResponseEntity` JSON in Azure Table, non-primitive answers JSON-stringified.
+- **`readSurveyResponsesDataset`** — columns from the survey model's questions (name + question-type → `ColumnType` mapping, carrying each question's title); rows flattened from `SurveyResponseEntity` JSON in Azure Table, a checkbox's answers joined with `; `, other non-primitive answers JSON-stringified. A submission time column leads, and an Identified survey adds a respondent column keyed by `publicId`.
 - **`readSheetDataset`** — reads the Sheet resource's content blob and converts `content.data` via `dataSourceToDataset`.
 - **`readProgramStatusDataset`** — participant/addedAt/responded rows from `ProgramParticipantEntity` in Azure Table, keyed by the non-secret `publicId` (never the token — dashboards bake dataset snapshots into public publishes).
 

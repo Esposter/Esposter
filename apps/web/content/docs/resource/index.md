@@ -94,7 +94,7 @@ Azure service at any point.
 - **Capabilities** — Publishable, DatasetProvider, Portable and FileAssets, each adopted by the types that declare them rather than rebuilt per type.
 - **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
 - **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and Flowchart.
-- **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it.
+- **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it, and one Export CSV over every dataset provider.
 - **TodoList to a todo product** — Microsoft To Do's lean core over the TodoList: task rows, completion, quick add, importance, manual order, steps, print list and recurrence, each an optional field or a view so no stored list needed a backfill.
 - **TodoList agent follow-ups** — Claude Code sessions capture the follow-ups they leave into the TodoList and drain them, over one MCP endpoint any procedure opts into and an API key table in `auth`; no new Azure service and no model inside the app.
 - **[Webpage social preview](/docs/resource/webpage-social-preview)** — the Webpage's Settings blade sets the description and share image its published page unfurls with, over the site's own.
