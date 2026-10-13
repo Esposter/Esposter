@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
-import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
-import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
+import { getDirectMessageName } from "@/services/message/room/getDirectMessageName";
 import { searchItems } from "@/services/search/searchItems";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useInviteStore } from "@/store/message/room/invite";
@@ -16,36 +14,46 @@ interface Props {
   room: RoomInMessage;
 }
 
+// A friend or a group conversation: each is sent the room's link into its direct message, and both sit in one list
+// Ordered by recency, so a group reads where the conversation with it does
+interface InviteRecipient {
+  id: string;
+  image: PublicUser["image"];
+  isGroup: boolean;
+  name: string;
+  recency: number;
+}
+
 const { room } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const runtimeConfig = useRuntimeConfig();
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const directMessageStore = useDirectMessageStore();
 const { directMessages } = storeToRefs(directMessageStore);
-const { checkIsInviteFriendPending, getDirectMessageParticipants, inviteFriend } = directMessageStore;
+const {
+  checkIsGroupDirectMessage,
+  checkIsInviteDirectMessagePending,
+  checkIsInviteFriendPending,
+  getDirectMessageParticipants,
+  inviteDirectMessage,
+  inviteFriend,
+} = directMessageStore;
 const inviteStore = useInviteStore();
-const { createInvite } = inviteStore;
+const { getUsableInviteLink } = inviteStore;
 const { invites } = storeToRefs(inviteStore);
 // A paused room has no usable link to send, and the invite the reader holds is the one the send carries
 const invite = computed(() => invites.value.get(room.id));
 const isInviteSendable = computed(() => Boolean(invite.value) && !room.isInvitePaused);
-// The invite can lapse or run out of uses while the dialog is open, so the click rechecks it and mints a fresh one with
-// The same use limit, as the manager's own read does, before a link is sent
-const sendInvite = async (friendId: PublicUser["id"]) => {
-  if (!invite.value || room.isInvitePaused) return;
-  if (!checkIsInviteUsable(invite.value)) {
-    const { maxUses } = invite.value;
-    await createInvite({
-      expireAfterMinutes: DEFAULT_INVITE_EXPIRE_AFTER_MINUTES,
-      maxUses: INVITE_MAX_USES_OPTIONS.find((uses) => uses === maxUses) ?? 0,
-      roomId: room.id,
-    });
-  }
-  const usableInvite = invites.value.get(room.id);
-  if (!usableInvite || !checkIsInviteUsable(usableInvite)) return;
-  await inviteFriend(friendId, getInviteLink(runtimeConfig.public.baseUrl, usableInvite.id));
+// The invite can lapse or run out of uses while the dialog is open, so the send rechecks it and mints a fresh one
+// Before a link is sent
+const sendInvite = async (recipient: InviteRecipient) => {
+  const inviteLink = await getUsableInviteLink(room);
+  if (!inviteLink) return;
+  if (recipient.isGroup) await inviteDirectMessage(recipient.id, inviteLink);
+  else await inviteFriend(recipient.id, inviteLink);
 };
+const checkIsRecipientPending = ({ id, isGroup }: InviteRecipient) =>
+  isGroup ? checkIsInviteDirectMessagePending(id) : checkIsInviteFriendPending(id);
 const searchQuery = ref("");
 // Ranks each friend by the newest direct message they are in, so the friend the reader talked to last leads, as
 // Discord's dialog does. A friend with none keeps their place in the friends list behind every one who has one
@@ -57,15 +65,33 @@ const friendRecencyMap = computed(() => {
   return recencyMap;
 });
 const getFriendRecency = (userId: PublicUser["id"]) => friendRecencyMap.value.get(userId) ?? Number.MAX_SAFE_INTEGER;
-const friendItems = computed(() =>
-  searchItems(
-    friends.value.toSorted(
-      (firstFriend, secondFriend) => getFriendRecency(firstFriend.id) - getFriendRecency(secondFriend.id),
-    ),
-    searchQuery.value,
-    ({ name }) => ({ name }),
-  ),
-);
+// A group's recency is its own place in the direct message list, which is the same order a friend's recency is read in
+const recipients = computed<InviteRecipient[]>(() => {
+  const friendRecipients = friends.value.map(({ id, image, name }) => ({
+    id,
+    image,
+    isGroup: false,
+    name,
+    recency: getFriendRecency(id),
+  }));
+  const groupRecipients = directMessages.value.flatMap((directMessage, index) =>
+    checkIsGroupDirectMessage(directMessage.id)
+      ? [
+          {
+            id: directMessage.id,
+            image: directMessage.image,
+            isGroup: true,
+            name: getDirectMessageName(directMessage, getDirectMessageParticipants(directMessage.id)),
+            recency: index,
+          },
+        ]
+      : [],
+  );
+  return [...friendRecipients, ...groupRecipients].toSorted(
+    (firstRecipient, secondRecipient) => firstRecipient.recency - secondRecipient.recency,
+  );
+});
+const recipientItems = computed(() => searchItems(recipients.value, searchQuery.value, ({ name }) => ({ name })));
 // Which friends are already members is read once the friends are, since a member row reads Joined and is disabled. With
 // No friends there is nobody to ask about, and the read would refuse an empty list
 const { data: roomMembers, refresh: readRoomMembers } = useQuery(
@@ -84,16 +110,21 @@ onMounted(async () => {
 <template>
   <div flex flex-col gap-2>
     <UiTextField v-model="searchQuery" label="Search friends" :type="UiTextFieldType.Search" />
-    <ul v-if="friendItems.length > 0" max-h="[40dvh]" flex flex-col of-y-auto>
-      <MessageFriendsUserListItem v-for="{ id, image, name } of friendItems" :key="id" :image :name>
+    <ul v-if="recipientItems.length > 0" max-h="[40dvh]" flex flex-col of-y-auto>
+      <MessageFriendsUserListItem
+        v-for="recipient of recipientItems"
+        :key="recipient.id"
+        :image="recipient.image"
+        :name="recipient.name"
+      >
         <template #append>
-          <UiButton v-if="memberIdSet.has(id)" disabled>Joined</UiButton>
+          <UiButton v-if="memberIdSet.has(recipient.id)" disabled>Joined</UiButton>
           <UiButton
             v-else
             :disabled="!isInviteSendable"
-            :is-pending="checkIsInviteFriendPending(id)"
+            :is-pending="checkIsRecipientPending(recipient)"
             :variant="UiButtonVariant.Accent"
-            @click="sendInvite(id)"
+            @click="sendInvite(recipient)"
           >
             Invite
           </UiButton>
@@ -102,7 +133,7 @@ onMounted(async () => {
     </ul>
     <UiEmptyState
       v-else
-      :description="searchQuery ? 'No friend of yours goes by that name.' : undefined"
+      :description="searchQuery ? 'No friend or group of yours goes by that name.' : undefined"
       :meaning="UiIconMeaning.Person"
       title="No friends found"
     />

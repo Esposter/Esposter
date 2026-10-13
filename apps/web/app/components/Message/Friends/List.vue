@@ -11,15 +11,27 @@ import { useFriendDialogStore } from "@/store/message/user/friendDialog";
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const friendDialogStore = useFriendDialogStore();
-const { removingUserId } = storeToRefs(friendDialogStore);
+const { invitingUserId, removingUserId } = storeToRefs(friendDialogStore);
 const blockStore = useBlockStore();
 const { createBlock } = blockStore;
 const { getContextMenuProps } = useContextMenu();
+const { invitableRooms } = useInvitableRooms();
 const displayFriends = computed(() =>
   friends.value.toSorted((firstFriend, secondFriend) => compareCreatedAt(secondFriend, firstFriend)),
 );
 // What a friend's row does, behind its overflow mark and its context menu alike, as Discord keeps them under More
 const getFriendItems = (userId: PublicUser["id"]): Item[] => [
+  ...(invitableRooms.value.length > 0
+    ? [
+        {
+          meaning: UiIconMeaning.Invite,
+          onClick: () => {
+            invitingUserId.value = userId;
+          },
+          title: "Invite to room",
+        },
+      ]
+    : []),
   {
     meaning: UiIconMeaning.Remove,
     onClick: () => {
@@ -60,5 +72,6 @@ const getFriendItems = (userId: PublicUser["id"]): Item[] => [
       title="No friends yet"
     />
     <MessageFriendsConfirmRemoveFriendDialog />
+    <MessageFriendsInviteToRoomDialog />
   </MessageFriendsSection>
 </template>

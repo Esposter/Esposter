@@ -1,5 +1,6 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { getDirectMessageName } from "@/services/message/room/getDirectMessageName";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
 export const useDirectMessageName = (room: MaybeRefOrGetter<RoomInMessage | undefined>) => {
@@ -9,9 +10,6 @@ export const useDirectMessageName = (room: MaybeRefOrGetter<RoomInMessage | unde
   return computed(() => {
     const roomValue = toValue(room);
     if (!roomValue) return "";
-    if (roomValue.name) return roomValue.name;
-
-    const participants = getDirectMessageParticipants(roomValue.id);
-    return participants.map(({ name }) => name).join(", ");
+    return getDirectMessageName(roomValue, getDirectMessageParticipants(roomValue.id));
   });
 };

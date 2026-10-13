@@ -61,24 +61,31 @@ The invite router, `server/trpc/routers/invite.ts`, holds every procedure over t
 
 ## Key files
 
-| File                                                                  | Role                                        |
-| :-------------------------------------------------------------------- | :------------------------------------------ |
-| `packages/db-schema/src/schema/message/invitesInMessage.ts`           | table + check constraints                   |
-| `apps/web/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)   |
-| `apps/web/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values    |
-| `apps/web/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included |
-| `apps/web/server/trpc/routers/invite.ts`                              | every procedure over the invite table       |
-| `apps/web/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete               |
-| `apps/web/app/store/message/room/invite.ts`                           | shared per-room invite map                  |
-| `apps/web/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link   |
-| `apps/web/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel |
-| `apps/web/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects          |
-| `apps/web/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager              |
-| `apps/web/app/components/Message/Model/Room/Invite/Row.vue`           | the settings panel's row for a live link    |
-| `apps/web/app/composables/message/room/useReadMyInvite.ts`            | own-invite read every surface seeds from    |
-| `apps/web/app/pages/messages/invite/[code].vue`                       | invite landing page                         |
+| File                                                                  | Role                                                     |
+| :-------------------------------------------------------------------- | :------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/invitesInMessage.ts`           | table + check constraints                                |
+| `apps/web/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)                |
+| `apps/web/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values                 |
+| `apps/web/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included              |
+| `apps/web/server/trpc/routers/invite.ts`                              | every procedure over the invite table                    |
+| `apps/web/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete                            |
+| `apps/web/app/store/message/room/invite.ts`                           | shared per-room invite map                               |
+| `apps/web/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link                |
+| `apps/web/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel              |
+| `apps/web/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects                       |
+| `apps/web/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager                           |
+| `apps/web/app/components/Message/Model/Room/Invite/Row.vue`           | the settings panel's row for a live link                 |
+| `apps/web/app/components/Message/Model/Room/Invite/FriendList.vue`    | the dialog's friends and group DMs, each with an Invite  |
+| `apps/web/app/components/Message/Friends/InviteToRoomDialog.vue`      | the friend menu's room picker                            |
+| `apps/web/app/composables/message/room/useInvitableRooms.ts`          | the rooms a friend can be invited into                   |
+| `apps/web/app/services/message/room/getDirectMessageName.ts`          | a conversation's name, shared by the list and the header |
+| `apps/web/app/composables/message/room/useReadMyInvite.ts`            | own-invite read every surface seeds from                 |
+| `apps/web/app/pages/messages/invite/[code].vue`                       | invite landing page                                      |
 
 ## Decisions
+
+- **A group direct message is one with more than one other person in it**, so the list reads it from the participants the direct message store already holds rather than a flag of its own. The group's name is the room's own name, or the participants' names as the header shows them (`getDirectMessageName`), and its link goes in through `createMessage` as a friend's does.
+- **The friend's menu picks a room rather than the friend's dialog doing it**, because the menu has no room in context. The picker lists the reader's rooms that are not paused and where they hold `ManageInvites`, and paused rooms are left out rather than listed unusable, since their link could not be sent.
 
 - **The friends list filters the loaded friends on the client** with `searchItems`, as the direct message friend picker does, rather than a server search: the friends are already in memory, and `useAutoSearch` is for queries that leave the client.
 - **Membership is read when the dialog opens**, through `readMembersByIds`, so a friend who joins while the dialog stays open still reads Invite until it is reopened. The list is keyed by its room, so the dialog retargeted at another room reads that room's members, and a reader with no friends sends no read at all.
@@ -89,7 +96,12 @@ The invite router, `server/trpc/routers/invite.ts`, holds every procedure over t
 
 Discord's arrangement, and the reason there are two: creating is a dialog, and settings lists what was created.
 
-- **The dialog** — `Invite friends to <room>` — is opened from the room's context menu in the sidebar (**Invite people**, offered where the reader holds `ManageInvites`) and from the settings panel's **Create invite** button. It hands over a usable link the moment it opens: the read that finds no live link mints one, and a read that finds one never replaces it, because a live link may already be in someone's inbox. Its option selects then regenerate deliberately. Above the link it lists the sender's friends, the friend last talked to in a direct message first, with an **Invite** beside each: Invite sends the room's link into that friend's direct message as the sender's own message, creating the direct message where none exists, and the dialog stays open. A friend already in the room reads **Joined** and is disabled, and every Invite is disabled while the room has no usable link (paused, or none yet). The list is `MessageModelRoomInviteFriendList`, and its send is `inviteFriend` on the direct message store, which does not navigate, unlike `createDirectMessage`.
+- **The dialog** — `Invite friends to <room>` — is opened from the room's context menu in the sidebar (**Invite people**, offered where the reader holds `ManageInvites`) and from the settings panel's **Create invite** button. It hands over a usable link the moment it opens: the read that finds no live link mints one, and a read that finds one never replaces it, because a live link may already be in someone's inbox. Its option selects then regenerate deliberately. Above the link it lists the sender's friends, the friend last talked to in a direct message first, with an **Invite** beside each: Invite sends the room's link into that friend's direct message as the sender's own message, creating the direct message where none exists, and the dialog stays open. The group direct messages the reader is in are listed in the same recency order, each with an **Invite** that sends the link into the group itself, with no direct message to create. A friend already in the room reads **Joined** and is disabled, and every Invite is disabled while the room has no usable link (paused, or none yet). The list is `MessageModelRoomInviteFriendList`; a friend's send is `inviteFriend` on the direct message store, which does not navigate, unlike `createDirectMessage`, and a group's is `inviteDirectMessage` there.
+- **The friend's menu** — **Invite to room** on a friend's row, its overflow mark and its context menu alike, offered where the reader can invite into at least one room — opens `Invite <name> to a room`, a list of the rooms the reader may mint a link in and whose invites are not paused. Choosing one sends that room's link to the friend's direct message, the same send the room dialog makes, and closes the picker. The room's link is read before one is minted, through `getUsableInviteLink` on the invite store, so a live link is never replaced by a friend's pick. The list is `MessageFriendsInviteToRoomDialog`.
 - **The settings panel** — **User Management → Invites** — is the management side, and where a room's invites are paused and resumed. It reads the room's whole set through `readRoomInvites` and never mounts the manager, so opening it mints nothing: it is Discord's table drawn as a list — the inviter, then the invite code, uses and expiry — one row per live link, the expiry an `hh:mm:ss` clock counting itself down, gaining a `dd:` part in front only while a day is left rather than a phrase that only moves when the page is re-read, with copy, an `Edit invite link` into the dialog on the reader's own row, a revoke on any of them, and Discord's empty state when there are none.
 
 The dialog displays from `useInviteStore`'s per-room map; the panel reads the room's whole set through a store of its own, keyed by room so a read for the room the reader just left cannot land over the list on screen. Neither may go on showing what the other replaced, so the two are kept in step in both directions: creating from the dialog fires `inviteCreateHooks`, which is how the panel's list gains the new link and loses the one it replaced without the invite store having to know the panel exists, and a revoke in the panel reaches back into that map when the row it killed was the reader's own — otherwise the dialog goes on offering a token the panel has already deleted.
+
+## Sources
+
+- [Discord — how do I invite friends to my server?](https://support.discord.com/hc/en-us/articles/204155938-How-do-I-invite-friends-to-my-server) — "A box will appear with an invite link and direct invite buttons for the friends or group DMs that you've communicated with most recently", and "Invite to Server" from a friend's right-click menu.

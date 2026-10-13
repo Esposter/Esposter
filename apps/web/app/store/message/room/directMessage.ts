@@ -28,6 +28,8 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   // Is a list nothing can state the invariants of
   const directMessageParticipantsMap = ref(new Map<string, PublicUser[]>());
   const getDirectMessageParticipants = (roomId: string) => directMessageParticipantsMap.value.get(roomId) ?? [];
+  // Every conversation past two people is a group, which the invite dialog lists beside the friends
+  const checkIsGroupDirectMessage = (roomId: string) => getDirectMessageParticipants(roomId).length > 1;
   const storeDirectMessageParticipants = (roomId: string, participants: PublicUser[]) => {
     directMessageParticipantsMap.value.set(roomId, participants);
   };
@@ -56,6 +58,8 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const { createMessage } = dataStore;
   const { executeMutation: executeCreateDirectMessageMutation } = useMutation();
   const { checkIsPending: checkIsInviteFriendPending, executeMutation: executeInviteFriendMutation } = useMutation();
+  const { checkIsPending: checkIsInviteDirectMessagePending, executeMutation: executeInviteDirectMessageMutation } =
+    useMutation();
   const { executeMutation: executeDeleteDirectMessageParticipantMutation } = useMutation();
   const { executeMutation: executeHideDirectMessageMutation } = useMutation();
   const { executeMutation: executeLeaveDirectMessageMutation } = useMutation();
@@ -70,6 +74,14 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
       },
     });
   };
+  // The link goes into a conversation the reader is already in, so unlike inviteFriend there is no direct message
+  // To create first, and the message is the reader's own
+  const inviteDirectMessage = async (roomId: string, inviteLink: string) => {
+    await executeInviteDirectMessageMutation(
+      () => createMessage({ files: [], message: inviteLink, replyRowKey: "", roomId, type: MessageType.Message }),
+      { key: roomId },
+    );
+  };
   // The invite a friend is sent: the direct message is created where none exists, and the reader stays on the
   // Screen they are on, so unlike createDirectMessage this does not navigate. The message is the reader's own
   const inviteFriend = async (friendId: PublicUser["id"], inviteLink: string) => {
@@ -78,13 +90,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
       onSuccess: async (room) => {
         const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
         if (!existingDirectMessage) storeCreateDirectMessage(room, true);
-        await createMessage({
-          files: [],
-          message: inviteLink,
-          replyRowKey: "",
-          roomId: room.id,
-          type: MessageType.Message,
-        });
+        await inviteDirectMessage(room.id, inviteLink);
       },
     });
   };
@@ -162,6 +168,8 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   };
 
   return {
+    checkIsGroupDirectMessage,
+    checkIsInviteDirectMessagePending,
     checkIsInviteFriendPending,
     createDirectMessage,
     currentDirectMessage,
@@ -170,6 +178,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     directMessages,
     getDirectMessageParticipants,
     hideDirectMessage,
+    inviteDirectMessage,
     inviteFriend,
     leaveDirectMessage,
     storeCreateDirectMessageParticipant,

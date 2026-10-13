@@ -1,10 +1,14 @@
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
-import type { InviteInMessage } from "@esposter/db-schema";
+import type { InviteInMessage, RoomInMessage } from "@esposter/db-schema";
 
+import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
+import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
+import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
 
 export const useInviteStore = defineStore("message/room/invite", () => {
   const { $trpc } = useNuxtApp();
+  const runtimeConfig = useRuntimeConfig();
   const { checkIsPending: checkIsCreateInvitePending, executeMutation } = useMutation();
   // The server keeps one live invite per member per room, so every mount of the Invite People dialog reads this
   // Shared map — regenerating a link in one keeps the others current
@@ -30,6 +34,36 @@ export const useInviteStore = defineStore("message/room/invite", () => {
       },
     });
   };
+  // The link the member already holds, read from the server only when the map has none, since a live link may
+  // Already be in someone's inbox and a create would replace it
+  const readStoredInvite = async (roomId: string) => {
+    const storedInvite = invites.value.get(roomId);
+    if (storedInvite) return storedInvite;
 
-  return { checkIsCreateInvitePending, createInvite, invites, seedInvite, setInvite };
+    const readInvite = await $trpc.invite.readMyInvite.query({ roomId });
+    // A create that landed during the read is the live link, so the read only fills a slot that is still empty
+    if (!invites.value.get(roomId)) setInvite(roomId, readInvite);
+    return invites.value.get(roomId);
+  };
+  // The absolute link a friend is sent, minted anew only when the one the member holds has lapsed or run out, at the
+  // Default expiry and the same use limit. Undefined when no usable link can be sent: the room is paused, or the
+  // Create did not land
+  const getUsableInviteLink = async ({ id, isInvitePaused }: Pick<RoomInMessage, "id" | "isInvitePaused">) => {
+    if (isInvitePaused) return undefined;
+
+    const invite = await readStoredInvite(id);
+    if (invite && checkIsInviteUsable(invite)) return getInviteLink(runtimeConfig.public.baseUrl, invite.id);
+
+    await createInvite({
+      expireAfterMinutes: DEFAULT_INVITE_EXPIRE_AFTER_MINUTES,
+      maxUses: INVITE_MAX_USES_OPTIONS.find((uses) => uses === invite?.maxUses) ?? 0,
+      roomId: id,
+    });
+    const newInvite = invites.value.get(id);
+    return newInvite && checkIsInviteUsable(newInvite)
+      ? getInviteLink(runtimeConfig.public.baseUrl, newInvite.id)
+      : undefined;
+  };
+
+  return { checkIsCreateInvitePending, createInvite, getUsableInviteLink, invites, seedInvite, setInvite };
 });
