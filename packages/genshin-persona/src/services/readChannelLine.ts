@@ -4,12 +4,14 @@ import { MAX_CHANNEL_LINE_LENGTH } from "#src/services/constants";
 export const readChannelLine = (body: string): string | undefined => {
   if (body.length > MAX_CHANNEL_LINE_LENGTH) return undefined;
 
+  // eslint-disable-next-line no-restricted-syntax -- this package takes no workspace dep, so no getResult; invalid JSON is an undefined line
   try {
-    const parsed: unknown = JSON.parse(body);
-    if (typeof parsed !== "object" || parsed === null || !("text" in parsed)) return undefined;
-    if (typeof parsed.text !== "string") return undefined;
+    // oxlint-disable-next-line no-restricted-properties -- a channel line carries no dates, so there is no reviver to restore one
+    const parsedBody: unknown = JSON.parse(body);
+    if (typeof parsedBody !== "object" || parsedBody === null || !("text" in parsedBody)) return undefined;
+    if (typeof parsedBody.text !== "string") return undefined;
 
-    const line = parsed.text.trim();
+    const line = parsedBody.text.trim();
     return line === "" ? undefined : line;
   } catch {
     return undefined;

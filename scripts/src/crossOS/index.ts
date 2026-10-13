@@ -1,8 +1,8 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { defineCommand } from "citty";
 import { spawn } from "@esposter/shared-node/child-process";
+import { defineCommand } from "citty";
 import { constants } from "node:os";
 
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach

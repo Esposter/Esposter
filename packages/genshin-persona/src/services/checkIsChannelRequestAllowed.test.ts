@@ -1,9 +1,9 @@
 import { checkIsChannelRequestAllowed } from "#src/services/checkIsChannelRequestAllowed";
 import { describe, expect, test } from "vitest";
 
-const TOKEN = "3f9a1c";
-
 describe(checkIsChannelRequestAllowed, () => {
+  const TOKEN = "3f9a1c";
+
   test("accepts the loopback with the token", () => {
     expect.hasAssertions();
 

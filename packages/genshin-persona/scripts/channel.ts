@@ -1,12 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { checkIsChannelRequestAllowed } from "#src/services/checkIsChannelRequestAllowed";
 import { createChannelPage } from "#src/services/createChannelPage";
 import { readChannelLine } from "#src/services/readChannelLine";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 
@@ -17,6 +17,8 @@ import { createServer } from "node:http";
 const token = randomBytes(16).toString("hex");
 const replyStreams = new Set<ServerResponse>();
 
+// The low-level Server keeps the raw request handlers and the channel notification, which McpServer's tool API does not expose
+// oxlint-disable-next-line typescript/no-deprecated -- see the comment above
 const mcp = new Server(
   { name: "genshin-persona", version: "4.0.0" },
   {
@@ -37,8 +39,10 @@ mcp.setRequestHandler(ListToolsRequestSchema, () => ({
 }));
 
 mcp.setRequestHandler(CallToolRequestSchema, (request) => {
+  // oxlint-disable-next-line error-handling/no-bare-error -- an unlisted tool name is the SDK's own error to report to the caller
   if (request.params.name !== "reply") throw new Error(`Unknown tool ${request.params.name}`);
 
+  // oxlint-disable-next-line typescript/no-base-to-string -- the arguments are the caller's own JSON, and its text is the reply as sent
   const text = String(request.params.arguments?.text ?? "");
   for (const stream of replyStreams) stream.write(`event: reply\ndata: ${JSON.stringify({ text })}\n\n`);
   return { content: [{ text: "sent", type: "text" }] };
@@ -57,10 +61,7 @@ const handleSay = (request: IncomingMessage, response: ServerResponse) => {
     const line = readChannelLine(body);
     if (line === undefined) return writeEnded(response, 400);
 
-    void mcp.notification({
-      method: "notifications/claude/channel",
-      params: { content: line, meta: { sender: "desk" } },
-    });
+    mcp.notification({ method: "notifications/claude/channel", params: { content: line, meta: { sender: "desk" } } });
     writeEnded(response, 204);
   });
 };

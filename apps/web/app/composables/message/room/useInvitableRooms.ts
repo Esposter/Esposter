@@ -1,7 +1,6 @@
-import { RoomPermission } from "@esposter/db-schema";
-
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
+import { RoomPermission } from "@esposter/db-schema";
 
 // The rooms a friend can be invited into from outside the room: the reader may mint a link there, and its invites are
 // Not paused. A paused room is left out rather than listed as unusable, since its link could not be sent

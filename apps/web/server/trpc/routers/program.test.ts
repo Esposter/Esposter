@@ -20,8 +20,8 @@ import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
-import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
@@ -52,6 +52,9 @@ const readStoredParticipants = async (programId: string) => {
 };
 
 // The program-specific participant issuance and status join.
+const sortByKeyValue = <T extends { keyValue: string }>(items: T[]) =>
+  items.toSorted((firstItem, secondItem) => firstItem.keyValue.localeCompare(secondItem.keyValue));
+
 describe("programRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(programRouter);
   let mockContext: Context;
@@ -444,8 +447,6 @@ describe("programRouter", () => {
     });
     return { program, survey };
   };
-  const sortByKeyValue = <T extends { keyValue: string }>(items: T[]) =>
-    items.toSorted((a, b) => a.keyValue.localeCompare(b.keyValue));
 
   test("invites refuse an email with no link to the survey, before reading the audience", async () => {
     expect.hasAssertions();
@@ -464,16 +465,16 @@ describe("programRouter", () => {
 
     const { program } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Take the survey</a>`);
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
-    const { invites, unmatchedCount, emailHtml } = await caller.readProgramInvites({
+    const { emailHtml, invites, unmatchedCount } = await caller.readProgramInvites({
       id: program.id,
       scope: ProgramInviteScope.All,
     });
 
     expect(unmatchedCount).toBe(0);
     expect(emailHtml).toContain("Take the survey");
-    expect(sortByKeyValue(invites.map(({ keyValue, token }) => ({ keyValue, token })))).toStrictEqual(
-      sortByKeyValue(participants),
-    );
+    expect(
+      sortByKeyValue(invites.map(({ keyValue: inviteKeyValue, token }) => ({ keyValue: inviteKeyValue, token }))),
+    ).toStrictEqual(sortByKeyValue(participants));
     expect(sortByKeyValue(invites).map(({ row }) => row[AUDIENCE_KEY_COLUMN])).toStrictEqual(["a", "b"]);
   });
 
@@ -482,7 +483,9 @@ describe("programRouter", () => {
 
     const { program, survey } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Go</a>`);
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
-    const responderToken = takeOne(participants.filter(({ keyValue }) => keyValue === "a")).token;
+    const responderToken = takeOne(
+      participants.filter(({ keyValue: participantKeyValue }) => participantKeyValue === "a"),
+    ).token;
     const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
     await createEntity(
       surveyResponseClient,
@@ -494,7 +497,7 @@ describe("programRouter", () => {
     );
     const { invites } = await caller.readProgramInvites({ id: program.id, scope: ProgramInviteScope.Awaiting });
 
-    expect(invites.map(({ keyValue, token }) => ({ keyValue, token }))).toStrictEqual(
+    expect(invites.map(({ keyValue: inviteKeyValue, token }) => ({ keyValue: inviteKeyValue, token }))).toStrictEqual(
       participants.filter(({ token }) => token !== responderToken),
     );
   });

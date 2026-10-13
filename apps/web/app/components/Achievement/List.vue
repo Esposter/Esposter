@@ -17,7 +17,9 @@ const sort = ref(AchievementSort.Category);
 const sortedAchievementDefinitions = computed(() =>
   sort.value === AchievementSort.RarestFirst
     ? achievementDefinitions.value.toSorted(
-        (a, b) => (achievementRarities.value?.[a.name] ?? 0) - (achievementRarities.value?.[b.name] ?? 0),
+        (firstAchievement, secondAchievement) =>
+          (achievementRarities.value?.[firstAchievement.name] ?? 0) -
+          (achievementRarities.value?.[secondAchievement.name] ?? 0),
       )
     : achievementDefinitions.value,
 );
@@ -69,7 +71,7 @@ const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, AchievementStatuses, Achi
           :meaning="UiIconMeaning.Achievement"
           :title="value === AchievementStatus.Unlocked ? 'Nothing unlocked yet' : 'Every achievement unlocked'"
         />
-        <AchievementGrid v-else :="achievementListMap[value]" :achievement-rarities="achievementRarities" />
+        <AchievementGrid v-else :="achievementListMap[value]" :achievement-rarities />
       </template>
     </UiTabs>
   </section>

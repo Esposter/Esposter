@@ -20,6 +20,13 @@ export const programRouter = router({
     resourceIdInputSchema,
     "id",
   ).mutation<GeneratedProgramParticipants>(({ ctx }) => generateProgramParticipants(ctx, ctx.resource.id)),
+  // The invite export is the one read that carries tokens, and only the owner reads it, the same as the CSV the
+  // Mutation hands over. Scoped to the still-awaiting for the reminder, so the reminder never re-sends a responder
+  readProgramInvites: getOwnerProcedure(
+    ResourceType.Program,
+    z.object({ ...resourceIdInputSchema.shape, scope: z.enum(ProgramInviteScope) }),
+    "id",
+  ).query<ProgramInvites>(({ ctx, input }) => readProgramInvites(ctx, ctx.resource, input.scope)),
   // Owner-only and deliberately never a dataset — keyValue answers "who hasn't answered yet",
   // Which is blade work, not chart work.
   // Projected down to what the blade renders: the join's publicId is the dataset's identity and nothing on
@@ -33,11 +40,4 @@ export const programRouter = router({
       };
     },
   ),
-  // The invite export is the one read that carries tokens, and only the owner reads it, the same as the CSV the
-  // Mutation hands over. Scoped to the still-awaiting for the reminder, so the reminder never re-sends a responder
-  readProgramInvites: getOwnerProcedure(
-    ResourceType.Program,
-    z.object({ ...resourceIdInputSchema.shape, scope: z.enum(ProgramInviteScope) }),
-    "id",
-  ).query<ProgramInvites>(({ ctx, input }) => readProgramInvites(ctx, ctx.resource, input.scope)),
 });

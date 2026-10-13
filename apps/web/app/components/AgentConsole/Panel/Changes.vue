@@ -11,13 +11,13 @@ import { CommandType } from "agent-console-server/contracts";
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { composerText, consolePanelType } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { diffCommentMap, fileEdits, fileOriginMap } = storeToRefs(agentConsoleSessionStore);
+const { currentSessionId, diffCommentMap, fileEdits, fileOriginMap } = storeToRefs(agentConsoleSessionStore);
 const { clearDiffComments } = agentConsoleSessionStore;
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { sendCommand } = agentConsoleConnectionStore;
 // The file is read by the host from the session's folder and shown in the console, not in this list
 const openFile = (path: string) => {
-  sendCommand({ path, sessionId: agentConsoleSessionStore.currentSessionId, type: CommandType.ReadFile });
+  sendCommand({ path, sessionId: currentSessionId.value, type: CommandType.ReadFile });
 };
 const diffComments = computed(() => [...diffCommentMap.value.values()]);
 // The comments go into the composer as one prompt, appended to any text already there, and the console moves to the

@@ -14,10 +14,10 @@ export class WebpageEditor extends AGrapesJsEditor {
   // Standalone render captured at save time so the public view page can serve
   // The published webpage without loading GrapesJS
   css?: string;
-  html?: string;
   // The share preview the published page unfurls with, over the site's own. The image is one of the webpage's file
   // Assets, so publishing clones it with the rest of the content
   description = "";
+  html?: string;
   imageUrl = "";
   pages: unknown[] = [
     {
@@ -750,8 +750,8 @@ export const webpageEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,
     css: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
-    html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
     description: z.string().max(WEBPAGE_DESCRIPTION_MAX_LENGTH),
+    html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
     imageUrl: z.literal("").or(z.string().startsWith(RESOURCE_ASSETS_URL_PREFIX)),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<WebpageEditor>>;

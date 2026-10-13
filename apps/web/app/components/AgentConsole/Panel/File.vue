@@ -32,6 +32,6 @@ const copyPath = (path: string) => {
       />
     </div>
     <p v-if="openedFile.notice" text-muted>{{ openedFile.notice }}</p>
-    <pre v-else of-auto ws-pre text-sm>{{ openedFile.content }}</pre>
+    <pre v-else text-sm ws-pre of-auto>{{ openedFile.content }}</pre>
   </div>
 </template>

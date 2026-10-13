@@ -12,7 +12,9 @@ const { nodeFunction, nodePromisified } = vi.hoisted(() => ({
 vi.mock(import("node:child_process"), async () => {
   const { promisify: promisifyCustom } = await import("node:util");
   return {
-    execFile: Object.assign(nodeFunction, { [promisifyCustom.custom]: nodePromisified }) as unknown as typeof baseExecFile,
+    execFile: Object.assign(nodeFunction, {
+      [promisifyCustom.custom]: nodePromisified,
+    }) as unknown as typeof baseExecFile,
   };
 });
 

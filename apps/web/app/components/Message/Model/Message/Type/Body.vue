@@ -30,9 +30,9 @@ const toggleSpoiler = (event: Event) => {
           class="rich-text-content"
           min-w-0
           break-words
-          @click="toggleSpoiler"
-          @keydown.enter="toggleSpoiler"
-          @keydown.space.prevent="toggleSpoiler"
+          @click="(event) => toggleSpoiler(event)"
+          @keydown.enter="(event) => toggleSpoiler(event)"
+          @keydown.space.prevent="(event) => toggleSpoiler(event)"
           v-html="messageHtml"
         />
         <span v-if="message.isEdited" text-sm text-muted>(edited)</span>

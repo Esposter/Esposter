@@ -39,7 +39,7 @@ const commandMenuItems = computed(() => {
 const agentConsoleFileStore = useAgentConsoleFileStore();
 const { files } = storeToRefs(agentConsoleFileStore);
 // An @ with no space after it is a file being mentioned; the file list is asked of the host as the menu opens
-const mentionQuery = computed(() => composerText.value.match(/(?:^|\s)@(\S*)$/u)?.[1]);
+const mentionQuery = computed(() => composerText.value.match(/(?:^|\s)@(?<mentionQuery>\S*)$/u)?.groups?.mentionQuery);
 const isMentioning = computed(() => mentionQuery.value !== undefined);
 const mentionMenuItems = computed(() => {
   const query = mentionQuery.value?.toLowerCase() ?? "";
@@ -81,8 +81,8 @@ const permissionMode = computed({
     });
   },
 });
-const attach = async (files: FileList | undefined) => {
-  const newAttachments = await Promise.all(Array.from(files ?? [], (file) => readAttachment(file)));
+const attach = async (fileList: FileList | undefined) => {
+  const newAttachments = await Promise.all(Array.from(fileList ?? [], (file) => readAttachment(file)));
   attachments.value = [...attachments.value, ...newAttachments.filter((attachment) => attachment !== undefined)];
 };
 const submit = () => {
@@ -153,7 +153,7 @@ const submit = () => {
         :field="prompt ?? undefined"
         :items="suggestionItems"
         :label="suggestionLabel"
-        @select="selectSuggestion"
+        @select="(value) => selectSuggestion(value)"
       />
       <div flex flex-wrap gap-2 items-center>
         <UiSelect v-model="model" :items="modelMenuItems" label="Model" />

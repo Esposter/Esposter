@@ -79,7 +79,7 @@ describe("datasetRouter", () => {
       { name: "b", type: ColumnType.Boolean },
       { name: "c", type: ColumnType.String },
     ]);
-    expect(dataset.rows).toStrictEqual([{ submittedAt, a: 0, b: true, c: "" }]);
+    expect(dataset.rows).toStrictEqual([{ a: 0, b: true, c: "", submittedAt }]);
     expect(dataset.totalRows).toBe(1);
   });
 
@@ -121,7 +121,7 @@ describe("datasetRouter", () => {
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
-    expect(dataset.rows).toStrictEqual([{ submittedAt, a: 0, b: null, c: null }]);
+    expect(dataset.rows).toStrictEqual([{ a: 0, b: null, c: null, submittedAt }]);
   });
 
   test("joins checkbox answers into one cell, with non-string items as json", async () => {
@@ -137,7 +137,7 @@ describe("datasetRouter", () => {
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.rows).toStrictEqual([
-      { submittedAt, a: null, b: null, c: `red; ${JSON.stringify({ other: "blue" })}` },
+      { a: null, b: null, c: `red; ${JSON.stringify({ other: "blue" })}`, submittedAt },
     ]);
   });
 
@@ -158,7 +158,7 @@ describe("datasetRouter", () => {
       { name: "submittedAt_", title: "Submitted", type: ColumnType.Date },
       { name: "submittedAt", type: ColumnType.String },
     ]);
-    expect(dataset.rows).toStrictEqual([{ submittedAt_: submittedAt, submittedAt: "answer" }]);
+    expect(dataset.rows).toStrictEqual([{ submittedAt: "answer", submittedAt_: submittedAt }]);
   });
 
   test("fails read survey responses with wrong user", async () => {

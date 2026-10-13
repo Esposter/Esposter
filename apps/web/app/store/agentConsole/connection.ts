@@ -107,12 +107,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         // oxlint-disable-next-line error-alert/no-raw-error-alert -- a host's command error is not a tRPC rejection, so no error link has shown it
         createAlert(serverMessage.message, "error");
         break;
-      case ServerMessageType.FileContent:
-        storeOpenedFile(serverMessage);
-        break;
-      case ServerMessageType.Files:
-        storeFiles(serverMessage.files);
-        break;
       case ServerMessageType.Events: {
         const addedEvents = storeEvents(serverMessage.sessionId, serverMessage.events);
         const sessionTitle =
@@ -120,6 +114,12 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         reactToEvents(theme, sessionTitle, addedEvents, getConnectionSocket(connectionId).connectedAt);
         break;
       }
+      case ServerMessageType.FileContent:
+        storeOpenedFile(serverMessage);
+        break;
+      case ServerMessageType.Files:
+        storeFiles(serverMessage.files);
+        break;
       // The host was stopped from its own window, so its sessions end with it and the page waits to be asked to
       // Reconnect rather than retrying a host that is not coming back on its own
       case ServerMessageType.HostStopping:

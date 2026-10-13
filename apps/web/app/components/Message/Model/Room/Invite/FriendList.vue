@@ -11,10 +11,6 @@ import { useInviteStore } from "@/store/message/room/invite";
 import { useFriendStore } from "@/store/message/user/friend";
 import { getSynchronizedFunction } from "@esposter/shared";
 
-interface Props {
-  room: RoomInMessage;
-}
-
 // A friend or a group conversation: each is sent the room's link into its direct message, and both sit in one list
 // Ordered by recency, so a group reads where the conversation with it does
 interface InviteRecipient {
@@ -23,6 +19,10 @@ interface InviteRecipient {
   isGroup: boolean;
   name: string;
   recency: number;
+}
+
+interface Props {
+  room: RoomInMessage;
 }
 
 const { room } = defineProps<Props>();

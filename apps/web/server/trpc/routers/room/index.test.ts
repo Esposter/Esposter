@@ -28,7 +28,6 @@ import {
   roomsInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { and, eq } from "drizzle-orm";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import {
   getMockSasUrl,
@@ -37,6 +36,7 @@ import {
   MockContainerDatabase,
   MockEventGridDatabase,
 } from "azure-mock";
+import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Uploaded through the client, so the mock dates the blob now

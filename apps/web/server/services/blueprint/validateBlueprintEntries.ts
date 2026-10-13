@@ -1,9 +1,9 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 
 import { getInvalidBlueprintError } from "#server/services/blueprint/getInvalidBlueprintError";
-import { mapBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
 import { blueprintEntrySchema } from "#shared/models/resource/blueprint/BlueprintEntry";
 import { BLUEPRINT_ENTRY_TOKEN_REGEX } from "#shared/services/resource/blueprint/constants";
+import { mapBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 
 // Pre-validates every substituted entry — its name against the resource name rules, and its content against

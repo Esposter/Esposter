@@ -10,8 +10,8 @@ import { setLockfileNodeVersion } from "#src/services/updateNode/setLockfileNode
 import { setManifestNodeVersion } from "#src/services/updateNode/setManifestNodeVersion";
 import { WORKSPACE_FILE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { defineCommand } from "citty";
 import { spawnSync } from "@esposter/shared-node/child-process";
+import { defineCommand } from "citty";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 

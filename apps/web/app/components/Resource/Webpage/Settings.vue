@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { WEBPAGE_DESCRIPTION_MAX_LENGTH } from "#shared/services/resource/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { WEBPAGE_DESCRIPTION_MAX_LENGTH } from "#shared/services/resource/constants";
 import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
@@ -9,7 +9,8 @@ import { ResourceType } from "@esposter/db-schema";
 const webpageEditorStore = useWebpageEditorStore();
 const { loadContent, saveContent } = webpageEditorStore;
 const { webpageEditor } = storeToRefs(webpageEditorStore);
-const { resource } = storeToRefs(useResourceStore());
+const resourceStore = useResourceStore();
+const { resource } = storeToRefs(resourceStore);
 const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => resource.value?.id ?? "");
 const shareImageFiles = ref<File[]>([]);
 // A picked image uploads at once and only its url is kept, so the file never waits in the form
@@ -39,7 +40,7 @@ await loadContent();
     </UiFrame>
     <UiFrame title="Share image">
       <p text-muted>The image above the title and description in a shared link.</p>
-      <img
+      <NuxtImg
         v-if="webpageEditor.imageUrl"
         :src="webpageEditor.imageUrl"
         alt=""

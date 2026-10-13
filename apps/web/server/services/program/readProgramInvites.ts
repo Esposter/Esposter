@@ -1,7 +1,7 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
-import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { ProgramInvite } from "#shared/models/resource/program/ProgramInvite";
 import type { ProgramInvites } from "#shared/models/resource/program/ProgramInvites";
+import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";

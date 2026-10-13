@@ -98,7 +98,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
     expect(spawn).toHaveBeenCalledExactlyOnceWith(
       WSL_EXECUTABLE,
       ["--exec", "sh", "-c", WSL_REMOVE_LIST_SCRIPT, "sh", expect.stringContaining(VIRRUN_REMOVE_LIST_TEMP_PREFIX)],
-      { stdio: "ignore", windowsHide: true },
+      { stdio: "ignore" },
     );
     expect(readStagedList()).toBe(joinNullDelimited(linuxDirectories));
     expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop);
