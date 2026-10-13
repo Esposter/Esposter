@@ -46,7 +46,7 @@ await loadContent();
         max-h-48
         max-w-full
         object-contain
-        rounded-md
+        rd="[var(--ui-container-radius)]"
       />
       <FileField
         v-model="shareImageFiles"

@@ -16,7 +16,7 @@ The lore pick draws the session's character at random, weighted by exactly the o
 
 1. **The animation.** When a session whose character was drawn by lore opens, a star falls and resolves into the character's nameplate — purple for four stars, gold for five, the rarity already in the roster data.
 2. **The rates.** The rows the welcome chart shows, as the banner's details: every character with the probability the tier gave them. No rate is ours.
-3. **History as state.** The characters met in recent sessions — the pick records the plugin already keeps — join the state the tier reads, so if variety matters the tier weighs it in its own odds. Nothing in the code scales a weight.
+3. **History as state.** The characters met in recent sessions — the pick records the plugin already keeps — join the state the tier reads; how that state is weighed is set out in [character pick](/docs/infra/claude-interface/persona-plugin/character-pick).
 
 ## How it works
 
