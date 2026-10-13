@@ -20,7 +20,7 @@ The second half of the desktop stage is input: a line typed at the character rat
 
 ## Status
 
-Built: the channel server (`scripts/channel.ts`, declared by `.mcp.json`) serving the chat page on the loopback under a printed token, typed lines pushed into the session as `desk` channel events, and the `reply` tool pushing the plain answer to the page. The page's header carries no nameplate: the server starts with the session, not with the session's id, so there is no session record to read it from; the header stays until the start hook hands the server its character. Not built, waiting on [the viewer as the stage](/docs/proposals/infra/viewer-stage), which is unbuilt: the spoken lines' viewer sink, the permission relay (the server declares no `claude/channel/permission` yet), and the viewer's tap probe.
+Built: the channel server (`packages/genshin-persona/scripts/channel.ts`, declared by `.mcp.json`) serving the chat page on the loopback under a printed token, typed lines pushed into the session as `desk` channel events, and the `reply` tool pushing the plain answer to the page. The page's header carries no nameplate: the server starts with the session, not with the session's id, so there is no session record to read it from; the header stays until the start hook hands the server its character. Not built, waiting on [the viewer as the stage](/docs/proposals/infra/viewer-stage), which is unbuilt: the spoken lines' viewer sink, the permission relay (the server declares no `claude/channel/permission` yet), and the viewer's tap probe.
 
 ## The facts this rests on
 
