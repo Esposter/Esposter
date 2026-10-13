@@ -6,7 +6,7 @@ import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWher
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { StorageTier, usersInAuth } from "@esposter/db-schema";
-import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
+import { and, eq, gt, gte, lt, lte, or, sql } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhere, () => {
@@ -61,6 +61,22 @@ describe(getCursorWhere, () => {
         and(lt(usersInAuth.createdAt, user.createdAt)),
         and(eq(usersInAuth.createdAt, user.createdAt), lt(usersInAuth.id, user.id)),
       ),
+    );
+  });
+
+  test("gets lexicographic where for a sort key that is an expression", () => {
+    expect.hasAssertions();
+
+    const displayName = sql<string>`coalesce(nullif(${usersInAuth.biography}, ''), ${usersInAuth.name})`;
+    const columns = { displayName, id: usersInAuth.id };
+    const sortBy: SortItem<keyof typeof columns>[] = [
+      { key: "displayName", order: SortOrder.Asc },
+      { key: "id", order: SortOrder.Asc },
+    ];
+    const serializedCursors = serialize({ displayName: user.name, id: user.id }, sortBy);
+
+    expect(getCursorWhere(columns, serializedCursors, sortBy)).toStrictEqual(
+      or(and(gt(displayName, user.name)), and(eq(displayName, user.name), gt(usersInAuth.id, user.id))),
     );
   });
 });

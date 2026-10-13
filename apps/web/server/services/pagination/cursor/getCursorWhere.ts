@@ -1,16 +1,16 @@
+import type { GetCursorWhere } from "#server/models/pagination/cursor/GetCursorWhere";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { BinaryOperator } from "drizzle-orm";
-import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
+import type { BinaryOperator, Column, SQL } from "drizzle-orm";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
 import { exhaustiveGuard, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 
-export const getCursorWhere = <TTable extends TableConfig>(
-  table: PgTableWithColumns<TTable>,
+export const getCursorWhere: GetCursorWhere = <TColumns extends Record<string, Column | SQL>>(
+  columns: TColumns,
   serializedCursors: string,
-  sortBy: SortItem<keyof TTable["columns"] & string>[],
+  sortBy: SortItem<keyof TColumns & string>[],
 ) => {
   const cursors = deserialize(serializedCursors);
   const getCursorValue = (key: string) => {
@@ -36,8 +36,8 @@ export const getCursorWhere = <TTable extends TableConfig>(
       return and(
         ...sortBy
           .slice(0, index)
-          .map(({ key: previousKey }) => eq(takeOne(table, previousKey), getCursorValue(previousKey))),
-        operator(takeOne(table, key), getCursorValue(key)),
+          .map(({ key: previousKey }) => eq(takeOne(columns, previousKey), getCursorValue(previousKey))),
+        operator(takeOne(columns, key), getCursorValue(key)),
       );
     }),
   );
