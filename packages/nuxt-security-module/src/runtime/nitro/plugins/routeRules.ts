@@ -6,11 +6,18 @@ import { setSecurityRouteMatcher } from "#src/runtime/services/securityRouteMatc
 import { definePlugin } from "nitro";
 
 // The plugin the module's server template calls with the build's route rules.
-// It resolves them once at startup, handing them to the app's own hook to add to or change.
-// Every request then matches them without copying them again.
+// The app's hook is called on the first request, not at setup. The app's own server plugins register their listeners
+// After this one, so a call at setup would reach none of them. Every request then matches the resolved rules
+// Without copying them again.
 export const createRouteRulesPlugin = (routeRules: Record<string, SecurityRules>): NitroAppPlugin =>
-  definePlugin(async (nitroApp) => {
-    const routes = structuredClone(routeRules);
-    await nitroApp.hooks.callHook(ROUTE_RULES_HOOK, routes);
-    setSecurityRouteMatcher(routes);
+  definePlugin((nitroApp) => {
+    let routesResolved: Promise<void> | undefined;
+    nitroApp.hooks.hook("request", () => {
+      routesResolved ??= (async () => {
+        const routes = structuredClone(routeRules);
+        await nitroApp.hooks.callHook(ROUTE_RULES_HOOK, routes);
+        setSecurityRouteMatcher(routes);
+      })();
+      return routesResolved;
+    });
   });

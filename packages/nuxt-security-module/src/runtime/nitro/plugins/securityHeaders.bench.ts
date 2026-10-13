@@ -17,6 +17,7 @@ describe(securityHeaders, () => {
   test("a page's response", async ({ bench }) => {
     const app = createNitroApp();
     createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+    await app.nitroApp.hooks.callHook("request", createPageEvent());
     nonce(app.nitroApp);
     securityHeaders(app.nitroApp);
 

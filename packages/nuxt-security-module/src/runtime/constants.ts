@@ -2,7 +2,7 @@ import type { SecurityHeaders } from "#src/models/SecurityHeaders";
 
 // The package's name, which prefixes every runtime hook the module calls and is the module's `meta.name`
 export const MODULE_NAME = "nuxt-security-module";
-// Called once when the module's route rules are resolved, so a consumer can add or change a route's rules
+// Called once, on the first request, before the module's route rules are matched, so a consumer can add or change a route's rules
 export const ROUTE_RULES_HOOK: `${typeof MODULE_NAME}:routeRules` = `${MODULE_NAME}:routeRules`;
 // The response header each option key is sent as
 export const SECURITY_HEADER_NAMES: Readonly<Record<keyof SecurityHeaders, string>> = {
