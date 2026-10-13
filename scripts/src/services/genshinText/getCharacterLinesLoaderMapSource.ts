@@ -9,13 +9,12 @@ export const getCharacterLinesLoaderMapSource = (): string => {
     (await import("#src/generated/characterLines/${language}.json", { with: { type: "json" } })).default,
 `,
   );
-  return `import type { VoiceLine } from "#src/models/VoiceLine";
+  return `/* eslint-disable no-restricted-syntax -- each language is its own chunk: the map is the entry every spinner read loads, so the other fourteen languages' lines, hundreds of kilobytes each, stay out of the eager graph */
+import type { VoiceLine } from "#src/models/VoiceLine";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
 
-// Written by \`pnpm -C scripts genshin:text write\`, never by hand. Each language is a dynamic import on purpose: the
-// Map is the entry every spinner read loads, so the import is the split that keeps the other fourteen languages'
-// Lines, hundreds of kilobytes each, out of it
+// Written by \`pnpm -C scripts genshin:text write\`, never by hand.
 export const CharacterLinesLoaderMap: Record<GameLanguage, () => Promise<Record<string, VoiceLine[]>>> = {
 ${entries.join("")}};
 `;

@@ -61,7 +61,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 ## Promise Style
 
 - **`try`, `.then`/`.catch`/`.finally` and `new Error` are banned** — the `error-handling` skill owns all three and their exceptions.
-- **Never `await import(...)`** for code-splitting — always a static top-level `import`. The exceptions, and what a dynamic import that survives them has to say in its comment: `references/dynamic-imports.md`.
+- **Never `await import(...)`** for code-splitting — always a static top-level `import`, enforced by `no-restricted-syntax`. An exception is a disable directive whose reason is the comment `references/dynamic-imports.md` asks for.
 - **`void asyncFn()` is banned** (`no-void`) — it silences `no-floating-promises` by discarding the promise, so rejections go unhandled and the caller cannot await completion. The replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
 
 ## Control Flow

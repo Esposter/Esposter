@@ -8,8 +8,7 @@ import VuePdfEmbed from "vue-pdf-embed";
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
 import "vue-pdf-embed/dist/styles/textLayer.css";
 
-// The embed is the thumbnail every PDF message row renders; the full viewer only ever mounts inside the dialog
-// Below, so keeping it static would make every row pay for a library nobody opened
+// eslint-disable-next-line no-restricted-syntax -- the full viewer mounts only inside the dialog, so a PDF message row's thumbnail never loads it
 const VPdfViewer = defineAsyncComponent(async () => (await import("@vue-pdf-viewer/viewer")).VPdfViewer);
 const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 const themeModeStore = useThemeModeStore();

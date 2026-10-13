@@ -18,6 +18,7 @@ export const saveResourceContentDelta = async (
   { contentVersion, id }: Pick<ResourceInResource, "contentVersion" | "id">,
 ): Promise<ResourceInResource | undefined> => {
   const deltaBytes = await getResultAsync(async () => {
+    // eslint-disable-next-line no-restricted-syntax -- the delta worker and its wasm load on the first large save, keeping them out of the eager graph (see encodeContentDelta)
     const { encodeContentDelta } = await import("@/services/resource/encodeContentDelta");
     return encodeContentDelta(contentBytes, contentBaseline.bytes);
   }).match(

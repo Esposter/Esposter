@@ -5,9 +5,7 @@ import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/de
 import { getSourceColumnName } from "@/services/resource/sheet/dataSource/getSourceColumnName";
 
 export const deserializeXlsx = async (file: File, settings: XlsxFileSettings) => {
-  // The command bar renders on every resource page and reaches this codec through PortableFormatMap, while
-  // `xlsx` is one format of the one portable type that has it — the types that can neither import nor
-  // Export would otherwise ship a workbook parser they can never run, so it is fetched when one is read
+  // eslint-disable-next-line no-restricted-syntax -- the command bar reaches this codec on every resource page, so the workbook parser is fetched only when an xlsx is read
   const { readSheet } = await import("read-excel-file/browser");
   const cellRows = await readSheet(file, settings.configuration.sheetIndex + 1);
   const [headerCells, ...bodyCells] = cellRows;

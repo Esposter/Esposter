@@ -20,6 +20,15 @@ export default [
       "VariableDeclarator > CallExpression.init[callee.object.name='z'][callee.property.name='enum'][arguments.0.type='Identifier']",
   },
   {
+    // A dynamic import is a split the reader cannot see from the top of the file, and Vite discovers the chunk late.
+    // The exceptions are a lazy-loader contract and the split of a heavy dependency that an always-loaded module
+    // Reaches, each disabled in place with what it keeps out of the eager graph. A test is exempt because it
+    // Re-imports after mocking, which is what the dynamic import is for there
+    message:
+      "Import statically at the top of the file — `await import()` hides the dependency and defers Vite's discovery. An exception (a lazy-loader contract, or the split of a heavy dependency an always-loaded module reaches) disables this saying what it keeps out of the eager graph. See the typescript skill.",
+    selector: "AwaitExpression > ImportExpression.argument",
+  },
+  {
     // The double cast launders a value past every check the compiler would have run — the hole `no-explicit-any`
     // Closes, spelled another way. A test is where the genuine seams mostly live (a class fake standing in for an
     // SDK class), so only source is held to it; a seam source cannot model either disables this with what the

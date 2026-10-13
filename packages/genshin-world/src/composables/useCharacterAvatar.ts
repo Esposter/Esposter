@@ -29,6 +29,7 @@ export const useCharacterAvatar = (
         if (!components.includes(AVATAR_COMPONENT)) return;
         // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
         getResultAsync(async () =>
+          // eslint-disable-next-line no-restricted-syntax -- the avatar builder loads on the first traveler avatar request, keeping it out of the world's eager graph
           (await import("#src/services/character/avatar/readCharacterAvatar")).readCharacterAvatar(
             `${sceneExportBaseUrl}/${AVATAR_COMPONENT}`,
             options,

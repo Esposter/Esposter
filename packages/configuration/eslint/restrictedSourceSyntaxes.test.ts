@@ -43,6 +43,19 @@ describe("restrictedSourceSyntaxes", () => {
         violations: 0,
       },
       {
+        filePath: "awaitedImport.ts",
+        name: "awaitedImport",
+        source: `export const a = await import("x");`,
+        violations: 1,
+      },
+      // A lazy component is not awaited, so it is not the eager-loading shape this bans
+      {
+        filePath: "lazyComponent.ts",
+        name: "lazyComponent",
+        source: `export const a = defineAsyncComponent(() => import("x"));`,
+        violations: 0,
+      },
+      {
         filePath: "satisfiedDiscriminatedUnion.ts",
         name: "satisfiedDiscriminatedUnion",
         source: `export const aSchema = z.discriminatedUnion("a", []) satisfies z.ZodType<A>;`,

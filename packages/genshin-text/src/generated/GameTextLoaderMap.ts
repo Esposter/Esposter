@@ -1,11 +1,10 @@
+/* eslint-disable no-restricted-syntax -- every language but English is its own chunk: the map is the entry every reader loads, so its dynamic imports keep the fourteen languages a page does not show out of the eager graph */
 import type { GameText } from "#src/models/GameText";
 
 import English from "#src/generated/text/English.json" with { type: "json" };
 import { GameLanguage } from "#src/models/GameLanguage";
 
-// Written by `pnpm -C scripts genshin:text write`, never by hand. Every language but English is a dynamic import
-// On purpose: the map is the entry every reader loads, so the import is the split that keeps the fourteen languages
-// A page does not show out of its eager graph
+// Written by `pnpm -C scripts genshin:text write`, never by hand.
 export const ENGLISH_GAME_TEXT: GameText = English;
 export const GameTextLoaderMap: Record<GameLanguage, () => Promise<GameText>> = {
   [GameLanguage.ChineseSimplified]: async () =>

@@ -40,11 +40,7 @@ watch(isFullscreen, () => {
 
 onMounted(async () => {
   const svgResult = await getResultAsync(async () => {
-    // Imported lazily after mount so the multi-megabyte mermaid chunk never resolves inside the docs
-    // Page's Suspense: a failed chunk (stale PWA/browser cache after a redeploy) would otherwise reject
-    // The pending tree and silently kill doc→doc navigation — the route reacts before the new tree
-    // Swaps in (https://github.com/nuxt/nuxt/issues/14456), and Nuxt's chunk-error auto-reload only
-    // Catches clean fetch failures, not stale-cache eval errors (https://github.com/nuxt/nuxt/issues/23612)
+    // eslint-disable-next-line no-restricted-syntax -- mermaid is multi-megabyte, so it is imported after mount and never resolves inside the docs page's Suspense: a stale-cache chunk failure after a redeploy would reject the pending tree and kill doc navigation (nuxt#14456, nuxt#23612)
     const { default: mermaid } = await import("mermaid");
     mermaid.initialize({ startOnLoad: false, theme: isDark.value ? "dark" : "default" });
     const { svg } = await mermaid.render(`mermaid-${id}`, code);
