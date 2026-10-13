@@ -26,7 +26,9 @@ import {
   PublicUserColumns,
   RoomPermission,
   roomsInMessage,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
+import { and, eq } from "drizzle-orm";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import {
   getMockSasUrl,
@@ -716,6 +718,23 @@ describe("roomRouter", () => {
     const userId = getMockSession().user.id;
 
     expect(takeOne(members.items).id).toBe(userId);
+  });
+
+  test("reads members by display name, with the nickname they are listed under", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { user } = getMockSession();
+    const nickname = "Ally";
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ nickname })
+      .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, user.id)));
+    const members = await roomCaller.readMembers({ filter: { name: nickname }, roomId: newRoom.id });
+    const globalNameMembers = await roomCaller.readMembers({ filter: { name: user.name }, roomId: newRoom.id });
+
+    expect(takeOne(members.items).displayName).toBe(nickname);
+    expect(takeOne(globalNameMembers.items).displayName).toBe(nickname);
   });
 
   test("reads members by ids", async () => {

@@ -1,4 +1,5 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
@@ -49,6 +50,7 @@ import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
+  getDisplayNameExpression,
   getPublicUserColumns,
   invitesInMessage,
   MessageType,
@@ -307,18 +309,25 @@ export const baseRoomRouter = router({
       return ctx.db.select({ count: count(), roleId: topRoles.roleId }).from(topRoles).groupBy(topRoles.roleId);
     },
   ),
-  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<PublicUser>>(
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<MemberInRoom>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
+      // The display name is the sort, cursor and search key, so the order, the page boundary and the match all
+      // Agree with the name the row renders
+      const displayName = getDisplayNameExpression();
+      const sortableColumns = { ...getPublicUserColumns(usersInAuth), displayName };
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
-      if (cursor) wheres.push(getCursorWhere(usersInAuth, cursor, sortBy));
-      if (filter?.name) wheres.push(ilike(usersInAuth.name, `%${escapeLike(filter.name)}%`));
+      if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
+      if (filter?.name) {
+        const pattern = `%${escapeLike(filter.name)}%`;
+        wheres.push(or(ilike(displayName, pattern), ilike(usersInAuth.name, pattern)));
+      }
 
       const members = await ctx.db
-        .select(getPublicUserColumns(usersInAuth))
+        .select(sortableColumns)
         .from(usersInAuth)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
         .where(and(...wheres))
-        .orderBy(...parseSortByToSql(usersInAuth, sortBy))
+        .orderBy(...parseSortByToSql(sortableColumns, sortBy))
         .limit(limit + 1);
       return getCursorPaginationData(members, limit, sortBy);
     },
