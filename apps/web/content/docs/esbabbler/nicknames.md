@@ -55,16 +55,15 @@ One column: `usersToRooms.nickname` — `text`, NOT NULL DEFAULT `""`, max 32 ch
 Two internal maps, both keyed by `roomId`, deliberately split for privacy:
 
 - **`myUserToRoom`** — `Map<roomId, UserToRoomInMessage | undefined>` — the **current user's own** full row for that room (notificationType, lastReadAt, isHidden…), reached per room through `getMyUserToRoom` / `setMyUserToRoom`; populated by `readMyUsersToRooms` and the `onUpdateUserToRoom` subscription. There is no per-user inner map here — nobody else's row is ever held. What the store **exports** under that name is `useDataMap`'s current-key ref, not the map — one row, the room in view's — so it is named for the row rather than for the map behind it.
-- **`nicknameMap`** — `Map<roomId, Map<userId, string>>` — **all members'** nicknames (including self); populated by `readNicknames` (called per-room from `readMetadata` in `useReadMembers`) and the same subscription.
+- **`nicknameMap`** — `Map<roomId, Map<userId, string>>` — **all members'** names as the room shows them (including self); filled from each row's server-resolved `displayName` as `readMembers` pages it in, and kept current by the same subscription. The `|| name` fallback in `getDisplayName` covers a cleared nickname.
 
 ## Procedures
 
-Two focused procedures keep each member's private fields (notificationType, lastReadAt, lastMessageAt, isHidden) to themselves:
+Members' nicknames are not a procedure of their own: `readMembers` resolves each one into the row's `displayName`. The one procedure that reads this table keeps each member's private fields (notificationType, lastReadAt, lastMessageAt, isHidden) to themselves:
 
-| Procedure            | Input                   | Returns                          | Who                |
-| :------------------- | :---------------------- | :------------------------------- | :----------------- |
-| `readNicknames`      | `{ roomId, userIds[] }` | `{ userId, roomId, nickname }[]` | All listed members |
-| `readMyUsersToRooms` | `{ roomIds[] }`         | Full `UserToRoomInMessage[]`     | Current user only  |
+| Procedure            | Input           | Returns                      | Who               |
+| :------------------- | :-------------- | :--------------------------- | :---------------- |
+| `readMyUsersToRooms` | `{ roomIds[] }` | Full `UserToRoomInMessage[]` | Current user only |
 
 `readMyUsersToRooms` is called from `useReadRooms` to pre-load the current user's private settings (unread state, notification type) for all rooms at startup.
 

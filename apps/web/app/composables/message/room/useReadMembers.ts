@@ -3,6 +3,7 @@ import type { PublicUser } from "@esposter/db-schema";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useUserStore } from "@/store/message/user";
 import { useMemberStore } from "@/store/message/user/member";
 
@@ -17,19 +18,16 @@ export const useReadMembers = () => {
   const readUserStatuses = useReadUserStatuses();
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
-  const readNicknames = useReadNicknames();
+  const userToRoomStore = useUserToRoomStore();
+  const { setNickname } = userToRoomStore;
   // The term the rows on screen came from, so paging carries it with the cursor — a member who joins mid-scroll
   // Cannot appear in a later page of a search they do not match
   const searchedName = ref("");
   const readMetadata = (roomId: string, memberIds: PublicUser["id"][]) => {
     if (memberIds.length === 0) return Promise.resolve();
-    return Promise.all([
-      readUserStatuses(memberIds),
-      readMemberRoles({ roomId, userIds: memberIds }),
-      readNicknames(roomId, memberIds),
-    ]);
+    return Promise.all([readUserStatuses(memberIds), readMemberRoles({ roomId, userIds: memberIds })]);
   };
-  // A member row is not a user row: the list renders a status, roles and a nickname beside every name. Every path
+  // A member row is not a user row: the list renders a status and roles beside every name. Every path
   // That produces a page — the first, a search, a scroll — goes through here rather than restating the fan-out,
   // Which is how one of them comes to render rows the others do not
   const readMemberPage = async (roomId: string, cursor: string, signal?: AbortSignal) => {
@@ -42,6 +40,9 @@ export const useReadMembers = () => {
       cursorPaginationData.items.map(({ id }) => id),
     );
     storeUsers(cursorPaginationData.items);
+    // The render path resolves a member's name from the overlay, which the read's own display name fills, so
+    // Nothing else has to fetch nicknames
+    for (const { displayName, id } of cursorPaginationData.items) setNickname(roomId, id, displayName);
     return cursorPaginationData;
   };
   // The room's own totals, which a search must never re-read: the roleless group is derived from a count of

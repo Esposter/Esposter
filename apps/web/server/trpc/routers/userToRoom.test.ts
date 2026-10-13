@@ -62,20 +62,6 @@ describe("userToRoomRouter", () => {
     expect(userToRoom.notificationType).toBe(NotificationType.DirectMessage);
   });
 
-  test("reads nicknames for members", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-    const nicknames = await userToRoomCaller.readNicknames({ roomId: newRoom.id, userIds: [userId] });
-    const nicknameEntry = takeOne(nicknames);
-
-    expect(nicknames).toHaveLength(1);
-    expect(nicknameEntry.userId).toBe(userId);
-    expect(nicknameEntry.roomId).toBe(newRoom.id);
-    expect(nicknameEntry.nickname).toBe("");
-  });
-
   test("fails readMyUsersToRooms for non-member", async () => {
     expect.hasAssertions();
 
@@ -84,18 +70,6 @@ describe("userToRoomRouter", () => {
 
     await expect(
       userToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails readNicknames for non-member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      userToRoomCaller.readNicknames({ roomId: newRoom.id, userIds: [userId] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 

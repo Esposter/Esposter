@@ -10,7 +10,6 @@ import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedu
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { roomIdsInputSchema } from "#shared/models/db/room/RoomIdsInput";
 import { readMyUsersToRoomsInputSchema } from "#shared/models/db/userToRoom/ReadMyUsersToRoomsInput";
-import { readNicknamesInputSchema } from "#shared/models/db/userToRoom/ReadNicknamesInput";
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import { roomIdSchema, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, ne } from "drizzle-orm";
@@ -51,14 +50,6 @@ export const userToRoomRouter = router({
         where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
       });
     }),
-  readNicknames: getMemberProcedure(readNicknamesInputSchema, "roomId").query<
-    Pick<UserToRoomInMessage, "nickname" | "roomId" | "userId">[]
-  >(({ ctx, input }) =>
-    ctx.db.query.usersToRoomsInMessage.findMany({
-      columns: { nickname: true, roomId: true, userId: true },
-      where: { roomId: { eq: input.roomId }, userId: { in: input.userIds } },
-    }),
-  ),
   updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation<UserToRoomInMessage>(
     ({ ctx, input }) => updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, input),
   ),
