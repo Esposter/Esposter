@@ -69,9 +69,8 @@ sequenceDiagram
 | `apps/web/app/composables/grapesjs/useGrapesJsEditor.ts`      | deleted                                                  |
 | `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts` | deleted, with the plugin modules and the style manager   |
 | `apps/web/app/services/emailEditor/getEmailHtml.ts`           | deleted; the server compiles                             |
-| `apps/web/shared/services/grapesjs/constants.ts`              | deleted; Mailjet's host moves beside the email types     |
+| `apps/web/shared/services/grapesjs/constants.ts`              | deleted                                                  |
 | `apps/web/configuration/security.ts`                          | no GrapesJS origins                                      |
-| `apps/web/shared/services/app/ImageSourceWhitelist.ts`        | no stock-template hosts; Mailjet for MJML's social icons |
 | `apps/web/server/db/migrations`                               | the custom migration binning every Email and Webpage row |
 | `apps/web/package.json`                                       | GrapesJS and its plugins out, MJML's Node package in     |
 | `pnpm-workspace.yaml`                                         | the catalog entries                                      |

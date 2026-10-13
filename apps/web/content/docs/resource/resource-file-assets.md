@@ -45,7 +45,7 @@ flowchart LR
 
 **The clone asks the same question, and `checkIsResourceAssetReadable` is the one definition both ask.** The read path alone is not enough: `cloneContentAssets` copies whatever url the caller's content names, so a check that lived only on the serving endpoint would let anyone holding a url they cannot open — a personalized export mails absolute ones out — paste it into their own resource, publish, and have the clone re-serve the owner's private blob from a directory that answers to the whole internet. A url the caller may not read is data, not an error: the clone carries it verbatim, exactly like a dangling or unparseable one, so blueprint-deployed content keeps rendering for whoever can already see its assets. The endpoint keeps only the status mapping — an anonymous request for a working-copy url is `401` because it is a missing credential, and everything else the predicate refuses is `404`, since a `401` on a published url would leak that the publication row is gone.
 
-CSP needs no special-casing: `ImageSourceWhitelist` carries `'self'` (the relative url) and the Azure base url (the redirect target — CSP checks redirect targets).
+CSP needs no special-casing: `img-src` carries `'self'` (the relative url) and `https:`, which covers the Azure redirect target (CSP checks redirect targets).
 
 ## Matching a stable url
 

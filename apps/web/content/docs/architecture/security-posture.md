@@ -15,7 +15,6 @@ This page covers the **app**. The Azure estate's posture — network exposure, m
 flowchart TD
   modules["configuration/modules.ts — production branch only"] -->|"registers nuxt-security-module"| module["nuxt-security-module"]
   config["configuration/security.ts"] -->|"headers, requestSizeLimiter"| module
-  plugin["server/plugins/security.ts"] -->|"nuxt-security-module:routeRules hook"| module
   module -->|"Content-Security-Policy and Permissions-Policy"| response["every response"]
   module -->|"rejects an oversized body before the handler"| upload["request size limit"]
   response --> browser["browser enforces the policy"]
@@ -30,7 +29,9 @@ flowchart TD
 
 ### Content Security Policy
 
-`img-src` is not written in the security config at all — it is the shared `ImageSourceWhitelist`, so the one list of permitted image origins serves both the CSP and any other consumer that needs it. Under `nuxt dev` alone, `configuration/development.ts` appends `https://nuxt.com`, where Nuxt DevTools loads the logo on its button from, and `https://unocss.dev`, where the UnoCSS inspector's tab loads its icon from; production names neither. `script-src` carries `'unsafe-eval'`, which Desmos requires to evaluate the expressions it is given; the separate `script-src-elem` and `style-src-elem` lists enumerate the third-party origins actually loaded (Desmos, GrapesJS, MediaPipe's track processors) with a comment naming the dependency behind each entry, so an entry whose dependency is removed is obvious. No font origin is listed: `@nuxt/fonts` fetches each family's stylesheet on the server, at build and in dev, and serves the files as build assets from the app's own `/_nuxt/fonts`, so the browser never contacts the font host. `worker-src` allows `'self'` for the PDF viewer's worker and `blob:` for the one Desmos constructs at runtime.
+`img-src` is `'self'`, `data:`, `blob:` and `https:` — any image served over HTTPS, as [the image policy](#the-image-policy) below sets out. `script-src` carries `'unsafe-eval'`, which Desmos requires to evaluate the expressions it is given; the separate `script-src-elem` and `style-src-elem` lists enumerate the third-party origins actually loaded (Desmos, GrapesJS, MediaPipe's track processors) with a comment naming the dependency behind each entry, so an entry whose dependency is removed is obvious. No font origin is listed: `@nuxt/fonts` fetches each family's stylesheet on the server, at build and in dev, and serves the files as build assets from the app's own `/_nuxt/fonts`, so the browser never contacts the font host. `worker-src` allows `'self'` for the PDF viewer's worker and `blob:` for the one Desmos constructs at runtime.
+
+`connect-src` and `media-src` are written in the security config as well, since `default-src 'self'` would otherwise cover them: `connect-src` names the Azure container, the LiveKit socket and its HTTPS region lookup, Web PubSub, and the two hosts `@livekit/track-processors` fetches its wasm and segmenter model from; `media-src` names the container and `blob:`. Each entry carries its reason beside it in `configuration/security.ts`, and `configuration/security.test.ts` pins them.
 
 ### Embedder policy
 
@@ -50,11 +51,9 @@ The module's `sri` is left at its default, so every script the page loads carrie
 
 `requestSizeLimiter` is wired to `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`, the same constants that bound the tRPC body and the upload SAS. Those values and the upload path they govern are documented in [file uploads](/docs/architecture/file-uploads) — this config is only where the module is told about them.
 
-### The user-content route override
+### The image policy
 
-`connect-src` and `media-src` are written in the security config as well, since `default-src 'self'` would otherwise cover them: `connect-src` names the Azure container, the LiveKit socket and its HTTPS region lookup, Web PubSub, and the two hosts `@livekit/track-processors` fetches its wasm and segmenter model from; `media-src` names the container and `blob:`. Each entry carries its reason beside it in `configuration/security.ts`, and `configuration/security.test.ts` pins them.
-
-`server/plugins/security.ts` hooks `nuxt-security-module:routeRules` and widens `img-src` to include `https:` under the messages and resource explorer routes, merged over whatever rules already apply via `defu`. Members post arbitrary image links to each other, in a message or inside a resource's page or email, and an allowlist cannot enumerate the web; every other route keeps the narrow whitelist, so the widening is scoped to exactly the surface that needs it.
+Members post arbitrary image links to each other, in a message or inside a resource's page or email, and an allowlist cannot enumerate the web, so `img-src` takes `https:` on every route. A narrower policy per route cannot hold here: the app navigates on the client, so the document a session first loaded carries its policy to every page opened after it, and a room reached from the home page would keep the home page's list. An earlier per-route widening under the messages route is rejected for exactly that, and it never took effect besides: the header served under the messages route carried the narrow list all the same.
 
 The accepted cost is a privacy one, and it is accepted rather than unnoticed: a rendered image is a request the viewer's browser makes to whatever origin the poster chose, so that origin learns every viewer's IP address and the moment they opened the room or the resource. Nothing mitigates it today. The only real fix is proxying message images through the app, which trades the leak for bandwidth, a cache and a fetch-side SSRF surface — worth revisiting when rooms hold people who do not already trust each other, not before.
 
@@ -67,13 +66,10 @@ The accepted cost is a privacy one, and it is accepted rather than unnoticed: a 
 
 Paths relative to `apps/web`.
 
-| File                                          | Role                                                                    |
-| --------------------------------------------- | ----------------------------------------------------------------------- |
-| `configuration/modules.ts`                    | registers `nuxt-security-module` in the production module list only     |
-| `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features         |
-| `configuration/development.ts`                | the dev-only `img-src` entries for the DevTools button and tab icons    |
-| `server/plugins/security.ts`                  | per-route CSP override widening `img-src` under the user-content routes |
-| `configuration/routeRules.ts`                 | the embedder policy on built scripts, so a dedicated worker starts      |
-| `configuration/experimental.ts`               | the entry import map off, so a chunk's name changes with its bytes      |
-| `shared/services/app/ImageSourceWhitelist.ts` | the shared list of permitted image origins                              |
-| `shared/services/app/constants.ts`            | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                          |
+| File                               | Role                                                                |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| `configuration/modules.ts`         | registers `nuxt-security-module` in the production module list only |
+| `configuration/security.ts`        | CSP, permissions policy, request size limits, disabled features     |
+| `configuration/routeRules.ts`      | the embedder policy on built scripts, so a dedicated worker starts  |
+| `configuration/experimental.ts`    | the entry import map off, so a chunk's name changes with its bytes  |
+| `shared/services/app/constants.ts` | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                      |

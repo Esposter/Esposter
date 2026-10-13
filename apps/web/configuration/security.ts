@@ -3,7 +3,6 @@ import type { NuxtConfig } from "nuxt/schema";
 import { BASE_URL } from "../app/services/desmos/constants.ts";
 import { MEDIAPIPE_TASKS_VISION_URL } from "../app/services/message/room/liveKit/constants.ts";
 import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
-import { ImageSourceWhitelist } from "../shared/services/app/ImageSourceWhitelist.ts";
 import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../shared/services/grapesjs/constants.ts";
 
 export const security: NuxtConfig["security"] = {
@@ -25,7 +24,10 @@ export const security: NuxtConfig["security"] = {
         "https://storage.googleapis.com",
         // An unset env var, as in CI, leaves its host out: the security module refuses an undefined source
       ].filter((source) => source !== undefined),
-      "img-src": ImageSourceWhitelist,
+      // Members embed images from anywhere on the web, in a message or a resource's page or email, and no allowlist
+      // Can enumerate it. One policy for every route: the app navigates on the client, so the document a session
+      // Landed on carries its policy to every page it opens after
+      "img-src": ["'self'", "data:", "blob:", "https:"],
       // Audio and video messages play from Azure Blob, and an uploaded file's preview plays from its `blob:` URL
       "media-src": ["'self'", process.env.AZURE_CONTAINER_BASE_URL, "blob:"].filter((source) => source !== undefined),
       // Desmos

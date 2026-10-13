@@ -47,6 +47,5 @@ describe("security", () => {
       "https://storage.googleapis.com",
     ]);
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(["'self'", "blob:"]);
-    expect(contentSecurityPolicy?.["img-src"]).not.toContain(undefined);
   });
 });

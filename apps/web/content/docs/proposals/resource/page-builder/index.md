@@ -83,7 +83,7 @@ The published views render nothing of GrapesJS: `apps/web/app/components/Resourc
 
 ## What GrapesJS costs
 
-**Bytes.** The table above. Both editors also load Font Awesome 4 from cdnjs, because GrapesJS's default `cssIcons` names it and the style sectors use its classes; the webpage editor fetches the TUI image editor, which bundles Fabric.js, from `uicdn.toast.com` as soon as its plugin initialises, whether or not an image is ever edited. Both origins are entries in `apps/web/configuration/security.ts` for that reason, and its stock templates, blocks and image editor add six image hosts to `apps/web/shared/services/app/ImageSourceWhitelist.ts`.
+**Bytes.** The table above. Both editors also load Font Awesome 4 from cdnjs, because GrapesJS's default `cssIcons` names it and the style sectors use its classes; the webpage editor fetches the TUI image editor, which bundles Fabric.js, from `uicdn.toast.com` as soon as its plugin initialises, whether or not an image is ever edited. Both origins are entries in `apps/web/configuration/security.ts` for that reason.
 
 **Architecture.** Every component is a Backbone model with a Backbone view rendering into the frame's document; tools such as the badge, the toolbar and the offsets are drawn in the parent over the frame. A project is pages of frames of component JSON — `type`, `tagName`, `attributes`, `components`, text as `textnode` children — beside an array of CSS rule objects with `selectors`, `style`, `mediaText` and `state`. HTML comes from each model's `toHTML`, CSS from the CSS composer. Its bundled ESM module runs to about seventy thousand lines, of which about fifty thousand are its own; in those, no `aria-` attribute, `role` or `tabindex` appears.
 
