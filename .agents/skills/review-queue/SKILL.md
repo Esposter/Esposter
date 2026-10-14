@@ -1,6 +1,6 @@
 ---
 name: review-queue
-description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, a single change committed on a local branch in the main checkout, and a worktree opened only for changes that run concurrently, landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
+description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, every change committed on `ai/queue` itself in the main checkout (no branch of its own), and a worktree opened only for changes that run concurrently, landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
 ---
 
 # Review Queue
@@ -35,9 +35,9 @@ A session pushes `main` only as the direct local push under "Settled" allows —
 
 ## The loop
 
-A single change lands from the main checkout, on a local branch of its own, with no worktree: branch from `origin/ai/queue`, edit, commit by pathspec, and land. The checkout's existing installs serve it, so no install is run. A worktree is opened only when two or more changes must run at once, since each worktree costs a whole install of the packages it touches (`.agents/skills/throughput/references/fleet.md` owns the commands and why). Each agent:
+Every change lands on `ai/queue` itself, in the main checkout: fast-forward `ai/queue` to `origin/ai/queue`, edit, commit by pathspec, and land. No branch is cut for a change, and a finished one is never left behind as a local branch. The checkout's existing installs serve it, so no install is run. A worktree is opened only when two or more changes must run at once, since each worktree costs a whole install of the packages it touches (`.agents/skills/throughput/references/fleet.md` owns the commands and why). Each agent:
 
-1. **Cuts a branch of its own from the queue.** `git switch -c <name> origin/ai/queue`, in the main checkout when the change is one. Only for a concurrent change: `git worktree add -b <name> .agents/worktrees/<name> origin/ai/queue`, then the install of the packages it will touch, never the whole workspace. A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
+1. **Fast-forwards `ai/queue` and works on it.** `git switch ai/queue && git merge --ff-only origin/ai/queue`. Only for a concurrent change: `git worktree add .agents/worktrees/<name> origin/ai/queue`, then the install of the packages it will touch, never the whole workspace. A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
 2. **Commits each coherent unit by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit.
 3. **Lands the commits:**
 
