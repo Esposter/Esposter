@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T">
-import type { UiSchemaFormConfig } from "@/models/ui/UiSchemaFormConfig";
+import type { UiSchemaFormConfiguration } from "@/models/ui/UiSchemaFormConfiguration";
 import type { CoreActions, JsonFormsCore, JsonFormsSubStates, JsonSchema } from "@jsonforms/core";
 import type { z } from "zod";
 
@@ -21,7 +21,7 @@ interface Props {
 // Validation is off
 const modelValue = defineModel<T>({ required: true });
 const { context = {}, schema, validationSchema } = defineProps<Props>();
-const config = computed<UiSchemaFormConfig>(() => {
+const config = computed<UiSchemaFormConfiguration>(() => {
   const issueMap = new Map<string, string>();
   const result = validationSchema?.safeParse(modelValue.value);
   if (result && !result.success)

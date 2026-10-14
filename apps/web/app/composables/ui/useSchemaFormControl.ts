@@ -1,4 +1,4 @@
-import type { UiSchemaFormConfig } from "@/models/ui/UiSchemaFormConfig";
+import type { UiSchemaFormConfiguration } from "@/models/ui/UiSchemaFormConfiguration";
 import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
 
 import { getSchemaFormLayout } from "@/services/ui/schemaForm/getSchemaFormLayout";
@@ -9,7 +9,7 @@ import { useJsonFormsControl } from "@jsonforms/vue";
 export const useSchemaFormControl = (props: UiSchemaFormRendererProps) => {
   const { control, handleChange } = useJsonFormsControl(props);
   const isChanged = ref(false);
-  const config = computed(() => control.value.config as UiSchemaFormConfig);
+  const config = computed(() => control.value.config as UiSchemaFormConfiguration);
   const layout = computed(() => getSchemaFormLayout(control.value.schema) ?? {});
   const issue = computed(() => (isChanged.value ? config.value.issueMap.get(control.value.path) : undefined));
   const change = (value: unknown) => {
