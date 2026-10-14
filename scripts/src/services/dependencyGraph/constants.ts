@@ -2,7 +2,7 @@
 
 export const GRAPH_FILENAME = "dependency-graph.svg";
 
-// Pnpm writes a sibling it links from the workspace as a `link:` version to its folder
+// `pnpm` writes a sibling it links from the workspace as a `link:` version to its folder
 export const LINK_PREFIX = "link:";
 // The one neutral in the palette. It is the grey that carries against both a white and a near-black page, which
 // Is what every line the theme does not own has to do — the svg is committed once and read in either scheme.

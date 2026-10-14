@@ -15,12 +15,13 @@ import { test } from "vitest";
 // So the reason travels with the file.
 const IS_CI = Boolean(process.env.CI);
 // Switched off locally too, and this is that switch. Three iterations over every package is three full
-// `vp run build:packages` runs — ten minutes before any other member's bench starts — and what it measures is
-// Tsdown and rolldown rather than anything in this repo, so it moves when a dependency bumps and not when the code
-// Does. It is also the one bench that deletes state it does not own: each `dist` it removes to force a cold build is
-// The same `dist` a concurrent member's `vitest.config.ts` resolves `@esposter/configuration` through, which is why
-// The root `bench` script pins `--workspace-concurrency=1`. Flip to `true` when the build pipeline itself changes,
-// Run `pnpm bench` in this package, commit the artifact, flip it back.
+// `vp run build:packages` runs, ten minutes before any other member's bench starts. What it measures is
+// `tsdown` and `rolldown`, so it moves when a dependency bumps rather than when this repo's code does.
+// It is also the one bench that deletes state it does not own: each
+// `dist` it removes to force a cold build is the same `dist` a concurrent member's `vitest.config.ts` resolves
+// `@esposter/configuration` through, which is why the root `bench` script pins `--workspace-concurrency=1`.
+// Flip to `true` when the build pipeline itself changes, then run `pnpm bench` in this package,
+// `commit` the artifact, and flip it back.
 const IS_ENABLED = false;
 const isBenchable = IS_ENABLED && !IS_CI;
 // The cwd is pinned to the repository root rather than inherited: this file's project root is `scripts/`, and a
