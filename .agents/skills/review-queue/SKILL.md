@@ -11,9 +11,10 @@ Every agent works on **one permanent branch, `ai/queue`**, from its own git work
 
 - **Per-chunk feature branches.** The queue is linear history and the review cuts its windows at commit boundaries, so a branch per chunk adds a merge that buys nothing.
 - **Pushing `main` by hand, outside the scenarios below.** `main` moves by the review's fast-forward. Two hand pushes are allowed, both plain fast-forwards, never forced: the owner's fast-forward of `main` to `ai/queue` once a review has passed, and the direct local push below. Any other hand push is a commit the review never read.
-  - **Direct local push (no review).** A change made locally in the main checkout, on a local branch, that is a CI fix or a hand dependency update (`dependency-updates`). It goes to `ai/queue` and `main` in the same sitting, without waiting for the review. Its CI run still gates it: a red result is fixed in the next commit, pushed the same way.
+  - **Direct local push (no review), two commit types only.** A commit whose subject is `fix(ci):` (a CI fix) or `chore(deps):` (a hand dependency update, `dependency-updates`), made locally in the main checkout. It goes to `ai/queue` and then `main` in the same sitting, without waiting for the review. Its CI run still gates it: a red result is fixed in the next commit, pushed the same way.
+  - **Never direct, whatever its size:** a docs page, a skill, a ledger, a roadmap entry, a feature, a refactor, a test. Those go to `ai/queue` and wait for the review, even when the change is one line of prose. A commit that touches docs alongside a CI fix is split, the fix going direct and the docs through the queue.
+  - **When in doubt, the queue.** If the subject cannot honestly say `fix(ci)` or `chore(deps)`, the commit is not direct.
   - **Automatic, not a session's push.** Renovate's minor and patch automerges land on `ai/queue` by the bot, which is the one other separate change that does not need a session. Majors and pnpm bumps wait for a person (`dependency-updates`).
-  - Anything else — a feature, a refactor, a docs change — goes through `ai/queue` and the review.
 - **Merging `main` into `ai/queue`.** A merge is never linearised away, and it blinds the next pull: a rebase onto `origin/main` is then a no-op, and `git cherry` reads every already-landed commit as owed. The queue catches up by `git pull --rebase` only. The one merge the system makes itself is the review's, when `main` was pushed by hand.
 - **Rebasing or force-pushing `ai/queue` to reshape it.** Nothing rewrites the queue, so a session that does is the only writer changing history under the others. A session's own unlanded commits are replayed by `git pull --rebase`, and that is all.
 - **Syncing by reset.** `git reset --hard origin/ai/queue`, and a reset followed by cherry-picking what `git cherry` calls owed, stay rejected. `git cherry` matches patch ids, so the list cannot tell a commit the remote already carries from one it lacks, and the reset throws local history away on that guess. The rebase keeps it: each conflict stops on one commit with both sides in view.
@@ -29,7 +30,7 @@ Every agent works on **one permanent branch, `ai/queue`**, from its own git work
 | `main`       | the review only                         | a fast-forward to the end of the last window that passed                     |
 | other `ai/*` | the one session that owns it            | a plain push                                                                 |
 
-A session pushes `main` only in the direct local push scenario under "Settled" — never otherwise. Its branch is local, named after the change, and never pushed under its own name: it only gives the pull a fork point.
+A session pushes `main` only in the direct local push scenario under "Settled" (a `fix(ci)` or `chore(deps)` commit) — never otherwise. Its branch is local, named after the change, and never pushed under its own name: it only gives the pull a fork point.
 
 ## The loop
 
