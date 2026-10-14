@@ -7,18 +7,22 @@ import { publishBlobPrefixDeletion } from "#server/services/azure/eventGrid/publ
 import { ownedBy } from "#server/services/db/ownedBy";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
-import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { AzureContainer, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 
 export const deleteRoom = async (db: Context["db"], { session, user }: GetSessionPayload, id: string) => {
-  const deletedRoom = (
-    await db
-      .delete(roomsInMessage)
-      .where(ownedBy(roomsInMessage, id, user.id))
-      .returning()
-  )[0];
-  if (!deletedRoom) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Room, id);
+  const deletedRoom = requireMutation(
+    (
+      await db
+        .delete(roomsInMessage)
+        .where(ownedBy(roomsInMessage, id, user.id))
+        .returning()
+    )[0],
+    Operation.Delete,
+    DatabaseEntityType.Room,
+    id,
+  );
 
   roomEventEmitter.emit("deleteRoom", { roomId: deletedRoom.id, sessionId: session.id, userId: user.id });
   // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed — which is
