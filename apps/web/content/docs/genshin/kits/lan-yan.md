@@ -29,5 +29,5 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/lanyan), MIT: the hitmark, animation and reach of each strike, the charged attack, the plunges' hitmarks and radii, the burst's hits and animation, and the skill's animation, read from its attack, charge, plunge, burst, skill and constellation files.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lanyan), MIT: the hitmark, animation and reach of each strike, the charged attack, the plunges' hitmarks and radii, the burst's hits and animation, and the skill's animation, read from its attack, charge, plunge, burst, skill and constellation files.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists the multipliers, cooldowns and costs beside each group.
