@@ -1,3 +1,4 @@
+import type { FormsPluginOptions } from "@/models/webpageEditor/FormsPluginOptions";
 import type { BlockProperties, Component, Editor, Plugin } from "grapesjs";
 
 const FORM_TYPE = "form";
@@ -62,12 +63,6 @@ const createOption = (value: string, label: string) => ({
 
 // The options trait reads and writes through one textarea per trait view, so the element is kept on that view
 const optionsTextInputs = new WeakMap<object, HTMLTextAreaElement>();
-
-export interface FormsPluginOptions {
-  block?: (blockId: string) => Partial<BlockProperties>;
-  blocks?: string[];
-  category?: BlockProperties["category"];
-}
 
 export const formsPlugin: Plugin<FormsPluginOptions> = (editor: Editor, options) => {
   const { block = () => ({}), blocks = DEFAULT_BLOCK_IDS, category = { id: "forms", label: "Forms" } } = options;
