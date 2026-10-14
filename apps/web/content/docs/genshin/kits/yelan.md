@@ -19,4 +19,4 @@ Yelan's kit is its record and one behaviour module, `createYelanKitBehaviour`, o
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yelan), MIT: the kit's hitmarks, cancel frames and areas, the shot's frames, Lingering Lifeline's frames and hit, Depth-Clarion Dice's initial hit, its Exquisite Throws' travel and interval, and the wave's ticker.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yelan), MIT: the kit's hitmarks, cancel frames and areas, the shot's frames, Lingering Lifeline's frames and hit, Depth-Clarion Dice's initial hit, its Exquisite Throws' travel and interval, and the wave's ticker.
