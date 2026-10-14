@@ -1,18 +1,8 @@
+import type { SurfaceStatisticsPage } from "#src/models/genshinParity/shared/SurfaceStatisticsPage";
+
 import { PARITY_PAGE_ROOT } from "#src/services/genshinParity/shared/constants";
 import { getResultAsync } from "@esposter/shared";
 import { chromium } from "playwright";
-
-export interface SurfaceStatisticsPage {
-  close: () => Promise<void>;
-  // A surface's statistics over the pixels its mask holds, reduced on the page's GPU, as `computeStructureError` reads them
-  computeStatistics: (
-    values: Float32Array,
-    mask: Uint8Array,
-    width: number,
-    height: number,
-    sigmas: readonly number[],
-  ) => Promise<number[]>;
-}
 
 // The parity page's root, where the GPU reductions a surface's structure is scored by are served. The caller closes the
 // Page with `close`, which closes the browser it launched

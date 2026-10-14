@@ -1,4 +1,4 @@
-import type { SvgPathSegment } from "#src/services/genshinParity/shared/parseSvgPath";
+import type { SvgPathSegment } from "#src/models/genshinParity/shared/SvgPathSegment";
 
 import { SvgPathCommand } from "#src/models/genshinParity/shared/SvgPathCommand";
 import { SvgPathTokenType } from "#src/models/genshinParity/shared/SvgPathTokenType";

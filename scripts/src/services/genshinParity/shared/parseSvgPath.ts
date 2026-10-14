@@ -1,16 +1,8 @@
+import type { SvgPath } from "#src/models/genshinParity/shared/SvgPath";
+import type { SvgPathSegment } from "#src/models/genshinParity/shared/SvgPathSegment";
+
 import { SvgPathCommand } from "#src/models/genshinParity/shared/SvgPathCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-export interface SvgPath {
-  scale: number;
-  segments: SvgPathSegment[];
-}
-
-export interface SvgPathSegment {
-  command: SvgPathCommand;
-  // Absolute coordinates as integers in the path's scale, with an arc's two flags as 0 or 1 unscaled
-  values: number[];
-}
 
 const COMMAND_REGEX = /[A-Za-z]/u;
 const FLAG_REGEX = /[01]/u;
