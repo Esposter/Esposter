@@ -5,7 +5,7 @@ import {
   BLUEPRINT_ENTRY_TOKEN_REGEX,
   BLUEPRINT_PARAMETER_TOKEN_REGEX,
 } from "#shared/services/resource/blueprint/constants";
-import { visitBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
+import { visitBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/visitBlueprintEntryContentStrings";
 import { substituteBlueprintParameterTokens } from "#shared/services/resource/blueprint/substituteBlueprintParameterTokens";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 
