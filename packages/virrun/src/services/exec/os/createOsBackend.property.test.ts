@@ -56,7 +56,8 @@ describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
     temporaryDirectories.cleanup();
   });
 
-  // Over 5s on the shared bridge (~31s), so disabled for now; drop `.skip` to restore.
+  // Over 5s on the shared bridge (~31s), so disabled for now. To restore, put back the
+  // `skipIf(!checkIsOsBackendSupported())` gate in place of `.skip`.
   test.skip(
     "randomized command sequences never corrupt sandbox state",
     async () => {

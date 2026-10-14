@@ -17,7 +17,8 @@ describe(createOsBackend, () => {
   // Real bwrap sandbox execs (win32: over the wsl.exe bridge) contend for the one shared WSL bridge when the suite
   // Fans test files across 16 workers, so a ~1-3s exec can exceed vitest's 5s default. Same hang-ceiling the sibling
   // Acceptance/property os tests carry; the exec is not slow, the cross-file contention is.
-  // Over 5s on the shared bridge, so disabled for now; drop `.skip` to restore.
+  // Over 5s on the shared bridge, so disabled for now. To restore, put back the
+  // `skipIf(!checkIsOsBackendSupported())` gate in place of `.skip`.
   test.skip(
     "captures stdout and a zero exit code",
     async () => {
@@ -32,7 +33,8 @@ describe(createOsBackend, () => {
     ACCEPTANCE_TIMEOUT_MS,
   );
 
-  // Over 5s on the shared bridge, so disabled for now; drop `.skip` to restore.
+  // Over 5s on the shared bridge, so disabled for now. To restore, put back the
+  // `skipIf(!checkIsOsBackendSupported())` gate in place of `.skip`.
   test.skip(
     "propagates a non-zero exit code as a result, not a throw",
     async () => {
@@ -51,7 +53,8 @@ describe(createOsBackend, () => {
   // Reported and the backend must reject rather than invent a result. The reject message carries the
   // Base sentinel plus bwrap's own (host-/version-specific) diagnostic appended, so match the stable
   // Sentinel as a substring — the exact stderr-surfacing contract is pinned in createBwrapBackend.test.ts.
-  // Over 5s on the shared bridge, so disabled for now; drop `.skip` to restore.
+  // Over 5s on the shared bridge, so disabled for now. To restore, put back the
+  // `skipIf(!checkIsOsBackendSupported())` gate in place of `.skip`.
   test.skip(
     "rejects with a sandbox error when bubblewrap fails to set up",
     async () => {
