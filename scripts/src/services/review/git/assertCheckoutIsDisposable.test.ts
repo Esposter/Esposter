@@ -27,7 +27,7 @@ describe(assertCheckoutIsDisposable, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () =>
     writeFileSync(join(getCwd(), PATH), "edit");
 
     expect(() => assertCheckoutIsDisposable(getCwd())).toThrowErrorMatchingInlineSnapshot(`
-      [InvalidOperationError: Invalid operation: Read, name: assertCheckoutIsDisposable, The review resets this checkout to the queue's tip, which would discard:
+      [InvalidOperationError: Invalid operation: Delete, name: assertCheckoutIsDisposable, The review resets this checkout to the queue's tip, which would discard:
       M README.md
       Run it from a checkout of its own.]
     `);
@@ -41,7 +41,7 @@ describe(assertCheckoutIsDisposable, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () =>
     commitFile(PATH, "unpushed");
 
     expect(() => assertCheckoutIsDisposable(getCwd())).toThrowErrorMatchingInlineSnapshot(`
-      [InvalidOperationError: Invalid operation: Read, name: assertCheckoutIsDisposable, The review resets this checkout to the queue's tip, which would discard:
+      [InvalidOperationError: Invalid operation: Delete, name: assertCheckoutIsDisposable, The review resets this checkout to the queue's tip, which would discard:
       6251999 README.md
       Run it from a checkout of its own.]
     `);

@@ -3,8 +3,8 @@ import type { ProgramInvite } from "#shared/models/resource/program/ProgramInvit
 import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
 
-// Key values are unique per program, but sanitizing can map two of them to one name ("12/3" and "12-3"), so a name
-// Already taken gets a counter rather than replacing the participant who has it
+// Key values are unique per program, but sanitizing can map two of them to one name ("12/3" and "12-3").
+// A name already taken gets a counter rather than replacing the participant who has it
 const createUniqueFileName = (keyValue: string, takenFileNames: Set<string>) => {
   const sanitizedName = sanitizeFilename(keyValue);
   let fileName = sanitizedName;

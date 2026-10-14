@@ -11,7 +11,7 @@ export const assertCheckoutIsDisposable = (cwd: string = REPOSITORY_ROOT): void 
   const unpushed = runGit(["log", "--oneline", `${REMOTE_QUEUE_REF}..HEAD`], cwd).trim();
   if (!changes && !unpushed) return;
   throw new InvalidOperationError(
-    Operation.Read,
+    Operation.Delete,
     assertCheckoutIsDisposable.name,
     [
       "The review resets this checkout to the queue's tip, which would discard:",
