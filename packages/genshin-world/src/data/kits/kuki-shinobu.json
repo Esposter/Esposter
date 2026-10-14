@@ -4,7 +4,7 @@
   "frames.ringNextTick": { "cause": "Unclassified", "value": 113 },
   "frames.ringStart": { "cause": "Unclassified", "value": 23 },
   "frames.ringTickInterval": { "cause": "Unclassified", "value": 90 },
-  "hits.gyoeiNarukamiKariyamaRite.length": { "cause": "Unclassified", "value": 7 },
+  "hits.gyoeiNarukamiKariyamaRite.length": { "cause": "DiffersFromSource", "value": 7 },
   "hits.gyoeiNarukamiKariyamaRite.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
@@ -96,7 +96,7 @@
   },
   "hits.gyoeiNarukamiKariyamaRite.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.gyoeiNarukamiKariyamaRite.6.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.length": { "cause": "Unclassified", "value": 7 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.length": { "cause": "DiffersFromSource", "value": 7 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
