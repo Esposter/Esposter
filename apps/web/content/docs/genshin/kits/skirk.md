@@ -35,5 +35,5 @@ Skirk's kit is its record and one behaviour module, `createSkirkKitBehaviour`, o
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/main/internal/characters/skirk), MIT: the strikes' hitmarks, animations and reaches, the Seven-Phase Flash's state, its entry at 19 frames and its 754 frames, the charged attack's slashes and reach, Havoc: Ruin's slashes, final slash, reach and animation, Havoc: Extinction's animation, the cooldowns and energy maximum.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/skirk), MIT: the strikes' hitmarks, animations and reaches, the Seven-Phase Flash's state, its entry at 19 frames and its 754 frames, the charged attack's slashes and reach, Havoc: Ruin's slashes, final slash, reach and animation, Havoc: Extinction's animation, the cooldowns and energy maximum.
 - The proud skill groups 11431, 11432 and 11439 in the hosted game data: each multiplier's index and the cooldowns, read at talent level 1.
