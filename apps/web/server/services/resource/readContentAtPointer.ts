@@ -2,15 +2,16 @@ import type { ReadResourceContentInput } from "#shared/models/db/resource/ReadRe
 import type { ReadResourceContentResult } from "#shared/models/resource/ReadResourceContentResult";
 import type { Except } from "type-fest";
 
-import { checkIsJsonSizeWithin, getLeafSize } from "#server/services/resource/checkIsJsonSizeWithin";
+import { checkIsJsonSizeWithin } from "#server/services/resource/checkIsJsonSizeWithin";
 import { MAX_AGENT_READ_SIZE } from "#server/services/resource/constants";
+import { getJsonByteSize } from "#server/services/resource/getJsonByteSize";
 import { parseJsonPointer } from "#shared/services/jsonPatch/parseJsonPointer";
 import { readJsonValue } from "#shared/services/jsonPatch/readJsonValue";
 import { checkIsPlainObject, getResult } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 const getMemberSizes = (members: [string, unknown][]) =>
-  Object.fromEntries(members.map(([key, member]) => [key, getLeafSize(member)]));
+  Object.fromEntries(members.map(([key, member]) => [key, getJsonByteSize(member)]));
 // The stored JSON at a pointer, an array a page at a time with its length beside the page. Past the read cap the content
 // Is left out and the size of each of its members answered instead, so the agent narrows the read rather than receive
 // A truncated document
@@ -39,6 +40,6 @@ export const readContentAtPointer = (
   }
   // A leaf has no members to size, so its own size is the one thing the read can say it withheld. It is serialized
   // Once, and that size both decides whether the leaf is returned and is the size returned when it is not
-  const leafSize = getLeafSize(value);
+  const leafSize = getJsonByteSize(value);
   return leafSize <= MAX_AGENT_READ_SIZE ? { content: value } : { size: leafSize };
 };
