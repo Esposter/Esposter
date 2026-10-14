@@ -1,10 +1,11 @@
 import type { Context } from "#server/trpc/context";
 
-import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
+import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
-export const requireCallSession = async (db: Context["db"], callSessionId: string) => {
-  const callSession = await db.query.callSessionsInMessage.findFirst({ where: { id: { eq: callSessionId } } });
-  if (!callSession) throw getNotFoundError(DatabaseEntityType.CallSession, callSessionId);
-  return callSession;
-};
+export const requireCallSession = (db: Context["db"], callSessionId: string) =>
+  requireEntity(
+    db.query.callSessionsInMessage.findFirst({ where: { id: { eq: callSessionId } } }),
+    DatabaseEntityType.CallSession,
+    callSessionId,
+  );
