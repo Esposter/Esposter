@@ -148,10 +148,10 @@ const configuration: UserConfig = defineConfig({
         cwd: `${PACKAGES_DIRECTORY}/genshin-world`,
         dependsOn: [getBuildTaskName("genshin-world")],
       },
-      // The checks are cached leaves, each traced like a build: a tree no leaf's reads changed in replays its verdict.
-      // The aggregates over them are uncached, so an aggregate with no inputs of its own never replays a verdict no
-      // Leaf produced. `dependsOn` runs every leaf even after one fails, where `&&` stops at the first, so a red check
-      // Never hides the rest
+      // The checks are cached leaves, each traced like a build: a tree no leaf's reads changed in replays its verdict. The one
+      // Exception is `typecheck:workspace`, uncached because its check writes across `.nuxt`. The aggregates over them are
+      // Uncached, so an aggregate with no inputs of its own never replays a verdict no leaf produced. `dependsOn` runs every
+      // Leaf even after one fails, where `&&` stops at the first, so a red check never hides the rest
       "format:check": createTask("vp fmt --check", []),
       lint: {
         cache: false,
