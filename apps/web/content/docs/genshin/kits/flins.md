@@ -34,6 +34,6 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/flins), MIT: each strike's hitmark, animation and reach, the charged attack's box, hitmark and animation, Manifest Flame's press and stance, and Cometh the Night's hitmarks, animation and circle, read from gcsim's `attack.go`, `charge.go`, `skill.go` and `burst.go`; `cons.go` and `asc.go` hold the mechanics still waiting on hooks.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/flins), MIT: each strike's hitmark, animation and reach, the charged attack's box, hitmark and animation, Manifest Flame's press and stance, and Cometh the Night's hitmarks, animation and circle, read from gcsim's `attack.go`, `charge.go`, `skill.go` and `burst.go`; `cons.go` and `asc.go` hold the mechanics still waiting on hooks.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier beside its group.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Flins's own folder has no plunge file.
