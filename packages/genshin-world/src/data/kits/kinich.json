@@ -8,7 +8,7 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 20.024937810560445 }
   },
-  "hitFields.dragonBreath.element": { "cause": "Unclassified", "value": "Grass" },
+  "hitFields.dragonBreath.element": { "cause": "Unsourced", "value": "Grass" },
   "hitFields.dragonBreath.gauge": { "cause": "Unsourced", "value": 1 },
   "hitFields.dragonBreath.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
   "hitFields.dragonBreath.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 10139 } },
