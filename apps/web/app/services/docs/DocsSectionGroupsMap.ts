@@ -49,6 +49,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     Development: [
       "environment",
       "monorepo-tooling",
+      "release-flow",
       "build-pipeline",
       "vite-plus",
       "nuxt-module-packages",
