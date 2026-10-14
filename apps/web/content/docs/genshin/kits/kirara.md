@@ -19,4 +19,4 @@ Kirara's kit is its record and one behaviour module, `createKiraraKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kirara), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's three circles, Tail-Flicking Flying Kick's fan, the short hold's and the holds' cat ticks and kicks, the shield's duration, and Secret Art: Surprise Dispatch's box, mines and expiry.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/kirara), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's three circles, Tail-Flicking Flying Kick's fan, the short hold's and the holds' cat ticks and kicks, the shield's duration, and Secret Art: Surprise Dispatch's box, mines and expiry.
