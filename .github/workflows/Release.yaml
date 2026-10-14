@@ -1,9 +1,9 @@
 name: 🚀 Release
 
-# The nightly release, of main: only what a review has passed ships. `version` versions and tags main's new commits and pushes
-# the commit and its tag to main, then starts a review run, whose diverged-main step merges the version commit into ai/queue.
-# `npm` publishes the tagged packages through trusted publishing, and `release` makes the GitHub release that `host-installer`
-# and `publish` complete. A night with no commit on main since the last tag is skipped by `check`, and every later job with it.
+# The nightly release, of main: only what a review has passed ships. One job runs `pnpm release`, which gates the tree, versions
+# and tags main's new commits, pushes the version commit and its tags to main, and publishes the new versions through npm trusted
+# publishing. Then the job drafts the GitHub release, `host-installer` attaches the Windows host to that draft, and `publish` makes
+# it public last. The review run that the job starts merges main into ai/queue.
 on:
   schedule:
     # Nightly, at 15:16 UTC
@@ -42,17 +42,20 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # The push goes through the collector's token, not the workflow's: main's ruleset lets only the Admin role update it, the
-  # role the review's fast-forward pushes with
-  version:
-    name: Version and tag
+  # The push goes through the collector's token, not the workflow's: main's ruleset lets only the Admin role update it, the role
+  # the review's fast-forward pushes with. The same job holds id-token: write, which npm's trusted publishing exchanges for each
+  # package's publish, so the versions the release pushes are the ones it publishes, with no second job to fetch them again.
+  release:
+    name: Release
     needs: check
     if: needs.check.outputs.skip == 'false'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+      id-token: write
     outputs:
-      tag: ${{ steps.push.outputs.tag }}
+      tag: ${{ steps.tag.outputs.tag }}
+      is-published: ${{ steps.release.outputs.is-published }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -60,97 +63,42 @@ jobs:
           ref: main
           fetch-depth: 0
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-          persist-credentials: false
+          persist-credentials: true
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      # Lerna lives in the root project, so the root is all `version` installs
-      - name: 📦 Install the root
+      - name: 📦 Install the workspace
         uses: ./.github/actions/install-projects
-        with:
-          filter: "{.}"
 
       - name: 🆔 Identify the releaser
         run: |
           git config user.name "Q16solver"
           git config user.email "Q16solver@users.noreply.github.com"
 
-      - name: 🏷️ Version
-        run: pnpm release:version
-
-      # Lerna tagged the version commit before the push, so after a rebase onto a main the review has just moved, the tag is
-      # re-pointed at the rebased commit. A conflicting rebase fails the step, since only the commit's author can settle it.
-      # Once pushed, a review run is started, which finds main diverged and merges it into ai/queue
-      - name: 📤 Push the version
-        id: push
-        env:
-          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-        run: |
-          gh auth setup-git
-          tag="$(git describe --tags --abbrev=0)"
-          for attempt in 1 2 3 4 5; do
-            git pull --rebase origin main
-            git tag -fa "$tag" -m "$tag"
-            if git push origin HEAD:main && git push origin "refs/tags/$tag"; then
-              echo "tag=$tag" >> "$GITHUB_OUTPUT"
-              gh workflow run Review.yaml --ref ai/queue --repo "$GITHUB_REPOSITORY"
-              exit 0
-            fi
-            echo "Push attempt $attempt was rejected, retrying on the new tip of main." >&2
-          done
-          echo "Could not push $tag to main after 5 attempts." >&2
-          exit 1
-
-  # Publishes at the tag `version` pushed, so the packages on npm are the tree the tag names. No NPM_TOKEN: lerna-lite exchanges
-  # this run's OIDC token for each package, and turns on provenance itself
-  npm:
-    name: Publish to npm
-    needs: [check, version]
-    if: needs.check.outputs.skip == 'false'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ needs.version.outputs.tag }}
-          persist-credentials: false
-
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
-      # `scripts` too, not only the packages: the root's oxlint config loads its plugins, so `pnpm release`'s lint
-      # needs the `scripts` project's dependencies, which a packages-only install leaves out
-      - name: 📦 Install the packages and scripts
-        uses: ./.github/actions/install-projects
-        with:
-          filter: ./{packages/*,scripts}
-
-      - name: 📢 Publish
+      # `scripts` too: the root's oxlint config loads its plugins, so the gates need the `scripts` project's dependencies
+      - name: 📢 Release
         run: pnpm release
 
-  # The repo has immutable releases on, so a published release takes no further assets: the release is created as a
-  # Draft as soon as the tag exists, the host is attached to the draft, and `publish` makes it public last, once every
-  # asset is on it and npm has published. A failed npm publish leaves the draft unpublished rather than no release at all
-  release:
-    needs: [check, version]
-    if: needs.check.outputs.skip == 'false'
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    outputs:
-      is-published: ${{ steps.release.outputs.is-published }}
-    # No checkout: the release is `gh` calls against the API, addressed by `--repo`, and the tag they name is
-    # already on the remote, pushed by `version` before `npm` published from it. Nothing here reads the tree.
-    steps:
-      - name: 🚀 Release
+      - name: 🏷️ Read the tag
+        id: tag
+        run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
+
+      # Once the tag is on main a review run is started, which finds main diverged and merges it into ai/queue
+      - name: 🔁 Start the review run
+        env:
+          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+        run: gh workflow run Review.yaml --ref ai/queue --repo "$GITHUB_REPOSITORY"
+
+      # The repo has immutable releases on, so a published release takes no further assets: the release is created as a
+      # Draft once `pnpm release` has published the tag's versions, the host is attached to the draft, and `publish` makes
+      # it public last, once every asset is on it. A failed `pnpm release` creates no draft at all, so the tag may exist
+      # without a release: the recovery is in apps/web/content/docs/architecture/release-flow.md
+      - name: 🚀 Release draft
         id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.version.outputs.tag }}
+          TAG: ${{ steps.tag.outputs.tag }}
         # A re-run must pick up where the last run stopped, not fail: an existing draft goes on to the host and the
         # Publish, and an already-published release skips both, since it can take no asset. Only a genuine "not
         # Found" is evidence the release is absent — a 401, a secondary rate limit or a network blip exits non-zero
@@ -176,7 +124,7 @@ jobs:
   # Windows runs an exe from inside a zip without the files beside it. Unsigned, since signing costs a yearly fee
   # (apps/web/content/docs/infra/deferred/signed-host-installers.md)
   host-installer:
-    needs: [check, version, release]
+    needs: [check, release]
     if: needs.check.outputs.skip == 'false' && needs.release.outputs.is-published != 'true'
     permissions:
       contents: write
@@ -185,7 +133,7 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.version.outputs.tag }}
+          ref: ${{ needs.release.outputs.tag }}
           persist-credentials: false
 
       - name: 🔧 Setup Project Dependencies
@@ -206,12 +154,12 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.version.outputs.tag }}
+          TAG: ${{ needs.release.outputs.tag }}
         run: gh release upload "$env:TAG" packages/agent-console-server/dist-sea/agent-console-host.exe --repo "$env:GITHUB_REPOSITORY" --clobber
 
   publish:
-    needs: [check, version, npm, release, host-installer]
-    if: needs.check.outputs.skip == 'false' && needs.npm.result == 'success' && needs.release.outputs.is-published != 'true'
+    needs: [check, release, host-installer]
+    if: needs.check.outputs.skip == 'false' && needs.release.outputs.is-published != 'true'
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -219,5 +167,5 @@ jobs:
       - name: 📢 Publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.version.outputs.tag }}
+          TAG: ${{ needs.release.outputs.tag }}
         run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false
