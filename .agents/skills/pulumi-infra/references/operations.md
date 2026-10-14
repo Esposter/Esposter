@@ -6,7 +6,7 @@ Read when running `pnpm infra:preview` / `pnpm infra:up`, after a catalog bump t
 
 Run in order from `apps/infra/`, always before `infra:preview` or `infra:up`:
 
-1. `pnpm typecheck` — TypeScript type check. An apply reaches live Azure before any CI run reads the change, so this is the one check a session runs ahead of CI (the `running-checks` skill's Pulumi exception).
+1. `pnpm typecheck` — TypeScript type check, the one check a session runs ahead of CI (the `running-checks` skill, "A Pulumi apply").
 2. `pnpm infra:preview --suppress-outputs` — confirm scope before applying.
 3. `pnpm infra:up --yes --suppress-outputs` — apply only after the preview is confirmed.
 

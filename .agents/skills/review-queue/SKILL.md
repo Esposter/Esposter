@@ -10,7 +10,7 @@ Every agent works on **one permanent branch, `ai/queue`**, from its own git work
 ## Settled — do not re-propose
 
 - **Per-chunk feature branches.** The queue is linear history and the review cuts its windows at commit boundaries, so a branch per chunk adds a merge that buys nothing.
-- **Pushing `main` by hand.** `main` moves only by the review's fast-forward. A hand push is a commit the review never read.
+- **Pushing `main` by hand.** `main` moves by the review's fast-forward and, as the one exception, by the owner's direct fast-forward of `main` to `ai/queue` once a review has passed (a plain push, never forced). Any other hand push is a commit the review never read.
 - **Merging `main` into `ai/queue`.** A merge is never linearised away, and it blinds the next pull: a rebase onto `origin/main` is then a no-op, and `git cherry` reads every already-landed commit as owed. The queue catches up by `git pull --rebase` only. The one merge the system makes itself is the review's, when `main` was pushed by hand.
 - **Rebasing or force-pushing `ai/queue` to reshape it.** Nothing rewrites the queue, so a session that does is the only writer changing history under the others. A session's own unlanded commits are replayed by `git pull --rebase`, and that is all.
 - **Syncing by reset.** `git reset --hard origin/ai/queue`, and a reset followed by cherry-picking what `git cherry` calls owed, stay rejected. `git cherry` matches patch ids, so the list cannot tell a commit the remote already carries from one it lacks, and the reset throws local history away on that guess. The rebase keeps it: each conflict stops on one commit with both sides in view.

@@ -43,7 +43,7 @@ jobs:
           fi
 
   # The push goes through the collector's token, not the workflow's: main's ruleset lets only the Admin role update it, the
-  # Role the review's fast-forward pushes with
+  # role the review's fast-forward pushes with
   version:
     name: Version and tag
     needs: check
@@ -80,7 +80,7 @@ jobs:
         run: pnpm release:version
 
       # Lerna tagged the version commit before the push, so after a rebase onto a main the review has just moved, the tag is
-      # Re-pointed at the rebased commit. A conflicting rebase fails the step, since only the commit's author can settle it.
+      # re-pointed at the rebased commit. A conflicting rebase fails the step, since only the commit's author can settle it.
       # Once pushed, a review run is started, which finds main diverged and merges it into ai/queue
       - name: 📤 Push the version
         id: push

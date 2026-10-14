@@ -9,4 +9,4 @@ description: Apply when the `/settle` command is run, or when the open `review` 
 The main session decides every verdict; haiku subagents make the edits.
 This never pushes `main`, which moves only through the review's fast-forward.
 Any issue left open stays with the review's settle job.
-`/settle <issue number>` runs the procedure for that one issue only.
+`/settle` runs the procedure for every open review issue.
