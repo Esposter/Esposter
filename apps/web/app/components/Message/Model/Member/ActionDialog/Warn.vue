@@ -1,26 +1,20 @@
 <script setup lang="ts">
-import type { PublicUser } from "@esposter/db-schema";
+import type { MemberActionTarget } from "@/models/message/member/MemberActionTarget";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { AdminActionType } from "@esposter/db-schema";
 
-interface Props {
-  displayName: string;
-  user: Pick<PublicUser, "id">;
-}
+interface Props extends MemberActionTarget {}
 
 const isOpen = defineModel<boolean>({ default: false });
 const { displayName, user } = defineProps<Props>();
-const executeAdminAction = useExecuteAdminAction();
 const reason = ref("");
 </script>
 
 <template>
   <MessageModelMemberActionDialogShell
     v-model="isOpen"
-    :execute="
-      () => executeAdminAction((roomId) => ({ reason, roomId, targetUserId: user.id, type: AdminActionType.Warn }))
-    "
+    :get-input="(roomId) => ({ reason, roomId, targetUserId: user.id, type: AdminActionType.Warn })"
     submit-label="Warn"
     :submit-variant="UiButtonVariant.Accent"
     :title="`Warn ${displayName}`"

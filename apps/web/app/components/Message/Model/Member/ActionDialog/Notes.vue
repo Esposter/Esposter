@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PublicUser } from "@esposter/db-schema";
+import type { MemberActionTarget } from "@/models/message/member/MemberActionTarget";
 
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -10,10 +10,8 @@ import { UiRules } from "@/services/ui/UiRules";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
-interface Props {
-  displayName: string;
+interface Props extends MemberActionTarget {
   roomId: string;
-  user: Pick<PublicUser, "id">;
 }
 
 const isOpen = defineModel<boolean>({ default: false });

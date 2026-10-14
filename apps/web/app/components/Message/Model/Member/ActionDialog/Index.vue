@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { PublicUser } from "@esposter/db-schema";
+import type { MemberActionTarget } from "@/models/message/member/MemberActionTarget";
 
 import { MemberDialogType } from "@/models/message/user/MemberDialogType";
 import { AdminActionType } from "@esposter/db-schema";
 
-interface Props {
-  displayName: string;
+interface Props extends MemberActionTarget {
   roomId: string;
-  user: Pick<PublicUser, "id">;
 }
 // The dialog one of a member's actions opened. The row mounts this only while one is open, so closing it is clearing
 // Which one it is

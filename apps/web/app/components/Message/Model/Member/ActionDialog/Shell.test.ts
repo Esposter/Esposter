@@ -1,12 +1,18 @@
 // @vitest-environment happy-dom
+import type { useExecuteAdminAction } from "@/composables/message/moderation/useExecuteAdminAction";
+
 import Shell from "@/components/Message/Model/Member/ActionDialog/Shell.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { noop } from "@esposter/shared";
+import { AdminActionType } from "@esposter/db-schema";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("@/composables/message/moderation/useExecuteAdminAction"), () => ({
+  useExecuteAdminAction: vi.fn<typeof useExecuteAdminAction>(),
+}));
 
 describe("messageModelMemberActionDialogShell", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -24,7 +30,7 @@ describe("messageModelMemberActionDialogShell", () => {
       const component = mount(Shell, {
         attachTo: document.body,
         props: {
-          execute: noop,
+          getInput: () => ({ roomId: "", targetUserId: "", type: AdminActionType.Warn }),
           modelValue: true,
           submitLabel: "Timeout",
           submitVariant: UiButtonVariant.Danger,
