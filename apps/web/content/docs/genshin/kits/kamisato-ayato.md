@@ -20,4 +20,4 @@ Ayato's kit is its record and one behaviour module, `createAyatoKitBehaviour`, o
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/ayato), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's slash, the collision and the low and high plunges' frames, reaches and poise, Kamisato Art: Kyouka's animation, illusion and Soukai Kanka's Shunsuiken strikes, the Namisen stacks, Kamisato Art: Suiyuu's frames, field and ticks, and Ascension 1 and Constellations 1, 2 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ayato), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's slash, the collision and the low and high plunges' frames, reaches and poise, Kamisato Art: Kyouka's animation, illusion and Soukai Kanka's Shunsuiken strikes, the Namisen stacks, Kamisato Art: Suiyuu's frames, field and ticks, and Ascension 1 and Constellations 1, 2 and 6.
