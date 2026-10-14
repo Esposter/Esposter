@@ -22,8 +22,8 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   // One frame's draw answers every compile asked for before it
   #drawn?: PromiseWithResolvers<void>;
   readonly #edgeOutlineMaterials = new Map<string, NodeMaterial>();
-  readonly #pixelEdgeOutlineMaterials = new WeakMap<Node<"vec4">, Map<string, NodeMaterial>>();
   #outlineMaterial?: NodeMaterial;
+  readonly #pixelEdgeOutlineMaterials = new WeakMap<Node<"vec4">, Map<string, NodeMaterial>>();
 
   // A material with its own edge is outlined in that edge, and every other toon material by the one shared material
   _getOutlineMaterial(originalMaterial: Material): NodeMaterial {
