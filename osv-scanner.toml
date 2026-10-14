@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "GHSA-589f-c66p-hxr4"
+ignoreUntil = 2027-10-15
+reason = "The advisory affects grapesjs below 0.19.5; the locked 0.23.6 release is outside its affected range. Re-check the published range before expiry."
