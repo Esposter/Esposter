@@ -32,4 +32,4 @@ Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehav
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/sigewinne), MIT: the kit's hitmarks and animations, the strikes' and shot's boxes and circles, the bubbles' radius and interval, the waves' box and ticks, and the proud group indices behind each multiplier and share.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/sigewinne), MIT: the kit's hitmarks and animations, the strikes' and shot's boxes and circles, the bubbles' radius and interval, the waves' box and ticks, and the proud group indices behind each multiplier and share.
