@@ -20,4 +20,4 @@ Kokomi's kit is its record and one behaviour module, `createKokomiKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kokomi), MIT: the kit's hitmarks, cancel frames and areas, projectile travel, the charged attack's frames, Bake-Kurage's ticks and radius, and Nereid's Ascension's hit, animation and ten-second garment.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/kokomi), MIT: the kit's hitmarks, cancel frames and areas, projectile travel, the charged attack's frames, Bake-Kurage's ticks and radius, and Nereid's Ascension's hit, animation and ten-second garment.
