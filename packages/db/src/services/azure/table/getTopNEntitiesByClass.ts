@@ -12,7 +12,7 @@ export const getTopNEntitiesByClass = async <TEntity extends CompositeKey>(
   getClass: (entity: Record<string, unknown>) => Class<TEntity>,
   queryOptions?: TableEntityQueryOptions,
 ): Promise<TEntity[]> => {
-  // Filter out metadata like continuation token before deserializing the json
+  // Filter out the etag before deserializing the json
   // Azure may return a short page even when more rows exist, so keep paging until topN entities
   // Are collected or the partition is exhausted — a full first page still costs a single request,
   // And a short result now proves there is genuinely nothing more to read.
