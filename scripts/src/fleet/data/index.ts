@@ -1,7 +1,7 @@
-import { filesCommand } from "#src/fleet/data/filesCommand";
-import { manifestCommand } from "#src/fleet/data/manifestCommand";
-import { createTransferCommand } from "#src/fleet/data/transferCommand";
 import { TransferDirection } from "#src/models/fleet/data/TransferDirection";
+import { filesCommand } from "#src/services/fleet/data/commands/filesCommand";
+import { manifestCommand } from "#src/services/fleet/data/commands/manifestCommand";
+import { createTransferCommand } from "#src/services/fleet/data/commands/transferCommand";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
