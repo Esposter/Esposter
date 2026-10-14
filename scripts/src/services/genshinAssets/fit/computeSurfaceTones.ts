@@ -3,6 +3,7 @@ import type { SurfaceSample } from "#src/models/genshinAssets/fit/SurfaceSample"
 import type { Vector } from "#src/models/shared/Vector";
 
 import { clusterColours } from "#src/services/genshinAssets/fit/clusterColours";
+import { computeWeightedMean } from "#src/services/genshinAssets/fit/computeWeightedMean";
 
 // The most tones a surface's textures are split into, each a cluster of their colours
 const SURFACE_TONE_COUNT = 3;
@@ -14,12 +15,10 @@ const toHex = (colour: Vector): string =>
   `#${colour.map((channel) => Math.round(channel).toString(16).padStart(2, "0")).join("")}`;
 const computeTotalWeight = (samples: readonly SurfaceSample[]): number =>
   samples.reduce((sum, { weight }) => sum + weight, 0);
-const computeWeightedMean = (samples: readonly SurfaceSample[]): Vector => {
-  const total = computeTotalWeight(samples);
-  return ([0, 1, 2] as const).map(
-    (channel) => samples.reduce((sum, { colour, weight }) => sum + (colour[channel] ?? 0) * weight, 0) / total,
+const computeWeightedColour = (samples: readonly SurfaceSample[]): Vector =>
+  ([0, 1, 2] as const).map((channel) =>
+    computeWeightedMean(samples.map(({ colour, weight }) => ({ value: colour[channel] ?? 0, weight }))),
   ) as Vector;
-};
 // A surface's colour as the mean of its samples weighted by their area, and its palette: its samples grouped by k-means
 // Over their colours (`clusterColours`, seeded darkest first), each tone the weighted mean of its samples with the share
 // Of the weight its palette samples hold. Samples of no weight count for nothing, and the samples must hold some weight
@@ -36,13 +35,13 @@ export const computeSurfaceTones = (
     count,
   );
   return {
-    color: toHex(computeWeightedMean(weighted)),
+    color: toHex(computeWeightedColour(weighted)),
     palette: Array.from({ length: count }, (_tone, cluster) =>
       palette.filter((_sample, index) => clusters[index] === cluster),
     ).flatMap((members) =>
       members.length === 0
         ? []
-        : [{ color: toHex(computeWeightedMean(members)), share: computeTotalWeight(members) / total }],
+        : [{ color: toHex(computeWeightedColour(members)), share: computeTotalWeight(members) / total }],
     ),
   };
 };

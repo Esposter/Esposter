@@ -1,10 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
-import { DATA_FOLDERS, FAILURE_EXIT_CODE } from "#src/services/fleet/data/constants";
+import { DATA_FOLDERS } from "#src/services/fleet/data/constants";
 import { getManifest } from "#src/services/fleet/data/getManifest";
 import { getParityDirectory } from "#src/services/fleet/data/getParityDirectory";
 import { resolveFolders } from "#src/services/fleet/data/resolveFolders";
-import { getResultAsync, SITE_NAME } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation, SITE_NAME } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 // `pnpm ai:fleet:data manifest` — the directory digests of this machine's game data, printed as one JSON object
@@ -23,8 +23,7 @@ export const manifestCommand: SubCommandsDef[string] = defineCommand({
     ).match(
       (manifest) => console.info(JSON.stringify(manifest)),
       (error) => {
-        console.error(error);
-        process.exitCode = FAILURE_EXIT_CODE;
+        throw new InvalidOperationError(Operation.Read, "manifest", error.message);
       },
     ),
 });

@@ -1,13 +1,14 @@
-import type { TransferDirection } from "#src/models/fleet/data/TransferDirection";
 import type { SubCommandsDef } from "citty";
 
-import { DATA_FOLDERS, FAILURE_EXIT_CODE } from "#src/services/fleet/data/constants";
+import { TransferDirection } from "#src/models/fleet/data/TransferDirection";
+import { DATA_FOLDERS } from "#src/services/fleet/data/constants";
 import { getParityDirectory } from "#src/services/fleet/data/getParityDirectory";
 import { readPeer } from "#src/services/fleet/data/readPeer";
 import { resolveFolders } from "#src/services/fleet/data/resolveFolders";
 import { syncPeer } from "#src/services/fleet/data/syncPeer";
-import { getResultAsync, noop, SITE_NAME } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation, SITE_NAME } from "@esposter/shared";
 import { defineCommand } from "citty";
+import { posix } from "node:path";
 
 // The `pull` and `push` commands: the same diff, copied the one way or the other
 export const createTransferCommand = (direction: TransferDirection, description: string): SubCommandsDef[string] =>
@@ -41,7 +42,7 @@ export const createTransferCommand = (direction: TransferDirection, description:
       (
         await getResultAsync(async () => {
           const peer = await readPeer(args.peer);
-          const remoteDirectory = args.into ? `${peer.parityDirectory}/${args.into}` : peer.parityDirectory;
+          const remoteDirectory = args.into ? posix.join(peer.parityDirectory, args.into) : peer.parityDirectory;
           await syncPeer(
             direction,
             peer,
@@ -52,7 +53,10 @@ export const createTransferCommand = (direction: TransferDirection, description:
           );
         })
       ).match(noop, (error) => {
-        console.error(error);
-        process.exitCode = FAILURE_EXIT_CODE;
+        throw new InvalidOperationError(
+          direction === TransferDirection.Pull ? Operation.Read : Operation.Push,
+          args.peer,
+          error.message,
+        );
       }),
   });

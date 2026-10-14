@@ -1,5 +1,7 @@
 import type { SurfaceDetail } from "#src/models/genshinAssets/fit/SurfaceDetail";
 
+import { computeWeightedMean } from "#src/services/genshinAssets/fit/computeWeightedMean";
+
 // The mean of several surfaces' details, their texel sizes too, each weighted by the area it was sampled over,
 // Undefined when none is given or none was sampled over any area
 export const averageSurfaceDetails = (
@@ -9,12 +11,12 @@ export const averageSurfaceDetails = (
   const totalWeight = details.reduce((sum, { weight }) => sum + weight, 0);
   if (!first || totalWeight <= 0) return undefined;
   return {
-    bands: first.detail.bands.map(
-      (_band, index) =>
-        details.reduce((sum, { detail: { bands }, weight }) => sum + (bands[index] ?? 0) * weight, 0) / totalWeight,
+    bands: first.detail.bands.map((_band, index) =>
+      computeWeightedMean(details.map(({ detail: { bands }, weight }) => ({ value: bands[index] ?? 0, weight }))),
     ),
-    metresPerTexel:
-      details.reduce((sum, { detail: { metresPerTexel }, weight }) => sum + metresPerTexel * weight, 0) / totalWeight,
-    variance: details.reduce((sum, { detail: { variance }, weight }) => sum + variance * weight, 0) / totalWeight,
+    metresPerTexel: computeWeightedMean(
+      details.map(({ detail: { metresPerTexel }, weight }) => ({ value: metresPerTexel, weight })),
+    ),
+    variance: computeWeightedMean(details.map(({ detail: { variance }, weight }) => ({ value: variance, weight }))),
   };
 };

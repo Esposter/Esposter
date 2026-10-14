@@ -4,9 +4,8 @@ import type { ComparatorToken } from "#src/models/semver/ComparatorToken";
 import { RangeOperator } from "#src/models/semver/RangeOperator";
 import { checkIsAnyPart } from "#src/services/semver/checkIsAnyPart";
 import { ANY_COMPARATOR_TEXT } from "#src/services/semver/constants";
-import { expandMajorBounds } from "#src/services/semver/expandMajorBounds";
+import { expandTildeToken } from "#src/services/semver/expandTildeToken";
 import { incrementNumericIdentifier } from "#src/services/semver/incrementNumericIdentifier";
-import { toBounds } from "#src/services/semver/toBounds";
 
 // A version with no wildcard is itself, a bare version with a wildcard is the bounds it spans, and an operator over a
 // Wildcard moves its bound to the next version it names
@@ -23,10 +22,9 @@ export const expandXRangeToken = (
   const isAnyPatch = isAnyMinor || checkIsAnyPart(patch);
   if (!isAnyPatch) return [{ operator, version: `${major}.${minor}.${patch}${prerelease}` }];
 
+  // A wildcard names the versions its tilde names, so an equal over one takes the tilde's bounds
   if (operator === RangeOperator.Equal)
-    return isAnyMinor
-      ? expandMajorBounds(major, prereleaseSuffix)
-      : toBounds(`${major}.${minor}.0${prereleaseSuffix}`, `${major}.${incrementNumericIdentifier(minor)}.0-0`);
+    return expandTildeToken({ major, minor, operator, patch, prerelease }, prereleaseSuffix);
 
   if (operator === RangeOperator.GreaterThan)
     return [

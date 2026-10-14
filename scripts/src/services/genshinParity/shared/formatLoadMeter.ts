@@ -52,6 +52,15 @@ const getGameDataFigure = (budget: undefined | { gameDataBytes?: number }, gameD
   value: gameDataBytes,
 });
 
+// The requests a load or a crossing made, checked against the budget its meter names for it
+const getRequestsFigure = (budget: undefined | { requests?: number }, requests: number): Figure => ({
+  budget: budget?.requests,
+  isChecked: true,
+  name: "requests",
+  unit: LoadFigureUnit.Count,
+  value: requests,
+});
+
 // The measures the load steps took, slowest first, each with the tiles it rebuilt when it rebuilt any
 const formatMeasures = ({ measures }: LoadBench): string[] =>
   measures
@@ -69,7 +78,7 @@ const formatCrossing = (
 ): { isOver: boolean; lines: string[] } => {
   const tileCount = bench.measures.reduce((sum, { tileCount: measureTileCount }) => sum + measureTileCount, 0);
   const rows = [
-    { budget: budget?.requests, isChecked: true, name: "requests", unit: LoadFigureUnit.Count, value: bench.requests },
+    getRequestsFigure(budget, bench.requests),
     getGameDataFigure(budget, bench.gameDataBytes),
     { budget: budget?.tileCount, isChecked: true, name: "tiles rebuilt", unit: LoadFigureUnit.Count, value: tileCount },
   ].map((figure) => formatRow(figure));
@@ -107,7 +116,7 @@ export const formatLoadMeter = (
       unit: LoadFigureUnit.Milliseconds,
       value: readyMs,
     },
-    { budget: budget?.requests, isChecked: true, name: "requests", unit: LoadFigureUnit.Count, value: bench.requests },
+    getRequestsFigure(budget, bench.requests),
     getGameDataFigure(budget, bench.gameDataBytes),
     { budget: budget?.objects, isChecked: true, name: "objects", unit: LoadFigureUnit.Count, value: objects },
     {
