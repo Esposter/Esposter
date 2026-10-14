@@ -10,6 +10,7 @@ import type { WishSet } from "#src/models/WishSet";
 
 import GameButton from "#src/components/GameButton/Index.vue";
 import WishDetails from "#src/components/WishDetails/Index.vue";
+import WishPath from "#src/components/WishPath/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { computed, ref } from "vue";
 
@@ -122,12 +123,7 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
       }}</GameButton>
       <GameButton class="link" :kind="GameButtonKind.Reply">{{ historyLabel }}</GameButton>
     </div>
-    <p v-if="pathLabel" class="path">
-      {{ pathLabel }}
-      <span class="fate-points">
-        <span v-for="({ color, text }, index) of fatePoints" :key="index" :style="{ color }">{{ text }}</span>
-      </span>
-    </p>
+    <WishPath v-if="pathLabel" class="path" :path-label :fate-points />
     <div v-if="bannerKind" class="sets">
       <GameButton
         v-for="{ cost, count, isAffordable, label } of sets"
@@ -335,13 +331,6 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
   position: absolute;
   top: calc(var(--unit) * 940);
   left: calc(var(--unit) * 68);
-  margin: 0;
-  font-size: calc(var(--unit) * 22);
-}
-
-.fate-points {
-  margin-left: calc(var(--unit) * 12);
-  opacity: 0.7;
 }
 
 .sets {

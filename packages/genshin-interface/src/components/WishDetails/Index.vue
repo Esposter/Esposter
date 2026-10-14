@@ -2,6 +2,7 @@
 import type { TextSegment } from "#src/models/TextSegment";
 import type { WishPoolCell } from "#src/models/WishPoolCell";
 
+import WishPath from "#src/components/WishPath/Index.vue";
 import { computed } from "vue";
 
 interface Props {
@@ -39,12 +40,7 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
           </ul>
         </li>
       </ul>
-      <p v-if="pathLabel" class="path">
-        {{ pathLabel }}
-        <span class="fate-points">
-          <span v-for="({ color, text }, index) of fatePoints" :key="index" :style="{ color }">{{ text }}</span>
-        </span>
-      </p>
+      <WishPath v-if="pathLabel" class="path" :path-label :fate-points />
     </div>
   </div>
 </template>
@@ -119,15 +115,5 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
 .stars {
   color: #ffcc32;
   white-space: nowrap;
-}
-
-.path {
-  margin: 0;
-  font-size: calc(var(--unit) * 22);
-}
-
-.fate-points {
-  margin-left: calc(var(--unit) * 12);
-  opacity: 0.7;
 }
 </style>
