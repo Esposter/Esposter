@@ -22,4 +22,4 @@ The Autumn Whirlwind absorbs an element as gcsim's does: a check from 81 frames,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kazuha), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's and plunges' frames and circles, Chihayaburu's press and hold, Kazuha Slash's hitmarks and circle, the Autumn Whirlwind's five ticks, its absorb check's schedule, circle and order, and its elemental ticks, and Constellations 1 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/kazuha), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's and plunges' frames and circles, Chihayaburu's press and hold, Kazuha Slash's hitmarks and circle, the Autumn Whirlwind's five ticks, its absorb check's schedule, circle and order, and its elemental ticks, and Constellations 1 and 6.
