@@ -1,6 +1,6 @@
-import type { SetMemberPermissionOverrideOptions } from "#server/models/room/rbac/SetMemberPermissionOverrideOptions";
 import type { Context } from "#server/trpc/context";
 import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
+import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
 
 import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
@@ -11,7 +11,7 @@ import { and, eq, sql } from "drizzle-orm";
 // Is removed rather than kept as an empty entry. Returns the state left behind, both zero when there is no row
 export const setMemberPermissionOverride = (
   db: Context["db"],
-  { allow, deny, inherit, roomId, userId }: SetMemberPermissionOverrideOptions,
+  { allow, deny, inherit, roomId, userId }: UpsertMemberPermissionOverrideInput,
 ): Promise<MemberPermissionOverride> => {
   const {
     allow: allowColumn,

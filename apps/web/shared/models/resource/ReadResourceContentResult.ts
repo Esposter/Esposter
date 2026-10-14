@@ -6,6 +6,6 @@ export interface ReadResourceContentResult {
   length?: number;
   // Past the read cap, the size of each member in place of the content, so a narrower read can be chosen
   memberSizes?: Record<string, number>;
-  // Past the read cap, a leaf's size in place of its content, a string's length included
+  // Past the read cap, a leaf's size in place of its content: the UTF-8 byte length of its JSON encoding, quotes included
   size?: number;
 }

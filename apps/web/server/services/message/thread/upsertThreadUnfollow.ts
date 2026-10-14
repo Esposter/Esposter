@@ -1,8 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { ThreadFollowInMessage } from "@esposter/db-schema";
 
-import { THREAD_FOLLOW_CONFLICT_TARGET } from "@esposter/db";
-import { threadFollowsInMessage } from "@esposter/db-schema";
+import { upsertThreadFollow } from "@esposter/db";
 
 // Records the member's decision to stop following, rather than deleting the row: a deleted row is
 // Indistinguishable from one that never existed, and auto-follow reads that gap as "this member has not
@@ -11,8 +10,4 @@ import { threadFollowsInMessage } from "@esposter/db-schema";
 export const upsertThreadUnfollow = (
   db: Context["db"],
   { roomId, threadRootRowKey, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootRowKey" | "userId">,
-) =>
-  db
-    .insert(threadFollowsInMessage)
-    .values({ isUnfollowed: true, roomId, threadRootRowKey, userId })
-    .onConflictDoUpdate({ set: { isUnfollowed: true }, target: THREAD_FOLLOW_CONFLICT_TARGET });
+) => upsertThreadFollow(db, { roomId, threadRootRowKey, userId }, true);

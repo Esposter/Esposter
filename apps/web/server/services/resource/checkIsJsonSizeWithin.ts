@@ -1,6 +1,6 @@
 import { checkIsPlainObject } from "@esposter/shared";
 
-const getLeafSize = (value: unknown) => (value === undefined ? 0 : Buffer.byteLength(JSON.stringify(value)));
+export const getLeafSize = (value: unknown) => (value === undefined ? 0 : Buffer.byteLength(JSON.stringify(value)));
 // Whether a value serializes to at most `maxSize` bytes of JSON, found without serializing it. A value reached twice is
 // Counted twice, as `JSON.stringify` writes it, and the walk stops once the running size passes the limit, so its cost
 // Is bounded by the limit rather than by how far a value sharing its subtrees expands

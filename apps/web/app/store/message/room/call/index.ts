@@ -308,6 +308,13 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, console.error);
   };
 
+  // The room is checked first, so an admin action taken in a room whose call the user is not in never reaches the
+  // Call they are in: a force mute from there would otherwise mark them muted while their microphone stays live
+  const registerCallAdminActionHook = (adminActionType: AdminActionType, handler: () => Promise<void>) =>
+    AdminActionHookMap[adminActionType].register(async (roomId) => {
+      if (callRoomId.value !== roomId) return;
+      await handler();
+    });
   // Being removed from the room, for good or for a while, takes the user out of its call as well — and a kick from
   // The call is from that room's call, never from one the user is in elsewhere
   for (const adminActionType of [
@@ -317,16 +324,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     AdminActionType.SoftBan,
     AdminActionType.TimeoutUser,
   ])
-    AdminActionHookMap[adminActionType].register(async (roomId) => {
-      if (callRoomId.value === roomId) await leaveCall();
-    });
-  // The room is checked first, so an admin action taken in a room whose call the user is not in never reaches the
-  // Call they are in: a force mute from there would otherwise mark them muted while their microphone stays live
-  const registerCallAdminActionHook = (adminActionType: AdminActionType, handler: () => Promise<void>) =>
-    AdminActionHookMap[adminActionType].register(async (roomId) => {
-      if (callRoomId.value !== roomId) return;
-      await handler();
-    });
+    registerCallAdminActionHook(adminActionType, leaveCall);
   // The participant map is keyed by the call the user is actually in, which is the thread's session during a
   // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
   registerCallAdminActionHook(AdminActionType.ForceMute, async () => {

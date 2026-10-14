@@ -3,10 +3,10 @@ import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
+import { getMessageTableClients } from "#server/services/message/getMessageTableClients";
 import { rejectMessageCreation } from "#server/services/message/moderation/rejectMessageCreation";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
@@ -18,7 +18,6 @@ import {
 } from "@esposter/db";
 import {
   AppNotificationType,
-  AzureTable,
   DatabaseEntityType,
   publishNotification,
   roomsInMessage,
@@ -47,10 +46,7 @@ export const createUserMessage = async (
     return messageCreationRejection;
   });
   await rejectMessageCreation(db, user.id, input.roomId, rejection);
-  const [messageClient, messageAscendingClient] = await Promise.all([
-    useTableClient(AzureTable.Messages),
-    useTableClient(AzureTable.MessagesAscending),
-  ]);
+  const [messageClient, messageAscendingClient] = await getMessageTableClients();
   const newMessageEntity = await createMessage(messageClient, messageAscendingClient, { ...input, userId: user.id });
   messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
   // Best-effort after the Table write — a failed increment loses one badge count, never a message.

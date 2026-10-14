@@ -12,17 +12,11 @@ import { AzureContainer, DatabaseEntityType, roomsInMessage } from "@esposter/db
 import { noop, Operation } from "@esposter/shared";
 
 export const deleteRoom = async (db: Context["db"], { session, user }: GetSessionPayload, id: string) => {
-  const deletedRoom = requireMutation(
-    (
-      await db
-        .delete(roomsInMessage)
-        .where(ownedBy(roomsInMessage, id, user.id))
-        .returning()
-    )[0],
-    Operation.Delete,
-    DatabaseEntityType.Room,
-    id,
-  );
+  const deletedRooms = await db
+    .delete(roomsInMessage)
+    .where(ownedBy(roomsInMessage, id, user.id))
+    .returning();
+  const deletedRoom = requireMutation(deletedRooms[0], Operation.Delete, DatabaseEntityType.Room, id);
 
   roomEventEmitter.emit("deleteRoom", { roomId: deletedRoom.id, sessionId: session.id, userId: user.id });
   // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed — which is

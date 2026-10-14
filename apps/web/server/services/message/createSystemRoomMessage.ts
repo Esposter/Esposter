@@ -1,9 +1,9 @@
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
+import { getMessageTableClients } from "#server/services/message/getMessageTableClients";
 import { createMessage } from "@esposter/db";
-import { AzureTable, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 // Every line the server writes into a room on a member's behalf. The action that prompted it has already landed,
@@ -19,10 +19,7 @@ export const createSystemRoomMessage = (
   { replyRowKey = "", type = MessageType.System }: Partial<Pick<StandardMessageEntity, "replyRowKey" | "type">> = {},
 ) =>
   getResultAsync(async () => {
-    const [messageClient, messageAscendingClient] = await Promise.all([
-      useTableClient(AzureTable.Messages),
-      useTableClient(AzureTable.MessagesAscending),
-    ]);
+    const [messageClient, messageAscendingClient] = await getMessageTableClients();
     const systemMessage = await createMessage(messageClient, messageAscendingClient, {
       message,
       replyRowKey,

@@ -25,14 +25,13 @@ export const updateUserToRoom = async (
     if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
+  const updatedUserToRooms = await db
+    .update(usersToRoomsInMessage)
+    .set(rest)
+    .where(getRoomMembershipWhere(roomId, effectiveUserId))
+    .returning();
   const updatedUserToRoom = requireMutation(
-    (
-      await db
-        .update(usersToRoomsInMessage)
-        .set(rest)
-        .where(getRoomMembershipWhere(roomId, effectiveUserId))
-        .returning()
-    )[0],
+    updatedUserToRooms[0],
     Operation.Update,
     DatabaseEntityType.UserToRoom,
     JSON.stringify({ roomId }),
