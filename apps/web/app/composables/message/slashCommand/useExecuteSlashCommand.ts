@@ -59,7 +59,7 @@ export const useExecuteSlashCommand = () => {
       case SlashCommandType.Spoiler:
         // Every ASCII punctuation mark is escaped, so the text reaches the reader as typed and the one parse after the
         // Switch cannot read a markdown mark or a tag inside the span as formatting
-        message = `<span data-spoiler>${command.parameterValues.text.replaceAll(/[!-/:-@[-`{-~]/gu, "\\$&")}</span>`;
+        message = `<span data-spoiler>${command.parameterValues.text.replaceAll(/[!-/:-@[-`{-~]/gu, String.raw`\$&`)}</span>`;
         break;
       case SlashCommandType.TableFlip:
         message = `(╯°□°）╯︵ ┻━┻`;

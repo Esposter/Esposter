@@ -26,7 +26,11 @@ describe(assertCheckoutIsDisposable, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () =>
     publish(QUEUE_BRANCH, "HEAD");
     writeFileSync(join(getCwd(), PATH), "edit");
 
-    expect(() => assertCheckoutIsDisposable(getCwd())).toThrow(PATH);
+    expect(() => assertCheckoutIsDisposable(getCwd())).toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: assertCheckoutIsDisposable, The review resets this checkout to the queue's tip, which would discard:
+      M README.md
+      Run it from a checkout of its own.]
+    `);
   });
 
   test("refuses a checkout holding an unpushed commit", () => {
@@ -36,6 +40,10 @@ describe(assertCheckoutIsDisposable, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () =>
     publish(QUEUE_BRANCH, "HEAD");
     commitFile(PATH, "unpushed");
 
-    expect(() => assertCheckoutIsDisposable(getCwd())).toThrow("Run it from a checkout of its own.");
+    expect(() => assertCheckoutIsDisposable(getCwd())).toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: assertCheckoutIsDisposable, The review resets this checkout to the queue's tip, which would discard:
+      6251999 README.md
+      Run it from a checkout of its own.]
+    `);
   });
 });
