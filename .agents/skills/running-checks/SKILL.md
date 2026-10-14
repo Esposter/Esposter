@@ -6,8 +6,8 @@ description: Apply when about to run pnpm typecheck, lint, lint:fix, test, forma
 # Running Checks
 
 **CI runs the checks; a session runs only the tests of what it touched.** Every push to `ai/queue` runs typecheck,
-lint, format and the whole suite. The session watches its push's run in the background and fixes a red typecheck
-or lint job itself, in a commit behind the push (`AGENTS.md`, "Finishing a change", step 6). The pre-commit hook only formats what is staged and
+lint, format and the whole suite. The session does not watch its push's run unless the user asks for verification;
+then it fixes a red typecheck or lint job itself, in a commit behind the push (`AGENTS.md`, "Finishing a change", step 6). The pre-commit hook only formats what is staged and
 runs no check (`.githooks/pre-commit`); it re-adds each staged file whole from the working copy, so a partial stage of
 a file commits all of it, and a commit is split by file or with the other hunks kept out of the working copy. The command and its directory are the `package-scripts` skill's; this page is
 which checks a session runs and how it waits on them.
@@ -51,9 +51,10 @@ fixed startup cost, and nothing is learned at chunk 3 that chunk 7 won't also re
 regardless: commits are cheap and protect against other sessions' resets, checks are not. The run follows the
 review's quality lane, since cleanup edits code (`AGENTS.md`, "Finishing a change").
 
-## Watching the push's run
+## Watching the push's run, when asked
 
-`pnpm ai:ci:watch`, in the background straight after the push. It finds the run by the tip's commit — never by
+Watching waits for the user to ask for verification; it does not start on its own after a push. Then
+`pnpm ai:ci:watch`, in the background. It finds the run by the tip's commit — never by
 `--branch` with `--workflow`, whose per-workflow filter answers `ai/queue` with weeks-old runs — follows a run that
 was skipped while it waited to the newer run that carries the commit too (`concurrency` in `CI.yaml` keeps only the
 newest waiting run), waits for it, and exits non-zero on a red with each failed job's error lines, which is what wakes
