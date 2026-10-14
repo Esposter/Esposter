@@ -240,10 +240,7 @@ export const resourceRouter = router({
     // Is at worst refused as stale, never applied over a save the agent did not read
     .query<ReadResourceContentResult>(async ({ ctx, input }) => {
       const storedResourceContent = await readStoredResourceContent(ctx.resource.id);
-      return {
-        ...readContentAtPointer(storedResourceContent, input),
-        contentVersion: ctx.resource.contentVersion,
-      };
+      return { ...readContentAtPointer(storedResourceContent, input), contentVersion: ctx.resource.contentVersion };
     }),
   readResourceContentSchema: standardAuthedProcedure
     .input(readResourceContentSchemaInputSchema)

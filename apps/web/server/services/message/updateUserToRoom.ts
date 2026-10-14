@@ -27,7 +27,11 @@ export const updateUserToRoom = async (
 
   const updatedUserToRoom = requireMutation(
     (
-      await db.update(usersToRoomsInMessage).set(rest).where(getRoomMembershipWhere(roomId, effectiveUserId)).returning()
+      await db
+        .update(usersToRoomsInMessage)
+        .set(rest)
+        .where(getRoomMembershipWhere(roomId, effectiveUserId))
+        .returning()
     )[0],
     Operation.Update,
     DatabaseEntityType.UserToRoom,

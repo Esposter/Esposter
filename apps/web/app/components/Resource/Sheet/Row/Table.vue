@@ -45,9 +45,7 @@ const { item: editingRow } = useSingletonDialog(editingId, () =>
   displayRows.value.find(({ id }) => id === editingId.value),
 );
 const reorderRows = useReorderRows();
-const isDraggable = computed(
-  () => !search.value && sortBy.value.length === 0 && displayRows.value === dataSource.rows,
-);
+const isDraggable = computed(() => !search.value && sortBy.value.length === 0 && displayRows.value === dataSource.rows);
 const cellStore = useCellStore();
 const { focusedCell, selectedCellRange } = storeToRefs(cellStore);
 const {

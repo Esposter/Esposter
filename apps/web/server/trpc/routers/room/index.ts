@@ -505,10 +505,5 @@ export const baseRoomRouter = router({
 
 export const roomRouter = mergeRouters(
   baseRoomRouter,
-  router({
-    category: categoryRouter,
-    directMessage: directMessageRouter,
-    emoji: emojiRouter,
-    filter: filterRouter,
-  }),
+  router({ category: categoryRouter, directMessage: directMessageRouter, emoji: emojiRouter, filter: filterRouter }),
 );
