@@ -30,5 +30,5 @@ Chevreuse's kit is its record and one behaviour module, `createChevreuseKitBehav
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/chevreuse), MIT: each strike's hitmarks, frames and areas, the charged attack's hitmark and circle, the press's and hold's boxes and hitmarks, the Overcharged Ball's circle and the overload subscription, Explosive Grenade and its shells' delays, and the passives and constellations listed as not built.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chevreuse), MIT: each strike's hitmarks, frames and areas, the charged attack's hitmark and circle, the press's and hold's boxes and hitmarks, the Overcharged Ball's circle and the overload subscription, Explosive Grenade and its shells' delays, and the passives and constellations listed as not built.
 - [Short-Range Rapid Interdiction Fire](https://genshin-impact.fandom.com/wiki/Short-Range_Rapid_Interdiction_Fire) and [Ring of Bursting Grenades](https://genshin-impact.fandom.com/wiki/Ring_of_Bursting_Grenades), Genshin Impact Wiki, where the game's values agree with the table.
