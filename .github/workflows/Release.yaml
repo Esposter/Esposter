@@ -84,7 +84,7 @@ jobs:
         id: tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
 
-      # Once the tag is on main a review run is started, which finds main diverged and merges it into ai/queue
+      # Once the release has published, a review run is started, which finds main diverged and merges it into ai/queue
       - name: 🔁 Start the review run
         env:
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
