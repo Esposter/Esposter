@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import type { BanInMessageWithUsers } from "@esposter/db-schema";
 
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+
 interface Props {
   ban: BanInMessageWithUsers;
 }
 
 const { ban } = defineProps<Props>();
+const userToRoomStore = useUserToRoomStore();
+const { getDisplayName } = userToRoomStore;
 </script>
 
 <template>
   <div role="listitem" flex gap-2 items-center>
     <div ui-row flex-1 min-w-0>
-      <UiItemContent :image="ban.user.image" :title="ban.user.name">
+      <UiItemContent :image="ban.user.image" :title="getDisplayName(ban.user, ban.roomId)">
         <template #append>
           <span text-sm text-muted truncate>
             Banned
@@ -23,7 +27,7 @@ const { ban } = defineProps<Props>();
               month="short"
               year="numeric"
             />
-            <template v-if="ban.bannedByUser"> by {{ ban.bannedByUser.name }}</template>
+            <template v-if="ban.bannedByUser"> by {{ getDisplayName(ban.bannedByUser, ban.roomId) }}</template>
           </span>
         </template>
       </UiItemContent>
