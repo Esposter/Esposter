@@ -14,7 +14,7 @@ const { $trpc } = useNuxtApp();
 const { data: achievementRarities } = useQuery(() => $trpc.achievement.readAchievementRarities.query());
 const sort = ref(AchievementSort.Category);
 // Rarest first reads the rarity read; until it lands every rarity is 0, so the category order holds
-const sortedAchievementDefinitions = computed(() =>
+const displayAchievementDefinitions = computed(() =>
   sort.value === AchievementSort.RarestFirst
     ? achievementDefinitions.value.toSorted(
         (firstAchievement, secondAchievement) =>
@@ -27,17 +27,17 @@ const achievementListMap = computed(() => {
   const unlockedUserAchievements = getUnlockedUserAchievements(userAchievements.value);
   return {
     [AchievementStatus.All]: {
-      achievementDefinitions: sortedAchievementDefinitions.value,
+      achievementDefinitions: displayAchievementDefinitions.value,
       userAchievements: userAchievements.value,
     },
     [AchievementStatus.Locked]: {
-      achievementDefinitions: sortedAchievementDefinitions.value.filter(
+      achievementDefinitions: displayAchievementDefinitions.value.filter(
         ({ name }) => !unlockedUserAchievements.some(({ achievement }) => achievement.name === name),
       ),
       userAchievements: userAchievements.value,
     },
     [AchievementStatus.Unlocked]: {
-      achievementDefinitions: sortedAchievementDefinitions.value.filter(({ name }) =>
+      achievementDefinitions: displayAchievementDefinitions.value.filter(({ name }) =>
         unlockedUserAchievements.some(({ achievement }) => achievement.name === name),
       ),
       userAchievements: unlockedUserAchievements,
