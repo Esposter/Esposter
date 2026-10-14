@@ -46,7 +46,8 @@ export const likeRouter = router({
   ),
   deleteLike: standardAuthedProcedure.input(deleteLikeInputSchema).mutation<LikeInPost>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
-      const post = await requireEntity(readLikedPost(tx, input), DatabaseEntityType.Post, input);
+      const likedPost = readLikedPost(tx, input);
+      const post = await requireEntity(likedPost, DatabaseEntityType.Post, input);
       const deletedLike = requireMutation(
         (await tx.delete(likesInPost).where(getLikeWhere(input, ctx.getSessionPayload.user.id)).returning())[0],
         Operation.Delete,
