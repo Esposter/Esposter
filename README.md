@@ -3,6 +3,7 @@
 [![Build Status][badge-ci]][url-ci]
 [![Duplicate Code][badge-duplicates]][url-ci]
 [![Repository Score][badge-score]][url-score]
+[![OpenSSF Scorecard][badge-openssf]][url-openssf]
 [![skills.sh installs][badge-skills]][url-skills]
 [![Apache-2.0 licensed][badge-license]][url-license]
 
@@ -418,6 +419,8 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [badge-duplicates]: https://img.shields.io/badge/duplicate%20code-0%20clones-33c854
 [badge-score]: https://img.shields.io/badge/score-94%2F100-33c854
 [url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
+[badge-openssf]: https://api.scorecard.dev/projects/github.com/Esposter/Esposter/badge
+[url-openssf]: https://scorecard.dev/viewer/?uri=github.com/Esposter/Esposter
 [badge-skills]: https://skills.sh/b/Esposter/Esposter
 [url-skills]: https://skills.sh/Esposter/Esposter
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
