@@ -2,11 +2,9 @@ import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/Tile
 import type { z } from "zod";
 
 import { WorldData, worldDataSchema } from "#shared/models/dungeons/data/world/WorldData";
-import { TilemapKeys, tilemapKeySchema } from "#shared/models/dungeons/keys/TilemapKey";
+import { tilemapKeySchema } from "#shared/models/dungeons/keys/TilemapKey";
 import { zodStrictRecord } from "#shared/services/zod/zodStrictRecord";
 
 export type World = Record<TilemapKey, WorldData>;
-export const getInitialWorld = (): World =>
-  Object.fromEntries(TilemapKeys.map((tilemapKey) => [tilemapKey, new WorldData()]));
 
 export const worldSchema = zodStrictRecord(tilemapKeySchema, worldDataSchema) satisfies z.ZodType<World>;
