@@ -1,476 +1,476 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 3 },
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 12339 } },
-  "burst.hits.1.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
-  "burst.hits.1.element": { "cause": "Unclassified", "value": "Fire" },
-  "burst.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
-  "burst.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 121 },
-  "burst.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 12339 } },
-  "burst.hits.2.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
-  "burst.hits.2.element": { "cause": "Unclassified", "value": "Fire" },
-  "burst.hits.2.gauge": { "cause": "Unclassified", "value": 1 },
-  "burst.hits.2.hitmarkFrames": { "cause": "Unclassified", "value": 154 },
-  "burst.hits.2.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 12339 } },
-  "burstVariant.animationFrames": { "cause": "Unclassified", "value": 104 },
-  "burstVariant.hits.length": { "cause": "Unclassified", "value": 3 },
+  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
+  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12339 } },
+  "burst.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
+  "burst.hits.1.element": { "cause": "Unsourced", "value": "Fire" },
+  "burst.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
+  "burst.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 121 },
+  "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12339 } },
+  "burst.hits.2.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
+  "burst.hits.2.element": { "cause": "Unsourced", "value": "Fire" },
+  "burst.hits.2.gauge": { "cause": "Unsourced", "value": 1 },
+  "burst.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 154 },
+  "burst.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 12339 } },
+  "burstVariant.animationFrames": { "cause": "Unsourced", "value": 104 },
+  "burstVariant.hits.length": { "cause": "Unsourced", "value": 3 },
   "burstVariant.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "burstVariant.hits.0.element": { "cause": "Unclassified", "value": "Fire" },
-  "burstVariant.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "burstVariant.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 97 },
-  "burstVariant.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 12339 } },
+  "burstVariant.hits.0.element": { "cause": "Unsourced", "value": "Fire" },
+  "burstVariant.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "burstVariant.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 97 },
+  "burstVariant.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 12339 } },
   "burstVariant.hits.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "burstVariant.hits.1.element": { "cause": "Unclassified", "value": "Fire" },
-  "burstVariant.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
-  "burstVariant.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 121 },
-  "burstVariant.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 12339 } },
+  "burstVariant.hits.1.element": { "cause": "Unsourced", "value": "Fire" },
+  "burstVariant.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
+  "burstVariant.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 121 },
+  "burstVariant.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 12339 } },
   "burstVariant.hits.2.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "burstVariant.hits.2.element": { "cause": "Unclassified", "value": "Fire" },
-  "burstVariant.hits.2.gauge": { "cause": "Unclassified", "value": 1 },
-  "burstVariant.hits.2.hitmarkFrames": { "cause": "Unclassified", "value": 154 },
-  "burstVariant.hits.2.multiplier": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 12339 } },
+  "burstVariant.hits.2.element": { "cause": "Unsourced", "value": "Fire" },
+  "burstVariant.hits.2.gauge": { "cause": "Unsourced", "value": 1 },
+  "burstVariant.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 154 },
+  "burstVariant.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 12339 } },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 12331 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.blackDragonTicks.length": { "cause": "Unclassified", "value": 16 },
   "hits.blackDragonTicks.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.0.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 185 },
   "hits.blackDragonTicks.0.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.1.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.1.hitmarkFrames": { "cause": "Unclassified", "value": 258 },
   "hits.blackDragonTicks.1.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.2.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.2.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.2.hitmarkFrames": { "cause": "Unclassified", "value": 332 },
   "hits.blackDragonTicks.2.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.3.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.3.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.3.hitmarkFrames": { "cause": "Unclassified", "value": 406 },
   "hits.blackDragonTicks.3.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.4.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.4.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.4.hitmarkFrames": { "cause": "Unclassified", "value": 479 },
   "hits.blackDragonTicks.4.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.5.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.5.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.5.hitmarkFrames": { "cause": "Unclassified", "value": 553 },
   "hits.blackDragonTicks.5.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.6.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.6.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.6.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.6.hitmarkFrames": { "cause": "Unclassified", "value": 626 },
   "hits.blackDragonTicks.6.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.7.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.7.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.7.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.7.hitmarkFrames": { "cause": "Unclassified", "value": 700 },
   "hits.blackDragonTicks.7.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.8.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.8.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.8.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.8.hitmarkFrames": { "cause": "Unclassified", "value": 774 },
   "hits.blackDragonTicks.8.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.8.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.9.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.9.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.9.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.9.hitmarkFrames": { "cause": "Unclassified", "value": 847 },
   "hits.blackDragonTicks.9.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.9.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.10.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.10.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.10.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.10.hitmarkFrames": { "cause": "Unclassified", "value": 921 },
   "hits.blackDragonTicks.10.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.10.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.11.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.11.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.11.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.11.hitmarkFrames": { "cause": "Unclassified", "value": 994 },
   "hits.blackDragonTicks.11.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.11.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.12.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.12.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.12.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.12.hitmarkFrames": { "cause": "Unclassified", "value": 1068 },
   "hits.blackDragonTicks.12.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.12.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.13.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.13.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.13.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.13.hitmarkFrames": { "cause": "Unclassified", "value": 1142 },
   "hits.blackDragonTicks.13.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.13.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.14.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.14.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.14.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.14.hitmarkFrames": { "cause": "Unclassified", "value": 1215 },
   "hits.blackDragonTicks.14.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.14.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.15.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
   },
   "hits.blackDragonTicks.15.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.15.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.15.hitmarkFrames": { "cause": "Unclassified", "value": 1289 },
   "hits.blackDragonTicks.15.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 12339 }
   },
   "hits.blackDragonTicks.15.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.length": { "cause": "Unclassified", "value": 20 },
   "hits.whiteDragonTicks.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.0.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 156 },
   "hits.whiteDragonTicks.0.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.1.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.1.hitmarkFrames": { "cause": "Unclassified", "value": 214 },
   "hits.whiteDragonTicks.1.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.2.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.2.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.2.hitmarkFrames": { "cause": "Unclassified", "value": 273 },
   "hits.whiteDragonTicks.2.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.3.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.3.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.3.hitmarkFrames": { "cause": "Unclassified", "value": 332 },
   "hits.whiteDragonTicks.3.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.4.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.4.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.4.hitmarkFrames": { "cause": "Unclassified", "value": 391 },
   "hits.whiteDragonTicks.4.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.5.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.5.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.5.hitmarkFrames": { "cause": "Unclassified", "value": 450 },
   "hits.whiteDragonTicks.5.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.6.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.6.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.6.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.6.hitmarkFrames": { "cause": "Unclassified", "value": 508 },
   "hits.whiteDragonTicks.6.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.7.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.7.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.7.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.7.hitmarkFrames": { "cause": "Unclassified", "value": 567 },
   "hits.whiteDragonTicks.7.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.8.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.8.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.8.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.8.hitmarkFrames": { "cause": "Unclassified", "value": 626 },
   "hits.whiteDragonTicks.8.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.8.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.9.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.9.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.9.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.9.hitmarkFrames": { "cause": "Unclassified", "value": 685 },
   "hits.whiteDragonTicks.9.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.9.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.10.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.10.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.10.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.10.hitmarkFrames": { "cause": "Unclassified", "value": 744 },
   "hits.whiteDragonTicks.10.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.10.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.11.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.11.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.11.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.11.hitmarkFrames": { "cause": "Unclassified", "value": 802 },
   "hits.whiteDragonTicks.11.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.11.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.12.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.12.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.12.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.12.hitmarkFrames": { "cause": "Unclassified", "value": 861 },
   "hits.whiteDragonTicks.12.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.12.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.13.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.13.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.13.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.13.hitmarkFrames": { "cause": "Unclassified", "value": 920 },
   "hits.whiteDragonTicks.13.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.13.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.14.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.14.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.14.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.14.hitmarkFrames": { "cause": "Unclassified", "value": 979 },
   "hits.whiteDragonTicks.14.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.14.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.15.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.15.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.15.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.15.hitmarkFrames": { "cause": "Unclassified", "value": 1038 },
   "hits.whiteDragonTicks.15.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.15.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.16.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.16.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.16.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.16.hitmarkFrames": { "cause": "Unclassified", "value": 1096 },
   "hits.whiteDragonTicks.16.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.16.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.17.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.17.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.17.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.17.hitmarkFrames": { "cause": "Unclassified", "value": 1155 },
   "hits.whiteDragonTicks.17.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.17.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.18.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.18.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.18.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.18.hitmarkFrames": { "cause": "Unclassified", "value": 1214 },
   "hits.whiteDragonTicks.18.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.18.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.19.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.whiteDragonTicks.19.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.19.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.19.hitmarkFrames": { "cause": "Unclassified", "value": 1273 },
   "hits.whiteDragonTicks.19.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 12339 }
   },
   "hits.whiteDragonTicks.19.poiseDamage": { "cause": "Unclassified", "value": 0 },
@@ -479,14 +479,14 @@
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.recastEnergy": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 12332 } },
+  "parameters.recastEnergy": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 12332 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "skillChain.followUps.length": { "cause": "Unclassified", "value": 1 },
-  "skillChain.followUps.0.animationFrames": { "cause": "Unclassified", "value": 83 },
-  "skillChain.followUps.0.hits.length": { "cause": "Unclassified", "value": 1 },
+  "skillChain.followUps.length": { "cause": "Unsourced", "value": 1 },
+  "skillChain.followUps.0.animationFrames": { "cause": "Unsourced", "value": 83 },
+  "skillChain.followUps.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "skillChain.followUps.0.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.7 }
   },
   "skillChain.followUps.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 35 },
@@ -494,62 +494,62 @@
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 12332 }
   },
-  "skillChain.windowSeconds": { "cause": "Unclassified", "value": 6 },
-  "stances.recastWindow.normalAttacks.length": { "cause": "Unclassified", "value": 1 },
-  "stances.recastWindow.normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 67 },
-  "stances.recastWindow.normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 3 },
+  "skillChain.windowSeconds": { "cause": "Unsourced", "value": 6 },
+  "stances.recastWindow.normalAttacks.length": { "cause": "Unsourced", "value": 1 },
+  "stances.recastWindow.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 67 },
+  "stances.recastWindow.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 3 },
   "stances.recastWindow.normalAttacks.0.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.272001872658765 }
   },
   "stances.recastWindow.normalAttacks.0.hits.0.attackTag": { "cause": "Unclassified", "value": "ElementalSkill" },
-  "stances.recastWindow.normalAttacks.0.hits.0.element": { "cause": "Unclassified", "value": "Fire" },
-  "stances.recastWindow.normalAttacks.0.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "stances.recastWindow.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 32 },
+  "stances.recastWindow.normalAttacks.0.hits.0.element": { "cause": "Unsourced", "value": "Fire" },
+  "stances.recastWindow.normalAttacks.0.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "stances.recastWindow.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 32 },
   "stances.recastWindow.normalAttacks.0.hits.0.internalCooldownTag": {
     "cause": "Unclassified",
     "value": "ElementalSkill"
   },
   "stances.recastWindow.normalAttacks.0.hits.0.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 12332 }
   },
-  "stances.recastWindow.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "stances.recastWindow.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.recastWindow.normalAttacks.0.hits.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.272001872658765 }
   },
   "stances.recastWindow.normalAttacks.0.hits.1.attackTag": { "cause": "Unclassified", "value": "ElementalSkill" },
-  "stances.recastWindow.normalAttacks.0.hits.1.element": { "cause": "Unclassified", "value": "Fire" },
-  "stances.recastWindow.normalAttacks.0.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
-  "stances.recastWindow.normalAttacks.0.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 37 },
+  "stances.recastWindow.normalAttacks.0.hits.1.element": { "cause": "Unsourced", "value": "Fire" },
+  "stances.recastWindow.normalAttacks.0.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
+  "stances.recastWindow.normalAttacks.0.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 37 },
   "stances.recastWindow.normalAttacks.0.hits.1.internalCooldownTag": {
     "cause": "Unclassified",
     "value": "ElementalSkill"
   },
   "stances.recastWindow.normalAttacks.0.hits.1.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 12332 }
   },
-  "stances.recastWindow.normalAttacks.0.hits.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "stances.recastWindow.normalAttacks.0.hits.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.recastWindow.normalAttacks.0.hits.2.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.272001872658765 }
   },
   "stances.recastWindow.normalAttacks.0.hits.2.attackTag": { "cause": "Unclassified", "value": "ElementalSkill" },
-  "stances.recastWindow.normalAttacks.0.hits.2.element": { "cause": "Unclassified", "value": "Fire" },
-  "stances.recastWindow.normalAttacks.0.hits.2.gauge": { "cause": "Unclassified", "value": 1 },
-  "stances.recastWindow.normalAttacks.0.hits.2.hitmarkFrames": { "cause": "Unclassified", "value": 42 },
+  "stances.recastWindow.normalAttacks.0.hits.2.element": { "cause": "Unsourced", "value": "Fire" },
+  "stances.recastWindow.normalAttacks.0.hits.2.gauge": { "cause": "Unsourced", "value": 1 },
+  "stances.recastWindow.normalAttacks.0.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
   "stances.recastWindow.normalAttacks.0.hits.2.internalCooldownTag": {
     "cause": "Unclassified",
     "value": "ElementalSkill"
   },
   "stances.recastWindow.normalAttacks.0.hits.2.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 12332 }
   },
-  "stances.recastWindow.normalAttacks.0.hits.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "stances.recastWindow.normalAttacks.0.targeting": { "cause": "Unclassified", "value": "Skill" },
+  "stances.recastWindow.normalAttacks.0.hits.2.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "stances.recastWindow.normalAttacks.0.targeting": { "cause": "Unsourced", "value": "Skill" },
   "burst.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
 }
