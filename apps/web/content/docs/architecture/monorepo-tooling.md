@@ -164,9 +164,9 @@ The cache is one task per package, with `build:packages` ordering them as a set.
 
 The generated barrels travel in the artifact alongside `dist` because `build:packages` generates them from a `build:prepare` hook and they are not committed — TypeDoc and the package lint/typecheck steps fail without them even when `dist` is present. Every generated source index file is kept, not just the root `src/index.ts`, since some generators create nested barrels — and so is genshin-world's `src/generated/characterKitMap`, the kit map its `build:prepare` hook writes before the barrels, which its sources import and its barrel lists.
 
-### The jscpd gate
+### The duplicate-code gate
 
-The `jscpd` job in `CI.yaml` is the duplicate-code finder's gate: it scans the finder's scopes with the finder's globs and minimums, so a clone the gate fails on is one the sweep reports. Both copies of those settings live in code and are held equal by the `duplicate code` test in `scripts/src/workspace/duplicateCode.test.ts`: `.jscpd.json` must equal the finder's constants, and the workflow's `path:` must name its scopes. Changing a threshold means changing the constant, which regenerates nothing by hand.
+The `Duplicate Code` job in `CI.yaml` runs the duplicate-code finder's workspace test, `scripts/src/workspace/duplicateCode.test.ts`, which holds the whole scan of the finder's scopes to no finding. The finder runs jscpd itself, with the scopes, globs and minimums its constants hold, so the gate fails on any clone the sweep reports. `.jscpd.json` must equal those constants, which the same test holds, because the jscpd CLI reads it from the repository root. Changing a threshold means changing the constant, which regenerates nothing by hand.
 
 ## CI security
 

@@ -3,8 +3,8 @@
 Every run of code two files share, found by `pnpm ai:sweep:duplicate-code` over the code scopes, with tests, generated
 output, declarations, import blocks, drawn assets and the Azure resource declarations left out (the finder's
 `constants.ts` says why for each). The workspace suite's zero test (`scripts/src/workspace/duplicateCode.test.ts`)
-holds the whole scan to no finding, and its jscpd gate test holds `.jscpd.json` and CI's scan paths to the finder's
-constants.
+holds the whole scan to no finding, and CI's Duplicate Code job runs that file as the gate. Its config test holds
+`.jscpd.json` to the finder's constants.
 
 Where a finding's home looked missing, it is settled:
 
