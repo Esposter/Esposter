@@ -5,8 +5,8 @@ import {
   BLUEPRINT_ENTRY_TOKEN_REGEX,
   BLUEPRINT_PARAMETER_TOKEN_REGEX,
 } from "#shared/services/resource/blueprint/constants";
-import { visitBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/visitBlueprintEntryContentStrings";
 import { substituteBlueprintParameterTokens } from "#shared/services/resource/blueprint/substituteBlueprintParameterTokens";
+import { visitBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/visitBlueprintEntryContentStrings";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 
 // What each entry will be created as, resolved from the parameter values by the same substitution deploy runs,

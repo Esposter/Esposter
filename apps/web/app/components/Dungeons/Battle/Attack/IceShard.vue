@@ -14,10 +14,10 @@ const animationCompleteEventKey = getAnimationCompleteEventKey(AttackKey["Ice Sh
 
 <template>
   <DungeonsBattleAttackAnimated
+    #default="{ playAnimationKey }"
     v-model:is-active="isActive"
     :start-spritesheet-key="AttackKey['Ice Shard Start']"
     @complete="emit('complete')"
-    v-slot="{ playAnimationKey }"
   >
     <DungeonsBattleAttack
       v-model:is-active="isActive"

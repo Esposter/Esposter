@@ -17,10 +17,10 @@ import { generateWebPubSubClientAccessUrl } from "#server/services/azure/webPubS
 import { on } from "#server/services/events/on";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "#server/services/message/createUserMessage";
-import { getMessageTableClients } from "#server/services/message/getMessageTableClients";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { checkIsUploadFileTokenValid } from "#server/services/message/file/checkIsUploadFileTokenValid";
 import { createUploadFileToken } from "#server/services/message/file/createUploadFileToken";
+import { getMessageTableClients } from "#server/services/message/getMessageTableClients";
 import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
 import { readLiveMessageWithEtag } from "#server/services/message/readLiveMessageWithEtag";
 import { readMessages } from "#server/services/message/readMessages";
