@@ -33,4 +33,4 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/emilie), MIT: the strikes' hitmarks, animations and reaches, the charged attack's box, the plunges' circles, collision and hitmarks, the skill's summon hit and Thorn, the burst's animation, Constellation 2 and Ascension 4, and the proud skill groups' indices, read from gcsim's Emilie data file.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/emilie), MIT: the strikes' hitmarks, animations and reaches, the charged attack's box, the plunges' circles, collision and hitmarks, the skill's summon hit and Thorn, the burst's animation, Constellation 2 and Ascension 4, and the proud skill groups' indices, read from gcsim's Emilie data file.
