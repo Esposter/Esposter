@@ -9,7 +9,7 @@ export const readModerationLogInputSchema = z.object({
     sortBy: true,
   }).shape,
   // "" = unfiltered — the client sends it for a filter it has not set, and it is read as absent here, so the router
-  // The router tests each filter for presence and never matches on the sentinel itself
+  // tests each filter for presence and never matches on the sentinel itself
   actorUserId: moderationLogEntitySchema.shape.actorUserId.or(z.literal("")).transform((value) => value || undefined),
   targetUserId: moderationLogEntitySchema.shape.targetUserId.or(z.literal("")).transform((value) => value || undefined),
   type: moderationLogEntitySchema.shape.type.or(z.literal("")).transform((value) => value || undefined),
