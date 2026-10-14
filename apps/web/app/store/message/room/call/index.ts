@@ -320,24 +320,26 @@ export const useCallStore = defineStore("message/room/call", () => {
     AdminActionHookMap[adminActionType].register(async (roomId) => {
       if (callRoomId.value === roomId) await leaveCall();
     });
+  // The room is checked first, so an admin action taken in a room whose call the user is not in never reaches the
+  // Call they are in: a force mute from there would otherwise mark them muted while their microphone stays live
+  const registerCallAdminActionHook = (adminActionType: AdminActionType, handler: () => Promise<void>) =>
+    AdminActionHookMap[adminActionType].register(async (roomId) => {
+      if (callRoomId.value !== roomId) return;
+      await handler();
+    });
   // The participant map is keyed by the call the user is actually in, which is the thread's session during a
-  // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here.
-  // The room is checked first: a force mute from a room whose call the user is not in would otherwise mark them
-  // Muted in the call they are in while their microphone stays live
-  AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
-    if (callRoomId.value !== roomId) return;
+  // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
+  registerCallAdminActionHook(AdminActionType.ForceMute, async () => {
     if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, true);
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
-  AdminActionHookMap[AdminActionType.ForceUnmute].register(async (roomId) => {
-    if (callRoomId.value !== roomId) return;
+  registerCallAdminActionHook(AdminActionType.ForceUnmute, async () => {
     if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, false);
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
   });
-  AdminActionHookMap[AdminActionType.StopScreenShare].register(async (roomId) => {
-    if (callRoomId.value !== roomId) return;
+  registerCallAdminActionHook(AdminActionType.StopScreenShare, async () => {
     await setScreenShare(false);
   });
 
