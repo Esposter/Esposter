@@ -19,9 +19,10 @@ export const useMonsterDeathTween = (isEnemy: boolean) => {
     return undefined;
   }
 
+  const duration = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
   useTween(monsterInfoContainerTween, {
     delay: 0,
-    duration: Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
+    duration,
     onComplete: () => {
       monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
     },
@@ -31,7 +32,7 @@ export const useMonsterDeathTween = (isEnemy: boolean) => {
   return new Promise<void>((resolve) => {
     useTween(monsterTween, {
       delay: 0,
-      duration: Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
+      duration,
       onComplete: () => {
         monsterPosition.value.y = monsterPositionYEnd;
         resolve();
