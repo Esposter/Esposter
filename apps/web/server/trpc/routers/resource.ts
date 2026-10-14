@@ -238,10 +238,13 @@ export const resourceRouter = router({
     })
     // The row was read before the blob, so the version answered is never newer than the content: a patch pinned to it
     // Is at worst refused as stale, never applied over a save the agent did not read
-    .query<ReadResourceContentResult>(async ({ ctx, input }) => ({
-      ...readContentAtPointer(await readStoredResourceContent(ctx.resource.id), input),
-      contentVersion: ctx.resource.contentVersion,
-    })),
+    .query<ReadResourceContentResult>(async ({ ctx, input }) => {
+      const storedResourceContent = await readStoredResourceContent(ctx.resource.id);
+      return {
+        ...readContentAtPointer(storedResourceContent, input),
+        contentVersion: ctx.resource.contentVersion,
+      };
+    }),
   readResourceContentSchema: standardAuthedProcedure
     .input(readResourceContentSchemaInputSchema)
     .meta({
