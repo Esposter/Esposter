@@ -67,3 +67,4 @@ A review run that goes red is a session's to read. Its step summary names the wi
 ## Deep Dives
 
 - `references/pull-conflicts.md` — when `git pull --rebase` stops on a conflict, or replays commits that are not the agent's.
+- `references/local-settle.md` — when settling open review issues from a session, not the review's settle job.
