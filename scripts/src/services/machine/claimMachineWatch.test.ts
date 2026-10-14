@@ -1,7 +1,11 @@
 import { claimMachineWatch } from "#src/services/machine/claimMachineWatch";
-import { MACHINE_LOCK_PATH, MACHINE_LOCK_TAKEOVER_PATH } from "#src/services/machine/constants";
+import {
+  EMPTY_LOCK_GRACE_MILLISECONDS,
+  MACHINE_LOCK_PATH,
+  MACHINE_LOCK_TAKEOVER_PATH,
+} from "#src/services/machine/constants";
 import { releaseMachineWatch } from "#src/services/machine/releaseMachineWatch";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -65,6 +69,26 @@ describe(claimMachineWatch, () => {
     expect(claimMachineWatch()).toBe(false);
     expect(readFileSync(MACHINE_LOCK_TAKEOVER_PATH, "utf8")).toBe(`${OTHER_PROCESS_ID}`);
     expect(readFileSync(MACHINE_LOCK_PATH, "utf8")).toBe(`${DEAD_PROCESS_ID}`);
+  });
+
+  test("holds a fresh empty claim whose writer has not yet written its process id in", () => {
+    expect.hasAssertions();
+
+    writeFileSync(MACHINE_LOCK_PATH, "");
+
+    expect(claimMachineWatch()).toBe(false);
+    expect(readFileSync(MACHINE_LOCK_PATH, "utf8")).toBe("");
+  });
+
+  test("takes over an empty claim its writer never filled in, once the grace has passed", () => {
+    expect.hasAssertions();
+
+    writeFileSync(MACHINE_LOCK_PATH, "");
+    const pastGrace = new Date(Date.now() - EMPTY_LOCK_GRACE_MILLISECONDS * 2);
+    utimesSync(MACHINE_LOCK_PATH, pastGrace, pastGrace);
+
+    expect(claimMachineWatch()).toBe(true);
+    expect(readFileSync(MACHINE_LOCK_PATH, "utf8")).toBe(OWN_PROCESS_ID);
   });
 
   test("releases only a claim this process holds", () => {
