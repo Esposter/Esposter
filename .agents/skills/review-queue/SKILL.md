@@ -21,6 +21,7 @@ Every agent works on **one permanent branch, `ai/queue`**, from its own git work
 - **A worktree created detached** (`git worktree add --detach`). A detached worktree has no fork point, so its pull replays every commit the queue holds that its `HEAD` reaches (`references/pull-conflicts.md`).
 - **Holding a finished chunk until CI comes back.** A queue push spends nothing, and a red typecheck or lint found afterwards is one more commit behind the unit. Push each unit as it lands, and fix a red on `ai/queue` in the next commit (the `running-checks` skill).
 - **Holding a commit for the review.** The review never waits on CI and reads every commit it is owed, whatever its size or shape. A session does not measure a window, exclude files to bring one under a cap, or open a pull request for one.
+- **The review's local fallback.** When the workflow review cannot run (a usage limit, or CI unusable), the owner runs the same review locally from a separate Claude account, over the same window of commits `main` does not yet have. A passed window reaches `main` by the owner's fast-forward, as line 13 allows; a session never runs the local review as its own pass to land on `main`.
 
 ## The refs
 
