@@ -26,7 +26,7 @@ flowchart TD
 ## Jobs
 
 - **`check`** reads the latest tag and counts the commits on `main` since it. A count of zero skips the run, and every job depends on `check`, so a quiet night does nothing.
-- **`version`** runs `pnpm release:version` on `main` as `REVIEW_COLLECTOR_TOKEN`, the identity `main`'s ruleset lets update it. It pulls and rebases the version commit onto `main`'s tip, re-points the tag at the rebased commit, and pushes `main` and the tag, retrying a rejected push up to five times. It then starts a review run on `ai/queue` so the version commit reaches the queue.
+- **`version`** runs `pnpm release:version` on `main` as `REVIEW_COLLECTOR_TOKEN`, the identity `main`'s ruleset lets update it. It moves the tag with the version commit as that commit lands on `main`, retrying a rejected push up to five times, then starts a review run on `ai/queue` so the version commit reaches the queue. [Monorepo tooling](/docs/architecture/monorepo-tooling) owns the reasons.
 - **`npm`** checks out the tag, installs the packages and the `scripts` project, and runs `pnpm release`. The install selects `./{packages/*,scripts}` because the root oxlint config loads plugins from `scripts`. Publishing uses npm trusted publishing (`id-token: write`, no token).
 - **`release`** runs no checkout. It creates a draft release on the tag with `gh release create --draft --verify-tag`, and a re-run accepts an existing draft or an already-published release. It does not wait for npm.
 - **`host-installer`** runs on a Windows runner. It checks out the tag, builds the agent console host as a single executable, and attaches it to the draft with `--clobber`, so a re-run replaces the asset. It is skipped once the release is already public.
