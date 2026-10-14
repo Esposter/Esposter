@@ -1,13 +1,13 @@
 name: 🛡️ Scorecard
 
-# The Scorecard analysis of `main`, published so the README badge shows its result. It runs on each push to `main`
-# (the review's fast-forward and the owner's sync both make one) rather than on a weekly schedule, since a scheduled
-# run would publish a result for a tree nothing changed
+# The Scorecard analysis of the default branch, published so the README badge shows its result. The action publishes
+# only for the default branch, which is `ai/queue`, so it runs on each push to `ai/queue` rather than on a weekly
+# schedule, since a scheduled run would publish a result for a tree nothing changed
 
 on:
   push:
     branches:
-      - main
+      - ai/queue
   workflow_dispatch:
 
 # Read-only for the workflow as a whole; the job's own grants below are the only writes
