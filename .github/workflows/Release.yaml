@@ -122,8 +122,6 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      # The default selector, not `./packages/*`: the root's oxlint config loads `scripts/`' plugins, so `pnpm release`'s
-      # lint needs the `scripts` project's dependencies, which a packages-only install leaves out
       # `scripts` too, not only the packages: the root's oxlint config loads its plugins, so `pnpm release`'s lint
       # needs the `scripts` project's dependencies, which a packages-only install leaves out
       - name: 📦 Install the packages and scripts
@@ -135,9 +133,10 @@ jobs:
         run: pnpm release
 
   # The repo has immutable releases on, so a published release takes no further assets: the release is created as a
-  # Draft, the host is attached to the draft, and `publish` makes it public last, once every asset is on it
+  # Draft as soon as the tag exists, the host is attached to the draft, and `publish` makes it public last, once every
+  # asset is on it and npm has published. A failed npm publish leaves the draft unpublished rather than no release at all
   release:
-    needs: [check, version, npm]
+    needs: [check, version]
     if: needs.check.outputs.skip == 'false'
     permissions:
       contents: write
@@ -211,8 +210,8 @@ jobs:
         run: gh release upload "$env:TAG" packages/agent-console-server/dist-sea/agent-console-host.exe --repo "$env:GITHUB_REPOSITORY" --clobber
 
   publish:
-    needs: [check, version, release, host-installer]
-    if: needs.check.outputs.skip == 'false' && needs.release.outputs.is-published != 'true'
+    needs: [check, version, npm, release, host-installer]
+    if: needs.check.outputs.skip == 'false' && needs.npm.result == 'success' && needs.release.outputs.is-published != 'true'
     permissions:
       contents: write
     runs-on: ubuntu-latest
