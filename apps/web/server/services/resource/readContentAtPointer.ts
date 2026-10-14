@@ -33,11 +33,10 @@ export const readContentAtPointer = (
           length: value.length,
           memberSizes: getMemberSizes(page.map((member, index) => [`${offset + index}`, member])),
         };
-  } else if (checkIsPlainObject(value)) {
+  } else if (checkIsPlainObject(value))
     return checkIsJsonSizeWithin(value, MAX_AGENT_READ_SIZE)
       ? { content: value }
       : { memberSizes: getMemberSizes(Object.entries(value)) };
-  }
   // A leaf has no members to size, so its own size is the one thing the read can say it withheld. It is serialized
   // Once, and that size both decides whether the leaf is returned and is the size returned when it is not
   const leafSize = getJsonByteSize(value);

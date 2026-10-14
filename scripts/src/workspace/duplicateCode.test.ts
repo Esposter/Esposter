@@ -8,6 +8,7 @@ import {
 } from "#src/services/sweeps/duplicateCode/constants";
 import { readDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/readDuplicateCodeFindings";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
+import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -32,7 +33,7 @@ describe("duplicateCode", () => {
   test("reads the finder's formats, globs and minimums from its config", () => {
     expect.hasAssertions();
 
-    expect(JSON.parse(readFileSync(join(REPOSITORY_ROOT, ".jscpd.json"), "utf8"))).toStrictEqual({
+    expect(jsonDateParse(readFileSync(join(REPOSITORY_ROOT, ".jscpd.json"), "utf8"))).toStrictEqual({
       format: DUPLICATE_CODE_FORMATS,
       gitignore: false,
       ignore: DUPLICATE_CODE_IGNORED_GLOBS,

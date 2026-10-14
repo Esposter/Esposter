@@ -11,8 +11,7 @@ export const createThreadFollow = (
   db: Database,
   { roomId, threadRootRowKey, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootRowKey" | "userId">,
   isSelfInitiated: boolean,
-) => {
-  return isSelfInitiated
+) =>
+  isSelfInitiated
     ? upsertThreadFollow(db, { roomId, threadRootRowKey, userId }, false)
     : db.insert(threadFollowsInMessage).values({ roomId, threadRootRowKey, userId }).onConflictDoNothing();
-};
