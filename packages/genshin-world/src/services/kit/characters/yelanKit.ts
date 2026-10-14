@@ -7,7 +7,7 @@ import { takeOne } from "@esposter/shared";
 
 // Provisional: Depth-Clarion Dice waves an Exquisite Throw each second, its first a second after the burst's hit, as
 // Gcsim's ticker starts from the hit's status
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/yelan/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yelan/burst.go
 const EXQUISITE_THROW_WAVE_SECONDS = 1;
 // The field lives a tenth of a second past its seconds, so the step that runs its last wave still has it
 const FIELD_LINGER_SECONDS = 0.1;
