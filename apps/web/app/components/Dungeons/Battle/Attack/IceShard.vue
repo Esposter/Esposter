@@ -9,23 +9,30 @@ import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnim
 const isActive = defineModel<boolean>("isActive", { required: true });
 const { isToEnemy } = defineProps<AttackProps>();
 const emit = defineEmits<{ complete: [] }>();
-const playAnimationKey = usePlayAnimation(AttackKey["Ice Shard Start"], isActive, emit);
 const animationCompleteEventKey = getAnimationCompleteEventKey(AttackKey["Ice Shard Start"]);
 </script>
 
 <template>
-  <DungeonsBattleAttack
+  <DungeonsBattleAttackAnimated
     v-model:is-active="isActive"
-    :spritesheet-key="AttackKey['Ice Shard']"
     :is-to-enemy
-    :configuration="{ type: AttackGameObjectType.Sprite }"
-    :create-animation-configurations="
-      (scene) => [
-        getAnimationConfiguration(scene, AttackKey['Ice Shard']),
-        getAnimationConfiguration(scene, AttackKey['Ice Shard Start']),
-      ]
-    "
-    :play-animation-key
-    @[animationCompleteEventKey]="playAnimationKey = AttackKey['Ice Shard']"
-  />
+    :start-spritesheet-key="AttackKey['Ice Shard Start']"
+    @complete="emit('complete')"
+    v-slot="{ playAnimationKey }"
+  >
+    <DungeonsBattleAttack
+      v-model:is-active="isActive"
+      :spritesheet-key="AttackKey['Ice Shard']"
+      :is-to-enemy
+      :configuration="{ type: AttackGameObjectType.Sprite }"
+      :create-animation-configurations="
+        (scene) => [
+          getAnimationConfiguration(scene, AttackKey['Ice Shard']),
+          getAnimationConfiguration(scene, AttackKey['Ice Shard Start']),
+        ]
+      "
+      :play-animation-key="playAnimationKey.value"
+      @[animationCompleteEventKey]="playAnimationKey.value = AttackKey['Ice Shard']"
+    />
+  </DungeonsBattleAttackAnimated>
 </template>

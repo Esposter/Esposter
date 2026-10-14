@@ -8,32 +8,39 @@ import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnim
 const isActive = defineModel<boolean>("isActive", { required: true });
 const { isToEnemy } = defineProps<AttackProps>();
 const emit = defineEmits<{ complete: [] }>();
-const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
 </script>
 
 <template>
-  <DungeonsBattleAttackContainer v-model:is-active="isActive" :is-to-enemy>
-    <DungeonsBattleAttack
-      v-model:is-active="isActive"
-      :spritesheet-key="SpritesheetKey.Slash"
-      :is-to-enemy
-      :configuration="{ type: AttackGameObjectType.Container }"
-      :create-animation-configurations="(scene) => [getAnimationConfiguration(scene, SpritesheetKey.Slash)]"
-      :play-animation-key
-    />
-    <DungeonsBattleAttack
-      v-model:is-active="isActive"
-      :spritesheet-key="SpritesheetKey.Slash"
-      :is-to-enemy
-      :configuration="{ type: AttackGameObjectType.Container, position: { x: 30 } }"
-      :play-animation-key
-    />
-    <DungeonsBattleAttack
-      v-model:is-active="isActive"
-      :spritesheet-key="SpritesheetKey.Slash"
-      :is-to-enemy
-      :configuration="{ type: AttackGameObjectType.Container, position: { x: -30 } }"
-      :play-animation-key
-    />
-  </DungeonsBattleAttackContainer>
+  <DungeonsBattleAttackAnimated
+    v-model:is-active="isActive"
+    :is-to-enemy
+    :start-spritesheet-key="SpritesheetKey.Slash"
+    @complete="emit('complete')"
+    v-slot="{ playAnimationKey }"
+  >
+    <DungeonsBattleAttackContainer v-model:is-active="isActive" :is-to-enemy>
+      <DungeonsBattleAttack
+        v-model:is-active="isActive"
+        :spritesheet-key="SpritesheetKey.Slash"
+        :is-to-enemy
+        :configuration="{ type: AttackGameObjectType.Container }"
+        :create-animation-configurations="(scene) => [getAnimationConfiguration(scene, SpritesheetKey.Slash)]"
+        :play-animation-key="playAnimationKey.value"
+      />
+      <DungeonsBattleAttack
+        v-model:is-active="isActive"
+        :spritesheet-key="SpritesheetKey.Slash"
+        :is-to-enemy
+        :configuration="{ type: AttackGameObjectType.Container, position: { x: 30 } }"
+        :play-animation-key="playAnimationKey.value"
+      />
+      <DungeonsBattleAttack
+        v-model:is-active="isActive"
+        :spritesheet-key="SpritesheetKey.Slash"
+        :is-to-enemy
+        :configuration="{ type: AttackGameObjectType.Container, position: { x: -30 } }"
+        :play-animation-key="playAnimationKey.value"
+      />
+    </DungeonsBattleAttackContainer>
+  </DungeonsBattleAttackAnimated>
 </template>
