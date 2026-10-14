@@ -198,6 +198,10 @@ The dev server pre-bundles the imports the world and the login find only as they
 
 Vitest runs on Windows because `apps/web/configuration/modules.ts` gives Nuxt a minimal module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO); loading the full list there crashes the config load on the PWA module's virtual import. If a new test needs an excluded module, add it to the Vitest branch there.
 
+## Windows
+
+Agent worktrees live under `.agents/worktrees/<name>`, inside the repo and gitignored. Windows caps paths at 260 characters unless long paths are enabled, and a worktree's `node_modules` paths exceed that, so enable them once. From an elevated PowerShell run `Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1`, then restart the terminal.
+
 ## Dependency updates
 
 Renovate writes every version the repo declares — the catalog and `overrides:` in `pnpm-workspace.yaml`, both node pins, `packageManager`, every action under `.github/` and every `FROM` — and lands each one on `ai/queue` beside the sessions' commits, where the review reads it like any other. pnpm ships new workspace settings in minors that only its release notes announce, so a pnpm bump is read against those notes before it is taken. What a person writes is policy, and it lives in one place: a `packageRules` entry in `renovate.json` whose `description` is the reason, for every dependency that is held below a version, disabled, grouped or read before merging. `pnpm outdated:dependencies` reads the same rules, so a bump by hand and the bot agree on what is held — a cap expressed only as a catalog range, or only as a note in a skill, is one the bot cannot read and will propose past. The rules themselves, what each manager reaches and the local dry run that shows it are the `dependency-updates` skill's.
