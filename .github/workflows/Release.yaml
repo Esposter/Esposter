@@ -3,7 +3,8 @@ name: 🚀 Release
 # The nightly release, of main: only what a review has passed ships. One job runs `pnpm release`, which gates the tree, versions
 # and tags main's new commits, pushes the version commit and its tags to main, and publishes the new versions through npm trusted
 # publishing. Then the job drafts the GitHub release, `host-installer` attaches the Windows host to that draft, and `publish` makes
-# it public last. The review run that the job starts merges main into ai/queue.
+# it public last. The push that `pnpm release` makes to main starts the review run that merges main into ai/queue
+# (`MergeMain.yaml`), so nothing here dispatches it.
 on:
   schedule:
     # Nightly, at 15:16 UTC
@@ -83,12 +84,6 @@ jobs:
       - name: 🏷️ Read the tag
         id: tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
-
-      # Once the release has published, a review run is started, which finds main diverged and merges it into ai/queue
-      - name: 🔁 Start the review run
-        env:
-          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-        run: gh workflow run Review.yaml --ref ai/queue --repo "$GITHUB_REPOSITORY"
 
       # The repo has immutable releases on, so a published release takes no further assets: the release is created as a
       # Draft once `pnpm release` has published the tag's versions, the host is attached to the draft, and `publish` makes

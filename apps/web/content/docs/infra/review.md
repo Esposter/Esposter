@@ -42,7 +42,7 @@ flowchart TD
 ```
 
 1. **Fetch.** The run reads `origin/main` and `origin/ai/queue`.
-2. **Diverged main.** If `main` is not an ancestor of `ai/queue`, something else pushed `main`: the nightly release's version commit, which starts a run itself, or a push by hand. The run merges `origin/main` into `ai/queue`, pushes it, and ends, since that push starts the next run. A conflict fails the run, listing the conflicted paths.
+2. **Diverged main.** If `main` is not an ancestor of `ai/queue`, something else pushed `main`: the nightly release's version commit or a push by hand. `MergeMain.yaml` starts a run on every such push, so none is dispatched by hand. The run merges `origin/main` into `ai/queue`, pushes it, and ends, since that push starts the next run. A conflict fails the run, listing the conflicted paths.
 3. **Commits owed.** The commits on `main..ai/queue`, first parents only, in order. None means the run ends.
 4. **Windows.** Every owed commit is cut into consecutive windows. Each window is the longest run of commits whose changed files, taken together, stay within `REVIEW_WINDOW_FILE_CAP`, and holds at least one commit, even when that commit alone is over the cap. The run plans every window owed at its start.
 5. **Batches.** Each window's changed files, after the excluded paths and binary files are dropped, are sorted by path so neighbours land together, then packed in order into batches under a file cap and a changed-line cap.
@@ -175,6 +175,7 @@ A review does not gate on CI. A window's review completes and `main` moves, what
 
 | File                                                              | Role                                                                                                             |
 | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `.github/workflows/MergeMain.yaml`                                | the push to `main` that dispatches this workflow when `main` is ahead of `ai/queue`                              |
 | `.github/workflows/Review.yaml`                                   | the workflow: its triggers, the review job, the fix matrix, the settle job, and the groups, timeouts and outputs |
 | `scripts/src/review/index.ts`                                     | the entry point, `pnpm -C scripts ai:review`, with `--from`, `--to`, `--dry-run` and `--findings-directory`      |
 | `scripts/src/reviewFix/index.ts`                                  | the entry point, `pnpm -C scripts ai:review:fix`, the fixer over one issue's findings file                       |

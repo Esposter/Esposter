@@ -14,7 +14,8 @@ flowchart TD
   Trigger[Nightly at 15:16 UTC, or manual dispatch] --> Check{check: commits on main since the latest tag?}
   Check -- no --> Skip[Skipped: every later job]
   Check -- yes --> Release[release: pnpm release on main, gates then lerna version, then trusted publish]
-  Release -- success --> Review[Review run on ai/queue merges main back]
+  Release -- success --> Main[Push to main]
+  Main --> Merge[MergeMain: a review run on ai/queue merges main back]
   Release -- success --> Draft[Draft GitHub release on the tag]
   Release -- failure --> Held[No review run, no draft: the tag may exist without a release]
   Draft --> Host[host-installer: build the Windows host, attach it to the draft]
@@ -24,7 +25,7 @@ flowchart TD
 ## Jobs
 
 - **`check`** reads the latest tag and counts the commits on `main` since it. A count of zero skips the run, and every later job depends on `check`, so a quiet night does nothing.
-- **`release`** checks out `main` as `REVIEW_COLLECTOR_TOKEN`, the identity `main`'s ruleset lets update it, and runs `pnpm release`. That runs the gates, then `lerna version`, which commits and tags the version and pushes it, then `lerna publish from-package`, which publishes through npm trusted publishing (`id-token: write`, no token). The job then starts a review run on `ai/queue` so the version commit reaches the queue, and creates a draft release on the tag with `gh release create --draft --verify-tag`. A re-run accepts an existing draft or an already-published release. [Monorepo tooling](/docs/architecture/monorepo-tooling) owns the reasons.
+- **`release`** checks out `main` as `REVIEW_COLLECTOR_TOKEN`, the identity `main`'s ruleset lets update it, and runs `pnpm release`. That runs the gates, then `lerna version`, which commits and tags the version and pushes it, then `lerna publish from-package`, which publishes through npm trusted publishing (`id-token: write`, no token). The push `pnpm release` makes to `main` starts a review run on `ai/queue` through `MergeMain.yaml`, so the version commit reaches the queue, and the job creates a draft release on the tag with `gh release create --draft --verify-tag`. A re-run accepts an existing draft or an already-published release. [Monorepo tooling](/docs/architecture/monorepo-tooling) owns the reasons.
 - **`host-installer`** runs on a Windows runner. It checks out the tag, builds the agent console host as a single executable, and attaches it to the draft with `--clobber`, so a re-run replaces the asset. It is skipped once the release is already public.
 - **`publish`** makes the draft public with `gh release edit --draft=false`. It needs `release` and `host-installer` to have succeeded, so a public release always names a version that reached npm.
 
@@ -42,13 +43,14 @@ flowchart TD
 
 - The first publish of a new package is manual, because trusted publishing needs the package to exist on npm first. [Monorepo tooling](/docs/architecture/monorepo-tooling) gives the command.
 
-- A failed `pnpm release` is not retried by a quiet night, because `check` skips the commits the tag covers. If the version push landed, the tag exists with no GitHub release and possibly no npm publish, and the version commit reaches `ai/queue` only at the next push to it, since that push starts a review run. The recovery is manual: check out the tag, run `pnpm exec lerna publish from-package --yes` (it publishes only the versions npm lacks), then `gh release create <tag> --draft --verify-tag` and attach the host. Make the release public with `gh release edit <tag> --draft=false` once it has its asset. `pnpm release` is not re-run at a tag, because its version step would bump again: `forcePublish` versions every member.
+- A failed `pnpm release` is not retried by a quiet night, because `check` skips the commits the tag covers. If the version push landed, the tag exists with no GitHub release and possibly no npm publish, and the version commit reaches `ai/queue` through the push that `MergeMain.yaml` answers, since that push moved `main`. The recovery is manual: check out the tag, run `pnpm exec lerna publish from-package --yes` (it publishes only the versions npm lacks), then `gh release create <tag> --draft --verify-tag` and attach the host. Make the release public with `gh release edit <tag> --draft=false` once it has its asset. `pnpm release` is not re-run at a tag, because its version step would bump again: `forcePublish` versions every member.
 
 ## Key files
 
-| File                               | Role                                                       |
-| ---------------------------------- | ---------------------------------------------------------- |
-| `.github/workflows/Release.yaml`   | the release jobs, their gates and their order              |
-| `.github/actions/install-projects` | the install step every publish and check job shares        |
-| `lerna.json`                       | the workspace globs lerna versions and publishes           |
-| `package.json`                     | `release`, the script the release job runs, gates included |
+| File                               | Role                                                                          |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
+| `.github/workflows/Release.yaml`   | the release jobs, their gates and their order                                 |
+| `.github/workflows/MergeMain.yaml` | the push to `main` that starts the review run merging it back into `ai/queue` |
+| `.github/actions/install-projects` | the install step every publish and check job shares                           |
+| `lerna.json`                       | the workspace globs lerna versions and publishes                              |
+| `package.json`                     | `release`, the script the release job runs, gates included                    |

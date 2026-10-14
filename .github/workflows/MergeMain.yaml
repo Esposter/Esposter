@@ -1,0 +1,40 @@
+name: 🔀 Merge main back
+
+# Starts the review run whenever a push moves `main` ahead of `ai/queue`, so the version commit a release pushes, or a push to
+# `main` by hand, reaches the queue with no step of its own. The review's own fast-forward moves `main` onto `ai/queue`, so
+# `main` is already an ancestor there and nothing is dispatched. The dispatch runs under the collector's token, as the
+# review's fast-forward does, so this workflow's own token stays read-only.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    name: Start the review run
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: 🔎 Check whether main is ahead of ai/queue
+        id: check
+        run: |
+          git fetch origin main ai/queue
+          if git merge-base --is-ancestor origin/main origin/ai/queue; then
+            echo "main is already in ai/queue, nothing to merge back."
+            echo "dispatch=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "dispatch=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 🔁 Start the review run
+        if: steps.check.outputs.dispatch == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+        run: gh workflow run Review.yaml --ref ai/queue --repo "$GITHUB_REPOSITORY"

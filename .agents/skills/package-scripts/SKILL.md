@@ -11,7 +11,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 - **A root `build:<app>` script per app.** A root script that only delegates to a package is a second definition of the line at the call site; what earns a root script its line is `apps/web/content/docs/architecture/monorepo-tooling.md`, "Recursive script orchestration".
 - **Majoring the published packages because an export was renamed or removed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves every public package to the next whole number; a rename or a removal ships as the `refactor` it is, and a package is kept at its smallest form rather than its oldest surface (`apps/web/content/docs/architecture/no-compatibility-debt.md`).
-- **Publishing a release from a developer's machine.** The release is the nightly `Release.yaml` run: `pnpm release` gates the tree, versions `main` and pushes the version commit and its tag, then publishes through npm's trusted publishing; the review run the job starts merges the version commit back into `ai/queue`. No person runs it (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Lerna Lite").
+- **Publishing a release from a developer's machine.** The release is the nightly `Release.yaml` run: `pnpm release` gates the tree, versions `main` and pushes the version commit and its tag, then publishes through npm's trusted publishing; the push to `main` that the release makes starts the review run (`MergeMain.yaml`), which merges the version commit back into `ai/queue`. No person runs it (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Lerna Lite").
 
 ## `apps/web`
 
