@@ -6,7 +6,7 @@ Read when running `pnpm infra:preview` / `pnpm infra:up`, after a catalog bump t
 
 Run in order from `apps/infra/`, always before `infra:preview` or `infra:up`:
 
-1. `pnpm typecheck` — TypeScript type check. An apply reaches live Azure before any CI run reads the change, so this is the one check a session runs ahead of CI (the `running-checks` skill).
+1. `pnpm typecheck` — TypeScript type check. An apply reaches live Azure before any CI run reads the change, so this is the one check a session runs ahead of CI (the `running-checks` skill's Pulumi exception).
 2. `pnpm infra:preview --suppress-outputs` — confirm scope before applying.
 3. `pnpm infra:up --yes --suppress-outputs` — apply only after the preview is confirmed.
 
@@ -35,7 +35,7 @@ untargeted `infra:preview` reports the grants unchanged, because the identity is
 
 ## The first `up` after a provider bump cannot be targeted
 
-State pins the default provider each resource was last written with (`pulumi:providers:github::default_6_14_1`), so a catalog bump to a provider package makes the program register a version state has never seen. Under `--target`, Pulumi registers providers only for the targeted resources, so the untargeted ones' provider is missing and it refuses:
+State pins the default provider each resource was last written with (`pulumi:providers:github::default_<version>`), so a catalog bump to a provider package makes the program register a version state has never seen. Under `--target`, Pulumi registers providers only for the targeted resources, so the untargeted ones' provider is missing and it refuses:
 
 ```text
 error: provider …:pulumi:providers:github::default_6_14_0::… for resource …

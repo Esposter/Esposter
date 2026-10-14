@@ -6,6 +6,8 @@ Read when changing the `parent` of an already-deployed resource, renaming or rep
 
 Changing `parent` in code changes the Pulumi URN (old = delete, new = create). `protect: true` blocks the delete, so the preview errors. Sequence:
 
+Run these from `apps/infra/`.
+
 1. Update `parent` in code to the correct final parent.
 2. `pulumi state unprotect "<old-urn>"` for each affected resource — allows Pulumi to delete the old state entry.
 3. `pnpm infra:preview` — confirm the plan shows delete (old URN) + create (new URN) per affected resource, plus any net-new creates.
