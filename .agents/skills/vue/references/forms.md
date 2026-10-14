@@ -19,9 +19,9 @@ When a form handles both create and edit, use an explicit `isCreate` prop (defau
 ```ts
 interface Props {
   initialValues?: Pick<Foo, "bar" | "baz">;
-  isCreate?: boolean;
+  isCreate?: true;
 }
-const { initialValues = { bar: "", baz: "" }, isCreate = false } = defineProps<Props>();
+const { initialValues = { bar: "", baz: "" }, isCreate } = defineProps<Props>();
 const { cloned: values } = useCloned(() => initialValues);
 ```
 
@@ -30,7 +30,7 @@ const { cloned: values } = useCloned(() => initialValues);
 - `isCreate` drives button text: `isCreate ? 'Create Foo' : 'Edit Foo'`.
 - Create page passes `is-create`; update page passes `:initial-values` (no `is-create`).
 
-The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `Foo/EditDialogButton`), where it also skips the equality check that would disable the save button when state matches the original.
+The same `isCreate?: true` pattern applies to dialog buttons (e.g. `Foo/EditDialogButton`), where it also skips the equality check that would disable the save button when state matches the original.
 
 ## A settings draft is the form's, not the row's
 
