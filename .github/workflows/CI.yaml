@@ -184,6 +184,25 @@ jobs:
         with:
           task: format:check
 
+  # The gate the duplicate-code sweep's finder answers to: the same scopes, globs and minimums as its constants, which the
+  # `duplicateCode` workspace test holds this step and `.jscpd.json` to. Threshold 0 fails on any clone
+  duplicate-code:
+    name: Duplicate Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 🔍 Duplicate code
+        uses: kucherenko/jscpd@095d6ca33e9f291c144bb05ef653b2bfdc3c1453 # v5.4.1
+        with:
+          config: .jscpd.json
+          path: apps/web/app apps/web/server apps/web/shared apps/functions/src apps/infra/src packages scripts/src
+          threshold: "0"
+          upload-sarif: "false"
+
   # Each entry's `name` is the check context the branch ruleset requires
   # (`apps/infra/src/github/rulesets/queueStatusChecks.ts`)
   check:
