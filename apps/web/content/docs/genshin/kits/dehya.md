@@ -19,4 +19,4 @@ Not built yet: the Sanctum her skill leaves, its Molten Inferno DoT, which strik
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/dehya), MIT: Dehya's strikes' hitmarks, cancel frames, reaches and poise, Molten Inferno's initial hit and its animation, the plunges' timings and poise, and the burst's first punch.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dehya), MIT: Dehya's strikes' hitmarks, cancel frames, reaches and poise, Molten Inferno's initial hit and its animation, the plunges' timings and poise, and the burst's first punch.
