@@ -13,7 +13,11 @@
   "lockFileMaintenance": { "automerge": true, "enabled": true },
   "osvVulnerabilityAlerts": true,
   "packageRules": [
-    { "automerge": true, "matchUpdateTypes": ["minor", "patch"] },
+    {
+      "automerge": true,
+      "description": "A minor or patch update merges on green as a pull request into `ai/queue`, with no person in the loop; a major opens a pull request that waits for one. The rules below that hold, group or disable a package take it out of this default.",
+      "matchUpdateTypes": ["minor", "patch"]
+    },
     {
       "description": "Every automerging minor and patch update is one group, so one branch and one CI run cover them rather than one per dependency on the shared runners. Each automerge is a pull request into `ai/queue` that merges once its own required checks pass. Later rules naming a `groupName` keep their own branch.",
       "groupName": "non-major dependencies",
