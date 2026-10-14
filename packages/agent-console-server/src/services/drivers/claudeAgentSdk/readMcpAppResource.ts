@@ -1,11 +1,7 @@
+import type { McpAppResource } from "#src/models/claudeAgentSdk/McpAppResource";
 import type { Query } from "@anthropic-ai/claude-agent-sdk";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-export interface McpAppResource {
-  html: string;
-  meta: Record<string, unknown>;
-}
 
 /**
  * One MCP Apps widget, read from the server the session's CLI dialed. The contents are untrusted third-party HTML,

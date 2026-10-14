@@ -1,12 +1,8 @@
+import type { RepositoryFile } from "#src/models/files/RepositoryFile";
+
 import { REPOSITORY_FILE_MAX_BYTE_LENGTH } from "#src/services/files/constants";
 import { resolveRepositoryPath } from "#src/services/files/resolveRepositoryPath";
 import { readFile, stat } from "node:fs/promises";
-
-export interface RepositoryFile {
-  content: string;
-  // Empty when the file's text is in content, else why the view cannot show it
-  notice: string;
-}
 
 // A file the session names, as text. One too large to show, or one holding a NUL byte, answers with its reason only
 export const readRepositoryFile = async (cwd: string, path: string): Promise<RepositoryFile> => {
