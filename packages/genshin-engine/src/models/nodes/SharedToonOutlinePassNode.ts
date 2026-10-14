@@ -11,7 +11,9 @@ import { ToonOutlinePassNode } from "three/webgpu";
 // The same: the pass's own thickness, colour and alpha nodes, with nothing of the toon material read. So each toon
 // Material met for the first time paid a node build and often a pipeline mid-frame. One material serves them all, built
 // Once from the pass's nodes, and an object's skinned, instanced or morphed variant still compiles as its own pipeline.
-// A material with its own edge is outlined by one material per distinct edge, built once and shared the same way
+// A material with its own edge is outlined by one material per distinct edge, built once and shared the same way, save
+// A game model's colour read per pixel: it samples its own material's textures, so its outline material is that
+// Colour's alone, and is dropped with it
 export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   declare alphaNode: Node<"float">;
   // The pass's nodes, which three types untyped, as the outline materials built from them read them
@@ -20,6 +22,7 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   // One frame's draw answers every compile asked for before it
   #drawn?: PromiseWithResolvers<void>;
   readonly #edgeOutlineMaterials = new Map<string, NodeMaterial>();
+  readonly #pixelEdgeOutlineMaterials = new WeakMap<Node<"vec4">, Map<string, NodeMaterial>>();
   #outlineMaterial?: NodeMaterial;
 
   // A material with its own edge is outlined in that edge, and every other toon material by the one shared material
@@ -59,8 +62,15 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   }
 
   #getEdgeOutlineMaterial({ color, isVertexWeighted, offset, size, widthKnots }: ToonEdge): NodeMaterial {
-    const key = `${Array.isArray(color) ? color.join(",") : color.id}:${size}:${widthKnots.depths.join(",")}:${widthKnots.scales.join(",")}:${isVertexWeighted}:${offset?.size}:${offset?.blockBChannel}`;
-    let edgeOutlineMaterial = this.#edgeOutlineMaterials.get(key);
+    const shapeKey = `${size}:${widthKnots.depths.join(",")}:${widthKnots.scales.join(",")}:${isVertexWeighted}:${offset?.size}:${offset?.blockBChannel}`;
+    let edgeOutlineMaterials = this.#edgeOutlineMaterials;
+    let key = shapeKey;
+    if (Array.isArray(color)) key = `${color.join(",")}:${shapeKey}`;
+    else {
+      edgeOutlineMaterials = this.#pixelEdgeOutlineMaterials.get(color) ?? new Map<string, NodeMaterial>();
+      this.#pixelEdgeOutlineMaterials.set(color, edgeOutlineMaterials);
+    }
+    let edgeOutlineMaterial = edgeOutlineMaterials.get(key);
     if (edgeOutlineMaterial === undefined) {
       const scale = createOutlineScaleNode(widthKnots.depths, widthKnots.scales);
       const edgeColour = Array.isArray(color) ? vec4(...color) : color;
@@ -73,7 +83,7 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
             this.#createGameOffsetNode(offset),
           )
         : createOutlineMaterial(edgeColour, this.thicknessNode.mul(float(size)).mul(scale));
-      this.#edgeOutlineMaterials.set(key, edgeOutlineMaterial);
+      edgeOutlineMaterials.set(key, edgeOutlineMaterial);
     }
     return edgeOutlineMaterial;
   }
