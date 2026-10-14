@@ -27,6 +27,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [emoji](/docs/esbabbler/emoji)                                             | One emoji index — picker, reactions, `:` autocomplete, tones       |
 | [custom emoji](/docs/esbabbler/custom-emoji)                               | Per-room uploads — count cap, id-keyed tag, content node           |
 | [file & media](/docs/esbabbler/file-media)                                 | Image thumbnails, per-room attachment limits, attachment browsing  |
+| [code viewer](/docs/esbabbler/code-viewer)                                 | Read-only code attachments, grammar by filename, the app's theme   |
 | [message search](/docs/esbabbler/message-search)                           | Right-sidebar search — filter chips, free text, search history     |
 | [friends and DMs](/docs/esbabbler/friends-and-dms)                         | Friend requests, blocking, 1:1 and group direct messages           |
 | [RBAC](/docs/esbabbler/rbac)                                               | Roles, permission bitfield, hierarchy, procedure guards            |

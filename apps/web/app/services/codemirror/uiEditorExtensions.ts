@@ -6,8 +6,8 @@ import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { EditorView } from "codemirror";
 
 // The code viewer's chrome and highlighting in the UI library's tokens, in place of a bundled theme. The upstream
-// One Dark theme's issue tracker was only skimmed: a colour table carries no defects worth porting. The editor draws
-// No background of its own, so the frame it sits in shows through, and the text takes the token the app's text takes
+// One Dark theme's audit, and why nothing reachable overturns the replacement, is on the code viewer page. The editor
+// Draws no background of its own, so the frame it sits in shows through, and the text takes the token the app's text takes
 export const uiEditorExtensions: Extension[] = [
   EditorView.theme({
     "&": { backgroundColor: "transparent", color: `var(--ui-${UiToken.Text})` },
