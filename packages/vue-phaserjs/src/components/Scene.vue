@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SceneEmits } from "#src/models/scene/SceneEmits";
 import type { SceneProps } from "#src/models/scene/SceneProps";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { VNode } from "vue";
@@ -16,13 +17,7 @@ import { Cameras, Scenes } from "phaser";
 
 defineSlots<{ default: () => VNode }>();
 const { autoStart, sceneKey } = defineProps<SceneProps>();
-const emit = defineEmits<{
-  create: [SceneWithPlugins];
-  init: [SceneWithPlugins];
-  preload: [SceneWithPlugins];
-  shutdown: [SceneWithPlugins];
-  update: [SceneWithPlugins, ...Parameters<SceneWithPlugins["update"]>];
-}>();
+const emit = defineEmits<SceneEmits>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const cameraStore = useCameraStore();

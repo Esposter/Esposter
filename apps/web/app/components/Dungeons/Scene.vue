@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SceneProps, SceneWithPlugins } from "vue-phaserjs";
+import type { SceneEmits, SceneProps, SceneWithPlugins } from "vue-phaserjs";
 
 import { SoundSetting } from "#shared/models/dungeons/data/settings/SoundSetting";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -9,13 +9,7 @@ import { getScene, Scene } from "vue-phaserjs";
 
 defineSlots<{ default: () => VNode }>();
 const props = defineProps<SceneProps>();
-const emit = defineEmits<{
-  create: [SceneWithPlugins];
-  init: [SceneWithPlugins];
-  preload: [SceneWithPlugins];
-  shutdown: [SceneWithPlugins];
-  update: [SceneWithPlugins, ...Parameters<SceneWithPlugins["update"]>];
-}>();
+const emit = defineEmits<SceneEmits>();
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const volumeStore = useVolumeStore();
