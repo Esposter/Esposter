@@ -18,9 +18,9 @@ All documentation lives in `apps/web/content/docs/` and is rendered in the app a
 
 **Where a page lives states whether it is built.** Never mix built and unbuilt in one page.
 
-- `docs/<area>/` and `docs/architecture/` describe **only what exists in code today**. If you can't point at the file that implements a sentence, the sentence doesn't belong here.
-- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal; a one-time change leaves only its shipped-log line (`references/page-shapes.md`, "Lifecycle map").
-- `docs/<area>/deferred/` holds ideas we chose **not to build yet** (one page per idea, each with a revisit trigger); `docs/<area>/rejected/` holds ideas we decided **against** (one page per idea). Folder names are deliberately direct — never a vague umbrella like `decisions/` or `misc/`.
+- `apps/web/content/docs/<area>/` and `apps/web/content/docs/architecture/` describe **only what exists in code today**. If you can't point at the file that implements a sentence, the sentence doesn't belong here.
+- `apps/web/content/docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal; a one-time change leaves only its shipped-log line (`references/page-shapes.md`, "Lifecycle map").
+- `apps/web/content/docs/<area>/deferred/` holds ideas we chose **not to build yet** (one page per idea, each with a revisit trigger); `apps/web/content/docs/<area>/rejected/` holds ideas we decided **against** (one page per idea). Folder names are deliberately direct — never a vague umbrella like `decisions/` or `misc/`.
 - `docs/<area>/roadmap.md` holds **open work** (checkbox backlog). Check `deferred/` and `rejected/` before adding a roadmap item or proposal — never re-argue a decided idea.
 
 **Docs move with the code that changes them** — update the owning page in the same change that ships the behaviour, and cover the full lifecycle it describes (creation _and_ cleanup/teardown), not just the happy path.
