@@ -189,7 +189,7 @@ catalogs:
       specifier: ^4.16.5
       version: 4.16.5
     '@azure/identity':
-      specifier: ^4.13.3
+      specifier: ^4.14.0
       version: 4.14.0
     '@azure/search-documents':
       specifier: ^13.0.0
@@ -627,7 +627,7 @@ catalogs:
       specifier: ^15.2.0
       version: 15.2.0
     mermaid:
-      specifier: ^12.1.0
+      specifier: ^12.2.0
       version: 12.2.0
     mime-db:
       specifier: ^1.54.0
@@ -6382,8 +6382,8 @@ packages:
     resolution: {integrity: sha512-U/yG5a2IELJxAtwkgGmhZJnLCHRzyxNyWWbaDKMbCyjB0kuPxU9fvIZCxf7Kv7jz7I7IXlyuY7gXkXGMdLHhPw==}
     engines: {node: '>= 22'}
 
-  '@pmndrs/pointer-events@6.6.31':
-    resolution: {integrity: sha512-Uy30AifXlyV0rKFblPMuPJz5xS4+VtZ2/TSAoI0m1xzUChLvHX5FDXJdRQZAmSoDODbBAskZP6rminT0AZ+r5A==}
+  '@pmndrs/pointer-events@6.6.32':
+    resolution: {integrity: sha512-ziow8WQach6AF3fB8XGfmxmjLH6iUKPDJsw5RzxU7oxhfpn4uQZKzq50U1LFywroMZ45JhCqxE+p7IM8MHRsFg==}
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
@@ -9765,8 +9765,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.454:
-    resolution: {integrity: sha512-NqD5GhkXnxJpDQVCmmpc546qjH6kei2VI9m45CTF+sQU7bcS7YeVt7ba0cnjueMH1AXGRu/driZUP9iYVSv7vg==}
+  electron-to-chromium@1.5.455:
+    resolution: {integrity: sha512-EDKY1GvJLJC0UQpk+zWxnXp315azNHIns3arXVNUQUOLaon6GtIzBBXWvNno7bVoDXRPnEAV2uwgMCb+RvG5hQ==}
 
   elkjs@0.9.3:
     resolution: {integrity: sha512-f/ZeWvW/BCXbhGEf1Ujp29EASo/lk1FDnETgNKwJrsVvGZhUWCZyg3xLJjAsxfOmt8KjswHmI5EwCQcPMpOYhQ==}
@@ -19730,7 +19730,7 @@ snapshots:
 
   '@platformatic/vfs@0.5.0': {}
 
-  '@pmndrs/pointer-events@6.6.31': {}
+  '@pmndrs/pointer-events@6.6.32': {}
 
   '@polka/url@1.0.0-next.29': {}
 
@@ -20585,7 +20585,7 @@ snapshots:
 
   '@tresjs/core@5.9.3(three@0.186.1)(vue@3.5.44)':
     dependencies:
-      '@pmndrs/pointer-events': 6.6.31
+      '@pmndrs/pointer-events': 6.6.32
       '@vue/devtools-api': 8.2.1
       '@vueuse/core': 15.0.0(vue@3.5.44)
       radashi: 12.9.6
@@ -22380,7 +22380,7 @@ snapshots:
     dependencies:
       baseline-browser-mapping: 2.11.28
       caniuse-lite: 1.0.30001816
-      electron-to-chromium: 1.5.454
+      electron-to-chromium: 1.5.455
       node-releases: 2.0.58
       update-browserslist-db: 1.3.4(browserslist@4.29.3)
 
@@ -23145,7 +23145,7 @@ snapshots:
     dependencies:
       jake: 10.9.4
 
-  electron-to-chromium@1.5.454: {}
+  electron-to-chromium@1.5.455: {}
 
   elkjs@0.9.3: {}
 

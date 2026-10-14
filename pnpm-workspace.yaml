@@ -42,7 +42,7 @@ catalog:
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
   "@azure/functions": ^4.16.5
-  "@azure/identity": ^4.13.3
+  "@azure/identity": ^4.14.0
   "@azure/search-documents": ^13.0.0
   "@azure/service-bus": ^7.10.0
   "@azure/storage-blob": ^12.34.0
@@ -199,7 +199,7 @@ catalog:
   lru-cache: ^11.5.3
   marked: ^18.1.1
   mathjs: ^15.2.0
-  mermaid: ^12.1.0
+  mermaid: ^12.2.0
   mime-db: ^1.54.0
   minimark: ^1.0.0
   minisearch: ^7.2.0
