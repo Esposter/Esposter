@@ -76,7 +76,7 @@ Reading is limited to the owner. `genshin.readCharacterPacks` returns the caller
 
 On load, the browser's kept copy draws first, when its hash matches. Otherwise the account's copy is read and cached in the browser store the first time the field's character needs it, so a later load on that device does not fetch it again. The host's copy and the capsule follow.
 
-The limits are in `apps/web/server/services/genshin/accountCharacterPack/constants.ts`: 32 MB per file, 256 MB per pack, 1 GB per account, and 256 files per pack, each sized for a release's model and textures with room to spare.
+The limits are the `MAX_CHARACTER_PACK_*` and `MAX_ACCOUNT_CHARACTER_PACKS_SIZE` constants in `apps/web/server/services/genshin/accountCharacterPack/constants.ts`, each sized for a release's model and textures with room to spare.
 
 ```mermaid
 sequenceDiagram
