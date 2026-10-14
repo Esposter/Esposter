@@ -1,17 +1,17 @@
 ---
 name: code-review
-description: Apply when handed any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one. The single entry point for every code review — a working diff, a branch, a PR number, or a subsystem audited against the docs governing it — run in the main session with no workflow script and no finder/verifier fan-out, in two lanes (quality and correctness), every correctness finding carrying its trigger, the written record as tiebreaker, and one findings table as the report.
+description: Apply when handed any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one. The single entry point for every code review — a working diff, a branch, a PR number, or a subsystem audited against the docs governing it — run by the main session, which judges every candidate, with `haiku` subagents reading a wide window in batches and no workflow script, in two lanes (quality and correctness), every correctness finding carrying its trigger, the written record as tiebreaker, and one findings table as the report.
 ---
 
 # Code Review — One Entry Point, One Thread
 
-Every review request — `/code-review`, `/simplify`, "review this", "review PR N", "clean this up", post-merge audits — is answered here, in the main session. **Read the code yourself and report what you find.** There is no workflow script to invoke — not the built-in `Workflow({ name: "code-review" })`, and no workflows directory under `.agents/`.
+Every review request — `/code-review`, `/simplify`, "review this", "review PR N", "clean this up", post-merge audits — is answered here, in the main session. **Read the code and report what you find, judging every candidate yourself.** There is no workflow script to invoke — not the built-in `Workflow({ name: "code-review" })`, and no workflows directory under `.agents/`.
 
 Never use the built-in `/review` command, the built-in `/simplify`, or a plugin skill named `code-review` — all answer to "review this", and several overlapping commands is how the shallowest one gets picked.
 
 ## Settled — do not re-propose
 
-- **Fanning a review out to finder and verifier agents, or a workflow script.** Cost is agents × material read: a cold subagent re-derives a diff the session already holds, and returns findings whose context died with it. The one thing a separate verifier bought — a judge that did not raise the claim — was its instructions, not its address, and those are "The trigger rule" and "Refute first" on this page, enforced here for free. The price is that the same context that formed a candidate now judges it, which is exactly what those two rules exist to stop, and they are not optional.
+- **A finder and verifier fan-out run by a workflow script — rejected.** The old direction was one thread: the main session reads everything, and no agent judges a claim it did not form. Overturned: a window too wide for one reader is read by `haiku` subagents, one per batch, each returning candidates from its batch with the reviewer prompt and batch caps of CI's review pool (`scripts/src/services/review/constants.ts`). The main session still judges every candidate itself, under "The trigger rule" and "Refute first", before anything is reported. A cold agent re-deriving a diff is paid per batch, not per candidate, so the main context keeps the findings and not the file dumps.
 - **Measuring candidate counts, per-lens ceilings or token estimates.** Nothing publishes them, and a prose number with no way to fail is one that fails silently and forever (`references/fixing-findings.md`, "Restated a number the code could publish").
 
 ## The two lanes
@@ -35,7 +35,7 @@ The conventions a finding cites live in the domain skills; **read the window's f
 
 1. **Scope.** Pick the window — `references/diff-window.md` for a change, `references/area-window.md` for a subsystem with no change. Do this before reading anything: a window chosen afterwards is the window that flatters what you already read.
 2. **Read.** The diff, plus every file it touches, plus one hop out of anything load-bearing (the caller, the callee, the primitive it wraps). Generated files, lockfiles and binaries are skipped — **say so**, because "no finding against the snapshot" must never read as "the snapshot is clean".
-3. **Find, per lane.** Quality candidates and correctness candidates, kept apart.
+3. **Find, per lane.** Quality candidates and correctness candidates, kept apart. For a wide window, one `haiku` subagent per batch returns candidates from its batch (the Settled entry above); the main session reads each candidate's cited code before it counts.
 4. **Refute, then report.** Every correctness candidate goes through "The trigger rule" and "Refute first". Quality candidates skip this — they are settled by the code they name.
 5. **Report** the table (`references/reporting.md`), then fix (`references/fixing-findings.md`), then check and commit.
 
