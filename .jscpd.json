@@ -1,0 +1,20 @@
+{
+  "format": ["typescript", "vue"],
+  "gitignore": false,
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.test-d.ts",
+    "**/*.bench.ts",
+    "**/generated/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/*.d.ts",
+    "**/migrations/**",
+    "**/apps/web/app/assets/**",
+    "**/apps/infra/src/azure/resources/**"
+  ],
+  "minLines": 5,
+  "minTokens": 50,
+  "reporters": ["console"],
+  "threshold": 0
+}

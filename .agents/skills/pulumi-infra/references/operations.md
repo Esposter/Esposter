@@ -8,13 +8,14 @@ Run in order from `apps/infra/`, always before `infra:preview` or `infra:up`:
 
 1. `pnpm typecheck` — TypeScript type check, the one check a session runs ahead of CI (the `running-checks` skill, "A Pulumi apply").
 2. `pnpm infra:preview --suppress-outputs` — confirm scope before applying.
-3. `pnpm infra:up --yes --suppress-outputs` — apply only after the preview is confirmed.
+3. `pnpm infra:up --yes --suppress-outputs` — apply once the preview shows only the intended changes.
 
 `infra:preview` and `infra:up` both run `pnpm build` themselves — never run `pnpm build` separately first.
 
 ## Rules around an apply
 
 - Never use `pulumi up --skip-preview`.
+- **Running `pnpm infra:up` is always allowed** once the preview is clean. The session runs the preview and the apply itself and does not ask the user first.
 - Before applying, confirm the preview contains only the intended resources and properties for the active roadmap item.
 - If `pulumi up` partially succeeds or fails, stop and run `pnpm infra:preview` again before any follow-up apply.
 - **`preview` and `up` diff the program against state, never against Azure**, so an `up` reporting `unchanged` is not evidence that the live estate matches — anything changed out of band is invisible to both. When something reads as deployed but does not work, run `pnpm infra:refresh` before concluding the code is wrong, and check RBAC against Azure directly (`az role assignment list --assignee <principalId> --all`): a role assignment present in state and absent in Azure fails at runtime with `Forbidden` behind a clean preview.

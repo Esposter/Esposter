@@ -9,7 +9,13 @@ export const actionsPermissions: github.ActionsRepositoryPermissions = new githu
       // Local composite actions under ./.github/actions/* are always allowed and need no entry.
       // GitHub-owned actions/* are covered by githubOwnedAllowed; everything else is pinned below.
       githubOwnedAllowed: true,
-      patternsAlloweds: ["azure/login@*", "pnpm/setup@*", "pulumi/actions@*", "voidzero-dev/setup-vp@*"],
+      patternsAlloweds: [
+        "azure/login@*",
+        "kucherenko/jscpd@*",
+        "pnpm/setup@*",
+        "pulumi/actions@*",
+        "voidzero-dev/setup-vp@*",
+      ],
       verifiedAllowed: false,
     },
     repository: repository.name,
