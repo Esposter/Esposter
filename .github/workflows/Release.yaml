@@ -11,6 +11,8 @@ on:
     - cron: "16 15 * * *"
   workflow_dispatch:
 
+permissions: read-all
+
 # A run waits behind an earlier one rather than racing it onto the same tag
 concurrency:
   group: release

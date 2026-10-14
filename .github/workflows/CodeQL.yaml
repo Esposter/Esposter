@@ -1,13 +1,10 @@
 name: 🔎 CodeQL
-# Advanced setup rather than GitHub's one-click default, which analyses every pull request against `main` — here
-# That is the release and every renovate bump, and a full analysis per bump finds nothing a scan of the same tree
-# On `main` does not. So `main` is what is scanned, plus a weekly run, because a query pack published after the
-# Last release finds what the release's own scan could not have. An open alert on `main` is a red run here, which
-# A red here is fixed on `ai/queue` like any red CI (AGENTS.md, finishing step 6).
+# CI security: apps/web/content/docs/architecture/monorepo-tooling.md
 
 on:
   push:
     branches:
+      - ai/queue
       - main
   schedule:
     - cron: "16 18 * * 0"
