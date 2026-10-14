@@ -30,4 +30,4 @@ Clorinde's kit is its record and one behaviour module, `createClorindeKitBehavio
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/clorinde), MIT: every strike's hitmarks, frames and areas, the circle and hitmark of the charged attack, Last Lightfall's five boxes and their hitmarks, the press's cooldown and state, and the passives and constellations listed as not built.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/clorinde), MIT: every strike's hitmarks, frames and areas, the circle and hitmark of the charged attack, Last Lightfall's five boxes and their hitmarks, the press's cooldown and state, and the passives and constellations listed as not built.
