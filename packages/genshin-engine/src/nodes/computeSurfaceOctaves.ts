@@ -2,7 +2,7 @@ import type { SurfaceDetail } from "#src/models/nodes/SurfaceDetail";
 
 import { SURFACE_DETAIL_BAND_SIGMAS, SURFACE_OCTAVE_TEXEL_FREQUENCIES } from "#src/nodes/constants";
 
-export interface SurfaceOctave {
+interface SurfaceOctave {
   amplitude: number;
   frequency: number;
 }
