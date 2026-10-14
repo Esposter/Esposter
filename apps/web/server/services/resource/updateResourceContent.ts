@@ -26,7 +26,8 @@ export const updateResourceContent = async <T>(
   if (contentVersion !== undefined && contentVersion !== resource.contentVersion)
     throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
 
-  const { content, result } = update(await readStoredResourceContent(resource.id));
+  const storedResourceContent = await readStoredResourceContent(resource.id);
+  const { content, result } = update(storedResourceContent);
   const savedResource = await getResultAsync(() =>
     saveResourceContent(ctx, {
       activityType: ResourceActivityType.ContentSaved,
