@@ -28,20 +28,17 @@ import { Operation } from "@esposter/shared";
 
 // A respondent's procedures answer for the person filling the survey in, never for the owner acting on it
 const RESPONDENT_PROCEDURE_REASON = "A respondent's procedure, not the owner's act";
+const slowRespondentProcedure = slowRateLimitedProcedure.meta({ humanOnly: RESPONDENT_PROCEDURE_REASON });
+const standardRespondentProcedure = standardRateLimitedProcedure.meta({ humanOnly: RESPONDENT_PROCEDURE_REASON });
 
 export const surveyRouter = router({
   // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
   // See ResourceDefinitionMap
   ...createResourceProcedures(ResourceType.Survey, { transformPublishedContent: transformPublishedBlobUrls }),
-  createSurveyResponse: slowRateLimitedProcedure
+  createSurveyResponse: slowRespondentProcedure
     .input(createSurveyResponseInputSchema)
-    .meta({ humanOnly: RESPONDENT_PROCEDURE_REASON })
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
-      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(
-        ctx.db,
-        input.partitionKey,
-        input.participantToken,
-      );
+      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(ctx.db, input);
       // A submitted response carries no draft key at all, since the reads ask for the key to be absent
       const newSurveyResponse = new SurveyResponseEntity({ ...input, ...(isDraft && { isDraft }), participantToken });
       await createEntity(surveyResponseClient, newSurveyResponse);
@@ -55,9 +52,8 @@ export const surveyRouter = router({
       await requireSurveyResponse(surveyResponseClient, ctx.resource.id, rowKey);
       await surveyResponseClient.deleteEntity(ctx.resource.id, rowKey);
     }),
-  readSurveyResponse: standardRateLimitedProcedure
+  readSurveyResponse: standardRespondentProcedure
     .input(readSurveyResponseInputSchema)
-    .meta({ humanOnly: RESPONDENT_PROCEDURE_REASON })
     .query<SurveyResponseEntity | undefined>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
       const resolvedParticipantToken = await resolveSurveyResponseRead(ctx.db, partitionKey, participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
@@ -83,15 +79,10 @@ export const surveyRouter = router({
     resourceIdInputSchema,
     "id",
   ).query<ReadSurveyResponsesCountResult>(({ ctx }) => readSurveyResponsesCount(ctx.resource.id)),
-  updateSurveyResponse: standardRateLimitedProcedure
+  updateSurveyResponse: standardRespondentProcedure
     .input(updateSurveyResponseInputSchema)
-    .meta({ humanOnly: RESPONDENT_PROCEDURE_REASON })
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
-      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(
-        ctx.db,
-        input.partitionKey,
-        input.participantToken,
-      );
+      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(ctx.db, input);
       const entityWithEtag = await requireEntity(
         getEntityWithEtag(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
         AzureEntityType.SurveyResponse,
