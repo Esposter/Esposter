@@ -7,7 +7,7 @@ import { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKi
 import { RampLayout } from "#src/models/character/RampLayout";
 
 // The inputs of a material the caller supplies, each one it has; every other takes the default the page sets out
-export type CharacterShadingOverrides = Partial<CharacterShadingInputs> & { rampTexture: Texture };
+type CharacterShadingOverrides = Partial<CharacterShadingInputs> & { rampTexture: Texture };
 
 const WHITE: Vector3Tuple = [1, 1, 1];
 const BLACK: Vector3Tuple = [0, 0, 0];

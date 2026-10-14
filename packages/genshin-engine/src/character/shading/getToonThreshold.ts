@@ -1,6 +1,6 @@
 import { NEUTRAL_LIGHT_MAP_GREEN, TOON_HIGH, TOON_LOW } from "#src/character/shading/constants";
 
-export interface ToonThresholdInputs {
+interface ToonThresholdInputs {
   // Whether the lightmap's green is the ambient occlusion, which the material's own flag selects
   isLightMapAo: boolean;
   isVertexAo: boolean;

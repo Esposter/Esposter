@@ -14,7 +14,7 @@ import { Bone, Quaternion, Vector3 } from "three";
 export interface CharacterPoser {
   update: (update: CharacterPoseUpdate) => void;
 }
-export interface CharacterPoseUpdate {
+interface CharacterPoseUpdate {
   delta: number;
   locomotion: Locomotion;
   phase: LocomotionPhase;
