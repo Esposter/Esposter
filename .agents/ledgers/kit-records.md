@@ -1,6 +1,6 @@
 # Kit records
 
-Each kit's overlay derives its row (`scripts/src/services/sweeps/ledgerCoverage/LedgerUnitsMap.ts`), and the rule a pass carries is the `genshin-engine` skill's `references/regions-and-kits.md`.
+Each kit's overlay derives its row (`scripts/src/services/sweeps/ledgerCoverage/LedgerUnitsMap.ts`), and the rule a pass carries is the Framework decisions bullet on `Unsourced` and `Unclassified` in `apps/web/content/docs/genshin/kits/index.md`.
 
 ```bash
 grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json

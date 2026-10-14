@@ -14,7 +14,7 @@ gcsim sources: `nicole/attack.go`, `charge.go`, `skill.go` and `burst.go`, with 
 ## Decisions
 
 - **The burst's hit is priced round the targeting zone.** Her burst is a circle of 6.5 metres on her primary target, which an area holds as the targeting zone's radius plus its own, 21.5 metres, as `TargetCentred`.
-- **The skill's hit is a circle of 5 metres round her body**, recorded by hand as `Unclassified` as its hitbox has no name in gcsim's press list.
+- **The skill's hit is a circle of 5 metres round her body**, recorded by hand, as its hitbox has no name in gcsim's press list.
 
 ## Not built
 
