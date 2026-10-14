@@ -33,8 +33,8 @@ describe(getNavigationGroups, () => {
   test("mapped section orders groups by declaration order with unmapped pages leading", () => {
     expect.hasAssertions();
 
-    // "esbabbler" and its "messaging" and "moderation" slugs are real DocsSectionGroupsMap keys the code owns; moderation
-    // comes first in the items, so only declaration order puts Messaging ahead of it
+    // "esbabbler" and its "messaging" and "moderation" slugs are real DocsSectionGroupsMap keys the code owns
+    // Moderation comes first in the items, so only declaration order puts Messaging ahead of it
     const sectionPath = `${RoutePath.Docs}/esbabbler`;
     const groups = getNavigationGroups(sectionPath, [
       createNavigationItem(`${sectionPath}/moderation`),
