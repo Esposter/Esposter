@@ -32,7 +32,7 @@ A session never pushes `main`. Its branch in its own worktree is local, named af
 
 An agent's commits never go through the main checkout. Each agent:
 
-1. **Sets up a worktree on a branch of its own, cut from the queue.** `git worktree add -b <name> ~/Esposter/wt/<name> origin/ai/queue`. Then in it the agent installs and builds only the packages it will touch, never the whole workspace (`.agents/skills/throughput/references/fleet.md` owns the commands and why). A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
+1. **Sets up a worktree on a branch of its own, cut from the queue.** `git worktree add -b <name> .agents/worktrees/<name> origin/ai/queue`. Then in it the agent installs and builds only the packages it will touch, never the whole workspace (`.agents/skills/throughput/references/fleet.md` owns the commands and why). A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
 2. **Commits each coherent unit in the worktree, by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit.
 3. **Lands the commits:**
 
@@ -44,7 +44,7 @@ A rebase conflict stops the loop on the commit it stopped on, and the agent that
 
 4. **Removes the worktree** once its commits have landed: `.agents/skills/throughput/scripts/remove-worktree.sh`, which deletes its branch with it.
 
-**Worktrees live on the drive of the pnpm store.** `~/Esposter` is on that drive, so pnpm hard-links from the store instead of copying.
+**Worktrees live under `.agents/worktrees/`, which is gitignored. Windows needs long paths enabled once (see `apps/web/content/docs/architecture/monorepo-tooling.md`, Windows long paths).**
 
 **The main checkout is not edited by agents.** It only fast-forwards with `git pull --rebase`. Never `reset`, cherry-pick or stash in it.
 
