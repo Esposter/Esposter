@@ -1,175 +1,175 @@
 {
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5439 } },
-  "burst.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 5439 } },
+  "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.skillFirstTick": { "cause": "Unclassified", "value": 24 },
-  "frames.skillTickInterval": { "cause": "Unclassified", "value": 120 },
-  "hits.bakeKurageRipples.length": { "cause": "Unclassified", "value": 7 },
+  "frames.skillFirstTick": { "cause": "Unsourced", "value": 24 },
+  "frames.skillTickInterval": { "cause": "Unsourced", "value": 120 },
+  "hits.bakeKurageRipples.length": { "cause": "Unsourced", "value": 7 },
   "hits.bakeKurageRipples.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.0.hitmarkFrames": { "cause": "Unclassified", "value": 24 },
+  "hits.bakeKurageRipples.0.hitmarkFrames": { "cause": "Unsourced", "value": 24 },
   "hits.bakeKurageRipples.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.bakeKurageRipples.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.1.hitmarkFrames": { "cause": "Unclassified", "value": 150 },
+  "hits.bakeKurageRipples.1.hitmarkFrames": { "cause": "Unsourced", "value": 150 },
   "hits.bakeKurageRipples.1.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.bakeKurageRipples.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.2.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.2.hitmarkFrames": { "cause": "Unclassified", "value": 270 },
+  "hits.bakeKurageRipples.2.hitmarkFrames": { "cause": "Unsourced", "value": 270 },
   "hits.bakeKurageRipples.2.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.bakeKurageRipples.2.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.3.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.3.hitmarkFrames": { "cause": "Unclassified", "value": 390 },
+  "hits.bakeKurageRipples.3.hitmarkFrames": { "cause": "Unsourced", "value": 390 },
   "hits.bakeKurageRipples.3.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.bakeKurageRipples.3.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.4.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.4.hitmarkFrames": { "cause": "Unclassified", "value": 510 },
+  "hits.bakeKurageRipples.4.hitmarkFrames": { "cause": "Unsourced", "value": 510 },
   "hits.bakeKurageRipples.4.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.bakeKurageRipples.4.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.5.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.5.hitmarkFrames": { "cause": "Unclassified", "value": 630 },
+  "hits.bakeKurageRipples.5.hitmarkFrames": { "cause": "Unsourced", "value": 630 },
   "hits.bakeKurageRipples.5.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.bakeKurageRipples.5.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.6.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
-  "hits.bakeKurageRipples.6.hitmarkFrames": { "cause": "Unclassified", "value": 750 },
+  "hits.bakeKurageRipples.6.hitmarkFrames": { "cause": "Unsourced", "value": 750 },
   "hits.bakeKurageRipples.6.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.bakeKurageRipples.6.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.bakeKurageHealMaxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 5432 }
   },
-  "parameters.bakeKurageFlatHeal": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 5432 } },
+  "parameters.bakeKurageFlatHeal": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5432 } },
   "parameters.garmentChargedAttackMaxHealthBonus": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 4, "proudSkillGroupId": 5439 }
   },
   "parameters.garmentNormalAttackMaxHealthBonus": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 5439 }
   },
   "parameters.garmentSkillMaxHealthBonus": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 8, "proudSkillGroupId": 5439 }
   },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "stances.ceremonialGarment.chargedAttack.animationFrames": { "cause": "Unclassified", "value": 76 },
-  "stances.ceremonialGarment.chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
+  "stances.ceremonialGarment.chargedAttack.animationFrames": { "cause": "Unsourced", "value": 76 },
+  "stances.ceremonialGarment.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.chargedAttack.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
-  "stances.ceremonialGarment.chargedAttack.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
+  "stances.ceremonialGarment.chargedAttack.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5439 }
   },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.maxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
   },
   "stances.ceremonialGarment.chargedAttack.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 5431 }
   },
-  "stances.ceremonialGarment.chargedAttack.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "stances.ceremonialGarment.chargedAttack.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "stances.ceremonialGarment.normalAttacks.length": { "cause": "Unclassified", "value": 3 },
-  "stances.ceremonialGarment.normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 30 },
-  "stances.ceremonialGarment.normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
+  "stances.ceremonialGarment.chargedAttack.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "stances.ceremonialGarment.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
+  "stances.ceremonialGarment.normalAttacks.length": { "cause": "Unsourced", "value": 3 },
+  "stances.ceremonialGarment.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 30 },
+  "stances.ceremonialGarment.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
-  "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
+  "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5439 }
   },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.maxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
   },
-  "stances.ceremonialGarment.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 12 },
+  "stances.ceremonialGarment.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 12 },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 5431 }
   },
-  "stances.ceremonialGarment.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "stances.ceremonialGarment.normalAttacks.0.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "stances.ceremonialGarment.normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 34 },
-  "stances.ceremonialGarment.normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 1 },
+  "stances.ceremonialGarment.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "stances.ceremonialGarment.normalAttacks.0.targeting": { "cause": "Unsourced", "value": "Strike" },
+  "stances.ceremonialGarment.normalAttacks.1.animationFrames": { "cause": "Unsourced", "value": 34 },
+  "stances.ceremonialGarment.normalAttacks.1.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
-  "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
+  "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5439 }
   },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.maxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
   },
-  "stances.ceremonialGarment.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 19 },
+  "stances.ceremonialGarment.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 19 },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 5431 }
   },
-  "stances.ceremonialGarment.normalAttacks.1.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "stances.ceremonialGarment.normalAttacks.1.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "stances.ceremonialGarment.normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 65 },
-  "stances.ceremonialGarment.normalAttacks.2.hits.length": { "cause": "Unclassified", "value": 1 },
+  "stances.ceremonialGarment.normalAttacks.1.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "stances.ceremonialGarment.normalAttacks.1.targeting": { "cause": "Unsourced", "value": "Strike" },
+  "stances.ceremonialGarment.normalAttacks.2.animationFrames": { "cause": "Unsourced", "value": 65 },
+  "stances.ceremonialGarment.normalAttacks.2.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 6, "radius": 5 }
   },
-  "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.defenseShare": { "cause": "Unclassified", "value": 0 },
+  "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5439 }
   },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.maxHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
   },
-  "stances.ceremonialGarment.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 36 },
+  "stances.ceremonialGarment.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 36 },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 5431 }
   },
-  "stances.ceremonialGarment.normalAttacks.2.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "stances.ceremonialGarment.normalAttacks.2.targeting": { "cause": "Unclassified", "value": "Strike" },
-  "stances.ceremonialGarment.skill.animationFrames": { "cause": "Unclassified", "value": 61 },
-  "stances.ceremonialGarment.skill.hits.length": { "cause": "Unclassified", "value": 0 },
-  "stances.ceremonialGarment.skill.targeting": { "cause": "Unclassified", "value": "Skill" }
+  "stances.ceremonialGarment.normalAttacks.2.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "stances.ceremonialGarment.normalAttacks.2.targeting": { "cause": "Unsourced", "value": "Strike" },
+  "stances.ceremonialGarment.skill.animationFrames": { "cause": "Unsourced", "value": 61 },
+  "stances.ceremonialGarment.skill.hits.length": { "cause": "Unsourced", "value": 0 },
+  "stances.ceremonialGarment.skill.targeting": { "cause": "Unsourced", "value": "Skill" }
 }
