@@ -6,7 +6,6 @@
 [![Apache-2.0 licensed][badge-license]][url-license]
 [![Agent skills][badge-skills]][url-skills]
 [![OpenSSF Scorecard][badge-openssf]][url-openssf]
-[![Socket][badge-socket]][url-socket]
 
 ## Table of Contents
 
@@ -426,6 +425,4 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-skills]: https://github.com/Esposter/Esposter/tree/main/.agents/skills
 [badge-openssf]: https://api.scorecard.dev/projects/github.com/Esposter/Esposter/badge
 [url-openssf]: https://scorecard.dev/viewer/?uri=github.com/Esposter/Esposter
-[badge-socket]: https://badge.socket.dev/npm/package/nuxt-security-module/latest
-[url-socket]: https://socket.dev/npm/package/nuxt-security-module
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest
