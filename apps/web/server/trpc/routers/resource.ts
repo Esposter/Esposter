@@ -232,7 +232,7 @@ export const resourceRouter = router({
     .meta({
       mcp: {
         description:
-          "Read a resource's content as JSON at a JSON Pointer, the empty pointer for the whole document, with the contentVersion it was read at. An array is answered a page at a time beside its length. Past a size cap the content is left out and the size of each member answered instead, so read a narrower pointer. Content never saved reads as null.",
+          "Read a resource's content as JSON at a JSON Pointer, the empty pointer for the whole document, with the contentVersion it was read at. An array is answered a page at a time beside its length. Past a size cap the content is left out and the size of each member answered instead, or a leaf's own size, so read a narrower pointer. Content never saved reads as null.",
         scope: McpScope.Resources,
       },
     })

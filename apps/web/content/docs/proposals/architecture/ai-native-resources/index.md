@@ -15,7 +15,6 @@ This proposal wires the agent surface once, at the resource layer. A resource ty
 Each is a unit built on its own, listed in build order:
 
 - [Agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys) — the keys made before scopes given the follow-ups scope, and the operations that stay the owner's; scopes, read-only hints and per-key attribution shipped ([agent access](/docs/architecture/agent-access)), and the content tools after them ([agent content tools](/docs/architecture/agent-content-tools))
-- [Leaf size](/docs/proposals/architecture/ai-native-resources/leaf-size) — a string or other non-object value past the read cap answered its size, as a container is, so an agent can tell how far to narrow the read
 - [Live edits](/docs/proposals/architecture/ai-native-resources/live-edits) — an open editor adopts an agent's save, and an unsaved edit meets it as a choice shown at once
 - [Lifecycle tools](/docs/proposals/architecture/ai-native-resources/lifecycle-tools) — create, rename, tag, delete, restore, publish, references, history and datasets, plus each type's own procedures
 - [Schema fidelity](/docs/proposals/architecture/ai-native-resources/schema-fidelity) — the source fixes where a content schema stops describing what its editor edits

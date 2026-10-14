@@ -36,7 +36,7 @@ A read answers the stored JSON, through `JSON.parse` alone, rather than the cont
 
 - **A pointer selects.** An RFC 6901 JSON Pointer picks a subtree, so an agent reads a Sheet's columns without its rows. A pointer to nothing is refused, naming it.
 - **An array is paged.** An array at the pointer is answered a page at a time, at most `MAX_READ_LIMIT` items, its whole length beside the page.
-- **Past `MAX_AGENT_READ_SIZE` the content is left out**, and the answer gives the size of each member instead — each key of an object, or each index of the page — so the agent narrows the read rather than receiving a truncated document. The cap sits well under the output Claude Code accepts from one tool call by default.
+- **Past `MAX_AGENT_READ_SIZE` the content is left out**, and the answer gives the size of each member instead — each key of an object, or each index of the page — or, for a leaf such as a long string, its own `size`, so the agent narrows the read rather than receiving a truncated document. The cap sits well under the output Claude Code accepts from one tool call by default.
 - **The version is never newer than the content.** The owner guard reads the row before the read reads the blob, so a save landing in between leaves the answered version behind the content, and a patch pinned to it is refused as stale rather than applied over a save the agent never read.
 
 ## Editing

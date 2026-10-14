@@ -43,6 +43,14 @@ describe(readContentAtPointer, () => {
     });
   });
 
+  test("answers a leaf's size in place of a value past the cap", () => {
+    expect.hasAssertions();
+
+    expect(readContentAtPointer("a".repeat(MAX_AGENT_READ_SIZE), { ...page, pointer: "" })).toStrictEqual({
+      size: MAX_AGENT_READ_SIZE + 2,
+    });
+  });
+
   test("refuses a pointer to nothing", () => {
     expect.hasAssertions();
 
