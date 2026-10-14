@@ -164,6 +164,10 @@ The cache is one task per package, with `build:packages` ordering them as a set.
 
 The generated barrels travel in the artifact alongside `dist` because `build:packages` generates them from a `build:prepare` hook and they are not committed — TypeDoc and the package lint/typecheck steps fail without them even when `dist` is present. Every generated source index file is kept, not just the root `src/index.ts`, since some generators create nested barrels — and so is genshin-world's `src/generated/characterKitMap`, the kit map its `build:prepare` hook writes before the barrels, which its sources import and its barrel lists.
 
+### The jscpd gate
+
+The `jscpd` job in `CI.yaml` is the duplicate-code finder's gate: it scans the finder's scopes with the finder's globs and minimums, so a clone the gate fails on is one the sweep reports. Both copies of those settings live in code and are held equal by the `duplicate code` test in `scripts/src/workspace/duplicateCode.test.ts`: `.jscpd.json` must equal the finder's constants, and the workflow's `path:` must name its scopes. Changing a threshold means changing the constant, which regenerates nothing by hand.
+
 ## CI security
 
 Set `persist-credentials: false` on every `actions/checkout` step.
@@ -222,6 +226,10 @@ git ls-remote --tags --sort='v:refname' https://github.com/<owner>/<repo>.git 'v
 Ignore broad aliases (`v6`) and pre-release tags. For annotated tags `git ls-remote` prints both `refs/tags/<version>` and `refs/tags/<version>^{}` — pin the `^{}` (dereferenced) SHA.
 
 Use normal zipped artifacts unless there is a measured need for direct artifact uploads. If artifact uploads use `archive: false`, use `actions/download-artifact` v8 or newer so direct/non-zipped artifacts are handled correctly.
+
+### Allowed actions
+
+The repository allows only the actions listed in `apps/infra/src/github/actionsPermissions.ts`: GitHub-owned actions, plus the `patternsAlloweds` pinned there. Any other third-party action is refused by GitHub, and a workflow that uses one fails at startup with no job run, so the whole workflow goes red with no log to read. A change that adds a third-party action adds its `owner/repo@*` to that list in the same commit, and the infra change is applied with `pnpm infra:up` after a clean preview.
 
 ## Sources
 

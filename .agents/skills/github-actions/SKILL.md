@@ -53,6 +53,7 @@ The argument for a job's shape lives in the page that owns it ("Owned elsewhere"
 - **Which pnpm script a job runs, and how it is invoked** (the root script over the binary, bare `pnpm <script>` over `pnpm run <script>`, never the `-- <args>` separator) — `package-scripts` ("Key Rules").
 - **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — `dependency-updates` (`references/github-actions.md`).
 - **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `apps/web/content/docs/architecture/monorepo-tooling.md`.
+- **Adding a third-party action** — its `owner/repo@*` goes into `patternsAlloweds` in `apps/infra/src/github/actionsPermissions.ts` in the same change, or GitHub refuses the whole workflow at startup (`monorepo-tooling.md`, "Allowed actions").
 - **The review's own workflow**, `.github/workflows/Review.yaml` (`pnpm -C scripts ai:review`, and `ai:review:fix` in its fix matrix) — the `review-queue` skill, and `apps/web/content/docs/infra/review.md`.
 
 ## Reference pages
