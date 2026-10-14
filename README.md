@@ -1,36 +1,12 @@
 # [Esposter](https://esposter.com)
 
 [![Build Status][badge-ci]][url-ci]
-[![Review][badge-review]][url-review]
-[![CodeQL][badge-codeql]][url-codeql]
-[![Release][badge-release]][url-release]
-[![Pulumi infra][badge-pulumi-workflow]][url-pulumi-workflow]
-[![Last commit][badge-last-commit]][url-last-commit]
 [![Repository Score][badge-score]][url-score]
 [![Duplicate Code][badge-duplicates]][url-ci]
 [![Apache-2.0 licensed][badge-license]][url-license]
-
-[![Node.js][badge-node]][url-node]
-[![pnpm][badge-pnpm]][url-pnpm]
-[![TypeScript][badge-typescript]][url-typescript]
-[![Nuxt][badge-nuxt]][url-nuxt]
-[![Vue][badge-vue]][url-vue]
-[![tRPC][badge-trpc]][url-trpc]
-[![Drizzle][badge-drizzle]][url-drizzle]
-[![PostgreSQL][badge-postgresql]][url-postgresql]
-[![Azure][badge-azure]][url-azure]
-[![Pulumi][badge-pulumi]][url-pulumi]
-[![Pinia][badge-pinia]][url-pinia]
-[![UnoCSS][badge-unocss]][url-unocss]
-[![Phaser][badge-phaser]][url-phaser]
-[![three.js][badge-threejs]][url-threejs]
-[![Vitest][badge-vitest]][url-vitest]
-[![ESLint][badge-eslint]][url-eslint]
-
-[![jscpd][badge-jscpd]][url-jscpd]
-[![Renovate][badge-renovate]][url-renovate]
-[![Claude Code plugins][badge-plugins]][url-plugins]
 [![Agent skills][badge-skills]][url-skills]
+[![OpenSSF Scorecard][badge-openssf]][url-openssf]
+[![Socket][badge-socket]][url-socket]
 
 ## Table of Contents
 
@@ -446,54 +422,10 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [badge-duplicates]: https://img.shields.io/badge/duplicate%20code-0%20clones-33c854
 [badge-score]: https://img.shields.io/badge/score-94%2F100-33c854
 [url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
-[badge-review]: https://github.com/Esposter/Esposter/actions/workflows/Review.yaml/badge.svg?event=push&branch=ai/queue
-[url-review]: https://github.com/Esposter/Esposter/actions/workflows/Review.yaml
-[badge-codeql]: https://github.com/Esposter/Esposter/actions/workflows/CodeQL.yaml/badge.svg?branch=main
-[url-codeql]: https://github.com/Esposter/Esposter/actions/workflows/CodeQL.yaml
-[badge-release]: https://github.com/Esposter/Esposter/actions/workflows/Release.yaml/badge.svg
-[url-release]: https://github.com/Esposter/Esposter/actions/workflows/Release.yaml
-[badge-pulumi-workflow]: https://github.com/Esposter/Esposter/actions/workflows/Pulumi.yaml/badge.svg?event=push&branch=ai/queue
-[url-pulumi-workflow]: https://github.com/Esposter/Esposter/actions/workflows/Pulumi.yaml
-[badge-last-commit]: https://img.shields.io/github/last-commit/Esposter/Esposter/main
-[url-last-commit]: https://github.com/Esposter/Esposter/commits/main
-[badge-node]: https://img.shields.io/badge/Node.js-5FA04E?logo=nodedotjs&logoColor=white
-[url-node]: https://nodejs.org
-[badge-pnpm]: https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=white
-[url-pnpm]: https://pnpm.io
-[badge-typescript]: https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white
-[url-typescript]: https://www.typescriptlang.org
-[badge-nuxt]: https://img.shields.io/badge/Nuxt-00DC82?logo=nuxt&logoColor=white
-[url-nuxt]: https://nuxt.com
-[badge-vue]: https://img.shields.io/badge/Vue-4FC08D?logo=vuedotjs&logoColor=white
-[url-vue]: https://vuejs.org
-[badge-trpc]: https://img.shields.io/badge/tRPC-2398F3?logo=trpc&logoColor=white
-[url-trpc]: https://trpc.io
-[badge-drizzle]: https://img.shields.io/badge/Drizzle-C5F74F?logo=drizzle&logoColor=black
-[url-drizzle]: https://orm.drizzle.team
-[badge-postgresql]: https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white
-[url-postgresql]: https://www.postgresql.org
-[badge-azure]: https://img.shields.io/badge/Azure-0078D4?logo=microsoftazure&logoColor=white
-[url-azure]: https://azure.microsoft.com
-[badge-pulumi]: https://img.shields.io/badge/Pulumi-8A3391?logo=pulumi&logoColor=white
-[url-pulumi]: https://www.pulumi.com
-[badge-pinia]: https://img.shields.io/badge/Pinia-FFD859?logo=pinia&logoColor=black
-[url-pinia]: https://pinia.vuejs.org
-[badge-unocss]: https://img.shields.io/badge/UnoCSS-333333?logo=unocss&logoColor=white
-[url-unocss]: https://unocss.dev
-[badge-phaser]: https://img.shields.io/badge/Phaser-8C4DFF
-[url-phaser]: https://phaser.io
-[badge-threejs]: https://img.shields.io/badge/three.js-000000?logo=threedotjs&logoColor=white
-[url-threejs]: https://threejs.org
-[badge-vitest]: https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white
-[url-vitest]: https://vitest.dev
-[badge-eslint]: https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=white
-[url-eslint]: https://eslint.org
-[badge-jscpd]: https://img.shields.io/npm/v/jscpd?label=jscpd&color=brightgreen
-[url-jscpd]: https://github.com/kucherenko/jscpd
-[badge-renovate]: https://img.shields.io/badge/Renovate-enabled-1A1F6C?logo=renovatebot&logoColor=white
-[url-renovate]: https://github.com/Esposter/Esposter/blob/main/renovate.json
-[badge-plugins]: https://img.shields.io/badge/Claude%20Code-plugins%3A%203-D97757
-[url-plugins]: https://esposter.com/docs/infra/claude-interface
 [badge-skills]: https://img.shields.io/badge/agent%20skills-100%2B-blueviolet
 [url-skills]: https://github.com/Esposter/Esposter/tree/main/.agents/skills
+[badge-openssf]: https://api.scorecard.dev/projects/github.com/Esposter/Esposter/badge
+[url-openssf]: https://scorecard.dev/viewer/?uri=github.com/Esposter/Esposter
+[badge-socket]: https://badge.socket.dev/npm/package/nuxt-security-module/latest
+[url-socket]: https://socket.dev/npm/package/nuxt-security-module
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest
