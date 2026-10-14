@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
 import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 
-interface Props extends AttackProps {
+interface Props {
   startSpritesheetKey: SpritesheetKey;
 }
 

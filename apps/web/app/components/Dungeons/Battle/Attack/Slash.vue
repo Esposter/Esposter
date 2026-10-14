@@ -13,7 +13,6 @@ const emit = defineEmits<{ complete: [] }>();
 <template>
   <DungeonsBattleAttackAnimated
     v-model:is-active="isActive"
-    :is-to-enemy
     :start-spritesheet-key="SpritesheetKey.Slash"
     @complete="emit('complete')"
     v-slot="{ playAnimationKey }"
