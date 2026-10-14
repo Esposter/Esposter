@@ -29,8 +29,10 @@ export const syncPeer = async (
   isDryRun: boolean,
 ): Promise<void> => {
   const isPull = direction === TransferDirection.Pull;
-  const localManifest = await getManifest(localDirectory, folders);
-  const remoteManifest = await readRemoteManifest(peer, remoteDirectory, folders);
+  const [localManifest, remoteManifest] = await Promise.all([
+    getManifest(localDirectory, folders),
+    readRemoteManifest(peer, remoteDirectory, folders),
+  ]);
   const directories = isPull
     ? getChangedDirectories(remoteManifest, localManifest)
     : getChangedDirectories(localManifest, remoteManifest);
