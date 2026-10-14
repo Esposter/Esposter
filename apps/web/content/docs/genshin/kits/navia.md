@@ -34,4 +34,4 @@ Navia's kit is its record and one behaviour module, `createNaviaKitBehaviour`, o
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/navia), MIT: the kit's hitmarks, cancel frames and reaches, the plunges' frames, reaches and poise, Rosula Shardshot's frames, pellet reach, travel delay, press and hold firing, the Surging Blade's timing and ICD, As the Sunlit Sky's Singing Salute's frames, blast, cannon spacing and Crystal Shrapnel gain, and Constellation 4 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/navia), MIT: the kit's hitmarks, cancel frames and reaches, the plunges' frames, reaches and poise, Rosula Shardshot's frames, pellet reach, travel delay, press and hold firing, the Surging Blade's timing and ICD, As the Sunlit Sky's Singing Salute's frames, blast, cannon spacing and Crystal Shrapnel gain, and Constellation 4 and 6.
