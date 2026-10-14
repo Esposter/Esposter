@@ -2,7 +2,7 @@
 
 Read when a command renders the world, a frame stalls, or the parity page is served. The one-line rules are in `SKILL.md`; this page is their reasoning.
 
-- **A command that renders the world is a plain run, bounded by the session that starts it.** `passes`, `compare`, `stalls` and any other command that opens Edge on a world page runs as a plain `pnpm -C scripts genshin:parity …` command, since each renderer holds about 2.5 GB: three agents' world passes at once took free memory to 1.6 GB on 2026-10-09, so the session starting agents keeps world renders from landing together.
+- **A command that renders the world is a plain run, bounded by the session that starts it.** `passes`, `compare`, `stalls` and any other command that opens Edge on a world page runs as a plain `pnpm -C scripts genshin:parity …` command, since each renderer holds about 2.5 GB. Do not run world passes in parallel; each one holds about 1.6 GB, so the session starting agents keeps world renders from landing together.
 
 - **A stall is named from `stalls --trace` before anything is fixed.** A slow frame whose page GPU calls total under a millisecond is not a compile: its main thread sat in a native call (a `writeBuffer` or a `createCommandEncoder`, the GPU backlog) or in the page's own code, which the trace's CPU samples name. Its rendering-side causes and numbers are in `apps/web/content/docs/genshin/rendering-style.md`.
 
