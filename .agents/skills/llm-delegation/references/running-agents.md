@@ -2,6 +2,7 @@
 
 Read while a subagent is running, before launching several at once, or when cleaning up after a batch.
 
+- **Never pass `isolation: "worktree"` to the Agent tool.** It is refused here, because `.claude` is a committed symlink to `.agents`, so the call fails with no agent started. Create the worktree by hand first, on a branch, under the agent tree's gitignored worktrees folder: `git worktree add -b <name> .agents/worktrees/<name> origin/ai/queue`. Then the agent's prompt names that path and tells it to work only there and never to touch `.claude`. The `review-queue` skill's loop is the setup, and `throughput`'s `remove-worktree.sh` is the teardown (see "Cleaning up" below).
 - **A haiku agent stops at the first obstacle unless its prompt names the way past it.**
   - Unprompted, it ends on "the wiki returns 402", "the search API refuses", "too large for this pass" or "needs a design call", with nothing built.
   - So the prompt names the working route for each known obstacle (the repo's own wiki reader, yt-dlp's `bilisearch:`/`ytsearch:`, the dump's fallback source), settles the design calls itself, and says that a report of nothing built is a failed run.
