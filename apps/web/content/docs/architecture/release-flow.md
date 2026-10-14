@@ -17,7 +17,7 @@ flowchart TD
   Release -- success --> Main[Push to main]
   Main --> Merge[MergeMain: a review run on ai/queue merges main back]
   Release -- success --> Draft[Draft GitHub release on the tag]
-  Release -- failure --> Held[No review run, no draft: the tag may exist without a release]
+  Release -- failure --> Held[Failed before the push: no review run, no draft. Failed after the push: MergeMain still runs; the tag may exist without a release]
   Draft --> Host[host-installer: build the Windows host, attach it to the draft]
   Host --> Publish[publish: draft becomes public]
 ```
