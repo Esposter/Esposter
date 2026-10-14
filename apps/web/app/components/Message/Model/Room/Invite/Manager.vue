@@ -7,6 +7,7 @@ import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#s
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiToken } from "@/models/ui/UiToken";
 import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
 import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
@@ -80,7 +81,7 @@ const { copied, copy } = useClipboard({ legacy: true });
 </script>
 
 <template>
-  <UiAlert v-if="room.isInvitePaused" status="info">
+  <UiAlert v-if="room.isInvitePaused" :status="UiToken.Info">
     Invites are paused for this room, so no link works and no new one can be created.
   </UiAlert>
   <div v-else flex flex-col gap-3>

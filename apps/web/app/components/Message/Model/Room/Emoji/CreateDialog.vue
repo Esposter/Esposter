@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { pluralize } from "#shared/util/text/pluralize";
+import { UiToken } from "@/models/ui/UiToken";
 import { getFileSize } from "@/services/file/getFileSize";
 import { validateFile } from "@/services/file/validateFile";
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
@@ -75,7 +76,7 @@ const isNameValid = computed(
         </p>
         <MessageModelRoomEmojiNameField v-model="name" is-autofocus />
       </section>
-      <UiAlert v-if="isFull" status="error">
+      <UiAlert v-if="isFull" :status="UiToken.Error">
         This room already has its {{ MAX_ROOM_EMOJIS }} {{ pluralize("emoji", MAX_ROOM_EMOJIS) }}. Delete one to add
         another.
       </UiAlert>

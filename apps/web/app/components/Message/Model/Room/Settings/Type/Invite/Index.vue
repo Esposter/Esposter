@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiToken } from "@/models/ui/UiToken";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 
 interface Props {
@@ -36,7 +37,7 @@ await readRoomInvites();
         Pause invites
       </UiButton>
     </div>
-    <UiAlert v-if="room.isInvitePaused" status="warning">Invites to this room are currently paused.</UiAlert>
+    <UiAlert v-if="room.isInvitePaused" :status="UiToken.Warning">Invites to this room are currently paused.</UiAlert>
     <div v-if="items.length > 0" role="list" aria-label="Invites" flex flex-col>
       <MessageModelRoomInviteRow
         v-for="invite of items"

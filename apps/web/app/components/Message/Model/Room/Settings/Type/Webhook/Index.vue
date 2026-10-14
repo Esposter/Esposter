@@ -4,6 +4,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { DEFAULT_WEBHOOK_NAME, WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiToken } from "@/models/ui/UiToken";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface Props {
@@ -32,7 +33,7 @@ await readWebhooks(room.id);
         New webhook
       </UiButton>
     </div>
-    <UiAlert v-if="items.length >= WEBHOOK_MAX_LENGTH" status="warning">
+    <UiAlert v-if="items.length >= WEBHOOK_MAX_LENGTH" :status="UiToken.Warning">
       You can only create up to {{ WEBHOOK_MAX_LENGTH }} {{ pluralize("webhook", WEBHOOK_MAX_LENGTH) }}.
     </UiAlert>
     <MessageModelRoomSettingsTypeWebhookList :room-id="room.id" />
