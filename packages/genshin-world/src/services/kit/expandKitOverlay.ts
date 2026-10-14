@@ -3,7 +3,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 const RANGE_SEGMENT_REGEX = /^(?<start>\d+)-(?<end>\d+)$/u;
 
 // The part of an overlay entry the expansion reads: a cited entry names its file, and carries a value for each hit of a run
-export interface KitOverlayRangeEntry {
+interface KitOverlayRangeEntry {
   file?: string;
   index?: number;
   value?: unknown;
