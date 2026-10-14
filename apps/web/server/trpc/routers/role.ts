@@ -1,7 +1,5 @@
-import type {
-  MemberPermissionOverride,
-  MemberPermissionOverrideEntry,
-} from "#shared/models/db/role/MemberPermissionOverride";
+import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
+import type { MemberPermissionOverrideEntry } from "#shared/models/db/role/MemberPermissionOverrideEntry";
 import type { MyRoomPermissions } from "#shared/models/db/role/MyRoomPermissions";
 import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
 

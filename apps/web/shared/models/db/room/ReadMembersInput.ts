@@ -1,10 +1,8 @@
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { MEMBER_DISPLAY_NAME_KEY } from "#shared/services/room/constants";
 import { PublicUserColumns, roomIdSchema, selectUserInAuthSchema } from "@esposter/db-schema";
 import { z } from "zod";
-
-// The name a member is listed, searched and paged by: the nickname when there is one, else the global name
-export const MEMBER_DISPLAY_NAME_KEY = "displayName";
 
 export const readMembersInputSchema = z.object({
   ...roomIdSchema.shape,

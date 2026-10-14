@@ -3,7 +3,3 @@ export interface MemberPermissionOverride {
   allow: bigint;
   deny: bigint;
 }
-
-export interface MemberPermissionOverrideEntry extends MemberPermissionOverride {
-  userId: string;
-}
