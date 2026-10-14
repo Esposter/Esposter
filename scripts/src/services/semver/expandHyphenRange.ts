@@ -6,10 +6,8 @@ import { checkIsAnyPart } from "#src/services/semver/checkIsAnyPart";
 import { incrementNumericIdentifier } from "#src/services/semver/incrementNumericIdentifier";
 
 // The first version is the lower bound, and a wildcard leaves that side open
-const expandHyphenLowerBound = (
-  { major, minor, patch, prerelease }: ComparatorToken,
-  prereleaseSuffix: string,
-): ComparatorText[] => {
+const expandHyphenLowerBound = (token: ComparatorToken, prereleaseSuffix: string): ComparatorText[] => {
+  const { major, minor, patch, prerelease } = token;
   if (checkIsAnyPart(major)) return [];
   if (checkIsAnyPart(minor))
     return [{ operator: RangeOperator.GreaterThanOrEqual, version: `${major}.0.0${prereleaseSuffix}` }];
@@ -26,10 +24,8 @@ const expandHyphenLowerBound = (
 
 // The last version is the upper bound: a bare one includes itself, and with prereleases included it takes in its own
 // Prereleases as well, so the bound stops at the next patch's lowest prerelease
-const expandHyphenUpperBound = (
-  { major, minor, patch, prerelease }: ComparatorToken,
-  prereleaseSuffix: string,
-): ComparatorText[] => {
+const expandHyphenUpperBound = (token: ComparatorToken, prereleaseSuffix: string): ComparatorText[] => {
+  const { major, minor, patch, prerelease } = token;
   if (checkIsAnyPart(major)) return [];
   if (checkIsAnyPart(minor))
     return [{ operator: RangeOperator.LessThan, version: `${incrementNumericIdentifier(major)}.0.0-0` }];
