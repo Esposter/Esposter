@@ -16,11 +16,12 @@ export const generateWebPubSubClientAccessUrl = async (
   signal?: AbortSignal,
 ): Promise<string> => {
   const webPubSubServiceClient = useWebPubSubServiceClient(azureWebPubSubHub);
+  const sessionDevice = getDevice(getSessionPayload);
   const { url } = await webPubSubServiceClient.getClientAccessToken({
     abortSignal: signal,
     groups: [group],
     roles: [`webPubSub.joinLeaveGroup.${group}`],
-    userId: getDeviceId(getDevice(getSessionPayload)),
+    userId: getDeviceId(sessionDevice),
   });
   return url;
 };
