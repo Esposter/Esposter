@@ -8,19 +8,11 @@ import { InitialState } from "../InitialState";
 import { joinDirectory } from "../shell/joinDirectory";
 import { getCheckoutPeer } from "./getCheckoutPeer";
 import { getParentFolder } from "./getParentFolder";
-import { getRecordsPath } from "./getRecordsPath";
 import { getWholeIndexDenyReason, getWholeIndexRefusal } from "./getWholeIndexRefusal";
-import { parseRecords } from "./parseRecords";
+import { readRecords } from "./readRecords";
+import { resolveRecordsPath } from "./resolveRecordsPath";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
-
-// The records file under the person's home folder, the home read from this file's own environment lookup
-const resolveRecordsPath = async ($: EngineInterface): Promise<string> =>
-  getRecordsPath((await $.env.get("HOME")) ?? (await $.env.get("USERPROFILE")) ?? "");
-
-// The records as the file holds them, none when it does not yet exist
-const readRecords = async ($: EngineInterface, path: string): Promise<Record<string, WardRecord>> =>
-  (await $.fs.exists(path)) ? parseRecords(await $.fs.read(path)) : {};
 
 // The nearest folder at or above `folder` holding a `.git`, a worktree's file included, undefined when none does
 const findCheckoutRoot = async ($: EngineInterface, folder: string): Promise<string | undefined> => {
