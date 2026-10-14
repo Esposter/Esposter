@@ -19,4 +19,4 @@ Provisional: his plunges. gcsim's folder has no plunge file, so the collision, l
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/lyney), MIT: Lyney's strikes' hitmarks, cancel frames and reach, the Prop Arrow and its Grin-Malkin Hat, Bewildering Lights' hit and reach, and Wondrous Trick: Miracle Parade's Explosive Firework and its hat with their timings and the Pyrotechnic Strike's travel.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lyney), MIT: Lyney's strikes' hitmarks, cancel frames and reach, the Prop Arrow and its Grin-Malkin Hat, Bewildering Lights' hit and reach, and Wondrous Trick: Miracle Parade's Explosive Firework and its hat with their timings and the Pyrotechnic Strike's travel.
