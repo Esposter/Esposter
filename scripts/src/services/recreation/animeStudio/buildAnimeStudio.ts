@@ -194,13 +194,10 @@ export const buildAnimeStudio = async (
   rmSync(stagingDirectory, { force: true, recursive: true });
   mkdirSync(workDirectory, { recursive: true });
 
-  const animeStudio = await fetchSource(ANIMESTUDIO_REPOSITORY, ANIMESTUDIO_SHA, workDirectory, "AnimeStudio");
-  const texture2DDecoder = await fetchSource(
-    TEXTURE2DDECODER_REPOSITORY,
-    TEXTURE2DDECODER_SHA,
-    workDirectory,
-    "Texture2DDecoder",
-  );
+  const [animeStudio, texture2DDecoder] = await Promise.all([
+    fetchSource(ANIMESTUDIO_REPOSITORY, ANIMESTUDIO_SHA, workDirectory, "AnimeStudio"),
+    fetchSource(TEXTURE2DDECODER_REPOSITORY, TEXTURE2DDECODER_SHA, workDirectory, "Texture2DDecoder"),
+  ]);
   retargetProjects(animeStudio);
   patchOozCopies(join(animeStudio, "AnimeStudio.Ooz"));
   patchOozSignedOffsets(join(animeStudio, "AnimeStudio.Ooz"));
