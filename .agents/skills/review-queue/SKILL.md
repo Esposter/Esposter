@@ -37,7 +37,7 @@ A session pushes `main` only as the direct local push under "Settled" allows —
 
 Every change lands on `ai/queue` itself, in the main checkout: fast-forward `ai/queue` to `origin/ai/queue`, edit, commit by pathspec, and land. No branch is cut for a change, and a finished one is never left behind as a local branch. The checkout's existing installs serve it, so no install is run. A worktree is opened only when two or more changes must run at once, since each worktree costs a whole install of the packages it touches (`.agents/skills/throughput/references/fleet.md` owns the commands and why). Each agent:
 
-1. **Fast-forwards `ai/queue` and works on it.** `git switch ai/queue && git merge --ff-only origin/ai/queue`. Only for a concurrent change: `git worktree add -b <name> .agents/worktrees/<name> origin/ai/queue`, then the install of the packages it will touch, never the whole workspace. A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
+1. **Fast-forwards `ai/queue` and works on it.** `git switch ai/queue && git merge --ff-only origin/ai/queue`. Only for a concurrent change: a worktree made as `llm-delegation`'s `references/running-agents.md` says, then the install of the packages it will touch, never the whole workspace. A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
 2. **Commits each coherent unit by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit.
 3. **Lands the commits:**
 
