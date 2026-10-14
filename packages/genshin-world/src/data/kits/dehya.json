@@ -1,17 +1,17 @@
 {
   "burst.animationFrames": { "cause": "DiffersFromSource", "value": 105 },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 300 },
+  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 300 },
   "chargedAttack.hits.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.1.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
-  "chargedAttack.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 300 },
+  "chargedAttack.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 300 },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 7931 } },
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Fire" },
