@@ -16,19 +16,19 @@ import { takeOne } from "@esposter/shared";
 
 // The stamina each seal cuts a charged attack's cost by is 15%, 25% from Constellation 1, as gcsim (MIT) yanfei/asc.go
 // Gives it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/yanfei/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/asc.go
 const CHARGED_ATTACK_STAMINA_REDUCTION = 0.15;
 const CHARGED_ATTACK_STAMINA_CONSTELLATION = 1;
 const CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION = 0.25;
 // Done Deal adds a Scarlet Seal each second for its 15 seconds, and its Pyro DMG bonus to Charged Attacks, as gcsim (MIT)
 // Yanfei/burst.go gives it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/yanfei/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/burst.go
 const BURST_SECONDS = 15;
 const BURST_SEAL_INTERVAL_SECONDS = 1;
 const DONE_DEAL_STATUS_ID = "yanfei-done-deal";
 // Scarlet Seals last 10 seconds from the last one gained, and Yanfei holds three of them, four from Constellation 6, as
 // Gcsim (MIT) yanfei/yanfei.go gives it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/yanfei/yanfei.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/yanfei.go
 const SEAL_SECONDS = 10;
 const MAX_SEALS = 3;
 const MAX_SEALS_CONSTELLATION = 6;
