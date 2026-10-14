@@ -29,4 +29,4 @@ Sethos's kit is built from its record alone, on avatar 10000097, and `createSeth
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/sethos), MIT: each strike's hitmarks, frames and boxes, the fully-charged Aimed Shot's hitmark and animation, the skill's circle, hitmark, cooldown and energy refund, and the burst's buff and animation, as the passives and constellations listed as not built.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/sethos), MIT: each strike's hitmarks, frames and boxes, the fully-charged Aimed Shot's hitmark and animation, the skill's circle, hitmark, cooldown and energy refund, and the burst's buff and animation, as the passives and constellations listed as not built.
