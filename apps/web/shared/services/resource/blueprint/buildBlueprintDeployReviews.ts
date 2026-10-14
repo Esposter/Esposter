@@ -18,7 +18,7 @@ export const buildBlueprintDeployReviews = (entries: BlueprintEntry[], parameter
     const name = substituteBlueprintParameterTokens(entry.name, parameterValueMap);
     const bindingKeys = new Set<string>();
     visitBlueprintEntryContentStrings(entry, (value) => {
-      for (const [, key] of value.matchAll(BLUEPRINT_ENTRY_TOKEN_REGEX)) bindingKeys.add(key);
+      for (const { groups } of value.matchAll(BLUEPRINT_ENTRY_TOKEN_REGEX)) bindingKeys.add(groups?.key ?? "");
     });
     const undeclaredTokens = name.match(BLUEPRINT_PARAMETER_TOKEN_REGEX) ?? [];
     const isNameEmpty = !blueprintEntrySchema.shape.name.safeParse(name).success;
