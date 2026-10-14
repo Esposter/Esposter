@@ -10,8 +10,10 @@ import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKi
 import { BannerKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
-const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
-const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const [englishNameText, statTables] = await Promise.all([
+  NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL),
+  readStatTables(GAME_DATA_LOCAL_BASE_URL),
+]);
 
 // The Character Event banner open on Born of Ocean Swell, the English PC client's wish screen at 78 seconds of the public
 // 1080p recording: 539 Primogems and 32 Intertwined Fates held, with no wish yet made on it

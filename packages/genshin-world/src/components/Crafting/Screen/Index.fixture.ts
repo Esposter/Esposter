@@ -13,8 +13,10 @@ import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { createSeededRandom } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
-const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
-const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
+const [englishNameText, materialDataMap] = await Promise.all([
+  NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL),
+  readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
+]);
 
 // Condensed Resin on the Consumable tab, which the player has learned from its Instruction and which is open at Adventure
 // Rank 10, with Diluc as the crafter and one already crafted, as the Crafting Table clip shows it
