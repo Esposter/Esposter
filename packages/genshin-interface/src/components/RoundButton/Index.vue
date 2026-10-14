@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DiscButton from "#src/components/DiscButton/Index.vue";
 import { InterfaceIcon } from "#src/models/InterfaceIcon";
 import { SETTINGS_RING_CENTRE, SETTINGS_RING_RADIUS, SETTINGS_RING_WIDTH } from "#src/services/constants";
 import { InterfaceIconCentreMap } from "#src/services/InterfaceIconCentreMap";
@@ -16,7 +17,7 @@ const { icon, label } = defineProps<Props>();
 <template>
   <!-- The game's round button: a white disc 52 units across under a soft dark rim, its glyph in the game's near black
        Centred on its ink, as the game centres each icon's sprite -->
-  <button class="round-button" :aria-label="label" type="button">
+  <DiscButton :label :size="52">
     <svg
       class="glyph"
       :viewBox="`${InterfaceIconCentreMap[icon][0] - 24} ${InterfaceIconCentreMap[icon][1] - 24} 48 48`"
@@ -32,23 +33,10 @@ const { icon, label } = defineProps<Props>();
         :stroke-width="SETTINGS_RING_WIDTH"
       />
     </svg>
-  </button>
+  </DiscButton>
 </template>
 
 <style scoped>
-.round-button {
-  display: grid;
-  width: calc(var(--unit) * 52);
-  height: calc(var(--unit) * 52);
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: #fdfdfd;
-  box-shadow: 0 0 calc(var(--unit) * 3) calc(var(--unit) * 1) rgb(0 0 0 / 0.3);
-  cursor: inherit;
-  place-items: center;
-}
-
 .glyph {
   width: calc(var(--unit) * 48);
   height: calc(var(--unit) * 48);

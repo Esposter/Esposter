@@ -2,6 +2,7 @@
 import type { CraftingCell } from "#src/models/CraftingCell";
 import type { CraftingMaterial } from "#src/models/CraftingMaterial";
 
+import DiscButton from "#src/components/DiscButton/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 
 interface Props {
@@ -69,11 +70,11 @@ const emit = defineEmits<{ close: []; craft: [] }>();
         <span class="coin" aria-hidden="true" />
         {{ coins }}
       </p>
-      <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">
+      <DiscButton class="close" :label="closeLabel" :size="56" @click="emit('close')">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 6 18 18M18 6 6 18" />
         </svg>
-      </button>
+      </DiscButton>
     </header>
     <ul class="tabs">
       <li v-for="tab of tabs" :key="tab.id">
@@ -168,14 +169,6 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   position: absolute;
   top: calc(var(--unit) * 18);
   left: calc(var(--unit) * 1828);
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: #fdfdfd;
-  box-shadow: 0 0 calc(var(--unit) * 3) calc(var(--unit) * 1) rgb(0 0 0 / 0.3);
-  cursor: inherit;
 }
 
 .close svg {

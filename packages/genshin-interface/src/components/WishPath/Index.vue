@@ -13,7 +13,7 @@ const { fatePoints, pathLabel } = defineProps<Props>();
 
 <template>
   <!-- The Epitomized Path the weapon wish's banner holds, its name and its Fate Points as the game words and colours them -->
-  <p class="path">
+  <p>
     {{ pathLabel }}
     <span class="fate-points">
       <span v-for="({ color, text }, index) of fatePoints" :key="index" :style="{ color }">{{ text }}</span>
@@ -22,7 +22,7 @@ const { fatePoints, pathLabel } = defineProps<Props>();
 </template>
 
 <style scoped>
-.path {
+p {
   margin: 0;
   font-size: calc(var(--unit) * 22);
 }
