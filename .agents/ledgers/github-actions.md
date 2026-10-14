@@ -6,8 +6,8 @@ Workflow and composite-action authoring — the runner's own affordances, templa
 | ------------------------------------------------------------------------ | ---------------------- | ----- |
 | `.github/workflows/CI.yaml`                                              | 2026-10-14 · Haiku 5.5 |       |
 | `.github/workflows` — `Release`, `build-packages`, `deploy-function-app` | 2026-10-14 · Haiku 5.5 |       |
-| `.github/workflows` — `claude-warmup`                                    | 2026-10-05 · Opus 5.5  |       |
-| `.github/workflows` — `Bench`, `CodeQL`, `DeleteMergedBranch`, `Pulumi`  | 2026-10-05 · Opus 5.5  |       |
-| `.github/workflows/Review.yaml`                                          | —                      |       |
-| `.github/workflows/MergeMain.yaml`                                       | —                      |       |
-| `.github/actions`                                                        | 2026-10-05 · Opus 5.5  |       |
+| `.github/workflows` — `claude-warmup`                                    | 2026-10-14 · Haiku 5.5 |       |
+| `.github/workflows` — `Bench`, `CodeQL`, `DeleteMergedBranch`, `Pulumi`  | 2026-10-14 · Haiku 5.5 |       |
+| `.github/workflows/Review.yaml`                                          | 2026-10-14 · Haiku 5.5 |       |
+| `.github/workflows/MergeMain.yaml`                                       | 2026-10-14 · Haiku 5.5 |       |
+| `.github/actions`                                                        | 2026-10-14 · Haiku 5.5 |       |
