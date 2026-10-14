@@ -341,9 +341,9 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   appearance: none;
 }
 
-.crafted {
+.crafted,
+.required {
   position: absolute;
-  top: calc(var(--unit) * 622);
   left: calc(var(--unit) * 1020);
   width: calc(var(--unit) * 570);
   margin: 0;
@@ -352,15 +352,12 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   text-align: center;
 }
 
+.crafted {
+  top: calc(var(--unit) * 622);
+}
+
 .required {
-  position: absolute;
   top: calc(var(--unit) * 700);
-  left: calc(var(--unit) * 1020);
-  width: calc(var(--unit) * 570);
-  margin: 0;
-  font-size: calc(var(--unit) * 22);
-  line-height: calc(var(--unit) * 26);
-  text-align: center;
 }
 
 .craft {
