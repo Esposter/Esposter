@@ -31,5 +31,5 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/iansan), MIT: the hitmark and animation of each strike, the charged attack's hit and animation, the skill's activation and animation, and the burst's hit and animation, read from its attack, charge, skill and burst files, with its constellation and ascension files for the mechanics waiting on their hooks.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/iansan), MIT: the hitmark and animation of each strike, the charged attack's hit and animation, the skill's activation and animation, and the burst's hit and animation, read from its attack, charge, skill and burst files, with its constellation and ascension files for the mechanics waiting on their hooks.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier beside its group.
