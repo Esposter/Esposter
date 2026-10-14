@@ -5,7 +5,7 @@ import type { Vector } from "#src/models/shared/Vector";
 import { clusterColours } from "#src/services/genshinAssets/fit/clusterColours";
 
 // The most tones a surface's textures are split into, each a cluster of their colours
-export const SURFACE_TONE_COUNT = 3;
+const SURFACE_TONE_COUNT = 3;
 // The most samples the palette's k-means reads: a clustering walks every sample at each of its steps, so a surface's
 // Samples past this many are read at an even stride, each still weighted by its own area
 const PALETTE_SAMPLE_LIMIT = 20000;

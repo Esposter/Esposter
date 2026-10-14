@@ -8,9 +8,10 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { Vector } from "#src/models/shared/Vector";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { averageSurfaceDetails } from "#src/services/genshinAssets/fit/averageSurfaceDetails";
 import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePartSurfaces";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
-import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
+import { computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
 import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTriangleArea";
 import { computeUvTexels } from "#src/services/genshinAssets/fit/computeUvTexels";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
