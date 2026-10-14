@@ -1,6 +1,5 @@
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 
-import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
@@ -58,7 +57,9 @@ export const useExecuteSlashCommand = () => {
         message = `${command.parameterValues.text}¯\\_(ツ)_/¯`;
         break;
       case SlashCommandType.Spoiler:
-        message = `<span data-spoiler>${escapeHtml(command.parameterValues.text)}</span>`;
+        // Every ASCII punctuation mark is escaped, so the text reaches the reader as typed and the one parse after the
+        // Switch cannot read a markdown mark or a tag inside the span as formatting
+        message = `<span data-spoiler>${command.parameterValues.text.replaceAll(/[!-/:-@[-`{-~]/gu, "\\$&")}</span>`;
         break;
       case SlashCommandType.TableFlip:
         message = `(╯°□°）╯︵ ┻━┻`;

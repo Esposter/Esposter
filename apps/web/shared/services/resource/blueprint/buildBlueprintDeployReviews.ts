@@ -5,7 +5,7 @@ import {
   BLUEPRINT_ENTRY_TOKEN_REGEX,
   BLUEPRINT_PARAMETER_TOKEN_REGEX,
 } from "#shared/services/resource/blueprint/constants";
-import { mapBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
+import { visitBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
 import { substituteBlueprintParameterTokens } from "#shared/services/resource/blueprint/substituteBlueprintParameterTokens";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 
@@ -17,12 +17,9 @@ export const buildBlueprintDeployReviews = (entries: BlueprintEntry[], parameter
   return entries.map((entry) => {
     const name = substituteBlueprintParameterTokens(entry.name, parameterValueMap);
     const bindingKeys = new Set<string>();
-    mapBlueprintEntryContentStrings(entry, (value) =>
-      value.replace(BLUEPRINT_ENTRY_TOKEN_REGEX, (match, key: string) => {
-        bindingKeys.add(key);
-        return match;
-      }),
-    );
+    visitBlueprintEntryContentStrings(entry, (value) => {
+      for (const [, key] of value.matchAll(BLUEPRINT_ENTRY_TOKEN_REGEX)) bindingKeys.add(key);
+    });
     const undeclaredTokens = name.match(BLUEPRINT_PARAMETER_TOKEN_REGEX) ?? [];
     const isNameEmpty = !blueprintEntrySchema.shape.name.safeParse(name).success;
     const notes: string[] = [];
