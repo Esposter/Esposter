@@ -40,7 +40,7 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
           </ul>
         </li>
       </ul>
-      <WishPath v-if="pathLabel" class="path" :path-label :fate-points />
+      <WishPath v-if="pathLabel" :path-label :fate-points />
     </div>
   </div>
 </template>

@@ -1,15 +1,14 @@
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { characterDataSchema } from "#src/models/character/CharacterData";
 import { gameDataIndexSchema } from "#src/models/data/GameDataIndex";
 import { kitRecordSchema } from "#src/models/kit/record/KitRecord";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { gameDataLock } from "#src/services/data/gameDataLock";
 import { readGameData } from "#src/services/data/readGameData";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { readGameDataObject } from "#src/services/data/readGameDataObject";
 import { expandKitOverlay } from "#src/services/kit/expandKitOverlay";
 import { toKebabCase } from "@esposter/shared";
-import { GameLanguage } from "genshin-text";
 import { basename } from "node:path";
 import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -25,16 +24,15 @@ describe("kitOverlays", () => {
 
     const kitIndexHash = gameDataLock.indexes.kits;
     assert.exists(kitIndexHash);
-    const [characters, nameText, kitIndex] = await Promise.all([
+    const [characters, kitIndex] = await Promise.all([
       readGameData(GAME_DATA_LOCAL_BASE_URL, "stats/characters", z.array(characterDataSchema)),
-      NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL),
       readGameDataObject(GAME_DATA_LOCAL_BASE_URL, kitIndexHash),
     ]);
     const kitCharacterIds = Object.keys(gameDataIndexSchema.parse(kitIndex));
     const overlayNameCharacterIdMap = new Map(
       characters
         .filter(({ id }) => kitCharacterIds.includes(String(id)))
-        .map(({ id, nameTextId }) => [toKebabCase(nameText[nameTextId] ?? ""), String(id)]),
+        .map(({ id, nameTextId }) => [toKebabCase(englishNameText[nameTextId] ?? ""), String(id)]),
     );
     const valuePairs = await Promise.all(
       Object.entries(overlayPathMap).map(async ([overlayPath, overlay]) => {

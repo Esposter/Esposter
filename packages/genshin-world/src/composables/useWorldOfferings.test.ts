@@ -3,19 +3,17 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
-import { GameLanguage } from "genshin-text";
 import { assert, describe, expect, test } from "vitest";
 import { ref, shallowRef } from "vue";
 
-const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 const levels = await readFrostbearingTreeLevels(GAME_DATA_LOCAL_BASE_URL);
 

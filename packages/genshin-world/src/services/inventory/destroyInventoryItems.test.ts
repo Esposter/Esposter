@@ -1,18 +1,16 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { destroyInventoryItems } from "#src/services/inventory/destroyInventoryItems";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { ItemCategory } from "genshin-interface";
-import { GameLanguage } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
-const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
 describe(destroyInventoryItems, () => {

@@ -6,18 +6,9 @@ import type { Texture } from "three";
 import { AVATAR_TEXTURE_FOLDER, AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
 import { createAvatarTexture } from "#src/services/character/avatar/createAvatarTexture";
 import { createCharacterAvatar } from "#src/services/character/avatar/createCharacterAvatar";
-import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "#src/services/scene/constants";
+import { readFileResponse } from "#src/services/shared/readFileResponse";
 import { readJson } from "#src/services/shared/readJson";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// One file of a component as the host serves it, rejected when its fetch fails or does not answer in time
-const readFileResponse = async (url: string): Promise<Response> => {
-  const response = await fetch(url, { signal: AbortSignal.timeout(DATA_FETCH_TIMEOUT_MS) });
-  if (!response.ok)
-    throw new InvalidOperationError(Operation.Read, url, `HTTP ${response.status} ${response.statusText}`);
-  return response;
-};
 
 // The game's model of a component the host serves: its manifest, its binary read once as an ArrayBuffer, and each texture
 // The materials the model draws name, decoded once and shared by the materials that name it. A file that fails rejects the

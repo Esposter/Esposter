@@ -1,22 +1,19 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CraftingRecipeKind } from "#src/models/crafting/CraftingRecipeKind";
 import { Currency } from "#src/models/inventory/Currency";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { createSeededRandom } from "genshin-engine";
-import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
+import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-const [englishNameText, materialDataMap] = await Promise.all([
-  NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL),
-  readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
-]);
+const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
 // Condensed Resin on the Consumable tab, which the player has learned from its Instruction and which is open at Adventure
 // Rank 10, with Diluc as the crafter and one already crafted, as the Crafting Table clip shows it

@@ -1,17 +1,16 @@
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { claimExpedition } from "#src/services/expedition/claimExpedition";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { ItemCategory } from "genshin-interface";
-import { ENGLISH_GAME_TEXT, GameLanguage, GameTextKey } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
-const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
 const random = (): number => 0;

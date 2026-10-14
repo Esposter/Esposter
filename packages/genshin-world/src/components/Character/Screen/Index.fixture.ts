@@ -2,17 +2,14 @@ import type { Character } from "#src/models/character/Character";
 import type { TalentLevels } from "#src/models/character/TalentLevels";
 import type { Weapon } from "#src/models/weapon/Weapon";
 
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { CharacterMenuTab } from "genshin-interface";
-import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
+import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-const [englishNameText, statTables] = await Promise.all([
-  NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL),
-  readStatTables(GAME_DATA_LOCAL_BASE_URL),
-]);
+const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 // Xilonen on the Attributes tab at level 90, the English PC client's character screen as the 21:9 recording shows her
 // Beside fourteen of the player's other characters, the Traveler among them, their weapons held at the first level

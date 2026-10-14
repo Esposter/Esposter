@@ -1,13 +1,11 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { ItemCategory } from "genshin-interface";
-import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
-
-const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
+import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The weapons' tab of the English client at 1080 high, holding 1,347 four-star weapons at level 20, the tab's room
 // Counted beside its name (`Weapons 1347/2000`), as the recording of the account tour shows it

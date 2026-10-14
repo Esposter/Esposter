@@ -1,12 +1,10 @@
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { ItemCategory } from "genshin-interface";
-import { GameLanguage } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
-const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
 describe(getItemDefinition, () => {

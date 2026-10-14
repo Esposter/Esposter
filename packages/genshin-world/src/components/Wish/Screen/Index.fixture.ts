@@ -1,19 +1,16 @@
 import type { Wallet } from "#src/models/inventory/Wallet";
 
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { BEGINNERS_WISH_LIMIT, INITIAL_WISH_PITY } from "#src/services/wish/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
 import { BannerKind } from "genshin-interface";
-import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
+import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-const [englishNameText, statTables] = await Promise.all([
-  NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL),
-  readStatTables(GAME_DATA_LOCAL_BASE_URL),
-]);
+const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 // The Character Event banner open on Born of Ocean Swell, the English PC client's wish screen at 78 seconds of the public
 // 1080p recording: 539 Primogems and 32 Intertwined Fates held, with no wish yet made on it

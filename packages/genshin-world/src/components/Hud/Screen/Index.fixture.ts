@@ -1,10 +1,10 @@
+import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { SkillGlyphsLoaderMap } from "#src/generated/skillGlyphs/SkillGlyphsLoaderMap";
 import { Element } from "#src/models/Element";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { CHONGYUN_CHARACTER_ID } from "#src/services/kit/characters/chongyunKit";
@@ -13,9 +13,7 @@ import { createParty } from "#src/services/party/createParty";
 import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { createInput, STAMINA_MAX } from "genshin-engine";
-import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
-
-const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
+import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The English mobile client's world HUD on a 1920 by 935 screen, from the public recording of a session at 70 seconds,
 // Letterboxed, so cropped to the game's screen and scored over the part clear of its subtitles. Its touch layout is drawn,
