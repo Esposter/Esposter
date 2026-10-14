@@ -234,36 +234,12 @@ watch(
   transform: scaleY(var(--scale-y));
 }
 
-.normal-card-even {
-  animation: normal-card-even 2.5s ease both;
-}
-
+.normal-card-even,
 .normal-card-odd {
-  animation: normal-card-odd 2.5s ease both;
+  animation: normal-card-sway 2.5s ease both;
 }
 
-@keyframes normal-card-even {
-  0% {
-    margin-right: var(--old-margin-right);
-    transform: scaleY(var(--old-scale-y));
-  }
-
-  20% {
-    margin-right: var(--old-margin-right);
-    transform: scaleY(var(--old-scale-y));
-  }
-
-  40% {
-    transform: scaleY(var(--scale-y));
-  }
-
-  100% {
-    margin-right: var(--margin-right);
-    transform: scaleY(var(--scale-y));
-  }
-}
-
-@keyframes normal-card-odd {
+@keyframes normal-card-sway {
   0% {
     margin-right: var(--old-margin-right);
     transform: scaleY(var(--old-scale-y));
