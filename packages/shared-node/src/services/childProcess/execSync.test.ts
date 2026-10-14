@@ -30,6 +30,14 @@ describe(execSync, () => {
     expect(nodeFunction).toHaveBeenCalledExactlyOnceWith(file, { timeout: 1, windowsHide: true });
   });
 
+  test("an undefined options argument is the options slot, not an args slot", () => {
+    expect.hasAssertions();
+
+    execSync(file, undefined);
+
+    expect(nodeFunction).toHaveBeenCalledExactlyOnceWith(file, { windowsHide: true });
+  });
+
   test("a caller cannot re-show the window by passing windowsHide false", () => {
     expect.hasAssertions();
 
