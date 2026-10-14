@@ -41,7 +41,7 @@ From the **repo root**:
 vp run lint           # oxlint over the whole repo, then eslint — the one that matches CI, replayed when unchanged
 pnpm build            # build the app and the libraries it imports
 pnpm test <path>      # the suites a change touched — never run bare, it is the whole workspace
-vp run typecheck      # typecheck every package, replayed when unchanged
+vp run typecheck      # typecheck every package; the packages replay when unchanged, the workspace pass always runs
 pnpm coverage         # run every project's tests with coverage
 ```
 

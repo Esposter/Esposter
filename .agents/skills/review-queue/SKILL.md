@@ -5,7 +5,7 @@ description: Apply when about to git commit or git push, when deciding what bran
 
 # Review Queue
 
-Every agent works on **one permanent branch, `ai/queue`**, from its own git worktree, and lands its commits on it with `git pull --rebase` and `git push`. Nothing rewrites `ai/queue`. The review (`apps/web/content/docs/infra/review.md`, its workflow `.github/workflows/Review.yaml`) plans every window of the commits `main` does not yet have, reviews all of them in one pool, and moves `main` forward only through the windows that passed. This skill is what an agent does on its side of that.
+Every agent works on **one permanent branch, `ai/queue`**, in the main checkout, and lands its commits on it with `git pull --rebase` and `git push`. Nothing rewrites `ai/queue`. The review (`apps/web/content/docs/infra/review.md`, its workflow `.github/workflows/Review.yaml`) plans every window of the commits `main` does not yet have, reviews all of them in one pool, and moves `main` forward only through the windows that passed. This skill is what an agent does on its side of that.
 
 ## Settled — do not re-propose
 
@@ -31,13 +31,13 @@ Every agent works on **one permanent branch, `ai/queue`**, from its own git work
 | `main`       | the review only                         | a fast-forward to the end of the last window that passed                     |
 | other `ai/*` | the one session that owns it            | a plain push                                                                 |
 
-A session pushes `main` only as the direct local push under "Settled" allows — never otherwise. Its branch is local, named after the change, and never pushed under its own name: it only gives the pull a fork point.
+A session pushes `main` only as the direct local push under "Settled" allows — never otherwise. A session lands on `ai/queue` itself; the only other branch it ever holds is a concurrent change's worktree branch, which gives that worktree's pull a fork point.
 
 ## The loop
 
 Every change lands on `ai/queue` itself, in the main checkout: fast-forward `ai/queue` to `origin/ai/queue`, edit, commit by pathspec, and land. No branch is cut for a change, and a finished one is never left behind as a local branch. The checkout's existing installs serve it, so no install is run. A worktree is opened only when two or more changes must run at once, since each worktree costs a whole install of the packages it touches (`.agents/skills/throughput/references/fleet.md` owns the commands and why). Each agent:
 
-1. **Fast-forwards `ai/queue` and works on it.** `git switch ai/queue && git merge --ff-only origin/ai/queue`. Only for a concurrent change: `git worktree add .agents/worktrees/<name> origin/ai/queue`, then the install of the packages it will touch, never the whole workspace. A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
+1. **Fast-forwards `ai/queue` and works on it.** `git switch ai/queue && git merge --ff-only origin/ai/queue`. Only for a concurrent change: `git worktree add -b <name> .agents/worktrees/<name> origin/ai/queue`, then the install of the packages it will touch, never the whole workspace. A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
 2. **Commits each coherent unit by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit.
 3. **Lands the commits:**
 
@@ -51,7 +51,7 @@ A rebase conflict stops the loop on the commit it stopped on, and the agent that
 
 **Worktrees live under `.agents/worktrees/`, which is gitignored. Windows needs long paths enabled once (see `apps/web/content/docs/architecture/monorepo-tooling.md`, Windows long paths).**
 
-**Never `reset` or cherry-pick in the main checkout.** A single change may commit there on its local branch; a concurrent change goes in a worktree instead.
+**Never `reset` or cherry-pick in the main checkout.** A change commits on `ai/queue` there; a concurrent change goes in a worktree instead.
 
 **Never `git stash`, `git add -A`, or a bare `--force-with-lease`.** Commits are pushed plain, and every commit is reviewed, so no commit needs a marker to be treated differently. A commit may take any shape.
 
