@@ -37,7 +37,7 @@ import {
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { and, eq, notExists } from "drizzle-orm";
 
-export const roomEmojiRouter = router({
+export const emojiRouter = router({
   createRoomEmoji: getPermissionsProcedure(
     RoomPermission.ManageEmojis,
     createRoomEmojiInputSchema,

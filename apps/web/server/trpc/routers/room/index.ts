@@ -34,7 +34,7 @@ import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissi
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { categoryRouter } from "#server/trpc/routers/room/category";
 import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
-import { roomEmojiRouter } from "#server/trpc/routers/room/emoji";
+import { emojiRouter } from "#server/trpc/routers/room/emoji";
 import { filterRouter } from "#server/trpc/routers/room/filter";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
@@ -508,7 +508,7 @@ export const roomRouter = mergeRouters(
   router({
     category: categoryRouter,
     directMessage: directMessageRouter,
-    emoji: roomEmojiRouter,
+    emoji: emojiRouter,
     filter: filterRouter,
   }),
 );

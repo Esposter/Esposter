@@ -7,7 +7,7 @@ import { useContainerClient } from "#server/composables/azure/container/useConta
 import { getRoomEmojiBlobName } from "#server/services/message/emoji/getRoomEmojiBlobName";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
-import { roomEmojiRouter } from "#server/trpc/routers/room/emoji";
+import { emojiRouter } from "#server/trpc/routers/room/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
@@ -19,7 +19,7 @@ import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
   new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;
 
-describe("roomEmojiRouter", () => {
+describe("emojiRouter", () => {
   const { createMember, getMockContext, getRoomId, setupMemberWithRole } = setupRoomSuite();
   let mockContext: Context;
   let roomEmojiCaller: DecorateRouterRecord<TRPCRouter["room"]["emoji"]>;
@@ -45,7 +45,7 @@ describe("roomEmojiRouter", () => {
 
   beforeAll(() => {
     mockContext = getMockContext();
-    roomEmojiCaller = createCallerFactory(roomEmojiRouter)(mockContext);
+    roomEmojiCaller = createCallerFactory(emojiRouter)(mockContext);
   });
 
   beforeEach(() => {
