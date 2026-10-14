@@ -1,6 +1,6 @@
 ---
 name: running-checks
-description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the session and CI — the session runs only the tests of what it touched, in the background, once after all the edits going out together, and CI runs typecheck, lint, format and the whole suite on the push, the session watching that run and fixing a red typecheck or lint itself.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the session and CI — the session runs only the tests of what it touched, in the background, once after all the edits going out together, and CI runs typecheck, lint, format and the whole suite on the push. The session does not watch that run unless the user asks for verification.
 ---
 
 # Running Checks
