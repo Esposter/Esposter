@@ -61,7 +61,7 @@ An entry is taken when the machine has its needs, its area is lent, it is not wa
 - **A holder renews every ten minutes**, with a new commit leased from the claim the remote holds at that moment. A renewal stops when the ref is gone, or when another holder has it.
 - **A network that drops never ends a hold.** Every call to origin's fleet refs, a push, a fetch or an `ls-remote`, is killed past `FLEET_REF_TIMEOUT_MILLISECONDS`, a bound well above a healthy call and well inside the renewal interval, because a network that stalls mid-call (a laptop put to sleep, Wi-Fi dropped) otherwise leaves git waiting on its transport for hours. A renewal that fails or is killed is logged and tried again at the next interval. A failed push is judged by where the remote holds the ref afterwards: at the new commit it landed, and still at the leased one nothing refused it, so a renewal that only timed out is retried rather than read as the claim moving.
 - **Silence past thirty minutes frees a claim.** An unrenewed claim is replaced under the same explicit lease, so two machines reclaiming it cannot both land.
-- **A miss stays.** A miss is written into the claim and never goes stale, so the entry waits for the coordinator's call and its paths stay held.
+- **A miss stays.** A miss is written into the claim and never goes stale, so the entry waits for the coordinator's call and its paths stay held. The holder's `pnpm ai:resume` lists it as information only, so it never blocks that machine's new work.
 - **A finished entry releases its claim.** The landing commit removes the entry from its page, and the claim's ref is then deleted, which ends the hold.
 
 ## Load is read, not reported

@@ -29,7 +29,7 @@ describe(getClaimItems, () => {
       "stale, 30 min",
       "resume it from its handoff, or release with --miss naming what is left",
     ],
-    ["missed", 0, createClaim("pc", "left"), true, "missed (left), 0 min", "the coordinator's call"],
+    ["missed", 0, createClaim("pc", "left"), true, "missed (left), 0 min", ""],
   ])("reads a claim %s", (_title, now, claim, isRunning, text, action) => {
     expect.hasAssertions();
 

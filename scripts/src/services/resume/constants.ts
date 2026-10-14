@@ -3,7 +3,6 @@ export const TREE_GROUP_SEGMENT_COUNT = 2;
 export const TREE_ACTION = "finish, commit or record each; never discard";
 export const QUEUE_PUSH_ACTION = "git pull --rebase origin ai/queue && git push origin HEAD:ai/queue";
 export const STALE_CLAIM_ACTION = "resume it from its handoff, or release with --miss naming what is left";
-export const MISSED_CLAIM_ACTION = "the coordinator's call";
 export const HOLD_DIED_ACTION = "hold died";
 export const DELETE_PID_FILE_ACTION = "delete the pid file";
 export const REMOVE_WORKTREE_SCRIPT = "bash .agents/skills/throughput/scripts/remove-worktree.sh";

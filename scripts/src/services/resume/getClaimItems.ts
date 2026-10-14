@@ -5,7 +5,7 @@ import type { ResumeItem } from "#src/models/resume/ResumeItem";
 import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
-import { HOLD_DIED_ACTION, MISSED_CLAIM_ACTION, STALE_CLAIM_ACTION } from "#src/services/resume/constants";
+import { HOLD_DIED_ACTION, STALE_CLAIM_ACTION } from "#src/services/resume/constants";
 import { formatAge } from "#src/services/shared/formatAge";
 
 const MISS_LENGTH = 40;
@@ -24,11 +24,9 @@ export const getClaimItems = (
       const label = `${entry} ${formatClaimHolder(message)}`;
       const status = getClaimStatus(message, now);
       if (status === ClaimStatus.Stale) return { action: STALE_CLAIM_ACTION, text: `${label} stale, ${age}` };
+      // A miss is a reminder for when there is room to clear it, so it reports without gating the resume
       if (status === ClaimStatus.Missed)
-        return {
-          action: MISSED_CLAIM_ACTION,
-          text: `${label} missed (${(message.miss ?? "").slice(0, MISS_LENGTH)}), ${age}`,
-        };
+        return { action: "", text: `${label} missed (${(message.miss ?? "").slice(0, MISS_LENGTH)}), ${age}` };
       const isHoldRunning = holdFiles.some(
         (holdFile) => holdFile.entry === entry && holdFile.worker === message.worker && holdFile.isRunning,
       );
