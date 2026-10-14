@@ -22,4 +22,4 @@ Her skill throws a Yuegui that flings White Jade Radishes at enemies, each heali
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yaoyao), MIT: Yaoyao's strikes' hitmarks, reaches and cancel frames, the charged attack's circle and frames, the skill's cast animation, and Moonjade Descent's circle, animation and frames.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yaoyao), MIT: Yaoyao's strikes' hitmarks, reaches and cancel frames, the charged attack's circle and frames, the skill's cast animation, and Moonjade Descent's circle, animation and frames.
