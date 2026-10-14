@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** the genshin-world bundle snapshot matches CI's build after the level map stopped converting its keys ([e69c74f](https://github.com/Esposter/Esposter/commit/e69c74f2b55ff4886afbb20f5ad44c8b6ff7b7c9))
+* **ci:** the size snapshots of genshin-world, vue-phaserjs and infra match CI's builds ([70ac3c0](https://github.com/Esposter/Esposter/commit/70ac3c091474c8a0058dca8d0e354137f1b42c68))
+* **ci:** the size snapshots of the seven packages match their current builds ([bf6a776](https://github.com/Esposter/Esposter/commit/bf6a776ce382feaa623bfa9cae712402e3f28f02))
+* **ci:** the ten kit records the sweeps wrote are formatted, the Format check's red ([b722759](https://github.com/Esposter/Esposter/commit/b7227599b10dd1e11c6d92629c9a6684bed28f7e))
+* **ci:** the ward registrations drop the import the records helper left unused, and the level map compares keys without a cast ([06ff2c5](https://github.com/Esposter/Esposter/commit/06ff2c5e2c51562b6d7a2c9a5c0a9971abd3a1cf))
+
+### Performance Improvements
+
+* **genshin-world:** screen fixtures load their game-data tables together ([f9d7555](https://github.com/Esposter/Esposter/commit/f9d7555e3b215cbb0180c8065e49797555927dd0))
+
 ## [4.1.2](https://github.com/Esposter/Esposter/compare/v4.1.1...v4.1.2) (2026-10-14)
 
 **Note:** Version bump only for package genshin-world

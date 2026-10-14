@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** the infra bundle snapshot matches CI's build with the Scorecard allowlist entry ([64cbf6c](https://github.com/Esposter/Esposter/commit/64cbf6ce87dfdcc1d180d0eb0ff23ff9733886ed))
+* **ci:** the size snapshots of genshin-world, vue-phaserjs and infra match CI's builds ([70ac3c0](https://github.com/Esposter/Esposter/commit/70ac3c091474c8a0058dca8d0e354137f1b42c68))
+* **ci:** the size snapshots of the seven packages match their current builds ([bf6a776](https://github.com/Esposter/Esposter/commit/bf6a776ce382feaa623bfa9cae712402e3f28f02))
+
 ## [4.1.2](https://github.com/Esposter/Esposter/compare/v4.1.1...v4.1.2) (2026-10-14)
 
 **Note:** Version bump only for package @esposter/infra

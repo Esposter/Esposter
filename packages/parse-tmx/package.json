@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "A parser for tmx.",
   "keywords": [
     "game-development",

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** the ward registrations drop the import the records helper left unused, and the level map compares keys without a cast ([06ff2c5](https://github.com/Esposter/Esposter/commit/06ff2c5e2c51562b6d7a2c9a5c0a9971abd3a1cf))
+
 ## [4.1.2](https://github.com/Esposter/Esposter/compare/v4.1.1...v4.1.2) (2026-10-14)
 
 **Note:** Version bump only for package genshin-mods

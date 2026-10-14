@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** format the four files the format check named ([dacb9af](https://github.com/Esposter/Esposter/commit/dacb9afe58e8f5466d0fbccdf0d8f694aafa9644))
+* **ci:** the apps/web typecheck passes again ([1445b89](https://github.com/Esposter/Esposter/commit/1445b894c883e32d188895ee892580c43972c72b))
+* **ci:** the code-viewer page is in the Messaging group, and the review-queue and kit prose no longer repeat a run another page owns ([3879c50](https://github.com/Esposter/Esposter/commit/3879c50a44b0aa31601d14e9e42e6919dbafdb78))
+* **ci:** the lint errors are fixed, and the test files read package JSON with jsonDateParse ([0c20906](https://github.com/Esposter/Esposter/commit/0c2090660d22f583adfa56e6e2ecefc53f498b67))
+* **ci:** the lint job's five files are sorted and slot-styled as the rules want ([d8e05fd](https://github.com/Esposter/Esposter/commit/d8e05fd7c9747386c2c6d9df1fb9c48b0f438eca)), closes [#default](https://github.com/Esposter/Esposter/issues/default)
+* **comments:** the moderation log input's comment no longer repeats its router clause ([794923e](https://github.com/Esposter/Esposter/commit/794923e416aa7965b585dadaeb2e0ac6aed7b71b))
+* **comments:** the three comments the last fixes rewrote start with a capital letter ([5e8c3ac](https://github.com/Esposter/Esposter/commit/5e8c3ac914198e679bfda77d33372840e9b39f36))
+* **esbabbler:** resolve room ban names through getDisplayName ([b74bb58](https://github.com/Esposter/Esposter/commit/b74bb5842c09ed9bb5b2da98ac4e5f1fb4f87006))
+
+### Features
+
+* **server:** a read past the cap answers a leaf's own size ([3424122](https://github.com/Esposter/Esposter/commit/3424122d5d26cf4c80e346ccbd6eb903dc28260c))
+
+### Performance Improvements
+
+* **message:** message creation resolves its two table clients together ([4f7143c](https://github.com/Esposter/Esposter/commit/4f7143c792f872c594169263ea2d9c456200d454))
+* **survey:** dataset read overlaps its source read and its settings read ([0bd89bd](https://github.com/Esposter/Esposter/commit/0bd89bd55d86674ca42a2886ec3f12df294b2b98))
+
 ## [4.1.2](https://github.com/Esposter/Esposter/compare/v4.1.1...v4.1.2) (2026-10-14)
 
 ### Bug Fixes

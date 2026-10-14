@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** the duplicate-code finder reads its clones whatever jscpd's threshold exit says ([96502ba](https://github.com/Esposter/Esposter/commit/96502ba075e13f8b1ef405561efcd03318d1821e))
+* **ci:** the lint errors are fixed, and the test files read package JSON with jsonDateParse ([0c20906](https://github.com/Esposter/Esposter/commit/0c2090660d22f583adfa56e6e2ecefc53f498b67))
+* **ci:** the scripts typecheck and lint pass again ([3978ff2](https://github.com/Esposter/Esposter/commit/3978ff2d2d094a20c2abc898b992545a00151083))
+* **comments:** the three comments the last fixes rewrote start with a capital letter ([5e8c3ac](https://github.com/Esposter/Esposter/commit/5e8c3ac914198e679bfda77d33372840e9b39f36))
+* **comments:** the weighted mean's comment names its caller once ([d3cddea](https://github.com/Esposter/Esposter/commit/d3cddeab56df3e3c8c2d503c3c8551df93f8dc37))
+* **scripts:** the duplicate-code finder reads a one-line object of numeric fields as data ([80ba97f](https://github.com/Esposter/Esposter/commit/80ba97f519e921960bfabcf0276657b893f3657d))
+* **scripts:** the files command never hangs on stdin, the duplicate-code regex is linear, and the fleet commands throw their failures ([138393a](https://github.com/Esposter/Esposter/commit/138393a2baa7ec925b4e2894f0a8d8049c7755ac))
+* **scripts:** the semver wildcard passes its token whole, and the duplicate-code row test asserts output, not time ([bba623c](https://github.com/Esposter/Esposter/commit/bba623c6fcdb152a87c6bbed46e39b9d4bc8cbd0))
+
+### Performance Improvements
+
+* **fleet:** sync and machine sample overlap their independent reads ([dd70afa](https://github.com/Esposter/Esposter/commit/dd70afa1b7bc562e658fa40794c65e43689a1b90))
+* **recreation:** AnimeStudio and Texture2DDecoder sources download together ([4210a50](https://github.com/Esposter/Esposter/commit/4210a50d99069cafadff1c5fbbc3ba3cacd892ff))
+
 ## [4.1.2](https://github.com/Esposter/Esposter/compare/v4.1.1...v4.1.2) (2026-10-14)
 
 **Note:** Version bump only for package @esposter/scripts

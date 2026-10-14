@@ -1,6 +1,6 @@
 {
   "name": "trpc-msw",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "tRPC for Mock Service Worker — answers queries, mutations and subscriptions over HTTP, batching, SSE and WebSockets with tRPC's own handlers, typed off your router.",
   "keywords": [
     "batch",

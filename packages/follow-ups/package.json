@@ -1,6 +1,6 @@
 {
   "name": "@esposter/follow-ups",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "private": true,
   "description": "A Claude Code plugin that writes the follow-ups a session leaves unfinished into an Esposter TodoList, and drains them again one change at a time until none is left.",
   "keywords": [

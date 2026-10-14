@@ -1,6 +1,6 @@
 {
   "name": "@esposter/shared",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "A library that contains shared typescript code.",
   "keywords": [
     "error-handling",

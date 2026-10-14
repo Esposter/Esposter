@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** format the four files the format check named ([dacb9af](https://github.com/Esposter/Esposter/commit/dacb9afe58e8f5466d0fbccdf0d8f694aafa9644))
+* **ci:** refresh the functions bundle-size snapshot ([dc36448](https://github.com/Esposter/Esposter/commit/dc36448f6f8b1a3ced382b8d21dd4efbca4b2a10))
+* **ci:** the apps/web typecheck passes again ([1445b89](https://github.com/Esposter/Esposter/commit/1445b894c883e32d188895ee892580c43972c72b))
+* **ci:** the code-viewer page is in the Messaging group, and the review-queue and kit prose no longer repeat a run another page owns ([3879c50](https://github.com/Esposter/Esposter/commit/3879c50a44b0aa31601d14e9e42e6919dbafdb78))
+* **ci:** the duplicate-code finder reads its clones whatever jscpd's threshold exit says ([96502ba](https://github.com/Esposter/Esposter/commit/96502ba075e13f8b1ef405561efcd03318d1821e))
+* **ci:** the genshin-world bundle snapshot matches CI's build after the level map stopped converting its keys ([e69c74f](https://github.com/Esposter/Esposter/commit/e69c74f2b55ff4886afbb20f5ad44c8b6ff7b7c9))
+* **ci:** the infra bundle snapshot matches CI's build with the Scorecard allowlist entry ([64cbf6c](https://github.com/Esposter/Esposter/commit/64cbf6ce87dfdcc1d180d0eb0ff23ff9733886ed))
+* **ci:** the lint errors are fixed, and the test files read package JSON with jsonDateParse ([0c20906](https://github.com/Esposter/Esposter/commit/0c2090660d22f583adfa56e6e2ecefc53f498b67))
+* **ci:** the lint job's five files are sorted and slot-styled as the rules want ([d8e05fd](https://github.com/Esposter/Esposter/commit/d8e05fd7c9747386c2c6d9df1fb9c48b0f438eca)), closes [#default](https://github.com/Esposter/Esposter/issues/default)
+* **ci:** the Scorecard analysis runs on ai/queue, the default branch, since the action publishes only for that branch ([b246e28](https://github.com/Esposter/Esposter/commit/b246e28fb4c2ee5cb50fd703f88020e4ed81aaf8))
+* **ci:** the scripts typecheck and lint pass again ([3978ff2](https://github.com/Esposter/Esposter/commit/3978ff2d2d094a20c2abc898b992545a00151083))
+* **ci:** the size snapshots of genshin-world, vue-phaserjs and infra match CI's builds ([70ac3c0](https://github.com/Esposter/Esposter/commit/70ac3c091474c8a0058dca8d0e354137f1b42c68))
+* **ci:** the size snapshots of the seven packages match their current builds ([bf6a776](https://github.com/Esposter/Esposter/commit/bf6a776ce382feaa623bfa9cae712402e3f28f02))
+* **ci:** the ten kit records the sweeps wrote are formatted, the Format check's red ([b722759](https://github.com/Esposter/Esposter/commit/b7227599b10dd1e11c6d92629c9a6684bed28f7e))
+* **ci:** the ward registrations drop the import the records helper left unused, and the level map compares keys without a cast ([06ff2c5](https://github.com/Esposter/Esposter/commit/06ff2c5e2c51562b6d7a2c9a5c0a9971abd3a1cf))
+* **comments:** the moderation log input's comment no longer repeats its router clause ([794923e](https://github.com/Esposter/Esposter/commit/794923e416aa7965b585dadaeb2e0ac6aed7b71b))
+* **comments:** the three comments the last fixes rewrote start with a capital letter ([5e8c3ac](https://github.com/Esposter/Esposter/commit/5e8c3ac914198e679bfda77d33372840e9b39f36))
+* **comments:** the weighted mean's comment names its caller once ([d3cddea](https://github.com/Esposter/Esposter/commit/d3cddeab56df3e3c8c2d503c3c8551df93f8dc37))
+* **esbabbler:** resolve room ban names through getDisplayName ([b74bb58](https://github.com/Esposter/Esposter/commit/b74bb5842c09ed9bb5b2da98ac4e5f1fb4f87006))
+* **hooks:** the pre-commit formatter's failure stops the commit instead of passing it ([a6e0114](https://github.com/Esposter/Esposter/commit/a6e01144d46ce2d5af25d56a4fb71efb979848b1))
+* **scripts:** the duplicate-code finder reads a one-line object of numeric fields as data ([80ba97f](https://github.com/Esposter/Esposter/commit/80ba97f519e921960bfabcf0276657b893f3657d))
+* **scripts:** the files command never hangs on stdin, the duplicate-code regex is linear, and the fleet commands throw their failures ([138393a](https://github.com/Esposter/Esposter/commit/138393a2baa7ec925b4e2894f0a8d8049c7755ac))
+* **scripts:** the semver wildcard passes its token whole, and the duplicate-code row test asserts output, not time ([bba623c](https://github.com/Esposter/Esposter/commit/bba623c6fcdb152a87c6bbed46e39b9d4bc8cbd0))
+* **shared-node:** the content cache refuses a name that is not a SHA-256 digest ([260483d](https://github.com/Esposter/Esposter/commit/260483d9cb1e1104d9ed6d85eba072e45597eb25))
+
+### Features
+
+* **server:** a read past the cap answers a leaf's own size ([3424122](https://github.com/Esposter/Esposter/commit/3424122d5d26cf4c80e346ccbd6eb903dc28260c))
+
+### Performance Improvements
+
+* **fleet:** sync and machine sample overlap their independent reads ([dd70afa](https://github.com/Esposter/Esposter/commit/dd70afa1b7bc562e658fa40794c65e43689a1b90))
+* **functions:** broadcast's two table clients resolve together ([1098e76](https://github.com/Esposter/Esposter/commit/1098e76c20ab3a3daa40ca1280b9a6071bd2571e))
+* **genshin-world:** screen fixtures load their game-data tables together ([f9d7555](https://github.com/Esposter/Esposter/commit/f9d7555e3b215cbb0180c8065e49797555927dd0))
+* **message:** message creation resolves its two table clients together ([4f7143c](https://github.com/Esposter/Esposter/commit/4f7143c792f872c594169263ea2d9c456200d454))
+* **recreation:** AnimeStudio and Texture2DDecoder sources download together ([4210a50](https://github.com/Esposter/Esposter/commit/4210a50d99069cafadff1c5fbbc3ba3cacd892ff))
+* **survey:** dataset read overlaps its source read and its settings read ([0bd89bd](https://github.com/Esposter/Esposter/commit/0bd89bd55d86674ca42a2886ec3f12df294b2b98))
+
 ## [4.1.2](https://github.com/Esposter/Esposter/compare/v4.1.1...v4.1.2) (2026-10-14)
 
 ### Bug Fixes
