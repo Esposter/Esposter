@@ -46,16 +46,8 @@ export const createOsBaselineBackend = (): ExecBackend => {
 };
 
 describe.skipIf(process.platform !== "win32" || !checkIsOsBackendSupported())(createOsBaselineBackend, () => {
-  // Over the 5s default on the shared WSL bridge, so parked; drop the `.skip` to run it again
-  test.skip("captures stdout and zero exit code from WSL", async () => {
-    expect.hasAssertions();
-
-    const { exec } = createOsBaselineBackend();
-    const { exitCode, stdout } = await exec(`echo ${TEST_FILENAME}`, { cwd: "", stdio: "pipe" });
-
-    expect(exitCode).toBe(0);
-    expect(stdout.trim()).toBe(TEST_FILENAME);
-  });
+  // Over the 5s default on the shared WSL bridge, so parked as a todo; the body is in git history at 7effcab2b3
+  test.todo("captures stdout and zero exit code from WSL");
 
   test("propagates a non-zero exit code from WSL", async () => {
     expect.hasAssertions();
