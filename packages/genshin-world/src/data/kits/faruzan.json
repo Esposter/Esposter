@@ -3,7 +3,7 @@
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 96 },
   "frames.firstWhirlwindPulse": { "cause": "Unsourced", "value": 180 },
   "frames.dazzlingPolyhedron": { "cause": "Unsourced", "value": 788 },
-  "frames.whirlwindPulseInterval": { "cause": "Unclassified", "value": 120 },
+  "frames.whirlwindPulseInterval": { "cause": "Unsourced", "value": 120 },
   "hits.whirlwindPulse.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
