@@ -20,7 +20,7 @@ const updateRow = useUpdateRow();
 const columnStore = useColumnStore();
 const { columns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
-const { filteredRows } = storeToRefs(rowStore);
+const { displayRows } = storeToRefs(rowStore);
 const cellStore = useCellStore();
 const { clearFocus, requestFocus } = cellStore;
 const editableColumns = computed(() =>
@@ -59,7 +59,7 @@ const focusGridCell = (event: KeyboardEvent) => {
 <template>
   <div
     @blur.capture="submitEdit()"
-    @keydown.arrow-down.stop="rowIndex + 1 < filteredRows.length && focusCell(rowIndex + 1, column.name)"
+    @keydown.arrow-down.stop="rowIndex + 1 < displayRows.length && focusCell(rowIndex + 1, column.name)"
     @keydown.arrow-up.stop="rowIndex - 1 >= 0 && focusCell(rowIndex - 1, column.name)"
     @keydown.enter.stop="
       (event: KeyboardEvent) => {

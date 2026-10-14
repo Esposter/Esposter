@@ -28,7 +28,7 @@ const { displayColumns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
 const {
   columnKeySummaryMap,
-  filteredRows,
+  displayRows,
   itemsPerPage,
   page,
   rowIdIndexMap,
@@ -40,13 +40,13 @@ const {
 const rowDialogStore = useRowDialogStore();
 const { editingId } = storeToRefs(rowDialogStore);
 // Resolved through the target so a filter, a search or a delete that takes the row out of the table drops the
-// Target with it, instead of re-opening the edit dialog over that row the next time it is back in `filteredRows`
+// Target with it, instead of re-opening the edit dialog over that row the next time it is back in `displayRows`
 const { item: editingRow } = useSingletonDialog(editingId, () =>
-  filteredRows.value.find(({ id }) => id === editingId.value),
+  displayRows.value.find(({ id }) => id === editingId.value),
 );
 const reorderRows = useReorderRows();
 const isDraggable = computed(
-  () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
+  () => !search.value && sortBy.value.length === 0 && displayRows.value === dataSource.rows,
 );
 const cellStore = useCellStore();
 const { focusedCell, selectedCellRange } = storeToRefs(cellStore);
@@ -143,7 +143,7 @@ onClickOutside(table, () => {
       :is-reorderable="isDraggable || undefined"
       is-resizable
       is-selectable
-      :items="filteredRows"
+      :items="displayRows"
       :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
       label="Rows"
       :search

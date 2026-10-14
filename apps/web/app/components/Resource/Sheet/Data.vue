@@ -7,7 +7,7 @@ const sheetStore = useSheetStore();
 const { loadContent } = sheetStore;
 const { dataSource } = storeToRefs(sheetStore);
 const rowStore = useRowStore();
-const { filteredRows } = storeToRefs(rowStore);
+const { displayRows } = storeToRefs(rowStore);
 const isColumnsOpen = ref(true);
 const isDataOpen = ref(true);
 const statistics = computed(() => computeDataSourceStatistics(dataSource.value));
@@ -48,7 +48,7 @@ await loadContent();
           <h2 ui-heading>Data</h2>
         </template>
         <template #actions>
-          <ResourceSheetStatisticsBar :filtered-row-count="filteredRows.length" :statistics />
+          <ResourceSheetStatisticsBar :filtered-row-count="displayRows.length" :statistics />
         </template>
         <div pt-2>
           <ResourceSheetRowTable :data-source />

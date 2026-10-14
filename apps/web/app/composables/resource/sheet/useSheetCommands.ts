@@ -18,7 +18,7 @@ export const useSheetCommands = () => {
   const columnStore = useColumnStore();
   const { displayColumns } = storeToRefs(columnStore);
   const rowStore = useRowStore();
-  const { filteredRows } = storeToRefs(rowStore);
+  const { displayRows } = storeToRefs(rowStore);
   const cellStore = useCellStore();
   const { focusedCell, selectedCellRange } = storeToRefs(cellStore);
   const { clearCellSelection, extendCellSelection, startCellSelection } = cellStore;
@@ -26,7 +26,7 @@ export const useSheetCommands = () => {
   const pasteRangeFromClipboard = getSynchronizedFunction(usePasteRangeFromClipboard());
   const extendSelection = ([rowDelta, columnDelta]: readonly [number, number]) => {
     if (!focusedCell.value) return;
-    const newRowIndex = Math.max(0, Math.min(filteredRows.value.length - 1, focusedCell.value.rowIndex + rowDelta));
+    const newRowIndex = Math.max(0, Math.min(displayRows.value.length - 1, focusedCell.value.rowIndex + rowDelta));
     const newColumnIndex = Math.max(
       0,
       Math.min(displayColumns.value.length - 1, focusedCell.value.columnIndex + columnDelta),
@@ -64,7 +64,7 @@ export const useSheetCommands = () => {
       id: "sheet-select-all",
       meaning: UiIconMeaning.SelectAll,
       run: () => {
-        const rowCount = filteredRows.value.length;
+        const rowCount = displayRows.value.length;
         const columnCount = displayColumns.value.length;
         if (rowCount === 0 || columnCount === 0) return;
         startCellSelection(0, 0);

@@ -34,12 +34,12 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   const { data: search } = useDataMap(() => resourceStore.currentResourceId, "");
   const { data: sortBy } = useDataMap<SortItem<string>[]>(() => resourceStore.currentResourceId, []);
   const { data: selectedRowIds } = useDataMap<string[]>(() => resourceStore.currentResourceId, []);
-  const filteredRows = computed(() => filterDataSourceRows(sheetStore.dataSource.rows, filterStore.columnFilters));
-  const rowIdIndexMap = computed(() => new Map(filteredRows.value.map((row, index) => [row.id, index])));
+  const displayRows = computed(() => filterDataSourceRows(sheetStore.dataSource.rows, filterStore.columnFilters));
+  const rowIdIndexMap = computed(() => new Map(displayRows.value.map((row, index) => [row.id, index])));
   // A computed column keeps nothing in `row.data`, so every cell — displayed, searched or sorted — has to come
   // Through `computeValue` rather than off the row
   const getCellValue = (row: Row, column: Column) =>
-    computeValue(filteredRows.value, row, columnStore.columns, column, rowIdIndexMap.value.get(row.id));
+    computeValue(displayRows.value, row, columnStore.columns, column, rowIdIndexMap.value.get(row.id));
   const getCellText = (row: Row, column: Column) => getDisplayText(getCellValue(row, column), column);
   const tableColumns = computed<UiDataTableColumn<Row>[]>(() => [
     // The row's number leads, as a spreadsheet's row header does, so it is the column the table keeps in view
@@ -62,7 +62,7 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
     const summaryMap = new Map<string, string>();
     for (const column of columnStore.displayColumns) {
       if (column.type !== ColumnType.Number || !column.footerStatisticsKey) continue;
-      const values = filteredRows.value.map((row) => takeOne(row.data, column.name));
+      const values = displayRows.value.map((row) => takeOne(row.data, column.name));
       const context = buildColumnStatisticsComputeContext(column.type, values);
       const definition = ColumnStatisticsDefinitionMap[column.footerStatisticsKey];
       const value = definition.compute(context);
@@ -95,7 +95,7 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
 
   return {
     columnKeySummaryMap,
-    filteredRows,
+    displayRows,
     getCellText,
     isCopyIncludingHeaders,
     itemsPerPage,

@@ -10,7 +10,7 @@ export const useCopyRangeToClipboard = () => {
   const sheetStore = useSheetStore();
   const { dataSource } = storeToRefs(sheetStore);
   const rowStore = useRowStore();
-  const { filteredRows, isCopyIncludingHeaders } = storeToRefs(rowStore);
+  const { displayRows, isCopyIncludingHeaders } = storeToRefs(rowStore);
   const cellStore = useCellStore();
   const { selectedCellRange } = storeToRefs(cellStore);
   return async () => {
@@ -19,7 +19,7 @@ export const useCopyRangeToClipboard = () => {
     // Materialize through the shared export path so computed columns copy their displayed value
     // Instead of an empty cell; the row range bounds the clone/compute work to the selection while
     // Each cell still resolves via computeValue against the full row/column context
-    const { columns, rows } = filterDataSourceRange(dataSource.value, filteredRows.value, range);
+    const { columns, rows } = filterDataSourceRange(dataSource.value, displayRows.value, range);
     const rangeDataSource = { ...dataSource.value, columns, rows };
     await getResultAsync(() =>
       copyToClipboard(rangeDataSource, { isIncludingHeaders: isCopyIncludingHeaders.value }),
