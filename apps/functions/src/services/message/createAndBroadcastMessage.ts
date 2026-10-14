@@ -11,8 +11,10 @@ export const createAndBroadcastMessage = async <T extends CreateMessageInput>(
   context: InvocationContext,
   input: T,
 ): Promise<InstanceType<MessageTypeEntityMap[T["type"]]>> => {
-  const messageClient = await getTableClient(AzureTable.Messages);
-  const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
+  const [messageClient, messageAscendingClient] = await Promise.all([
+    getTableClient(AzureTable.Messages),
+    getTableClient(AzureTable.MessagesAscending),
+  ]);
   const newMessage = await createMessage(messageClient, messageAscendingClient, input);
   // Broadcast is best-effort: the message is already persisted, so a transient failure here must not
   // Reject and replay the (at-least-once) event, which would create a duplicate message with a fresh rowKey.
