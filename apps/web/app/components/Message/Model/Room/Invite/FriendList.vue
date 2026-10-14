@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { InviteRecipient } from "@/models/message/room/invite/InviteRecipient";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -10,16 +11,6 @@ import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useInviteStore } from "@/store/message/room/invite";
 import { useFriendStore } from "@/store/message/user/friend";
 import { getSynchronizedFunction } from "@esposter/shared";
-
-// A friend or a group conversation: each is sent the room's link into its direct message, and both sit in one list
-// Ordered by recency, so a group reads where the conversation with it does
-interface InviteRecipient {
-  id: string;
-  image: PublicUser["image"];
-  isGroup: boolean;
-  name: string;
-  recency: number;
-}
 
 interface Props {
   room: RoomInMessage;

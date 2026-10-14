@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="TMultiple extends boolean = false">
+import type { FriendPickerModelValue } from "@/models/message/room/directMessage/FriendPickerModelValue";
 import type { UiListItem } from "@/models/ui/UiListItem";
 import type { PublicUser } from "@esposter/db-schema";
 
@@ -7,14 +8,12 @@ import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { searchItems } from "@/services/search/searchItems";
 import { useFriendStore } from "@/store/message/user/friend";
 
-type ModelValue = TMultiple extends true ? string[] : string | undefined;
-
 interface Props {
   excludedUserIds?: PublicUser["id"][];
   isMultiple?: TMultiple;
 }
 
-const modelValue = defineModel<ModelValue>();
+const modelValue = defineModel<FriendPickerModelValue<TMultiple>>();
 const { excludedUserIds = [], isMultiple } = defineProps<Props>();
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
@@ -42,8 +41,8 @@ const toggleFriend = (id: string) => {
       selectedUserIds.value.includes(id)
         ? selectedUserIds.value.filter((userId) => userId !== id)
         : [...selectedUserIds.value, id]
-    ) as ModelValue;
-  else modelValue.value = (modelValue.value === id ? undefined : id) as ModelValue;
+    ) as FriendPickerModelValue<TMultiple>;
+  else modelValue.value = (modelValue.value === id ? undefined : id) as FriendPickerModelValue<TMultiple>;
 };
 
 const reset = () => {
