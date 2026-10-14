@@ -29,4 +29,4 @@ Gcsim gives her strikes, charged attack, plunges and marks no poise, so each dea
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/charlotte), MIT: her strikes' hitmarks, cancel frames and radii, the charged attack and Spiritbreath Thorn, the plunges' frames and radii, Framing's press and its marks, and Still Photo's hit, heals and Kamera's ticks.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte), MIT: her strikes' hitmarks, cancel frames and radii, the charged attack and Spiritbreath Thorn, the plunges' frames and radii, Framing's press and its marks, and Still Photo's hit, heals and Kamera's ticks.
