@@ -47,7 +47,7 @@ export const createOsBaselineBackend = (): ExecBackend => {
 
 describe.skipIf(process.platform !== "win32" || !checkIsOsBackendSupported())(createOsBaselineBackend, () => {
   // Over the 5s default on the shared WSL bridge, so parked as a todo; the body stays intact to restore with `.todo`
-  describe.todo("bridge-contended stdout case", () => {
+  describe.todo("bridge-contended cases", () => {
     test("captures stdout and zero exit code from WSL", async () => {
       expect.hasAssertions();
 
@@ -57,15 +57,15 @@ describe.skipIf(process.platform !== "win32" || !checkIsOsBackendSupported())(cr
       expect(exitCode).toBe(0);
       expect(stdout.trim()).toBe(TEST_FILENAME);
     });
-  });
 
-  test("propagates a non-zero exit code from WSL", async () => {
-    expect.hasAssertions();
+    test("propagates a non-zero exit code from WSL", async () => {
+      expect.hasAssertions();
 
-    const { exec } = createOsBaselineBackend();
-    const { exitCode } = await exec(`sh -c 'exit 1'`, { cwd: "", stdio: "pipe" });
+      const { exec } = createOsBaselineBackend();
+      const { exitCode } = await exec(`sh -c 'exit 1'`, { cwd: "", stdio: "pipe" });
 
-    expect(exitCode).toBe(1);
+      expect(exitCode).toBe(1);
+    });
   });
 
   test("passes an argv array as discrete arguments in WSL", async () => {
