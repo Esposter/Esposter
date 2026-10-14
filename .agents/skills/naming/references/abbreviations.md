@@ -12,7 +12,7 @@ coverage. The denylist also catches only the **bare** word, so every compound sp
 
 ## `Directory`, never `Dir`
 
-`upperDirectory`, `lowerDirectories`, `DirectorySource`, in a compound as much as bare. A lowercase library word
+`sourceDirectory`, `packageDirectory`, `stateDirectory`, in a compound as much as bare. A lowercase library word
 keeps its own spelling (`mkdir`, `tmpdir`, `readdir`, `gitdir`, overlayfs's `upperdir`), and so does a string
 value — `SourceType.Directory` is still `"dir"` on the wire.
 

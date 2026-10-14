@@ -80,22 +80,14 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8]
-    # ubuntu-26.04, not ubuntu-latest: the virrun os-backend suites need bubblewrap >= 0.10.0 (RAM overlay) and
-    # 24.04 ships 0.9.0 — on the older image the differential tests self-gate via describe.skipIf and the
-    # correctness gate silently disappears.
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # bubblewrap is installed for the suites that test virrun's os backend, but vitest itself runs natively:
-      # inside bwrap, isOsBackendSupported() cannot spawn its nested bwrap+overlay probe, and those suites
-      # would self-gate away through describe.skipIf
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
-        with:
-          bubblewrap-sandbox: true
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages

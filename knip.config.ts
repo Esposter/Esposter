@@ -2,11 +2,11 @@ import type { KnipConfig } from "knip";
 
 const knipConfiguration: KnipConfig = {
   exclude: ["types"],
-  ignoreBinaries: ["pwsh"],
+  // `typecheck:workspace` in `vite.config.ts` names `typecheck` as the first word of its command, which knip reads as a binary
+  ignoreBinaries: ["pwsh", "typecheck"],
   ignoreExportsUsedInFile: true,
   workspaces: {
     ".": {
-      entry: ["virrun.config.ts"],
       // The `lint:workflows` task in `vite.config.ts` runs this package's binary, which no script names
       ignoreDependencies: ["@esposter/shared-node", "@kjanat/actionlint", "@lerna-lite/publish"],
     },

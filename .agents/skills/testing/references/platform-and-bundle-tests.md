@@ -4,7 +4,7 @@ Read when a suite is skipped on a platform, or its output depends on the host ru
 
 ## Output that depends on the host
 
-- **Strip ANSI before snapshotting CLI output** — `checkIsColorEnabled()` reads the ambient terminal/env (TTY, `FORCE_COLOR`, `NO_COLOR`), so a raw snapshot of colorized output flip-flops between an interactive shell, `-u` and CI. Wrap the value in `stripAnsi(...)` (`#src/services/cli/color/stripAnsi.test` in virrun) so the snapshot checks message content alone; colouring is verified in the `colorize`/`checkIsColorEnabled` tests. Narrow a `string | undefined` with `assert.exists(value)` first.
+- **Strip ANSI before snapshotting CLI output** — The color check reads the ambient terminal/env (TTY, `FORCE_COLOR`, `NO_COLOR`), so a raw snapshot of colorized output flip-flops between an interactive shell, `-u` and CI. Wrap the value in `stripAnsi(...)` so the snapshot checks message content alone; colouring is verified in the `colorize` tests. Narrow a `string | undefined` with `assert.exists(value)` first.
 - **Non-deterministic / OS-specific error messages are not snapshotted at all** — when a thrown message embeds something unreconstructable portably (an absolute path differing by OS, e.g. a Node `ENOENT`), a `toThrowErrorMatchingInlineSnapshot` passes locally and fails in CI. Observe the behaviour portably instead: assert `fs.existsSync(path)` is `false`, or that the returned value changed.
 
 ## Capability and platform gating

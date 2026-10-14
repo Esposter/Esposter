@@ -14,10 +14,10 @@ describe(getConsumerPackagePaths, () => {
         name,
         getPackageIdentifiersMap([
           ["apps/web/a.ts", `${name}(items)`],
-          ["packages/virrun/a.ts", `${name}(items)`],
+          ["packages/parse-tmx/a.ts", `${name}(items)`],
         ]),
       ),
-    ).toStrictEqual(["apps/web", "packages/virrun"]);
+    ).toStrictEqual(["apps/web", "packages/parse-tmx"]);
   });
 
   test("counts a package once however many of its files reference the export", () => {

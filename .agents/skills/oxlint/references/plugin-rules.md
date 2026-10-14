@@ -29,7 +29,7 @@ Everything else in the plugin is green and left on category defaults.
 Each reports under the empirical audit, and none earns turning on:
 
 - **`import/default`** restates TypeScript, which rejects a default import of a module with none (TS1192), and misreads Vite's `?url` imports, whose default the client types declare but the resolved file does not export.
-- **`import/no-dynamic-require`** — the repo is ESM, and its only `require` of a computed path is virrun running a script it was handed, which is the point of it.
+- **`import/no-dynamic-require`** — the repo is ESM.
 - **`unicorn/prefer-export-from`** asks for `export { a as b } from`, the alias re-export `file-organization` bans; a constant naming another's value for its own purpose stays a declaration.
 
 ## Rules that argue with a shorthand or a convention the repo prefers

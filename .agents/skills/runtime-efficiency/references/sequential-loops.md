@@ -16,7 +16,7 @@ Map the set to promises and `await Promise.all(...)`. The shape is independent w
 one wrote and nothing depends on the order they land in:
 
 - **A write per element of one set** — each row, blob or file stands alone. Validate the whole set first when a bad
-  element must stop every write (`loadFilesSource` checks every path before writing any).
+  element must stop every write.
 - **A read per candidate, answered by any hit** — the scans run together and the answer is whether one matched
   (`resolveIdentifiedToken`).
 - **Batches that do not read each other** — `generateProgramParticipants` sends its transactions together; each

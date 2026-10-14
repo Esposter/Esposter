@@ -33,18 +33,16 @@ describe(getNavigationGroups, () => {
   test("mapped section orders groups by declaration order with unmapped pages leading", () => {
     expect.hasAssertions();
 
-    // "virrun" and its "architecture"/"cache" slugs are real DocsSectionGroupsMap keys the code owns
-    const sectionPath = `${RoutePath.Docs}/virrun`;
+    // "esbabbler" and its "messaging" slug are real DocsSectionGroupsMap keys the code owns
+    const sectionPath = `${RoutePath.Docs}/esbabbler`;
     const groups = getNavigationGroups(sectionPath, [
-      createNavigationItem(`${sectionPath}/cache`),
-      createNavigationItem(`${sectionPath}/architecture`),
+      createNavigationItem(`${sectionPath}/messaging`),
       createNavigationItem(`${sectionPath}/a`),
     ]);
 
     expect(groups.map(({ items, title }) => ({ paths: items.map(({ path }) => path), title }))).toStrictEqual([
       { paths: [`${sectionPath}/a`], title: undefined },
-      { paths: [`${sectionPath}/architecture`], title: "Core" },
-      { paths: [`${sectionPath}/cache`], title: "Performance" },
+      { paths: [`${sectionPath}/messaging`], title: "Messaging" },
     ]);
   });
 

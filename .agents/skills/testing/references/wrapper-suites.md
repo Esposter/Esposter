@@ -6,7 +6,6 @@ Read when two suites are identical modulo constants, or a suite tests a wrapper 
 
 - **A wrapper that extends one function's result mocks that function** and asserts its own delta over the fixed
   object the mock returns — `toStrictEqual({ ...extended, env: { ...extended.env, CI } })` — never calls through
-  under the extended function's own mock set, which copies that suite's setup and ends up re-asserting its contract
-  (`createOsInstallOptions.test.ts` over `createOsExecOptions`).
+  under the extended function's own mock set, which copies that suite's setup and ends up re-asserting its contract.
 
 - **A wrapper's test states where the matrix lives** — a header comment naming the owning test file (`// The list-to-blocks matrix lives in createSurveyInviteBlocks.test.ts; here only the MJML markup flavour`). Without it the next reader cannot tell a deliberately narrow suite from a thin one, and fills the gap with duplicates. The pointer also decays: a file carrying it while still asserting the delegated matrix is a duplicate to delete, not a comment to update.

@@ -21,7 +21,6 @@
 | `content/docs` — `resource`                                                                                                                                         | 2026-10-05 · Opus 5.5 |       |
 | `content/docs` — `esbabbler`                                                                                                                                        | 2026-10-05 · Opus 5.5 |       |
 | `content/docs` — `architecture`                                                                                                                                     | 2026-10-05 · Opus 5.5 |       |
-| `content/docs` — `virrun`                                                                                                                                           | 2026-10-05 · Opus 5.5 |       |
 | `content/docs` — the product areas                                                                                                                                  | 2026-10-05 · Opus 5.5 |       |
 | `content/docs` — the rest                                                                                                                                           | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/genshinParity/commands`, `scripts/src/genshinParity`                                                                                          | 2026-10-05 · Opus 5.5 |       |

@@ -78,7 +78,7 @@ const VUETIFY_IMPORT_PATH = { message: VUETIFY_MESSAGE, name: "@vuetify/v0" };
 const VUETIFY_IMPORT_PATTERN = { group: ["@vuetify/v0/*"], message: VUETIFY_MESSAGE };
 const WORKSPACE_LIBRARY_IMPORT_PATTERN = {
   allowTypeImports: true,
-  group: ["@esposter/*", "agent-console-server", "azure-mock", "keyframe-store", "parse-tmx", "virrun", "vue-phaserjs"],
+  group: ["@esposter/*", "agent-console-server", "azure-mock", "keyframe-store", "parse-tmx", "vue-phaserjs"],
   message:
     "The Nuxt configuration loads in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one fails every fresh install. Import the npm package the library wraps instead; types are fine.",
 };

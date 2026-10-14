@@ -323,9 +323,6 @@ catalogs:
     '@pinia/nuxt':
       specifier: ^1.0.2
       version: 1.0.2
-    '@platformatic/vfs':
-      specifier: ^0.5.0
-      version: 0.5.0
     '@pulumi/azure-native':
       specifier: ^3.28.0
       version: 3.28.0
@@ -758,9 +755,6 @@ catalogs:
     typedoc:
       specifier: ^0.28.20
       version: 0.28.20
-    unconfig:
-      specifier: ^7.5.0
-      version: 7.5.0
     unicode-emoji-json:
       specifier: ^0.9.0
       version: 0.9.0
@@ -880,9 +874,6 @@ importers:
       typescript:
         specifier: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
         version: typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
-      virrun:
-        specifier: workspace:*
-        version: link:packages/virrun
       vite-plus:
         specifier: 'catalog:'
         version: 1.1.0(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(@vitest/ui@5.0.4)(esbuild@0.28.2)(happy-dom@21.0.1)(jiti@2.7.0)(msw@3.0.3(@types/node@26.6.5)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(playwright@1.64.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
@@ -2355,49 +2346,6 @@ importers:
       superjson:
         specifier: 'catalog:'
         version: 2.2.6
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.23.1(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.1)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))(@vue/language-core@3.3.13)(oxc-resolver@11.24.2)(publint@0.3.25)(tsx@4.23.15)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))
-      vitest:
-        specifier: 'catalog:'
-        version: 5.0.4(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/browser-playwright@5.0.4)(@vitest/browser-preview@5.0.4)(@vitest/coverage-v8@5.0.4)(@vitest/ui@5.0.4)(happy-dom@21.0.1)(msw@3.0.3(@types/node@26.6.5)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-      zod:
-        specifier: 'catalog:'
-        version: 4.6.7
-
-  packages/virrun:
-    dependencies:
-      unconfig:
-        specifier: 'catalog:'
-        version: 7.5.0
-    devDependencies:
-      '@arethetypeswrong/core':
-        specifier: 'catalog:'
-        version: 0.18.5
-      '@esposter/configuration':
-        specifier: workspace:*
-        version: link:../configuration
-      '@esposter/shared':
-        specifier: workspace:*
-        version: link:../shared
-      '@esposter/shared-node':
-        specifier: workspace:*
-        version: link:../shared-node
-      '@platformatic/vfs':
-        specifier: 'catalog:'
-        version: 0.5.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 26.6.5
-      citty:
-        specifier: 'catalog:'
-        version: 0.2.2
-      fast-check:
-        specifier: 'catalog:'
-        version: 4.10.2
-      publint:
-        specifier: 'catalog:'
-        version: 0.3.25
       tsdown:
         specifier: 'catalog:'
         version: 0.23.1(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.1)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))(@vue/language-core@3.3.13)(oxc-resolver@11.24.2)(publint@0.3.25)(tsx@4.23.15)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))
@@ -6377,10 +6325,6 @@ packages:
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
-
-  '@platformatic/vfs@0.5.0':
-    resolution: {integrity: sha512-U/yG5a2IELJxAtwkgGmhZJnLCHRzyxNyWWbaDKMbCyjB0kuPxU9fvIZCxf7Kv7jz7I7IXlyuY7gXkXGMdLHhPw==}
-    engines: {node: '>= 22'}
 
   '@pmndrs/pointer-events@6.6.32':
     resolution: {integrity: sha512-ziow8WQach6AF3fB8XGfmxmjLH6iUKPDJsw5RzxU7oxhfpn4uQZKzq50U1LFywroMZ45JhCqxE+p7IM8MHRsFg==}
@@ -19727,8 +19671,6 @@ snapshots:
       - unplugin
 
   '@pkgr/core@0.3.6': {}
-
-  '@platformatic/vfs@0.5.0': {}
 
   '@pmndrs/pointer-events@6.6.32': {}
 

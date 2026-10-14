@@ -89,7 +89,6 @@ catalog:
   "@oxlint/plugins": ^1.88.0
   "@panzoom/panzoom": ^4.6.2
   "@pinia/nuxt": ^1.0.2
-  "@platformatic/vfs": ^0.5.0
   "@pulumi/azure-native": ^3.28.0
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.268.0
@@ -253,7 +252,6 @@ catalog:
   type-fest: ^5.10.0
   typedoc: ^0.28.20
   typescript: 6.0.3
-  unconfig: ^7.5.0
   unicode-emoji-json: ^0.9.0
   unocss: ^66.11.0
   unplugin-auto-import: ^21.1.0

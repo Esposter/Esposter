@@ -10,6 +10,4 @@ The node version is one pin, `.node-version`, and two things write it, and both 
 
 The TS orchestration (`scripts/src/updateNode/`) runs the `vp env` pin and clean, then edits the manifests and lockfiles the pin moves. The pure manifest and lockfile editors and the `@types/node` registry read live under `scripts/src/services/updateNode/` with unit tests; the generic registry/version utilities live in `scripts/src/services/shared/`.
 
-On Windows the bump also stales the opt-in virrun sandbox's warm snapshot, and the re-provision runs `pnpm install` on the WSL guest's own node and pnpm, which this script never reaches. The sandbox mounts `/` read-only, so the guest's version manager cannot download the new pin mid-run: install it in the guest first (`vp env install` from the repo inside WSL), or every sandboxed command fails with vp's `Failed to install Node … Read-only file system`.
-
 It deliberately does **not** refresh the lockfile. After it finishes, run `pnpm refresh:lockfile` to resolve the new `@types/node`. Already-open shells keep the old version until reopened.

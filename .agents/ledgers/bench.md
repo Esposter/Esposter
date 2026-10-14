@@ -25,7 +25,6 @@ the two ways a bench quietly stops measuring what it names.
 | `apps/web` — the sheet command benches and their fixtures   | 2026-10-05 · Opus 5.5 | 6 groups plus the 4 `.bench.ts` fixture files that carry `describe.todo`          |
 | `apps/web` — `app/templates`                                | 2026-10-05 · Opus 5.5 | the template checks' parse, walk and generate costs                               |
 | `packages/keyframe-store`                                   | 2026-10-05 · Opus 5.5 | one `test.for` per document size; every write task copies the seeded backend      |
-| `packages/virrun`                                           | 2026-10-05 · Opus 5.5 | two of the three are switched off — read the gate before judging the bench        |
 | `scripts`                                                   | 2026-10-05 · Opus 5.5 | `buildPackages` is switched off and deletes each `dist`, so it also skips on `CI` |
 | `packages/genshin-engine`                                   | 2026-10-05 · Opus 5.5 |                                                                                   |
 | `packages/pitch-transcription`, `packages/trpc-nuxt-module` | 2026-10-05 · Opus 5.5 |                                                                                   |
@@ -62,7 +61,7 @@ clean".
 - **A switched-off bench cannot be re-run to settle a drifted artifact, and must not be.** Its groups skip, so
   the reporter writes a file with their sections gone — the fix for a live bench deletes the numbers of a
   switched-off one. Where the two disagree, the artifact is the record and the drift is carried until the bench
-  is next flipped on for a reason of its own. `localMonorepo.platform`'s `test - packages/shared` is there:
+  is next flipped on for a reason of its own. The `test - packages/shared` group is there:
   `vitest(valid-title)` forbids a `test()` title starting with `test`, so the Vitest 5 migration could not keep
   the name its `describe` used to give the group, and no rename passes lint _and_ matches the committed heading.
 

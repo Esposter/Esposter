@@ -15,7 +15,7 @@ The usual reason to keep a wrong name is that changing it is expensive. Here it 
 
 - **Names in code** — the compiler finds every reference. A rename that typechecks is complete, and what typecheck cannot see (a path in a docs table, a name in prose) is covered by the docs index test and a grep across `content/docs`, `.agents` and the READMEs.
 - **Deployed identities** — infrastructure is Pulumi code ([infra](/docs/infra)), so renaming an Azure resource, a function, or the identifier a subscription points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
-- **A published package's exports** — `virrun`, `parse-tmx`, `vue-phaserjs`, `azure-mock`, `@esposter/azure`,
+- **A published package's exports** — `parse-tmx`, `vue-phaserjs`, `azure-mock`, `@esposter/azure`,
   `genshin-world` and `@esposter/shared` are published, and renaming, folding away or removing an export from one
   is **not treated as a breaking change here**. Each is kept at its smallest, most refactored form: an export the
   simplest shape no longer needs is deleted like any other code, never kept behind a forwarding wrapper for a caller

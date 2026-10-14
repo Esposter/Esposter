@@ -1,5 +1,0 @@
-// Build the mkdtemp prefix for a pid-tagged temp: a reap prefix (e.g. `upper.`, `upper.persist.`, `.tmp.`) plus the
-// Current process's pid, so the created directory is `<reapPrefix><pid>.<mkdtempRandom>`. A concurrent run's reap reads
-// The owner pid back out (parseTempOwnerPid) and spares the temp while this process is alive, only reclaiming it once
-// The owner has died.
-export const withPidTempPrefix = (reapPrefix: string): string => `${reapPrefix}${process.pid}.`;

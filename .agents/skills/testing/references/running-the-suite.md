@@ -18,18 +18,17 @@ The inflation is not marginal, so a duration read off the full run says nothing 
 
 `fsModuleCache` stays on: transforming the module graph is the largest share of a run and it persists to `node_modules/.vitest-cache` across reruns and processes. Its key does not cover Nuxt's auto-import registry, so a transform cached while a module's imports were missing keeps failing after the fix (`defineStore is not defined` once `@pinia/nuxt` installs again): delete `node_modules/.vitest-cache` and rerun.
 
-**`isolate: false` does not go on, per project or globally** (`SKILL.md`, Settled). Vitest's own hint advertises it on every run and the whole-`packages` saving looks decisive. It is not: measured project by project, the packages that survive it come out level — the entire apparent gain belongs to `virrun` and `vue-phaserjs`, the two that **fail** under it, and fail for the reason isolation exists. virrun's suites read module-scope memo caches (`readWslPath`, the WSL environment and capability caches) that a reused worker carries between files, and `vue-phaserjs` boots one Phaser game per process. Buying the setting back would mean a reset hook per cache — custom scaffolding in exchange for nothing measurable. Re-propose it only with a per-project measurement showing a win.
+**`isolate: false` does not go on, per project or globally** (`SKILL.md`, Settled). Vitest's own hint advertises it on every run and the whole-`packages` saving looks decisive. It is not: measured project by project, the packages that survive it come out level — the entire apparent gain belongs to `vue-phaserjs`, the one that **fails** under it, and fails for the reason isolation exists: it boots one Phaser game per process. Buying the setting back would mean a reset hook per piece of shared state — custom scaffolding in exchange for nothing measurable. Re-propose it only with a per-project measurement showing a win.
 
 ## Environment
 
 Tests run on Windows: `configuration/modules.ts` allowlists a minimal set of Nuxt modules under `process.env.VITEST`, so a test needing an excluded module adds it to that branch.
 
-Every runner reads the host: root `pnpm test`, `pnpm test:packages` and a package's own `pnpm test` all invoke vitest natively, so `process.platform` reads `win32` on a Windows host and a test gated on it selects the Windows case. Only a run put through virrun on purpose — `pnpm virrun -- vitest …` — executes inside WSL and reads `linux`, which is how the POSIX half of a split snapshot is measured locally (`references/bundle-size.md`).
+Every runner reads the host: root `pnpm test`, `pnpm test:packages` and a package's own `pnpm test` all invoke vitest natively, so `process.platform` reads `win32` on a Windows host and a test gated on it selects the Windows case.
 
 ## Narrowing a run: `-t` and `-u`
 
 - **`-t "name"` is not a scope — pass paths as well.** A name filter picks which tests _execute_; every test file in range is still collected, transformed and imported first, so `-t` alone spends a full suite's startup to run a handful of assertions. Whenever a run is narrowed by name — refreshing the bundle-size snapshots is the standing case, `-t "size" index.test.ts` (`references/bundle-size.md`) — narrow it by path in the same command.
-- **On a Windows host, `-u` through `pnpm virrun -- vitest …` writes Windows bytes into a POSIX snapshot unless virrun built the `dist/` too.** That run reads `linux` ("Environment", on this page), so in a suite splitting its snapshots by platform the POSIX test is the one selected; against a natively built Windows `dist/`, a broad `-u` writes the Windows byte counts into the **POSIX** slots, the two then read identically — the one thing the split exists to prevent — and it fails on CI's ubuntu runner rather than locally. So `-u` gets the narrowest path list that can produce the diff, and **`git diff` on the updated snapshots is read before committing**: a snapshot that moved in a file the change never touched is the tell.
 
 ## Scoping a local run
 

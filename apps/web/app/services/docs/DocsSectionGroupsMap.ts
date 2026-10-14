@@ -193,10 +193,4 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "dataset-csv-export",
     ],
   },
-  virrun: {
-    Core: ["architecture", "orchestrator-api", "execution-backends", "configuration", "win32-spawn"],
-    Performance: ["cache", "task-cache", "task-cache-eviction", "snapshot-and-fork", "write-back", "wsl-source-mirror"],
-    Guarantees: ["correctness", "benchmarking", "subprocess-timeouts", "derived-not-named"],
-    Background: ["adoption", "prior-art"],
-  },
 };

@@ -57,7 +57,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@oxlint/plugins`                       | —                     | Keep — tooling    | the repo's own oxlint rules load through it                                                            |
 | `@panzoom/panzoom`                      | —                     | Keep — engine     | pointer, pinch and wheel interaction, where a hand-rolled version ships worse                          |
 | `@pinia/nuxt`                           | —                     | Keep — framework  | the store's Nuxt module                                                                                |
-| `@platformatic/vfs`                     | —                     | Keep — engine     | virrun's in-memory filesystem                                                                          |
 | `@pulumi/azure-native`                  | —                     | Keep — SDK        | the infrastructure SDK                                                                                 |
 | `@pulumi/github`                        | —                     | Keep — SDK        | the infrastructure SDK                                                                                 |
 | `@pulumi/pulumi`                        | —                     | Keep — SDK        | the infrastructure SDK                                                                                 |
@@ -212,7 +211,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `type-fest`                             | —                     | Keep — types      | type utilities                                                                                         |
 | `typedoc`                               | —                     | Keep — tooling    | API docs                                                                                               |
 | `typescript`                            | —                     | Keep — tooling    | the compiler                                                                                           |
-| `unconfig`                              | —                     | Keep — tooling    | virrun's config loading                                                                                |
 | `unicode-emoji-json`                    | —                     | Keep — data       | the emoji list, tracking Unicode                                                                       |
 | `unocss`                                | —                     | Keep — framework  | the styling engine                                                                                     |
 | `unplugin-auto-import`                  | —                     | Keep — tooling    | auto-imports in the packages' builds                                                                   |

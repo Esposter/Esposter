@@ -109,7 +109,6 @@
     "oxlint-tsgolint": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
-    "virrun": "workspace:*",
     "vite-plus": "catalog:",
     "vitest": "catalog:"
   },

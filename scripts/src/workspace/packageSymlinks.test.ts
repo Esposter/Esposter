@@ -10,10 +10,8 @@ import { describe, expect, test } from "vitest";
  * `ERR_PNPM_DIRECTORY_FETCHER_PATH_ESCAPE`. It walks the whole directory, so neither `files`, nor `--legacy`, nor the
  * node linker excuses the link. Nothing else fails until the deploy job does, on a push to `ai/queue` or `main`.
  *
- * That walk is over the working tree, which is why this one is too rather than over `git ls-files`: an untracked link
- * escapes the index but not the fetcher, and `pnpm test` runs the suite through virrun, whose mirror excludes `.git`
- * (resolveMirrorExcludes) — so an index-based check is red on every local run and green only in CI, which runs vitest
- * natively.
+ * That walk is over the working tree rather than over `git ls-files`: an untracked link escapes the index but not the
+ * fetcher.
  */
 describe("packageSymlinks", () => {
   const NODE_MODULES_DIRECTORY = "node_modules";

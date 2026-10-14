@@ -4,7 +4,7 @@ Read when a check behind a `--filter` reports success too quickly, when passing 
 
 ## A `--filter` that matches nothing exits 0
 
-It prints nothing either, so a check run behind one reports success for having run no check at all. `pnpm --filter @esposter/virrun typecheck` is that failure: the package's npm name is `virrun`, not `@esposter/virrun` (the table in `AGENTS.md` names each package), so the typo compiles nothing and passes clean. Prefer `pnpm -C <dir>` or running from the package directory, which cannot silently match nothing; when a filter is the right tool, treat empty output from a check as "it did not run" until a real compiler banner or test count proves otherwise.
+It prints nothing either, so a check run behind one reports success for having run no check at all. Prefer `pnpm -C <dir>` or running from the package directory, which cannot silently match nothing; when a filter is the right tool, treat empty output from a check as "it did not run" until a real compiler banner or test count proves otherwise.
 
 ## `pnpm <script> -- <args>` drops the args
 
@@ -19,7 +19,3 @@ pnpm forwards the literal `--`, so trailing flags become post-`--` positionals a
 pnpm falls through to `run` for any word that is not one of its own commands, so `pnpm build`, `pnpm -C apps/web build` and `pnpm --filter "@esposter/web..." build` all run the script and the prefix says nothing. Leave it off.
 
 What the prefix _does_ decide is a name that collides with a pnpm command, and there the reading flips rather than merely getting longer. `pnpm --filter @esposter/functions deploy` in the Functions deploy workflow is pnpm's own `deploy` — it copies a pruned, production-only package tree into a directory — and spelling it `run deploy` there would look like a tidy-up and change what runs. So the prefix is not a style choice to apply evenly: check the name against pnpm's commands, use `run` only when one shadows a script, and leave it off everywhere else.
-
-## A suite that shells out to `git` cannot run under `pnpm virrun --` on Windows
-
-virrun's `os` backend reaches the checkout through WSL, at `/mnt/c/…`, where git refuses to discover a repository across the mount: `fatal: not a git repository (or any parent up to mount point /mnt/c/Users/<user>/Documents)`. Every `scripts/src/workspace` suite that reads the tree goes through `runGit` — `git ls-files --deleted` before the first assertion — so each comes back red on a tree that is perfectly clean, and the failure names a file the change never touched. Run them from the owning package instead, where git sees the real path: `pnpm -C scripts test src/workspace/citations.test.ts --run`. The root scripts run native, so only a run put through virrun on purpose meets this; CI runs native and never does.

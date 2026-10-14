@@ -26,7 +26,7 @@ How CI carries the cache, why a hit needs the install, and why the app build rep
 **A command earns a task only when a replay is as good as a run, and a run costs enough to skip.** Three things hold together: the command's result depends on nothing but files the tracer sees, it is slow enough that a hit saves a job real time, and something runs it again on a tree that has not changed — a rerun, a re-push, a second workflow on the same commit. Everything else stays a script, which is the default rather than a task waiting to be promoted:
 
 - **A command run for its effect or a fresh reading** — `dev`, `release`, the `lint:fix` passes, and `bench:ci`, whose whole job is measuring again, so a replay would hand back an old measurement.
-- **A command reading what the tracer cannot see** — the network, a git remote, the clock. `coverage` is one: its shards run virrun's own os-backend suites through bubblewrap, the sandbox the tracer cannot follow into (the same blind spot that keeps the root scripts off virrun, below), so a replay could pass over an edit that only the sandboxed run read.
+- **A command reading what the tracer cannot see** — the network, a git remote, the clock.
 
 **Rejected: keeping `format:check` a script.** It began as one, on the reasoning that a hit still pays the install. It is a task because the check reruns on an unchanged tree (a rerun, a re-push), where a hit restores the verdict and a pass runs the formatter over the whole workspace. Do not move it back to a script.
 
@@ -48,10 +48,6 @@ Every cached task is probed against this tree before it is trusted: a source edi
 
 `vp env` provisions node and pnpm from the two pins the repository already keeps, `.node-version` and `packageManager`, through shims that replace Corepack; `pnpm update:node` writes the pin and hands the install to it. The procedure is the `dependency-updates` skill's (`references/updating-node.md`). CI is untouched: `pnpm/setup` reads the same two pins.
 
-## virrun is an opt-in
-
-The root scripts run their tools natively. virrun stays installed with its `virrun.config.ts`, and `pnpm virrun -- <cmd>` runs one command in its sandbox when a job wants the RAM overlay or the warm snapshot — but nothing routes through it, because `vp run`'s tracer cannot follow a command into the sandbox ([vite-task 700](https://github.com/voidzero-dev/vite-task/issues/700)) and a Windows tracer cannot see into WSL. A routed check could never be cached locally; a native one can.
-
 ## What `vp` does not own
 
 - **`vp test` as the runner** — [deferred](/docs/architecture/deferred/vite-plus-test-runner) behind three blockers.
@@ -66,7 +62,6 @@ The root scripts run their tools natively. virrun stays installed with its `virr
 | `pnpm-workspace.yaml`                         | the `vite-plus` catalog entry and the overrides that leave one copy of each tool            |
 | `.github/actions/run-cached-task/action.yaml` | restores the task cache, runs the task, saves the cache when it executed                    |
 | `scripts/src/updateNode/index.ts`             | pins node through `vp env pin` and cleans through `vp env clean`                            |
-| `virrun.config.ts`                            | the opt-in sandbox's backend per platform                                                   |
 
 ## Sources
 

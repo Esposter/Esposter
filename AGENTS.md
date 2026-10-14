@@ -35,7 +35,6 @@ This file is an **index and a process**, never a reference. Anything explaining 
 | `packages/shared-node`          | `@esposter/shared-node`   | Node-only shared tooling — the machine-wide download cache (`/cache`), hidden-window child processes (`/child-process`) and benchmark reporting for vitest bench                |
 | `packages/trpc-msw`             | `trpc-msw`                | tRPC for Mock Service Worker — HTTP, batching, SSE and WebSockets answered by tRPC's own handlers                                                                               |
 | `packages/trpc-nuxt-module`     | `trpc-nuxt-module`        | tRPC for Nuxt — a Nuxt module for the router's HTTP and WebSocket handlers and composables over `useAsyncData`                                                                  |
-| `packages/virrun`               | `virrun`                  | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated                                                                                                      |
 | `packages/vue-phaserjs`         | `vue-phaserjs`            | Phaser game engine integration for Vue                                                                                                                                          |
 | `scripts`                       | `@esposter/scripts`       | The repo's own tooling: workspace graph, dependency report, sweeps, plugins                                                                                                     |
 

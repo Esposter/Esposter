@@ -34,7 +34,7 @@ Guard clauses over nested conditionals. `InvalidOperationError` for impossible s
 
 ## Testing — 10 / 10
 
-Several hundred test files, concentrated in `app` and `virrun` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Azure Functions logic lives in extracted, directly-tested `handlers/`, leaving only thin `app.eventGrid(...)` registration glue uncovered.
+Several hundred test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Azure Functions logic lives in extracted, directly-tested `handlers/`, leaving only thin `app.eventGrid(...)` registration glue uncovered.
 
 **Accepted trade-off:** untested Pinia stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
 

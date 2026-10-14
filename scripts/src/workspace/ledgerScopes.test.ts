@@ -21,8 +21,7 @@ const checkIsResolved = (pathspec: string): Promise<boolean> => {
  * nothing reports no work and reads exactly like a swept tree — the same silence that skill's "prove the scan can
  * fail" rule is about, one level up. Nothing else would notice: a scope is prose to every other tool.
  *
- * Resolved against the working tree rather than against `git ls-files`, because the suite runs inside virrun's
- * overlay, which carries the files and not the repository.
+ * Resolved against the working tree rather than against `git ls-files`.
  */
 describe("ledgerScopes", () => {
   const LEDGER_ROW_REGEX = /^\| \[(?<ledger>[^\]]+)\]\([^)]+\)\s*\|[^|]*\|[^|]*\|(?<scope>[^|]*)\|$/u;

@@ -55,7 +55,7 @@ our own key sitting beside a foreign one is named the way any other identifier i
 
 ## One name can be two identifiers
 
-A wire manifest's `isSnapshotLowerPath` **field** and a predicate **parameter** of the same name are not the same
+A wire manifest's **field** and a predicate **parameter** of the same name are not the same
 identifier. The field is a stored boolean and keeps `is*`; the parameter is called and takes `check*`. A rename
 driven by whole-word substitution cannot tell them apart — it renames the field, the schema key and the wire key
 together, and what fails is an unrelated inline snapshot rather than the parse. Check what each occurrence is

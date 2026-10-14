@@ -20,6 +20,5 @@ export const DocsSectionIconMap: Readonly<Record<string, string>> = {
   "trpc-msw": "i-mdi:api",
   "trpc-nuxt-module": "i-mdi:nuxt",
   user: "i-mdi:account-group",
-  virrun: "i-mdi:console",
   "vue-phaserjs": "i-mdi:gamepad-variant",
 };

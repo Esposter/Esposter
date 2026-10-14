@@ -10,7 +10,6 @@ export const DocsCategorySectionsMap: Readonly<Record<DocsCategory, readonly str
     "shared",
     "trpc-msw",
     "trpc-nuxt-module",
-    "virrun",
     "vue-phaserjs",
   ],
   [DocsCategory.Products]: [
