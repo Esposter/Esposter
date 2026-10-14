@@ -16,7 +16,6 @@ const inputStore = useInputStore();
 const { clearComposer } = inputStore;
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
-const isDeleteOpen = ref(false);
 const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Edit,
@@ -32,26 +31,15 @@ const items = computed<Item[]>(() => [
     },
     title: "Schedule message",
   },
-  {
-    isDanger: true,
-    isGroupStart: true,
-    meaning: UiIconMeaning.Delete,
-    onClick: () => {
-      isDeleteOpen.value = true;
-    },
-    title: "Delete draft",
-  },
 ]);
 </script>
 
 <template>
-  <UiOverflowMenu :items label="Draft actions" />
-  <MessageDraftsAndSentDeleteConfirmDialog
-    v-if="isDeleteOpen"
-    v-model="isDeleteOpen"
-    title="Delete draft"
-    :confirm="() => clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey })"
-  >
-    <p>Are you sure you want to delete this draft?</p>
-  </MessageDraftsAndSentDeleteConfirmDialog>
+  <MessageDraftsAndSentMoreMenu
+    :actions="items"
+    :confirm-delete="() => clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey })"
+    delete-label="Delete draft"
+    delete-message="Are you sure you want to delete this draft?"
+    label="Draft actions"
+  />
 </template>

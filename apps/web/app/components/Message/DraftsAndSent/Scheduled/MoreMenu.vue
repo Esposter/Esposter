@@ -19,7 +19,6 @@ const { cancelScheduledMessageJob } = scheduledMessageJobStore;
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
-const isDeleteOpen = ref(false);
 const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Edit,
@@ -53,26 +52,15 @@ const items = computed<Item[]>(() => [
     },
     title: "Cancel schedule and save to drafts",
   },
-  {
-    isDanger: true,
-    isGroupStart: true,
-    meaning: UiIconMeaning.Delete,
-    onClick: () => {
-      isDeleteOpen.value = true;
-    },
-    title: "Delete message",
-  },
 ]);
 </script>
 
 <template>
-  <UiOverflowMenu :items label="Scheduled message actions" />
-  <MessageDraftsAndSentDeleteConfirmDialog
-    v-if="isDeleteOpen"
-    v-model="isDeleteOpen"
-    title="Delete message"
-    :confirm="() => cancelScheduledMessageJob(scheduledMessageJob.id)"
-  >
-    <p>Are you sure you want to delete this scheduled message?</p>
-  </MessageDraftsAndSentDeleteConfirmDialog>
+  <MessageDraftsAndSentMoreMenu
+    :actions="items"
+    :confirm-delete="() => cancelScheduledMessageJob(scheduledMessageJob.id)"
+    delete-label="Delete message"
+    delete-message="Are you sure you want to delete this scheduled message?"
+    label="Scheduled message actions"
+  />
 </template>
