@@ -1,11 +1,10 @@
 # [Esposter](https://esposter.com)
 
 [![Build Status][badge-ci]][url-ci]
-[![Repository Score][badge-score]][url-score]
 [![Duplicate Code][badge-duplicates]][url-ci]
+[![Repository Score][badge-score]][url-score]
+[![skills.sh installs][badge-skills]][url-skills]
 [![Apache-2.0 licensed][badge-license]][url-license]
-[![Agent skills][badge-skills]][url-skills]
-[![OpenSSF Scorecard][badge-openssf]][url-openssf]
 
 ## Table of Contents
 
@@ -416,13 +415,11 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 
 [badge-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml/badge.svg?event=push&branch=main
 [url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml?query=event%3Apush+branch%3Amain
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
-[url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
 [badge-duplicates]: https://img.shields.io/badge/duplicate%20code-0%20clones-33c854
 [badge-score]: https://img.shields.io/badge/score-94%2F100-33c854
 [url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
-[badge-skills]: https://img.shields.io/badge/agent%20skills-100%2B-blueviolet
-[url-skills]: https://github.com/Esposter/Esposter/tree/main/.agents/skills
-[badge-openssf]: https://api.scorecard.dev/projects/github.com/Esposter/Esposter/badge
-[url-openssf]: https://scorecard.dev/viewer/?uri=github.com/Esposter/Esposter
+[badge-skills]: https://skills.sh/b/Esposter/Esposter
+[url-skills]: https://skills.sh/Esposter/Esposter
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest
