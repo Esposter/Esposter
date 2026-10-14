@@ -8,12 +8,7 @@ This is the same job run from the session: the main session decides every verdic
 
 1. List the open issues with `gh issue list --label review --state open`, and read each body. Each finding names a file, a summary and a trigger. Work every finding; none is skipped silently.
 2. If an issue's `Run:` line names a run whose review or fix job has not completed, leave that issue open, and name it in the report. A fixer may still be on it.
-3. For each issue, the main session decides a verdict for every finding before any edit:
-   - `fixed`: the change is made.
-   - `refuted`: the finding is wrong, and the reason is the code fact that disproves it.
-   - `recorded`: the finding is real but is a design decision, and the reason is given with the owning area's proposal or roadmap page, by repo path, where the decision is written.
-
-   A finding without a verdict keeps its issue open.
+3. For each issue, the main session decides a verdict for every finding before any edit. Each verdict is one `review.md` allows, with the reason it requires. A `recorded` reason also names, by repo path, the proposal or roadmap page where the decision is written. A finding without a verdict keeps its issue open.
 
 4. For each issue, spawn one subagent with `model: "haiku"`. Never a fork, and never opus or sonnet. Its prompt is its whole world, so give it: the issue number; each finding to fix, verbatim (file, line, summary, trigger); the verdict already decided for each finding; the worktree path; and the done-definition. The done-definition is that every `fixed` and `recorded` finding has its edit committed and landed, its touched tests and checks pass, and it reports an outcome table. The subagent never decides a verdict and never comments on or closes the issue.
 5. Give each issue its own worktree, created from the main checkout: `git worktree add -b settle-<issue number> .agents/worktrees/settle-<issue number> origin/ai/queue`. Once its commits have landed, remove it with `bash .agents/skills/throughput/scripts/remove-worktree.sh <full path>`. A relative name fails.
