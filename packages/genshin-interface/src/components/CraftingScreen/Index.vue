@@ -2,6 +2,8 @@
 import type { CraftingCell } from "#src/models/CraftingCell";
 import type { CraftingMaterial } from "#src/models/CraftingMaterial";
 
+import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
+
 interface Props {
   // The amount slider's name for assistive tech
   amountLabel: string;
@@ -62,7 +64,7 @@ const emit = defineEmits<{ close: []; craft: [] }>();
        place from the game's layout, not a two-column grid, since its recipe list is narrower than its detail -->
   <div class="crafting-screen">
     <header class="head">
-      <p class="title" role="heading" aria-level="1">{{ title }}</p>
+      <ScreenTitle role="heading" aria-level="1">{{ title }}</ScreenTitle>
       <p class="coins">
         <span class="coin" aria-hidden="true" />
         {{ coins }}
@@ -140,11 +142,6 @@ const emit = defineEmits<{ close: []; craft: [] }>();
 }
 
 .title {
-  position: absolute;
-  top: calc(var(--unit) * 30);
-  left: calc(var(--unit) * 145);
-  margin: 0;
-  font-size: calc(var(--unit) * 22);
   line-height: calc(var(--unit) * 32);
 }
 

@@ -9,6 +9,7 @@ import type { WishResultCell } from "#src/models/WishResultCell";
 import type { WishSet } from "#src/models/WishSet";
 
 import GameButton from "#src/components/GameButton/Index.vue";
+import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import WishDetails from "#src/components/WishDetails/Index.vue";
 import WishPath from "#src/components/WishPath/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
@@ -84,7 +85,7 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
        Against a recording of the English Client at 1080 high, and the banner card's art and the banners' tabs' portraits
        Are the plate's, which cannot ship -->
   <div class="wish-screen">
-    <p class="title" role="heading" aria-level="1">{{ title }}</p>
+    <ScreenTitle role="heading" aria-level="1">{{ title }}</ScreenTitle>
     <ul class="banners">
       <li v-for="kind of bannerKinds" :key="kind">
         <GameButton
@@ -181,14 +182,6 @@ const bannerLabelText = computed(() => bannerKind.value && getBannerLabel(banner
   inset: 0;
   background: rgb(28 32 42 / 0.92);
   color: #fff;
-}
-
-.title {
-  position: absolute;
-  top: calc(var(--unit) * 30);
-  left: calc(var(--unit) * 145);
-  margin: 0;
-  font-size: calc(var(--unit) * 22);
 }
 
 .banners,
