@@ -9,10 +9,8 @@ import { incrementNumericIdentifier } from "#src/services/semver/incrementNumeri
 
 // A version with no wildcard is itself, a bare version with a wildcard is the bounds it spans, and an operator over a
 // Wildcard moves its bound to the next version it names
-export const expandXRangeToken = (
-  { major, minor, operator, patch, prerelease }: ComparatorToken,
-  prereleaseSuffix: string,
-): ComparatorText[] => {
+export const expandXRangeToken = (token: ComparatorToken, prereleaseSuffix: string): ComparatorText[] => {
+  const { major, minor, operator, patch, prerelease } = token;
   if (checkIsAnyPart(major))
     return operator === RangeOperator.GreaterThan || operator === RangeOperator.LessThan
       ? [{ operator: RangeOperator.LessThan, version: "0.0.0-0" }]
@@ -23,8 +21,7 @@ export const expandXRangeToken = (
   if (!isAnyPatch) return [{ operator, version: `${major}.${minor}.${patch}${prerelease}` }];
 
   // A wildcard names the versions its tilde names, so an equal over one takes the tilde's bounds
-  if (operator === RangeOperator.Equal)
-    return expandTildeToken({ major, minor, operator, patch, prerelease }, prereleaseSuffix);
+  if (operator === RangeOperator.Equal) return expandTildeToken(token, prereleaseSuffix);
 
   if (operator === RangeOperator.GreaterThan)
     return [
