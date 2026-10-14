@@ -70,10 +70,7 @@
     "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 5439 }
   },
-  "parameters.garmentSkillMaxHealthBonus": {
-    "cause": "Unsourced",
-    "value": { "index": 8, "proudSkillGroupId": 5439 }
-  },
+  "parameters.garmentSkillMaxHealthBonus": { "cause": "Unsourced", "value": { "index": 8, "proudSkillGroupId": 5439 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

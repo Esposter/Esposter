@@ -78,10 +78,7 @@
   "stances.musouIsshin.normalAttacks.0.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
   "stances.musouIsshin.normalAttacks.0.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 12 },
-  "stances.musouIsshin.normalAttacks.0.hits.0.internalCooldownTag": {
-    "cause": "Unsourced",
-    "value": "NormalAttack"
-  },
+  "stances.musouIsshin.normalAttacks.0.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.0.hits.0.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 4, "proudSkillGroupId": 5239 }
@@ -98,10 +95,7 @@
   "stances.musouIsshin.normalAttacks.1.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
   "stances.musouIsshin.normalAttacks.1.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 13 },
-  "stances.musouIsshin.normalAttacks.1.hits.0.internalCooldownTag": {
-    "cause": "Unsourced",
-    "value": "NormalAttack"
-  },
+  "stances.musouIsshin.normalAttacks.1.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.1.hits.0.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 5, "proudSkillGroupId": 5239 }
@@ -118,10 +112,7 @@
   "stances.musouIsshin.normalAttacks.2.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
   "stances.musouIsshin.normalAttacks.2.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 11 },
-  "stances.musouIsshin.normalAttacks.2.hits.0.internalCooldownTag": {
-    "cause": "Unsourced",
-    "value": "NormalAttack"
-  },
+  "stances.musouIsshin.normalAttacks.2.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.2.hits.0.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 5239 }
@@ -138,10 +129,7 @@
   "stances.musouIsshin.normalAttacks.3.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
   "stances.musouIsshin.normalAttacks.3.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 22 },
-  "stances.musouIsshin.normalAttacks.3.hits.0.internalCooldownTag": {
-    "cause": "Unsourced",
-    "value": "NormalAttack"
-  },
+  "stances.musouIsshin.normalAttacks.3.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.3.hits.0.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 5239 }
@@ -155,10 +143,7 @@
   "stances.musouIsshin.normalAttacks.3.hits.1.element": { "cause": "Unsourced", "value": "Electric" },
   "stances.musouIsshin.normalAttacks.3.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 33 },
-  "stances.musouIsshin.normalAttacks.3.hits.1.internalCooldownTag": {
-    "cause": "Unsourced",
-    "value": "NormalAttack"
-  },
+  "stances.musouIsshin.normalAttacks.3.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.3.hits.1.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 8, "proudSkillGroupId": 5239 }
@@ -175,10 +160,7 @@
   "stances.musouIsshin.normalAttacks.4.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
   "stances.musouIsshin.normalAttacks.4.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 33 },
-  "stances.musouIsshin.normalAttacks.4.hits.0.internalCooldownTag": {
-    "cause": "Unsourced",
-    "value": "NormalAttack"
-  },
+  "stances.musouIsshin.normalAttacks.4.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.4.hits.0.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 9, "proudSkillGroupId": 5239 }

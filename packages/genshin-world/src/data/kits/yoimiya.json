@@ -41,10 +41,7 @@
     "cause": "Unclassified",
     "value": "NormalAttack"
   },
-  "stances.niwabiFireDance.normalAttacks.0.hits.0.multiplier": {
-    "cause": "Unsourced",
-    "value": 0.49150767599999995
-  },
+  "stances.niwabiFireDance.normalAttacks.0.hits.0.multiplier": { "cause": "Unsourced", "value": 0.49150767599999995 },
   "stances.niwabiFireDance.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.niwabiFireDance.normalAttacks.0.hits.1.area": {
     "cause": "Unsourced",
@@ -57,10 +54,7 @@
     "cause": "Unclassified",
     "value": "NormalAttack"
   },
-  "stances.niwabiFireDance.normalAttacks.0.hits.1.multiplier": {
-    "cause": "Unsourced",
-    "value": 0.49150767599999995
-  },
+  "stances.niwabiFireDance.normalAttacks.0.hits.1.multiplier": { "cause": "Unsourced", "value": 0.49150767599999995 },
   "stances.niwabiFireDance.normalAttacks.0.hits.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.niwabiFireDance.normalAttacks.0.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.niwabiFireDance.normalAttacks.1.animationFrames": { "cause": "Unsourced", "value": 26 },

@@ -19,10 +19,7 @@
   "actions.kesagiris.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 71 },
   "actions.kesagiris.0.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.0.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.0.hits.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.0.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.0.hits.0.poiseDamage": { "file": "charge.go", "line": 240, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.0.targeting": { "cause": "Unsourced", "value": "Strike" },
   "actions.kesagiris.1.animationFrames": { "cause": "Unsourced", "value": 144 },
@@ -44,10 +41,7 @@
   "actions.kesagiris.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 51 },
   "actions.kesagiris.1.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.1.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.1.hits.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.1.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.1.hits.0.poiseDamage": { "file": "charge.go", "line": 233, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.1.hits.1.area": {
     "cause": "Unsourced",
@@ -66,10 +60,7 @@
   "actions.kesagiris.1.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 106 },
   "actions.kesagiris.1.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.1.hits.1.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.1.hits.1.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.1.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.1.hits.1.poiseDamage": { "file": "charge.go", "line": 240, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.1.targeting": { "cause": "Unsourced", "value": "Strike" },
   "actions.kesagiris.2.animationFrames": { "cause": "Unsourced", "value": 173 },
@@ -91,10 +82,7 @@
   "actions.kesagiris.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 51 },
   "actions.kesagiris.2.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.2.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.2.hits.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.2.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.2.hits.0.poiseDamage": { "file": "charge.go", "line": 233, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.2.hits.1.area": {
     "cause": "Unsourced",
@@ -113,10 +101,7 @@
   "actions.kesagiris.2.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 81 },
   "actions.kesagiris.2.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.2.hits.1.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.2.hits.1.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.2.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.2.hits.1.poiseDamage": { "file": "charge.go", "line": 228, "source": "Gcsim", "value": 81.7 },
   "actions.kesagiris.2.hits.2.area": {
     "cause": "Unsourced",
@@ -135,10 +120,7 @@
   "actions.kesagiris.2.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 135 },
   "actions.kesagiris.2.hits.2.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.2.hits.2.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.2.hits.2.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.2.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.2.hits.2.poiseDamage": { "file": "charge.go", "line": 240, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.2.targeting": { "cause": "Unsourced", "value": "Strike" },
   "actions.kesagiris.3.animationFrames": { "cause": "Unsourced", "value": 202 },
@@ -160,10 +142,7 @@
   "actions.kesagiris.3.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 51 },
   "actions.kesagiris.3.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.3.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.3.hits.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.3.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.3.hits.0.poiseDamage": { "file": "charge.go", "line": 233, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.3.hits.1.area": {
     "cause": "Unsourced",
@@ -182,10 +161,7 @@
   "actions.kesagiris.3.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 81 },
   "actions.kesagiris.3.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.3.hits.1.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.3.hits.1.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.3.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.3.hits.1.poiseDamage": { "file": "charge.go", "line": 228, "source": "Gcsim", "value": 81.7 },
   "actions.kesagiris.3.hits.2.area": {
     "cause": "Unsourced",
@@ -204,10 +180,7 @@
   "actions.kesagiris.3.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 109 },
   "actions.kesagiris.3.hits.2.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.3.hits.2.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.3.hits.2.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.3.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.3.hits.2.poiseDamage": { "file": "charge.go", "line": 228, "source": "Gcsim", "value": 81.7 },
   "actions.kesagiris.3.hits.3.area": {
     "cause": "Unsourced",
@@ -226,10 +199,7 @@
   "actions.kesagiris.3.hits.3.hitmarkFrames": { "cause": "Unsourced", "value": 164 },
   "actions.kesagiris.3.hits.3.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.3.hits.3.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.3.hits.3.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.3.hits.3.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.3.hits.3.poiseDamage": { "file": "charge.go", "line": 240, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.3.targeting": { "cause": "Unsourced", "value": "Strike" },
   "actions.kesagiris.4.animationFrames": { "cause": "Unsourced", "value": 231 },
@@ -251,10 +221,7 @@
   "actions.kesagiris.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 51 },
   "actions.kesagiris.4.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.4.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.4.hits.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.4.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.4.hits.0.poiseDamage": { "file": "charge.go", "line": 233, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.4.hits.1.area": {
     "cause": "Unsourced",
@@ -273,10 +240,7 @@
   "actions.kesagiris.4.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 81 },
   "actions.kesagiris.4.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.4.hits.1.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.4.hits.1.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.4.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.4.hits.1.poiseDamage": { "file": "charge.go", "line": 228, "source": "Gcsim", "value": 81.7 },
   "actions.kesagiris.4.hits.2.area": {
     "cause": "Unsourced",
@@ -295,10 +259,7 @@
   "actions.kesagiris.4.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 109 },
   "actions.kesagiris.4.hits.2.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.4.hits.2.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.4.hits.2.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.4.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.4.hits.2.poiseDamage": { "file": "charge.go", "line": 228, "source": "Gcsim", "value": 81.7 },
   "actions.kesagiris.4.hits.3.area": {
     "cause": "Unsourced",
@@ -317,10 +278,7 @@
   "actions.kesagiris.4.hits.3.hitmarkFrames": { "cause": "Unsourced", "value": 139 },
   "actions.kesagiris.4.hits.3.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.4.hits.3.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.4.hits.3.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 5, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.4.hits.3.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.4.hits.3.poiseDamage": { "file": "charge.go", "line": 228, "source": "Gcsim", "value": 81.7 },
   "actions.kesagiris.4.hits.4.area": {
     "cause": "Unsourced",
@@ -339,10 +297,7 @@
   "actions.kesagiris.4.hits.4.hitmarkFrames": { "cause": "Unsourced", "value": 193 },
   "actions.kesagiris.4.hits.4.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "actions.kesagiris.4.hits.4.isBlunt": { "cause": "Unsourced", "value": true },
-  "actions.kesagiris.4.hits.4.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 5731 }
-  },
+  "actions.kesagiris.4.hits.4.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 5731 } },
   "actions.kesagiris.4.hits.4.poiseDamage": { "file": "charge.go", "line": 240, "source": "Gcsim", "value": 143.4 },
   "actions.kesagiris.4.targeting": { "cause": "Unsourced", "value": "Strike" },
   "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 1 },

@@ -54,7 +54,12 @@
   "hits.arkhe.hitmarkFrames": { "cause": "DiffersFromSource", "value": 30 },
   "hits.arkhe.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 8931 } },
   "hits.arkhe.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.ousiaBubble.area": { "file": "skill.go", "line": 121, "source": "Gcsim", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
+  "hits.ousiaBubble.area": {
+    "file": "skill.go",
+    "line": 121,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
   "hits.ousiaBubble.element": { "cause": "Unclassified", "value": "Water" },
   "hits.ousiaBubble.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.ousiaBubble.hitmarkFrames": { "file": "skill.go", "line": 26, "source": "Gcsim", "value": 18 },

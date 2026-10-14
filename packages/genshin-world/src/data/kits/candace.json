@@ -45,10 +45,7 @@
   "skillHolds.0.action.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 91 },
   "skillHolds.0.action.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
-  "skillHolds.0.action.hits.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 3, "proudSkillGroupId": 7232 }
-  },
+  "skillHolds.0.action.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 7232 } },
   "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unsourced", "value": 300 },
   "skillHolds.0.action.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" }
 }

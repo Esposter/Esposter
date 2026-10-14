@@ -62,10 +62,7 @@
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5339 }
   },
-  "parameters.mujiMujiDarumaFlatHealing": {
-    "cause": "Unsourced",
-    "value": { "index": 4, "proudSkillGroupId": 5339 }
-  },
+  "parameters.mujiMujiDarumaFlatHealing": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 5339 } },
   "parameters.mujiMujiDarumaHealingAttackShare": {
     "cause": "Unsourced",
     "value": { "index": 5, "proudSkillGroupId": 5339 }

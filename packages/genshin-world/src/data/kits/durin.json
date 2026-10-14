@@ -48,10 +48,7 @@
   "hits.blackDragonTicks.0.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 185 },
-  "hits.blackDragonTicks.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.0.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.1.area": {
     "cause": "Unsourced",
@@ -60,10 +57,7 @@
   "hits.blackDragonTicks.1.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.1.hitmarkFrames": { "cause": "Unclassified", "value": 258 },
-  "hits.blackDragonTicks.1.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.1.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.2.area": {
     "cause": "Unsourced",
@@ -72,10 +66,7 @@
   "hits.blackDragonTicks.2.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.2.hitmarkFrames": { "cause": "Unclassified", "value": 332 },
-  "hits.blackDragonTicks.2.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.2.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.3.area": {
     "cause": "Unsourced",
@@ -84,10 +75,7 @@
   "hits.blackDragonTicks.3.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.3.hitmarkFrames": { "cause": "Unclassified", "value": 406 },
-  "hits.blackDragonTicks.3.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.3.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.4.area": {
     "cause": "Unsourced",
@@ -96,10 +84,7 @@
   "hits.blackDragonTicks.4.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.4.hitmarkFrames": { "cause": "Unclassified", "value": 479 },
-  "hits.blackDragonTicks.4.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.4.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.5.area": {
     "cause": "Unsourced",
@@ -108,10 +93,7 @@
   "hits.blackDragonTicks.5.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.5.hitmarkFrames": { "cause": "Unclassified", "value": 553 },
-  "hits.blackDragonTicks.5.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.5.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.6.area": {
     "cause": "Unsourced",
@@ -120,10 +102,7 @@
   "hits.blackDragonTicks.6.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.6.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.6.hitmarkFrames": { "cause": "Unclassified", "value": 626 },
-  "hits.blackDragonTicks.6.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.6.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.7.area": {
     "cause": "Unsourced",
@@ -132,10 +111,7 @@
   "hits.blackDragonTicks.7.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.7.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.7.hitmarkFrames": { "cause": "Unclassified", "value": 700 },
-  "hits.blackDragonTicks.7.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.7.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.8.area": {
     "cause": "Unsourced",
@@ -144,10 +120,7 @@
   "hits.blackDragonTicks.8.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.8.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.8.hitmarkFrames": { "cause": "Unclassified", "value": 774 },
-  "hits.blackDragonTicks.8.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.8.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.8.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.9.area": {
     "cause": "Unsourced",
@@ -156,10 +129,7 @@
   "hits.blackDragonTicks.9.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.9.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.9.hitmarkFrames": { "cause": "Unclassified", "value": 847 },
-  "hits.blackDragonTicks.9.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.9.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.9.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.10.area": {
     "cause": "Unsourced",
@@ -168,10 +138,7 @@
   "hits.blackDragonTicks.10.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.10.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.10.hitmarkFrames": { "cause": "Unclassified", "value": 921 },
-  "hits.blackDragonTicks.10.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.10.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.10.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.11.area": {
     "cause": "Unsourced",
@@ -180,10 +147,7 @@
   "hits.blackDragonTicks.11.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.11.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.11.hitmarkFrames": { "cause": "Unclassified", "value": 994 },
-  "hits.blackDragonTicks.11.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.11.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.11.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.12.area": {
     "cause": "Unsourced",
@@ -192,10 +156,7 @@
   "hits.blackDragonTicks.12.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.12.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.12.hitmarkFrames": { "cause": "Unclassified", "value": 1068 },
-  "hits.blackDragonTicks.12.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.12.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.12.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.13.area": {
     "cause": "Unsourced",
@@ -204,10 +165,7 @@
   "hits.blackDragonTicks.13.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.13.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.13.hitmarkFrames": { "cause": "Unclassified", "value": 1142 },
-  "hits.blackDragonTicks.13.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.13.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.13.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.14.area": {
     "cause": "Unsourced",
@@ -216,10 +174,7 @@
   "hits.blackDragonTicks.14.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.14.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.14.hitmarkFrames": { "cause": "Unclassified", "value": 1215 },
-  "hits.blackDragonTicks.14.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.14.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.14.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.blackDragonTicks.15.area": {
     "cause": "Unsourced",
@@ -228,10 +183,7 @@
   "hits.blackDragonTicks.15.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.blackDragonTicks.15.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.blackDragonTicks.15.hitmarkFrames": { "cause": "Unclassified", "value": 1289 },
-  "hits.blackDragonTicks.15.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 7, "proudSkillGroupId": 12339 }
-  },
+  "hits.blackDragonTicks.15.multiplier": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 12339 } },
   "hits.blackDragonTicks.15.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.length": { "cause": "Unclassified", "value": 20 },
   "hits.whiteDragonTicks.0.area": {
@@ -241,10 +193,7 @@
   "hits.whiteDragonTicks.0.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 156 },
-  "hits.whiteDragonTicks.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.0.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.1.area": {
     "cause": "Unsourced",
@@ -253,10 +202,7 @@
   "hits.whiteDragonTicks.1.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.1.hitmarkFrames": { "cause": "Unclassified", "value": 214 },
-  "hits.whiteDragonTicks.1.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.1.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.2.area": {
     "cause": "Unsourced",
@@ -265,10 +211,7 @@
   "hits.whiteDragonTicks.2.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.2.hitmarkFrames": { "cause": "Unclassified", "value": 273 },
-  "hits.whiteDragonTicks.2.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.2.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.3.area": {
     "cause": "Unsourced",
@@ -277,10 +220,7 @@
   "hits.whiteDragonTicks.3.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.3.hitmarkFrames": { "cause": "Unclassified", "value": 332 },
-  "hits.whiteDragonTicks.3.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.3.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.4.area": {
     "cause": "Unsourced",
@@ -289,10 +229,7 @@
   "hits.whiteDragonTicks.4.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.4.hitmarkFrames": { "cause": "Unclassified", "value": 391 },
-  "hits.whiteDragonTicks.4.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.4.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.5.area": {
     "cause": "Unsourced",
@@ -301,10 +238,7 @@
   "hits.whiteDragonTicks.5.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.5.hitmarkFrames": { "cause": "Unclassified", "value": 450 },
-  "hits.whiteDragonTicks.5.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.5.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.6.area": {
     "cause": "Unsourced",
@@ -313,10 +247,7 @@
   "hits.whiteDragonTicks.6.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.6.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.6.hitmarkFrames": { "cause": "Unclassified", "value": 508 },
-  "hits.whiteDragonTicks.6.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.6.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.7.area": {
     "cause": "Unsourced",
@@ -325,10 +256,7 @@
   "hits.whiteDragonTicks.7.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.7.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.7.hitmarkFrames": { "cause": "Unclassified", "value": 567 },
-  "hits.whiteDragonTicks.7.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.7.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.8.area": {
     "cause": "Unsourced",
@@ -337,10 +265,7 @@
   "hits.whiteDragonTicks.8.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.8.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.8.hitmarkFrames": { "cause": "Unclassified", "value": 626 },
-  "hits.whiteDragonTicks.8.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.8.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.8.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.9.area": {
     "cause": "Unsourced",
@@ -349,10 +274,7 @@
   "hits.whiteDragonTicks.9.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.9.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.9.hitmarkFrames": { "cause": "Unclassified", "value": 685 },
-  "hits.whiteDragonTicks.9.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.9.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.9.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.10.area": {
     "cause": "Unsourced",
@@ -361,10 +283,7 @@
   "hits.whiteDragonTicks.10.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.10.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.10.hitmarkFrames": { "cause": "Unclassified", "value": 744 },
-  "hits.whiteDragonTicks.10.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.10.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.10.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.11.area": {
     "cause": "Unsourced",
@@ -373,10 +292,7 @@
   "hits.whiteDragonTicks.11.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.11.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.11.hitmarkFrames": { "cause": "Unclassified", "value": 802 },
-  "hits.whiteDragonTicks.11.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.11.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.11.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.12.area": {
     "cause": "Unsourced",
@@ -385,10 +301,7 @@
   "hits.whiteDragonTicks.12.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.12.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.12.hitmarkFrames": { "cause": "Unclassified", "value": 861 },
-  "hits.whiteDragonTicks.12.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.12.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.12.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.13.area": {
     "cause": "Unsourced",
@@ -397,10 +310,7 @@
   "hits.whiteDragonTicks.13.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.13.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.13.hitmarkFrames": { "cause": "Unclassified", "value": 920 },
-  "hits.whiteDragonTicks.13.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.13.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.13.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.14.area": {
     "cause": "Unsourced",
@@ -409,10 +319,7 @@
   "hits.whiteDragonTicks.14.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.14.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.14.hitmarkFrames": { "cause": "Unclassified", "value": 979 },
-  "hits.whiteDragonTicks.14.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.14.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.14.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.15.area": {
     "cause": "Unsourced",
@@ -421,10 +328,7 @@
   "hits.whiteDragonTicks.15.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.15.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.15.hitmarkFrames": { "cause": "Unclassified", "value": 1038 },
-  "hits.whiteDragonTicks.15.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.15.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.15.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.16.area": {
     "cause": "Unsourced",
@@ -433,10 +337,7 @@
   "hits.whiteDragonTicks.16.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.16.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.16.hitmarkFrames": { "cause": "Unclassified", "value": 1096 },
-  "hits.whiteDragonTicks.16.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.16.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.16.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.17.area": {
     "cause": "Unsourced",
@@ -445,10 +346,7 @@
   "hits.whiteDragonTicks.17.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.17.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.17.hitmarkFrames": { "cause": "Unclassified", "value": 1155 },
-  "hits.whiteDragonTicks.17.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.17.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.17.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.18.area": {
     "cause": "Unsourced",
@@ -457,10 +355,7 @@
   "hits.whiteDragonTicks.18.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.18.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.18.hitmarkFrames": { "cause": "Unclassified", "value": 1214 },
-  "hits.whiteDragonTicks.18.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.18.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.18.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.whiteDragonTicks.19.area": {
     "cause": "Unsourced",
@@ -469,10 +364,7 @@
   "hits.whiteDragonTicks.19.element": { "cause": "Unclassified", "value": "Fire" },
   "hits.whiteDragonTicks.19.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.whiteDragonTicks.19.hitmarkFrames": { "cause": "Unclassified", "value": 1273 },
-  "hits.whiteDragonTicks.19.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 6, "proudSkillGroupId": 12339 }
-  },
+  "hits.whiteDragonTicks.19.multiplier": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12339 } },
   "hits.whiteDragonTicks.19.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
