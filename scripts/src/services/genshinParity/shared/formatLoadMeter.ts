@@ -44,7 +44,7 @@ const formatRow = ({ budget, isChecked, name, unit, value }: Figure): { isOver: 
 };
 
 // The game data a load or a crossing fetched, checked against the budget its meter names for it
-const getGameDataFigure = (budget: { gameDataBytes?: number } | undefined, gameDataBytes: number): Figure => ({
+const getGameDataFigure = (budget: undefined | { gameDataBytes?: number }, gameDataBytes: number): Figure => ({
   budget: budget?.gameDataBytes,
   isChecked: true,
   name: "game data",

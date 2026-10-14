@@ -9,7 +9,7 @@ const MENU_SETTINGS_REFERENCE = {
   approval: { bar: 2, measure: ParityApprovalMeasure.MeanDifference },
   capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
   isBackdrop: true,
-};
+} as const;
 // The settings backdrop's header rows and the first two rows of its menu, which both entries draw over the same place
 const MENU_SETTINGS_TOP_PLATE = [
   { height: 112, width: 1920, x: 0, y: 0 },
