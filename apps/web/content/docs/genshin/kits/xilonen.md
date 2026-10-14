@@ -32,5 +32,5 @@ Xilonen's kit is its record and one behaviour module, `createXilonenKitBehaviour
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/xilonen), MIT: the kit's hitmarks, animations, reach, the charged attack's box and the plunges' radii and poise, and the proud group indices behind each multiplier.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xilonen), MIT: the kit's hitmarks, animations, reach, the charged attack's box and the plunges' radii and poise, and the proud group indices behind each multiplier.
 - [Hosted game data](/docs/genshin/hosted-game-data): the avatar's talent groups 10331, 10332 and 10339 and her skill depot, from the talent and skill kit tables.
