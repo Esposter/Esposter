@@ -30,4 +30,4 @@ gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/varka), MIT: the timings of his strikes, his charged attack, skill, burst and elements, and his table data file.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/varka), MIT: the timings of his strikes, his charged attack, skill, burst and elements, and his table data file.
