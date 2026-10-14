@@ -32,5 +32,5 @@ Nilou's kit is its record and one behaviour module, `createNilouKitBehaviour`, o
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou), MIT: the strikes' hitmarks, cancel frames and areas, the charged attack's two slashes, the sword dance's and the Whirling Steps' hits and reaches, Dance of Haftkarsvar's share and frames, Pirouette's ten seconds, Lunar Prayer's eight, its 30-frame delay, Dance of Abzendegi's hit and frames, and the constellations' values.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou), MIT: the strikes' hitmarks, cancel frames and areas, the charged attack's two slashes, the sword dance's and the Whirling Steps' hits and reaches, Dance of Haftkarsvar's share and frames, Pirouette's ten seconds, Lunar Prayer's eight, its 30-frame delay, Dance of Abzendegi's hit and frames, and the constellations' values.
 - The proud skill groups 7031, 7032 and 7039 in the hosted game data: each multiplier's index and the cooldowns, the stamina and the energy cost, read at talent level 1.
