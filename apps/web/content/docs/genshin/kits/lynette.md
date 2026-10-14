@@ -21,4 +21,4 @@ Not built yet: Enigmatic Feint's hold, its Shadowsign and release strike, which 
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/lynette), MIT: Lynette's strikes' hitmarks, cancel frames and boxes, the charged attack, the plunges and their collision, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit and the Bogglecat Box's 754-frame duration.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lynette), MIT: Lynette's strikes' hitmarks, cancel frames and boxes, the charged attack, the plunges and their collision, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit and the Bogglecat Box's 754-frame duration.
