@@ -185,6 +185,8 @@ Declare job permissions explicitly and narrowly:
 - Release jobs: `contents: write`.
 - PR-commenting previews: minimum scopes for OIDC, repo reads, and PR comments.
 
+CodeQL scans pushes to both `ai/queue` and `main`, plus a weekly run on `main`. The queue scan surfaces findings while a change is still in review; the weekly scan picks up query updates after a release. Its alerts job fails while an open CodeQL alert remains on the scanned ref.
+
 ## Workflow lint
 
 `vp run lint:workflows` runs actionlint over `.github/workflows` as a leaf of the root `lint` task, so the Lint check of every push reads each workflow GitHub would run. A workflow GitHub cannot parse fails its run at startup with no job at all, so the push that carried the break is where it turns red.
