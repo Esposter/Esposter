@@ -8,6 +8,6 @@ What the registries feed:
 
 - **`schema`** is what drizzle-kit's `generateDrizzleJson` / `generateMigration` read for the db-mock snapshot, and what better-auth's adapter looks models up in. drizzle-kit emits `CREATE SCHEMA` and `CREATE TYPE` only for what it holds, which is why the Postgres schema objects are registered beside the tables — a table in an unregistered schema fails at apply time with `schema "…" does not exist`.
 - **`relations`** is what puts a table on `db.query.*`: a table with no relation part is absent from the relational builder however it is registered in `schema`, and a read that wants the relational API gives the table its part first (`references/relations-v2.md`).
-- **`pnpm db:gen`** reads the schema folders directly through `drizzle.config.ts`'s glob, so it sees exactly what the registry holds.
+- From `packages/db-schema/`, **`pnpm db:gen`** reads the schema folders directly through `drizzle.config.ts`'s glob, so it sees exactly what the registry holds.
 
 After a schema change, `pnpm build` in `packages/db-schema/`, then `pnpm snapshot:gen` in `packages/db-mock/` — the snapshot generator runs without the `source` condition, so it reads the built `dist`, where tests and the typecheck read `src`.
