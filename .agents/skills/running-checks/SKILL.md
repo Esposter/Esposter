@@ -14,14 +14,15 @@ which checks a session runs and how it waits on them.
 
 ## Settled — do not re-propose
 
-- **Typecheck and lint before a push.** CI runs both on every push at no session cost, while locally each took
-  minutes per change and the root type-aware lint outgrew WSL's memory on this repository. Nothing waits on them
+- **Typecheck and lint before a push.** CI runs them on every push at no session cost, while a local run takes
+  minutes per change and the root type-aware lint needs more memory than WSL gives it here. Nothing waits on them
   either way: the push already went out beside them, so a local run only moved the finding earlier by the length of
   a CI run, at the session's price.
 - **Dropping the touched tests with them.** Their cost scales with the change rather than the repository, and they
   catch what neither a typecheck nor a lint can — the behaviour the change was for.
-- **Lint, a typecheck or any other check in the pre-commit hook.** Rejected by the user's decision of 2026-10-09: keep
-  checks at a minimum and delegate every check to CI. The hook only formats.
+- **Lint, a typecheck or any other check in the pre-commit hook.** Checks stay in CI, which runs them on every push; the
+  pre-commit hook only formats, so no commit waits on a check.
+- **A Pulumi apply.** `pnpm typecheck` in `apps/infra` runs before `infra:up`, since an apply reaches Azure and CI runs after it.
 
 ## The tests of what the change touched, in the background
 
