@@ -30,5 +30,5 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kinich), MIT: the hitmark, animation and box of each strike, the charged attack's thrusts, the skill's animation, the burst's hit and animation, and the Ajaw's laser intervals, read from its attack, charge, skill, burst, ascension, constellation and character files, the last for the Nightsoul state the not-built mechanics read.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/kinich), MIT: the hitmark, animation and box of each strike, the charged attack's thrusts, the skill's animation, the burst's hit and animation, and the Ajaw's laser intervals, read from its attack, charge, skill, burst, ascension, constellation and character files, the last for the Nightsoul state the not-built mechanics read.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier and the burst's and skill's cooldowns beside its group.
