@@ -4,8 +4,8 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { createUserMessage } from "#server/services/message/createUserMessage";
-import { createThreadUnfollow } from "#server/services/message/thread/createThreadUnfollow";
 import { readFollowedThreadRootRowKeys } from "#server/services/message/thread/readFollowedThreadRootRowKeys";
+import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createMessage, createThreadFollow } from "@esposter/db";
 import { AzureTable, MessageType, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -85,7 +85,7 @@ describe(createUserMessage, () => {
       type: MessageType.Message,
     });
     await createReply(room.id, root.rowKey);
-    await createThreadUnfollow(mockContext.db, {
+    await upsertThreadUnfollow(mockContext.db, {
       roomId: room.id,
       threadRootRowKey: root.rowKey,
       userId: rootAuthor.user.id,

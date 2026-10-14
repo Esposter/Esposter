@@ -8,7 +8,7 @@ import { threadFollowsInMessage } from "@esposter/db-schema";
 // Indistinguishable from one that never existed, and auto-follow reads that gap as "this member has not
 // Decided yet". Written even where no follow row exists, so turning the bell off before ever being followed
 // Still binds the next reply someone else posts to the thread
-export const createThreadUnfollow = (
+export const upsertThreadUnfollow = (
   db: Context["db"],
   { roomId, threadRootRowKey, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootRowKey" | "userId">,
 ) =>

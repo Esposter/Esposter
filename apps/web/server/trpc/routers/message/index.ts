@@ -26,8 +26,8 @@ import { readMessages } from "#server/services/message/readMessages";
 import { readMessagesByRowKeys } from "#server/services/message/readMessagesByRowKeys";
 import { readMySentMessages } from "#server/services/message/readMySentMessages";
 import { searchMessages } from "#server/services/message/searchMessages";
-import { createThreadUnfollow } from "#server/services/message/thread/createThreadUnfollow";
 import { readFollowedThreadRootRowKeys } from "#server/services/message/thread/readFollowedThreadRootRowKeys";
+import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { updateMessage } from "#server/services/message/updateMessage";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { assertIsMember } from "#server/services/room/assertIsMember";
@@ -441,7 +441,7 @@ export const baseMessageRouter = router({
   ),
   unfollowThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { roomId, threadRootRowKey } }) => {
-      await createThreadUnfollow(ctx.db, { roomId, threadRootRowKey, userId: ctx.getSessionPayload.user.id });
+      await upsertThreadUnfollow(ctx.db, { roomId, threadRootRowKey, userId: ctx.getSessionPayload.user.id });
     },
   ),
   // Unpinning needs a Replace — Merge cannot unset a property — so the same conditional write as

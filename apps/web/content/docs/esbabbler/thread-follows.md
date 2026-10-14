@@ -63,7 +63,7 @@ All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 | `packages/db/src/services/notification/getThreadFollowerUserIds.ts`   | follower recipient query             |
 | `packages/db/src/services/message/thread/createThreadFollow.ts`       | idempotent follow insert             |
 | `packages/db/src/services/message/thread/createReplyThreadFollows.ts` | the follows a reply owes             |
-| `apps/web/server/services/message/thread/createThreadUnfollow.ts`     | records the unfollow on the row      |
+| `apps/web/server/services/message/thread/upsertThreadUnfollow.ts`     | records the unfollow on the row      |
 | `apps/functions/src/services/notification/resolveNotification.ts`     | unions followers into the recipients |
 | `apps/web/app/store/message/threadFollow.ts`                          | client follow state + drawer list    |
 | `apps/web/app/components/Message/RightSideBar/Threads/`               | Followed Threads drawer              |
