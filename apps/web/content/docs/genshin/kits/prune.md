@@ -30,4 +30,4 @@ gcsim sources: `prune/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/prune), MIT: her attacks' hitmarks and cancels, the skill's press and convert, the burst's initial hit and DoT, and her table data file.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/prune), MIT: her attacks' hitmarks and cancels, the skill's press and convert, the burst's initial hit and DoT, and her table data file.
