@@ -47,7 +47,7 @@ export const createOsBaselineBackend = (): ExecBackend => {
 
 describe.skipIf(process.platform !== "win32" || !checkIsOsBackendSupported())(createOsBaselineBackend, () => {
   // Over the 5s default on the shared WSL bridge, so parked as a todo. The body is kept intact;
-  // drop the `.todo` to run it.
+  // Drop the `.todo` to run it.
   describe.todo("bridge-contended cases", () => {
     test("captures stdout and zero exit code from WSL", async () => {
       expect.hasAssertions();
