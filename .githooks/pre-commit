@@ -15,5 +15,5 @@ TOOLS_ROOT=.
 TOOLS_ROOT=$(cd "$TOOLS_ROOT" && pwd -P)
 xargs -0 git ls-files -s -- < "$STAGED_FILE" > "$(git rev-parse --git-path "pre-commit-entries-$PPID")"
 # The list is already NUL-separated, as git diff -z wrote it, and -0 is the form both GNU and macOS's BSD xargs read
-xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxfmt" --config "$TOOLS_ROOT/oxfmt.config.ts" --no-error-on-unmatched-pattern < "$STAGED_FILE" || true
+xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxfmt" --config "$TOOLS_ROOT/oxfmt.config.ts" --no-error-on-unmatched-pattern < "$STAGED_FILE"
 xargs -0 -n 50 git add < "$STAGED_FILE"
