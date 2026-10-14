@@ -23,4 +23,4 @@ Niwabi Fire-Dance is a stance for the table's 10 seconds whose strikes deal Pyro
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yoimiya), MIT: the kit's hitmarks, cancel frames and areas, the fully charged shot's frames, Niwabi Fire-Dance's animation, the Normal Attacks alone it makes Pyro and multiplies, and its end as she leaves the field, Ryuukin Saxifrage's initial hit and animation, and Aurous Blaze's mark on the first enemy struck, the attacks that set it off, and its explosion's delay, circle, gauge and poise.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yoimiya), MIT: the kit's hitmarks, cancel frames and areas, the fully charged shot's frames, Niwabi Fire-Dance's animation, the Normal Attacks alone it makes Pyro and multiplies, and its end as she leaves the field, Ryuukin Saxifrage's initial hit and animation, and Aurous Blaze's mark on the first enemy struck, the attacks that set it off, and its explosion's delay, circle, gauge and poise.
