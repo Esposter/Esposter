@@ -11,8 +11,7 @@ permissions:
 jobs:
   build-packages:
     name: Build Packages
-    # Serialises the two callers' copies of this job on the same commit, so the second replays what the first
-    # saved; never cancelled, because the waiting job still owes its caller the artifact
+    # The two callers' copies queue on the commit (monorepo-tooling.md → ## CI job shape)
     concurrency:
       group: build-packages-${{ github.sha }}
       cancel-in-progress: false
