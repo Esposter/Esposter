@@ -25,19 +25,19 @@ Where a finding's home looked missing, it is settled:
 | `packages/genshin-world/src/services/kit/characters`             | 2026-10-12 · Opus 5.5  |                                                                         |
 | `packages`                                                       | 2026-10-11 · Haiku 5.5 | the light packages not named above                                      |
 | `apps/web/app`                                                   | —                      | the rest of the app, excluding the rows above                           |
-| `scripts/src/services/genshinParity`                             | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `scripts/src/services/genshinParity`                             | 2026-10-14 · Haiku 5.5 |                                                                         |
 | `packages/vue-phaserjs`                                          | —                      |                                                                         |
 | `apps/web/shared/assets/clicker/data/upgrades`                   | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `apps/web/app/components/Message`                                | —                      |                                                                         |
+| `apps/web/app/components/Message`                                | 2026-10-14 · Haiku 5.5 |                                                                         |
 | `apps/infra`                                                     | 2026-10-11 · Haiku 5.5 | the rest of the infrastructure, excluding the Azure resource rows above |
 | `packages/genshin-engine`                                        | 2026-10-11 · Haiku 5.5 |                                                                         |
 | `packages/db-schema`                                             | —                      |                                                                         |
-| `apps/web/server/trpc/routers`                                   | 2026-10-11 · Haiku 5.5 |                                                                         |
+| `apps/web/server/trpc/routers`                                   | 2026-10-14 · Haiku 5.5 |                                                                         |
 | `packages/agent-console-server`                                  | 2026-10-11 · Haiku 5.5 |                                                                         |
 | `apps/web/app/services/dungeons`                                 | 2026-10-11 · Haiku 5.5 |                                                                         |
 | `apps/web/app/models/resource`, `apps/web/app/services/resource` | —                      |                                                                         |
 | `packages/shared`                                                | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `scripts/src`                                                    | 2026-10-11 · Haiku 5.5 | the rest of the tooling, excluding the rows above                       |
+| `scripts/src`                                                    | 2026-10-14 · Haiku 5.5 | the rest of the tooling, excluding the rows above                       |
 | `apps/web/shared`                                                | —                      | the rest of the shared tree, excluding the clicker upgrades row above   |
 | `apps/web/server`                                                | —                      | the rest of the server, excluding the router row above                  |
 | `apps/functions/src`                                             | 2026-10-11 · Haiku 5.5 | no finding today; the row stays so a copy that lands there is read      |
