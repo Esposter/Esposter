@@ -5,7 +5,18 @@ import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Geom, Math } from "phaser";
 
-const maskMap = new WeakMap<SceneWithPlugins, { graphics: GameObjects.Graphics; mask: Filters.Mask }>();
+interface CameraMask {
+  graphics: GameObjects.Graphics;
+  mask: Filters.Mask;
+}
+
+const maskMap = new WeakMap<SceneWithPlugins, CameraMask>();
+
+const removeCameraMask = (scene: SceneWithPlugins, { graphics, mask }: CameraMask) => {
+  scene.cameras.main.filters.internal.remove(mask);
+  graphics.destroy();
+  maskMap.delete(scene);
+};
 
 export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
   const settingsStore = useSettingsStore();
@@ -13,11 +24,7 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
   if (isSkipAnimations.value) return undefined;
 
   const existingMask = maskMap.get(scene);
-  if (existingMask) {
-    scene.cameras.main.filters.internal.remove(existingMask.mask);
-    existingMask.graphics.destroy();
-    maskMap.delete(scene);
-  }
+  if (existingMask) removeCameraMask(scene, existingMask);
 
   const { height, width } = scene.scale;
   const rectangleShape = new Geom.Rectangle(0, height / 2, width, 0);
@@ -30,9 +37,7 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
       duration: 800,
       height: { ease: Math.Easing.Expo.InOut, ...getTweenRange(0, height) },
       onComplete: () => {
-        scene.cameras.main.filters.internal.remove(mask);
-        graphics.destroy();
-        maskMap.delete(scene);
+        removeCameraMask(scene, { graphics, mask });
         resolve();
       },
       onUpdate: () => {
