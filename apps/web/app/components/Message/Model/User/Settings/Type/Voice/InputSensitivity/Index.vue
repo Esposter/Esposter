@@ -3,6 +3,7 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiToken } from "@/models/ui/UiToken";
 
 interface Props {
   userSettings: UserSettingsInMessage;
@@ -18,7 +19,7 @@ const { audioInputs, ensurePermissions, permissionGranted } = useDevicesList({ r
     v-if="permissionGranted && audioInputs.length > 0"
     :user-settings
   />
-  <UiAlert v-else status="warning">
+  <UiAlert v-else :status="UiToken.Warning">
     <div flex gap-2 items-center>
       <span flex-1>
         You do not have any input devices enabled. Grant {{ MESSAGE_DISPLAY_NAME }} access to your microphone to observe
