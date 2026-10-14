@@ -1,11 +1,11 @@
-import type { ReadModerationLogInput } from "#shared/models/db/moderation/ReadModerationLogInput";
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { AdminActionType, RoomInMessage } from "@esposter/db-schema";
 
 import { useModerationLogStore } from "@/store/message/moderation/log";
 
+// The filters as the client holds them: an unset one is "" and the router reads it as absent
 export const useReadModerationLog = (
   roomId: RoomInMessage["id"],
-  filters: MaybeRefOrGetter<Pick<ReadModerationLogInput, "actorUserId" | "targetUserId" | "type">>,
+  filters: MaybeRefOrGetter<{ actorUserId: string; targetUserId: string; type: "" | AdminActionType }>,
 ) => {
   const { $trpc } = useNuxtApp();
   const moderationLogStore = useModerationLogStore();

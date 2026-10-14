@@ -9,9 +9,10 @@ defineSlots<{ default: (props: { playAnimationKey: Ref<SpritesheetKey | undefine
 const isActive = defineModel<boolean>("isActive", { required: true });
 const { startSpritesheetKey } = defineProps<Props>();
 const emit = defineEmits<{ complete: [] }>();
-const playAnimationKey = usePlayAnimation(startSpritesheetKey, isActive, emit);
+// The key is held in a plain object so the template hands the slot its Ref, not the value a top-level ref would unwrap to
+const animation = { playAnimationKey: usePlayAnimation(startSpritesheetKey, isActive, emit) };
 </script>
 
 <template>
-  <slot :play-animation-key="playAnimationKey" />
+  <slot :play-animation-key="animation.playAnimationKey" />
 </template>
