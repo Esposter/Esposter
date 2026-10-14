@@ -72,8 +72,8 @@ export const readDuplicateCodeFindings = (): DuplicateCodeFinding[] => {
       "--reporters",
       "json",
       "--silent",
-      // jscpd exits non-zero over `.jscpd.json`'s threshold, counting the raw clones; the finder reads every clone and
-      // filters them itself, so a clone the filter keeps is the one to fail on, not the launcher's exit
+      // The launcher exits non-zero over `.jscpd.json`'s threshold, counting the raw clones. The finder reads every clone
+      // The finder filters them itself, so the clone to fail on is one the filter keeps, not the launcher's exit
       "--threshold",
       "100",
     ],
