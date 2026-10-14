@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/Esposter/Esposter/compare/v4.1.0...v4.1.1) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** the parked os backend cases are todos, so the lint gate passes ([28f943c](https://github.com/Esposter/Esposter/commit/28f943c5a74782214ffacf3115df730fb6a78b24))
+* **ci:** the parked-case comment's second line starts uppercase, so the lint gate passes ([7dbe153](https://github.com/Esposter/Esposter/commit/7dbe1532873d7319ddc3d09b92518866bebecbcb))
+* the review's findings on hidden spawns, the machine watch claim and the channel's decoding ([67da66e](https://github.com/Esposter/Esposter/commit/67da66eab5f59fd0050711d495a752278875f629))
+
 # [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
 
 ### Bug Fixes

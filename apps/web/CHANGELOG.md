@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/Esposter/Esposter/compare/v4.1.0...v4.1.1) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** release-flow is listed in the docs sidebar's Development group ([e385d55](https://github.com/Esposter/Esposter/commit/e385d5564c46b32e4fc4384eb7b2c7dd3ba701f0))
+* **ci:** the release flow's version step points at monorepo tooling instead of repeating it ([81a74c6](https://github.com/Esposter/Esposter/commit/81a74c6ac9dd8da642e8963b882a88cad93a24c5))
+* **ci:** typecheck:workspace is uncached, since its check writes across apps/web/.nuxt ([1ac7c4a](https://github.com/Esposter/Esposter/commit/1ac7c4a795fc6373a8d3b6a839e30f73b3e4b4af))
+* **genshin-engine:** a per-pixel edge's outline material is its colour's own and goes with it ([6ea2bad](https://github.com/Esposter/Esposter/commit/6ea2bad88e90f84137888fa37995ce1889e06160))
+* **lint:** the five oxlint findings on the invite files, the slash command escape and the checkout guard ([d584961](https://github.com/Esposter/Esposter/commit/d584961e5d25ef6ae9accbc40e057069ff71855c))
+* **review:** a run refuses a checkout it would discard work from ([8d362ba](https://github.com/Esposter/Esposter/commit/8d362ba6ac57a9afe1fa60bfd805746e1555d36c))
+* **review:** the checkout guard names the reset as a delete, and the invite comment reads as one sentence per line ([99029db](https://github.com/Esposter/Esposter/commit/99029db835f4ed6821787e4047178bf9723dc82b))
+* **web:** a blueprint's binding keys read from the match groups, never a positional capture ([f90a61c](https://github.com/Esposter/Esposter/commit/f90a61c6a29253e7cca89f030eed3dd45c04ed3d))
+* **web:** the review's findings on copy, spoilers, invite files, direct message names and blueprint scans ([888e2c0](https://github.com/Esposter/Esposter/commit/888e2c0bbaff03faf932f2b31af3ca93777f834c))
+
+### Performance Improvements
+
+* **cache:** every game data read on a machine goes through one content-addressed cache ([5811b15](https://github.com/Esposter/Esposter/commit/5811b153a619670757202301869b5ee33e7074b6))
+
 # [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
 
 ### Bug Fixes

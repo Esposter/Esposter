@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/Esposter/Esposter/compare/v4.1.0...v4.1.1) (2026-10-14)
+
+### Bug Fixes
+
+* **cache:** the content cache's entry declares its barrel, and the mirror test spreads its keys ([ac3caf8](https://github.com/Esposter/Esposter/commit/ac3caf8a875fde3802d3de8b4123046fd1f05e8b))
+
+### Performance Improvements
+
+* **cache:** every game data read on a machine goes through one content-addressed cache ([5811b15](https://github.com/Esposter/Esposter/commit/5811b153a619670757202301869b5ee33e7074b6))
+
 # [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
 
 ### Bug Fixes

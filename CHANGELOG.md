@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/Esposter/Esposter/compare/v4.1.0...v4.1.1) (2026-10-14)
+
+### Bug Fixes
+
+* **cache:** the content cache's entry declares its barrel, and the mirror test spreads its keys ([ac3caf8](https://github.com/Esposter/Esposter/commit/ac3caf8a875fde3802d3de8b4123046fd1f05e8b))
+* **ci:** release-flow is listed in the docs sidebar's Development group ([e385d55](https://github.com/Esposter/Esposter/commit/e385d5564c46b32e4fc4384eb7b2c7dd3ba701f0))
+* **ci:** the draft release is made with the tag, and publish waits for npm ([a458de6](https://github.com/Esposter/Esposter/commit/a458de6d8c4ba803e132f25f05de96d61f4049c5))
+* **ci:** the package-scripts table row is padded to the formatter's width ([a8b67f3](https://github.com/Esposter/Esposter/commit/a8b67f33dcefe4b44f3495a6fdb3c1e919fff4ab))
+* **ci:** the parked os backend cases are todos, so the lint gate passes ([28f943c](https://github.com/Esposter/Esposter/commit/28f943c5a74782214ffacf3115df730fb6a78b24))
+* **ci:** the parked-case comment's second line starts uppercase, so the lint gate passes ([7dbe153](https://github.com/Esposter/Esposter/commit/7dbe1532873d7319ddc3d09b92518866bebecbcb))
+* **ci:** the release flow's version step points at monorepo tooling instead of repeating it ([81a74c6](https://github.com/Esposter/Esposter/commit/81a74c6ac9dd8da642e8963b882a88cad93a24c5))
+* **ci:** the release installs the packages and scripts, not the default selector ([62337ae](https://github.com/Esposter/Esposter/commit/62337aef1bb415228d97c83ebf00d9443de1a3b4))
+* **ci:** the review-queue citation names its skill, and the release installs the scripts project ([2a35a8f](https://github.com/Esposter/Esposter/commit/2a35a8f236bd773de7333db35141c7b6c830dde9))
+* **ci:** the typecheck comment names its one uncached leaf ([d5f41fe](https://github.com/Esposter/Esposter/commit/d5f41fe085b4ea4b703d8026121fc591f766393d))
+* **ci:** typecheck:workspace is uncached, since its check writes across apps/web/.nuxt ([1ac7c4a](https://github.com/Esposter/Esposter/commit/1ac7c4a795fc6373a8d3b6a839e30f73b3e4b4af))
+* **deps:** grapesjs is pinned to 0.23.6, since 0.23.7 was published without its bundles ([9d6b7db](https://github.com/Esposter/Esposter/commit/9d6b7db7ff2f52916ae83b8efb6de57b83408566))
+* **genshin-engine:** a per-pixel edge's outline material is its colour's own and goes with it ([6ea2bad](https://github.com/Esposter/Esposter/commit/6ea2bad88e90f84137888fa37995ce1889e06160))
+* **genshin-engine:** the shared outline material is declared before the per-pixel edge cache ([c00290a](https://github.com/Esposter/Esposter/commit/c00290a0415d9fab08fe75a40b2574666ae2eb47))
+* **lint:** the five oxlint findings on the invite files, the slash command escape and the checkout guard ([d584961](https://github.com/Esposter/Esposter/commit/d584961e5d25ef6ae9accbc40e057069ff71855c))
+* **machine:** an empty claim is held while fresh, and a claim is never read as process 0 ([5388e79](https://github.com/Esposter/Esposter/commit/5388e79bbc3dae3965cebfa5fcdb60d20f1bf8a5))
+* **review:** a run refuses a checkout it would discard work from ([8d362ba](https://github.com/Esposter/Esposter/commit/8d362ba6ac57a9afe1fa60bfd805746e1555d36c))
+* **review:** the checkout guard names the reset as a delete, and the invite comment reads as one sentence per line ([99029db](https://github.com/Esposter/Esposter/commit/99029db835f4ed6821787e4047178bf9723dc82b))
+* **shared-node:** an undefined options argument to execSync is the options slot, so its window stays hidden ([d23eea3](https://github.com/Esposter/Esposter/commit/d23eea396605cd5bd576790582b64d771f0899ad))
+* the review's findings on hidden spawns, the machine watch claim and the channel's decoding ([67da66e](https://github.com/Esposter/Esposter/commit/67da66eab5f59fd0050711d495a752278875f629))
+* **web:** a blueprint's binding keys read from the match groups, never a positional capture ([f90a61c](https://github.com/Esposter/Esposter/commit/f90a61c6a29253e7cca89f030eed3dd45c04ed3d))
+* **web:** the review's findings on copy, spoilers, invite files, direct message names and blueprint scans ([888e2c0](https://github.com/Esposter/Esposter/commit/888e2c0bbaff03faf932f2b31af3ca93777f834c))
+
+### Features
+
+* **skills:** /settle runs the local settle procedure ([b09cc9b](https://github.com/Esposter/Esposter/commit/b09cc9b77bb53626292cc8c572527843b21a686b))
+
+### Performance Improvements
+
+* **cache:** every game data read on a machine goes through one content-addressed cache ([5811b15](https://github.com/Esposter/Esposter/commit/5811b153a619670757202301869b5ee33e7074b6))
+
+### Reverts
+
+* Revert "docs: the oxlint ignore-patterns page says the nested worktree entry guards legacy worktrees" ([c4fd43d](https://github.com/Esposter/Esposter/commit/c4fd43d0fef3201a6f4ef21b7c9f7a6b450b1108))
+
 # [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
 
 ### Bug Fixes

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/Esposter/Esposter/compare/v4.1.0...v4.1.1) (2026-10-14)
+
+### Bug Fixes
+
+* **lint:** the five oxlint findings on the invite files, the slash command escape and the checkout guard ([d584961](https://github.com/Esposter/Esposter/commit/d584961e5d25ef6ae9accbc40e057069ff71855c))
+* **machine:** an empty claim is held while fresh, and a claim is never read as process 0 ([5388e79](https://github.com/Esposter/Esposter/commit/5388e79bbc3dae3965cebfa5fcdb60d20f1bf8a5))
+* **review:** a run refuses a checkout it would discard work from ([8d362ba](https://github.com/Esposter/Esposter/commit/8d362ba6ac57a9afe1fa60bfd805746e1555d36c))
+* **review:** the checkout guard names the reset as a delete, and the invite comment reads as one sentence per line ([99029db](https://github.com/Esposter/Esposter/commit/99029db835f4ed6821787e4047178bf9723dc82b))
+* the review's findings on hidden spawns, the machine watch claim and the channel's decoding ([67da66e](https://github.com/Esposter/Esposter/commit/67da66eab5f59fd0050711d495a752278875f629))
+
+### Performance Improvements
+
+* **cache:** every game data read on a machine goes through one content-addressed cache ([5811b15](https://github.com/Esposter/Esposter/commit/5811b153a619670757202301869b5ee33e7074b6))
+
 # [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
 
 ### Bug Fixes

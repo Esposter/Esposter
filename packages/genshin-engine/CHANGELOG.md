@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/Esposter/Esposter/compare/v4.1.0...v4.1.1) (2026-10-14)
+
+### Bug Fixes
+
+* **genshin-engine:** a per-pixel edge's outline material is its colour's own and goes with it ([6ea2bad](https://github.com/Esposter/Esposter/commit/6ea2bad88e90f84137888fa37995ce1889e06160))
+* **genshin-engine:** the shared outline material is declared before the per-pixel edge cache ([c00290a](https://github.com/Esposter/Esposter/commit/c00290a0415d9fab08fe75a40b2574666ae2eb47))
+
 # [4.1.0](https://github.com/Esposter/Esposter/compare/v4.0.0...v4.1.0) (2026-10-13)
 
 ### Bug Fixes
