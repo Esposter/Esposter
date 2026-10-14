@@ -122,10 +122,10 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
+      # The default selector, not `./packages/*`: the root's oxlint config loads `scripts/`' plugins, so `pnpm release`'s
+      # lint needs the `scripts` project's dependencies, which a packages-only install leaves out
       - name: 📦 Install the packages and scripts
         uses: ./.github/actions/install-projects
-        with:
-          filter: ./packages/*
 
       - name: 📢 Publish
         run: pnpm release
