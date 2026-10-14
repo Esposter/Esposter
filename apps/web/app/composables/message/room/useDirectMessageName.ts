@@ -10,7 +10,6 @@ export const useDirectMessageName = (room: MaybeRefOrGetter<RoomInMessage | unde
   return computed(() => {
     const roomValue = toValue(room);
     if (!roomValue) return "";
-    // A named room never reads its participants, since the name is what it is called by
-    return getDirectMessageName(roomValue, roomValue.name ? [] : getDirectMessageParticipants(roomValue.id));
+    return getDirectMessageName(roomValue, getDirectMessageParticipants(roomValue.id));
   });
 };
