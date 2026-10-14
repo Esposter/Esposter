@@ -21,4 +21,4 @@ Kuki's kit is its record and one behaviour module, `createKukiKitBehaviour`, on 
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kuki), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's slashes, Grass Ring of Sanctification's frames, ring, ticks and drain, Gyoei Narukami Kariyama Rite's frames and hits, and Ascension 4 and Constellations 1 and 2.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/kuki), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's slashes, Grass Ring of Sanctification's frames, ring, ticks and drain, Gyoei Narukami Kariyama Rite's frames and hits, and Ascension 4 and Constellations 1 and 2.
