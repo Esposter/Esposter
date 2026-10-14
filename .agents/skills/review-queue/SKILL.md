@@ -1,6 +1,6 @@
 ---
 name: review-queue
-description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, each agent's commits made in its own worktree and landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
+description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, a single change committed on a local branch in the main checkout, and a worktree opened only for changes that run concurrently, landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
 ---
 
 # Review Queue
@@ -26,14 +26,14 @@ Every agent works on **one permanent branch, `ai/queue`**, from its own git work
 | `main`       | the review only                         | a fast-forward to the end of the last window that passed                     |
 | other `ai/*` | the one session that owns it            | a plain push                                                                 |
 
-A session never pushes `main`. Its branch in its own worktree is local, named after the worktree, and never pushed under its own name: it only gives the pull a fork point.
+A session never pushes `main`. Its branch is local, named after the change, and never pushed under its own name: it only gives the pull a fork point.
 
 ## The loop
 
-An agent's commits never go through the main checkout. Each agent:
+A single change lands from the main checkout, on a local branch of its own, with no worktree: branch from `origin/ai/queue`, edit, commit by pathspec, and land. The checkout's existing installs serve it, so no install is run. A worktree is opened only when two or more changes must run at once, since each worktree costs a whole install of the packages it touches (`.agents/skills/throughput/references/fleet.md` owns the commands and why). Each agent:
 
-1. **Sets up a worktree on a branch of its own, cut from the queue.** `git worktree add -b <name> .agents/worktrees/<name> origin/ai/queue`. Then in it the agent installs and builds only the packages it will touch, never the whole workspace (`.agents/skills/throughput/references/fleet.md` owns the commands and why). A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
-2. **Commits each coherent unit in the worktree, by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit.
+1. **Cuts a branch of its own from the queue.** `git switch -c <name> origin/ai/queue`, in the main checkout when the change is one. Only for a concurrent change: `git worktree add -b <name> .agents/worktrees/<name> origin/ai/queue`, then the install of the packages it will touch, never the whole workspace. A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
+2. **Commits each coherent unit by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit.
 3. **Lands the commits:**
 
 ```bash
@@ -42,11 +42,11 @@ for attempt in 1 2 3 4; do git pull --rebase origin ai/queue || break; git push 
 
 A rebase conflict stops the loop on the commit it stopped on, and the agent that made the commit settles it (`references/pull-conflicts.md`). Only a rejected push retries.
 
-4. **Removes the worktree** once its commits have landed: `.agents/skills/throughput/scripts/remove-worktree.sh`, which deletes its branch with it.
+4. **Removes the branch, or the worktree, once its commits have landed.** A worktree goes through `.agents/skills/throughput/scripts/remove-worktree.sh`, which deletes its branch with it; a local branch is deleted with `git branch -d`.
 
 **Worktrees live under `.agents/worktrees/`, which is gitignored. Windows needs long paths enabled once (see `apps/web/content/docs/architecture/monorepo-tooling.md`, Windows long paths).**
 
-**The main checkout is not edited by agents.** It only fast-forwards with `git pull --rebase`. Never `reset`, cherry-pick or stash in it.
+**Never `reset` or cherry-pick in the main checkout.** A single change may commit there on its local branch; a concurrent change goes in a worktree instead.
 
 **Never `git stash`, `git add -A`, or a bare `--force-with-lease`.** Commits are pushed plain, and every commit is reviewed, so no commit needs a marker to be treated differently. A commit may take any shape.
 
