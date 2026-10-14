@@ -33,4 +33,4 @@ Arlecchino's kit is its record and one behaviour module, `createArlecchinoKitBeh
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/arlecchino), MIT: the kit's hitmarks and animations, the hitboxes and their offsets, the plunge and burst circles, the poise of the plunges, and the proud group indices behind each multiplier, cost and cooldown.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/arlecchino), MIT: the kit's hitmarks and animations, the hitboxes and their offsets, the plunge and burst circles, the poise of the plunges, and the proud group indices behind each multiplier, cost and cooldown.
