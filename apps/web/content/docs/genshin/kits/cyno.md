@@ -36,5 +36,5 @@ Cyno's kit is its record and one behaviour module, `createCynoKitBehaviour`, on 
 
 ## Sources
 
-- [gcsim (MIT)](https://github.com/genshinsim/gcsim/tree/main/internal/characters/cyno): the strikes' hitmarks, cancel frames and reaches, the charged attack, the plunges' hitmarks, animations and radii, Secret Rite and Mortuary Rite's frames and reaches, the stance's 712 frames, the extensions, Judication, the Ascension 1 and 4 values, and the constellations.
+- [gcsim (MIT)](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/cyno): the strikes' hitmarks, cancel frames and reaches, the charged attack, the plunges' hitmarks, animations and radii, Secret Rite and Mortuary Rite's frames and reaches, the stance's 712 frames, the extensions, Judication, the Ascension 1 and 4 values, and the constellations.
 - The proud skill groups 7131, 7132 and 7139 in the hosted game data: each multiplier's index and the cooldowns, the stance's Elemental Mastery, its duration in seconds, and the burst's cooldown and cost in energy, all at talent level 1.
