@@ -28,4 +28,4 @@ Gaming's kit is its record and one behaviour module, `createGamingKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/gaming), MIT: the kit's four strikes' hitmarks, cancels, poise and reaches, the collision and the low and high plunges' frames, reaches and poise, Bestial Ascent's animation and cooldown, Suanni's Gilded Dance's animation, strike and cooldown, and the multiplier indices of each group.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/gaming), MIT: the kit's four strikes' hitmarks, cancels, poise and reaches, the collision and the low and high plunges' frames, reaches and poise, Bestial Ascent's animation and cooldown, Suanni's Gilded Dance's animation, strike and cooldown, and the multiplier indices of each group.
