@@ -198,7 +198,7 @@ The dev server pre-bundles the imports the world and the login find only as they
 
 Vitest runs on Windows because `apps/web/configuration/modules.ts` gives Nuxt a minimal module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO); loading the full list there crashes the config load on the PWA module's virtual import. If a new test needs an excluded module, add it to the Vitest branch there.
 
-## Windows
+## Windows long paths
 
 Agent worktrees live under `.agents/worktrees/<name>`, inside the repo and gitignored. Windows caps paths at 260 characters unless long paths are enabled, and a worktree's `node_modules` paths exceed that, so enable them once. From an elevated PowerShell run `Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1`, then restart the terminal.
 
