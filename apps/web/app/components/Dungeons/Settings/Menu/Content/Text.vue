@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -9,7 +7,6 @@ import {
 } from "@/services/dungeons/scene/settings/constants";
 import { getSettingsRowY } from "@/services/dungeons/scene/settings/getSettingsRowY";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
@@ -21,18 +18,13 @@ interface Props {
 }
 
 const { columnIndex, rowIndex, text } = defineProps<Props>();
-const controlsStore = useControlsStore();
-const { controls } = storeToRefs(controlsStore);
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
-const onGridClick = useOnGridClick(
-  SettingsOptionGrid,
-  // We shouldn't be able to move to the settings option
-  () => ({ x: columnIndex === 0 ? SettingsOptionGrid.position.value.x : columnIndex, y: rowIndex }),
-  () => {
-    if (SettingsOptionGrid.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
-  },
-);
+// We shouldn't be able to move to the settings option
+const onGridClick = useSettingsOnGridClick(() => ({
+  x: columnIndex === 0 ? SettingsOptionGrid.position.value.x : columnIndex,
+  y: rowIndex,
+}));
 </script>
 
 <template>
