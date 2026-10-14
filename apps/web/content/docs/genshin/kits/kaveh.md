@@ -19,4 +19,4 @@ Not built yet: the Dendro Cores his skill and burst rupture, which strike the en
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/kaveh), MIT: Kaveh's strikes' hitmarks, cancel frames, fans and poise, Artistic Ingenuity and Painted Dome's hitmarks, animations and circles, the plunges' timings and poise, and Painted Dome's burst state's wider strikes.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/kaveh), MIT: Kaveh's strikes' hitmarks, cancel frames, fans and poise, Artistic Ingenuity and Painted Dome's hitmarks, animations and circles, the plunges' timings and poise, and Painted Dome's burst state's wider strikes.
