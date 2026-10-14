@@ -13,6 +13,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 // Source rather than a refused caller, answered alike so it confirms nothing about anyone else's resource
 export const readDataset = async (ctx: AuthedContext, { id, type }: DatasetReference): Promise<Dataset> => {
   const { read, resourceType } = DatasetProviderMap[type];
-  const resource = await requireEntity(readOwnedResource(ctx, id, resourceType), DatabaseEntityType.Resource, id);
+  const ownedResource = readOwnedResource(ctx, id, resourceType);
+  const resource = await requireEntity(ownedResource, DatabaseEntityType.Resource, id);
   return read(ctx.db, resource);
 };
