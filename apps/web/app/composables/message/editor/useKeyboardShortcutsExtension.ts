@@ -1,10 +1,12 @@
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";
 
+import { MessageOperation } from "#shared/models/message/MessageOperation";
+import { MessageOperationPermission } from "#shared/models/message/MessageOperationPermission";
+import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import { MessageType } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { Extension } from "@tiptap/vue-3";
 
@@ -25,7 +27,9 @@ export const useKeyboardShortcutsExtension = async (send: (editor: Editor) => Pr
           if (!userId) return false;
           const lastOwnMessage = items.value.find(
             ({ deletedAt, type, userId: messageUserId }) =>
-              !deletedAt && type === MessageType.Message && messageUserId === userId,
+              !deletedAt &&
+              getMessageOperationPermission(type, MessageOperation.Update) === MessageOperationPermission.Author &&
+              messageUserId === userId,
           );
           if (!lastOwnMessage) return false;
           editingRowKey.value = lastOwnMessage.rowKey;
