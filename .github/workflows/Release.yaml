@@ -124,8 +124,12 @@ jobs:
 
       # The default selector, not `./packages/*`: the root's oxlint config loads `scripts/`' plugins, so `pnpm release`'s
       # lint needs the `scripts` project's dependencies, which a packages-only install leaves out
+      # `scripts` too, not only the packages: the root's oxlint config loads its plugins, so `pnpm release`'s lint
+      # needs the `scripts` project's dependencies, which a packages-only install leaves out
       - name: 📦 Install the packages and scripts
         uses: ./.github/actions/install-projects
+        with:
+          filter: ./{packages/*,scripts}
 
       - name: 📢 Publish
         run: pnpm release
