@@ -21,4 +21,4 @@ Sayu's kit is its record and one behaviour module, `createSayuKitBehaviour`, on 
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/sayu), MIT: Sayu's strikes' hitmarks, reaches, cancel frames and poise, the Windwheel's DoT and kick circles and frames, the roll's ticks and the short hold, and Mujina Flurry's initial hit, Muji-Muji Daruma's ticks and their frames.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/sayu), MIT: Sayu's strikes' hitmarks, reaches, cancel frames and poise, the Windwheel's DoT and kick circles and frames, the roll's ticks and the short hold, and Mujina Flurry's initial hit, Muji-Muji Daruma's ticks and their frames.
