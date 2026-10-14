@@ -8,11 +8,11 @@ import { createAvatarTexture } from "#src/services/character/avatar/createAvatar
 import { createCharacterAvatar } from "#src/services/character/avatar/createCharacterAvatar";
 import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "#src/services/scene/constants";
-import { fetchJson } from "#src/services/shared/fetchJson";
+import { readJson } from "#src/services/shared/readJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One file of a component as the host serves it, rejected when its fetch fails or does not answer in time
-const fetchFile = async (url: string): Promise<Response> => {
+const readFileResponse = async (url: string): Promise<Response> => {
   const response = await fetch(url, { signal: AbortSignal.timeout(DATA_FETCH_TIMEOUT_MS) });
   if (!response.ok)
     throw new InvalidOperationError(Operation.Read, url, `HTTP ${response.status} ${response.statusText}`);
@@ -27,9 +27,9 @@ export const readCharacterAvatar = async (
   options: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,
 ): Promise<CharacterAvatar> => {
   const readBinary = async (): Promise<ArrayBuffer> =>
-    (await fetchFile(`${componentUrl}/${AVATAR_BINARY_FILE_NAME}`)).arrayBuffer();
+    (await readFileResponse(`${componentUrl}/${AVATAR_BINARY_FILE_NAME}`)).arrayBuffer();
   const [manifest, buffer] = await Promise.all([
-    fetchJson(`${componentUrl}/${AVATAR_MANIFEST_FILE_NAME}`) as Promise<AvatarManifest>,
+    readJson(`${componentUrl}/${AVATAR_MANIFEST_FILE_NAME}`) as Promise<AvatarManifest>,
     readBinary(),
   ]);
   const drawnMaterials = new Set(manifest.meshes.flatMap(({ submeshes }) => submeshes.map(({ material }) => material)));
@@ -47,7 +47,7 @@ export const readCharacterAvatar = async (
   }
   const textureFileEntries = await Promise.all(
     Array.from(textureFiles, async (file): Promise<[string, Texture]> => {
-      const blob = await (await fetchFile(`${componentUrl}/${AVATAR_TEXTURE_FOLDER}/${file}`)).blob();
+      const blob = await (await readFileResponse(`${componentUrl}/${AVATAR_TEXTURE_FOLDER}/${file}`)).blob();
       return [file, await createAvatarTexture(blob, colourFiles.has(file))];
     }),
   );

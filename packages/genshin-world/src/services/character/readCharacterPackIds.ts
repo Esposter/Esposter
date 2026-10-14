@@ -1,5 +1,5 @@
 import { CHARACTER_PACK_INDEX_PATH } from "#src/services/character/constants";
-import { fetchJson } from "#src/services/shared/fetchJson";
+import { readJson } from "#src/services/shared/readJson";
 import { createUniqueArraySchema, getResultAsync } from "@esposter/shared";
 import { z } from "zod";
 
@@ -8,6 +8,6 @@ import { z } from "zod";
 export const readCharacterPackIds = (characterPackBaseUrl: string): ReturnType<typeof getResultAsync<number[]>> =>
   getResultAsync(async () =>
     createUniqueArraySchema(z.int().positive()).parse(
-      await fetchJson(`${characterPackBaseUrl}/${CHARACTER_PACK_INDEX_PATH}`),
+      await readJson(`${characterPackBaseUrl}/${CHARACTER_PACK_INDEX_PATH}`),
     ),
   );

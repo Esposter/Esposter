@@ -1,5 +1,5 @@
 import { SCENE_EXPORT_INDEX_PATH } from "#src/services/scene/constants";
-import { fetchJson } from "#src/services/shared/fetchJson";
+import { readJson } from "#src/services/shared/readJson";
 import { createUniqueArraySchema, getResultAsync } from "@esposter/shared";
 import { z } from "zod";
 
@@ -8,6 +8,6 @@ import { z } from "zod";
 export const readSceneExportComponents = (sceneExportBaseUrl: string): ReturnType<typeof getResultAsync<string[]>> =>
   getResultAsync(async () =>
     createUniqueArraySchema(z.string().min(1)).parse(
-      await fetchJson(`${sceneExportBaseUrl}/${SCENE_EXPORT_INDEX_PATH}`),
+      await readJson(`${sceneExportBaseUrl}/${SCENE_EXPORT_INDEX_PATH}`),
     ),
   );
