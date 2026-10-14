@@ -34,4 +34,4 @@ gcsim sources: her attack, charge, skill and burst files, with the table data in
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/columbina), MIT: her strikes' hitmarks and cancels, the charged attack's hit and animation, the skill's press and DoT and their timing, the burst's hit and animation, and her table data file.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/columbina), MIT: her strikes' hitmarks and cancels, the charged attack's hit and animation, the skill's press and DoT and their timing, the burst's hit and animation, and her table data file.
