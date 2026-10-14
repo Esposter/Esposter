@@ -1,5 +1,5 @@
 import { claimMachineWatch } from "#src/services/machine/claimMachineWatch";
-import { MACHINE_LOCK_PATH } from "#src/services/machine/constants";
+import { MACHINE_LOCK_PATH, MACHINE_LOCK_TAKEOVER_PATH } from "#src/services/machine/constants";
 import { releaseMachineWatch } from "#src/services/machine/releaseMachineWatch";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -54,6 +54,17 @@ describe(claimMachineWatch, () => {
 
     expect(claimMachineWatch()).toBe(true);
     expect(readFileSync(MACHINE_LOCK_PATH, "utf8")).toBe(OWN_PROCESS_ID);
+  });
+
+  test("leaves a takeover lock another live process holds in place", () => {
+    expect.hasAssertions();
+
+    writeFileSync(MACHINE_LOCK_PATH, `${DEAD_PROCESS_ID}`);
+    writeFileSync(MACHINE_LOCK_TAKEOVER_PATH, `${OTHER_PROCESS_ID}`);
+
+    expect(claimMachineWatch()).toBe(false);
+    expect(readFileSync(MACHINE_LOCK_TAKEOVER_PATH, "utf8")).toBe(`${OTHER_PROCESS_ID}`);
+    expect(readFileSync(MACHINE_LOCK_PATH, "utf8")).toBe(`${DEAD_PROCESS_ID}`);
   });
 
   test("releases only a claim this process holds", () => {

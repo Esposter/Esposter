@@ -53,9 +53,11 @@ const writeEnded = (response: ServerResponse, statusCode: number) => {
 };
 
 const handleSay = (request: IncomingMessage, response: ServerResponse) => {
+  // Decoded as the stream arrives, so a character split across two chunks is joined rather than read as two bad bytes
+  request.setEncoding("utf8");
   let body = "";
-  request.on("data", (chunk: Buffer) => {
-    body += chunk.toString();
+  request.on("data", (chunk: string) => {
+    body += chunk;
   });
   request.on("end", () => {
     const line = readChannelLine(body);

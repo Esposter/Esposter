@@ -31,6 +31,14 @@ describe(spawn, () => {
     expect(nodeFunction).toHaveBeenCalledExactlyOnceWith(file, args, { cwd: file, windowsHide: true });
   });
 
+  test("keeps the caller's options when the args slot is passed as undefined", () => {
+    expect.hasAssertions();
+
+    spawn(file, undefined, { cwd: file });
+
+    expect(nodeFunction).toHaveBeenCalledExactlyOnceWith(file, undefined, { cwd: file, windowsHide: true });
+  });
+
   test("a caller cannot re-show the window by passing windowsHide false", () => {
     expect.hasAssertions();
 

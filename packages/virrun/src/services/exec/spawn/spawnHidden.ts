@@ -4,7 +4,7 @@ import { spawnResolved } from "#src/services/exec/spawn/spawnResolved";
 import { spawn } from "@esposter/shared-node/child-process";
 
 // Spawn every virrun child through here: the `.cmd` resolution below is virrun's own, and the window hiding is the shared
-// `@esposter/shared-node/child-process` wrapper's, which every spawn in the repo goes through.
+// `@esposter/shared-node/child-process` wrapper's, which every virrun spawn goes through.
 //
 // An argv goes through spawnResolved, because on win32 a `.cmd` shim — pnpm, npx, every `node_modules/.bin` entry — is
 // Otherwise unreachable without a shell: a direct spawn resolves only an `.exe` on PATH, and node refuses a batch file
