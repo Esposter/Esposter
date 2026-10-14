@@ -186,8 +186,11 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm --filter "{.}" i --ignore-scripts
 
+      # Like the checks below, a hit restores nothing: the replay is the verdict that this exact tree already formatted
       - name: 📝 Format
-        run: pnpm format:check
+        uses: ./.github/actions/run-cached-task
+        with:
+          task: format:check
 
   # Each entry's `name` is the check context the branch ruleset requires
   # (`apps/infra/src/github/rulesets/queueStatusChecks.ts`)

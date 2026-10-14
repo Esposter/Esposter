@@ -148,14 +148,17 @@ const configuration: UserConfig = defineConfig({
         cwd: `${PACKAGES_DIRECTORY}/genshin-world`,
         dependsOn: [getBuildTaskName("genshin-world")],
       },
-      // The aggregates over their leaves, which are package.json scripts. `dependsOn` runs every leaf even after one
-      // Fails, where `&&` stops at the first, so a red check never hides the rest. The leaves are uncached, so an
-      // Aggregate with no inputs of its own would replay a verdict no check produced: each runs every time
+      // The checks are cached leaves, each traced like a build: a tree no leaf's reads changed in replays its verdict.
+      // The aggregates over them are uncached, so an aggregate with no inputs of its own never replays a verdict no
+      // Leaf produced. `dependsOn` runs every leaf even after one fails, where `&&` stops at the first, so a red check
+      // Never hides the rest
+      "format:check": createTask("vp fmt --check", []),
       lint: {
         cache: false,
         command: 'echo "every lint check ran"',
         dependsOn: ["lint:oxlint", "lint:eslint", "lint:workspace", "lint:unused", "lint:workflows"],
       },
+      "lint:eslint": createTask("eslint .", []),
       // The fixers write the same files, so they run in order: `&&` rather than `dependsOn`, which runs in parallel
       "lint:fix": {
         cache: false,
@@ -165,16 +168,32 @@ const configuration: UserConfig = defineConfig({
         cache: false,
         command: "vp run lint:fix:packages:oxlint && vp run lint:fix:packages:workspace",
       },
+      "lint:oxlint": createTask("vp lint --debug=timings --format=default --disable-nested-config", []),
       "lint:packages": {
         cache: false,
         command: 'echo "every packages lint check ran"',
         dependsOn: ["lint:packages:oxlint", "lint:packages:workspace"],
       },
+      "lint:packages:oxlint": createTask(
+        "vp lint --debug=timings --format=default --disable-nested-config packages",
+        [],
+      ),
+      "lint:packages:workspace": createTask('pnpm -r --filter "./packages/*" --parallel lint', []),
+      "lint:unused": createTask("knip", []),
+      "lint:workflows": createTask("actionlint -shellcheck= -pyflakes=", []),
+      "lint:workspace": createTask("pnpm -r --parallel lint", []),
       typecheck: {
         cache: false,
         command: 'echo "every typecheck ran"',
         dependsOn: ["typecheck:root", "typecheck:workspace"],
       },
+      // The packages' types are read from the `dist` the build writes, so the build is ordered first
+      "typecheck:packages": {
+        ...createTask('pnpm -r --filter "./packages/*" --parallel typecheck', []),
+        dependsOn: ["build:packages"],
+      },
+      "typecheck:root": createTask("tsc", []),
+      "typecheck:workspace": createTask("pnpm -r --parallel typecheck", []),
     },
   },
 });

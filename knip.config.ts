@@ -2,10 +2,14 @@ import type { KnipConfig } from "knip";
 
 const knipConfiguration: KnipConfig = {
   exclude: ["types"],
-  ignoreBinaries: ["lint", "pwsh", "typecheck"],
+  ignoreBinaries: ["pwsh"],
   ignoreExportsUsedInFile: true,
   workspaces: {
-    ".": { entry: ["virrun.config.ts"], ignoreDependencies: ["@esposter/shared-node", "@lerna-lite/publish"] },
+    ".": {
+      entry: ["virrun.config.ts"],
+      // The `lint:workflows` task in `vite.config.ts` runs this package's binary, which no script names
+      ignoreDependencies: ["@esposter/shared-node", "@kjanat/actionlint", "@lerna-lite/publish"],
+    },
     "apps/functions": { entry: ["src/**/*.ts"] },
     "apps/infra": { entry: ["src/**/*.ts"] },
     "apps/web": {

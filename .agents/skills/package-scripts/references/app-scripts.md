@@ -21,7 +21,7 @@ strictly less than CI does and reports success while CI fails: the app's real pr
 the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's ("Running lint").
 
 **A root check is an aggregate over named leaves through `dependsOn`, never a `&&` chain.** `lint`, `lint:packages` and
-`typecheck` each run over one script per tool, so every tool reports and the aggregate still exits non-zero — where
+`typecheck` each run over one leaf task per tool, so every tool reports and the aggregate still exits non-zero — where
 `&&` stopped at the first, and every failure behind it cost another full round of fix-and-rerun. `&&` is for a step
 that needs the one before it to have _succeeded_, which is a build consuming what an earlier build produced; ordering
 alone is not that reason. `lint:fix` and `lint:fix:packages` are the two `&&` chains, because their fixers write the
