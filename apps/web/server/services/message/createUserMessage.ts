@@ -47,8 +47,10 @@ export const createUserMessage = async (
     return messageCreationRejection;
   });
   await rejectMessageCreation(db, user.id, input.roomId, rejection);
-  const messageClient = await useTableClient(AzureTable.Messages);
-  const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+  const [messageClient, messageAscendingClient] = await Promise.all([
+    useTableClient(AzureTable.Messages),
+    useTableClient(AzureTable.MessagesAscending),
+  ]);
   const newMessageEntity = await createMessage(messageClient, messageAscendingClient, { ...input, userId: user.id });
   messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
   // Best-effort after the Table write — a failed increment loses one badge count, never a message.

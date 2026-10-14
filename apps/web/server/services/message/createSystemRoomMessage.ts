@@ -19,8 +19,10 @@ export const createSystemRoomMessage = (
   { replyRowKey = "", type = MessageType.System }: Partial<Pick<StandardMessageEntity, "replyRowKey" | "type">> = {},
 ) =>
   getResultAsync(async () => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+    const [messageClient, messageAscendingClient] = await Promise.all([
+      useTableClient(AzureTable.Messages),
+      useTableClient(AzureTable.MessagesAscending),
+    ]);
     const systemMessage = await createMessage(messageClient, messageAscendingClient, {
       message,
       replyRowKey,
