@@ -1,6 +1,6 @@
 {
   "name": "@esposter/scripts",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "private": true,
   "description": "The repository's own tooling: the workspace dependency graph, the outdated-dependency report, the custom oxlint plugins, the sweep scans and the cross-platform launcher.",
   "keywords": [

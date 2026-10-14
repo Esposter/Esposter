@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/Esposter/Esposter/compare/v4.1.1...v4.1.2) (2026-10-14)
+
+### Bug Fixes
+
+* **ci:** the navigation test's comment opens each line on a capital, so the lint gate passes ([082d019](https://github.com/Esposter/Esposter/commit/082d0194aa0c382ba7dce02121a9c7367abcf9fb))
+* the virrun removal's leftovers in docs, a joined proposals line, and a navigation test that lost its ordering check ([f70a730](https://github.com/Esposter/Esposter/commit/f70a730d2bb186bc09eadbeac9140802cdce1aa0))
+
 ## [4.1.1](https://github.com/Esposter/Esposter/compare/v4.1.0...v4.1.1) (2026-10-14)
 
 ### Bug Fixes
