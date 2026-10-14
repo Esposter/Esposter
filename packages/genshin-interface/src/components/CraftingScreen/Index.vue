@@ -65,9 +65,7 @@ const emit = defineEmits<{ close: []; craft: [] }>();
        place from the game's layout, not a two-column grid, since its recipe list is narrower than its detail -->
   <div class="crafting-screen">
     <header class="head">
-      <div class="heading">
-        <ScreenTitle role="heading" aria-level="1">{{ title }}</ScreenTitle>
-      </div>
+      <ScreenTitle class="heading" role="heading" aria-level="1">{{ title }}</ScreenTitle>
       <p class="coins">
         <span class="coin" aria-hidden="true" />
         {{ coins }}
