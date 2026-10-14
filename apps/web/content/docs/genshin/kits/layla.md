@@ -19,5 +19,5 @@ Layla's kit is its record and one behaviour module, `createLaylaKitBehaviour`, o
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/layla), MIT: Layla's strikes' hitmarks, cancel frames and reaches, the charged attack's slashes, Nights of Formal Focus's hit, frames and shield, and Starlight Slug's field, its ticks, release and travel.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/layla), MIT: Layla's strikes' hitmarks, cancel frames and reaches, the charged attack's slashes, Nights of Formal Focus's hit, frames and shield, and Starlight Slug's field, its ticks, release and travel.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Layla's own folder has none.
