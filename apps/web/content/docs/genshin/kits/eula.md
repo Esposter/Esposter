@@ -20,4 +20,4 @@ Eula's kit is its record and one behaviour module, `createEulaKitBehaviour`, ava
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/eula), MIT: the kit's hitmarks, cancel frames and areas, poise, Icetide Vortex's press and hold frames, hits and cooldowns, its Icewhirls and shred, Grimheart's stacks and ICD, Glacial Illumination's frames, Lightfall Sword timings and stack gains, and Constellations 1, 4 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/eula), MIT: the kit's hitmarks, cancel frames and areas, poise, Icetide Vortex's press and hold frames, hits and cooldowns, its Icewhirls and shred, Grimheart's stacks and ICD, Glacial Illumination's frames, Lightfall Sword timings and stack gains, and Constellations 1, 4 and 6.
