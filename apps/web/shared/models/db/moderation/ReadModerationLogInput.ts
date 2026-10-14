@@ -8,9 +8,10 @@ export const readModerationLogInputSchema = z.object({
   ...createCursorPaginationParamsSchema(moderationLogEntitySchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM]).omit({
     sortBy: true,
   }).shape,
-  // "" = unfiltered — the client's empty-string sentinel propagates end-to-end, and the server truthiness-guards
-  // Each field rather than treating the sentinel as a value to match on
-  ...moderationLogEntitySchema.pick({ actorUserId: true, targetUserId: true }).shape,
-  type: moderationLogEntitySchema.shape.type.or(z.literal("")),
+  // "" = unfiltered — the client sends it for a filter it has not set, and it is read as absent here, so the router
+  // tests each filter for presence and never matches on the sentinel itself
+  actorUserId: moderationLogEntitySchema.shape.actorUserId.or(z.literal("")).transform((value) => value || undefined),
+  targetUserId: moderationLogEntitySchema.shape.targetUserId.or(z.literal("")).transform((value) => value || undefined),
+  type: moderationLogEntitySchema.shape.type.or(z.literal("")).transform((value) => value || undefined),
 });
 export type ReadModerationLogInput = z.infer<typeof readModerationLogInputSchema>;
