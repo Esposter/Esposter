@@ -20,4 +20,4 @@ Yanfei's kit is its record and one behaviour module, `createYanfeiKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yanfei), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's animation, hit and radii by seal count, the plunges' and collision's circles, Signed Edict's hit and cooldown, Done Deal's hit, seals and bonus, Ascension 1's Pyro DMG Bonus, and Constellations 1 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yanfei), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's animation, hit and radii by seal count, the plunges' and collision's circles, Signed Edict's hit and cooldown, Done Deal's hit, seals and bonus, Ascension 1's Pyro DMG Bonus, and Constellations 1 and 6.
