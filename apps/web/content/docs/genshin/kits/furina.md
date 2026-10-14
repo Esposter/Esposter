@@ -35,5 +35,5 @@ Gcsim gives her strikes, charged attack and the Salon's hits no poise, so each d
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/furina), MIT: her strikes' hitmarks, cancel frames and reaches, the Arkhe hits and their cooldowns, the charged attack and its turn of her Arkhe, the plunges' frames, reaches and poise, Salon Solitaire's bubble, members, schedules, drain and Singer, the burst's hit and Fanfare with its debounce, Endless Waltz, Ascension 4 and the constellations; `pkg/core/attacks/icd_groups.dm.go`, the Salon's internal cooldown group.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina), MIT: her strikes' hitmarks, cancel frames and reaches, the Arkhe hits and their cooldowns, the charged attack and its turn of her Arkhe, the plunges' frames, reaches and poise, Salon Solitaire's bubble, members, schedules, drain and Singer, the burst's hit and Fanfare with its debounce, Endless Waltz, Ascension 4 and the constellations; `pkg/core/attacks/icd_groups.dm.go`, the Salon's internal cooldown group.
 - The proud skill groups 8931, 8932 and 8939 in the hosted game data: each multiplier's index, the drains' and heal's shares, the Arkhe hits' and skill's cooldowns, the Fanfare's share of HP, most and bonuses, and the burst's cooldown and energy cost, read at talent level 1.
