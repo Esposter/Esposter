@@ -14,7 +14,7 @@ gcsim sources: `nicole/attack.go`, `charge.go`, `skill.go` and `burst.go`, with 
 ## Decisions
 
 - **The burst's hit is priced round the targeting zone.** Her burst is a circle of 6.5 metres on her primary target, which an area holds as the targeting zone's radius plus its own, 21.5 metres, as `TargetCentred`.
-- **The skill's hit is a circle of 5 metres round her body**, recorded by hand, as its hitbox has no name in gcsim's press list.
+- **The skill's hit is a circle of 5 metres round her body**, recorded by hand, as its hitbox has no name in gcsim's press list, and Nicole's overlay is empty, so it names no cause for it.
 
 ## Not built
 
@@ -26,7 +26,7 @@ gcsim sources: `nicole/attack.go`, `charge.go`, `skill.go` and `burst.go`, with 
 | File                                                              | Role                                                                                       |
 | :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module; it reads her record and adds no behaviour yet |
-| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: the areas gcsim leaves unnamed                                           |
+| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: empty, so her hitboxes name no cause                                     |
 
 ## Sources
 

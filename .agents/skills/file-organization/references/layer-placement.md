@@ -13,11 +13,12 @@ sit on it.
 Factory functions, command creators, and other exported functions.
 
 **Exception: the nullary factory that hands a model its own field default stays beside the type it constructs** —
-`getInitialWorld` in `World.ts`, read only by `Save`'s `world = getInitialWorld()`. Where the type is derived from
-the value — `type Settings = typeof InitialSettings` — there is nowhere else for it to go, since the model would
-have to import a service to describe its own shape; where it is not, splitting the pair separates a default from the
-type it belongs to for no reader's benefit. A default factory that takes an argument, branches, or is read by
-anything but its own model is an ordinary service function (`createDefaultSheetSettings`).
+where the type is derived from the value — `type Settings = typeof InitialSettings` — there is nowhere else for it to go,
+since the model would have to import a service to describe its own shape; where it is not, splitting the pair separates
+a default from the type it belongs to for no reader's benefit. `getInitialWorld` is not one of these: it is read by
+`Save`, not `World`'s own model, so it is an ordinary service at `apps/web/shared/services/dungeons/world/getInitialWorld.ts`,
+outside `World.ts`. A default factory that takes an argument, branches, or is read by anything but its own model is an
+ordinary service function (`createDefaultSheetSettings`).
 
 **External library extensions go in `services/`** — helpers that extend or wrap third-party libraries
 (`services/<lib>/doThing.ts`), not `util/`. A helper over a language global rather than a library is a `util/` one

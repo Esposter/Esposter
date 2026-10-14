@@ -13,7 +13,7 @@ gcsim sources: `prune/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 
 ## Decisions
 
-- **The skill and burst's hitboxes are circles by hand.** The skill's press is a circle of 2.5 metres offset 1.4 metres ahead, priced at 3.9 metres, and the burst's initial hit is a circle of 6.5 metres. gcsim names neither in a form the builder matches, so each is recorded by hand.
+- **The skill and burst's hitboxes are circles by hand.** The skill's press is a circle of 2.5 metres offset 1.4 metres ahead, priced at 3.9 metres, and the burst's initial hit is a circle of 6.5 metres. gcsim names neither in a form the builder matches, so each is recorded by hand, and Prune's overlay names no cause for either.
 
 ## Not built
 
