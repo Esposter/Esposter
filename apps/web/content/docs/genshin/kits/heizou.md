@@ -22,4 +22,4 @@ The burst lands an aura check just before its hit, with no damage, element or po
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/heizou), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's frames and box, the plunges' frames and circles, Heartstopper Strike's hit, box and frames, its full hold's 180 frames and Declension and Conviction bonuses, Fudou Style Vacuum Slugger's circle and hitmark, Windmuster Iris's aura check, its four tags, the order it takes an aura in, its 40-frame delay and its circle, and the Durability of every hit.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/heizou), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's frames and box, the plunges' frames and circles, Heartstopper Strike's hit, box and frames, its full hold's 180 frames and Declension and Conviction bonuses, Fudou Style Vacuum Slugger's circle and hitmark, Windmuster Iris's aura check, its four tags, the order it takes an aura in, its 40-frame delay and its circle, and the Durability of every hit.
