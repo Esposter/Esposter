@@ -55,11 +55,10 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   }
 
   getPosition(value: GridValue<TGrid>): Position | undefined {
-    for (let y = 0; y < this.rowSize; y++)
-      for (let x = 0; x < this.getColumnSize(y); x++) {
-        const position: Position = { x, y };
-        if (this.getValue(position) === value) return position;
-      }
+    for (let y = 0; y < this.rowSize; y++) {
+      const x = this.getPositionX(value, y);
+      if (x !== undefined) return { x, y };
+    }
 
     return undefined;
   }
