@@ -40,7 +40,7 @@ packages/agent-console-server/src/services/drivers/terminalMirror/
 ## Notes
 
 - The SDK driver costs nothing only while SDK use stays inside the subscription. That is re-read at every Claude Code billing change, and if it moves, this driver keeps the console free at the price of the controls a channel cannot reach.
-- **Blocked on the channel.** The prompt and verdict path is the [chat channel](/docs/proposals/infra/channel-chat), which is unbuilt: `packages/genshin-persona` has no `.mcp.json` and no channel server, so there is no seam to write a prompt into. The driver is built after that proposal ships, and no read-only tail is built ahead of it: the transcript tail and the channel are one driver, since the prompt and verdict path is the channel server itself.
+- **Blocked on the channel's permission relay.** The prompt and verdict path is the [chat channel](/docs/proposals/infra/channel-chat): its server (`packages/genshin-persona/scripts/channel.ts`, declared by `packages/genshin-persona/.mcp.json`) is built and already takes typed prompts into a session, so the seam exists. Its verdicts wait on the permission relay, which that proposal still lists as unbuilt. The driver is built after that relay ships, and no read-only tail is built ahead of it: the transcript tail and the channel are one driver, since the prompt and verdict path is the channel server itself.
 - **A channel reaches only a session launched with it.** A session a terminal started without the [channel flag](/docs/proposals/infra/channel-chat) is out of this driver's reach, and the read-only tail is not a way round that.
 
 ## Sources

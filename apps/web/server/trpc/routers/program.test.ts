@@ -51,10 +51,10 @@ const readStoredParticipants = async (programId: string) => {
   });
 };
 
-// The program-specific participant issuance and status join.
 const sortByKeyValue = <T extends { keyValue: string }>(items: T[]) =>
   items.toSorted((firstItem, secondItem) => firstItem.keyValue.localeCompare(secondItem.keyValue));
 
+// The program-specific participant issuance and status join.
 describe("programRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(programRouter);
   let mockContext: Context;
