@@ -4,6 +4,19 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { getCharacterScreenPlate } from "#src/services/genshinParity/shared/getCharacterScreenPlate";
 
+// The two settings entries are scored from the same recording, against the same mean-difference bar, over a backdrop
+const MENU_SETTINGS_REFERENCE = {
+  approval: { bar: 2, measure: ParityApprovalMeasure.MeanDifference },
+  capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
+  isBackdrop: true,
+};
+// The settings backdrop's header rows and the first two rows of its menu, which both entries draw over the same place
+const MENU_SETTINGS_TOP_PLATE = [
+  { height: 112, width: 1920, x: 0, y: 0 },
+  { height: 44, width: 186, x: 108, y: 130 },
+  { height: 50, width: 254, x: 108, y: 200 },
+];
+
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
@@ -724,13 +737,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Approved by its mean difference as the Graphics tab is: with the rows' rims and shadow drawn, what FLIP still sees is
   // The game's typeface, which Signika stands in for along every label's edge
   "settings-audio-rows": {
-    approval: { bar: 2, measure: ParityApprovalMeasure.MeanDifference },
-    capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
-    isBackdrop: true,
+    ...MENU_SETTINGS_REFERENCE,
     plate: [
-      { height: 112, width: 1920, x: 0, y: 0 },
-      { height: 44, width: 186, x: 108, y: 130 },
-      { height: 50, width: 254, x: 108, y: 200 },
+      ...MENU_SETTINGS_TOP_PLATE,
       { height: 52, width: 190, x: 108, y: 270 },
       { height: 62, width: 350, x: 100, y: 332 },
       { height: 48, width: 197, x: 108, y: 410 },
@@ -768,13 +777,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Tab's words, the two headings, the twelve rows in sight and the scroll bar are filled from the blurred world around
   // Them, which the page draws them over, so only what the page draws can differ
   "settings-graphics-rows": {
-    approval: { bar: 2, measure: ParityApprovalMeasure.MeanDifference },
-    capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
-    isBackdrop: true,
+    ...MENU_SETTINGS_REFERENCE,
     plate: [
-      { height: 112, width: 1920, x: 0, y: 0 },
-      { height: 44, width: 186, x: 108, y: 130 },
-      { height: 50, width: 254, x: 108, y: 200 },
+      ...MENU_SETTINGS_TOP_PLATE,
       { height: 62, width: 350, x: 100, y: 262 },
       { height: 44, width: 136, x: 108, y: 339 },
       { height: 48, width: 197, x: 108, y: 410 },
