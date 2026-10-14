@@ -10,6 +10,14 @@ describe(getDataRowLines, () => {
     );
   });
 
+  test("reads a one-line object of numeric fields as a data row", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  { height: 44, width: 186, x: 108, y: 130 },\n  const a = makeItem();")).toStrictEqual(
+      new Set([1]),
+    );
+  });
+
   test("reads the header of a record of primitives and the brackets framing a row block as data", () => {
     expect.hasAssertions();
 
