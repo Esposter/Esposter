@@ -48,4 +48,16 @@ describe(readContentAddressedObject, () => {
     );
     expect(existsSync(join(directory, hash))).toBe(false);
   });
+
+  // A name climbing out of the directory would read a file outside the cache, so it is refused before any read
+  test("refuses a name that climbs out of the directory", async () => {
+    expect.hasAssertions();
+
+    const download = vi.fn<() => Promise<Uint8Array>>();
+
+    await expect(readContentAddressedObject("../x", download, directory)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: ../x, is not a SHA-256 hex digest]`,
+    );
+    expect(download).not.toHaveBeenCalled();
+  });
 });
