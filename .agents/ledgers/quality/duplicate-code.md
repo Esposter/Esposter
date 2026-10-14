@@ -18,26 +18,100 @@ Where a finding's home looked missing, it is settled:
 - **Declarations and component preamble:** a clone made only of imports, interface and type bodies, `defineProps`, `defineEmits` and `defineModel` calls, or bare composable bindings is each file's own list of what it holds, not logic. The finder skips it.
 - **Enum-keyed record rows:** a clone made only of the rows of a `Record` keyed by an enum is data a table holds. The finder skips it.
 
-| Unit                                                             | Swept                  | Notes                                                                   |
-| ---------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets`                             | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `packages/genshin-world`                                         | 2026-10-12 · Opus 5.5  | the rest of the package; `src/services/kit/characters` is its own row   |
-| `packages/genshin-world/src/services/kit/characters`             | 2026-10-12 · Opus 5.5  |                                                                         |
-| `packages`                                                       | 2026-10-11 · Haiku 5.5 | the light packages not named above                                      |
-| `apps/web/app`                                                   | —                      | the rest of the app, excluding the rows above                           |
-| `scripts/src/services/genshinParity`                             | 2026-10-14 · Haiku 5.5 |                                                                         |
-| `packages/vue-phaserjs`                                          | —                      |                                                                         |
-| `apps/web/shared/assets/clicker/data/upgrades`                   | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `apps/web/app/components/Message`                                | 2026-10-14 · Haiku 5.5 |                                                                         |
-| `apps/infra`                                                     | 2026-10-11 · Haiku 5.5 | the rest of the infrastructure, excluding the Azure resource rows above |
-| `packages/genshin-engine`                                        | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `packages/db-schema`                                             | —                      |                                                                         |
-| `apps/web/server/trpc/routers`                                   | 2026-10-14 · Haiku 5.5 |                                                                         |
-| `packages/agent-console-server`                                  | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `apps/web/app/services/dungeons`                                 | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `apps/web/app/models/resource`, `apps/web/app/services/resource` | —                      |                                                                         |
-| `packages/shared`                                                | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `scripts/src`                                                    | 2026-10-14 · Haiku 5.5 | the rest of the tooling, excluding the rows above                       |
-| `apps/web/shared`                                                | —                      | the rest of the shared tree, excluding the clicker upgrades row above   |
-| `apps/web/server`                                                | —                      | the rest of the server, excluding the router row above                  |
-| `apps/functions/src`                                             | 2026-10-11 · Haiku 5.5 | no finding today; the row stays so a copy that lands there is read      |
+| Unit                                                 | Swept | Notes                              |
+| :--------------------------------------------------- | :---- | :--------------------------------- |
+| `apps/functions`                                     | —     |                                    |
+| `apps/infra`                                         | —     |                                    |
+| `apps/web/app`                                       | —     | the rest, excluding the rows above |
+| `apps/web/app/components`                            | —     | the rest, excluding the rows above |
+| `apps/web/app/components/AgentConsole`               | —     |                                    |
+| `apps/web/app/components/App`                        | —     |                                    |
+| `apps/web/app/components/Dungeons`                   | —     |                                    |
+| `apps/web/app/components/Message`                    | —     | the rest, excluding the rows above |
+| `apps/web/app/components/Message/Content`            | —     |                                    |
+| `apps/web/app/components/Message/Model`              | —     |                                    |
+| `apps/web/app/components/Resource`                   | —     |                                    |
+| `apps/web/app/components/Styled`                     | —     |                                    |
+| `apps/web/app/components/Ui`                         | —     |                                    |
+| `apps/web/app/components/User`                       | —     |                                    |
+| `apps/web/app/composables`                           | —     | the rest, excluding the rows above |
+| `apps/web/app/composables/dungeons`                  | —     |                                    |
+| `apps/web/app/composables/message`                   | —     |                                    |
+| `apps/web/app/composables/resource`                  | —     |                                    |
+| `apps/web/app/models`                                | —     |                                    |
+| `apps/web/app/services`                              | —     | the rest, excluding the rows above |
+| `apps/web/app/services/dungeons`                     | —     |                                    |
+| `apps/web/app/services/message`                      | —     |                                    |
+| `apps/web/app/services/resource`                     | —     |                                    |
+| `apps/web/app/services/webpageEditor`                | —     |                                    |
+| `apps/web/app/store`                                 | —     |                                    |
+| `apps/web/server`                                    | —     | the rest, excluding the rows above |
+| `apps/web/server/services`                           | —     |                                    |
+| `apps/web/server/trpc`                               | —     |                                    |
+| `apps/web/shared`                                    | —     |                                    |
+| `packages`                                           | —     | the rest, excluding the rows above |
+| `packages/agent-console-server`                      | —     |                                    |
+| `packages/azure-mock`                                | —     |                                    |
+| `packages/db`                                        | —     |                                    |
+| `packages/db-schema`                                 | —     |                                    |
+| `packages/genshin-engine`                            | —     | the rest, excluding the rows above |
+| `packages/genshin-engine/src`                        | —     | the rest, excluding the rows above |
+| `packages/genshin-engine/src/atmosphere`             | —     |                                    |
+| `packages/genshin-engine/src/character`              | —     |                                    |
+| `packages/genshin-engine/src/models`                 | —     |                                    |
+| `packages/genshin-engine/src/nodes`                  | —     |                                    |
+| `packages/genshin-engine/src/terrain`                | —     |                                    |
+| `packages/genshin-interface`                         | —     |                                    |
+| `packages/genshin-mods`                              | —     |                                    |
+| `packages/genshin-persona`                           | —     | the rest, excluding the rows above |
+| `packages/genshin-persona/src`                       | —     | the rest, excluding the rows above |
+| `packages/genshin-persona/src/localizations`         | —     |                                    |
+| `packages/genshin-persona/src/personaCards`          | —     |                                    |
+| `packages/genshin-persona/src/services`              | —     |                                    |
+| `packages/genshin-world`                             | —     | the rest, excluding the rows above |
+| `packages/genshin-world/parity`                      | —     |                                    |
+| `packages/genshin-world/src`                         | —     | the rest, excluding the rows above |
+| `packages/genshin-world/src/components`              | —     | the rest, excluding the rows above |
+| `packages/genshin-world/src/components/Hud`          | —     |                                    |
+| `packages/genshin-world/src/components/Login`        | —     |                                    |
+| `packages/genshin-world/src/components/Menu`         | —     |                                    |
+| `packages/genshin-world/src/components/World`        | —     |                                    |
+| `packages/genshin-world/src/composables`             | —     |                                    |
+| `packages/genshin-world/src/models`                  | —     |                                    |
+| `packages/genshin-world/src/services`                | —     | the rest, excluding the rows above |
+| `packages/genshin-world/src/services/character`      | —     |                                    |
+| `packages/genshin-world/src/services/combat`         | —     |                                    |
+| `packages/genshin-world/src/services/gcg`            | —     |                                    |
+| `packages/genshin-world/src/services/kit`            | —     | the rest, excluding the rows above |
+| `packages/genshin-world/src/services/kit/characters` | —     |                                    |
+| `packages/genshin-world/src/services/login`          | —     |                                    |
+| `packages/genshin-world/src/services/splash`         | —     |                                    |
+| `packages/nuxt-security-module`                      | —     |                                    |
+| `packages/parse-tmx`                                 | —     |                                    |
+| `packages/shared`                                    | —     |                                    |
+| `packages/trpc-nuxt-module`                          | —     |                                    |
+| `packages/vue-phaserjs`                              | —     |                                    |
+| `scripts/src`                                        | —     | the rest, excluding the rows above |
+| `scripts/src/models`                                 | —     |                                    |
+| `scripts/src/services`                               | —     | the rest, excluding the rows above |
+| `scripts/src/services/fleet`                         | —     |                                    |
+| `scripts/src/services/genshinAssets`                 | —     | the rest, excluding the rows above |
+| `scripts/src/services/genshinAssets/commands`        | —     |                                    |
+| `scripts/src/services/genshinAssets/fit`             | —     |                                    |
+| `scripts/src/services/genshinAssets/kits`            | —     |                                    |
+| `scripts/src/services/genshinAssets/music`           | —     |                                    |
+| `scripts/src/services/genshinAssets/scene`           | —     |                                    |
+| `scripts/src/services/genshinAssets/shared`          | —     |                                    |
+| `scripts/src/services/genshinAssets/world`           | —     |                                    |
+| `scripts/src/services/genshinParity`                 | —     | the rest, excluding the rows above |
+| `scripts/src/services/genshinParity/commands`        | —     |                                    |
+| `scripts/src/services/genshinParity/passes`          | —     |                                    |
+| `scripts/src/services/genshinParity/shared`          | —     |                                    |
+| `scripts/src/services/genshinParity/sky`             | —     |                                    |
+| `scripts/src/services/genshinParity/witness`         | —     |                                    |
+| `scripts/src/services/genshinText`                   | —     |                                    |
+| `scripts/src/services/outdatedDependencies`          | —     |                                    |
+| `scripts/src/services/oxlint`                        | —     |                                    |
+| `scripts/src/services/recreation`                    | —     |                                    |
+| `scripts/src/services/review`                        | —     |                                    |
+| `scripts/src/services/sweeps`                        | —     |                                    |
