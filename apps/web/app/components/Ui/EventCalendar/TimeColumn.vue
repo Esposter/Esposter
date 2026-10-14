@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
+import type { UiCalendarSlotEmits } from "@/models/ui/UiCalendarSlotEmits";
 
 import {
   CALENDAR_CLOSING_HOUR,
@@ -24,14 +25,7 @@ interface Props {
 // In the same slot side by side, and on today a line in the accent at the current time. The hours outside the working
 // Day and the whole of a weekend are shaded, as Outlook shades them
 const { day, events, focusedSlot, isCreatable, isToday, selectedSlot } = defineProps<Props>();
-const emit = defineEmits<{
-  create: [start: Temporal.PlainDateTime];
-  dragStart: [id: string];
-  drop: [start: Temporal.PlainDateTime];
-  nudge: [id: string, duration: Temporal.Duration];
-  open: [id: string];
-  select: [start: Temporal.PlainDateTime];
-}>();
+const emit = defineEmits<UiCalendarSlotEmits & { select: [start: Temporal.PlainDateTime] }>();
 const isWeekend = computed(() => day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT);
 const midnight = Temporal.PlainTime.from({ hour: 0 });
 const slotMinutes = CALENDAR_SLOT_DURATION.total("minutes");

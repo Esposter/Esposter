@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
+import type { UiCalendarSlotEmits } from "@/models/ui/UiCalendarSlotEmits";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "@/services/ui/constants";
@@ -20,14 +21,7 @@ interface Props {
 // The day shown, so a step off the first or the last day steps the view
 const date = defineModel<Temporal.PlainDate>("date", { required: true });
 const { days, eventDayMap, isCreatable, step, today } = defineProps<Props>();
-const emit = defineEmits<{
-  create: [start: Temporal.PlainDateTime];
-  dragStart: [id: string];
-  drop: [start: Temporal.PlainDateTime];
-  nudge: [id: string, duration: Temporal.Duration];
-  open: [id: string];
-  showDay: [day: Temporal.PlainDate];
-}>();
+const emit = defineEmits<UiCalendarSlotEmits & { showDay: [day: Temporal.PlainDate] }>();
 const scroller = useTemplateRef("scroller");
 const grid = useTemplateRef("grid");
 const header = useTemplateRef("header");
