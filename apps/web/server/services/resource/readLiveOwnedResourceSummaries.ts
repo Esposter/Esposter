@@ -1,11 +1,8 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
+import type { ResourceWhere } from "#server/models/resource/ResourceWhere";
 import type { LinkedResource } from "#shared/models/resource/LinkedResource";
 
 import { MAX_READ_LIMIT } from "@esposter/shared";
-
-type ResourceWhere = NonNullable<
-  NonNullable<Parameters<AuthedContext["db"]["query"]["resourcesInResource"]["findMany"]>[0]>["where"]
->;
 
 // The caller's live resources matching a where, as the name and type a reference shows, by name. The ownership and the
 // Soft-delete guard are the caller's own on every such read, so a where names only what it selects

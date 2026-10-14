@@ -1,4 +1,5 @@
 import type { GenshinSaveEnvelope } from "#server/models/genshin/GenshinSaveEnvelope";
+import type { GenshinSaveState } from "#server/models/genshin/GenshinSaveState";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { genshinSaveEnvelopeSchema } from "#server/models/genshin/GenshinSaveEnvelope";
@@ -6,12 +7,6 @@ import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
 import { readBlobState } from "#server/services/blobState/readBlobState";
 import { getResult } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-
-// The blob's envelope and its ETag, the ETag the write that follows is conditioned on
-export interface GenshinSaveState {
-  envelope?: GenshinSaveEnvelope;
-  etag?: string;
-}
 
 // A blob that no longer parses is never overwritten: the start and the save answer this error and leave the blob as it
 // Is, since the save is the player's only copy, and a fresh game written over it would be the loss

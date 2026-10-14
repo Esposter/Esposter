@@ -1,16 +1,9 @@
+import type { SetMemberPermissionOverrideOptions } from "#server/models/room/rbac/SetMemberPermissionOverrideOptions";
 import type { Context } from "#server/trpc/context";
 import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
 
 import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
-
-interface SetMemberPermissionOverrideOptions {
-  allow: bigint;
-  deny: bigint;
-  inherit: bigint;
-  roomId: string;
-  userId: string;
-}
 
 // The three bitfields move a bit between states, so the write clears every bit it names from both fields before it
 // Sets the ones it allows or denies. Passing a bit into the opposite field therefore moves it rather than leaving it
