@@ -18,100 +18,100 @@ Where a finding's home looked missing, it is settled:
 - **Declarations and component preamble:** a clone made only of imports, interface and type bodies, `defineProps`, `defineEmits` and `defineModel` calls, or bare composable bindings is each file's own list of what it holds, not logic. The finder skips it.
 - **Enum-keyed record rows:** a clone made only of the rows of a `Record` keyed by an enum is data a table holds. The finder skips it.
 
-| Unit                                                 | Swept | Notes                              |
-| :--------------------------------------------------- | :---- | :--------------------------------- |
-| `apps/functions`                                     | —     |                                    |
-| `apps/infra`                                         | —     |                                    |
-| `apps/web/app`                                       | —     | the rest, excluding the rows above |
-| `apps/web/app/components`                            | —     | the rest, excluding the rows above |
-| `apps/web/app/components/AgentConsole`               | —     |                                    |
-| `apps/web/app/components/App`                        | —     |                                    |
-| `apps/web/app/components/Dungeons`                   | —     |                                    |
-| `apps/web/app/components/Message`                    | —     | the rest, excluding the rows above |
-| `apps/web/app/components/Message/Content`            | —     |                                    |
-| `apps/web/app/components/Message/Model`              | —     |                                    |
-| `apps/web/app/components/Resource`                   | —     |                                    |
-| `apps/web/app/components/Styled`                     | —     |                                    |
-| `apps/web/app/components/Ui`                         | —     |                                    |
-| `apps/web/app/components/User`                       | —     |                                    |
-| `apps/web/app/composables`                           | —     | the rest, excluding the rows above |
-| `apps/web/app/composables/dungeons`                  | —     |                                    |
-| `apps/web/app/composables/message`                   | —     |                                    |
-| `apps/web/app/composables/resource`                  | —     |                                    |
-| `apps/web/app/models`                                | —     |                                    |
-| `apps/web/app/services`                              | —     | the rest, excluding the rows above |
-| `apps/web/app/services/dungeons`                     | —     |                                    |
-| `apps/web/app/services/message`                      | —     |                                    |
-| `apps/web/app/services/resource`                     | —     |                                    |
-| `apps/web/app/services/webpageEditor`                | —     |                                    |
-| `apps/web/app/store`                                 | —     |                                    |
-| `apps/web/server`                                    | —     | the rest, excluding the rows above |
-| `apps/web/server/services`                           | —     |                                    |
-| `apps/web/server/trpc`                               | —     |                                    |
-| `apps/web/shared`                                    | —     |                                    |
-| `packages`                                           | —     | the rest, excluding the rows above |
-| `packages/agent-console-server`                      | —     |                                    |
-| `packages/azure-mock`                                | —     |                                    |
-| `packages/db`                                        | —     |                                    |
-| `packages/db-schema`                                 | —     |                                    |
-| `packages/genshin-engine`                            | —     | the rest, excluding the rows above |
-| `packages/genshin-engine/src`                        | —     | the rest, excluding the rows above |
-| `packages/genshin-engine/src/atmosphere`             | —     |                                    |
-| `packages/genshin-engine/src/character`              | —     |                                    |
-| `packages/genshin-engine/src/models`                 | —     |                                    |
-| `packages/genshin-engine/src/nodes`                  | —     |                                    |
-| `packages/genshin-engine/src/terrain`                | —     |                                    |
-| `packages/genshin-interface`                         | —     |                                    |
-| `packages/genshin-mods`                              | —     |                                    |
-| `packages/genshin-persona`                           | —     | the rest, excluding the rows above |
-| `packages/genshin-persona/src`                       | —     | the rest, excluding the rows above |
-| `packages/genshin-persona/src/localizations`         | —     |                                    |
-| `packages/genshin-persona/src/personaCards`          | —     |                                    |
-| `packages/genshin-persona/src/services`              | —     |                                    |
-| `packages/genshin-world`                             | —     | the rest, excluding the rows above |
-| `packages/genshin-world/parity`                      | —     |                                    |
-| `packages/genshin-world/src`                         | —     | the rest, excluding the rows above |
-| `packages/genshin-world/src/components`              | —     | the rest, excluding the rows above |
-| `packages/genshin-world/src/components/Hud`          | —     |                                    |
-| `packages/genshin-world/src/components/Login`        | —     |                                    |
-| `packages/genshin-world/src/components/Menu`         | —     |                                    |
-| `packages/genshin-world/src/components/World`        | —     |                                    |
-| `packages/genshin-world/src/composables`             | —     |                                    |
-| `packages/genshin-world/src/models`                  | —     |                                    |
-| `packages/genshin-world/src/services`                | —     | the rest, excluding the rows above |
-| `packages/genshin-world/src/services/character`      | —     |                                    |
-| `packages/genshin-world/src/services/combat`         | —     |                                    |
-| `packages/genshin-world/src/services/gcg`            | —     |                                    |
-| `packages/genshin-world/src/services/kit`            | —     | the rest, excluding the rows above |
-| `packages/genshin-world/src/services/kit/characters` | —     |                                    |
-| `packages/genshin-world/src/services/login`          | —     |                                    |
-| `packages/genshin-world/src/services/splash`         | —     |                                    |
-| `packages/nuxt-security-module`                      | —     |                                    |
-| `packages/parse-tmx`                                 | —     |                                    |
-| `packages/shared`                                    | —     |                                    |
-| `packages/trpc-nuxt-module`                          | —     |                                    |
-| `packages/vue-phaserjs`                              | —     |                                    |
-| `scripts/src`                                        | —     | the rest, excluding the rows above |
-| `scripts/src/models`                                 | —     |                                    |
-| `scripts/src/services`                               | —     | the rest, excluding the rows above |
-| `scripts/src/services/fleet`                         | —     |                                    |
-| `scripts/src/services/genshinAssets`                 | —     | the rest, excluding the rows above |
-| `scripts/src/services/genshinAssets/commands`        | —     |                                    |
-| `scripts/src/services/genshinAssets/fit`             | —     |                                    |
-| `scripts/src/services/genshinAssets/kits`            | —     |                                    |
-| `scripts/src/services/genshinAssets/music`           | —     |                                    |
-| `scripts/src/services/genshinAssets/scene`           | —     |                                    |
-| `scripts/src/services/genshinAssets/shared`          | —     |                                    |
-| `scripts/src/services/genshinAssets/world`           | —     |                                    |
-| `scripts/src/services/genshinParity`                 | —     | the rest, excluding the rows above |
-| `scripts/src/services/genshinParity/commands`        | —     |                                    |
-| `scripts/src/services/genshinParity/passes`          | —     |                                    |
-| `scripts/src/services/genshinParity/shared`          | —     |                                    |
-| `scripts/src/services/genshinParity/sky`             | —     |                                    |
-| `scripts/src/services/genshinParity/witness`         | —     |                                    |
-| `scripts/src/services/genshinText`                   | —     |                                    |
-| `scripts/src/services/outdatedDependencies`          | —     |                                    |
-| `scripts/src/services/oxlint`                        | —     |                                    |
-| `scripts/src/services/recreation`                    | —     |                                    |
-| `scripts/src/services/review`                        | —     |                                    |
-| `scripts/src/services/sweeps`                        | —     |                                    |
+| Unit                                                 | Swept                  | Notes                              |
+| :--------------------------------------------------- | :--------------------- | :--------------------------------- |
+| `apps/functions`                                     | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/infra`                                         | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app`                                       | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `apps/web/app/components`                            | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `apps/web/app/components/AgentConsole`               | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/components/App`                        | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/components/Dungeons`                   | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/components/Message`                    | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `apps/web/app/components/Message/Content`            | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/components/Message/Model`              | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/components/Resource`                   | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/components/Styled`                     | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/components/Ui`                         | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/components/User`                       | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/composables`                           | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `apps/web/app/composables/dungeons`                  | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/composables/message`                   | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/composables/resource`                  | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/models`                                | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/services`                              | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `apps/web/app/services/dungeons`                     | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/services/message`                      | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/services/resource`                     | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/services/webpageEditor`                | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/app/store`                                 | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/server`                                    | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `apps/web/server/services`                           | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/server/trpc`                               | 2026-10-14 · Haiku 5.5 |                                    |
+| `apps/web/shared`                                    | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages`                                           | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/agent-console-server`                      | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/azure-mock`                                | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/db`                                        | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/db-schema`                                 | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-engine`                            | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-engine/src`                        | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-engine/src/atmosphere`             | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-engine/src/character`              | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-engine/src/models`                 | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-engine/src/nodes`                  | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-engine/src/terrain`                | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-interface`                         | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-mods`                              | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-persona`                           | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-persona/src`                       | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-persona/src/localizations`         | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-persona/src/personaCards`          | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-persona/src/services`              | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world`                             | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-world/parity`                      | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src`                         | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-world/src/components`              | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-world/src/components/Hud`          | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/components/Login`        | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/components/Menu`         | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/components/World`        | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/composables`             | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/models`                  | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/services`                | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-world/src/services/character`      | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/services/combat`         | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/services/gcg`            | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/services/kit`            | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `packages/genshin-world/src/services/kit/characters` | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/services/login`          | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/genshin-world/src/services/splash`         | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/nuxt-security-module`                      | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/parse-tmx`                                 | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/shared`                                    | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/trpc-nuxt-module`                          | 2026-10-14 · Haiku 5.5 |                                    |
+| `packages/vue-phaserjs`                              | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src`                                        | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `scripts/src/models`                                 | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services`                               | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `scripts/src/services/fleet`                         | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinAssets`                 | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `scripts/src/services/genshinAssets/commands`        | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinAssets/fit`             | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinAssets/kits`            | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinAssets/music`           | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinAssets/scene`           | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinAssets/shared`          | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinAssets/world`           | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinParity`                 | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
+| `scripts/src/services/genshinParity/commands`        | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinParity/passes`          | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinParity/shared`          | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinParity/sky`             | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinParity/witness`         | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/genshinText`                   | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/outdatedDependencies`          | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/oxlint`                        | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/recreation`                    | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/review`                        | 2026-10-14 · Haiku 5.5 |                                    |
+| `scripts/src/services/sweeps`                        | 2026-10-14 · Haiku 5.5 |                                    |
