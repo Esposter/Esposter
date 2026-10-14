@@ -24,4 +24,4 @@ For the burst's 15 seconds the Ooyoroi stands as a summon, and a normal attack t
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/thoma), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's frames, Blazing Blessing's hit, animation and shield, Crimson Ooyoroi's initial hit and animation, and Fiery Collapse's trigger, interval, box, hitmark and gauge, and its shield's stacking and cap.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/thoma), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's frames, Blazing Blessing's hit, animation and shield, Crimson Ooyoroi's initial hit and animation, and Fiery Collapse's trigger, interval, box, hitmark and gauge, and its shield's stacking and cap.
