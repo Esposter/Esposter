@@ -5,7 +5,7 @@ import type { UserInAuth, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
-import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { checkHasPermission } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
@@ -25,11 +25,14 @@ export const updateUserToRoom = async (
     if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const updatedUserToRoom = (
-    await db.update(usersToRoomsInMessage).set(rest).where(getRoomMembershipWhere(roomId, effectiveUserId)).returning()
-  )[0];
-  if (!updatedUserToRoom)
-    throw getInvalidOperationError(Operation.Update, DatabaseEntityType.UserToRoom, JSON.stringify({ roomId }));
+  const updatedUserToRoom = requireMutation(
+    (
+      await db.update(usersToRoomsInMessage).set(rest).where(getRoomMembershipWhere(roomId, effectiveUserId)).returning()
+    )[0],
+    Operation.Update,
+    DatabaseEntityType.UserToRoom,
+    JSON.stringify({ roomId }),
+  );
   userToRoomEventEmitter.emit("updateUserToRoom", updatedUserToRoom);
   return updatedUserToRoom;
 };
