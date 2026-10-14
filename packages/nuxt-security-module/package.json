@@ -1,6 +1,6 @@
 {
   "name": "nuxt-security-module",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Nuxt security module for Nitro 3 and h3 2 — security headers, a per-request nonce Content Security Policy, subresource integrity, CORS, allowed methods, basic auth and a request size limit.",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
