@@ -26,7 +26,7 @@ describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
   // Past vitest's 5s default. Use the same hang-ceiling the acceptance/property os tests already carry — the exec is
   // Not the slow part, the contention is.
   // Echo, printf multiline and working directory run over 5s on the shared bridge, so they are left out for now;
-  // drop the filter to restore them.
+  // Drop the filter to restore them.
   const SLOW_CASE_NAMES = new Set(["echo", "printf multiline", "working directory"]);
 
   test.each(SHELL_DIFFERENTIAL_CORPUS.filter(({ name }) => !SLOW_CASE_NAMES.has(name)))(

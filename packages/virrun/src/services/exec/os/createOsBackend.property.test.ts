@@ -56,54 +56,56 @@ describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
     temporaryDirectories.cleanup();
   });
 
-  // Over 5s on the shared bridge (~31s), so disabled for now. To restore, put back the
-  // `skipIf(!checkIsOsBackendSupported())` gate in place of `.skip`.
-  test.skip(
-    "randomized command sequences never corrupt sandbox state",
-    async () => {
-      expect.hasAssertions();
+  // Over 5s on the shared bridge (~31s), so parked as a todo. The body is kept intact; drop the `.todo` and restore the
+  // `skipIf(!checkIsOsBackendSupported())` gate to run it.
+  describe.todo("randomized command sequences", () => {
+    test(
+      "never corrupt sandbox state",
+      async () => {
+        expect.hasAssertions();
 
-      const { exec } = createOsBackend();
+        const { exec } = createOsBackend();
 
-      await fc.assert(
-        fc.asyncProperty(fc.array(operationArbitrary, { maxLength: 5, minLength: 1 }), async (operations) => {
-          const directory = temporaryDirectories.create();
-          writeFileSync(join(directory, CANARY), "");
+        await fc.assert(
+          fc.asyncProperty(fc.array(operationArbitrary, { maxLength: 5, minLength: 1 }), async (operations) => {
+            const directory = temporaryDirectories.create();
+            writeFileSync(join(directory, CANARY), "");
 
-          for (const operation of operations) {
-            // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: the operations run in sequence on one directory
-            const { exitCode, stderr, stdout } = await exec(toCommand(operation), { cwd: directory, stdio: "pipe" });
+            for (const operation of operations) {
+              // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: the operations run in sequence on one directory
+              const { exitCode, stderr, stdout } = await exec(toCommand(operation), { cwd: directory, stdio: "pipe" });
 
-            // Well-formedness: a real command result, never a wedged sandbox.
-            expect(Number.isInteger(exitCode)).toBe(true);
-            expect(stdout).toBeTypeOf("string");
-            expect(stderr).toBeTypeOf("string");
-          }
+              // Well-formedness: a real command result, never a wedged sandbox.
+              expect(Number.isInteger(exitCode)).toBe(true);
+              expect(stdout).toBeTypeOf("string");
+              expect(stderr).toBeTypeOf("string");
+            }
 
-          // Host isolation: the canary survives unmodified, and nothing a command wrote/mkdir'd reached the host.
-          expect(existsSync(join(directory, CANARY))).toBe(true);
-          expect(readFileSync(join(directory, CANARY), "utf8")).toBe("");
-          expect(existsSync(join(directory, SCRATCH_FILE))).toBe(false);
-          expect(existsSync(join(directory, SCRATCH_DIRECTORY))).toBe(false);
+            // Host isolation: the canary survives unmodified, and nothing a command wrote/mkdir'd reached the host.
+            expect(existsSync(join(directory, CANARY))).toBe(true);
+            expect(readFileSync(join(directory, CANARY), "utf8")).toBe("");
+            expect(existsSync(join(directory, SCRATCH_FILE))).toBe(false);
+            expect(existsSync(join(directory, SCRATCH_DIRECTORY))).toBe(false);
 
-          // No cross-exec leakage: a fresh upper sees the source baseline, never a mid-sequence write to the canary,
-          // And the scratch artifacts a prior exec may have written/mkdir'd are absent inside the sandbox too — not
-          // Just on the host — so a leaked upper (the only way isolation breaks) cannot slip past unread.
-          const finalRead = await exec(`cat ${CANARY}`, { cwd: directory, stdio: "pipe" });
+            // No cross-exec leakage: a fresh upper sees the source baseline, never a mid-sequence write to the canary,
+            // And the scratch artifacts a prior exec may have written/mkdir'd are absent inside the sandbox too — not
+            // Just on the host — so a leaked upper (the only way isolation breaks) cannot slip past unread.
+            const finalRead = await exec(`cat ${CANARY}`, { cwd: directory, stdio: "pipe" });
 
-          expect(finalRead.exitCode).toBe(0);
-          expect(finalRead.stdout).toBe("");
+            expect(finalRead.exitCode).toBe(0);
+            expect(finalRead.stdout).toBe("");
 
-          const freshScratchCheck = await exec(`test ! -e ${SCRATCH_FILE} && test ! -d ${SCRATCH_DIRECTORY}`, {
-            cwd: directory,
-            stdio: "pipe",
-          });
+            const freshScratchCheck = await exec(`test ! -e ${SCRATCH_FILE} && test ! -d ${SCRATCH_DIRECTORY}`, {
+              cwd: directory,
+              stdio: "pipe",
+            });
 
-          expect(freshScratchCheck.exitCode).toBe(0);
-        }),
-        { numRuns: 10 },
-      );
-    },
-    ACCEPTANCE_TIMEOUT_MS,
-  );
+            expect(freshScratchCheck.exitCode).toBe(0);
+          }),
+          { numRuns: 10 },
+        );
+      },
+      ACCEPTANCE_TIMEOUT_MS,
+    );
+  });
 });
