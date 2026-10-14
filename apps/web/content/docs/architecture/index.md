@@ -87,7 +87,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Drag reorder](/docs/architecture/drag-reorder)                                           | `useDragReorder`, the pointer half of every reorderable list, table and sidebar, replacing `vue-draggable-plus`                                                                    |
 | [SQL highlighting](/docs/architecture/sql-highlight)                                      | `highlightSql`, the dev query log's colours, replacing `sql-highlight`                                                                                                             |
 
-Cross-cutting standards we decided against are recorded in [rejected](/docs/architecture/rejected) — check it before proposing a new one. Ones we chose not to build yet, each with a revisit trigger, are in [deferred](/docs/architecture/deferred). Open decisions on these standards are on the [roadmap](/docs/architecture/roadmap).
+Cross-cutting standards we decided against are recorded in [rejected](/docs/architecture/rejected) — check it before proposing a new one. Ones we chose not to build yet, each with a revisit trigger, are in [deferred](/docs/architecture/deferred).
 
 ## Shipped log
 
