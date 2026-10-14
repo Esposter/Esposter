@@ -2,8 +2,6 @@ import type { EngineInterface, On, ToolCallResult } from "claude-code";
 
 import { atom, read } from "claude-code";
 
-import type { WardRecord } from "../../../types";
-
 import { WardAnswer, WardAnswers } from "../../models/WardAnswer";
 import { InitialState } from "../InitialState";
 import { getCollidingRecord } from "./getCollidingRecord";

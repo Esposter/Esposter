@@ -2,8 +2,6 @@ import type { EngineInterface, On, ToolCallResult } from "claude-code";
 
 import { atom, read } from "claude-code";
 
-import type { WardRecord } from "../../../types";
-
 import { InitialState } from "../InitialState";
 import { joinDirectory } from "../shell/joinDirectory";
 import { getCheckoutPeer } from "./getCheckoutPeer";

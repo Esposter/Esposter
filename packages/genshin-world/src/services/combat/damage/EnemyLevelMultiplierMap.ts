@@ -5,9 +5,7 @@ import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/Charact
 const SHARED_LEVEL_LIMIT = 57;
 // Levels up to the limit are the characters' rows, read from their table rather than copied
 export const EnemyLevelMultiplierMap: Record<number, number> = {
-  ...Object.fromEntries(
-    Object.entries(CharacterLevelMultiplierMap).filter(([level]) => Number(level) <= SHARED_LEVEL_LIMIT),
-  ),
+  ...Object.fromEntries(Object.entries(CharacterLevelMultiplierMap).filter(([level]) => level <= SHARED_LEVEL_LIMIT)),
   58: 452.566797,
   59: 471.426268,
   60: 490.481663,
