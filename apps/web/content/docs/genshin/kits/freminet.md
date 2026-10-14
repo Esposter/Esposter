@@ -23,4 +23,4 @@ Not built: Pressurized Floe's Pers Time stance, which holds the frost of each st
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/freminet), MIT: Freminet's strikes' hitmarks, cancel frames, reaches and poise, the low and high plunges and their collision, Pressurized Floe's Upward Thrust, and Shadowhunter's Ambush.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/freminet), MIT: Freminet's strikes' hitmarks, cancel frames, reaches and poise, the low and high plunges and their collision, Pressurized Floe's Upward Thrust, and Shadowhunter's Ambush.
