@@ -35,6 +35,6 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/durin), MIT: each strike's hitmarks, animation and reach, the charged attack's circle, hitmark and animation, Tap E's window, both recasts and Denial of Darkness's status, and the bursts' hitmarks, animations and DoT schedules, read from `attack.go`, `charge.go`, `skill.go` and `burst.go`, with `cons.go` and `asc.go` for the mechanics waiting on their hooks.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/durin), MIT: each strike's hitmarks, animation and reach, the charged attack's circle, hitmark and animation, Tap E's window, both recasts and Denial of Darkness's status, and the bursts' hitmarks, animations and DoT schedules, read from `attack.go`, `charge.go`, `skill.go` and `burst.go`, with `cons.go` and `asc.go` for the mechanics waiting on their hooks.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier beside its group.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Durin's own folder has no plunge file.
