@@ -21,4 +21,4 @@ Yun Jin's kit is its record and one behaviour module, `createYunjinKitBehaviour`
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yunjin), MIT: the kit's hitmarks, cancel frames and areas, Opening Flourish's hitmarks, circles, shields and animations, Cliffbreaker's Banner's circle, poise and frames, and the shield's expiry at its hit.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yunjin), MIT: the kit's hitmarks, cancel frames and areas, Opening Flourish's hitmarks, circles, shields and animations, Cliffbreaker's Banner's circle, poise and frames, and the shield's expiry at its hit.
