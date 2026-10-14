@@ -1,3 +1,4 @@
+import { FATE_POINTS, PATH_LABEL, POOL } from "#src/components/WishDetails/Index.fixture";
 import { BannerKind } from "#src/models/BannerKind";
 
 const BANNER_LABELS = {
@@ -19,15 +20,10 @@ export const props = {
     { id: "IntertwinedFate", name: "Intertwined Fate", quantity: 1 },
   ],
   detailsLabel: "Details",
-  fatePoints: [{ text: "Fate Point: " }, { color: "#f39000", text: "0" }, { text: "/1" }],
+  fatePoints: FATE_POINTS,
   historyLabel: "History",
-  pathLabel: "Epitomized Path",
-  pool: [
-    { id: 15_502, isFeatured: true, name: "Amos' Bow", rarity: 5 },
-    { id: 11_501, isFeatured: false, name: "Aquila Favonia", rarity: 5 },
-    { id: 11_401, isFeatured: true, name: "Favonius Sword", rarity: 4 },
-    { id: 11_301, isFeatured: false, name: "Cool Steel", rarity: 3 },
-  ],
+  pathLabel: PATH_LABEL,
+  pool: POOL,
   probabilityLabel: "Probability increased!",
   purchases: [],
   results: [],
