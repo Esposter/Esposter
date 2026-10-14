@@ -29,4 +29,4 @@ Jahoda's kit is its record and one behaviour module, `createJahodaKitBehaviour`,
 
 ## Sources
 
-- [gcsim (main)](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/jahoda), MIT: her strikes' hitmarks and cancels, the charged shot's frames, Hidden Aces' frames, Savvy Strategy's windup, pursuit, fill, drains and cooldown, and the robots and heals the page lists as not yet built.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/jahoda), MIT: her strikes' hitmarks and cancels, the charged shot's frames, Hidden Aces' frames, Savvy Strategy's windup, pursuit, fill, drains and cooldown, and the robots and heals the page lists as not yet built.
