@@ -11,6 +11,8 @@ describe("checkIsTresCustomElement", () => {
     ["Tresor", false],
     ["div", false],
   ])("%s", (tagName, expected) => {
+    expect.hasAssertions();
+
     expect(checkIsTresCustomElement(tagName)).toBe(expected);
   });
 });

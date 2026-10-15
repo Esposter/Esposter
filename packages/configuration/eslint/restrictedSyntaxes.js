@@ -3,6 +3,12 @@
 // Applies to both contexts must be spread into both.
 export default [
   {
+    // `RegExp.escape` is the platform API for embedding a string in a pattern, including edge cases a local character
+    // Replacement misses. A named local clone is recognizable without tracking where it lives.
+    message: "Use `RegExp.escape(value)` instead of declaring a local `escapeRegExp` helper.",
+    selector: "VariableDeclarator[id.name='escapeRegExp'][init.type=/^(Arrow)?FunctionExpression$/]",
+  },
+  {
     // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
     message:
       "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",

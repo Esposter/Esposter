@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // Every tracked or new spec in the repository, read from the working tree, so a spec being written is checked before
-// it is committed.
+// It is committed.
 export const readSpecFindings = (): string[] =>
   readSweepFilePaths(OPENSPEC_SPEC_PATHSPEC).flatMap((path) =>
     lintScenarios(path, readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")),

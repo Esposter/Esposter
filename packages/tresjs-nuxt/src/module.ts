@@ -11,7 +11,6 @@ import { defu } from "defu";
 export type { ModuleOptions } from "#src/models/ModuleOptions";
 
 const LOWERCASE_NAME_REGEX = /^[a-z]/u;
-const USE_NAME_REGEX = /^use/u;
 
 const tresjsModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
   defaults: { glsl: false, modules: [] },
@@ -22,7 +21,7 @@ const tresjsModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>(
     nuxt.options.vue.compilerOptions.isCustomElement = checkIsTresCustomElement;
     const coreExportNames = await getExportNames(await resolvePath(CORE_PACKAGE_NAME));
     addImports([
-      ...coreExportNames.filter((name) => USE_NAME_REGEX.test(name)).map((name) => ({ from: CORE_PACKAGE_NAME, name })),
+      ...coreExportNames.filter((name) => name.startsWith("use")).map((name) => ({ from: CORE_PACKAGE_NAME, name })),
       { as: "extendTres", from: CORE_PACKAGE_NAME, name: "extend" },
       { from: CORE_PACKAGE_NAME, name: "TresObject", type: true },
     ]);
@@ -30,14 +29,17 @@ const tresjsModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>(
       references.push({ types: CORE_PACKAGE_NAME });
     });
     const packageNames = new Set([...(options.modules ?? []), ...(await getTresPackageNames(nuxt.options.rootDir))]);
-    for (const packageName of packageNames) {
-      const entryPath = await resolvePath(packageName);
-      if (entryPath === packageName) continue;
-      for (const name of await getExportNames(entryPath)) {
-        if (LOWERCASE_NAME_REGEX.test(name)) addImports({ from: packageName, name });
-        else addComponent({ export: name, filePath: packageName, name });
-      }
-    }
+    const packageExports = await Promise.all(
+      Array.from(packageNames, async (packageName) => {
+        const entryPath = await resolvePath(packageName);
+        if (entryPath === packageName) return [];
+        return (await getExportNames(entryPath)).map((name) => ({ name, packageName }));
+      }),
+    );
+    for (const { name, packageName } of packageExports.flat())
+      if (LOWERCASE_NAME_REGEX.test(name)) addImports({ from: packageName, name });
+      else addComponent({ export: name, filePath: packageName, name });
+
     nuxt.options.vite.resolve = defu(nuxt.options.vite.resolve, { dedupe: [THREE_PACKAGE_NAME] });
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, { include: [THREE_PACKAGE_NAME] });
     addComponent({ filePath: await resolvePath(resolve("./runtime/TresCanvas.client")), name: TRES_CANVAS_NAME });

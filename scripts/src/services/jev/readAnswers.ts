@@ -14,7 +14,7 @@ const client = process.env.VITEST === undefined ? getResult(() => new TypeSafeCl
 // Nothing here throws or retries — the SDK retries its own transport, and what it cannot answer is answered a
 // Tier up (`llm-delegation` skill).
 export const readAnswers = async <const TQuestions extends Questions>(
-  state: EntryType,
+  state: NonNullable<EntryType>,
   questions: TQuestions,
 ): Promise<SystemOneResult<TQuestions>["answers"] | undefined> => {
   if (client === undefined) {

@@ -14,7 +14,7 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 - **Committing the engine's declarations, or a hand-written copy of them.** They are the engine's, per version and early access; nothing publishes them, so they are laid locally and gitignored.
 - **`claude plugin test` suites for logic.** Its runner has no fs, network or process and is not the repository's Vitest; logic lives in pure modules Vitest covers, and the wiring is what `claude plugin validate` checks.
 - **Writing a person's `settings.json` from a plugin.** A status line, a spinner word, a hint and a hook on any settings event are all reachable from a hooks module, and a write there outlives the plugin.
-- **A mod object (`{ onSessionStart, … }`) per mod, composed by the register file.** Its handlers take `$` across an import, which the engine refuses; one lifecycle file holds every unmatched event instead.
+- **One `registerLifecycle(on)` entry in `register.ts`, alongside matched mod registrations.** Matcherless lifecycle handlers live together because the engine permits one hook per event per plugin.
 
 ## Rules
 

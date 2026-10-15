@@ -6,6 +6,7 @@ import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 const getDependencyNames = async (directory: string): Promise<string[]> => {
+  // oxlint-disable-next-line no-restricted-properties -- package manifests contain versions and scripts, never date fields to revive
   const manifest: PackageManifest = JSON.parse(await readFile(join(directory, "package.json"), "utf8"));
   return [...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.devDependencies ?? {})];
 };
@@ -16,7 +17,7 @@ export const getTresPackageNames = async (rootDirectory: string): Promise<string
   const directories = existsSync(join(parentDirectory, "package.json"))
     ? [rootDirectory, parentDirectory]
     : [rootDirectory];
-  const dependencyNames = (await Promise.all(directories.map(getDependencyNames))).flat();
+  const dependencyNames = (await Promise.all(directories.map((directory) => getDependencyNames(directory)))).flat();
   return [...new Set(dependencyNames)].filter(
     (dependencyName) => dependencyName.startsWith(TRES_PACKAGE_SCOPE) && dependencyName !== CORE_PACKAGE_NAME,
   );

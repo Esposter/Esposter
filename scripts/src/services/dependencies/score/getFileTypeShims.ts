@@ -49,9 +49,6 @@ const getNearbyPackageNames = (importLines: ImportLine[], index: number): Set<st
       .map(({ packageName }) => packageName),
   );
 
-// A binding name may carry `$`, which a pattern reads as its end anchor, so every syntax character is escaped
-const escapeRegExp = (text: string): string => text.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
-
 // Every package whose imported name is called or read from within the window of a cast. The lookbehind stands in for `\b`,
 // Which a name starting with `$` never satisfies beside a space
 const getCalledPackageNames = (lines: string[], importLines: ImportLine[], index: number): Set<string> => {
@@ -60,7 +57,7 @@ const getCalledPackageNames = (lines: string[], importLines: ImportLine[], index
     importLines
       .filter(({ bindingNames }) =>
         bindingNames.some((bindingName) =>
-          new RegExp(String.raw`(?<![\w$])${escapeRegExp(bindingName)}\s*[(.]`, "u").test(windowText),
+          new RegExp(String.raw`(?<![\w$])${RegExp.escape(bindingName)}\s*[(.]`, "u").test(windowText),
         ),
       )
       .map(({ packageName }) => packageName),

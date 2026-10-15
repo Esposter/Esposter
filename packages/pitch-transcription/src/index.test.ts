@@ -12,7 +12,7 @@ describe("pitch-transcription", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 4.31 KB (4418 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 4.30 KB (4405 bytes)"`);
   });
 
   test("types size", () => {

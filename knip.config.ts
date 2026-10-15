@@ -30,8 +30,8 @@ const knipConfiguration: KnipConfig = {
         // @TODO: no upstream issue — `nuxt-ai-ready`'s virtual `content-lookup` module imports `minimark/stringify` without
         // Declaring it, so the app declares it and nothing in the app imports it (harlan-zw/nuxt-ai-ready)
         "minimark",
-        // @TODO: no upstream issue — `@nuxt/nitro-server` aliases `bufferutil` to `mocked-exports/proxy`, which Nitro 3
-        // Resolves from the app, so nothing in the app imports it (nuxt/nuxt)
+        // @TODO: no upstream issue — Nitro 3 resolves `@nuxt/nitro-server`'s `mocked-exports/proxy` alias from the app
+        // Remove this ignore entry when Nitro resolves the alias from Nuxt (nuxt/nuxt)
         "mocked-exports",
         // @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — knip reads an `#app` import as the package it
         // Resolves to, which is the `nuxt-nightly` alias until the catalog's `nuxt` is a range again

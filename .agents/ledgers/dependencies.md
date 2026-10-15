@@ -30,6 +30,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@electric-sql/pglite`                  | —                     | Keep — engine     | in-memory PostgreSQL for the server tests                                                              |
 | `@eslint/core`                          | —                     | Keep — tooling    | the linter's core                                                                                      |
 | `@eslint/json`                          | —                     | Keep — tooling    | the linter's core                                                                                      |
+| `@fission-ai/openspec`                  | —                     | Keep — tooling    | validates and archives the repository's specifications                                                 |
 | `@fontsource/signika`                   | —                     | Keep — data       | font files                                                                                             |
 | `@hpcc-js/wasm-graphviz`                | —                     | Keep — engine     | Graphviz layout for the dependency graph                                                               |
 | `@huggingface/transformers`             | —                     | Keep — engine     | model inference                                                                                        |

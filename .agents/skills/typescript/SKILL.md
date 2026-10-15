@@ -57,6 +57,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **Never pass a function reference as a callback** — wrap it, `array.map((item) => fn(item))`, except `Number`, `String` and `Boolean` (`references/callbacks.md`).
 - **Prefer inferred return types** — annotate only a narrower contract or a public API boundary (`references/function-signatures.md`).
 - **Syntax is never extracted into a helper** — the `over-engineering` skill (`references/syntax-extraction.md`).
+- **Use `RegExp.escape(value)` when embedding a string in a regular expression** — do not hand-roll a local `escapeRegExp` helper; ESLint enforces the named-helper ban in `restrictedSyntaxes`.
 
 ## Promise Style
 

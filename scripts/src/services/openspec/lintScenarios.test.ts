@@ -1,9 +1,9 @@
 import { lintScenarios } from "#src/services/openspec/lintScenarios";
 import { describe, expect, test } from "vitest";
 
-const SPEC_PATH = "openspec/changes/example/specs/example/spec.md";
-
 describe(lintScenarios, () => {
+  const SPEC_PATH = "openspec/changes/example/specs/example/spec.md";
+
   test("accepts a scenario of WHEN then THEN, with GIVEN and AND steps where they belong", () => {
     expect.hasAssertions();
 
