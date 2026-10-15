@@ -32,5 +32,6 @@ const isMissing = computed(() =>
     <span text-sm text-muted>{{ label }}</span>
     <UiSelect v-model="modelValue" :items :label />
     <span v-if="isMissing" role="alert" text-sm text-error>{{ getMissingResourceMessage(label.toLowerCase()) }}</span>
+    <slot name="warning" />
   </div>
 </template>

@@ -3,6 +3,7 @@ import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramSt
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
+import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import { downloadFile } from "@/services/app/downloadFile";
@@ -11,7 +12,7 @@ import { createParticipantLinksCsv } from "@/services/resource/program/createPar
 import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
-import { ResourceType } from "@esposter/db-schema";
+import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -31,6 +32,11 @@ describe("resourceProgramStatus", () => {
   const statusRow: ProgramStatusRow = { addedAt: new Date(0), isResponded: true, keyValue };
   const keyColumn = "keyColumn";
   const surveyId = crypto.randomUUID();
+  const setSurveyMode = (responseMode: SurveyResponseMode) =>
+    trpcMsw.survey.readResourceContent.query(() => ({
+      model: "",
+      settings: surveySettingsSchema.parse({ responseMode }),
+    }));
 
   beforeEach(async () => {
     // The blade reads its id off the resource page's route, which the auth middleware guards
@@ -38,6 +44,7 @@ describe("resourceProgramStatus", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
     trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId }));
+    setSurveyMode(SurveyResponseMode.Identified);
     // The page reads the row before any blade mounts, and a content load reads only the blob
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -56,6 +63,39 @@ describe("resourceProgramStatus", () => {
 
     expect(component.text()).toContain(keyValue);
     expect(component.text()).toContain("1 of 1 responded");
+  });
+
+  test("warns when an anonymous survey has no participant responses to match", async () => {
+    expect.hasAssertions();
+
+    setSurveyMode(SurveyResponseMode.Anonymous);
+    trpcMsw.program.readProgramStatus.query(() => ({ isRespondedPartial: false, rows: [] }));
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+
+    expect(component.text()).toContain("Anonymous mode drops participant tokens");
+  });
+
+  test("warns when anonymous survey responses leave every participant awaiting", async () => {
+    expect.hasAssertions();
+
+    setSurveyMode(SurveyResponseMode.Anonymous);
+    trpcMsw.program.readProgramStatus.query(() => ({
+      isRespondedPartial: false,
+      rows: [{ ...statusRow, isResponded: false }],
+    }));
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+
+    expect(component.text()).toContain("Anonymous mode drops participant tokens");
+  });
+
+  test("does not warn for identified surveys", async () => {
+    expect.hasAssertions();
+
+    setSurveyMode(SurveyResponseMode.Identified);
+    setStatus(false);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+
+    expect(component.text()).not.toContain("Anonymous mode drops participant tokens");
   });
 
   // `isResponded` comes from a capped response scan, so past that cap a responder reads as awaiting. The count

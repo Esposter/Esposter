@@ -22,7 +22,7 @@ import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { useProgramStore } from "@/store/resource/program";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { NotificationSeverity, ResourceType } from "@esposter/db-schema";
+import { NotificationSeverity, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
 const { currentRoute } = useRouter();
@@ -37,6 +37,11 @@ const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation: executeGenerateMutation, isPending: isGeneratePending } = useMutation();
 const id = computed(() => getRouteParam(currentRoute.value.params, "id"));
 const statusRows = ref<ProgramStatusRow[]>([]);
+const { data: surveyContent, refresh: refreshSurveyContent } = useQuery(
+  () => $trpc.survey.readResourceContent.query({ id: programResource.value.surveyId }),
+  { isLazy: true },
+);
+const isAnonymousSurvey = computed(() => surveyContent.value?.settings.responseMode === SurveyResponseMode.Anonymous);
 // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
 const isRespondedPartial = ref(false);
 // A participant is keyed by the key column's value, which the program dedupes on
@@ -141,7 +146,7 @@ const generateParticipants = async () => {
   });
 };
 await loadContent();
-await readStatus();
+await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyContent() : Promise.resolve()]);
 </script>
 
 <template>
@@ -166,6 +171,7 @@ await readStatus();
       :value="respondedPercentage"
       :value-text="`${isRespondedPartial ? 'at least ' : ''}${respondedPercentage}% responded`"
     />
+    <ResourceProgramSurveyModeWarning v-if="isAnonymousSurvey && respondedCount === 0" />
     <!-- The undercount is in the table too — a participant past the response cap renders as Awaiting — so the
       warning sits above both rather than beside the count -->
     <UiAlert v-if="isRespondedPartial" status="warning">

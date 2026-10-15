@@ -4,6 +4,7 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useProgramStore } from "@/store/resource/program";
+import { SurveyResponseMode } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
@@ -17,6 +18,23 @@ const audience = computed({
   },
 });
 const { dataset, error } = useDataset(audience);
+const selectedSurveyId = ref("");
+const surveyContentId = ref("");
+const { data: surveyContent, refresh: refreshSurveyContent } = useQuery(
+  () => $trpc.survey.readResourceContent.query({ id: selectedSurveyId.value }),
+  {
+    isLazy: true,
+    onSuccess: () => {
+      surveyContentId.value = selectedSurveyId.value;
+    },
+  },
+);
+const isAnonymousSurvey = computed(
+  () =>
+    Boolean(programResource.value.surveyId) &&
+    surveyContentId.value === programResource.value.surveyId &&
+    surveyContent.value?.settings.responseMode === SurveyResponseMode.Anonymous,
+);
 // The key column can only be one the audience actually has, so it is picked, never typed
 const keyColumnItems = computed<UiSelectItem<string>[]>(
   () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
@@ -25,6 +43,15 @@ const keyColumnItems = computed<UiSelectItem<string>[]>(
 const emailResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
 const surveyResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
 await loadContent();
+watch(
+  () => programResource.value.surveyId,
+  async (surveyId) => {
+    selectedSurveyId.value = surveyId;
+    surveyContentId.value = "";
+    if (surveyId) await refreshSurveyContent();
+  },
+  { immediate: true },
+);
 // Both binding pickers are independent of each other, so they resolve together
 await getResultAsync(async () => {
   const [emails, surveys] = await Promise.all([
@@ -63,7 +90,11 @@ watchAutosave(programResource, saveProgram);
     <UiFrame title="Bindings">
       <p text-muted>The email that invites participants, and the survey their link opens.</p>
       <ResourceProgramBindingSelect v-model="programResource.emailId" :resources="emailResources" label="Email" />
-      <ResourceProgramBindingSelect v-model="programResource.surveyId" :resources="surveyResources" label="Survey" />
+      <ResourceProgramBindingSelect v-model="programResource.surveyId" :resources="surveyResources" label="Survey">
+        <template #warning>
+          <ResourceProgramSurveyModeWarning v-if="isAnonymousSurvey" />
+        </template>
+      </ResourceProgramBindingSelect>
     </UiFrame>
   </div>
 </template>
