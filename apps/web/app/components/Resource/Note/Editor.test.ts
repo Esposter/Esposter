@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceNoteEditor from "@/components/Resource/Note/Editor.vue";
