@@ -95,6 +95,8 @@ The fourth is [nuxt-security-module](/docs/nuxt-security-module), the first secu
 
 The sixth is [drag reorder](/docs/architecture/drag-reorder), the first package taken off the stop list by reading its item again. `vue-draggable-plus` was kept as accessibility-shaped, but the keyboard reorder and its announcement were already the UI library's, and what it did — through the SortableJS it bundled — was only the pointer drag. That drag is now a composable on Pointer Events, which never hands the browser a native drag and never moves a row Vue rendered.
 
+The seventh is [tresjs-nuxt](/docs/tresjs-nuxt), the first Nuxt module absorbed as an adapter. `@tresjs/nuxt` joined the renderer to Nuxt, but its own dependencies took in a UI library and its font package for a devtools tab the app never used, and a dependency on a second engine it never called. The replacement keeps both engines and writes only the connection: it reads export names from source instead of importing the renderer at configuration time, and it drops the tab with everything that tab pulled in.
+
 ## The stop list
 
 These stay packages whatever their size or call-site count, so the initiative cannot talk itself into the expensive mistake later:

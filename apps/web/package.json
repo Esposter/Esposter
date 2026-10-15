@@ -100,7 +100,6 @@
     "@tiptap/vue-3": "catalog:",
     "@tresjs/cientos": "catalog:",
     "@tresjs/core": "catalog:",
-    "@tresjs/nuxt": "catalog:",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@vue-flow/background": "catalog:",

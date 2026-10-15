@@ -7,6 +7,7 @@ import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "../app/services/trpc/constants.t
 // Module from the app's `postinstall`, before any workspace package is built, and a name resolves to the `dist` a fresh
 // Clone does not have yet
 const NUXT_SECURITY_MODULE_PATH = "../../packages/nuxt-security-module/src/module.ts";
+const TRESJS_NUXT_MODULE_PATH = "../../packages/tresjs-nuxt/src/module.ts";
 // The tRPC module's options are the router and context the generated handlers import, the endpoints they are
 // Registered at, and the keep-alive the WebSocket handler pings its connections with
 const trpcModule: [string, ModuleOptions] = [
@@ -32,11 +33,11 @@ export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   "@nuxt/test-utils/module",
   "@nuxtjs/seo",
   "@pinia/nuxt",
-  "@tresjs/nuxt",
   "@unocss/nuxt",
   "@vite-pwa/nuxt",
   "@vueuse/nuxt",
   NUXT_SECURITY_MODULE_PATH,
+  TRESJS_NUXT_MODULE_PATH,
   trpcModule,
 ];
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).

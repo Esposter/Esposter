@@ -8,6 +8,7 @@ export const DocsCategorySectionsMap: Readonly<Record<DocsCategory, readonly str
     "parse-tmx",
     "pitch-transcription",
     "shared",
+    "tresjs-nuxt",
     "trpc-msw",
     "trpc-nuxt-module",
     "vue-phaserjs",

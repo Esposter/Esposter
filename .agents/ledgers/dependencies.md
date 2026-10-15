@@ -76,7 +76,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@tiptap/vue-3`                         | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tresjs/cientos`                       | —                     | Keep — framework  | TresJS's helpers, which the Genshin world reaches for before raw `three`                               |
 | `@tresjs/core`                          | —                     | Keep — framework  | the declarative renderer the Genshin world is built on, its WebGPU renderer given through `TresCanvas` |
-| `@tresjs/nuxt`                          | —                     | Keep — framework  | TresJS's Nuxt module                                                                                   |
 | `@trpc/client`                          | —                     | Keep — framework  | the API layer                                                                                          |
 | `@trpc/server`                          | —                     | Keep — framework  | the API layer                                                                                          |
 | `@tsdown/css`                           | —                     | Keep — tooling    | tsdown's CSS handling                                                                                  |
@@ -168,6 +167,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `mime-db`                               | —                     | Keep — data       | the IANA-derived dataset our `@esposter/shared` lookup reads, which changes without us                 |
 | `minimark`                              | —                     | Keep — framework  | `nuxt-ai-ready`'s content lookup imports `minimark/stringify`; knip cannot see the virtual module      |
 | `minisearch`                            | —                     | Keep — engine     | the search index                                                                                       |
+| `mlly`                                  | —                     | Keep — tooling    | the static export reader the module lists a package's exports with, never importing it                 |
 | `mocked-exports`                        | —                     | Keep — hold       | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
 | `msw`                                   | —                     | Keep — tooling    | request mocking                                                                                        |
 | `neverthrow`                            | —                     | Keep — framework  | the `Result` the error-handling convention is built on                                                 |
@@ -216,6 +216,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `unplugin-auto-import`                  | —                     | Keep — tooling    | auto-imports in the packages' builds                                                                   |
 | `unplugin-vue`                          | —                     | Keep — tooling    | Vue SFCs in the packages' builds                                                                       |
 | `vite`                                  | —                     | Keep — tooling    | the dev server and bundler                                                                             |
+| `vite-plugin-glsl`                      | —                     | Keep — tooling    | the shader plugin the module loads only when its glsl option is on, an optional peer                   |
 | `vite-plus`                             | —                     | Keep — tooling    | the task runner, lint and format                                                                       |
 | `vitest`                                | —                     | Keep — tooling    | the test runner                                                                                        |
 | `vitest-browser-vue`                    | —                     | Keep — tooling    | browser-mode component tests                                                                           |

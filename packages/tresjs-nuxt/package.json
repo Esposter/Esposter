@@ -1,0 +1,91 @@
+{
+  "name": "tresjs-nuxt",
+  "version": "4.2.0",
+  "description": "TresJS for Nuxt — a Nuxt module that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.",
+  "keywords": [
+    "nuxt",
+    "nuxt-module",
+    "threejs",
+    "tresjs",
+    "typescript",
+    "vue"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/tresjs-nuxt#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/module.ts",
+      "default": "./dist/index.js"
+    },
+    "./runtime/TresCanvas.client": {
+      "source": "./src/runtime/TresCanvas.client.ts",
+      "default": "./dist/runtime/TresCanvas.client.js"
+    },
+    "./runtime/TresCanvas.server": {
+      "source": "./src/runtime/TresCanvas.server.ts",
+      "default": "./dist/runtime/TresCanvas.server.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./runtime/TresCanvas.client": "./dist/runtime/TresCanvas.client.js",
+      "./runtime/TresCanvas.server": "./dist/runtime/TresCanvas.server.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@nuxt/kit": "catalog:",
+    "@nuxt/schema": "catalog:",
+    "defu": "catalog:",
+    "mlly": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "vite-plugin-glsl": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@tresjs/core": "catalog:",
+    "nuxt": "catalog:",
+    "three": "catalog:",
+    "vite-plugin-glsl": "catalog:",
+    "vue": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "vite-plugin-glsl": {
+      "optional": true
+    }
+  }
+}
