@@ -2,6 +2,7 @@
 title: Email
 description: Proposal — the email editor's node types over MJML, compiled on the server, with a design canvas for editing and a Preview of what a client receives.
 model: claude-opus-5-5
+waiting: "resource/page-builder/document-model, which defines the email node types and renderer contract this editor uses"
 ---
 
 # Email
