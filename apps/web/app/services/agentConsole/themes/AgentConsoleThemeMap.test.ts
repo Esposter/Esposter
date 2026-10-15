@@ -27,7 +27,7 @@ describe("agentConsoleThemeMap", () => {
   test("sets the Genshin theme accent from the element line", () => {
     expect.hasAssertions();
 
-    expect(AgentConsoleThemeMap[AgentConsoleThemeType.Genshin].getPalette(elementLine)).toEqual({
+    expect(AgentConsoleThemeMap[AgentConsoleThemeType.Genshin].getPalette(elementLine)).toStrictEqual({
       [UiToken.Accent]: "#33ccb3",
     });
   });
@@ -35,6 +35,6 @@ describe("agentConsoleThemeMap", () => {
   test.each([`${GENSHIN_ELEMENT_LINE_PREFIX}Unknown`, characterLine])("sets no palette from %j", (context) => {
     expect.hasAssertions();
 
-    expect(AgentConsoleThemeMap[AgentConsoleThemeType.Genshin].getPalette(context)).toEqual({});
+    expect(AgentConsoleThemeMap[AgentConsoleThemeType.Genshin].getPalette(context)).toStrictEqual({});
   });
 });

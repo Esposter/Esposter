@@ -7,11 +7,12 @@ import { downloadFile } from "@/services/app/downloadFile";
 import { DEFAULT_EDGE_OPTIONS } from "@/services/flowchartEditor/constants";
 import { edgeTypes } from "@/services/flowchartEditor/EdgeTypeMap";
 import { nodeTypes } from "@/services/flowchartEditor/NodeTypeMap";
+import { captureFlowchart } from "@/services/resource/flowchart/captureFlowchart";
 import { useAlertStore } from "@/store/alert";
 import { useFlowchartExportStore } from "@/store/flowchartEditor/export";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
-import { InvalidOperationError, Operation, getResultAsync } from "@esposter/shared";
-import { VueFlow, useVueFlow } from "@vue-flow/core";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { useVueFlow, VueFlow } from "@vue-flow/core";
 
 interface Props {
   request: FlowchartExportRequest;
@@ -20,6 +21,8 @@ interface Props {
 const { request } = defineProps<Props>();
 const flowchartExportStore = useFlowchartExportStore();
 const alertStore = useAlertStore();
+const { closeExport } = flowchartExportStore;
+const { createAlert } = alertStore;
 const canvas = useTemplateRef("canvas");
 const { fitView } = useVueFlow("flowchart-export");
 let isExporting = false;
@@ -27,26 +30,25 @@ const startExport = async () => {
   if (isExporting) return;
   isExporting = true;
   await getResultAsync(async () => {
-    if (request.nodes.length) await fitView({ padding: 0.12 });
-    await document.fonts.ready;
+    if (request.nodes.length > 0) await fitView({ padding: 0.12 });
+    await window.document.fonts.ready;
     await nextTick();
     const element = canvas.value?.querySelector<HTMLElement>(".vue-flow");
     if (!element) throw new InvalidOperationError(Operation.Create, startExport.name, "Export canvas is unavailable");
-    const { captureFlowchart } = await import("@/services/resource/flowchart/captureFlowchart");
     const blob = await captureFlowchart(element, request.format);
     const mimeType = request.format === FlowchartExportFormat.Png ? MimeType.Png : MimeType.Svg;
     downloadFile(`${trimFileExtension(request.name)}.${request.format}`, blob, mimeType);
   }).match(
-    () => flowchartExportStore.closeExport(),
+    () => closeExport(),
     (error) => {
-      alertStore.createAlert("Couldn't export this flowchart", "error");
+      createAlert("Couldn't export this flowchart", "error");
       console.error(error);
-      flowchartExportStore.closeExport();
+      closeExport();
     },
   );
 };
 onMounted(async () => {
-  if (!request.nodes.length) await startExport();
+  if (request.nodes.length === 0) await startExport();
 });
 </script>
 
@@ -62,9 +64,9 @@ onMounted(async () => {
       :nodes-connectable="false"
       :nodes-draggable="false"
       :elements-selectable="false"
-      bg-background
       text-text
-      @nodes-initialized="startExport"
+      bg-background
+      @nodes-initialized="startExport()"
     />
   </div>
 </template>

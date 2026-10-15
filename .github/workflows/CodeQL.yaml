@@ -76,6 +76,6 @@ jobs:
           REF: ${{ github.ref }}
         run: |
           gh api --paginate "repos/$REPOSITORY/code-scanning/alerts?ref=$REF&state=open&per_page=100" \
-            --jq '.[] | "\(.most_recent_instance.location.path):\(.most_recent_instance.location.start_line) \(.rule.id) — \(.most_recent_instance.message.text)"' \
+            --jq '.[] | select(.tool.name == "CodeQL") | "\(.most_recent_instance.location.path):\(.most_recent_instance.location.start_line) \(.rule.id) — \(.most_recent_instance.message.text)"' \
             | tee alerts.txt
           test ! -s alerts.txt

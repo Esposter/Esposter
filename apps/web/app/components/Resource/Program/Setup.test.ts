@@ -28,7 +28,8 @@ describe("resourceProgramSetup", () => {
       model: "",
       settings: surveySettingsSchema.parse({ responseMode: SurveyResponseMode.Anonymous }),
     }));
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    await resourceStore.readResource();
   });
 
   test("warns under the survey selector when its responses cannot be matched to participants", async () => {

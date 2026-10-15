@@ -4,7 +4,7 @@ import { FilterType, FilterTypeAuthorTypes, FilterTypeHases } from "@esposter/db
 import { uncapitalize } from "@esposter/shared";
 
 export const FilterTypePlaceholderMap = {
-  [FilterType.AuthorType]: EN_US_DISJUNCTION_FORMATTER.format(FilterTypeAuthorTypes.map(uncapitalize)),
+  [FilterType.AuthorType]: EN_US_DISJUNCTION_FORMATTER.format(FilterTypeAuthorTypes.map((type) => uncapitalize(type))),
   [FilterType.From]: "user",
   [FilterType.In]: "room",
   [FilterType.Mentions]: "user",
