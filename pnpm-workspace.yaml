@@ -170,7 +170,6 @@ catalog:
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-vuejs-accessibility: ^2.6.2
   fake-indexeddb: ^6.2.5
-  fast-check: ^4.10.2
   fflate: ^0.8.3
   grapesjs: 0.23.6
   grapesjs-mjml: ^1.0.8

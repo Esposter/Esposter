@@ -118,7 +118,6 @@
     "@esposter/shared-node": "workspace:*",
     "@nuxt/nitro-server": "catalog:",
     "@types/node": "catalog:",
-    "fast-check": "catalog:",
     "h3": "catalog:",
     "nitro": "catalog:",
     "publint": "catalog:",
