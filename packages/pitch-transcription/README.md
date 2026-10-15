@@ -50,7 +50,7 @@ A worker or a server that already holds the readings imports note creation from 
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/pitch-transcription.html) to level up, and the [package's page](https://esposter.com/docs/pitch-transcription) for how it works and the absorption of `@spotify/basic-pitch` it replaced.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/pitch-transcription) to level up. It explains how the package works and how it absorbed `@spotify/basic-pitch`.
 
 ### Key exports
 

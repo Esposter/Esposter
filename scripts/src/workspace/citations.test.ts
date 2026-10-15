@@ -5,7 +5,7 @@ import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
-import { AGENT_WORKTREES_DIRECTORY, APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY } from "@esposter/configuration";
+import { AGENT_WORKTREES_DIRECTORY, APP_RELATIVE_PREFIXES } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -25,9 +25,7 @@ const normalizeHeading = (text: string) =>
  * directory whose children moved to different roots is never a rename, and a row copied from an older tree is
  * not one either. A path that resolves nowhere reads exactly like one that does, which is the silence the docs
  * suite's Key Files check already refuses for its tables — this is the same check over every backticked path
- * in the trees the sync rewrites. Two routes are exempt because neither is a source path a rename could carry:
- * the worktrees directory, which is machine-local and gitignored, and TypeDoc's output under the app's `public/`,
- * which is a deployment artifact that exists only once `typedoc` has run.
+ * in the trees the sync rewrites. The worktrees directory is exempt because it is machine-local and gitignored.
  */
 describe("citations", () => {
   // A path token we can resolve, i.e. no glob placeholder, line number or prose — brackets are Nuxt route segments.
@@ -47,11 +45,9 @@ describe("citations", () => {
   // App-relative prefix — which keeps the identifier tokens in the same prose (`useQuery`, `--no-cache`) and the
   // Install-time paths (`node_modules/.vite`) out of the check.
   const repositoryEntryNames = new Set(readSweepFilePaths(".").map((path) => takeOne(path.split("/"), 0)));
-  const generatedDocsDirectory = `public/${DOCS_API_DIRECTORY}`;
   const checkIsRepositoryPath = (token: string) =>
     REPOSITORY_PATH_REGEX.test(token) &&
     !token.startsWith(AGENT_WORKTREES_DIRECTORY) &&
-    !token.includes(generatedDocsDirectory) &&
     (repositoryEntryNames.has(takeOne(token.split("/"), 0)) ||
       APP_RELATIVE_PREFIXES.some((prefix) => token.startsWith(prefix)));
   // A ledger unit may be a glob (`apps/infra/src/*`) or a module named without its extension so the row covers the

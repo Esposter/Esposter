@@ -72,7 +72,6 @@
     "bench:ci": "vitest bench --run",
     "bench:types": "pnpm -C scripts bench:types",
     "build": "pnpm --filter \"@esposter/web...\" build",
-    "build:docs": "typedoc",
     "coverage": "vitest run --coverage",
     "crossOS": "pnpm -C scripts crossOS",
     "format": "vp fmt",
@@ -107,7 +106,6 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
-    "typedoc": "catalog:",
     "typescript": "catalog:",
     "vite-plus": "catalog:",
     "vitest": "catalog:"
@@ -119,8 +117,5 @@
       "linux": "./scripts/src/refreshLockfile/index.sh",
       "win32": "pnpm pwsh scripts/src/refreshLockfile/index.ps1"
     }
-  },
-  "scriptsComments": {
-    "build": "@TODO: https://github.com/TypeStrong/typedoc/issues/3098 — restore `pnpm build:docs` to the chain once TypeDoc runs on TypeScript 7, or a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
   }
 }

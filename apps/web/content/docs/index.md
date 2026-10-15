@@ -14,7 +14,3 @@ Esposter is a social platform monorepo — a nice and casual place for posting r
 - **[nuxt-security-module](/docs/nuxt-security-module)** — the replacement for `nuxt-security`, which the app runs: its upstream audit, its defaults review and its regression results.
 - **[tresjs-nuxt](/docs/tresjs-nuxt)** — Nuxt integration for TresJS and installed Tres packages.
 - **[Proposals](/docs/proposals)** — designs that are **not implemented yet**. Everything under a product area describes shipped behavior; everything under proposals is future work awaiting implementation.
-
-## API reference
-
-[Generated TypeDoc API documentation](/docs/api/){target="_blank"} covers the monorepo packages. It is static output served from `public/`, not a content page, so the link opens in a new tab — an in-app navigation would hand `/docs/api/` to the docs route, which has no page to render for it.

@@ -69,7 +69,6 @@
     "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
-    "typedoc": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {

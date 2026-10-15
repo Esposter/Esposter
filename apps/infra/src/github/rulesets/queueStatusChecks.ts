@@ -29,9 +29,6 @@ export const queueStatusChecks: github.RepositoryRuleset = new github.Repository
         requiredChecks: [
           { context: "build-packages / Build Packages" },
           { context: "Build App" },
-          // @TODO: https://github.com/TypeStrong/typedoc/issues/3098 — restore with the `build-docs` job in
-          // .github/workflows/CI.yaml: a context no job reports is never satisfied, so requiring it blocks every merge
-          // { context: "Build Documentation" },
           ...Array.from({ length: CoverageShardCount }, (_value, shardIndex) => ({
             context: `Coverage (${shardIndex + 1})`,
           })),

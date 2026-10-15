@@ -12,7 +12,7 @@ Read when deciding whether a subject earns a test at all, or which of two tests 
 
 ## Framework and filesystem wiring
 
-**A test that asserts framework or filesystem wiring earns nothing.** A directory exists, a config key holds the value the config file just set, a third-party loader was handed the right glob — none of these fail on a change anyone would ship, and the ones over generated output (a build directory, a typedoc dump) fail on a fresh clone instead. What is worth pinning is a literal a tool **cannot** import and therefore silently drops: a JSON config's ignore list, or a config evaluated during `postinstall`, which runs before any workspace package is built and so cannot resolve one. Not a path the suite beside it would already fail on. Ask what a reviewer would have merged for this test to fire; if the answer is "nothing", it is maintenance with no return.
+**A test that asserts framework or filesystem wiring earns nothing.** A directory exists, a config key holds the value the config file just set, a third-party loader was handed the right glob — none of these fail on a change anyone would ship, and the ones over generated output (a build directory or generated docs) fail on a fresh clone instead. What is worth pinning is a literal a tool **cannot** import and therefore silently drops: a JSON config's ignore list, or a config evaluated during `postinstall`, which runs before any workspace package is built and so cannot resolve one. Not a path the suite beside it would already fail on. Ask what a reviewer would have merged for this test to fire; if the answer is "nothing", it is maintenance with no return.
 
 ## Deleting on sight
 

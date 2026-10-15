@@ -23,7 +23,7 @@ pnpm i tresjs-nuxt
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/tresjs-nuxt.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/tresjs-nuxt) to level up.
 
 ## <a name="license">⚖️ License</a>
 

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { readHandWrittenPages } from "@@/content/docs/readHandWrittenPages.test";
-import { APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
+import { APP_RELATIVE_PREFIXES, DOCS_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";
@@ -94,9 +94,6 @@ describe("docsLinks", () => {
   const pagePaths = pages.map(({ page }) => page);
   const DOCS_LINK_REGEX = new RegExp(String.raw`\]\((?<target>/${DOCS_DIRECTORY}[^)\s#]*)(?:#[^)\s]*)?\)`, "gu");
   const DOCS_ROUTE_PREFIX_REGEX = new RegExp(String.raw`^/${DOCS_DIRECTORY}/?`, "u");
-  // Real docs routes that are not content pages — the api section is generated TypeDoc output.
-  const ALLOWED_LINK_TARGETS = [`/${DOCS_API_DIRECTORY}`];
-
   test("every /docs link resolves to a page", () => {
     expect.hasAssertions();
 
@@ -104,11 +101,7 @@ describe("docsLinks", () => {
       .flatMap(({ markdown, page }) =>
         Array.from(markdown.matchAll(DOCS_LINK_REGEX), (match) => ({ page, target: match.groups?.target ?? "" })),
       )
-      .filter(
-        ({ target }) =>
-          !ALLOWED_LINK_TARGETS.some((allowed) => target === allowed || target.startsWith(`${allowed}/`)) &&
-          !checkIsPage(target.replace(DOCS_ROUTE_PREFIX_REGEX, "").replace(/\/$/u, "")),
-      )
+      .filter(({ target }) => !checkIsPage(target.replace(DOCS_ROUTE_PREFIX_REGEX, "").replace(/\/$/u, "")))
       .map(({ page, target }) => `${page} → ${target}`);
 
     expect(brokenLinks).toStrictEqual([]);

@@ -55,7 +55,7 @@ The game's data is not bundled. Every record the world reads — the opening's t
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/genshin-world.html) to level up. The world's design is in the app's [Genshin docs](https://esposter.com/docs/genshin), and how each screen is matched to the game is its [parity page](https://esposter.com/docs/genshin/parity).
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/genshin) to level up. How each screen is matched to the game is described on the [parity page](https://esposter.com/docs/genshin/parity).
 
 ## <a name="license">⚖️ License</a>
 

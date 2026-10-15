@@ -20,8 +20,8 @@ export const DOCS_CATEGORY_SECTIONS_FILE = "apps/web/app/services/docs/DocsCateg
 export const DOCS_SECTION_ICON_FILE = "apps/web/app/services/docs/DocsSectionIconMap.ts";
 export const APP_MODULES_FILE = "apps/web/configuration/modules.ts";
 export const GITHUB_REPOSITORY_URL = "https://github.com/Esposter/Esposter";
-// The TypeDoc module page of a published package, which is the documentation its README links
-export const API_MODULE_URL_PREFIX = "https://esposter.com/docs/api/modules";
+// The docs site, which the generated README links for package documentation
+export const DOCS_URL_PREFIX = "https://esposter.com/docs";
 export const NUXT_MODULE_ENTRY_PATH = "src/module.ts";
 export const PLUGIN_SCOPE = "@esposter";
 // The two configuration files every member carries are identical across kinds.

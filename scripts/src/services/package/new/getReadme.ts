@@ -1,22 +1,18 @@
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
 import { PackageKind } from "#src/models/package/PackageKind";
-import {
-  API_MODULE_URL_PREFIX,
-  DOCS_SECTION_DIRECTORY,
-  GITHUB_REPOSITORY_URL,
-} from "#src/services/package/new/constants";
+import { DOCS_SECTION_DIRECTORY, DOCS_URL_PREFIX, GITHUB_REPOSITORY_URL } from "#src/services/package/new/constants";
 import { getPackageName } from "#src/services/package/new/getPackageName";
 
 // The README skeleton readme-standards describes: badges and Getting Started only where the package is published or installed.
 // The documentation link is the one its kind has. A plugin is installed by Claude Code, not npm, so it has no install step.
-// It links its docs page instead of a TypeDoc module
+// It links its docs page instead of the general docs index
 export const getReadme = (options: CreatePackageOptions): string => {
   const { description, kind, name } = options;
   const packageName = getPackageName(options);
   const isPublished = kind !== PackageKind.Plugin;
   const documentationUrl = isPublished
-    ? `${API_MODULE_URL_PREFIX}/${name}.html`
+    ? `${DOCS_URL_PREFIX}/${name}`
     : `${GITHUB_REPOSITORY_URL}/blob/main/${DOCS_SECTION_DIRECTORY}/${name}/index.md`;
   const badges = isPublished
     ? [

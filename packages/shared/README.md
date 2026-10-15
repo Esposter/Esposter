@@ -23,7 +23,7 @@ pnpm i @esposter/shared zod
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_shared.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/shared) to level up.
 
 ### Key Exports
 

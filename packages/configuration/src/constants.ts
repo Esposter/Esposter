@@ -21,7 +21,7 @@ export const AGENT_ALIAS_DIRECTORY = ".claude";
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 // The docs site's one path segment. `apps/web/content/docs` holds the pages, `app/pages/docs/[...slug].vue` is
 // The route that renders them, and `/docs/...` is therefore the url every page is linked by — so the content
-// Collection, the TypeDoc output path and the docs suites all build their paths from here rather than repeating it.
+// Collection and docs suites all build their paths from here rather than repeating it.
 // Three consumers cannot import it, and none needs a pin: a Nuxt route is its own directory name, a markdown link
 // Is authored text, and `content.config.ts` is loaded by `nuxt prepare` from the app's `postinstall` — which runs
 // Before any workspace package is built, so importing this there fails the install itself on a fresh clone. All
@@ -39,11 +39,6 @@ export const APP_RELATIVE_PREFIXES = [
   "server/",
   "shared/",
 ] as const;
-// Generated TypeDoc output. It is written into the app's `public/`, so it is served from under the docs route
-// Without being a content page — which is why the docs link check has to allow this one prefix explicitly.
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const DOCS_API_DIRECTORY: string = `${DOCS_DIRECTORY}/api`;
-
 export const DISTRIBUTION_DIRECTORY = "dist";
 
 export const KIBIBYTE: number = 2 ** 10;

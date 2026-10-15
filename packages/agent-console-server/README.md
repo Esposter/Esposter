@@ -27,7 +27,7 @@ Press Connect on the page, or hold Ctrl and click the one-time link the host pri
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/agent-console-server.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs) to level up.
 
 `agent-console-server [--port <port>] [--hostname <address>] [--origin <app origin>]`, and `agent-console-server devices [--revoke <id>]`
 

@@ -70,8 +70,7 @@ pointer nothing resolves; a citation from inside `references/` to a file at its 
 recurring shape, and it needs `../`. The one line the check cannot judge is `skill-authoring`'s
 `references/x.md` placeholder.
 
-Excluded: `CHANGELOG.md` (lerna output) · "public/docs/api" (TypeDoc
-output) · `~/.claude/plugins` skills (external, not ours to edit).
+Excluded: `CHANGELOG.md` (lerna output) · `~/.claude/plugins` skills (external, not ours to edit).
 
 Enforceable next. What is already enforced sits with what it guards: the link, index-coverage,
 Key Files, proposal-model, the label-size cap and both label-line-break checks in `content/docs/index.test.ts`, every backticked

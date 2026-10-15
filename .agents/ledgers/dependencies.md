@@ -211,7 +211,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `tsdown`                                | —                     | Keep — tooling    | the package bundler                                                                                    |
 | `tsx`                                   | —                     | Keep — tooling    | runs TypeScript with enums, which node's type stripping refuses                                        |
 | `type-fest`                             | —                     | Keep — types      | type utilities                                                                                         |
-| `typedoc`                               | —                     | Keep — tooling    | API docs                                                                                               |
 | `typescript`                            | —                     | Keep — tooling    | the compiler                                                                                           |
 | `unicode-emoji-json`                    | —                     | Keep — data       | the emoji list, tracking Unicode                                                                       |
 | `unocss`                                | —                     | Keep — framework  | the styling engine                                                                                     |

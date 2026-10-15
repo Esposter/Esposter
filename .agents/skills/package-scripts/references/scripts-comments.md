@@ -9,9 +9,5 @@ to restore — and that is **all** the object holds: why a script is shaped as i
 the docs page that owns it, where the reasoning already sits, so a copy in the manifest is a second one that drifts.
 
 ```json
-{
-  "scriptsComments": {
-    "build": "@TODO: https://github.com/TypeStrong/typedoc/issues/3098 — restore `pnpm build:docs` to the chain …"
-  }
-}
+{ "scriptsComments": { "build": "@TODO: <upstream issue URL> — remove the temporary build step when the fix ships" } }
 ```

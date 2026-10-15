@@ -35,10 +35,10 @@ flowchart LR
 
 Which literal a tool needs follows from how far it walks, so the two exclusions are not interchangeable:
 
-| Exclusion           | Needed by          | Not needed by                                                                                                                                                    |
-| ------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.claude` alias     | oxlint             | oxfmt and VS Code search, neither of which follows a directory symlink; git, which stores it                                                                     |
-| `.agents/worktrees` | oxlint, oxfmt, git | Vitest and TypeDoc, whose globs are rooted at the workspace members; the root TypeScript program, which compiles the root config files and descends into nothing |
+| Exclusion           | Needed by          | Not needed by                                                                                                                                        |
+| ------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude` alias     | oxlint             | oxfmt and VS Code search, neither of which follows a directory symlink; git, which stores it                                                         |
+| `.agents/worktrees` | oxlint, oxfmt, git | Vitest, whose globs are rooted at the workspace members; the root TypeScript program, which compiles the root config files and descends into nothing |
 
 ESLint states neither. The shared config bridges `oxlint.config.ts`'s `ignorePatterns` into flat-config global `ignores` through `eslint-plugin-oxlint`, so one list governs both linters and the root `eslint.config.js` only ignores the workspace members, each of which lints itself.
 

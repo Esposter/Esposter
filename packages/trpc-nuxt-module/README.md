@@ -77,7 +77,7 @@ const { data } = await $trpc.greeting.useQuery(name);
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/trpc-nuxt-module.html) to level up. How it works, and every upstream `trpc-nuxt` issue it answers, are on the [trpc-nuxt-module docs page](https://esposter.com/docs/trpc-nuxt-module).
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/trpc-nuxt-module) to level up. It covers the design and the upstream `trpc-nuxt` issues this module answers.
 
 ### Key exports
 
