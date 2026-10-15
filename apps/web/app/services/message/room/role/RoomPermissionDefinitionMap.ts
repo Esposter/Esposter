@@ -15,6 +15,10 @@ export const RoomPermissionDefinitionMap = {
     category: RoomPermissionCategory.Moderation,
     description: "Remove a member from the room. They can rejoin with a new invite.",
   },
+  ManageDisplayNames: {
+    category: RoomPermissionCategory.Moderation,
+    description: "Change what other members are called in this room.",
+  },
   ManageEmojis: {
     category: RoomPermissionCategory.Advanced,
     description: "Add, rename and delete the room's custom emoji.",
@@ -23,10 +27,6 @@ export const RoomPermissionDefinitionMap = {
   ManageMessages: {
     category: RoomPermissionCategory.TextChannel,
     description: "Delete and pin messages written by anyone, not only their own.",
-  },
-  ManageNicknames: {
-    category: RoomPermissionCategory.Moderation,
-    description: "Change what other members are called in this room.",
   },
   ManageRoles: {
     category: RoomPermissionCategory.General,

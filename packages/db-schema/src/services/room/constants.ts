@@ -1,4 +1,4 @@
-export const NICKNAME_MAX_LENGTH = 32;
+export const DISPLAY_NAME_MAX_LENGTH = 32;
 export const ROOM_CATEGORY_NAME_MAX_LENGTH = 100;
 export const ROOM_EMOJI_NAME_MAX_LENGTH = 32;
 // The shortcode charset, which is the unicode dataset's slug charset. `:name:` in the composer resolves against

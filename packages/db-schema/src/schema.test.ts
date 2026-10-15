@@ -94,7 +94,7 @@ describe("schema", () => {
       users_biography_length_check: LENGTH("auth"."users"."biography") <= 160
       users_name_length_check: LENGTH(TRIM("auth"."users"."name")) BETWEEN 1 AND 100
       userStatuses_message_length_check: LENGTH("message"."userStatuses"."message") <= 64
-      usersToRooms_nickname_length_check: LENGTH("message"."usersToRooms"."nickname") <= 32
+      usersToRooms_displayName_length_check: LENGTH("message"."usersToRooms"."displayName") <= 32
       usersToRooms_mentionCount_check: "message"."usersToRooms"."mentionCount" >= 0
       webhooks_name_length_check: LENGTH(TRIM("message"."webhooks"."name")) BETWEEN 1 AND 100"
     `);

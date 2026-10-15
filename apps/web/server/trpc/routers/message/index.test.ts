@@ -586,15 +586,15 @@ describe("messageRouter", () => {
     expect(data).toStrictEqual({ roomId, userId: mockSession.user.id, username: mockSession.user.name });
   });
 
-  test("on creates typing names the typist by their room nickname", async () => {
+  test("on creates typing with the typist's room display name", async () => {
     expect.hasAssertions();
 
-    const nickname = "nickname";
+    const displayName = "displayName";
     const subscription = await messageCaller.onCreateTyping({ roomId });
     const member = await createMember();
     await mockContext.db
       .update(usersToRoomsInMessage)
-      .set({ nickname })
+      .set({ displayName })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
     const data = await getFirstEmit(
       () => subscription,
@@ -604,7 +604,7 @@ describe("messageRouter", () => {
       },
     );
 
-    expect(data).toStrictEqual({ roomId, userId: member.id, username: nickname });
+    expect(data).toStrictEqual({ roomId, userId: member.id, username: displayName });
   });
 
   test("updates", async () => {

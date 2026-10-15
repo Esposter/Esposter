@@ -6,11 +6,11 @@ import { describe } from "vitest";
 export const createUserToRoom = (overrides: Partial<UserToRoomInMessage> = {}): UserToRoomInMessage => ({
   createdAt: new Date(0),
   deletedAt: null,
+  displayName: "",
   isHidden: false,
   lastMessageAt: null,
   lastReadAt: null,
   mentionCount: 0,
-  nickname: "",
   notificationType: NotificationType.DirectMessage,
   roomId: crypto.randomUUID(),
   timeoutUntil: null,

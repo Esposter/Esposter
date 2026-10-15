@@ -46,13 +46,18 @@ const memberItems = computed(() => {
   return getMemberGroups(members.value, (userId) => getMemberRoles(room.id, userId)).flatMap(
     ({ members: groupMembers, role }) => {
       const group = `${role?.name ?? "Members"}${getMemberCountSuffix(role?.id ?? "")}`;
-      return groupMembers.map<UiListItem<string>>((member) => ({
-        description: getStatusMessage(member.id) || undefined,
-        group,
-        hasMarkSlot: true,
-        title: getDisplayName(member, room.id),
-        value: member.id,
-      }));
+      return groupMembers.map<UiListItem<string>>((member) => {
+        const details = [member.name === member.displayName ? "" : member.name, getStatusMessage(member.id) ?? ""]
+          .filter(Boolean)
+          .join(" · ");
+        return {
+          description: details || undefined,
+          group,
+          hasMarkSlot: true,
+          title: member.displayName,
+          value: member.id,
+        };
+      });
     },
   );
 });

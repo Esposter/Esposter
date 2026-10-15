@@ -3,7 +3,7 @@ import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
-import { NICKNAME_MAX_LENGTH } from "#src/services/room/constants";
+import { DISPLAY_NAME_MAX_LENGTH } from "#src/services/room/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNormalizedStringSchema } from "@esposter/shared";
@@ -16,11 +16,11 @@ export const notificationTypeEnum = messageSchema.enum("notificationType", Notif
 export const usersToRoomsInMessage = pgTable(
   "usersToRooms",
   {
+    displayName: text().notNull().default(""),
     isHidden: boolean().notNull().default(false),
     lastMessageAt: timestamp(),
     lastReadAt: timestamp(),
     mentionCount: integer().notNull().default(0),
-    nickname: text().notNull().default(""),
     notificationType: notificationTypeEnum().notNull().default(NotificationType.DirectMessage),
     roomId: uuid()
       .notNull()
@@ -31,9 +31,9 @@ export const usersToRoomsInMessage = pgTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ mentionCount, nickname, roomId, timeoutUntil, userId }) => [
+    extraConfig: ({ displayName, mentionCount, roomId, timeoutUntil, userId }) => [
       primaryKey({ columns: [userId, roomId] }),
-      check("usersToRooms_nickname_length_check", createMaxLengthCheckSql(nickname, NICKNAME_MAX_LENGTH)),
+      check("usersToRooms_displayName_length_check", createMaxLengthCheckSql(displayName, DISPLAY_NAME_MAX_LENGTH)),
       check("usersToRooms_mentionCount_check", createMinimumCheckSql(mentionCount, 0)),
       index("usersToRooms_timeoutUntil_index")
         .on(timeoutUntil)
@@ -46,7 +46,7 @@ export const usersToRoomsInMessage = pgTable(
 export type UserToRoomInMessage = typeof usersToRoomsInMessage.$inferSelect;
 
 export const selectUserToRoomInMessageSchema = createSelectSchema(usersToRoomsInMessage, {
+  displayName: (schema) => createNormalizedStringSchema(DISPLAY_NAME_MAX_LENGTH, schema),
   mentionCount: (schema) => schema.nonnegative(),
-  nickname: (schema) => createNormalizedStringSchema(NICKNAME_MAX_LENGTH, schema),
   notificationType: notificationTypeSchema,
 });

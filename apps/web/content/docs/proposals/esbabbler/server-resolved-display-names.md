@@ -6,9 +6,9 @@ model: claude-opus-5
 
 # Server-Resolved Display Names
 
-A room calls a member whatever their nickname says ([nicknames](/docs/esbabbler/nicknames)), and a direct message calls itself after the people in it ([friends and DMs](/docs/esbabbler/friends-and-dms)). Both names are assembled on the client, after the read. Every query that has to **find** or **order** one of those names therefore runs against a different value than the one the reader is looking at.
+A room shows a member's per-room display name ([display names](/docs/esbabbler/nicknames)), and a direct message calls itself after the people in it ([friends and DMs](/docs/esbabbler/friends-and-dms)). Both names are assembled on the client, after the read. Every query that has to **find** or **order** one of those names therefore runs against a different value than the one the reader is looking at.
 
-The member list is the visible case. A room where Alice is nicknamed `Ally` renders `Ally`, and typing `Ally` into the member search returns nothing — the filter is `ilike(users.name, …)`. Typing `Alice` returns a row that says `Ally`, which reads as the wrong result rather than the right one. The same procedure backs the `@` mention list, the audit log's member picker and the search sidebar's `from:` picker, so one filter is wrong in four places.
+The member list is the visible case. A room where Alice's display name is `Ally` renders `Ally`, and typing `Ally` into the member search returns nothing — the filter is `ilike(users.name, …)`. Typing `Alice` returns a row that says `Ally`, which reads as the wrong result rather than the right one. The same procedure backs the `@` mention list, the audit log's member picker and the search sidebar's `from:` picker, so one filter is wrong in four places.
 
 ## The rule
 
@@ -16,7 +16,7 @@ The member list is the visible case. A room where Alice is nicknamed `Ally` rend
 
 ```mermaid
 flowchart TD
-  Nickname["usersToRooms.nickname"] --> Expression["displayName expression"]
+  RoomName["usersToRooms.displayName"] --> Expression["displayName expression"]
   Name["users.name"] --> Expression
   Expression --> Filter["ilike filter"]
   Expression --> Sort["order by"]
@@ -32,12 +32,12 @@ Today only the last edge exists, and it is drawn on the client — which is why 
 
 ### One expression, at the join that is already there
 
-`readMembers` already inner-joins `usersToRoomsInMessage`, so the nickname is one column away from a query that never looks at it:
+`readMembers` already inner-joins `usersToRoomsInMessage`, so the display name is one column away from a query that never looks at it:
 
 ```ts
-// coalesce over nullif, because "no nickname" is the empty string rather than null (nicknames doc)
+// coalesce over nullif, because "no display name" is the empty string rather than null (display names doc)
 export const getDisplayNameExpression = () =>
-  sql<string>`coalesce(nullif(${usersToRoomsInMessage.nickname}, ''), ${users.name})`;
+  sql<string>`coalesce(nullif(${usersToRoomsInMessage.displayName}, ''), ${users.name})`;
 ```
 
 Selected as `displayName`, it becomes the filter target, the `orderBy` key and the cursor key in the same read. The client's `getDisplayName` overlay keeps its job on the **render** path — a message author resolved by `useCreator`, a mention label rewritten by `useMessageHtml` — where the user row came from somewhere other than a member read. The two must agree, which is one more reason the fallback rule is stated once and both sides quote it: `nullif` on the server is `||` on the client.
@@ -52,7 +52,7 @@ Selected as `displayName`, it becomes the filter target, the `orderBy` key and t
 
 ### The row shows why it matched
 
-The reactions dialog already renders the shape this needs — nickname as the title, the global name as a subtitle when the two differ — and Discord's member list does the same. Once the search matches both names, the subtitle is what tells a reader who typed `Alice` why a row saying `Ally` came back. The member list, the settings members panel and the `@` mention list adopt it; the mention list is also the one place that still puts the **global** name in front of the reader while the committed mention renders as the nickname.
+The reactions dialog already renders the shape this needs — display name as the title, the account name as a subtitle when the two differ — and Discord's member list does the same. Once the search matches both names, the subtitle is what tells a reader who typed `Alice` why a row saying `Ally` came back. The member list, the settings members panel and the `@` mention list adopt it; the mention list is also the one place that still puts the account name in front of the reader while the committed mention renders as the display name.
 
 ### Direct messages get a name that exists
 
@@ -60,7 +60,7 @@ A direct message stores `name = ""` and `useDirectMessageName` joins the partici
 
 ## What is deliberately unchanged
 
-- **Bans.** Banning deletes the `usersToRooms` row, so a banned user has no nickname left to resolve — the global name is the only name there is, and the ban list's search matching it is correct rather than an oversight.
+- **Bans.** Banning deletes the `usersToRooms` row, so a banned user has no room display name to resolve — the account name is the only name there is, and the ban list's search matching it is correct rather than an oversight.
 - **Friend search.** `searchUsers` has no room, so a global name is the only sensible key.
 - **System messages.** `"<name> joined the room."` is baked into message content at write time. Freezing the name there is a property of message content, not of name resolution.
 
@@ -69,8 +69,8 @@ A direct message stores `name = ""` and `useDirectMessageName` joins the partici
 1. `getDisplayNameExpression` beside the other shared query helpers, with the schema that owns the columns.
 2. Widen `getCursorWhere` to a columns record, mirroring `parseSortByToSql`'s overload pair, with the cursor test that covers an aliased expression.
 3. `readMembers`: select `displayName`, sort on it by default, and cursor on it paired with `users.id` — a display name is not unique, and a keyset that reads strictly past its cursor drops the row that ties with it at a page boundary. The filter matches `displayName` **or** `users.name`, since the subtitle above only has something to explain when a search for `Alice` returns `Ally`. Return type gains the field.
-4. **Partly done.** Client: `readNicknames` is gone from `readMetadata`, and the render-path overlay is filled from each row's `displayName`, so `readNicknames` (procedure, input and client composable) is deleted. `members` already sorts on `displayName`. Still open: the global-name subtitle on the member list, the settings panel and the mention list.
-5. `readRooms`: the aggregated form — the same participant set the client joins, so every other participant and never the reader. The order goes **inside** the aggregate (`string_agg(displayName, ', ' ORDER BY displayName, users.id)`); an outer `ORDER BY` sorts the rows the query returns and leaves the order the aggregate consumed them in untouched, which is the order the name is built from. `users.id` breaks the tie, since two participants may render the same name. `readDirectMessageParticipants` returns the same resolved names in that same order and `useDirectMessageName` joins them as given, or the searched name and the rendered one drift apart the moment a participant is added. Tests: a nicknamed participant, the same room read twice, and a room gaining one. Then remove the `RoomType.Room` restriction from the quick switcher and render the resolved name in `Searched.vue`.
+4. **Done.** `readNicknames` is gone from `readMetadata`; `readMembers` returns the room's `displayName` with the account `name`, and the member list, settings panel and mention picker render those fields directly. The member list and settings panel show the account name as a subtitle when it differs. The display-name render path for message and call authors remains room-scoped for data that does not come from the member read.
+5. `readRooms`: the aggregated form — the same participant set the client joins, so every other participant and never the reader. The order goes **inside** the aggregate (`string_agg(displayName, ', ' ORDER BY displayName, users.id)`); an outer `ORDER BY` sorts the rows the query returns and leaves the order the aggregate consumed them in untouched, which is the order the name is built from. `users.id` breaks the tie, since two participants may render the same name. `readDirectMessageParticipants` returns the same resolved names in that same order and `useDirectMessageName` joins them as given, or the searched name and the rendered one drift apart the moment a participant is added. Tests: a participant with a room display name, the same room read twice, and a room gaining one. Then remove the `RoomType.Room` restriction from the quick switcher and render the resolved name in `Searched.vue`.
 
 Step 5 is separable and lands second — steps 1–4 fix a wrong answer, step 5 adds rows that were never there.
 

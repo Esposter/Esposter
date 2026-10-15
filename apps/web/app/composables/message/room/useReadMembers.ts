@@ -19,7 +19,7 @@ export const useReadMembers = () => {
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
   const userToRoomStore = useUserToRoomStore();
-  const { setNickname } = userToRoomStore;
+  const { setDisplayName } = userToRoomStore;
   // The term the rows on screen came from, so paging carries it with the cursor — a member who joins mid-scroll
   // Cannot appear in a later page of a search they do not match
   const searchedName = ref("");
@@ -41,8 +41,8 @@ export const useReadMembers = () => {
     );
     storeUsers(cursorPaginationData.items);
     // The render path resolves a member's name from the overlay, which the read's own display name fills, so
-    // Nothing else has to fetch nicknames
-    for (const { displayName, id } of cursorPaginationData.items) setNickname(roomId, id, displayName);
+    // Nothing else has to fetch displayNames
+    for (const { displayName, id } of cursorPaginationData.items) setDisplayName(roomId, id, displayName);
     return cursorPaginationData;
   };
   // The room's own totals, which a search must never re-read: the roleless group is derived from a count of

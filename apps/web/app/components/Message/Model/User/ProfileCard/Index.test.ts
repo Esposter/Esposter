@@ -12,9 +12,9 @@ describe("messageModelUserProfileCard", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const user = createUser({ name: "globalName" });
-  const nickname = "nickname";
+  const displayName = "displayName";
 
-  // The member row this card pops out of resolves the nickname, so a card reading the global name renames the
+  // The member row this card pops out of resolves the displayName, so a card reading the global name renames the
   // Person under the cursor the moment the popout opens
   test("names the member the way its room does", async () => {
     expect.hasAssertions();
@@ -23,11 +23,11 @@ describe("messageModelUserProfileCard", () => {
     const component = await mountSuspended(MessageModelUserProfileCard, { props: { user } });
     setCurrentRoomId(roomId);
     const userToRoomStore = useUserToRoomStore();
-    const { setNickname } = userToRoomStore;
-    setNickname(roomId, user.id, nickname);
+    const { setDisplayName } = userToRoomStore;
+    setDisplayName(roomId, user.id, displayName);
     await flushPromises();
 
-    expect(component.text()).toContain(nickname);
+    expect(component.text()).toContain(displayName);
     expect(component.text()).not.toContain(user.name);
   });
 });

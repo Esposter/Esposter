@@ -17,13 +17,13 @@ export const useCreator = (message: MaybeRefOrGetter<MessageEntity | undefined>)
     if (!messageValue) return undefined;
 
     if (messageValue.type === MessageType.Webhook) {
-      // An app user is not a member of the room, so it has no nickname to resolve
+      // An app user is not a member of the room, so it has no room display name to resolve
       const appUser = appUserMap.value.get(messageValue.appUser.id);
       return appUser ? { ...appUser, ...messageValue.appUser } : undefined;
     }
 
     const user = userMap.value.get(messageValue.userId);
-    // The creator is named on every message it wrote, so it resolves the room nickname exactly like the member
+    // The creator is named on every message it wrote, so it resolves the room display name exactly like the member
     // Sidebar and the settings Members panel — otherwise a renamed member is two different people in one room
     if (user) return { ...user, name: getDisplayName(user, messageValue.partitionKey) };
     else return undefined;

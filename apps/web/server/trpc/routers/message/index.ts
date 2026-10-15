@@ -113,11 +113,11 @@ export const baseMessageRouter = router({
       // Who is typing, and the name the room knows them by, are the server's to say, never the input's: a member
       // Naming another would show them typing, and a member naming themselves could wear any name
       const userToRoom = await ctx.db.query.usersToRoomsInMessage.findFirst({
-        columns: { nickname: true },
+        columns: { displayName: true },
         where: { roomId: { eq: roomId }, userId: { eq: user.id } },
       });
       messageEventEmitter.emit("createTyping", [
-        { roomId, userId: user.id, username: userToRoom?.nickname || user.name },
+        { roomId, userId: user.id, username: userToRoom?.displayName || user.name },
         { sessionId: session.id, userId: user.id },
       ]);
     }),

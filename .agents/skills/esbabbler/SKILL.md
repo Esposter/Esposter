@@ -1,6 +1,6 @@
 ---
 name: esbabbler
-description: Apply when working on the messaging module (apps/web/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Esposter messaging feature (esbabbler) conventions — Discord parity as the default design rule, display names resolved through getDisplayName/getMemberName with the || nickname fallback, MessageTypeOperationPermissionMap as the one source of what may be done to a message, and a subscription written on another member's behalf recording that member's own decision on the row. Calls/voice internals live in the esbabbler-call skill.
+description: Apply when working on the messaging module (apps/web/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Esposter messaging feature (esbabbler) conventions — Discord parity as the default design rule, room display names returned by the server on the screen-specific procedure, MessageTypeOperationPermissionMap as the one source of what may be done to a message, and a subscription written on another member's behalf recording that member's own decision on the row. Calls/voice internals live in the esbabbler-call skill.
 ---
 
 # Esbabbler (Messaging) Feature Conventions
@@ -11,7 +11,7 @@ Esbabbler is a Discord clone: an undecided behaviour, name, default or layout ta
 
 ## Display Name Resolution
 
-Every member name inside a room goes through `getDisplayName(user, roomId)`, an id alone through `getMemberName(userId)`, and a nickname falls back with `||` — never a bare `user.name` in a room (`references/display-names.md`).
+The procedure for a screen that shows room members returns the room's `displayName` alongside the account `name` when that screen needs both. Render those fields directly; do not keep a frontend room-name overlay or a `getMemberName` wrapper (`references/display-names.md`).
 
 ## What May Be Done To A Message
 

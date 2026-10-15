@@ -13,16 +13,16 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
   const room = createRoom("name");
   const userToRoom = createUserToRoom({ roomId: room.id, userId: room.userId });
 
-  // The field emits save from blur and from Enter, so a nickname committed with Enter and then blurred writes
+  // The field emits save from blur and from Enter, so a displayName committed with Enter and then blurred writes
   // The same value twice — every one of those writes is a round trip the queue now runs one after the other
   test("writes once when the field saves from both blur and Enter", async () => {
     expect.hasAssertions();
 
-    const nickname = "nickname";
+    const displayName = "displayName";
     let updateCount = 0;
     trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
       updateCount += 1;
-      return { ...userToRoom, nickname: input.nickname ?? userToRoom.nickname };
+      return { ...userToRoom, displayName: input.displayName ?? userToRoom.displayName };
     });
     const userToRoomStore = useUserToRoomStore();
     const { setMyUserToRoom } = userToRoomStore;
@@ -30,7 +30,7 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
 
     const component = await mountSuspended(MessageModelRoomSettingsTypeProfileIndex, { props: { room } });
     const input = component.get("input");
-    await input.setValue(nickname);
+    await input.setValue(displayName);
     await input.trigger("keydown", { key: "Enter" });
     await flushPromises();
     await input.trigger("focusout");

@@ -1,6 +1,6 @@
 import { db } from "#src/services/shared/db";
 
-// Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room nickname
+// Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room display name
 // ([nicknames](/docs/esbabbler/nicknames)) is applied once and never on the request path a member is waiting on.
 //
 // A webhook message has no author of its own — it is posted by an app user on the webhook's behalf — so the two
@@ -16,11 +16,11 @@ export const getMessageNotificationAuthor = async ({
 }): Promise<{ icon?: null | string; title: string }> => {
   if (userId) {
     const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
-      columns: { nickname: true },
+      columns: { displayName: true },
       where: { roomId: { eq: roomId }, userId: { eq: userId } },
       with: { user: { columns: { image: true, name: true } } },
     });
-    if (userToRoom) return { icon: userToRoom.user.image, title: userToRoom.nickname || userToRoom.user.name };
+    if (userToRoom) return { icon: userToRoom.user.image, title: userToRoom.displayName || userToRoom.user.name };
     else return { title: "" };
   } else if (appUserId) {
     const appUser = await db.query.appUsersInMessage.findFirst({

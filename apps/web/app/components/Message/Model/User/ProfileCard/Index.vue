@@ -36,7 +36,7 @@ const { checkHasSentFriendRequest } = friendRequestStore;
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId } = storeToRefs(moderationNoteStore);
 const isSelf = computed(() => session.value?.user.id === user.id);
-// The row this card pops out of already shows the room nickname, so the card has to resolve the same way —
+// The row this card pops out of already shows the room displayName, so the card has to resolve the same way —
 // Otherwise opening a renamed member swaps the name out from under the cursor
 const displayName = computed(() => getDisplayName(user, currentRoomId.value));
 const { copyUserIdItem, friendItem, isKickable, moderationItems } = useMemberActionItems(

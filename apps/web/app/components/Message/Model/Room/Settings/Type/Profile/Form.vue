@@ -13,18 +13,18 @@ const { $trpc } = useNuxtApp();
 const userToRoomStore = useUserToRoomStore();
 const { setMyUserToRoom } = userToRoomStore;
 const { executeMutation } = useMutation();
-const editedNickname = ref(userToRoom.nickname);
+const editedDisplayName = ref(userToRoom.displayName);
 const save = async () => {
   // The field emits save from both blur and Enter, so the same value would otherwise be written twice
-  if (editedNickname.value === userToRoom.nickname) return;
+  if (editedDisplayName.value === userToRoom.displayName) return;
 
-  const newNickname = editedNickname.value;
-  await executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ nickname: newNickname, roomId }), {
+  const newDisplayName = editedDisplayName.value;
+  await executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ displayName: newDisplayName, roomId }), {
     applyOptimistic: () => {
-      const oldNickname = userToRoom.nickname;
-      setMyUserToRoom(roomId, { ...userToRoom, nickname: newNickname });
+      const oldDisplayName = userToRoom.displayName;
+      setMyUserToRoom(roomId, { ...userToRoom, displayName: newDisplayName });
       return () => {
-        setMyUserToRoom(roomId, { ...userToRoom, nickname: oldNickname });
+        setMyUserToRoom(roomId, { ...userToRoom, displayName: oldDisplayName });
       };
     },
     key: roomId,
@@ -34,6 +34,6 @@ const save = async () => {
 
 <template>
   <div py-4 flex flex-col gap-6 ui-body>
-    <MessageModelRoomSettingsTypeProfileNicknameField v-model="editedNickname" @save="save()" />
+    <MessageModelRoomSettingsTypeProfileDisplayNameField v-model="editedDisplayName" @save="save()" />
   </div>
 </template>

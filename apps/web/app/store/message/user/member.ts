@@ -7,7 +7,6 @@ import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useUserStore } from "@/store/message/user";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 
@@ -17,8 +16,6 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const { mutateMemberRoles } = roleStore;
   const userStore = useUserStore();
   const { storeUser } = userStore;
-  const userToRoomStore = useUserToRoomStore();
-  const { getDisplayName } = userToRoomStore;
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a
   // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
   // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
@@ -32,12 +29,10 @@ export const useMemberStore = defineStore("message/user/member", () => {
         EN_US_COMPARATOR.compare(firstMember.id, secondMember.id),
     ),
   );
-  // Single source of truth for resolving a member id to its room display name (nickname over global name),
+  // Single source of truth for resolving a member id to its room display name (displayName over global name),
   // Falling back to the raw id for actors/targets no longer in the loaded member list.
-  const getMemberName = (userId: PublicUser["id"]) => {
-    const member = members.value.find(({ id }) => id === userId);
-    return member ? getDisplayName(member, roomStore.scopedRoomId) : userId;
-  };
+  const getMemberName = (userId: PublicUser["id"]) =>
+    members.value.find(({ id }) => id === userId)?.displayName ?? userId;
   // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by
   // Room for the same reason the list is: they describe one room, only the network can produce them, and a
   // Switch made offline would otherwise leave the room being entered wearing the totals of the one just left

@@ -1,32 +1,24 @@
 <script setup lang="ts">
 import type { UiListItem } from "@/models/ui/UiListItem";
-import type { RoomInMessage } from "@esposter/db-schema";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { useRoleStore } from "@/store/message/room/role";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useMemberStore } from "@/store/message/user/member";
 import { noop } from "@esposter/shared";
 
-interface Props {
-  roomId: RoomInMessage["id"];
-}
-
-const { roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { selectMember } = roleStore;
 const { selectedMemberId } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
-const userToRoomStore = useUserToRoomStore();
-const { getDisplayName } = userToRoomStore;
-// A member goes by their nickname in the room they are named in
+// A member goes by their displayName in the room they are named in
 const memberItems = computed(() =>
   members.value.map<UiListItem<string>>((member) => ({
+    description: member.name === member.displayName ? undefined : member.name,
     image: member.image,
-    title: getDisplayName(member, roomId),
+    title: member.displayName,
     value: member.id,
   })),
 );

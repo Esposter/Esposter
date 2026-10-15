@@ -72,7 +72,7 @@ The stored poll body is parsed and re-serialized through `pollMessageContentSche
 
 `MessageTypeOperationPermissionMap` is the one source of truth for what may be done to a message, and it is declared `as const satisfies Record<MessageType, …>`, so it is exhaustive — a new type does not compile until it declares its operations. Presence answers whether the type supports the operation at all: `Call`, `EditRoom`, `PinMessage` and `System` messages are written by the server on the room's behalf and support none, so update, delete and pin on them are a `BAD_REQUEST` for every caller, including one holding `ManageMessages`. The value answers which of the callers who could perform it actually may — `Author` means the author _or_ a member with `ManageMessages`, `AnyMember` means the membership check already settled it, and `ManageMessages` means that permission alone. A webhook message has no user author, so all of its operations resolve to `ManageMessages`.
 
-Mentions are stored as HTML: the TipTap mention suggestion inserts `<span data-type="mention" data-id="...">` nodes, which the server later parses for notification targeting and the client resolves to display names (see [nicknames](/docs/esbabbler/nicknames)).
+Mentions are stored as HTML: the TipTap mention suggestion inserts `<span data-type="mention" data-id="...">` nodes, which the server later parses for notification targeting and the client resolves to display names (see [display names](/docs/esbabbler/nicknames)).
 
 All three composer suggestion popovers — mentions, emoji and [slash commands](/docs/esbabbler/slash-commands) — render through one `MessageModelMessageSuggestionList` surface, so the composer's chrome is the same whichever trigger opened it. It owns the lifted surface, the group title from `getSuggestionListTitle`, and the listbox, which it scrolls to keep the option the editor's arrow keys select in view while focus stays in the editor; each popover supplies its own rows and its own width as a passthrough attribute, and nothing else.
 
@@ -80,19 +80,19 @@ All three composer suggestion popovers — mentions, emoji and [slash commands](
 
 The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. A delete only stamps `deletedAt`, so the procedure reads its message through `readLiveMessageWithEtag`, which answers a deleted one as absent — as `forwardMessage` and `readThread` do — and nothing can edit, pin, vote on or forward a message its author removed. Highlights:
 
-| Procedure                         | Auth   | Purpose                                                                                                                                                    |
-| --------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `createMessage`                   | member | Write message, emit, trigger push                                                                                                                          |
-| `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure)                                                                                                        |
-| `forwardMessage`                  | member | Forward into another room                                                                                                                                  |
-| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                           |
-| `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write                                                                                                          |
-| `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                            |
-| `searchMessages`                  | member | Filtered search via the Azure AI Search index                                                                                                              |
-| `readMySentMessages`              | authed | Cross-room sent list from the Search index                                                                                                                 |
-| `onCreateMessage` etc.            | member | Live subscriptions                                                                                                                                         |
-| `createTyping` / `onCreateTyping` | member | Typing indicators — the typist and the name shown (room nickname, else account name) are resolved server-side from the session, never taken from the input |
-| `generate*FileSas*`               | member | SAS-based file upload/download URLs                                                                                                                        |
+| Procedure                         | Auth   | Purpose                                                                                                                                                        |
+| --------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createMessage`                   | member | Write message, emit, trigger push                                                                                                                              |
+| `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure)                                                                                                            |
+| `forwardMessage`                  | member | Forward into another room                                                                                                                                      |
+| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                               |
+| `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write                                                                                                              |
+| `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                                |
+| `searchMessages`                  | member | Filtered search via the Azure AI Search index                                                                                                                  |
+| `readMySentMessages`              | authed | Cross-room sent list from the Search index                                                                                                                     |
+| `onCreateMessage` etc.            | member | Live subscriptions                                                                                                                                             |
+| `createTyping` / `onCreateTyping` | member | Typing indicators — the typist and the name shown (room display name, else account name) are resolved server-side from the session, never taken from the input |
+| `generate*FileSas*`               | member | SAS-based file upload/download URLs                                                                                                                            |
 
 ## Key files
 

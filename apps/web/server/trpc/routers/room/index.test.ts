@@ -621,7 +621,7 @@ describe("roomRouter", () => {
     const userId = getMockSession().user.id;
 
     await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Failed query: insert into "message"."usersToRooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "lastMessageAt", "lastReadAt", "mentionCount", "nickname", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, default, default, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "lastMessageAt", "lastReadAt", "mentionCount", "nickname", "notificationType", "roomId", "timeoutUntil", "userId"\nparams: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]`,
+      `[TRPCError: Failed query: insert into "message"."usersToRooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "lastMessageAt", "lastReadAt", "mentionCount", "displayName", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, default, default, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "lastMessageAt", "lastReadAt", "mentionCount", "displayName", "notificationType", "roomId", "timeoutUntil", "userId"\nparams: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]`,
     );
   });
 
@@ -643,7 +643,7 @@ describe("roomRouter", () => {
     });
     // The room travels with the member: the client subscribes for every room it is in at once, so a payload
     // Without it can only be applied to the room that happens to be open. Every member receives it, so the member
-    // Rides along as what anyone may see of them, with the name the room shows for them: a new member has no nickname
+    // Rides along as what anyone may see of them, with the name the room shows for them: a new member has no display name
     expect(data).toStrictEqual({ roomId: newRoom.id, user: { ...user, displayName: user?.name } });
   });
 
@@ -720,21 +720,21 @@ describe("roomRouter", () => {
     expect(takeOne(members.items).id).toBe(userId);
   });
 
-  test("reads members by display name, with the nickname they are listed under", async () => {
+  test("reads members by display name, with the value they are listed under", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const { user } = getMockSession();
-    const nickname = "Ally";
+    const displayName = "Ally";
     await mockContext.db
       .update(usersToRoomsInMessage)
-      .set({ nickname })
+      .set({ displayName })
       .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, user.id)));
-    const members = await roomCaller.readMembers({ filter: { name: nickname }, roomId: newRoom.id });
+    const members = await roomCaller.readMembers({ filter: { name: displayName }, roomId: newRoom.id });
     const globalNameMembers = await roomCaller.readMembers({ filter: { name: user.name }, roomId: newRoom.id });
 
-    expect(takeOne(members.items).displayName).toBe(nickname);
-    expect(takeOne(globalNameMembers.items).displayName).toBe(nickname);
+    expect(takeOne(members.items).displayName).toBe(displayName);
+    expect(takeOne(globalNameMembers.items).displayName).toBe(displayName);
   });
 
   test("reads members by ids", async () => {

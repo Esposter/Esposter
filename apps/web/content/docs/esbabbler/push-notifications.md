@@ -57,7 +57,7 @@ A webhook message has no sender to exclude, so every `All` member is reached inc
 
 ## Rendering
 
-The notification is shown as its author, resolved at delivery from the ids the event carries: the sender's per-room nickname when set ([nicknames](/docs/esbabbler/nicknames)), otherwise their account name; a webhook message resolves the app user that posted on its behalf. The body is the message's first paragraph as plain text — a send that renders to nothing at all (an attachment-only message) resolves to no notification rather than an empty one.
+The notification is shown as its author, resolved at delivery from the ids the event carries: the sender's per-room display name when set ([display names](/docs/esbabbler/nicknames)), otherwise their account name; a webhook message resolves the app user that posted on its behalf. The body is the message's first paragraph as plain text — a send that renders to nothing at all (an attachment-only message) resolves to no notification rather than an empty one.
 
 A reply deep-links to the thread root rather than to itself: the thread is where the reply is read, and it is the one destination that is right for a room member and a thread follower alike.
 

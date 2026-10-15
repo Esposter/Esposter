@@ -14,7 +14,12 @@ const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 // A pick filters by the member, so a row is only a choice here, never the member list's row with its profile
 const items = computed(() =>
-  members.value.map<UiListItem<string>>(({ id, image, name }) => ({ image: image ?? "", title: name, value: id })),
+  members.value.map<UiListItem<string>>(({ displayName, id, image, name }) => ({
+    description: name === displayName ? undefined : name,
+    image: image ?? "",
+    title: displayName,
+    value: id,
+  })),
 );
 </script>
 

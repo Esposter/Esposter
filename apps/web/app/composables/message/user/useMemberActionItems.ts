@@ -43,7 +43,7 @@ export const useMemberActionItems = (
   const moderationNoteStore = useModerationNoteStore();
   const { getModerationNoteCount } = moderationNoteStore;
   const isSelf = computed(() => session.value.data?.user.id === toValue(user).id);
-  // The moderator picked this member off a list that names them by nickname, so every action names them the same way
+  // The moderator picked this member off a list that names them by displayName, so every action names them the same way
   const displayName = computed(() => getDisplayName(toValue(user), toValue(roomId)));
   // Discord leads a stranger's profile with adding them and a friend's with messaging them, and a direct message is
   // Only ever opened with a friend

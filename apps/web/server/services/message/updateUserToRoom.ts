@@ -21,7 +21,7 @@ export const updateUserToRoom = async (
   const effectiveUserId = targetUserId ?? userId;
 
   if (targetUserId && targetUserId !== userId) {
-    const isPermitted = await checkHasPermission(db, userId, roomId, RoomPermission.ManageNicknames);
+    const isPermitted = await checkHasPermission(db, userId, roomId, RoomPermission.ManageDisplayNames);
     if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 

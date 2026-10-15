@@ -13,7 +13,7 @@ export const useReadRooms = async () => {
   const { readMyPermissions, readRoles } = roleStore;
   const { data: session } = await useAuthSession();
   const readMyUsersToRooms = useReadMyUsersToRooms();
-  // A room row is not a room: the sidebar renders a nickname, the reader's own standing and the room's roles
+  // A room row is not a room: the sidebar renders a displayName, the reader's own standing and the room's roles
   // Beside every name. Both paths that produce a page go through here rather than restating the fan-out, which
   // Is how a scrolled page comes to render rows the first one does not
   const readRoomMetadata = async (roomIds: RoomInMessage["id"][]) => {

@@ -3,7 +3,7 @@ import { roomIdSchema, selectUserToRoomInMessageSchema, userIdSchema } from "@es
 import { z } from "zod";
 
 const updatableUserToRoomSchema = z.object({
-  ...selectUserToRoomInMessageSchema.pick({ nickname: true, notificationType: true }).partial().shape,
+  ...selectUserToRoomInMessageSchema.pick({ displayName: true, notificationType: true }).partial().shape,
   lastReadAt: selectUserToRoomInMessageSchema.shape.lastReadAt.unwrap().optional(),
 });
 
@@ -17,7 +17,7 @@ export const updateUserToRoomInputSchema = refineAtLeastOne(
 ).refine(
   (data) =>
     !data.targetUserId ||
-    (data.nickname !== undefined && data.notificationType === undefined && data.lastReadAt === undefined),
-  { error: "targetUserId requires nickname and must not include notificationType or lastReadAt" },
+    (data.displayName !== undefined && data.notificationType === undefined && data.lastReadAt === undefined),
+  { error: "targetUserId requires displayName and must not include notificationType or lastReadAt" },
 );
 export type UpdateUserToRoomInput = z.infer<typeof updateUserToRoomInputSchema>;

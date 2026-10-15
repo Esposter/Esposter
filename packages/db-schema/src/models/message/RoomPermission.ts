@@ -15,7 +15,7 @@ export const RoomPermission = {
   BanMembers: 1n << 8n,
   MuteMembers: 1n << 9n,
   MoveMembers: 1n << 10n,
-  ManageNicknames: 1n << 11n,
+  ManageDisplayNames: 1n << 11n,
   ManageWebhooks: 1n << 12n,
   ManageEmojis: 1n << 13n,
   // Last, and it moves up as the list grows: stored values are read as the current shape rather than migrated,
