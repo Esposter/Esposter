@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { getNoteExtensions } from "@/services/resource/note/getNoteExtensions";
+import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { NoteSlashSuggestion } from "@/services/resource/note/NoteSlashSuggestion";
 import { Editor } from "@tiptap/vue-3";
 import { assert, describe, expect, test } from "vitest";

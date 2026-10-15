@@ -1,6 +1,6 @@
 ---
 title: AI-native resources
-description: Proposal — whatever a person can do in a resource editor, an agent can do through a typed procedure. Generic content tools already find, describe, read and patch every type's document from its ResourceDefinitionMap entry; what remains is an open editor adopting an agent's save, the lifecycle as tools, the schema fixes, typed commands and the in-product assistant.
+description: Proposal — whatever a person can do in a resource editor, an agent can do through a typed procedure. Generic content tools already find, describe, read and patch every type's document from its ResourceDefinitionMap entry; what remains is an open editor adopting an agent's save, the lifecycle as tools, typed commands and the in-product assistant.
 model: claude-opus-5-5
 ---
 
@@ -17,7 +17,7 @@ Each is a unit built on its own, listed in build order:
 - [Agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys) — the keys made before scopes given the follow-ups scope, and the operations that stay the owner's; scopes, read-only hints and per-key attribution shipped ([agent access](/docs/architecture/agent-access)), and the content tools after them ([agent content tools](/docs/architecture/agent-content-tools))
 - [Live edits](/docs/proposals/architecture/ai-native-resources/live-edits) — an open editor adopts an agent's save, and an unsaved edit meets it as a choice shown at once
 - [Lifecycle tools](/docs/proposals/architecture/ai-native-resources/lifecycle-tools) — create, rename, tag, delete, restore, publish, references, history and datasets, plus each type's own procedures
-- [Schema fidelity](/docs/proposals/architecture/ai-native-resources/schema-fidelity) — the source fixes where a content schema stops describing what its editor edits
+- Schema fidelity — shipped in [agent content tools](/docs/architecture/agent-content-tools): Flowchart labels, Note documents, Survey models and captured GrapesJS output now follow their editors' rules
 - [Typed commands](/docs/proposals/architecture/ai-native-resources/typed-commands) — the per-type operations a patch fits badly, the Sheet's own command classes first
 - [In-product assistant](/docs/proposals/architecture/ai-native-resources/in-product-assistant) — an editor's Ask Claude, handed to the person's own session so it takes the same path as any agent
 
@@ -54,18 +54,18 @@ flowchart TD
 
 What each type's content schema gives the generic tools, and what reaches beyond its content. Each schema was converted with Zod's `z.toJSONSchema` in input mode, the side a writer fills: a schema holding a Date throws under the default, since Zod has no JSON Schema for a Date, and converts once a Date is written as the `date-time` string the stored JSON already holds.
 
-| Type      | Conversion       | Where the schema stops describing the content                                              | Beyond the content                                                               |
-| --------- | ---------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| Blueprint | as is            | each entry's `content`, another type's document that deploy parses                         | capture and deploy                                                               |
-| Dashboard | Dates as strings | nowhere                                                                                    | publish, whose transform resolves every bound dataset                            |
-| Email     | Dates as strings | the GrapesJS project — `pages` and every key its catchall passes — and the captured `html` | publish, file assets, a personalized export only a live editor can produce       |
-| Flowchart | Dates as strings | each node's and edge's `data`, where a node's label lives                                  | publish                                                                          |
-| Note      | as is            | every node's `attrs` and extra keys, and a node `type` that may be any string              | publish                                                                          |
-| Program   | as is            | nowhere                                                                                    | participant generation and status                                                |
-| Sheet     | Dates as strings | nowhere                                                                                    | dataset reads, browser-side import and export, column edits that touch every row |
-| Survey    | as is            | nowhere — but the questions are SurveyJS's JSON inside one `model` string                  | responses, publish, file assets                                                  |
-| TodoList  | Dates as strings | nowhere                                                                                    | ticking a repeating todo rolls its date                                          |
-| Webpage   | Dates as strings | the GrapesJS project, and the `html` and `css` a save captured                             | publish, file assets                                                             |
+| Type      | Conversion       | Where the schema stops describing the content                                                          | Beyond the content                                                               |
+| --------- | ---------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| Blueprint | as is            | each entry's `content`, another type's document that deploy parses                                     | capture and deploy                                                               |
+| Dashboard | Dates as strings | nowhere                                                                                                | publish, whose transform resolves every bound dataset                            |
+| Email     | Dates as strings | the GrapesJS project — `pages` and every key its catchall passes — and the captured `html` (read-only) | publish, file assets, a personalized export only a live editor can produce       |
+| Flowchart | Dates as strings | edge data has no writable fields; node labels are described                                            | publish                                                                          |
+| Note      | as is            | every node's `attrs` and extra keys; node types are checked against the writing kit                    | publish                                                                          |
+| Program   | as is            | nowhere                                                                                                | participant generation and status                                                |
+| Sheet     | Dates as strings | nowhere                                                                                                | dataset reads, browser-side import and export, column edits that touch every row |
+| Survey    | as is            | the model is empty or parses to a JSON object; SurveyJS-specific constraints stay unchecked            | responses, publish, file assets                                                  |
+| TodoList  | Dates as strings | nowhere                                                                                                | ticking a repeating todo rolls its date                                          |
+| Webpage   | Dates as strings | the GrapesJS project, and the captured `html` and `css` (read-only)                                    | publish, file assets                                                             |
 
 **The headline:** every type needs the same four parts of the contract, which is the argument for writing them once. Every schema converts, given the one Date rule, so describing is generic; a type whose third column reads "nowhere" is described all the way down and the content tools reach it whole, and the others stop at the paths that column names, which is where generic writing stops too.
 
@@ -73,9 +73,9 @@ What each type's content schema gives the generic tools, and what reaches beyond
 
 The generic tools reach exactly as far as a type's content schema describes its document. Where it does not, they refuse the write rather than guess, and these are the gaps, each with its reason and where it closes:
 
-- **An undescribed part of a schema.** `z.unknown()` and the loose objects behind it accept anything, so the server cannot check what an agent writes there: the GrapesJS project of an Email or a Webpage, a Flowchart node's `data`, a Note node's `attrs`, a Blueprint entry's `content`. Writes under those paths are refused. [Schema fidelity](/docs/proposals/architecture/ai-native-resources/schema-fidelity) closes the Flowchart's and narrows the Note's; the Blueprint's stays by design.
-- **Output another engine derives in the browser.** A Webpage's and an Email's published HTML is what GrapesJS captured at the last editor save, so a patched project would publish stale markup. Until the [page builder](/docs/proposals/resource/page-builder) replaces the format, both are read-only to an agent apart from the Email's dataset binding.
-- **A document inside a string.** A Survey's questions are SurveyJS's JSON stored as one string, so an agent replaces the model whole, and nothing on the server checks it is a model SurveyJS will load.
+- **An undescribed part of a schema.** `z.unknown()` and the loose objects behind it accept anything, so the server cannot check what an agent writes there: the GrapesJS project of an Email or a Webpage, a Note node's `attrs`, a Blueprint entry's `content`. Writes under those paths are refused. The Flowchart's node label is described and its edge data is empty; the Blueprint entry's content stays undescribed by design.
+- **Output another engine derives in the browser.** A Webpage's and an Email's published HTML is what GrapesJS captured at the last editor save, so a patched project would publish stale markup. Until the [page builder](/docs/proposals/resource/page-builder) replaces the format, captured HTML and CSS are read-only to an agent apart from the Email's dataset binding.
+- **A document inside a string.** A Survey's questions are SurveyJS's JSON stored as one string, so an agent replaces the model whole. The server checks a non-empty model parses to an object, while keeping the empty string as the existing empty-model sentinel; SurveyJS-specific requirements such as question types and unique names stay unchecked.
 - **Binary content.** A file asset is uploaded by an HTTP PUT to a short-lived signed URL. An agent with a shell, as a Claude Code session has, makes that request itself; a client that can only call tools cannot upload, and no tool carries bytes, since a body is capped at `MAX_REQUEST_SIZE`.
 - **Work only the browser does.** Import and export are handlers in the browser. An agent needs no import, since it writes the content, and reads in place of exporting; the one export it cannot reproduce is the Email's personalized HTML, which needs a live GrapesJS until the page builder compiles on the server.
 - **An edit whose effect is computed.** Renaming a Sheet column re-keys every row, and changing its type re-coerces every cell. A patch can only restate that by hand, so these are [typed commands](/docs/proposals/architecture/ai-native-resources/typed-commands).
@@ -99,7 +99,7 @@ The generic tools reach every type at once, so ordering by value is ordering the
 1. **Agent keys, then content tools** — shipped ([agent access](/docs/architecture/agent-access), [agent content tools](/docs/architecture/agent-content-tools)). Every type is found, described, read and edited, and the TodoList, Sheet, Dashboard and Program are reached whole, since their schemas describe everything. What [agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys) leaves — the keys made before scopes, and the operations that stay the owner's — is its own unit.
 2. **Live edits**, so an agent's write never strands a person's open editor behind a refresh.
 3. **Lifecycle tools** — publishing, links, history and each type's own procedures.
-4. **Schema fidelity** — the Flowchart's node data first, as the smallest fix with the largest gain, then the Note's document check and the Survey's model check.
+4. **Schema fidelity** — shipped: Flowchart node labels, Note document validation, Survey JSON-object validation, and read-only captured GrapesJS output ([agent content tools](/docs/architecture/agent-content-tools)).
 5. **Typed commands** — the Sheet's column commands, a repeating todo's tick, and a Note written as Markdown once [Note Markdown portability](/docs/proposals/resource/note-markdown-portability) ships its converter.
 6. **The in-product assistant**, once the agent console pairs a host again.
 7. **The page builder's cutover.** Its document is a typed node tree whose schema the registry builds, its edits are JSON Patch operations, and it renders on the server at publish. So at the cutover the Webpage and the Email are described all the way down, their captured HTML goes, and the generic tools reach them whole with no unit of their own; the content tools apply the page builder's `applyPatches`, which lives in the app's `shared/` layer since both its consumers are in `apps/web`.

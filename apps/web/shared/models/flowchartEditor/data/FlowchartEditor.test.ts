@@ -11,7 +11,7 @@ describe("flowchartEditorSchema", () => {
   // Zod outputs plain objects and toStrictEqual is prototype-sensitive, so compare against a plain clone
   const baseFlowchartEditor: ToData<FlowchartEditor> = structuredClone(new FlowchartEditor());
   const node: GraphNode = {
-    data: {},
+    data: { label: "label" },
     id: crypto.randomUUID(),
     position: { x: 0.1, y: 0.1 },
     style: { backgroundColor: "backgroundColor" },
@@ -30,5 +30,21 @@ describe("flowchartEditorSchema", () => {
     };
 
     expect(flowchartEditorSchema.parse(canvasFlowchartEditor)).toStrictEqual(flowchartEditor);
+  });
+
+  test("describes node labels and leaves no unknown edge data", () => {
+    expect.hasAssertions();
+
+    expect(
+      flowchartEditorSchema.safeParse({ ...baseFlowchartEditor, nodes: [{ ...node, data: { label: 1 } }] }).success,
+    ).toBe(false);
+    expect(
+      flowchartEditorSchema.safeParse({ ...baseFlowchartEditor, nodes: [{ ...node, data: { other: "value" } }] })
+        .success,
+    ).toBe(false);
+    expect(
+      flowchartEditorSchema.safeParse({ ...baseFlowchartEditor, edges: [{ ...edge, data: { other: "value" } }] })
+        .success,
+    ).toBe(false);
   });
 });

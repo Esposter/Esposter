@@ -749,9 +749,9 @@ export class WebpageEditor extends AGrapesJsEditor {
 export const webpageEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,
-    css: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
+    css: z.string().max(MAX_RESOURCE_CONTENT_SIZE).meta({ readOnly: true }).optional(),
     description: z.string().max(WEBPAGE_DESCRIPTION_MAX_LENGTH),
-    html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
+    html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).meta({ readOnly: true }).optional(),
     imageUrl: z.literal("").or(z.string().startsWith(RESOURCE_ASSETS_URL_PREFIX)),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<WebpageEditor>>;

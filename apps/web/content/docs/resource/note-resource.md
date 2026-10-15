@@ -28,21 +28,21 @@ Note owns no tables. It is one `ResourceType` enum value (`Note`, added to the `
 
 ## Key files
 
-| File                                                                   | Role                                                    |
-| ---------------------------------------------------------------------- | ------------------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceType.ts`               | `Note` enum value                                       |
-| `apps/web/server/db/migrations/20260717000000_add_note_resource_type/` | pg enum `ADD VALUE 'Note'` migration                    |
-| `apps/web/shared/models/resource/note/NoteResource.ts`                 | `{ doc }` content schema                                |
-| `apps/web/shared/services/resource/constants.ts`                       | `EMPTY_NOTE_DOC`, the empty-document default            |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`           | Note definition entry                                   |
-| `apps/web/app/services/resource/note/getNoteExtensions.ts`             | shared Tiptap extension set (editor + published render) |
-| `apps/web/app/components/Resource/Note/Editor.vue`                     | Tiptap editor blade                                     |
-| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`              | writing-kit toolbar                                     |
-| `apps/web/app/components/Resource/Note/View.vue`                       | published `generateHTML` render                         |
-| `packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts`        | keeps a task item's checkbox, disabled                  |
-| `apps/web/app/assets/css/globals.css`                                  | task-list rules in the rich-text typography             |
-| `apps/web/app/store/resource/note/index.ts`                            | blade-scoped load/save store                            |
-| `apps/web/server/trpc/routers/note.ts`                                 | `createResourceProcedures(Note)` router                 |
+| File                                                                   | Role                                                                 |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `packages/db-schema/src/models/resource/ResourceType.ts`               | `Note` enum value                                                    |
+| `apps/web/server/db/migrations/20260717000000_add_note_resource_type/` | pg enum `ADD VALUE 'Note'` migration                                 |
+| `apps/web/shared/models/resource/note/NoteResource.ts`                 | `{ doc }` content schema                                             |
+| `apps/web/shared/services/resource/constants.ts`                       | `EMPTY_NOTE_DOC`, the empty-document default                         |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`           | Note definition entry                                                |
+| `apps/web/shared/services/resource/note/getNoteExtensions.ts`          | shared Tiptap extension set (editor + published render + validation) |
+| `apps/web/app/components/Resource/Note/Editor.vue`                     | Tiptap editor blade                                                  |
+| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`              | writing-kit toolbar                                                  |
+| `apps/web/app/components/Resource/Note/View.vue`                       | published `generateHTML` render                                      |
+| `packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts`        | keeps a task item's checkbox, disabled                               |
+| `apps/web/app/assets/css/globals.css`                                  | task-list rules in the rich-text typography                          |
+| `apps/web/app/store/resource/note/index.ts`                            | blade-scoped load/save store                                         |
+| `apps/web/server/trpc/routers/note.ts`                                 | `createResourceProcedures(Note)` router                              |
 
 ## Notes
 

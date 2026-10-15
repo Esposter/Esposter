@@ -58,8 +58,8 @@ describe(getAgentJsonSchema, () => {
   const ResourceTypeUnwritablePathsMap = {
     Blueprint: ["/entries/-/content"],
     Dashboard: [],
-    Email: ["/*", "/pages/-"],
-    Flowchart: ["/edges/-/data/*", "/nodes/-/data/*"],
+    Email: ["/html", "/*", "/pages/-"],
+    Flowchart: [],
     Note: ["/doc/*", "/doc/attrs/*", "/doc/marks/-/*", "/doc/marks/-/attrs/*"],
     Program: [],
     Sheet: [
@@ -70,7 +70,7 @@ describe(getAgentJsonSchema, () => {
     ],
     Survey: [],
     TodoList: [],
-    Webpage: ["/*", "/pages/-"],
+    Webpage: ["/css", "/html", "/*", "/pages/-"],
   } as const satisfies Record<ResourceType, string[]>;
 
   test.each(ResourceTypes)("describes the %s content as an object, its unwritable paths recorded", (type) => {

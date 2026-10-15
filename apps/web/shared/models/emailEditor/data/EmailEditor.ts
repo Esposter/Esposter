@@ -107,6 +107,6 @@ export const emailEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,
     datasetReference: datasetReferenceSchema.optional(),
-    html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
+    html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).meta({ readOnly: true }).optional(),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;

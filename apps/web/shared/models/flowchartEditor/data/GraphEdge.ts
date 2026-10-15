@@ -9,16 +9,18 @@ import { z } from "zod";
 // An edge is its two ends, its path's kind, its arrowhead and its label. Its coordinates and the copies of both end
 // Nodes the canvas hangs on it are derived from the nodes on every render, so they are never stored. Its label is a
 // String and its arrowhead a marker type, the two forms the editor writes, not the wider forms the canvas accepts
+type GraphEdgeData = Record<string, never>;
+
 export type GraphEdge = SetRequired<
   Pick<
-    DefaultEdge<Record<string, unknown>, Record<string, CustomEvent>, ConnectionLineType>,
+    DefaultEdge<GraphEdgeData, Record<string, CustomEvent>, ConnectionLineType>,
     "data" | "id" | "source" | "sourceHandle" | "target" | "targetHandle" | "type"
   >,
   "data" | "type"
 > & { label?: string; markerEnd?: MarkerType };
 
 export const graphEdgeSchema = z.object({
-  data: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()),
+  data: z.strictObject({}),
   id: z.string().max(MAX_RESOURCE_CONTENT_SIZE),
   // A label is capped as a node's label is: a string inside the document, bounded by the document's own ceiling
   label: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),

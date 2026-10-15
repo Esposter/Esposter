@@ -1,5 +1,7 @@
 import type { JSONContent } from "@tiptap/core";
 
+import { getSchema } from "@tiptap/core";
+import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { z } from "zod";
 
@@ -8,8 +10,8 @@ import { z } from "zod";
 export interface NoteResource {
   doc: JSONContent;
 }
-// A ProseMirror node: type + optional attrs/marks/text and recursive children. looseObject keeps any extra
-// Node fields a future Tiptap extension emits, so a valid document never fails the content-schema parse.
+// The recursive structure keeps attrs and future extension fields the editor persists. The document schema below
+// Checks that each node and mark belongs to the writing kit this app actually loads.
 const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
   z.looseObject({
     attrs: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()).optional(),
@@ -28,4 +30,12 @@ const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
   }),
 );
 
-export const noteResourceSchema = z.object({ doc: jsonContentSchema }) satisfies z.ZodType<NoteResource>;
+const noteDocumentSchema = getSchema(getNoteExtensions());
+
+export const noteResourceSchema = z.object({ doc: jsonContentSchema }).superRefine(({ doc }, ctx) => {
+  try {
+    noteDocumentSchema.nodeFromJSON(doc).check();
+  } catch (error) {
+    ctx.addIssue({ code: "custom", message: error instanceof Error ? error.message : String(error), path: ["doc"] });
+  }
+}) satisfies z.ZodType<NoteResource>;

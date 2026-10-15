@@ -11,16 +11,15 @@ import { z } from "zod";
 // What defines a node and nothing the canvas derives from it: its measured size, handle bounds and selection are
 // Recomputed on every mount, so persisting them only makes a save fail on a value the canvas owns. The style is
 // The one field the canvas writes back, carrying a picked colour and a resized node's width and height
+type GraphNodeData = { label?: string };
+
 export type GraphNode = SetRequired<
-  Pick<
-    Node<Record<string, unknown>, Record<string, CustomEvent>, GeneralNodeType>,
-    "data" | "id" | "position" | "type"
-  >,
+  Pick<Node<GraphNodeData, Record<string, CustomEvent>, GeneralNodeType>, "data" | "id" | "position" | "type">,
   "data" | "type"
 > & { style?: Record<string, string> };
 
 export const graphNodeSchema = z.object({
-  data: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()),
+  data: z.strictObject({ label: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional() }),
   id: graphNodeIdSchema,
   position: xyPositionSchema,
   style: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.string().max(MAX_RESOURCE_CONTENT_SIZE)).optional(),

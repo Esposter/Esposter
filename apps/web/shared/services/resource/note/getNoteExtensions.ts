@@ -1,4 +1,4 @@
-import type { AnyExtension } from "@tiptap/vue-3";
+import type { AnyExtension } from "@tiptap/core";
 
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { StarterKit } from "@tiptap/starter-kit";

@@ -24,14 +24,14 @@ When [Markdown portability](/docs/proposals/resource/note-markdown-portability) 
 
 ## Key files
 
-| File                                                        | Role after the change                                   |
-| ----------------------------------------------------------- | ------------------------------------------------------- |
-| `apps/web/app/services/resource/note/getNoteExtensions.ts`  | `TableKit` in the shared extension set                  |
-| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`   | the Table button and the in-table menu                  |
-| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts` | the existing table allowance the published render rides |
-| `apps/web/app/assets/css/globals.css`                       | table borders and header weight in the rich-text styles |
-| `apps/web/package.json`                                     | gains `@tiptap/extension-table` from the catalog        |
-| `pnpm-workspace.yaml`                                       | the catalog entry for `@tiptap/extension-table`         |
+| File                                                          | Role after the change                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------- |
+| `apps/web/shared/services/resource/note/getNoteExtensions.ts` | `TableKit` in the shared extension set                  |
+| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`     | the Table button and the in-table menu                  |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`   | the existing table allowance the published render rides |
+| `apps/web/app/assets/css/globals.css`                         | table borders and header weight in the rich-text styles |
+| `apps/web/package.json`                                       | gains `@tiptap/extension-table` from the catalog        |
+| `pnpm-workspace.yaml`                                         | the catalog entry for `@tiptap/extension-table`         |
 
 ## Sources
 

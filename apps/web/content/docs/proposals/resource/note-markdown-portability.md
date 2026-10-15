@@ -27,7 +27,7 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 | --------------------------------------------------------------- | ----------------------------------------------- |
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Note declares `portable`                        |
 | `apps/web/app/services/resource/PortableFormatMap.ts`           | the Markdown format for Note                    |
-| `apps/web/app/services/resource/note/getNoteExtensions.ts`      | the extension set the converter parses against  |
+| `apps/web/shared/services/resource/note/getNoteExtensions.ts`   | the extension set the converter parses against  |
 | `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the Note to `ResourceNoteDialogs`          |
 | `apps/web/package.json`                                         | gains `@tiptap/markdown` from the catalog       |
 | `pnpm-workspace.yaml`                                           | the catalog entry for `@tiptap/markdown`, exact |

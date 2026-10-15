@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getNoteExtensions } from "@/services/resource/note/getNoteExtensions";
+import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { ResourceType } from "@esposter/db-schema";
 import { sanitizeTextHtml } from "@esposter/shared";
 import { generateHTML } from "@tiptap/html";
