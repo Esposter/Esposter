@@ -3,6 +3,7 @@ import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
 import { getComposerKey } from "@/services/message/composer/getComposerKey";
+import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -69,7 +70,14 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     const composerFileUrlMap = getFileUrlMap(key) ?? new Map<string, UploadFileUrl>();
     const composerUploadTokenMap = getUploadTokenMap(key) ?? new Map<string, string>();
     for (const { file, id, token } of uploadFiles) {
-      composerFiles.push({ filename: file.name, hasThumbnail: false, id, mimetype: file.type, size: file.size });
+      composerFiles.push({
+        filename: file.name,
+        hasThumbnail: false,
+        id,
+        isSpoiler: file.name.startsWith(SPOILER_FILENAME_PREFIX),
+        mimetype: file.type,
+        size: file.size,
+      });
       composerFileUrlMap.set(id, reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) }));
       composerUploadTokenMap.set(id, token);
     }
@@ -93,6 +101,10 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     const idSet = new Set(ids);
     for (const file of composerFiles) if (idSet.has(file.id)) file.hasThumbnail = true;
     setFiles(key, composerFiles);
+  };
+  const toggleUploadFileSpoiler = (target: ComposerTarget, id: string) => {
+    const uploadedFile = getFiles(getComposerKey(target))?.find((file) => file.id === id);
+    if (uploadedFile) uploadedFile.isSpoiler = !uploadedFile.isSpoiler;
   };
   // Holds the attachments a send took: they stay in the store with their grants, out of the composer, until the
   // Server answers one way or the other
@@ -192,5 +204,6 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     storeUploadFiles,
     storeUploadFileThumbnails,
     storeUploadStart,
+    toggleUploadFileSpoiler,
   };
 });

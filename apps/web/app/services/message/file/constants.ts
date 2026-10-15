@@ -4,3 +4,4 @@ export const MAX_ZOOM_SCALE = 8;
 // The fitted size — nothing outside the frame to pan into below it
 export const MIN_ZOOM_SCALE = 1;
 export const ZOOM_SCALE_PER_WHEEL_STEP = 0.25;
+export const SPOILER_FILENAME_PREFIX = "SPOILER_";

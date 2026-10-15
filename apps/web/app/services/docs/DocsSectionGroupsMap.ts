@@ -107,6 +107,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "thread-follows",
       "file-media",
       "code-viewer",
+      "spoilers",
     ],
     "Members & profiles": [
       "friends-and-dms",

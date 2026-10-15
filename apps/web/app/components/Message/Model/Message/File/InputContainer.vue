@@ -10,7 +10,7 @@ interface Props {
 
 const { target } = defineProps<Props>();
 const uploadFileStore = useUploadFileStore();
-const { discardUploadFiles, getComposerFiles, getComposerFileUrlMap } = uploadFileStore;
+const { discardUploadFiles, getComposerFiles, getComposerFileUrlMap, toggleUploadFileSpoiler } = uploadFileStore;
 const files = computed(() => getComposerFiles(target));
 const composerFileUrlMap = computed(() => getComposerFileUrlMap(target));
 </script>
@@ -24,6 +24,7 @@ const composerFileUrlMap = computed(() => getComposerFileUrlMap(target));
       :index
       :upload-file-url="composerFileUrlMap.get(file.id)"
       @delete="(index) => discardUploadFiles(target, [takeOne(files, index).id])"
+      @toggle-spoiler="(id) => toggleUploadFileSpoiler(target, id)"
     />
   </div>
 </template>

@@ -5,6 +5,7 @@ import type { Router } from "vue-router";
 import { getMockSession } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { useSession } from "@/services/auth/authClient.test";
+import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -34,8 +35,8 @@ describe(useDataStore, () => {
   const filename = "a";
   const mimetype = MimeType.PlainText;
   const size = 1;
-  const baseFile = { filename, hasThumbnail: false, mimetype, size };
-  const createFile = () => new File([message], filename, { type: mimetype });
+  const baseFile = { filename, hasThumbnail: false, isSpoiler: false, mimetype, size };
+  const createFile = (newFilename = filename) => new File([message], newFilename, { type: mimetype });
 
   beforeAll(() => {
     router = useRouter();
@@ -69,6 +70,21 @@ describe(useDataStore, () => {
 
     expect(isCreated).toBe(false);
     expect(items.value).toHaveLength(0);
+  });
+
+  test("marks uploads with the spoiler filename prefix and lets the composer toggle the mark", () => {
+    expect.hasAssertions();
+
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
+    const uploadFileStore = useUploadFileStore();
+    const spoilerFileId = crypto.randomUUID();
+    uploadFileStore.storeUploadFiles(target, [
+      { file: createFile(`${SPOILER_FILENAME_PREFIX}${filename}`), id: spoilerFileId, token: "" },
+    ]);
+    expect(uploadFileStore.getComposerFiles(target).map(({ isSpoiler }) => isSpoiler)).toStrictEqual([true]);
+    uploadFileStore.toggleUploadFileSpoiler(target, spoilerFileId);
+
+    expect(uploadFileStore.getComposerFiles(target).map(({ isSpoiler }) => isSpoiler)).toStrictEqual([false]);
   });
 
   // The mutation spans the server commit, so a rejection can equally be a lost response for a message that

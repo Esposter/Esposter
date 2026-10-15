@@ -11,6 +11,8 @@ export class FileEntity {
   // Written before it was recorded read back as false and render their original, exactly as they did then
   hasThumbnail = false;
   declare id: string;
+  // Older Azure Table message rows do not have this property, so an unmarked attachment remains unspoiled.
+  isSpoiler = false;
   declare mimetype: string;
   declare size: number;
 
@@ -26,6 +28,7 @@ export const fileEntitySchema = z.object({
   filename: z.string().min(1).max(FILENAME_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
   hasThumbnail: z.boolean().default(false),
   id: z.uuid(),
+  isSpoiler: z.boolean().default(false),
   mimetype: z.string().max(MIMETYPE_MAX_LENGTH),
   size: z.int().positive(),
 }) satisfies z.ZodType<FileEntity>;

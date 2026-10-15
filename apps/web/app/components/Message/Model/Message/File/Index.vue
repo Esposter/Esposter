@@ -26,8 +26,17 @@ const url = computed(() => fileUrl.value?.url ?? "");
 const isViewable = computed(() => getViewableFiles(message.partitionKey).some(({ id }) => id === file.id));
 const cornerStyle = computed(() => getFileCornerStyle(columnLayout, index));
 const isActive = ref(false);
+const isSpoilerRevealed = ref(false);
+const ariaLabel = computed(() => {
+  if (!isViewable.value) return undefined;
+  return file.isSpoiler && !isSpoilerRevealed.value ? `Reveal spoiler: ${file.filename}` : `View ${file.filename}`;
+});
 const view = () => {
   if (!isViewable.value) return;
+  if (file.isSpoiler && !isSpoilerRevealed.value) {
+    isSpoilerRevealed.value = true;
+    return;
+  }
   viewingRoomId.value = message.partitionKey;
   viewingFileId.value = file.id;
 };
@@ -39,7 +48,7 @@ const view = () => {
     :style="cornerStyle"
     :role="isViewable ? 'button' : undefined"
     :tabindex="isViewable ? 0 : undefined"
-    :aria-label="isViewable ? `View ${file.filename}` : undefined"
+    :aria-label
     :class="{ 'cursor-zoom-in': isViewable }"
     h-full
     relative
@@ -54,6 +63,12 @@ const view = () => {
     @focusout="isActive = false"
   >
     <MessageModelFileRenderer :file :is-preview :thumbnail-url="fileUrl?.thumbnailUrl" :url />
+    <div
+      v-if="file.isSpoiler && !isSpoilerRevealed && isViewable"
+      class="text-white bg-black/60 flex pointer-events-none items-center inset-0 justify-center absolute backdrop-blur-md"
+    >
+      SPOILER
+    </div>
     <!-- Mounting on hover keeps the options tree off the tree for the whole file grid -->
     <MessageModelMessageFileOptionsMenu
       v-if="
