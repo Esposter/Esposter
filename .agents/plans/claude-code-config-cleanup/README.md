@@ -22,11 +22,19 @@ Proposals for cleaning up the team Claude Code configuration. Kept here, in the 
 
 The copy is one-way: the implemented change is the record in `ClaudeCodeConfig` once merged. The copy here stays the proposal.
 
+## What goes where
+
+Only changes that affect other machines belong in `ClaudeCodeConfig`, because that repository is deployed to every machine that uses the team setup. Everything that only concerns this project stays here in Esposter: the plan, the ledger, drafts, and Esposter's own tooling.
+
 ## Tooling
 
-- OpenSpec CLI pinned at 1.12.0 (`npm i -g @fission-ai/openspec@1.12.0`). Installed on this machine; every other machine needs it before implementing a row.
+- OpenSpec CLI is an Esposter project dependency: `@fission-ai/openspec` at `^1.12.0` in the catalog, run with `pnpm exec openspec`. The lockfile resolves 1.12.0. Other machines get it with `pnpm i` in Esposter. There is no global install.
 - `/opsx-setup` runs once per machine (team profile), per the `opsx-setup` skill.
 - PowerShell 7 (`pwsh`) runs `scripts/Verify-Config.ps1`.
+
+## Drafts
+
+`drafts/docs-openspec-source-of-truth.patch` holds the drafted documentation changes for `ClaudeCodeConfig`: an index README, a source-of-truth line in `AGENTS.md`, and the `openspec` and `opsx-setup` skill text. It is not applied. It changes what other machines load, so it goes into `ClaudeCodeConfig` only on approval.
 
 ## Sharing
 

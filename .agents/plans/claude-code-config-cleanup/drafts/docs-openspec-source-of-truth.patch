@@ -1,0 +1,362 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index 93a891d..8e10821 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -19,7 +19,8 @@ skip when the diff fits one sentence) → Implement (smallest coherent change) 
+ checks; no claims without output) → Summarise (what changed, commands + results, what remains).
+ Requests are outcome + constraints + acceptance criteria; derive the HOW from the repository.
+ OpenSpec repo (`openspec/` present): non-trivial changes go `/spec` → `/build` → `/gate` →
+-`/ship`; the approved proposal is the spec. No `openspec/` yet → `/opsx-setup`.
++`/ship`; `openspec/specs/` is the behaviour truth, and an unarchived change is its own spec.
++No `openspec/` yet → `/opsx-setup`.
+ 
+ ## Decision Policy
+ 
+@@ -52,4 +53,5 @@ completion criteria. Parallel writers use separate worktrees.
+ ## Security & Context
+ 
+ Least privilege everywhere; integrations read-only unless writes are required. Persistent
+-truth lives in contracts and specs, never only in chat.
++truth lives in files, never only in chat: behaviour in `openspec/specs/`, commands and
++architecture in the contract, procedures in skills.
+diff --git a/README.md b/README.md
+index a414c84..807c5b8 100644
+--- a/README.md
++++ b/README.md
+@@ -1,49 +1,26 @@
+ # Claude Code Team Configuration
+ 
+-Shared Claude Code setup for our .NET, Vue.js, and Azure team, built on the AI-native SDLC
+-playbook: a **one-screen engineering contract** that loads every session, **institutional
+-knowledge as skills** that load only when relevant, **deterministic hooks** behind every
+-policy that must hold, and everything versioned and regression-tested like code.
++Shared Claude Code setup for the .NET, Vue.js and Azure team. This README is an index: each fact is written once, in the file that owns it, and every other file points to that file.
+ 
+-Three plugins from one marketplace carry the on-demand layer, so each repository enables
+-exactly the stack it uses:
++## Source of truth
+ 
+-| Plugin | Enable in | Carries |
+-|--------|-----------|---------|
+-| `team-core` | every repo | `/spec → /build → /gate → /ship` (+ `/feature`), `/opsx-setup`, `/retro` + `/promote-lessons`, design/debugging/backlog/authoring skills, planner · architect · security-reviewer · test-planner · verifier · code-reviewer · tdd-guide · build-error-resolver · refactor-cleaner · doc-updater, stack-neutral `coding-standards`, OpenSpec 1.12 kit, review-stage `security-review`, guard + signal hooks |
+-| `dotnet` | .NET repos | `csharp-standards` + `csharp-testing` (auto-load on `.cs`), `backend-patterns`, `mssql-best-practices`, database-reviewer (no hooks) |
+-| `vue` | repos with a Vue/TypeScript client | `vue-standards` + `vue-testing` (auto-load on `.ts`/`.vue`), `frontend-patterns`, e2e-runner (no hooks) |
++| Question | Owner |
++|---|---|
++| What the setup does (behaviour) | `openspec/specs/<capability>/spec.md` — merged from shipped changes on archive |
++| A change in flight (proposal, design, tasks) | `openspec/changes/<id>/` until it is archived |
++| Commands, architecture, conventions | `AGENTS.md`, imported by `CLAUDE.md` |
++| Claude Code adapter (plan mode, delegation) | `CLAUDE.md` |
++| Context discipline, agent roster and model choice | `rules/context.md`, `rules/agents.md` |
++| Procedures and checklists | `plugins/*/skills/<name>/SKILL.md` |
++| Agents, by role | `plugins/*/agents/*.md` |
++| Hooks (silent protectors only) | `plugins/team-core/hooks/hooks.json` |
++| Deploy and status | `Deploy-ClaudeConfig.ps1` |
++| The gate (every check) | `scripts/Verify-Config.ps1` |
++| Per-repository starters | `templates/` |
+ 
+-## How It Fits Together
++OpenSpec is the source of truth for behaviour. A change is written as a proposal and delta specs; archiving merges the deltas into `openspec/specs/`. Specs say what the setup does, the contract says how to build and run it, and skills say how to perform a job.
+ 
+-| Layer | File(s) | Loaded |
+-|-------|---------|--------|
+-| Engineering contract (cross-agent source of truth) | `AGENTS.md` | Every session (imported by CLAUDE.md) |
+-| Claude Code adapter (plan mode, subagents, checkpoints) | `CLAUDE.md` → `@AGENTS.md` | Every session |
+-| Rules (orchestration + context discipline only) | `rules/agents.md`, `rules/context.md` | Every session once deployed to `~/.claude/rules/` |
+-| Plugins (agents, skills incl. slash commands, hooks) | `plugins/team-core`, `plugins/dotnet`, `plugins/vue` | Agents on delegation, skills on demand or by file path, user-invoked skills only when typed, hooks always |
+-| Settings baseline (permissions, attribution) | `settings.template.json` | First deploy |
+-| Per-repo starters | `templates/Project-Contract.template.md`, `templates/REVIEW.template.md` | Copied per repo |
+-| Org starter | `templates/managed-settings.template.json` | Deployed by IT (optional) |
+-| OpenSpec changes for this repo | `openspec/` | Reviewed like code |
+-| Pushdown staging (content moving to its owning repo) | `pushdown/` | Never — see `pushdown/README.md` |
+-
+-The always-loaded layer (CLAUDE.md + AGENTS.md + the two rules) is capped at 6,500
+-characters by `scripts/Verify-Config.ps1`. Canonical commands, architecture boundaries,
+-and "things Claude gets wrong here" live in **each repo's project contract**, not here.
+-
+-## Tech Stack Coverage
+-
+-| Layer | Technologies |
+-|-------|-------------|
+-| **Backend** | C# / .NET (Framework 4.8, .NET 8, .NET 9), ASP.NET Web API, EF Core |
+-| **Frontend** | Vue.js 3, TypeScript, Vite, Vuetify, Pinia |
+-| **Database** | MSSQL / Azure SQL |
+-| **Testing** | MSTest, Vitest + Vue Test Utils, Playwright |
+-| **CI/CD** | Azure DevOps Pipelines |
+-| **Cloud** | Azure App Service, Functions, SQL, Blob, KeyVault, App Insights, Entra ID, APIM |
+-
+-## Quick Start
++## Install
+ 
+ ```powershell
+ git clone <repo-url> C:\Dev\ClaudeCodeConfig
+@@ -56,221 +33,29 @@ claude plugin install dotnet@team-claude-code-config      # .NET repos
+ claude plugin install vue@team-claude-code-config         # repos with a Vue client
+ ```
+ 
+-Per-repo enablement (team-shared, in the repo's `.claude/settings.json`):
+-
+-```json
+-{
+-  "extraKnownMarketplaces": {
+-    "team-claude-code-config": { "source": { "source": "git", "url": "<this repo's git URL>" } }
+-  },
+-  "enabledPlugins": {
+-    "team-core@team-claude-code-config": true,
+-    "dotnet@team-claude-code-config": true,
+-    "vue@team-claude-code-config": true
+-  }
+-}
+-```
+-
+-A private ADO URL needs cached git credentials for auto-install; the local-path
+-`marketplace add` above is the fallback.
+-
+-| Command | Description |
+-|---------|-------------|
+-| `Deploy-ClaudeConfig` | Deploy the contract to `~/.claude/`; migrates a pre-v3 full install; reports plugin enablement |
+-| `Update-ClaudeConfig` | `git pull --ff-only` + redeploy + refresh the three plugins |
+-| `Show-ClaudeConfigStatus` | Deployment state, stale files, deprecated plugin aliases, missing plugins |
+-
+-**Deploy is contract-only.** Agents, skills, commands, and hooks come only from the plugins
+-(hook scripts run via `${CLAUDE_PLUGIN_ROOT}`, which does not exist outside a plugin).
+-A previous full install is migrated automatically: script-installed team agents/skills/
+-commands and script-managed hooks are removed (personal ones and `settings.json.bak` are
+-kept). Symlink installs are handled reparse-point-safely.
+-
+-**Deprecated aliases.** `team-claude-code-config` (→ team-core) and `dotnet-vue-stack`
+-(→ dotnet) remain in the marketplace so older installs keep working; `Show-ClaudeConfigStatus`
+-flags them. Disable them and enable `team-core` + `dotnet` (+ `vue`).
+-
+-**Hooks are snapshotted at session start.** After any hook change — yours or a plugin
+-update — run `/hooks` to review and reload, or start a new session; until then the old
+-hook set keeps running.
+-
+-Security note: the permission `deny` rules for `.env`/`appsettings.Production`/certificates
+-constrain Claude's built-in file tools, and the PreToolUse guard blocks shell commands that
+-reference those files — neither is an OS guarantee. For hard isolation use `/sandbox` or a
+-container; the org-level `templates/managed-settings.template.json` adds `strictKnownMarketplaces`,
+-`disableSideloadFlags`, and deny rules that engineers cannot widen (`allowManagedHooksOnly`
+-stays `false` so plugin hooks still run).
+-
+-Maintenance: `Update-ClaudeConfig` after config PRs merge; run Claude Code's built-in
+-`/checkup` periodically to prune unused skills/MCPs/plugins and dedup CLAUDE.md.
+-
+-## Workflow — spec first, scenarios drive the tests
+-
+-One-time: `npm i -g @fission-ai/openspec@1.12.0`, then `/opsx-setup` once per machine
+-(team profile) and once per repo (init, `openspec/config.yaml`, `team-bdd` schema, scenario
+-lint script; generated `/opsx:*` commands committed).
+-
+-| Stage | Command | What happens | Gate |
+-|-------|---------|--------------|------|
+-| Spec | `/spec <idea \| work item>` | `brainstorm` classifies (spike / bounded / architectural) → `grilling` frontier rounds → `domain-modeling` glossary → `/opsx:propose` under `team-bdd` → scenario lint + `openspec validate --strict` → design review by role | human approves the change; no code before |
+-| Build | `/build <id>` | per task: tdd-guide writes the RED test from the scenario and its test-plan cases (`<Requirement>_<Scenario>`) → GREEN → Check → tick; slices one after another; deviations written back; bugfixes in fix mode | task ticked only when fully done |
+-| Gate | `/gate <id>` | Check first (+ `openspec validate --strict` + scenario lint), then ONE code-reviewer pass (REVIEW.md passes incl. compliance vs the change, `security-review` preloaded) | Check GREEN, no open blocker |
+-| Ship | `/ship <id>` | PR description from proposal + scenarios + evidence; the PR is created only after the user approves; post-merge `openspec archive` | the repo's CI review on PR open and push |
+-
+-Change hygiene, checked by `/spec` before it asks for approval: a change has one intent
+-(more than three capabilities or twelve tasks means split it), requirements describe
+-behaviour and leave paths and file names to `design.md` (the lint prints an `advisory:`
+-line), a behaviour that can fail has a failure-path scenario, and one pull request carries
+-one change. Changes are recorded under the schema in `openspec/config.yaml`, and the
+-generated `.claude/commands/opsx/` and `.claude/skills/openspec-*` are committed; this repo
+-follows both, and Verify-Config fails when either drifts.
+-
+-### Roles, one at a time
+-
+-Agents are chosen for their function and run one after another, each reading what the role
+-before it produced. Parallel runs happen only when you ask for them or a stage command
+-names the step; parallel writers still get their own worktree.
+-
+-| Stage | Role (agent) | What it contributes |
+-|-------|--------------|---------------------|
+-| `/spec` design review, architectural change | `architect` → `security-reviewer` → `test-planner` | structure, boundaries and trade-offs; then threats and abuse cases as candidate scenarios; then a test case per scenario with level, data and negative cases |
+-| `/spec` design review, bounded change | `test-planner` (after `security-reviewer` when the change touches authentication, input handling, secrets or tenant data) | the test plan, saved as `test-plan.md` in the change |
+-| `/spec` design review, spike | none | |
+-| `/build` | `tdd-guide`, then the implementer | the failing test from the scenario and the plan's cases, then the smallest change that passes |
+-| `/gate` | `code-reviewer`, which runs `security-reviewer` and then `database-reviewer` (dotnet plugin) when the diff calls for them | bugs, security, compliance with the change |
+-
+-Findings a role returns that tighten the design inside the approved intent are written into
+-the change before you are asked to approve it; findings that change scope, cost or a
+-decision you already made come to you first.
+-
+-`/feature <idea | id>` chains all four and resumes at the right stage. Repos without
+-`openspec/` get the planner's five-part spec and an offer of `/opsx-setup`. Stage commands are
+-user-invoked (hidden from the model's roster); the design skills (`grilling`, `grill-me`,
+-`domain-modeling`, `brainstorm`) and the process skills (`tdd`, `verify`, `openspec`) are
+-model-invoked so agents reach them too.
+-
+-## Improvement loop — the environment learns, humans approve
+-
+-Team-core hooks record per-session **signals**: guard blocks (every guard script logs when
+-it blocks), user corrections (a UserPromptSubmit detector for phrases like "no, that's
+-not…", "revert", "don't"), and tool failures. Quiet sessions leave nothing. At SessionEnd,
+-a session with signals launches a detached headless `claude -p /retro` that reads the
+-signals and the transcript around them and writes **lesson candidates** — category
+-(navigation · automated checks · reviewer standards · oversized steering · tool economy ·
+-no-ops · information access · mistake twice), quoted evidence, target file, proposed
+-change — to `~/.team-lessons/<repo>/` (manual runs: the repo's gitignored `.lessons/`; the
+-Write tool refuses `.claude/` paths in headless mode). It never edits configuration.
+-
+-`/promote-lessons` shows pending candidates; the human accepts or dismisses each (with a
+-reason that stops it being raised again). Project lessons land in the repo's CLAUDE.md
+-"Things Claude gets wrong", `.claude/rules`, or `REVIEW.md` on a `chore/lessons-<date>`
+-branch; team lessons become a branch in the ClaudeCodeConfig clone with the PR command
+-printed. Shared skills change only through that path. `/retro` also runs by hand
+-(`/retro --signals <file> --transcript <file>`).
+-
+-## Design, debugging, backlog, and authoring skills (team-core)
+-
+-| Skill | Invocation | Use |
+-|-------|-----------|-----|
+-| `brainstorm`, `grilling` / `/grill-me`, `domain-modeling` | model / user | classify → frontier-round interviews → `CONTEXT.md` glossary + ADRs |
+-| `codebase-design` (+ DEEPENING, DESIGN-IT-TWICE) | model | deep-module vocabulary: depth, seam, adapter, leverage, locality; deletion test |
+-| `/improve-codebase-architecture` | user | churn-guided survey → Markdown report of deepening candidates → grilling |
+-| `diagnosing-bugs` (+ HITL loop templates) | model | red-capable loop first, ranked hypotheses, one variable at a time, three-strikes architecture gate, RED regression via fix mode |
+-| `tdd`, `verify`, `openspec` | model | process skills behind the stage commands |
+-| `/to-tickets`, `/triage` (+ agent brief, out-of-scope KB) | user | Azure DevOps tracer-bullet tickets with predecessor links; triage state machine with verified claims |
+-| `research`, `resolving-merge-conflicts`, `prototype`, `/handoff` | model / user | primary-source notes in `docs/research/`; intent-preserving conflict resolution; throwaway logic page or `?variant=` Vue UI variants; temp-dir handoff doc |
+-| `skill-authoring` (+ SKILL-MECHANICS) | model | how the team writes and tests skills, rules, and contract text; Verify-Config as the gate |
+-| `/retro`, `/promote-lessons`, `/opsx-setup` | user | improvement loop and OpenSpec kit setup |
+-
+-Vendored skills carry MIT footers naming their source (see Third-party notices).
+-
+-## Hooks
+-
+-All hooks are node script files under `plugins/<name>/hooks/scripts/`, unit-tested by
+-Verify-Config (never inline `node -e`: Claude Code runs hook commands through `bash -c`, and
+-a raw backtick blocked every Bash call once).
+-
+-**A hook protects; it does not nag.** Every registered hook stops something dangerous and is
+-silent otherwise. Quality signals — formatting, types, debug output, stray docs, task
+-write-back — are not hooks: they belong to the project's Check command, to CI, and to the
+-`/gate` reviewer. Hooks that interrupt the loop cost more attention than the defects they
+-catch, so the team ships none.
+-
+-- **team-core**, and that is the whole list:
+-  - shell commands that read secret files (`.env`, `appsettings.Production`, `.pfx`) — blocked
+-  - foreground dev servers (`dotnet run|watch`, `npm run dev`, `vite`) — blocked, rerun in background
+-  - hardcoded secrets in a Write/Edit payload — blocked
+-  - dangerous git (`reset --hard`, `clean -f`, `checkout .`, `restore .`, `branch -D`,
+-    `push --force`) — blocked, the user runs it themselves
+-  - test files while `/build` fix mode is on — frozen, so a bugfix cannot edit its own
+-    failing test (rare by construction)
+-  - edits on `main`/`master` — blocked (branch first); a base not fetched in 24 hours is
+-    fetched quietly before the edit, and an unreachable origin only leaves a note
+-  - signals: guard blocks, user corrections, tool failures recorded per session; SessionEnd
+-    launches the retro only when a session left signals (`RETRO_DISABLED=1` switches it off —
+-    it is the only hook that spends tokens)
+-- **dotnet**, **vue** — no hooks.
+-
+-Ordinary `git push` is not gated and PR creation is not blocked; the review that matters runs
+-in CI on PR open and on every push, with `/gate` as the local pre-flight.
+-
+-A repo that wants more — an end-of-turn `Check`, a formatter, a type check — configures it
+-in its own `.claude/settings.json` and owns the interruption. Team plugins stay silent.
+-
+-## Rules (`rules/`)
+-
+-Two files, auto-loaded: `agents.md` (roster, delegation, handoff contract, model selection)
+-and `context.md` (token discipline, phase-boundary ladder). Git, testing, and security policy
+-live in AGENTS.md hard rules and the relevant skills; language standards are path-scoped
+-plugin skills.
+-
+-## Templates (`templates/`)
++Per-repository plugin enablement is in `templates/Project-Contract.template.md`. A private Azure DevOps URL needs cached git credentials for automatic install; `marketplace add` with a local path is the fallback.
+ 
+-- `Project-Contract.template.md` — per-repo `CLAUDE.md`: purpose, canonical commands with a
+-  single `Check` gate and healthy-output examples, architecture map, invariants,
+-  conventions, hard rules, overrides vs the team contract, "things Claude gets wrong here",
+-  plugin enablement snippet.
+-- `REVIEW.template.md` — per-repo review policy read by code-reviewer and `/gate`.
+-- `openspec/` — `config.yaml` (BDD rules, operations guidance), `schemas/team-bdd/`
+-  (GIVEN/WHEN/THEN spec template), `scripts/lint-scenarios.js`; installed by `/opsx-setup`.
+-- `issue-tracker-azure-devops.md` — copied to `docs/agents/issue-tracker.md`; the `az boards`
+-  operations `/to-tickets`, `/triage`, and `/spec` use.
+-- `agent-brief.template.md` — behavioural PBI/ticket body for `ready-for-agent` work.
+-- `managed-settings.template.json` — org-level starter for IT (deny secret reads, approved
+-  marketplace only, no sideloading).
++OpenSpec CLI, pinned to 1.12.0: a project dependency where the repository carries one (`pnpm exec openspec`), otherwise `npm i -g @fission-ai/openspec@1.12.0`. Then `/opsx-setup` once per machine and once per repository.
+ 
+-## AI Dev Lab (`devlab/`)
++| Command | Does |
++|---|---|
++| `Deploy-ClaudeConfig` | Deploys the contract to `~/.claude/` and reports plugin enablement |
++| `Update-ClaudeConfig` | Pulls, redeploys and refreshes the three plugins |
++| `Show-ClaudeConfigStatus` | Deployment state, stale files, deprecated aliases, missing plugins |
+ 
+-Behavioural test bed for the deployed setup: `.\devlab\Run-DevLab.ps1` runs scripted
+-scenarios through headless `claude -p` (contract recall, TDD flow, hook guardrails, `/spec`
+-flow, `/retro` over fixture signals), grades them with a haiku judge, and reports pass/score, turns, cost, and tokens per scenario
+-(`devlab/results/`, gitignored). `azure-pipelines.yml` runs it on PRs that change plugins,
+-rules, or the contract when a `CLAUDE_API_KEY` pipeline variable exists.
++Run `Update-ClaudeConfig` after a configuration change merges. Run `/checkup` periodically to prune unused skills, MCP servers and plugins.
+ 
+-## MCP (`mcp-configs/`)
++Hooks are snapshotted at session start. After a hook change, run `/hooks` to review and reload, or start a new session.
+ 
+-Minimal, least-privilege set: Azure DevOps, Context7 docs lookup, Playwright. Prefer
+-per-repo `.mcp.json`; prefer CLIs (`az`, `git`) where they suffice.
++Deny rules and the PreToolUse guard constrain Claude's own tools; they are not an operating-system sandbox. For hard isolation use `/sandbox` or a container. The organisation template in `templates/managed-settings.template.json` adds rules engineers cannot widen.
+ 
+-## Verifying Changes to This Repo
++## Verifying a change to this repository
+ 
+ ```powershell
+ .\scripts\Verify-Config.ps1
+ ```
+ 
+-Checks JSON validity, hook manifests (script files only, `bash -n` parse, scripts exist, JS
+-syntax), guard-script unit vectors, deploy link-safety and full-install migration in temp
+-directories, the three plugin manifests and marketplace aliases, agent/skill frontmatter,
+-stack-scoped loading (`paths:` on the language skills, no stack markers in the general
+-skill, no framework code in tdd-guide), review-stage security wiring, the rules whitelist,
+-the always-loaded budget (≤ 6,500 chars), the `/gate` rename, the OpenSpec kit (templates,
+-scenario-lint vectors, fix-mode vectors, user-invoked stage skills), the hook roster (only
+-the silent guards are registered; the dropped ones must not come back), the
+-improvement loop (signal, detector, and launcher vectors), the vendored skills (presence,
+-invocation, attribution, adapted strings), templates, and the pipeline.
+-GREEN is required before a PR; the same script runs in CI. Also test-drive: deploy, start a
+-fresh session, and ask "where do the canonical commands live / what is the definition of
+-done?" — the answers must come from the contract.
++It must print GREEN before a pull request. The same script runs in CI.
+ 
+ ## Third-party notices
+ 
+diff --git a/plugins/team-core/skills/openspec/SKILL.md b/plugins/team-core/skills/openspec/SKILL.md
+index 5d83313..9d2fbb6 100644
+--- a/plugins/team-core/skills/openspec/SKILL.md
++++ b/plugins/team-core/skills/openspec/SKILL.md
+@@ -6,10 +6,13 @@ description: Use when a repo contains an openspec/ directory, when the user asks
+ # OpenSpec — team kit (pinned 1.12.0)
+ 
+ OpenSpec drives changes through reviewable artifacts: align on the spec before code.
++`openspec/specs/` is the source of truth for behaviour; a change folder is its proposal until archived.
+ 
+ ## Setup
+ 
+-`npm i -g @fission-ai/openspec@1.12.0`, then `/opsx-setup` — once per machine (team
++Install the CLI pinned at 1.12.0: as a project dependency where the repo carries one
++(Esposter does: `pnpm exec openspec`), otherwise `npm i -g @fission-ai/openspec@1.12.0`.
++Then `/opsx-setup` — once per machine (team
+ profile) and once per repo (init/update, `config.yaml`, `team-bdd` schema). The generated
+ `.claude/skills/openspec-*` and `.claude/commands/opsx/*` are committed so every clone has
+ the same commands. The `/opsx:*` set comes from a **machine-global** profile
+diff --git a/plugins/team-core/skills/opsx-setup/SKILL.md b/plugins/team-core/skills/opsx-setup/SKILL.md
+index 755f77f..9789800 100644
+--- a/plugins/team-core/skills/opsx-setup/SKILL.md
++++ b/plugins/team-core/skills/opsx-setup/SKILL.md
+@@ -12,8 +12,10 @@ team standard and shows the diff.
+ 
+ ## 1. CLI check
+ 
+-`openspec --version` must print `1.12.0`. Otherwise STOP and print exactly:
+-`npm i -g @fission-ai/openspec@1.12.0` — do not continue with another version.
++`openspec --version` (or `pnpm exec openspec --version` where the repo carries OpenSpec as a
++dependency) must print `1.12.0`. Otherwise STOP and print exactly the install for that repo:
++`pnpm i` where it is a dependency, else `npm i -g @fission-ai/openspec@1.12.0` — do not
++continue with another version.
+ 
+ ## 2. Machine profile (global)
+ 

@@ -43,7 +43,8 @@ Move P1–P2 and P3–P8 together; the coupling column is the reason.
 
 | Item                                                                                             | Status                                                                               |
 | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| OpenSpec CLI 1.12.0 installed globally on the planning machine                                   | done (verified `1.12.0`)                                                             |
-| OpenSpec CLI on each other machine that implements a row                                         | open                                                                                 |
+| OpenSpec CLI as an Esposter project dependency (`pnpm exec openspec`, resolves 1.12.0)           | done; global install removed                                                         |
+| Drafted docs patch for `ClaudeCodeConfig` (`drafts/docs-openspec-source-of-truth.patch`)         | drafted, not applied; needs approval (changes what other machines load)              |
+| OpenSpec CLI on each other machine that implements a row (`pnpm i` in Esposter)                  | open                                                                                 |
 | `/opsx-setup` on each machine that implements a row                                              | open                                                                                 |
 | Each change validates with `openspec validate <id> --strict --no-interactive` in its target repo | to do at implementation, per row (validated here from the planning checkout; passes) |
