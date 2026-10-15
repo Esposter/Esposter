@@ -67,7 +67,6 @@ sequenceDiagram
 | Page                                                                                       | What it settles                                                               |
 | :----------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
 | [Anthropic-hosted sessions](/docs/proposals/infra/agent-console/anthropic-hosted-sessions) | sessions Anthropic runs on the reader's API key, as one more connection       |
-| [Repository files](/docs/proposals/infra/agent-console/repository-files)                   | a file path a reply or a tool call names, opened in the read-only file view   |
 | [Side chat](/docs/proposals/infra/agent-console/side-chat)                                 | a question beside the session on a discarded fork, adding nothing back        |
 | [Effort level](/docs/proposals/infra/agent-console/effort-level)                           | an effort select beside the model select, showing the level the session is at |
 | [Session titles](/docs/proposals/infra/agent-console/session-titles)                       | renaming a session by its title, saved in its own transcript                  |
@@ -82,7 +81,7 @@ sequenceDiagram
 
 ## Scope and order
 
-1. **One day's work in the console alone**, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison) and closed where it recurs. [Anthropic-hosted sessions](/docs/proposals/infra/agent-console/anthropic-hosted-sessions) come after the connecting pages of the [console](/docs/infra/claude-interface/agent-console). The Code tab's lean core closes the returns the comparison predicts: [repository files](/docs/proposals/infra/agent-console/repository-files) and [side chat](/docs/proposals/infra/agent-console/side-chat) come next, with [effort level](/docs/proposals/infra/agent-console/effort-level) and [session titles](/docs/proposals/infra/agent-console/session-titles) as small changes to the composer and the sessions tab.
+1. **One day's work in the console alone**, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison) and closed where it recurs. [Anthropic-hosted sessions](/docs/proposals/infra/agent-console/anthropic-hosted-sessions) come after the connecting pages of the [console](/docs/infra/claude-interface/agent-console). The Code tab's lean core closes the returns the comparison predicts: [repository files](/docs/infra/claude-interface/agent-console/repository-files) are shipped; [side chat](/docs/proposals/infra/agent-console/side-chat) comes next, with [effort level](/docs/proposals/infra/agent-console/effort-level) and [session titles](/docs/proposals/infra/agent-console/session-titles) as small changes to the composer and the sessions tab.
 2. **The Genshin theme**: persona, voice, wish banner, then the ambience, all inside the world.
 3. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
 

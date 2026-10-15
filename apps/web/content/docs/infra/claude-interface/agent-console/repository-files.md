@@ -11,6 +11,7 @@ The composer takes a file by paste or drop, which needs the file open somewhere 
 
 - **`@` in the composer** opens the session's files, as `/` opens the command palette. The list is asked of the host each time the menu opens, so a file made since the last open is listed. The page filters it as the reader types, up to fifty matches. A pick replaces the `@` text with `@path` followed by a space, which Claude Code itself resolves on the prompt, so the console reads nothing into the prompt.
 - **Opening a file** from the changes tab's **Open file** button asks the host for its text. The file opens in a read-only view above the conversation, with its path, an **Attach as context** button that adds `@path` to the composer, a **Copy path** button, and a close control.
+- **A path in a reply or tool input** opens the same view when it matches a path in the session's file list. The links work in prose, code and the JSON shown for a tool call; a path that is not in the list stays text.
 - **A file the view cannot show says why.** A file over 512 KB, or one holding a NUL byte, is reported with its reason and no text.
 
 The host answers both from the session's working directory. The file list is `git ls-files` there, untracked files that are not ignored included, and outside a repository a walk of the directory that skips `.git` and `node_modules`. Paths are sent with forward slashes whichever the platform.
@@ -48,6 +49,8 @@ flowchart LR
 | `apps/web/app/store/agentConsole/file.ts`                                   | the session's file list and the opened file                  |
 | `apps/web/app/store/agentConsole/connection.ts`                             | hands each answer to the file store                          |
 | `apps/web/app/components/AgentConsole/Panel/Composer.vue`                   | the @ menu and the mention it inserts                        |
+| `apps/web/app/components/AgentConsole/Markdown.vue`                         | links known paths in replies and code                        |
+| `apps/web/app/components/AgentConsole/Panel/ToolCall.vue`                   | renders tool input through the path-linking markdown         |
 | `apps/web/app/components/AgentConsole/Panel/File.vue`                       | the read-only file view                                      |
 | `apps/web/app/components/AgentConsole/Panel/Changes.vue`                    | the Open file control on each file's diff                    |
 

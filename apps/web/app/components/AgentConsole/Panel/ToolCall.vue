@@ -23,6 +23,7 @@ const summary = computed(() => {
   const [firstValue] = Object.values(toolCall.toolUse.input);
   return typeof firstValue === "string" ? firstValue : "";
 });
+const toolInputMarkdown = computed(() => `\`\`\`json\n${JSON.stringify(toolCall.toolUse.input, null, 2)}\n\`\`\``);
 // Folded, a call still shows the first lines of what it returned, as the terminal prints them under the call
 const isOpen = ref(false);
 const resultPreview = computed(() => {
@@ -48,7 +49,7 @@ const resultPreview = computed(() => {
         <span text-muted flex-1 min-w-0 truncate>{{ summary }}</span>
         <span text-muted>{{ duration }}</span>
       </summary>
-      <pre of-x-auto>{{ JSON.stringify(toolCall.toolUse.input, null, 2) }}</pre>
+      <AgentConsoleMarkdown :source="toolInputMarkdown" />
       <pre
         v-if="toolCall.result"
         b-border
