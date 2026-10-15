@@ -1,6 +1,6 @@
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { serializeValue } from "@esposter/azure";
-import { FilterType, FilterTypeHas } from "@esposter/db-schema";
+import { FilterType, FilterTypeAuthorTypes, FilterTypeHas } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -28,10 +28,26 @@ describe(getFilterDisplayValue, () => {
     expect(getFilterDisplayValue({ type: FilterType.Has, value: FilterTypeHas.Image })).toBe("has: image");
   });
 
+  test.each(FilterTypeAuthorTypes)(`${FilterType.AuthorType}: renders %s uncapitalized`, (authorType) => {
+    expect.hasAssertions();
+
+    expect(getFilterDisplayValue({ type: FilterType.AuthorType, value: authorType })).toBe(
+      `authorType: ${authorType.toLowerCase()}`,
+    );
+  });
+
   test(`${FilterType.Pinned}: rejects a value no picker could have chosen`, () => {
     expect.hasAssertions();
 
     expect(() => getFilterDisplayValue({ type: FilterType.Pinned, value })).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value)).message}]`,
+    );
+  });
+
+  test(`${FilterType.AuthorType}: rejects a value no picker could have chosen`, () => {
+    expect.hasAssertions();
+
+    expect(() => getFilterDisplayValue({ type: FilterType.AuthorType, value })).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value)).message}]`,
     );
   });

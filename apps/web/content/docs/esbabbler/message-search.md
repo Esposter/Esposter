@@ -5,7 +5,7 @@ description: The right-sidebar search — one field mixing filter chips and free
 
 # Message search
 
-The right sidebar searches a room's messages through the Azure AI Search index. One field carries two different things at once: **filter chips** that narrow structurally (`from:`, `has:`, `before:`) and **free text** that is matched against message content. This page is the ground truth for how a keystroke becomes one or the other, and for what a search is allowed to send.
+The right sidebar searches a room's messages through the Azure AI Search index. One field carries two different things at once: **filter chips** that narrow structurally (`from:`, `authorType:`, `has:`, `before:`) and **free text** that is matched against message content. This page is the ground truth for how a keystroke becomes one or the other, and for what a search is allowed to send.
 
 Unlike every other search surface in the app, this one is explicit-submit — nothing fires per keystroke, so it sits outside the [`useAutoSearch` stack](/docs/architecture/search) by design.
 
@@ -38,7 +38,7 @@ The panel hangs under the whole field at its width and opens as the field is foc
 
 ## A chip's lifecycle
 
-`createFilter` pushes `{ type, value: "" }`. That `""` is the absent-value sentinel: the chip exists, shows its keyword, and is waiting. `SearchFilterComponentMap` maps the type to the picker that fills it — members for `from:`/`mentions:`, rooms for `in:`, the media kinds for `has:`, a date picker for `before:`/`during:`/`after:`, true/false for `pinned:`.
+`createFilter` pushes `{ type, value: "" }`. That `""` is the absent-value sentinel: the chip exists, shows its keyword, and is waiting. `SearchFilterComponentMap` maps the type to the picker that fills it — User or Webhook for `authorType:`, members for `from:`/`mentions:`, rooms for `in:`, the media kinds for `has:`, a date picker for `before:`/`during:`/`after:`, true/false for `pinned:`. `from:` stays a person filter; `authorType:` matches `type ne 'Webhook'` for User and `type eq 'Webhook'` for Webhook. User includes every message type backed by a member id, including room actions and calls; this filter does not distinguish conversation from system activity. The index already stores `type`, so this adds no field or reindex.
 
 ```mermaid
 stateDiagram-v2
@@ -96,17 +96,24 @@ Results, totals and the current page are all keyed by room, so a response that l
 
 ## Key files
 
-| File                                                          | Role                                                                                                            |
-| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `app/components/Message/RightSideBar/Search/Input.vue`        | The token field — the colon that converts, the Enter that searches, and the panel's picker, options and history |
-| `app/components/Ui/TokenField.vue`                            | The chips before the text, and the panel under the field                                                        |
-| `app/services/message/filter/getFilterTypeFromSearchQuery.ts` | The keyword-plus-colon rule, and the only place it is decided                                                   |
-| `app/services/message/filter/SearchFilterComponentMap.ts`     | Filter type to the picker that gives it a value                                                                 |
-| `app/services/message/filter/getFilterDisplayValue.ts`        | What a chip reads as, pending or complete                                                                       |
-| `shared/services/message/checkIsFilterPending.ts`             | The `""` sentinel test — the one definition of "waiting for a value"                                            |
-| `shared/services/message/getSearchableFilters.ts`             | The filters a search runs with — pending chips and exact repeats dropped                                        |
-| `shared/services/message/checkIsSearchQueryEmpty.ts`          | Whether there is anything to search on at all                                                                   |
-| `app/composables/message/search/useReadSearchedMessages.ts`   | The explicit-submit read, and the history row it earns                                                          |
-| `app/store/message/search/index.ts`                           | Per-room query, chips, results, totals and page                                                                 |
-| `server/services/message/searchMessages.ts`                   | Clause assembly and the paged index read                                                                        |
-| `packages/db/src/services/azure/search/filtersToClauses.ts`   | Each filter type's OData clause                                                                                 |
+| File                                                                     | Role                                                                                                            |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `app/components/Message/RightSideBar/Search/Input.vue`                   | The token field — the colon that converts, the Enter that searches, and the panel's picker, options and history |
+| `app/components/Ui/TokenField.vue`                                       | The chips before the text, and the panel under the field                                                        |
+| `app/services/message/filter/getFilterTypeFromSearchQuery.ts`            | The keyword-plus-colon rule, and the only place it is decided                                                   |
+| `app/services/message/filter/SearchFilterComponentMap.ts`                | Filter type to the picker that gives it a value                                                                 |
+| `app/components/Message/RightSideBar/Search/Filter/AuthorTypePicker.vue` | The User and Webhook options for `authorType:`                                                                  |
+| `app/services/message/filter/getFilterDisplayValue.ts`                   | What a chip reads as, pending or complete                                                                       |
+| `packages/db-schema/src/models/message/filter/FilterTypeAuthorType.ts`   | The filter's two selectable author types                                                                        |
+| `packages/db-schema/src/services/message/MessageTypeAuthorTypeMap.ts`    | The exhaustive author category for every message type                                                           |
+| `shared/services/message/checkIsFilterPending.ts`                        | The `""` sentinel test — the one definition of "waiting for a value"                                            |
+| `shared/services/message/getSearchableFilters.ts`                        | The filters a search runs with — pending chips and exact repeats dropped                                        |
+| `shared/services/message/checkIsSearchQueryEmpty.ts`                     | Whether there is anything to search on at all                                                                   |
+| `app/composables/message/search/useReadSearchedMessages.ts`              | The explicit-submit read, and the history row it earns                                                          |
+| `app/store/message/search/index.ts`                                      | Per-room query, chips, results, totals and page                                                                 |
+| `server/services/message/searchMessages.ts`                              | Clause assembly and the paged index read                                                                        |
+| `packages/db/src/services/azure/search/filtersToClauses.ts`              | Each filter type's OData clause                                                                                 |
+
+## Sources
+
+- [Discord — how to use search](https://support.discord.com/hc/en-us/articles/115000468588-How-to-Use-Search-on-Discord) — its author-type filter offers user, bot and webhook; this search offers User and Webhook because webhooks use the app-user identity here.

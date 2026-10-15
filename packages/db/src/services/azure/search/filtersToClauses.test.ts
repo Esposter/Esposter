@@ -1,15 +1,17 @@
 import { ContentTypes } from "#src/services/azure/search/ContentTypes";
 import { filtersToClauses } from "#src/services/azure/search/filtersToClauses";
-import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator } from "@esposter/azure";
+import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator, serializeValue } from "@esposter/azure";
 import {
   FileEntityPropertyNames,
   FilterType,
+  FilterTypeAuthorType,
   FilterTypeHas,
   getMimeCategory,
+  MessageType,
   MimeCategory,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(filtersToClauses, () => {
@@ -33,6 +35,25 @@ describe(filtersToClauses, () => {
       { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.Lt, value },
       { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.Gt, value },
     ]);
+  });
+
+  test.each([
+    [FilterTypeAuthorType.User, BinaryOperator.Ne],
+    [FilterTypeAuthorType.Webhook, BinaryOperator.Eq],
+  ] as const)("%s narrows messages by author type", (authorType, operator) => {
+    expect.hasAssertions();
+
+    expect(filtersToClauses([{ type: FilterType.AuthorType, value: authorType }])).toStrictEqual([
+      { key: StandardMessageEntityPropertyNames.type, operator, value: MessageType.Webhook },
+    ]);
+  });
+
+  test(`${FilterType.AuthorType} rejects a value no picker could have chosen`, () => {
+    expect.hasAssertions();
+
+    expect(() => filtersToClauses([{ type: FilterType.AuthorType, value: "Bot" }])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue("Bot")).message}]`,
+    );
   });
 
   // Any attachment at all is the collection being non-empty rather than any value in it, which is the one clause

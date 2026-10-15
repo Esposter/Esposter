@@ -7,6 +7,9 @@ const UserPicker = defineAsyncComponent(() => import("@/components/Message/Right
 const DatePicker = defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/DatePicker.vue"));
 
 export const SearchFilterComponentMap = {
+  [FilterType.AuthorType]: defineAsyncComponent(
+    () => import("@/components/Message/RightSideBar/Search/Filter/AuthorTypePicker.vue"),
+  ),
   [FilterType.From]: UserPicker,
   [FilterType.In]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/RoomPicker.vue")),
   [FilterType.Mentions]: UserPicker,

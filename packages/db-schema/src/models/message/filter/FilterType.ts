@@ -2,6 +2,7 @@
 import { z } from "zod";
 
 export enum FilterType {
+  AuthorType = "AuthorType",
   From = "From",
   In = "In",
   Mentions = "Mentions",

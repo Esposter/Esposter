@@ -1,9 +1,10 @@
 /* eslint-disable perfectionist/sort-objects -- follows `FilterType`'s own order */
 import { EN_US_DISJUNCTION_FORMATTER } from "#shared/services/intl/constants";
-import { FilterType, FilterTypeHases } from "@esposter/db-schema";
+import { FilterType, FilterTypeAuthorTypes, FilterTypeHases } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 
 export const FilterTypePlaceholderMap = {
+  [FilterType.AuthorType]: EN_US_DISJUNCTION_FORMATTER.format(FilterTypeAuthorTypes.map(uncapitalize)),
   [FilterType.From]: "user",
   [FilterType.In]: "room",
   [FilterType.Mentions]: "user",

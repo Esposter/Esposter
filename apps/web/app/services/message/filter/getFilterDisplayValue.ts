@@ -7,7 +7,7 @@ import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
 import { useRoomStore } from "@/store/message/room";
 import { useUserStore } from "@/store/message/user";
 import { serializeValue } from "@esposter/azure";
-import { FilterType } from "@esposter/db-schema";
+import { FilterType, filterTypeAuthorTypeSchema } from "@esposter/db-schema";
 import { exhaustiveGuard, InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
 
 // Every picker writes the shape its own filter type declares, so a value of any other shape is a bug in the
@@ -26,6 +26,11 @@ export const getFilterDisplayValue = (filter: Filter) => {
 
 const getDisplayValue = (type: FilterType, value: SerializableValue) => {
   switch (type) {
+    case FilterType.AuthorType: {
+      const authorType = filterTypeAuthorTypeSchema.safeParse(value);
+      if (!authorType.success) throw getInvalidValueError(value);
+      return uncapitalize(authorType.data);
+    }
     case FilterType.From:
     case FilterType.Mentions: {
       if (typeof value !== "string") throw getInvalidValueError(value);

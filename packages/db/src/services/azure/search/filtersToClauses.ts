@@ -15,8 +15,12 @@ import {
 import {
   FileEntityPropertyNames,
   FilterType,
+  FilterTypeAuthorType,
   FilterTypeHas,
+  filterTypeAuthorTypeSchema,
   getMimeCategory,
+  MessageTypeAuthorTypeMap,
+  MessageTypes,
   MimeCategory,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
@@ -37,6 +41,14 @@ const FilterTypeClauseMap = {
   [FilterType.From]: { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq },
   [FilterType.In]: { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq },
 } as const satisfies Partial<Record<FilterType, { key: string; operator: BinaryOperator }>>;
+const FilterTypeAuthorTypeClauseMap = {
+  [FilterTypeAuthorType.User]: MessageTypes.filter(
+    (messageType) => MessageTypeAuthorTypeMap[messageType] !== FilterTypeAuthorType.User,
+  ).map((value) => ({ key: StandardMessageEntityPropertyNames.type, operator: BinaryOperator.Ne, value })),
+  [FilterTypeAuthorType.Webhook]: MessageTypes.filter(
+    (messageType) => MessageTypeAuthorTypeMap[messageType] === FilterTypeAuthorType.Webhook,
+  ).map((value) => ({ key: StandardMessageEntityPropertyNames.type, operator: BinaryOperator.Eq, value })),
+} satisfies Record<FilterTypeAuthorType, Clause<Record<SelectFields<MessageEntity> & string, unknown>>[]>;
 // Every picker writes the shape its own filter type declares, so a value of another shape is a bug in the picker
 // Rather than something the user typed
 const getInvalidValueError = (value: SerializableValue) =>
@@ -54,6 +66,14 @@ export const filtersToClauses = (
       case FilterType.From:
       case FilterType.In:
         for (const { value } of typeFilters) clauses.push({ ...FilterTypeClauseMap[type], value });
+        break;
+      case FilterType.AuthorType:
+        for (const { value } of typeFilters) {
+          const authorType = filterTypeAuthorTypeSchema.safeParse(value);
+          if (!authorType.success) throw getInvalidValueError(value);
+
+          clauses.push(...FilterTypeAuthorTypeClauseMap[authorType.data]);
+        }
         break;
       case FilterType.Mentions: {
         clauses.push({

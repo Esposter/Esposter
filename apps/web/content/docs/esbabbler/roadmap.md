@@ -6,7 +6,3 @@ description: Open esbabbler work, prioritized — every item links its proposal 
 # Esbabbler — Roadmap
 
 Prioritized top-down. Every item links a full proposal; the specs are the plan, this is the index. Grep [deferred](/docs/esbabbler/deferred) + [rejected](/docs/esbabbler/rejected) before adding anything.
-
-## Next
-
-- [ ] [Author type search filter](/docs/proposals/esbabbler/author-type-search-filter) — an `authorType:` filter separating what a member wrote from what a webhook posted, so the half of the message union with no `userId` is reachable from search
