@@ -69,6 +69,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@tiptap/extension-file-handler`        | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-list`                | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-mention`             | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/extension-table`               | —                     |                   |                                                                                                        |
 | `@tiptap/extensions`                    | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/html`                          | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/pm`                            | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
