@@ -15,8 +15,10 @@ import {
   friendsInSocial,
   roomsInMessage,
   RoomType,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { and, eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("directMessageRouter", () => {
@@ -122,6 +124,11 @@ describe("directMessageRouter", () => {
     expect.hasAssertions();
 
     const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
+    const displayName = "Ally";
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName })
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessage.id), eq(usersToRoomsInMessage.userId, user.id)));
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
 
     expect(participantsData).toHaveLength(1);
@@ -130,7 +137,9 @@ describe("directMessageRouter", () => {
 
     expect(entry.roomId).toBe(directMessage.id);
     expect(entry.participants).toHaveLength(1);
+    expect(takeOne(entry.participants).displayName).toBe(displayName);
     expect(takeOne(entry.participants).id).toBe(user.id);
+    expect(takeOne(entry.participants).name).toBe(user.name);
   });
 
   test("creates direct message participant", async () => {
@@ -140,14 +149,18 @@ describe("directMessageRouter", () => {
     const addedUser = await createMockUser(mockContext.db);
     await createFriends(mockContext, mainUser, addedUser);
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName: "Zed" })
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessage.id), eq(usersToRoomsInMessage.userId, user.id)));
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName: "Amy" })
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessage.id), eq(usersToRoomsInMessage.userId, addedUser.id)));
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
     const directMessages = await directMessageCaller.readDirectMessages();
 
-    expect(
-      takeOne(participantsData)
-        .participants.map(({ id }) => id)
-        .toSorted(),
-    ).toStrictEqual([addedUser.id, user.id].toSorted());
+    expect(takeOne(participantsData).participants.map(({ displayName }) => displayName)).toStrictEqual(["Amy", "Zed"]);
     expect(takeOne(directMessages.items).participantKey).toBe(
       getDirectMessageParticipantKey([addedUser.id, mainUser.id, user.id]),
     );

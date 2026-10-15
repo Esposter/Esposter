@@ -45,7 +45,7 @@ describe(useFileStore, () => {
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
       createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: MimeType.PlainText, size: 1 }],
+        files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.PlainText, size: 1 }],
         message: filename,
         roomId,
         type: MessageType.Message,
@@ -80,6 +80,7 @@ describe(useFileStore, () => {
       filename: name,
       hasThumbnail: false,
       id: crypto.randomUUID(),
+      isSpoiler: false,
       mimetype,
       size: 1,
     }));
@@ -102,7 +103,7 @@ describe(useFileStore, () => {
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
       createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: MimeType.Png, size: 1 }],
+        files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.Png, size: 1 }],
         message: filename,
         roomId,
         type: MessageType.Message,
@@ -122,7 +123,7 @@ describe(useFileStore, () => {
     const { getFileUrlMap, getViewableFiles, readFileUrls } = fileStore;
     const threadStore = useThreadStore();
     const { activeRoomId, threadMessages } = storeToRefs(threadStore);
-    const file = { filename, hasThumbnail: false, id: fileId, mimetype: MimeType.Png, size: 1 };
+    const file = { filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.Png, size: 1 };
     activeRoomId.value = otherRoomId;
     threadMessages.value = [
       createMessageEntity({
@@ -162,6 +163,7 @@ describe(useFileStore, () => {
       filename,
       hasThumbnail: false,
       id: crypto.randomUUID(),
+      isSpoiler: false,
       mimetype: MimeType.PlainText,
       size: 1,
     }));
@@ -192,7 +194,7 @@ describe(useFileStore, () => {
     useFileStore();
     await MessageHookMap[Operation.Create].run(
       createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: MimeType.PlainText, size: 1 }],
+        files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.PlainText, size: 1 }],
         message: filename,
         roomId: otherRoomId,
         type: MessageType.Message,
@@ -213,7 +215,7 @@ describe(useFileStore, () => {
     const { fileUrlMap } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
     const message = createMessageEntity({
-      files: [{ filename, hasThumbnail: false, id: fileId, mimetype: MimeType.PlainText, size: 1 }],
+      files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.PlainText, size: 1 }],
       message: filename,
       roomId,
       type: MessageType.Message,

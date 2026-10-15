@@ -67,6 +67,8 @@ Member display names are returned by `readMembers` on each row as `displayName`.
 
 `readMyUsersToRooms` is called from `useReadRooms` to pre-load the current user's private settings (unread state, notification type) for all rooms at startup.
 
+The quick switcher needs to search and page direct messages by the same name it renders. `readRooms` can include DMs for that surface and returns the resolved value as `displayName`: participant display names (falling back to each account's `name`) are sorted by display name and user id, then joined in that order. `readDirectMessageParticipants` returns those participants with the same `displayName` values and order, so the client joins the server-resolved values instead of resolving them again. The UI still labels the per-room setting **Nickname**; persisted fields and code use `displayName` consistently.
+
 ## Setting your nickname
 
 Room settings → **My Profile** tab (visible to all members, no permission required). The field is labeled **Nickname** in the UI; it edits `displayName`, and an empty value falls back to the account name. Saves via `updateUserToRoom({ roomId, displayName })`; the update propagates via the `onUpdateUserToRoom` subscription into both maps.

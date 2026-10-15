@@ -8,9 +8,9 @@ export const useDirectMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const directMessageStore = useDirectMessageStore();
   const {
-    storeCreateDirectMessageParticipant,
     storeDeleteDirectMessage,
     storeDeleteDirectMessageParticipant,
+    storeDirectMessageParticipants,
     storeUpdateDirectMessage,
   } = directMessageStore;
   const { directMessages } = storeToRefs(directMessageStore);
@@ -30,9 +30,15 @@ export const useDirectMessageSubscribables = () => {
         }),
         // One subscription over every direct message, because the event carries the room it happened in
         $trpc.room.onJoinRoom.subscribe(roomIds, {
-          onData: ({ roomId, user }) => {
-            storeCreateDirectMessageParticipant(roomId, user);
-          },
+          onData: getSynchronizedFunction(({ roomId }) =>
+            getResultAsync(async () => {
+              const directMessageParticipants = await $trpc.room.directMessage.readDirectMessageParticipants.query([
+                roomId,
+              ]);
+              const directMessage = directMessageParticipants.find((item) => item.roomId === roomId);
+              if (directMessage) storeDirectMessageParticipants(roomId, directMessage.participants);
+            }).match(noop, console.error),
+          ),
         }),
         $trpc.room.onLeaveRoom.subscribe(roomIds, {
           onData: getSynchronizedFunction(({ roomId, userId }) =>

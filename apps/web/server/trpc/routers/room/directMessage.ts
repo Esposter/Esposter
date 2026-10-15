@@ -39,7 +39,7 @@ import {
 } from "@esposter/db-schema";
 import { getOrCreate, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, ne, or } from "drizzle-orm";
+import { and, asc, eq, inArray, ne, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 export const directMessageRouter = router({
@@ -220,8 +220,14 @@ export const directMessageRouter = router({
     .query<DirectMessageParticipants[]>(async ({ ctx, input: roomIds }) => {
       const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
       const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
+      const usersInAuth2 = alias(usersInAuth, "usersInAuth2");
+      const participantDisplayName = sql<string>`coalesce(nullif(${usersToRoomsInMessage2.displayName}, ''), ${usersInAuth2.name})`;
       const rows = await ctx.db
-        .select({ roomId: usersToRoomsInMessage2.roomId, user: getPublicUserColumns(usersInAuth) })
+        .select({
+          displayName: participantDisplayName,
+          roomId: usersToRoomsInMessage2.roomId,
+          user: getPublicUserColumns(usersInAuth2),
+        })
         .from(usersToRoomsInMessage1)
         .innerJoin(
           roomsInMessage,
@@ -234,15 +240,17 @@ export const directMessageRouter = router({
             ne(usersToRoomsInMessage2.userId, ctx.getSessionPayload.user.id),
           ),
         )
-        .innerJoin(usersInAuth, eq(usersInAuth.id, usersToRoomsInMessage2.userId))
+        .innerJoin(usersInAuth2, eq(usersInAuth2.id, usersToRoomsInMessage2.userId))
         .where(
           and(
             eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
             inArray(usersToRoomsInMessage1.roomId, roomIds),
           ),
-        );
-      const roomIdParticipantsMap = new Map<string, PublicUser[]>();
-      for (const { roomId, user } of rows) getOrCreate(roomIdParticipantsMap, roomId, () => []).push(user);
+        )
+        .orderBy(asc(participantDisplayName), asc(usersInAuth2.id));
+      const roomIdParticipantsMap = new Map<string, DirectMessageParticipants["participants"]>();
+      for (const { displayName, roomId, user } of rows)
+        getOrCreate(roomIdParticipantsMap, roomId, () => []).push({ ...user, displayName });
       return Array.from(roomIdParticipantsMap, ([roomId, participants]) => ({ participants, roomId }));
     }),
   readDirectMessages: standardAuthedProcedure

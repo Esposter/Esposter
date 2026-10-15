@@ -17,10 +17,10 @@ import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortB
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { deleteRoom } from "#server/services/room/deleteRoom";
+import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
-import { readJoinedRoomsPage } from "#server/services/room/readJoinedRoomsPage";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -415,36 +415,54 @@ export const baseRoomRouter = router({
             .limit(1)
         )[0];
     }),
-  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query<CursorPaginationData<RoomInMessage>>(
-    async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
-      const innerJoinCondition = and(
-        eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
-        eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
-      );
-      let room: RoomInMessage | undefined;
+  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query<
+    CursorPaginationData<RoomInMessage & { displayName: string }>
+  >(async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sortBy } }) => {
+    const innerJoinCondition = and(
+      eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+      eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+    );
+    const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.getSessionPayload.user.id);
+    const displayName = sql<string>`coalesce(nullif(${roomsInMessage.name}, ''), ${directMessageDisplayNames.displayName}, '')`;
+    const roomColumns = getColumns(roomsInMessage);
+    const sortableColumns = { ...roomColumns, displayName };
+    let room: (RoomInMessage & { displayName: string }) | undefined;
 
-      if (roomId) {
-        const routeRoom = (
-          await ctx.db
-            .select(getColumns(roomsInMessage))
-            .from(roomsInMessage)
-            .innerJoin(usersToRoomsInMessage, innerJoinCondition)
-            .where(eq(roomsInMessage.id, roomId))
-        )[0];
-        if (!routeRoom) throw getNotFoundError(DatabaseEntityType.Room, roomId);
-        if (routeRoom.type === RoomType.Room) room = routeRoom;
-      }
+    if (roomId) {
+      const routeRoom = (
+        await ctx.db
+          .select({ ...roomColumns, displayName })
+          .from(roomsInMessage)
+          .innerJoin(usersToRoomsInMessage, innerJoinCondition)
+          .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id))
+          .where(eq(roomsInMessage.id, roomId))
+      )[0];
+      if (!routeRoom) throw getNotFoundError(DatabaseEntityType.Room, roomId);
+      if (routeRoom.type === RoomType.Room || (includeDirectMessages && routeRoom.type === RoomType.DirectMessage))
+        room = routeRoom;
+    }
 
-      const wheres: (SQL | undefined)[] = [eq(roomsInMessage.type, RoomType.Room)];
-      if (cursor) wheres.push(getCursorWhere(roomsInMessage, cursor, sortBy));
-      if (filter?.name) wheres.push(ilike(roomsInMessage.name, `%${escapeLike(filter.name)}%`));
-      if (room) wheres.push(ne(roomsInMessage.id, room.id));
+    const wheres: (SQL | undefined)[] = [
+      inArray(roomsInMessage.type, includeDirectMessages ? [RoomType.Room, RoomType.DirectMessage] : [RoomType.Room]),
+    ];
+    if (includeDirectMessages)
+      wheres.push(or(ne(roomsInMessage.type, RoomType.DirectMessage), eq(usersToRoomsInMessage.isHidden, false)));
+    if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
+    if (filter?.name) wheres.push(ilike(displayName, `%${escapeLike(filter.name)}%`));
+    if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
-      const cursorPaginationData = await readJoinedRoomsPage(ctx.db, innerJoinCondition, wheres, limit, sortBy);
-      if (room) cursorPaginationData.items.push(room);
-      return cursorPaginationData;
-    },
-  ),
+    const rooms = await ctx.db
+      .select({ ...roomColumns, displayName })
+      .from(roomsInMessage)
+      .innerJoin(usersToRoomsInMessage, innerJoinCondition)
+      .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id))
+      .where(and(...wheres))
+      .orderBy(...parseSortByToSql(sortableColumns, sortBy))
+      .limit(limit + 1);
+    const cursorPaginationData = getCursorPaginationData(rooms, limit, sortBy);
+    if (room) cursorPaginationData.items.push(room);
+    return cursorPaginationData;
+  }),
   updateRoom: addProfanityFilterMiddleware(
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],

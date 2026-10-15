@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { ReadRoomsInput } from "#shared/models/db/room/ReadRoomsInput";
 import type { BlobDeletionEventGridData, StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -13,6 +14,7 @@ import { inviteRouter } from "#server/trpc/routers/invite";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { getPartitionKeyFilter } from "@esposter/azure";
@@ -130,7 +132,7 @@ describe("roomRouter", () => {
     const rooms = await roomCaller.readRooms({ filter: { name: "1" }, roomId: newRoom1.id });
 
     expect(rooms.items).toHaveLength(1);
-    expect(takeOne(rooms.items)).toStrictEqual(newRoom1);
+    expect(takeOne(rooms.items)).toStrictEqual({ ...newRoom1, displayName: newRoom1.name });
   });
 
   test("reads multiple with roomId with exclusive filter", async () => {
@@ -141,8 +143,8 @@ describe("roomRouter", () => {
     const rooms = await roomCaller.readRooms({ filter: { name: "2" }, roomId: newRoom1.id });
 
     expect(rooms.items).toHaveLength(2);
-    expect(takeOne(rooms.items)).toStrictEqual(newRoom2);
-    expect(takeOne(rooms.items, 1)).toStrictEqual(newRoom1);
+    expect(takeOne(rooms.items)).toStrictEqual({ ...newRoom2, displayName: newRoom2.name });
+    expect(takeOne(rooms.items, 1)).toStrictEqual({ ...newRoom1, displayName: newRoom1.name });
   });
 
   test("fails read multiple with non-existent room", async () => {
@@ -600,6 +602,34 @@ describe("roomRouter", () => {
 
     expect(rooms.items).toHaveLength(1);
     expect(takeOne(rooms.items).id).toBe(newRoom.id);
+  });
+
+  test("searches direct messages by their ordered participant display names", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name: "Ally" });
+    const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName: "Ally" })
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessage.id), eq(usersToRoomsInMessage.userId, user.id)));
+    const sortBy: NonNullable<ReadRoomsInput["sortBy"]> = [
+      { key: "displayName", order: SortOrder.Asc },
+      { key: "id", order: SortOrder.Asc },
+    ];
+    const matches = await roomCaller.readRooms({ filter: { name: "Ally" }, includeDirectMessages: true, sortBy });
+    const firstPage = await roomCaller.readRooms({ includeDirectMessages: true, limit: 1, sortBy });
+    const secondPage = await roomCaller.readRooms({
+      cursor: firstPage.nextCursor,
+      includeDirectMessages: true,
+      limit: 1,
+      sortBy,
+    });
+
+    expect(matches.items.map(({ displayName }) => displayName)).toStrictEqual(["Ally", "Ally"]);
+    expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual(
+      [newRoom.id, directMessage.id].toSorted(),
+    );
   });
 
   test("reads rooms with direct message roomId", async () => {

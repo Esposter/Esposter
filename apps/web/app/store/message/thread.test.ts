@@ -97,7 +97,14 @@ describe(useThreadStore, () => {
     expect.hasAssertions();
 
     const url = "url";
-    const file = { filename: message, hasThumbnail: false, id: crypto.randomUUID(), mimetype: MimeType.Png, size: 1 };
+    const file = {
+      filename: message,
+      hasThumbnail: false,
+      id: crypto.randomUUID(),
+      isSpoiler: false,
+      mimetype: MimeType.Png,
+      size: 1,
+    };
     const reply = createMessageEntity({
       files: [file],
       message,

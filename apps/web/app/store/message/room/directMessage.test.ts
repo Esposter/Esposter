@@ -43,7 +43,7 @@ describe(useDirectMessageStore, () => {
     onFirstDeleted(true);
     await rejectedDeleteDirectMessageParticipant;
 
-    expect(getDirectMessageParticipants(roomId)).toStrictEqual([second, third]);
+    expect(getDirectMessageParticipants(roomId).map(({ id }) => id)).toStrictEqual([second.id, third.id]);
     expect(alertStore.alerts).toHaveLength(1);
   });
 
@@ -58,7 +58,7 @@ describe(useDirectMessageStore, () => {
     storeDirectMessageParticipants(roomId, [first, second, third]);
     await deleteDirectMessageParticipant(roomId, second.id);
 
-    expect(getDirectMessageParticipants(roomId)).toStrictEqual([first, third]);
+    expect(getDirectMessageParticipants(roomId).map(({ id }) => id)).toStrictEqual([first.id, third.id]);
     expect(alertStore.alerts).toHaveLength(0);
   });
 

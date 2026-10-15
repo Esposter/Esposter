@@ -25,10 +25,11 @@ vi.mock("pdfjs-dist/build/pdf.worker?url", () => ({ default: "" }));
 // Its title bar still gives it a title and a way out that is not clicking the backdrop
 describe("messageModelFileRendererPdf", () => {
   const filename = "filename";
-  const file: Pick<FileEntity, "filename" | "hasThumbnail" | "id" | "mimetype" | "size"> = {
+  const file: Pick<FileEntity, "filename" | "hasThumbnail" | "id" | "isSpoiler" | "mimetype" | "size"> = {
     filename,
     hasThumbnail: false,
     id: crypto.randomUUID(),
+    isSpoiler: false,
     mimetype: MimeType.Pdf,
     size: 1,
   };

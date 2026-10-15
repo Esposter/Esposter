@@ -5,8 +5,11 @@ import { z } from "zod";
 
 export const readRoomsInputSchema = z
   .object({
+    includeDirectMessages: z.boolean().default(false),
     roomId: selectRoomInMessageSchema.shape.id.optional(),
-    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [UPDATED_AT_DESCENDING_SORT_ITEM]).shape,
+    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof().or(z.literal("displayName")), [
+      UPDATED_AT_DESCENDING_SORT_ITEM,
+    ]).shape,
     filter: refineRoomSchema(selectRoomInMessageSchema.pick({ name: true })).optional(),
   })
   .prefault({});

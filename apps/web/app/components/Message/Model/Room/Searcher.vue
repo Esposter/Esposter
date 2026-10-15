@@ -8,11 +8,11 @@ const { readMoreSearchedItems } = roomSearchStore;
 
 useCommandScope({
   commands: () =>
-    items.value.map(({ id, image, name }) => ({
+    items.value.map(({ displayName, id, image }) => ({
       group: "Rooms",
       id,
       image: image ?? "",
-      title: name ?? "",
+      title: displayName,
       to: RoutePath.Messages(id),
     })),
   hasMore: () => hasMore.value,
