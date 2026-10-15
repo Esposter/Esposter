@@ -33,7 +33,7 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Email,
   },
   [ResourceType.Flowchart]: {
-    capabilities: { publishable: true },
+    capabilities: { portable: true, publishable: true },
     contentSchema: flowchartEditorSchema,
     icon: "i-mdi:sitemap",
     title: ResourceType.Flowchart,

@@ -4,6 +4,7 @@ import type { PortableResourceType } from "@/models/resource/PortableResourceTyp
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
@@ -13,6 +14,8 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
+import { useFlowchartEditorStore } from "@/store/flowchartEditor";
+import { useFlowchartExportStore } from "@/store/flowchartEditor/export";
 import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
@@ -21,6 +24,7 @@ import { useTodoListPrintDialogStore } from "@/store/resource/todoList/printDial
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
+import { toRaw } from "vue";
 
 // Per-format import/export for Sheet. Both hand off to the dialog the blade shell mounts rather than acting
 // Outright: an import shows what it is about to replace the sheet with, and an export asks which columns to take
@@ -59,6 +63,28 @@ const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
     });
   },
   label: type,
+});
+
+const createFlowchartPortableFormat = (format: FlowchartExportFormat): PortableFormat => ({
+  export: async () => {
+    const resourceStore = useResourceStore();
+    const resourceId = resourceStore.currentResourceId;
+    const flowchartEditorStore = useFlowchartEditorStore();
+    const { loadContent } = flowchartEditorStore;
+    await loadContent();
+    if (resourceStore.currentResourceId !== resourceId || !resourceStore.resource) return;
+    const { flowchartEditor } = storeToRefs(flowchartEditorStore);
+    const flowchartExportStore = useFlowchartExportStore();
+    const { openExport } = flowchartExportStore;
+    openExport({
+      edges: structuredClone(toRaw(flowchartEditor.value.edges)),
+      format,
+      name: resourceStore.resource.name,
+      nodes: structuredClone(toRaw(flowchartEditor.value.nodes)),
+    });
+  },
+  icon: format === FlowchartExportFormat.Png ? "i-mdi:image-outline" : "i-mdi:vector-square",
+  label: format.toUpperCase(),
 });
 // Import/export formats per portable type
 export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> = {
@@ -104,6 +130,10 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       icon: "i-mdi:language-html5",
       label: "Personalized HTML",
     },
+  ],
+  [ResourceType.Flowchart]: [
+    createFlowchartPortableFormat(FlowchartExportFormat.Png),
+    createFlowchartPortableFormat(FlowchartExportFormat.Svg),
   ],
   [ResourceType.Sheet]: [
     createSheetPortableFormat(DataSourceType.Csv),

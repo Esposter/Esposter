@@ -74,6 +74,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Email web view](/docs/resource/email-web-view) — Email is Publishable: save-time HTML capture, `/view/Email/[id]` browser copy
 - [Flowchart connectors](/docs/resource/flowchart-connectors) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
 - [Flowchart publish](/docs/resource/flowchart-publish) — Flowchart is Publishable: read-only VueFlow render at `/view/Flowchart/[id]`
+- [Flowchart image export](/docs/resource/flowchart-image-export) — export the whole diagram as PNG or SVG from the resource menu
 - [Resource file assets](/docs/resource/resource-file-assets) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
 - [Storage quotas](/docs/resource/storage-quotas) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite blocks](/docs/resource/webpage-survey-invite-blocks) — published surveys as drag-in invite buttons in both GrapesJS editors
