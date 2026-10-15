@@ -7,7 +7,7 @@ describe("noteResourceSchema", () => {
 
     expect(
       noteResourceSchema.safeParse({
-        doc: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "note" }] }] },
+        doc: { content: [{ content: [{ text: "note", type: "text" }], type: "paragraph" }], type: "doc" },
       }).success,
     ).toBe(true);
   });
@@ -18,28 +18,28 @@ describe("noteResourceSchema", () => {
     expect(
       noteResourceSchema.safeParse({
         doc: {
-          type: "doc",
           content: [
             {
-              type: "table",
               content: [
                 {
-                  type: "tableRow",
                   content: [
-                    { type: "tableHeader", content: [{ type: "paragraph" }] },
-                    { type: "tableHeader", content: [{ type: "paragraph" }] },
+                    { content: [{ type: "paragraph" }], type: "tableHeader" },
+                    { content: [{ type: "paragraph" }], type: "tableHeader" },
                   ],
+                  type: "tableRow",
                 },
                 {
-                  type: "tableRow",
                   content: [
-                    { type: "tableCell", content: [{ type: "paragraph" }] },
-                    { type: "tableCell", content: [{ type: "paragraph" }] },
+                    { content: [{ type: "paragraph" }], type: "tableCell" },
+                    { content: [{ type: "paragraph" }], type: "tableCell" },
                   ],
+                  type: "tableRow",
                 },
               ],
+              type: "table",
             },
           ],
+          type: "doc",
         },
       }).success,
     ).toBe(true);
@@ -49,7 +49,7 @@ describe("noteResourceSchema", () => {
     expect.hasAssertions();
 
     expect(
-      noteResourceSchema.safeParse({ doc: { type: "doc", content: [{ type: "uninstalledExtension" }] } }).success,
+      noteResourceSchema.safeParse({ doc: { content: [{ type: "uninstalledExtension" }], type: "doc" } }).success,
     ).toBe(false);
   });
 });

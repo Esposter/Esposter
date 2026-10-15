@@ -6,11 +6,6 @@ import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { ConnectionLineType, MarkerType } from "@vue-flow/core";
 import { z } from "zod";
 
-// An edge is its two ends, its path's kind, its arrowhead and its label. Its coordinates and the copies of both end
-// Nodes the canvas hangs on it are derived from the nodes on every render, so they are never stored. Its label is a
-// String and its arrowhead a marker type, the two forms the editor writes, not the wider forms the canvas accepts
-type GraphEdgeData = Record<string, never>;
-
 export type GraphEdge = SetRequired<
   Pick<
     DefaultEdge<GraphEdgeData, Record<string, CustomEvent>, ConnectionLineType>,
@@ -18,6 +13,11 @@ export type GraphEdge = SetRequired<
   >,
   "data" | "type"
 > & { label?: string; markerEnd?: MarkerType };
+
+// An edge is its two ends, its path's kind, its arrowhead and its label. Its coordinates and the copies of both end
+// Nodes the canvas hangs on it are derived from the nodes on every render, so they are never stored. Its label is a
+// String and its arrowhead a marker type, the two forms the editor writes, not the wider forms the canvas accepts
+interface GraphEdgeData extends Record<string, never> {}
 
 export const graphEdgeSchema = z.object({
   data: z.strictObject({}),

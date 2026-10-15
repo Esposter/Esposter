@@ -3,6 +3,7 @@ import type { ToData } from "@esposter/shared";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
+import { getResult } from "@esposter/shared";
 import { z } from "zod";
 
 export interface SurveyResource {
@@ -17,14 +18,17 @@ const surveyModelSchema = z
   .superRefine((model, ctx) => {
     if (!model) return;
 
-    try {
+    getResult(() => {
       // oxlint-disable-next-line no-restricted-properties -- SurveyJS model strings may contain ISO-shaped text that a date reviver would mutate
       const surveyModel: unknown = JSON.parse(model);
-      if (surveyModel === null || typeof surveyModel !== "object" || Array.isArray(surveyModel))
-        ctx.addIssue({ code: "custom", message: "Survey model must be a JSON object" });
-    } catch (error) {
-      ctx.addIssue({ code: "custom", message: error instanceof Error ? error.message : String(error) });
-    }
+      return surveyModel;
+    }).match(
+      (surveyModel) => {
+        if (surveyModel === null || typeof surveyModel !== "object" || Array.isArray(surveyModel))
+          ctx.addIssue({ code: "custom", message: "Survey model must be a JSON object" });
+      },
+      (error) => ctx.addIssue({ code: "custom", message: error.message }),
+    );
   });
 
 // Object wrapper (not a bare string schema) so future fields extend without a blob-shape break

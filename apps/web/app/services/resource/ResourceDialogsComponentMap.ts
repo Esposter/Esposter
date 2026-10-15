@@ -9,7 +9,7 @@ const ResourceFlowchartDialogs: Component = defineAsyncComponent(
 // By the blade shell rather than by a blade: a dialog mounted in one blade is missing from the others, and one
 // Mounted in each is torn down and rebuilt on every switch. A type with no entry mounts nothing
 export const ResourceDialogsComponentMap: Partial<Record<ResourceType, Component>> = {
+  [ResourceType.Flowchart]: ResourceFlowchartDialogs,
   [ResourceType.Sheet]: ResourceSheetDialogs,
   [ResourceType.TodoList]: ResourceTodoListDialogs,
-  [ResourceType.Flowchart]: ResourceFlowchartDialogs,
 };

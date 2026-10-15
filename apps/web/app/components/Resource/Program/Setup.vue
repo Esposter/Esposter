@@ -43,14 +43,13 @@ const keyColumnItems = computed<UiSelectItem<string>[]>(
 const emailResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
 const surveyResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
 await loadContent();
-watch(
+watchImmediate(
   () => programResource.value.surveyId,
   async (surveyId) => {
     selectedSurveyId.value = surveyId;
     surveyContentId.value = "";
     if (surveyId) await refreshSurveyContent();
   },
-  { immediate: true },
 );
 // Both binding pickers are independent of each other, so they resolve together
 await getResultAsync(async () => {

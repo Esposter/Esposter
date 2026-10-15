@@ -109,10 +109,10 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
     storeSessionReset,
     storeSessions,
     streamDraft,
+    themeStyle,
     timelineLanes,
     todoUpdate,
     toolCallMap,
-    themeStyle,
     turnResult,
     turnUsage,
   };

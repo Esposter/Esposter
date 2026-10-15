@@ -1,8 +1,9 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { getSchema } from "@tiptap/core";
-import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
+import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
+import { getResult, noop } from "@esposter/shared";
+import { getSchema } from "@tiptap/core";
 import { z } from "zod";
 
 // The Tiptap/ProseMirror JSON document is the source of truth at rest — HTML is only generated at the render
@@ -33,9 +34,7 @@ const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
 const noteDocumentSchema = getSchema(getNoteExtensions());
 
 export const noteResourceSchema = z.object({ doc: jsonContentSchema }).superRefine(({ doc }, ctx) => {
-  try {
-    noteDocumentSchema.nodeFromJSON(doc).check();
-  } catch (error) {
-    ctx.addIssue({ code: "custom", message: error instanceof Error ? error.message : String(error), path: ["doc"] });
-  }
+  getResult(() => noteDocumentSchema.nodeFromJSON(doc).check()).match(noop, (error) =>
+    ctx.addIssue({ code: "custom", message: error.message, path: ["doc"] }),
+  );
 }) satisfies z.ZodType<NoteResource>;

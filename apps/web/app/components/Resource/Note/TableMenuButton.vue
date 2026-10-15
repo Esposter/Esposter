@@ -41,6 +41,7 @@ const items = computed<Item[]>(() => [
     icon: "i-mdi:table-row-remove",
     isDanger: true,
     onClick: () => {
+      // eslint-disable-next-line no-restricted-syntax -- removes a row from the unsaved note editor draft
       editor?.chain().focus().deleteRow().run();
     },
     title: "Delete row",
@@ -49,6 +50,7 @@ const items = computed<Item[]>(() => [
     icon: "i-mdi:table-column-remove",
     isDanger: true,
     onClick: () => {
+      // eslint-disable-next-line no-restricted-syntax -- removes a column from the unsaved note editor draft
       editor?.chain().focus().deleteColumn().run();
     },
     title: "Delete column",
@@ -71,15 +73,16 @@ const items = computed<Item[]>(() => [
     icon: "i-mdi:table-remove",
     isDanger: true,
     onClick: () => {
+      // eslint-disable-next-line no-restricted-syntax -- removes a table from the unsaved note editor draft
       editor?.chain().focus().deleteTable().run();
     },
     title: "Delete table",
   },
 ]);
 
-watch(
+watchImmediate(
   () => editor,
-  (currentEditor, _, onCleanup) => {
+  (currentEditor, _previousEditor, onCleanup) => {
     if (!currentEditor) {
       isTableActive.value = false;
       return;
@@ -91,7 +94,6 @@ watch(
     update();
     onCleanup(() => currentEditor.off("selectionUpdate", update));
   },
-  { immediate: true },
 );
 </script>
 

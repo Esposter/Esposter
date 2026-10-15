@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useNoteSlashExtension } from "@/composables/resource/note/useNoteSlashExtension";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
+import { useNoteSlashExtension } from "@/composables/resource/note/useNoteSlashExtension";
 import { useNoteStore } from "@/store/resource/note";
 import { ResourceType } from "@esposter/db-schema";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
