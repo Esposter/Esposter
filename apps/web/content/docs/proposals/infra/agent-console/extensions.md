@@ -2,6 +2,7 @@
 title: Extensions
 description: Proposal — how external tooling joins the agent console with the least code on either side, through the MCP Apps standard the console hosts, and a first-party view only when a tool needs the scene.
 model: claude-opus-5-5
+waiting: "The installed Agent SDK's public Query interface has no mcp_call method; resume if it arrives or the host transport boundary changes."
 ---
 
 # Extensions
@@ -81,6 +82,7 @@ packages/agent-console-server/src/services/
 ## Notes
 
 - Both probes the MCP Apps tier rests on are answered by the SDK, so the host does not dial servers itself. The tool's `ui://` reference is read from the session's `mcpServerStatus()` tool list, whose `_meta` carries the MCP Apps members the CLI validated, and the widget is read with `query.readMcpResource(serverName, uri)` from the server the CLI already connected. Both need the CLI's advertised capabilities (`mcp_tool_ui_meta_v1`, `mcp_read_resource_v1`), and an SDK-type server is refused, so an in-process server's widget is not reachable this way.
+- The installed SDK's public `Query` interface has no `mcp_call` method, so the iframe's tool calls have no route through the session's MCP connection. Opening a second connection would cross the SDK-owned transport boundary; wait for SDK support or revise that boundary before building the host.
 - The same-origin frame is the cheapest tier only because the console lives in the app; a tool that must work outside Esposter is an MCP App even when a route would do, so it is written once for every host.
 - The sandbox proxy needs an origin of its own. Serving it from the host's loopback on a second port keeps it off the app's origin, and is the open part of the tier's design.
 
