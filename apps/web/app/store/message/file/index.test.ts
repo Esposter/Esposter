@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-
 import { MimeType } from "#shared/models/file/MimeType";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";

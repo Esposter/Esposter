@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-
 import { getMockSession } from "#server/trpc/context.test";
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useSession } from "@/services/auth/authClient.test";

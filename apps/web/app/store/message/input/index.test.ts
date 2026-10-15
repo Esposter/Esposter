@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-
 import { DRAFT_DEBOUNCE_MS } from "@/services/message/draft/constants";
 import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
