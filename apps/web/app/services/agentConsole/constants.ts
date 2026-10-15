@@ -10,9 +10,9 @@ export const CONTEXT_WARNING_RATIO = 0.9;
 export const MAIN_LANE_TITLE = "Main agent";
 // The hook event Claude Code names a session-start hook by, whose context a theme reads the avatar from
 export const SESSION_START_HOOK_EVENT = "SessionStart";
-// The persona plugin's line naming the session's character, spelled as the plugin spells it: the plugin installs on
-// Its own, so the two sides share the text rather than a module
+// The persona plugin installs on its own; its session-start lines are shared as text rather than through a module
 export const GENSHIN_CHARACTER_LINE_PREFIX = "Character: ";
+export const GENSHIN_ELEMENT_LINE_PREFIX = "Element: ";
 // A token count at the precision a gauge is read at — 30.3K of 1M rather than every digit
 export const TOKEN_COUNT_FORMAT = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1, notation: "compact" });
 // How many lines of a tool's result show under it before the call is unfolded, as the terminal shows

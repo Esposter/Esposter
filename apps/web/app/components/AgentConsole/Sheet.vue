@@ -24,7 +24,8 @@ const agentConsolePanelStore = useAgentConsolePanelStore();
 const { consoleHeight, consolePanelType, isConsoleExpanded, isConsoleOpen } = storeToRefs(agentConsolePanelStore);
 const { onConsoleFocusRequest, openConsole } = agentConsolePanelStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { currentSessionId, isTurnRunning, pendingPermissionRequests } = storeToRefs(agentConsoleSessionStore);
+const { currentSessionId, isTurnRunning, pendingPermissionRequests, themeStyle } =
+  storeToRefs(agentConsoleSessionStore);
 const agentConsolePaneStore = useAgentConsolePaneStore();
 const { isPaneOpen, paneWidth } = storeToRefs(agentConsolePaneStore);
 useAgentConsoleCommands();
@@ -86,7 +87,7 @@ onConsoleFocusRequest(async () => {
     ref="sheet"
     aria-label="Console"
     :class="isConsoleExpanded ? 'inset-0' : 'inset-x-0 bottom-0 max-h-full'"
-    :style="isConsoleExpanded ? undefined : { height: `${height}px` }"
+    :style="[themeStyle, isConsoleExpanded ? undefined : { height: `${height}px` }]"
     tabindex="-1"
     flex
     flex-col

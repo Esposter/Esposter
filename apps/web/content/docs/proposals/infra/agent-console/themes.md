@@ -1,12 +1,12 @@
 ---
 title: Themes
-description: Proposal — what the agent console's theme interface grows beyond the default theme's reactions. The next parts are a palette, the voxel world's rooms and a voice. The Genshin theme, built from the persona plugin, is the first to use them.
+description: Proposal — the remaining voice, scene and reactions in the agent console's theme interface. The Genshin theme reads its avatar and element palette from the persona plugin's session-start context.
 model: claude-haiku-5-5
 ---
 
 # Themes
 
-The [agent console](/docs/infra/claude-interface/agent-console) already has a theme registry. It holds the default and the Genshin theme, and the parts a theme sets are its avatar, which the Genshin theme reads off the persona plugin's line in the session-start context, and its reactions, which add to the console's own hidden-tab notification ([as built](/docs/infra/claude-interface/agent-console)). This proposal is the rest of what a theme may set, and the rest of the Genshin theme.
+The [agent console](/docs/infra/claude-interface/agent-console) has a theme registry. It holds the default and the Genshin theme, and the parts a theme sets are its avatar, palette and reactions ([as built](/docs/infra/claude-interface/agent-console)). This proposal tracks the remaining voice, scene and reaction work for the Genshin theme.
 
 ## What a theme may add
 
@@ -29,33 +29,32 @@ Built from what the [persona plugin](/docs/infra/claude-interface/persona-plugin
 
 ```mermaid
 flowchart TD
+  C[Session-start context] --> TH{Theme with a matching plugin line}
+  TH -->|default| D[No avatar or palette]
+  TH -->|Genshin| P[Character avatar and element palette]
   E[Session event] --> N[Notification when hidden — every theme]
-  E --> TH{Active theme}
-  TH -->|default| Q[Nothing more]
-  TH -->|Genshin| R{Reaction map}
-  R -->|session start| WB[Wish banner, palette]
+  E --> A{Active theme}
+  A -->|default| Q[Nothing more]
+  A -->|Genshin| R{Reaction map}
+  R -->|session start| WB[Wish banner]
   R -->|spoken line in a reply| SY[Resident synthesizer, then ambience]
   R -->|attention wanted| PO[The character turns, once the world draws one]
 ```
 
 ## Scope and order
 
-1. **The palette**, the first part a theme sets past its reactions. The persona session-start context now includes the character's stable element on its own `Element: <element>` line beside `Character: <name>`, so the Genshin theme can read it without parsing the localized headline. The palette itself remains unbuilt while its colour-map source is unresolved: `ElementColorMap` currently belongs to genshin-persona, which the web app cannot depend on. The theme scope can take token overrides alongside its selected style; the palette needs one agreed source for those element colours before implementation.
-2. **The voice**, from the resident synthesizer, once the palette has shipped and the console has a line source.
-3. **The scene and reactions**: the wish banner, then the element ambience, then spatial chat as an option. Each one is built as its own sub-spec.
-
-The palette's colours need one source keyed by element. The current proposal is to move `ElementColorMap` from `packages/genshin-persona/src/services/ElementColorMap.ts` into [genshin-text](/docs/genshin/game-text), whose `splitGameTextColors` already owns the interface colours and which the web app already depends on. That would let the console read the map directly and let the published persona plugin take it from npm. The map still lives in genshin-persona; this source choice remains open until the palette is built.
-
-The palette is not built yet, so nothing in the console changes and the Genshin theme keeps the avatar alone. The console itself is unmounted while `/genshin` is the game alone, so the palette's look has no place to be judged until that changes; the user's eyes check it then.
+1. **The voice**, from the resident synthesizer, using the console's spoken-line source.
+2. **The scene and reactions**: the wish banner, then the element ambience, then spatial chat as an option. Each one is built as its own sub-spec.
 
 ## Key files
 
-| File                                                                | Role after the change                                          |
-| :------------------------------------------------------------------ | :------------------------------------------------------------- |
-| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts` | The registry the Genshin theme is added to                     |
-| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts`             | The theme interface, grown by the parts the Genshin theme sets |
-| `packages/genshin-persona/src/services/getSessionStartOutput.ts`    | Adds the stable element line to the session context            |
-| `packages/genshin-persona/scripts/speak.ts`                         | The resident synthesizer the Genshin theme speaks through      |
+| File                                                                | Role after the change                                        |
+| :------------------------------------------------------------------ | :----------------------------------------------------------- |
+| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts` | The registry and Genshin theme's element palette             |
+| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts`             | The theme interface, including avatar, palette and reactions |
+| `apps/web/app/store/agentConsole/session.ts`                        | Resolves the session theme and scoped palette                |
+| `packages/genshin-text/src/services/ElementColorMap.ts`             | Element colours shared with the persona's generated module   |
+| `packages/genshin-persona/scripts/speak.ts`                         | The resident synthesizer the Genshin theme speaks through    |
 
 ```text
 apps/web/app/components/AgentConsole/Theme/Genshin/
@@ -64,5 +63,5 @@ packages/genshin-text/src/services/ElementColorMap.ts   ← the element colours,
 
 ## Notes
 
-- Each session keeps the look of the theme whose plugin began it, as the avatar already does, so the Genshin theme on one session and the default on a parallel one is the ordinary state, not an edge case. Each part added here reads the session's theme the same way.
+- Each session keeps the look of the theme whose plugin began it, including the palette, so the Genshin theme on one session and the default on a parallel one is the ordinary state, not an edge case. Each part added here reads the session's theme the same way.
 - A second persona set — another game, another cast — is another theme reading another plugin's hook line, and nothing in the console changes for it.

@@ -99,6 +99,7 @@ export const PersonaCopiedModules: string[] = [
   "models/TravelerGender.ts",
   "services/GameLanguageTagMap.ts",
   "services/checkIsGameLanguage.ts",
+  "services/ElementColorMap.ts",
   "services/fillLinePlaceholders.ts",
   "services/getCanonicalLanguage.ts",
   "services/getLanguageDisplayName.ts",

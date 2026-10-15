@@ -26,16 +26,20 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const timelineLanes = computed(() => [...sessionView.value.timelineLaneMap.values()]);
   const streamDraft = computed(() => sessionView.value.streamDraft);
   const toolCallMap = computed(() => sessionView.value.toolCallMap);
-  // Who the session is presented as, by the first theme that finds its own line in a session-start hook's context
-  const avatar = computed(() => {
+  // The first theme that finds its own line in a session-start hook's context presents that session
+  const themeContext = computed(() => {
     for (const sessionStartContext of sessionView.value.sessionStartContexts)
       for (const theme of Object.values(AgentConsoleThemeMap)) {
-        const themeAvatar = theme.getAvatar(sessionStartContext);
-        if (themeAvatar) return themeAvatar;
+        const avatar = theme.getAvatar(sessionStartContext);
+        if (avatar) return { avatar, palette: theme.getPalette(sessionStartContext) };
       }
 
-    return "";
+    return { avatar: "", palette: {} };
   });
+  const avatar = computed(() => themeContext.value.avatar);
+  const themeStyle = computed(() =>
+    Object.fromEntries(Object.entries(themeContext.value.palette).map(([token, value]) => [`--ui-${token}`, value])),
+  );
   const capabilities = computed(() => sessionView.value.latestEventMap[AgentEventType.Capabilities]);
   const contextUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.ContextUsage]);
   // Warns before automatic compaction rather than at it, which is the moment a person can still choose to compact
@@ -108,6 +112,7 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
     timelineLanes,
     todoUpdate,
     toolCallMap,
+    themeStyle,
     turnResult,
     turnUsage,
   };

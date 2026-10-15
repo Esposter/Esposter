@@ -53,7 +53,7 @@ flowchart TD
 | Hand a session to the terminal         | —                                                         | `claude --resume` on the same session id; nothing is lost either way                                               |
 | Undo a turn's edits                    | rewind, which can restore the files from its checkpoints  | rewind from any prompt, the files put back from the same checkpoints                                               |
 | Follow the review                      | the Actions tab and the run's summary                     | the same                                                                                                           |
-| Hear the character                     | the persona plugin's hooks                                | the same hooks, until the Genshin [theme](/docs/proposals/infra/agent-console/themes) ships                        |
+| Hear the character                     | the persona plugin's hooks                                | the same hooks; the Genshin [theme](/docs/proposals/infra/agent-console/themes) still owes its voice               |
 
 ## What the console costs
 
