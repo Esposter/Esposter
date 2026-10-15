@@ -10,6 +10,7 @@ describe(createFlowchartSvg, () => {
     const element = document.createElement("div");
     element.style.color = "red";
     element.textContent = "A node";
+    vi.spyOn(window, "getComputedStyle").mockReturnValue(element.style);
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 120, 80));
     const svg = await createFlowchartSvg(element);
     const parsedSvg = new DOMParser().parseFromString(await svg.text(), "image/svg+xml");
