@@ -8,7 +8,13 @@ const knipConfiguration: KnipConfig = {
   workspaces: {
     ".": {
       // The `lint:workflows` task in `vite.config.ts` runs this package's binary, which no script names
-      ignoreDependencies: ["@esposter/shared-node", "@kjanat/actionlint", "@lerna-lite/publish"],
+      // The OpenSpec skill invokes this CLI with `pnpm exec`, which Knip does not trace from skill prose
+      ignoreDependencies: [
+        "@esposter/shared-node",
+        "@fission-ai/openspec",
+        "@kjanat/actionlint",
+        "@lerna-lite/publish",
+      ],
     },
     "apps/functions": { entry: ["src/**/*.ts"] },
     "apps/infra": { entry: ["src/**/*.ts"] },
@@ -73,6 +79,10 @@ const knipConfiguration: KnipConfig = {
     // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is
     // Optional on purpose
     "packages/shared-node": { ignoreDependencies: ["vitest"] },
+    "packages/tresjs-nuxt": {
+      // The module imports its optional peer by the name held in GLSL_PACKAGE_NAME when the glsl option is enabled
+      ignoreDependencies: ["vite-plugin-glsl"],
+    },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
     scripts: {
       // The shell wrapper starts the slot gate by its path, so nothing imports it
