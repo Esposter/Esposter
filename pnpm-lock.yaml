@@ -768,7 +768,7 @@ catalogs:
       specifier: ^8.0.0
       version: 8.0.0
     vite-plugin-glsl:
-      specifier: ^1.6.1
+      specifier: ^1.6.2
       version: 1.6.2
     vite-plus:
       specifier: ^1.2.0
