@@ -71,6 +71,10 @@ Skip step 1 only for a genuinely one-line change. When a step finds nothing, say
 
 Carrying one settled convention across code that predates this ritual is a **sweep**: one file per sweep in `.agents/ledgers/`, tracked as repo state rather than as a proposal, and run per the `sweeps` skill. A sweep is not only a job someone schedules — **when the change edits a file inside a unit an open ledger still lists as unswept, sweep those files first, in their own commit ahead of the behaviour change**, so the ledger drains as a by-product of ordinary work. Scope it to the files being touched, keep the two commits apart, and leave the row alone: coverage tracks whole units, and there is no partially-swept state.
 
+## Specifications
+
+New specifications and design decisions are OpenSpec changes under `openspec/changes/<id>/`, and a change's requirements are merged into `openspec/specs/` only when its pull request has merged. The `openspec` skill owns the process; `openspec/config.yaml` holds the artifact rules. Existing proposals under `apps/web/content/docs/proposals/` and the architecture pages are not migrated by a change, and that migration has not started.
+
 ## Syncing to main
 
 `main` moves by the review's fast-forward. The one exception is the owner's **sync to main**: the session reviews `main..ai/queue` locally (both lanes, every commit in the window), fixes each finding in its own commit on `ai/queue`, and once the review passes fast-forwards `main` to the tip and its local `main` with it. No other session pushes `main`. The procedure, its limits and the direct-push cases are the `review-queue` skill's.
@@ -92,6 +96,7 @@ Carrying one settled convention across code that predates this ritual is a **swe
 | Review: what lands on `ai/queue`, reviewed and fixed by haiku                | `apps/web/content/docs/infra/review.md`                     |
 | Game text — the game's own words in its languages, by text id                | `genshin-text` skill                                        |
 | Building a proposal — choosing, verifying, shipping, handing back            | `building-proposals` skill                                  |
+| Specifications and decision records — OpenSpec changes under `openspec/`     | `openspec` skill                                            |
 | tRPC — router structure, procedure builders, naming, tests                   | `trpc` skill                                                |
 | Schema and migrations — `db:gen`, SQL fixups, chain recovery                 | `drizzle` skill                                             |
 | Slash commands — the registry and adding one                                 | `slash-commands` skill                                      |

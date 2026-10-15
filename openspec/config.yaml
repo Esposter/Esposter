@@ -1,0 +1,27 @@
+# OpenSpec project config. Commit this file.
+# Docs: https://github.com/Fission-AI/OpenSpec/blob/main/docs/customization.md
+schema: spec-driven
+
+# Short project facts every artifact prompt should know. AGENTS.md already loads for agents, so only add what it does not say.
+context: |
+  Product: Esposter, a social platform monorepo (chat, Genshin tooling, docs site, agent console).
+  Stack: TypeScript strict; Nuxt + Vue front, tRPC and Nitro server routes, Drizzle over PostgreSQL, Azure Table and Blob, Azure Functions, Pinia, Vitest.
+  Language: English
+  Contract: canonical commands and architecture live in AGENTS.md at the repo root; OpenSpec holds requirements and decisions only.
+
+rules:
+  proposal:
+    - State one intent you can say in one sentence. More than three capabilities or twelve tasks means split the change, unless the user accepts the size.
+    - Mark BREAKING changes. Name every capability whose behaviour changes; use skip_specs only for pure tooling, refactor or docs changes.
+  specs:
+    - Requirements describe behaviour an outsider can observe. File paths, class names and library choices belong in design.md.
+    - Every requirement has exactly one SHALL or MUST sentence and at least one scenario.
+    - Every scenario is bullet steps only: an optional "- **GIVEN**", one "- **WHEN**", one "- **THEN**", and "- **AND**" for extra checks. scripts/src/services/openspec/readSpecFindings.test.ts enforces this in CI.
+    - A requirement whose behaviour can be refused, can fail or can reach a limit has a failure-path scenario.
+    - Scenario titles name the behaviour, not the test that will cover it.
+  design:
+    - Record each decision with the alternative rejected and the reason it lost.
+    - Resolve anything that would change the specs or the tasks now. Open Questions are only for answers that change nothing else.
+  tasks:
+    - Each task states how it is verified: the test file written first and seen failing, or the command and its expected output.
+    - Group by capability; order by dependency; one task fits one session.
