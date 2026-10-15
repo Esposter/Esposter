@@ -16,6 +16,7 @@ describe(formatCard, () => {
 
     const card: Card = {
       description: "",
+      element: "",
       greeting: "resolvedGreeting",
       headline,
       name: "name",

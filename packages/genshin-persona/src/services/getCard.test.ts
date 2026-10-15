@@ -22,6 +22,7 @@ describe(getCard, () => {
 
     expect(card.greeting).toBe(localization.characters[character.name]?.greeting);
     expect(card.greeting).not.toBe(greeting);
+    expect(card.element).toBe(character.element);
     expect(card.personaCard).toBe(personaCard);
   });
 

@@ -1,7 +1,12 @@
 import type { Card } from "#src/models/Card";
 import type { SessionStartOutput } from "#src/models/SessionStartOutput";
 
-import { CHARACTER_LINE_PREFIX, DEFAULT_LANGUAGE, NAMEPLATE_PREFIX } from "#src/services/constants";
+import {
+  CHARACTER_LINE_PREFIX,
+  DEFAULT_LANGUAGE,
+  ELEMENT_LINE_PREFIX,
+  NAMEPLATE_PREFIX,
+} from "#src/services/constants";
 import { formatCard } from "#src/services/formatCard";
 import { getReplyLanguageInstruction } from "#src/services/getReplyLanguageInstruction";
 
@@ -23,7 +28,12 @@ export const getSessionStartOutput = (
   const instruction = isEnglishThroughout ? "" : getReplyLanguageInstruction(replyLanguage);
   const output: SessionStartOutput = {
     hookSpecificOutput: {
-      additionalContext: [formatCard(card), instruction, `${CHARACTER_LINE_PREFIX}${card.name}`]
+      additionalContext: [
+        formatCard(card),
+        instruction,
+        `${CHARACTER_LINE_PREFIX}${card.name}`,
+        card.element ? `${ELEMENT_LINE_PREFIX}${card.element}` : "",
+      ]
         .filter(Boolean)
         .join("\n"),
       hookEventName: "SessionStart",

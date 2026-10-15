@@ -6,6 +6,8 @@ import type { PersonaCard } from "#src/models/PersonaCard";
 export interface Card {
   // The game's one-line introduction, the lore the model answers from; "" for the player character
   description: string;
+  // The game's stable element key, carried on its own line for programs that read the session context
+  element: string;
   // The one line of the card a person reads, so it is the interface language's where that language has written
   // It and the card's own otherwise; "" for a character with no card
   greeting: string;

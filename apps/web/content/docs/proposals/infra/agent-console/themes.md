@@ -40,13 +40,11 @@ flowchart TD
 
 ## Scope and order
 
-1. **The palette**, the first part a theme sets past its reactions. It is read off the character's element, and two seams stand between it and the console today, so the first build settles them before a line of the palette is written:
-   - **The element is not in the session context.** The persona's context carries the card's name on its last line (`Character: <name>`, from `getSessionStartOutput`), and the element only in the headline's prose, which no theme may parse. The first build adds `Element: <element>` as a line of its own under the name line, read by the Genshin theme the way the avatar is.
-   - **The console's scope takes one style and one mode.** `UiThemeScope` lets each scope pick a `UiStyle` (`uiStyle`), but it provides only `getUiTheme(style, mode)`, the theme of that style. The palette does not become a style: the scope takes the style's theme as it does now and a palette of token overrides beside it, set as the tokens' own CSS custom properties on the scope's root, so an element recolours the accents inside the console and nothing outside it, and no feature names a design style.
+1. **The palette**, the first part a theme sets past its reactions. The persona session-start context now includes the character's stable element on its own `Element: <element>` line beside `Character: <name>`, so the Genshin theme can read it without parsing the localized headline. The palette itself remains unbuilt while its colour-map source is unresolved: `ElementColorMap` currently belongs to genshin-persona, which the web app cannot depend on. The theme scope can take token overrides alongside its selected style; the palette needs one agreed source for those element colours before implementation.
 2. **The voice**, from the resident synthesizer, once the palette has shipped and the console has a line source.
 3. **The scene and reactions**: the wish banner, then the element ambience, then spatial chat as an option. Each one is built as its own sub-spec.
 
-The element colours are the palette's source, and they live in one place. They move out of `packages/genshin-persona/src/services/ElementColorMap.ts` into [genshin-text](/docs/genshin/game-text), keyed by element: the colour is how the game's interface paints the element's name, which `genshin-text` already owns through `splitGameTextColors`, and the package depends only on `@esposter/shared`, is published, and is already a dependency of the web app. genshin-persona cannot take a workspace dependency, so it takes the map from npm through its own `package-lock`. There is one copy and no duplicate, and the nameplate's colour fallback reads it from there.
+The palette's colours need one source keyed by element. The current proposal is to move `ElementColorMap` from `packages/genshin-persona/src/services/ElementColorMap.ts` into [genshin-text](/docs/genshin/game-text), whose `splitGameTextColors` already owns the interface colours and which the web app already depends on. That would let the console read the map directly and let the published persona plugin take it from npm. The map still lives in genshin-persona; this source choice remains open until the palette is built.
 
 The palette is not built yet, so nothing in the console changes and the Genshin theme keeps the avatar alone. The console itself is unmounted while `/genshin` is the game alone, so the palette's look has no place to be judged until that changes; the user's eyes check it then.
 
@@ -56,6 +54,7 @@ The palette is not built yet, so nothing in the console changes and the Genshin 
 | :------------------------------------------------------------------ | :------------------------------------------------------------- |
 | `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts` | The registry the Genshin theme is added to                     |
 | `apps/web/app/models/agentConsole/AgentConsoleTheme.ts`             | The theme interface, grown by the parts the Genshin theme sets |
+| `packages/genshin-persona/src/services/getSessionStartOutput.ts`    | Adds the stable element line to the session context            |
 | `packages/genshin-persona/scripts/speak.ts`                         | The resident synthesizer the Genshin theme speaks through      |
 
 ```text

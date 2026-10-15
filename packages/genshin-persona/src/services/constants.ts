@@ -67,6 +67,8 @@ export const NAMEPLATE_PREFIX = "✦ ";
 // The line naming the character for a program rather than a person: the agent console's Genshin theme finds it in the
 // Session-start hook's context, spelled the same on both sides, so neither parses the headline's prose
 export const CHARACTER_LINE_PREFIX = "Character: ";
+// The stable element key beside the character name, for a theme to read without parsing the localized headline
+export const ELEMENT_LINE_PREFIX = "Element: ";
 export const ANSI_RESET = "\u001B[0m";
 // A "#rrggbb" triplet's channels: two hex digits each, 0 to 255
 export const HEX_RADIX = 16;

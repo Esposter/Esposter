@@ -11,7 +11,7 @@ import { getBirthdayNote } from "#src/services/getBirthdayNote";
 // And the card's otherwise. The rest of the authored card reaches the model alone and stays as written — a model
 // Reading the habits and the sign-off in English answers in whatever language it was asked to, register intact
 export const getCard = (
-  { birthday, description, displayElement, displayName, name, region, title }: Character,
+  { birthday, description, displayElement, displayName, element, name, region, title }: Character,
   today: Temporal.PlainDate,
   localization: ResolvedLocalization,
   personaCard?: PersonaCard,
@@ -19,6 +19,7 @@ export const getCard = (
   const details = [title, displayElement, region].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
   return {
     description,
+    element,
     greeting: localization.characters[name]?.greeting ?? personaCard?.greeting ?? "",
     headline: details ? `${displayName} — ${details}` : displayName,
     name,
