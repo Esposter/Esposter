@@ -96,6 +96,7 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
+    "@fission-ai/openspec": "catalog:",
     "@kjanat/actionlint": "catalog:",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
