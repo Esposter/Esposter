@@ -2,6 +2,7 @@
 title: Terminal-mirror driver
 description: Proposal — the agent console's second driver, which attaches to a session a terminal already runs. It tails the session's transcript for events and pushes prompts and verdicts in through a channel. It is a subset of the Agent SDK driver, and it is what keeps the console free if SDK use ever leaves the subscription.
 model: claude-opus-5-5
+waiting: "infra/viewer-stage, which supplies the channel's permission relay"
 ---
 
 # Terminal-mirror driver
