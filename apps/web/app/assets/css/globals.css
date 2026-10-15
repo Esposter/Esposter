@@ -131,9 +131,8 @@ p:empty::before {
   }
 }
 
-/* Rich text (tiptap) output, themed from outside in the library's tokens: the list padding and markers and the heading */
-/* Sizes the reset takes away, links in the link colour, code in the mono face whatever the body reads in, and a quote */
-/* Behind a rule in the edge colour */
+/* Rich text (tiptap) output, themed from outside in the library's tokens: list padding and markers, heading sizes, */
+/* Tables and their headers, links in the link colour, code in the mono face, and a quote behind a rule */
 .rich-text-content {
   span[data-spoiler]:not([data-revealed]) {
     background-color: var(--ui-muted);
@@ -174,6 +173,24 @@ p:empty::before {
     padding-left: calc(var(--ui-step) * 3);
     box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-border);
   }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  :is(th, td) {
+    border: var(--ui-border-width) solid var(--ui-border);
+    padding: var(--ui-step);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background-color: var(--ui-muted);
+    font-weight: var(--ui-weight-heading);
+  }
+
   /* A task list trades the marker for its checkbox beside the text, the same in the editor and the published render, */
   /* And a ticked task reads as done — muted and struck through, its own lines only so its open sub-tasks stay legible. */
   /* Every rule is on the list's own items, since a task can hold a bullet list whose items are not tasks */

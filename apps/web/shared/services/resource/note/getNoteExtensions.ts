@@ -1,6 +1,7 @@
 import type { AnyExtension } from "@tiptap/core";
 
 import { TaskItem, TaskList } from "@tiptap/extension-list";
+import { TableKit } from "@tiptap/extension-table";
 import { StarterKit } from "@tiptap/starter-kit";
 
 // The single writing kit shared by the Note editor and its published render — StarterKit covers headings,
@@ -9,6 +10,7 @@ import { StarterKit } from "@tiptap/starter-kit";
 // Extension set, so the render matches what was authored; codeBlock stays on for documents.
 export const getNoteExtensions = (): AnyExtension[] => [
   StarterKit.configure({ link: { openOnClick: false } }),
+  TableKit,
   TaskList,
   TaskItem.configure({ nested: true }),
 ];

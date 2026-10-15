@@ -13,6 +13,13 @@ interface Props {
 const { editor } = defineProps<Props>();
 const items = computed<MenuItem[]>(() => [
   ...getNoteBlockMenuItems(editor),
+  {
+    icon: "i-mdi:table",
+    onClick: () => {
+      editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    },
+    title: "Table",
+  },
   { isDivider: true },
   ...getTextFormatMenuItems(editor),
   {
@@ -31,6 +38,7 @@ const items = computed<MenuItem[]>(() => [
 <template>
   <div p-1 flex flex-wrap w-full items-center>
     <RichTextEditorMenuBarButtons :items />
+    <ResourceNoteTableMenuButton :editor />
     <div aria-hidden="true" mx-1 bg-divider shrink-0 h-6 w="[var(--ui-border-width)]" self-center />
     <ResourceNoteLinkMenuButton :editor />
   </div>
