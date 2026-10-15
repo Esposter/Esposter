@@ -8,6 +8,7 @@ import { describe, expect, onTestFinished, test, vi } from "vitest";
 const createTheme = () =>
   ({
     getAvatar: () => "",
+    getPalette: () => ({}),
     reactions: {
       [AgentConsoleReaction.AttentionNeeded]: vi.fn<(title: string, body: string) => void>(),
       [AgentConsoleReaction.TurnEnded]: vi.fn<(title: string, body: string) => void>(),
@@ -67,7 +68,7 @@ describe(reactToEvents, () => {
       vi.unstubAllGlobals();
     });
 
-    reactToEvents({ getAvatar: () => "", reactions: {} }, "", events, new Date(0));
+    reactToEvents({ getAvatar: () => "", getPalette: () => ({}), reactions: {} }, "", events, new Date(0));
 
     expect(notifications).toHaveLength(2);
     expect(notifications).toContainEqual(["", "Write is waiting for permission"]);

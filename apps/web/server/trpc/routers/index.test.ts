@@ -76,13 +76,12 @@ describe("trpcRouter", () => {
 
     expect([...unboundedProcedurePaths]).toStrictEqual([]);
     // An opaque value holds whatever strings and arrays it is sent, so these are the procedures where only the body
-    // Limit bounds them: each carries a document whose shape another library or resource owns (GrapesJS, Vue Flow,
-    // TipTap, SurveyJS answers, a blueprint's entries), or a patch's values, which the resource's own schema parses once
+    // Limit bounds them: each carries a document whose shape another library or resource owns (GrapesJS, TipTap,
+    // SurveyJS answers, a blueprint's entries), or a patch's values, which the resource's own schema parses once
     // Applied. A new one fails here until it is bounded or named
     expect([...opaqueProcedurePaths]).toStrictEqual([
       "blueprint.saveResourceContent",
       "email.saveResourceContent",
-      "flowchart.saveResourceContent",
       "note.saveResourceContent",
       "resource.updateResourceContent",
       "survey.createSurveyResponse",

@@ -18,8 +18,9 @@ const surveyModelSchema = z
     if (!model) return;
 
     try {
-      const parsed: unknown = JSON.parse(model);
-      if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed))
+      // oxlint-disable-next-line no-restricted-properties -- SurveyJS model strings may contain ISO-shaped text that a date reviver would mutate
+      const surveyModel: unknown = JSON.parse(model);
+      if (surveyModel === null || typeof surveyModel !== "object" || Array.isArray(surveyModel))
         ctx.addIssue({ code: "custom", message: "Survey model must be a JSON object" });
     } catch (error) {
       ctx.addIssue({ code: "custom", message: error instanceof Error ? error.message : String(error) });

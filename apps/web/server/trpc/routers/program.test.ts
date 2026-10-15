@@ -65,7 +65,7 @@ describe("programRouter", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
-  const model = "model";
+  const model = "{}";
   const settings = surveySettingsSchema.parse({});
   const identifiedSettings = { ...settings, responseMode: SurveyResponseMode.Identified };
   // Three participants is the smallest set exhibiting responded / not-responded / duplicate-key

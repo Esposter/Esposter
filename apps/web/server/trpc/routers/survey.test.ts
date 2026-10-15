@@ -38,8 +38,8 @@ describe("surveyRouter", () => {
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   const name = "name";
-  const model = "model";
-  const updatedModel = "updatedModel";
+  const model = "{}";
+  const updatedModel = '{"title":"updated"}';
   const settings = surveySettingsSchema.parse({});
   const identifiedSettings = { ...settings, responseMode: SurveyResponseMode.Identified };
   const closedMessage = "closedMessage";

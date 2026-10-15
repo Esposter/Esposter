@@ -5,7 +5,7 @@ import { TresCanvas as CoreTresCanvas } from "@tresjs/core";
 import { describe, expect, test, vi } from "vitest";
 
 // The renderer loads three and WebGL, which the forwarding under test never touches
-vi.mock(import("@tresjs/core"), () => ({ TresCanvas: { name: "CoreTresCanvas" } }));
+vi.mock(import("@tresjs/core"), () => ({ TresCanvas: { name: "CoreTresCanvas" } as unknown as typeof CoreTresCanvas }));
 
 describe("tresCanvasClient", () => {
   // Upstream #33: attributes and slots must reach the renderer unchanged, so anything the page passes in still arrives
@@ -14,7 +14,7 @@ describe("tresCanvasClient", () => {
 
     const attrs = { class: "scene" };
     const slots = { default: () => [] };
-    const { setup } = tresCanvasClient as ComponentOptions;
+    const { setup } = tresCanvasClient as unknown as ComponentOptions;
     const render = (setup as (props: object, context: SetupContext) => () => VNode)({}, {
       attrs,
       slots,

@@ -40,7 +40,7 @@ describe("surveyFunnel", () => {
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const settings = surveySettingsSchema.parse({});
   const name = "name";
-  const model = "model";
+  const model = "{}";
   const customerKeyValue = "keyValue";
   // Three customers is the smallest audience exhibiting responded / not-responded / rejected, and a key value
   // Long enough that the "never leaks the participant list" assertions have a needle worth searching for

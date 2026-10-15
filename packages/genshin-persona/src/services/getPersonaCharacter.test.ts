@@ -1,5 +1,5 @@
-import { CharacterColorMap } from "#src/services/CharacterColorMap";
 import { ElementColorMap } from "#src/generated/genshinText/services/ElementColorMap";
+import { CharacterColorMap } from "#src/services/CharacterColorMap";
 import { getPersonaCharacter } from "#src/services/getPersonaCharacter";
 import { assert, describe, expect, test } from "vitest";
 

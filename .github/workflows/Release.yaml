@@ -10,6 +10,11 @@ on:
     # Nightly, at 15:16 UTC
     - cron: "16 15 * * *"
   workflow_dispatch:
+    inputs:
+      recover-tag:
+        description: "Publish an existing version tag that a previous release run did not finish"
+        required: false
+        type: string
 
 permissions: read-all
 
@@ -26,22 +31,36 @@ jobs:
       contents: read
     outputs:
       skip: ${{ steps.check.outputs.skip }}
+      tag: ${{ steps.check.outputs.tag }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: main
+          ref: ${{ inputs.recover-tag || 'main' }}
           fetch-depth: 0
           persist-credentials: false
 
       - name: 🔎 Check for unreleased commits
         id: check
+        env:
+          RECOVER_TAG: ${{ inputs.recover-tag }}
         run: |
+          if [ -n "$RECOVER_TAG" ]; then
+            if ! git show-ref --verify --quiet "refs/tags/$RECOVER_TAG"; then
+              echo "Tag $RECOVER_TAG does not exist." >&2
+              exit 1
+            fi
+            echo "Recovering existing release $RECOVER_TAG."
+            echo "tag=$RECOVER_TAG" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           tag="$(git describe --tags --abbrev=0)"
           if [ "$(git rev-list --count "$tag..HEAD")" = 0 ]; then
             echo "No commit since $tag, nothing to release."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
+            echo "tag=$tag" >> "$GITHUB_OUTPUT"
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
@@ -63,7 +82,7 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: main
+          ref: ${{ inputs.recover-tag || 'main' }}
           fetch-depth: 0
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           persist-credentials: true
@@ -81,7 +100,14 @@ jobs:
 
       # `scripts` too: the root's oxlint config loads its plugins, so the gates need the `scripts` project's dependencies
       - name: 📢 Release
-        run: pnpm release
+        env:
+          RECOVER_TAG: ${{ inputs.recover-tag }}
+        run: |
+          if [ -n "$RECOVER_TAG" ]; then
+            pnpm exec lerna publish from-package --yes
+          else
+            pnpm release
+          fi
 
       - name: 🏷️ Read the tag
         id: tag

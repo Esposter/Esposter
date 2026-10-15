@@ -1,7 +1,7 @@
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import { describe, expect, test } from "vitest";
 
-describe(surveyResourceSchema, () => {
+describe("surveyResourceSchema", () => {
   test("accepts a serialized SurveyJS object", () => {
     expect.hasAssertions();
 

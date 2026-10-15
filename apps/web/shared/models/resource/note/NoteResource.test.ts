@@ -1,7 +1,7 @@
 import { noteResourceSchema } from "#shared/models/resource/note/NoteResource";
 import { describe, expect, test } from "vitest";
 
-describe(noteResourceSchema, () => {
+describe("noteResourceSchema", () => {
   test("accepts a document supported by the Note writing kit", () => {
     expect.hasAssertions();
 
