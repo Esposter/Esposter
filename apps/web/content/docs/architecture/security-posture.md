@@ -21,7 +21,7 @@ flowchart TD
   module -->|"integrity hash on every script"| browser
   experimental["configuration/experimental.ts"] -->|"entryImportMap false"| names["a chunk's name changes with its bytes"]
   names --> browser
-  rules["configuration/routeRules.ts"] -->|"Cross-Origin-Embedder-Policy on /_nuxt/**"| worker["a dedicated worker's script"]
+  assetHook["server/plugins/nuxtAssets.ts"] -->|"Cross-Origin-Embedder-Policy on /_nuxt/*.js"| worker["a dedicated worker's script"]
   worker --> browser
   config -.->|"rateLimiter false"| rate["app's own rate limiting"]
   config -.->|"no XSS validator in the module"| xss["rich text sanitised at its Zod boundary"]
@@ -35,7 +35,9 @@ flowchart TD
 
 ### Embedder policy
 
-The module sends `Cross-Origin-Embedder-Policy` on rendered pages only, never on a static asset, with the value its [defaults review](/docs/nuxt-security-module/defaults-review) records for each environment. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `configuration/routeRules.ts` gives the built scripts under `/_nuxt/` the production policy, which reaches them because Nitro's route-rule headers run ahead of its static handler.
+The module sends `Cross-Origin-Embedder-Policy` on rendered pages only, never on a static asset, with the value its [defaults review](/docs/nuxt-security-module/defaults-review) records for each environment. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `server/plugins/nuxtAssets.ts` adds the production policy to built JavaScript requests under `/_nuxt/` through Nitro's request hook before Nitro handles the static asset.
+
+A Nitro request hook adds that header to built JavaScript requests before static-file handling, so the asset policy does not add another route-rule pattern alongside Nuxt AI Ready's `/**.md` cache rule.
 
 A header change to those scripts never reaches a copy already cached. They are served `immutable` for a year, and the host's edge keeps its own copy for each `Accept-Encoding`, so a script cached before the change goes on being served without the new header until the edge's cache is purged, and a browser that fetched it meanwhile keeps its copy until its own cache is cleared. A file the change also renames is the exception, since no cache holds its new name.
 
@@ -70,6 +72,6 @@ Paths relative to `apps/web`.
 | ---------------------------------- | ------------------------------------------------------------------- |
 | `configuration/modules.ts`         | registers `nuxt-security-module` in the production module list only |
 | `configuration/security.ts`        | CSP, permissions policy, request size limits, disabled features     |
-| `configuration/routeRules.ts`      | the embedder policy on built scripts, so a dedicated worker starts  |
+| `server/plugins/nuxtAssets.ts`     | the embedder policy on built scripts, so a dedicated worker starts  |
 | `configuration/experimental.ts`    | the entry import map off, so a chunk's name changes with its bytes  |
 | `shared/services/app/constants.ts` | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                      |
