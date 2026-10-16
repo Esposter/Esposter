@@ -71,13 +71,13 @@ export const vite: NuxtConfig["vite"] = {
       "zod",
     ],
   },
-  // yaml's Node export is CommonJS, which the ESM Vite SSR runner cannot evaluate; use its equivalent ESM build.
+  // Yaml's Node export is CommonJS, which the ESM Vite SSR runner cannot evaluate; use its equivalent ESM build.
   plugins: [
     {
-      name: "yaml-browser-ssr-entry",
       enforce: "pre",
+      name: "yaml-browser-ssr-entry",
       resolveId(source, importer) {
-        if (source !== "yaml" || !importer) return;
+        if (source !== "yaml" || !importer) return null;
         const yamlDirectory = dirname(createRequire(importer).resolve("yaml/package.json"));
         return join(yamlDirectory, "browser/index.js");
       },

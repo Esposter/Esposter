@@ -1,5 +1,6 @@
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 import { DOCS_DIRECTORY } from "@esposter/configuration";
+import { RoutePath } from "@esposter/shared";
 
 export const PACKAGES_DIRECTORY = "packages";
 // Lowercase words joined by single hyphens: the name is a directory, an npm name and a docs slug at once
@@ -21,7 +22,7 @@ export const DOCS_SECTION_ICON_FILE = "apps/web/app/services/docs/DocsSectionIco
 export const APP_MODULES_FILE = "apps/web/configuration/modules.ts";
 export const GITHUB_REPOSITORY_URL = "https://github.com/Esposter/Esposter";
 // The docs site, which the generated README links for package documentation
-export const DOCS_URL_PREFIX = "https://esposter.com/docs";
+export const DOCS_URL_PREFIX = `https://esposter.com${RoutePath.Docs}`;
 export const NUXT_MODULE_ENTRY_PATH = "src/module.ts";
 export const PLUGIN_SCOPE = "@esposter";
 // The two configuration files every member carries are identical across kinds.

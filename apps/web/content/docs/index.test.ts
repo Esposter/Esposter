@@ -94,6 +94,7 @@ describe("docsLinks", () => {
   const pagePaths = pages.map(({ page }) => page);
   const DOCS_LINK_REGEX = new RegExp(String.raw`\]\((?<target>/${DOCS_DIRECTORY}[^)\s#]*)(?:#[^)\s]*)?\)`, "gu");
   const DOCS_ROUTE_PREFIX_REGEX = new RegExp(String.raw`^/${DOCS_DIRECTORY}/?`, "u");
+
   test("every /docs link resolves to a page", () => {
     expect.hasAssertions();
 
