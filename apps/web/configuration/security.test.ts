@@ -19,6 +19,7 @@ describe("security", () => {
       expect.arrayContaining([
         "'self'",
         "data:",
+        "blob:",
         "https://container.blob.core.windows.net",
         "wss://livekit.example.cloud",
         "https://livekit.example.cloud",
@@ -44,6 +45,7 @@ describe("security", () => {
     expect(contentSecurityPolicy?.["connect-src"]).toStrictEqual([
       "'self'",
       "data:",
+      "blob:",
       "wss://*.webpubsub.azure.com",
       "https://cdn.jsdelivr.net",
       "https://storage.googleapis.com",

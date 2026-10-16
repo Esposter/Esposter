@@ -14,6 +14,8 @@ export const security: NuxtConfig["security"] = {
         "'self'",
         // The Gem's glTF carries its buffers as base64 data URIs, which three.js fetches the same way it fetches a URL
         "data:",
+        // Three.js GLTFLoader: embedded texture sources become blob URLs before they are fetched
+        "blob:",
         // Azure Blob: the upload's SAS PUTs and the reads of the game data the world fetches
         process.env.AZURE_CONTAINER_BASE_URL,
         // LiveKit: the signalling socket, and the HTTPS form of its host that its region lookup fetches
