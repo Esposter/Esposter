@@ -53,7 +53,8 @@ const renderGlobe = async () => {
   const renderer = new WebGLRenderer({ antialias: true, canvas });
   disposables.push(renderer);
   renderer.setClearColor(0x000, 0);
-  renderer.setSize(width.value, height.value);
+  // The canvas is sized by its CSS, so the drawing buffer's size leaves the element's own box alone
+  renderer.setSize(width.value, height.value, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const scene = new Scene();
@@ -155,7 +156,7 @@ const renderGlobe = async () => {
   useEventListener("resize", () => {
     camera.aspect = width.value / height.value;
     camera.updateProjectionMatrix();
-    renderer.setSize(width.value, height.value);
+    renderer.setSize(width.value, height.value, false);
   });
 
   intervalId = window.setInterval(
@@ -178,5 +179,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <canvas :id />
+  <canvas :id max-w-180 w-full block />
 </template>
