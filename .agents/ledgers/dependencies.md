@@ -136,7 +136,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `eslint-plugin-pinia`                   | —                     | Keep — tooling    | the linter and its rules                                                                               |
 | `eslint-plugin-vuejs-accessibility`     | —                     | Keep — tooling    | the linter and its rules                                                                               |
 | `fake-indexeddb`                        | —                     | Keep — tooling    | IndexedDB in the test environment                                                                      |
-| `fast-check`                            | —                     | Keep — engine     | property testing: arbitraries and shrinking are the product                                            |
 | `fflate`                                | —                     | Keep — spec       | the zip format, which `CompressionStream` does not write                                               |
 | `grapesjs`                              | —                     | Keep — engine     | the page-builder engine                                                                                |
 | `grapesjs-mjml`                         | —                     | Keep — engine     | the MJML compiler's integration                                                                        |
