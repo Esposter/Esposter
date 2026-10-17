@@ -22,7 +22,8 @@ export const DOCS_SECTION_ICON_FILE = "apps/web/app/services/docs/DocsSectionIco
 export const APP_MODULES_FILE = "apps/web/configuration/modules.ts";
 export const GITHUB_REPOSITORY_URL = "https://github.com/Esposter/Esposter";
 // The docs site, which the generated README links for package documentation
-export const DOCS_URL_PREFIX = `https://esposter.com${RoutePath.Docs}`;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
+export const DOCS_URL_PREFIX: string = `https://esposter.com${RoutePath.Docs}`;
 export const NUXT_MODULE_ENTRY_PATH = "src/module.ts";
 export const PLUGIN_SCOPE = "@esposter";
 // The two configuration files every member carries are identical across kinds.
