@@ -18,8 +18,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Archer's Message at its first rank: an extra forced critical hit at the rank's multiplier, once every ten seconds
-const archersMessagePassiveModule = createArchersMessagePassiveModule([1]);
+// Archer's Message with synthetic params: an extra forced critical hit at the multiplier given, once every ten seconds
+const archersMessagePassiveModule = createArchersMessagePassiveModule([2]);
 const weakPointHit: KitHit = { ...TRAVELER_KIT.plungeCollision, weakPoint: true };
 const createDamageTaken = (attackTag: AttackTag, hit: KitHit) => ({
   attackTag,
@@ -48,7 +48,7 @@ describe(createArchersMessagePassiveModule, () => {
         talentMultiplier: hit.talentMultiplier,
         target,
       })),
-    ).toStrictEqual([{ isForcedCritical: true, talentMultiplier: 1, target: enemy }]);
+    ).toStrictEqual([{ isForcedCritical: true, talentMultiplier: 2, target: enemy }]);
   });
 
   test("a hit that is no charged attack, or lands on no weak point, queues no extra hit", () => {

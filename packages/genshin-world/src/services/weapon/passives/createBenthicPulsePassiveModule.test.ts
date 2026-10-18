@@ -10,8 +10,8 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const wielder: Combatant = createWielderCombatant();
-// Song of Stillness, Benthic Pulse at its first rank: sixteen per cent more DMG for eight seconds after the wielder is healed
-const benthicPulsePassiveModule = createBenthicPulsePassiveModule([0.16, 8, 0, 0]);
+// Song of Stillness, Benthic Pulse with synthetic params: 20% more DMG for three seconds after the wielder is healed
+const benthicPulsePassiveModule = createBenthicPulsePassiveModule([0.2, 3]);
 const healthGained: KitEvent = {
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: 0.5,
@@ -29,11 +29,11 @@ describe(createBenthicPulsePassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 0.16,
+        amount: 0.2,
         attribute: Attribute.AllDamageBonus,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 8,
+        secondsRemaining: 3,
         source: "benthicPulse",
       },
     ]);

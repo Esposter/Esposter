@@ -16,9 +16,9 @@ const readBuffs = (effects: readonly KitEffect[]) =>
     .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining }));
 
 describe(createAeonWavePassiveModule, () => {
-  // Aeon Wave at its first rank: each change in the wielder's HP adds 14% Charged Attack DMG for four seconds, up to three
-  // Stacks once every 0.3 seconds, and a third stack restores 8 energy once every twelve seconds. Its HP line is the table's
-  const aeonWavePassiveModule = createAeonWavePassiveModule([4, 0.3, 0.14, 8, 12]);
+  // Aeon Wave with synthetic params: each change in the wielder's HP adds 0.2 Charged Attack DMG for two seconds, up to
+  // Three stacks once every 0.25 seconds, and a third stack restores 2 energy once every three seconds.
+  const aeonWavePassiveModule = createAeonWavePassiveModule([2, 0.25, 0.2, 2, 3]);
   const wielder: Combatant = createWielderCombatant();
   const healthChanged = {
     bondOfLifeShare: 0,
@@ -28,14 +28,14 @@ describe(createAeonWavePassiveModule, () => {
     overflowHealthShare: 0,
   };
 
-  test("a change in the wielder's HP adds a stack of Charged Attack DMG for four seconds", () => {
+  test("a change in the wielder's HP adds a stack of Charged Attack DMG for two seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     aeonWavePassiveModule.onKitEvent?.(healthChanged, context, wielder);
 
     expect(readBuffs(context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.14, attribute: Attribute.ChargedAttackDamageBonus, secondsRemaining: 4 },
+      { amount: 0.2, attribute: Attribute.ChargedAttackDamageBonus, secondsRemaining: 2 },
     ]);
   });
 
@@ -47,7 +47,7 @@ describe(createAeonWavePassiveModule, () => {
     aeonWavePassiveModule.onKitEvent?.(healthChanged, context, wielder);
 
     expect(readBuffs(context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.14, attribute: Attribute.ChargedAttackDamageBonus, secondsRemaining: 4 },
+      { amount: 0.2, attribute: Attribute.ChargedAttackDamageBonus, secondsRemaining: 2 },
     ]);
   });
 
@@ -60,10 +60,10 @@ describe(createAeonWavePassiveModule, () => {
       stepKitSeconds(context, 0.5);
     }
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(8);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(2);
   });
 
-  test("the energy is restored once every twelve seconds", () => {
+  test("the energy is restored once every three seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -71,13 +71,13 @@ describe(createAeonWavePassiveModule, () => {
       aeonWavePassiveModule.onKitEvent?.(healthChanged, context, wielder);
       stepKitSeconds(context, 0.5);
     }
-    stepKitSeconds(context, 12.1);
+    stepKitSeconds(context, 3.1);
     for (let change = 0; change < 3; change++) {
       aeonWavePassiveModule.onKitEvent?.(healthChanged, context, wielder);
       stepKitSeconds(context, 0.5);
     }
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(16);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(4);
   });
 
   test("a change in another character's HP adds no stack", () => {
