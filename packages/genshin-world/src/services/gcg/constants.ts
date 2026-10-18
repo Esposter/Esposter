@@ -122,5 +122,6 @@ export const GCG_SKILL_KIND_DISPLAY_ORDER: GcgSkillKind[] = [
 export const GCG_EQUIPMENT_CARD_KINDS = new Set<GcgCardKind>([
   GcgCardKind.Artifact,
   GcgCardKind.Talent,
+  GcgCardKind.Vehicle,
   GcgCardKind.Weapon,
 ]);

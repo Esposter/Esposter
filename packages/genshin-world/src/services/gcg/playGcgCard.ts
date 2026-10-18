@@ -9,7 +9,7 @@ import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
-import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
+import { GCG_EQUIPMENT_CARD_KINDS, GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { notifyGcgSummonsDisappeared } from "#src/services/gcg/effects/notifyGcgSummonsDisappeared";
@@ -72,8 +72,7 @@ const checkCanPlaceGcgCard = (side: GcgSideState, card: GcgCard, targetIndex: nu
   );
 };
 
-const checkIsGcgEquipment = (card: GcgCard): boolean =>
-  card.kind === GcgCardKind.Artifact || card.kind === GcgCardKind.Talent || card.kind === GcgCardKind.Weapon;
+const checkIsGcgEquipment = (card: GcgCard): boolean => GCG_EQUIPMENT_CARD_KINDS.has(card.kind);
 
 // Puts a played card where its kind keeps it: a support in the support zone, equipment on the target, an event nowhere
 const placeGcgCard = (
