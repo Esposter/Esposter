@@ -10,6 +10,7 @@ import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHit
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
 import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
@@ -239,6 +240,54 @@ describe(getGcsimKitCandidates, () => {
         candidateMap.get(path)?.map(({ value }) => value),
       ),
     ).toStrictEqual([[1], [55]]);
+  });
+
+  test("cites a burst's hit count at its queue call's line and its hit at the line of the damage delay the call passes", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 6,
+          siteLine: 6,
+          variableName: "ai",
+        },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["burstFrames", { elementLines: {}, file: "burst.go", line: 1, value: 90 }]]),
+      filePaths: [],
+      folder: "jean",
+      queuedAttacks: [{ attackName: "ai", delay: 92, delayLine: 9, file: "burst.go", line: 7 }],
+      talentFile: "zz_jean.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Jean",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames"].map((path) => candidateMap.get(path)?.[0]?.provenance),
+    ).toStrictEqual([
+      { file: "internal/characters/jean/burst.go", line: 7, source: KitSource.Gcsim },
+      { file: "internal/characters/jean/burst.go", line: 9, source: KitSource.Gcsim },
+    ]);
   });
 
   test("joins a burst's hit to the talent variable of the attack its queue call fires at its hitmark, where a second attack under the burst tag has its own", () => {
