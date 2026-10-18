@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [architecture]
+x-model: claude-haiku-5-5
+x-touches: ["apps/web/app/services/shared/**", "apps/web/app/workers/shared/**"]
