@@ -3,6 +3,7 @@ import {
   TEST_CONTEXT,
   TEST_ID,
   TEST_LABEL,
+  TEST_LANG,
   TEST_OTHER_ID,
   TEST_ROOT,
   TEST_URL,
@@ -40,7 +41,7 @@ describe(renderWebpageDocument, () => {
     }).toStrictEqual({
       body: `<body><section class="section"><a class="button" href="${TEST_URL}">${TEST_LABEL}</a></section></body></html>`,
       documents: 1,
-      opening: '<!doctype html><html lang="en">',
+      opening: `<!doctype html><html lang="${TEST_LANG}">`,
     });
   });
 });
