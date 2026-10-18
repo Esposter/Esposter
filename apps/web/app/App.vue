@@ -39,7 +39,8 @@ const dockInsetClass = computed(() => {
         <UiContextMenuHost />
         <AppCommandPalette />
         <AppShortcutsDialog />
-        <MessageContentCallPictureInPictureHost v-if="session" />
+        <!-- The host carries the call's engine, so it loads once the page is idle rather than with the entry -->
+        <LazyMessageContentCallPictureInPictureHost v-if="session" hydrate-on-idle />
         <MessageModelUserSettingsDialog v-if="session" />
       </div>
     </NuxtSEO>
