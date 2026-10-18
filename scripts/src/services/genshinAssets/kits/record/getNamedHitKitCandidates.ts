@@ -46,16 +46,21 @@ const readSiteCallsMap = (
   );
 };
 
-// The calls a list's hit takes by its place: its own key's calls where they are as many as the list is long, else the
-// Calls of the one attack site that makes as many calls as the list is long from keys including its own. A second such
-// Site, whether its calls land in an order or not, is a rival the hit cannot tell apart from, so neither is taken
+// The calls a list's hit takes: first the one call of its key that fires at the hit's own hitmark, where the hit has one
+// And one call lands there, as a call of another delay the same attack makes is not the list's hit. Else by its place: its
+// Own key's calls where they are as many as the list is long, else the calls of the one attack site that makes as many
+// Calls as the list is long from keys including its own. A second such site, whether its calls land in an order or not,
+// Is a rival the hit cannot tell apart from, so neither is taken
 const readListHitCalls = (
   key: string,
   namedHit: NamedHitCandidate,
   index: number,
   listLength: number,
   siteCallsMap: ReturnType<typeof readSiteCallsMap>,
+  hitmark: unknown,
 ): Map<string, KitCandidate[]> | undefined => {
+  const hitmarkCalls = typeof hitmark === "number" ? namedHit.queuedCalls.filter(({ delay }) => delay === hitmark) : [];
+  if (hitmarkCalls.length === 1) return hitmarkCalls[0]?.fieldMap;
   if (namedHit.queuedCalls.length === listLength) return namedHit.queuedCalls[index]?.fieldMap;
   const takingSites = Array.from(siteCallsMap.values()).filter(
     ({ calls, keys }) => calls.length === listLength && keys.has(key),
@@ -96,7 +101,8 @@ export const getNamedHitKitCandidates = (
     const siteCallsMap = readSiteCallsMap(new Map(hits.map(({ key, namedHit }) => [key, namedHit])));
     for (const { hitPath, index, key, namedHit } of hits) {
       for (const [field, candidates] of namedHit.fieldMap) candidateMap.set(`${hitPath}.${field}`, candidates);
-      for (const [field, candidates] of readListHitCalls(key, namedHit, index, listLength, siteCallsMap) ?? [])
+      const hitmark = valueMap.get(`${hitPath}.hitmarkFrames`);
+      for (const [field, candidates] of readListHitCalls(key, namedHit, index, listLength, siteCallsMap, hitmark) ?? [])
         candidateMap.set(`${hitPath}.${field}`, candidates);
     }
   }
