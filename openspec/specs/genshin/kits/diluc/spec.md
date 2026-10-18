@@ -106,12 +106,18 @@ From constellation 1, each strike Diluc makes SHALL deal 15% more DMG to an enem
 
 ### Requirement: Second constellation stacks Searing Ember on each hit Diluc takes
 
-From constellation 2, each hit that costs Diluc HP SHALL add a stack of Searing Ember, at most one every 1.5 seconds and up to three stacks. Each stack gives 10% ATK and 5% ATK SPD for 10 seconds, and a new stack restarts those 10 seconds.
+From constellation 2, each hit on Diluc that costs him HP, or that a shield takes whole or in part, SHALL add a stack of Searing Ember, at most one every 1.5 seconds and up to three stacks. Each stack gives 10% ATK and 5% ATK SPD for 10 seconds, and a new stack restarts those 10 seconds.
 
 #### Scenario: A hit that costs Diluc HP adds a stack
 
 - **GIVEN** Diluc is at constellation 2
 - **WHEN** an enemy's strike, a drown or a wildlife's charge costs Diluc HP
+- **THEN** his ATK is raised by 10% and his ATK SPD by 5% for 10 seconds
+
+#### Scenario: A hit a shield takes adds a stack
+
+- **GIVEN** Diluc is at constellation 2
+- **WHEN** an enemy's strike on Diluc is taken by a shield, whoever cast it
 - **THEN** his ATK is raised by 10% and his ATK SPD by 5% for 10 seconds
 
 #### Scenario: A hit inside 1.5 seconds of the last stack adds none

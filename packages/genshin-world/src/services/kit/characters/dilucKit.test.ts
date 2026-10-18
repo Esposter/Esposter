@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
+import type { KitShieldAbsorbedEvent } from "#src/models/kit/KitShieldAbsorbedEvent";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
@@ -40,6 +41,14 @@ const createHealthLossEvent = (characterId: number, sourceCharacterId?: number):
   overflowHealthShare: 0,
   ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
 });
+// A shield owned by one party member takes part of an enemy's strike on another, a tenth of the struck member's Max HP
+const createShieldAbsorbedEvent = (characterId: number, struckCharacterId: number): KitShieldAbsorbedEvent => ({
+  amount: 0.1,
+  characterId,
+  kind: KitEventKind.ShieldAbsorbed,
+  struckCharacterId,
+});
+
 // The bonus the team's buffs give an attribute as they stand
 const getAttributeBonus = (kitEffectState: KitEffectState, attribute: Attribute): number =>
   kitEffectState.effects.reduce(
@@ -241,7 +250,10 @@ describe(createDilucKitBehaviour, () => {
     const context = createKitTestContext(combatant, { kitEffectState });
     const takeHit = (characterId = DILUC_CHARACTER_ID, sourceCharacterId?: number) =>
       DILUC_KIT.onKitEvent?.(createHealthLossEvent(characterId, sourceCharacterId), context, combatant);
-    return { combatant, kitEffectState, context, takeHit };
+    // A shield of the given owner takes an enemy's strike on the struck member whole or in part
+    const absorbHit = (struckCharacterId = DILUC_CHARACTER_ID, ownerCharacterId = OTHER_CHARACTER_ID) =>
+      DILUC_KIT.onKitEvent?.(createShieldAbsorbedEvent(ownerCharacterId, struckCharacterId), context, combatant);
+    return { combatant, kitEffectState, context, absorbHit, takeHit };
   };
 
   test("constellation 2 raises diluc's atk by 10% and atk spd by 5% when he takes damage", () => {
@@ -288,6 +300,28 @@ describe(createDilucKitBehaviour, () => {
     const { kitEffectState, takeHit } = createConstellation2Fixture();
     takeHit(DILUC_CHARACTER_ID, OTHER_CHARACTER_ID);
     expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
+  });
+
+  test("constellation 2 takes a stack from a hit on Diluc that a shield takes whole, whoever owns the shield", () => {
+    expect.hasAssertions();
+    const { kitEffectState, absorbHit } = createConstellation2Fixture();
+    absorbHit(DILUC_CHARACTER_ID);
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBeCloseTo(0.1);
+  });
+
+  test("constellation 2 raises nothing for a shield absorbing a hit on a teammate", () => {
+    expect.hasAssertions();
+    const { kitEffectState, absorbHit } = createConstellation2Fixture();
+    absorbHit(OTHER_CHARACTER_ID, DILUC_CHARACTER_ID);
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
+  });
+
+  test("constellation 2 takes one stack for a hit that a shield takes in part and Diluc's HP takes the rest", () => {
+    expect.hasAssertions();
+    const { kitEffectState, absorbHit, takeHit } = createConstellation2Fixture();
+    absorbHit(DILUC_CHARACTER_ID);
+    takeHit();
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBeCloseTo(0.1);
   });
 
   test("constellation 2 raises nothing before its constellation", () => {
