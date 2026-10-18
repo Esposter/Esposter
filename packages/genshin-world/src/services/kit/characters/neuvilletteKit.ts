@@ -36,4 +36,8 @@ const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount:
 // Built yet: Equitable Judgment, the held charged attack, whose length counts the Sourcewater droplets its legal evaluation
 // Picks up and whose judgement ticks drain Max HP, and Ascension 1, which raises that charge by the reactions it counts,
 // And the droplets the skill and burst leave, which nothing collects. His constellations are not built
+// Constellation 1 needs Past Draconic Glories from the Ascension talent Heir to the Ancient Sea's Authority, not built
+// Constellation 2 needs that Ascension talent's CRIT DMG per Past Draconic Glories, which the kit does not build
+// Constellation 4 needs Sourcewater Droplets generated when he is healed, which the kit does not build
+// Constellation 6 needs Sourcewater Droplets and the Equitable Judgment currents, which the kit does not build
 export const createNeuvilletteKitBehaviour = (): KitBehaviour => ({ getPassiveBonuses });
