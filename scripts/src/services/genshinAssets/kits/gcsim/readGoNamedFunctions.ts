@@ -4,11 +4,13 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { findClosingBrace } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 
-// A named function or method of a file, by its name and the positions its body opens and closes at
+// A named function or method of a file, by its name and the position of that name, and the positions its body opens and
+// Closes at
 export interface GoNamedFunction {
   bodyEnd: number;
   bodyStart: number;
   name: string;
+  nameIndex: number;
   parameters: string[];
 }
 
@@ -65,7 +67,13 @@ const readNamedFunction = (tokens: readonly GoToken[], funcPosition: number): Go
   const bodyEnd = findClosingBrace(tokens, bodyStart);
   return bodyEnd === undefined
     ? undefined
-    : { bodyEnd, bodyStart, name: name.text, parameters: readParameterNames(tokens, namePosition + 1, parametersEnd) };
+    : {
+        bodyEnd,
+        bodyStart,
+        name: name.text,
+        nameIndex: namePosition,
+        parameters: readParameterNames(tokens, namePosition + 1, parametersEnd),
+      };
 };
 
 // Each named function and method of a file, read once for the positions in it

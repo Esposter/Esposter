@@ -2,6 +2,7 @@ import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
+import type { GoNamedFunction } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
@@ -9,18 +10,13 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import {
+  readGoEnclosingFunction,
+  readGoNamedFunctions,
+} from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 
 // How many calls a value is followed through, so a cycle of calls gives no value
 const MAX_DEPTH = 4;
-
-// A top-level function of a file: its body's braces, its name's token and the names of its parameters in order
-interface GoFunctionScope {
-  bodyEnd: number;
-  bodyStart: number;
-  name: string;
-  nameIndex: number;
-  parameters: string[];
-}
 
 // The braces a block's assignment dominates a position in: the block it sits in, or the `case` clause of a switch
 interface GoBlock {
@@ -43,57 +39,6 @@ const findClosing = (tokens: readonly GoToken[], openingPosition: number, openin
 
 const checkIsCaseClause = (token: GoToken | undefined): boolean =>
   token?.kind === GoTokenKind.Identifier && (token.text === "case" || token.text === "default");
-
-// The names a parameter list declares, the first identifier of each comma-separated piece between its brackets
-const readParameterNames = (tokens: readonly GoToken[], start: number, end: number): string[] => {
-  const names: string[] = [];
-  let depth = 0;
-  let pieceStart = start;
-  for (let position = start; position <= end; position++) {
-    const token = tokens[position];
-    if (position === end || (depth === 0 && checkIsGoPunctuation(token, ","))) {
-      const name = tokens.slice(pieceStart, position).find(({ kind }) => kind === GoTokenKind.Identifier)?.text;
-      if (name !== undefined) names.push(name);
-      pieceStart = position + 1;
-    } else if (checkIsGoPunctuation(token, "(") || checkIsGoPunctuation(token, "[")) depth++;
-    else if (checkIsGoPunctuation(token, ")") || checkIsGoPunctuation(token, "]")) depth--;
-  }
-  return names;
-};
-
-// The function a `func` keyword at the position declares, `func (c *char) name(params) results {`, else Undefined
-const readFunctionScope = (tokens: readonly GoToken[], funcPosition: number): GoFunctionScope | undefined => {
-  let position = funcPosition + 1;
-  if (checkIsGoPunctuation(tokens[position], "(")) position = findClosing(tokens, position, "(", ")") + 1;
-  const nameToken = tokens[position];
-  if (nameToken?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[position + 1], "(")) return undefined;
-  const parametersEnd = findClosing(tokens, position + 1, "(", ")");
-  let bodyStart = parametersEnd + 1;
-  while (bodyStart < tokens.length && !checkIsGoPunctuation(tokens[bodyStart], "{")) bodyStart++;
-  if (bodyStart >= tokens.length) return undefined;
-  return {
-    bodyEnd: findClosing(tokens, bodyStart, "{", "}"),
-    bodyStart,
-    name: nameToken.text,
-    nameIndex: position,
-    parameters: readParameterNames(tokens, position + 2, parametersEnd),
-  };
-};
-
-// Each top-level function of a file, a closure inside one sharing its locals rather than starting a scope of its own
-const readFunctionScopes = (tokens: readonly GoToken[]): GoFunctionScope[] => {
-  const scopes: GoFunctionScope[] = [];
-  let depth = 0;
-  for (const [position, token] of tokens.entries()) {
-    if (checkIsGoPunctuation(token, "{")) depth++;
-    else if (checkIsGoPunctuation(token, "}")) depth--;
-    else if (depth === 0 && token.kind === GoTokenKind.Identifier && token.text === "func") {
-      const scope = readFunctionScope(tokens, position);
-      if (scope !== undefined) scopes.push(scope);
-    }
-  }
-  return scopes;
-};
 
 // The block an assignment at the position sits in, walking back to the brace or `case` opening it and forward to the
 // Brace or the next `case` closing it
@@ -129,7 +74,7 @@ const findBlock = (tokens: readonly GoToken[], position: number): GoBlock => {
 
 // The braces of each closure in a function's body that a position is not in, `func(...) {` ... `}`: a closure's locals
 // And assignments are its own, so a reference outside it never reads them
-const readOtherClosures = (tokens: readonly GoToken[], scope: GoFunctionScope, position: number): GoBlock[] => {
+const readOtherClosures = (tokens: readonly GoToken[], scope: GoNamedFunction, position: number): GoBlock[] => {
   const blocks: GoBlock[] = [];
   for (let position = scope.bodyStart + 1; position < scope.bodyEnd; position++) {
     if (
@@ -154,7 +99,7 @@ const checkIsInBlocks = (blocks: readonly GoBlock[], index: number): boolean =>
 // Give, `travel = 5` in the branch that defaults it, since the player's parameter is absent in the default run
 const findOkDefault = (
   tokens: readonly GoToken[],
-  scope: GoFunctionScope,
+  scope: GoNamedFunction,
   name: string,
   position: number,
   constantMap: ReadonlyMap<string, GoConstant>,
@@ -202,7 +147,7 @@ const readAssignmentKind = (tokens: readonly GoToken[], position: number): "upda
 // Position, so no branch between the two can skip it. An update reads the value it changes, which no constant gives
 const findAssignment = (
   tokens: readonly GoToken[],
-  scope: GoFunctionScope,
+  scope: GoNamedFunction,
   name: string,
   position: number,
   constantMap: ReadonlyMap<string, GoConstant>,
@@ -258,7 +203,6 @@ const readClampValues = (expression: GoExpression): number[] | undefined => {
 // Local's from its dominating assignment, else a constant's. A name no assignment reaches, or a branch may skip, has none,
 // So a local of another function is never read
 export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyMap<string, GoConstant>) => {
-  const scopes = readFunctionScopes(tokens);
   const callPositionsByName = new Map<string, number[]>();
   for (const [position, token] of tokens.entries())
     if (token.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "(")) {
@@ -266,8 +210,9 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
       positions.push(position);
       callPositionsByName.set(token.text, positions);
     }
-  const findScope = (position: number): GoFunctionScope | undefined =>
-    scopes.find(({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd);
+  const namedFunctions = readGoNamedFunctions(tokens);
+  const findScope = (position: number): GoNamedFunction | undefined =>
+    readGoEnclosingFunction(namedFunctions, position);
 
   // The values of an argument that is a local dominated by a clamp of the action's hold, read at its call's position
   const readClampedArgument = (argument: GoExpression, callPosition: number): number[] | undefined => {
@@ -280,7 +225,7 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
   };
 
   // Each number a function's parameter takes at its call sites, undefined where a call's argument has none
-  const readParameterValues = (scope: GoFunctionScope, index: number, depth: number): number[] | undefined => {
+  const readParameterValues = (scope: GoNamedFunction, index: number, depth: number): number[] | undefined => {
     if (depth > MAX_DEPTH) return undefined;
     const callPositions = (callPositionsByName.get(scope.name) ?? []).filter(
       (position) => position !== scope.nameIndex,
