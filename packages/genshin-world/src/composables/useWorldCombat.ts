@@ -57,6 +57,7 @@ export const useWorldCombat = ({
   gameDataBaseUrl,
   onPartyDown,
   onPartyRevived,
+  partyBonusLines,
   placeWorldDrops,
   savedCharacters,
   savedParty,
@@ -72,6 +73,8 @@ export const useWorldCombat = ({
   gameDataBaseUrl: string;
   onPartyDown: () => void;
   onPartyRevived: () => void;
+  // The bonuses the whole party holds from the Spiral Abyss's chamber, which every character of the party takes
+  partyBonusLines: Readonly<Ref<AttributeLine[]>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   savedCharacters: Character[];
   savedParty: Party;
@@ -154,6 +157,7 @@ export const useWorldCombat = ({
             statTables,
             getElement(character.id),
             travelerBonusLines.value,
+            partyBonusLines.value,
           ),
         );
     }

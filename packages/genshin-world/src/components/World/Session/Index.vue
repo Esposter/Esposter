@@ -15,8 +15,7 @@ import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
-import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
-import type { AbyssPeriodBlessing } from "#src/models/spiralAbyss/AbyssPeriodBlessing";
+import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -54,6 +53,7 @@ import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
 import ShopScreen from "#src/components/Shop/Screen/Index.vue";
+import SpiralAbyssBenediction from "#src/components/SpiralAbyss/Benediction/Index.vue";
 import SpiralAbyssEntryScreen from "#src/components/SpiralAbyss/Entry/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
@@ -82,6 +82,7 @@ import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
+import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
@@ -112,6 +113,7 @@ import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
+import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { GENSHIN_SETTINGS_DEFAULTS, GENSHIN_SETTINGS_STORAGE_KEY } from "#src/services/menu/constants";
@@ -132,8 +134,6 @@ import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
-import { findAbyssPeriodAt } from "#src/services/spiralAbyss/findAbyssPeriodAt";
-import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
@@ -528,6 +528,8 @@ const travelerElement = computed(() => computeTravelerElement(resonatedRegionIds
 const travelerBonusLines = computed(() =>
   getTravelerElementBonusLines(resonatedRegionIds.value, finishedMainQuestIds.value.has(TRAVELER_BONUS_QUEST_ID)),
 );
+// The bonus lines the Spiral Abyss's chamber gives the whole party, held here as the combat and the chamber both read them
+const abyssBonusLines = shallowRef<AttributeLine[]>([]);
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 // The constellation table, read as the world starts, and the constellations each character's one set holds, by its id. A
 // Traveler's form has a set for each element, which a statue picks, so it has none here until one does
@@ -574,6 +576,7 @@ const {
     const nearestWaypoint = findNearestTeleportWaypoint(unlockedLandmarks.value, characterBody.position);
     if (nearestWaypoint) jumpTo(computeJumpPose(nearestWaypoint));
   },
+  partyBonusLines: abyssBonusLines,
   placeWorldDrops,
   savedCharacters: savedState.characters,
   savedParty: savedState.party,
@@ -676,18 +679,24 @@ const reputation = shallowRef<ReputationProgress>(savedState.reputation);
 const reputationCity = shallowRef<ReputationCity>();
 const shopId = shallowRef(0);
 const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
-// The Moon Spire's periods from the hosted game data, and the blessing of the period the entrance opens its screen on
-const abyssPeriods = shallowRef<AbyssPeriod[]>([]);
-const abyssBlessing = shallowRef<AbyssPeriodBlessing | undefined>();
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readAbyssPeriods(gameDataBaseUrl)).match(
-  (periods) => {
-    abyssPeriods.value = periods;
-  },
-  (error) => {
-    console.error(error);
-  },
-);
+// The Spiral Abyss on the world: its entry, its chambers in the arena beside the entrance, and the Benediction a Corridor chamber offers
+const {
+  abyssBlessing,
+  abyssCamps,
+  abyssChoices,
+  abyssFloorsOffered,
+  chooseAbyssBenediction,
+  enterAbyssChamber,
+  openAbyssEntrance,
+  stepAbyss,
+} = useWorldSpiralAbyss({
+  areaId: findAreaAt(catalogue, ABYSS_ENTRANCE_POSITION.x, ABYSS_ENTRANCE_POSITION.z)?.id ?? "",
+  bonusLines: abyssBonusLines,
+  events,
+  gameDataBaseUrl,
+  getWorldNow,
+  party,
+});
 const reputationLevel = shallowRef(reputation.value.level);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
@@ -917,7 +926,7 @@ const {
   wallet,
 });
 // The enemies in the world are the ley line outcrops' fighting camps and the domain challenge's camp
-const fightingCamps = computed(() => [...outcropCamps.value, ...domainCamps.value]);
+const fightingCamps = computed(() => [...outcropCamps.value, ...domainCamps.value, ...abyssCamps.value]);
 // The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's centre
 const domainArenaInteractables = computed<Interactable[]>(() => {
   if (!domainArena.value) return [];
@@ -1173,6 +1182,11 @@ defineExpose({ jumpTo, readCameraPosition });
             isPlaying: !isPaused && screenKind === ScreenKind.World && domainClaimOffers === undefined,
             partyDown: false,
           });
+          stepAbyss({
+            deltaMilliseconds: context.delta,
+            isPlaying: !isPaused && screenKind.value === ScreenKind.World && abyssChoices.value === undefined,
+            partyDown: false,
+          });
           if (!isPaused && screenKind === ScreenKind.World)
             touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)
@@ -1255,7 +1269,7 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === ABYSS_ENTRANCE_INTERACTABLE_ID
             ) {
-              abyssBlessing = findAbyssPeriodAt(abyssPeriods, getWorldNow())?.blessing;
+              openAbyssEntrance();
               screenKind = ScreenKind.SpiralAbyss;
             } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
@@ -1778,9 +1792,23 @@ defineExpose({ jumpTo, readCameraPosition });
     <SpiralAbyssEntryScreen
       v-if="screenKind === ScreenKind.SpiralAbyss"
       :blessing="abyssBlessing"
+      :floors="abyssFloorsOffered"
       :game-text
       :name-text
+      @choose="
+        (floorId, chamberId) => {
+          enterAbyssChamber(floorId, chamberId);
+          screenKind = ScreenKind.World;
+        }
+      "
       @close="screenKind = ScreenKind.World"
+    />
+    <SpiralAbyssBenediction
+      v-if="abyssChoices"
+      :choices="abyssChoices"
+      :game-text
+      :name-text
+      @choose="chooseAbyssBenediction"
     />
     <ShopScreen
       v-if="screenKind === ScreenKind.Shop"
