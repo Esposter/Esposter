@@ -25,28 +25,24 @@ const { updateVisual } = visualStore;
       @commit="(changes) => changes.forEach((change) => updateVisual(change))"
     >
       <template #default="{ visual }">
-        <DashboardVisualPreviewContainer :id="visual.id" size-full :type="visual.type" />
+        <DashboardVisualPreviewContainer
+          size-full
+          ui-frame
+          cursor-pointer
+          active="[background-image:var(--ui-pressed-overlay)]"
+          :id="visual.id"
+          :type="visual.type"
+        />
       </template>
     </DashboardGrid>
   </div>
 </template>
 
 <style scoped>
-/* The grid is the page's background, and each tile a panel on its edge, in the library's tokens */
+/* The grid is the page's background, in the library's tokens */
 .dashboard-grid {
   width: 100%;
   min-height: 100%;
   background-color: var(--ui-background);
-}
-
-:deep(.dashboard-grid-tile) {
-  cursor: pointer;
-  background-color: var(--ui-panel);
-  border-radius: var(--ui-container-radius);
-  box-shadow: var(--ui-frame-shadow);
-
-  &:active:not(:focus-within) {
-    background-image: var(--ui-pressed-overlay);
-  }
 }
 </style>
