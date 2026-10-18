@@ -75,6 +75,7 @@ export const ZHONGLI_CHARACTER_ID = 10_000_030;
 // Dominus Lapidis' press casts a Stone Stele ahead of him, replacing the newest once the most stand, and its hold casts
 // One unless the most stand and its Jade Shield at its hitmark. Planet Befall casts its meteor ahead of him, wider from
 // Four constellations, and from two a Jade Shield
+// Constellation 6 needs the Jade Shield's damage converted to HP for the current character, not built
 export const createZhongliKitBehaviour = ({
   kit,
   readHit,
