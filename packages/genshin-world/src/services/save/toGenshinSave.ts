@@ -9,6 +9,7 @@ import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toPartySave } from "#src/services/save/toPartySave";
 import { toProcessingJobSaves } from "#src/services/save/toProcessingJobSaves";
 import { toShopPurchaseSaves } from "#src/services/save/toShopPurchaseSaves";
+import { toSpiralAbyssSave } from "#src/services/save/toSpiralAbyssSave";
 import { toWalletSave } from "#src/services/save/toWalletSave";
 import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjustmentSave";
 
@@ -40,6 +41,7 @@ export const toGenshinSave = ({
   reputation,
   settledSeelieIds,
   shopPurchases,
+  spiralAbyssProgressMap,
   solvedPuzzleIds,
   travelerName,
   unlockedLandmarkIds,
@@ -75,6 +77,7 @@ export const toGenshinSave = ({
   quests: Object.fromEntries(quests),
   reputation,
   shopPurchases: toShopPurchaseSaves(shopPurchases),
+  spiralAbyss: toSpiralAbyssSave(spiralAbyssProgressMap),
   statues: { foundOculusIds: [...foundOculusIds], regions: Object.fromEntries(regionStatueProgressMap) },
   travelerName,
   unlockedLandmarks: [...unlockedLandmarkIds],

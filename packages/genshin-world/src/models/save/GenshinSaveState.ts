@@ -16,6 +16,7 @@ import type { Party } from "#src/models/party/Party";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
+import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
 import type { WishPity } from "#src/models/wish/WishPity";
@@ -59,6 +60,8 @@ export interface GenshinSaveState {
   reputation: ReputationProgress;
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];
+  // The Abyss's progress by cycle, keyed as the save keys it
+  spiralAbyssProgressMap: ReadonlyMap<string, AbyssProgress>;
   solvedPuzzleIds: ReadonlySet<string>;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;
