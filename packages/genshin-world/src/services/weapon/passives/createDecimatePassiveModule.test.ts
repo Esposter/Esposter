@@ -18,8 +18,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Decimate at its first rank, which reads its DMG percentage from the affix row's first number
-const decimatePassiveModule = createDecimatePassiveModule([0.4]);
+// Decimate with a synthetic percentage, which is its only param
+const decimatePassiveModule = createDecimatePassiveModule([0.2]);
 const strike: KitStrike = {
   attackTag: AttackTag.NormalAttack,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -38,7 +38,7 @@ describe(createDecimatePassiveModule, () => {
         createParty([TRAVELER_CHARACTER_ID]),
         [],
       ),
-    ).toBeCloseTo(0.4);
+    ).toBeCloseTo(0.2);
   });
 
   test("a strike on another family of enemy is not raised", () => {

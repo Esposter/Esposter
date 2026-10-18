@@ -11,9 +11,9 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
 const wielder: Combatant = createWielderCombatant();
-// The Widsith's Debut at its first rank: the Recitative's ATK, the Aria's Elemental DMG and the Interlude's Elemental
-// Mastery, a theme for ten seconds, and a cooldown of thirty
-const debutPassiveModule = createDebutPassiveModule([0.6, 0.48, 240, 10, 30]);
+// The Widsith's Debut with synthetic params: the Recitative's ATK, the Aria's Elemental DMG and the Interlude's
+// Elemental Mastery, a theme for three seconds, and a cooldown of four
+const debutPassiveModule = createDebutPassiveModule([0.2, 0.15, 60, 3, 4]);
 const createTakeField = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   kind: KitEventKind.CharacterSwapped as const,
@@ -21,7 +21,7 @@ const createTakeField = () => ({
 });
 
 describe(createDebutPassiveModule, () => {
-  test("taking the field with a roll on the first theme gains its ATK for its ten seconds", () => {
+  test("taking the field with a roll on the first theme gains its ATK for its three seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -31,7 +31,7 @@ describe(createDebutPassiveModule, () => {
       context.kitEffectState.effects
         .filter((effect) => effect.kind === "buff")
         .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
-    ).toStrictEqual([{ amount: 0.6, attribute: Attribute.AttackPercent, secondsRemaining: 10 }]);
+    ).toStrictEqual([{ amount: 0.2, attribute: Attribute.AttackPercent, secondsRemaining: 3 }]);
   });
 
   test("a roll on the second theme gains the Elemental DMG Bonus of every element at the rank's amount", () => {
@@ -44,10 +44,10 @@ describe(createDebutPassiveModule, () => {
       context.kitEffectState.effects
         .filter((effect) => effect.kind === "buff")
         .map(({ amount, attribute }) => ({ amount, attribute })),
-    ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.48, attribute })));
+    ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.15, attribute })));
   });
 
-  test("taking the field again inside the rank's thirty seconds gains no theme", () => {
+  test("taking the field again inside the rank's cooldown gains no theme", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

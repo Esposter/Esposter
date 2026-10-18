@@ -15,9 +15,9 @@ const readBuffs = (effects: readonly KitEffect[]) =>
     .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining }));
 
 describe(createDeathlyPactPassiveModule, () => {
-  // Deathly Pact at its first rank: its CRIT DMG line is the table's. Each increase of the wielder's Bond of Life raises its
-  // DMG by 16% for six seconds, up to three stacks
-  const deathlyPactPassiveModule = createDeathlyPactPassiveModule([0.2, 0.16, 6]);
+  // Deathly Pact with synthetic params: its CRIT DMG line is the table's, so its first param is not read here.
+  // Each increase of the wielder's Bond of Life raises its DMG by 25% for three seconds, up to three stacks
+  const deathlyPactPassiveModule = createDeathlyPactPassiveModule([0, 0.25, 3]);
   const wielder: Combatant = createWielderCombatant();
   const bondOfLifeIncreased = {
     bondOfLifeShare: 0.1,
@@ -27,14 +27,14 @@ describe(createDeathlyPactPassiveModule, () => {
     overflowHealthShare: 0,
   };
 
-  test("an increase of the wielder's Bond of Life raises its DMG by 16% for six seconds", () => {
+  test("an increase of the wielder's Bond of Life raises its DMG by 25% for three seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     deathlyPactPassiveModule.onKitEvent?.(bondOfLifeIncreased, context, wielder);
 
     expect(readBuffs(context.kitEffectState.effects)).toStrictEqual([
-      { amount: 0.16, attribute: Attribute.AllDamageBonus, secondsRemaining: 6 },
+      { amount: 0.25, attribute: Attribute.AllDamageBonus, secondsRemaining: 3 },
     ]);
   });
 
@@ -46,16 +46,16 @@ describe(createDeathlyPactPassiveModule, () => {
       deathlyPactPassiveModule.onKitEvent?.(bondOfLifeIncreased, context, wielder);
 
     expect(readBuffs(context.kitEffectState.effects)).toStrictEqual([
-      { amount: 3 * 0.16, attribute: Attribute.AllDamageBonus, secondsRemaining: 6 },
+      { amount: 0.75, attribute: Attribute.AllDamageBonus, secondsRemaining: 3 },
     ]);
   });
 
-  test("the stacks end six seconds after the last increase", () => {
+  test("the stacks end three seconds after the last increase", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     deathlyPactPassiveModule.onKitEvent?.(bondOfLifeIncreased, context, wielder);
-    stepKitSeconds(context, 6.1);
+    stepKitSeconds(context, 3.1);
 
     expect(readBuffs(context.kitEffectState.effects)).toStrictEqual([]);
   });
