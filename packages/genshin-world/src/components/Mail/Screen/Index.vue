@@ -80,19 +80,6 @@ const hasClaimable = computed(() =>
 const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows, birthdayMailIds).length < mails.length);
 // The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
 const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));
-const confirmDeleteRead = () => {
-  isConfirmingDeleteRead.value = false;
-  emit("deleteRead");
-};
-const confirmDeleteGift = (mailId: number) => {
-  isConfirmingDeleteGift.value = false;
-  emit("deleteGift", mailId);
-};
-const selectMail = (mailId: number) => {
-  selectedMailId.value = mailId;
-  isConfirmingDeleteGift.value = false;
-  emit("read", mailId);
-};
 const selectTab = (isGift: boolean) => {
   isGiftBoxTab.value = isGift;
   isConfirmingDeleteGift.value = false;
@@ -157,7 +144,13 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
           :key="entry.mail.id"
           :aria-selected="entry.mail.id === selectedEntry?.mail.id"
           :data-read="entry.mail.isRead || undefined"
-          @click="selectMail(entry.mail.id)"
+          @click="
+            () => {
+              selectedMailId = entry.mail.id;
+              isConfirmingDeleteGift = false;
+              emit('read', entry.mail.id);
+            }
+          "
         >
           <span class="title">{{ textMap[entry.row.titleTextId] }}</span>
           <span class="sender">{{ textMap[entry.row.senderTextId] }}</span>
@@ -179,7 +172,16 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         <GameButton class="cancel" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteRead = false">
           {{ gameText[GameTextKey.Cancel] }}
         </GameButton>
-        <GameButton class="confirm-button" :kind="GameButtonKind.Pill" @click="confirmDeleteRead()">
+        <GameButton
+          class="confirm-button"
+          :kind="GameButtonKind.Pill"
+          @click="
+            () => {
+              isConfirmingDeleteRead = false;
+              emit('deleteRead');
+            }
+          "
+        >
           {{ gameText[GameTextKey.Confirm] }}
         </GameButton>
       </section>
@@ -238,7 +240,12 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
           <GameButton
             class="confirm-button"
             :kind="GameButtonKind.Pill"
-            @click="confirmDeleteGift(selectedEntry.mail.id)"
+            @click="
+              () => {
+                isConfirmingDeleteGift = false;
+                emit('deleteGift', selectedEntry.mail.id);
+              }
+            "
           >
             {{ gameText[GameTextKey.MailDelete] }}
           </GameButton>
