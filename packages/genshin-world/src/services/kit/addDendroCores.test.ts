@@ -6,6 +6,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import {
@@ -53,6 +54,7 @@ describe(addDendroCores, () => {
     expect(kitEffectState.effects).toStrictEqual([
       {
         characterId: TRAVELER_CHARACTER_ID,
+        coreKind: DendroCoreKind.Bloom,
         kind: "dendroCore",
         position: { x: 3 + ENEMY_CAPSULE_RADIUS + ENEMY_DROP_OFFSET, z: expect.closeTo(4) },
         reactionType: TransformativeReactionType.Bloom,

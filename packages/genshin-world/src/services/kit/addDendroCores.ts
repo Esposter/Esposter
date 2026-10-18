@@ -7,6 +7,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import {
   DENDRO_CORE_DROP_SECONDS,
   DENDRO_CORE_LIFETIME_SECONDS,
@@ -33,6 +34,7 @@ export const addDendroCores = (
     if (reactionType !== ReactionType.Bloom && reactionType !== ReactionType.LunarBloom) continue;
     addKitEffect(kitEffectState, {
       characterId,
+      coreKind: DendroCoreKind.Bloom,
       kind: "dendroCore",
       position: getEnemyDropPoint(position, random),
       reactionType: TransformativeReactionType.Bloom,
