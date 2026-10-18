@@ -8,7 +8,7 @@ describe(mailSaveSchema, () => {
   test("a mail's claim is kept across a reload", () => {
     expect.hasAssertions();
 
-    const mail = { deliveredAt: DELIVERED_AT, id: 1, isClaimed: true, isRead: true };
+    const mail = { deliveredAt: DELIVERED_AT, id: 1, isClaimed: true, isPinned: false, isRead: true };
 
     expect(mailSaveSchema.parse(structuredClone(mail))).toStrictEqual(mail);
   });
