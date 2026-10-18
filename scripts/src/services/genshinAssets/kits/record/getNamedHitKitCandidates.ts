@@ -1,9 +1,6 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type {
-  NamedHitCall,
-  NamedHitCandidate,
-  NamedHitCandidateMap,
-} from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
+import type { NamedHitCall } from "#src/models/genshinAssets/kits/NamedHitCall";
+import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
