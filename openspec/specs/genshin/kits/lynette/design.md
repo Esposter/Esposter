@@ -7,6 +7,7 @@ Not built yet: Enigmatic Feint's hold, its Shadowsign and release strike, which 
 ## Decisions
 
 - **The Bogglecat Box's tick timings, area, hitmark and poise are `Unsourced`.** gcsim gives the box's 754 frames at `burst.go` line 13, but no literal gives its first tick at 122 frames or its interval of 59, so both stand as published and their causes say so. The tick's area of six metres round the box, its zero hitmark and its zero poise have no literal either. Its multiplier is gcsim's, joined to proud skill group 8339 at index 1.
+- **Constellation 4's extra charge is a skill-charge bonus, which applies while Enigmatic Feint's press and hold are not built.** It is a cooldown property of the skill, as Lan Yan's Constellation 6 is, so it applies through `getSkillChargeBonus`.
 
 ## Key files
 

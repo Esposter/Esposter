@@ -49,9 +49,25 @@ Wondrous Trick: Miracle Parade's Explosive Firework SHALL set a Grin-Malkin Hat,
 - **WHEN** the player casts Wondrous Trick: Miracle Parade and the hat expires
 - **THEN** the Pyrotechnic Strike lands 36 frames later on the primary target
 
+### Requirement: Constellation 4 Pyro RES
+
+From Constellation 4, the Prop Arrow's Pyrotechnic Strike SHALL cut the Pyro RES of the enemy it hits by 20% for 6 seconds.
+
+#### Scenario: Constellation 4 cuts the enemy's Pyro RES
+
+- **GIVEN** Lyney has Constellation 4
+- **WHEN** his Prop Arrow's Pyrotechnic Strike hits an opponent
+- **THEN** that opponent's Pyro RES is reduced by 20% for 6 seconds
+
+#### Scenario: Constellation 3 changes nothing
+
+- **GIVEN** Lyney has Constellation 3
+- **WHEN** his Prop Arrow's Pyrotechnic Strike hits an opponent
+- **THEN** the opponent's Pyro RES is not reduced
+
 ### Requirement: Unbuilt Lyney effects
 
-Lyney's tap-released and partial-hold shots, his Prop Surplus, his hat's explosions, his hat limit, his burst ticks, his Spiritbreath Thorn and his Ascension and constellation passives SHALL NOT take effect.
+Lyney's tap-released and partial-hold shots, his Prop Surplus, his hat's explosions, his hat limit, his burst ticks, his Spiritbreath Thorn, his Ascension passives and Constellations 1 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

@@ -6,6 +6,8 @@ Not built yet: the tap-released Physical Aimed Shot and the Pyro shot at a parti
 
 Provisional: his plunges. gcsim's folder has no plunge file, so the collision, low and high plunge take Bennett's shared timings and poise, with his table's entries 5, 6 and 7 as their multipliers, as `lyneyKit.ts` writes them. The roadmap asks whether they match the game.
 
+- **Constellation 4's Pyro RES cut rides on the Prop Arrow's Pyrotechnic Strike.** That strike is the Pyro Charged Attack the constellation names, so the hit carries the status from Constellation 4 through `enemyStatus`.
+
 ## Key files
 
 | File                                                             | Role                                                                                                                                                             |
