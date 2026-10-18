@@ -8,11 +8,12 @@ Lan Yan's kit is its record and one behaviour module, `createLanYanKitBehaviour`
 - **Her plunges are gcsim's own, not borrowed.** gcsim has a plunge file for Lan Yan, so her low plunge is a circle of 3 metres at 44 frames, her high plunge one of 3.5 metres at 46, and the collision one of 1.5 metres at 38 frames, each in a 67-frame animation. These radii differ from the kit constants that borrow Bennett's, which is why they are written here.
 - **Her burst's three hits are circles of radius 6 on the primary target, at 30, 46 and 51 frames.** Each is priced as the targeting area's radius plus its own, and deals two units of Anemo gauge, from gcsim's 50 durability, in a 100-frame animation.
 - **Constellation 4 adds 60 Elemental Mastery to each member of the deployed team for 12 seconds as the burst is cast.** It is a buff on each member under one source, so a second burst restarts it, as gcsim's party stat mod does.
+- **Constellation 6's extra charge is a skill-charge bonus, which applies while the press is not built.** The charge is a cooldown property of the skill, not an effect of its press, so it applies from Constellation 6 through `getSkillChargeBonus`; the press's effects wait on the shield and stance hooks.
 
 ## Not built
 
 - **The Swallow-Wisp Pinion Dance press deals nothing.** It plays its 49-frame animation and spends its 16-second cooldown, but its detect hit, its Feathermoon Rings and its shield are not built. The rings are a stance, which replaces her normal attacks and skill for 66 frames from the detect, and are not built yet. The shield is cast with the element the detected enemy carries, which the framework cannot read yet, and that wait is the shield's element hook.
-- **Ascension 1 (the shield absorbs the element) and Ascension 4 (the rings' flat damage) wait on the press.** Constellation 1 (the rings' extra hits) and Constellation 6 (the skill's second charge) wait on it too, and Constellation 2 (the shield restored by a normal attack) waits on the shield hook, since it restores a shield the press casts.
+- **Ascension 1 (the shield absorbs the element) and Ascension 4 (the rings' flat damage) wait on the press.** Constellation 1 (the rings' extra hits) waits on it too, and Constellation 2 (the shield restored by a normal attack) waits on the shield hook, since it restores a shield the press casts.
 
 ## Key files
 
