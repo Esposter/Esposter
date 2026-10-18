@@ -1,9 +1,10 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
-import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
-import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { gainKitNightsoulPoints } from "#src/services/kit/effects/gainKitNightsoulPoints";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 
 export const MAVUIKA_CHARACTER_ID = 10_000_106;
 
@@ -25,12 +26,15 @@ const NIGHTSOUL_DRAIN_PER_SECOND = 5;
 // Constellation 6 needs the All-Fire Armaments of The Named Moment, which the kit does not build
 export const createMavuikaKitBehaviour = (): KitBehaviour => ({
   skill: {
-    onStart: ({ activeCombatant, kitEffectState }) => {
+    onStart: (context) => {
+      const { activeCombatant, kitEffectState } = context;
       const { characterId, constellationCount } = activeCombatant;
       const maximum = constellationCount < CONSTELLATION_1 ? NIGHTSOUL_POINTS : NIGHTSOUL_POINTS_WITH_C1;
-      if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
-        gainKitResource(kitEffectState, characterId, NIGHTSOUL_POINTS_ID, maximum, maximum);
-      else
+      if (hasKitNightsoulBlessing(kitEffectState.effects, characterId)) {
+        const gained = gainKitNightsoulPoints(kitEffectState, characterId, maximum, maximum);
+        if (gained > 0)
+          emitKitEvent({ characterId, kind: KitEventKind.NightsoulPointsGained, points: gained }, context);
+      } else
         enterKitNightsoulBlessing(kitEffectState, characterId, {
           nightsoulRate: { maximum, perSecond: -NIGHTSOUL_DRAIN_PER_SECOND },
           points: maximum,

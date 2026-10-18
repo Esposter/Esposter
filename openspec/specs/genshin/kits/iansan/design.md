@@ -16,7 +16,7 @@ Iansan's kit is its record and one behaviour module, `createIansanKitBehaviour`,
 ## Not built
 
 - **The skill's press enters the Nightsoul Blessing; the rest waits on the hook.** The press enters the blessing with 54 points for 16 seconds, which drain six a second as gcsim's do. gcsim enters it three frames after the press, and the kit enters it at the press. Her burst's points and party ATK bonus, and the Electro Swift Stormflight that swaps her charged attack, are not built.
-- **Ascension 1, Ascension 4 and Constellations 2, 4 and 6 wait on the Nightsoul state hook.** Each reads the points the state holds, the state itself or the party ATK bonus.
+- **Ascension 1 waits on the Electro Swift Stormflight and the burst; Ascension 4 and Constellations 2, 4 and 6 wait on the Nightsoul state hook.** gcsim's Ascension 1 gives the +20% ATK on the Stormflight's first enemy hit, which the kit does not build, and its Nightsoul half raises the points her burst gains, which the kit does not build either. The generation event `NightsoulPointsGained` is in the kit for it. Each of the other waits reads the points the state holds, the state itself or the party ATK bonus.
 
 ## Key files
 
