@@ -49,6 +49,7 @@ import { createPrecisePassiveModule } from "#src/services/weapon/passives/create
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
+import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
@@ -273,4 +274,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3099408603": createHamayumiPassiveModule,
   // Cadence of Days Gone By (Song of the Vigil)
   "385807483": createSongOfTheVigilPassiveModule,
+  // Repentance and Redemption (Blade of Atonement)
+  "2270410107": createRepentanceAndRedemptionPassiveModule,
 };
