@@ -10,7 +10,7 @@
 
 ## 3. The other opponents' decks
 
-- [ ] 3.1 Model the cards and skills each further deck needs and publish each deck as its own record read by key. Verify: a test named after the scenario "A played card applies its effect", and the card's cost refusal named after "A card the player cannot pay for is refused". Built so far: deck 14005 (Patton's game 1015) has its cards and character scripts modelled, and its record waits for game 1015 to be a challenger duel; deck 13105 was already complete. Blocked: decks 12103, 13001, 14002, 12105 and 13003 carry no card list in the dump, and the wiki's stage pages for their opponents carry none either, so no card of them can be modelled or published. The refusal test is written; "A played card applies its effect" is already covered by the tutorial-card tests.
+- [ ] 3.1 Model the cards and skills each further deck needs and publish each deck as its own record read by key. Verify: a test named after the scenario "A played card applies its effect", and the card's cost refusal named after "A card the player cannot pay for is refused". Built so far: deck 14005 (Patton's game 1015) has its cards and character scripts modelled, and its record waits for game 1015 to be a challenger duel; deck 12107 (game 1103) has its six created cards and five character scripts modelled, and its record is not published yet; deck 13105 was already complete. Blocked: decks 12103, 13001, 14002, 12105 and 13003 carry no card list in the dump, and the wiki's stage pages for their opponents carry none either, so no card of them can be modelled or published. The refusal test is written; "A played card applies its effect" is already covered by the tutorial-card tests.
 
 ## 4. Invitationals, tavern challengers and the Card Shop
 
