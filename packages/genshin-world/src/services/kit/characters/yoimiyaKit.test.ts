@@ -44,6 +44,12 @@ const createDamageTakenEvent = (
   isCritical = false,
 ): KitEvent => ({ attackTag, enemy, hit, isCritical, isDefeated, kind: KitEventKind.DamageTaken, striker });
 
+// The attribute, amount and seconds of each buff in a kit's effects
+const readBuffTuples = (effects: KitEffectState["effects"]) =>
+  effects.flatMap((effect) =>
+    effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
+  );
+
 // The buffs a Pyro hit of Yoimiya's that is or is not a CRIT gives her, at a constellation count, as its kit reads them
 const readCriticalBuffs = (constellationCount: number, isCritical: boolean) => {
   const combatant = { ...createYoimiyaCombatant(), constellationCount };
@@ -57,9 +63,7 @@ const readCriticalBuffs = (constellationCount: number, isCritical: boolean) => {
     combatant,
   );
 
-  return kitEffectState.effects.flatMap((effect) =>
-    effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
-  );
+  return readBuffTuples(kitEffectState.effects);
 };
 
 describe(createYoimiyaKitBehaviour, () => {
@@ -222,11 +226,7 @@ describe(createYoimiyaKitBehaviour, () => {
       combatant,
     );
 
-    expect(
-      kitEffectState.effects.flatMap((effect) =>
-        effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
-      ),
-    ).toStrictEqual([[Attribute.AttackPercent, 0.2, 20]]);
+    expect(readBuffTuples(kitEffectState.effects)).toStrictEqual([[Attribute.AttackPercent, 0.2, 20]]);
   });
 
   test("a Constellation 0 switch leaves the Aurous Blaze at 10 seconds and raises no ATK on a defeat", () => {
