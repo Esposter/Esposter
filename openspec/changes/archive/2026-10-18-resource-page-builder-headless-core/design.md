@@ -35,12 +35,12 @@ The webpage and email editors are the first consumers, and the only ones this ch
 
 ## Key files
 
-| File                                                               | Role after the change                                      |
-| ------------------------------------------------------------------ | ---------------------------------------------------------- |
-| `apps/web/shared/services/jsonPatch/applyPatches.ts`               | moved, with its models and helpers, into `packages/shared` |
-| `apps/web/server/services/resource/applyResourceContentPatches.ts` | imports the applier from `@esposter/shared`                |
-| `apps/web/server/services/mcp/checkIsAgentWritablePath.ts`         | reads JSON Pointers through `@esposter/shared`             |
-| `openspec/specs/architecture/agent-content-tools/design.md`        | names the applier's new home                               |
+| File                                                               | Role after the change                                            |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| `packages/shared/src/services/jsonPatch/applyPatches.ts`           | the applier, moved here from the app with its models and helpers |
+| `apps/web/server/services/resource/applyResourceContentPatches.ts` | imports the applier from `@esposter/shared`                      |
+| `apps/web/server/services/mcp/checkIsAgentWritablePath.ts`         | reads JSON Pointers through `@esposter/shared`                   |
+| `openspec/specs/architecture/agent-content-tools/design.md`        | names the applier's new home                                     |
 
 New code lands here:
 

@@ -2,7 +2,7 @@
 
 The Flowchart resource draws its canvas with Vue Flow (`@vue-flow/core`) and four of its plugin components: the background, the controls, the minimap and the node resizer. Three futures are open:
 
-- **Rebuild it on the [headless editor core](../../../changes/resource-page-builder-headless-core/design.md).** The flowchart would be the core's second implementer and the proof that it is generic: a graph of freely placed nodes and edges beside the page builder's tree of slotted nodes. Vue Flow and its plugins would go.
+- **Rebuild it on the [headless editor core](../../../changes/archive/2026-10-18-resource-page-builder-headless-core/design.md).** The flowchart would be the core's second implementer and the proof that it is generic: a graph of freely placed nodes and edges beside the page builder's tree of slotted nodes. Vue Flow and its plugins would go.
 - **Remove it.** Excalidraw is a mature open-source whiteboard that already does what the flowchart does, and better, so the resource could be dropped rather than maintained. Embedding Excalidraw is not one of the options: it is a React application, and the app is Vue.
 - **Keep Vue Flow, and absorb its four plugin components as the app's own.** This is the absorption the [dependency admission](../../../specs/architecture/dependency-admission/design.md) standard gives a component wrapper.
 

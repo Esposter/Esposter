@@ -1,6 +1,6 @@
 # Document model
 
-The webpage and email editors' documents: the node types each editor registers over the [headless core](../resource-page-builder-headless-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. It is built once the core has shipped.
+The webpage and email editors' documents: the node types each editor registers over the [headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. It is built once the core has shipped.
 
 ## The document model
 
@@ -30,7 +30,7 @@ interface PageDocument<TRootProps, TNode> {
 
 `WebpageEditor` and `EmailEditor` keep their names and their place in `JSONClassMap` and become this document plus what the editor does not own: the Email's `datasetReference`, and on a published snapshot only, the HTML the publish baked (see "Rendering and publishing"). `AGrapesJsEditor`, its `pages` default and the `catchall` that let GrapesJS's own keys ride through all go — the schemas describe every field, as [persisted data, latest shape only](../../specs/architecture/persisted-data-latest-shape-only/design.md) asks.
 
-The tree, the registry contract and the schema below are the [headless core](../resource-page-builder-headless-core/design.md)'s, generic over a registry; this page holds the webpage and email registries and what only they read. The document schema is one discriminated union over `type`, recursive through each slot, built from the registry. It checks what Zod can: every props schema, every slot's allowed child types, ids unique within the document, and the node count under a named `MAX_*` limit through a refinement on the root. An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS.
+The tree, the registry contract and the schema below are the [headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md)'s, generic over a registry; this page holds the webpage and email registries and what only they read. The document schema is one discriminated union over `type`, recursive through each slot, built from the registry. It checks what Zod can: every props schema, every slot's allowed child types, ids unique within the document, and the node count under a named `MAX_*` limit through a refinement on the root. An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS.
 
 The text inside a text node is the ProseMirror JSON the Note stores, validated by the node schema `apps/web/shared/models/resource/note/NoteResource.ts` already declares, exported for its second consumer. Portable Text was weighed for it and lost: it would need an editor of its own — Portable Text's is React — or a converter each way, against a format the app already stores, edits and renders on the server.
 

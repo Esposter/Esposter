@@ -24,7 +24,7 @@ No script ever reaches the canvas, by construction rather than by policy: every 
 
 ## Selection and drag
 
-Where a move lands, which slots accept a node and where focus goes after a delete are computed by the [headless core](../resource-page-builder-headless-core/design.md)'s navigation; this page draws, announces and binds them. Every pointer action has a keyboard path, because each is a registered command first, so the keyboard, a single pointer, the palette and the context menu all reach it, and `useCommands` lists each in the shortcuts dialog.
+Where a move lands, which slots accept a node and where focus goes after a delete are computed by the [headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md)'s navigation; this page draws, announces and binds them. Every pointer action has a keyboard path, because each is a registered command first, so the keyboard, a single pointer, the palette and the context menu all reach it, and `useCommands` lists each in the shortcuts dialog.
 
 ```mermaid
 flowchart TD

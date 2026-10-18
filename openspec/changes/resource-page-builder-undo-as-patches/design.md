@@ -1,6 +1,6 @@
 # Undo as patches
 
-The page builder's undo and redo, built once the [document model](../resource-page-builder-document-model/design.md) holds each editor's document in its store, over the [headless core](../resource-page-builder-headless-core/design.md)'s commands and history.
+The page builder's undo and redo, built once the [document model](../resource-page-builder-document-model/design.md) holds each editor's document in its store, over the [headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md)'s commands and history.
 
 ## Undo and redo as patches
 

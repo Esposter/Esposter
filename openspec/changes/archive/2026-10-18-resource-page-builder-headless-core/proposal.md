@@ -22,5 +22,5 @@ None.
 ## Impact
 
 - A new workspace package, `headless-block-editor`.
-- `apps/web/shared/services/jsonPatch/` and `apps/web/shared/models/jsonPatch/`, which move into `packages/shared`, and every importer of them in `apps/web/server`.
+- the applier and its models in the app's shared layer, which move into `packages/shared`, and every importer of them in `apps/web/server`.
 - The page builder program and its document model, undo and canvas changes, whose generic halves land in the package.

@@ -90,7 +90,8 @@ The read-change-save-retry loop is `updateResourceContent(ctx, resource, update,
 | `apps/web/server/services/resource/readStoredResourceContent.ts`      | the stored JSON a read selects from and a patch applies to                 |
 | `apps/web/server/services/resource/readContentAtPointer.ts`           | the value at a pointer, an array's page, and the member sizes past the cap |
 | `apps/web/server/services/resource/checkIsJsonSizeWithin.ts`          | a value's JSON size against a cap, without serializing it                  |
-| `packages/shared/src/models/jsonPatch/JsonPatchOperation.ts`          | the six operations and their schema                                        |
+| `packages/shared/src/models/jsonPatch/JsonPatchOperation.ts`          | the six operations' types                                                  |
+| `apps/web/shared/models/db/resource/JsonPatchOperation.ts`            | the operations' wire schema, checked at the request                        |
 | `packages/shared/src/services/jsonPatch/applyPatches.ts`              | the one RFC 6902 applier                                                   |
 | `apps/web/server/services/resource/todoList/updateTodoListContent.ts` | the follow-ups' change, through the generic update                         |
 | `apps/web/shared/models/flowchartEditor/data/GraphNode.ts`            | the node label the Flowchart editor reads and writes                       |

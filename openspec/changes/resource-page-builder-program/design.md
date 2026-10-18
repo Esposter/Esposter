@@ -6,7 +6,7 @@ This proposal replaces the engine rather than thinning it. The document becomes 
 
 ## Sub-pages
 
-- [Headless core](../resource-page-builder-headless-core/design.md) — the editing model as a package of its own: the tree, the registry contract, the commands, the navigation and the history, with no editor's node types in it
+- [Headless core](../archive/2026-10-18-resource-page-builder-headless-core/design.md) — the editing model as a package of its own: the tree, the registry contract, the commands, the navigation and the history, with no editor's node types in it
 - [Document model](../resource-page-builder-document-model/design.md) — the typed node tree, the node types a registry holds for each editor, and how a document renders and publishes
 - [Canvas](../resource-page-builder-canvas/design.md) — the same-origin frame, its overlays, and the pointer, keyboard and layers paths that select and move nodes
 - [Style panel](../resource-page-builder-style-panel/design.md) — styles kept on each node per breakpoint and state, drawn by the library's controls
