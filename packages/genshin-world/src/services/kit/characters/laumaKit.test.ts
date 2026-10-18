@@ -2,15 +2,21 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createLaumaKitBehaviour, LAUMA_CHARACTER_ID } from "#src/services/kit/characters/laumaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const LAUMA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAUMA_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createCombatant = (elementalMastery: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementalMastery }]),
@@ -134,5 +140,37 @@ describe(createLaumaKitBehaviour, () => {
       baseDamageBonuses: [expect.closeTo(0.07), 0.14],
       lunarReactionTypes: [LunarReactionType.LunarBloom],
     });
+  });
+});
+
+// The Elemental Skill DMG Bonus Cleansing for the Spring gives a hit of hers, with her at the given ascension and Elemental
+// Mastery
+const readSkillDamageBonus = (ascension: number, elementalMastery: number): number => {
+  const combatant = { ...createCombatant(elementalMastery), ascension };
+  return (
+    LAUMA_KIT.getStrikeDamageBonus?.(
+      {
+        attackTag: AttackTag.ElementalSkill,
+        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+        combatant,
+        hit: takeOne(LAUMA_KIT.elementalSkill.hits),
+      },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      createParty([LAUMA_CHARACTER_ID]),
+    ) ?? 0
+  );
+};
+
+describe("cleansing for the Spring", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect([readSkillDamageBonus(4, 500), readSkillDamageBonus(4, 1000)]).toStrictEqual([0.0004 * 500, 0.32]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readSkillDamageBonus(3, 1000)).toBe(0);
   });
 });

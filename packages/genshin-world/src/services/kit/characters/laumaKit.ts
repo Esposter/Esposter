@@ -7,6 +7,7 @@ import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { spendVerdantDew } from "#src/services/party/spendVerdantDew";
@@ -29,6 +30,11 @@ const SKILL_HOLD_MAXIMUM_DEW_COUNT = 3;
 // Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.000175;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
+// Cleansing for the Spring, Lauma's Ascension 4 passive as its text gives it: her Elemental Skill's DMG rises by 0.04% for
+// Each point of her Elemental Mastery, to at most 32%
+const ASCENSION_4 = 4;
+const CLEANSING_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.0004;
+const CLEANSING_MAXIMUM_DAMAGE_BONUS = 0.32;
 
 export const LAUMA_CHARACTER_ID = 10_000_119;
 
@@ -38,7 +44,8 @@ export const LAUMA_CHARACTER_ID = 10_000_119;
 // Following her, its multiplier of her Elemental Mastery for each Dew spent. Her Moonsign Benediction adds Base DMG Bonus
 // For her Elemental Mastery. Not built yet: Pale Hymn's buff on Bloom and Lunar-Bloom hits, with the Moon Song Hymn of
 // Eternal Rest's Dew gives it; the Spirit Envoy state her charged attack's first press enters, which waits on a stance
-// That drains stamina; and her passives and constellations
+// That drains stamina; Light for the Frosty Night and her constellations; the Spirit Envoy's cooldown reduction of Cleansing
+// For the Spring, as the charged attack's cooldown is not read by a kit
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
@@ -78,6 +85,14 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
           BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS,
         ),
     },
+    getStrikeDamageBonus: ({ attackTag, combatant }) =>
+      combatant.ascension < ASCENSION_4 || attackTag !== AttackTag.ElementalSkill
+        ? 0
+        : Math.min(
+            CLEANSING_MAXIMUM_DAMAGE_BONUS,
+            CLEANSING_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY *
+              combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
+          ),
     skill: pressBehaviour,
     // A hold with no Dew plays the press, and with Dew Hymn of Eternal Rest, spending it on its Lunar-Bloom hit
     skillHolds: [
