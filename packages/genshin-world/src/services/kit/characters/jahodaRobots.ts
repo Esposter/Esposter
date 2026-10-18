@@ -10,6 +10,7 @@ import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 // The robots' timings and the strike they deal, as the record gives them. A robot checks its circle for an aura from its
 // First check, then every interval while it finds none, and the next robot checks a spacing after the one before. Once a
@@ -17,6 +18,8 @@ import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 // Interval, until the burst's seconds end
 type JahodaRobotSettings = {
   absorbArea: AttackArea;
+  // The energy each absorb gives her, from Constellation 4
+  absorbEnergy: number;
   absorbFirstSeconds: number;
   absorbIntervalSeconds: number;
   absorbSpacingSeconds: number;
@@ -72,6 +75,7 @@ export const startJahodaRobots = (
         const element = findAbsorbedElement(reachedEnemies);
         if (element === undefined) return;
         isAbsorbed = true;
+        if (settings.absorbEnergy > 0) gainPartyMemberEnergy(checkContext.party, combatant, settings.absorbEnergy);
         // The absorb happens on this check, so the strikes run out with the burst, from the absorb's own seconds
         const absorbSeconds = absorbFirstSeconds + tickIndex * settings.absorbIntervalSeconds;
         schedulePeriodicKitTask(

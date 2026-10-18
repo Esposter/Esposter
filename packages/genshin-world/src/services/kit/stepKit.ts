@@ -15,6 +15,7 @@ import {
   PLUNGE_COLLISION_SECONDS,
 } from "#src/services/kit/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { clearKitSkillCharge } from "#src/services/kit/effects/clearKitSkillCharge";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { endKitAction } from "#src/services/kit/endKitAction";
@@ -47,6 +48,8 @@ export const stepKit = (
   const previousHeldSeconds = kitState.skillHeldSeconds;
   const maximumHeldSeconds = kit.elementalSkillMaximumHeldSeconds ?? Infinity;
   if (isSkillHeld) {
+    // A hold that starts uncharged, whatever a kit completed before it
+    if (previousHeldSeconds === 0) clearKitSkillCharge(context.kitEffectState, context.activeCombatant.characterId);
     kitState.skillHeldSeconds = Math.min(previousHeldSeconds + stepSeconds, maximumHeldSeconds);
     kitState.skillReleasedSeconds =
       previousHeldSeconds < maximumHeldSeconds && kitState.skillHeldSeconds === maximumHeldSeconds
