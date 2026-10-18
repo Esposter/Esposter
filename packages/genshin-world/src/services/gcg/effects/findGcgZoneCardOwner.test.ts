@@ -38,6 +38,7 @@ describe(findGcgZoneCardOwner, () => {
     expect.hasAssertions();
     const equipment = createGcgZoneCard(EQUIPMENT_ID, {});
     const characters = [createCharacterState(), createCharacterState([equipment])];
+
     expect(findGcgZoneCardOwner(characters, equipment)).toBe(1);
   });
 
@@ -45,6 +46,7 @@ describe(findGcgZoneCardOwner, () => {
     expect.hasAssertions();
     const status = createGcgZoneCard(STATUS_ID, {});
     const characters = [createCharacterState([], [status]), createCharacterState()];
+
     expect(findGcgZoneCardOwner(characters, status)).toBe(0);
   });
 
@@ -52,6 +54,7 @@ describe(findGcgZoneCardOwner, () => {
     expect.hasAssertions();
     const support = createGcgZoneCard(SUPPORT_ID, {});
     const characters = [createCharacterState()];
+
     expect(findGcgZoneCardOwner(characters, support)).toBeUndefined();
   });
 });

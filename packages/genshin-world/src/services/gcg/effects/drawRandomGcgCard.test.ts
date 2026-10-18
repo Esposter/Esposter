@@ -74,6 +74,7 @@ describe(drawRandomGcgCard, () => {
       [ACTION_ID, ARTIFACT_ID, OTHER_ARTIFACT_ID],
     );
     drawRandomGcgCard(side, GcgCardKind.Artifact, () => 0.99, HAND_CARD_LIMIT);
+
     expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
       drawPile: [ACTION_ID, ARTIFACT_ID],
       hand: [OTHER_ARTIFACT_ID],
@@ -84,6 +85,7 @@ describe(drawRandomGcgCard, () => {
     expect.hasAssertions();
     const side = createSide([createCard(ACTION_ID, GcgCardKind.Event)], [ACTION_ID]);
     drawRandomGcgCard(side, GcgCardKind.Artifact, () => 0, HAND_CARD_LIMIT);
+
     expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({ drawPile: [ACTION_ID], hand: [] });
   });
 
@@ -100,6 +102,7 @@ describe(drawRandomGcgCard, () => {
       HAND_CARD_LIMIT,
       ({ id }) => id === OTHER_ARTIFACT_ID,
     );
+
     expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
       drawPile: [ARTIFACT_ID],
       hand: [OTHER_ARTIFACT_ID],
