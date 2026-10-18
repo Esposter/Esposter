@@ -1,8 +1,8 @@
 ## 1. Activation
 
-- [ ] 1.1 Refuse Activate when all six constellations are active or no Stella Fortuna is held. Verify: tests named after the scenarios 'Activate is disabled with no Stella Fortuna held' and 'Activate is disabled when all six constellations are active', seen failing first.
-- [ ] 1.2 Activate the next constellation and spend one Stella Fortuna when Activate is pressed. Verify: a test named after the scenario 'Activate makes the next constellation active and spends one Stella Fortuna', seen failing first.
-- [ ] 1.3 Add each wish's Stella Fortuna to its characters as the draw lands. Verify: a test named after the scenario 'a duplicate draw adds its Stella Fortuna to the character at once', seen failing first.
+- [x] 1.1 Refuse Activate when all six constellations are active or no Stella Fortuna is held. Verify: tests named after the scenarios 'Activate is disabled with no Stella Fortuna held' and 'Activate is disabled when all six constellations are active', seen failing first.
+- [x] 1.2 Activate the next constellation and spend one Stella Fortuna when Activate is pressed. Verify: a test named after the scenario 'Activate makes the next constellation active and spends one Stella Fortuna', seen failing first.
+- [x] 1.3 Add each wish's Stella Fortuna to its characters as the draw lands. Verify: a test named after the scenario 'a duplicate draw adds its Stella Fortuna to the character at once', seen failing first.
 
 ## 2. Constellation effects
 

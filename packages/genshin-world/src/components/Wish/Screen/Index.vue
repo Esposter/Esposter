@@ -10,6 +10,7 @@ import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { WishItemKind } from "#src/models/wish/WishItemKind";
+import { addStellaFortuna } from "#src/services/character/addStellaFortuna";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
@@ -168,11 +169,12 @@ const wish = (count: number) => {
       if (!weaponData) throw new InvalidOperationError(Operation.Read, String(item.id), "has no weapon data");
       nextInventory = addInventoryItem(nextInventory, toWeaponDefinition(weaponData, item.name), 1).inventory;
     }
-  // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a copy
+  // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a copy, and
+  // Each duplicate's Stella Fortuna is added to its character as the draw lands, a new character's second copy included
   const newCharacters = [...wishes.heldCountMap.keys()]
     .filter((id) => !characterCopyCountMap.value.has(id))
     .map((id) => createCharacter(id, statTables.characterDataMap));
-  if (newCharacters.length > 0) characters.value = [...characters.value, ...newCharacters];
+  characters.value = addStellaFortuna([...characters.value, ...newCharacters], wishes.stellaFortunaCountMap);
   characterCopyCountMap.value = wishes.heldCountMap;
   inventory.value = nextInventory;
   pityMap.value = { ...pityMap.value, [banner.value.kind]: wishes.pity };

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
 import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
+import type { Constellation } from "#src/models/character/Constellation";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
 import type { Inventory } from "#src/models/inventory/Inventory";
@@ -12,6 +13,8 @@ import CharacterAttributeList from "#src/components/Character/AttributeList/Inde
 import CharacterProfile from "#src/components/Character/Profile/Index.vue";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
+import { activateConstellation } from "#src/services/character/activateConstellation";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import {
@@ -20,6 +23,7 @@ import {
   TRAVELER_CHARACTER_ID,
   WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
+import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { getTalentRows } from "#src/services/character/getTalentRows";
 import { TalentUpgradeRefusalGameTextKeyMap } from "#src/services/character/TalentUpgradeRefusalGameTextKeyMap";
@@ -44,6 +48,8 @@ interface Props {
   activeCharacterId: number;
   // The kit each character's combat talents are read from, the proud skill group each of them names
   characterTalentKits: CharacterTalentKit[];
+  // The constellations each character's set holds, by its id, the ones its Activate button presses the next of
+  characterIdConstellationsMap: ReadonlyMap<number, Constellation[]>;
   // The Companionship EXP each character has earned, by its id, from which its Friendship Level is read
   companionshipExpMap?: ReadonlyMap<number, number>;
   // Where the host serves the game's published data, which the Profile tab reads its character's record from
@@ -75,6 +81,7 @@ defineSlots<{
 const {
   activeCharacterId,
   characterTalentKits,
+  characterIdConstellationsMap,
   companionshipExpMap = new Map<number, number>(),
   gameDataBaseUrl,
   gameText,
@@ -86,7 +93,8 @@ const {
   statTables,
   talentUpgradeMap,
 } = defineProps<Props>();
-// The player's characters, across the screen's top in the order given, and a talent's raised level is written into
+// The player's characters, across the screen's top in the order given, a character's activated constellation and a
+// Talent's raised level written back into them
 const characters = defineModel<Character[]>("characters", { required: true });
 // The bag and the wallet a talent's next level takes its materials and Mora from
 const inventory = defineModel<Inventory>("inventory", { required: true });
@@ -202,6 +210,17 @@ const upgradeTalentAt = (index: number) => {
   inventory.value = raised.inventory;
   wallet.value = raised.wallet;
 };
+// The set the Activate button presses the next of, and whether that is refused now, a character with no set refused too
+const constellations = computed(() => characterIdConstellationsMap.get(characterId.value) ?? []);
+const isActivateDisabled = computed(
+  () => !character.value || getConstellationActivationRefusal(character.value, constellations.value) !== undefined,
+);
+// The next constellation activated, the character written back in its place
+const activate = () => {
+  characters.value = characters.value.map((item) =>
+    item.id === characterId.value ? activateConstellation(item, constellations.value) : item,
+  );
+};
 </script>
 
 <template>
@@ -225,7 +244,10 @@ const upgradeTalentAt = (index: number) => {
       />
       <CharacterMenuConstellation
         v-else-if="character && tab === CharacterMenuTab.Constellation"
+        :activate-label="gameText[GameTextKey.Activate]"
         :activated="constellationsActivated"
+        :is-activate-disabled="isActivateDisabled"
+        @activate="activate()"
       />
       <CharacterMenuTalents
         v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
