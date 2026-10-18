@@ -24,6 +24,8 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
       { count: 1, energyDropKind: EnergyDropKind.Orb, healthPercent: 0 },
     ],
     poiseType: PoiseType.Boss,
+    // Hurricane Seed, the material the wiki names as the Anemo Hypostasis's own drop
+    uniqueDropId: 113001,
   },
   [EnemyKindId.AnemoSamachurl]: {
     element: Element.Anemo,
