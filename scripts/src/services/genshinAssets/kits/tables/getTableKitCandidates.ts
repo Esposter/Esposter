@@ -4,6 +4,8 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
+import { characterIdSlotHitLabelsMap } from "#src/services/genshinAssets/kits/tables/characterIdSlotHitLabelsMap";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CombatTalent, KitPlunge } from "genshin-world";
 
 const STRIKE_LABEL_REGEX = /^(?<strike>\d+)-Hit DMG$/u;
@@ -26,7 +28,11 @@ const FULLY_CHARGED_AIMED_SHOT_LABELS: ReadonlySet<string> = new Set([
 // Index: the normal attack's labels, `3-Hit DMG` each hit of the third strike in turn, the charged attack's, a spin's
 // And its final blow's or a bow's fully charged shot's among them, its stamina's and the plunges', the skill's cooldown
 // And its hold's, and the burst's cooldown and energy cost
-export const getTableKitCandidates = ({ labelMap, talentGroupIdMap }: KitTables): Map<string, KitCandidate[]> => {
+export const getTableKitCandidates = ({
+  characterId,
+  labelMap,
+  talentGroupIdMap,
+}: KitTables): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   const addLabel = (path: string, combatTalent: CombatTalent, { indexes, label }: KitTableLabel, position = 0) => {
     const proudSkillGroupId = talentGroupIdMap[combatTalent];
@@ -40,6 +46,19 @@ export const getTableKitCandidates = ({ labelMap, talentGroupIdMap }: KitTables)
   const addHits = (path: string, combatTalent: CombatTalent, tableLabel: KitTableLabel) => {
     for (const position of tableLabel.indexes.keys())
       addLabel(`${path}.hits.${position}.multiplier`, combatTalent, tableLabel, position);
+  };
+  // A folder-less character's skill and burst hits read their labels in hit order, a label spanning several hits giving
+  // One to each of its parameters, and each hit takes the next position across the labels
+  const addSlotHitLabels = (slot: string, combatTalent: CombatTalent, labelNames: readonly string[]) => {
+    let hitIndex = 0;
+    for (const name of labelNames) {
+      const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find(({ label }) => label === name);
+      if (tableLabel === undefined) throw new InvalidOperationError(Operation.Read, name, "has no label in its talent");
+      for (const position of tableLabel.indexes.keys()) {
+        addLabel(`${slot}.hits.${hitIndex}.multiplier`, combatTalent, tableLabel, position);
+        hitIndex += 1;
+      }
+    }
   };
   const normalAttackLabels = labelMap.get(talentGroupIdMap[CombatTalent.NormalAttack]) ?? [];
   const hasChargedAttackCycle = normalAttackLabels.some(({ label }) => CHARGED_ATTACK_CYCLIC_LABELS.has(label));
@@ -72,5 +91,10 @@ export const getTableKitCandidates = ({ labelMap, talentGroupIdMap }: KitTables)
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalBurst]) ?? [])
     if (tableLabel.label === "CD") addLabel("burstCooldownSeconds", CombatTalent.ElementalBurst, tableLabel);
     else if (tableLabel.label === "Energy Cost") addLabel("burstEnergyCost", CombatTalent.ElementalBurst, tableLabel);
+  const slotHitLabels = characterIdSlotHitLabelsMap.get(characterId);
+  if (slotHitLabels !== undefined) {
+    addSlotHitLabels("burst", CombatTalent.ElementalBurst, slotHitLabels.burst);
+    addSlotHitLabels("skill", CombatTalent.ElementalSkill, slotHitLabels.skill);
+  }
   return candidateMap;
 };
