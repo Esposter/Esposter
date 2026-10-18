@@ -93,7 +93,7 @@ export const useWorldQuests = ({
       nextProgressMap.set(quest.id, nextProgress);
       achievementEvents.push(...getFinishedQuestEvents(quest, progress, nextProgress));
       if (checkIsQuestFinished(quest, nextProgress) && !checkIsQuestFinished(quest, progress))
-        events.emit("finishQuest", quest.id);
+        events.emit("finishQuest", quest, progress, nextProgress);
     }
     questProgressMap.value = startQuests(quests.value, nextProgressMap, questEvent);
     events.emit("achievementEvents", achievementEvents);

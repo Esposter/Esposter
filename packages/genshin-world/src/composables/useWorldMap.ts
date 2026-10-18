@@ -1,6 +1,7 @@
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
+import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -15,6 +16,8 @@ import { computeNationExplorationPercentage } from "#src/services/exploration/co
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { addReputationExp } from "#src/services/reputation/addReputationExp";
 import { computeReputationExploresReached } from "#src/services/reputation/computeReputationExploresReached";
+import { getFinishedReputationRewards } from "#src/services/reputation/getFinishedReputationRewards";
+import { getReputationRequestBindings } from "#src/services/reputation/getReputationRequestBindings";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
@@ -102,28 +105,45 @@ export const useWorldMap = ({
   // Each exploration threshold the nation's percentage passes since the last settle pays its Reputation EXP and wallet
   // Items once, and a threshold the percentage already held pays nothing. Nothing settles until the areas, the Reputation
   // And every region are in, so the percentage before the unlocks is the one the saved landmarks reach
+  // A Reputation reward pays its EXP at the nation's levels and its items into the wallet, the one payment both the
+  // Exploration thresholds and the finished requests make
+  const payReputationReward = ({ exp, items }: ReputationReward) => {
+    if (!mondstadtReputation.value) return;
+    setReputation(addReputationExp(reputation.value, exp, mondstadtReputation.value.levels));
+    const nextWallet = { ...wallet.value };
+    for (const { count, id } of items) {
+      const currency = getWalletCurrency(id);
+      if (currency === undefined) throw new InvalidOperationError(Operation.Update, "reputation reward", String(id));
+      nextWallet[currency] += count;
+    }
+    setWallet(nextWallet);
+  };
   const settleExplorationThresholds = () => {
     if (!mondstadtReputation.value || explorationAreas.value.length === 0 || !isJumpLandmarksLoaded.value) return;
-    const { explores, levels } = mondstadtReputation.value;
+    const { explores } = mondstadtReputation.value;
     const previousPercentage = computeNationExplorationPercentage(
       explorationAreas.value,
       jumpLandmarks.value.filter(({ id }) => thresholdPaidLandmarkIds.has(id)),
     );
     const percentage = computeNationExplorationPercentage(explorationAreas.value, unlockedLandmarks.value);
     thresholdPaidLandmarkIds = unlockedLandmarkIds.value;
-    for (const { reward } of computeReputationExploresReached(previousPercentage, percentage, explores)) {
-      setReputation(addReputationExp(reputation.value, reward.exp, levels));
-      const nextWallet = { ...wallet.value };
-      for (const { count, id } of reward.items) {
-        const currency = getWalletCurrency(id);
-        if (currency === undefined) throw new InvalidOperationError(Operation.Update, "reputation reward", String(id));
-        nextWallet[currency] += count;
-      }
-      setWallet(nextWallet);
-    }
+    for (const { reward } of computeReputationExploresReached(previousPercentage, percentage, explores))
+      payReputationReward(reward);
   };
   // The areas, the Reputation and the regions are read in the background, so the thresholds settle once all of them are in
   watch([mondstadtReputation, explorationAreas, isJumpLandmarksLoaded], settleExplorationThresholds);
+  // A finished quest pays the Reputation request it is, once: the event is emitted on the move that finishes it, and each
+  // Request binds its quest once, so a quest the groups repeat pays its first row's reward
+  events.on("finishQuest", (quest, progress, nextProgress) => {
+    if (!mondstadtReputation.value) return;
+    for (const reward of getFinishedReputationRewards(
+      quest,
+      progress,
+      nextProgress,
+      getReputationRequestBindings(mondstadtReputation.value.requests),
+    ))
+      payReputationReward(reward);
+  });
   // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with, by its
   // Id and by its scene point, which the quest step that names a waypoint by its point finishes on
   const activateLandmark = (landmarkId: string) => {
