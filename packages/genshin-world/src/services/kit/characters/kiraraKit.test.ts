@@ -5,15 +5,21 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKiraraKitBehaviour, KIRARA_CHARACTER_ID } from "#src/services/kit/characters/kiraraKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const KIRARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KIRARA_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createKiraraCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -83,5 +89,46 @@ describe(createKiraraKitBehaviour, () => {
     expect.hasAssertions();
     expect(KIRARA_KIT.burstEnergyCost).toBe(60);
     expect(KIRARA_KIT.burstCooldownSeconds).toBe(15);
+  });
+});
+
+// The DMG Bonus Pupillary Variance gives a hit of hers from her Max HP, for the given attack, with her at the given ascension
+const readStrikeDamageBonus = (ascension: number, attackTag: AttackTag): number => {
+  const combatant = {
+    ...createKiraraCombatant(),
+    ascension,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  };
+  return (
+    KIRARA_KIT.getStrikeDamageBonus?.(
+      {
+        attackTag,
+        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+        combatant,
+        hit: takeOne(KIRARA_KIT.elementalSkill.hits),
+      },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      createParty([KIRARA_CHARACTER_ID]),
+    ) ?? 0
+  );
+};
+
+describe("pupillary Variance", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect([
+      readStrikeDamageBonus(4, AttackTag.ElementalSkill),
+      readStrikeDamageBonus(4, AttackTag.ElementalBurst),
+    ]).toStrictEqual([expect.closeTo(0.04), expect.closeTo(0.03)]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect([
+      readStrikeDamageBonus(3, AttackTag.ElementalSkill),
+      readStrikeDamageBonus(3, AttackTag.ElementalBurst),
+    ]).toStrictEqual([0, 0]);
   });
 });

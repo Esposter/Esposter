@@ -3,6 +3,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -18,11 +19,20 @@ const SELF_INFUSION_SECONDS = 0.1;
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/kirara/burst.go
 const CARDAMOM_COUNT = 6;
 
+// Pupillary Variance, Kirara's Ascension 4 passive: every 1,000 of her Max HP adds 0.4% DMG to her skill's hits and 0.3%
+// To her burst's, as gcsim (MIT, main) kirara/asc.go gives it
+// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kirara/asc.go
+const ASCENSION_4 = 4;
+const PUPILLARY_VARIANCE_SKILL_DAMAGE_BONUS = 0.004;
+const PUPILLARY_VARIANCE_BURST_DAMAGE_BONUS = 0.003;
+const PUPILLARY_VARIANCE_HEALTH_UNIT = 1000;
+
 export const KIRARA_CHARACTER_ID = 10_000_061;
 
 // Kirara's behaviour: Tail-Flicking Flying Kick, its press and each hold, cast her shield and the 0.1 second Dendro
 // Self-infusion as they start, and Secret Art: Surprise Dispatch sets its Cat Grass Cardamoms, the detonated ones first
-// And the rest at expiry. Her passives and constellations are not built
+// And the rest at expiry. From Ascension 4 her skill's and burst's hits gain DMG by her Max HP. Her Ascension 1 passive,
+// Reinforced Packaging, and her constellations are not built
 export const createKiraraKitBehaviour = ({
   kit,
   readHits,
@@ -63,6 +73,13 @@ export const createKiraraKitBehaviour = ({
     },
   };
   return {
+    getStrikeDamageBonus: ({ attackTag, combatant }) => {
+      if (combatant.ascension < ASCENSION_4) return 0;
+      const healthUnits = combatant.attributes.maxHealth / PUPILLARY_VARIANCE_HEALTH_UNIT;
+      if (attackTag === AttackTag.ElementalSkill) return healthUnits * PUPILLARY_VARIANCE_SKILL_DAMAGE_BONUS;
+      if (attackTag === AttackTag.ElementalBurst) return healthUnits * PUPILLARY_VARIANCE_BURST_DAMAGE_BONUS;
+      return 0;
+    },
     // The Cardamoms are a summon cast at her body
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
