@@ -1,8 +1,7 @@
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
-import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
+import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 // The numbers the expressions on one line of a gcsim file evaluate to, each expression read from every token, so an
@@ -16,7 +15,7 @@ export const readGcsimLineValues = (
   const values: number[] = [];
   for (let position = 0; position < tokens.length; position++) {
     const { expression } = parseGoExpression(tokens, position);
-    const value = readGoNumber(evaluateGoExpression(expression, resolveName));
+    const value = evaluateGoNumber(expression, resolveName);
     if (value !== undefined) values.push(value);
   }
   return values;

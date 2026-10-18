@@ -10,8 +10,8 @@ import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpress
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
+import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { toGoNumberValue } from "#src/services/genshinAssets/kits/gcsim/toGoNumberValue";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
@@ -242,7 +242,7 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
   for (const { expression, file, indexes, line, name } of elementAssignments) {
     const constant = constantMap.get(name);
     const value = evaluateGoExpression(expression, resolveName);
-    const indexValues = indexes.map((index) => readGoNumber(evaluateGoExpression(index, resolveName)));
+    const indexValues = indexes.map((index) => evaluateGoNumber(index, resolveName));
     if (constant === undefined || value === undefined || !Array.isArray(constant.value)) continue;
     if (!indexValues.every((index) => index !== undefined)) continue;
     // An intermediate level the package never made leaves no slice to assign into, so the assignment is skipped

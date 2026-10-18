@@ -6,10 +6,9 @@ import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHit
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
-import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
+import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readArgumentStarts } from "#src/services/genshinAssets/kits/gcsim/readArgumentStarts";
-import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 
 // The layout of a `combat` hitbox constructor's arguments: an on-target one takes its target first, a source one its
 // Source then its centre, each then its offset, its size (a circle's radius, a box's width and height) and a fan angle
@@ -64,7 +63,7 @@ const readOffset = (
   while (tokens[position] !== undefined && !checkIsGoPunctuation(tokens[position], "}")) {
     const key = tokens[position];
     if (key?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[position + 1], ":")) return undefined;
-    const value = readGoNumber(evaluateGoExpression(parseGoExpression(tokens, position + 2).expression, resolveName));
+    const value = evaluateGoNumber(parseGoExpression(tokens, position + 2).expression, resolveName);
     if (typeof value !== "number" || (key.text !== "X" && key.text !== "Y")) return undefined;
     offset[key.text === "X" ? 0 : 1] = value;
     position = parseGoExpression(tokens, position + 2).end;
@@ -77,7 +76,7 @@ const readNumber = (
   tokens: readonly GoToken[],
   start: number,
   resolveName: (name: string) => GoValue | undefined,
-): number | undefined => readGoNumber(evaluateGoExpression(parseGoExpression(tokens, start).expression, resolveName));
+): number | undefined => evaluateGoNumber(parseGoExpression(tokens, start).expression, resolveName);
 
 // The hitbox a queue call's attack pattern is written as, `combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 2)`
 // And its kin, in gcsim's shape and centre terms: a circle or box on the player, or on the primary target, with its
