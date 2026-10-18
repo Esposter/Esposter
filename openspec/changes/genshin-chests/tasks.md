@@ -14,7 +14,7 @@
 ## 4. Digging and seals
 
 - [x] 4.1 Offer Dig at each buried place and reveal the chest once dug, paying no reward until the tier is measured. Verify: tests named after the scenarios 'a buried chest offers Dig at its place', 'a dug chest appears once dug' and 'a dug chest pays no reward until its tier is measured', seen failing first.
-- [ ] 4.2 Free each sealed chest by Pyro for vines or ice, and by a blunt or poise-damaging attack for rock. Verify: tests named after the scenarios 'a chest sealed in vines is freed by Pyro', 'a chest sealed in rock is freed by a blunt attack' and 'a chest sealed in vines is not freed by an attack of another element', seen failing first. Blocked: no published place names the seal it wears, and the map's labels give the sealed kind one label with no sub-labels, so a strike cannot be matched to a place. The rule is built as `checkIsSealFreed`; the seal each place holds is the chest-seal-pyro recording's to settle.
+- [ ] 4.2 Free each sealed chest by Pyro for vines or ice, and by a blunt or poise-damaging attack for rock. Verify: tests named after the scenarios 'a chest sealed in vines is freed by Pyro', 'a chest sealed in rock is freed by a blunt attack' and 'a chest sealed in vines is not freed by an attack of another element', seen failing first. Blocked on three things: no published place names the seal it wears, so the map's sealed label cannot be matched to a seal; no strike reaches a chest, as `checkIsSealFreed` has no caller; and `chest-seal-pyro.mkv` is unrecorded, which would settle the seal each place holds. The rule is built as `checkIsSealFreed`, and the row stays unticked until then.
 
 ## 5. Locks by puzzles
 
