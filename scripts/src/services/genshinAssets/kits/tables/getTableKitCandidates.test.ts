@@ -289,8 +289,10 @@ describe(getTableKitCandidates, () => {
       "burst.hits.1.multiplier": { index: 1, proudSkillGroupId: 12_239 },
       "burst.hits.2.multiplier": { index: 2, proudSkillGroupId: 12_239 },
       "burst.hits.3.multiplier": { index: 3, proudSkillGroupId: 12_239 },
+      "burst.hits.length": 4,
       "skill.hits.0.multiplier": { index: 0, proudSkillGroupId: 12_232 },
       "skill.hits.1.multiplier": { index: 1, proudSkillGroupId: 12_232 },
+      "skill.hits.length": 2,
       "stances.phantasmPerformance.chargedAttack.hits.0.multiplier": { index: 4, proudSkillGroupId: 12_232 },
       "stances.phantasmPerformance.chargedAttack.hits.1.multiplier": { index: 5, proudSkillGroupId: 12_232 },
       "stances.phantasmPerformance.chargedAttack.hits.2.multiplier": { index: 6, proudSkillGroupId: 12_232 },
@@ -298,6 +300,7 @@ describe(getTableKitCandidates, () => {
       "stances.phantasmPerformance.chargedAttack.hits.4.multiplier": { index: 8, proudSkillGroupId: 12_232 },
       "stances.phantasmPerformance.chargedAttack.hits.5.multiplier": { index: 9, proudSkillGroupId: 12_232 },
       "stances.phantasmPerformance.chargedAttack.hits.6.multiplier": { index: 10, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.length": 7,
     });
   });
 
@@ -339,7 +342,9 @@ describe(getTableKitCandidates, () => {
     });
     expect(readCandidateValues(candidates)).toStrictEqual({
       "burst.hits.0.multiplier": { index: 0, proudSkillGroupId: 14_339 },
+      "burst.hits.length": 1,
       "skill.hits.0.multiplier": { index: 0, proudSkillGroupId: 14_332 },
+      "skill.hits.length": 1,
     });
   });
 
@@ -393,6 +398,7 @@ describe(getTableKitCandidates, () => {
         "stances.phantasmPerformance.chargedAttack.hits.4.multiplier",
         "stances.phantasmPerformance.chargedAttack.hits.5.multiplier",
         "stances.phantasmPerformance.chargedAttack.hits.6.multiplier",
+        "stances.phantasmPerformance.chargedAttack.hits.length",
         "stances.phantasmPerformance.chargedAttackStamina",
         "parameters.phantasmPerformanceCharges",
         "parameters.shadowDanceSeconds",
@@ -450,14 +456,21 @@ describe(getTableKitCandidates, () => {
       [
         "stances.lunarPhaseShift.chargedAttack.hits.0.multiplier",
         "stances.lunarPhaseShift.chargedAttack.hits.1.multiplier",
+        "stances.lunarPhaseShift.chargedAttack.hits.length",
         "stances.lunarPhaseShift.normalAttacks.0.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.0.hits.length",
         "stances.lunarPhaseShift.normalAttacks.1.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.1.hits.length",
         "stances.lunarPhaseShift.normalAttacks.2.hits.0.multiplier",
         "stances.lunarPhaseShift.normalAttacks.2.hits.1.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.2.hits.length",
         "stances.lunarPhaseShift.normalAttacks.3.hits.0.multiplier",
         "stances.lunarPhaseShift.normalAttacks.3.hits.1.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.3.hits.length",
+        "stances.lunarPhaseShift.normalAttacks.length",
         "stances.lunarPhaseShift.skill.hits.0.multiplier",
         "stances.lunarPhaseShift.skill.hits.1.multiplier",
+        "stances.lunarPhaseShift.skill.hits.length",
         "parameters.lunarPhaseShiftSeconds",
       ].toSorted(),
     );
@@ -473,6 +486,9 @@ describe(getTableKitCandidates, () => {
       index: 2,
       proudSkillGroupId: 12_632,
     });
+    expect(values["stances.lunarPhaseShift.normalAttacks.length"]).toBe(4);
+    expect(values["stances.lunarPhaseShift.normalAttacks.3.hits.length"]).toBe(2);
+    expect(values["stances.lunarPhaseShift.chargedAttack.hits.length"]).toBe(2);
   });
 
   test("gives Illuga's skill hold its hits from the Hold DMG label, and its cooldown from the skill's CD", () => {
@@ -498,5 +514,7 @@ describe(getTableKitCandidates, () => {
     expect(values["skillHolds.0.action.hits.0.multiplier"]).toStrictEqual({ index: 2, proudSkillGroupId: 12_732 });
     expect(values["skillHolds.0.action.hits.1.multiplier"]).toStrictEqual({ index: 3, proudSkillGroupId: 12_732 });
     expect(values["skillHolds.0.cooldownSeconds"]).toStrictEqual({ index: 4, proudSkillGroupId: 12_732 });
+    expect(values["skillHolds.0.action.hits.length"]).toBe(2);
+    expect(values["skillHolds.length"]).toBe(1);
   });
 });
