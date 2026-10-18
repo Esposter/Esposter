@@ -203,6 +203,56 @@ const readTaskClosures = (tokens: readonly GoToken[]): TaskClosure[] => {
   return closures;
 };
 
+// A closure a function returns, `return func() {` ... `}`: its body's braces and the name of the function returning it
+interface ReturnedClosure {
+  bodyEnd: number;
+  bodyStart: number;
+  functionName?: string;
+}
+
+// Each closure a function returns in a file, read at its `return` token
+const readReturnedClosures = (tokens: readonly GoToken[], scope: GoScope): ReturnedClosure[] => {
+  const closures: ReturnedClosure[] = [];
+  for (const [position, token] of tokens.entries()) {
+    if (token.kind !== GoTokenKind.Identifier || token.text !== "return" || tokens[position + 1]?.text !== "func")
+      continue;
+    let bodyStart = position + 2;
+    while (bodyStart < tokens.length && !checkIsGoPunctuation(tokens[bodyStart], "{")) bodyStart++;
+    const bodyEnd = findClosingBrace(tokens, bodyStart);
+    if (bodyEnd !== undefined) closures.push({ bodyEnd, bodyStart, functionName: scope.functionName(position) });
+  }
+  return closures;
+};
+
+// A `Tasks.Add` or `QueueCharTask` call that schedules a function's returned closure, as in
+// `Tasks.Add(c.tick(src), delay)`: its Call's token, the start of its delay, and the name of the function its first
+// argument calls
+interface ClosureSchedule {
+  delayStart: number;
+  functionName: string;
+  position: number;
+}
+
+// Each call of a file that schedules a call's result, read at its `Tasks` or `QueueCharTask` token
+const readClosureSchedules = (tokens: readonly GoToken[]): ClosureSchedule[] => {
+  const schedules: ClosureSchedule[] = [];
+  for (const [position, token] of tokens.entries()) {
+    const isScheduler =
+      (token.text === "Tasks" &&
+        checkIsGoPunctuation(tokens[position + 1], ".") &&
+        tokens[position + 2]?.text === "Add") ||
+      token.text === "QueueCharTask";
+    if (token.kind !== GoTokenKind.Identifier || !isScheduler) continue;
+    const call = parseGoExpression(tokens, position).expression;
+    if (call.kind !== GoExpressionKind.Call || call.parameterStarts.length < 2) continue;
+    const [attackStart, delayStart] = call.parameterStarts;
+    const attack = parseGoExpression(tokens, attackStart ?? position).expression;
+    if (attack.kind !== GoExpressionKind.Call || delayStart === undefined) continue;
+    schedules.push({ delayStart, functionName: attack.callee.split(".").at(-1) ?? "", position });
+  }
+  return schedules;
+};
+
 // The variable values of every iteration a position is in, one map each, of its enclosing constant loops taken together
 const readIterations = (loops: readonly ConstantLoop[], position: number): Map<string, number>[] =>
   loops
@@ -227,6 +277,35 @@ export const readGcsimQueuedAttacks = (
     const scope = createGoScope(tokens, constantMap);
     const loops = readConstantLoops(tokens, scope);
     const taskClosures = readTaskClosures(tokens);
+    const returnedClosures = readReturnedClosures(tokens, scope);
+    const closureSchedules = readClosureSchedules(tokens);
+    const readAllIterations = (position: number): Map<string, number>[] => {
+      const parameterIterations = scope.readParameterIterations(position);
+      return readIterations(loops, position).flatMap((loopIteration) =>
+        parameterIterations.map((parameterIteration) => new Map([...loopIteration, ...parameterIteration])),
+      );
+    };
+    // The delays a closure a function returns takes from the schedules of that function outside every returned closure,
+    // each schedule's delay read at its own iterations. A schedule inside a returned closure runs again at each of the
+    // closure's own times, so it is not read; no schedule at all leaves the delay unread
+    const readClosureDelays = (functionName: string | undefined): (number | undefined)[] => {
+      const schedules = closureSchedules.filter(
+        (schedule) =>
+          schedule.functionName === functionName &&
+          !returnedClosures.some(
+            ({ bodyEnd, bodyStart }) => bodyStart < schedule.position && schedule.position < bodyEnd,
+          ),
+      );
+      if (schedules.length === 0) return [undefined];
+      return schedules.flatMap(({ delayStart, position }) =>
+        readAllIterations(position).map((iteration) =>
+          evaluateGoNumber(
+            parseGoExpression(tokens, delayStart).expression,
+            (name) => iteration.get(name) ?? scope.resolveName(name, position),
+          ),
+        ),
+      );
+    };
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.kind !== GoTokenKind.Identifier || !QUEUE_CALLEES.has(token.text)) continue;
@@ -256,29 +335,31 @@ export const readGcsimQueuedAttacks = (
         ({ delayStart }) => parseGoExpression(tokens, delayStart).expression,
       );
       const [firstTask] = enclosingTasks;
-      const parameterIterations = scope.readParameterIterations(position);
-      for (const iteration of readIterations(loops, position).flatMap((loopIteration) =>
-        parameterIterations.map((parameterIteration) => new Map([...loopIteration, ...parameterIteration])),
-      )) {
+      const enclosingClosure = returnedClosures.find(
+        ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
+      );
+      const closureDelays = enclosingClosure === undefined ? [0] : readClosureDelays(enclosingClosure.functionName);
+      for (const iteration of readAllIterations(position)) {
         const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
         const delayValues = [delayExpression, ...taskDelayExpressions].map((expression) =>
           expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
         );
-        const delay = delayValues.reduce<number | undefined>(
+        const ownDelay = delayValues.reduce<number | undefined>(
           (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
           0,
         );
         const holdValue = iteration.get("hold");
-        queuedAttacks.push({
-          attackLine,
-          attackName,
-          delay,
-          delayLine: tokens[firstTask?.delayStart ?? delayStart ?? position]?.line ?? token.line,
-          file,
-          hitbox,
-          line: token.line,
-          ...(holdValue !== undefined && { holdValue }),
-        });
+        for (const closureDelay of closureDelays)
+          queuedAttacks.push({
+            attackLine,
+            attackName,
+            delay: ownDelay === undefined || closureDelay === undefined ? undefined : ownDelay + closureDelay,
+            delayLine: tokens[firstTask?.delayStart ?? delayStart ?? position]?.line ?? token.line,
+            file,
+            hitbox,
+            line: token.line,
+            ...(holdValue !== undefined && { holdValue }),
+          });
       }
     }
     return queuedAttacks;

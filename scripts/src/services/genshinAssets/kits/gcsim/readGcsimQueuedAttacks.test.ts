@@ -642,4 +642,101 @@ describe(readGcsimQueuedAttacks, () => {
       [14, 37, 1],
     ]);
   });
+  test("adds the delay of the Tasks.Add that schedules a closure a function returns to its queue call", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package durin",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(c.burstTick(c.burstSrc), 30)",
+          "}",
+          "",
+          "func (c *char) burstTick(src int) func() {",
+          "\treturn func() {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, 5)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([35]);
+  });
+  test("reads no delay from a closure a function returns whose schedule's delay it cannot read", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package durin",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(c.burstTick(c.burstSrc), ceil(burstFirstTickDelay))",
+          "}",
+          "",
+          "func (c *char) burstTick(src int) func() {",
+          "\treturn func() {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      undefined,
+    ]);
+  });
+  test("reads no delay from a returned closure no Tasks.Add schedules, an attack callback run by its hit", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package navia",
+          "",
+          "func (c *char) c2() info.AttackCBFunc {",
+          "\treturn func(a info.AttackCB) {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      undefined,
+    ]);
+  });
+  test("reads a closure's schedule outside it, not the schedule the closure makes of itself each time it runs", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package gorou",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(c.collapse(c.Core.F), 90)",
+          "}",
+          "",
+          "func (c *char) collapse(src int) func() {",
+          "\treturn func() {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "\t\tc.Core.Tasks.Add(c.collapse(src), 90)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([90]);
+  });
 });
