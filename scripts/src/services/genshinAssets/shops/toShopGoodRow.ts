@@ -12,7 +12,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // One good as the world reads it, its game-time dates written as ISO strings with the game's offset. A good priced in Mora
 // Takes the table's Mora cost; one bought with something other than one item or Mora has no price the world can take, so
 // It is an error rather than a free good
-export const toShopGoodRow = (row: ExcelShopGoodsRow): ShopGoodRow => {
+export const toShopGoodRow = (row: ExcelShopGoodsRow, reputationDiscountLevel?: number): ShopGoodRow => {
   const price = row.costScoin > 0 ? { count: row.costScoin, id: MORA_ITEM_ID } : getShopGoodPrice(row);
   if (!price)
     throw new InvalidOperationError(Operation.Read, "shop good", `good ${row.goodsId} has no single item price`);
@@ -30,5 +30,6 @@ export const toShopGoodRow = (row: ExcelShopGoodsRow): ShopGoodRow => {
     priceCount: price.count,
     priceItemId: price.id,
     refresh,
+    ...(reputationDiscountLevel === undefined ? {} : { reputationDiscountLevel }),
   };
 };

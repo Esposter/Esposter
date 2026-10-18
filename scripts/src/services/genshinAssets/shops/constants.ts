@@ -5,6 +5,8 @@ import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 export const PAIMON_BARGAINS_SHOP_TYPE = 1001;
 // The general goods the Mondstadt grocery sells, shop 1004 in the table, the one the city's grocery row is read as
 export const MONDSTADT_GENERAL_GOODS_SHOP_TYPE = 1004;
+// Mondstadt's city in the shop table, whose shops' discount the grocery's goods take
+export const MONDSTADT_CITY_ID = 1;
 // The Masterless currencies the shop's Fates are bought with, Starglitter and Stardust, by their item ids in the game's
 // Tables, and the Fates it gives, Intertwined and Acquaint, by theirs
 export const SHOP_CURRENCY_ITEM_IDS: readonly number[] = [221, 222];
