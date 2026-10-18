@@ -20,6 +20,11 @@ describe(readModel, () => {
     { length: 36000 },
     (_value, index) => Math.sin((2 * Math.PI * 440 * index) / AUDIO_SAMPLE_RATE) / 2,
   );
+  // Two tones one after the other, A4 then E5, so the model hears two notes the snapshot can tell apart
+  const twoTones = Float32Array.from(
+    { length: 36000 },
+    (_value, index) => Math.sin((2 * Math.PI * (index < 18000 ? 440 : 659) * index) / AUDIO_SAMPLE_RATE) / 2,
+  );
   // One read of the shipped model, which every test below observes a part of: a read takes a few seconds alone and
   // Several times that under coverage, so a read per test cannot fit the default test timeout
   let executions = 0;
@@ -51,5 +56,33 @@ describe(readModel, () => {
     expect.hasAssertions();
 
     expect({ executions, frames: readings.frames.length }).toStrictEqual({ executions: 1, frames: 140 });
+  });
+
+  test("hears the notes the TensorFlow.js export heard", async () => {
+    expect.hasAssertions();
+
+    const model = await readShippedModel();
+    const twoTonesReadings = await readModel(model, twoTones);
+
+    expect(
+      createNotes(twoTonesReadings).map(({ durationFrames, pitchMidi, startFrame }) => ({
+        durationFrames,
+        pitchMidi,
+        startFrame,
+      })),
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "durationFrames": 66,
+          "pitchMidi": 69,
+          "startFrame": 1,
+        },
+        {
+          "durationFrames": 70,
+          "pitchMidi": 76,
+          "startFrame": 68,
+        },
+      ]
+    `);
   });
 });
