@@ -104,5 +104,6 @@
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2032 } },
   "skill.hits.0.poiseDamage": { "cause": "Unsourced", "value": 140 },
   "skillHolds.0.action.hits.length": { "cause": "Unsourced", "value": 1 },
-  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2032 } }
+  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2032 } },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2039 } }
 }
