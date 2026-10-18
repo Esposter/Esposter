@@ -10,7 +10,7 @@ export const statuesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish Mondstadt's Statue of The Seven levels (the Oculi each takes, its rewards and stamina) from the dump to the game data",
+      "Publish Mondstadt's and Liyue's Statue of The Seven levels (the Oculi each takes, its rewards and stamina) from the dump to the game data",
     name: "statues",
   },
   run: async ({ args }) => {
