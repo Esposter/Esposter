@@ -8,9 +8,12 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { breastplate } from "#src/services/gcg/cards/breastplate";
 import { fatalRainscreen } from "#src/services/gcg/cards/fatalRainscreen";
+import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
@@ -181,5 +184,57 @@ describe("raincutter", () => {
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
     expect(takeOne(duel.sides, 0).characters.map(({ aura }) => aura)).toStrictEqual([Element.Hydro]);
     expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([RAINBOW_BLADEWORK_ID]);
+  });
+});
+
+describe("full Plate", () => {
+  const FULL_PLATE_ID = 116_021;
+  const createShieldedDuel = (shield: number): GcgDuel =>
+    createDuel([createSideState([{ ...createCharacterState(1602), shield }]), createSideState([])]);
+
+  test("while its active character holds a shield, the Physical DMG it takes is halved, rounded up", () => {
+    expect.hasAssertions();
+    const context: GcgEffectContext = { duel: createShieldedDuel(2), sideIndex: 0 };
+    const zoneCard = createGcgZoneCard(FULL_PLATE_ID, fullPlate);
+    expect(fullPlate.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(2);
+    expect(fullPlate.modifyDamageReceived?.(context, 3, zoneCard, Element.Pyro)).toBe(3);
+  });
+
+  test("without a shield on its active character, no DMG is halved", () => {
+    expect.hasAssertions();
+    const context: GcgEffectContext = { duel: createShieldedDuel(0), sideIndex: 0 };
+    const zoneCard = createGcgZoneCard(FULL_PLATE_ID, fullPlate);
+    expect(fullPlate.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(3);
+  });
+
+  test("at the end phase it is spent once no character on its side holds a shield", () => {
+    expect.hasAssertions();
+    const zoneCard = createGcgZoneCard(FULL_PLATE_ID, fullPlate);
+    fullPlate.onEndPhase?.({ duel: createShieldedDuel(1), sideIndex: 0 }, zoneCard);
+    expect(zoneCard.usages).toBe(1);
+    fullPlate.onEndPhase?.({ duel: createShieldedDuel(0), sideIndex: 0 }, zoneCard);
+    expect(zoneCard.usages).toBe(0);
+  });
+});
+
+describe("breastplate", () => {
+  test("the skill deals 1 Geo DMG, grants its character 2 Shield points, and creates a Full Plate onstage", () => {
+    expect.hasAssertions();
+    const BREASTPLATE_SKILL: GcgSkill = {
+      costs: [],
+      effect: "Char_Skill_16022",
+      energyGain: 1,
+      id: 16_022,
+      kind: GcgSkillKind.ElementalSkill,
+    };
+    const FULL_PLATE_ID = 116_021;
+    const duel = createDuel([
+      createSideState([createCharacterState(1602)]),
+      createSideState([createCharacterState(1203)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, BREASTPLATE_SKILL);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
+    expect(takeOne(duel.sides, 0).characters.map(({ shield }) => shield)).toStrictEqual([2]);
+    expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([FULL_PLATE_ID]);
   });
 });
