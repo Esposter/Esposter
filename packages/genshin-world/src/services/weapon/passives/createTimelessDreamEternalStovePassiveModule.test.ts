@@ -22,8 +22,9 @@ const createWielder = (energyRecharge: number): Combatant => ({
 });
 
 describe(createTimelessDreamEternalStovePassiveModule, () => {
-  // Timeless Dream: Eternal Stove at its first rank: 28% ATK for each whole point of Energy Recharge over its base, up to 80%,
-  // And 30% Energy Recharge for twelve seconds after an Elemental Burst
+  // Timeless Dream: Eternal Stove at its first rank: ATK rises by 28% of the Energy Recharge over its base, a
+  // Proportional share and not a whole-point step, up to 80%, and 30% Energy Recharge for twelve seconds after an
+  // Elemental Burst
   const timelessDreamEternalStovePassiveModule = createTimelessDreamEternalStovePassiveModule([0.28, 0.8, 0.3, 12]);
 
   test("a wielder's Energy Recharge over the base raises ATK by the rank's share of it", () => {
