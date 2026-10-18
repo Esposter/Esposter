@@ -1,10 +1,13 @@
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 import type { CookingRecipe } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { WEAPON_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
+import { GOOD_HUNTER_SHOP_TYPE, SHOP_GOODS_TABLE_NAME } from "#src/services/genshinAssets/shops/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { CookingFoodType, CookingQuality, EnemyDropFamilyDropTableMap, GadgetKind, GameDataset } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -18,7 +21,12 @@ vi.mock(import("#src/services/genshinAssets/expeditions/readMondstadtExpeditionP
 vi.mock(import("#src/services/genshinAssets/cooking/readCookingRecipes"), () => ({
   readCookingRecipes: vi.fn<() => CookingRecipe[]>(() => []),
 }));
-vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<() => never[]>() }));
+vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({
+  readExcelTable: vi.fn<(tableName: string) => unknown[]>(() => []),
+}));
+
+// The game's time as the dump writes it, read off the epoch
+const toGameTime = (date: Date) => date.toISOString().slice(0, 19).replace("T", " ");
 
 describe(buildItems, () => {
   const TREE_ITEM_ID = 107010;
@@ -37,6 +45,28 @@ describe(buildItems, () => {
 
   const BATCH_CONSUMABLE_ITEM_ID = 7001;
   const QUEST_CONSUMABLE_ITEM_ID = 7002;
+
+  const FISH_ITEM_ID = 3001;
+  const FONTAINE_FISHING_SHOP_TYPE = 1090;
+  const UNKNOWN_ITEM_ID = 99_999;
+  const WEAPON_ITEM_ID = 11_426;
+
+  const toShopGood = (shopType: number, itemId: number): ExcelShopGoodsRow => ({
+    beginTime: toGameTime(new Date(0)),
+    buyLimit: 0,
+    costHcoin: 0,
+    costItems: [{ count: 1, id: FISH_ITEM_ID }],
+    costMcoin: 0,
+    costScoin: 0,
+    endTime: toGameTime(new Date(0)),
+    goodsId: 1,
+    itemCount: 1,
+    itemId,
+    minPlayerLevel: 0,
+    rotateId: 0,
+    shopType,
+    subTabId: 0,
+  });
 
   const materialRows = [
     {
@@ -120,11 +150,16 @@ describe(buildItems, () => {
     },
   ] satisfies MaterialRow[];
 
+  let materialTable: MaterialRow[] = [];
+  let itemTables: Record<string, unknown[]> = {};
+
   beforeEach(() => {
     const dropItemRows = Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) =>
       materials.map(({ itemId }) => ({ ...materialRows[0], id: itemId, nameTextMapHash: itemId })),
     );
-    vi.mocked(readExcelTable).mockReturnValue([...materialRows, ...dropItemRows]);
+    materialTable = [...materialRows, ...dropItemRows];
+    itemTables = { [MATERIAL_TABLE_NAME]: materialTable };
+    vi.mocked(readExcelTable).mockImplementation((tableName) => itemTables[tableName] ?? []);
     vi.mocked(readPublishedGameData).mockImplementation((key) => {
       if (key === "offerings/frostbearingTree")
         return Promise.resolve([
@@ -281,11 +316,10 @@ describe(buildItems, () => {
 
   test("a named item the material table gives no type fails the publish", async () => {
     expect.hasAssertions();
-    const materialTable = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
-    vi.mocked(readExcelTable).mockReturnValue([
+    itemTables[MATERIAL_TABLE_NAME] = [
       ...materialTable.filter(({ id }) => id !== TREE_ITEM_ID),
       { ...materialRows[1], materialType: undefined },
-    ]);
+    ];
 
     await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 107010, has no material type in the material table, so the bag would show it in no tab]`,
@@ -294,8 +328,8 @@ describe(buildItems, () => {
 
   test("publishes a consumable whose use adds an item, filed under the consume tab", async () => {
     expect.hasAssertions();
-    vi.mocked(readExcelTable).mockReturnValue([
-      ...readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME),
+    itemTables[MATERIAL_TABLE_NAME] = [
+      ...materialTable,
       {
         foodQuality: "",
         id: BATCH_CONSUMABLE_ITEM_ID,
@@ -306,7 +340,7 @@ describe(buildItems, () => {
         rankLevel: 2,
         stackLimit: 99,
       },
-    ]);
+    ];
 
     const built = await buildItems();
 
@@ -326,8 +360,8 @@ describe(buildItems, () => {
 
   test("a consumable of a tab the bag does not show is no bag item", async () => {
     expect.hasAssertions();
-    vi.mocked(readExcelTable).mockReturnValue([
-      ...readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME),
+    itemTables[MATERIAL_TABLE_NAME] = [
+      ...materialTable,
       {
         foodQuality: "",
         id: QUEST_CONSUMABLE_ITEM_ID,
@@ -338,12 +372,43 @@ describe(buildItems, () => {
         rankLevel: 1,
         stackLimit: 99,
       },
-    ]);
+    ];
 
     const built = await buildItems();
 
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
     expect(ids.map(({ id }) => id)).not.toContain(QUEST_CONSUMABLE_ITEM_ID);
+  });
+
+  test("a fishing good that is a weapon is held by the weapon table, so the bag holds no item for it", async () => {
+    expect.hasAssertions();
+    itemTables[WEAPON_TABLE_NAME] = [{ id: WEAPON_ITEM_ID }];
+    itemTables[SHOP_GOODS_TABLE_NAME] = [toShopGood(FONTAINE_FISHING_SHOP_TYPE, WEAPON_ITEM_ID)];
+    itemTables[MATERIAL_TABLE_NAME] = [...materialTable, { ...materialRows[0], id: FISH_ITEM_ID, nameTextMapHash: 9 }];
+
+    const built = await buildItems();
+
+    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(ids.map(({ id }) => id)).not.toContain(WEAPON_ITEM_ID);
+  });
+
+  test("a good whose item no item table holds fails the publish, naming the id", async () => {
+    expect.hasAssertions();
+    itemTables[SHOP_GOODS_TABLE_NAME] = [toShopGood(GOOD_HUNTER_SHOP_TYPE, UNKNOWN_ITEM_ID)];
+
+    await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 99999, is in no item table]`,
+    );
+  });
+
+  test("an item two item tables hold fails the publish, naming the id", async () => {
+    expect.hasAssertions();
+    itemTables[WEAPON_TABLE_NAME] = [{ id: TREE_ITEM_ID }];
+
+    await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 107010, is in more than one item table]`,
+    );
   });
 });
