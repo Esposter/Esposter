@@ -40,6 +40,9 @@ export const MAX_PARTY_TEAM_NAME_LENGTH = 32;
 export const MAX_UNLOCKED_LANDMARK_COUNT = 512;
 // The chests a player opens once each, so the bound is every chest the world's regions hold at once with room to spare
 export const MAX_OPENED_CHEST_COUNT = 4096;
+// The one-time domains a player clears once each: only those enter the save, so the bound is every domain the game has with
+// Room to spare
+export const MAX_CLEARED_DOMAIN_COUNT = 64;
 // The Oculi a player finds once each, across every region the game has, so the bound is the whole map's with room to
 // Spare
 export const MAX_FOUND_OCULUS_COUNT = 4096;
@@ -140,6 +143,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
   characters: [],
+  clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
@@ -201,6 +205,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     }) +
   MAX_UNLOCKED_LANDMARK_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_OPENED_CHEST_COUNT * getListEntryLength(MAX_SAVE_ID) +
+  MAX_CLEARED_DOMAIN_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_SETTLED_SEELIE_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_SOLVED_PUZZLE_COUNT * getListEntryLength(MAX_SAVE_ID) +
   PARTY_TEAM_MAX_COUNT *
@@ -245,6 +250,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   adventureExp: 0,
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],
+  clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },

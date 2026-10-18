@@ -24,6 +24,7 @@ import {
   MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
   MAX_OFFERING_ITEM_KIND_COUNT,
+  MAX_CLEARED_DOMAIN_COUNT,
   MAX_OPENED_CHEST_COUNT,
   MAX_PARTY_TEAM_NAME_LENGTH,
   MAX_QUEST_COUNT,
@@ -161,6 +162,9 @@ describe("genshinSaveSchema", () => {
           level: maxNumber,
         },
       },
+      clearedDomains: Array.from({ length: MAX_CLEARED_DOMAIN_COUNT }, (_value, index) =>
+        String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+      ),
       openedChests: Array.from({ length: MAX_OPENED_CHEST_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
       ),
