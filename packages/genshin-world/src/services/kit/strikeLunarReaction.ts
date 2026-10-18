@@ -31,13 +31,13 @@ export const strikeLunarReaction = (
   const damages = priceReactionContributors(
     contributorIds,
     context,
-    (level, attributeTotalMap) =>
+    (level, attributeTotalMap, partyDamageBonus) =>
       getLunarDamage(
         lunarReactionType,
         takeOne(CharacterLevelMultiplierMap, level),
         attributeTotalMap[Attribute.ElementalMastery],
         moonsign.baseDamageBonusMap[lunarReactionType] ?? 0,
-        moonsign.reactionBonus,
+        moonsign.reactionBonus + partyDamageBonus,
       ),
     lunarReactionType,
   );

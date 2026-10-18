@@ -57,16 +57,8 @@ const checkIsOutOfStrikeReach = (strike: KitStrike, target: Enemy | undefined, e
 // Reaches the enemies round its own, whose energy and reactions follow in turn. The strikes given keep only those that
 // Struck an enemy, written in place
 export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): void => {
-  const {
-    characterIdCombatantMap,
-    enemyMap,
-    enemyTables,
-    kitEffectState,
-    party,
-    placeWildlifeDrops,
-    random,
-    wildlifeList,
-  } = context;
+  const { characterIdCombatantMap, enemyMap, kitEffectState, party, placeWildlifeDrops, random, wildlifeList } =
+    context;
   let struckCount = 0;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
@@ -135,11 +127,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
           deployedBonuses.damageBonus,
       };
       const { appliedElement, energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
-        enemyTables,
         enemy,
         pricedHit,
         pricedCombatant,
-        random,
+        context,
         moonsign,
         stellarReactionTypes,
       );

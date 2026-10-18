@@ -9,6 +9,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
@@ -101,7 +102,8 @@ describe(getBuffedCombatant, () => {
         health: ENDURING_ROCK_HEALTH,
         maxHealth: ENDURING_ROCK_HEALTH,
       };
-      strikeEnemy(enemyTables, enemy, DILUC_KIT.plungeCollision, buffed, () => 1);
+      const context = createKitTestContext(buffed, { enemyTables, random: () => 1 });
+      strikeEnemy(enemy, DILUC_KIT.plungeCollision, buffed, context);
       return enemy.maxHealth - enemy.health;
     };
 
