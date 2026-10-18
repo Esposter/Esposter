@@ -5,12 +5,14 @@ import { toOfferingLevelRow } from "#src/services/genshinAssets/offerings/toOffe
 import { describe, expect, test } from "vitest";
 
 describe(toOfferingLevelRow, () => {
-  const FROSTBEARING_ITEM_ID = 107_010;
-  const ITEMS_PER_LEVEL = 10;
+  const ITEM_ID = 101;
+  const ITEM_COUNT = 10;
+  const OTHER_ITEM_ID = 102;
+  const OTHER_ITEM_COUNT = 1;
   const LEVEL = 2;
-  const REWARD_ID = 311_102;
-  const MORA_ITEM_ID = 202;
-  const MORA_COUNT = 50_000;
+  const REWARD_ID = 3001;
+  const MORA_ITEM_ID = 201;
+  const MORA_COUNT = 500;
   const rewardRow: ExcelRewardRow = {
     rewardId: REWARD_ID,
     rewardItemList: [
@@ -19,19 +21,24 @@ describe(toOfferingLevelRow, () => {
     ],
   };
 
-  test("should read the item and count a level takes, and its reward's items with the empty slots dropped", () => {
+  test("offering the items for a level raises the offering", () => {
     expect.hasAssertions();
 
     const levelRow: ExcelOfferingLevelupRow = {
-      consumeItemConfigVec: [{ count: ITEMS_PER_LEVEL, id: FROSTBEARING_ITEM_ID }, {}],
+      consumeItemConfigVec: [
+        { count: ITEM_COUNT, id: ITEM_ID },
+        { count: OTHER_ITEM_COUNT, id: OTHER_ITEM_ID },
+      ],
       level: LEVEL,
       offeringId: 1,
       rewardId: REWARD_ID,
     };
 
     expect(toOfferingLevelRow(levelRow, rewardRow)).toStrictEqual({
-      itemCount: ITEMS_PER_LEVEL,
-      itemId: FROSTBEARING_ITEM_ID,
+      items: [
+        { itemCount: ITEM_COUNT, itemId: ITEM_ID },
+        { itemCount: OTHER_ITEM_COUNT, itemId: OTHER_ITEM_ID },
+      ],
       level: LEVEL,
       rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }],
     });
@@ -43,7 +50,7 @@ describe(toOfferingLevelRow, () => {
     const levelRow: ExcelOfferingLevelupRow = {
       consumeItemConfigVec: [
         { count: 0, id: 0 },
-        { count: ITEMS_PER_LEVEL, id: FROSTBEARING_ITEM_ID },
+        { count: ITEM_COUNT, id: ITEM_ID },
       ],
       level: LEVEL,
       offeringId: 1,
@@ -51,8 +58,7 @@ describe(toOfferingLevelRow, () => {
     };
 
     expect(toOfferingLevelRow(levelRow, rewardRow)).toStrictEqual({
-      itemCount: ITEMS_PER_LEVEL,
-      itemId: FROSTBEARING_ITEM_ID,
+      items: [{ itemCount: ITEM_COUNT, itemId: ITEM_ID }],
       level: LEVEL,
       rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }],
     });
@@ -69,8 +75,7 @@ describe(toOfferingLevelRow, () => {
     };
 
     expect(toOfferingLevelRow(levelRow, rewardRow)).toStrictEqual({
-      itemCount: 0,
-      itemId: 0,
+      items: [],
       level: 1,
       rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }],
     });
