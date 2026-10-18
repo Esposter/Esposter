@@ -1,25 +1,12 @@
-import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
+import type { StrongboxCraftTables } from "#src/models/crafting/StrongboxCraftTables";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
-import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { canOfferForStrongbox } from "#src/services/crafting/canOfferForStrongbox";
 import { rollStrongboxArtifact } from "#src/services/crafting/rollStrongboxArtifact";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
-
-// The game's tables and the names a strongbox's artifact is taken into the bag with, beside the roll's random
-export interface StrongboxCraftTables {
-  artifactDropTables: ArtifactDropTables;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  names: Readonly<Record<string, string>>;
-  random: () => number;
-  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
-  weaponDataMap: ReadonlyMap<number, WeaponData>;
-}
 
 // The bag and wallet after the Mystic Offering makes a strongbox: the chosen artifacts are given up, which must be exactly
 // The strongbox's count of different unlocked artifacts of its star rank, and the artifact it holds is taken in as a drop.
