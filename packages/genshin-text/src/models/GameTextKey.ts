@@ -33,6 +33,20 @@ export enum GameTextKey {
   ArchiveMaterials = "UI_CODEX_MATERIAL",
   ArchiveTravelLog = "UI_CODEX_QUEST",
   ArchiveTutorials = "UI_CODEX_TIPS",
+  // The Artifacts tab's buttons: Enhance raises a worn artifact's level, Equip puts one on an empty slot and Unequip
+  // Takes the worn one off
+  ArtifactActionEnhance = "UI_EQUIP_PAGE_LEVEL_UP",
+  ArtifactActionEquip = "UI_EQUIP_BUTTON",
+  ArtifactActionUnequip = "UI_ACTIVITY_POTION_BUFF_REMOVE_BUTTON",
+  // The set bonus block's heading, and the words it shows while no bonus is active
+  ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
+  ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
+  // The five artifact slots under the names the game gives them, in the order it lists them
+  ArtifactSlotCircletOfLogos = "EQUIP_DRESS",
+  ArtifactSlotFlowerOfLife = "EQUIP_BRACER",
+  ArtifactSlotGobletOfEonothem = "EQUIP_RING",
+  ArtifactSlotPlumeOfDeath = "EQUIP_NECKLACE",
+  ArtifactSlotSandsOfEon = "EQUIP_SHOES",
   // The button that lifts a character past its level cap with Masterless Stella Fortuna
   AscensionLimit = "UI_TEXT_ACTIVITY_LEVEL_UP",
   // The character screen's attributes under the game's own names, and the groups its details sort them into

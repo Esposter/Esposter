@@ -26,13 +26,26 @@ Each built task names the test it was written first in, and each test is a scena
       artifact takes the materials' EXP and its fodder's, and the Mora they cost is charged", "an enhancement the wallet cannot
       pay for is refused", "an enhancement of an empty slot is refused".
 
-## 5. Not built
+## 5. The Artifacts panel
 
-- [ ] 5.1 The Artifacts tab's panel: the five slots with their main and sub stats, the set bonuses at two and four pieces,
-      and the Enhance and Equip actions. Waits on the artifact slot and set-bonus game text keys, which the main session
-      writes, and on a fixture and parity case for the panel.
-- [ ] 5.2 The bag's artifact entry holds a rolled, individual piece with a unique instance id. Waits on the
+- [x] 5.1 The Artifacts tab's panel: the five slots, the picked slot's name, the set bonus block and the Enhance and Equip
+      or Unequip actions. Its case is the visual suite's `CharacterMenuArtifacts` fixture and its `worn` variant. Its words
+      are the artifact members of `GameTextKey`, which the text map's next write carries, and the character screen's
+      Artifacts tab passes it those words, the slot names and the set block's state.
+
+- [ ] 5.2 The set bonus lines. Each bonus's line is the game's set line filled with its effect's text, which the artifact
+      table does not hold a text id for yet. Waits on that text id being read from the dump.
+
+- [ ] 5.3 The picked artifact's main and sub stats in the panel's details. Waits on the stats layout measured off the
+      reference frame.
+
+- [ ] 5.4 The panel's parity reference and its approval, once the reference frame is fetched and its compare is clean.
+      Waits on a browser run.
+
+## 6. Not built
+
+- [ ] 6.1 The bag's artifact entry holds a rolled, individual piece with a unique instance id. Waits on the
       character-screen agent's change (`agent/w6-character-screen`), which lands first; this change builds
       against the `Artifact` type that change uses.
-- [ ] 5.3 Equipping from the bag, unequipping to it and taking fodder from it. Waits on 5.2.
-- [ ] 5.4 The main affix pools are read by the drop that rolls an artifact. Waits on that drop's wiring.
+- [ ] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Waits on 6.1.
+- [ ] 6.3 The main affix pools are read by the drop that rolls an artifact. Waits on that drop's wiring.

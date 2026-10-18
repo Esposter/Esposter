@@ -17,6 +17,8 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
+import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotGameTextKeyMap";
+import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { activateConstellation } from "#src/services/character/activateConstellation";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
@@ -183,6 +185,16 @@ const weaponPanel = computed(() => {
 const artifactsEquipped = computed(() =>
   ARTIFACT_SLOT_ORDER.map((slot) => character.value?.artifacts.some((artifact) => artifact.slot === slot) ?? false),
 );
+// The artifact slots' names in the game's order
+const artifactSlotNames = computed(() => ARTIFACT_SLOT_ORDER.map((slot) => gameText[ArtifactSlotGameTextKeyMap[slot]]));
+// The set bonus block says there is no bonus only while none is active. Its lines wait on the effect text an artifact
+// Set's bonus is written with, which the artifact table does not hold yet, so the block lists none
+const noSetBonusLabel = computed(() =>
+  getActiveArtifactSetBonuses(character.value?.artifacts ?? [], statTables.artifactSetDataMap).length === 0
+    ? gameText[GameTextKey.ArtifactSetBonusNone]
+    : "",
+);
+const setBonusLines: string[] = [];
 // Which of the six constellations are activated, the first the character's count of them
 const constellationsActivated = computed(() =>
   Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < (character.value?.constellationCount ?? 0)),
@@ -349,7 +361,15 @@ const activate = () => {
       <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />
       <CharacterMenuArtifacts
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
+        :enhance-label="gameText[GameTextKey.ArtifactActionEnhance]"
+        :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
         :equipped="artifactsEquipped"
+        is-equip-disabled
+        :no-set-bonus-label="noSetBonusLabel"
+        :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
+        :set-bonus-lines="setBonusLines"
+        :slot-names="artifactSlotNames"
+        :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
       />
       <CharacterMenuConstellation
         v-else-if="character && tab === CharacterMenuTab.Constellation"

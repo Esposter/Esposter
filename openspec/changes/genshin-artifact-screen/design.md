@@ -34,10 +34,15 @@ flowchart TD
 
 What works today and what this change adds:
 
-- **Built now:** the three services, the set reader and the two tables read into `StatTables`. Their tests are named in
-  the change's tasks, and the existing character, kit and save suites cover what they share.
-- **Not built, and why:** the Artifacts tab's panel, equipping from the bag, unequipping to it and fodder taken from it.
-  Each needs a bag piece to hold its rolled state, and the bag does not yet: an entry is saved with its level alone
+- **Built now:** the three services, the set reader, the two tables read into `StatTables`, and the Artifacts panel's
+  five slots, the picked slot's name, the set bonus block and its actions, drawn by its fixture and worn variant in the
+  visual suite, and the character screen's Artifacts tab, which passes the panel its words, slot names and the set
+  block's state. Their tests are named in the change's tasks, and the existing character, kit and save suites cover what
+  they share.
+- **Not built, and why:** the picked artifact's main and sub stats in the panel, whose layout the reference frame has
+  not been measured for yet, the set bonus lines, which wait on the effect text an artifact set's bonus is written with
+  (the artifact table holds the numbers, not that text), the panel's parity reference and approval, equipping from the
+  bag, unequipping to it and fodder taken from it. Each of the bag moves needs a bag piece to hold its rolled state, and the bag does not yet: an entry is saved with its level alone
   (`InventoryItemSave`), so a piece cannot leave the bag equipped or enter it as fodder. The character-screen agent's
   change (`agent/w6-character-screen`) makes each bag artifact an individual, rolled at its drop and saved with a unique
   instance id, and that branch lands before this change does.
@@ -52,6 +57,18 @@ What works today and what this change adds:
 - **Equip and unequip are pure services over the character.** The bag is written by the caller, so the services do not
   reach the chest drop path's files. Rejected: having the service put the displaced piece in the bag, since that writes
   an entry whose shape is not settled.
+- **The panel names a slot by its index and holds no artifact model.** Its actions emit the index of the picked slot,
+  and the host maps it to the character's artifact through these services, so the panel builds against the `Artifact`
+  type rather than a view model of its own.
+- **The set block shows the game's own set line once its text is read.** `EQUIP_RELIC_SET_NUM` reads
+  `{0}-Piece Set: {1}`, so one key would carry the piece count and its effect, filled by `fillGameTextValues`. Rejected: a
+  heading key for each piece count, which splits one sentence the game writes whole. The key joins the enum with the
+  lines, since no code names it before then. Until a set's effect text is read, the block lists no lines and says that
+  no bonus is active only while none is.
+- **The buttons take the artifact page's own words where it has them.** Enhance is `UI_EQUIP_PAGE_LEVEL_UP`, not the
+  weapon's `UI_EQUIP_PAGE_LEVELUP_BUTTON` that `WeaponEnhance` keys, since the artifact's own member should not carry the
+  weapon's name. Equip is `UI_EQUIP_BUTTON`, and Unequip the one exact "Unequip" the dump holds, the potion buff's remove
+  button (see Notes).
 - **Enhancing refuses on the Mora in the service.** The gate is in `enhanceCharacterArtifact` rather than left to the
   caller, as `enhanceWeapon` does, so a caller that forgets the check cannot spend Mora it does not hold. The wiki's
   Enhancing section says the same: one Artifact EXP costs one Mora except when recycling a leveled artifact, which the
@@ -75,7 +92,10 @@ type `rollArtifact` returns and writes no second artifact model. Its dev backfil
 | `packages/genshin-world/src/models/character/RawStatTables.ts`                 | The two tables as they are fetched                                                                                     |
 | `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`              | Unchanged: the EXP, levels and affix levels a worn artifact gains                                                      |
 | `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`       | Unchanged: the Mora an enhancement costs, checked before it runs                                                       |
-| `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`   | The Artifacts panel's frame, which the open panel work fills (not built)                                               |
+| `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`   | The Artifacts panel: the slots, the picked slot's name, the set bonus block and the actions (its stats are not built)  |
+| `packages/genshin-text/src/models/GameTextKey.ts`                              | The panel's ten artifact members: the five slot names, the set block's heading and empty words, and the three actions  |
+| `packages/genshin-world/src/services/artifact/ArtifactSlotGameTextKeyMap.ts`   | Each artifact slot by the game's name for it, read by the character screen                                             |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`             | The Artifacts tab's props: the labels, the slot names and the set block's state, from the game text and the tables     |
 | `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The bag's add, on the chest drop path: the character-screen agent's change, not this one's (not built)                 |
 | `packages/genshin-world/src/services/save/toInventorySave.ts`                  | The bag's save of an artifact, on the chest drop path: the character-screen agent's change, not this one's (not built) |
 
@@ -100,9 +120,12 @@ packages/genshin-world/src/
   rules are read from the Enhancing section of the [Artifact](https://genshin-impact.fandom.com/wiki/Artifact) page,
   and the EXP and Mora figures from the [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP) page the
   artifact enhancement design already cites.
-- **The panel's words are not yet keyed.** A search of `GameTextKey` for the artifact words finds the bag's own and the
-  Artifacts tab's title, but no key for the slot names or the set bonus headings, so the panel waits on the keys the main
-  session writes.
+- **The Artifacts tab's buttons do nothing yet.** The character screen passes the panel its words, but Enhance, Equip and
+  Unequip emit into nothing until the bag and fodder moves land, and Equip is disabled meanwhile.
+- **The panel's Enhance and Unequip ids are provisional.** The dump's artifact page has no button word of its own for
+  either. Enhance takes the equip page's level-up id, which the weapon page shares in its own name, and Unequip is the one
+  exact "Unequip" in the dump, the potion buff's remove button. The reference frame checks both before the panel is
+  approved, and a different id changes only the enum member's value.
 
 ## Sources
 
