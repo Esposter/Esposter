@@ -55,6 +55,23 @@ const castStandingOz = (combatant: Combatant): KitEffectState => {
   return kitEffectState;
 };
 
+// One Overloaded reaction by the active character, with Oz standing, as Fischl at the ascension stood
+const triggerOverloaded = (ascension: number): KitEffectState => {
+  const combatant = createFischlCombatant(ascension);
+  const kitEffectState = castStandingOz(combatant);
+  FISCHL_KIT.onKitEvent?.(
+    {
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      kind: KitEventKind.ReactionTriggered,
+      reactions: [{ reactionType: ReactionType.Overloaded }],
+      striker: combatant,
+    },
+    createKitTestContext(combatant, { kitEffectState }),
+    combatant,
+  );
+  return kitEffectState;
+};
+
 describe(createFischlKitBehaviour, () => {
   const travelerCombatant: Combatant = {
     ...createFischlCombatant(),
@@ -150,6 +167,20 @@ describe(createFischlKitBehaviour, () => {
         effect.kind === "summon" && effect.id === undefined ? [effect.attackTag] : [],
       ),
     ).toStrictEqual([AttackTag.ElementalSkill]);
+  });
+
+  describe("the Ascension 4 passive, Undone Be Thy Sinful Hex", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(castHits(triggerOverloaded(4))).toStrictEqual([0.8]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(castHits(triggerOverloaded(3))).toStrictEqual([]);
+    });
   });
 
   test("one constellation's coordinated attack follows her normal attack while Oz is away", () => {
