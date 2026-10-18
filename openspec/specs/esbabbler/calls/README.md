@@ -70,7 +70,7 @@ The creator's lobby list is optimistic: admitting or dismissing removes that kno
 
 Everything about a live call except its anchor row lives in module-level maps under `server/services/message/call/`, each keyed by `callSessionId` and each lost on restart. There are four of them rather than one record per session, and the split is load-bearing rather than incidental:
 
-- `callSessionParticipantMap` — the participants, keyed by auth session id. Created by the first join and deleted when the last participant leaves, so its presence _is_ what "this call is live" means, and `requireJoinedCallSession` reads nothing else.
+- `callSessionParticipantMap` — the participants, keyed by auth session id. Created by the first join and deleted when the last participant leaves, so its presence _is_ what "this call is live" means. `requireJoinedCallSession` reads it for everyone but the call's creator, who is admitted from the stored session row.
 - `callKnockerMap` and `callAdmittedParticipantMap` — the standalone waiting room. They are torn down with the participant map, because a call nobody is in has nobody left to admit anyone.
 - `callStartTimeMap` — set by the first joiner and read by the **last leaver, after the other three are already gone**, to word the call-duration system message. It outlives the teardown on purpose, which is exactly why it cannot be a field of a record deleted as a unit.
 
@@ -93,7 +93,7 @@ Every teardown path funnels through `leaveCallAsParticipant` — the explicit le
 
 Losing these maps is survivable, not correct. LiveKit is an external SFU reached over `LIVEKIT_URL`; this process mints tokens and receives webhooks but holds no media connection, so a call in progress is entirely unaffected by the process going away and its participants stay connected to the SFU throughout. What the restart destroys is only this side's picture of them, and three things follow from that:
 
-- `requireJoinedCallSession` reads the participant map and nothing else, so every pre-restart participant is locked out of the call procedures until they rejoin, while still being in the call.
+- `requireJoinedCallSession` admits the creator from the stored session row but every other participant only from the participant map, so every pre-restart participant other than the creator is locked out of the call procedures until they rejoin, while still being in the call.
 - Their eventual `participant_left` webhook finds no map entry, `deleteCallParticipant` returns `false`, and `leaveCallAsParticipant` returns early — no `leaveCall` event, no duration message.
 - The next join reads `isFirstJoiner` from that same empty map and re-stamps `callStartTimeMap`, so the duration the call finally reports is measured from the restart rather than from the call.
 
