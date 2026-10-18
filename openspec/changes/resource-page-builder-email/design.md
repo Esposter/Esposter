@@ -1,6 +1,6 @@
 # Email
 
-The email editor, built over the node types and the renderer contract the [document model](../resource-page-builder-document-model/design.md) defines.
+The email editor, built over the node types and the renderer contract the [document model](../resource-page-builder-document-model/design.md) defines, inside the frame and shell the [canvas](../resource-page-builder-canvas/design.md) draws, with the field components the [style panel](../resource-page-builder-style-panel/design.md) builds.
 
 ## Email
 
@@ -19,6 +19,8 @@ MJML stays the engine, behind an email node-type set and compiled on the server.
 The preview text is a root prop, so the bar's field binds it through a patch like any other edit, and `readEmailPreviewText`, `writeEmailPreviewText` and `getEmailPreview` go with the read-back after every change. A merge field is an inline node in the text, inserted by typing `{{` — the mention suggestion the composer already uses, offering the bound dataset's columns — or by dragging a column from the Merge fields category; it renders as the `{{column}}` token `toMergeField` writes today.
 
 **The design canvas** draws each email type with its `canvas` component: a section as a full-width band around a centred body-width container, its columns side by side as MJML lays them on a desktop client and stacked below MJML's 480-pixel breakpoint in the mobile width, and each leaf with MJML's own defaults — a text in Ubuntu, Helvetica, Arial at 13 pixels with 10 by 25 of padding, a button in #414141 with a 3-pixel radius. Each type's schema carries those defaults as Zod defaults, and a server test holds them equal to the default attributes of the MJML components installed, so an MJML release that changes one fails a test rather than drifting the canvas.
+
+**Style fields.** An email node has no breakpoints and no states: email clients honour media queries unevenly, so MJML's own column stacking is the responsive model. Its style fields are its MJML attributes — padding, colours, font, alignment, border, background image — drawn by the style panel's field components and stored as props, and the Style tab shows no breakpoint or state choice for an email.
 
 **Preview** is the truth: a toggle beside the device widths shows `generateEmailHtml`'s output in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
 

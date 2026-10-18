@@ -82,7 +82,7 @@ Each type's contract makes its published output accessible by construction rathe
 
 `render` returns a small element tree — a tag, typed attributes, children — and one serialiser turns a tree into HTML, escaping every text node and attribute value through the shared sanitiser's `escapeText` and `escapeAttribute`. Attribute names come from a typed set with no event handler in it, every URL prop passes `checkIsAllowedUrl` at its schema, and the one raw-HTML type stores what `sanitizeHtml` returns. That closes the vectors GrapesJS's parser leaves open — a `javascript:` URL behind a leading space or another case, `srcdoc`, an SVG `xlink:href` — and each becomes a regression test on Custom HTML.
 
-A webpage renders to one document: `<html lang>` from the root, then a single stylesheet of the theme's tokens on `:root`, each present type's structural CSS, and every styled node's rules; then the body; then each present type's script, once. An email renders to MJML: the root's `lang`, the preview text as `mj-preview` in `mj-head`, the sections in `mj-body`.
+A webpage renders to one document: `<html lang>` from the root, then a single stylesheet of each present type's structural CSS, which the [style panel](../resource-page-builder-style-panel/design.md) later opens with the page's tokens and closes with every styled node's rules; then the body; then each present type's script, once. An email renders to MJML: the root's `lang`, the preview text as `mj-preview` in `mj-head`, the sections in `mj-body`.
 
 ```mermaid
 flowchart TD

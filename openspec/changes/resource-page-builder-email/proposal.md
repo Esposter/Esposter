@@ -12,6 +12,7 @@ An email is built from email node types, edited on a design canvas, and checked 
 - The design canvas draws each section as a full-width band around a centred body, columns side by side on desktop and stacked below 480 pixels, and each leaf with the email engine's own default look.
 - Preview shows the compiled email as a client receives it, at desktop and mobile width, with the validator's messages above it.
 - The preview text is a field on the email's root, so editing it updates the compiled email.
+- An email node has no breakpoints or states, and its style fields are its email attributes.
 - A merge field is inserted by typing two braces, offering the bound dataset's columns, or by dragging a column into a text. It shows as its token.
 - A personalised export compiles from the saved email, so it works with the editor closed. It downloads one HTML file per dataset row in a zip.
 - **Capabilities:** `resource/page-builder/email` (new).
@@ -23,6 +24,8 @@ An email is built from email node types, edited on a design canvas, and checked 
 ## Waiting on
 
 - `openspec/changes/resource-page-builder-document-model/`, which defines the email node types and the renderer contract this editor uses.
+- `openspec/changes/resource-page-builder-canvas/`, whose frame and shell the design canvas draws in.
+- `openspec/changes/resource-page-builder-style-panel/`, whose field components draw an email node's attributes.
 
 ## Impact
 

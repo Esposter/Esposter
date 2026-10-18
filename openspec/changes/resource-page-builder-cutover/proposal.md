@@ -13,6 +13,7 @@ The new editors ship, every existing webpage and email is deleted, and the old e
 - A program bound to a deleted email keeps its invite reference and reads it as missing. Earned achievements stay.
 - The editor's dependencies, security origins, skill and ledger for the old engine are removed, and the server compiles email markup.
 - The affected specs are rewritten as built.
+- Each editor's script beyond the explorer is at most 200 KiB gzipped on this change's production build, and a build over it does not merge.
 - **Capabilities:** `resource/page-builder/cutover` (new), `resource/blueprint-resource` and `resource/program-resource` (changed).
 
 ## Capabilities
@@ -30,7 +31,7 @@ The page builder's phases one to three, which this change swaps in:
 - `openspec/changes/resource-page-builder-canvas/`, the webpage editor's canvas.
 - `openspec/changes/resource-page-builder-style-panel/`, the style panel.
 - `openspec/changes/resource-page-builder-email/`, the email editor.
-- `openspec/changes/resource-page-builder-performance-and-proof/`, whose ceiling is measured on this change's build before it merges.
+- `openspec/changes/resource-page-builder-performance-and-proof/`, whose benches and proofs the editors pass before the swap.
 
 ## Impact
 

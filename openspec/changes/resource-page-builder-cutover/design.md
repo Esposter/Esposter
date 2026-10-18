@@ -1,6 +1,6 @@
 # Cutover
 
-The page builder's last part, built once the editors it ships exist: the [canvas](../resource-page-builder-canvas/design.md), the [style panel](../resource-page-builder-style-panel/design.md), [undo as patches](../resource-page-builder-undo-as-patches/design.md) and the [email editor](../resource-page-builder-email/design.md).
+The page builder's last part, built once the editors it ships exist and are proved: the [canvas](../resource-page-builder-canvas/design.md), the [style panel](../resource-page-builder-style-panel/design.md), [undo as patches](../resource-page-builder-undo-as-patches/design.md), the [email editor](../resource-page-builder-email/design.md), and [performance and proof](../resource-page-builder-performance-and-proof/design.md).
 
 ## The cutover
 
@@ -58,6 +58,10 @@ sequenceDiagram
   CHANGE->>BLOB: backfill — Blueprint entries lose Email and Webpage content
   CHANGE->>DB: confirm — no pre-deploy Email or Webpage row remains
 ```
+
+## The ceiling
+
+Each editor's script beyond the explorer is at most 200 KiB gzipped, measured on this change's production build before it merges, since only that build holds the editors as a reader loads them. It is an acceptance check of the cutover rather than a standing gate, for the reasons [bundle budgets](../../deferred/architecture/bundle-budgets/design.md) are deferred; the editors stay behind `ResourceEditorComponentMap`'s async components, so nothing of them reaches another route.
 
 ## Key files
 

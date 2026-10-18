@@ -8,7 +8,8 @@ The webpage editor draws its page in a region of the app's own document, so the 
 
 The webpage is drawn on a canvas that renders as the published page does, and every pointer action has a keyboard path.
 
-- The page is drawn in an isolated frame at tablet and mobile widths, and at desktop width in the frame the style panel's desktop minimum allows. A narrow pane scales the frame down rather than reflowing it.
+- The page is drawn in an isolated frame at tablet and mobile widths, and at desktop width no narrower than 992 pixels, one above the tablet breakpoint. A narrow pane scales the frame down rather than reflowing it.
+- The editor around the frame holds the palette, the layers tree and the panels, and the Content panel edits the selected node's fields.
 - The page's styles stay out of the editor, the editor's styles stay out of the page, and a script inside a custom HTML block does not run in the canvas.
 - Hovering a node outlines it, and selecting a node shows its outline and toolbar.
 - A block dragged from the palette drops into the slot the pointer is over, and a drop where no slot accepts the block is cancelled.
@@ -25,11 +26,11 @@ The webpage is drawn on a canvas that renders as the published page does, and ev
 ## Waiting on
 
 - `openspec/changes/resource-page-builder-document-model/`, which defines the typed nodes the canvas draws and the edits it makes.
-- `openspec/changes/resource-page-builder-style-panel/`, which sets the narrowest desktop width the canvas frame keeps, beside its tablet and mobile breakpoints.
 
 ## Impact
 
-- The webpage editor's canvas, its overlays, its node toolbar and its context menu.
+- The webpage editor's shell, its canvas, its overlays, its node toolbar and its context menu.
+- The app's first browser suite, kept apart from its default run, for what only a layout engine can show.
 - The layers tree, a new component in the shared UI library.
 - The command registry, which lists every pointer and keyboard action in the shortcuts dialog.
 - Text editing inside a node, which moves to the rich text editor mounted inside the frame.

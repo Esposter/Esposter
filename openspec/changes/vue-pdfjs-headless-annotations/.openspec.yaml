@@ -2,3 +2,4 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [vue-pdfjs-headless]
 x-model: claude-opus-5-5
+x-waiting: "architecture/pdf-viewer-package, which creates the package, its document loading and its viewer"

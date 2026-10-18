@@ -171,3 +171,23 @@ Deleting a node SHALL move selection and focus to its next sibling, else its pre
 - **GIVEN** a node with a next sibling and a previous sibling
 - **WHEN** the owner deletes the node
 - **THEN** selection and focus move to the next sibling
+
+### Requirement: The Content panel edits the selected node's fields
+
+The Content panel SHALL show the fields of the selected node's type, and a change to a field SHALL show on the canvas.
+
+#### Scenario: Editing a button's label in the Content panel shows on the canvas
+
+- **GIVEN** a selected button on a page
+- **WHEN** the owner changes its label in the Content panel
+- **THEN** the button on the canvas shows the new label
+
+### Requirement: An empty page offers the palette
+
+A page with no nodes SHALL offer the palette in its canvas, so the first block can be added from there.
+
+#### Scenario: An empty page offers the palette
+
+- **GIVEN** a new webpage with no nodes
+- **WHEN** the owner opens it in the editor
+- **THEN** the canvas offers the palette's blocks

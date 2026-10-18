@@ -2,3 +2,4 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [resource]
 x-model: claude-opus-5-5
+x-waiting: "resource/page-builder/headless-core, whose tree, registry contract and document schema the node types register over"

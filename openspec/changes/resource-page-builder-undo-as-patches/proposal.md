@@ -23,7 +23,8 @@ Every page builder edit is recorded as reversible operations, and undo and redo 
 
 ## Waiting on
 
-None.
+- `openspec/changes/resource-page-builder-headless-core/`, whose commands and bounded history every edit goes through.
+- `openspec/changes/resource-page-builder-document-model/`, whose stores hold the document each edit applies to.
 
 ## Impact
 

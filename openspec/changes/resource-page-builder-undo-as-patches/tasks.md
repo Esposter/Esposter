@@ -1,18 +1,22 @@
 ## 1. Recording
 
-- [ ] 1.1 Apply each edit as its list of operations, recording the reverse of each operation. Verify: a test named after the scenario 'Undo restores the document before the last edit'.
-- [ ] 1.2 Coalesce repeated changes to one value within an interaction, keeping the first reverse and the last value. Verify: a test named after the scenario 'A drag of a value is one undo entry'.
+- [ ] 1.1 Apply each command's operations to the open resource's document through the page builder store, pushing the core's history entry with its label. Verify: a test named after the scenario 'Undo restores the document before the last edit'.
+- [ ] 1.2 Give each slider drag, held key and text session one interaction id, so the core coalesces its replaces. Verify: a test named after the scenario 'A drag of a value is one undo entry'.
 
 ## 2. History
 
-- [ ] 2.1 Keep the history and the redo entries per open resource, bounded, with the labels the command bar shows. Verify: tests named after the scenarios 'Undo stops at the oldest kept entry' and 'The command bar names the edit it would undo'.
+- [ ] 2.1 Keep one bounded history per open resource, with the labels the command bar shows. Verify: tests named after the scenarios 'Undo stops at the oldest kept entry' and 'The command bar names the edit it would undo'.
 - [ ] 2.2 Reapply the last undone edit on Redo, and discard the redo entries on a new edit. Verify: tests named after the scenarios 'Redo reapplies an undone edit' and 'A new edit after undo discards the redo entry'.
-- [ ] 2.3 Clear the history when a version is restored. Verify: a test named after the scenario 'Restoring a version leaves nothing to undo'.
+- [ ] 2.3 Clear the resource's history from the content store's reload hook when a version is restored. Verify: a test named after the scenario 'Restoring a version leaves nothing to undo'.
 
 ## 3. Shared primitive
 
-- [ ] 3.1 Collapse the sheet's history and this history onto one shared primitive, now that both consumers exist. Verify: the sheet's existing history tests pass unchanged, and a test named after the scenario 'Undo restores the document before the last edit' passes for the page builder.
+- [ ] 3.1 Move the core's bounded history into `@esposter/shared`, and build the core's history and the sheet's history store on it. Verify: the sheet's existing history tests pass unchanged, and the core's history tests pass from the shared package.
 
 ## 4. Saving
 
-- [ ] 4.1 Keep edits in the browser and save the whole document as it is today. Verify: a test whose scenario is 'A save stores the whole document after edits'.
+- [ ] 4.1 Keep the patches in the browser and send the whole document on each save. Verify: a test named after the scenario 'A save stores the whole document after edits'.
+
+## 5. The record
+
+- [ ] 5.1 Describe the history store and the shared bounded history as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/services/openspec` passes.

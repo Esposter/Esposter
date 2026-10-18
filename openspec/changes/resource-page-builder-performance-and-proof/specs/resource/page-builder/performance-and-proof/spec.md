@@ -1,21 +1,5 @@
 ## ADDED Requirements
 
-### Requirement: Each editor's script stays within its budget
-
-Each editor's script, measured beyond the explorer and gzipped, SHALL be at most 200 KiB.
-
-#### Scenario: An editor's script loads within the budget
-
-- **GIVEN** the cutover's production build
-- **WHEN** the size of each editor's script is measured beyond the explorer, gzipped
-- **THEN** each editor's script is at most 200 KiB
-
-#### Scenario: A cutover build over the budget does not merge
-
-- **GIVEN** a cutover build whose editor script is over 200 KiB gzipped
-- **WHEN** the build is checked before it merges
-- **THEN** the merge is held
-
 ### Requirement: An editor makes no request to a third-party origin of its own
 
 An editor SHALL make no request to a third-party origin, except for content the owner adds.

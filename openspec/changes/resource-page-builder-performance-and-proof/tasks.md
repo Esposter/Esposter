@@ -1,7 +1,6 @@
-## 1. Budgets
+## 1. Origins
 
-- [ ] 1.1 Measure each editor's script beyond the explorer on the cutover's production build, and hold it under 200 KiB gzipped. Verify: tests named after the scenarios 'An editor's script loads within the budget' and 'A cutover build over the budget does not merge'.
-- [ ] 1.2 Keep the editors from requesting any third-party origin. Verify: a test whose scenario is 'Opening an editor requests no third-party origin'.
+- [ ] 1.1 Keep the editors from requesting any third-party origin. Verify: a browser test whose scenario is 'Opening an editor requests no third-party origin'.
 
 ## 2. Benchmarks
 
@@ -18,3 +17,7 @@
 ## 4. Output proof
 
 - [ ] 4.1 Assert each type's output whole across its edge values, and assert the sanitiser's vectors on the raw-HTML types. Verify: tests named after the scenarios 'A type's output matches for every edge value' and 'A hostile markup vector in custom HTML is removed'.
+
+## 5. The record
+
+- [ ] 5.1 Record each target with the bench or test that holds it as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/services/openspec` passes.

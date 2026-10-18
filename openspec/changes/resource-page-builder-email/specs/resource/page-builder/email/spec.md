@@ -96,3 +96,14 @@ A personalised export SHALL compile from the saved email and SHALL download one 
 - **THEN** a zip downloads holding two HTML files
 - **AND** each file has its row's values in place of the merge fields
 - **AND** the export includes the latest saved edit
+
+### Requirement: An email node's style fields are its email attributes
+
+An email node SHALL offer no breakpoints or states, and its style fields SHALL be the attributes its email output takes.
+
+#### Scenario: An email text has no breakpoint or state choice
+
+- **GIVEN** a text node in an email
+- **WHEN** the owner opens its style fields
+- **THEN** no breakpoint or state choice is shown
+- **AND** the fields include its padding, colours and font

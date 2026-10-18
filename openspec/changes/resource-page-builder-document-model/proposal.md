@@ -24,7 +24,7 @@ A webpage and an email are stored as a tree of typed nodes, and publishing rende
 
 ## Waiting on
 
-None.
+- `openspec/changes/resource-page-builder-headless-core/`, whose tree, registry contract and document schema each editor's node types register over.
 
 ## Impact
 
