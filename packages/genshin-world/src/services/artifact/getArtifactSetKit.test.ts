@@ -16,6 +16,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import {
   ADVENTURER_ARTIFACT_SET_ID,
   BERSERKER_ARTIFACT_SET_ID,
+  BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID,
   DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID,
   INSTRUCTOR_ARTIFACT_SET_ID,
   NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
@@ -238,6 +239,23 @@ describe(getArtifactSetKit, () => {
     expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.8);
     expect(getPartyMember(party, ally.characterId).healthShare).toBe(0.5);
   });
+  test("A hit on wildlife reaches Bloodstained Chivalry's set module, the one set that answers wildlife", () => {
+    expect.hasAssertions();
+
+    const kit = getArtifactSetKit(
+      TRAVELER_KIT,
+      createSetArtifacts(BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID, 4),
+      statTables.artifactSetDataMap,
+    );
+    const combatant = createSetCombatant(TRAVELER_CHARACTER_ID, kit);
+    const context = createKitTestContext(combatant, { party: createParty([TRAVELER_CHARACTER_ID]) });
+    const wildlife = createWildlife({ id: "pigeon", kind: WildlifeKind.WhitePigeon, position: { x: 0, z: 2 } });
+
+    kit.onKitEvent?.({ kind: KitEventKind.WildlifeStruck, striker: combatant, wildlife }, context, combatant);
+
+    expect(kit.getChargedAttackStaminaMultiplier?.(context)).toBe(0);
+  });
+
   test("A weapon passive triggers on wildlife, an artifact set does not", () => {
     expect.hasAssertions();
     receivedKinds.length = 0;
