@@ -62,8 +62,8 @@ export const MAX_CLEARED_DOMAIN_COUNT = 64;
 export const MAX_FOUND_OCULUS_COUNT = 4096;
 // The camps a player clears once each, bounded by the enemy camps the regions' data holds: 4795 of them, counted on 2026-10-18
 export const MAX_CLEARED_CAMP_COUNT = 4795;
-// The mined outcrops a save holds, each once by its place: a mining prunes the ones whose respawn has come, so the bound is
-// The day's draws across the regions with room to spare
+// The mined outcrops a save holds, each once by its place: a mining prunes the ones whose respawn has come, so the save
+// Holds only the ones mined since the last reset
 export const MAX_MINED_OUTCROP_COUNT = 256;
 // The Seelies a player settles in their courts once each, so the bound is the map's 547 Seelie marks on the ground in the
 // Mapped regions, counted from the official map's point list the puzzles build places on 2026-10-18
