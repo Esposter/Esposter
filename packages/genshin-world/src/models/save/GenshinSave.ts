@@ -6,6 +6,7 @@ import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
+import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { homePlacementSaveSchema } from "#src/models/home/HomePlacementSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
@@ -41,6 +42,8 @@ export const genshinSaveSchema = z
     // The characters the player holds, each once by its id, with the copies a wish has granted it
     characters: createUniqueArraySchema(characterSaveSchema, "id").max(MAX_CHARACTER_COUNT),
     // The day's four commissions and the moment they were dealt, a day dealt before the daily reset being dealt again
+    // The one-time domains cleared, each once, so a repeat clear gives nothing
+    clearedDomains: clearedDomainSaveSchema,
     commissionDay: commissionDaySaveSchema,
     companionshipExp: companionshipExpSaveSchema,
     crafting: craftingSaveSchema,

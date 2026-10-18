@@ -28,6 +28,7 @@ export const useWorldSave = ({
     | "achievementProgressMap"
     | "archiveKillsMap"
     | "archiveProgressMap"
+    | "clearedDomainIds"
     | "craftedCountMap"
     | "craftingProgress"
     | "foundOculusIds"
@@ -49,6 +50,7 @@ export const useWorldSave = ({
   );
   const archiveKillsMap = shallowRef<ArchiveKills>(savedState.archiveKillsMap);
   const archiveProgressMap = shallowRef<ArchiveProgress>(savedState.archiveProgressMap);
+  const clearedDomainIds = shallowRef<ReadonlySet<string>>(savedState.clearedDomainIds);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
   const foundOculusIds = shallowRef<ReadonlySet<string>>(savedState.foundOculusIds);
@@ -65,6 +67,7 @@ export const useWorldSave = ({
       achievementProgressMap,
       archiveKillsMap,
       archiveProgressMap,
+      clearedDomainIds,
       craftedCountMap,
       craftingProgress,
       foundOculusIds,
@@ -89,6 +92,7 @@ export const useWorldSave = ({
     achievementProgressMap,
     archiveKillsMap,
     archiveProgressMap,
+    clearedDomainIds,
     craftedCountMap,
     craftingProgress,
     foundOculusIds,
