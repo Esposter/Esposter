@@ -14,7 +14,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { healKitPerStrike } from "#src/services/kit/healKitPerStrike";
@@ -113,15 +113,16 @@ export const createHuTaoKitBehaviour = ({
   const paramita = readStance("paramita", { chargedAttack: { hits: [{ enemyStatus: createBloodBlossomStatus }] } });
   // Spirit Soother's heal from one enemy its hit strikes, the larger share at her HP at or under half, read as it strikes
   const healOnSpiritSootherStrike = (context: KitContext, strike: KitStrike) => {
-    const { attributes, characterId } = getBuffedCombatant(
+    const { characterId } = strike.combatant;
+    const { healthShare } = getPartyMember(context.party, characterId);
+    const maxHealth = getKitMaxHealth(
       strike.combatant,
       context.kitEffectState.effects,
       context.party,
       context.characterIdCombatantMap,
     );
-    const { healthShare } = getPartyMember(context.party, characterId);
     healKitPerStrike(context, strike, {
-      health: (healthShare <= lowHealthShare ? lowRegenShare : regenShare) * attributes.maxHealth,
+      health: (healthShare <= lowHealthShare ? lowRegenShare : regenShare) * maxHealth,
       maximumHeals: SPIRIT_SOOTHER_MAXIMUM_HEALS,
       resourceId: SPIRIT_SOOTHER_HEAL_RESOURCE,
     });
@@ -230,10 +231,11 @@ export const createHuTaoKitBehaviour = ({
       );
     },
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
+      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
         // Guide to Afterlife takes its HP share of her current HP, but never below GUIDE_MINIMUM_HP
         const { healthShare } = getPartyMember(party, combatant.characterId);
-        const minimumHealthShare = GUIDE_MINIMUM_HP / combatant.attributes.maxHealth;
+        const minimumHealthShare =
+          GUIDE_MINIMUM_HP / getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         const lostHealthShare = Math.max(
           0,
           Math.min(guideToAfterlifeHealthShare * healthShare, healthShare - minimumHealthShare),
@@ -250,7 +252,9 @@ export const createHuTaoKitBehaviour = ({
           secondsRemaining: paramitaSeconds,
         });
         buffKitMember(kitEffectState, combatant.characterId, {
-          amount: paramitaMaxHealthAttackShare * combatant.attributes.maxHealth,
+          amount:
+            paramitaMaxHealthAttackShare *
+            getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
           attribute: Attribute.Attack,
           isEndedOnSwap: true,
           secondsRemaining: paramitaSeconds,

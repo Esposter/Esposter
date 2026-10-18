@@ -2,8 +2,8 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -15,6 +15,7 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { takeOne } from "@esposter/shared";
@@ -107,11 +108,17 @@ export const createZhongliKitBehaviour = ({
   // The Jade Shield: a Geo shield on the team of the table's flat health and share of Zhongli's Max HP, for its seconds,
   // And its RES cut, landing from a summon that follows the body on the field. A field ticking every step ends the summon
   // Once the shield is spent or recast over
-  const castJadeShield = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant): void => {
+  const castJadeShield = (
+    { characterIdCombatantMap, kitEffectState, party }: KitContext,
+    body: KitBody,
+    combatant: Combatant,
+  ): void => {
     const { characterId } = combatant;
     const shield = castKitShield(kitEffectState, characterId, {
       element: Element.Geo,
-      health: shieldFlatHealth + shieldMaxHealthShare * combatant.attributes.maxHealth,
+      health:
+        shieldFlatHealth +
+        shieldMaxHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
       secondsRemaining: shieldSeconds,
     });
     const resistanceCut = castKitSummon(kitEffectState, body, combatant, jadeShieldHits, {
@@ -131,12 +138,12 @@ export const createZhongliKitBehaviour = ({
   return {
     // Planet Befall's meteor lands from a summon cast ahead of Zhongli
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, body, kitEffectState } = context;
         const { constellationCount } = combatant;
         const hit = constellationCount >= TOPAZ_UNBREAKABLE_AND_FEARLESS_CONSTELLATION ? topazMeteor : meteor;
         castKitSummon(kitEffectState, createAheadBody(body, METEOR_OFFSET), combatant, [hit]);
-        if (constellationCount >= STONE_THE_CRADLE_OF_JADE_CONSTELLATION)
-          castJadeShield(kitEffectState, body, combatant);
+        if (constellationCount >= STONE_THE_CRADLE_OF_JADE_CONSTELLATION) castJadeShield(context, body, combatant);
       },
     },
     chargedAttack: { hits: [attackHitBehaviour] },
@@ -167,12 +174,8 @@ export const createZhongliKitBehaviour = ({
             castKitSummon(kitEffectState, createAheadBody(body, STELE_OFFSET), combatant, holdSteleHits, {
               secondsRemaining: holdSteleSeconds,
             });
-          scheduleKitTask(
-            kitEffectState,
-            combatant.characterId,
-            holdHitmarkSeconds,
-            ({ kitEffectState: tickKitEffectState }) =>
-              castJadeShield(tickKitEffectState, { facing, height, position }, combatant),
+          scheduleKitTask(kitEffectState, combatant.characterId, holdHitmarkSeconds, (tick) =>
+            castJadeShield(tick, { facing, height, position }, combatant),
           );
         },
       },

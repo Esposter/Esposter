@@ -21,10 +21,17 @@ export const strikePartyMember = (
   enemy: Enemy,
   combatant: Combatant,
   kitEffectState: KitEffectState,
+  characterIdCombatantMap: ReadonlyMap<number, Combatant>,
 ): KitShieldAbsorbedEvent[] => {
   const shields = kitEffectState.effects.filter((effect) => checkIsKitShieldLive(effect));
   const healthsBefore = shields.map((shield) => ({ before: shield.health, shield }));
-  hitPartyMember(party, combatant, kitEffectState, computeEnemyStrikeDamage(enemyTables, enemy, combatant));
+  hitPartyMember(
+    party,
+    combatant,
+    kitEffectState,
+    characterIdCombatantMap,
+    computeEnemyStrikeDamage(enemyTables, enemy, combatant),
+  );
   const { attackElement } = enemy.traits;
   if (attackElement !== undefined)
     applyPartyMemberElement(

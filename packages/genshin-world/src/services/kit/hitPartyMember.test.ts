@@ -24,6 +24,7 @@ describe(hitPartyMember, () => {
     kit: TRAVELER_KIT,
     level: 1,
   };
+  const characterIdCombatantMap = new Map([[1, combatant]]);
 
   test("should lose the share of max HP the shields do not absorb", () => {
     expect.hasAssertions();
@@ -31,7 +32,7 @@ describe(hitPartyMember, () => {
     const party = createParty([1]);
     const shield: KitShield = { characterId: 2, health: 50, kind: "shield", secondsRemaining: 10 };
 
-    hitPartyMember(party, combatant, { effects: [shield] }, 100);
+    hitPartyMember(party, combatant, { effects: [shield] }, characterIdCombatantMap, 100);
 
     expect(shield.health).toBe(0);
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - 50 / MAX_HEALTH);
@@ -42,7 +43,7 @@ describe(hitPartyMember, () => {
 
     const party = createParty([1]);
 
-    hitPartyMember(party, combatant, { effects: [] }, 100);
+    hitPartyMember(party, combatant, { effects: [] }, characterIdCombatantMap, 100);
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - 100 / MAX_HEALTH);
   });

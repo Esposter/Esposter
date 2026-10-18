@@ -9,6 +9,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 export const YUNJIN_CHARACTER_ID = 10_000_064;
@@ -31,10 +32,11 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
   // Hit lands, as gcsim expires it at that frame
   const createShieldOnStart = ({ hits }: KitAction): KitAction["onStart"] => {
     const shieldSeconds = takeOne(hits).hitmarkSeconds;
-    return ({ activeCombatant: combatant, kitEffectState }) =>
+    return ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) =>
       castKitShield(kitEffectState, combatant.characterId, {
         element: Element.Geo,
-        health: shieldShare * combatant.attributes.maxHealth + shieldFlat,
+        health:
+          shieldShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap) + shieldFlat,
         secondsRemaining: shieldSeconds,
       });
   };

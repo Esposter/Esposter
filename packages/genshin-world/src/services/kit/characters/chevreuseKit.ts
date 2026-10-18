@@ -8,6 +8,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
@@ -32,10 +33,8 @@ const grantVerticalForce = ({
   kitEffectState,
   party,
 }: KitContext): void => {
-  const amount = Math.min(
-    (combatant.attributes.maxHealth / 1000) * VERTICAL_FORCE_ATK_PER_1000_MAX_HEALTH,
-    VERTICAL_FORCE_ATK_MAX,
-  );
+  const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+  const amount = Math.min((maxHealth / 1000) * VERTICAL_FORCE_ATK_PER_1000_MAX_HEALTH, VERTICAL_FORCE_ATK_MAX);
   for (const characterId of getDeployedCharacterIds(party)) {
     const member = characterIdCombatantMap.get(characterId);
     if (!member?.element || !VERTICAL_FORCE_ELEMENTS.has(member.element)) continue;

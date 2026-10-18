@@ -14,6 +14,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -119,8 +120,10 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
   return {
     // Shining Miracle♪'s heal is a task run at its hitmark, priced by her as she stood at the cast
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        const burstHeal = burstFlatHeal + burstHealthShare * combatant.attributes.maxHealth;
+      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
+        const burstHeal =
+          burstFlatHeal +
+          burstHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         scheduleKitTask(kitEffectState, combatant.characterId, shiningMiracleHealSeconds, (tick) =>
           changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, burstHeal),
         );
@@ -203,7 +206,13 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
     // The droplets are a summon and the Melody Loop a field, both cast where Barbara stands and priced by her as she
     // Stood then
     skill: {
-      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
+      onStart: ({
+        activeCombatant: combatant,
+        body: { facing, height, position },
+        characterIdCombatantMap,
+        kitEffectState,
+        party,
+      }) => {
         castKitSummon(kitEffectState, { facing, height, position }, combatant, droplets);
         if (combatant.ascension >= ASCENSION_4)
           addKitStatus(kitEffectState, combatant.characterId, {
@@ -211,13 +220,12 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
             secondsRemaining: melodyLoopStartSeconds + melodyLoopSeconds,
             stacks: 0,
           });
+        const regenerationHeal =
+          regenerationFlatHeal +
+          regenerationHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: melodyLoopStartSeconds,
-          onTick: createMelodyLoopTick(
-            combatant,
-            regenerationFlatHeal + regenerationHealthShare * combatant.attributes.maxHealth,
-            melodyLoopSeconds,
-          ),
+          onTick: createMelodyLoopTick(combatant, regenerationHeal, melodyLoopSeconds),
           secondsRemaining: melodyLoopStartSeconds + melodyLoopSeconds,
           tickIntervalSeconds: MELODY_LOOP_TICK_INTERVAL_SECONDS,
         });

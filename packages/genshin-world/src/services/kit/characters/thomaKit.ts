@@ -10,7 +10,7 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 // Measured: gcsim v2.47.2 (MIT) thoma/burst.go, thoma.go and shield.go, Fiery Collapse: for the burst's seconds, a normal
@@ -62,22 +62,18 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
       onStrike: ({ characterIdCombatantMap, kitEffectState, party }, { combatant }) => {
         if (isShielded) return;
         isShielded = true;
-        const { attributes, characterId } = getBuffedCombatant(
-          combatant,
-          kitEffectState.effects,
-          party,
-          characterIdCombatantMap,
-        );
+        const { characterId } = combatant;
+        const combatantMaxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         const standingHealth =
           kitEffectState.effects.find(
             (effect): effect is KitShield =>
               checkIsKitShieldLive(effect) && !effect.isCrystallize && effect.characterId === characterId,
           )?.health ?? 0;
-        const maxHealth = maxShieldMaxHealthShare * attributes.maxHealth + maxShieldFlatHealth;
+        const maxHealth = maxShieldMaxHealthShare * combatantMaxHealth + maxShieldFlatHealth;
         castKitShield(kitEffectState, characterId, {
           element: Element.Pyro,
           health: Math.min(
-            standingHealth + fieryCollapseShieldMaxHealthShare * attributes.maxHealth + fieryCollapseShieldFlatHealth,
+            standingHealth + fieryCollapseShieldMaxHealthShare * combatantMaxHealth + fieryCollapseShieldFlatHealth,
             maxHealth,
           ),
           secondsRemaining: fieryCollapseShieldSeconds,
@@ -113,11 +109,11 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
     // Blazing Blessing sets its shield as it starts, from Thoma's Max HP and the table's share and flat HP, for its
     // Seconds. It also infuses his own attacks with Pyro for the infusion's seconds
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
+        const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Pyro,
-          health:
-            blazingBlessingShieldMaxHealthShare * combatant.attributes.maxHealth + blazingBlessingShieldFlatHealth,
+          health: blazingBlessingShieldMaxHealthShare * maxHealth + blazingBlessingShieldFlatHealth,
           secondsRemaining: blazingBlessingShieldSeconds,
         });
         addKitEffect(kitEffectState, {

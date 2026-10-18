@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -37,8 +38,8 @@ export const createDehyaKitBehaviour = (): KitBehaviour => ({
       combatant.ascension < ASCENSION_4
     )
       return;
-    const { attributes, characterId } = combatant;
-    const { kitEffectState, party } = context;
+    const { characterId } = combatant;
+    const { characterIdCombatantMap, kitEffectState, party } = context;
     if (getPartyMember(party, characterId).healthShare >= STALWART_AND_TRUE_THRESHOLD) return;
     if (
       !startKitCooldown(
@@ -49,14 +50,21 @@ export const createDehyaKitBehaviour = (): KitBehaviour => ({
       )
     )
       return;
-    changeKitMemberHealth(context, combatant, characterId, STALWART_AND_TRUE_INITIAL_HEAL_SHARE * attributes.maxHealth);
+    const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+    changeKitMemberHealth(context, combatant, characterId, STALWART_AND_TRUE_INITIAL_HEAL_SHARE * maxHealth);
     for (const tick of Array.from({ length: STALWART_AND_TRUE_TICK_COUNT }, (_value, index) => index + 1))
       scheduleKitTask(kitEffectState, characterId, tick * STALWART_AND_TRUE_TICK_INTERVAL_SECONDS, (tickContext) =>
         changeKitMemberHealth(
           tickContext,
           combatant,
           characterId,
-          STALWART_AND_TRUE_TICK_HEAL_SHARE * attributes.maxHealth,
+          STALWART_AND_TRUE_TICK_HEAL_SHARE *
+            getKitMaxHealth(
+              combatant,
+              tickContext.kitEffectState.effects,
+              tickContext.party,
+              tickContext.characterIdCombatantMap,
+            ),
         ),
       );
   },

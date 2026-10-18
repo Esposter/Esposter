@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -16,6 +17,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { takeOne } from "@esposter/shared";
@@ -82,10 +84,15 @@ export const createCandaceKitBehaviour = ({
 
   // The shield is the one Candace casts onto the team, for the seconds until its hit lands, as gcsim sets its shield to
   // Expire at the hitmark
-  const castShield = (kitEffectState: KitEffectState, combatant: Combatant, secondsRemaining: number): KitShield =>
+  const castShield = (
+    { characterIdCombatantMap, kitEffectState, party }: KitContext,
+    combatant: Combatant,
+    secondsRemaining: number,
+  ): KitShield =>
     castKitShield(kitEffectState, combatant.characterId, {
       element: Element.Hydro,
-      health: shieldFlat + shieldShare * combatant.attributes.maxHealth,
+      health:
+        shieldFlat + shieldShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
       secondsRemaining,
     });
 
@@ -143,15 +150,7 @@ export const createCandaceKitBehaviour = ({
       )
         castKitSummon(kitEffectState, body, combatant, [constellation6Wave]);
     },
-    skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        castShield(kitEffectState, combatant, tapHitmarkSeconds),
-    },
-    skillHolds: [
-      {
-        onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-          castShield(kitEffectState, combatant, chargedHitmarkSeconds),
-      },
-    ],
+    skill: { onStart: (context) => castShield(context, context.activeCombatant, tapHitmarkSeconds) },
+    skillHolds: [{ onStart: (context) => castShield(context, context.activeCombatant, chargedHitmarkSeconds) }],
   };
 };

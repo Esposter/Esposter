@@ -7,6 +7,7 @@ import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthSca
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 
 // Measured: gcsim (MIT) layla/burst.go, Starlight Slug's field holds a circle of radius 12 round the body. Each tick strikes
 // The closest enemy in the circle, which the kit cannot pick, so each tick reaches every enemy in its reach, which
@@ -58,12 +59,13 @@ export const createLaylaKitBehaviour = ({ readHit, readParameter, readSeconds }:
       },
     },
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
         const curtainBonus =
           combatant.constellationCount >= CONSTELLATION_1 ? 1 + CONSTELLATION_1_SHIELD_ABSORPTION_BONUS : 1;
+        const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Cryo,
-          health: (shieldFlatHealth + shieldMaxHealthShare * combatant.attributes.maxHealth) * curtainBonus,
+          health: (shieldFlatHealth + shieldMaxHealthShare * maxHealth) * curtainBonus,
           secondsRemaining: shieldSeconds,
         });
       },

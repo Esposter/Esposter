@@ -5,6 +5,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 const ADVENTURER_FIELD_ID = "adventurer";
@@ -35,13 +36,15 @@ export const createAdventurerSetModule = ({ params }: ArtifactSetBonus): Artifac
         id: ADVENTURER_FIELD_ID,
         kind: "field",
         nextTickSeconds: tickIntervalSeconds,
-        onTick: (context) =>
-          changeKitMemberHealth(
-            context,
+        onTick: (context) => {
+          const maxHealth = getKitMaxHealth(
             combatant,
-            combatant.characterId,
-            healedHealthShare * combatant.attributes.maxHealth,
-          ),
+            context.kitEffectState.effects,
+            context.party,
+            context.characterIdCombatantMap,
+          );
+          changeKitMemberHealth(context, combatant, combatant.characterId, healedHealthShare * maxHealth);
+        },
         radius: UNBOUNDED_FIELD_RADIUS,
         secondsRemaining: seconds,
         tickIndex: 0,

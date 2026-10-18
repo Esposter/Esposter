@@ -13,6 +13,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 
 // Measured: gcsim (MIT) kokomi/skill.go, Bake-Kurage's heal lands on the active character while it stands within a circle
 // Of radius 6 whose centre lies 3 metres ahead, every tick, for 12.5 seconds
@@ -98,8 +99,8 @@ export const createKokomiKitBehaviour = ({
   // Bake-Kurage is a summon of its ripples where Kokomi casts it, and a field of its heal over the circle they reach,
   // Which heals the active character from the cast's Max HP while it stands in the circle
   const createBakeKurage = (ripples: KitHit[]): KitActionBehaviour => ({
-    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-      const { maxHealth } = combatant.attributes;
+    onStart: ({ activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party }) => {
+      const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
       castKitSummon(kitEffectState, body, combatant, ripples, { secondsRemaining: SKILL_DURATION_SECONDS });
       const centre = createAheadBody(body, SKILL_CENTRE_METRES).position;
       castKitField(kitEffectState, combatant.characterId, centre, {
