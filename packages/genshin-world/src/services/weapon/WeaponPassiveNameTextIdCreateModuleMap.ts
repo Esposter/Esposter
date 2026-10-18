@@ -254,12 +254,28 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "4145255819": createDebutPassiveModule,
   // Press the Advantage (Blackcliff Longsword)
   "3117685819": createPressTheAdvantagePassiveModule,
+  // Press the Advantage (Blackcliff Slasher)
+  "2584261683": createPressTheAdvantagePassiveModule,
+  // Press the Advantage (Blackcliff Pole)
+  "4236194011": createPressTheAdvantagePassiveModule,
+  // Press the Advantage (Blackcliff Agate)
+  "1776215435": createPressTheAdvantagePassiveModule,
+  // Press the Advantage (Blackcliff Warbow)
+  "1421912251": createPressTheAdvantagePassiveModule,
   // Justice (The Black Sword)
   "1092738259": createJusticePassiveModule,
   // Itinerant Hero (The Alley Flash)
   "3197835587": createItinerantHeroPassiveModule,
   // Focus (Royal Longsword)
   "2129974699": createFocusPassiveModule,
+  // Focus (Royal Greatsword)
+  "2759911603": createFocusPassiveModule,
+  // Focus (Royal Spear)
+  "1960420595": createFocusPassiveModule,
+  // Focus (Royal Grimoire)
+  "916503587": createFocusPassiveModule,
+  // Focus (Royal Bow)
+  "2136204531": createFocusPassiveModule,
   // Undying Admiration (Festering Desire)
   "1399609651": createUndyingAdmirationPassiveModule,
   // Spotless Heart (Cinnabar Spindle)
