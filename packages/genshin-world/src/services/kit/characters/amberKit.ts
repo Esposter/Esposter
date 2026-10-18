@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -11,6 +12,7 @@ import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/burst.go
 const EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION = 1;
 const EVERY_ARROW_FINDS_ITS_TARGET_CRITICAL_RATE = 0.1;
+const EVERY_ARROW_FINDS_ITS_TARGET_RADIUS_SHARE = 0.3;
 
 // Ascension 1's CRIT Rate on Fiery Rain, priced by the combatant that cast it
 const addEveryArrowCriticalRate = (combatant: Combatant): Combatant => {
@@ -27,6 +29,13 @@ const addEveryArrowCriticalRate = (combatant: Combatant): Combatant => {
     },
   };
 };
+
+// Ascension 1's arrows are the base arrows with each radius widened, as gcsim scales the burst's radius at Ascension 1
+const widenFieryRainArrows = (arrows: KitHit[]): KitHit[] =>
+  arrows.map((arrow) => ({
+    ...arrow,
+    hitArea: { ...arrow.hitArea, radius: arrow.hitArea.radius * (1 + EVERY_ARROW_FINDS_ITS_TARGET_RADIUS_SHARE) },
+  }));
 
 export const AMBER_CHARACTER_ID = 10_000_021;
 
@@ -45,7 +54,7 @@ export const createAmberKitBehaviour = ({
   const bunnyMaxHealthShare = readParameter("baronBunnyMaxHealthShare");
   const bunnySeconds = readSeconds("baronBunnySeconds");
   const fieryRainArrows = readHits("fieryRainArrows");
-  const everyArrowFindsItsTargetFieryRainArrows = readHits("everyArrowFindsItsTargetFieryRainArrows");
+  const everyArrowFindsItsTargetFieryRainArrows = widenFieryRainArrows(fieryRainArrows);
 
   return {
     burst: {

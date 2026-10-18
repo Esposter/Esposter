@@ -7,6 +7,7 @@ Aloy's kit is its record and one behaviour module, `createAloyKitBehaviour`, ava
 - **Aloy's strikes, fully charged shot, Freeze Bomb, Chillwater Bomblets and burst deal 0 poise.** Provisional, as gcsim gives none, so `aloyKit.ts` stands each hit at 0; her plunge reaches and 0.4-second landing are the stand-ins other kits use.
 - **Each Chillwater Bomblet adds one coil stack per enemy it strikes, and Freeze Bomb and each bomblet give 1U of Cryo.** gcsim counts a bomblet once for all its enemies and gives Freeze Bomb no gauge, so `aloyKit.ts` counts each enemy and reads 1U as Ganyu's Cryo hits do.
 - **Freeze Bomb's hit count is `Unsourced`.** The three hits are one bomb and the bomblets of the loop at "skill.go" line 96, which runs to "bomblets", defaulted to 2 at line 52, and no reader counts a loop's hits, so the count of 3 stays hand-set. The bomblets' hitmarks are cited from line 101, "skillRelease+travel+delay+((i+1)*6)" evaluated per bomblet.
+- **Aloy's Ascension 1 and 4 passives run from the start of Rushing Ice.** From Ascension 1 Rushing Ice raises the ATK of the deployed team by 8%, and Aloy's own by 8% more, for its ten seconds. From Ascension 4 her Cryo DMG Bonus rises 3.5% each second, as gcsim's stacks do, to 35% at the tenth; each step restarts one buff that ends with Rushing Ice.
 
 ## Key files
 
