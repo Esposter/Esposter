@@ -6,7 +6,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/CharacterLevelMultiplierMap";
-import { getReactionDamage } from "#src/services/combat/damage/getReactionDamage";
+import { getLunarReactionDamage } from "#src/services/combat/damage/getLunarReactionDamage";
 import { sumLunarContributions } from "#src/services/combat/damage/sumLunarContributions";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { priceReactionContributors } from "#src/services/kit/priceReactionContributors";
@@ -46,7 +46,7 @@ export const strikeStellarReaction = (
     contributorIds,
     context,
     (level, attributeTotalMap) =>
-      getReactionDamage(
+      getLunarReactionDamage(
         coefficient,
         takeOne(CharacterLevelMultiplierMap, level),
         attributeTotalMap[Attribute.ElementalMastery],
