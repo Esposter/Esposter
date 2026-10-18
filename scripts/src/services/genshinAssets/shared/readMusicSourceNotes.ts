@@ -1,17 +1,10 @@
 import type { ModelReadings } from "pitch-transcription";
 
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { loadGraphModelSync } from "@tensorflow/tfjs";
 import { existsSync } from "node:fs";
 import { readFile, rename, writeFile } from "node:fs/promises";
-import {
-  ANNOTATIONS_SEMITONES,
-  convertNotesToSeconds,
-  createNotes,
-  MODEL_URL,
-  MODEL_WEIGHTS_URL,
-  readModel,
-} from "pitch-transcription";
+import { fileURLToPath } from "node:url";
+import { InferenceSession } from "onnxruntime-node";
+import { ANNOTATIONS_SEMITONES, convertNotesToSeconds, createNotes, MODEL_URL, readModel } from "pitch-transcription";
 
 // The notes a decoded source plays, as pitch-transcription hears them at its defaults, with no pitch bends: the model's
 // Frame and onset readings are kept beside the source as 32-bit floats, frames then onsets, so a second fit reads them
@@ -32,9 +25,8 @@ export const readMusicSourceNotes = async (
       ]);
     readings = { frames: getRows(0), onsets: getRows(frameCount) };
   } else {
-    const [modelJson, weights] = await Promise.all([readFile(MODEL_URL, "utf8"), readFile(MODEL_WEIGHTS_URL)]);
-    const model = loadGraphModelSync([parseMachineJson(modelJson), new Uint8Array(weights).buffer]);
-    readings = await readModel(model, samples);
+    const session = await InferenceSession.create(fileURLToPath(MODEL_URL));
+    readings = await readModel(session, samples);
     // Written beside its name and renamed onto it, so a write cut short is never read as the whole source's readings
     const partialPath = `${readingsPath}.partial`;
     await writeFile(partialPath, Float32Array.from([...readings.frames.flat(), ...readings.onsets.flat()]));
