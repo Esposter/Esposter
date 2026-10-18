@@ -3,7 +3,7 @@ import type { InventoryDestruction } from "#src/models/inventory/InventoryDestru
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
-import { addDestroyReturn } from "#src/services/inventory/addDestroyReturn";
+import { addRewardItem } from "#src/services/inventory/addRewardItem";
 import { getDestroyableItem } from "#src/services/inventory/getDestroyableItem";
 import { getDestroyReturns } from "#src/services/inventory/getDestroyReturns";
 
@@ -21,7 +21,7 @@ export const destroyInventoryItems = (
   const destroyedItems = Array.from(new Set(ids), (id) => getDestroyableItem(items, id));
   const remainingInventory: Inventory = { items: items.filter((item) => !destroyedItems.includes(item)), nextId };
   return getDestroyReturns(destroyedItems).reduce<InventoryDestruction | undefined>(
-    (destruction, itemCount) => destruction && addDestroyReturn(destruction, itemCount, names, materialDataMap),
+    (destruction, itemCount) => destruction && addRewardItem(destruction, itemCount, names, materialDataMap),
     { inventory: remainingInventory, wallet },
   );
 };

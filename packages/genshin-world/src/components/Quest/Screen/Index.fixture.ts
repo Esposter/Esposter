@@ -11,6 +11,7 @@ const createQuest = (id: string, kind: QuestKind): Quest => ({
   id,
   kind,
   offerTalkIds: [],
+  rewards: [],
   steps: [{ id, objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: id }], textId: id }],
   talks: [],
   titleTextId: id,
@@ -72,6 +73,7 @@ export const props = {
       id: "an-ark-that-used-to-be-a-soul",
       kind: QuestKind.World,
       offerTalkIds: [],
+      rewards: [],
       steps: [
         {
           id: "collect-fragments",

@@ -54,6 +54,9 @@ export const EMPTY_WALLET: Readonly<Wallet> = {
 };
 // Mora's item id in the game's tables, which every pile of it a defeated enemy drops is filed under
 export const MORA_ITEM_ID = 202;
+// Character EXP's item id, which a quest's reward names. It is no bag item and no wallet currency, and no grant pays it yet,
+// So it is left out of the items and skipped by a quest's finish
+export const CHARACTER_EXP_ITEM_ID = 101;
 // The item id each currency the wallet holds is filed under in the game's material table, so a drop or a reward naming
 // One is a wallet grant, never a bag item
 export const CurrencyItemIdMap: Record<Currency, number> = {
