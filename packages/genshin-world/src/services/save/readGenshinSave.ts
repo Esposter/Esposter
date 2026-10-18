@@ -4,6 +4,7 @@ import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { toAchievementProgressMap } from "#src/services/save/toAchievementProgressMap";
+import { toArchiveProgressMap } from "#src/services/save/toArchiveProgressMap";
 import { toCharacters } from "#src/services/save/toCharacters";
 import { toCommissionDay } from "#src/services/save/toCommissionDay";
 import { toInventory } from "#src/services/save/toInventory";
@@ -16,6 +17,7 @@ export const readGenshinSave = (
   {
     achievements,
     adventureExp,
+    archive,
     characters,
     commissionDay,
     companionshipExp,
@@ -42,6 +44,8 @@ export const readGenshinSave = (
   return {
     achievementProgressMap: toAchievementProgressMap(achievements),
     adventureExp,
+    archiveKillsMap: new Map(Object.entries(archive.kills).map(([entryId, count]) => [Number(entryId), count])),
+    archiveProgressMap: toArchiveProgressMap(archive.progress),
     characterCopyCountMap: new Map(characters.map(({ copyCount, id }) => [id, copyCount])),
     characters: toCharacters(characters, companionshipExpMap),
     commissionDay: toCommissionDay(commissionDay),

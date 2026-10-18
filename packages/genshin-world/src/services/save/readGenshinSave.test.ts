@@ -6,6 +6,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
+import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -21,6 +22,9 @@ import { describe, expect, test } from "vitest";
 
 describe(readGenshinSave, () => {
   const ACHIEVEMENT_ID = "5";
+  // A Living Being defeated and its entry opened in the Archive, the defeat counted once
+  const ARCHIVE_ENTRY_ID = 1;
+  const ARCHIVE_KILL_COUNT = 1;
   const FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const ADVENTURE_EXP = 1200;
   const CHARACTER_ID = 6;
@@ -201,6 +205,19 @@ describe(readGenshinSave, () => {
           count: 0,
           dealtRank: COMMISSION_UNLOCK_RANK,
         })),
+      },
+    };
+
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+  });
+
+  test("opened entries and counts survive a reload", () => {
+    expect.hasAssertions();
+    const save: GenshinSave = {
+      ...EMPTY_GENSHIN_SAVE,
+      archive: {
+        kills: { [ARCHIVE_ENTRY_ID]: ARCHIVE_KILL_COUNT },
+        progress: { ...EMPTY_GENSHIN_SAVE.archive.progress, [ArchiveSection.LivingBeings]: [ARCHIVE_ENTRY_ID] },
       },
     };
 

@@ -28,7 +28,7 @@ flowchart LR
 2. **Wildlife's Living Beings**, once an animal is struck and its kills count.
 3. **Tutorials' opening**, once a tip is shown.
 
-The viewpoints are buildable now; the other two wait on another unit each, the wildlife's strike and a shown tip.
+The viewpoints wait on the hosted `sceneGroups/scene3` record, which the game-data lock does not publish yet; the other two wait on another unit each, the wildlife's strike and a shown tip.
 
 The artifact sets' caller is wherever the player's artifacts change, which the first artifact drop brings.
 

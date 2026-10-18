@@ -1,5 +1,6 @@
 import { achievementProgressSaveSchema } from "#src/models/achievement/AchievementProgressSave";
 import { adventureExpSaveSchema } from "#src/models/adventureRank/AdventureExpSave";
+import { archiveSaveSchema } from "#src/models/archive/ArchiveSave";
 import { worldLevelAdjustmentSaveSchema } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
 import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
@@ -24,6 +25,8 @@ export const genshinSaveSchema = z
   .object({
     achievements: achievementProgressSaveSchema,
     adventureExp: adventureExpSaveSchema,
+    // The entries the Archive has opened and the defeats it has counted
+    archive: archiveSaveSchema,
     // The characters the player holds, each once by its id, with the copies a wish has granted it
     characters: createUniqueArraySchema(characterSaveSchema, "id").max(MAX_CHARACTER_COUNT),
     // The day's four commissions and the moment they were dealt, a day dealt before the daily reset being dealt again

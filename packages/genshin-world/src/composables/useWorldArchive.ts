@@ -5,7 +5,7 @@ import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameLanguage } from "genshin-text";
-import type { ComputedRef, Ref } from "vue";
+import type { ComputedRef, Ref, ShallowRef } from "vue";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { GameDataset } from "#src/models/data/GameDataset";
@@ -24,9 +24,11 @@ import { getResultAsync } from "@esposter/shared";
 import { z } from "zod";
 
 // The Archive's entries, the volumes it reads and the defeats it counts. Its entries are read once the quest it opens after
-// Is done, as the game opens it, and its progress starts empty, the bag's items and the defeats opening its entries as they
-// Come in
+// Is done, as the game opens it, and its progress and defeats are the save's, the bag's items and the defeats opening its
+// Entries as they come in
 export const useWorldArchive = ({
+  archiveKillsMap,
+  archiveProgressMap,
   enemyKindMap,
   events,
   finishedMainQuestIds,
@@ -34,6 +36,8 @@ export const useWorldArchive = ({
   language,
   screenKind,
 }: {
+  archiveKillsMap: ShallowRef<ArchiveKills>;
+  archiveProgressMap: ShallowRef<ArchiveProgress>;
   enemyKindMap: ReadonlyMap<EnemyKindId, EnemyKind>;
   events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
@@ -42,7 +46,6 @@ export const useWorldArchive = ({
   screenKind: Ref<ScreenKind>;
 }) => {
   const archiveData = shallowRef<ArchiveData>();
-  const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
   // The volume the Archive is reading, its title and its text in the reader's language
   const bookReading = shallowRef<{ body: string; title: string }>();
   // The volume last chosen whose text is still loading, let go once the Archive closes, so a text that arrives for another
@@ -51,8 +54,6 @@ export const useWorldArchive = ({
   watch(screenKind, (newScreenKind) => {
     if (newScreenKind !== ScreenKind.Archive) loadingBookId = undefined;
   });
-  // The defeats of each Living Being, counted under its entry for the Archive to show
-  const archiveKillsMap = shallowRef<ArchiveKills>(new Map());
   // A volume the Archive's Books section opens has its text read from the hosted game data in the reader's language,
   // When it opens
   const readBook = (bookId: number) => {
@@ -117,5 +118,5 @@ export const useWorldArchive = ({
     archiveProgressMap.value = openArchiveEntry(archiveProgressMap.value, ArchiveSection.LivingBeings, archiveEntryId);
     archiveKillsMap.value = countArchiveDefeat(archiveKillsMap.value, archiveEntryId);
   });
-  return { archiveData, archiveKillsMap, archiveProgressMap, bookReading, readBook };
+  return { archiveData, bookReading, readBook };
 };

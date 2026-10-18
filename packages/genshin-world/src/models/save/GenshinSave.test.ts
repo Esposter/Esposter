@@ -1,5 +1,6 @@
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 
+import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute, Attributes } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -11,6 +12,8 @@ import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import {
   EMPTY_GENSHIN_SAVE,
   MAX_ACHIEVEMENT_COUNT,
+  MAX_ARCHIVE_ENTRY_COUNT,
+  MAX_ARCHIVE_KILL_COUNT,
   MAX_CHARACTER_COUNT,
   MAX_CRAFTING_RECIPE_COUNT,
   MAX_FOUND_OCULUS_COUNT,
@@ -107,6 +110,20 @@ describe("genshinSaveSchema", () => {
           Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
         ),
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
+      },
+      archive: {
+        kills: Object.fromEntries(
+          Array.from({ length: MAX_ARCHIVE_KILL_COUNT }, (_value, index) => [
+            String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+            maxNumber,
+          ]),
+        ),
+        progress: Object.fromEntries(
+          Object.values(ArchiveSection).map((section) => [
+            section,
+            Array.from({ length: MAX_ARCHIVE_ENTRY_COUNT }, (_value, index) => maxNumber - index),
+          ]),
+        ),
       },
       inventory: {
         items: Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({

@@ -3,6 +3,7 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
 import achievementCount from "#src/data/achievements/achievementCount.json";
+import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -33,6 +34,10 @@ export const MAX_FOUND_OCULUS_COUNT = 4096;
 // The regions a player's statues are held in, one entry each, bounded by the game's nations and borderlands with room
 // To spare
 export const MAX_STATUE_REGION_COUNT = 32;
+// The entries a section of the Archive holds open, one each, bounded by the codex's largest section with room to spare
+export const MAX_ARCHIVE_ENTRY_COUNT = 4096;
+// The Living Beings the Archive counts defeats of, one entry each, bounded by the codex's rows with room to spare
+export const MAX_ARCHIVE_KILL_COUNT = 4096;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;
 export const MAX_CHARACTER_COUNT = 512;
@@ -154,6 +159,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_OPENED_CHEST_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_FOUND_OCULUS_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_STATUE_REGION_COUNT * getRecordEntryLength({ heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
+  Object.keys(ArchiveSection).length * MAX_ARCHIVE_ENTRY_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
+  MAX_ARCHIVE_KILL_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_INVENTORY_ITEM_COUNT *
     getListEntryLength({
       id: MAX_SAVE_NUMBER,
@@ -170,6 +177,18 @@ export const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
+  archive: {
+    kills: {},
+    progress: {
+      [ArchiveSection.Books]: [],
+      [ArchiveSection.Equipment]: [],
+      [ArchiveSection.Geography]: [],
+      [ArchiveSection.LivingBeings]: [],
+      [ArchiveSection.Materials]: [],
+      [ArchiveSection.TravelLog]: [],
+      [ArchiveSection.Tutorials]: [],
+    },
+  },
   characters: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},

@@ -138,6 +138,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         ? guest.offerings.frostbearingTree
         : account.offerings.frostbearingTree,
     },
+    archive: account.archive,
     openedChests: account.openedChests,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,

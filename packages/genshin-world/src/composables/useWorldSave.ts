@@ -1,4 +1,6 @@
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
+import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
+import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -8,9 +10,10 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { ref, shallowRef, watch } from "vue";
 
-// The bag, the wallet, the wish counters, the achievements' progress and the bench's crafting the player holds. A change to
-// Any of them is a grant the host saves: the changes made in one tick are one grant, so a pickup is one save, a wish is one
-// Save with its spend and its pity, and an achievement's progress is saved with the Primogems it paid. Every change to the
+// The bag, the wallet, the wish counters, the achievements' progress, the bench's crafting and the Archive's entries and
+// Defeats the player holds. A change to any of them is a grant the host saves: the changes made in one tick are one grant,
+// So a pickup is one save, a wish is one save with its spend and its pity, and an achievement's progress is saved with the
+// Primogems it paid. Every change to the
 // Bag is also announced to the systems that read what it takes in
 export const useWorldSave = ({
   emitGrant,
@@ -22,6 +25,8 @@ export const useWorldSave = ({
   savedState: Pick<
     GenshinSaveState,
     | "achievementProgressMap"
+    | "archiveKillsMap"
+    | "archiveProgressMap"
     | "craftedCountMap"
     | "craftingProgress"
     | "frostbearingTreeProgress"
@@ -37,6 +42,8 @@ export const useWorldSave = ({
   const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(
     savedState.achievementProgressMap,
   );
+  const archiveKillsMap = shallowRef<ArchiveKills>(savedState.archiveKillsMap);
+  const archiveProgressMap = shallowRef<ArchiveProgress>(savedState.archiveProgressMap);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
@@ -47,6 +54,8 @@ export const useWorldSave = ({
       wallet,
       wishPityMap,
       achievementProgressMap,
+      archiveKillsMap,
+      archiveProgressMap,
       craftedCountMap,
       craftingProgress,
       frostbearingTreeProgress,
@@ -67,6 +76,8 @@ export const useWorldSave = ({
   };
   return {
     achievementProgressMap,
+    archiveKillsMap,
+    archiveProgressMap,
     craftedCountMap,
     craftingProgress,
     frostbearingTreeProgress,

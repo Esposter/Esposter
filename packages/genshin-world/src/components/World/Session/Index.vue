@@ -145,6 +145,8 @@ const {
   craftedCountMap,
   craftingProgress,
   frostbearingTreeProgress,
+  archiveKillsMap,
+  archiveProgressMap,
   inventory,
   openedChestIds,
   setInventory,
@@ -192,7 +194,9 @@ const {
   wallet,
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
-const { archiveData, archiveKillsMap, archiveProgressMap, bookReading, readBook } = useWorldArchive({
+const { archiveData, bookReading, readBook } = useWorldArchive({
+  archiveKillsMap,
+  archiveProgressMap,
   enemyKindMap: enemyTables.enemyKindMap,
   events,
   finishedMainQuestIds,
@@ -395,6 +399,8 @@ useWorldSaveSync({
   getSaveState: () => ({
     achievementProgressMap: achievementProgressMap.value,
     adventureExp: adventureExp.value,
+    archiveKillsMap: archiveKillsMap.value,
+    archiveProgressMap: archiveProgressMap.value,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
     commissionDay: savedState.commissionDay,

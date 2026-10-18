@@ -2,6 +2,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 
 import { toAchievementProgressSave } from "#src/services/save/toAchievementProgressSave";
+import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave";
 import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
@@ -12,6 +13,8 @@ import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjus
 export const toGenshinSave = ({
   achievementProgressMap,
   adventureExp,
+  archiveKillsMap,
+  archiveProgressMap,
   characterCopyCountMap,
   characters,
   commissionDay,
@@ -33,6 +36,7 @@ export const toGenshinSave = ({
 }: GenshinSaveState): GenshinSave => ({
   achievements: toAchievementProgressSave(achievementProgressMap),
   adventureExp,
+  archive: { kills: Object.fromEntries(archiveKillsMap), progress: toArchiveProgressSave(archiveProgressMap) },
   characters: toCharacterSaves(characters, characterCopyCountMap),
   commissionDay: toCommissionDaySave(commissionDay),
   companionshipExp: Object.fromEntries([
