@@ -7,8 +7,8 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 describe("craftingStrongbox", () => {
-  // A bag holding one more unlocked artifact than the strongbox takes: once three are picked the offering is ready, and the
-  // Fourth is held back with its button disabled rather than picked as well
+  // A bag holding one more unlocked artifact than the strongbox takes: once three are picked the offering is ready, and
+  // The fourth is held back with its button disabled rather than picked as well
   test("the offering takes no more artifacts than its strongbox needs", async () => {
     expect.hasAssertions();
 

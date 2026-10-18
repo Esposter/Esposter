@@ -156,8 +156,8 @@ const applyOfferingPickUp = (pickUp: DroppedItemPickUp) => {
   inventory.value = pickUp.inventory;
   wallet.value = pickUp.wallet;
 };
-// Back from the Mystic Offering returns to the bench's first recipe tab, which the offering's own tab is not, and closes
-// The bench while no recipe tab is open to return to
+// Back from the Mystic Offering returns to the bench's first recipe tab, which the offering's own tab is not, and
+// Closes the bench while no recipe tab is open to return to
 const closeMysticOffering = () => {
   const firstRecipeTab = recipeTabCells.value.at(0);
   if (firstRecipeTab === undefined) emit("close");

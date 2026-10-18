@@ -7,8 +7,8 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 describe("craftingScreen", () => {
-  // The Mystic Offering at its Adventure Rank with no recipe open, so the offering's tab is the bench's only one, and the
-  // Back it shows closes the bench rather than returning to a tab that is the offering itself
+  // The Mystic Offering at its Adventure Rank with no recipe open, so the offering's tab is the bench's only one, and
+  // The Back it shows closes the bench rather than returning to a tab that is the offering itself
   test("back from the Mystic Offering closes the bench when no recipe tab is open", async () => {
     expect.hasAssertions();
 
