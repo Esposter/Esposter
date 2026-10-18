@@ -23,12 +23,10 @@ const createStrikeEntries = (
 ): [string, unknown][] => [
   [`${path}.poiseDamage`, poise],
   [`${path}.internalCooldownTag`, internalCooldownTag],
-  [`${path}.isBlunt`, undefined],
 ];
-const createUntaggedEntries = (path: string, poise: number, isBlunt?: true, gauge?: number): [string, unknown][] => [
+const createUntaggedEntries = (path: string, poise: number, gauge?: number): [string, unknown][] => [
   [`${path}.poiseDamage`, poise],
   [`${path}.internalCooldownTag`, undefined],
-  [`${path}.isBlunt`, isBlunt],
   ...(gauge === undefined ? [] : [[`${path}.gauge`, gauge] satisfies [string, unknown]]),
 ];
 
@@ -64,12 +62,12 @@ describe(getWikiKitCandidates, () => {
           ...createStrikeEntries("normalAttacks.3.hits.3", 12.8),
           ...createStrikeEntries("normalAttacks.4.hits.0", 71.2),
           ...createStrikeEntries("chargedAttack.hits.0", 120, InternalCooldownTag.ChargedAttack),
-          ...createUntaggedEntries("plungeCollision", 25, undefined, 0),
-          ...createUntaggedEntries(`plunges.${KitPlunge.Low}.hits.0`, 100, true),
-          ...createUntaggedEntries(`plunges.${KitPlunge.High}.hits.0`, 150, true),
+          ...createUntaggedEntries("plungeCollision", 25, 0),
+          ...createUntaggedEntries(`plunges.${KitPlunge.Low}.hits.0`, 100),
+          ...createUntaggedEntries(`plunges.${KitPlunge.High}.hits.0`, 150),
           ...createStrikeEntries("burst.hits.0", 30, InternalCooldownTag.ElementalBurst),
           ["burst.hits.0.gauge", 1],
-          ...createUntaggedEntries("burst.hits.3", 30, undefined, 1),
+          ...createUntaggedEntries("burst.hits.3", 30, 1),
         ].map(([path, value]) => [path, [value]]),
       ),
     );

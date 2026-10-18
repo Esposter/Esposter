@@ -24,14 +24,12 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21.5 }
   },
-  "hitFields.lightfallExplosion.isBlunt": { "cause": "Unsourced", "value": true },
   "hitFields.lightfallExplosion.poiseDamage": { "cause": "Unsourced", "value": 400 },
   "hits.shatteredLightfall.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21.5 }
   },
   "hits.shatteredLightfall.hitmarkFrames": { "cause": "Unsourced", "value": 108 },
-  "hits.shatteredLightfall.isBlunt": { "cause": "Unsourced", "value": true },
   "hits.shatteredLightfall.multiplier": { "cause": "Unsourced", "value": 1.83524 },
   "hits.shatteredLightfall.poiseDamage": { "cause": "Unsourced", "value": 180 },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5131 } },
@@ -61,17 +59,10 @@
     "value": { "index": 1, "proudSkillGroupId": 5132 }
   },
   "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.0.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.1.isBlunt": { "cause": "DiffersFromSource" },
   "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.isBlunt": { "cause": "DiffersFromSource" },
   "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.1.isBlunt": { "cause": "DiffersFromSource" }
+  "normalAttacks.4.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" }
 }

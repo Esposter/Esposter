@@ -46,7 +46,5 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 }
 }

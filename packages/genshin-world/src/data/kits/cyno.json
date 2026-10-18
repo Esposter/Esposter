@@ -111,7 +111,6 @@
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 18 },
-  "stances.pactswornPathclearer.normalAttacks.2.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 7139 }
@@ -154,7 +153,6 @@
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 40 },
-  "stances.pactswornPathclearer.normalAttacks.4.hits.0.isBlunt": { "cause": "Unsourced", "value": true },
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 7139 }

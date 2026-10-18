@@ -37,7 +37,5 @@
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6332 } },
-  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6332 } },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6332 } }
 }

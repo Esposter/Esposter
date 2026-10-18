@@ -45,7 +45,5 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 20 }
   },
   "skillHolds.0.variant.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 19 },
-  "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 9032 } },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+  "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 9032 } }
 }

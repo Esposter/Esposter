@@ -23,7 +23,7 @@ const readTemplateBody = (wikitext: string, start: number): string => {
 };
 
 // The rows of every `{{Advanced Properties}}` template on a wiki talent page, numbered on from one template to the
-// Next: each row's `titleN`, `guN`, `icdtagN`, `poiseN` and `bluntN`, the first row's written with no number
+// Next: each row's `titleN`, `guN`, `icdtagN` and `poiseN`, the first row's written with no number
 export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[] => {
   const properties: WikiAdvancedProperty[] = [];
   let rowOffset = 0;
@@ -52,7 +52,6 @@ export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[
       properties.push({
         ...(gauge !== undefined && { gauge: Number(gauge) }),
         ...(internalCooldownTag !== undefined && internalCooldownTag !== "" && { internalCooldownTag }),
-        ...(fieldMap.get("blunt") === "1" && { isBlunt: true }),
         ...(NUMBER_REGEX.test(poise) && { poise: Number(poise) }),
         row: rowOffset + row,
         title,

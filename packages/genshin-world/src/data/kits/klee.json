@@ -126,7 +126,6 @@
   "hits.jumpyDumpty.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.jumpyDumpty.1.hitmarkFrames": { "cause": "Unclassified", "value": 111 },
   "hits.jumpyDumpty.1.internalCooldownTag": { "cause": "Unclassified", "value": "KleePyroDamage" },
-  "hits.jumpyDumpty.1.isBlunt": { "cause": "Unclassified", "value": true },
   "hits.jumpyDumpty.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 2932 } },
   "hits.jumpyDumpty.1.poiseDamage": { "cause": "Unclassified", "value": 40 },
   "hits.jumpyDumpty.2.area": {
@@ -137,7 +136,6 @@
   "hits.jumpyDumpty.2.gauge": { "cause": "Unclassified", "value": 2 },
   "hits.jumpyDumpty.2.hitmarkFrames": { "cause": "Unclassified", "value": 140 },
   "hits.jumpyDumpty.2.internalCooldownTag": { "cause": "Unclassified", "value": "KleePyroDamage" },
-  "hits.jumpyDumpty.2.isBlunt": { "cause": "Unclassified", "value": true },
   "hits.jumpyDumpty.2.multiplier": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 2932 } },
   "hits.jumpyDumpty.2.poiseDamage": { "cause": "Unclassified", "value": 40 },
   "hits.jumpyDumpty.3.area": {

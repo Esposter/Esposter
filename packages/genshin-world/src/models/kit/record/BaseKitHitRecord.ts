@@ -16,8 +16,8 @@ import { z } from "zod";
 
 // One hit of a kit's record short of a bubble, which a bubble's explosion is: the cylinder it reaches, and while an
 // Infusion converts its attacks the cylinder and poise it takes instead, the element it deals, none for a physical hit,
-// Its gauge, its hitmark in frames at 60 a second from the action's start, its internal cooldown tag, whether it is
-// Blunt, its talent multiplier and its poise damage
+// Its gauge, its hitmark in frames at 60 a second from the action's start, its internal cooldown tag, its talent
+// Multiplier and its poise damage
 export interface BaseKitHitRecord {
   area: AttackArea;
   // The kind of attack the hit is dealt as where it names its own, rather than its action's
@@ -31,7 +31,6 @@ export interface BaseKitHitRecord {
   healParty?: KitPartyHealRecord;
   hitmarkFrames: number;
   internalCooldownTag?: InternalCooldownTag;
-  isBlunt?: true;
   // The Lunar reaction a direct Lunar hit deals its damage as
   lunarReactionType?: LunarReactionType;
   multiplier: KitParameter;
@@ -52,7 +51,6 @@ export const baseKitHitRecordSchema = z.strictObject({
   healParty: kitPartyHealRecordSchema.optional(),
   hitmarkFrames: z.number().nonnegative(),
   internalCooldownTag: z.enum(InternalCooldownTag).optional(),
-  isBlunt: z.literal(true).optional(),
   lunarReactionType: z.enum(LunarReactionType).optional(),
   multiplier: kitParameterSchema,
   poiseDamage: z.number().nonnegative(),

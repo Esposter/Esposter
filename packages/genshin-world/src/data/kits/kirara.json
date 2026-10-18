@@ -1053,7 +1053,5 @@
   "skillHolds.10.action.hits.20.multiplier": { "cause": "Unsourced", "value": 1.44 },
   "skillHolds.10.cooldownSeconds": { "cause": "Unsourced", "value": 12 },
   "skillHolds.10.minimumHeldSeconds": { "cause": "Unsourced", "value": 10 },
-  "skillHolds.0.action.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
-  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+  "skillHolds.0.action.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
 }
