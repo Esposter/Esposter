@@ -1,3 +1,4 @@
+import type { TalentLevelMap } from "#src/models/character/TalentLevelMap";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
@@ -10,15 +11,16 @@ import { createKitRecordResolver } from "#src/services/kit/build/createKitRecord
 import { tagKitHits } from "#src/services/kit/tagKitHits";
 
 // A character's kit, from its record and its behaviour, once as the character joins: the record's slots resolved against
-// The character's multipliers, its frames divided into seconds once and its talents' parameters read off their tables,
-// The behaviour given the record to read what else it plays by name, and what it returns joined to the slots' actions
-// And hits, each tagged with the kind of attack its action deals
+// The character's multipliers and the level each talent plays at, its frames divided into seconds once and its talents'
+// Parameters read off their tables at those levels, the behaviour given the record to read what else it plays by name,
+// And what it returns joined to the slots' actions and hits, each tagged with the kind of attack its action deals
 export const buildKit = (
   record: KitRecord,
   talentMultiplierMap: TalentMultiplierMap,
+  talentLevelMap: TalentLevelMap,
   createBehaviour: (reader: KitRecordReader) => KitBehaviour,
 ): Kit => {
-  const resolver = createKitRecordResolver(talentMultiplierMap);
+  const resolver = createKitRecordResolver(talentMultiplierMap, talentLevelMap);
   const kit = resolver.toKit(record);
   return tagKitHits(applyKitBehaviour(kit, createBehaviour(createKitRecordReader(record, resolver, kit))));
 };

@@ -5,6 +5,7 @@ The levelling is built: each combat talent rises from 1 to 10 by its phase, Mora
 ## Decisions
 
 - **The level a kit reads is the talent's own plus what its constellations add.** The kit reads the level the character holds, plus `getConstellationTalentAdditions` for that talent, and nothing else. Materials never pay for a level past 10, so a level past it is a constellation's alone.
+- **A kit reads its levels once, as its character joins the party.** `readCharacterKit` takes the levels the character plays at and builds the kit from them, so a talent raised in play (an upgrade, or a constellation the character takes) plays at its new level from the next join or reload, not at once. A kit in play holds its state, so a rebuild on each raise needs a decision of its own, and the [kits](../../specs/genshin/kits/README.md) page names it as a gap.
 - **The Talents tab presses the upgrade.** It lists each combat talent with its level, the phase its next level needs, and its cost, and presses `upgradeTalent`. Its look is the [character screen](../genshin-character-screen/design.md)'s.
 - **A refusal is read before the press, never caught after it.** `upgradeTalent` throws on a refusal, and try/catch is banned, so the tab asks first: one function names why a level cannot be taken now, and `upgradeTalent` throws on that same answer, so the tab and the rule never disagree.
 - **A row says why in the game's words, and its numbers in its cost.** A refused row's reason is one of the game's short reasons (`Max level reached`, `Character Ascension Phase too low`, `Insufficient Mora`, `Insufficient materials`), and the phase the next level needs and the Mora and items it takes are the row's own lines, so no reason carries a number.
@@ -45,12 +46,14 @@ packages/genshin-world/src/services/character/getTalentUpgradeRefusal.ts
 
 ## Key files
 
-| File                                                                               | Role after the change                                               |
-| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/character/upgradeTalent.ts`                   | Its caller is `upgradeCharacterTalent`, which the press calls       |
-| `packages/genshin-world/src/services/character/upgradeCharacterTalent.ts`          | Its caller is the Talents tab's press, which writes the roster back |
-| `packages/genshin-world/src/services/character/getTalentRows.ts`                   | Its caller is the Talents tab, which lists each talent's row        |
-| `packages/genshin-world/src/services/character/getConstellationTalentAdditions.ts` | Its caller is the kit, which reads a talent at these levels         |
+| File                                                                               | Role after the change                                                                            |
+| :--------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/character/upgradeTalent.ts`                   | Its caller is `upgradeCharacterTalent`, which the press calls                                    |
+| `packages/genshin-world/src/services/character/upgradeCharacterTalent.ts`          | Its caller is the Talents tab's press, which writes the roster back                              |
+| `packages/genshin-world/src/services/character/getTalentRows.ts`                   | Its caller is the Talents tab, which lists each talent's row                                     |
+| `packages/genshin-world/src/services/character/getConstellationTalentAdditions.ts` | Its caller is the kit, which reads a talent at these levels                                      |
+| `packages/genshin-world/src/services/character/getPlayedTalentLevels.ts`           | Its caller is the kit's build as a character joins, which reads each talent at this level        |
+| `packages/genshin-world/src/services/character/getCharacterIdConstellationsMap.ts` | Its callers are the world gate and the session, which read each character's constellations by id |
 
 ## Sources
 
