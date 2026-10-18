@@ -98,6 +98,7 @@ getResultAsync(() =>
       startingCharacterIdKitMap,
       statTables,
       talentUpgradeMap: talentTables.talentUpgradeMap,
+      timeTrialPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.TimeTrialChallenge),
       wildlifePlaces,
       windriseData,
       wishSchedule,

@@ -137,6 +137,7 @@ const {
   startingCharacterIdKitMap,
   statTables,
   talentUpgradeMap,
+  timeTrialPlaces,
   wildlifePlaces,
   windriseData,
   wishSchedule,
@@ -322,7 +323,11 @@ const { chestInteractables, openChestById } = useWorldChests({
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
 const { quickUseEquippedGadget } = useWorldGadgets({ gameDataBaseUrl, inventory });
 // The Seelies of Mondstadt, each led to its court by the player following it, and settled where the save names it settled
-const { puzzleSeelies, settledSeelieIds, stepWorldPuzzles } = useWorldPuzzles(seelies, savedState.settledSeelieIds);
+const { puzzleSeelies, settledSeelieIds, stepWorldPuzzles } = useWorldPuzzles(
+  seelies,
+  savedState.settledSeelieIds,
+  timeTrialPlaces,
+);
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
