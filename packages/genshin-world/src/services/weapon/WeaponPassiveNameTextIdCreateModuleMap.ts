@@ -55,6 +55,7 @@ import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/c
 import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
+import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
@@ -255,4 +256,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "4049199251": createTidalShadowPassiveModule,
   // Benthic Pulse (Song of Stillness)
   "369700907": createBenthicPulsePassiveModule,
+  // Tip of the Spear (Rightful Reward)
+  "2803637475": createTipOfTheSpearPassiveModule,
 };
