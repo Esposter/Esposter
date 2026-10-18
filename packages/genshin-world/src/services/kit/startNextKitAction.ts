@@ -24,8 +24,9 @@ import { takeOne } from "@esposter/shared";
 // The action the presses ask for once none is playing: a charged attack once a strike held past its hold has ended, a
 // Burst or a skill its gates allow in any state they may start in, else the string's next strike when it is pressed or
 // Queued on the ground. A charged attack spends its stamina at the factor the kit's passive gives it, a skill starts
-// While a charge of it stands, and a skill with holds starts on its release, at the hold level its seconds held reach. A
-// Skill's or a burst's cooldown is lowered by each field the body casts it inside that lowers cooldowns. An action whose
+// While a charge of it stands, and a skill with holds starts on its release, at the hold level its seconds held reach,
+// Or the top one while a counter window stands. A skill's or a burst's cooldown is lowered by each field the body
+// Casts it inside that lowers cooldowns. An action whose
 // Start gate fails starts nothing, and what it would have spent or advanced stays as it was
 const checkCanStart = (action: KitAction, context: KitContext) => action.canStart?.(context) !== false;
 
@@ -99,8 +100,10 @@ export const startNextKitAction = (
     // Seconds until every charge is back
     const { activeCombatant, kitEffectState } = context;
     const isChargeComplete = checkIsKitSkillChargeComplete(kitEffectState, activeCombatant.characterId);
+    // A counter window standing on the character releases at the top level, as a completed charge does
+    const isTopLevel = kit.jumpsSkillHoldToTop?.(context) === true;
     const hold = kit.elementalSkillHolds?.findLast(
-      ({ minimumHeldSeconds }) => isChargeComplete || kitState.skillReleasedSeconds >= minimumHeldSeconds,
+      ({ minimumHeldSeconds }) => isChargeComplete || isTopLevel || kitState.skillReleasedSeconds >= minimumHeldSeconds,
     );
     const holdAction = hold?.variant?.checkIsActive(context) ? hold.variant.action : hold?.action;
     const skillAction = holdAction ?? kit.elementalSkill;
