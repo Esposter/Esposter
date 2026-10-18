@@ -26,12 +26,12 @@ A character's model SHALL stand at the height of the game's own model of that ch
 - **WHEN** the Traveler's height is compared with the game's model of the Traveler
 - **THEN** the two heights agree
 
-### Requirement: Terms Shown On Choice
+### Requirement: Terms Shown Beside The Character
 
-A party screen SHALL show a chosen character's terms and credit beside the character.
+The Character screen SHALL show the terms and credit of the character it shows beside that character, once the character's model is loaded.
 
 #### Scenario: a chosen character's terms show beside it
 
-- **GIVEN** a party screen with a character chosen
-- **WHEN** the player views the chosen character
-- **THEN** the character's terms and credit are shown beside it
+- **GIVEN** the Character screen open on a character whose model is loaded
+- **WHEN** the player views that character
+- **THEN** the model's terms and credit are shown beside it, without a button to press
