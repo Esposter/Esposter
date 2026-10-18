@@ -12,6 +12,9 @@ export interface Party {
   activeIndex: number;
   characterIdMemberMap: Map<number, PartyMember>;
   deployedTeamIndex: number;
+  // The seconds left of the fall the member on the field plays, while no member may be switched to, none once it ends or
+  // When nobody on the field has fallen. Not saved, so a reload onto a fallen member asks for the next one at once
+  fallSecondsRemaining: number;
   // The changes to its members' HP not yet sent to the deployed team's kits, which the step on the field sends and empties
   healthChanges: PartyHealthChange[];
   lunarChargedCloud: LunarChargedCloud;

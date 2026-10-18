@@ -22,10 +22,12 @@ import {
   IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER,
   PARTY_MEMBER_BURST_INPUT_ACTIONS,
 } from "#src/services/party/constants";
+import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { drownParty } from "#src/services/party/drownParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
+import { stepPartyFall } from "#src/services/party/stepPartyFall";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
 import { useLoop, useTres } from "@tresjs/core";
 import { useEventListener } from "@vueuse/core";
@@ -150,6 +152,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     .set(position.x - characterController.previousPosition.x, position.z - characterController.previousPosition.z)
     .divideScalar(FIXED_STEP_SECONDS);
   stepGrassTrail(grassTrail, trailPosition, trailVelocity, FIXED_STEP_SECONDS);
+  stepPartyFall(party, FIXED_STEP_SECONDS);
   if (phase.state === LocomotionState.Drown && previousState !== LocomotionState.Drown) {
     drownParty(party);
     emit("clearKitEffects");
@@ -161,15 +164,17 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     kitState = createKitState();
     kitCharacterId = characterId;
   }
+  // A member who is down plays its fall with no presses, so its kit starts nothing while the team's effects still run
+  const isFieldStanding = !checkIsCharacterDown(party, characterId);
   stepActiveKit(
     kitState,
     {
       height: position.y - ground.getGround(position.x, position.z).height,
-      isAttackHeld: inputState.heldActions.has(InputAction.NormalAttack),
-      isAttackPressed,
-      isBurstPressed,
-      isSkillHeld: inputState.heldActions.has(InputAction.ElementalSkill),
-      isSkillPressed,
+      isAttackHeld: isFieldStanding && inputState.heldActions.has(InputAction.NormalAttack),
+      isAttackPressed: isFieldStanding && isAttackPressed,
+      isBurstPressed: isFieldStanding && isBurstPressed,
+      isSkillHeld: isFieldStanding && inputState.heldActions.has(InputAction.ElementalSkill),
+      isSkillPressed: isFieldStanding && isSkillPressed,
       locomotionState: phase.state,
     },
     FIXED_STEP_SECONDS,
