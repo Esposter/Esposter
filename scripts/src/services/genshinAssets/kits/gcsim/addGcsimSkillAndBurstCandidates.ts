@@ -10,6 +10,7 @@ import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGc
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
+import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
@@ -64,11 +65,20 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
     );
     // A hit is joined to a multiplier and a hitbox by its place only where the slot has one of each for every hitmark
     const isLeafJoined = slotLeaves.length === hitmarkValues.length;
+    // Where the leaves and hitmarks differ in number, a hit is the attack of the one queue call firing at its hitmark,
+    // And takes its talent variable's leaf only where that variable has a single multiplier
+    const queuedHits = getGcsimQueuedHits(gcsim, attackTags, hitmarks.file);
+    const readQueuedAttack = (hitmark: number) => {
+      const queuedAttacks = queuedHits.filter(({ delay }) => delay === hitmark);
+      return queuedAttacks.length === 1 ? queuedAttacks[0].attack : undefined;
+    };
     const hitboxes = config.abilityHitboxesMap.get(slot) ?? [];
     const isHitboxJoined = hitboxes.length === hitmarkValues.length;
     add(`${slot}.hits.length`, hitmarkValues.length, toFile(hitmarks.file), hitmarks.line);
     for (const [hitIndex, hitmark] of hitmarkValues.entries()) {
-      const talentLeaf = isLeafJoined ? slotLeaves[hitIndex] : undefined;
+      const queuedAttack = isLeafJoined ? undefined : readQueuedAttack(hitmark);
+      const queuedLeaves = config.talentVariables.find(({ name }) => name === queuedAttack?.talentVariable)?.leaves;
+      const talentLeaf = isLeafJoined ? slotLeaves[hitIndex] : queuedLeaves?.length === 1 ? queuedLeaves[0] : undefined;
       const variable =
         talentLeaf === undefined
           ? undefined
@@ -81,7 +91,7 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
             : hitmarkValues.length === 1
               ? findGcsimHitbox(config, slot, ...pressHitboxNames)
               : undefined,
-          attack: slotAttacks.find(({ talentVariable }) => talentVariable === variable),
+          attack: queuedAttack ?? slotAttacks.find(({ talentVariable }) => talentVariable === variable),
           hitmark: {
             file: hitmarks.file,
             line: hitmarks.elementLines[hitIndex] ?? hitmarks.line,

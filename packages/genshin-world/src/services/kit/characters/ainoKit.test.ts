@@ -93,7 +93,7 @@ const strikeSkillHit = (context: KitContext, hit: KitHit): void => {
 // The teammate's hits in, with the zone the burst left standing
 const createTeammateTeam = (constellationCount: number) => {
   const aino = { ...createAinoCombatant(0), constellationCount };
-  const teammate = { ...aino, characterId: MOONSIGN_CHARACTER_IDS[0] };
+  const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
   const kitEffectState: KitEffectState = { effects: [] };
   const context = createKitTestContext(aino, {
     characterIdCombatantMap: new Map<number, Combatant>([

@@ -127,7 +127,7 @@ export const createJahodaKitBehaviour = ({
   const robotFirstStrikeSeconds = readSeconds("robotFirstStrike");
   const robotStrikeIntervalSeconds = readSeconds("robotStrikeInterval");
   const robotStrikeMultiplier = readParameter("robotStrikeTalentMultiplier");
-  const robotStrikeHitFields = readHitFields("robotStrike", ["area", "gauge", "poiseDamage"]);
+  const robotStrikeHitFields = readHitFields("robotStrike", ["hitmarkSeconds", "talentMultiplier"]);
   // The filled flask's hit lands sooner from a press, or the pursuit running out, than from the fill that fills it, and the
   // Unfilled flask's hit the same from each
   const filledDrainHit: KitHit = {
