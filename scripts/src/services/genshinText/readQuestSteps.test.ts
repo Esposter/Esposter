@@ -1,5 +1,5 @@
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
-import { QuestBanType, QuestObjectiveKind } from "genshin-world";
+import { formatQuestWaitTargetId, QuestBanType, QuestObjectiveKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(readQuestSteps, () => {
@@ -160,7 +160,7 @@ describe(readQuestSteps, () => {
   test("notes a shown step whose conditions ask nothing of the Traveler", () => {
     expect.hasAssertions();
 
-    const questBinary = { A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_FINISH_PLOT", G: [0, 0] }] }] };
+    const questBinary = { A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_LUA_NOTIFY", G: [0, 0] }] }] };
 
     expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
       notes: ["1's step 100 asks nothing of the Traveler its conditions name"],
@@ -249,5 +249,157 @@ describe(readQuestSteps, () => {
         },
       ],
     });
+  });
+
+  test("plot that is a talk", () => {
+    expect.hasAssertions();
+
+    const questBinary = { A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_FINISH_PLOT", G: [7, 0] }] }] };
+
+    expect(
+      readQuestSteps(
+        questBinary,
+        QUEST_ID,
+        checkIsText,
+        () => true,
+        (talkId) => talkId === "7",
+      ).steps,
+    ).toStrictEqual([
+      {
+        id: "100",
+        objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["7"] }],
+        textId: String(TEXT_HASH),
+      },
+    ]);
+  });
+
+  test("plot the world cannot play", () => {
+    expect.hasAssertions();
+
+    const questBinary = { A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_FINISH_PLOT", G: [7, 0] }] }] };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: [],
+      offerTalkIds: [],
+      steps: [
+        {
+          id: "100",
+          objectives: [{ count: 1, kind: QuestObjectiveKind.Plot, targetIds: ["7"] }],
+          textId: String(TEXT_HASH),
+        },
+      ],
+    });
+  });
+
+  test("scene named", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_PRESENT_AT_SPECIFIC_SCENE", G: [9, 0] }] }],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText).steps).toStrictEqual([
+      {
+        id: "100",
+        objectives: [{ count: 1, kind: QuestObjectiveKind.Scene, targetIds: ["9"] }],
+        textId: String(TEXT_HASH),
+      },
+    ]);
+  });
+
+  test("wait window read", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_GAME_TIME_TICK", G: [1, 0], H: "09,11" }] }],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText).steps).toStrictEqual([
+      {
+        id: "100",
+        objectives: [
+          {
+            count: 1,
+            kind: QuestObjectiveKind.Wait,
+            targetIds: [formatQuestWaitTargetId({ days: 1, fromHour: 9, toHour: 11 })],
+          },
+        ],
+        textId: String(TEXT_HASH),
+      },
+    ]);
+  });
+
+  test("alternative ticks merged", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [
+        {
+          B: 100,
+          C: 1,
+          D: TEXT_HASH,
+          E: [
+            { F: "QUEST_CONTENT_GAME_TIME_TICK", G: [0, 0], H: "6,9" },
+            { F: "QUEST_CONTENT_GAME_TIME_TICK", G: [1, 0], H: "18,6" },
+          ],
+        },
+      ],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText).steps).toStrictEqual([
+      {
+        id: "100",
+        objectives: [
+          {
+            count: 1,
+            kind: QuestObjectiveKind.Wait,
+            targetIds: [
+              formatQuestWaitTargetId({ days: 0, fromHour: 6, toHour: 9 }),
+              formatQuestWaitTargetId({ days: 1, fromHour: 18, toHour: 6 }),
+            ],
+          },
+        ],
+        textId: String(TEXT_HASH),
+      },
+    ]);
+  });
+
+  test("unreadable window left out", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [
+        {
+          B: 100,
+          C: 1,
+          D: TEXT_HASH,
+          E: [
+            { F: "QUEST_CONTENT_GAME_TIME_TICK", G: [0, 0], H: "6,25" },
+            { F: "QUEST_CONTENT_GAME_TIME_TICK", G: [0, 0] },
+          ],
+        },
+      ],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: ["1's step 100 asks nothing of the Traveler its conditions name"],
+      offerTalkIds: [],
+      steps: [],
+    });
+  });
+
+  test("hidden step stays out", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [
+        { B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_COMPLETE_TALK", G: [0, 0] }] },
+        { B: 101, C: 2, E: [{ F: "QUEST_CONTENT_FINISH_PLOT", G: [7, 0] }] },
+        { B: 102, C: 3, E: [{ F: "QUEST_CONTENT_PRESENT_AT_SPECIFIC_SCENE", G: [9, 0] }] },
+        { B: 103, C: 4, E: [{ F: "QUEST_CONTENT_GAME_TIME_TICK", G: [0, 0], H: "0,24" }] },
+      ],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText).steps.map(({ id }) => id)).toStrictEqual(["100"]);
   });
 });

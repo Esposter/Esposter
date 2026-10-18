@@ -209,6 +209,53 @@ The world SHALL carry only the quests `QuestIds` lists, read by their ids from t
 - **WHEN** the quests are read
 - **THEN** only the quests in the inventory are read from the game's data
 
+### Requirement: A step finishing on a plot, a scene or a clock tick is read as the world's own state
+
+The reader SHALL keep a shown step whose finish is a plot finished, being present in a scene or a game time tick, as a talk-to, plot, scene or wait objective. It SHALL leave out such a step the game gives no words.
+
+#### Scenario: Plot that is a talk
+
+- **GIVEN** a shown step finishing on a plot whose id names a talk the world plays, one with lines and a character it is begun on
+- **WHEN** the reader reads the step
+- **THEN** its objective is a talk-to of that talk, met when the talk ends
+
+#### Scenario: Plot the world cannot play
+
+- **GIVEN** a shown step finishing on a plot whose id names no talk the world plays
+- **WHEN** the reader reads the step
+- **THEN** its objective is a plot, met at once, as a named stand-in
+
+#### Scenario: Scene named
+
+- **GIVEN** a shown step finishing on being present in a scene
+- **WHEN** the reader reads the step
+- **THEN** its objective is a scene naming the scene's id
+
+#### Scenario: Wait window read
+
+- **GIVEN** a shown step finishing on a game time tick of some days and a window of hours
+- **WHEN** the reader reads the step
+- **THEN** its objective is a wait of those days and that window
+
+#### Scenario: Alternative ticks merged
+
+- **GIVEN** a shown step with several game time ticks
+- **WHEN** the reader reads the step
+- **THEN** it has one wait objective, naming a window for each tick, any one of which meets it
+
+#### Scenario: Unreadable window left out
+
+- **GIVEN** a game time tick whose text is no window of hours of a day
+- **WHEN** the reader reads the step
+- **THEN** the tick is left out
+- **AND** a step with nothing else to ask is left out and noted
+
+#### Scenario: Hidden step stays out
+
+- **GIVEN** a step with no words finishing on a plot, a scene or a game time tick
+- **WHEN** the reader reads the quest
+- **THEN** the step is left out, as the game's own bookkeeping
+
 ### Requirement: A go-to step does not move until its place is placed
 
 A go-to step SHALL stay where it is until the region data places its trigger.

@@ -115,6 +115,10 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       Number(questId),
       (hash) => englishTextMap.has(String(hash)),
       (talkId) => readTalk(Number(talkId), talkTables).lines.length > 0,
+      (talkId) => {
+        const { lines, npcIds } = readTalk(Number(talkId), talkTables);
+        return lines.length > 0 && npcIds.length > 0;
+      },
     );
     notes.push(...stepNotes);
     const offerTalkIds = questKind === QuestKind.Archon ? [] : readOfferTalkIds;

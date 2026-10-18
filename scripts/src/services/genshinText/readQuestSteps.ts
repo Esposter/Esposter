@@ -1,10 +1,12 @@
-import type { QuestStep } from "genshin-world";
+import type { QuestObjective, QuestStep } from "genshin-world";
 
+import { mergeQuestWaitObjectives } from "#src/services/genshinText/mergeQuestWaitObjectives";
 import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContentObjectiveMap";
 import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
 import { readQuestGuideNpcId } from "#src/services/genshinText/readQuestGuideNpcId";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
-import { QuestBanType, QuestObjectiveKind } from "genshin-world";
+import { readQuestWait } from "#src/services/genshinText/readQuestWait";
+import { formatQuestWaitTargetId, QuestBanType, QuestObjectiveKind } from "genshin-world";
 
 // Whether a sub quest holds a condition in any of its fields, and how many of a list's sub quests do
 const hasCondition = (subQuest: Record<string, unknown>) =>
@@ -18,13 +20,17 @@ const countConditioned = (subQuestList: Record<string, unknown>[]) =>
 // Conditions the list the most steps fill, where its fail conditions are a list only some do; and its words the field
 // Holding a hash the text map has. A step with no words is the game's own bookkeeping, never shown, and one whose
 // Conditions ask nothing of the Traveler is left out and noted. A step's objectives are every condition that asks
-// Something, all of which the step needs done. A quest a talk offers opens on such a hidden step finishing on that talk,
-// So the talks the first step finishes on offer the quest when that step has no words
+// Something, all of which the step needs done. A plot finished is the talk it names where the world plays that talk (it
+// Has lines and a character it is begun on), and otherwise a plot the world cannot play, which is met at once; a game
+// Time tick is a wait on its days and window of hours, the ticks of a step being alternatives. A quest a talk offers
+// Opens on such a hidden step finishing on that talk, so the talks the first step finishes on offer the quest when that
+// Step has no words
 export const readQuestSteps = (
   questBinary: Record<string, unknown>,
   questId: number,
   checkIsText: (hash: number) => boolean,
   checkIsPlayableTalk: (talkId: string) => boolean = () => true,
+  checkIsBegunTalk: (talkId: string) => boolean = () => false,
 ): { notes: string[]; offerTalkIds: string[]; steps: QuestStep[] } => {
   // The sub quests are the list holding the most sub quests that hold a condition, so one sub quest with none, a step the
   // Game finishes by script, does not hide the rest; that one is left out below as asking nothing
@@ -79,15 +85,25 @@ export const readQuestSteps = (
     const id = numbers.find((value) => value === questId || Math.floor(value / 100) === questId);
     const textHash = readTextHash(subQuest);
     if (id === undefined || textHash === undefined) return [];
-    const objectives = readFinishConditions(subQuest).flatMap(({ parameters, type }) => {
-      const questContentObjective = QuestContentObjectiveMap[type];
-      if (!questContentObjective) return [];
-      const { kind, targetIndex } = questContentObjective;
-      const targetId = String(parameters[targetIndex] ?? "");
-      if (kind === QuestObjectiveKind.TalkTo && !checkTalkIsPlayable(targetId)) return [];
-      const isCounted = [QuestObjectiveKind.Collect, QuestObjectiveKind.Defeat].includes(kind);
-      return [{ count: isCounted ? Math.max(Number(parameters[1] ?? 0), 1) : 1, kind, targetIds: [targetId] }];
-    });
+    const objectives = mergeQuestWaitObjectives(
+      readFinishConditions(subQuest).flatMap<QuestObjective>((condition) => {
+        const { parameters, type } = condition;
+        const questContentObjective = QuestContentObjectiveMap[type];
+        if (!questContentObjective) return [];
+        const targetId = String(parameters[questContentObjective.targetIndex] ?? "");
+        const kind =
+          questContentObjective.kind === QuestObjectiveKind.Plot && checkIsBegunTalk(targetId)
+            ? QuestObjectiveKind.TalkTo
+            : questContentObjective.kind;
+        if (kind === QuestObjectiveKind.TalkTo && !checkTalkIsPlayable(targetId)) return [];
+        if (kind === QuestObjectiveKind.Wait) {
+          const questWait = readQuestWait(condition);
+          return questWait ? [{ count: 1, kind, targetIds: [formatQuestWaitTargetId(questWait)] }] : [];
+        }
+        const isCounted = [QuestObjectiveKind.Collect, QuestObjectiveKind.Defeat].includes(kind);
+        return [{ count: isCounted ? Math.max(Number(parameters[1] ?? 0), 1) : 1, kind, targetIds: [targetId] }];
+      }),
+    );
     if (objectives.length === 0) {
       notes.push(`${questId}'s step ${id} asks nothing of the Traveler its conditions name`);
       return [];
