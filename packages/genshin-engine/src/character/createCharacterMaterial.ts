@@ -13,12 +13,12 @@ import { float, texture, uv, vec4 } from "three/tsl";
 
 // One of a character's materials, shaded as the game's own character shader draws a body, its inputs taken from the PMX
 // Material: its diffuse is the main texture and its colour, its toon the ramp (its own read up its one column, a shared
-// One across its row), its sphere laid over the diffuse by its mode, and its specular and edge carry over. The regions and the lightmap
-// Take their defaults, as the shading page's inputs table sets out. A material is drawn opaque, writing its depth,
-// Unless its diffuse alpha is below one or its texture has clear texels, and then it is blended and drawn from both
-// Faces. Every opaque material is outlined, as the game outlines every character: one whose edge the file sets in that
-// Edge's colour and width, the colour tone-mapped as the body's is, and one whose file sets none, as an official
-// Release's do, by the world's own outline. A material left at no opacity is not drawn
+// One across its row), its sphere laid over the diffuse by its mode, and its specular and edge carry over. The regions
+// And the lightmap take their defaults, as the shading page's inputs table sets out. A material is drawn opaque,
+// Writing its depth, unless its diffuse alpha is below one or its texture has clear texels, and then it is blended and
+// Drawn from both faces. Every opaque material is outlined, as the game outlines every character: one whose edge the
+// File sets in that edge's colour and width, the colour tone-mapped as the body's is, and one whose file sets none, as
+// An official release's do, by the world's own outline. A material left at no opacity is not drawn
 export const createCharacterMaterial = ({
   isTextureTransparent,
   lightUniforms,
@@ -69,7 +69,8 @@ export const createCharacterMaterial = ({
       opacity,
       side: isDoubleSided || isTransparent ? DoubleSide : FrontSide,
       transparent: isTransparent,
-      // A material left at no opacity, which a pack hides an alternate part with, is not drawn, so its depth hides nothing
+      // A material left at no opacity, which a pack hides an alternate part with, is not drawn, so its depth hides
+      // Nothing
       visible: opacity > 0,
     },
     isOutlined || !isTransparent,
