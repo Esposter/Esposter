@@ -1,13 +1,9 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPassResult";
 
-import {
-  PARITY_PASS_ORDER,
-  PARITY_PASSES_DIRECTORY,
-  ROW_PREFIX,
-  TABLE_HEADER,
-} from "#src/services/genshinParity/passes/constants";
+import { PARITY_PASS_ORDER, PARITY_PASSES_DIRECTORY, TABLE_HEADER } from "#src/services/genshinParity/passes/constants";
 import { getParityPassesPath } from "#src/services/genshinParity/passes/getParityPassesPath";
+import { getRowPass } from "#src/services/genshinParity/passes/getRowPass";
 import { readParityPassRows } from "#src/services/genshinParity/passes/readParityPassRows";
 import { toParityPassRows } from "#src/services/genshinParity/passes/toParityPassRows";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -23,9 +19,7 @@ export const writeParityPasses = async (
 ): Promise<void> => {
   const passesPath = getParityPassesPath(component);
   // The rows the file holds by the pass each names in its first cell, kept for a pass run alone
-  const keptPassRowsMap = Map.groupBy(isPassAlone ? await readParityPassRows(component) : [], (row) =>
-    row.slice(ROW_PREFIX.length, row.indexOf(" |", ROW_PREFIX.length)),
-  );
+  const keptPassRowsMap = Map.groupBy(isPassAlone ? await readParityPassRows(component) : [], getRowPass);
   const passRowsMap = new Map(results.map((result) => [result.pass, toParityPassRows(result)]));
   await mkdir(PARITY_PASSES_DIRECTORY, { recursive: true });
   await writeFile(
