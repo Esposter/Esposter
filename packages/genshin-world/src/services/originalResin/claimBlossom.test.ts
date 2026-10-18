@@ -151,7 +151,7 @@ describe(claimBlossom, () => {
     expect(drawCount).toBe(3);
   });
 
-  test("an offer the resin does not cover is refused, and nothing is drawn", () => {
+  test("a claim without enough resin is refused, and nothing is drawn", () => {
     expect.hasAssertions();
 
     expect(
