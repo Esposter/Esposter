@@ -21,8 +21,9 @@ const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createWhitemoonBristlePassiveModule, () => {
-  // Whitemoon Bristle at its first rank: CRIT Rate of 4%, and Foliar Incision adds 120% of Elemental Mastery to the Normal
-  // Attack and Elemental Skill DMG it is obtained with, ending after 28 DMG instances or 12 seconds, once every 12 seconds
+  // Whitemoon Bristle at its first rank: its CRIT Rate line is the table's, and Foliar Incision adds 120% of Elemental Mastery
+  // To the Normal Attack and Elemental Skill DMG it is obtained with, ending after 28 DMG instances or 12 seconds, once every
+  // 12 seconds
   const whitemoonBristlePassiveModule = createWhitemoonBristlePassiveModule([0.04, 1.2, 28, 12, 12]);
   const wielder: Combatant = {
     ascension: 0,
@@ -48,14 +49,6 @@ describe(createWhitemoonBristlePassiveModule, () => {
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
     combatant: wielder,
     hit: TRAVELER_KIT.plungeCollision,
-  });
-
-  test("the wielder's CRIT Rate rises by the rank's percentage", () => {
-    expect.hasAssertions();
-
-    expect(whitemoonBristlePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.04, attribute: Attribute.CriticalRate },
-    ]);
   });
 
   test("an elemental normal attack obtains Foliar Incision, adding the share of Elemental Mastery to normal and skill hits", () => {

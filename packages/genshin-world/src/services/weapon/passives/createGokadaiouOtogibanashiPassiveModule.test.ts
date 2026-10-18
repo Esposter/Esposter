@@ -20,7 +20,7 @@ const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createGokadaiouOtogibanashiPassiveModule, () => {
-  // Redhorn Stonethresher at its first rank: DEF rises by 28%, and Normal and Charged Attack hits deal 40% of DEF more as base damage
+  // Redhorn Stonethresher at its first rank: its DEF line is the table's, and Normal and Charged Attack hits deal 40% of DEF more as base damage
   const gokadaiouOtogibanashiPassiveModule = createGokadaiouOtogibanashiPassiveModule([0.28, 0.4]);
   const wielder: Combatant = {
     ascension: 0,
@@ -36,14 +36,6 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
     combatant: wielder,
     hit: TRAVELER_KIT.plungeCollision,
-  });
-
-  test("the wielder's DEF rises by the rank's percentage", () => {
-    expect.hasAssertions();
-
-    expect(gokadaiouOtogibanashiPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.28, attribute: Attribute.DefensePercent },
-    ]);
   });
 
   test("a normal or charged attack gains the rank's share of DEF as base damage", () => {
