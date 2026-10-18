@@ -13,6 +13,7 @@ import { buyShopGoodCount } from "#src/services/shop/buyShopGoodCount";
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
 import { computeNextShopRefreshTime } from "#src/services/shop/computeNextShopRefreshTime";
 import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
+import { countShopPrice } from "#src/services/shop/countShopPrice";
 import { discountShopGood } from "#src/services/shop/discountShopGood";
 import { formatShopRefreshCountdown } from "#src/services/shop/formatShopRefreshCountdown";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
@@ -45,25 +46,30 @@ const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
 const count = ref(1);
 const goodId = ref(0);
 const now = computed(() => Temporal.Now.instant());
-// The goods on offer to this rank now, each with the currency it is paid in, priced at the reputation the player has
+// The goods on offer to this rank now, priced at the reputation the player has. A good is paid in a currency, or in an
+// Item the bag holds, as a fish is
 const offeredGoods = computed(() =>
-  goods.flatMap((good) => {
-    const priceCurrency = ShopItemCurrencyMap[good.priceItemId];
-    return priceCurrency !== undefined && checkIsShopGoodOffered(good, adventureRank, now.value)
-      ? [{ good: discountShopGood(good, reputationLevel), priceCurrency }]
-      : [];
-  }),
+  goods.flatMap((good) =>
+    checkIsShopGoodOffered(good, adventureRank, now.value) ? [discountShopGood(good, reputationLevel)] : [],
+  ),
 );
-const pickedOffer = computed(() => offeredGoods.value.find(({ good }) => good.goodsId === goodId.value));
+const pickedGood = computed(() => offeredGoods.value.find((good) => good.goodsId === goodId.value));
+// What a good is paid in, named by the currency's name when the wallet trades it, else by the bag's item
+const getPriceName = (priceItemId: number): string => {
+  const currency = ShopItemCurrencyMap[priceItemId];
+  return currency === undefined
+    ? getItemDefinition(priceItemId, nameText, materialDataMap).name
+    : gameText[takeOne(CurrencyGameTextKeyMap, currency)];
+};
 const balances = computed<CurrencyCount[]>(() =>
-  Array.from(new Set(offeredGoods.value.map(({ priceCurrency }) => priceCurrency)), (currency) => ({
-    id: currency,
-    name: gameText[takeOne(CurrencyGameTextKeyMap, currency)],
-    quantity: wallet.value[currency],
+  Array.from(new Set(offeredGoods.value.map(({ priceItemId }) => priceItemId)), (priceItemId) => ({
+    id: String(priceItemId),
+    name: getPriceName(priceItemId),
+    quantity: countShopPrice(inventory.value, wallet.value, priceItemId),
   })),
 );
 const goodCells = computed<ShopGoodCell[]>(() =>
-  offeredGoods.value.map(({ good, priceCurrency }) => {
+  offeredGoods.value.map((good) => {
     const left = computeShopGoodLeft(good, purchases.value, now.value);
     const limitKey = ShopRefreshLimitGameTextKeyMap[good.refresh];
     const nextRefreshTime = computeNextShopRefreshTime(good.refresh, now.value);
@@ -73,7 +79,7 @@ const goodCells = computed<ShopGoodCell[]>(() =>
         left === undefined || limitKey === undefined ? undefined : fillGameTextValues(gameText[limitKey], left),
       name: getItemDefinition(good.itemId, nameText, materialDataMap).name,
       price: good.priceCount,
-      priceName: gameText[takeOne(CurrencyGameTextKeyMap, priceCurrency)],
+      priceName: getPriceName(good.priceItemId),
       refreshLabel:
         nextRefreshTime === undefined
           ? undefined
@@ -87,22 +93,25 @@ const goodCells = computed<ShopGoodCell[]>(() =>
 // The most the picked good can be bought for: its limit left and the player's currency both counted. A good with no
 // Price is bought one at a time
 const countMaximum = computed(() => {
-  if (!pickedOffer.value) return 0;
-  const { good, priceCurrency } = pickedOffer.value;
+  if (!pickedGood.value) return 0;
+  const good = pickedGood.value;
   const left = computeShopGoodLeft(good, purchases.value, now.value) ?? Number.POSITIVE_INFINITY;
-  const affordable = good.priceCount > 0 ? Math.floor(wallet.value[priceCurrency] / good.priceCount) : 1;
+  const affordable =
+    good.priceCount > 0
+      ? Math.floor(countShopPrice(inventory.value, wallet.value, good.priceItemId) / good.priceCount)
+      : 1;
   return Math.min(left, affordable);
 });
 // Buys the picked good as many times as the count asks, and keeps what the purchases leave when one was made
 const buy = (good: ShopGoodCell, buyCount: number) => {
-  const offer = offeredGoods.value.find(({ good: shopGood }) => shopGood.goodsId === good.id);
-  if (!offer) return;
+  const shopGood = offeredGoods.value.find(({ goodsId }) => goodsId === good.id);
+  if (!shopGood) return;
   const bought = buyShopGoodCount(
     wallet.value,
     inventory.value,
     (itemId) => getItemDefinition(itemId, nameText, materialDataMap),
     purchases.value,
-    offer.good,
+    shopGood,
     buyCount,
     adventureRank,
     now.value,

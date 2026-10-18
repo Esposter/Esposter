@@ -18,4 +18,4 @@
 - [x] 4.1 Trade Sigils at each region's Souvenir Shop, closed until its offering is at its last level. Verify: tests named after 'Sigils are traded for materials, blueprints and Mora' and 'A Souvenir Shop stays closed until its offering is at its last level'.
 - [x] 4.2 Apply the reputation discount to a city shop's Mora price. Verify: a test named after 'A discounted Mora price is rounded down to a multiple of five'.
 - [x] 4.3 Open a city vendor's shop from their talk as each region is built. Verify: a test named after 'Talking to a vendor opens their shop'.
-- [ ] 4.4 Open the Fishing Associations' shops once fishing lands. Verify: the test named 'Talking to a vendor opens their shop', extended to the Fishing Associations' shops.
+- [ ] 4.4 Open the Fishing Associations' shops once fishing lands. Verify: the test named 'Talking to a vendor opens their shop', extended to the Fishing Associations' shops. Blocked until a Fishing Association is placed as a resident in the region data (design.md).

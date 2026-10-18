@@ -1,4 +1,5 @@
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
@@ -9,6 +10,7 @@ import {
   BAG_TAB_BY_TABLE_TYPE,
   MATERIAL_TABLE_NAME,
 } from "#src/services/genshinAssets/items/constants";
+import { checkIsFishingAssociationGood } from "#src/services/genshinAssets/shops/checkIsFishingAssociationGood";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -37,7 +39,7 @@ const isAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boolean =>
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
 // Takes or yields, every dish a cook recipe yields, every gadget of the gadgets slice, every offering the Frostbearing
-// Tree's levels take or pay, every item a Reputation level pays, every item the Mondstadt grocery sells, and every item a
+// Tree's levels take or pay, every item a Reputation level pays, every item the Mondstadt grocery sells, each Fishing Association's goods and their fish, and every item a
 // Carried quest's finish pays, each read from the game's material table with its name's text id, which `genshin:text names`
 // Writes into the name-text chunks.
 // The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken
@@ -67,6 +69,16 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   const groceryGoods = z
     .array(z.object({ itemId: z.int() }))
     .parse(await readPublishedGameData("shops/mondstadtGeneralGoods"));
+  // The fish a Fishing Association's goods are bought with, and the items they give, as the goods table names them
+  const fishingGoods = readExcelTable<ExcelShopGoodsRow>("ShopGoodsExcelConfigData").filter((row) =>
+    checkIsFishingAssociationGood(row),
+  );
+  const fishingGoodItemIds = [
+    ...fishingGoods.map(({ itemId }) => itemId),
+    ...fishingGoods.flatMap(({ costItems }) =>
+      costItems.flatMap(({ count = 0, id = 0 }) => (count > 0 && id > 0 ? [id] : [])),
+    ),
+  ];
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const questRewardItemIds = [...readCarriedQuestRewards().values()].flatMap((rewards) =>
     rewards.map(({ itemId }) => itemId),
@@ -84,6 +96,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...frostbearingTreeLevels.flatMap(({ rewards }) => rewards.map(({ itemId }) => itemId)),
       ...reputationLevels.flatMap(({ reward }) => reward.items.map(({ id }) => id)),
       ...groceryGoods.map(({ itemId }) => itemId),
+      ...fishingGoodItemIds,
       ...materialRows.filter((row) => isAddItemConsumable(row)).map(({ id }) => id),
       ...questRewardItemIds,
     ]),
