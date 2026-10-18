@@ -99,11 +99,12 @@ export const strikeEnemy = (
     transformativeDamage,
   } = priceEnemyReactions(kind, enemy, reactions, combatant, element, context);
 
-  // A direct Lunar hit is priced as the Lunar reaction of its type is, so the party reaction bonuses that reaction takes apply
-  const lunarHit = kitHit.lunarHit;
-  const lunarBonuses = lunarHit
-    ? getDeployedReactionBonuses({ combatant, reactionType: lunarHit.lunarReactionType }, context)
-    : undefined;
+  // A direct Lunar hit is priced as the Lunar reaction of its type is, so the party reaction bonuses that reaction takes on
+  // This enemy apply to it
+  const { lunarHit } = kitHit;
+  const lunarBonuses =
+    lunarHit &&
+    getDeployedReactionBonuses({ combatant, element, enemy, reactionType: lunarHit.lunarReactionType }, context);
   const isCritical =
     kitHit.isForcedCritical ||
     random() <
@@ -145,6 +146,7 @@ export const strikeEnemy = (
             (kitHit.damageBonus ?? 0) +
             enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
           defense,
+          defenseIgnored: kitHit.defenseIgnored,
           // The DEF each status takes off the enemy, which the defence multiplier reads against the attacker's level
           defenseReduction: enemy.statuses.reduce((total, { defenseReduction }) => total + (defenseReduction ?? 0), 0),
           isCritical,

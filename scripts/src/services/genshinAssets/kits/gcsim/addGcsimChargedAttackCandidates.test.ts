@@ -68,6 +68,7 @@ const gcsim: GcsimCharacter = {
   folder: "iansan",
   holdCooldowns: [],
   queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
+  talentArrayMap: new Map(),
   talentFile: "iansan.go",
   talentParameterMap: new Map([
     ["attack|Charged Attack DMG", { indexes: [3], line: 4 }],
@@ -86,6 +87,7 @@ const tables: KitTables = {
     [CombatTalent.NormalAttack]: 11031,
   },
   talentMultiplierMap: {},
+  weaponType: WeaponType.Catalyst,
 };
 
 describe(addGcsimChargedAttackCandidates, () => {

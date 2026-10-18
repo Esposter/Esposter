@@ -1,6 +1,7 @@
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -28,9 +29,9 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
 import { createParty } from "#src/services/party/createParty";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -68,16 +69,16 @@ describe(landReactionReach, () => {
 
     const origin = createSturdyEnemy(0);
     const near = createSturdyEnemy(3);
-    const getPartyReactionBonus = vi.fn(() => ({}));
+    const getPartyReactionBonus = vi.fn<NonNullable<Kit["getPartyReactionBonus"]>>(() => ({}));
     const blooming: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, getPartyReactionBonus } };
     const bloomContext = createKitTestContext(blooming, { enemyTables });
     const bloom: TransformativeReaction = { element: Element.Dendro, reactionType: TransformativeReactionType.Bloom };
 
     landReactionReach(bloomContext, origin, [origin, near], bloom, blooming);
 
-    expect(getPartyReactionBonus).toHaveBeenCalledWith(
-      expect.objectContaining({ characterId: combatant.characterId }),
-      { combatant: blooming, reactionType: TransformativeReactionType.Bloom },
+    expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
+      { ...blooming, isOnField: true },
+      { combatant: blooming, element: Element.Dendro, enemy: near, reactionType: TransformativeReactionType.Bloom },
       bloomContext,
     );
   });

@@ -120,6 +120,33 @@ describe(strikeLunarCharged, () => {
       striker: member,
     });
   });
+
+  test("a contributor's party reaction bonus is read with Electro, the element a Lunar-Charged deals its damage in, and the enemy it strikes", () => {
+    expect.hasAssertions();
+    const getPartyReactionBonus = vi.fn<NonNullable<Kit["getPartyReactionBonus"]>>(() => ({}));
+    const member: Combatant = {
+      ...createMember(TRAVELER_CHARACTER_ID, 0),
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus },
+    };
+    const enemy = createSturdyEnemy();
+    const lunarReactionTypes = [LunarReactionType.LunarCharged];
+    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
+    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
+    const context = createKitTestContext(member, {
+      enemyMap: new Map([["", enemy]]),
+      enemyTables,
+      party: createParty([member.characterId]),
+    });
+
+    strikeLunarCharged(enemy, context);
+
+    expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
+      { ...member, isOnField: true },
+      { combatant: member, element: Element.Electro, enemy, reactionType: LunarReactionType.LunarCharged },
+      context,
+    );
+  });
+
   test("a passive takes effect at its ascension phase: Ifa's Rescue Essentials add 0.2% a point to the Lunar-Charged DMG the party deals, up to 150 points", () => {
     expect.hasAssertions();
     const ifa: Combatant = { ...createMember(IFA_CHARACTER_ID, 0), ascension: 1, kit: IFA_KIT };

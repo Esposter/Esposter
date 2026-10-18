@@ -6,6 +6,7 @@ Varesa's kit is its record and one behaviour module, `createVaresaKitBehaviour`,
 
 Her Fiery Passion forms, the apex state that opens Volcanic Kablam and the Follow-Up Strike wait on a skill variant and a Rush follow-up hook the kit lacks. Her Nightsoul points and the timed Blessing a full set enters are built (see Decisions).
 
+- **Flying Kick's area is its circle on the target.** Its circle of radius 7.5 sits a metre ahead of the target and is priced at the targeting area's 15 metres plus both, 23.5 metres from her, as the one queue call firing its multiplier's variable gives it (`burst.go`, line 76).
 - **The Fiery Passion forms need a skill variant.** Inside the blessing Rush is Fiery Passion Rush, a different multiplier and a 2-frame hitmark, and Flying Kick is Fiery Passion Flying Kick. The burst's form fits the kit's burst variant, which the kit can hold; Rush's needs a skill variant, which the record has no slot for.
 - **Her plunge chain's apex state waits on the apex hook.** gcsim's plunges set an apex state, which opens Volcanic Kablam, the short burst that follows a plunge. The plunges built here give the Nightsoul points but not the apex state, so Volcanic Kablam is not built.
 - **The Follow-Up Strike waits on a Rush follow-up hook.** After Rush, her charged attack lands at 11 frames and costs no stamina, from a status Rush sets. A kit holds no charged attack variant to swap in, so the charged attack built here is the one without the follow-up.
@@ -19,6 +20,7 @@ Her Fiery Passion forms, the apex state that opens Volcanic Kablam and the Follo
 - **Strikes and the charged attack give no poise.** gcsim gives Varesa's normal attacks and plunges none, so each reads 0, following the framework's rule for an absent poise.
 - **The plunges are the airborne ones.** gcsim plays a high plunge from a charged attack at 37 frames and from the air at 38, and the low plunge at 37 from the air, so the kit takes the airborne frames for both: the high at 38 frames of a 77-frame animation, and the low at 37 of 75. The collision is 6 frames before the high's first hit, at 31.
 - **Rush's box is gcsim's, marked provisional.** gcsim queues Rush as a box 0.1 metres wide and 2 metres long centred on the primary target and marks it "TODO: approximated". The kit ships it as gcsim gives it, priced as the target's reach plus the box's far corner. The roadmap's manual verification has the question.
+- **The Fiery Passion Flying Kick's area is Unsourced at radius 22.5.** gcsim's kick is a circle of radius 7.5 on the primary target (`burst.go:76`), and the target-centred convention stores that as 15 plus the radius, the 15 being `SKILL_TARGETING_AREA`'s (`services/kit/constants.ts`), so 22.5. The overlay holds the value Unsourced until the reader's burst talent-variable join reads gcsim's circle, when the entry becomes a Gcsim value at that line.
 - **Rush's particles are not built.** Its hit gives particles in gcsim, which the framework does not yet produce, so Rush's energy is not generated, as the kit page's shared gap records.
 
 ## Key files

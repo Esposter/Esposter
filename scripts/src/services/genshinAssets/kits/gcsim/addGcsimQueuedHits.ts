@@ -38,16 +38,15 @@ export const addGcsimQueuedHits = (
     attacks.find(({ attackTag }) => attackTag !== undefined && attackTags.includes(attackTag))?.file;
   // A call firing at a hold's hitmark is the hold's hit, which the hold reads, so it is none of this ability's
   const heldHitmarks = readGcsimHoldHitmarks(gcsim);
-  const fileHits = (file === undefined ? [] : getGcsimQueuedHits(gcsim, attackTags, file)).filter(
-    ({ attack, delay, file: hitFile }) =>
-      !excludedAttacks.includes(attack) && !heldHitmarks.some((held) => held.file === hitFile && held.delay === delay),
-  );
+  const fileHits = (file === undefined ? [] : getGcsimQueuedHits(gcsim, attackTags, file))
+    .filter(({ delay, file: hitFile }) => !heldHitmarks.some((held) => held.file === hitFile && held.delay === delay))
+    .filter(({ attack }) => !excludedAttacks.includes(attack));
   const [firstHit] = fileHits;
   if (firstHit === undefined) return;
   const queuedHits = fileHits.filter(({ attack }) => attack === firstHit.attack);
   const hitboxes = config.abilityHitboxesMap.get(abilityName) ?? [];
   const isHitboxJoined = hitboxes.length === queuedHits.length;
-  add(`${path}.hits.length`, queuedHits.length, toFile(firstHit.file), firstHit.line);
+  add(`${path}.hits.length`, queuedHits.length, toFile(firstHit.file), firstHit.callLine);
   for (const [hitIndex, { attack, delay, file: hitFile, hitbox, line }] of queuedHits.entries())
     addHit(
       `${path}.hits.${hitIndex}`,

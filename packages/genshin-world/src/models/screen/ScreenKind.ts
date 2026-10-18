@@ -39,4 +39,5 @@ export enum ScreenKind {
   TrainingGuide = "TrainingGuide",
   Wish = "Wish",
   World = "World",
+  Worship = "Worship",
 }

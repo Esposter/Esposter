@@ -13,7 +13,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createIttoKitBehaviour, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
@@ -71,6 +71,19 @@ describe(createIttoKitBehaviour, () => {
         secondsRemaining: 13.25,
       },
     ]);
+  });
+
+  test("constellation 1's Royal Descent gives two Superlative Superstrength stacks at 1.25 seconds, then one every half second from 2.25", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext({ ...createIttoCombatant(), constellationCount: 1 });
+
+    ITTO_KIT.elementalBurst.onStart?.(context);
+
+    const stacksAfterEachStep = [1.25, 0.75, 0.25, 0.5, 0.5].map((seconds) => {
+      stepKitSeconds(context, seconds);
+      return readSuperstrengthStacks(context.kitEffectState);
+    });
+    expect(stacksAfterEachStep).toStrictEqual([2, 2, 3, 4, 5]);
   });
 
   test("his strikes give Superlative Superstrength as they land, the first and third too as the Raging Oni King", () => {

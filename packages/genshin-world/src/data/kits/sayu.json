@@ -1170,6 +1170,5 @@
   "skillHolds.10.action.hits.21.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 5332 } },
   "skillHolds.10.cooldownSeconds": { "cause": "Unsourced", "value": 11 },
   "skillHolds.10.minimumHeldSeconds": { "cause": "Unsourced", "value": 10 },
-  "skillMaximumHeldSeconds": { "cause": "Unsourced", "value": 10 },
-  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skillMaximumHeldSeconds": { "cause": "Unsourced", "value": 10 }
 }

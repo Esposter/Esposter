@@ -100,6 +100,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         enemy,
         party,
         kitEffectState.effects,
+        characterIdCombatantMap,
       );
       const { additiveBaseDamageBonus } = enemyHit;
       const flatDamage =
@@ -125,6 +126,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
           (enemyHit.damageBonus ?? 0) +
           (combatant.kit.getStrikeDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
           deployedBonuses.damageBonus,
+        defenseIgnored:
+          (enemyHit.defenseIgnored ?? 0) +
+          (combatant.kit.getStrikeDefenceIgnored?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.defenseIgnored,
       };
       const { appliedElement, energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemy,
@@ -173,7 +178,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         );
       }
       const element = getKitHitElement(enemyHit, combatant);
-      emitKitEvent({ element, enemy, kind: KitEventKind.EnemyHit, striker: combatant }, context);
+      emitKitEvent({ attackTag, element, enemy, kind: KitEventKind.EnemyHit, striker: combatant }, context);
       if (enemyHit.weakPoint) emitKitEvent({ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }, context);
       emitKitEvent(
         {

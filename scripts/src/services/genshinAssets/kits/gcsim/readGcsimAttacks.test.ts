@@ -1,4 +1,8 @@
-import { GCSIM_FIXTURE_DIRECTORY } from "#src/services/genshinAssets/kits/gcsim/constants.test";
+import {
+  GCSIM_FIXTURE_DIRECTORY,
+  GCSIM_ODETTE_FIXTURE_DIRECTORY,
+  GCSIM_VARKA_FIXTURE_DIRECTORY,
+} from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
 import { readFileSync } from "node:fs";
@@ -116,6 +120,7 @@ describe(readGcsimAttacks, () => {
       { element: "attributes.Electro", line: 8, talentVariable: "burstFinal", variableName: "ai" },
     ]);
   });
+
   test("reads a struct copy as its source as of the copy, with the sets it gets after, its site the copy's own line", () => {
     expect.hasAssertions();
 
@@ -142,6 +147,111 @@ func (c *char) Burst() {
       { line: 7, siteLine: 4, talentVariable: "burstBloom", variableName: "ai" },
       { line: 9, siteLine: 9, talentVariable: "burstBloom", variableName: "aiC2" },
       { line: 10, siteLine: 9, talentVariable: "burstBloom", variableName: "aiC2" },
+    ]);
+  });
+
+  test("tags each Mult set in an if else's branches with its branch and the chain's last line, the literal and the call after untagged", () => {
+    expect.hasAssertions();
+
+    const name = "skill.go";
+    const sources = [{ path: name, source: readFileSync(join(GCSIM_ODETTE_FIXTURE_DIRECTORY, name), "utf8") }];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ branch, line, talentVariable }) => ({
+        branch,
+        line,
+        talentVariable,
+      })),
+    ).toStrictEqual([
+      { branch: undefined, line: 12, talentVariable: undefined },
+      { branch: { chain: 2, endLine: 30, index: 0 }, line: 25, talentVariable: "plume" },
+      { branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
+    ]);
+  });
+
+  test("reads a poise an if on a constant loop's variable sets on a copy as the copy's attack for that iteration only", () => {
+    expect.hasAssertions();
+
+    const name = "burst.go";
+    const sources = [{ path: name, source: readFileSync(join(GCSIM_ODETTE_FIXTURE_DIRECTORY, name), "utf8") }];
+    const fieldLineMap = {
+      Abil: 48,
+      ActorIndex: 47,
+      AttackTag: 49,
+      Durability: 54,
+      Element: 53,
+      ICDGroup: 51,
+      ICDTag: 50,
+      Mult: 55,
+      StrikeType: 52,
+    };
+    const literal = {
+      abil: "Presto: Bluebird Finale (Slash)",
+      attackTag: "attacks.AttackTagElementalBurst",
+      durability: 25,
+      element: "attributes.Cryo",
+      fieldLineMap,
+      file: name,
+      internalCooldownTag: "attacks.ICDTagElementalBurst",
+      line: 46,
+      poiseDamage: undefined,
+      poiseDamageVariable: undefined,
+      siteLine: 46,
+      talentVariable: "burst",
+      variableName: "ai",
+    };
+
+    expect(readGcsimAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+      literal,
+      { ...literal, line: 66, siteLine: 66, variableName: "aiCopy" },
+      {
+        ...literal,
+        branch: { chain: 0, endLine: 70, index: 0 },
+        fieldLineMap: { ...fieldLineMap, PoiseDMG: 69 },
+        iteration: { value: 0, variable: "i" },
+        line: 69,
+        poiseDamage: 30,
+        siteLine: 66,
+        variableName: "aiCopy",
+      },
+      {
+        ...literal,
+        abil: "Presto: Bluebird Finale (Final)",
+        fieldLineMap: {
+          Abil: 78,
+          ActorIndex: 77,
+          AttackTag: 79,
+          Durability: 84,
+          Element: 83,
+          ICDGroup: 81,
+          ICDTag: 80,
+          Mult: 85,
+          StrikeType: 82,
+        },
+        line: 76,
+        siteLine: 76,
+        talentVariable: "burstFinal",
+        variableName: "aiFinal",
+      },
+    ]);
+  });
+
+  test("reads a constant loop's literal once per iteration, its element the local slice's entry the loop variable indexes", () => {
+    expect.hasAssertions();
+
+    const name = "burst.go";
+    const sources = [{ path: name, source: readFileSync(join(GCSIM_VARKA_FIXTURE_DIRECTORY, name), "utf8") }];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ element, fieldLineMap, iteration, line }) => ({
+        element,
+        elementLine: fieldLineMap.Element,
+        iteration,
+        line,
+      })),
+    ).toStrictEqual([
+      { element: undefined, elementLine: 30, iteration: { value: 0, variable: "i" }, line: 36 },
+      { element: "attributes.Anemo", elementLine: 30, iteration: { value: 1, variable: "i" }, line: 36 },
     ]);
   });
 });

@@ -58,7 +58,7 @@ export const applyGcgDamage = (
       context,
     );
   settleGcgDefeats(duel, standingBefore);
-  for (const side of duel.sides) pruneGcgZoneCards(side);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
   return dealt;
 };
 
@@ -240,7 +240,7 @@ export const applyGcgStandbyPiercing = (
     }
   }
   settleGcgDefeats(duel, standingBefore);
-  for (const side of duel.sides) pruneGcgZoneCards(side);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
   return dealt;
 };
 

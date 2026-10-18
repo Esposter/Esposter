@@ -21,5 +21,5 @@ export const runGcgEndPhase = (duel: GcgDuel): void => {
     for (const zoneCard of listGcgFieldCards(side, undefined))
       if (GcgCardIdModuleMap.get(zoneCard.cardId)?.initialRounds !== undefined && zoneCard.rounds > 0)
         zoneCard.rounds -= 1;
-  for (const side of duel.sides) pruneGcgZoneCards(side);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
 };

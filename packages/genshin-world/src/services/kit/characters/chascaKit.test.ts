@@ -1,9 +1,14 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+
+import { Element } from "#src/models/Element";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { CHASCA_CHARACTER_ID, createChascaKitBehaviour } from "#src/services/kit/characters/chascaKit";
+import { XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
+import { YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
@@ -11,10 +16,23 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const CHASCA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHASCA_CHARACTER_ID);
 const toFrames = (seconds: number) => Math.round(seconds * 60);
+
+const createPartyMember = (characterId: number, element: Element): Combatant => ({
+  ...createChascaCombatant(),
+  characterId,
+  element,
+});
+
+// The shells Galesplitting casts, which its start puts on the team's effects as one summon
+const readShells = ({ kitEffectState }: KitContext) => {
+  const summon = kitEffectState.effects.find((effect) => effect.kind === "summon");
+  return summon?.kind === "summon" ? summon.hits : [];
+};
 
 const createChascaCombatant = (): Combatant => ({
   ascension: 0,
@@ -135,5 +153,66 @@ describe(createChascaKitBehaviour, () => {
     const context = createKitTestContext(createChascaCombatant());
     CHASCA_KIT.onSprint?.(context, createKitState());
     expect(countKitResource(context.kitEffectState.effects, CHASCA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
+  });
+
+  test("the skill's press ends the state only while the Blessing holds", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createChascaCombatant());
+    expect(CHASCA_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(false);
+    CHASCA_KIT.elementalSkill.onStart?.(context);
+    expect(CHASCA_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(true);
+  });
+
+  test("galesplitting's six shells land at gcsim's hitmarks, from 103 to 160 frames", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createChascaCombatant());
+    CHASCA_KIT.elementalBurst.onStart?.(context);
+    expect(readShells(context).map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([
+      103, 139, 147, 153, 157, 160,
+    ]);
+  });
+
+  test("each shell takes its enemy in turn by its place among the six", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createChascaCombatant());
+    CHASCA_KIT.elementalBurst.onStart?.(context);
+    expect(readShells(context).map(({ targetIndex }) => targetIndex)).toStrictEqual([0, 1, 2, 3, 4, 5]);
+  });
+
+  test("a team with no Pyro, Hydro, Electro or Cryo member makes all six shells Anemo", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createChascaCombatant());
+    CHASCA_KIT.elementalBurst.onStart?.(context);
+    expect(readShells(context).map(({ element }) => element)).toStrictEqual(
+      Array.from({ length: 6 }, () => Element.Anemo),
+    );
+  });
+
+  test("each Pyro, Hydro, Electro or Cryo party member's element is a Radiant shell twice over, shuffled by the kit's random source, and the rest are Anemo", () => {
+    expect.hasAssertions();
+    const chasca = createChascaCombatant();
+    const pyro = createPartyMember(YOIMIYA_CHARACTER_ID, Element.Pyro);
+    const hydro = createPartyMember(XINGQIU_CHARACTER_ID, Element.Hydro);
+    // The four bullets' keys are 0.9, 0.1, 0.5 and 0.2 in the order they are dealt, so they sort Hydro, Hydro, Pyro, Pyro
+    const draws = [0.9, 0.1, 0.5, 0.2];
+    let drawIndex = 0;
+    const context = createKitTestContext(chasca, {
+      characterIdCombatantMap: new Map([
+        [CHASCA_CHARACTER_ID, chasca],
+        [pyro.characterId, pyro],
+        [hydro.characterId, hydro],
+      ]),
+      party: createParty([CHASCA_CHARACTER_ID, pyro.characterId, hydro.characterId]),
+      random: () => draws[drawIndex++] ?? 0,
+    });
+    CHASCA_KIT.elementalBurst.onStart?.(context);
+    expect(readShells(context).map(({ element }) => element)).toStrictEqual([
+      Element.Hydro,
+      Element.Hydro,
+      Element.Pyro,
+      Element.Pyro,
+      Element.Anemo,
+      Element.Anemo,
+    ]);
   });
 });

@@ -5,6 +5,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { DENDRO_CORE_LIFETIME_SECONDS, HYPERBLOOM_FLIGHT_SECONDS } from "#src/services/combat/dendroCore/constants";
@@ -34,6 +35,7 @@ describe(strikeKitDendroCores, () => {
 
   const createCore = (x: number, secondsRemaining = DENDRO_CORE_LIFETIME_SECONDS): KitDendroCore => ({
     characterId: BLOOM_CORE_ID,
+    coreKind: DendroCoreKind.Bloom,
     kind: "dendroCore",
     position: { x, z: 0 },
     reactionType: TransformativeReactionType.Bloom,
@@ -74,6 +76,23 @@ describe(strikeKitDendroCores, () => {
       secondsRemaining,
     });
   });
+
+  test.each<Element>([Element.Electro, Element.Pyro])(
+    "leaves a Bountiful Core as it is under a %s strike, as no reaction sends it off",
+    (element) => {
+      expect.hasAssertions();
+
+      const core: KitDendroCore = { ...createCore(1), coreKind: DendroCoreKind.Bountiful, secondsRemaining: 0.4 };
+      strikeKitDendroCores(
+        { effects: [core] },
+        createParty([TRAVELER_CHARACTER_ID]),
+        createStrike(element, 1),
+        combatant,
+      );
+
+      expect(core).toStrictEqual({ ...createCore(1), coreKind: DendroCoreKind.Bountiful, secondsRemaining: 0.4 });
+    },
+  );
 
   test.each<[string, KitDendroCore, KitStrike]>([
     ["a core not yet standing", createCore(1, DENDRO_CORE_LIFETIME_SECONDS + 0.1), createStrike(Element.Electro, 1)],

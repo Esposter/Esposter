@@ -42,21 +42,18 @@ export const landReactionReach = (
   context: KitContext,
   origin: Pick<Enemy, "position">,
   enemies: Iterable<Enemy>,
-  { element, reactionType, spreadGauge }: TransformativeReaction,
+  { element, reachRadius, reactionBonus: teamReactionBonus = 0, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
   lunarReactionTypes: readonly LunarReactionType[] = [],
   stellarReactionTypes: readonly StellarReactionType[] = [],
 ): Map<Enemy, EnemyStrikeResult> => {
   const enemyStrikeResultMap = new Map<Enemy, EnemyStrikeResult>();
-  const radius = TransformativeReactionReachRadiusMap[reactionType];
+  const radius = reachRadius ?? TransformativeReactionReachRadiusMap[reactionType];
   if (radius === undefined) return enemyStrikeResultMap;
   const reachPoiseDamage = TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
 
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
-  // The reaction's party bonuses, its creator's own kit's among them, as the team's hooks read it
-  const { additiveBaseDamageBonus: reactionAdditiveBaseDamageBonus, damageBonus: reactionBonus } =
-    getDeployedReactionBonuses({ combatant, reactionType }, context);
   // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
   const reachedEnemies = Array.from(enemies, (enemy) => ({
     distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
@@ -83,6 +80,11 @@ export const landReactionReach = (
     const { additiveBaseDamageBonus, amplifyingMultiplier, poiseDamage, reachingReactions, transformativeDamage } =
       priceEnemyReactions(kind, enemy, reactions, combatant, element, context);
     const resistance = getEnemyResistance(kind, enemy, element);
+    // The reaction's party bonuses on the enemy it reaches, its creator's own kit's among them, as the team's hooks read it
+    const { additiveBaseDamageBonus: reactionAdditiveBaseDamageBonus, damageBonus } = getDeployedReactionBonuses(
+      { combatant, element, enemy, reactionType },
+      context,
+    );
     const reactionDamage =
       reactionType === TransformativeReactionType.Swirl && element === Element.Hydro
         ? 0
@@ -93,7 +95,7 @@ export const landReactionReach = (
             element,
             elementalState.seconds,
           ) *
-          (getTransformativeDamage(reactionType, level, elementalMastery, resistance, reactionBonus) +
+          (getTransformativeDamage(reactionType, level, elementalMastery, resistance, damageBonus + teamReactionBonus) +
             (additiveBaseDamageBonus + reactionAdditiveBaseDamageBonus) * getResistanceMultiplier(resistance)) *
           amplifyingMultiplier;
     enemyStrikeResultMap.set(enemy, {

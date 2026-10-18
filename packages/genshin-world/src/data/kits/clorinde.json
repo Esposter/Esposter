@@ -24,7 +24,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.765244492586962 }
   },
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.impaleTheNightFullBondOfLife.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 6, "proudSkillGroupId": 9832 }
@@ -45,6 +44,54 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 9832 }
   },
+  "hits.swiftHuntNormalShot.0-2.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 26,
+    "source": "Gcsim",
+    "value": [8, 8, 9]
+  },
+  "hits.swiftHuntNormalShot.0.area": {
+    "file": "attack.go",
+    "line": 142,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.6 }
+  },
+  "hits.swiftHuntNormalShot.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.swiftHuntNormalShot.1.area": {
+    "file": "attack.go",
+    "line": 142,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.6 }
+  },
+  "hits.swiftHuntNormalShot.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.swiftHuntNormalShot.2.area": {
+    "file": "attack.go",
+    "line": 142,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.6 }
+  },
+  "hits.swiftHuntNormalShot.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.swiftHuntPiercingShot.0-2.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 26,
+    "source": "Gcsim",
+    "value": [8, 8, 9]
+  },
+  "hits.swiftHuntPiercingShot.0.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 14 }
+  },
+  "hits.swiftHuntPiercingShot.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.swiftHuntPiercingShot.1.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 14 }
+  },
+  "hits.swiftHuntPiercingShot.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.swiftHuntPiercingShot.2.area": {
+    "cause": "BoxAsCircle",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 14 }
+  },
+  "hits.swiftHuntPiercingShot.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -61,5 +108,9 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "stances.nightVigil.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 18 },
+  "stances.nightVigil.normalAttacks.1.animationFrames": { "cause": "Unsourced", "value": 17 },
+  "stances.nightVigil.normalAttacks.2.animationFrames": { "cause": "Unsourced", "value": 20 },
+  "stances.nightVigil.skill.animationFrames": { "file": "skill.go", "line": 39, "source": "Gcsim", "value": 43 }
 }

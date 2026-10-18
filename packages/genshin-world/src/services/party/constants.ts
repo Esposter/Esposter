@@ -40,6 +40,9 @@ export const ENDURING_ROCK_RESISTANCE_REDUCTION = 0.2;
 export const ENDURING_ROCK_SECONDS = 15;
 // The id of the status Enduring Rock gives each enemy it strikes, which the next hit under it restarts
 export const ENDURING_ROCK_STATUS_ID = "enduringRock";
+// The id of the status Nilou's Ascension 1 gives each deployed member, Golden Chalice's Bounty, under which a Bloom
+// Leaves a Bountiful Core
+export const GOLDEN_CHALICE_BOUNTY_STATUS_ID = "goldenChaliceBounty";
 // The seconds Sprawling Greenery's timed Elemental Mastery lasts on each party member, as the Elemental Resonance page
 // Of the Genshin Impact Wiki gives it
 export const SPRAWLING_GREENERY_SECONDS = 6;

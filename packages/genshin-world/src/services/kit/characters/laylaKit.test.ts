@@ -29,6 +29,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const LAYLA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAYLA_CHARACTER_ID);
@@ -92,7 +93,7 @@ describe(createLaylaKitBehaviour, () => {
       for (const effect of context.kitEffectState.effects)
         if (effect.kind === "summon" && !seenHits.has(effect.hits)) {
           seenHits.add(effect.hits);
-          casts.push({ frame: fromFrame + frame, hit: effect.hits[0], summon: effect });
+          casts.push({ frame: fromFrame + frame, hit: takeOne(effect.hits, 0), summon: effect });
         }
     }
     return casts;
@@ -352,5 +353,23 @@ describe(createLaylaKitBehaviour, () => {
     const { energy } = getPartyMember(context.party, LAYLA_CHARACTER_ID);
     cast.hit.onStrike?.(context, { body: context.body, combatant: cast.summon.combatant, hit: cast.hit }, enemy);
     expect(getPartyMember(context.party, LAYLA_CHARACTER_ID).energy - energy).toBe(0);
+  });
+
+  test("starlight Slug's damage is priced from the Max HP of the striker it hits, with its buffs on", () => {
+    expect.hasAssertions();
+    const kitEffectState = castAction(LAYLA_KIT.elementalBurst);
+    const field = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
+    field?.onTick(createKitTestContext(createLaylaCombatant(), { kitEffectState }), 0);
+    const slugStrike = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon")?.hits[0];
+    const buffedStriker: Combatant = {
+      ...createLaylaCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
+        { attribute: Attribute.HealthPercent, value: 0.5 },
+      ]),
+    };
+    const damageBonusOf = (striker: Combatant) => slugStrike?.additiveBaseDamageBonus?.(striker) ?? 0;
+
+    expect(damageBonusOf(buffedStriker)).toBeCloseTo(1.5 * damageBonusOf(createLaylaCombatant()));
   });
 });
