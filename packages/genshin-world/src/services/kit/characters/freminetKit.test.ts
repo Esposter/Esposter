@@ -1,10 +1,39 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createFreminetKitBehaviour, FREMINET_CHARACTER_ID } from "#src/services/kit/characters/freminetKit";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const FREMINET_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FREMINET_CHARACTER_ID);
+
+const createFreminetCombatant = (): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: FREMINET_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: FREMINET_KIT,
+  level: 90,
+  weaponType: WeaponType.Claymore,
+});
+
+// The strikes that land over the given frames of the world's fixed step, each frame's list read as the step leaves it
+const landedStrikes = (context: KitContext, frames: number) => {
+  const strikes: KitContext["strikes"] = [];
+  for (let frame = 0; frame < frames; frame++) {
+    stepKitSeconds(context, FIXED_STEP_SECONDS);
+    strikes.push(...context.strikes);
+  }
+  return strikes;
+};
 
 describe(createFreminetKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from his proud skill groups", () => {
@@ -45,5 +74,18 @@ describe(createFreminetKitBehaviour, () => {
       skillElement: FREMINET_KIT.elementalSkill.hits[0]?.element,
       skillHitmarkFrames: Math.round((FREMINET_KIT.elementalSkill.hits[0]?.hitmarkSeconds ?? 0) * 60),
     }).toStrictEqual({ burstHitmarkFrames: 44, skillElement: Element.Cryo, skillHitmarkFrames: 29 });
+  });
+
+  test("each skill press queues spiritbreath thorn's cryo strike 62 frames later, and a press within nine seconds of one queues none", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createFreminetCombatant());
+    FREMINET_KIT.elementalSkill.onStart?.(context);
+    expect(landedStrikes(context, 61)).toStrictEqual([]);
+    expect(landedStrikes(context, 1).map(({ hit }) => hit.element)).toStrictEqual([Element.Cryo]);
+    FREMINET_KIT.elementalSkill.onStart?.(context);
+    expect(landedStrikes(context, 480)).toStrictEqual([]);
+    FREMINET_KIT.elementalSkill.onStart?.(context);
+    expect(landedStrikes(context, 61)).toStrictEqual([]);
+    expect(landedStrikes(context, 1)).toHaveLength(1);
   });
 });
