@@ -8,7 +8,7 @@ Mail is how the game hands a player rewards and messages: a letter from a charac
 
 - The Mail screen lists the mails the player holds, each with its sender and title.
 - Opening a mail shows its text and the items attached to it, and a claim gives the items to the bag and wallet once.
-- A mail the player has not claimed is kept until its expiry, and a claimed one is kept marked claimed.
+- A mail the player has not claimed is kept until its expiry, and a claimed one is kept as read.
 - The mails a player holds are saved with the save, so they survive a reload.
 
 ## Capabilities

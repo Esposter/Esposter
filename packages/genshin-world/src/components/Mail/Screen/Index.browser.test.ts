@@ -42,7 +42,12 @@ const props = {
   now: Temporal.Instant.fromEpochMilliseconds(86_400_000),
   textMap,
 };
-const mail = (isClaimed: boolean): MailSave => ({ deliveredAt: DELIVERED_AT, id: BIRTHDAY_MAIL_ID, isClaimed });
+const mail = (isClaimed: boolean): MailSave => ({
+  deliveredAt: DELIVERED_AT,
+  id: BIRTHDAY_MAIL_ID,
+  isClaimed,
+  isRead: false,
+});
 
 describe("mailScreen", () => {
   // The held mail listed by its title, and the claim pressed on the selected mail gives its id back

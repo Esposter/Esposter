@@ -258,7 +258,7 @@ describe(readGenshinSave, () => {
 
     const save = {
       ...EMPTY_GENSHIN_SAVE,
-      mails: [{ deliveredAt: new Date(0).toISOString(), id: 35, isClaimed: false }],
+      mails: [{ deliveredAt: new Date(0).toISOString(), id: 35, isClaimed: false, isRead: false }],
       travelerBirthday: { day: 13, month: 10 },
     };
 

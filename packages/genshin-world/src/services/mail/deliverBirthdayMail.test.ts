@@ -20,7 +20,7 @@ describe(deliverBirthdayMail, () => {
     expect.hasAssertions();
 
     expect(deliverBirthdayMail([], BIRTHDAY, BIRTHDAY_ROWS, BIRTHDAY_NOON)).toStrictEqual([
-      { deliveredAt: BIRTHDAY_NOON.toString(), id: 35, isClaimed: false },
+      { deliveredAt: BIRTHDAY_NOON.toString(), id: 35, isClaimed: false, isRead: false },
     ]);
   });
 
@@ -35,7 +35,7 @@ describe(deliverBirthdayMail, () => {
   test("the birthday mail is delivered once a birthday", () => {
     expect.hasAssertions();
 
-    const delivered: MailSave[] = [{ deliveredAt: BIRTHDAY_NOON.toString(), id: 35, isClaimed: false }];
+    const delivered: MailSave[] = [{ deliveredAt: BIRTHDAY_NOON.toString(), id: 35, isClaimed: false, isRead: false }];
 
     expect(deliverBirthdayMail(delivered, BIRTHDAY, BIRTHDAY_ROWS, BIRTHDAY_NOON)).toStrictEqual(delivered);
   });
