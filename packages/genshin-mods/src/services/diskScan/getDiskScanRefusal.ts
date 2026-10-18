@@ -19,11 +19,15 @@ const normalizePath = (token: string) => {
 
 const isRoot = (token: string) => ROOT_REGEX.test(normalizePath(token));
 
-// A flag group holding r or R: `-R`, `-rn`, `-lR`, `--recursive`
-const isRecursiveFlag = (token: string) => /^-[a-zA-Z]*[rR]/u.test(token) || token === "--recursive";
+// The long form `--recursive`, which getopt also takes as any prefix of it from `--rec` on, since `--re` names two options
+const isRecursiveLongFlag = (token: string) => token.startsWith("--rec") && "recursive".startsWith(token.slice(2));
 
-// The ls flag recurses on the capital R alone, since its lowercase r sorts in reverse, and on its long form
-const isLsRecursiveFlag = (token: string) => /^-[a-zA-Z]*R/u.test(token) || token === "--recursive";
+// A flag group holding the scan's recursive letter, or the long form: grep takes r or R (`-R`, `-rn`, `-lR`), and ls takes
+// The capital R alone, since its lowercase r sorts in reverse
+const GREP_RECURSIVE_FLAG_REGEX = /^-[a-zA-Z]*[rR]/u;
+const LS_RECURSIVE_FLAG_REGEX = /^-[a-zA-Z]*R/u;
+const isRecursiveFlag = (token: string, shortFlagRegex: RegExp) =>
+  shortFlagRegex.test(token) || isRecursiveLongFlag(token);
 
 // A flag that gives grep its pattern as the next argument, or as the rest of the same one
 const SEPARATE_PATTERN_FLAG_REGEX = /^-[a-zA-Z]*[ef]$|^--(?:regexp|file)$/u;
@@ -55,9 +59,13 @@ const readGrepArguments = (args: string[]): { flags: string[]; paths: string[] }
 const getScanRefusal = (name: string, args: string[]): string | undefined => {
   if (name === "find" || name === "du") return args.some((arg) => isRoot(arg)) ? name : undefined;
   if (name === "ls")
-    return args.some((arg) => isLsRecursiveFlag(arg)) && args.some((arg) => isRoot(arg)) ? name : undefined;
+    return args.some((arg) => isRecursiveFlag(arg, LS_RECURSIVE_FLAG_REGEX)) && args.some((arg) => isRoot(arg))
+      ? name
+      : undefined;
   const { flags, paths } = readGrepArguments(args);
-  return flags.some((flag) => isRecursiveFlag(flag)) && paths.some((path) => isRoot(path)) ? name : undefined;
+  return flags.some((flag) => isRecursiveFlag(flag, GREP_RECURSIVE_FLAG_REGEX)) && paths.some((path) => isRoot(path))
+    ? name
+    : undefined;
 };
 
 const getScanCommandRefusal: CommandRefusal = (name, args) =>
