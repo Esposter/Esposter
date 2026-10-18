@@ -5,6 +5,7 @@ export const WEAPON_CODEX_TABLE_NAME = "WeaponCodexExcelConfigData";
 export const WEAPON_TABLE_NAME = "WeaponExcelConfigData";
 export const RELIQUARY_CODEX_TABLE_NAME = "ReliquaryCodexExcelConfigData";
 export const RELIQUARY_SET_TABLE_NAME = "ReliquarySetExcelConfigData";
+export const RELIQUARY_TABLE_NAME = "ReliquaryExcelConfigData";
 export const EQUIP_AFFIX_TABLE_NAME = "EquipAffixExcelConfigData";
 export const MATERIAL_CODEX_TABLE_NAME = "MaterialCodexExcelConfigData";
 export const BOOKS_CODEX_TABLE_NAME = "BooksCodexExcelConfigData";
