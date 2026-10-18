@@ -17,7 +17,7 @@ flowchart TD
   E["Published view: breakpoint columns, and no commit"] -.-> A
 ```
 
-**Breakpoints are published only.** The published view picks a column count from its width, 12 at 1200 pixels and above down to 2 below 480, and reflows its visuals with it. The editor always has the full 12 columns and saves what the user sets.
+**Breakpoints are published only.** The published view picks a column count from its width, 12 at 1200 pixels and above down to 2 below 480, and reflows its visuals with it. It draws the grid only once that width is known, so a first frame never picks the narrowest breakpoint. The editor always has the full 12 columns and saves what the user sets.
 
 ## Data model
 

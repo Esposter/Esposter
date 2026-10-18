@@ -3,12 +3,15 @@ import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { useAlertStore } from "@/store/alert";
 import { useDashboardStore } from "@/store/dashboard";
 import { toRawDeep } from "@esposter/shared";
 
 export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const visuals = computed({
     get: () => dashboardStore.dashboard.visuals,
     set: (newVisuals) => {
@@ -43,13 +46,19 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   // On success so a rejected write keeps the user's draft open for retry instead of losing it
   const save = async (editedVisual: Visual) => {
     const { updateVisual: updateDashboardVisual } = getDashboardOperationData();
-    // Cloned because updateVisual assigns onto the live visual
     const previousVisual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], editedVisual));
-    const snapshot = previousVisual ? structuredClone(toRawDeep(previousVisual)) : undefined;
+    // A visual removed while its dialog was open has nothing to save onto, so the save is refused and the draft kept
+    if (!previousVisual) {
+      createAlert("The visual was removed, so the edit was not saved", "error");
+      return false;
+    }
+
+    // Cloned because updateVisual assigns onto the live visual
+    const snapshot = structuredClone(toRawDeep(previousVisual));
     updateDashboardVisual(editedVisual);
     const isSuccessful = await saveDashboard();
     if (isSuccessful) isEditFormDialogOpen.value = false;
-    else if (snapshot) updateDashboardVisual(snapshot);
+    else updateDashboardVisual(snapshot);
     return isSuccessful;
   };
   // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual

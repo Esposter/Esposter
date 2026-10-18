@@ -12,7 +12,7 @@ import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // The visual store reads its visuals straight off the dashboard store's content, so the dashboard has to be
 // Loaded before there is anything to edit — and before a save has a resource to write to
@@ -85,6 +85,24 @@ describe(useVisualStore, () => {
     expect(duplicatedVisual.id).not.toBe(visual.id);
     expect(duplicatedVisual.dataset).toStrictEqual(dataset);
     expect(duplicatedVisual.y).toBe(visual.y + visual.h);
+  });
+
+  // A visual removed while its dialog was open has nothing to save onto, so the save is refused before the dashboard
+  // Is written and the dialog stays open on the draft
+  test("refuses an edit whose visual was removed and keeps the dialog open", async () => {
+    expect.hasAssertions();
+
+    const saveResourceContent = vi.fn<() => ReturnType<typeof createResource>>(() => createResource(1));
+    trpcMsw.dashboard.saveResourceContent.mutation(saveResourceContent);
+    const visualStore = await setupStore();
+    const { save } = visualStore;
+    const { isEditFormDialogOpen } = storeToRefs(visualStore);
+    isEditFormDialogOpen.value = true;
+    const isSuccessful = await save(new Visual({ type: VisualType.Bar }));
+
+    expect(isSuccessful).toBe(false);
+    expect(isEditFormDialogOpen.value).toBe(true);
+    expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
   // The dashboard is persisted wholesale, so a rejected write has to leave the visual showing what the server
