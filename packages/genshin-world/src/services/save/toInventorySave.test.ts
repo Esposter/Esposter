@@ -11,6 +11,14 @@ import { describe, expect, test } from "vitest";
 describe(toInventorySave, () => {
   const weaponDefinition = { category: ItemCategory.Weapon, id: 1, name: "", rank: 0, rarity: 0, stackLimit: 1 };
   const materialDefinition = { category: ItemCategory.Material, id: 2, name: "", rank: 0, rarity: 0, stackLimit: 9 };
+  const artifactDefinition = {
+    category: ItemCategory.Artifact,
+    id: 60_110,
+    name: "",
+    rank: 0,
+    rarity: 1,
+    stackLimit: 1,
+  };
 
   test("saves a weapon with its state and a stack without a level", () => {
     expect.hasAssertions();
@@ -60,14 +68,6 @@ describe(toInventorySave, () => {
   test("saves an artifact as the artifact it was rolled as", () => {
     expect.hasAssertions();
 
-    const artifactDefinition = {
-      category: ItemCategory.Artifact,
-      id: 60_110,
-      name: "",
-      rank: 0,
-      rarity: 1,
-      stackLimit: 1,
-    };
     const artifact: Artifact = {
       experience: 0,
       isLocked: false,
@@ -94,14 +94,6 @@ describe(toInventorySave, () => {
   test("refuses an artifact that holds no artifact", () => {
     expect.hasAssertions();
 
-    const artifactDefinition = {
-      category: ItemCategory.Artifact,
-      id: 60_110,
-      name: "",
-      rank: 0,
-      rarity: 1,
-      stackLimit: 1,
-    };
     const inventory: Inventory = {
       items: [{ definition: artifactDefinition, id: 0, quantity: 1 }],
       nextId: 1,
