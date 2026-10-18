@@ -33,6 +33,7 @@ export enum Attribute {
   HydroResistance = "FIGHT_PROP_WATER_SUB_HURT",
   IncomingHealingBonus = "FIGHT_PROP_HEALED_ADD",
   MovementSpeed = "FIGHT_PROP_MOVE_SPEED",
+  NormalAndChargedAttackDamageBonus = "FIGHT_PROP_NORMAL_AND_CHARGED_ADD_HURT",
   NormalAttackSpeed = "FIGHT_PROP_NORMAL_ATTACK_SPEED",
   PhysicalDamageBonus = "FIGHT_PROP_PHYSICAL_ADD_HURT",
   PhysicalResistance = "FIGHT_PROP_PHYSICAL_SUB_HURT",

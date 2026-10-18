@@ -4,6 +4,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
@@ -218,6 +219,57 @@ describe(strikeEnemy, () => {
     strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, combatant, NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("raises a normal attack's damage by the normal and charged attack bonus its character carries", () => {
+    expect.hasAssertions();
+
+    const NORMAL_AND_CHARGED_DAMAGE_BONUS = 0.5;
+    const enemy = createSturdyEnemy();
+    const kitHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.NormalAttack };
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      damageBonus: NORMAL_AND_CHARGED_DAMAGE_BONUS,
+      defense,
+      resistance: kind.physicalResistance,
+      stat: ATTACK,
+      talentMultiplier: kitHit.talentMultiplier,
+    });
+    const combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.NormalAndChargedAttackDamageBonus, value: NORMAL_AND_CHARGED_DAMAGE_BONUS },
+      ]),
+    };
+
+    strikeEnemy(enemyTables, enemy, kitHit, combatant, NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("leaves a skill's damage unchanged by the normal and charged attack bonus its character carries", () => {
+    expect.hasAssertions();
+
+    const kitHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.ElementalSkill };
+    const plainEnemy = createSturdyEnemy();
+    const boostedEnemy = createSturdyEnemy();
+    const plainCombatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: ATTACK }]),
+    };
+    const boostedCombatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.NormalAndChargedAttackDamageBonus, value: 0.5 },
+      ]),
+    };
+
+    strikeEnemy(enemyTables, plainEnemy, kitHit, plainCombatant, NEVER_CRITICAL);
+    strikeEnemy(enemyTables, boostedEnemy, kitHit, boostedCombatant, NEVER_CRITICAL);
+
+    expect(boostedEnemy.health).toBeCloseTo(plainEnemy.health);
   });
 
   test("raises an elemental hit's damage by the all-damage bonus too", () => {
