@@ -2,7 +2,7 @@
 import type { PDFDocumentLoadingTask } from "pdfjs-dist";
 
 import PdfViewer from "@/components/Pdf/Viewer.vue";
-import { PDF_MAX_CANVAS_AREA, PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "@/services/pdf/constants";
+import { PDF_MAX_CANVAS_AREA, PDF_MAX_SCALE, PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "@/services/pdf/constants";
 import { loadPdfDocument } from "@/services/pdf/loadPdfDocument";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -48,14 +48,16 @@ const pdfjsStubs = vi.hoisted(() => {
     setDocument = vi.fn();
   }
 
-  return { EventBusStub, FindControllerStub, LinkServiceStub, PdfJsViewerStub };
+  const FindState = { NOT_FOUND: 1 };
+
+  return { EventBusStub, FindControllerStub, FindState, LinkServiceStub, PdfJsViewerStub };
 });
 
 vi.mock("@/services/pdf/loadPdfDocument", () => ({ loadPdfDocument: vi.fn() }));
 vi.mock("@/services/pdf/loadPdfViewer", () => ({
   loadPdfViewer: async () => ({
     EventBus: pdfjsStubs.EventBusStub,
-    FindState: { NOT_FOUND: 1 },
+    FindState: pdfjsStubs.FindState,
     LinkTarget: { BLANK: 2 },
     PDFFindController: pdfjsStubs.FindControllerStub,
     PDFLinkService: pdfjsStubs.LinkServiceStub,
@@ -75,7 +77,8 @@ describe("pdfViewer", () => {
   const LARGE_PAGE_SIDE = 4096;
   const NEED_PASSWORD = 1;
   const INCORRECT_PASSWORD = 2;
-  const MAX_SCALE = 10;
+  const LONG_PAGES_COUNT = 500;
+  const PASSWORD = " ";
   const SEARCH_QUERY = "word";
   const CURRENT_MATCH = 1;
   const TOTAL_MATCHES = 3;
@@ -161,7 +164,28 @@ describe("pdfViewer", () => {
     expect(component.find('input[type="password"]').exists()).toBe(true);
   });
 
-  test("A wrong password says so and asks again", async () => {
+  test("The right password", async () => {
+    expect.hasAssertions();
+
+    const { promise, resolve } = Promise.withResolvers<unknown>();
+    const updatePassword = vi.fn<(password: string) => void>();
+    const task = createTask(promise);
+    vi.mocked(loadPdfDocument).mockResolvedValue(task);
+    const component = await mountViewer();
+    await flushPromises();
+    task.onPassword(updatePassword, NEED_PASSWORD);
+    await flushPromises();
+    await component.find('input[type="password"]').setValue(PASSWORD);
+    await component.find("form").trigger("submit");
+    resolve(pdfDocument);
+    await flushPromises();
+
+    expect(updatePassword).toHaveBeenCalledWith(PASSWORD);
+    expect(pdfjsStubs.PdfJsViewerStub.last?.setDocument).toHaveBeenCalledWith(pdfDocument);
+    expect(component.find('input[type="password"]').exists()).toBe(false);
+  });
+
+  test("A wrong password", async () => {
     expect.hasAssertions();
 
     const task = createTask(new Promise(() => {}));
@@ -186,6 +210,20 @@ describe("pdfViewer", () => {
     expect(component.text()).toContain("could not be loaded");
   });
 
+  test("Opening a long document", async () => {
+    expect.hasAssertions();
+
+    // The viewer draws only the pages in view, which is the renderer's own work and runs against its real canvas, so
+    // this checks what the viewer hands over: the whole document, and the count it shows
+    const longDocument = { ...pdfDocument, numPages: LONG_PAGES_COUNT };
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(longDocument)));
+    const component = await mountViewer();
+    await flushPromises();
+
+    expect(pdfjsStubs.PdfJsViewerStub.last?.setDocument).toHaveBeenCalledWith(longDocument);
+    expect(component.text()).toContain(`of ${LONG_PAGES_COUNT}`);
+  });
+
   test("Going to a page", async () => {
     expect.hasAssertions();
 
@@ -198,19 +236,21 @@ describe("pdfViewer", () => {
     expect(pdfjsStubs.PdfJsViewerStub.last?.currentPageNumber).toBe(PAGE_NUMBER);
   });
 
-  test("Zooming past the largest scale disables zoom in", async () => {
+  test("Zooming past the largest scale", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
     const component = await mountViewer();
     await flushPromises();
-    pdfjsStubs.EventBusStub.last?.listeners.get("scalechanging")?.({ scale: MAX_SCALE });
+    pdfjsStubs.EventBusStub.last?.listeners.get("scalechanging")?.({ scale: PDF_MAX_SCALE });
     await flushPromises();
+    await findButton(component, "Zoom in")?.trigger("click");
 
     expect(findButton(component, "Zoom in")?.attributes("disabled")).toBeDefined();
+    expect(pdfjsStubs.PdfJsViewerStub.last?.increaseScale).not.toHaveBeenCalled();
   });
 
-  test("Searching for a word shows the match count", async () => {
+  test("Searching for a word", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -227,6 +267,22 @@ describe("pdfViewer", () => {
       expect.objectContaining({ query: SEARCH_QUERY }),
     );
     expect(component.text()).toContain(`${CURRENT_MATCH} of ${TOTAL_MATCHES}`);
+  });
+
+  test("Searching for a word the PDF does not hold", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
+    const component = await mountViewer();
+    await flushPromises();
+    await component.find('input[type="search"]').setValue(SEARCH_QUERY);
+    pdfjsStubs.EventBusStub.last?.listeners.get("updatefindcontrolstate")?.({
+      matchesCount: { current: 0, total: 0 },
+      state: pdfjsStubs.FindState.NOT_FOUND,
+    });
+    await flushPromises();
+
+    expect(component.text()).toContain("No matches");
   });
 
   test("Fit width, fit page and actual size set the scale", async () => {
@@ -257,7 +313,7 @@ describe("pdfViewer", () => {
     expect(pdfjsStubs.PdfJsViewerStub.last?.pagesRotation).toBe(PDF_ROTATION_STEP);
   });
 
-  test("Download saves the original bytes", async () => {
+  test("Downloading", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -265,7 +321,10 @@ describe("pdfViewer", () => {
       createObjectURL: vi.fn<(object: Blob) => string>(() => "blob:document"),
       revokeObjectURL: vi.fn<(url: string) => void>(),
     });
-    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    let savedFilename = "";
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) {
+      savedFilename = this.download;
+    });
     const component = await mountViewer();
     await flushPromises();
     await findButton(component, "Download")?.trigger("click");
@@ -273,9 +332,10 @@ describe("pdfViewer", () => {
 
     expect(URL.createObjectURL).toHaveBeenCalledOnce();
     expect(click).toHaveBeenCalledOnce();
+    expect(savedFilename).toBe(filename);
   });
 
-  test("Print renders each page and opens the print dialog", async () => {
+  test("Printing", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));

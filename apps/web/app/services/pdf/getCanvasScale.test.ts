@@ -10,11 +10,9 @@ describe("getCanvasScale", () => {
   test("draws a page at its screen width times the pixel ratio", () => {
     expect.hasAssertions();
 
-    const CSS_WIDTH = 612;
-
-    expect(getCanvasScale({ cssWidth: CSS_WIDTH, pageHeight: PAGE_HEIGHT, pageWidth: PAGE_WIDTH, pixelRatio: PIXEL_RATIO })).toBe(
-      PIXEL_RATIO,
-    );
+    expect(
+      getCanvasScale({ cssWidth: PAGE_WIDTH, pageHeight: PAGE_HEIGHT, pageWidth: PAGE_WIDTH, pixelRatio: PIXEL_RATIO }),
+    ).toBe(PIXEL_RATIO);
   });
 
   // iOS Safari refuses a canvas above its area and draws it blank, so the scale is lowered to the largest one it draws

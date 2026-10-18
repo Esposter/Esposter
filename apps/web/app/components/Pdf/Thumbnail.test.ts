@@ -107,6 +107,20 @@ describe("pdfThumbnail", () => {
     expect(canvas.width * canvas.height).toBeLessThanOrEqual(PDF_MAX_CANVAS_AREA);
   });
 
+  // A report that keeps the width is the canvas resizing its own height, which must not draw the page again
+  test("a report that keeps the drawn width does not draw again", async () => {
+    expect.hasAssertions();
+
+    loadPage();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({} as CanvasRenderingContext2D);
+    await mountThumbnail(url);
+    await flushPromises();
+    reportWidth?.(FIRST_WIDTH);
+    reportWidth?.(FIRST_WIDTH);
+
+    expect(page.render).toHaveBeenCalledTimes(1);
+  });
+
   // A missing source has nothing to load, so it draws nothing and throws nothing
   test("#261 a missing source draws nothing", async () => {
     expect.hasAssertions();
