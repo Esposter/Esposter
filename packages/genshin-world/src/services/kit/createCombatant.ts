@@ -8,11 +8,12 @@ import type { ElementalResonance } from "#src/models/party/ElementalResonance";
 import { getArtifactSetKit } from "#src/services/artifact/getArtifactSetKit";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
+import { getWeaponPassiveKit } from "#src/services/weapon/getWeaponPassiveKit";
 
 // A character's combat once its kit is built: its attributes summed under the deployed team's resonances, its kit with
-// The modules of the sets it wears answering beside it, and its element and the kind of weapon it wields read off its
-// Row of the roster, which the gauge a hit applies and the energy a drop gives it read. The Traveler's is the element of
-// The statue she resonated with last, which her row does not hold
+// The modules of the sets it wears and of its weapon's passive answering beside it, and its element and the kind of
+// Weapon it wields read off its row of the roster, which the gauge a hit applies and the energy a drop gives it read. The
+// Traveler's is the element of the statue she resonated with last, which her row does not hold
 export const createCombatant = (
   character: Character,
   kit: Kit,
@@ -32,7 +33,11 @@ export const createCombatant = (
     constellationCount: character.constellationCount,
     element,
     elementalResonances,
-    kit: getArtifactSetKit(kit, character.artifacts, statTables.artifactSetDataMap),
+    kit: getWeaponPassiveKit(
+      getArtifactSetKit(kit, character.artifacts, statTables.artifactSetDataMap),
+      character.weapon,
+      statTables.weaponDataMap.get(character.weapon.id),
+    ),
     level: character.level,
     weaponType: characterData?.weaponType,
   };
