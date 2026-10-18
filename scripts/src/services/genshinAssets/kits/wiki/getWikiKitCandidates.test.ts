@@ -31,6 +31,52 @@ const createUntaggedEntries = (path: string, poise: number, gauge?: number): [st
 ];
 
 describe(getWikiKitCandidates, () => {
+  test("keeps a row's poise where its internal cooldown tag is one the enum does not name, and writes no tag", () => {
+    expect.hasAssertions();
+
+    const varesa: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalSkill,
+      properties: [{ internalCooldownTag: "Varesa General", poise: 50, row: 1, title: "Rush DMG" }],
+      revisionId: 1,
+      title: "Varesa",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [varesa],
+      { weaponType: WeaponType.Catalyst },
+      new Map([["skill.hits.0", "Rush DMG"]]),
+    );
+
+    expect(
+      Object.fromEntries(
+        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
+      ),
+    ).toStrictEqual({ "skill.hits.0.poiseDamage": [50] });
+  });
+
+  test("joins a skill hold's hit to its row by the label its multiplier gives, as the skill's hits are", () => {
+    expect.hasAssertions();
+
+    const nahida: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalSkill,
+      properties: [
+        { poise: 75, row: 1, title: "Press DMG" },
+        { poise: 100, row: 2, title: "Hold DMG" },
+      ],
+      revisionId: 1,
+      title: "Nahida",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [nahida],
+      { weaponType: WeaponType.Catalyst },
+      new Map([["skillHolds.0.action.hits.0", "Hold DMG"]]),
+    );
+
+    expect(
+      Object.fromEntries(
+        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
+      ),
+    ).toStrictEqual({ "skillHolds.0.action.hits.0.poiseDamage": [100] });
+  });
   test("joins Xiangling's rows by their titles, the skill's and burst's by the words their table labels share", () => {
     expect.hasAssertions();
 

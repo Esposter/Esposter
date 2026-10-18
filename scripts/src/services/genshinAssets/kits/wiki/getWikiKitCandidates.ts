@@ -6,12 +6,15 @@ import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTal
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { WikiInternalCooldownTagMap } from "#src/services/genshinAssets/kits/wiki/WikiInternalCooldownTagMap";
-import { CombatTalent, KitPlunge, WeaponType } from "genshin-world";
+import { CombatTalent, InternalCooldownTag, KitPlunge, WeaponType } from "genshin-world";
 
 const NORMAL_ATTACK_TITLE_REGEX = /^Normal Attack (?<strike>\d+)(?:-Hit)?(?: (?<hit>[A-Z]))?$/u;
 const CHARGED_ATTACK_TITLE_REGEX =
   /^(?:Charged Attack(?: (?:(?<number>\d+)-Hit|(?<letter>[A-Z])))?|Fully-Charged Aimed Shot)$/u;
 const HIT_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+// The hits a skill page labels, the skill's and its holds', and those a burst page labels
+const SKILL_PAGE_HIT_PATH_REGEX = /^skill(?:Holds)?\./u;
+const BURST_PAGE_HIT_PATH_REGEX = /^burst\./u;
 const WIKI_NO_INTERNAL_COOLDOWN_TAG = "none";
 // The plunges' rows by their titles
 const WikiTitlePathMap: Partial<Record<string, string>> = {
@@ -51,13 +54,15 @@ export const getWikiKitCandidates = (
         value,
       });
     if (poise !== undefined) add("poiseDamage", poise);
-    if (internalCooldownTag !== undefined)
-      add(
-        "internalCooldownTag",
+    if (internalCooldownTag !== undefined) {
+      const tag =
         internalCooldownTag === WIKI_NO_INTERNAL_COOLDOWN_TAG
           ? undefined
-          : (WikiInternalCooldownTagMap[internalCooldownTag] ?? internalCooldownTag),
-      );
+          : (WikiInternalCooldownTagMap[internalCooldownTag] ?? internalCooldownTag);
+      // A tag the enum does not name is not written, as the record would reject it; the row's poise still stands
+      if (tag === undefined || (Object.values(InternalCooldownTag) as string[]).includes(tag))
+        add("internalCooldownTag", tag);
+    }
     if (isElemental && gauge !== undefined) add("gauge", gauge);
   };
   // The wiki writes a hit's gauge on every row, a physical strike's as well, so a row's gauge is read only where the
@@ -84,9 +89,10 @@ export const getWikiKitCandidates = (
           addRow(plungePath, property, page, isCatalyst || plungePath === "plungeCollision");
       }
     else {
-      const slot = page.combatTalent === CombatTalent.ElementalSkill ? "skill" : "burst";
+      const pageHitPathRegex =
+        page.combatTalent === CombatTalent.ElementalSkill ? SKILL_PAGE_HIT_PATH_REGEX : BURST_PAGE_HIT_PATH_REGEX;
       for (const [hitPath, label] of hitLabelMap) {
-        const property = hitPath.startsWith(`${slot}.`)
+        const property = pageHitPathRegex.test(hitPath)
           ? page.properties.find(({ title }) => toTitleWords(title) === toTitleWords(label))
           : undefined;
         if (property !== undefined) addRow(hitPath, property, page, true);
