@@ -44,7 +44,6 @@ const KIT_TABLES: KitTables = {
   weaponType: WeaponType.Sword,
 };
 const attackConstant = (value: GoValue, line: number, file = "attack.go") => ({ elementLines: {}, file, line, value });
-const toConstantAt = (file: string, line: number, value: GoValue) => ({ elementLines: {}, file, line, value });
 const createCharacterFixture = (
   folder: string,
   {
@@ -1125,9 +1124,9 @@ describe(getGcsimKitCandidates, () => {
         },
       ],
       constants: [
-        ["fierySkillFrames", toConstantAt("skill.go", 33, frames(52))],
+        ["fierySkillFrames", attackConstant(frames(52), 33, "skill.go")],
         ["fierySkillHitmark", attackConstant(2, 19, "skill.go")],
-        ["burstFrames", toConstantAt("burst.go", 27, frames(122))],
+        ["burstFrames", attackConstant(frames(122), 27, "burst.go")],
         ["burstHitmark", attackConstant(88, 18, "burst.go")],
       ],
       talentParameters: [
