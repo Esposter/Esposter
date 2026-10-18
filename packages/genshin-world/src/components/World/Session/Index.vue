@@ -418,6 +418,7 @@ const { achievementData } = useWorldAchievements({
 // The drops and the gathering points the character picks up, taken into the bag or the wallet
 const {
   bagFullHint,
+  breakOre,
   materialSources,
   pickUpGatheringPlace,
   pickUpInteractables,
@@ -837,10 +838,9 @@ const crafting = computed(() =>
 const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
 // The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
 const { refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
-  events,
+  breakOre,
   gameDataBaseUrl,
   getWorldNow,
-  placeWorldDrops,
   rank,
   regionIds: computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]),
 });
