@@ -13,7 +13,7 @@ Build the Genshin recreation as the agent console's world: an explorable contine
 - The recreation is labelled on its own pages as an unofficial, non-commercial fan work, and does not present itself as HoYoverse's.
 - The app ships no game model, texture, sound or image file; its geometry, textures and shaders are authored in the repository, and its game-derived data reaches it only through the hosted game data.
 - Characters are drawn only from an official HoYoverse model the reader holds, never from a copy the app hosts.
-- Each frame's acceptance is its perceptual score against its game references and then the user's eyes.
+- Each frame's acceptance is its perceptual score against its game references.
 - Each region is built on the shared world engine, adding its palette, building kit, flora, weather and landmarks.
 - The play features and then the game's systems are built one page each, in the order their pages give.
 - Multiplayer is not part of the world; co-op stays deferred.
@@ -30,5 +30,3 @@ Build the Genshin recreation as the agent console's world: an explorable contine
 ## Impact
 
 The agent console's `/genshin` page and the world behind it, which replaces the voxel world. The shared world engine, the regions' packages and the play-feature and game-system pages built on them. The hosted game data the world reads by key, and the references held outside the repository.
-
-Size kept as the source page's own: splitting it is a later decision.

@@ -25,22 +25,6 @@ The Nasha Town camera SHALL be written only when its seven landmarks reproject w
 - **WHEN** the landmarks reproject more than 2 pixels root mean square off the reference
 - **THEN** the pose is not written
 
-### Requirement: Each Nod-Krai pass
-
-Each Nod-Krai pass SHALL wait on the pass or camera it reads and SHALL be held only when its readout meets the bar its page names.
-
-#### Scenario: The layout pass waits for the camera
-
-- **GIVEN** the Nod-Krai layout pass reads the Nasha Town camera
-- **WHEN** the camera has not been written
-- **THEN** the layout pass does not run
-
-#### Scenario: A pass whose readout misses its bar is not held
-
-- **GIVEN** a Nod-Krai pass has run
-- **WHEN** its readout misses the bar its page names
-- **THEN** the pass is not held
-
 ### Requirement: The Nasha Town sun direction
 
 The Nasha Town sun direction SHALL replace the provisional noon only when the solved shadow edges lie within 2 pixels.

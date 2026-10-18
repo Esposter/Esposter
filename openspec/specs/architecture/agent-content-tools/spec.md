@@ -155,3 +155,19 @@ Every applied edit SHALL report the operations that undo it, so that an agent ca
 - **GIVEN** an agent's edit has been applied
 - **WHEN** the agent submits the undo operations the edit reported
 - **THEN** the content returns to its state before the edit
+
+### Requirement: CI refuses a resource type whose described surface is not recorded
+
+CI SHALL refuse any resource type whose content schema cannot be described to agents as a root object, or whose undescribed and read-only paths differ from the recorded ones.
+
+#### Scenario: A type whose content schema is not an object fails CI
+
+- **GIVEN** a resource type's content schema does not describe as a root object
+- **WHEN** CI runs
+- **THEN** CI fails
+
+#### Scenario: A change to a type's described surface fails CI until it is recorded
+
+- **GIVEN** a resource type's undescribed or read-only paths differ from the recorded ones
+- **WHEN** CI runs
+- **THEN** CI fails until the recorded paths are updated

@@ -31,22 +31,6 @@ The Fontaine camera SHALL be written only when its landmarks reproject within 2 
 - **WHEN** the landmarks reproject within 2 pixels root mean square
 - **THEN** the pose is written for the Fontaine location
 
-### Requirement: Each Fontaine pass
-
-Each Fontaine pass SHALL wait on the pass or camera it reads and SHALL be held only when its readout meets the bar its page names.
-
-#### Scenario: A pass waits for the camera it reads
-
-- **GIVEN** a Fontaine pass reads the camera
-- **WHEN** the camera has not been written
-- **THEN** the pass does not run
-
-#### Scenario: A pass whose readout misses its bar is not held
-
-- **GIVEN** a Fontaine pass has run
-- **WHEN** its readout misses the bar its page names
-- **THEN** the pass is not held
-
 ### Requirement: The Fontaine sun direction
 
 The Fontaine sun direction SHALL replace the provisional noon only when the solved shadow edges lie within 2 pixels.

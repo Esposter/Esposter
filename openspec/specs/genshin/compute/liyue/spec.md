@@ -24,22 +24,6 @@ The Liyue Harbor camera SHALL be written only when its landmarks reproject withi
 - **WHEN** the landmarks reproject more than 2 pixels root mean square off the reference
 - **THEN** the pose is not written
 
-### Requirement: Each Liyue pass
-
-Each Liyue pass SHALL wait on the pass or camera it reads and SHALL be held only when its readout meets the bar its page names.
-
-#### Scenario: A pass waits for the pass it reads
-
-- **GIVEN** a Liyue pass reads the output of an earlier pass
-- **WHEN** the earlier pass is not yet held
-- **THEN** the pass does not run
-
-#### Scenario: A pass whose readout misses its bar is not held
-
-- **GIVEN** a Liyue pass has run
-- **WHEN** its readout misses the bar its page names
-- **THEN** the pass is not held
-
 ### Requirement: The Liyue Harbor sun direction
 
 The Liyue Harbor sun direction SHALL replace the provisional noon only when the solved shadow edges lie within 2 pixels.

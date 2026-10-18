@@ -5,7 +5,6 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 ## Open
 
 - [ ] [Dependency admission](../../specs/architecture/dependency-admission/design.md) — the heavy engines by the client bytes `pnpm ai:dependencies:score --sort bundle` reads from the app's real build: the survey creator, three, apexcharts and mathjs each weighed for a lighter engine, a later load or neither; the two PDF viewers stay ([PDF viewer consolidation](../../rejected/architecture/pdf-viewer-consolidation/design.md)), and GrapesJS is answered by the [page builder](../resource-page-builder-program/design.md)
-- [ ] [Shared requirements in the spec tree](../../specs/architecture/spec-changes/design.md) — sibling capabilities that restate one requirement each (the character kits, the compute areas) take it from one common capability instead, so the requirement changes in one place and the duplicate-prose scan can read `spec.md` again
 - [ ] [Agent console](../infra-agent-console-program/design.md) — past terminal parity and the shipped connecting (host installer, session windows, device pairing, remote connections) and the Code tab's shell pane: diff comments, side chat, effort level and session titles, so a day's work needs no terminal; Anthropic-hosted sessions on the reader's own API key; then the Genshin theme, the views and the terminal-mirror driver
 
 ## Blocked (the character voice still switched on after two weeks of daily use)

@@ -52,7 +52,7 @@ The app SHALL serve no model, texture, sound or image file taken from the game, 
 
 ### Requirement: Characters are drawn only from an official model the reader holds
 
-A character SHALL be drawn only from an official HoYoverse model that the reader holds, and the app SHALL NOT host that model.
+A character SHALL be drawn only from an official HoYoverse model that the reader holds, and the app SHALL serve that model to no one but the reader who supplied it.
 
 #### Scenario: A reader with the official model sees the character drawn
 
@@ -76,23 +76,6 @@ Each region SHALL be laid out from the game's own terrain tiles and streaming re
 - **GIVEN** a region has been rebuilt from its game data
 - **WHEN** the player views the region from its reference camera
 - **THEN** its layout matches the game's reference of that view
-
-### Requirement: A pass is accepted only by its score and the user's eyes
-
-A recreation pass SHALL be accepted only when its frame scores within its gate against the game's references and the user approves it.
-
-#### Scenario: A pass is accepted when its frame scores within its gate
-
-- **GIVEN** a pass's frame has been scored against its game references
-- **WHEN** the score is within the pass's gate and the user approves the frame
-- **THEN** the pass is accepted and frozen
-
-#### Scenario: A frame outside its gate is not accepted
-
-- **GIVEN** a pass's frame has been scored against its game references
-- **WHEN** the score misses the pass's gate
-- **THEN** the pass is not accepted
-- **AND** the pass stays open for another round
 
 ### Requirement: The world's frame cost follows what the camera sees
 

@@ -17,7 +17,7 @@ The goal: whatever a person can do in a resource editor, an agent can do through
 
 ## Capabilities
 
-- **architecture/ai-native-resources** (new)
+None of its own: each part's change carries its capability under `architecture/ai-native-resources/`, and the refusal of an undescribed write is built (`openspec/specs/architecture/agent-content-tools/spec.md`).
 
 ## Waiting on
 
@@ -35,5 +35,3 @@ The goal: whatever a person can do in a resource editor, an agent can do through
 - The resource save stream and the open editors of every type, which adopt another device's save.
 - Each type's own procedures, reached by agents only where they are the owner's act.
 - A CI check over every type's described surface, and a CI check over every type's own procedures.
-
-Size kept as the source page's own: splitting it is a later decision.

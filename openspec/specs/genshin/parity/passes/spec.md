@@ -6,7 +6,7 @@ A new screen is derived in passes, each answering one kind of unknown from its m
 
 ### Requirement: Passes run in a fixed order, each after the one before holds
 
-A screen's passes SHALL run in a fixed order, and each pass SHALL be judged by its own measure before the next pass runs.
+A component's passes, a screen's or a region's, SHALL run in a fixed order, and each pass SHALL be judged by its own measure before the next pass runs.
 
 #### Scenario: Screen derived
 

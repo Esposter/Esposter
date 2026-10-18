@@ -30,22 +30,6 @@ The People of the Springs camera SHALL be written only when its seven landmarks 
 - **WHEN** the pose is solved
 - **THEN** it is solved without a starting pose
 
-### Requirement: Each Natlan pass
-
-Each Natlan pass SHALL wait on the pass or camera it reads and SHALL be held only when its readout meets the bar its page names.
-
-#### Scenario: The layout pass waits for the camera
-
-- **GIVEN** the Natlan layout pass reads the location's camera
-- **WHEN** the camera has not been written
-- **THEN** the layout pass does not run
-
-#### Scenario: A pass whose readout misses its bar is not held
-
-- **GIVEN** a Natlan pass has run
-- **WHEN** its readout misses the bar its page names
-- **THEN** the pass is not held
-
 ### Requirement: The People of the Springs sun direction
 
 The People of the Springs sun direction SHALL replace the provisional noon only when the solved shadow edges lie within 2 pixels.

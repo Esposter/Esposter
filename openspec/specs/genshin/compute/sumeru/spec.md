@@ -24,22 +24,6 @@ The Sumeru City camera SHALL be written only when its nine landmarks reproject w
 - **WHEN** the landmarks reproject more than 2 pixels root mean square off the reference
 - **THEN** the pose is not written
 
-### Requirement: Each Sumeru pass
-
-Each Sumeru pass SHALL wait on the pass or camera it reads and SHALL be held only when its readout meets the bar its page names.
-
-#### Scenario: The surface pass waits for the shape pass
-
-- **GIVEN** the Sumeru surface pass reads the shape pass
-- **WHEN** the shape pass is not yet held
-- **THEN** the surface pass does not run
-
-#### Scenario: A pass whose readout misses its bar is not held
-
-- **GIVEN** a Sumeru pass has run
-- **WHEN** its readout misses the bar its page names
-- **THEN** the pass is not held
-
 ### Requirement: The Sumeru City sun direction
 
 The Sumeru City sun direction SHALL replace the provisional noon only when the solved shadow edges lie within 2 pixels.
