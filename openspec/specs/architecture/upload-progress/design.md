@@ -13,7 +13,7 @@ flowchart LR
 
 ## Upstream
 
-Every issue on `sindresorhus/p-progress`, open and closed, was read with its comments before the counter was written. No issue is an in-scope defect of the counter: each is either outside the surface the upload uses, or a question the upstream README answers. The counter is tested against the mixed case below, and the installed 1.0.0 gives the same sequence for blocks that land on separate ticks.
+Every issue on `sindresorhus/p-progress`, open and closed, was read with its comments before the counter was written. No issue is an in-scope defect of the counter: each is either outside the surface the upload uses, or a question the upstream README answers. The counter is tested against the mixed case below.
 
 | Issue                                                                            | Verdict        | Evidence                                                                                                                                                                |
 | :------------------------------------------------------------------------------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -26,6 +26,14 @@ Every issue on `sindresorhus/p-progress`, open and closed, was read with its com
 | [#17](https://github.com/sindresorhus/p-progress/issues/17) `all` types          | Out of scope   | The mapped tuple types belong to upstream's surface. The counter takes `Promise<void>[]`, typed by us.                                                                  |
 | [#18](https://github.com/sindresorhus/p-progress/issues/18) async/await API      | Out of scope   | The constructor and `fn` API are not kept. The counter takes promises, which is the shape the issue asked for.                                                          |
 | [#21](https://github.com/sindresorhus/p-progress/issues/21) `fn` returns 1       | False positive | Resolution sets progress to `1` by design, as `index.d.ts` documents ("Progress percentage `1` is reported for you when the promise resolves"). `fn` is not kept.       |
+
+## Key files
+
+Paths relative to `apps/web`.
+
+| File                                           | Role                                                 |
+| ---------------------------------------------- | ---------------------------------------------------- |
+| `app/services/azure/container/uploadBlocks.ts` | the block counter, `landed / total` per resolved PUT |
 
 ## Sources
 
