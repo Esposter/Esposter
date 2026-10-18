@@ -1,13 +1,13 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
+  "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.radiantPsalterShield": { "cause": "Unsourced", "value": 31 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 45.6 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 42 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 27.6 },
+  "normalAttacks.2.hits.1.poiseDamage": { "source": "Wiki", "value": 27.6 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 68.7 },
   "parameters.radiantPsalterShieldMaxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 11539 }
