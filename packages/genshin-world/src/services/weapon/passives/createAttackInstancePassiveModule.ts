@@ -7,6 +7,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 export interface AttackInstancePassive {
   // The attack tags whose hits the status adds its share to, and whose hits count as its instances once it is obtained
@@ -57,8 +58,8 @@ export const createAttackInstancePassiveModule = ({
         });
         return;
       }
-      if (!checkIsObtainedBy(event) || checkIsKitStatusActive(kitEffectState.effects, characterId, cooldownId)) return;
-      addKitStatus(kitEffectState, characterId, { id: cooldownId, secondsRemaining: cooldownSeconds });
+      if (!checkIsObtainedBy(event) || !startKitCooldown(kitEffectState, characterId, cooldownId, cooldownSeconds))
+        return;
       addKitStatus(kitEffectState, characterId, { id, secondsRemaining: seconds, stacks: 0 });
     },
   };

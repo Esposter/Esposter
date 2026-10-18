@@ -1,17 +1,14 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeathlyPactPassiveModule } from "#src/services/weapon/passives/createDeathlyPactPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const readBuffs = (effects: readonly KitEffect[]) =>
   effects
     .filter((effect) => effect.kind === "buff")
@@ -20,16 +17,8 @@ const readBuffs = (effects: readonly KitEffect[]) =>
 describe(createDeathlyPactPassiveModule, () => {
   // Deathly Pact at its first rank: its CRIT DMG line is the table's. Each increase of the wielder's Bond of Life raises its
   // DMG by 16% for six seconds, up to three stacks
-  const deathlyPactPassiveModule = createDeathlyPactPassiveModule([0.2, 0.16, 6, 0, 0, 0, 0, 0]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const deathlyPactPassiveModule = createDeathlyPactPassiveModule([0.2, 0.16, 6]);
+  const wielder: Combatant = createWielderCombatant();
   const bondOfLifeIncreased = {
     bondOfLifeShare: 0.1,
     characterId: TRAVELER_CHARACTER_ID,
@@ -69,7 +58,7 @@ describe(createDeathlyPactPassiveModule, () => {
     deathlyPactPassiveModule.onKitEvent?.(bondOfLifeIncreased, context, wielder);
     stepKitSeconds(context, 6.1);
 
-    expect(readBuffs(context.kitEffectState.effects).filter(({ amount }) => amount > 0)).toStrictEqual([]);
+    expect(readBuffs(context.kitEffectState.effects)).toStrictEqual([]);
   });
 
   test("a heal that adds no Bond of Life obtains nothing", () => {

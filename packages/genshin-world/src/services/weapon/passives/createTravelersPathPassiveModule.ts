@@ -3,9 +3,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
 
@@ -25,13 +24,9 @@ export const createTravelersPathPassiveModule = (params: number[]): PassiveModul
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== combatant.characterId ||
         combatant.characterId !== TRAVELER_CHARACTER_ID ||
-        checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, TRAVELERS_PATH_COOLDOWN_ID)
+        !startKitCooldown(kitEffectState, combatant.characterId, TRAVELERS_PATH_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      addKitStatus(kitEffectState, combatant.characterId, {
-        id: TRAVELERS_PATH_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       buffKitMember(kitEffectState, combatant.characterId, {
         amount: attackBonus,
         attribute: Attribute.AttackPercent,

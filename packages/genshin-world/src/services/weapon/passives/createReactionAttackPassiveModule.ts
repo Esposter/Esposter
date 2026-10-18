@@ -1,11 +1,9 @@
-import type { Element } from "#src/models/Element";
-import type { ReactionType } from "#src/models/combat/ReactionType";
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsReactionNamed } from "#src/services/weapon/passives/checkIsReactionNamed";
+import { createReactionBuffPassiveModule } from "#src/services/weapon/passives/createReactionBuffPassiveModule";
 import { takeOne } from "@esposter/shared";
 
 const REACTION_ATTACK_SECONDS = 12;
@@ -13,24 +11,12 @@ const REACTION_ATTACK_SECONDS = 12;
 // A passive that raises its wielder's ATK by the rank's percentage for twelve seconds when the wielder triggers one of the
 // Reactions it names, a Swirl named by the element it infuses
 export const createReactionAttackPassiveModule = (
-  reactions: { element?: Element; reactionType: ReactionType }[],
+  reactions: Pick<Reaction, "element" | "reactionType">[],
   params: number[],
-): PassiveModule => {
-  const attackPercentage = takeOne(params, 0);
-  return {
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (
-        event.kind !== KitEventKind.ReactionTriggered ||
-        event.striker.characterId !== combatant.characterId ||
-        !checkIsReactionNamed(event.reactions, reactions)
-      )
-        return;
-      buffKitMember(kitEffectState, combatant.characterId, {
-        amount: attackPercentage,
-        attribute: Attribute.AttackPercent,
-        secondsRemaining: REACTION_ATTACK_SECONDS,
-        source: "reactionAttack",
-      });
-    },
-  };
-};
+): PassiveModule =>
+  // The buff takes no Ascendant Gleam amount
+  createReactionBuffPassiveModule([takeOne(params, 0), REACTION_ATTACK_SECONDS, 0], {
+    attribute: Attribute.AttackPercent,
+    checkIsTriggering: (triggered) => checkIsReactionNamed(triggered, reactions),
+    source: "reactionAttack",
+  });

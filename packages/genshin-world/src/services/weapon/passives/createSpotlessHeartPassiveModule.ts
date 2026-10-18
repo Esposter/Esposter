@@ -4,6 +4,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const SPOTLESS_HEART_COOLDOWN_ID = "spotlessHeartCooldown";
@@ -29,11 +30,7 @@ export const createSpotlessHeartPassiveModule = (params: number[]): PassiveModul
       const { characterId } = combatant;
       const { effects } = context.kitEffectState;
       if (event.kind === KitEventKind.SkillUsed && event.characterId === characterId) {
-        if (checkIsKitStatusActive(effects, characterId, SPOTLESS_HEART_COOLDOWN_ID)) return;
-        addKitStatus(context.kitEffectState, characterId, {
-          id: SPOTLESS_HEART_COOLDOWN_ID,
-          secondsRemaining: cooldownSeconds,
-        });
+        if (!startKitCooldown(context.kitEffectState, characterId, SPOTLESS_HEART_COOLDOWN_ID, cooldownSeconds)) return;
         addKitStatus(context.kitEffectState, characterId, {
           id: SPOTLESS_HEART_ID,
           secondsRemaining: Number.POSITIVE_INFINITY,

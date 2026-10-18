@@ -1,11 +1,9 @@
-import type { Element } from "#src/models/Element";
 import type { Reaction } from "#src/models/combat/Reaction";
-import type { ReactionType } from "#src/models/combat/ReactionType";
 
 // Whether a hit's reactions include one a passive names, a named element counting only when the reaction carries it
 export const checkIsReactionNamed = (
   reactions: readonly Reaction[],
-  namedReactions: readonly { element?: Element; reactionType: ReactionType }[],
+  namedReactions: readonly Pick<Reaction, "element" | "reactionType">[],
 ): boolean =>
   reactions.some((triggered) =>
     namedReactions.some(

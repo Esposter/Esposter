@@ -16,6 +16,7 @@ import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passives/createByakuyaKougetsuPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -27,15 +28,7 @@ describe(createByakuyaKougetsuPassiveModule, () => {
   // Max HP as base damage, and for 12 seconds after an Elemental Burst, each Normal Attack that hits restores 0.6 Energy,
   // Once every 0.1 seconds
   const byakuyaKougetsuPassiveModule = createByakuyaKougetsuPassiveModule([0.1, 0.01, 12, 0.6, 0.1]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const burstUsed = { characterId: TRAVELER_CHARACTER_ID, energyCost: 60, kind: KitEventKind.BurstUsed as const };
   const normalAttackHit = {
     attackTag: AttackTag.NormalAttack,

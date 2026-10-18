@@ -2,11 +2,10 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { collectDelayedKitEnergy } from "#src/services/kit/effects/collectDelayedKitEnergy";
 import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { releaseKitHolds } from "#src/services/kit/effects/releaseKitHolds";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const SUCCESSION_COOLDOWN_ID = "successionCooldown";
@@ -26,11 +25,7 @@ export const createIwakuraSuccessionPassiveModule = (params: number[]): PassiveM
     onKitEvent: (event, context, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.SkillUsed && event.characterId === characterId) {
-        if (checkIsKitStatusActive(context.kitEffectState.effects, characterId, SUCCESSION_COOLDOWN_ID)) return;
-        addKitStatus(context.kitEffectState, characterId, {
-          id: SUCCESSION_COOLDOWN_ID,
-          secondsRemaining: cooldownSeconds,
-        });
+        if (!startKitCooldown(context.kitEffectState, characterId, SUCCESSION_COOLDOWN_ID, cooldownSeconds)) return;
         addKitHold(context.kitEffectState, characterId, {
           id: SUCCESSION_ID,
           maximum: maximumSeeds,

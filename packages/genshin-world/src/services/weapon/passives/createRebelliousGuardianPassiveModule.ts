@@ -2,11 +2,10 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const REBELLIOUS_GUARDIAN_COOLDOWN_ID = "rebelliousGuardianCooldown";
@@ -26,13 +25,14 @@ export const createRebelliousGuardianPassiveModule = (params: number[]): Passive
         event.characterId !== combatant.characterId ||
         event.healthShare >= 0 ||
         event.sourceCharacterId !== undefined ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, REBELLIOUS_GUARDIAN_COOLDOWN_ID)
+        !startKitCooldown(
+          context.kitEffectState,
+          combatant.characterId,
+          REBELLIOUS_GUARDIAN_COOLDOWN_ID,
+          cooldownSeconds,
+        )
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: REBELLIOUS_GUARDIAN_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       const maxHealth = getKitMaxHealth(
         combatant,
         context.kitEffectState.effects,

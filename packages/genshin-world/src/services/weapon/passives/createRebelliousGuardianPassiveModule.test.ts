@@ -1,29 +1,18 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
-// The Bell's Rebellious Guardian at its first rank: a shield of a fifth of Max HP, a cooldown of forty-five seconds and a
-// Twelve per cent DMG Bonus
-const rebelliousGuardianPassiveModule = createRebelliousGuardianPassiveModule([0.2, 45, 0.12]);
+const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
+// Synthetic params, not the weapon's row: a shield of three tenths of Max HP, a cooldown of three seconds and a
+// Fifth DMG Bonus
+const rebelliousGuardianPassiveModule = createRebelliousGuardianPassiveModule([0.3, 3, 0.2]);
 
 describe(createRebelliousGuardianPassiveModule, () => {
   test("an enemy's strike that takes the wielder's HP generates its shield and the DMG Bonus while it lasts", () => {
@@ -46,12 +35,12 @@ describe(createRebelliousGuardianPassiveModule, () => {
     expect(context.kitEffectState.effects.filter(({ kind }) => kind !== "status")).toStrictEqual([
       {
         characterId: TRAVELER_CHARACTER_ID,
-        health: 0.2 * wielder.attributes.maxHealth,
+        health: 0.3 * wielder.attributes.maxHealth,
         kind: "shield",
         secondsRemaining: 10,
       },
       {
-        amount: 0.12,
+        amount: 0.2,
         attribute: Attribute.AllDamageBonus,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
@@ -94,7 +83,7 @@ describe(createRebelliousGuardianPassiveModule, () => {
     expect(context.kitEffectState.effects).toStrictEqual([]);
   });
 
-  test("a second loss inside the rank's forty-five seconds generates no second shield", () => {
+  test("a second loss inside the cooldown generates no second shield", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

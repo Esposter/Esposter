@@ -2,9 +2,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const WOLFISH_TRACKER_COOLDOWN_ID = "wolfishTrackerCooldown";
@@ -25,13 +24,14 @@ export const createWolfishTrackerPassiveModule = (params: number[]): PassiveModu
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== combatant.characterId ||
         event.enemy.health >= event.enemy.maxHealth * WOLFISH_TRACKER_HEALTH_SHARE ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, WOLFISH_TRACKER_COOLDOWN_ID)
+        !startKitCooldown(
+          context.kitEffectState,
+          combatant.characterId,
+          WOLFISH_TRACKER_COOLDOWN_ID,
+          WOLFISH_TRACKER_COOLDOWN_SECONDS,
+        )
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: WOLFISH_TRACKER_COOLDOWN_ID,
-        secondsRemaining: WOLFISH_TRACKER_COOLDOWN_SECONDS,
-      });
       buffKitTeam(context.kitEffectState, context.party, {
         amount: teamAttackPercent,
         attribute: Attribute.AttackPercent,

@@ -1,18 +1,15 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createAeonWavePassiveModule } from "#src/services/weapon/passives/createAeonWavePassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const readBuffs = (effects: readonly KitEffect[]) =>
   effects
     .filter((effect) => effect.kind === "buff")
@@ -22,15 +19,7 @@ describe(createAeonWavePassiveModule, () => {
   // Aeon Wave at its first rank: each change in the wielder's HP adds 14% Charged Attack DMG for four seconds, up to three
   // Stacks once every 0.3 seconds, and a third stack restores 8 energy once every twelve seconds. Its HP line is the table's
   const aeonWavePassiveModule = createAeonWavePassiveModule([4, 0.3, 0.14, 8, 12]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const healthChanged = {
     bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID,

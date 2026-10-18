@@ -22,9 +22,10 @@ const createWielder = (energyRecharge: number): Combatant => ({
 });
 
 describe(createTimelessDreamEternalStovePassiveModule, () => {
-  // Timeless Dream: Eternal Stove at its first rank: 28% ATK for each whole point of Energy Recharge over its base, up to 80%,
-  // And 30% Energy Recharge for twelve seconds after an Elemental Burst
-  const timelessDreamEternalStovePassiveModule = createTimelessDreamEternalStovePassiveModule([0.28, 0.8, 0.3, 12]);
+  // Synthetic params, not the weapon's row: half ATK per point of Energy Recharge over its base, a proportional
+  // Share and not a whole-point step, up to 60%, and a quarter Energy Recharge for three seconds after an Elemental
+  // Burst
+  const timelessDreamEternalStovePassiveModule = createTimelessDreamEternalStovePassiveModule([0.5, 0.6, 0.25, 3]);
 
   test("a wielder's Energy Recharge over the base raises ATK by the rank's share of it", () => {
     expect.hasAssertions();
@@ -32,7 +33,7 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
     const wielder = createWielder(1.5);
 
     expect(timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.28 * 0.5, attribute: Attribute.AttackPercent },
+      { amount: 0.5 * 0.5, attribute: Attribute.AttackPercent },
     ]);
   });
 
@@ -42,7 +43,7 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
     const wielder = createWielder(5);
 
     expect(timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.8, attribute: Attribute.AttackPercent },
+      { amount: 0.6, attribute: Attribute.AttackPercent },
     ]);
   });
 
@@ -59,6 +60,6 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
 
     expect(
       timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
-    ).toStrictEqual([{ amount: 0.28 * 0.8, attribute: Attribute.AttackPercent }]);
+    ).toStrictEqual([{ amount: 0.5 * 0.75, attribute: Attribute.AttackPercent }]);
   });
 });

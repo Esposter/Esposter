@@ -5,7 +5,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -14,24 +13,17 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 1000 }]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
-// Sky-Piercing Fang at its first rank: a burst gives Movement SPD and Normal Attack SPD of ten per cent each, and Normal and
-// Charged hits deal twenty per cent of ATK more for twelve seconds
-const skywardBladePassiveModule = createSkyPiercingFangPassiveModule([0.04, 0.1, 0.1, 0.2, 12]);
+const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseAttack, value: 1000 }]);
+// Synthetic params, not the weapon's row: a burst gives Movement SPD of a fifth and Normal Attack SPD of three tenths,
+// And Normal and Charged hits deal half of ATK more as base damage, for four seconds
+const skyPiercingFangPassiveModule = createSkyPiercingFangPassiveModule([0.1, 0.2, 0.3, 0.5, 4]);
 const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
 const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): KitStrike => ({
   attackTag,
@@ -41,19 +33,19 @@ const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): Kit
 });
 
 describe(createSkyPiercingFangPassiveModule, () => {
-  test("a burst raises the wielder's Movement SPD and Normal Attack SPD for twelve seconds", () => {
+  test("a burst raises the wielder's Movement SPD and Normal Attack SPD for four seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
 
     expect(
       context.kitEffectState.effects
         .filter((effect) => effect.kind === "buff")
         .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
     ).toStrictEqual([
-      { amount: 0.1, attribute: Attribute.MovementSpeed, secondsRemaining: 12 },
-      { amount: 0.1, attribute: Attribute.NormalAttackSpeed, secondsRemaining: 12 },
+      { amount: 0.2, attribute: Attribute.MovementSpeed, secondsRemaining: 4 },
+      { amount: 0.3, attribute: Attribute.NormalAttackSpeed, secondsRemaining: 4 },
     ]);
   });
 
@@ -61,11 +53,11 @@ describe(createSkyPiercingFangPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
 
     expect(
       [AttackTag.NormalAttack, AttackTag.ChargedAttack].map((attackTag) =>
-        skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+        skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
           createStrike(attackTag),
           enemy,
           context.party,
@@ -73,14 +65,14 @@ describe(createSkyPiercingFangPassiveModule, () => {
           context.characterIdCombatantMap,
         ),
       ),
-    ).toStrictEqual([0.2 * wielder.attributes.attack, 0.2 * wielder.attributes.attack]);
+    ).toStrictEqual([0.5 * wielder.attributes.attack, 0.5 * wielder.attributes.attack]);
   });
 
   test("the share is the striker's ATK, priced with its buffs on", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
     buffKitMember(context.kitEffectState, TRAVELER_CHARACTER_ID, {
       amount: 0.5,
       attribute: Attribute.AttackPercent,
@@ -100,14 +92,14 @@ describe(createSkyPiercingFangPassiveModule, () => {
     );
 
     expect(
-      skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.NormalAttack, pricedWielder),
         enemy,
         context.party,
         context.kitEffectState.effects,
         context.characterIdCombatantMap,
       ),
-    ).toBeCloseTo(0.2 * buffedAttack);
+    ).toBeCloseTo(0.5 * buffedAttack);
   });
 
   test("an elemental skill's strike gains no base damage, and neither does a normal attack before the burst", () => {
@@ -115,7 +107,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     expect(
-      skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.NormalAttack),
         enemy,
         context.party,
@@ -123,10 +115,10 @@ describe(createSkyPiercingFangPassiveModule, () => {
         context.characterIdCombatantMap,
       ),
     ).toBe(0);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
 
     expect(
-      skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.ElementalSkill),
         enemy,
         context.party,
@@ -136,15 +128,15 @@ describe(createSkyPiercingFangPassiveModule, () => {
     ).toBe(0);
   });
 
-  test("a normal attack gains no base damage after the twelve seconds run out", () => {
+  test("a normal attack gains no base damage after the four seconds run out", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
-    stepKitSeconds(context, 12);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    stepKitSeconds(context, 4);
 
     expect(
-      skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.NormalAttack),
         enemy,
         context.party,

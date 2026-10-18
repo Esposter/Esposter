@@ -2,6 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import type { Attribute } from "#src/models/character/Attribute";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
+import type { Reaction } from "#src/models/combat/Reaction";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
@@ -9,17 +10,26 @@ import { takeOne } from "@esposter/shared";
 
 // A passive that, after its wielder causes an Elemental Reaction, whether or not the wielder is on the field, raises one of its
 // Attributes by the rank's amount for the rank's seconds, and by the rank's Moonsign amount more while the deployed team is
-// Ascendant Gleam
+// Ascendant Gleam. Only the reactions a hit triggers that checkIsTriggering accepts count, and with none given, every one does
 export const createReactionBuffPassiveModule = (
   params: number[],
-  { attribute, source }: { attribute: Attribute; source: string },
+  {
+    attribute,
+    checkIsTriggering = () => true,
+    source,
+  }: { attribute: Attribute; checkIsTriggering?: (reactions: readonly Reaction[]) => boolean; source: string },
 ): PassiveModule => {
   const amount = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   const ascendantGleamAmount = takeOne(params, 2);
   return {
     onKitEvent: (event, context, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
+      if (
+        event.kind !== KitEventKind.ReactionTriggered ||
+        event.striker.characterId !== combatant.characterId ||
+        !checkIsTriggering(event.reactions)
+      )
+        return;
       const isAscendantGleam =
         getMoonsignLevel(context.characterIdCombatantMap, context.party) === MoonsignLevel.AscendantGleam;
       buffKitMember(context.kitEffectState, combatant.characterId, {

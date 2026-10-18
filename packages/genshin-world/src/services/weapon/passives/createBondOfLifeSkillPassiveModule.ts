@@ -3,15 +3,14 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import type { Attribute } from "#src/models/character/Attribute";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
 import { takeOne } from "@esposter/shared";
 
-export interface BondOfLifeSkillPassiveOptions {
+interface BondOfLifeSkillPassiveOptions {
   clearedAttributes: readonly Attribute[];
   // The amount each cleared attribute rises by, from the HP the Bond of Life cleared, the rank's rate of it and the rank's maximum
   priceClearedAmount: (clearedHealth: number, rate: number, max: number) => number;
@@ -38,11 +37,7 @@ export const createBondOfLifeSkillPassiveModule = (
   return {
     onKitEvent: (event, context, combatant) => {
       if (event.kind === KitEventKind.SkillUsed && event.characterId === combatant.characterId) {
-        if (checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, cooldownId)) return;
-        addKitStatus(context.kitEffectState, combatant.characterId, {
-          id: cooldownId,
-          secondsRemaining: cooldownSeconds,
-        });
+        if (!startKitCooldown(context.kitEffectState, combatant.characterId, cooldownId, cooldownSeconds)) return;
         for (const attribute of skillAttributes)
           buffKitMember(context.kitEffectState, combatant.characterId, {
             amount: skillAmount,

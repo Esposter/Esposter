@@ -3,9 +3,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 
@@ -30,13 +29,9 @@ export const createDebutPassiveModule = (params: number[]): PassiveModule => {
       if (
         event.kind !== KitEventKind.CharacterSwapped ||
         event.characterId !== combatant.characterId ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, DEBUT_COOLDOWN_ID)
+        !startKitCooldown(context.kitEffectState, combatant.characterId, DEBUT_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: DEBUT_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       const theme = themes[Math.floor(context.random() * themes.length)] ?? [];
       for (const { amount, attribute } of theme)
         buffKitMember(context.kitEffectState, combatant.characterId, {

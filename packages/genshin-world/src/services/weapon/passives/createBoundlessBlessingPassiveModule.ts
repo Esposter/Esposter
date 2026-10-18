@@ -6,10 +6,9 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
-import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { BOUNDLESS_BLESSING_ID, ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 
-const BOUNDLESS_BLESSING_ID = "boundlessBlessing";
 const BOUNDLESS_BLESSING_CLOCK_ID = "boundlessBlessingClock";
 const BOUNDLESS_BLESSING_INTERVAL_SECONDS = 4;
 const BOUNDLESS_BLESSING_MAXIMUM_STACKS = 4;

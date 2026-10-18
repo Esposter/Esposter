@@ -11,11 +11,14 @@ import { takeOne } from "@esposter/shared";
 const ASHEN_NIGHTSTAR_ID = "ashenNightstar";
 const ASHEN_NIGHTSTAR_MAXIMUM_STACKS = 4;
 
+const STACKING_ATTACK_TAGS = [
+  AttackTag.NormalAttack,
+  AttackTag.ChargedAttack,
+  AttackTag.ElementalSkill,
+  AttackTag.ElementalBurst,
+];
 const checkIsStackingHit = (attackTag: AttackTag | undefined): boolean =>
-  attackTag === AttackTag.NormalAttack ||
-  attackTag === AttackTag.ChargedAttack ||
-  attackTag === AttackTag.ElementalSkill ||
-  attackTag === AttackTag.ElementalBurst;
+  attackTag !== undefined && STACKING_ATTACK_TAGS.includes(attackTag);
 
 // Daylight's Augury at its rank: its wielder's Elemental Skill and Burst DMG rise by the rank's percentage, and each normal,
 // Charged, Elemental Skill or Elemental Burst hit it deals gains a stack of Ashen Nightstar for the rank's seconds. Each stack
@@ -23,7 +26,7 @@ const checkIsStackingHit = (attackTag: AttackTag | undefined): boolean =>
 export const createDaylightsAuguryPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const stackSeconds = takeOne(params, 1);
-  const attackShares = params.slice(2, 6);
+  const attackShares = params.slice(2, 2 + ASHEN_NIGHTSTAR_MAXIMUM_STACKS);
   return {
     getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
       {
@@ -32,7 +35,9 @@ export const createDaylightsAuguryPassiveModule = (params: number[]): PassiveMod
       },
     ],
     getStrikeDamageBonus: (strike) =>
-      strike.attackTag === AttackTag.ElementalSkill || strike.attackTag === AttackTag.ElementalBurst ? damageBonus : 0,
+      strike.attackTag !== undefined && [AttackTag.ElementalSkill, AttackTag.ElementalBurst].includes(strike.attackTag)
+        ? damageBonus
+        : 0,
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (
         event.kind !== KitEventKind.DamageTaken ||

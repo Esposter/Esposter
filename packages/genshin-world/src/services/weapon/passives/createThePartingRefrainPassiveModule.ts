@@ -9,6 +9,7 @@ import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { releaseKitHolds } from "#src/services/kit/effects/releaseKitHolds";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const FAREWELL_SONG_SOURCE = "farewellSong";
@@ -41,10 +42,9 @@ export const createThePartingRefrainPassiveModule = (params: number[]): PassiveM
       const { effects } = kitEffectState;
       if (
         checkIsKitStatusActive(effects, characterId, SIGIL_LOCKOUT_ID) ||
-        checkIsKitStatusActive(effects, characterId, SIGIL_COOLDOWN_ID)
+        !startKitCooldown(kitEffectState, characterId, SIGIL_COOLDOWN_ID, sigilCooldownSeconds)
       )
         return;
-      addKitStatus(kitEffectState, characterId, { id: SIGIL_COOLDOWN_ID, secondsRemaining: sigilCooldownSeconds });
       addKitHold(kitEffectState, characterId, {
         id: SIGIL_ID,
         maximum: SIGIL_MAXIMUM,

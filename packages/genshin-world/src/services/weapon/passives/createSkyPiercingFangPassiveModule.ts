@@ -8,7 +8,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { takeOne } from "@esposter/shared";
 
-const SKYWARD_BLADE_MIGHT_ID = "skypiercingMight";
+const SKY_PIERCING_MIGHT_ID = "skypiercingMight";
 
 // Skyward Blade's Sky-Piercing Fang at its rank: its CRIT Rate is a static line the rank carries. A burst its wielder uses
 // Gives the wielder Movement SPD and Normal Attack SPD by the rank's shares, and its Normal and Charged Attack hits deal the
@@ -23,7 +23,7 @@ export const createSkyPiercingFangPassiveModule = (params: number[]): PassiveMod
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) => {
       if (
         !checkIsNormalOrChargedAttack(strike.attackTag) ||
-        !checkIsKitStatusActive(effects, strike.combatant.characterId, SKYWARD_BLADE_MIGHT_ID)
+        !checkIsKitStatusActive(effects, strike.combatant.characterId, SKY_PIERCING_MIGHT_ID)
       )
         return 0;
       return damageShare * strike.combatant.attributes.attack;
@@ -31,7 +31,7 @@ export const createSkyPiercingFangPassiveModule = (params: number[]): PassiveMod
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.BurstUsed || event.characterId !== combatant.characterId) return;
       addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: SKYWARD_BLADE_MIGHT_ID,
+        id: SKY_PIERCING_MIGHT_ID,
         secondsRemaining: seconds,
       });
       for (const [attribute, amount] of [
@@ -42,7 +42,7 @@ export const createSkyPiercingFangPassiveModule = (params: number[]): PassiveMod
           amount,
           attribute,
           secondsRemaining: seconds,
-          source: SKYWARD_BLADE_MIGHT_ID,
+          source: SKY_PIERCING_MIGHT_ID,
         });
     },
   };

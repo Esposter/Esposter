@@ -7,6 +7,7 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
 import { createFlowerFeatherSongPassiveModule } from "#src/services/weapon/passives/createFlowerFeatherSongPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -35,7 +36,7 @@ describe(createFlowerFeatherSongPassiveModule, () => {
     const deployedCombatants = [
       { ...wielder, isOnField: true },
       createMember(1, Element.Hydro),
-      createMember(2, Element.Pyro, "natlan"),
+      createMember(2, Element.Pyro, NATLAN_REGION_ID),
       createMember(3, Element.Pyro),
     ];
 
@@ -51,7 +52,7 @@ describe(createFlowerFeatherSongPassiveModule, () => {
     const deployedCombatants = [
       { ...wielder, isOnField: true },
       createMember(1, Element.Hydro),
-      createMember(2, Element.Pyro, "natlan"),
+      createMember(2, Element.Pyro, NATLAN_REGION_ID),
       createMember(3, Element.Cryo),
     ];
 
@@ -64,7 +65,7 @@ describe(createFlowerFeatherSongPassiveModule, () => {
   test("the wielder is not counted toward its own team", () => {
     expect.hasAssertions();
 
-    const natlanWielder: Combatant = createMember(TRAVELER_CHARACTER_ID, Element.Pyro, "natlan");
+    const natlanWielder: Combatant = createMember(TRAVELER_CHARACTER_ID, Element.Pyro, NATLAN_REGION_ID);
 
     expect(
       flowerFeatherSongPassiveModule.getPassiveBonuses?.(natlanWielder, 1, [{ ...natlanWielder, isOnField: true }], []),

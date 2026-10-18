@@ -1,8 +1,7 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
 
@@ -19,13 +18,9 @@ export const createTipOfTheSpearPassiveModule = (params: number[]): PassiveModul
         event.kind !== KitEventKind.HealthChanged ||
         event.characterId !== combatant.characterId ||
         event.healthShare <= 0 ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, TIP_OF_THE_SPEAR_COOLDOWN_ID)
+        !startKitCooldown(context.kitEffectState, combatant.characterId, TIP_OF_THE_SPEAR_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: TIP_OF_THE_SPEAR_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       gainPartyMemberEnergy(context.party, combatant, energy);
     },
   };

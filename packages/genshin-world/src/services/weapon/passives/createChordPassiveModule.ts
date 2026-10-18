@@ -6,10 +6,9 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
-import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
+import { CHORD_HARMONIC_ID, SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 
-const CHORD_HARMONIC_ID = "harmonic";
 const CHORD_HARMONIC_MAXIMUM = 5;
 const CHORD_HARMONIC_SECONDS = 30;
 const CHORD_HARMONIC_COOLDOWN_SECONDS = 0.5;
@@ -18,6 +17,7 @@ const CHORD_HARMONIC_COOLDOWN_SECONDS = 0.5;
 // Five harmonics, which last thirty seconds from the last gained, deal the rank's multiplier of ATK to the surrounding
 // Enemies and clear the count. The area is provisional, the text naming only the surrounding opponents
 export const createChordPassiveModule = (params: number[]): PassiveModule => {
+  // The rank's first value is not read, since a hit always adds one harmonic and the module takes no count of its own
   const talentMultiplier = takeOne(params, 1);
   return {
     onKitEvent: (event, context, combatant) => {

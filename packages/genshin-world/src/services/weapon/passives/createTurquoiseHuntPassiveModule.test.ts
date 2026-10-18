@@ -4,13 +4,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createTurquoiseHuntPassiveModule } from "#src/services/weapon/passives/createTurquoiseHuntPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -18,19 +18,12 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createTurquoiseHuntPassiveModule, () => {
-  // Turquoise Hunt at its first rank: a stack for each Elemental Skill hit every half second, three stacks for a Burning or
-  // Burgeon a nearby party member triggers every two seconds, and 10% Elemental Skill and Burst DMG per stack for six seconds
-  const turquoiseHuntPassiveModule = createTurquoiseHuntPassiveModule([0.5, 2, 0.1, 6, 6]);
+  // Synthetic params, not the weapon's row: a stack for each Elemental Skill hit every quarter second, and three stacks
+  // For a Burning or Burgeon a nearby party member triggers every second, a fifth Elemental Skill and Burst DMG per
+  // Stack, lasting two seconds
+  const turquoiseHuntPassiveModule = createTurquoiseHuntPassiveModule([0.25, 1, 0.2, 2, 4]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
     enemy,
@@ -66,12 +59,12 @@ describe(createTurquoiseHuntPassiveModule, () => {
         context.kitEffectState.effects,
       );
 
-    expect(getBonus(AttackTag.ElementalSkill)).toBe(0.1);
-    expect(getBonus(AttackTag.ElementalBurst)).toBe(0.1);
+    expect(getBonus(AttackTag.ElementalSkill)).toBe(0.2);
+    expect(getBonus(AttackTag.ElementalBurst)).toBe(0.2);
     expect(getBonus(AttackTag.NormalAttack)).toBe(0);
   });
 
-  test("a second Elemental Skill hit inside the half second gains no stack, and the stack ends after six seconds", () => {
+  test("a second Elemental Skill hit inside the quarter second gains no stack, and the stack ends after two seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -85,9 +78,9 @@ describe(createTurquoiseHuntPassiveModule, () => {
         context.kitEffectState.effects,
       );
 
-    expect(getSkillBonus()).toBe(0.1);
+    expect(getSkillBonus()).toBe(0.2);
 
-    stepKitSeconds(context, 6.1);
+    stepKitSeconds(context, 2.1);
 
     expect(getSkillBonus()).toBe(0);
   });
@@ -109,7 +102,7 @@ describe(createTurquoiseHuntPassiveModule, () => {
         context.party,
         context.kitEffectState.effects,
       ),
-    ).toBe(0.1 * 3);
+    ).toBe(0.2 * 3);
   });
 
   test("a Burning the wielder itself triggers gains no stacks", () => {

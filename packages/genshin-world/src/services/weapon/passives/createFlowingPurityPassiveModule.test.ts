@@ -2,28 +2,17 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10000 }]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
+const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10000 }]);
 // Flowing Purity at its first rank: eight per cent All Elemental DMG Bonus for fifteen seconds after an Elemental Skill, with a
 // Bond of Life worth a quarter of Max HP once every ten seconds, and two per cent All Elemental DMG Bonus for every 1,000 HP
 // The bond cleared, at most twelve per cent, for fifteen seconds
@@ -66,10 +55,11 @@ describe(createFlowingPurityPassiveModule, () => {
     flowingPurityPassiveModule.onKitEvent?.(clearHealth(0.5), context, wielder);
 
     const buffs = getBuffs(context.kitEffectState.effects, "flowingPurityCleared");
-    expect(buffs.map(({ attribute, secondsRemaining }) => ({ attribute, secondsRemaining }))).toStrictEqual(
-      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ attribute, secondsRemaining: 15 })),
+    expect(
+      buffs.map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
+    ).toStrictEqual(
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.1, attribute, secondsRemaining: 15 })),
     );
-    expect(buffs.every(({ amount }) => Math.abs(amount - 0.1) < 1e-9)).toBe(true);
   });
 
   test("the DMG Bonus a clear raises is at most the rank's maximum", () => {
@@ -82,6 +72,8 @@ describe(createFlowingPurityPassiveModule, () => {
     flowingPurityPassiveModule.onKitEvent?.(clearHealth(0.01), context, wielder);
 
     const buffs = getBuffs(context.kitEffectState.effects, "flowingPurityCleared");
-    expect(buffs.every(({ amount }) => amount === 0.12)).toBe(true);
+    expect(buffs.map(({ amount, attribute }) => ({ amount, attribute }))).toStrictEqual(
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })),
+    );
   });
 });

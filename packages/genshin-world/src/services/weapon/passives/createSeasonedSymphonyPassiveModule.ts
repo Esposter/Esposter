@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { checkIsCharacterOnField } from "#src/services/party/checkIsCharacterOnField";
 import { takeOne } from "@esposter/shared";
 
 // Seasoned Symphony at its rank: the wielder's ATK rises by the rank's percentage, and by the second percentage more while
@@ -15,8 +16,7 @@ export const createSeasonedSymphonyPassiveModule = (params: number[]): PassiveMo
   const sweetEchoesSeconds = takeOne(params, 3);
   return {
     getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
-      const isOnField =
-        deployedCombatants.find((member) => member.characterId === combatant.characterId)?.isOnField ?? false;
+      const isOnField = checkIsCharacterOnField(deployedCombatants, combatant.characterId);
       return [{ amount: attackPercent + (isOnField ? 0 : offFieldAttackPercent), attribute: Attribute.AttackPercent }];
     },
     onKitEvent: (event, { kitEffectState }, combatant) => {
