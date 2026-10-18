@@ -92,10 +92,35 @@ describe(triggerDomainDisorder, () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    const melt = { kind: "reaction" as const, reactions: [{ element: Element.Pyro, reactionType: ReactionType.Melt }] };
-    const readySeconds = triggerDomainDisorder(kitEffectState, createParty([CHARACTER_ID]), WATER, melt, 0, 0);
+    const spread = {
+      kind: "reaction" as const,
+      reactions: [{ element: Element.Dendro, reactionType: ReactionType.Spread }],
+    };
+    const readySeconds = triggerDomainDisorder(kitEffectState, createParty([CHARACTER_ID]), WATER, spread, 0, 0);
     expect(kitEffectState.effects).toStrictEqual([]);
     expect(readySeconds).toBe(0);
+  });
+
+  test("a reaction disorder counts the Crystallize of its element", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const crystallize = {
+      kind: "reaction" as const,
+      reactions: [{ element: Element.Hydro, reactionType: ReactionType.Crystallize }],
+    };
+    const readySeconds = triggerDomainDisorder(kitEffectState, createParty([CHARACTER_ID]), WATER, crystallize, 0, 0);
+    expect(kitEffectState.effects).toStrictEqual([
+      {
+        amount: 0.1,
+        attribute: Attribute.HydroDamageBonus,
+        characterId: CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 10,
+        source: getDomainDisorderSource(WATER, 0),
+      },
+    ]);
+    expect(readySeconds).toBe(2);
   });
 
   test("a reaction disorder waits out its cooldown", () => {
