@@ -599,7 +599,7 @@ const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
 const OCULUS_REGION_ID = "mondstadt";
 const oculusPlaces = shallowRef<OculusPlace[]>([]);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readOculusPlaces(gameDataBaseUrl, OCULUS_REGION_ID)).match(
+getResultAsync(() => readOculusPlaces(gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
   (places) => {
     oculusPlaces.value = places;
   },
