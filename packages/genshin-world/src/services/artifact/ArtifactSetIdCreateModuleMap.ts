@@ -33,6 +33,7 @@ import {
   TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID,
   THUNDERSOOTER_ARTIFACT_SET_ID,
   TRAVELING_DOCTOR_ARTIFACT_SET_ID,
+  VERMILLION_HEREAFTER_ARTIFACT_SET_ID,
   WANDERERS_TROUPE_ARTIFACT_SET_ID,
 } from "#src/services/artifact/constants";
 import { createAdventurerSetModule } from "#src/services/artifact/sets/createAdventurerSetModule";
@@ -66,6 +67,7 @@ import { createShimenawasReminiscenceSetModule } from "#src/services/artifact/se
 import { createTenacityOfTheMillelithSetModule } from "#src/services/artifact/sets/createTenacityOfTheMillelithSetModule";
 import { createThundersooterSetModule } from "#src/services/artifact/sets/createThundersooterSetModule";
 import { createTravelingDoctorSetModule } from "#src/services/artifact/sets/createTravelingDoctorSetModule";
+import { createVermillionHereafterSetModule } from "#src/services/artifact/sets/createVermillionHereafterSetModule";
 import { createWanderersTroupeSetModule } from "#src/services/artifact/sets/createWanderersTroupeSetModule";
 
 // Each set whose bonus waits on combat, by the set table's id, and how that bonus is built as a module from its row. A set
@@ -104,5 +106,6 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID]: createTenacityOfTheMillelithSetModule,
   [THUNDERSOOTER_ARTIFACT_SET_ID]: createThundersooterSetModule,
   [TRAVELING_DOCTOR_ARTIFACT_SET_ID]: createTravelingDoctorSetModule,
+  [VERMILLION_HEREAFTER_ARTIFACT_SET_ID]: createVermillionHereafterSetModule,
   [WANDERERS_TROUPE_ARTIFACT_SET_ID]: createWanderersTroupeSetModule,
 };

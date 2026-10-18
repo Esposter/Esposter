@@ -67,6 +67,8 @@ export const BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID = 15_008;
 export const SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID = 15_019;
 // Ocean-Hued Clam's id in the set table
 export const OCEAN_HUED_CLAM_ARTIFACT_SET_ID = 15_022;
+// Vermillion Hereafter's id in the set table
+export const VERMILLION_HEREAFTER_ARTIFACT_SET_ID = 15_023;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
