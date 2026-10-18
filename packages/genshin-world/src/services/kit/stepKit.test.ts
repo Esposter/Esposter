@@ -241,7 +241,7 @@ describe(stepKit, () => {
     const { partyMember, step } = createFixture(kit);
     partyMember.skillCooldownSeconds = TRAVELER_KIT.skillCooldownSeconds;
 
-    expect(step({ isSkillPressed: true })?.hits).toStrictEqual([]);
+    expect(step({ isSkillPressed: true })).toBe(kit.elementalSkill);
     expect(partyMember.skillCooldownSeconds).toBe(TRAVELER_KIT.skillCooldownSeconds);
   });
 
