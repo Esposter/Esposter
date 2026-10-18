@@ -22,8 +22,12 @@ export const getArtifactSetKit = (
       if (!createModule) return [];
       const artifactSetData = artifactSetDataMap.get(setId);
       if (!artifactSetData) throw new InvalidOperationError(Operation.Read, getArtifactSetKit.name, `${setId}`);
+      // A bonus that is only attributes is counted by the attribute pipeline, its params repeating its value, so it builds no module
       return artifactSetData.bonuses
-        .filter(({ params, pieceCount }) => params.length > 0 && pieceCount <= setArtifacts.length)
+        .filter(
+          ({ attributeLines, params, pieceCount }) =>
+            params.length > 0 && attributeLines.length === 0 && pieceCount <= setArtifacts.length,
+        )
         .map((bonus) => createModule(bonus));
     },
   ).flat();

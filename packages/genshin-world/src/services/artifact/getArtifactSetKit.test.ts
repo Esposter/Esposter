@@ -16,6 +16,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import {
   ADVENTURER_ARTIFACT_SET_ID,
   BERSERKER_ARTIFACT_SET_ID,
+  DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID,
   INSTRUCTOR_ARTIFACT_SET_ID,
   NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
 } from "#src/services/artifact/constants";
@@ -92,6 +93,18 @@ describe(getArtifactSetKit, () => {
 
     expect(
       getArtifactSetKit(TRAVELER_KIT, createSetArtifacts(INSTRUCTOR_ARTIFACT_SET_ID, 2), statTables.artifactSetDataMap),
+    ).toBe(TRAVELER_KIT);
+  });
+
+  test("keeps the kit as it is for two pieces of a set whose two-piece bonus is only attributes, though its params repeat the value", () => {
+    expect.hasAssertions();
+
+    expect(
+      getArtifactSetKit(
+        TRAVELER_KIT,
+        createSetArtifacts(DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID, 2),
+        statTables.artifactSetDataMap,
+      ),
     ).toBe(TRAVELER_KIT);
   });
 
