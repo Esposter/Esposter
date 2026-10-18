@@ -14,12 +14,12 @@ Aino's kit is its record and one behaviour module, `createAinoKitBehaviour`, on 
 
 ## Not built
 
-- **Ascension 1 at a Moonsign of 2 waits on the Lunar and Moonsign hook.** It drops the balls every 0.7 seconds instead of every 1.5, and widens them to 4 metres, on gcsim's own internal cooldown for the Moonsign's hits. The kit prices the base burst, which is wrong while the team's Moonsign is 2 or more.
-- **Constellation 6's Lunar DMG bonus waits on the Lunar and Moonsign hook.** Its bonus reads the Lunar reactions and the Moonsign's level.
+- **Ascension 1 at Ascendant Gleam drops the balls every 0.7 seconds, each landing with a 4 metre radius.** gcsim's `aino/asc.go` gives the balls that interval and radius, read as the burst is cast. The landing circle's reach is the kit's proxy for the random enemy a ball falls on: the 10 metre search plus the ball's radius, which is 11 metres at the base and 14 at Ascension 1. gcsim also gives those Moonsign hits an internal cooldown of their own, which the kit has no tag for, so these balls strike with none, as the base balls do.
+- **Constellation 6's Lunar DMG bonus waits on the Lunar hook.** Its bonus reads the Lunar reactions and the Moonsign's level.
 - **Constellation 2's extra ball waits on a hook that reads another member's hits.** It strikes each enemy another member hits while the burst lasts, and the kit has no hook for another member's hits yet.
 - **Constellation 1's Elemental Mastery and Constellation 4's energy are not built.** Constellation 1 gives the active member Elemental Mastery for fifteen seconds after a skill or burst, which the kit does not yet re-add on each swap; Constellation 4 gives her energy on the skill's hits every ten seconds, which the kit has no status for yet.
 - **Musecatcher's hold is not built, as gcsim does not implement it either.** Her skill's particles are not granted by the kit.
-- **Her Ascension 1 passive, Modular Efficiency Protocol, is not built.** It waits on the Moonsign hook that Ascension 1 and Constellation 6 need, as the field's interval and radius are fixed at its cast. Her Ascension 4 passive, Structured Power Booster, is built as the water ball's Elemental Mastery bonus. The talent levels above the level the kit is built at are the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
+- **Her Ascension 1 passive, Modular Efficiency Protocol, is built as the burst's enhancement at Ascendant Gleam.** The field's interval and radius are fixed at its cast, so the level is read as the burst is cast, as gcsim reads it. Her Ascension 4 passive, Structured Power Booster, is built as the water ball's Elemental Mastery bonus. The talent levels above the level the kit is built at are the [talents](../../../../changes/genshin-talents/design.md) and [constellations](../../../../changes/genshin-constellations/design.md) pages'.
 
 ## Key files
 

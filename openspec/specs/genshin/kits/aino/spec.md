@@ -1,6 +1,6 @@
 ## Purpose
 
-Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 4, and what is left waiting on the Moonsign, Lunar and member-hit hooks.
+Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 1 at Ascendant Gleam and Ascension 4, and what is left waiting on the Lunar and member-hit hooks.
 
 ## Requirements
 
@@ -77,6 +77,22 @@ Cool Your Jets Ducky SHALL drop one Water Ball every 90 frames from 123 frames f
 - **GIVEN** a Water Ball falls
 - **WHEN** it lands ten frames later
 - **THEN** it strikes a random enemy within eleven metres of Aino's body
+
+### Requirement: Ascension 1 at Ascendant Gleam drops the Water Balls faster and wider
+
+At Ascension 1 with the team at Ascendant Gleam, Cool Your Jets Ducky SHALL drop one Water Ball every 0.7 seconds, and each ball SHALL land on a random enemy within ten metres of Aino's body with a landing radius of four metres, so its reach is fourteen metres. The interval and radius SHALL be read as the burst is cast.
+
+#### Scenario: Ascendant Gleam drops the balls every 0.7 seconds
+
+- **GIVEN** Aino is at Ascension 1 and the team is at Ascendant Gleam
+- **WHEN** her burst is cast
+- **THEN** a Water Ball falls every 0.7 seconds
+
+#### Scenario: Below Ascendant Gleam the balls keep their base beat
+
+- **GIVEN** Aino is at Ascension 1 and the team is short of Ascendant Gleam
+- **WHEN** her burst is cast
+- **THEN** a Water Ball falls every 90 frames
 
 ### Requirement: Ascension 4 adds half Aino's Elemental Mastery to each Water Ball
 
