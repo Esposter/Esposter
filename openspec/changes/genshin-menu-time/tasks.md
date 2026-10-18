@@ -5,7 +5,7 @@
 
 ## 2. Screen
 
-- [ ] 2.1 Draw the Time screen's dial, its hour and its Confirm button in the reference's pixels, with their labels as game-text keys, and let a dragged pointer add its turns to the advance. Verify: a test named after the scenario 'A full turn of the dial adds a day', written first and seen failing.
+- [x] 2.1 Draw the Time screen's dial, its hour and its Confirm button in the reference's pixels, with their labels as game-text keys, and let a dragged pointer add its turns to the advance. Verify: a test named after the scenario 'A full turn of the dial adds a day', written first and seen failing.
 
 ## 3. Wiring
 
