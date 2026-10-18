@@ -81,8 +81,7 @@ export const XINYAN_CHARACTER_ID = 10_000_044;
 // Striking every 2 seconds while it stands at level 3. Riff Revolution casts its Pyro DoT, a summon that follows the
 // Body. Constellation 2 gives its Physical hit CRIT Rate and sets Rave's shield as it is cast, its DoT striking Rave's
 // Two pulses besides, and Constellation 4's skill hit cuts Physical RES. Her Ascension 4 is not built, as no kit event
-// Reaches the team's shield, her Constellation 1 is not, as the kit's normal attack speed reads only an infusion's, and
-// Constellation 6 is not, as gcsim has none
+// Reaches the team's shield, and her Constellations 1 and 6 are not built, each set out below
 // Constellation 1 needs an ATK SPD bonus on her normal and charged attacks, which no attribute carries
 // Constellation 6 needs the Charged Attacks' stamina cut and ATK bonus, which the kit does not build
 export const createXinyanKitBehaviour = ({

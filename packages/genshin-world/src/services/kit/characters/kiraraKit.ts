@@ -62,8 +62,7 @@ const buffTeamElementalDamage = (kitEffectState: KitEffectState, party: Party, c
 // Kirara's behaviour: Tail-Flicking Flying Kick, its press and each hold, cast her shield and the 0.1 second Dendro
 // Self-infusion as they start, and Secret Art: Surprise Dispatch sets its Cat Grass Cardamoms, the detonated ones first
 // And the rest at expiry. From Ascension 4 her skill's and burst's hits gain DMG by her Max HP. Her Ascension 1 passive,
-// Reinforced Packaging, and Constellations 1, 2 and 4 are not built
-// And the rest at expiry. Her passives, and Constellations 1, 2 and 4, are not built
+// Reinforced Packaging, her other passives, and Constellations 1, 2 and 4 are not built
 // Constellation 1 needs an extra Cat Grass Cardamom scaled by her Max HP, which the summon's count does not read
 // Constellation 2 needs the Critical Transport Shields her crashes give members, which the kit does not build
 // Constellation 4 needs the shield-protected members' hits and the energy or shield they give, not built

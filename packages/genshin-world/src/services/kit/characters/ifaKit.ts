@@ -11,12 +11,13 @@ const CONSTELLATION_4_SECONDS = 15;
 
 // Ifa's behaviour outside her Nightsoul Blessing: none of her own, since her three normal attacks, charged attack,
 // Compound Sedation Field's hit, and her low and collision plunges are her record's alone, and her skill's press a
-// Placeholder spending its cooldown, as Mavuika's does. Her Tonic Shot, healing, sedation marks and passives and
-// Constellations wait on the Nightsoul hook and the sedation-mark hook, and the low plunge, which gcsim plays only after
+// Placeholder spending its cooldown, as Mavuika's does. Her Tonic Shot, healing, sedation marks and passives
+// Wait on the Nightsoul hook and the sedation-mark hook, and the low plunge, which gcsim plays only after
 // The Nightsoul Blessing ends, is not gated. Her high plunge is borrowed as the page records
 // Constellation 1 needs Supporting Fire, the normal attacks of Nightsoul's Blessing, which the state does not give yet
 // Constellation 2 needs the party's Nightsoul points above 60 and the Rescue Essentials, neither built
-// Constellation 4's wind current lasts three seconds more, which waits on a restraining field the burst lacks
+// Constellation 4's Elemental Mastery is built at the burst's start, but its wind current lasts three seconds more,
+// Which waits on a restraining field the burst lacks
 // Constellation 6 needs the Hold of Supporting Fire and its Nightsoul's Blessing turns, which the kit does not build
 export const createIfaKitBehaviour = (): KitBehaviour => ({
   burst: {
