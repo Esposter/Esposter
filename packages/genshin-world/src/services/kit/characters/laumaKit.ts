@@ -3,6 +3,7 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
@@ -75,6 +76,11 @@ const PALE_HYMN_REACTION_TYPES = new Set<ReactionType>([
   LunarReactionType.LunarBloom,
 ]);
 
+// Whether the team holds any Pale Hymn, the burst's or Moon Song's
+const checkHasPaleHymn = (effects: readonly KitEffect[], characterId: number): boolean =>
+  checkIsKitStatusActive(effects, characterId, LAUMA_PALE_HYMN_BURST_ID) ||
+  checkIsKitStatusActive(effects, characterId, LAUMA_PALE_HYMN_MOON_SONG_ID);
+
 // Whether a Dew can give the Moon Song now: her burst is up, and the Moon Song has not given one in this burst
 const checkCanGiveMoonSong = ({ effects }: KitEffectState, characterId: number): boolean =>
   checkIsKitStatusActive(effects, characterId, BURST_ID) &&
@@ -130,8 +136,8 @@ const spendPaleHymn = (kitEffectState: KitEffectState, characterId: number): voi
 // RES. Hymn of Eternal Rest plays while the party holds Verdant Dew, spending up to three on a direct Lunar-Bloom hit
 // Following her, its multiplier of her Elemental Mastery for each Dew spent. Her Moonsign Benediction adds Base DMG Bonus
 // For her Elemental Mastery. Her burst gives the party Pale Hymn 96 frames in, a Dew Hymn of Eternal Rest spends during
-// The burst gives the Moon Song its Pale Hymn, and each Bloom or Lunar-Bloom reaction spends one. Not built yet: the Pale
-// Hymn's Base DMG Bonus on Bloom and Lunar-Bloom, which the party's reaction hook gives; the Spirit Envoy state her charged
+// The burst gives the Moon Song its Pale Hymn, each Bloom or Lunar-Bloom reaction spends one, and the Pale Hymn adds her
+// Elemental Mastery to each of those reactions the party makes. Not built yet: the Spirit Envoy state her charged
 // Attack's first press enters, which waits on a stance that drains stamina; Light for the Frosty Night and her
 // Constellations; the Spirit Envoy's cooldown reduction of Cleansing for the Spring, as the charged attack's cooldown is not
 // Read by a kit
@@ -143,6 +149,9 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
   const holdLunarBloomMultiplier = readParameter("hymnOfEternalRestLunarBloomMultiplier");
+  // Pale Hymn's flat Elemental Mastery on Bloom, Hyperbloom and Burgeon, and on Lunar-Bloom, at her burst's talent level
+  const paleHymnBloomIncrease = readParameter("paleHymnBloomDamageIncrease");
+  const paleHymnLunarBloomIncrease = readParameter("paleHymnLunarBloomDamageIncrease");
   // The RES Dendro and Hydro enemies lose to a hit of the skill's, for its seconds
   const createShredStatus = (): EnemyStatus => ({
     damageTakenBonus: 0,
@@ -216,6 +225,15 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
         ),
     },
     skill: pressBehaviour,
+    // Pale Hymn adds her Elemental Mastery to the base damage of each Bloom and Lunar-Bloom the party makes while it holds
+    // Any, as gcsim (MIT) lauma/burst.go does, with her own Elemental Mastery
+    getPartyReactionBonus: (member, { reactionType }, { kitEffectState }) => {
+      if (!PALE_HYMN_REACTION_TYPES.has(reactionType) || !checkHasPaleHymn(kitEffectState.effects, member.characterId))
+        return {};
+      const increase =
+        reactionType === LunarReactionType.LunarBloom ? paleHymnLunarBloomIncrease : paleHymnBloomIncrease;
+      return { additiveBaseDamageBonus: member.attributes.attributeTotalMap[Attribute.ElementalMastery] * increase };
+    },
     // A hold with no Dew plays the press, and with Dew Hymn of Eternal Rest, spending it on its Lunar-Bloom hit
     skillHolds: [
       {

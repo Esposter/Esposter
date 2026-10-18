@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { ReactionType } from "#src/models/combat/ReactionType";
 
@@ -21,6 +22,7 @@ import {
   LAUMA_PALE_HYMN_MOON_SONG_ID,
 } from "#src/services/kit/characters/laumaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
@@ -311,5 +313,93 @@ describe("pale hymn", () => {
       afterOneMore: { burst: 17, moonSong: 0 },
       afterOverloaded: { burst: 18, moonSong: 6 },
     });
+  });
+});
+
+// Lauma's Pale Hymn Bloom and Lunar-Bloom increases of her Elemental Mastery at her burst's talent level 1, from gcsim
+// (MIT) lauma/burst.go and the burst's proud skill group
+const BLOOM_INCREASE = 2.7776;
+const LUNAR_BLOOM_INCREASE = 2.2224;
+
+// The base damage Pale Hymn adds to a reaction of the given kind, with Lauma at the given Elemental Mastery and the
+// Party's effects as given
+const readPaleHymnBaseDamageBonus = (
+  elementalMastery: number,
+  reactionType: ReactionType,
+  kitEffectState: KitEffectState,
+): number => {
+  const combatant = createCombatant(elementalMastery);
+  return (
+    LAUMA_KIT.getPartyReactionBonus?.(
+      combatant,
+      { combatant, reactionType },
+      createKitTestContext(combatant, { kitEffectState }),
+    )?.additiveBaseDamageBonus ?? 0
+  );
+};
+
+describe("pale hymn's base damage bonus", () => {
+  test("adds her Elemental Mastery times the Bloom increase to each Bloom, Hyperbloom and Burgeon while the party holds Pale Hymn", () => {
+    expect.hasAssertions();
+    const kitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
+      id: LAUMA_PALE_HYMN_BURST_ID,
+      secondsRemaining: 15,
+      stacks: 18,
+    });
+
+    expect(
+      [TransformativeReactionType.Bloom, TransformativeReactionType.Hyperbloom, TransformativeReactionType.Burgeon].map(
+        (reactionType) => readPaleHymnBaseDamageBonus(1000, reactionType, kitEffectState),
+      ),
+    ).toStrictEqual([
+      expect.closeTo(1000 * BLOOM_INCREASE),
+      expect.closeTo(1000 * BLOOM_INCREASE),
+      expect.closeTo(1000 * BLOOM_INCREASE),
+    ]);
+  });
+
+  test("adds her Elemental Mastery times the Lunar-Bloom increase to each Lunar-Bloom while the party holds Pale Hymn", () => {
+    expect.hasAssertions();
+    const kitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
+      id: LAUMA_PALE_HYMN_BURST_ID,
+      secondsRemaining: 15,
+      stacks: 18,
+    });
+
+    expect(readPaleHymnBaseDamageBonus(1000, LunarReactionType.LunarBloom, kitEffectState)).toBeCloseTo(
+      1000 * LUNAR_BLOOM_INCREASE,
+    );
+  });
+
+  test("adds nothing while the party holds no Pale Hymn, and nothing to a reaction that is not Bloom", () => {
+    expect.hasAssertions();
+    const kitEffectState = { effects: [] };
+    const withoutPaleHymn = readPaleHymnBaseDamageBonus(1000, TransformativeReactionType.Bloom, kitEffectState);
+    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
+      id: LAUMA_PALE_HYMN_BURST_ID,
+      secondsRemaining: 15,
+      stacks: 18,
+    });
+
+    expect({
+      otherReaction: readPaleHymnBaseDamageBonus(1000, TransformativeReactionType.Overloaded, kitEffectState),
+      withoutPaleHymn,
+    }).toStrictEqual({ otherReaction: 0, withoutPaleHymn: 0 });
+  });
+
+  test("holds the bonus from Moon Song's Pale Hymn alone, once the burst's is spent", () => {
+    expect.hasAssertions();
+    const kitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
+      id: LAUMA_PALE_HYMN_MOON_SONG_ID,
+      secondsRemaining: 15,
+      stacks: 6,
+    });
+
+    expect(readPaleHymnBaseDamageBonus(1000, TransformativeReactionType.Bloom, kitEffectState)).toBeCloseTo(
+      1000 * BLOOM_INCREASE,
+    );
   });
 });
