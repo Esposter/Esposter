@@ -21,4 +21,4 @@
 ## 5. Gardens and companions' earnings
 
 - [ ] 5.1 Grow a garden's seeds and hold a pond's fish over real time. Verify: a test named after the scenario 'A garden's seeds grow over real time'.
-- [ ] 5.2 Accrue Companionship EXP to each companion living in the realm. Verify: a test named after the scenario 'A companion living in the realm earns Companionship EXP'.
+- [x] 5.2 Accrue Companionship EXP to each companion living in the realm. Verify: a test named after the scenario 'A companion living in the realm earns Companionship EXP'.
