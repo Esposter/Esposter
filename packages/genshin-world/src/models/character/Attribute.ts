@@ -9,6 +9,7 @@ export enum Attribute {
   BaseAttack = "FIGHT_PROP_BASE_ATTACK",
   BaseDefense = "FIGHT_PROP_BASE_DEFENSE",
   BaseHealth = "FIGHT_PROP_BASE_HP",
+  CooldownReduction = "FIGHT_PROP_SKILL_CD_MINUS_RATIO",
   CriticalDamage = "FIGHT_PROP_CRITICAL_HURT",
   CriticalRate = "FIGHT_PROP_CRITICAL",
   CryoDamageBonus = "FIGHT_PROP_ICE_ADD_HURT",

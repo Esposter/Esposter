@@ -5,10 +5,7 @@ import type { GameText } from "genshin-text";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import {
-  ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS,
-  ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS,
-} from "#src/services/character/constants";
+import { getAttributeDetailGroups } from "#src/services/character/getAttributeDetailGroups";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -47,23 +44,16 @@ const rows = computed(() => {
     { label: gameText[GameTextKey.AttributeMaxStamina], value: `${maxStamina}` },
   ];
 });
-const groups = computed(() => {
-  const { attributeTotalMap } = attributes.value;
-  const toPercentRows = (attributeGameTextKeys: readonly (readonly [Attribute, GameTextKey])[]) =>
-    attributeGameTextKeys.map(([attribute, gameTextKey]) => ({
-      label: gameText[gameTextKey],
-      value: `${(attributeTotalMap[attribute] * 100).toFixed(1)}%`,
-    }));
-  return [
-    { rows: toPercentRows(ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS), title: gameText[GameTextKey.AttributeGroupAdvanced] },
-    { rows: toPercentRows(ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS), title: gameText[GameTextKey.AttributeGroupElemental] },
-  ];
-});
+// Details is pressed to open the three groups beneath the summary, and pressed again to close them
+const isDetailsOpen = ref(false);
+const detailGroups = computed(() =>
+  getAttributeDetailGroups(attributes.value.attributeTotalMap, gameText, isDetailsOpen.value),
+);
 </script>
 
 <template>
   <!-- The Attributes tab's panel: the character's name and level over its cap, the experience bar, and its base attributes
-       as the game shows them. Its advanced and elemental groups sit beneath, each under its title -->
+       as the game shows them. Details opens its groups beneath, each under its title -->
   <div class="attribute-list">
     <p class="name">{{ name }}</p>
     <p class="level">{{ levelText }}</p>
@@ -74,7 +64,10 @@ const groups = computed(() => {
         <dd class="value">{{ value }}</dd>
       </div>
     </dl>
-    <section v-for="{ rows: groupRows, title } of groups" :key="title">
+    <button type="button" class="details" @click="isDetailsOpen = !isDetailsOpen">
+      {{ gameText[GameTextKey.CharacterDetails] }}
+    </button>
+    <section v-for="{ rows: groupRows, title } of detailGroups" :key="title">
       <h2 class="title">{{ title }}</h2>
       <dl class="rows">
         <div v-for="{ label, value } of groupRows" :key="label" class="row">
@@ -118,6 +111,17 @@ const groups = computed(() => {
   width: 100%;
   height: calc(var(--unit) * 3);
   background: #4fc3d9;
+}
+
+/* Provisional until the button's place and colour are measured off the frame */
+.details {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .title {
