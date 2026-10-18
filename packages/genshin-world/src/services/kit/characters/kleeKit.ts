@@ -67,6 +67,8 @@ const rollExplosiveSpark = ({ kitEffectState, random }: KitContext, { combatant 
 // Klee's behaviour: each strike's and the charged attack's bomb, Jumpy Dumpty's bounces and mines and Sparks 'n' Splash's
 // Sparks land from summons, the sparks' while she stays on the field, with Sparkly Explosion and Blazing Delight's Pyro DMG
 // Bonus
+// Constellation 1 needs its spark bombardment, which the kit does not build
+// Constellation 2 needs the DEF cut that Jumpy Dumpty's mines apply, which the kit does not build
 export const createKleeKitBehaviour = ({
   readHit,
   readHits,
