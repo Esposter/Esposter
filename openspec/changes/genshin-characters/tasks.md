@@ -9,7 +9,7 @@
 
 ## 3. Scale
 
-- [ ] 3.1 Measure the Traveler's height from the game's own model and replace the reckoned unit with it. Verify: a test named after the scenario 'the Traveler's height matches the game's model', seen failing first.
+- [x] 3.1 Measure the Traveler's height from the game's own model and replace the reckoned unit with it. Verify: a test named after the scenario 'the Traveler's height matches the game's model', seen failing first.
 
 ## 4. Terms
 

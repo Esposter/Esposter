@@ -7,13 +7,15 @@ import { disposeCharacterMesh } from "#src/services/character/disposeCharacterMe
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
 
 interface Props {
+  // The character whose model this is, which sets the metres its PMX unit stands for
+  characterId: number;
   // Where the character's pack is read from, the browser's kept copy or the host's
   characterPackReader: CharacterPackReader;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
 }
 
-const { characterPackReader, lightUniforms, rampTexture } = defineProps<Props>();
+const { characterId, characterPackReader, lightUniforms, rampTexture } = defineProps<Props>();
 const emit = defineEmits<{ error: []; loaded: [] }>();
 const mesh = shallowRef<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>();
 let isUnmounted = false;
@@ -21,7 +23,7 @@ let isUnmounted = false;
 // A failure is logged and emitted, leaving what holds the model to draw something in its place, and a model arriving after
 // Its character has gone is released at once
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
-readCharacterMesh(characterPackReader, { lightUniforms, rampTexture }).match(
+readCharacterMesh(characterPackReader, { characterId, lightUniforms, rampTexture }).match(
   (characterMesh) => {
     if (isUnmounted) disposeCharacterMesh(characterMesh);
     else {

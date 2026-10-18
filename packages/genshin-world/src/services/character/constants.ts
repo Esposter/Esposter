@@ -65,6 +65,10 @@ export const CHARACTER_PACK_MODEL_NAME_LANGUAGES: readonly GameLanguage[] = [
 export const CHARACTER_PACK_FETCH_TIMEOUT_MS = 60_000;
 // The Traveler the world plays, the female twin, as the login's Traveler is
 export const TRAVELER_CHARACTER_ID = 10_000_007;
+// The metres a character's PMX unit stands for, by character id, where the game's own model of the character is measured:
+// The game's model height over the PMX's height in units. The Traveler's is measured, 1.5667 metres over 17.2332 units. A
+// Character not listed keeps the reckoned unit, provisional until its own game model is measured
+export const CHARACTER_PMX_UNIT_METRES: ReadonlyMap<number, number> = new Map([[TRAVELER_CHARACTER_ID, 0.0909]]);
 // The main quest whose completion unlocks the Traveler's bonus for each element it holds, Welkin Moon's Homecoming
 export const TRAVELER_BONUS_QUEST_ID = 6017;
 // The Attributes tab's base attributes, the Details list's first group, and the game's name for each, in the order it lists them
