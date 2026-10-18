@@ -11,10 +11,15 @@ const getParseError = (formula: string): null | string =>
 describe(parseMathExpression, () => {
   test.each([
     ["An unclosed parenthesis", "(1 + 2", /Parenthesis \) expected/u],
-    ["An unknown function", "foo(1)", /Unknown function "foo"/u],
-    ["A function given too many arguments", "round(1, 2, 3)", /"round" takes 1 or 2 arguments/u],
-    ["A list given to a function that takes none", "sin([1])", /"sin" does not take a list argument/u],
-    ["A list-only function given a single value", "count(5)", /"count" takes a list argument/u],
+    ["An unknown function", "foo(1)", /Unknown function "foo" \(char 1\)/u],
+    ["A function given too many arguments", "round(1, 2, 3)", /"round" takes 1 or 2 arguments \(char 1\)/u],
+    [
+      "A function given too many arguments after another operand",
+      "2 + round(1, 2, 3)",
+      /"round" takes 1 or 2 arguments \(char 5\)/u,
+    ],
+    ["A list given to a function that takes none", "sin([1])", /"sin" does not take a list argument \(char 1\)/u],
+    ["A list-only function given a single value", "count(5)", /"count" takes a list argument \(char 1\)/u],
     ["A sign with no operand", "1 +", /Unexpected end of expression/u],
     ["A word size too small for its literal", "1 + 0x1FFi8", /String "0x1FF" is out of range \(char 5\)/u],
     ["A decimal point right after an exponent marker", "2e.5", /Digit expected, got "\." \(char 2\)/u],

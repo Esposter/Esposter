@@ -1,16 +1,16 @@
+import type { MathExpressionError } from "#src/models/MathExpressionError";
 import type { MathExpressionFunction } from "#src/models/MathExpressionFunction";
 import type { MathExpressionNode } from "#src/models/MathExpressionNode";
 import type { MathExpressionParserState } from "#src/models/MathExpressionParserState";
 import type { Result } from "neverthrow";
 
-import { MathExpressionError } from "#src/models/MathExpressionError";
 import { MathExpressionListForm } from "#src/models/MathExpressionListForm";
 import { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
 import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
 import { MathExpressionTokenType } from "#src/models/MathExpressionTokenType";
 import { computeNumberLiteral } from "#src/services/computeNumberLiteral";
 import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/constants";
-import { failMathExpression } from "#src/services/failMathExpression";
+import { failMathExpression, failMathExpressionAt, getMathExpressionColumn } from "#src/services/failMathExpression";
 import { getMathExpressionToken } from "#src/services/getMathExpressionToken";
 import { MathExpressionFunctionMap } from "#src/services/MathExpressionFunctionMap";
 import { err, ok } from "neverthrow";
@@ -112,10 +112,11 @@ const getArityMessage = (name: string, definition: MathExpressionFunction): stri
   return `"${name}" takes ${definition.minArity} or ${definition.maxArity} arguments`;
 };
 
-const parseCall = (state: MathExpressionParserState, name: string): MathExpressionNode => {
+// Every error of a call is reported at the function's name, which the caller read before the call's parenthesis
+const parseCall = (state: MathExpressionParserState, name: string, column: number): MathExpressionNode => {
   const definition = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
   if (definition === undefined) {
-    if (state.error === null) state.error = new MathExpressionError(`Unknown function "${name}"`);
+    failMathExpressionAt(state, `Unknown function "${name}"`, column);
     return PLACEHOLDER;
   }
 
@@ -125,8 +126,8 @@ const parseCall = (state: MathExpressionParserState, name: string): MathExpressi
   if (isList) {
     getMathExpressionToken(state);
     const listNodes = parseSequence(state, "]");
-    if (state.error === null && definition.listForm === MathExpressionListForm.None)
-      state.error = new MathExpressionError(`"${name}" does not take a list argument`);
+    if (definition.listForm === MathExpressionListForm.None)
+      failMathExpressionAt(state, `"${name}" does not take a list argument`, column);
     argumentNodes = listNodes;
     if (state.error === null) getMathExpressionToken(state);
     if (state.error === null && state.token !== ")") failMathExpression(state, "Parenthesis ) expected");
@@ -136,13 +137,13 @@ const parseCall = (state: MathExpressionParserState, name: string): MathExpressi
 
   getMathExpressionToken(state);
   if (definition.listForm === MathExpressionListForm.Only && !isList) {
-    state.error = new MathExpressionError(`"${name}" takes a list argument`);
+    failMathExpressionAt(state, `"${name}" takes a list argument`, column);
     return PLACEHOLDER;
   }
   // A list spreads into the arguments of a spread function, whose computation decides what a list of any length means
   const isSpread = isList && definition.listForm !== MathExpressionListForm.Argument;
   if (!isSpread && (argumentNodes.length < definition.minArity || argumentNodes.length > definition.maxArity)) {
-    if (state.error === null) state.error = new MathExpressionError(getArityMessage(name, definition));
+    failMathExpressionAt(state, getArityMessage(name, definition), column);
     return PLACEHOLDER;
   }
   return { arguments: argumentNodes, name, type: MathExpressionNodeType.Call };
@@ -166,9 +167,10 @@ const parseSymbol = (state: MathExpressionParserState): MathExpressionNode => {
     (state.tokenType === MathExpressionTokenType.Delimiter && Object.hasOwn(MathExpressionFunctionMap, state.token));
   if (isName) {
     const name = state.token;
+    const column = getMathExpressionColumn(state);
     const isSymbol = state.tokenType === MathExpressionTokenType.Symbol;
     getMathExpressionToken(state);
-    if (state.token === "(") return parseCall(state, name);
+    if (state.token === "(") return parseCall(state, name, column);
     if (isSymbol) return { name, type: MathExpressionNodeType.Name };
   }
 
