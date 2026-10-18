@@ -36,7 +36,7 @@ flowchart TD
 
 - **The blossoms.** No challenge leaves a blossom, so no F prompt offers a claim. The prices are ready for the [ley line outcrops](../../../changes/genshin-ley-line-outcrops/design.md), [domains](../../../changes/genshin-domains/design.md) and [bosses](../../../changes/genshin-bosses/design.md) to call.
 - **The claims' rewards.** Not read yet: a ley line blossom's are its refresh row's reward previews, one a World Level ([ley line outcrops](../../../changes/genshin-ley-line-outcrops/design.md)), and a normal boss's the wiki's world boss rewards ([bosses](../../../changes/genshin-bosses/design.md)).
-- **Fragile Resin's refill.** The item is not in the materials the bag reads, and its use is the inventory's. The refill rule is ready for it.
+- **Fragile Resin's refill.** `refillOriginalResinWithFragileResin` restores the sixty it gives and takes one from the bag. Nothing calls it yet: the bag has no use of an item, which the inventory owns.
 - **Condensed Resin's claim is not wired.** Its spend is ready, but no offer is shown until a blossom is placed. Its crafting from 60 is the [crafting](../crafting/design.md) bench's.
 - **The dialogs.** The refill and claim dialogs, and the top bar's plus for refilling, are unbuilt. The top bar shows the count only.
 
@@ -44,25 +44,26 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 ## Key files
 
-| File                                                                                    | Role                                                                                       |
-| :-------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/originalResin/constants.ts`                        | The cap, the refill cap, the regeneration interval, the Primogem prices and the game's day |
-| `packages/genshin-world/src/services/originalResin/regenerateOriginalResin.ts`          | The count and its moment read to now, a point each interval below the cap                  |
-| `packages/genshin-world/src/services/originalResin/spendOriginalResin.ts`               | A spend read to now, undefined where the resin is not held                                 |
-| `packages/genshin-world/src/services/originalResin/refillOriginalResin.ts`              | A refill added to the count, filling to the refill cap                                     |
-| `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts` | A refill for the day's next price, the day's count restarting at the game's day            |
-| `packages/genshin-world/src/services/originalResin/computeBlossomClaimResin.ts`         | A claim's price by its blossom kind and the weekly boss's claims that week                 |
-| `packages/genshin-world/src/services/originalResin/claimOriginalResin.ts`               | A claim: the resin spent, the Adventure EXP gained and the Mora past rank 60               |
-| `packages/genshin-world/src/services/originalResin/claimBlossom.ts`                     | A blossom's claim: the offer paid, each draw of its reward taken into the bag and wallet   |
-| `packages/genshin-world/src/services/reward/drawRewardItems.ts`                         | A reward's items drawn to a count in their range, shared by commissions and expeditions    |
-| `packages/genshin-world/src/services/originalResin/computeBlossomClaimOffers.ts`        | The ways a blossom's claim is paid: one, two at twice the price, or a Condensed Resin      |
-| `packages/genshin-world/src/services/originalResin/checkIsMultiClaimBlossom.ts`         | A ley line or a domain, the blossoms that can be doubled or paid in Condensed Resin        |
-| `packages/genshin-world/src/services/originalResin/spendCondensedResin.ts`              | A Condensed Resin taken from the bag for three claims, refused at a boss                   |
-| `packages/genshin-world/src/models/originalResin/BlossomClaimOffer.ts`                  | One way to pay a claim: its claim count, its resin and its Condensed Resin                 |
-| `packages/genshin-world/src/models/inventory/Wallet.ts`                                 | The count of each currency, the moment Original Resin last changed, and the day's refills  |
-| `packages/genshin-world/src/services/inventory/constants.ts`                            | A new player's wallet, holding Original Resin at the cap                                   |
-| `packages/genshin-world/src/components/Map/Overlay/Index.vue`                           | The count on the map's top bar, read when the map opens                                    |
-| `packages/genshin-text/src/models/GameTextKey.ts`                                       | `OriginalResin`, the item's name in the game's text                                        |
+| File                                                                                       | Role                                                                                           |
+| :----------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/originalResin/constants.ts`                           | The cap, the refill cap, the regeneration interval, the Primogem prices and the game's day     |
+| `packages/genshin-world/src/services/originalResin/regenerateOriginalResin.ts`             | The count and its moment read to now, a point each interval below the cap                      |
+| `packages/genshin-world/src/services/originalResin/spendOriginalResin.ts`                  | A spend read to now, undefined where the resin is not held                                     |
+| `packages/genshin-world/src/services/originalResin/refillOriginalResin.ts`                 | A refill added to the count, filling to the refill cap                                         |
+| `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts`    | A refill for the day's next price, the day's count restarting at the game's day                |
+| `packages/genshin-world/src/services/originalResin/refillOriginalResinWithFragileResin.ts` | A Fragile Resin used from the bag: sixty restored, one taken out, undefined where none is held |
+| `packages/genshin-world/src/services/originalResin/computeBlossomClaimResin.ts`            | A claim's price by its blossom kind and the weekly boss's claims that week                     |
+| `packages/genshin-world/src/services/originalResin/claimOriginalResin.ts`                  | A claim: the resin spent, the Adventure EXP gained and the Mora past rank 60                   |
+| `packages/genshin-world/src/services/originalResin/claimBlossom.ts`                        | A blossom's claim: the offer paid, each draw of its reward taken into the bag and wallet       |
+| `packages/genshin-world/src/services/reward/drawRewardItems.ts`                            | A reward's items drawn to a count in their range, shared by commissions and expeditions        |
+| `packages/genshin-world/src/services/originalResin/computeBlossomClaimOffers.ts`           | The ways a blossom's claim is paid: one, two at twice the price, or a Condensed Resin          |
+| `packages/genshin-world/src/services/originalResin/checkIsMultiClaimBlossom.ts`            | A ley line or a domain, the blossoms that can be doubled or paid in Condensed Resin            |
+| `packages/genshin-world/src/services/originalResin/spendCondensedResin.ts`                 | A Condensed Resin taken from the bag for three claims, refused at a boss                       |
+| `packages/genshin-world/src/models/originalResin/BlossomClaimOffer.ts`                     | One way to pay a claim: its claim count, its resin and its Condensed Resin                     |
+| `packages/genshin-world/src/models/inventory/Wallet.ts`                                    | The count of each currency, the moment Original Resin last changed, and the day's refills      |
+| `packages/genshin-world/src/services/inventory/constants.ts`                               | A new player's wallet, holding Original Resin at the cap                                       |
+| `packages/genshin-world/src/components/Map/Overlay/Index.vue`                              | The count on the map's top bar, read when the map opens                                        |
+| `packages/genshin-text/src/models/GameTextKey.ts`                                          | `OriginalResin`, the item's name in the game's text                                            |
 
 ## Notes
 
