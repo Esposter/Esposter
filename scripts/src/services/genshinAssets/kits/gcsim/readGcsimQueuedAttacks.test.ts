@@ -604,4 +604,42 @@ describe(readGcsimQueuedAttacks, () => {
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([30]);
   });
+  test("reads both indexes of a named array a delay takes from a local clamped to 0 and 1 from the action's hold parameter", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package chiori",
+          "",
+          "var (",
+          "\tskillHitmarks = []int{21, 37}",
+          ")",
+          "",
+          "func (c *char) Skill(p map[string]int) {",
+          '\thold := min(max(p["hold"], 0), 1)',
+          "\tc.handleSkill(hold)",
+          "}",
+          "",
+          "func (c *char) handleSkill(hold int) {",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tc.Core.QueueAttackWithSnap(ai, snap, combat.NewBoxHitOnTarget(c.Core.Combat.Player(), nil, 5.5, 3.5), 0)",
+          "\t}, skillHitmarks[hold])",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, holdValue, line }) => [
+        line,
+        delay,
+        holdValue,
+      ]),
+    ).toStrictEqual([
+      [14, 21, 0],
+      [14, 37, 1],
+    ]);
+  });
 });
