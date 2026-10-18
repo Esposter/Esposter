@@ -130,7 +130,7 @@ interface Props {
   // How the character on the field moves, whose body's capsule is drawn where it has no pack
   characterLocomotion?: Locomotion;
   // Where the locomotion phase of the character on the field is read, which the Sheer Cold gauge reads its swimming off
-  getCharacterPhase: () => LocomotionPhase | undefined;
+  getCharacter: () => { maxHealth: number; phase: LocomotionPhase } | undefined;
   // Where the pack of the character on the field is read from, which it is drawn on the body from, or as its body's
   // Capsule where it has none or its model fails to load
   characterPackReader?: CharacterPackReader;
@@ -213,7 +213,7 @@ const {
   enemyTables,
   frostbearingTreePlaces,
   gameDataBaseUrl,
-  getCharacterPhase,
+  getCharacter,
   getGroundHeight,
   getWorldNow,
   grassTrail,
@@ -244,7 +244,7 @@ const emit = defineEmits<{
   campCleared: [camp: ClearedCamp];
   campLocks: [locks: ChestLockSource[]];
   charge: [];
-  coldDamage: [share: number];
+  coldDamage: [damage: number];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   ready: [];
   respawn: [spawnKey: string];
@@ -401,11 +401,11 @@ const areaWeather = useAreaWeather(origin, catalogue);
 const sheerCold = useSheerCold(
   catalogue,
   () => {
-    const phase = getCharacterPhase();
-    return characterBody && phase ? { phase, position: characterBody.position } : undefined;
+    const character = getCharacter();
+    return characterBody && character ? { ...character, position: characterBody.position } : undefined;
   },
   () => [],
-  (share) => emit("coldDamage", share),
+  (damage) => emit("coldDamage", damage),
 );
 watch(sheerCold, (value) => emit("sheerCold", value));
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);

@@ -1331,7 +1331,12 @@ watch(mapCamera, (newCamera, oldCamera) => {
 });
 const cameraEuler = new Euler();
 // The locomotion phase of the character on the field, which Windrise's Sheer Cold gauge reads its swimming off
-const getCharacterPhase = () => character.value?.phase;
+// The character on the field's locomotion and max HP, which the sheer cold gauge reads each frame
+const getCharacter = () => {
+  const phase = character.value?.phase;
+  const maxHealth = kitContext.characterIdCombatantMap.get(getActiveCharacterId(party))?.attributes.maxHealth;
+  return phase && maxHealth !== undefined ? { maxHealth, phase } : undefined;
+};
 // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
 // Refilling, and once it is full the meter fades out where it stood
 const hudFrame = reactive<HudFrame>({
@@ -1680,7 +1685,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :catalogue
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-locomotion="locomotion"
-        :get-character-phase="getCharacterPhase"
+        :get-character="getCharacter"
         :character-pack-reader="activeCharacterPackReader"
         :create-terrain-worker
         :kit-effect-state="kitContext.kitEffectState"
