@@ -30,6 +30,7 @@ import { ryuukinSaxifrage } from "#src/services/gcg/cards/ryuukinSaxifrage";
 import { searingOnslaught } from "#src/services/gcg/cards/searingOnslaught";
 import { signatureMix } from "#src/services/gcg/cards/signatureMix";
 import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gcg/cards/stellarRestoration";
+import { starwardSword } from "#src/services/gcg/cards/starwardSword";
 import { stellarisPhantasm } from "#src/services/gcg/cards/stellarisPhantasm";
 import { theMyriadWilds } from "#src/services/gcg/cards/theMyriadWilds";
 import { tideAndTorrent } from "#src/services/gcg/cards/tideAndTorrent";
@@ -58,6 +59,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_14023", lightningFang],
   ["Char_Skill_14032", stellarRestoration],
   ["Char_Skill_14032_Ex_1", stellarRestorationFromCard],
+  ["Char_Skill_14033", starwardSword],
   ["Char_Skill_15012", astableAnemohypostasisCreation],
   ["Char_Skill_15013", forbiddenCreation],
   ["Char_Skill_15022", galeBlade],
