@@ -408,6 +408,9 @@ export enum GameTextKey {
   QuestsInProgress = "UI_TEXT_DOING",
   // Party Setup's button that fills the team's empty slots with the next characters
   QuickSetup = "UI_BUTTON_FAST_TEAM",
+  // The quick swap menu's prompt over its slots while Z is held, and the word on its key that switches to the slot chosen
+  QuickSwapSelect = "WIDGET_QUICK_SWITCH_GUIDE2_2",
+  QuickSwapSwitch = "UI_PC_Quick_Switch",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
   RainbowdropCrystal = "3831100636",
