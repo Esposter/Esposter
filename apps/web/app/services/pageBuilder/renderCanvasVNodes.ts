@@ -36,8 +36,12 @@ export const renderCanvasVNodes = (document: WebpageDocument, context: RenderCon
     if (node.children.some((child) => checkIsRawNode(child)))
       return h(node.tag, { ...attributes, innerHTML: serializeHtml(node.children) });
 
-    return h(node.tag, attributes, node.children.map(toVNode));
+    return h(
+      node.tag,
+      attributes,
+      node.children.map((child) => toVNode(child)),
+    );
   };
 
-  return content.map(toVNode);
+  return content.map((contentNode) => toVNode(contentNode));
 };

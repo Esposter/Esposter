@@ -111,7 +111,7 @@ export const countdownNodeType = {
         role: "timer",
       },
       children: [
-        ...["day", "hour", "minute", "second"].map(createCountdownUnit),
+        ...["day", "hour", "minute", "second"].map((unit) => createCountdownUnit(unit)),
         { attributes: { class: "countdown-end", hidden: "" }, children: [], tag: "span" },
       ],
       tag: "div",
