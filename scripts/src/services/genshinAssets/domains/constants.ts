@@ -14,6 +14,8 @@ export const DOMAIN_ENTRANCE_POINT: ScenePointExemplar = {
   position: "tranPos",
   rotation: "tranRot",
 };
+// The field of an entrance's point holding the title text id its name is read from, which every entrance's point holds
+export const DOMAIN_ENTRANCE_TITLE_FIELD = "titleTextID";
 // The entry types that name a challenge domain's kind. The other entry types are one-time, trounce and event entrances,
 // Which their own pages own
 export const DungeonEntryTypeDomainKindMap: Partial<Record<string, DomainKind>> = {
