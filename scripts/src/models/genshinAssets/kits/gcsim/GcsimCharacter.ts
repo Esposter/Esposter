@@ -1,5 +1,6 @@
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
+import type { GcsimGravityRipple } from "#src/models/genshinAssets/kits/gcsim/GcsimGravityRipple";
 import type { GcsimHoldCooldown } from "#src/models/genshinAssets/kits/gcsim/GcsimHoldCooldown";
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 import type { GcsimTalentArray } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentArray";
@@ -21,6 +22,8 @@ export interface GcsimCharacter {
   constantMap: Map<string, GoConstant>;
   filePaths: string[];
   folder: string;
+  // The gravity ripples its switch sets, which only a character with a gravity tick has, so the rest leave it out
+  gravityRipples?: GcsimGravityRipple[];
   holdCooldowns: GcsimHoldCooldown[];
   queuedAttacks: GcsimQueuedAttack[];
   talentArrayMap: Map<string, GcsimTalentArray>;

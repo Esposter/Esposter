@@ -4,6 +4,7 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 import { addGcsimBladeRollerCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimBladeRollerCandidates";
 import { addGcsimCloudCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates";
 import { addGcsimFieryPassionCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates";
+import { addGcsimGravityRippleCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimGravityRippleCandidates";
 import { addGcsimPairidazaDreamsCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimPairidazaDreamsCandidates";
 import { addGcsimLoopShotCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates";
 import { addGcsimShellCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates";
@@ -15,6 +16,7 @@ export const GcsimCharacterMappingMap: Partial<
 > = {
   chasca: addGcsimShellCandidates,
   kaveh: addGcsimPairidazaDreamsCandidates,
+  columbina: addGcsimGravityRippleCandidates,
   kinich: addGcsimLoopShotCandidates,
   mizuki: addGcsimCloudCandidates,
   varesa: addGcsimFieryPassionCandidates,
