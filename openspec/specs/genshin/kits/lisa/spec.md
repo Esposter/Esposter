@@ -69,6 +69,22 @@ Lightning Rose SHALL deliver thirty discharges on the enemies within its reach, 
 - **WHEN** its discharges come due
 - **THEN** each discharge lands on the enemies within reach
 
+### Requirement: Lightning Rose lowers the DEF of the enemies it hits from Ascension 4
+
+From Ascension 4, each enemy a Lightning Rose discharge hits SHALL have its DEF decreased by 15% for 10 seconds, and each further discharge SHALL refresh that decrease rather than stack it.
+
+#### Scenario: A passive takes effect at its ascension phase
+
+- **GIVEN** Lisa is at Ascension 4
+- **WHEN** a Lightning Rose discharge strikes an enemy
+- **THEN** the enemy carries a DEF reduction of 15% for 10 seconds
+
+#### Scenario: A passive does not take effect below its ascension phase
+
+- **GIVEN** Lisa is at Ascension 3
+- **WHEN** a Lightning Rose discharge strikes an enemy
+- **THEN** the enemy carries no DEF reduction
+
 ### Requirement: Lisa's plunge attacks
 
 Lisa's plunge attacks SHALL land a collision and two plunges on the enemies within reach.

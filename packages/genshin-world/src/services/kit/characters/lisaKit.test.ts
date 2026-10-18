@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -34,6 +35,17 @@ const createLisaCombatant = (): Combatant => ({
   level: 90,
 });
 
+// The status each of Lightning Rose's discharges gives an enemy it strikes, struck by Lisa at the ascension
+const readDischargeEnemyStatuses = (ascension: number) => {
+  const combatant: Combatant = { ...createLisaCombatant(), ascension };
+  const context = createKitTestContext(combatant);
+  LISA_KIT.elementalBurst.onStart?.(context);
+  const summon = takeOne(
+    context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
+  );
+  return summon.hits.map((hit) => hit.enemyStatus?.(combatant));
+};
+
 describe("lisa kit", () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
@@ -61,6 +73,27 @@ describe("lisa kit", () => {
     expect(discharges).toHaveLength(30);
     expect(discharges.every(({ hit }) => hit.talentMultiplier === 0.3656)).toBe(true);
     expect(kitEffectState.effects).toStrictEqual([]);
+  });
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const statuses = readDischargeEnemyStatuses(4);
+
+    expect(statuses.length).toBeGreaterThan(1);
+    expect(statuses).toStrictEqual(
+      statuses.map(() => ({
+        damageTakenBonus: 0,
+        defenseReduction: 0.15,
+        id: "lisa-lightning-rose",
+        secondsRemaining: 10,
+      })),
+    );
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readDischargeEnemyStatuses(3).every((status) => status === undefined)).toBe(true);
   });
 
   test("stacks Conductive on each enemy its press strikes, up to three", () => {

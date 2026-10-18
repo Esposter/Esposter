@@ -71,7 +71,9 @@ export const strikeEnemy = (
   }
 
   const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
-  const { defense } = computeEnemyStats(enemyLevelCurves, kind, enemy.level);
+  const { defense: baseDefense } = computeEnemyStats(enemyLevelCurves, kind, enemy.level);
+  const defense =
+    baseDefense * (1 - enemy.statuses.reduce((total, { defenseReduction }) => total + (defenseReduction ?? 0), 0));
   const {
     additiveBaseDamageBonus,
     amplifyingMultiplier,
