@@ -4,3 +4,6 @@ export const REPUTATION_DISCOUNT_PERCENT = 10;
 export const REPUTATION_DISCOUNT_ROUNDING = 5;
 // How many bounties, and how many requests, may be claimed a week across every nation together
 export const REPUTATION_WEEKLY_CLAIM_LIMIT = 3;
+// The level a nation's keeper first offers its requests and its bounties from, in the dump's level numbering, which
+// Starts at one
+export const REPUTATION_OFFER_FIRST_LEVEL = 2;
