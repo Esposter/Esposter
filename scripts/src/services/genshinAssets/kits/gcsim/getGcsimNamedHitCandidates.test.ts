@@ -23,6 +23,7 @@ describe(getGcsimNamedHitCandidates, () => {
         file: "burst.go",
         internalCooldownTag: "attacks.ICDTagNone",
         line: 10,
+        siteLine: 10,
         talentVariable: "burst",
       },
     ],

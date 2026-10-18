@@ -36,6 +36,7 @@ describe(readGcsimAttacks, () => {
         line: 55,
         poiseDamage: undefined,
         poiseDamageVariable: undefined,
+        siteLine: 55,
         talentVariable: "attack",
         variableName: "ai",
       },
@@ -112,6 +113,34 @@ describe(readGcsimAttacks, () => {
     ).toStrictEqual([
       { element: "attributes.Electro", line: 2, talentVariable: "burstMid", variableName: "ai" },
       { element: "attributes.Electro", line: 8, talentVariable: "burstFinal", variableName: "ai" },
+    ]);
+  });
+  test("reads a struct copy as its source as of the copy, with the sets it gets after, its site the copy's own line", () => {
+    expect.hasAssertions();
+
+    const source = `package ayaka
+
+func (c *char) Burst() {
+	ai := info.AttackInfo{
+		Abil: "Soumetsu",
+	}
+	ai.Mult = burstBloom[c.TalentLvlBurst()]
+	var aiC2 info.AttackInfo
+	aiC2 = ai
+	aiC2.Mult = burstBloom[c.TalentLvlBurst()] * .2
+	aiC2.Abil = "Mini-Frostflake"
+}
+`;
+
+    expect(
+      readGcsimAttacks([{ path: "burst.go", source }], new Map()).map(
+        ({ line, siteLine, talentVariable, variableName }) => ({ line, siteLine, talentVariable, variableName }),
+      ),
+    ).toStrictEqual([
+      { line: 4, siteLine: 4, talentVariable: undefined, variableName: "ai" },
+      { line: 7, siteLine: 4, talentVariable: "burstBloom", variableName: "ai" },
+      { line: 9, siteLine: 9, talentVariable: "burstBloom", variableName: "aiC2" },
+      { line: 10, siteLine: 9, talentVariable: "burstBloom", variableName: "aiC2" },
     ]);
   });
 });
