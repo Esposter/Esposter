@@ -343,6 +343,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3170252851": createThePartingRefrainPassiveModule,
   // Golden Majesty (Vortex Vanquisher)
   "3573861603": createGoldenMajestyPassiveModule,
+  // Golden Majesty (The Unforged)
+  "1405856115": createGoldenMajestyPassiveModule,
   // Gokadaiou Otogibanashi (Redhorn Stonethresher)
   "372854075": createGokadaiouOtogibanashiPassiveModule,
   // Whitemoon Bristle (Light of Foliar Incision)
