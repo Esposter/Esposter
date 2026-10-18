@@ -20,6 +20,9 @@ export interface Party {
   healthChanges: PartyHealthChange[];
   lunarChargedCloud: LunarChargedCloud;
   lunarCrystallize: PartyLunarCrystallize;
+  // The Moonridge Dew the party holds, up to three, which Columbina's Lunar-Blooms gain and a Lunar-Bloom skill spends after
+  // Its Verdant Dew
+  moonridgeDew: number;
   // The seconds left before each source may drop its particle again, none once it is spent
   particleCooldownSecondsMap: Map<ParticleSource, number>;
   switchedSeconds: number;
