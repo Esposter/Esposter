@@ -69,7 +69,7 @@ describe(craftRecipe, () => {
     wallet,
   });
 
-  test("should take the materials and Mora of the whole batch and put every result in the bag", () => {
+  test("a craft spends its materials and mora", () => {
     expect.hasAssertions();
 
     const inventory: Inventory = { items: [{ definition: materialDefinition, id: 0, quantity: 6 }], nextId: 1 };
@@ -120,7 +120,7 @@ describe(craftRecipe, () => {
     ).toBeUndefined();
   });
 
-  test("should pay Condensed Resin's Original Resin from the wallet, not the bag", () => {
+  test("crafting Condensed Resin draws its resin from the Original Resin wallet", () => {
     expect.hasAssertions();
 
     const inventory: Inventory = { items: [{ definition: crystalCore, id: 0, quantity: 1 }], nextId: 1 };
