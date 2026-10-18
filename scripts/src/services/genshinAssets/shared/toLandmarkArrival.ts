@@ -1,7 +1,7 @@
 import type { SceneTransportPoint } from "#src/models/genshinAssets/world/SceneTransportPoint";
 import type { LandmarkArrival } from "genshin-world";
 
-import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffset";
 import { toRegionAxesPlace } from "#src/services/genshinAssets/shared/toRegionAxesPlace";
 
 // A transport point as the arrival of a landmark a jump goes to: its place and turn carried into the region's axes round
@@ -14,7 +14,7 @@ export const toLandmarkArrival = (
   const [, originY] = origin;
   const { position: regionPosition, rotation } = toRegionAxesPlace(position, turnDegrees, origin);
   return {
-    heightOffset: roundFitted(height - originY - getWorldHeight(regionPosition.x, regionPosition.z)),
+    heightOffset: toHeightOffset(height, originY, regionPosition, getWorldHeight),
     position: regionPosition,
     rotation,
   };

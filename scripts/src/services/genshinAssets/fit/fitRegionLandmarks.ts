@@ -1,9 +1,9 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
-import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readRegionLandmarkSources } from "#src/services/genshinAssets/shared/readRegionLandmarkSources";
+import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffset";
 import { toLandmarkArrival } from "#src/services/genshinAssets/shared/toLandmarkArrival";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
@@ -34,7 +34,7 @@ export const fitRegionLandmarks = async (component: DerivedAssetComponent, regio
     const place = placements.find(({ prefab }) => prefab.pathId === regionLandmark.pathId)?.places[0];
     if (!place) throw new InvalidOperationError(Operation.Read, component, `places ${landmark.id}'s prefab nowhere`);
     const { position, rotation } = toRegionPlace(place, origin);
-    const heightOffset = roundFitted(place.position[1] - originY - getWorldHeight(position.x, position.z));
+    const heightOffset = toHeightOffset(place.position[1], originY, position, getWorldHeight);
     if (landmark.kind !== LandmarkKind.StatueOfTheSeven) return { ...landmark, heightOffset, position, rotation };
     const scenePointId = DerivedAssetComponentMap[component].world?.points.find(
       ({ prefab }) => prefab.pathId === regionLandmark.pathId,

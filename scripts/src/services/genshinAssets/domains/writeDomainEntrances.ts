@@ -4,12 +4,12 @@ import type { DomainEntranceLandmark } from "genshin-world";
 import { DUNGEON_ENTRY_TABLE_NAME, DungeonEntryTypeDomainKindMap } from "#src/services/genshinAssets/domains/constants";
 import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/readDomainEntrancePoints";
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
-import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { OPEN_WORLD_SCENE_ID, REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
+import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffset";
 import { toRegionAxesPosition } from "#src/services/genshinAssets/shared/toRegionAxesPosition";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -59,7 +59,7 @@ export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }):
     }
     const { height, ...landmark } = place;
     const areaId = findNearestLandmarkAreaId(region, otherLandmarksMap.get(region) ?? [], place.position);
-    const heightOffset = roundFitted(height - originY - getWorldHeight(place.position.x, place.position.z));
+    const heightOffset = toHeightOffset(height, originY, place.position, getWorldHeight);
     getOrCreate(placedMap, region, () => []).push({ ...landmark, areaId, heightOffset });
   }
   const reports = await Promise.all(
