@@ -36,15 +36,24 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     burst,
     burstVariant,
     chargedAttack,
+    chargedAttackVariant,
+    checkCanStartAttack,
     getChargedAttackStaminaMultiplier,
     getNormalAttackExtraHit,
     getNormalAttackSpeedBonus,
+    getPartyDendroCoreDamageBonus,
+    getPartyReactionBonus,
+    getPartyStrikeBonus,
     getPassiveBonuses,
-    getReactionDamageBonus,
     getSkillChargeBonus,
     getSkillCooldownMultiplier,
+    getStrikeAdditiveBaseDamageBonus,
+    isSkillCooldownWaived,
+    getStrikeCriticalDamageBonus,
     getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
+    getStrikeDefenceIgnored,
+    jumpsSkillHoldToTop,
     keepsNormalAttackCombo,
     moonsignBenediction,
     normalAttacks = [],
@@ -53,37 +62,59 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     onStep,
     plungeCollision = {},
     plunges = {},
+    plungeVariants = [],
+    refusesFall,
     skill,
     skillChain = [],
     skillHolds = [],
+    stellarJubilee,
   } = behaviour;
+  if (checkCanStartAttack) kit.checkCanStartAttack = checkCanStartAttack;
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
   if (getNormalAttackSpeedBonus) kit.getNormalAttackSpeedBonus = getNormalAttackSpeedBonus;
+  if (getPartyDendroCoreDamageBonus) kit.getPartyDendroCoreDamageBonus = getPartyDendroCoreDamageBonus;
+  if (getPartyReactionBonus) kit.getPartyReactionBonus = getPartyReactionBonus;
+  if (getPartyStrikeBonus) kit.getPartyStrikeBonus = getPartyStrikeBonus;
   if (getPassiveBonuses) kit.getPassiveBonuses = getPassiveBonuses;
-  if (getReactionDamageBonus) kit.getReactionDamageBonus = getReactionDamageBonus;
   if (getSkillChargeBonus) kit.getSkillChargeBonus = getSkillChargeBonus;
   if (getSkillCooldownMultiplier) kit.getSkillCooldownMultiplier = getSkillCooldownMultiplier;
+  if (getStrikeAdditiveBaseDamageBonus) kit.getStrikeAdditiveBaseDamageBonus = getStrikeAdditiveBaseDamageBonus;
+  if (isSkillCooldownWaived) kit.isSkillCooldownWaived = isSkillCooldownWaived;
+  if (getStrikeCriticalDamageBonus) kit.getStrikeCriticalDamageBonus = getStrikeCriticalDamageBonus;
   if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
+  if (getStrikeDefenceIgnored) kit.getStrikeDefenceIgnored = getStrikeDefenceIgnored;
+  if (jumpsSkillHoldToTop) kit.jumpsSkillHoldToTop = jumpsSkillHoldToTop;
   if (keepsNormalAttackCombo) kit.keepsNormalAttackCombo = keepsNormalAttackCombo;
   if (onKitEvent) kit.onKitEvent = onKitEvent;
   if (onSprint) kit.onSprint = onSprint;
   if (onStep) kit.onStep = onStep;
+  if (refusesFall) kit.refusesFall = refusesFall;
   if (moonsignBenediction?.getBaseDamageBonus) {
     if (!kit.moonsignBenediction)
       throw new InvalidOperationError(Operation.Update, "moonsignBenediction", "its record holds none");
     kit.moonsignBenediction.getBaseDamageBonus = moonsignBenediction.getBaseDamageBonus;
   }
+  if (stellarJubilee?.getBaseDamageBonus) {
+    if (!kit.stellarJubilee)
+      throw new InvalidOperationError(Operation.Update, "stellarJubilee", "its record holds none");
+    kit.stellarJubilee.getBaseDamageBonus = stellarJubilee.getBaseDamageBonus;
+  }
   applyKitActionBehaviour(kit.elementalBurst, burst, "burst");
   applyKitVariantBehaviour(kit.elementalBurstVariant, burstVariant, "burstVariant");
   applyKitActionBehaviour(kit.chargedAttack, chargedAttack, "chargedAttack");
+  applyKitVariantBehaviour(kit.chargedAttackVariant, chargedAttackVariant, "chargedAttackVariant");
   checkHasCount("normalAttacks", normalAttacks.length, kit.normalAttacks.length);
   for (const [index, action] of kit.normalAttacks.entries())
     applyKitActionBehaviour(action, normalAttacks[index], `normalAttacks.${index}`);
   applyKitHitBehaviour(kit.plungeCollision, plungeCollision, "plungeCollision");
   applyKitActionBehaviour(kit.highPlunge, plunges[KitPlunge.High], `plunges.${KitPlunge.High}`);
   applyKitActionBehaviour(kit.lowPlunge, plunges[KitPlunge.Low], `plunges.${KitPlunge.Low}`);
+  const kitPlungeVariants = kit.plungeVariants ?? [];
+  checkHasCount("plungeVariants", plungeVariants.length, kitPlungeVariants.length);
+  for (const [index, variant] of kitPlungeVariants.entries())
+    applyKitVariantBehaviour(variant, plungeVariants[index], `plungeVariants.${index}`);
   applyKitActionBehaviour(kit.elementalSkill, skill, "skill");
   const followUps = kit.elementalSkillChain?.followUps ?? [];
   checkHasCount("skillChain", skillChain.length, followUps.length);

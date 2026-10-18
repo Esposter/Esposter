@@ -1,6 +1,8 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 3 },
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
+  "burst.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "burst.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 97 },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12339 } },
   "burst.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
   "burst.hits.1.element": { "cause": "Unsourced", "value": "Fire" },

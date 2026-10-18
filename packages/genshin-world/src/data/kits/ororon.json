@@ -10,6 +10,7 @@
   },
   "hits.soundwave.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 10539 } },
   "hits.soundwave.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.soundwave.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

@@ -2,6 +2,7 @@ import type { TimeTrialChallenge } from "#src/models/puzzle/TimeTrialChallenge";
 
 import { ChestKind } from "#src/models/chest/ChestKind";
 import { TimeTrialChallengeState } from "#src/models/puzzle/TimeTrialChallengeState";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { computeTimeTrialChestPlaces } from "#src/services/puzzle/computeTimeTrialChestPlaces";
 import { startTimeTrialChallenge } from "#src/services/puzzle/startTimeTrialChallenge";
 import { stepTimeTrialChallenge } from "#src/services/puzzle/stepTimeTrialChallenge";
@@ -89,6 +90,16 @@ describe(stepTimeTrialChallenge, () => {
       remainingSeconds: marker.challenge.remainingSeconds,
       state: marker.challenge.state,
     }).toStrictEqual({ chestPlaces: [], remainingSeconds: 0, state: TimeTrialChallengeState.Failed });
+  });
+
+  test("the timer runs out on the step its seconds do, not one step late", () => {
+    expect.hasAssertions();
+
+    const challenge = { ...createChallenge(), limitSeconds: 5 };
+    startTimeTrialChallenge(challenge);
+    for (let step = 0; step < 300; step++) stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
+
+    expect(challenge.state).toBe(TimeTrialChallengeState.Failed);
   });
 
   test("leaves an idle challenge's clock alone", () => {

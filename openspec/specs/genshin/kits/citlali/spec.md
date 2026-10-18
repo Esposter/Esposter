@@ -85,6 +85,12 @@ Citlali's skill press SHALL enter the Nightsoul Blessing for 20 seconds with its
 - **WHEN** the player casts Ice Storm
 - **THEN** she holds 24 Nightsoul points
 
+#### Scenario: The burst's points raise a generation event
+
+- **GIVEN** a field on the team is listening for kit events
+- **WHEN** the player casts Ice Storm
+- **THEN** the field hears a Nightsoul points gained event of 24 points for Citlali
+
 ### Requirement: Strikes and charged attack deal no poise
 
 Citlali's strikes and charged attack SHALL deal no poise, a provisional value until a recording of the game's poise settles it.

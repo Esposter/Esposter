@@ -2,6 +2,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitInfusion } from "#src/models/kit/KitInfusion";
 import type { KitShield } from "#src/models/kit/KitShield";
@@ -19,10 +21,14 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CANDACE_CHARACTER_ID, createCandaceKitBehaviour } from "#src/services/kit/characters/candaceKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
+import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { stepKit } from "#src/services/kit/stepKit";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -217,5 +223,91 @@ describe(createCandaceKitBehaviour, () => {
     landAttack();
 
     expect({ afterFirst, afterSecond: countSummons(kitEffectState) }).toStrictEqual({ afterFirst: 1, afterSecond: 1 });
+  });
+
+  // Candace's combatant at an ascension, holding her skill for two steps with the given event heard after the first, and
+  // Released: the action the release starts, which is her charged hold when its charge is complete
+  const CHARGED_ACTION = CANDACE_KIT.elementalSkillHolds?.at(-1)?.action;
+  const STEP_SECONDS = 0.1;
+  const IDLE_INPUT: KitInput = {
+    height: 0,
+    isAttackHeld: false,
+    isAttackPressed: false,
+    isBurstPressed: false,
+    isSkillHeld: false,
+    isSkillPressed: false,
+    locomotionState: LocomotionState.Idle,
+  };
+  const releaseHeldSkill = (ascension: number, createEvent: (combatant: Combatant) => KitEvent) => {
+    const combatant: Combatant = {
+      ascension,
+      attributes: computeCharacterAttributes([]),
+      characterId: CANDACE_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: CANDACE_KIT,
+      level: 90,
+      weaponType: WeaponType.Polearm,
+    };
+    const context = createKitTestContext(combatant);
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    const hold = { ...IDLE_INPUT, isSkillHeld: true };
+    stepKit(kitState, CANDACE_KIT, hold, partyMember, stamina, STEP_SECONDS, [], context);
+    CANDACE_KIT.onKitEvent?.(createEvent(combatant), context, combatant);
+    stepKit(kitState, CANDACE_KIT, hold, partyMember, stamina, STEP_SECONDS, [], context);
+    return stepKit(kitState, CANDACE_KIT, IDLE_INPUT, partyMember, stamina, STEP_SECONDS, [], context);
+  };
+  // An enemy's strike that takes a share of Candace's HP, and the same strike on another member of the team
+  const strikeOnCandace = (): KitEvent => ({
+    bondOfLifeShare: 0,
+    characterId: CANDACE_CHARACTER_ID,
+    healthShare: -0.1,
+    kind: KitEventKind.HealthChanged,
+    overflowHealthShare: 0,
+  });
+  const strikeOnKuki = (): KitEvent => ({
+    bondOfLifeShare: 0,
+    characterId: KUKI_CHARACTER_ID,
+    healthShare: -0.1,
+    kind: KitEventKind.HealthChanged,
+    overflowHealthShare: 0,
+  });
+
+  test("the Ascension 1 passive, Aegis of Crossed Arrows, takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(CHARGED_ACTION).toBeDefined();
+    expect(releaseHeldSkill(1, strikeOnCandace)).toBe(CHARGED_ACTION);
+  });
+
+  test("the Ascension 1 passive, Aegis of Crossed Arrows, does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    const action = releaseHeldSkill(0, strikeOnCandace);
+    expect(action).toBeDefined();
+    expect(action).not.toBe(CHARGED_ACTION);
+  });
+
+  test("a strike on another member of the team does not complete Candace's charge", () => {
+    expect.hasAssertions();
+
+    const action = releaseHeldSkill(1, strikeOnKuki);
+    expect(action).toBeDefined();
+    expect(action).not.toBe(CHARGED_ACTION);
+  });
+
+  test("a strike her shield takes completes her charge too, as the shield absorbs it on her", () => {
+    expect.hasAssertions();
+
+    expect(
+      releaseHeldSkill(1, () => ({
+        amount: 100,
+        characterId: CANDACE_CHARACTER_ID,
+        kind: KitEventKind.ShieldAbsorbed,
+        struckCharacterId: CANDACE_CHARACTER_ID,
+      })),
+    ).toBe(CHARGED_ACTION);
   });
 });

@@ -20,6 +20,7 @@ import type { ReputationRequest } from "#src/models/reputation/ReputationRequest
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
+import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Trial } from "#src/models/trial/Trial";
@@ -40,6 +41,7 @@ import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
 import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import StatueScreen from "#src/components/Statue/Screen/Index.vue";
+import StatueWorshipScreen from "#src/components/Statue/Worship/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DomainScreen from "#src/components/Domain/Screen/Index.vue";
 import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
@@ -98,6 +100,7 @@ import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
+import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldTips } from "#src/composables/useWorldTips";
@@ -109,6 +112,7 @@ import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
+import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
@@ -135,6 +139,7 @@ import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
@@ -176,6 +181,7 @@ import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRat
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
+import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants";
 import { offerReputationRequest } from "#src/services/reputation/offerReputationRequest";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
@@ -202,6 +208,7 @@ import {
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
+import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -241,6 +248,7 @@ const {
   characterTalentKits,
   craftingBenchPlace,
   craftingRecipes,
+  craftingStrongboxes,
   createTerrainWorker,
   enemyTables,
   frostbearingTreeLevels,
@@ -632,10 +640,8 @@ const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, 
   gameDataBaseUrl,
   inventory,
 });
-// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
-// Whose rewards the bag has no room for drop at the tree
 // The statues' Oculi and resonances, which pay their levels as the bag's offers do
-const { collectOculus, resonateStatue } = useWorldStatues({
+const { claimLevel, collectOculus, getRegionProgress, offerOculi, readRegionLevels, resonateStatue } = useWorldStatues({
   events,
   foundOculusIds,
   gainWorldAdventureExp,
@@ -649,6 +655,39 @@ const { collectOculus, resonateStatue } = useWorldStatues({
   setWallet,
   wallet,
 });
+// The Worship Statue on screen: the statue it was opened at and the region's levels as the screen read them, which its
+// offer and claim act on
+const worshipLandmarkId = ref<string>();
+const worshipLevels = shallowRef<StatueLevel[]>([]);
+const worshipRegionId = computed(() =>
+  worshipLandmarkId.value === undefined ? undefined : getStatueRegionId(worshipLandmarkId.value),
+);
+// F on a resonated statue opens its Worship Statue, its levels read first so the screen shows each level and its rewards
+const openWorship = (landmarkId: string) => {
+  const regionId = getStatueRegionId(landmarkId);
+  if (regionId === undefined) return;
+  readRegionLevels(regionId, (levels) => {
+    worshipLandmarkId.value = landmarkId;
+    worshipLevels.value = levels;
+    screenKind.value = ScreenKind.Worship;
+  });
+};
+const offerWorship = () => {
+  if (worshipRegionId.value !== undefined) offerOculi(worshipRegionId.value, worshipLevels.value);
+};
+// A claim takes the next level the region has reached, its rewards dropping where the Worship Statue was opened if the bag
+// has no room for them
+const claimWorship = () => {
+  if (worshipRegionId.value === undefined || worshipLandmarkId.value === undefined) return;
+  claimLevel(worshipRegionId.value, worshipLevels.value, {
+    id: worshipLandmarkId.value,
+    position: characterBody.position,
+  });
+};
+// The name of a reward's item in the reader's language, which a level pays by its material
+const getWorshipItemName = (itemId: number) => nameText[materialDataMap.get(itemId)?.nameTextId ?? ""] ?? "";
+// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
+// Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
   events,
   frostbearingTreeProgress,
@@ -837,12 +876,19 @@ useIntervalFn(() => {
 const cookingRecipe = shallowRef<CookingRecipe>();
 // The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
 const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
+// A deployed member's Max HP as the buffs on it stand now, none while the member has no combatant built
+const getMemberMaxHealth = (characterId: number): number | undefined => {
+  const combatant = kitContext.characterIdCombatantMap.get(characterId);
+  return combatant
+    ? getKitMaxHealth(combatant, kitContext.kitEffectState.effects, party, kitContext.characterIdCombatantMap)
+    : undefined;
+};
 const useBagEntry = (entryId: number) => {
   const use = useInventoryEntry(inventory.value, entryId, {
     cookingProgress: cookingProgress.value,
     dishUseMap: dishUseMap.value,
     eaterId: getActiveCharacterId(party),
-    getMaxHealth: (characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0,
+    getMaxHealth: (characterId) => getMemberMaxHealth(characterId) ?? 0,
     instructionRecipeMap: instructionRecipeMap.value,
     kitEffectState: kitContext.kitEffectState,
     now: getWorldNow(),
@@ -955,7 +1001,7 @@ const {
 const expeditions = shallowRef<Expedition[]>([]);
 const reputationLevel = shallowRef(reputation.value.level);
 // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
-// Started, and not kept with the save: a provisional rule until the weekly refresh is read
+// Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly refresh is read
 const reputationOffer = shallowRef<ReputationRequest>();
 const reputationOfferTitle = computed(() => {
   const quest = reputationOffer.value && quests.value.find(({ id }) => id === String(reputationOffer.value?.questId));
@@ -969,10 +1015,14 @@ const drawReputationOffer = () => {
     reputation.value.level,
     Math.random(),
     offerableQuestIds,
+    requestClaimedAts.value,
+    getWorldNow(),
   );
 };
 // Accepting the offer starts its quest, which the world then runs as any other
 const acceptReputationOffer = () => {
+  if (reputationBountyOffer.value === ReputationBountyOffer.Claim) return claimBounty();
+  if (reputationBountyOffer.value === ReputationBountyOffer.Offer) return takeBounty();
   if (!reputationOffer.value) return;
   acceptQuest(String(reputationOffer.value.questId));
   reputationOffer.value = undefined;
@@ -1029,6 +1079,8 @@ const {
   jumpPose,
   jumpTo,
   lockedJumpLandmarks,
+  payReputationReward,
+  requestClaimedAts,
   unlockedLandmarkIds,
   unlockedLandmarks,
 } = useWorldMap({
@@ -1042,12 +1094,32 @@ const {
   recordedDoingIds,
   regionDataBaseUrl,
   reputation,
+  savedRequestClaimedAts: savedState.reputationRequestClaimedAts,
   setReputation: (nextReputation) => {
     reputation.value = nextReputation;
   },
   setWallet,
   unlockedLandmarkIds: savedState.unlockedLandmarkIds,
   wallet,
+});
+// The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's target is
+// Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
+const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, takeBounty } =
+  useWorldReputationBounty({
+    events,
+    payReputationReward,
+    random: () => kitContext.random(),
+    reputation,
+    reputationCity,
+    savedBountyClaimedAts: savedState.reputationBountyClaimedAts,
+    savedBountyHunt: savedState.reputationBountyHunt,
+    worldLevel,
+  });
+const reputationBountyOffer = computed(() => {
+  if (bountyHunt.value) return bountyHunt.value.isTargetDefeated ? ReputationBountyOffer.Claim : undefined;
+  return reputation.value.level >= REPUTATION_OFFER_FIRST_LEVEL && (reputationCity.value?.bounties.length ?? 0) > 0
+    ? ReputationBountyOffer.Offer
+    : undefined;
 });
 watch(unlockedLandmarkIds, (landmarkIds) => {
   resonatedRegionIds.value = getResonatedRegionIds(landmarkIds);
@@ -1092,6 +1164,9 @@ useWorldSaveSync({
     quests: questProgressMap.value,
     regionStatueProgressMap: regionStatueProgressMap.value,
     reputation: reputation.value,
+    reputationBountyClaimedAts: bountyClaimedAts.value,
+    reputationBountyHunt: bountyHunt.value,
+    reputationRequestClaimedAts: requestClaimedAts.value,
     settledSeelieIds: settledSeelieIds.value,
     shopPurchases: shopPurchases.value,
     shownTipIds: shownTipIds.value,
@@ -1135,6 +1210,8 @@ const characterPassiveGroupIdMap = computed(
 const downCharacterIds = computed(
   () => new Set(characters.value.filter(({ id }) => checkIsCharacterDown(party, id)).map(({ id }) => id)),
 );
+// The artifact tables the Mystic Offering rolls its strongbox's artifact from, the same ones the chests draw from
+const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataMap, reliquarySets };
 // The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
 const crafting = computed(() =>
   computeCraftingCrafters(
@@ -1263,8 +1340,13 @@ const {
   weaponDataMap: statTables.weaponDataMap,
   wallet,
 });
-// The enemies in the world are the ley line outcrops' fighting camps and the domain challenge's camp
-const fightingCamps = computed(() => [...outcropCamps.value, ...domainCamps.value, ...abyssCamps.value]);
+// The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
+const fightingCamps = computed(() => [
+  ...outcropCamps.value,
+  ...domainCamps.value,
+  ...abyssCamps.value,
+  ...bountyCamps.value,
+]);
 // The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's centre
 const domainArenaInteractables = computed<Interactable[]>(() => {
   if (!domainArena.value) return [];
@@ -1322,7 +1404,7 @@ const interactables = computed<Interactable[]>(() => {
     ...trounceBlossomInteractables.value,
     ...frostbearingTrees,
     abyssEntrance,
-    ...computeStatueInteractables(unlockedLandmarks.value, gameText[GameTextKey.StatueBlessing], getGroundHeight),
+    ...computeStatueInteractables(unlockedLandmarks.value, gameText[GameTextKey.StatueWorship], getGroundHeight),
     ...lockedJumpLandmarks.value.map((landmark) =>
       toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
     ),
@@ -1461,7 +1543,7 @@ const cameraEuler = new Euler();
 // The character on the field's locomotion and max HP, which the sheer cold gauge reads each frame
 const getCharacter = () => {
   const phase = character.value?.phase;
-  const maxHealth = kitContext.characterIdCombatantMap.get(getActiveCharacterId(party))?.attributes.maxHealth;
+  const maxHealth = getMemberMaxHealth(getActiveCharacterId(party));
   return phase && maxHealth !== undefined ? { maxHealth, phase } : undefined;
 };
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
@@ -1626,8 +1708,8 @@ defineExpose({ jumpTo, readCameraPosition });
             seconds: context.delta,
           });
           // The Serenitea Pot used from the gadget slot is set down at the player's feet, unless the open world already holds one
-          if (usedGadget?.id === HOME_POT_GADGET_ID && !homeRealmVisit.value)
-            homePotPoint.value = placeHomePot(usedGadget, homePotPoint.value, characterBody.position);
+          if (usedGadget?.id === HOME_POT_GADGET_ID && !homeRealmVisit)
+            homePotPoint = placeHomePot(usedGadget, homePotPoint, characterBody.position);
           hudFrame.gadgetCooldown = getEquippedGadgetCooldown(getWorldNow());
           // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
@@ -1682,7 +1764,7 @@ defineExpose({ jumpTo, readCameraPosition });
             ) {
               screenKind = ScreenKind.Processing;
             } else if (interactable?.kind === InteractionKind.Activate && unlockedLandmarkIds.has(interactable.id)) {
-              screenKind = ScreenKind.Blessing;
+              openWorship(interactable.id);
             } else if (
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === DOMAIN_LEAVE_INTERACTABLE_ID
@@ -1723,7 +1805,7 @@ defineExpose({ jumpTo, readCameraPosition });
               screenKind = ScreenKind.Shop;
             } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
-              resonateStatue(interactable.id, { id: interactable.id, position: characterBody.position });
+              resonateStatue(interactable.id);
             } else if (interactable?.kind === InteractionKind.Use && isFishingPoint(interactable.id)) {
               openFishingPoint(interactable.id);
               screenKind = ScreenKind.Fishing;
@@ -1847,6 +1929,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :region-data-base-url
         :scene-export-base-url
         :frostbearing-tree-places
+        :bounty-trail-ends="bountyTrailEnds"
         :seelies="puzzleSeelies"
         :wildlife-list="kitContext.wildlifeList"
         :windrise-data
@@ -2249,6 +2332,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :material-data-map
       :name-text
+      :bounty-offer="reputationBountyOffer"
       :offer-title="reputationOfferTitle"
       :progress="reputation"
       :reputation="reputationCity"
@@ -2273,12 +2357,24 @@ defineExpose({ jumpTo, readCameraPosition });
       v-if="screenKind === ScreenKind.Blessing"
       v-model:power="restorativePower"
       :game-text
-      :get-max-health="(characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0"
+      :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
       :get-name="(characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ''] || ''"
       :get-now="getWorldNow"
       :party
       :statue-count="resonatedRegionIds.length"
       @close="screenKind = ScreenKind.World"
+      @worship="screenKind = ScreenKind.Worship"
+    />
+    <StatueWorshipScreen
+      v-if="screenKind === ScreenKind.Worship && worshipRegionId"
+      :game-text
+      :get-item-name="getWorshipItemName"
+      :levels="worshipLevels"
+      :progress="getRegionProgress(worshipRegionId)"
+      @blessing="screenKind = ScreenKind.Blessing"
+      @claim="claimWorship"
+      @close="screenKind = ScreenKind.World"
+      @offer="offerWorship"
     />
     <CookingScreen
       v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
@@ -2324,6 +2420,7 @@ defineExpose({ jumpTo, readCameraPosition });
       v-if="screenKind === ScreenKind.Crafting"
       v-model:crafted-count-map="craftedCountMap"
       :adventure-rank="rank"
+      :artifact-drop-tables="craftingArtifactDropTables"
       :crafters="crafting.crafters"
       :game-text
       :initial-crafter-id="crafting.crafterId"
@@ -2333,7 +2430,10 @@ defineExpose({ jumpTo, readCameraPosition });
       :progress="craftingProgress"
       :random="kitContext.random"
       :recipes="craftingRecipes"
+      :reliquary-piece-entry-map="reliquaryPieceEntryMap"
+      :strongboxes="craftingStrongboxes"
       :wallet
+      :weapon-data-map="statTables.weaponDataMap"
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
       @close="screenKind = ScreenKind.World"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"

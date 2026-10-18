@@ -6,9 +6,11 @@ import { checkIsInSourcewaterPickupArea } from "#src/services/kit/checkIsInSourc
 import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { absorbSourcewaterDroplets } from "#src/services/kit/effects/absorbSourcewaterDroplets";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/charge.go, ChargeAttack and chargeJudgementTick. The charge's legal evaluation
 // Starts three frames in and runs 209 frames less 57, 111 or 209 for the one, two or three Sourcewater Droplets it picks up.
@@ -35,11 +37,9 @@ type DecideLength = NonNullable<KitAction["decideLength"]>;
 // The drains and the droplets' heals from that moment, and returns the frames the charge lasts. The waves are read as the
 // Named list of the judgement's hits, whose hitmarks run from the start of the judgement
 const decideEquitableJudgement = (context: KitContext, waves: KitHit[]): number => {
-  const { activeCombatant, body, kitEffectState } = context;
-  const {
-    attributes: { maxHealth },
-    characterId,
-  } = activeCombatant;
+  const { activeCombatant, body, characterIdCombatantMap, kitEffectState, party } = context;
+  const { characterId } = activeCombatant;
+  const maxHealth = getKitMaxHealth(activeCombatant, kitEffectState.effects, party, characterIdCombatantMap);
   const pickedUp = absorbSourcewaterDroplets(
     kitEffectState,
     characterId,
@@ -50,7 +50,7 @@ const decideEquitableJudgement = (context: KitContext, waves: KitHit[]): number 
     scheduleKitTask(kitEffectState, characterId, DROPLET_HEAL_FRAMES / KIT_FRAMES_PER_SECOND, (tick) => {
       changeKitMemberHealth(tick, activeCombatant, characterId, DROPLET_HEAL_HEALTH_SHARE * maxHealth);
     });
-  const legalEvaluationFrames = INITIAL_LEGAL_EVALUATION_FRAMES - LEGAL_EVALUATION_REDUCTION_FRAMES[pickedUp];
+  const legalEvaluationFrames = INITIAL_LEGAL_EVALUATION_FRAMES - takeOne(LEGAL_EVALUATION_REDUCTION_FRAMES, pickedUp);
   for (const wave of waves)
     scheduleKitTask(
       kitEffectState,

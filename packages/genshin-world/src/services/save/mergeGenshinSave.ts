@@ -15,10 +15,11 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchaseSave } from "#src/models/shop/ShopPurchaseSave";
 import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAbyss/SpiralAbyssSave";
-import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
+import type { StatueProgressSave, StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { countHeldItems } from "#src/services/offering/countHeldItems";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { computeLastDailyReset } from "#src/services/time/computeLastDailyReset";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKind } from "genshin-interface/save";
@@ -64,16 +65,20 @@ const checkIsFurtherReputation = (reputation: ReputationProgress, than: Reputati
 // The Frostbearing Tree's progress is the further of the two, by its level and then by the items held toward the next
 const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
   checkIsFurtherByLevel(progress, than, ({ heldCounts }) => countHeldItems(heldCounts));
+// Whether a region's statues are further on than another's: by the level reached, then by the Oculi held toward the next
+const checkIsFurtherStatueRegion = (progress: StatueRegionProgressSave, than: StatueRegionProgressSave): boolean =>
+  progress.level === than.level ? progress.heldCount > than.heldCount : progress.level > than.level;
 // The statues' found Oculi are the union of both copies', and each region is the copy further on, as the Frostbearing
-// Tree's is, so a region only one copy holds is kept as it is
+// Tree's is. A region's claimed level is the account's, as its rewards were paid into the account's bag, which the merge
+// keeps: a level the guest claimed was paid into the guest's bag, so the account claims it again and is paid once, and a
+// region the account does not hold claims none
 const mergeStatueProgress = (account: StatueProgressSave, guest: StatueProgressSave): StatueProgressSave => {
   const regions = { ...account.regions };
   for (const [regionId, guestProgress] of Object.entries(guest.regions)) {
     const accountProgress = regions[regionId];
-    regions[regionId] =
-      accountProgress && !checkIsFurtherByLevel(guestProgress, accountProgress, ({ heldCount }) => heldCount)
-        ? accountProgress
-        : guestProgress;
+    const furtherProgress =
+      accountProgress && !checkIsFurtherStatueRegion(guestProgress, accountProgress) ? accountProgress : guestProgress;
+    regions[regionId] = { ...furtherProgress, claimedLevel: accountProgress?.claimedLevel ?? 0 };
   }
   return { foundOculusIds: [...new Set([...account.foundOculusIds, ...guest.foundOculusIds])], regions };
 };
@@ -214,7 +219,8 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
 // Larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a counter only grows. Each kind
 // Of wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's and never
 // Mixed. The Reputation and the Frostbearing Tree each keep the further. The bag, the wallet, the party, the opened
-// Chests and the realm's placements are the account's copy, except that a Primogem refill count from the same game day
+// Chests and the realm's placements are the account's copy, and so are the Adventure Rank rewards claimed, paid into the
+// bag and the wallet, except that a Primogem refill count from the same game day
 // Takes the larger, as a count of refills within a day only grows. The World Level adjustment is the copy changed
 // Later, since the one change of it the player made last is the one they still stand by. The day's commissions are the
 // Copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the account
@@ -223,7 +229,25 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
 // The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened. Each good
 // Bought in both copies keeps the purchase made later. Each dish keeps the higher proficiency of its two copies, the
 // Learned dishes union, and each processing's queue keeps the copy started later
+// The claims of one kind, bounties or requests, from both copies: each moment once, the latest of the week's limit kept, the
+// Older claims no longer counted
+const mergeWeeklyReputationClaimedAts = (account: string[], guest: string[]): string[] =>
+  [...new Set([...account, ...guest])]
+    .toSorted((claimedAt, than) =>
+      Temporal.Instant.compare(Temporal.Instant.from(claimedAt), Temporal.Instant.from(than)),
+    )
+    .slice(-REPUTATION_WEEKLY_CLAIM_LIMIT);
+
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
+  const reputationBountyClaimedAts = mergeWeeklyReputationClaimedAts(
+    account.reputationBountyClaimedAts,
+    guest.reputationBountyClaimedAts,
+  );
+  const reputationRequestClaimedAts = mergeWeeklyReputationClaimedAts(
+    account.reputationRequestClaimedAts,
+    guest.reputationRequestClaimedAts,
+  );
+  const reputationBountyHunt = account.reputationBountyHunt ?? guest.reputationBountyHunt;
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
     const accountProgress = achievements[achievementId];
@@ -266,9 +290,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   return {
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
-    adventureRankRewardsClaimed: [
-      ...new Set([...account.adventureRankRewardsClaimed, ...guest.adventureRankRewardsClaimed]),
-    ].toSorted((firstRank, secondRank) => firstRank - secondRank),
+    adventureRankRewardsClaimed: account.adventureRankRewardsClaimed,
     archive: mergeArchive(account.archive, guest.archive),
     cardGameExp: Math.max(account.cardGameExp, guest.cardGameExp),
     cardGameRewardedGameIds: [
@@ -321,6 +343,9 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     namecardItemId: account.namecardItemId || guest.namecardItemId,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
+    reputationBountyClaimedAts,
+    reputationRequestClaimedAts,
+    ...(reputationBountyHunt && { reputationBountyHunt }),
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),
     statues: mergeStatueProgress(account.statues, guest.statues),

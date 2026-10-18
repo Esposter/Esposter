@@ -1,14 +1,22 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
+import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+
+import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
+import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { getGcsimNamedHitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
-import { CombatTalent, Element, WeaponType } from "genshin-world";
+import { CombatTalent, Element, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const multiplierMap = (proudSkillGroupId: number) =>
   new Map([["hits.fieryRainArrows.0.multiplier", { index: 0, proudSkillGroupId }]]);
+
+// The cause of a value gcsim gives one, where only the variant of gcsim and rule values carries one
+const cause = (provenance: KitValueSource) => ("cause" in provenance ? provenance.cause : undefined);
 
 describe(getGcsimNamedHitCandidates, () => {
   const BURST_PROUD_SKILL_GROUP_ID = 2139;
@@ -43,6 +51,7 @@ describe(getGcsimNamedHitCandidates, () => {
     filePaths: [],
     folder: "amber",
     queuedAttacks: [],
+    talentArrayMap: new Map(),
     talentFile: "amber.go",
     talentParameterMap: new Map([["burst|Arrow DMG", { indexes: [0], line: 3 }]]),
     holdCooldowns: [],
@@ -71,12 +80,43 @@ describe(getGcsimNamedHitCandidates, () => {
       "hits.fieryRainArrows.0.multiplier",
       "hits.fieryRainArrows.0.element",
       "hits.fieryRainArrows.0.internalCooldownTag",
+      "hits.fieryRainArrows.0.poiseDamage",
     ]);
     expect(joined.get("hits.fieryRainArrows.0.element")?.map(({ value }) => value)).toStrictEqual([Element.Pyro]);
     expect(joined.get("hits.fieryRainArrows.0.multiplier")?.map(({ value }) => value)).toStrictEqual([
       { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
     ]);
     expect(getNamedHitKitCandidates(multiplierMap(0), namedHitCandidateMap).size).toBe(0);
+  });
+
+  test("joins a named hit's multiplier to its variable's array by value, where no talent row names it", () => {
+    expect.hasAssertions();
+
+    const arrayGcsim: GcsimCharacter = {
+      ...gcsim,
+      attacks: gcsim.attacks.map((attack) => ({ ...attack, talentVariable: "kick" })),
+      config: { ...gcsim.config, talentVariables: [] },
+      talentArrayMap: new Map([["kick", { line: 7, rows: [[1.5, 2]] }]]),
+      talentParameterMap: new Map(),
+    };
+    const arrayTables: KitTables = {
+      ...tables,
+      talentMultiplierMap: {
+        [BURST_PROUD_SKILL_GROUP_ID]: [
+          { level: 1, paramList: [0.5, 1.5] },
+          { level: 2, paramList: [0.6, 2] },
+        ],
+      },
+    };
+    const joined = getNamedHitKitCandidates(
+      new Map([["hits.kick.0.multiplier", { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }]]),
+      getGcsimNamedHitCandidates(arrayGcsim, arrayTables),
+    );
+
+    expect(joined.get("hits.kick.0.multiplier")?.map(({ value }) => value)).toStrictEqual([
+      { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
+    ]);
+    expect(joined.get("hits.kick.0.multiplier")?.[0]?.provenance).toMatchObject({ line: 7 });
   });
 
   test("takes a named list's calls in the order they land, whatever order the source calls them in", () => {
@@ -107,6 +147,45 @@ describe(getGcsimNamedHitCandidates, () => {
     ).toStrictEqual([[96], [120]]);
   });
 
+  test("joins a queue call's single-target hit to the targeting area of no radius, and an attack with no poise to none", () => {
+    expect.hasAssertions();
+
+    const namedHitCandidateMap = getGcsimNamedHitCandidates(
+      {
+        ...gcsim,
+        queuedAttacks: [
+          {
+            attackLine: 10,
+            delay: 3,
+            delayLine: 11,
+            file: "burst.go",
+            hitbox: {
+              center: GcsimHitboxCenter.PrimaryTarget,
+              file: "burst.go",
+              line: 11,
+              name: "NewSingleTargetHit",
+              radius: 0,
+              shape: GcsimHitboxShape.Circle,
+            },
+            line: 11,
+          },
+        ],
+      },
+      tables,
+    );
+    const joined = getNamedHitKitCandidates(multiplierMap(BURST_PROUD_SKILL_GROUP_ID), namedHitCandidateMap);
+
+    expect(
+      joined.get("hits.fieryRainArrows.0.area")?.map(({ provenance, value }) => [cause(provenance), value]),
+    ).toStrictEqual([
+      [KitProvisionalCause.TargetCentred, { angle: 2 * Math.PI, height: 2, radius: SKILL_TARGETING_AREA.radius }],
+    ]);
+    expect(joined.get("hits.fieryRainArrows.0.hitmarkFrames")?.map(({ value }) => value)).toStrictEqual([3]);
+    expect(
+      joined.get("hits.fieryRainArrows.0.poiseDamage")?.map(({ provenance, value }) => [cause(provenance), value]),
+    ).toStrictEqual([[KitProvisionalCause.NoPoiseSource, 0]]);
+  });
+
   test("joins a skill hold's and a stance's hit to the same talent variable, and a non-hit multiplier to none", () => {
     expect.hasAssertions();
 
@@ -127,5 +206,73 @@ describe(getGcsimNamedHitCandidates, () => {
       "skillHolds.0.action.hits.0.element",
       "stances.windfavored.normalAttacks.0.hits.0.element",
     ]);
+  });
+
+  test("gives a call after an if else's branches to the attack of each branch, so each branch's list takes it", () => {
+    expect.hasAssertions();
+
+    const SKILL_PROUD_SKILL_GROUP_ID = 15032;
+    const attackCommon = {
+      attackTag: "attacks.AttackTagElementalArt",
+      element: "attributes.Cryo",
+      fieldLineMap: {},
+      file: "skill.go",
+      internalCooldownTag: "attacks.ICDTagNone",
+      siteLine: 12,
+      variableName: "ai",
+    };
+    const branchGcsim: GcsimCharacter = {
+      ...gcsim,
+      attacks: [
+        { ...attackCommon, line: 12 },
+        { ...attackCommon, branch: { chain: 2, endLine: 30, index: 0 }, line: 25, talentVariable: "plume" },
+        { ...attackCommon, branch: { chain: 2, endLine: 30, index: 1 }, line: 28, talentVariable: "wing" },
+      ],
+      config: {
+        abilityHitboxesMap: new Map(),
+        names: [],
+        talentVariables: [
+          {
+            leaves: [
+              { path: [0], reference: { label: "Plume Dance Move DMG", selector: 0, type: GcsimTalentType.Skill } },
+            ],
+            line: 1,
+            name: "plume",
+          },
+          {
+            leaves: [
+              { path: [0], reference: { label: "Wing Dance Move DMG", selector: 0, type: GcsimTalentType.Skill } },
+            ],
+            line: 2,
+            name: "wing",
+          },
+        ],
+      },
+      queuedAttacks: [{ attackName: "ai", delay: 0, delayLine: 34, file: "skill.go", line: 34 }],
+      talentParameterMap: new Map([
+        ["skill|Plume Dance Move DMG", { indexes: [4], line: 3 }],
+        ["skill|Wing Dance Move DMG", { indexes: [7], line: 4 }],
+      ]),
+    };
+    const skillTables: KitTables = {
+      ...tables,
+      talentGroupIdMap: { ...tables.talentGroupIdMap, [CombatTalent.ElementalSkill]: SKILL_PROUD_SKILL_GROUP_ID },
+    };
+
+    const namedHitCandidateMap = getGcsimNamedHitCandidates(branchGcsim, skillTables);
+    const joined = getNamedHitKitCandidates(
+      new Map<string, unknown>([
+        ["hits.plume.0.multiplier", { index: 4, proudSkillGroupId: SKILL_PROUD_SKILL_GROUP_ID }],
+        ["hits.wing.0.multiplier", { index: 7, proudSkillGroupId: SKILL_PROUD_SKILL_GROUP_ID }],
+      ]),
+      namedHitCandidateMap,
+    );
+
+    expect(
+      [4, 7].map((index) => namedHitCandidateMap.get(`${SKILL_PROUD_SKILL_GROUP_ID}|${index}`)?.queuedCalls.length),
+    ).toStrictEqual([1, 1]);
+    expect(
+      ["hits.plume.0.element", "hits.wing.0.element"].map((path) => joined.get(path)?.map(({ value }) => value)),
+    ).toStrictEqual([[Element.Cryo], [Element.Cryo]]);
   });
 });

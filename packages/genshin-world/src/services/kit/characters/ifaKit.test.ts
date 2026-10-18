@@ -1,12 +1,21 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitReaction } from "#src/models/kit/KitReaction";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { createIfaKitBehaviour, IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -14,9 +23,10 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const IFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IFA_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
-const createIfaCombatant = (constellationCount = 0): Combatant => ({
-  ascension: 0,
+const createIfaCombatant = (constellationCount = 0, ascension = 0): Combatant => ({
+  ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: IFA_CHARACTER_ID,
   constellationCount,
@@ -25,6 +35,14 @@ const createIfaCombatant = (constellationCount = 0): Combatant => ({
   level: 90,
   weaponType: WeaponType.Catalyst,
 });
+
+// The DMG Bonus Ifa's party reaction hook adds to a reaction of the given type, read with her points in the given context
+const partyDamageBonusOf = (combatant: Combatant, reactionType: KitReaction["reactionType"], context: KitContext) =>
+  IFA_KIT.getPartyReactionBonus?.(
+    combatant,
+    { combatant, element: Element.Electro, enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), reactionType },
+    context,
+  )?.damageBonus ?? 0;
 
 describe(createIfaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -39,12 +57,12 @@ describe(createIfaKitBehaviour, () => {
     expect(multipliers).toStrictEqual([0.536072, 0.474672, 0.747584, 1.4704, 0.568288, 1.136335, 1.419344]);
   });
 
-  test("the three normal attacks hit at their hitmarks and cancel into a walk at their table frames", () => {
+  test("the three normal attacks hit at their hitmarks and end at their animation frames", () => {
     expect.hasAssertions();
     expect(
       IFA_KIT.normalAttacks.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))),
     ).toStrictEqual([[10], [13], [42]]);
-    expect(IFA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([27, 31, 88]);
+    expect(IFA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([27, 31, 90]);
   });
 
   test("the charged attack hits at 45 frames of an 86-frame animation, costing 50 stamina", () => {
@@ -107,5 +125,41 @@ describe(createIfaKitBehaviour, () => {
       findKitStatus(context.kitEffectState.effects, IFA_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID),
     ).toBeUndefined();
     expect(countKitResource(context.kitEffectState.effects, IFA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
+  });
+
+  test("a passive takes effect at its ascension phase: Ifa's Rescue Essentials add 1.5% a point to the Swirl and Electro-Charged DMG her party deals, and 0.2% to the Lunar-Charged, up to 150 points", () => {
+    expect.hasAssertions();
+    const combatant = createIfaCombatant(0, 1);
+    const context = createKitTestContext(combatant);
+    IFA_KIT.elementalSkill.onStart?.(context);
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBeCloseTo(1.2);
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.ElectroCharged, context)).toBeCloseTo(1.2);
+    expect(partyDamageBonusOf(combatant, LunarReactionType.LunarCharged, context)).toBeCloseTo(0.16);
+    const cappedContext = createKitTestContext(combatant);
+    enterKitNightsoulBlessing(cappedContext.kitEffectState, IFA_CHARACTER_ID, {
+      nightsoulRate: { maximum: 200, perSecond: -8 },
+      points: 200,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, cappedContext)).toBeCloseTo(2.25);
+    expect(partyDamageBonusOf(combatant, LunarReactionType.LunarCharged, cappedContext)).toBeCloseTo(0.3);
+  });
+
+  test("does not take effect below its ascension phase: Ifa at A0 adds no DMG Bonus to her party's reactions", () => {
+    expect.hasAssertions();
+    const combatant = createIfaCombatant();
+    const context = createKitTestContext(combatant);
+    IFA_KIT.elementalSkill.onStart?.(context);
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBe(0);
+    expect(partyDamageBonusOf(combatant, LunarReactionType.LunarCharged, context)).toBe(0);
+  });
+
+  test("a passive takes effect at its ascension phase: her Rescue Essentials are cleared with her blessing, so no DMG Bonus remains once it ends", () => {
+    expect.hasAssertions();
+    const combatant = createIfaCombatant(0, 1);
+    const context = createKitTestContext(combatant);
+    IFA_KIT.elementalSkill.onStart?.(context);
+    IFA_KIT.elementalSkill.onStart?.(context);
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBe(0);
   });
 });

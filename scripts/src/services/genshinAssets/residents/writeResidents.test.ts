@@ -25,6 +25,7 @@ describe(writeResidents, () => {
   const AREA_ID = "first-area";
   const REGION = "first-region";
   const REGION_FILE = `regions/${REGION}.json`;
+  const IDENTITY_TRANSFORM = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
   // The file holds a resident no placement supplies, so the residents the writer computes differ from it and a write is due
   const region: RegionDataFile = {
     landmarks: [],
@@ -38,7 +39,7 @@ describe(writeResidents, () => {
       points: [],
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
       regionMapPoints: [],
-      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
+      transform: IDENTITY_TRANSFORM,
     });
     vi.mocked(readPublishedGameData).mockResolvedValue({ buildings: {}, groups: {} } satisfies SceneGroups);
     vi.mocked(readDialogSpeakers).mockReturnValue([]);
@@ -73,7 +74,7 @@ describe(writeResidents, () => {
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
       points: [],
-      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
+      transform: IDENTITY_TRANSFORM,
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
       regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
     });
@@ -107,8 +108,10 @@ describe(writeResidents, () => {
     vi.mocked(findNearestLandmarkAreaId).mockReturnValue(AREA_ID);
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
+      points: [],
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
       regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
+      transform: IDENTITY_TRANSFORM,
     });
     vi.mocked(readPublishedGameData).mockResolvedValueOnce({
       buildings: {

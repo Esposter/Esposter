@@ -38,6 +38,7 @@ describe(strikePartyMember, () => {
     kit: TRAVELER_KIT,
     level: 1,
   };
+  const characterIdCombatantMap = new Map([[1, combatant]]);
   const hilichurlFighterTraits = EnemyKindTraitsMap[EnemyKindId.HilichurlFighter];
 
   afterEach(() => {
@@ -51,7 +52,7 @@ describe(strikePartyMember, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const damage = computeEnemyStrikeDamage(enemyTables, enemy, combatant);
 
-    strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] });
+    strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] }, characterIdCombatantMap);
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - damage / MAX_HEALTH);
   });
@@ -67,7 +68,7 @@ describe(strikePartyMember, () => {
       effects: [{ characterId: 1, health: shieldHealth, kind: "shield", secondsRemaining: 12 }],
     };
 
-    strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState);
+    strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState, characterIdCombatantMap);
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - (damage - shieldHealth) / MAX_HEALTH);
     expect(kitEffectState.effects).toStrictEqual([{ characterId: 1, health: 0, kind: "shield", secondsRemaining: 0 }]);
@@ -80,7 +81,7 @@ describe(strikePartyMember, () => {
     EnemyKindTraitsMap[EnemyKindId.HilichurlFighter] = { ...hilichurlFighterTraits, attackElement: Element.Cryo };
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
-    strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] });
+    strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] }, characterIdCombatantMap);
 
     expect([...getPartyMember(party, 1).elementalState.auras.keys()]).toStrictEqual([AuraType.Cryo]);
   });
@@ -96,7 +97,9 @@ describe(strikePartyMember, () => {
       effects: [{ characterId: 2, health: shieldHealth, kind: "shield", secondsRemaining: 12 }],
     };
 
-    expect(strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState)).toStrictEqual([
+    expect(
+      strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState, characterIdCombatantMap),
+    ).toStrictEqual([
       { amount: shieldHealth, characterId: 2, kind: KitEventKind.ShieldAbsorbed, struckCharacterId: 1 },
     ]);
   });

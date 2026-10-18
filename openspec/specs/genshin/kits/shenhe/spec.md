@@ -1,6 +1,6 @@
 ## Purpose
 
-Shenhe's kit as built: Spring Spirit Summoning's press and hold and Divine Maiden's Deliverance field with its DoT, with Constellation 1's extra charge, Constellation 2's six extra field seconds and its Cryo CRIT DMG on the active character built, and her Quill, other passives and Constellations 4 and 6 left unbuilt.
+Shenhe's kit as built: Spring Spirit Summoning's press and hold, which give the other party members her Icy Quill, and Divine Maiden's Deliverance field with its DoT, with Constellation 1's extra charge, Constellation 2's six extra field seconds and its Cryo CRIT DMG on the active character, and Constellations 4 and 6's Icy Quill effects built, and her other passives left unbuilt.
 
 ## Requirements
 
@@ -112,12 +112,87 @@ From Constellation 2, the active character standing in Divine Maiden's Deliveran
 - **WHEN** the active character stands in Divine Maiden's Deliverance's field
 - **THEN** her strikes take no CRIT DMG from it
 
+### Requirement: Icy Quill from Spring Spirit Summoning
+
+Spring Spirit Summoning's press SHALL give each other party member Shenhe's Icy Quill for ten seconds and five triggers, and its hold for fifteen seconds and seven triggers. Each Cryo hit a member carrying the Icy Quill strikes from an attack kind, normal, charged or plunging attack, elemental skill or burst, SHALL add Shenhe's current ATK times the quill's ratio, 45.656% at her start level, to the hit's base damage, and SHALL spend one trigger, the last of which ends the quill.
+
+#### Scenario: A press gives the quill to the other members
+
+- **WHEN** the player uses Spring Spirit Summoning's press
+- **THEN** each other party member carries the Icy Quill for ten seconds and five triggers
+- **AND** Shenhe carries none
+
+#### Scenario: A hold gives the quill for longer
+
+- **WHEN** the player holds Spring Spirit Summoning and releases it
+- **THEN** each other party member carries the Icy Quill for fifteen seconds and seven triggers
+
+#### Scenario: A Cryo hit adds Shenhe's ATK and spends a trigger
+
+- **GIVEN** a party member carries the Icy Quill
+- **WHEN** that member strikes an enemy with Cryo
+- **THEN** the hit's base damage gains Shenhe's current ATK times the quill's ratio
+- **AND** the quill spends one trigger
+
+#### Scenario: Other hits add nothing
+
+- **GIVEN** a party member carries the Icy Quill
+- **WHEN** that member strikes with a non-Cryo element, or a member without the quill strikes with Cryo
+- **THEN** no Icy Quill bonus applies
+
+#### Scenario: A hit from no attack kind adds nothing
+
+- **GIVEN** a party member carries the Icy Quill
+- **WHEN** that member lands a Cryo hit that is dealt as no attack kind, such as a reaction or a field's tick
+- **THEN** no Icy Quill bonus applies
+- **AND** the quill spends no trigger
+
+### Requirement: Constellation 4 Skyfrost Mantra
+
+Each Icy Quill trigger SHALL give Shenhe a Skyfrost Mantra stack from Constellation 4, up to fifty, which lasts sixty seconds and is restarted by each stack gained. Her Spring Spirit Summoning SHALL consume all of her stacks as it starts, adding 5% DMG to each of its hits for each stack consumed, for the seconds the summoning plays. The wiki gives no window of its own for that bonus, so the window is the press action's length, and it is flagged rather than read.
+
+#### Scenario: A trigger gives a stack from Constellation 4
+
+- **GIVEN** Shenhe has Constellation 4 and a party member carries the Icy Quill
+- **WHEN** that member's Cryo hit from an attack kind triggers the quill
+- **THEN** Shenhe gains one Skyfrost Mantra stack, up to fifty
+
+#### Scenario: No stack below Constellation 4
+
+- **GIVEN** Shenhe has Constellation 3 or less
+- **WHEN** a quilled member's Cryo hit triggers the quill
+- **THEN** Shenhe gains no Skyfrost Mantra stack
+
+#### Scenario: Spring Spirit Summoning consumes the stacks
+
+- **GIVEN** Shenhe holds three Skyfrost Mantra stacks
+- **WHEN** she starts Spring Spirit Summoning
+- **THEN** the stacks are gone
+- **AND** each of the summoning's hits gains 15% DMG
+
+### Requirement: Constellation 6 exempts normal and charged attack triggers
+
+At Constellation 6, a quilled member's Cryo hit from a normal or charged attack SHALL still give the quill's bonus, but SHALL NOT spend one of the quill's triggers. Hits from her other attack kinds spend a trigger as before.
+
+#### Scenario: A normal attack does not spend the quota
+
+- **GIVEN** Shenhe has Constellation 6 and a quilled member carries five triggers
+- **WHEN** that member's Cryo normal attack hits an enemy
+- **THEN** the hit gains the quill's bonus
+- **AND** the member still carries five triggers
+
+#### Scenario: A skill still spends the quota
+
+- **GIVEN** Shenhe has Constellation 6 and a quilled member carries five triggers
+- **WHEN** that member's Cryo elemental skill hits an enemy
+- **THEN** the member carries four triggers
+
 ### Requirement: Unbuilt Shenhe effects
 
-Shenhe's Quill, her other passives and her Constellations 4 and 6 SHALL NOT take effect.
+Shenhe's other passives SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Shenhe has the Quill, a passive, or Constellation 4 or 6 unlocked
+- **GIVEN** Shenhe has a passive unlocked
 - **WHEN** the player fights with Shenhe
 - **THEN** that effect has no effect

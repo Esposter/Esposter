@@ -19,11 +19,15 @@ export interface PassiveStack {
 
 // One stack of a passive's bonuses on its wielder: the stacks it holds counted up to its maximum, each bonus raised by its
 // Per-stack amount, and every stack restarting the passive's seconds. Once the stacks reach their maximum, its maximum
-// Bonuses land too, restarting with them. A passive still on its cooldown adds none
-export const addPassiveStack = (kitEffectState: KitEffectState, characterId: number, passive: PassiveStack): void => {
+// Bonuses land too, restarting with them. A passive still on its cooldown adds none. Returns whether a stack was added
+export const addPassiveStack = (
+  kitEffectState: KitEffectState,
+  characterId: number,
+  passive: PassiveStack,
+): boolean => {
   const { cooldownSeconds, id, maximumBonuses = [], maximumStacks, perStackBonuses, seconds } = passive;
   const cooldownId = `${id}Cooldown`;
-  if (checkIsKitStatusActive(kitEffectState.effects, characterId, cooldownId)) return;
+  if (checkIsKitStatusActive(kitEffectState.effects, characterId, cooldownId)) return false;
   if (cooldownSeconds !== undefined)
     addKitStatus(kitEffectState, characterId, { id: cooldownId, secondsRemaining: cooldownSeconds });
   const stacks = Math.min((findKitStatus(kitEffectState.effects, characterId, id)?.stacks ?? 0) + 1, maximumStacks);
@@ -38,4 +42,5 @@ export const addPassiveStack = (kitEffectState: KitEffectState, characterId: num
   if (stacks === maximumStacks)
     for (const { amount, attribute } of maximumBonuses)
       buffKitMember(kitEffectState, characterId, { amount, attribute, secondsRemaining: seconds, source: id });
+  return true;
 };

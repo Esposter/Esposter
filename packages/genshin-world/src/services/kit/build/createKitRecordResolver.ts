@@ -142,6 +142,9 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
       record.burstEnergyCost === undefined ? Number.POSITIVE_INFINITY : toParameter(record.burstEnergyCost),
     chargedAttack: toAction(record.chargedAttack),
     chargedAttackStamina: toParameter(record.chargedAttackStamina),
+    ...(record.chargedAttackVariant && {
+      chargedAttackVariant: { action: toAction(record.chargedAttackVariant), checkIsActive: missingKitBehaviour },
+    }),
     elementalBurst: toAction(record.burst),
     ...(record.burstVariant && {
       elementalBurstVariant: { action: toAction(record.burstVariant), checkIsActive: missingKitBehaviour },
@@ -167,6 +170,12 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
     }),
     highPlunge: toAction(record.plunges[KitPlunge.High]),
     lowPlunge: toAction(record.plunges[KitPlunge.Low]),
+    ...(record.plungeVariants && {
+      plungeVariants: record.plungeVariants.map((variantRecord) => ({
+        action: toAction(variantRecord),
+        checkIsActive: missingKitBehaviour,
+      })),
+    }),
     ...(record.moonsignBenediction && {
       moonsignBenediction: { lunarReactionTypes: record.moonsignBenediction.lunarReactionTypes },
     }),

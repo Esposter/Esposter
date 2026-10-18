@@ -53,9 +53,12 @@ export const createKavehKitBehaviour = ({ readSeconds, readStance }: KitRecordRe
       activeCombatant.constellationCount >= 2 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
         ? 0.15
         : 0,
-    getReactionDamageBonus: ({ constellationCount }, reactionType) =>
-      constellationCount >= CONSTELLATION_4 && reactionType === TransformativeReactionType.Bloom
-        ? BLOOM_DAMAGE_BONUS
-        : 0,
+    // Constellation 4: the Bloom reactions Kaveh makes deal 60% more DMG, as the reaction is his own
+    getPartyReactionBonus: (member, { combatant, reactionType }) =>
+      member.characterId === combatant.characterId &&
+      member.constellationCount >= CONSTELLATION_4 &&
+      reactionType === TransformativeReactionType.Bloom
+        ? { damageBonus: BLOOM_DAMAGE_BONUS }
+        : {},
   };
 };

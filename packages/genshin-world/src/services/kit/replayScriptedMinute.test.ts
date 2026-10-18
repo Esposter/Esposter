@@ -26,6 +26,8 @@ import {
   createGroundQuery,
   createLandmarkCollider,
   createSeededRandom,
+  createStamina,
+  LocomotionState,
   STAMINA_MAX,
 } from "genshin-engine";
 import { Vector3 } from "three";
@@ -116,6 +118,10 @@ export const replayScriptedMinute = ({
     enemyTables,
     expiredEffects: [],
     kitEffectState: { effects: [] },
+    locomotionState: LocomotionState.Idle,
+    isSkillHeld: false,
+    hexereiCount: 0,
+    stamina: createStamina(STAMINA_MAX),
     oreStrikes: [],
     outbox: [],
     party,

@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
+import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -30,7 +31,9 @@ vi.mock("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap", async (im
   return {
     WeaponPassiveNameTextIdCreateModuleMap: {
       ...WeaponPassiveNameTextIdCreateModuleMap,
-      GATED: () => ({ getStrikeDamageBonus: (_strike, _enemy, _party, effects) => (effects ? 0.1 : 0) }),
+      GATED: (): WeaponPassiveModule => ({
+        getStrikeDamageBonus: (_strike, _enemy, _party, effects) => (effects ? 0.1 : 0),
+      }),
     },
   };
 });

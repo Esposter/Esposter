@@ -1,5 +1,4 @@
 {
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 10431 } },
@@ -27,5 +26,8 @@
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 6 },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.isAimed": { "cause": "DiffersFromSource" }
+  "chargedAttack.isAimed": { "cause": "DiffersFromSource" },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 10439 } },
+  "hits.soulseekerShell.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.radiantShell.poiseDamage": { "cause": "NoPoiseSource", "value": 0 }
 }

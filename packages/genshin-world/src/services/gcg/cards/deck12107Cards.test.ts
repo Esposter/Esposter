@@ -97,11 +97,11 @@ describe("rain Sword", () => {
       sideIndex: 0,
     };
     const zoneCard = createGcgZoneCard(RAIN_SWORD_ID, rainSword);
-    expect(rainSword.modifyDamageReceived?.(context, 2, zoneCard)).toBe(2);
+    expect(rainSword.modifyDamageReceived?.(context, 2, zoneCard, GcgDamageKind.Physical)).toBe(2);
     expect(zoneCard.usages).toBe(2);
-    expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard)).toBe(2);
+    expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(2);
     expect(zoneCard.usages).toBe(1);
-    expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard)).toBe(2);
+    expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(2);
     expect(zoneCard.usages).toBe(0);
   });
 });

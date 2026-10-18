@@ -31,6 +31,52 @@ const createUntaggedEntries = (path: string, poise: number, gauge?: number): [st
 ];
 
 describe(getWikiKitCandidates, () => {
+  test("keeps a row's poise where its internal cooldown tag is one the enum does not name, and writes no tag", () => {
+    expect.hasAssertions();
+
+    const varesa: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalSkill,
+      properties: [{ internalCooldownTag: "Varesa General", poise: 50, row: 1, title: "Rush DMG" }],
+      revisionId: 1,
+      title: "Varesa",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [varesa],
+      { weaponType: WeaponType.Catalyst },
+      new Map([["skill.hits.0", "Rush DMG"]]),
+    );
+
+    expect(
+      Object.fromEntries(
+        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
+      ),
+    ).toStrictEqual({ "skill.hits.0.poiseDamage": [50] });
+  });
+
+  test("joins a skill hold's hit to its row by the label its multiplier gives, as the skill's hits are", () => {
+    expect.hasAssertions();
+
+    const nahida: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalSkill,
+      properties: [
+        { poise: 75, row: 1, title: "Press DMG" },
+        { poise: 100, row: 2, title: "Hold DMG" },
+      ],
+      revisionId: 1,
+      title: "Nahida",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [nahida],
+      { weaponType: WeaponType.Catalyst },
+      new Map([["skillHolds.0.action.hits.0", "Hold DMG"]]),
+    );
+
+    expect(
+      Object.fromEntries(
+        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
+      ),
+    ).toStrictEqual({ "skillHolds.0.action.hits.0.poiseDamage": [100] });
+  });
   test("joins Xiangling's rows by their titles, the skill's and burst's by the words their table labels share", () => {
     expect.hasAssertions();
 
@@ -77,5 +123,63 @@ describe(getWikiKitCandidates, () => {
       row: 2,
       source: KitSource.Wiki,
     });
+  });
+
+  test("names a skill row's tag by the member its wiki name is given, where the wiki names a character's own", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getWikiKitCandidates(
+      [
+        {
+          combatTalent: CombatTalent.ElementalSkill,
+          properties: [{ internalCooldownTag: "Vesna Elemental Skill Start", poise: 0, row: 1, title: "Skill DMG" }],
+          revisionId: 1,
+          title: "Vesna",
+        },
+      ],
+      { weaponType: WeaponType.Claymore },
+      new Map([["skill.hits.0", "Skill DMG"]]),
+    );
+
+    expect(candidateMap.get("skill.hits.0.internalCooldownTag")?.map(({ value }) => value)).toStrictEqual([
+      InternalCooldownTag.VesnaElementalSkillStart,
+    ]);
+  });
+
+  test("joins a stance's hit and a hold's hit to their rows by the words their labels share, as the skill's own hits are", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getWikiKitCandidates(
+      [
+        {
+          combatTalent: CombatTalent.ElementalSkill,
+          properties: [
+            {
+              gauge: 1,
+              internalCooldownTag: "none",
+              poise: 0,
+              row: 1,
+              title: "Phantasm Performance 1-Hit DMG (Nefer)",
+            },
+            { poise: 20, row: 2, title: "Hold DMG" },
+          ],
+          revisionId: 1,
+          title: "Nefer",
+        },
+      ],
+      { weaponType: WeaponType.Catalyst },
+      new Map([
+        ["stances.phantasmPerformance.chargedAttack.hits.0", "Phantasm Performance 1-Hit DMG (Nefer)"],
+        ["skillHolds.0.action.hits.0", "Hold DMG"],
+      ]),
+    );
+
+    expect(
+      candidateMap.get("stances.phantasmPerformance.chargedAttack.hits.0.poiseDamage")?.map(({ value }) => value),
+    ).toStrictEqual([0]);
+    expect(
+      candidateMap.get("stances.phantasmPerformance.chargedAttack.hits.0.gauge")?.map(({ value }) => value),
+    ).toStrictEqual([1]);
+    expect(candidateMap.get("skillHolds.0.action.hits.0.poiseDamage")?.map(({ value }) => value)).toStrictEqual([20]);
   });
 });

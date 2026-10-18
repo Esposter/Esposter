@@ -5,12 +5,13 @@ interface Props {
   // The Restorative Power the pool holds now, and the most it holds
   poolAmount: number;
   poolMaximum: number;
-  // The title the game shows at the top left
+  // The title the game shows at the top left, and the title of the Worship screen the screen switches to
   title: string;
+  worshipTitle: string;
 }
 
-const { members, poolAmount, poolMaximum, title } = defineProps<Props>();
-const emit = defineEmits<{ close: []; heal: [characterId: number] }>();
+const { members, poolAmount, poolMaximum, title, worshipTitle } = defineProps<Props>();
+const emit = defineEmits<{ close: []; heal: [characterId: number]; worship: [] }>();
 </script>
 
 <template>
@@ -18,6 +19,7 @@ const emit = defineEmits<{ close: []; heal: [characterId: number] }>();
   <div class="blessing-screen">
     <h1 class="title">{{ title }}</h1>
     <button class="close" type="button" @click="emit('close')">×</button>
+    <button class="worship" type="button" @click="emit('worship')">{{ worshipTitle }}</button>
     <p class="pool">{{ Math.floor(poolAmount) }} / {{ poolMaximum }}</p>
     <ul class="members">
       <li v-for="member in members" :key="member.id">
@@ -53,6 +55,13 @@ const emit = defineEmits<{ close: []; heal: [characterId: number] }>();
   top: 6%;
   right: 6%;
   font-size: 2rem;
+}
+
+.worship {
+  position: absolute;
+  top: 6%;
+  right: 16%;
+  font-size: 1.25rem;
 }
 
 .pool {

@@ -12,7 +12,7 @@ Citlali's kit is its record and one behaviour module, `createCitlaliKitBehaviour
 
 - **The strikes land 10 frames after their hitmarks.** gcsim queues each strike with a 10-frame travel, so each lands at its hitmark plus 10, as the bow kits and Ororon do.
 - **Her strikes and charged attack give no poise.** gcsim gives them none, so `citlaliKit.ts` stands them at 0, as Ororon's do. A recording of the game's poise on them would settle it.
-- **Her skill's press enters the Blessing with its points plus 24, for 20 seconds, and her burst gives 24 points.** gcsim queues the entry 18 frames after the press (`skill.go`) and gives the burst's 24 at its delayed start (`burst.go`); the kit applies both when each action starts. With no Opal Fire state, the Blessing holds its points, as gcsim's does.
+- **Her skill's press enters the Blessing with its points plus 24, for 20 seconds, and her burst gives 24 points.** gcsim queues the entry 18 frames after the press (`skill.go`) and gives the burst's 24 at its delayed start (`burst.go`); the kit applies both when each action starts. The burst's 24 go through `generateKitNightsoulPoints`, so the generation event reaches the team's fields as gcsim's `GeneratePoints` raises it. With no Opal Fire state, the Blessing holds its points, as gcsim's does.
 - **Her plunges are the proud group's 5, 6 and 7.** With no gcsim plunge file to time them, the collision, low and high plunge land at the start of their action with a zero animation, as the Ororon kit's do. A recording of her plunges landing at once would settle it; a later landing would need its frames.
 
 ## Key files
