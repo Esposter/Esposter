@@ -1,4 +1,6 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHitbox } from "#src/models/kit/KitHitbox";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
@@ -74,8 +76,42 @@ const DEFAULT_PROJECTION_HITBOX: KitHitbox = {
 // A projection reaches its enemies by its hitbox alone, so its hit has no area of its own
 const PROJECTION_HIT_AREA = { angle: 0, height: 0, radius: 0 };
 
-// Nicole's behaviour: her skill's shield and team ATK buff, and her burst's projections. Her passives wait on their hooks, as
-// Each reads her projections or the party's Elemental Resonance. Her strikes, charged attack, plunges, skill's hit and burst's
+// The first ascension gives the character on the field ATK 300 for as long as her skill's buff on it stands, three seconds
+// After the swap in, at once for a Hexerei, and before the sixth constellation a swap away takes it off the character it
+// Leaves, as gcsim's asc.go does. Her fourth ascension gives her own buff for eight seconds on each elemental hit of hers
+const ASCENSION_1 = 1;
+const ASCENSION_4 = 4;
+const CONSTELLATION_6 = 6;
+const A1_AMOUNT = 300;
+const A1_SOURCE = "nicole-a1";
+const A1_SWAP_SECONDS = 3;
+const A1_SWAP_ID = "nicole-a1-swap";
+const A4_SECONDS = 8;
+
+// Upgrades a member's ascension buff for the seconds given, or, when none is given, for as long as her skill's buff on the
+// Member stands, and never longer than that skill's buff. A repeat upgrade restarts the buff rather than stacking it, as
+// Gcsim's mod with the same key does
+const upgradeAscensionBuff = (kitEffectState: KitEffectState, characterId: number, seconds = Infinity): void => {
+  const skillBuff = kitEffectState.effects.find(
+    (effect): effect is KitBuff =>
+      effect.kind === "buff" && effect.characterId === characterId && effect.source === SKILL_BUFF_SOURCE,
+  );
+  const buffSeconds = Math.min(seconds, skillBuff?.secondsRemaining ?? 0);
+  if (buffSeconds <= 0) return;
+  removeKitEffects(
+    kitEffectState,
+    (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === A1_SOURCE,
+  );
+  buffKitMember(kitEffectState, characterId, {
+    amount: A1_AMOUNT,
+    attribute: Attribute.Attack,
+    secondsRemaining: buffSeconds,
+    source: A1_SOURCE,
+  });
+};
+
+// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, and her first and fourth ascensions.
+// Her constellations wait on hooks the kit has not got yet. Her strikes, charged attack, plunges, skill's hit and burst's
 // Own two hits are her record's alone
 export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {
   const burstProjection = readParameter("burstProjection");
@@ -101,8 +137,31 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
     // Her burst projects a copy of the active character's hit onto the enemy it struck, as gcsim's OnEnemyHit hook
     // Does, at most four times and once each 3 seconds
     onKitEvent: (event, context, combatant) => {
+      if (event.kind === KitEventKind.CharacterSwapped) {
+        if (combatant.ascension < ASCENSION_1) return;
+        const { characterId, previousCharacterId } = event;
+        if (combatant.constellationCount < CONSTELLATION_6 && previousCharacterId !== undefined)
+          removeKitEffects(
+            context.kitEffectState,
+            (effect) =>
+              effect.kind === "buff" && effect.characterId === previousCharacterId && effect.source === A1_SOURCE,
+          );
+        // A swap made before the last one's upgrade lands cancels that upgrade, as gcsim's a1Src token does
+        removeKitEffects(context.kitEffectState, (effect) => effect.kind === "field" && effect.id === A1_SWAP_ID);
+        scheduleKitTask(
+          context.kitEffectState,
+          combatant.characterId,
+          checkIsKitHexerei(characterId) ? 0 : A1_SWAP_SECONDS,
+          (tick) => upgradeAscensionBuff(tick.kitEffectState, characterId),
+          { id: A1_SWAP_ID },
+        );
+        return;
+      }
       if (event.kind !== KitEventKind.EnemyHit || event.striker.characterId !== context.activeCombatant.characterId)
         return;
+      // Her fourth ascension upgrades her own buff on each elemental hit of the active character, as gcsim's a4Init does
+      if (combatant.ascension >= ASCENSION_4 && event.element !== undefined)
+        upgradeAscensionBuff(context.kitEffectState, combatant.characterId, A4_SECONDS);
       const burst = findKitStatus(context.kitEffectState.effects, combatant.characterId, BURST_STATUS_ID);
       if (!burst || burst.secondsRemaining <= 0 || (burst.stacks ?? 0) >= PROJECTION_LIMIT) return;
       if (!startKitCooldown(context.kitEffectState, combatant.characterId, PROJECTION_ICD_ID, PROJECTION_ICD_SECONDS))
@@ -141,7 +200,11 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
       // Revelation: Uncreated Light shields the team with a Pyro shield scaled by her attack, and gives each deployed member an
       // ATK buff scaled by her attack, capped at the skill's maximum
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        removeKitEffects(kitEffectState, (effect) => effect.kind === "buff" && effect.source === SKILL_BUFF_SOURCE);
+        // Her skill takes off the buff it gave the team before and every ascension buff, as gcsim's cast does
+        removeKitEffects(
+          kitEffectState,
+          (effect) => effect.kind === "buff" && (effect.source === SKILL_BUFF_SOURCE || effect.source === A1_SOURCE),
+        );
         scheduleKitTask(kitEffectState, combatant.characterId, SKILL_SNAPSHOT_SECONDS, (tick) => {
           castKitShield(tick.kitEffectState, combatant.characterId, {
             element: Element.Pyro,
