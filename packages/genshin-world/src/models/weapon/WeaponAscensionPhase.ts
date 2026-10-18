@@ -1,20 +1,13 @@
+import type { AscensionCost } from "#src/models/character/AscensionCost";
 import type { AscensionPhase } from "#src/models/character/AscensionPhase";
-import type { ItemCount } from "#src/models/inventory/ItemCount";
 
+import { ascensionCostSchema } from "#src/models/character/AscensionCost";
 import { ascensionPhaseSchema } from "#src/models/character/AscensionPhase";
-import { itemCountSchema } from "#src/models/inventory/ItemCount";
-import { z } from "zod";
+import type { z } from "zod";
 
-// An ascension phase of a weapon: its attributes and cap as any phase has them, and what entering it costs, the Mora,
-// The items and the Adventure Rank the player needs
-export interface WeaponAscensionPhase extends AscensionPhase {
-  coinCost: number;
-  costItems: ItemCount[];
-  requiredPlayerLevel: number;
-}
+// An ascension phase of a weapon: its attributes and cap as any phase has them, and what entering it costs
+export type WeaponAscensionPhase = AscensionPhase & AscensionCost;
 
-export const weaponAscensionPhaseSchema = ascensionPhaseSchema.extend({
-  coinCost: z.int().nonnegative(),
-  costItems: z.array(itemCountSchema),
-  requiredPlayerLevel: z.int().nonnegative(),
-}) satisfies z.ZodType<WeaponAscensionPhase>;
+export const weaponAscensionPhaseSchema = ascensionPhaseSchema.extend(
+  ascensionCostSchema.shape,
+) satisfies z.ZodType<WeaponAscensionPhase>;
