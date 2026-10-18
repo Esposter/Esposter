@@ -1,4 +1,5 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitStrike } from "#src/models/kit/KitStrike";
@@ -12,6 +13,7 @@ export const getDeployedStrikeBonuses = (
   enemy: Enemy,
   party: Party,
   effects: readonly KitEffect[],
+  characterIdCombatantMap: ReadonlyMap<number, Combatant>,
 ) => {
   const bonuses = {
     additiveBaseDamageBonus: 0,
@@ -22,7 +24,7 @@ export const getDeployedStrikeBonuses = (
   };
   for (const member of deployedCombatants) {
     if (member.characterId === strike.combatant.characterId) continue;
-    const bonus = member.kit.getPartyStrikeBonus?.(member, strike, enemy, party, effects);
+    const bonus = member.kit.getPartyStrikeBonus?.(member, strike, enemy, party, effects, characterIdCombatantMap);
     bonuses.additiveBaseDamageBonus += bonus?.additiveBaseDamageBonus ?? 0;
     bonuses.criticalDamageBonus += bonus?.criticalDamageBonus ?? 0;
     bonuses.criticalRateBonus += bonus?.criticalRateBonus ?? 0;

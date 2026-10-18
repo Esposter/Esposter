@@ -455,6 +455,16 @@ describe(strikeKitEnemies, () => {
     expect(getPartyStrikeBonus.mock.calls.map(([handed]) => handed.characterId)).toStrictEqual([OTHER_CHARACTER_ID]);
   });
 
+  test("the party strike bonus is handed the team's built combatants, to read a member's buffed attributes from", () => {
+    expect.hasAssertions();
+    const getPartyStrikeBonus = vi.fn<NonNullable<Kit["getPartyStrikeBonus"]>>(() => ({}));
+    const member = createMember(getPartyStrikeBonus);
+    takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const characterIdCombatantMap = getPartyStrikeBonus.mock.calls[0][5];
+
+    expect(characterIdCombatantMap.get(OTHER_CHARACTER_ID)).toBe(member);
+  });
+
   const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 2, radius: 3 };
 
   test("a single-target hit strikes only the enemy at its index among those its area reaches", () => {

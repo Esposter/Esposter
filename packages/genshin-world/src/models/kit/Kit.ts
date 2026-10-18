@@ -97,14 +97,16 @@ export interface Kit {
   // Given the enemy as it stands, the deployed team and the effects on it
   getStrikeDefenceIgnored?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
-  // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team and the effects on
-  // It. A member's own strikes are priced by its own hooks, not this one. The defence it ignores joins the hit's
+  // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team, the effects on
+  // It and the team's built combatants by id, which a member's current attributes are read from. A member's own strikes
+  // Are priced by its own hooks, not this one. The defence it ignores joins the hit's
   getPartyStrikeBonus?: (
     member: Combatant,
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
     effects: readonly KitEffect[],
+    characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   ) => {
     additiveBaseDamageBonus?: number;
     criticalDamageBonus?: number;
