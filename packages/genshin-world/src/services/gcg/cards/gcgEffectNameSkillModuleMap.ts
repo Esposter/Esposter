@@ -22,6 +22,7 @@ import { hide } from "#src/services/gcg/cards/hide";
 import { icyPaws } from "#src/services/gcg/cards/icyPaws";
 import { illusoryTorrent } from "#src/services/gcg/cards/illusoryTorrent";
 import { infusedStonehide } from "#src/services/gcg/cards/infusedStonehide";
+import { kamisatoArtSoumetsu } from "#src/services/gcg/cards/kamisatoArtSoumetsu";
 import { lightningFang } from "#src/services/gcg/cards/lightningFang";
 import { midnightPhantasmagoria } from "#src/services/gcg/cards/midnightPhantasmagoria";
 import { mirrorReflectionOfDoom } from "#src/services/gcg/cards/mirrorReflectionOfDoom";
@@ -48,6 +49,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_11032", frostgnaw],
   ["Char_Skill_11033", glacialWaltz],
   ["Char_Skill_11042", chonghuasLayeredFrost],
+  ["Char_Skill_11053", kamisatoArtSoumetsu],
   ["Char_Skill_12022", fatalRainscreen],
   ["Char_Skill_12023", raincutter],
   ["Char_Skill_12032", mirrorReflectionOfDoom],
