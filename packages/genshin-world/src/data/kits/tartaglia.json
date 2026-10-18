@@ -82,7 +82,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.riptideBurst.hitmarkFrames": { "cause": "DiffersFromSource", "value": 5 },
   "hits.riptideBurst.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 3331 } },
   "hits.riptideBurst.poiseDamage": { "cause": "Unclassified", "value": 60 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 27 },

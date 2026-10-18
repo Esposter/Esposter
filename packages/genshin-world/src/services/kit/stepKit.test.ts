@@ -161,7 +161,7 @@ describe(stepKit, () => {
     expect(step(heldInput)).toBe(TRAVELER_KIT.chargedAttack);
   });
 
-  test("holds a charged attack at its stamina times the kit's multiplier, so none starts it on an empty pool", () => {
+  test("a charged attack costing none needs some stamina in the pool, so none starts it on an empty pool", () => {
     expect.hasAssertions();
 
     const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
@@ -175,8 +175,26 @@ describe(stepKit, () => {
     step({ isAttackHeld: true, isAttackPressed: true });
     for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
 
-    expect(step({ isAttackHeld: true })).toBe(kit.chargedAttack);
+    expect(step({ isAttackHeld: true })).toBeUndefined();
     expect(stamina.value).toBe(0);
+  });
+
+  test("a charged attack costing none starts on a pool that holds some stamina, and spends none of it", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    stamina.value = 1;
+    const context = createKitTestContext(TRAVELER_COMBATANT);
+    const step = (input: Partial<KitInput>) =>
+      stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
+    step({ isAttackHeld: true, isAttackPressed: true });
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
+
+    expect(step({ isAttackHeld: true })).toBe(kit.chargedAttack);
+    expect(stamina.value).toBe(1);
   });
 
   test("starts a skill only off its cooldown", () => {
@@ -789,5 +807,64 @@ describe(stepKit, () => {
       step({ locomotionState: LocomotionState.Dash }),
       step({ locomotionState: LocomotionState.Jump }),
     ]).toStrictEqual([undefined, undefined]);
+  });
+
+  // A kit whose skill runs for two steps, so a jump entered on its first step is the one its end starts
+  const createSkillJumpFixture = (jump: KitAction) =>
+    createFixture({ ...TRAVELER_KIT, elementalSkill: { ...TRAVELER_KIT.elementalSkill, seconds: 0.2 }, jump });
+
+  test("holds a jump entered during a skill that has not run its length, starting none at once", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+
+    expect(step({ locomotionState: LocomotionState.Jump })).toBeUndefined();
+  });
+
+  test("starts a jump entered during a skill on the step the skill's length elapses", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+
+    expect(step({ locomotionState: LocomotionState.Jump })).toBe(jump);
+  });
+
+  test("drops a queued jump the body has glided into as the skill ends, as a jump starts only on foot or in a movement state", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+
+    expect(step({ locomotionState: LocomotionState.Glide })).toBeUndefined();
+  });
+
+  test("clears a queued jump its start gate refuses as the skill ends, starting none after", () => {
+    expect.hasAssertions();
+
+    let isStartAllowed = false;
+    const jump: KitAction = {
+      canStart: () => isStartAllowed,
+      hits: [],
+      seconds: 0.5,
+      targetingArea: STRIKE_TARGETING_AREA,
+    };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+    const refused = step({ locomotionState: LocomotionState.Jump });
+    isStartAllowed = true;
+
+    expect([refused, step({ locomotionState: LocomotionState.Jump })]).toStrictEqual([undefined, undefined]);
   });
 });

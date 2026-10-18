@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -12,7 +12,7 @@ const ECHOING_BALLAD_COOLDOWN_ID = "echoingBallad";
 // Skyward Harp's Echoing Ballad at its rank: its wielder's CRIT DMG is raised by the rank's percentage. A hit of the wielder's
 // Own attack has the rank's chance to queue a Physical small AoE at the rank's multiplier of ATK, once every rank's cooldown in seconds.
 // A passive's own queued hit has no attack tag, so it queues nothing
-export const createEchoingBalladPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createEchoingBalladPassiveModule = (params: number[]): PassiveModule => {
   const criticalDamage = takeOne(params, 0);
   const chance = takeOne(params, 1);
   const talentMultiplier = takeOne(params, 2);

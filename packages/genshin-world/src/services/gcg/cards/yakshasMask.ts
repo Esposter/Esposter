@@ -2,10 +2,11 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
+import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
 import { takeOne } from "@esposter/shared";
+import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 
-export const YAKSHAS_MASK_ID = 115_041;
 const YAKSHAS_MASK_ROUNDS = 2;
 // Its usages are the Lemniscatic Wind Cycling reductions each attachment of the mask allows Conqueror of Evil: Guardian Yaksha
 const YAKSHAS_MASK_USAGES = 2;
@@ -27,10 +28,10 @@ export const yakshasMask: GcgCardModule = {
   onCostPaid: ({ duel, sideIndex }) => {
     takeOne(duel.sides, sideIndex).usedCardIds.push(YAKSHAS_MASK_ID);
   },
-  reduceCost: ({ characterIndex, duel, sideIndex }, subject) => {
-    const side = takeOne(duel.sides, sideIndex);
+  reduceCost: (context, subject) => {
+    const side = takeOne(context.duel.sides, context.sideIndex);
     return checkIsGcgSwitchCost(subject) &&
-      characterIndex === side.activeIndex &&
+      checkIsGcgActiveHolder(context) &&
       !side.usedCardIds.includes(YAKSHAS_MASK_ID)
       ? { count: 1 }
       : undefined;

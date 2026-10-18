@@ -9,6 +9,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 export const IFA_CHARACTER_ID = 10_000_113;
 
@@ -17,14 +18,29 @@ const CONSTELLATION_4_ELEMENTAL_MASTERY = 100;
 const CONSTELLATION_4_SECONDS = 15;
 // Her Nightsoul points are set to 80 as her blessing is entered, as gcsim (MIT) ifa/skill.go enterNightsoul sets them
 const NIGHTSOUL_POINTS = 80;
-// Her Rescue Essentials, her A1, add to the party's Swirl and Electro-Charged DMG 1.5% a point, and to its Lunar-Charged DMG
-// 0.2% a point, up to 150 points, as the proud skill 1132101's record gives the first two and the description (TextMap
-// 2399084529) the last
+// Her Rescue Essentials, her A1, are the Nightsoul points of her whole party, up to 150, held while her blessing lasts, as
+// The wiki's passive text and gcsim's team sum give them. Each one adds to the party's Swirl and Electro-Charged DMG 1.5%,
+// And to its Lunar-Charged DMG 0.2%, as the proud skill 1132101's record gives the first two and the description (TextMap
+// 2399084529) the last. At Constellation 2 the points above 60 count three times over, and the cap is 50 higher
 const RESCUE_ESSENTIALS_CAP = 150;
 const RESCUE_ESSENTIALS_SWIRL_ELECTRO_CHARGED_DAMAGE_BONUS = 0.015;
 const RESCUE_ESSENTIALS_LUNAR_CHARGED_DAMAGE_BONUS = 0.002;
+const RESCUE_ESSENTIALS_CONSTELLATION_2_THRESHOLD = 60;
+const RESCUE_ESSENTIALS_CONSTELLATION_2_MULTIPLIER = 3;
+const RESCUE_ESSENTIALS_CONSTELLATION_2_CAP_INCREASE = 50;
 // Her blessing drains 0.8 points every six frames, eight a second, as gcsim ifa/skill.go nightsoulPointReduceFunc does
 const NIGHTSOUL_DRAIN_PER_SECOND = 8;
+
+// The Rescue Essentials the party's points give her: from Constellation 2, the points above 60 count three times over, and
+// The cap is 50 higher, as gcsim's c2BonusPoints and c2CapIncrease (cons.go, lines 29 to 45) give them
+const countRescueEssentials = (constellationCount: number, partyPoints: number): number => {
+  if (constellationCount < 2) return Math.min(partyPoints, RESCUE_ESSENTIALS_CAP);
+  const counted =
+    partyPoints +
+    Math.max(partyPoints - RESCUE_ESSENTIALS_CONSTELLATION_2_THRESHOLD, 0) *
+      RESCUE_ESSENTIALS_CONSTELLATION_2_MULTIPLIER;
+  return Math.min(counted, RESCUE_ESSENTIALS_CAP + RESCUE_ESSENTIALS_CONSTELLATION_2_CAP_INCREASE);
+};
 
 // Ifa's behaviour: her skill's press enters the Nightsoul Blessing with its points, which drain eight a second, or leaves
 // It when she is in it, as gcsim's Skill does. Not built: her Tonic Shot, healing, sedation marks, A4 and
@@ -33,12 +49,12 @@ const NIGHTSOUL_DRAIN_PER_SECOND = 8;
 // Sedation Field's hit, and her low and collision plunges are her record's alone, and her high plunge is borrowed as the
 // Page records. The low plunge, which gcsim plays only after the Nightsoul Blessing ends, is not gated
 // Constellation 1 needs Supporting Fire, the normal attacks of Nightsoul's Blessing, which the state does not give yet
-// Constellation 2 needs the party's Nightsoul points above 60, which the kit does not read, and the Rescue Essentials, which A1 builds
+// Constellation 2 counts her Rescue Essentials, as gcsim's cons.go gives it, and its in-game text is not read: the wiki's
+// Constellation table lists only levels 1, 3 and 6, and the dump's talent rows, keyed by obfuscated fields, were not decoded
 // Constellation 4's wind current lasts three seconds more, which waits on a restraining field the burst lacks
 // Constellation 6 needs the Hold of Supporting Fire and its Nightsoul's Blessing turns, which the kit does not build
-// Her A1 is the party reaction hook's, read from the points she holds, unlike gcsim's sum over the team's points, as the
-// Description says. The Stellar Swirl value is not built, as the record gives it zero, and nearby is not modelled, as gcsim
-// Does not model it either
+// Her A1 is the party reaction hook's, and its Rescue Essentials last only while her blessing does. The Stellar Swirl value
+// Is not built, as the record gives it zero, and nearby is not modelled, as gcsim does not model it either
 export const createIfaKitBehaviour = (): KitBehaviour => ({
   burst: {
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {
@@ -64,10 +80,14 @@ export const createIfaKitBehaviour = (): KitBehaviour => ({
     },
   },
   getPartyReactionBonus: (member, { reactionType }, context) => {
-    if (member.ascension < 1) return {};
-    const points = Math.min(
-      countKitResource(context.kitEffectState.effects, member.characterId, NIGHTSOUL_POINTS_ID),
-      RESCUE_ESSENTIALS_CAP,
+    const { effects } = context.kitEffectState;
+    if (member.ascension < 1 || !hasKitNightsoulBlessing(effects, member.characterId)) return {};
+    const points = countRescueEssentials(
+      member.constellationCount,
+      getDeployedCharacterIds(context.party).reduce(
+        (total, characterId) => total + countKitResource(effects, characterId, NIGHTSOUL_POINTS_ID),
+        0,
+      ),
     );
     if (reactionType === TransformativeReactionType.Swirl || reactionType === TransformativeReactionType.ElectroCharged)
       return { damageBonus: points * RESCUE_ESSENTIALS_SWIRL_ELECTRO_CHARGED_DAMAGE_BONUS };

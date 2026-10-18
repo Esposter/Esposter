@@ -7,6 +7,8 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 // Action, for the passives that make it so
 export interface GcgSkillModule {
   afterDamage?: (context: GcgEffectContext) => void;
+  // A passive hears its character take DMG and survive it, once the damage has landed, its skill named in the context
+  afterDamageTaken?: (context: GcgEffectContext) => void;
   afterSkillUsed?: (context: GcgEffectContext) => void;
   getDamage?: (context: GcgEffectContext) => GcgDamage;
   getStandbyPiercing?: (context: GcgEffectContext) => number;

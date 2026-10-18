@@ -1,5 +1,5 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
-import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { createAfterSkillAttackDamageSetModule } from "#src/services/artifact/sets/createAfterSkillAttackDamageSetModule";
@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 // Martial Artist's two-piece bonus, its amount of Normal and Charged Attack DMG in the table's first param, and
 // Its four-piece bonus, which gives the same two for the seconds in the table's first param after the Elemental Skill, at
 // The amount in its third. The second param, 1, is left unread, as a use restarts the buff rather than stacking it
-export const createMartialArtistSetModule = (bonus: ArtifactSetBonus): ArtifactSetModule => {
+export const createMartialArtistSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const { params } = bonus;
   if (bonus.pieceCount === 2)
     return createAttributePassiveSetModule(

@@ -1,5 +1,4 @@
 {
-  "burst.animationFrames": { "cause": "DiffersFromSource", "value": 101 },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 5 },
   "burst.hits.1.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 20 } },
   "burst.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 98 },

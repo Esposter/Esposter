@@ -12,6 +12,7 @@ import type { KitEnergyParticleCollectedEvent } from "#src/models/kit/KitEnergyP
 import type { KitFallRefusedEvent } from "#src/models/kit/KitFallRefusedEvent";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 import type { KitMoraPickedUpEvent } from "#src/models/kit/KitMoraPickedUpEvent";
+import type { KitNightsoulBurstEvent } from "#src/models/kit/KitNightsoulBurstEvent";
 import type { KitNightsoulPointsConsumedEvent } from "#src/models/kit/KitNightsoulPointsConsumedEvent";
 import type { KitNightsoulPointsGainedEvent } from "#src/models/kit/KitNightsoulPointsGainedEvent";
 import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
@@ -40,6 +41,7 @@ export type KitEvent =
   | KitFallRefusedEvent
   | KitHealthChangedEvent
   | KitMoraPickedUpEvent
+  | KitNightsoulBurstEvent
   | KitNightsoulPointsConsumedEvent
   | KitNightsoulPointsGainedEvent
   | KitNormalAttackLandedEvent

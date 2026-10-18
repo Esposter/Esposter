@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -8,7 +8,7 @@ import { takeOne } from "@esposter/shared";
 // Seasoned Symphony at its rank: the wielder's ATK rises by the rank's percentage, and by the second percentage more while
 // It is off-field. A heal the wielder initiates gives the wielder and the character it healed Sweet Echoes, the third
 // Percentage of ATK for the rank's seconds, which a heal triggers whether or not the wielder is on the field
-export const createSeasonedSymphonyPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createSeasonedSymphonyPassiveModule = (params: number[]): PassiveModule => {
   const attackPercent = takeOne(params, 0);
   const offFieldAttackPercent = takeOne(params, 1);
   const sweetEchoesAttackPercent = takeOne(params, 2);

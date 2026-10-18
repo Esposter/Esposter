@@ -5,9 +5,8 @@ import { Element } from "#src/models/Element";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
 import { takeOne } from "@esposter/shared";
+import { ELECTRO_INFUSION_ID, LIGHTNING_STILETTO_ID } from "#src/services/gcg/cards/constants";
 
-const ELECTRO_INFUSION_ID = 114_032;
-const LIGHTNING_STILETTO_ID = 114_031;
 const STELLAR_RESTORATION_DAMAGE = 3;
 
 // The character using the skill gains Electro Infusion

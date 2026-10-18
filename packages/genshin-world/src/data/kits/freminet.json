@@ -8,7 +8,6 @@
   },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.animationFrames": { "cause": "DiffersFromSource", "value": 46 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8532 } },
   "hits.spiritbreathThorn.area": {

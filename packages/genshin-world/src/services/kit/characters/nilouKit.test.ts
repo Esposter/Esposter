@@ -370,4 +370,85 @@ describe(createNilouKitBehaviour, () => {
       atFortyThousand: getBonus(4, 40_000, DendroCoreKind.Bountiful),
     }).toStrictEqual({ atAscension3: 0, atFortyThousand: 0.9, atThreshold: 0, bloomCore: 0, capped: 4 });
   });
+
+  test("constellation 2 lowers an enemy's Hydro RES by 35% for ten seconds as a member under the Bounty deals Hydro DMG", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(2, 1);
+    const context = createTeamContext(combatant, [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro)]);
+    landThirdStep(context);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    NILOU_KIT.onKitEvent?.(
+      {
+        element: Element.Hydro,
+        enemy,
+        kind: KitEventKind.EnemyHit,
+        striker: createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro),
+      },
+      context,
+      combatant,
+    );
+
+    expect(enemy.statuses).toStrictEqual([
+      {
+        damageTakenBonus: 0,
+        id: "nilou-c2-hydro",
+        resistanceReduction: { [Element.Hydro]: 0.35 },
+        secondsRemaining: 10,
+      },
+    ]);
+  });
+
+  test("constellation 2 lowers an enemy's Dendro RES by 35% for ten seconds as a Bloom or Lunar-Bloom reaction triggers on it", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(2, 1);
+    const context = createTeamContext(combatant, [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro)]);
+    const bloomEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const lunarBloomEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const reactionTriggered = (enemy: typeof bloomEnemy, reactionType: ReactionType): KitEvent => ({
+      enemy,
+      kind: KitEventKind.ReactionTriggered,
+      reactions: [{ reactionType }],
+      striker: createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro),
+    });
+    NILOU_KIT.onKitEvent?.(reactionTriggered(bloomEnemy, ReactionType.Bloom), context, combatant);
+    NILOU_KIT.onKitEvent?.(reactionTriggered(lunarBloomEnemy, ReactionType.LunarBloom), context, combatant);
+
+    const dendroStatus = {
+      damageTakenBonus: 0,
+      id: "nilou-c2-dendro",
+      resistanceReduction: { [Element.Dendro]: 0.35 },
+      secondsRemaining: 10,
+    };
+    expect([bloomEnemy.statuses, lunarBloomEnemy.statuses]).toStrictEqual([[dendroStatus], [dendroStatus]]);
+  });
+
+  test("constellation 1 cuts no enemy's RES, from a Hydro hit under the Bounty or a Bloom reaction", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(1, 1);
+    const context = createTeamContext(combatant, [createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro)]);
+    landThirdStep(context);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    NILOU_KIT.onKitEvent?.(
+      {
+        element: Element.Hydro,
+        enemy,
+        kind: KitEventKind.EnemyHit,
+        striker: createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro),
+      },
+      context,
+      combatant,
+    );
+    NILOU_KIT.onKitEvent?.(
+      {
+        enemy,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ reactionType: ReactionType.Bloom }],
+        striker: createMember(ALHAITHAM_CHARACTER_ID, Element.Dendro),
+      },
+      context,
+      combatant,
+    );
+
+    expect(enemy.statuses).toStrictEqual([]);
+  });
 });

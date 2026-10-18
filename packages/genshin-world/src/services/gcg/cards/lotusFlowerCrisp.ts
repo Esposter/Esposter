@@ -2,8 +2,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
+import { LOTUS_FLOWER_CRISP_ID } from "#src/services/gcg/cards/constants";
 
-const LOTUS_FLOWER_CRISP_ID = 333_003;
 const DAMAGE_REDUCTION = 3;
 
 // Lotus Flower Crisp, a food: the target character takes 3 less DMG the next time, and the food is held as a status until the

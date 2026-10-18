@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -11,7 +11,7 @@ const PRESS_THE_ADVANTAGE_SOURCE = "pressTheAdvantage";
 // Press the Advantage at its rank: defeating an opponent its wielder struck raises the wielder's ATK by the rank's percentage
 // For the rank's seconds, up to three stacks. Each stack runs on its own timer, so each holds a source of its own, and a
 // Defeat at the cap adds none
-export const createPressTheAdvantagePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createPressTheAdvantagePassiveModule = (params: number[]): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   return {

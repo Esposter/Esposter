@@ -3,7 +3,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { takeOne } from "@esposter/shared";
 
-export const EMBLEM_OF_SEVERED_FATE_ID = 312_008;
 const EMBLEM_OF_SEVERED_FATE_BONUS = 2;
 
 // Emblem of Severed Fate, an artifact on a character: once a round her Elemental Burst deals 2 more DMG, and after another
