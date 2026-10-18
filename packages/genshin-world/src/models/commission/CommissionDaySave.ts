@@ -5,13 +5,12 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // The day's commissions as the save holds them: the four dealt, each unique by its id, the moment they were dealt as an
-// ISO string, and the ids of those claimed so far, each unique and at most a day's four. Whether Katheryne's bonus is
-// Claimed is absent from a save written before she gave it, which `toCommissionDay` reads from the four claims
+// ISO string, the ids of those claimed so far, each unique and at most a day's four, and whether Katheryne's bonus is claimed
 export const commissionDaySaveSchema = z.object({
   claimedCommissionIds: createUniqueArraySchema(z.int().positive()).max(COMMISSIONS_PER_DAY),
   dealtAt: z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH),
   dealtCommissions: createUniqueArraySchema(commissionProgressSchema, "commissionId").max(COMMISSIONS_PER_DAY),
-  isBonusClaimed: z.boolean().optional(),
+  isBonusClaimed: z.boolean(),
 });
 
 export type CommissionDaySave = z.infer<typeof commissionDaySaveSchema>;

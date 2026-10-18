@@ -101,6 +101,9 @@ describe("genshinSaveSchema", () => {
           ]),
         ),
       },
+      characterTrials: {
+        claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => maxNumber - index),
+      },
       characters: Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => ({
         artifacts: Object.values(ArtifactSlot).map((slot) => ({
           experience: maxNumber,
@@ -148,6 +151,7 @@ describe("genshinSaveSchema", () => {
           count: maxNumber,
           dealtRank: maxNumber,
         })),
+        isBonusClaimed: false,
       },
       companionshipExp: Object.fromEntries(
         Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
