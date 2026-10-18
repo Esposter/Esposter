@@ -7,7 +7,6 @@ import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { ComputedRef, Ref } from "vue";
 
-import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { advanceCommissionForQuest } from "#src/services/commission/advanceCommissionForQuest";
 import { computeCommissionDay } from "#src/services/commission/computeCommissionDay";
 import { computeEncounterPointOverflow } from "#src/services/commission/computeEncounterPointOverflow";
@@ -107,10 +106,10 @@ export const useWorldCommissions = ({
     const halfPoints = getQuestEncounterHalfPoints(quest.kind);
     if (halfPoints > 0) earnEncounterHalfPoints(halfPoints);
   });
-  // An item collected in the world earns the half point the wiki gives it, and none where the wiki gives none
-  events.on("questEvent", ({ kind, targetId }) => {
-    if (kind !== QuestObjectiveKind.Collect) return;
-    const halfPoints = getCollectedEncounterHalfPoints(targetId);
+  // A gathering point picked up earns the half point the wiki gives its item, and none where the wiki gives none
+  // A chest's item or a dropped one raises only the quest event, so it earns none here
+  events.on("gatheringPickedUp", (itemId) => {
+    const halfPoints = getCollectedEncounterHalfPoints(itemId);
     if (halfPoints > 0) earnEncounterHalfPoints(halfPoints);
   });
   // An Oculus found for the first time earns its half point

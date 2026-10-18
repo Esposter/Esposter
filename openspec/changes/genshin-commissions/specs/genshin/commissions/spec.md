@@ -163,16 +163,21 @@ Encounter Points an earn would hold past the storage SHALL be kept as Long-Term 
 
 ### Requirement: Collected Items And Oculi Earn Half Points
 
-A collected Crimson Agate, Lumenspar or Spirit Carp SHALL earn a half Encounter Point, and an Oculus SHALL earn one on its first collection. A Mnemonic Cluster and a Plumes of Purifying Light SHALL earn none.
+A Crimson Agate, Lumenspar or Spirit Carp picked up at a gathering point SHALL earn a half Encounter Point, and an Oculus SHALL earn one on its first collection. A Mnemonic Cluster and a Plumes of Purifying Light SHALL earn none, and an item a chest or a dropped item gives SHALL earn none.
 
 #### Scenario: a collected Crimson Agate earns a half Encounter Point
 
-- **WHEN** a Crimson Agate is collected
+- **WHEN** a Crimson Agate is picked up at a gathering point
 - **THEN** a half Encounter Point is held
 
 #### Scenario: a collected Mnemonic Cluster earns none
 
 - **WHEN** a Mnemonic Cluster is collected
+- **THEN** no Encounter Point is earned
+
+#### Scenario: a Crimson Agate held by a chest earns none
+
+- **WHEN** a chest gives a Crimson Agate
 - **THEN** no Encounter Point is earned
 
 #### Scenario: an Oculus found the first time earns a half Encounter Point

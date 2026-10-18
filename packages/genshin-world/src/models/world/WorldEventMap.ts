@@ -18,6 +18,8 @@ export interface WorldEventMap {
   defeatEnemy: [Enemy];
   // A quest's progress moving from its progress before to the one that finishes it, emitted once on that move
   finishQuest: [quest: Quest, progress: QuestProgress, nextProgress: QuestProgress];
+  // A gathering point picked up into the bag, by the id of the item it gave: the only pick up that earns a collected item
+  gatheringPickedUp: [itemId: string];
   // The first collection of an Oculus, which the save keeps as found
   oculusFound: [];
   parentQuestFinish: [];
