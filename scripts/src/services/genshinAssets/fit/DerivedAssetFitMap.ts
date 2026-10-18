@@ -20,8 +20,14 @@ export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAs
   [DerivedAssetComponent.Fontaine]: (only = []) =>
     runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Fontaine, { x: 1554.31, z: -5721.47 }) }, only),
   [DerivedAssetComponent.Hud]: fitHud,
-  [DerivedAssetComponent.Inazuma]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Inazuma, { x: -4942.86, z: 3135.69 }) }, only),
+  [DerivedAssetComponent.Inazuma]: (only, { isDryRun }) =>
+    runFits(
+      {
+        ground: () => fitRegionGround(DerivedAssetComponent.Inazuma, { x: -4942.86, z: 3135.69 }),
+        waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Inazuma, { isDryRun }),
+      },
+      only,
+    ),
   [DerivedAssetComponent.Liyue]: (only, { isDryRun }) =>
     runFits(
       {
@@ -40,13 +46,25 @@ export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAs
       },
       only,
     ),
-  [DerivedAssetComponent.Natlan]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Natlan, { x: -4568.99, z: -10185.85 }) }, only),
+  [DerivedAssetComponent.Natlan]: (only, { isDryRun }) =>
+    runFits(
+      {
+        ground: () => fitRegionGround(DerivedAssetComponent.Natlan, { x: -4568.99, z: -10185.85 }),
+        waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Natlan, { isDryRun }),
+      },
+      only,
+    ),
   [DerivedAssetComponent.NodKrai]: (only = []) =>
     runFits({ ground: () => fitRegionGround(DerivedAssetComponent.NodKrai, { x: -252.53, z: -10724.89 }) }, only),
   [DerivedAssetComponent.Snezhnaya]: (only = []) =>
     runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Snezhnaya, { x: 3750, z: -10730 }) }, only),
-  [DerivedAssetComponent.Sumeru]: (only = []) =>
-    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Sumeru, { x: -2306.31, z: -4053.85 }) }, only),
+  [DerivedAssetComponent.Sumeru]: (only, { isDryRun }) =>
+    runFits(
+      {
+        ground: () => fitRegionGround(DerivedAssetComponent.Sumeru, { x: -2306.31, z: -4053.85 }),
+        waterfalls: () => fitWaterfallSheets(DerivedAssetComponent.Sumeru, { isDryRun }),
+      },
+      only,
+    ),
   [DerivedAssetComponent.Windrise]: fitWindriseScene,
 };

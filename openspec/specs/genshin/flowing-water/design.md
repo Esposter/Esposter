@@ -30,7 +30,7 @@ flowchart TD
 
 **Fitted and drawn:** Liyue's rivers, each read off its water surface (`Area_Ly_Water_*`) as the centreline, width and level of its course into its region data's `rivers`. A surface no longer than twice its width is a pond and has no course, and a course breaks where its surface has no vertices for more than four metres rather than bridging the hole. `World/Rivers` draws each course as a ribbon in the water's material, mounted with the still water, and leaves out the rivers of a region whose game export stands in. A river draws still: its flow is not read yet.
 
-**Not yet:** the rivers of the regions other than Liyue, since no other region's witness holds a water surface, a river's flow, the falls outside the capitals' witnesses, and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
+**Not yet:** the rivers of the regions other than Liyue, since no other region's witness holds a water surface, a river's flow, the falls outside the capitals (their fit entries are in, and their data waits on the fit run), and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
 
 ## Key files
 
