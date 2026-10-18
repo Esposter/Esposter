@@ -10,7 +10,7 @@ export const reputationCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish Mondstadt's Reputation from the dump to the game data: its levels and rewards, its requests, its exploration thresholds and its weekly bounties",
+      "Publish Mondstadt's Reputation from the dump to the game data: its levels and rewards, its requests, its Reputation quests, its exploration thresholds and its weekly bounties",
     name: "reputation",
   },
   run: async ({ args }) => {

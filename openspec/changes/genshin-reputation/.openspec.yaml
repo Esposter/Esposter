@@ -17,4 +17,7 @@ x-touches:
     "scripts/src/services/genshinText/buildQuests.ts",
     "scripts/src/services/genshinText/constants.ts",
     "scripts/src/services/genshinAssets/enemies/**",
+    "scripts/src/models/genshinAssets/reputation/**",
+    "scripts/src/services/genshinAssets/reputation/**",
+    "scripts/src/services/genshinAssets/commands/reputationCommand.ts",
   ]

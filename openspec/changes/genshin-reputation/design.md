@@ -46,7 +46,7 @@ flowchart TD
 
 ## Data and measures
 
-- **Read from the game's tables, still to read:** `ReputationQuestExcelConfigData`, the Reputation quests with their rewards, once the quest reader carries them. Its rows name a quest by `parentQuestId` and a reward, but not the quest that pays, so the binding is the quest reader's to settle.
+- **Read from the game's tables:** `ReputationQuestExcelConfigData`, Mondstadt's rows read by `toReputationQuests` into the city's `quests`. Each row names the quest that pays by its `parentQuestId`, the binding of decision 2.3, and its reward by `rewardId`. The binding pays only once that quest is carried, and none of Mondstadt's 25 parents is carried yet.
 - **Read from the wiki:** which shops each discount covers, as the ids of the shops its function's text names.
 
 ## Key files
