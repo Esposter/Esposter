@@ -43,6 +43,7 @@ import { leaveItToMe } from "#src/services/gcg/cards/leaveItToMe";
 import { lightningStiletto } from "#src/services/gcg/cards/lightningStiletto";
 import { liyueHarborWharf } from "#src/services/gcg/cards/liyueHarborWharf";
 import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
+import { luckyDogsSilverCirclet } from "#src/services/gcg/cards/luckyDogsSilverCirclet";
 import { magicGuide } from "#src/services/gcg/cards/magicGuide";
 import { maskOfSolitudeBasalt } from "#src/services/gcg/cards/maskOfSolitudeBasalt";
 import { masterOfWeaponry } from "#src/services/gcg/cards/masterOfWeaponry";
@@ -136,6 +137,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [311_401, whiteTassel],
   [311_501, travelersHandySword],
   [311_502, sacrificialSword],
+  [312_002, luckyDogsSilverCirclet],
   [312101, brokenRimesEcho],
   [312_201, wineStainedTricorne],
   [312_301, witchsScorchingHat],
