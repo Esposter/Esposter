@@ -12,9 +12,8 @@ import { ColumnTransformationCompileMap } from "#shared/services/resource/sheet/
 import { ColumnTransformationSourceIdsMap } from "#shared/services/resource/sheet/column/transformation/ColumnTransformationSourceIdsMap";
 import { getOrCreate, takeOne } from "@esposter/shared";
 
-// Compiles a sheet's computed columns once, then binds them to a row list once, so a cell read is a lookup into
-// What binding already walked. A cyclic column reads empty rather than recursing, which is why the cycles are found
-// Up front instead of guarded per read
+// Compiles a sheet's computed columns once and binds them to a row list once, so a cell read is a lookup.
+// A cyclic column reads empty rather than recursing, so the cycles are found up front, not guarded per read
 export const compileSheetColumns = (columns: ToData<Column>[]) => {
   const columnIdMap = new Map(columns.map((column) => [column.id, column]));
   const findSource = (sourceColumnId: string) => columnIdMap.get(sourceColumnId);
@@ -45,8 +44,8 @@ export const compileSheetColumns = (columns: ToData<Column>[]) => {
       if (!bindTransformation || cyclicColumnIds.has(column.id)) return () => null;
       return bindTransformation({ readSource, rows });
     };
-    // Bound up front rather than on first read: a read can happen outside the caller's reactive tracking, and only a
-    // Bind here records an aggregation's source cells as what the caller depends on
+    // Bound up front rather than on first read, since a read can happen outside the caller's reactive tracking.
+    // Only a bind here records an aggregation's source cells as what the caller depends on
     for (const column of columns) readerOf(column);
     return (row, column, rowIndex) => readerOf(column)(row, rowIndex);
   };
