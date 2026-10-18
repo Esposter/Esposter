@@ -1,17 +1,30 @@
 import type { Artifact } from "#src/models/artifact/Artifact";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { Currency } from "#src/models/inventory/Currency";
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import {
+  CurrencyItemIdMap,
+  EMPTY_INVENTORY,
+  EMPTY_WALLET,
+  MORA_ITEM_ID,
+  WEAPON_START_ASCENSION,
+  WEAPON_START_EXPERIENCE,
+  WEAPON_START_LEVEL,
+  WEAPON_START_REFINEMENT,
+} from "#src/services/inventory/constants";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
@@ -116,9 +129,73 @@ describe(pickUpDroppedItem, () => {
         items: [
           {
             artifact,
-            definition: getDroppedItemDefinition(pieceId, names, materialDataMap, reliquaryPieceEntryMap),
+            definition: getDroppedItemDefinition(pieceId, names, new Map(), materialDataMap, reliquaryPieceEntryMap),
             id: 0,
             quantity: 1,
+          },
+        ],
+        nextId: 1,
+      },
+      overflow: 0,
+      wallet: EMPTY_WALLET,
+    });
+  });
+
+  test("takes a dropped weapon into the bag as a weapon of its own", () => {
+    expect.hasAssertions();
+
+    const weaponId = 90_201;
+    const names = { TEST_WEAPON: "Test Weapon" };
+    const weaponData: WeaponData = {
+      ascensionPhases: [],
+      baseExp: 0,
+      destroyReturnMaterial: 0,
+      destroyReturnMaterialCount: 0,
+      destroyRule: DestroyRule.None,
+      growAttributes: [],
+      id: weaponId,
+      nameTextId: "TEST_WEAPON",
+      passiveNameTextId: "",
+      passiveRankAttributeLines: [],
+      passiveRankDescriptionTextIds: [],
+      passiveRankParams: [],
+      rarity: 3,
+      refinementCosts: [],
+      refinementMaterialId: 0,
+      weaponType: WeaponType.Sword,
+    };
+
+    expect(
+      pickUpDroppedItem(
+        { count: 1, itemId: weaponId },
+        EMPTY_INVENTORY,
+        EMPTY_WALLET,
+        names,
+        materialDataMap,
+        new Map(),
+        new Map([[weaponId, weaponData]]),
+      ),
+    ).toStrictEqual({
+      inventory: {
+        items: [
+          {
+            ascension: WEAPON_START_ASCENSION,
+            definition: {
+              category: ItemCategory.Weapon,
+              destroyReturnMaterial: 0,
+              destroyReturnMaterialCount: 0,
+              destroyRule: DestroyRule.None,
+              id: weaponId,
+              name: "Test Weapon",
+              rank: 0,
+              rarity: 3,
+              stackLimit: 1,
+            },
+            experience: WEAPON_START_EXPERIENCE,
+            id: 0,
+            level: WEAPON_START_LEVEL,
+            quantity: 1,
+            refinement: WEAPON_START_REFINEMENT,
           },
         ],
         nextId: 1,

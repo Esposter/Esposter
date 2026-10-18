@@ -9,6 +9,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
@@ -56,6 +57,7 @@ export const useWorldPickups = ({
   serverClockOffsetMs,
   setInventory,
   setWallet,
+  weaponDataMap,
   wallet,
 }: {
   archive: { archiveData: ShallowRef<ArchiveData | undefined>; archiveProgressMap: ShallowRef<ArchiveProgress> };
@@ -71,6 +73,7 @@ export const useWorldPickups = ({
   serverClockOffsetMs: number;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
   wallet: Ref<Wallet>;
 }) => {
   // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
@@ -106,7 +109,7 @@ export const useWorldPickups = ({
       name:
         itemId === MORA_ITEM_ID
           ? gameText[GameTextKey.Mora]
-          : getDroppedItemDefinition(itemId, nameText, materialDataMap, reliquaryPieceEntryMap).name,
+          : getDroppedItemDefinition(itemId, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap).name,
       position: { x, y: getGroundHeight(x, z), z },
     }));
     const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
@@ -161,6 +164,7 @@ export const useWorldPickups = ({
       nameText,
       materialDataMap,
       reliquaryPieceEntryMap,
+      weaponDataMap,
     );
     setInventory(pickUp.inventory);
     setWallet(pickUp.wallet);

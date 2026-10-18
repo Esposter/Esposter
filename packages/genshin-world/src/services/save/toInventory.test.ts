@@ -47,7 +47,7 @@ describe(toInventory, () => {
       items: [
         {
           artifact,
-          definition: getDroppedItemDefinition(PIECE_ID, names, new Map(), reliquaryPieceEntryMap),
+          definition: getDroppedItemDefinition(PIECE_ID, names, new Map(), new Map(), reliquaryPieceEntryMap),
           id: 0,
           quantity: 1,
         },

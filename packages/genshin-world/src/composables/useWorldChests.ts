@@ -9,6 +9,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
@@ -51,6 +52,7 @@ export const useWorldChests = ({
   reliquarySets,
   setInventory,
   setWallet,
+  weaponDataMap,
   wallet,
   waterLevel,
 }: {
@@ -72,6 +74,7 @@ export const useWorldChests = ({
   reliquarySets: readonly ReliquarySetData[];
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
   wallet: Ref<Wallet>;
   waterLevel: number;
 }) => {
@@ -124,7 +127,13 @@ export const useWorldChests = ({
     const overflowDrops: DroppedItem[] = [];
     for (const dropped of opening.bagDrops) {
       const { itemId } = dropped;
-      const definition = getDroppedItemDefinition(itemId, nameText, materialDataMap, reliquaryPieceEntryMap);
+      const definition = getDroppedItemDefinition(
+        itemId,
+        nameText,
+        weaponDataMap,
+        materialDataMap,
+        reliquaryPieceEntryMap,
+      );
       const addition = addDroppedItem(nextInventory, dropped, definition);
       nextInventory = addition.inventory;
       if (addition.overflow > 0) overflowDrops.push({ ...dropped, count: addition.overflow });
