@@ -1,11 +1,10 @@
 import type { Artifact } from "#src/models/artifact/Artifact";
-import type { Character } from "#src/models/character/Character";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
-import { CombatTalent } from "#src/models/character/CombatTalent";
+import { createCharacter } from "#src/services/artifact/createCharacter.test";
 import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
@@ -20,18 +19,6 @@ const createArtifact = (level: number): Artifact => ({
   rarity: 5,
   setId: 1,
   slot: ArtifactSlot.FlowerOfLife,
-});
-
-const createCharacter = (artifacts: Artifact[]): Character => ({
-  artifacts,
-  ascension: 0,
-  constellationCount: 0,
-  friendshipExp: 0,
-  id: 1,
-  level: 1,
-  stellaFortunaCount: 0,
-  talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
-  weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
 });
 
 describe(equipBagArtifact, () => {

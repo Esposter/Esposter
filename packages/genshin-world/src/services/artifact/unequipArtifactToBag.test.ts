@@ -1,13 +1,12 @@
 import type { Artifact } from "#src/models/artifact/Artifact";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
-import type { Character } from "#src/models/character/Character";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { ReliquaryPieceData } from "#src/models/reliquary/ReliquaryPieceData";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
-import { CombatTalent } from "#src/models/character/CombatTalent";
+import { createCharacter } from "#src/services/artifact/createCharacter.test";
 import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
 import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
 import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
@@ -26,18 +25,6 @@ const createArtifact = (setId: number): Artifact => ({
   rarity: 5,
   setId,
   slot: ArtifactSlot.FlowerOfLife,
-});
-
-const createCharacter = (artifacts: Artifact[]): Character => ({
-  artifacts,
-  ascension: 0,
-  constellationCount: 0,
-  friendshipExp: 0,
-  id: 1,
-  level: 1,
-  stellaFortunaCount: 0,
-  talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
-  weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
 });
 
 describe(unequipArtifactToBag, () => {
