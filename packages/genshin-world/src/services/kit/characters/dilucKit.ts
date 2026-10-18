@@ -105,8 +105,9 @@ const addSearingEmberStack = (kitEffectState: KitEffectState, characterId: numbe
 // Diluc's behaviour: Dawn infuses his attacks with Pyro, lengthened and joined by a Pyro DMG Bonus from Ascension 4, and
 // Launches its phoenix at the slash, a summon a metre ahead of him that travels forward, strikes on each of its ticks and
 // Explodes at the end of its path
-// Constellation 2 is built for a hit that costs Diluc HP: an enemy's strike, a drown or a wildlife's charge. A hit his
-// Shield takes whole sends no HP change, so it adds no stack, and the damageless hits of his teammates are not built
+// Constellation 2 is built for a hit on Diluc that costs him HP, an enemy's strike, a drown or a wildlife's charge, and for
+// An enemy's strike on him that a shield takes, whoever owns the shield, as gcsim's OnPlayerHit fires on a shielded hit. The
+// Damageless hits of his teammates are not built
 // Constellation 4 reads each press against the one before it. The status a press leaves runs two seconds, so a press that
 // Finds it running came within two seconds of the last one. A follow-up that does not is the one the bonus lands on, and
 // Its status carries the bonus for the same two seconds. Constellation 6 arms the next two normal attacks on each press
@@ -224,12 +225,20 @@ export const createDilucKitBehaviour = ({
         );
       },
     },
-    // Searing Ember: a hit that costs Diluc HP takes a stack once the interval after the last one has run out. A kit of the
-    // Team that names its source for the HP loss, such as Furina's skill, is not a hit
+    // Searing Ember: a hit on Diluc takes a stack once the interval after the last one has run out. A hit is one that costs
+    // Him HP, or that a shield takes whole or in part, which names him as the member struck. A kit of the team that names
+    // Its source for the HP loss, such as Furina's skill, is not a hit
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.HealthChanged || combatant.constellationCount < CONSTELLATION_2) return;
+      if (combatant.constellationCount < CONSTELLATION_2) return;
       const { characterId } = combatant;
-      if (event.characterId !== characterId || event.healthShare >= 0 || event.sourceCharacterId !== undefined) return;
+      const isHit =
+        event.kind === KitEventKind.ShieldAbsorbed
+          ? event.struckCharacterId === characterId
+          : event.kind === KitEventKind.HealthChanged &&
+            event.characterId === characterId &&
+            event.healthShare < 0 &&
+            event.sourceCharacterId === undefined;
+      if (!isHit) return;
       if (checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_2_INTERVAL_STATUS_ID)) return;
       addKitStatus(kitEffectState, characterId, {
         id: CONSTELLATION_2_INTERVAL_STATUS_ID,

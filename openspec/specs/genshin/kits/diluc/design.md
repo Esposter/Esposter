@@ -22,7 +22,7 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, a
 
 - **Constellation 6's combo clause**, that Searing Onslaught does not interrupt the normal attack combo, is not built: `endKitAction` resets the combo index whenever a skill's action ends, and no hook reaches it.
 - **Relentless's "+3s duration" clause and the phase-0 passive, Tradition of the Dawn Knight, are not built.** The first has no named referent in the talent text, and the second refunds ore when crafting, outside combat.
-- **Constellation 2 is built for HP lost to a strike, a drown or a wildlife's charge.** Searing Ember's stacks follow each such hit, one at most every 1.5 seconds, the 1.5 seconds being the wiki's, as gcsim sets no interval. A strike a shield takes whole sends no HP change, and the shield event names only its owner, so that hit adds no stack; a teammate's damageless hit is not built. Constellation 6 needs the next two normal attacks after Searing Onslaught, which the damage hook also needs.
+- **Constellation 2 is built for a hit on Diluc that costs him HP, and for one a shield takes.** Searing Ember's stacks follow each such hit, one at most every 1.5 seconds, the 1.5 seconds being the wiki's, as gcsim sets no interval. gcsim hooks `OnPlayerHit`, which fires on a shielded hit too, so a strike a shield takes whole counts as a hit on him, whoever owns the shield: the `ShieldAbsorbed` event names the member the strike was on, and an HP loss and a shield's absorb of the same hit share the one interval. A teammate's damageless hit is not built. Constellation 6 needs the next two normal attacks after Searing Onslaught, which the damage hook also needs.
 
 ## Key files
 
