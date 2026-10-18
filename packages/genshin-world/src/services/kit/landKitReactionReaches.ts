@@ -11,6 +11,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
+import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 
 // The reactions that landed with a reach, each with the enemy it landed on or the Dendro Core it burst from, reaching
@@ -43,7 +44,11 @@ export const landKitReactionReaches = (
       combatant,
       lunarReactionTypes,
     )) {
-      collectKitEnergyDrops(energyDrops, combatant.element, context);
+      collectKitEnergyDrops(
+        [...energyDrops, ...getReactionParticleDrops(party, reactions, combatant.elementalResonances)],
+        combatant.element,
+        context,
+      );
       addSprawlingGreeneryBuffs(kitEffectState, party, combatant, reactions);
       addDendroCores(kitEffectState, enemy, combatant, reactions, random);
       startPartyLunarReactions(party, reactions);

@@ -235,7 +235,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 
 - **The Nightsoul Blessing is not built.** A press that starts it, the points it spends and the strikes it replaces wait on a counter of Nightsoul points that a Blessing spends and that ends it at zero; the Blessing itself is a stance, whose hits each name gcsim's attack tag as any stance's can. Each Natlan page names what its own Blessing would change.
 - **Constellations 3 and 5 raise talent levels no kit reads.** Each raises the skill and the burst by three levels, and a kit reads each group at its start level, so `getConstellationTalentAdditions` is unread.
-- **Particles are not built.** A skill's or burst's particles wait on a hit that gives particles, which nothing yet does, so an enemy's HP drop is the only energy a strike gives.
+- **Skill particles are not built.** A skill's or burst's particles wait on a hit that gives particles, which nothing yet does, so an enemy's HP drop and a Resonance's particle on a listed reaction (`getReactionParticleDrops`) are the only energy a strike gives.
 - **The Hexerei team bonus is not built.** Every Hexerei kit and its constellations waits on it. gcsim turns them on by default, and the kits here follow the standard kit.
 - **A kit moves no enemy.** Pulls, knockbacks and holds that move or fix an enemy in place are not built.
 - **A hit is priced from its striker alone.** A kit reads no other member's buff into a hit, so a Quill or a banner that adds to another member's hits is not built.

@@ -17,7 +17,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // Multipliers still in flight
 export const gainPartyEnergy = (
   party: Party,
-  { count, energyDropKind }: EnergyDrop,
+  { count, energyDropKind }: Pick<EnergyDrop, "count" | "energyDropKind">,
   dropElement: Element | undefined,
   characterIdCombatantMap: Map<number, Combatant>,
 ): void => {

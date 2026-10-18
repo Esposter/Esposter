@@ -14,4 +14,8 @@ export const stepPartyCooldowns = (party: Party, stepSeconds: number): void => {
     if (partyMember.skillCooldownSeconds > 0)
       partyMember.skillCooldownSeconds = Math.max(0, partyMember.skillCooldownSeconds - stepSeconds);
   }
+  // The team's particle cooldowns run off in the same step, each written only while it runs
+  for (const [particleSource, cooldownSeconds] of party.particleCooldownSecondsMap)
+    if (cooldownSeconds > 0)
+      party.particleCooldownSecondsMap.set(particleSource, Math.max(0, cooldownSeconds - stepSeconds));
 };
