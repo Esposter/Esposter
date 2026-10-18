@@ -46,6 +46,8 @@ export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
 // The Stormclusters give the character on the field Tengu Stormcall's ATK Bonus, a share of her base ATK, as each lands.
 // Ascension 1's shorter charge is not built, as a charged attack has one duration. Constellations 1 and 6 are not
 // Built, as no hit reads the Electro DMG Bonus they need. Ascension 4's Decorum restores Energy as the Ambush lands
+// Constellation 1 needs the hits and ATK grants of Tengu Juurai as events, which the kit does not emit
+// Constellation 6 needs a strike hook that raises CRIT DMG on the Electro DMG of her ATK-buffed members, not built
 // Restores the party's Energy as the Ambush's hits land, once every three seconds, from the Energy Recharge its striker has
 const restoreDecorumEnergy = (
   { characterIdCombatantMap, kitEffectState, party }: KitContext,
