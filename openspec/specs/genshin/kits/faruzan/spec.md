@@ -88,3 +88,19 @@ Dazzling Polyhedron SHALL give every member of the deployed team Prayerful Wind'
 - **GIVEN** Dazzling Polyhedron stands
 - **WHEN** a Whirlwind Pulse fires
 - **THEN** every member of the deployed team gains the Anemo DMG Bonus for four seconds
+
+### Requirement: Second constellation lengthens the Dazzling Polyhedron by 6 seconds
+
+From constellation 2, the Dazzling Polyhedron's field SHALL last 6 seconds longer, and its Whirlwind Pulses SHALL continue at their interval through the extra time.
+
+#### Scenario: A Faruzan at constellation 2 gets the longer field
+
+- **GIVEN** Faruzan is at constellation 2
+- **WHEN** she casts her burst
+- **THEN** the Dazzling Polyhedron's field lasts 6 seconds longer than at constellation 1
+
+#### Scenario: A Faruzan below constellation 2 gets the base field
+
+- **GIVEN** Faruzan is at constellation 1
+- **WHEN** she casts her burst
+- **THEN** the Dazzling Polyhedron's field lasts as long as the base talent gives

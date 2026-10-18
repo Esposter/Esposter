@@ -46,8 +46,8 @@ const createOffsetBody = (
 
 // Faruzan's behaviour: The Wind's Secret Ways' initial hit shreds the enemies it reaches, and its cast places the Dazzling
 // Polyhedron, whose Whirlwind Pulses shred each enemy they reach and give the party Prayerful Wind's Anemo DMG Bonus. The
-// Manifest Gale and Pressurized Collapse, her partial aimed shot, her particles, her passive and constellations are not
-// Built
+// Manifest Gale and Pressurized Collapse, her partial aimed shot, her particles, her passive, and
+// Constellations 1, 4 and 6 are not built. Constellation 2's longer polyhedron is built.
 export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const perfidiousWindRuinResistanceReduction = readParameter("perfidiousWindRuinResistanceReduction");
   const perfidiousWindRuinSeconds = readParameter("perfidiousWindRuinSeconds");
@@ -72,6 +72,9 @@ export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds 
     secondsRemaining: prayerfulWindSeconds,
     source: PRAYERFUL_WIND_SOURCE,
   };
+  // Constellation 2, Overzealous Intellect: the Dazzling Polyhedron lasts this many seconds longer
+  const CONSTELLATION_2_EXTRA_POLYHEDRON_SECONDS = 6;
+
   // The Dazzling Polyhedron's field is placed where the burst is cast, and its gadgets are placed from that cast's body. Its
   // Ticks are the Whirlwind Pulses, each cast from the gadget its count cycles to, and it lingers past its seconds
   const castDazzlingPolyhedron = (kitEffectState: KitEffectState, castBody: KitBody, combatant: Combatant): void => {
@@ -83,7 +86,10 @@ export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds 
         if (gadgetOffset)
           castKitSummon(tickKitEffectState, createOffsetBody(castBody, gadgetOffset), combatant, [whirlwindPulse]);
       },
-      secondsRemaining: dazzlingPolyhedronSeconds + SUMMON_LINGER_SECONDS,
+      secondsRemaining:
+        dazzlingPolyhedronSeconds +
+        SUMMON_LINGER_SECONDS +
+        (combatant.constellationCount >= 2 ? CONSTELLATION_2_EXTRA_POLYHEDRON_SECONDS : 0),
       tickIntervalSeconds: whirlwindPulseIntervalSeconds,
     });
   };

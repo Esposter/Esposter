@@ -11,27 +11,35 @@ const ASCENSION_4 = 4;
 const WHISPERING_FLAME_ATTACK_SHARE = 0.08;
 const WHISPERING_FLAME_MAX_BONUS = 160;
 
+// Constellation 4, Night on Bald Mountain: Flins's ATK is raised by this share
+const CONSTELLATION_4_ATTACK_PERCENT = 0.2;
+
 // Flins's behaviour: Manifest Flame's press plays no hit of its own, as gcsim's Arcane Light deals no damage; it starts a
 // Stance for the Manifest Flame's seconds, ending as he leaves the field, whose strikes and charged attack are the Electro
 // Ones. Not built yet: Thunderous Symphony, the burst Northland Spearstorm arms for six seconds, whose hits are
 // Lunar-Charged; Northland Spearstorm, the stance's skill, which waits on a stance's own skill cooldown, so the stance
 // Keeps the kit's own skill as Raiden's Musou Isshin does; Cometh the Night's middle hits, which are Lunar-Charged; and
-// His passives and constellations, which read the Lunar-Charged reaction or the Manifest Flame's own skill
+// Constellation 4's ATK is built; its Elemental Mastery part needs the ATK total, which a passive bonus does not read.
+// His passives, and Constellations 1, 2 and 6, read the Lunar-Charged reaction or the Manifest Flame's own skill
 export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecordReader): KitBehaviour => {
   const manifestFlameSeconds = readParameter("manifestFlameSeconds");
   // The Electro strikes are Normal Attack DMG and the charged attack Extra, gcsim's AttackTagNormal and AttackTagExtra in
   // Flins/attack.go and charge.go, so each group takes its kit tag
   const manifestFlame = readStance("manifestFlame");
   return {
-    getPassiveBonuses: (combatant) =>
-      combatant.ascension < ASCENSION_4
+    getPassiveBonuses: (combatant) => [
+      ...(combatant.ascension < ASCENSION_4
         ? []
         : [
             {
               amount: Math.min(combatant.attributes.attack * WHISPERING_FLAME_ATTACK_SHARE, WHISPERING_FLAME_MAX_BONUS),
               attribute: Attribute.ElementalMastery,
             },
-          ],
+          ]),
+      ...(combatant.constellationCount >= 4
+        ? [{ amount: CONSTELLATION_4_ATTACK_PERCENT, attribute: Attribute.AttackPercent }]
+        : []),
+    ],
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         enterKitStance(kitEffectState, combatant, manifestFlame, manifestFlameSeconds, { isEndedOnSwap: true }),

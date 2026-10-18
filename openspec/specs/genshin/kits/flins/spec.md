@@ -78,3 +78,19 @@ Flins's plunges SHALL take timings and poise borrowed from another character, pr
 - **GIVEN** a recording of Flins's plunge exists
 - **WHEN** its timing and poise are compared with the kit's
 - **THEN** the borrowed values stay provisional until the comparison settles them
+
+### Requirement: Fourth constellation raises Flins's ATK by 20%
+
+From constellation 4, Flins's ATK SHALL be raised by 20% as a passive bonus. Its Elemental Mastery part is not built.
+
+#### Scenario: A Flins at constellation 4 gets the ATK bonus
+
+- **GIVEN** Flins is at constellation 4
+- **WHEN** his passive bonuses are read
+- **THEN** they include an ATK percent bonus of 20%
+
+#### Scenario: A Flins below constellation 4 gets no bonus
+
+- **GIVEN** Flins is at constellation 3
+- **WHEN** his passive bonuses are read
+- **THEN** they are empty
