@@ -41,9 +41,9 @@ Each built task names the test it was written first in, and each test is a scena
 
 - [x] 5.3 The picked artifact's main and sub stats under the details pill, provisional. The stats take the Details list's
       row pitch from the registered frame and their place is not measured, since no reference frame shows a picked piece.
-      The sub stats are read from the piece's minor affixes; the main stat's name is read from its main affix, and its
-      value waits on the main affix pools (6.3). Tests: `getArtifactDetailStats.test.ts`, and the visual suite's `worn`
-      variant, which the main session runs.
+      The sub stats are read from the piece's minor affixes; the main stat's name and its value are read from its main
+      affix and its level's curve (6.3). Tests: `getArtifactDetailStats.test.ts`, and the visual suite's `worn` variant,
+      which the main session runs.
 
 - [ ] 5.4 The panel's parity reference and its approval, once the reference frame is fetched and its compare is clean.
       Waits on a browser run.
@@ -55,4 +55,9 @@ Each built task names the test it was written first in, and each test is a scena
       Covered by `addInventoryArtifact.test.ts`'s "takes each artifact in as an entry of its own holding the artifact it
       was rolled as".
 - [ ] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Waits on 6.1.
-- [ ] 6.3 The main affix pools are read by the drop that rolls an artifact. Waits on that drop's wiring.
+- [x] 6.3 The main affix pools and the main stat's value. Each slot's pool is the attributes its main prop depot lists
+      that the wiki's Artifact/Distribution page weighs for it, and the drop reads the pools through `rollPieceArtifact`.
+      The main stat's value is the attribute's curve at the artifact's rarity and level (`getArtifactMainAffixValue`),
+      the lookup `getCharacterAttributeLines` now shares. Tests: `getArtifactMainAffixPools.test.ts`,
+      `getArtifactMainAffixValue.test.ts`, and `getArtifactDetailStats.test.ts`. The published pools change once
+      `genshin:assets stats` republishes, which the main session runs.

@@ -7,6 +7,6 @@ character screen has to wear, unwear and enhance them.
 This change reads the two tables a worn artifact's enhancement needs into the world's stat tables, adds the services
 that equip, unequip and enhance a character's worn artifacts, and reads a character's set bonuses active at two and four
 pieces through one reader. The Artifacts tab's panel is built with its slots, the picked artifact's stats, the set bonus
-lines and actions; the main stat's value is not yet, and the stats' place is provisional. The bag's artifact entry and equipping from and unequipping to the bag are not
+lines and actions; the main stat's value reads its level's curve, and the stats' place is provisional. The bag's artifact entry and equipping from and unequipping to the bag are not
 built here: the bag's artifact entry is the character-screen agent's change, which lands first, and this change builds
 against the `Artifact` type it uses.

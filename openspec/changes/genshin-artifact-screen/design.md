@@ -48,7 +48,7 @@ What works today and what this change adds:
 
 - **The screen returns, and the world reads the rarity and EXP tables back.** A worn artifact's enhancement needs
   `stats/artifactRarities` for its levels and affix levels, and `stats/artifactExpMaterials` for the EXP each material
-  gives. Both are read by `readStatTables` now. The main affix pools stay unread until the drop that rolls an artifact
+  gives. Both are read by `readStatTables` now. The main affix curves are read for the main stat's value, and the main affix pools for the drop that rolls an artifact
   reads them. Rejected: deleting the path, since chest drops are being wired to roll artifacts into the bag, and a bag
   piece with nowhere to go is the gap this change closes.
 - **Equip and unequip are pure services over the character.** The bag is written by the caller, so the services do not
