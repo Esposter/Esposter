@@ -12,6 +12,20 @@ export const SEELIE_RETURN_SECONDS = 30;
 // A Seelie followed the whole of its route takes this many seconds to reach its court
 // Provisional: the route's walk measured from a recording, on the Recordings owed list, until then a stand-in pace
 export const SEELIE_ROUTE_SECONDS = 20;
+// A Time Trial Challenge's clock is set to this many seconds when it starts
+// Provisional: the wiki gives "X second(s)" and no limit per challenge, and the one challenge in the recording
+// The banner reads "Open the chest in 45s" (captures/yt-B_l5b_KXt-o-time-trial-limit.mp4)
+export const TIME_TRIAL_CHALLENGE_LIMIT_SECONDS = 45;
+// A Time Trial Challenge is solved once this many of its targets are done within its limit
+// Provisional: the wiki names each challenge's objective kinds (Aiming, Battling, Traversing) but gives no count per
+// Challenge, so one target stands in until a recording counts a challenge's targets
+export const TIME_TRIAL_CHALLENGE_TARGET_COUNT = 1;
+// A Time Trial Challenge is started by the character standing within this many metres of its marker
+// Provisional: a stand-in for the marker's interaction until a recording of a challenge started measures its reach
+export const TIME_TRIAL_MARKER_REACH_DISTANCE = 10;
+// The chest a solved Time Trial Challenge spawns, at its marker: the Chest page lists Time Trial chests under Common,
+// Exquisite and Precious, and Exquisite is the kind the Seelie chest takes, so it stands in here too, for the design to confirm
+export const TIME_TRIAL_CHEST_KIND = ChestKind.Exquisite;
 // A Seelie is followed while the character stands within this many metres of it on the ground
 // Provisional: a stand-in until a recording of a Seelie led home measures it, on the Recordings owed list
 export const SEELIE_FOLLOW_DISTANCE = 10;

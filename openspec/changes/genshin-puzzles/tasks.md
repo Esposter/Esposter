@@ -12,6 +12,6 @@
 
 ## 3. Other kinds
 
-- [ ] 3.1 Start each Time Trial Challenge from its marker with its wiki limit and targets, and spawn the chest only when every target is done in time. Verify: tests named after the scenarios 'Finishing every target in time spawns the chest' and 'A missed target before the timer ends gives no chest'.
+- [x] 3.1 Start each Time Trial Challenge from its marker with its wiki limit and targets, and spawn the chest only when every target is done in time. Verify: tests named after the scenarios 'Finishing every target in time spawns the chest' and 'A missed target before the timer ends gives no chest'.
 - [ ] 3.2 Open Shrines of Depths only with their region's key. Verify: tests named after the scenarios 'A shrine opens with its region's key' and 'A key from another region is refused'.
 - [ ] 3.3 Place the other Seelies from the wiki's Seelie pages, provisional where the wiki gives none. Verify: `pnpm -C scripts genshin:assets puzzles` publishes them, and the Mondstadt Seelie tests in 1.2 still pass.
