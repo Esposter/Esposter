@@ -13,7 +13,8 @@ flowchart TD
   ARR --> DATA["The region's data: its Teleport Waypoints, rewritten by each fit"]
   DATA --> LOCKED["Locked: offered to F, which unlocks it"]
   LOCKED --> UNLOCKED["Unlocked: listed on the map, the minimap and the jump list, named by its area"]
-  UNLOCKED -->|"chosen"| POSE["computeJumpPose: the arrival's place and turn"]
+  UNLOCKED -->|"chosen"| PANEL["The teleport panel on the map"]
+  PANEL -->|"Teleport"| POSE["computeJumpPose: the arrival's place and turn"]
 ```
 
 ## The fit

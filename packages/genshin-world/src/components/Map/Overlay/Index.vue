@@ -14,11 +14,13 @@ import { Currency } from "#src/models/inventory/Currency";
 import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
 import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
 import { computeAreaLabels } from "#src/services/map/computeAreaLabels";
+import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeWheelZoomMetres } from "#src/services/map/computeWheelZoomMetres";
 import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtShare";
 import { computeZoomShare } from "#src/services/map/computeZoomShare";
 import { findAreaAt } from "#src/services/map/findAreaAt";
+import { findLandmarkArea } from "#src/services/map/findLandmarkArea";
 import {
   MAP_DRAG_THRESHOLD_PIXELS,
   MAP_GROUND,
@@ -33,7 +35,7 @@ import {
 } from "#src/services/map/constants";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
-import { GameScreen } from "genshin-interface";
+import { GameButton, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -61,6 +63,14 @@ const {
   wallet,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
+
+// The landmark chosen on the map or in the list, whose teleport panel names its area and jumps there on its Teleport
+// Button alone, so a stray click on the map never teleports
+const chosenLandmark = shallowRef<Landmark>();
+const chosenArea = computed(() => chosenLandmark.value && findLandmarkArea(catalogue, chosenLandmark.value));
+const chooseLandmark = (landmark: Landmark) => {
+  chosenLandmark.value = landmark;
+};
 const closeButton = useTemplateRef("closeButton");
 const map = useTemplateRef("map");
 const zoomTrack = useTemplateRef("zoomTrack");
@@ -193,7 +203,7 @@ onMounted(() => {
       @pointerup="onMapPointerUp()"
       @wheel="metres = computeWheelZoomMetres(metres, $event.deltaY)"
     >
-      <MapDrawing :catalogue :landmarks :mark-radius @select="(landmark) => emit('jump', computeJumpPose(landmark))" />
+      <MapDrawing :catalogue :landmarks :mark-radius @select="chooseLandmark" />
       <template v-for="{ id, name, progressSegments, x, z } of areaLabels" :key="id">
         <text class="area-name" :font-size="metres * MAP_LABEL_SHARE" :x :y="z">
           {{ name }}
@@ -233,13 +243,7 @@ onMounted(() => {
         {{ name }} <span v-for="({ text }, index) of progressSegments" :key="index">{{ text }}</span>
       </li>
     </ul>
-    <MapJumpList
-      class="jumps"
-      :catalogue
-      :game-text
-      :landmarks
-      @jump="(landmark) => emit('jump', computeJumpPose(landmark))"
-    />
+    <MapJumpList class="jumps" :catalogue :game-text :landmarks @jump="chooseLandmark" />
     <p v-if="regionTag" class="region-tag">
       <span class="region-name">{{ regionTag.name }}</span>
       <span v-if="regionTag.progressSegments.length > 0" class="region-progress">
@@ -252,6 +256,16 @@ onMounted(() => {
       <span>{{ gameText[GameTextKey.OriginalResin] }}</span>
       <span>{{ originalResin }}/{{ ORIGINAL_RESIN_CAP }}</span>
     </p>
+    <section v-if="chosenLandmark" class="teleport-panel">
+      <h2 class="teleport-name">{{ chosenArea?.name }}</h2>
+      <p class="teleport-kind">{{ gameText[computeJumpLandmarkTextKey(chosenLandmark)] }}</p>
+      <GameButton class="teleport" @click="emit('jump', computeJumpPose(chosenLandmark))">
+        {{ gameText[GameTextKey.Teleport] }}
+      </GameButton>
+      <GameButton class="teleport-back" @click="chosenLandmark = undefined">
+        {{ gameText[GameTextKey.Back] }}
+      </GameButton>
+    </section>
     <button
       ref="closeButton"
       class="close"
@@ -369,6 +383,34 @@ onMounted(() => {
 .region-progress {
   display: block;
   font-size: calc(var(--unit) * 24);
+}
+
+/* Provisional: the teleport panel's place, on the map's right under the top bar, and its size, until a recording of the
+   English PC client's map, where a waypoint is chosen, measures them */
+.teleport-panel {
+  position: absolute;
+  top: calc(var(--unit) * 120);
+  right: calc(var(--unit) * 130);
+  display: flex;
+  width: calc(var(--unit) * 420);
+  flex-direction: column;
+  gap: calc(var(--unit) * 16);
+  padding: calc(var(--unit) * 24);
+  border-radius: calc(var(--unit) * 8);
+  background: rgb(0 0 0 / 0.6);
+  color: #ece5d7;
+}
+
+.teleport-name {
+  margin: 0;
+  font-size: calc(var(--unit) * 36);
+  font-weight: normal;
+}
+
+.teleport-kind {
+  margin: 0;
+  font-size: calc(var(--unit) * 22);
+  opacity: 0.7;
 }
 
 /* Provisional: the resin counter's place, left of the close button, and its type, until a recording of the English PC
