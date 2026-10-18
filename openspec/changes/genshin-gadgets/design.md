@@ -10,7 +10,7 @@ Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculu
 - **Equipped on Z, four on the quick swap.** One gadget is equipped to the quick-use slot and used with `Z`. Holding it opens the quick swap, which holds up to four gadgets chosen in the bag. Only a gadget the config marks equipable can be equipped.
 - **Where a gadget may be used is the game's.** `WidgetUseableExcelConfigData` says where each may not be used: in another player's world, which waits on [co-op](../../deferred/genshin/co-op/design.md) being deferred, and in a domain's type or scene, which the [domains](../genshin-domains/design.md) page supplies. The open world refuses none, so this check is not yet built.
 - **Made from instructions.** Most are crafted at the bench or forged once their instructions or diagram are used, which reputation and offerings give; a few come from quests and are kept.
-- **A gadget is a bag item of the widget material type.** Each of the slice's gadgets (the `gadgets/gadgets` record, eleven at this revision) has a `MaterialExcelConfigData` row of type `MATERIAL_WIDGET`, so the bag holds it as any material, filed under `ItemCategory.Gadget`, and `writeItems` writes its row beside the drops' and the forge's items.
+- **A gadget is a bag item of the widget material type.** Each of the slice's gadgets (the `gadgets/gadgets` record, about a dozen) has a `MaterialExcelConfigData` row of type `MATERIAL_WIDGET`, so the bag holds it as any material, filed under `ItemCategory.Gadget`, and `writeItems` writes its row beside the drops' and the forge's items.
 
 ## How it works
 
@@ -30,7 +30,7 @@ flowchart TD
 **This still adds, in order:**
 
 1. **Gadgets in the bag.**
-   - `MaterialType` (`packages/genshin-world/src/models/inventory/MaterialType.ts`) gains `Widget = "MATERIAL_WIDGET"`, and `MaterialTypeItemCategoryMap` maps it to `ItemCategory.Gadget`.
+   - `MaterialType` already holds `Widget = "MATERIAL_WIDGET"`, and `MaterialTypeItemCategoryMap` already maps it to `ItemCategory.Gadget`; nothing more is added to either.
    - `buildItems` (`scripts/src/services/genshinAssets/items/buildItems.ts`) adds every id of `readGadgetRows()`'s slice to the item ids it builds; rerunning `genshin:assets items` then `genshin:text names` republishes the materials and their names.
    - Test: every gadget the slice holds comes out of `buildItems` with `materialType` `MATERIAL_WIDGET`.
 2. **The quick-use slot.** The equipped gadget and its use on `Z`, with the usable-here check once domains stand: `Inventory` gains the equipped gadget, the bag's screen equips one from its tab, and the HUD shows it with its cooldown. It touches the bag's screen, so the fleet offers it only while no inventory unit holds that folder.
