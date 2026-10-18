@@ -1,5 +1,5 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 200 },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 55 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
@@ -15,6 +15,6 @@
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki" },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki" },
   "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki" },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 }
 }
