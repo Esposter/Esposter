@@ -4,8 +4,8 @@ import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 
-// Renders each node once its slots have rendered, in the order of the nodes; a node whose type the registry lacks renders nothing
-// Each slot the definition names is rendered first, and a slot the node's props do not hold as a list renders empty
+// Renders each node once its slots have rendered, in the order of the nodes, and nothing for a node whose type the
+// Registry lacks. A slot the node's props do not hold as a list renders empty
 export const renderBlockNodes = <TDefinition extends BlockTypeDefinition, TOutput>(
   nodes: BlockNode[],
   registry: BlockRegistry<TDefinition>,
