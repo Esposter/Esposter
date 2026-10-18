@@ -11,6 +11,7 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { MINTY_MEAT_ROLLS_ID, mintyMeatRolls } from "#src/services/gcg/cards/mintyMeatRolls";
+import { SWEEPING_TIME_ID, sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
@@ -146,6 +147,28 @@ describe(useGcgSkill, () => {
       dice: [],
       mintyUsages: usagesBefore,
       result: GcgActionResult.Done,
+    });
+  });
+
+  test("should leave a standby character's Sweeping Time out of its active character's Geo Normal Attack cost", () => {
+    expect.hasAssertions();
+
+    const geoAttack: GcgSkill = {
+      ...normalAttack,
+      costs: [{ count: 1, element: Element.Geo, kind: GcgCostKind.Dice }],
+    };
+    const active = createCharacterState([geoAttack]);
+    const sweeping = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
+    const standby = { ...createCharacterState([]), statuses: [sweeping] };
+    const attacker = { ...createSideState(active, [Element.Geo]), characters: [active, standby] };
+    const duel = createDuel(attacker, createSideState(createCharacterState([]), []));
+
+    const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]);
+
+    expect({ dice: attacker.dice, result, usedCardIds: attacker.usedCardIds }).toStrictEqual({
+      dice: [],
+      result: GcgActionResult.Done,
+      usedCardIds: [],
     });
   });
 });

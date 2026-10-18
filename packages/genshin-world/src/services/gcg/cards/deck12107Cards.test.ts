@@ -375,6 +375,7 @@ describe("sweeping Time", () => {
     kind: GcgSkillKind.ElementalSkill,
   };
   const createSweepingTimeContext = (): GcgEffectContext => ({
+    characterIndex: 0,
     duel: createDuel([createSideState([createCharacterState(1602)]), createSideState([])]),
     sideIndex: 0,
   });
