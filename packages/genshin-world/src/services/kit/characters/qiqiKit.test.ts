@@ -287,4 +287,47 @@ describe(createQiqiKitBehaviour, () => {
 
     expect(travelerMember.healthShare).toBe(0);
   });
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    // Ascension 1: a reaction the character on the field triggers gives it 20% Healing Bonus for 8 seconds
+    const combatant = createQiqiCombatant(1);
+    const context = createKitTestContext(combatant);
+    QIQI_KIT.onKitEvent?.(
+      {
+        enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [],
+        striker: combatant,
+      },
+      context,
+      combatant,
+    );
+    expect(context.kitEffectState.effects).toStrictEqual([
+      {
+        amount: 0.2,
+        attribute: Attribute.HealingBonus,
+        characterId: QIQI_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 8,
+      },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = createQiqiCombatant(0);
+    const context = createKitTestContext(combatant);
+    QIQI_KIT.onKitEvent?.(
+      {
+        enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [],
+        striker: combatant,
+      },
+      context,
+      combatant,
+    );
+    expect(context.kitEffectState.effects).toStrictEqual([]);
+  });
 });
