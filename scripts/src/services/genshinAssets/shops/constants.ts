@@ -5,6 +5,8 @@ import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 export const PAIMON_BARGAINS_SHOP_TYPE = 1001;
 // The general goods the Mondstadt grocery sells, shop 1004 in the table, the one the city's grocery row is read as
 export const MONDSTADT_GENERAL_GOODS_SHOP_TYPE = 1004;
+// Mondstadt's city in the shop table, whose shops' discount the grocery's goods take
+export const MONDSTADT_CITY_ID = 1;
 // The Realm Depot's goods, filed under shop type 1048 in the goods rows, each under the sub tab the depot shows it in
 export const REALM_DEPOT_SHOP_TYPE = 1048;
 export const REALM_DEPOT_TABS: readonly { stem: string; subTabId: number }[] = [
