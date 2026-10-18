@@ -1,6 +1,7 @@
 import type { OfferingProgress } from "#src/models/offering/OfferingProgress";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 
+import { OCULUS_ADVENTURE_EXP } from "#src/services/statue/constants";
 import { findOculus } from "#src/services/statue/findOculus";
 import { describe, expect, test } from "vitest";
 
@@ -11,6 +12,18 @@ describe(findOculus, () => {
     { itemCount: 0, itemId: 1, level: 1, rewards: [{ itemCount: 1, itemId: 2 }], staminaShare: 0 },
     { itemCount: 1, itemId: 1, level: 2, rewards: [{ itemCount: 1, itemId: 2 }], staminaShare: 0 },
   ];
+
+  test("touching an Oculus collects it and gives Adventure EXP", () => {
+    expect.hasAssertions();
+    const progress: OfferingProgress<StatueLevel> = { heldCount: 0, level: 0, levels: LEVELS };
+
+    expect(findOculus(new Set(), OCULUS_ID, progress)).toStrictEqual({
+      adventureExp: OCULUS_ADVENTURE_EXP,
+      foundOculusIds: new Set([OCULUS_ID]),
+      gainedLevels: [],
+      progress: { heldCount: 1, level: 0, levels: LEVELS },
+    });
+  });
 
   test("an offered Oculus completes a level at once", () => {
     expect.hasAssertions();
@@ -40,6 +53,7 @@ describe(findOculus, () => {
     const progress: OfferingProgress<StatueLevel> = { heldCount: 0, level: 1, levels: LEVELS };
 
     expect(findOculus(foundOculusIds, OCULUS_ID, progress)).toStrictEqual({
+      adventureExp: 0,
       foundOculusIds,
       gainedLevels: [],
       progress,
