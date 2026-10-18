@@ -182,11 +182,21 @@ describe("counting and primality", () => {
     expect(evaluateFormula("isPrime(1.5)")).toBe(0);
   });
 
-  // eslint-disable-next-line vitest/prefer-lowercase-title -- the title is the coordinator's name for this behaviour, kept verbatim
-  test("A function reads two lists", () => {
+  test.each([["A function reads two lists"]])("%s", (_title) => {
     expect.hasAssertions();
 
     expect(evaluateFormula("dot([1, 2], [3, 4])")).toBe(11);
+  });
+
+  test("a list or a call past the engine's limit on spread arguments is read whole", () => {
+    expect.hasAssertions();
+
+    const ones = Array.from({ length: 200_000 }, () => "1").join(", ");
+
+    expect(evaluateFormula(`count([${ones}])`)).toBe(200_000);
+    expect(evaluateFormula(`sum(${ones})`)).toBe(200_000);
+    expect(evaluateFormula(`max([${ones}])`)).toBe(1);
+    expect(evaluateFormula(`hypot(${ones})`)).toBe(Math.sqrt(200_000));
   });
 
   test("a factorial is the product mathjs computes, to the last bit", () => {

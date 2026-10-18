@@ -2,7 +2,9 @@ import type { MathExpressionSignature } from "#src/models/MathExpressionSignatur
 import type { MathExpressionValue } from "#src/models/MathExpressionValue";
 
 import { MathExpressionParameterType } from "#src/models/MathExpressionParameterType";
+import { checkIsLarger } from "#src/services/checkIsLarger";
 import { checkIsNearlyEqual } from "#src/services/checkIsNearlyEqual";
+import { checkIsSmaller } from "#src/services/checkIsSmaller";
 import { checkIsTruthy } from "#src/services/checkIsTruthy";
 import { computeBernoulliNumber } from "#src/services/computeBernoulliNumber";
 import { computeCombinations } from "#src/services/computeCombinations";
@@ -13,7 +15,9 @@ import { computeDistance } from "#src/services/computeDistance";
 import { computeDotProduct } from "#src/services/computeDotProduct";
 import { computeErf } from "#src/services/computeErf";
 import { computeErfInverse } from "#src/services/computeErfInverse";
+import { computeExtreme } from "#src/services/computeExtreme";
 import { computeGamma } from "#src/services/computeGamma";
+import { computeHypotenuse } from "#src/services/computeHypotenuse";
 import { computeKullbackLeibler } from "#src/services/computeKullbackLeibler";
 import { computeListComparison } from "#src/services/computeListComparison";
 import { computeLogGamma } from "#src/services/computeLogGamma";
@@ -23,6 +27,7 @@ import { computeNthRoot } from "#src/services/computeNthRoot";
 import { computePartitionSelect } from "#src/services/computePartitionSelect";
 import { computeProduct } from "#src/services/computeProduct";
 import { computeQuantile } from "#src/services/computeQuantile";
+import { computeSum } from "#src/services/computeSum";
 import { computeVectorNorm } from "#src/services/computeVectorNorm";
 import { computeZeta } from "#src/services/computeZeta";
 import { shiftDecimalPlaces } from "#src/services/shiftDecimalPlaces";
@@ -32,89 +37,84 @@ import { toNumber } from "#src/services/toNumber";
 // Arities and its computation. A computation yields null where mathjs would throw, which the evaluation turns into an error
 const MAXIMUM_DIGITS = 15;
 
-const countTruthy = (values: number[]): number => values.filter((value) => checkIsTruthy(value)).length;
+// A computation of numbers takes them as one array, never spread into arguments, so a list of any length is read
+type NumberCompute = (values: readonly number[]) => null | number;
+
+const countTruthy = (values: readonly number[]): number => values.filter((value) => checkIsTruthy(value)).length;
 
 // The numbers a call's values hold, where a list of numbers stands for its numbers
-const toNumbers = (values: MathExpressionValue[]): number[] => values.flat();
+const toNumbers = (values: readonly MathExpressionValue[]): number[] => values.flat();
 const signature = (
   parameters: MathExpressionParameterType[],
   minArity: number,
   maxArity: number,
-  compute: (...values: MathExpressionValue[]) => null | number,
+  compute: MathExpressionSignature["compute"],
 ): MathExpressionSignature => ({ compute, maxArity, minArity, parameters });
 const numeric =
-  (compute: (...values: number[]) => null | number) =>
-  (...values: MathExpressionValue[]) =>
-    compute(...toNumbers(values));
-const numberSignature = (
-  minArity: number,
-  maxArity: number,
-  compute: (...values: number[]) => null | number,
-): MathExpressionSignature => signature([MathExpressionParameterType.Number], minArity, maxArity, numeric(compute));
-const listSignature = (compute: (...values: number[]) => null | number): MathExpressionSignature =>
+  (compute: NumberCompute): MathExpressionSignature["compute"] =>
+  (values) =>
+    compute(toNumbers(values));
+const numberSignature = (minArity: number, maxArity: number, compute: NumberCompute): MathExpressionSignature =>
+  signature([MathExpressionParameterType.Number], minArity, maxArity, numeric(compute));
+const listSignature = (compute: NumberCompute): MathExpressionSignature =>
   signature([MathExpressionParameterType.List], 1, 1, numeric(compute));
-// A function of lists takes each argument as the list of its numbers, a number standing for a list of one
-const ofLists =
-  (compute: (...lists: number[][]) => null | number) =>
-  (...values: MathExpressionValue[]): null | number =>
-    compute(...values.map((value) => toNumbers([value])));
+// A function of two lists takes each argument as the list of its numbers, a number standing for a list of one
+const ofListPair =
+  (compute: (left: number[], right: number[]) => null | number): MathExpressionSignature["compute"] =>
+  (values) =>
+    compute(toNumbers(values.slice(0, 1)), toNumbers(values.slice(1, 2)));
 
 const listPairSignature = (compute: (left: number[], right: number[]) => null | number): MathExpressionSignature =>
-  signature([MathExpressionParameterType.List, MathExpressionParameterType.List], 2, 2, ofLists(compute));
+  signature([MathExpressionParameterType.List, MathExpressionParameterType.List], 2, 2, ofListPair(compute));
 // A pair of lists, or a list and a number, where the number is read as a list of one
 const orderedListSignatures = (
   compute: (left: number[], right: number[]) => null | number,
 ): MathExpressionSignature[] => [
-  signature([MathExpressionParameterType.Number, MathExpressionParameterType.List], 2, 2, ofLists(compute)),
-  signature([MathExpressionParameterType.List, MathExpressionParameterType.Number], 2, 2, ofLists(compute)),
+  signature([MathExpressionParameterType.Number, MathExpressionParameterType.List], 2, 2, ofListPair(compute)),
+  signature([MathExpressionParameterType.List, MathExpressionParameterType.Number], 2, 2, ofListPair(compute)),
   listPairSignature(compute),
 ];
 
 // A function of one argument takes only a list of one number, the list form every such function of mathjs's takes
 const singletonListSignature = (compute: (value: number) => null | number): MathExpressionSignature =>
-  signature([MathExpressionParameterType.List], 1, 1, (...values) => {
-    const numbers = toNumbers(values);
-    return numbers.length === 1 ? compute(numbers[0] ?? Number.NaN) : null;
-  });
+  listSignature((values) => (values.length === 1 ? compute(values[0] ?? Number.NaN) : null));
 
-const fixed = (arity: number, compute: (...values: number[]) => null | number): MathExpressionSignature[] => [
+const fixed = (arity: number, compute: NumberCompute): MathExpressionSignature[] => [
   numberSignature(arity, arity, compute),
 ];
-const ranged = (
-  minArity: number,
-  maxArity: number,
-  compute: (...values: number[]) => null | number,
-): MathExpressionSignature[] => [numberSignature(minArity, maxArity, compute)];
-const variadic = (minArity: number, compute: (...values: number[]) => null | number): MathExpressionSignature[] => [
+const ranged = (minArity: number, maxArity: number, compute: NumberCompute): MathExpressionSignature[] => [
+  numberSignature(minArity, maxArity, compute),
+];
+const variadic = (minArity: number, compute: NumberCompute): MathExpressionSignature[] => [
   numberSignature(minArity, Number.POSITIVE_INFINITY, compute),
 ];
 // A spread function also takes one list, whose numbers are its arguments
-const spread = (minArity: number, compute: (...values: number[]) => null | number): MathExpressionSignature[] => [
+const spread = (minArity: number, compute: NumberCompute): MathExpressionSignature[] => [
   numberSignature(minArity, Number.POSITIVE_INFINITY, compute),
   listSignature(compute),
 ];
 const unary = (compute: (value: number) => null | number): MathExpressionSignature[] =>
-  fixed(1, (...values) => compute(values[0] ?? Number.NaN));
+  fixed(1, (values) => compute(values[0] ?? Number.NaN));
 // A function that is the identity on a number, which takes a list of one number as its number
 const identity = (): MathExpressionSignature[] => [
   ...unary((value) => value),
   singletonListSignature((value) => value),
 ];
-// A list argument leads a function's arguments, and any numbers after it follow the list, as mathjs takes them
+// A list argument leads a function's arguments, and the numbers after it follow the list, as mathjs takes them
 const withList =
-  (compute: (list: number[], ...numbers: number[]) => null | number) =>
-  (...values: MathExpressionValue[]): null | number =>
-    compute(toNumbers(values.slice(0, 1)), ...toNumbers(values.slice(1)));
+  (compute: (list: number[], numbers: number[]) => null | number): MathExpressionSignature["compute"] =>
+  (values) =>
+    compute(toNumbers(values.slice(0, 1)), toNumbers(values.slice(1)));
 // A number leads a function's arguments and a list follows it
 const withNumberThenList =
-  (compute: (value: number, list: number[]) => null | number) =>
-  (...values: MathExpressionValue[]): null | number =>
+  (compute: (value: number, list: number[]) => null | number): MathExpressionSignature["compute"] =>
+  (values) =>
     compute(toNumbers(values.slice(0, 1))[0] ?? Number.NaN, toNumbers(values.slice(1)));
 // A bitwise function folds its operands left to right. An operand that decides the result, zero for and and minus one for
 // Or, ends the fold without the operands after it being read, and an operand that is not an integer is an error
 const bitwiseFold =
-  (absorbing: number, compute: (left: number, right: number) => number) =>
-  (...values: number[]): null | number => {
+  (absorbing: number, compute: (left: number, right: number) => number): NumberCompute =>
+  (values) => {
     let result = values[0] ?? Number.NaN;
     for (const value of values.slice(1)) {
       if (result === absorbing) return absorbing;
@@ -125,13 +125,13 @@ const bitwiseFold =
     return result;
   };
 const binary = (compute: (left: number, right: number) => null | number): MathExpressionSignature[] =>
-  fixed(2, (...values) => compute(values[0] ?? Number.NaN, values[1] ?? Number.NaN));
+  fixed(2, (values) => compute(values[0] ?? Number.NaN, values[1] ?? Number.NaN));
 const integerBinary = (compute: (left: number, right: number) => null | number): MathExpressionSignature[] =>
   binary((left, right) => (Number.isInteger(left) && Number.isInteger(right) ? compute(left, right) : null));
 const integerUnary = (compute: (value: number) => null | number): MathExpressionSignature[] =>
   unary((value) => (Number.isInteger(value) ? compute(value) : null));
 const digitally = (rounder: (value: number) => number): MathExpressionSignature[] =>
-  ranged(1, 2, (...values) => {
+  ranged(1, 2, (values) => {
     const [value = Number.NaN, digits = 0] = values;
     if (!Number.isInteger(digits) || digits < 0 || digits > MAXIMUM_DIGITS) return null;
     if (!Number.isFinite(value)) return value;
@@ -139,24 +139,23 @@ const digitally = (rounder: (value: number) => number): MathExpressionSignature[
   });
 // A statistic of a list is undefined for an empty one, where mathjs throws
 const ofNonEmpty =
-  (compute: (values: number[]) => number) =>
-  (...values: number[]): null | number =>
+  (compute: (values: readonly number[]) => number): NumberCompute =>
+  (values) =>
     values.length === 0 ? null : compute(values);
 
-const sum = (values: number[]): number => values.reduce((total, value) => total + value, 0);
-const mean = (values: number[]): number => sum(values) / values.length;
-const variance = (values: number[]): number => {
+const mean = (values: readonly number[]): number => computeSum(values) / values.length;
+const variance = (values: readonly number[]): number => {
   if (values.length === 1) return 0;
   const average = mean(values);
-  return sum(values.map((value) => (value - average) ** 2)) / (values.length - 1);
+  return computeSum(values.map((value) => (value - average) ** 2)) / (values.length - 1);
 };
-const median = (values: number[]): number => {
+const median = (values: readonly number[]): number => {
   const sorted = values.toSorted((left, right) => left - right);
   const middle = Math.floor(sorted.length / 2);
   if (sorted.length % 2 === 1) return sorted[middle] ?? Number.NaN;
   return ((sorted[middle - 1] ?? Number.NaN) + (sorted[middle] ?? Number.NaN)) / 2;
 };
-const medianAbsoluteDeviation = (values: number[]): number => {
+const medianAbsoluteDeviation = (values: readonly number[]): number => {
   const center = median(values);
   return median(values.map((value) => Math.abs(value - center)));
 };
@@ -183,7 +182,7 @@ const computeBellNumber = (index: number): null | number => {
 const MAXIMUM_STIRLING_WORK = 4_000_000;
 // The column of parts, for a few parts: S(m, r) = r S(m - 1, r) + S(m - 1, r - 1), updated in place from the highest part down
 const computeStirlingColumn = (count: number, parts: number): number => {
-  const column: number[] = Array.from({ length: parts + 1 }, (_, index) => (index === 0 ? 1 : 0));
+  const column: number[] = Array.from({ length: parts + 1 }, (_element, index) => (index === 0 ? 1 : 0));
   for (let step = 1; step <= count; step++) {
     for (let part = parts; part >= 1; part--) column[part] = part * (column[part] ?? 0) + (column[part - 1] ?? 0);
     column[0] = 0;
@@ -192,7 +191,7 @@ const computeStirlingColumn = (count: number, parts: number): number => {
 };
 // The diagonal below the parts, for a few counts short of the count: D(m, i) = S(m, m - i) = (m - i) D(m - 1, i - 1) + D(m - 1, i)
 const computeStirlingDiagonal = (count: number, index: number): number => {
-  const diagonal: number[] = Array.from({ length: index + 1 }, (_, position) => (position === 0 ? 1 : 0));
+  const diagonal: number[] = Array.from({ length: index + 1 }, (_element, position) => (position === 0 ? 1 : 0));
   for (let step = 1; step <= count; step++)
     for (let position = Math.min(step, index); position >= 1; position--)
       diagonal[position] = (step - position) * (diagonal[position - 1] ?? 0) + (diagonal[position] ?? 0);
@@ -217,7 +216,7 @@ const computePermutations = (available: number, chosen: number): null | number =
   }
   return result;
 };
-const computeMultinomial = (...parts: number[]): null | number => {
+const computeMultinomial = (parts: readonly number[]): null | number => {
   if (!parts.every((part) => Number.isInteger(part) && part > 0)) return null;
   let result = 1;
   let running = 0;
@@ -231,7 +230,7 @@ const computeCompositions = (total: number, parts: number): null | number => {
   if (!Number.isInteger(total) || !Number.isInteger(parts) || parts < 1 || parts > total) return null;
   return computeCombinations(total - 1, parts - 1);
 };
-const computeIntegerGreatestCommonDivisor = (values: number[]): null | number => {
+const computeIntegerGreatestCommonDivisor = (values: readonly number[]): null | number => {
   if (!values.every((value) => Number.isInteger(value))) return null;
   return values.reduce((total, value) => computeGreatestCommonDivisor(total, value), 0);
 };
@@ -296,10 +295,10 @@ const computeLeastCommonMultiple = (left: number, right: number): null | number 
   const divisor = computeGreatestCommonDivisor(left, right);
   return divisor === 0 ? 0 : Math.abs((left * right) / divisor);
 };
-const computeNorm = (...values: number[]): null | number => {
+const computeNorm = (values: readonly number[]): null | number => {
   if (values.length === 0) return 0;
   if (values.length === 1) return Math.abs(values[0] ?? Number.NaN);
-  return Math.sqrt(sum(values.map((value) => value * value)));
+  return Math.sqrt(computeSum(values.map((value) => value * value)));
 };
 
 export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]> = {
@@ -310,9 +309,9 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   acoth: unary(computeInverseCoth),
   acsc: unary((value) => Math.asin(1 / value)),
   acsch: unary((value) => Math.asinh(1 / value)),
-  add: variadic(2, (...values) => sum(values)),
+  add: variadic(2, computeSum),
   addScalar: binary((left, right) => left + right),
-  and: variadic(2, (...values) => toNumber(values.every((value) => checkIsTruthy(value)))),
+  and: variadic(2, (values) => toNumber(values.every((value) => checkIsTruthy(value)))),
   arg: unary((value) => (Number.isNaN(value) ? Number.NaN : value < 0 ? Math.PI : 0)),
   asec: unary((value) => Math.acos(1 / value)),
   asech: unary((value) => Math.acosh(1 / value)),
@@ -333,7 +332,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
     bitwiseFold(-1, (left, right) => left | right),
   ),
   bitXor: integerBinary((left, right) => left ^ right),
-  boolean: ranged(0, 1, (...values) => (values.length === 0 ? 0 : toNumber(checkIsTruthy(values[0] ?? 0)))),
+  boolean: ranged(0, 1, (values) => (values.length === 0 ? 0 : toNumber(checkIsTruthy(values[0] ?? 0)))),
   catalan: unary(computeCatalan),
   cbrt: unary(Math.cbrt),
   ceil: digitally(Math.ceil),
@@ -357,7 +356,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   cosh: unary(Math.cosh),
   cot: unary((value) => 1 / Math.tan(value)),
   coth: unary((value) => 1 / Math.tanh(value)),
-  count: [listSignature((...values) => values.length)],
+  count: [listSignature((values) => values.length)],
   csc: unary((value) => 1 / Math.sin(value)),
   csch: unary((value) => 1 / Math.sinh(value)),
   ctranspose: unary((value) => value),
@@ -374,7 +373,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
     signature([MathExpressionParameterType.Number, MathExpressionParameterType.List], 2, 2, () => toNumber(false)),
     signature([MathExpressionParameterType.List, MathExpressionParameterType.Number], 2, 2, () => toNumber(false)),
   ],
-  det: [...unary((value) => value), listSignature((...values) => computeDeterminant(values))],
+  det: [...unary((value) => value), listSignature(computeDeterminant)],
   distance: [listPairSignature(computeDistance)],
   divide: binary((left, right) => left / right),
   divideScalar: binary((left, right) => left / right),
@@ -392,14 +391,14 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   fix: digitally(Math.trunc),
   floor: digitally(Math.floor),
   gamma: unary(computeGamma),
-  gcd: spread(2, (...values) => (values.length < 2 ? null : computeIntegerGreatestCommonDivisor(values))),
-  hypot: spread(1, (...values) => Math.hypot(...values)),
+  gcd: spread(2, (values) => (values.length < 2 ? null : computeIntegerGreatestCommonDivisor(values))),
+  hypot: spread(1, computeHypotenuse),
   im: unary(() => 0),
   inv: unary((value) => 1 / value),
   invmod: binary(computeModularInverse),
   isBounded: [
     ...unary((value) => toNumber(Number.isFinite(value))),
-    listSignature((...values) => toNumber(values.every((value) => Number.isFinite(value)))),
+    listSignature((values) => toNumber(values.every((value) => Number.isFinite(value)))),
   ],
   isFinite: unary((value) => toNumber(Number.isFinite(value))),
   isInteger: unary((value) => toNumber(Number.isInteger(value))),
@@ -409,9 +408,9 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   isPrime: unary((value) => toNumber(computeIsPrime(value))),
   isZero: unary((value) => toNumber(value === 0)),
   kldivergence: [listPairSignature(computeKullbackLeibler)],
-  larger: binary((left, right) => toNumber(left > right && !checkIsNearlyEqual(left, right))),
+  larger: binary((left, right) => toNumber(checkIsLarger(left, right))),
   largerEq: binary((left, right) => toNumber(left >= right || checkIsNearlyEqual(left, right))),
-  lcm: variadic(2, (...values) => {
+  lcm: variadic(2, (values) => {
     const [first = Number.NaN, ...rest] = values;
     return rest.reduce<null | number>(
       (total, value) => (total === null ? null : computeLeastCommonMultiple(total, value)),
@@ -420,8 +419,8 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   }),
   leftShift: integerBinary((left, right) => left << right),
   lgamma: unary(computeLogGamma),
-  log: ranged(1, 2, (...values) => computeLogarithm(values[0] ?? Number.NaN, values[1])),
-  log1p: ranged(1, 2, (...values) => {
+  log: ranged(1, 2, (values) => computeLogarithm(values[0] ?? Number.NaN, values[1])),
+  log1p: ranged(1, 2, (values) => {
     const [value = Number.NaN, base] = values;
     return base === undefined ? Math.log1p(value) : Math.log1p(value) / Math.log(base);
   }),
@@ -430,20 +429,20 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   mad: spread(1, ofNonEmpty(medianAbsoluteDeviation)),
   max: spread(
     1,
-    ofNonEmpty((values) => Math.max(...values)),
+    ofNonEmpty((values) => computeExtreme(values, values[0] ?? Number.NaN, checkIsLarger)),
   ),
   mean: spread(1, ofNonEmpty(mean)),
   median: spread(1, ofNonEmpty(median)),
   min: spread(
     1,
-    ofNonEmpty((values) => Math.min(...values)),
+    ofNonEmpty((values) => computeExtreme(values, values[0] ?? Number.NaN, checkIsSmaller)),
   ),
   mod: binary((left, right) => computeModulo(left, right)),
   multinomial: [listSignature(computeMultinomial)],
   multiply: [
-    ...variadic(2, (...values) => values.reduce((total, value) => total * value, 1)),
+    ...variadic(2, (values) => values.reduce((total, value) => total * value, 1)),
     listPairSignature(computeDotProduct),
-    signature([MathExpressionParameterType.Any], 2, Number.POSITIVE_INFINITY, (...values) => computeProduct(values)),
+    signature([MathExpressionParameterType.Any], 2, Number.POSITIVE_INFINITY, computeProduct),
   ],
   multiplyScalar: binary((left, right) => left * right),
   norm: [
@@ -453,24 +452,24 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
       [MathExpressionParameterType.List, MathExpressionParameterType.Number],
       2,
       2,
-      withList((list, ...powers) => computeVectorNorm(list, powers[0] ?? Number.NaN)),
+      withList((list, [power = Number.NaN]) => computeVectorNorm(list, power)),
     ),
   ],
   not: unary((value) => toNumber(!checkIsTruthy(value))),
-  nthRoot: ranged(1, 2, (...values) => computeNthRoot(values[0] ?? Number.NaN, values[1] ?? 2)),
-  nullish: variadic(1, (...values) => values[0] ?? Number.NaN),
-  number: ranged(0, 1, (...values) => (values.length === 0 ? 0 : (values[0] ?? Number.NaN))),
+  nthRoot: ranged(1, 2, (values) => computeNthRoot(values[0] ?? Number.NaN, values[1] ?? 2)),
+  nullish: variadic(1, (values) => values[0] ?? Number.NaN),
+  number: ranged(0, 1, (values) => (values.length === 0 ? 0 : (values[0] ?? Number.NaN))),
   numeric: unary((value) => value),
-  or: variadic(1, (...values) => toNumber(countTruthy(values) > 0)),
+  or: variadic(1, (values) => toNumber(countTruthy(values) > 0)),
   partitionSelect: [
     signature(
       [MathExpressionParameterType.List, MathExpressionParameterType.Number],
       2,
       2,
-      withList((list, index = Number.NaN) => computePartitionSelect(list, index)),
+      withList((list, [index = Number.NaN]) => computePartitionSelect(list, index)),
     ),
   ],
-  permutations: ranged(1, 2, (...values) => {
+  permutations: ranged(1, 2, (values) => {
     const [available = Number.NaN, chosen = available] = values;
     return computePermutations(available, chosen);
   }),
@@ -485,7 +484,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
       [MathExpressionParameterType.List, MathExpressionParameterType.Number],
       2,
       3,
-      withList((list, probability = Number.NaN, sorted = 0) =>
+      withList((list, [probability = Number.NaN, sorted = 0]) =>
         computeQuantile(list, probability, checkIsTruthy(sorted)),
       ),
     ),
@@ -505,11 +504,11 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
       withNumberThenList((value, list) => list.filter((element) => element === value).length),
     ),
   ],
-  setSize: [listSignature((...values) => values.length)],
+  setSize: [listSignature((values) => values.length)],
   sign: unary(Math.sign),
   sin: unary(Math.sin),
   sinh: unary(Math.sinh),
-  smaller: binary((left, right) => toNumber(left < right && !checkIsNearlyEqual(left, right))),
+  smaller: binary((left, right) => toNumber(checkIsSmaller(left, right))),
   smallerEq: binary((left, right) => toNumber(left <= right || checkIsNearlyEqual(left, right))),
   sqrt: unary(Math.sqrt),
   square: unary((value) => value * value),
@@ -521,7 +520,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   stirlingS2: binary(computeStirlingSecondKind),
   subtract: binary((left, right) => left - right),
   subtractScalar: binary((left, right) => left - right),
-  sum: spread(1, (...values) => sum(values)),
+  sum: spread(1, computeSum),
   tan: unary(Math.tan),
   tanh: unary(Math.tanh),
   trace: identity(),
@@ -533,6 +532,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
     1,
     ofNonEmpty((values) => variance(values)),
   ),
-  xor: variadic(2, (...values) => toNumber(countTruthy(values) % 2 === 1)),
+  xor: variadic(2, (values) => toNumber(countTruthy(values) % 2 === 1)),
   zeta: unary(computeZeta),
 };

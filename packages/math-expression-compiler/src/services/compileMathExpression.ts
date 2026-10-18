@@ -1,4 +1,5 @@
 import type { MathExpressionNode } from "#src/models/MathExpressionNode";
+import type { MathExpressionSignature } from "#src/models/MathExpressionSignature";
 import type { MathExpressionValue } from "#src/models/MathExpressionValue";
 
 import { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
@@ -25,7 +26,6 @@ interface CompiledArgument {
   evaluate: (values: readonly number[], locals: Result[]) => MathExpressionValue | null;
   isConstant: boolean;
 }
-type Compute = (...values: MathExpressionValue[]) => Result;
 type Evaluator = (values: readonly number[], locals: Result[]) => Result;
 // An evaluator yields null where mathjs would throw, which is an error that the whole formula takes, and NaN where mathjs
 // Yields NaN as a value, which a comparison or a condition reads as mathjs does. The public function makes an error NaN
@@ -35,7 +35,7 @@ const NO_VALUES: readonly number[] = [];
 const NO_LOCALS: Result[] = [];
 
 // An operator's function takes one signature, the first of its table entry, which a call matches by its arguments
-const getCompute = (name: string): Compute =>
+const getCompute = (name: string): MathExpressionSignature["compute"] =>
   (Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name]?.[0]?.compute : undefined) ??
   (() => null);
 
@@ -78,7 +78,7 @@ const compileComparison = (names: string[], operands: MathExpressionNode[], cont
     for (const [index, compute] of computes.entries()) {
       const right = compiledOperands[index + 1]?.evaluate(values, locals) ?? null;
       if (left === null || right === null) return null;
-      result = compute(left, right);
+      result = compute([left, right]);
       if (result !== 1) return result;
       left = right;
     }
@@ -125,7 +125,7 @@ const compileBinary = (
 
     const rightValue = compiledRight.evaluate(values, locals);
     if (rightValue === null) return null;
-    return compute(leftValue, rightValue);
+    return compute([leftValue, rightValue]);
   };
   return { evaluate, isConstant: compiledLeft.isConstant && compiledRight.isConstant };
 };
@@ -217,7 +217,7 @@ const compileArgument = (node: MathExpressionNode, context: CompileContext): Com
   return { evaluate: compiled.evaluate, isConstant: compiled.isConstant };
 };
 
-// A call of one or two arguments applies its function directly, with no array per row, and a longer call gathers its values.
+// A call of one or two arguments hands its values straight to its function, and a longer call gathers them in a loop.
 // The signature a call takes is the one its argument kinds match, the same one the parser checked it against
 const compileCall = (name: string, argumentNodes: MathExpressionNode[], context: CompileContext): Compiled => {
   const signatures = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
@@ -230,7 +230,7 @@ const compileCall = (name: string, argumentNodes: MathExpressionNode[], context:
     return {
       evaluate: (values, locals) => {
         const firstValue = first.evaluate(values, locals);
-        return firstValue === null ? null : compute(firstValue);
+        return firstValue === null ? null : compute([firstValue]);
       },
       isConstant,
     };
@@ -241,7 +241,7 @@ const compileCall = (name: string, argumentNodes: MathExpressionNode[], context:
         const firstValue = first.evaluate(values, locals);
         if (firstValue === null) return null;
         const secondValue = second.evaluate(values, locals);
-        return secondValue === null ? null : compute(firstValue, secondValue);
+        return secondValue === null ? null : compute([firstValue, secondValue]);
       },
       isConstant,
     };
@@ -254,7 +254,7 @@ const compileCall = (name: string, argumentNodes: MathExpressionNode[], context:
         if (argumentValue === null) return null;
         argumentValues.push(argumentValue);
       }
-      return compute(...argumentValues);
+      return compute(argumentValues);
     },
     isConstant,
   };
@@ -311,7 +311,7 @@ const compileUnfolded = (node: MathExpressionNode, context: CompileContext): Com
       return {
         evaluate: (values, locals) => {
           const operandValue = compiledOperand.evaluate(values, locals);
-          return operandValue === null ? null : compute(operandValue);
+          return operandValue === null ? null : compute([operandValue]);
         },
         isConstant: compiledOperand.isConstant,
       };
