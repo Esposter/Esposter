@@ -36,6 +36,7 @@ import { createFocusPassiveModule } from "#src/services/weapon/passives/createFo
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
 import { createGildingPassiveModule } from "#src/services/weapon/passives/createGildingPassiveModule";
+import { createGokadaiouOtogibanashiPassiveModule } from "#src/services/weapon/passives/createGokadaiouOtogibanashiPassiveModule";
 import { createGoldenMajestyPassiveModule } from "#src/services/weapon/passives/createGoldenMajestyPassiveModule";
 import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passives/createGuerillaTacticsPassiveModule";
 import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
@@ -332,4 +333,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3170252851": createThePartingRefrainPassiveModule,
   // Golden Majesty (Vortex Vanquisher)
   "3573861603": createGoldenMajestyPassiveModule,
+  // Gokadaiou Otogibanashi (Redhorn Stonethresher)
+  "372854075": createGokadaiouOtogibanashiPassiveModule,
 };
