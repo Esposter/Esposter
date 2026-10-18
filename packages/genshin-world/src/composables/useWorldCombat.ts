@@ -11,6 +11,7 @@ import type { HudMember } from "#src/models/hud/HudMember";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { Party } from "#src/models/party/Party";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
@@ -50,7 +51,7 @@ import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharac
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
-import { computed, shallowRef, watch } from "vue";
+import { computed, shallowReactive, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
 // Field steps in, with the enemies the world holds and the kit's effects on the team. A defeat places its drops and is a
@@ -197,7 +198,8 @@ export const useWorldCombat = ({
     enemyMap: new Map<string, Enemy>(),
     enemyTables,
     expiredEffects: [],
-    kitEffectState: { effects: [] },
+    // Reactive as a shallow object, so the HUD's Max HP follows the team's effects as they start and lapse
+    kitEffectState: shallowReactive<KitEffectState>({ effects: [] }),
     locomotionState: LocomotionState.Idle,
     isSkillHeld: false,
     hexereiCount: 0,
