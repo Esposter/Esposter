@@ -1,7 +1,10 @@
+import { jsonPatchOperationSchema } from "#shared/models/db/resource/JsonPatchOperation";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { selectResourceInResourceSchema } from "@esposter/db-schema";
 import { z } from "zod";
-import { jsonPatchOperationSchema, MAX_PATCH_OPERATIONS } from "@esposter/shared";
+
+// One patch's operations, applied in turn while the request holds the document
+const MAX_PATCH_OPERATIONS = 1000;
 
 export const updateResourceContentInputSchema = z.object({
   ...resourceIdInputSchema.shape,
