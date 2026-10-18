@@ -8,7 +8,7 @@ goes back to it, and a piece that comes from it is the caller's to take out, so 
 
 ```mermaid
 flowchart TD
-  BAG["A bag artifact, once its entry holds its rolled state (not built)"] -->|"the caller equips it"| EQUIP["equipCharacterArtifact: the piece worn in its slot is returned"]
+  BAG["A bag artifact, its entry holding its rolled state"] -->|"the caller equips it"| EQUIP["equipCharacterArtifact: the piece worn in its slot is returned"]
   EQUIP --> WORN["Character artifacts: one piece a slot"]
   WORN -->|"the caller unequips a slot"| UNEQUIP["unequipCharacterArtifact: an empty slot is refused"]
   UNEQUIP -->|"the piece goes to the bag"| BAG
@@ -38,8 +38,9 @@ flowchart TD
   the bonus on confirm, so the level shown is the lowest it can be. The preview at the base bonus and the Auto Add order both stand as
   provisional, as the coordinator ruled, until a measurement of the game replaces them.
 - **A full artifact tab refuses Unequip with the artifact inventory's own notice.** Unequipping into a full artifact
-  inventory leaves the piece worn and shows `BAG_FULL_EQUIPMENT_TIPS`, "No space left in Artifact Inventory...", the
-  notice the game names for the artifact tab, as the coordinator ruled over the generic "Inventory full".
+  inventory leaves the piece worn and shows `BAG_FULL_EQUIPMENT_TIPS`, the notice that the artifact
+  inventory has no space left, the notice the game names for the artifact tab, as the coordinator ruled over the generic
+  inventory-full notice.
 - **The set reader is one function.** `getActiveArtifactSetBonuses` reaches each set's bonuses by its piece count, and
   `getArtifactSetAttributeLines` sums what it returns. The Artifacts tab's set-bonus block reads the same list.
 
@@ -52,10 +53,11 @@ What works today and what this change adds:
   fixture and worn variant in the visual suite, and the character screen's Artifacts tab, which passes the panel its
   words, slot names, stats and the set block's lines. Their tests are named in the change's tasks, and the existing
   character, kit and save suites cover what they share.
-- **Not built, and why:** the panel's parity reference and approval (task 5.4), which waits on a browser run, and the
-  bag moves' picker (task 6.2): equipping from the bag, unequipping to it and fodder taken from it. The bag holds each
-  piece as an entry of its own with a unique `id` (task 6.1, landed on `eye` with the character-screen change), so the
-  moves need only their services and the screen's wiring.
+- **Built with the bag:** the bag moves (task 6.2). The bag holds each piece as an entry of its own with a unique `id`
+  (task 6.1, landed on `eye` with the character-screen change). The Artifacts tab's Equip opens the bag's pieces for the
+  slot and the piece worn goes back to the bag, Unequip returns the worn piece to the bag, and fodder is taken from it
+  through `takeFodderArtifacts`.
+- **Not built, and why:** the panel's parity reference and approval (task 5.4), which waits on a browser run.
 
 ## Decisions
 
@@ -70,8 +72,8 @@ What works today and what this change adds:
 - **The panel names a slot by its index and holds no artifact model.** Its actions emit the index of the picked slot,
   and the host maps it to the character's artifact through these services, so the panel builds against the `Artifact`
   type rather than a view model of its own.
-- **The set block shows the game's own set line for each bonus the worn set reaches.** `EQUIP_RELIC_SET_NUM` reads
-  `{0}-Piece Set: {1}`, so one key carries the piece count and its effect, filled by `fillGameTextValues`. Rejected: a
+- **The set block shows the game's own set line for each bonus the worn set reaches.** `EQUIP_RELIC_SET_NUM` is
+  one line with a placeholder for the piece count and one for its effect, so one key carries both, filled by `fillGameTextValues`. Rejected: a
   heading key for each piece count, which splits one sentence the game writes whole. The effect's words are the game's
   own description of the affix at that piece count, read from the names record by its text hash (`descriptionTextHash`),
   so the names builder collects them with no list change. A bonus whose words the names do not hold reads as an empty
@@ -97,8 +99,8 @@ What works today and what this change adds:
 
 None in this change. A worn artifact is saved in full already (`CharacterSave.artifacts`), so equipping and enhancing a
 worn piece write nothing new. The bag's artifact entry takes the individual piece, a save change that belongs to the
-character-screen agent's branch (`agent/w6-character-screen`), not to this one. This change builds against the `Artifact`
-type `rollArtifact` returns and writes no second artifact model. Its dev backfill rule is that change's to state.
+character-screen change and landed on `eye` with task 6.1, not to this one. This change builds against the `Artifact`
+type `rollArtifact` returns and writes no second artifact model. The dev backfill rule is that change's to state.
 
 ## Key files
 
@@ -151,8 +153,9 @@ packages/genshin-world/src/
   rules are read from the Enhancing section of the [Artifact](https://genshin-impact.fandom.com/wiki/Artifact) page,
   and the EXP and Mora figures from the [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP) page the
   artifact enhancement design already cites.
-- **The Artifacts tab's buttons do nothing yet.** The character screen passes the panel its words, but Enhance, Equip and
-  Unequip emit into nothing until the bag and fodder moves land, and Equip is disabled meanwhile.
+- **The Artifacts tab's buttons act on the bag.** Enhance opens the fodder picker, Equip opens the bag's pieces for the
+  slot and Unequip returns the worn piece to the bag, with the full artifact inventory's notice when the bag cannot take
+  it. Equip is disabled for a slot the bag holds no piece for.
 - **The panel's Enhance and Unequip ids are provisional.** The dump's artifact page has no button word of its own for
   either. Enhance takes the equip page's level-up id, which the weapon page shares in its own name, and Unequip is the one
   exact "Unequip" in the dump, the potion buff's remove button. The reference frame checks both before the panel is
