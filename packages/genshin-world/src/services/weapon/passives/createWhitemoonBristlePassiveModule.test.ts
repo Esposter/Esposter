@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -42,6 +43,15 @@ describe(createWhitemoonBristlePassiveModule, () => {
     combatant: wielder,
     hit: TRAVELER_KIT.plungeCollision,
   });
+  // The base damage Foliar Incision adds to a strike of the attack tag, read through the kit's context
+  const readBaseDamageBonus = (context: KitContext, attackTag: AttackTag) =>
+    whitemoonBristlePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      createStrike(attackTag),
+      enemy,
+      context.party,
+      context.kitEffectState.effects,
+      context.characterIdCombatantMap,
+    );
 
   test("an elemental normal attack obtains Foliar Incision, adding the share of Elemental Mastery to normal and skill hits", () => {
     expect.hasAssertions();
@@ -54,15 +64,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
     );
 
     expect(
-      [AttackTag.NormalAttack, AttackTag.ElementalSkill].map((attackTag) =>
-        whitemoonBristlePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-          createStrike(attackTag),
-          enemy,
-          context.party,
-          context.kitEffectState.effects,
-          context.characterIdCombatantMap,
-        ),
-      ),
+      [AttackTag.NormalAttack, AttackTag.ElementalSkill].map((attackTag) => readBaseDamageBonus(context, attackTag)),
     ).toStrictEqual([120, 120]);
   });
 
@@ -76,15 +78,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
       wielder,
     );
 
-    expect(
-      whitemoonBristlePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ChargedAttack),
-        enemy,
-        context.party,
-        context.kitEffectState.effects,
-        context.characterIdCombatantMap,
-      ),
-    ).toBe(0);
+    expect(readBaseDamageBonus(context, AttackTag.ChargedAttack)).toBe(0);
   });
 
   test("a normal attack without an element obtains nothing", () => {
@@ -93,15 +87,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
     const context = createKitTestContext(wielder);
     whitemoonBristlePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(
-      whitemoonBristlePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
-        enemy,
-        context.party,
-        context.kitEffectState.effects,
-        context.characterIdCombatantMap,
-      ),
-    ).toBe(0);
+    expect(readBaseDamageBonus(context, AttackTag.NormalAttack)).toBe(0);
   });
 
   test("the Foliar Incision ends after its 28 DMG instances", () => {
@@ -116,14 +102,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
     );
     for (let instance = 0; instance < 27; instance++)
       whitemoonBristlePassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
-    const createBonus = () =>
-      whitemoonBristlePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
-        enemy,
-        context.party,
-        context.kitEffectState.effects,
-        context.characterIdCombatantMap,
-      );
+    const createBonus = () => readBaseDamageBonus(context, AttackTag.ElementalSkill);
     const bonusAfter27Instances = createBonus();
     whitemoonBristlePassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
 
@@ -141,15 +120,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
     );
     stepKitSeconds(context, 12);
 
-    expect(
-      whitemoonBristlePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
-        enemy,
-        context.party,
-        context.kitEffectState.effects,
-        context.characterIdCombatantMap,
-      ),
-    ).toBe(0);
+    expect(readBaseDamageBonus(context, AttackTag.NormalAttack)).toBe(0);
   });
 
   test("the wielder obtains Foliar Incision once every twelve seconds", () => {
@@ -161,14 +132,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
     for (let instance = 0; instance < 28; instance++)
       whitemoonBristlePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
     whitemoonBristlePassiveModule.onKitEvent?.(elementalNormalAttackHit, context, wielder);
-    const createBonus = () =>
-      whitemoonBristlePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
-        enemy,
-        context.party,
-        context.kitEffectState.effects,
-        context.characterIdCombatantMap,
-      );
+    const createBonus = () => readBaseDamageBonus(context, AttackTag.NormalAttack);
     const bonusInsideCooldown = createBonus();
     stepKitSeconds(context, 12);
     whitemoonBristlePassiveModule.onKitEvent?.(elementalNormalAttackHit, context, wielder);
