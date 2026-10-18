@@ -11,7 +11,7 @@ Dragonspine's Sheer Cold is the subzero climate's gauge. Standing in the climate
 - **Pyro does not drain the gauge.** The dump's Pyro rule is `ClimateAbility_HotMonster`, which belongs to the hot Boss bar, a separate gauge. The wiki agrees: Pyro is an accumulation modifier of -20%, not a drain, and its aura is not read by this change (named open below). So heat is the only drain, and the world's one heat rule is the campfire's.
 - **Scarlet Quartz is not a source of warmth.** The wiki says so outright. Its pickup takes 5% of the gauge and halts accumulation for 25 seconds, and the world has no Scarlet Quartz to pick up, so that is named open rather than built.
 - **Damage is 1% of max HP plus 150 HP each second the gauge stays full, handed on in HP.** The step returns the HP its full seconds cost, from the character's max HP, and Windrise emits it as `coldDamage`. The session takes it the way a boar's charge is taken: the team's shields absorb it first, and the member loses the share of max HP left over (`hitPartyMember`, which the enemy strike and the charge share too).
-- **The bar has no words.** The game's own name for the gauge is not in the reader's texts, and a `GameTextKey` member for it waits on the text write. The guide's link text "View Sheer Cold Details" is in the dump.
+- **The bar shows no words, and its label is the game's own name.** The gauge's name is the game's text `694190546`, "Sheer Cold" in English and "严寒" in Chinese, held as `GameTextKey.SheerCold`. The bar labels itself with it for assistive technology, and draws no words.
 
 ## Mechanism
 
@@ -52,6 +52,7 @@ flowchart TD
 
 - The game's own climate data, read from the dump: the rows of `BuffExcelConfigData` named `ClimateAbility_Cold`, with their Chinese `name` and `desc` (the Lv1 fill, the Lv2 damage and the area residency), and the anti-cold food rows `Anti_Cold_Food_Buff`, whose `desc` says each suppresses the bar's rise by a ratio.
 - The game's English guide text, `TextMap_MediumEN.json`, under the hash `2536823179` that `UI_GUIDE_COLDCLIMATE_DESC` names in `ManualTextMapConfigData.json`: the climate fills the gauge, its limit costs HP, heat diminishes it, and snowstorms and swimming accelerate it.
+- The game's name for the gauge: `TextMap_MediumEN.json` and `TextMap_MediumCHS.json` under the hash `694190546`, which the `genshin:text write` run puts in the reader's texts.
 - The Fandom wiki's Sheer Cold page, read through its wikitext API with a browser User-Agent (a bare client gets HTTP 402, a missing header): the accumulation rates and modifiers, the warmth and leaving rates, and the HP loss each second. Its HP table is the check: 30 seconds at 1% of max HP plus 150 HP empties 6,428 HP, which the per-second rule reproduces.
 
 ## Notes

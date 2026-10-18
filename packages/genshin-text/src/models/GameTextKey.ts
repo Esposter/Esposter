@@ -558,6 +558,8 @@ export enum GameTextKey {
   SettingsVolume = "UI_SETTING_AUDIO_CONFIG",
   SettingsVolumetricFog = "UI_SETTING_GRAPHICS_VOLUMETRIC_FOG",
   SettingsVSync = "UI_SETTING_GRAPHICS_VSYNC",
+  // The Sheer Cold gauge's name, which the bar across the screen's top is labelled with, and the subzero climate's
+  SheerCold = "694190546",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
   // The Left Today, Left This Week and Left This Month lines a shop's good shows, its count filled in
   ShopLimitDaily = "UI_MALL_LIMIT_BUY_INFO_DAILY",
@@ -672,7 +674,7 @@ export enum GameTextKey {
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
   // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
-  // the restoring's tips and label
+  // The restoring's tips and label
   WorldLevelAdjustedTo = "UI_WORLDLEVEL_ADJUST_HINT",
   WorldLevelCurrent = "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
   // The World Level dialog the profile card's info icon opens: what the World Level is, its headings and numbers in
