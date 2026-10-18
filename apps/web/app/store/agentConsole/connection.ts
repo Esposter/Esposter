@@ -1,6 +1,7 @@
 import type { Connection } from "@/models/agentConsole/Connection";
 import type { ConnectionSocket } from "@/models/agentConsole/ConnectionSocket";
 import type { Pairing } from "@/models/agentConsole/Pairing";
+import type { SideChatQuestion } from "@/models/agentConsole/SideChatQuestion";
 import type { Attachment, Command, ServerMessage } from "agent-console-server/contracts";
 import type { DistributedOmit } from "type-fest";
 
@@ -73,8 +74,9 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const theme = AgentConsoleThemeMap[AgentConsoleThemeType.Default];
   // The commands this tab sent that open a session or a shell: what they open is what this tab moves to
   const openingCommandIds = new Set<string>();
-  // The forks the side chat sent, which open its session rather than moving the tab to one
-  const sideChatCommandIds = new Set<string>();
+  // The forks the side chat sent, which open its session rather than moving the tab to one, each with the question it
+  // Was sent to ask, so a fork that fails clears only its own question
+  const sideChatCommandIds = new Map<string, SideChatQuestion | undefined>();
   const connectionSocketMap = new Map<string, ConnectionSocket>();
   const getConnectionSocket = (connectionId: string) =>
     getOrCreate(connectionSocketMap, connectionId, (): ConnectionSocket => ({
@@ -107,13 +109,20 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       case ServerMessageType.Paired:
       case ServerMessageType.Proof:
         break;
-      case ServerMessageType.CommandError:
+      case ServerMessageType.CommandError: {
         openingCommandIds.delete(serverMessage.commandId);
-        // A fork that failed to open leaves its question unasked, so the reader can send it again
-        if (sideChatCommandIds.delete(serverMessage.commandId)) agentConsoleSideChatStore.pendingQuestion = undefined;
+        // A fork that failed to open leaves its question unasked, so the reader can send it again. A question the
+        // Drawer has held since, which this fork never carried, is not this fork's to clear
+        const failedQuestion = sideChatCommandIds.get(serverMessage.commandId);
+        if (
+          sideChatCommandIds.delete(serverMessage.commandId) &&
+          failedQuestion === agentConsoleSideChatStore.pendingQuestion
+        )
+          agentConsoleSideChatStore.pendingQuestion = undefined;
         // oxlint-disable-next-line error-alert/no-raw-error-alert -- a host's command error is not a tRPC rejection, so no error link has shown it
         createAlert(serverMessage.message, "error");
         break;
+      }
       case ServerMessageType.Events: {
         const addedEvents = storeEvents(serverMessage.sessionId, serverMessage.events);
         const sessionTitle =
@@ -418,7 +427,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     }
 
     const id = crypto.randomUUID();
-    if (command.type === CommandType.Fork && command.isSideChat) sideChatCommandIds.add(id);
+    if (command.type === CommandType.Fork && command.isSideChat)
+      sideChatCommandIds.set(id, agentConsoleSideChatStore.pendingQuestion);
     else if (
       [
         CommandType.CreateSession,
