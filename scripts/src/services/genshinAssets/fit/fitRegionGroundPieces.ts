@@ -15,7 +15,7 @@ export const fitRegionGroundPieces = async (region: DerivedAssetComponent): Prom
   const pieces: { areaId: string; build: GameDataBuild; isRefused: boolean }[] = [];
   for (const area of areas.filter(({ outline }) => outline.length > 0))
     // oxlint-disable-next-line no-await-in-loop -- one piece at a time, as runFits fits one at a time: a piece's compute holds the thread
-    pieces.push({ areaId: area.id, ...(await fitGroundPieces(toGroundPiece(region, area), source, true)) });
+    pieces.push({ areaId: area.id, ...(await fitGroundPieces(toGroundPiece(region, area), source)) });
   const reasons = [
     ...pieces.filter(({ isRefused }) => isRefused).map(({ areaId }) => `${areaId} refused`),
     ...areas.filter(({ outline }) => outline.length === 0).map(({ id }) => `${id} has no outline`),

@@ -48,7 +48,6 @@ export const fitWindriseScene = (only: readonly string[], options: DryRunOptions
               key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
             },
             source,
-            true,
           )
         ).build;
       },
