@@ -21,4 +21,4 @@
 ## 5. Profile and Traveler
 
 - [ ] 5.1 Give the Traveler the element of each statue resonated with, and a bonus for each element. Verify: tests named after the scenarios 'the Traveler takes the element of the statue it resonates with' and 'each element resonated with adds a bonus', seen failing first.
-- [ ] 5.2 List the voice-over lines on the Profile tab once the character model's terms are in place. Verify: a test named after the scenario 'the Profile tab lists the character's voice-over lines', seen failing first.
+- [x] 5.2 List the voice-over lines on the Profile tab once the character model's terms are in place. Verify: a test named after the scenario 'the Profile tab lists the character's voice-over lines', seen failing first.

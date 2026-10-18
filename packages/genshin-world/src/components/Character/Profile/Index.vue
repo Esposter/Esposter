@@ -2,6 +2,7 @@
 import type { CharacterMenuProfileEntry } from "genshin-interface";
 import type { GameLanguage, GameText } from "genshin-text";
 
+import { getProfileEntries } from "#src/services/profile/getProfileEntries";
 import { readCharacterProfile } from "#src/services/profile/readCharacterProfile";
 import { toCharacterProfileEntries } from "#src/services/profile/toCharacterProfileEntries";
 import { getResultAsync } from "@esposter/shared";
@@ -30,7 +31,7 @@ const namecardName = ref("");
 getResultAsync(() => readCharacterProfile(gameDataBaseUrl, avatarId, language, friendshipExp)).match(
   ({ friendshipLevel, namecardNameTextId, profileText }) => {
     entries.value = toCharacterProfileEntries(
-      [...profileText.stories, ...profileText.voices],
+      getProfileEntries(profileText),
       friendshipLevel,
       gameText[GameTextKey.StoryUnlocksAt],
     );
