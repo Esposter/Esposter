@@ -1,24 +1,9 @@
-import type { ExcelReliquaryAffixRow } from "#src/models/genshinAssets/stats/ExcelReliquaryAffixRow";
-import type { ExcelReliquaryMainPropRow } from "#src/models/genshinAssets/stats/ExcelReliquaryMainPropRow";
-import type { ExcelTrialAvatarActivityRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarActivityRow";
-import type { ExcelTrialAvatarRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarRow";
-import type { ExcelTrialAvatarTemplateRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarTemplateRow";
-import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/ExcelTrialReliquaryRow";
 import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
-import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
-import { readReliquaryPieces } from "#src/services/genshinAssets/trials/readReliquaryPieces";
-import {
-  TRIAL_AVATAR_TABLE_NAME,
-  TRIAL_RELIQUARY_TABLE_NAME,
-  TRIAL_STAGE_TABLE_NAME,
-  TRIAL_TEMPLATE_TABLE_NAME,
-} from "#src/services/genshinAssets/trials/constants";
-import { WIKI_TRIAL_BUILDS } from "#src/services/genshinAssets/trials/wikiTrialBuilds";
-import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { readCharacterTrialsInput } from "#src/services/genshinAssets/trials/readCharacterTrialsInput";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
@@ -33,20 +18,7 @@ export const characterTrialsCommand: SubCommandsDef[string] = defineCommand({
     console.log(
       await publishGameDataStep({
         isDryRun: args["dry-run"],
-        publication: {
-          indexes: {},
-          objects: buildTrials({
-            affixRows: readExcelTable<ExcelReliquaryAffixRow>("ReliquaryAffixExcelConfigData"),
-            avatarRows: readExcelTable<ExcelTrialAvatarRow>(TRIAL_AVATAR_TABLE_NAME),
-            mainPropRows: readExcelTable<ExcelReliquaryMainPropRow>("ReliquaryMainPropExcelConfigData"),
-            pieceMap: readReliquaryPieces(),
-            reliquaryRows: readExcelTable<ExcelTrialReliquaryRow>(TRIAL_RELIQUARY_TABLE_NAME),
-            rewardMap: readRewardMap(),
-            stageRows: readExcelTable<ExcelTrialAvatarActivityRow>(TRIAL_STAGE_TABLE_NAME),
-            templateRows: readExcelTable<ExcelTrialAvatarTemplateRow>(TRIAL_TEMPLATE_TABLE_NAME),
-            wikiBuilds: WIKI_TRIAL_BUILDS,
-          }),
-        },
+        publication: { indexes: {}, objects: buildTrials(readCharacterTrialsInput()) },
         scopes: [GameDataset.CharacterTrials],
       }),
     );
