@@ -7,7 +7,7 @@ import type { Node } from "three/webgpu";
 import { WitnessProperty } from "#src/models/scene/WitnessProperty";
 import { LEAF_SHADER } from "#src/services/scene/constants";
 import { DoubleSide } from "three";
-import { color, normalMap, step, texture, vec3 } from "three/tsl";
+import { color, faceDirection, normalMap, step, texture, vec3 } from "three/tsl";
 
 // One exported material drawn as the stone's shader writes it into the game's G-buffer (`miHoYo/Scene/Login Base`):
 // The diffuse texture tinted by its colour, its normal map, and its mask texture (`SMBE`, read by the inventory) with
@@ -40,14 +40,20 @@ export const createWitnessMaterial = (
   // The leaf cards are cut where their texture's alpha falls under the material's cutoff, as the game's foliage shader
   // Clips them, and drawn from both sides: the leaf mesh holds no back face for any card and its normals are a field
   // Over the crown at right angles to the cards, so a card culled from behind would vanish from every view behind it
-  if (shader === LEAF_SHADER) {
+  const isLeafCard = shader === LEAF_SHADER;
+  if (isLeafCard) {
     material.userData.isLeafCard = true;
     material.side = DoubleSide;
     // The export's own texture cuts its cards, in place of the stand-in's oval
     if (diffuse) material.maskNode = texture(diffuse).a.greaterThan(floats[WitnessProperty.Cutoff] ?? 0);
   }
   const normal = getTexture(WitnessProperty.NormalMap);
-  if (normal) material.normalNode = normalMap(texture(normal));
+  if (normal) {
+    const mappedNormal = normalMap(texture(normal));
+    // Three turns a double-sided face's whole tangent frame round on its back, so a card's mapped normal is turned
+    // Back to the crown's, as the stand-in's card reads it
+    material.normalNode = isLeafCard ? mappedNormal.mul(faceDirection) : mappedNormal;
+  }
   const mask = getTexture(WitnessProperty.DetailMask);
   if (mask && floats[WitnessProperty.EmissionType]) {
     const [emissionRed = 0, emissionGreen = 0, emissionBlue = 0] = colors[WitnessProperty.EmissionColor] ?? [];

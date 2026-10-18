@@ -43,7 +43,7 @@ flowchart TD
 - **One toon material for the environment.** Every surface uses `createToonMaterial`, three's `MeshToonNodeMaterial` reading the world's ramp: a short row of bytes from dark to lit with a narrow smooth step (`computeRampValues`), so light steps across a band rather than a Lambert curve. The ramp's dark side is zero, so a face turned from the sun takes only ambient light.
 - **Shadow is a colour, not an absence.** Cast shadow and the ramp's dark side both leave only the hemisphere light, whose sky is above and whose bounce is the grass below, so shade reads as the sky's blue and the ground's green. Nothing is multiplied toward black.
 - **A rim picks out silhouettes.** A Fresnel term, masked to the side the sun lights and tinted by the sky, is the material's emissive node (`createRimNode`), so it lights on top of the ramp. Its colour and strength are the shared `LightUniforms` every material reads, so the [sky](../sky-and-time/design.md) moves them through the day by writing a few values.
-- **Leaves are cut in the shader.** A leaf card is a plain quad cut to a pointed oval by its opacity (`createLeafMaterial`), so a crown needs no leaf texture.
+- **Leaves are cut in the shader.** A leaf card is a plain quad cut to a pointed oval by a mask (`createLeafMaterial`), so a crown needs no leaf texture. The shadow pass cuts by the mask too, where it reads no opacity, so a card casts its leaf rather than its quad. Both faces of a card take the crown's own normal: three turns a double-sided face's normal round on its back, which faced half the cards into the crown, where the rim lit them pale.
 
 ### Outlines
 

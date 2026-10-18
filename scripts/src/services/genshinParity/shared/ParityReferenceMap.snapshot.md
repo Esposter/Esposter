@@ -70,7 +70,7 @@ committed.
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |
-| `windrise-statue-day` | `WorldScreen` | 28.46% | 0.229 | 29.94% | 0.7878 |
+| `windrise-statue-day` | `WorldScreen` | 26.73% | 0.306 | 26.74% | 0.7579 |
 | `wish-screen` | `WishScreen` | 50.96% | 0.425 | 49.28% | 0.8743 |
 | `world-level-dialog` | `MenuWorldLevelDialog` | 5.86% | 0.862 | 1.99% | 0.1965 |
 
@@ -130,9 +130,9 @@ drawn away from the reference shows on its own row.
 | `people-of-the-springs-location/sky` | 100.0% | 24.17 | 21.49% | 0.7945 |
 | `sumeru-city-location/frame` | 100.0% | 19.08 | 28.07% | 0.8157 |
 | `sumeru-city-location/sky` | 100.0% | 19.08 | 28.07% | 0.8157 |
-| `windrise-statue-day/frame` | 100.0% | 29.33 | 29.94% | 0.7878 |
-| `windrise-statue-day/Statue` | 0.8% | 30.11 | 14.41% | 0.6782 |
-| `windrise-statue-day/Oak` | 32.9% | 34.36 | 33.48% | 0.7807 |
-| `windrise-statue-day/Paving` | 0.5% | 46.13 | 16.07% | 0.7791 |
-| `windrise-statue-day/Ground` | 58.8% | 31.73 | 26.92% | 0.7835 |
-| `windrise-statue-day/sky` | 7.0% | 41.87 | 41.47% | 0.8694 |
+| `windrise-statue-day/frame` | 100.0% | 24.21 | 26.74% | 0.7579 |
+| `windrise-statue-day/Statue` | 0.8% | 36.64 | 15.11% | 0.6795 |
+| `windrise-statue-day/Oak` | 32.5% | 26.13 | 26.59% | 0.7303 |
+| `windrise-statue-day/Paving` | 0.5% | 44.17 | 14.32% | 0.7572 |
+| `windrise-statue-day/Ground` | 58.8% | 28.43 | 25.14% | 0.7600 |
+| `windrise-statue-day/sky` | 7.4% | 42.17 | 42.22% | 0.8708 |
