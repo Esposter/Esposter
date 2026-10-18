@@ -146,11 +146,30 @@ Constellation 2 SHALL give Yaoyao 3 energy when a radish strikes an enemy while 
 - **WHEN** the skill Yuegui throws its third or sixth radish at Constellation 6
 - **THEN** a Mega Radish lands at the same target, healing the active character by 7.5% of Yaoyao's Max HP
 
-### Requirement: Unbuilt Ascension 1 and Constellation 1 stamina
+### Requirement: Ascension 1's radishes while dashing or jumping
 
-Ascension 1's passive and Constellation 1's stamina restore SHALL have no effect in the world yet.
+While Moonjade Descent lasts at Ascension 1, Yaoyao SHALL throw a burst radish every 0.6 seconds at a random enemy within 8 metres of her, while she dashes or jumps, and SHALL throw none while she stands or no enemy stands within 8 metres. The radish heals as a burst radish does. A swap that ends the burst SHALL end the throws.
 
-#### Scenario: Ascension 1 gives no locomotion bonus
+#### Scenario: a dash or a jump throws on each 0.6-second interval
 
 - **WHEN** Yaoyao is dashing or jumping during Moonjade Descent at Ascension 1
-- **THEN** no extra radish is thrown
+- **THEN** a radish is thrown at an enemy within 8 metres 36 frames after the burst's cast, and again 36 frames later
+
+#### Scenario: standing still or with no enemy in reach throws nothing
+
+- **WHEN** Yaoyao stands still during Moonjade Descent at Ascension 1, or the nearest enemy stands beyond 8 metres while she dashes
+- **THEN** no radish is thrown
+
+#### Scenario: a swap ends the throws with the burst
+
+- **WHEN** a swap ends Moonjade Descent at Ascension 1
+- **THEN** no radish is thrown after it
+
+### Requirement: Unbuilt Constellation 1 stamina
+
+Constellation 1's stamina restore SHALL have no effect in the world yet.
+
+#### Scenario: Constellation 1 restores no stamina
+
+- **WHEN** a radish heals Yaoyao at Constellation 1
+- **THEN** no stamina is restored
