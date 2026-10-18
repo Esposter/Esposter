@@ -29,6 +29,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const LAYLA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAYLA_CHARACTER_ID);
@@ -92,7 +93,7 @@ describe(createLaylaKitBehaviour, () => {
       for (const effect of context.kitEffectState.effects)
         if (effect.kind === "summon" && !seenHits.has(effect.hits)) {
           seenHits.add(effect.hits);
-          casts.push({ frame: fromFrame + frame, hit: effect.hits[0], summon: effect });
+          casts.push({ frame: fromFrame + frame, hit: takeOne(effect.hits, 0), summon: effect });
         }
     }
     return casts;
