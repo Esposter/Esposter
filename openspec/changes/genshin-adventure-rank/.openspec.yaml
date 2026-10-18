@@ -13,4 +13,6 @@ x-touches:
     "packages/genshin-world/src/models/adventureRank/**",
     "packages/genshin-world/src/services/originalResin/claimOriginalResin.test.ts",
     "packages/genshin-text/src/models/GameTextKey.ts",
+    "scripts/src/models/genshinAssets/adventureRank/**",
+    "scripts/src/services/genshinAssets/adventureRank/**",
   ]

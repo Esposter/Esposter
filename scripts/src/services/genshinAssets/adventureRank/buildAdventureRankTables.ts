@@ -2,6 +2,8 @@ import type { ExcelPlayerLevelLockRow } from "#src/models/genshinAssets/adventur
 import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/adventureRank/ExcelPlayerLevelRow";
 import type { ExcelWorldLevelRow } from "#src/models/genshinAssets/adventureRank/ExcelWorldLevelRow";
 
+import { toAdventureRankLevel } from "#src/services/genshinAssets/adventureRank/toAdventureRankLevel";
+import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
@@ -9,8 +11,9 @@ import { GameDataset } from "genshin-world";
 // Table's main quest is held as the game's id in a string, or "" where the World Level needs no quest, the way
 // The world's quests name theirs. Returns the records the tables publish under
 export const buildAdventureRankTables = (): Record<string, unknown> => {
+  const rewardMap = readRewardMap();
   const levels = readExcelTable<ExcelPlayerLevelRow>("PlayerLevelExcelConfigData")
-    .map(({ exp, level }) => ({ exp, level }))
+    .map((row) => toAdventureRankLevel(row, rewardMap))
     .toSorted((firstLevel, secondLevel) => firstLevel.level - secondLevel.level);
   const locks = readExcelTable<ExcelPlayerLevelLockRow>("PlayerLevelLockExcelConfigData")
     .map(({ playerLevelUpperLimit, unlockMainQuestId, unlockPlayerLevel, worldLevel }) => ({
