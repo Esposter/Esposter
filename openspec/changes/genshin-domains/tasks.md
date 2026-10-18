@@ -1,7 +1,8 @@
 ## 1. Entrances
 
-- [x] 1.1 Add the domain entrance landmarks from the scene points, each with the kind its entry type names, and no landmark for a normal entry. Verify: toDomainEntrance.test.ts written first and seen failing, named after the scenario 'An unlocked entrance joins the jumps'.
+- [x] 1.1 Add the domain entrance landmarks from the scene points, each with the kind its entry type names, and no landmark for a normal entry. Verify: toDomainEntrance.test.ts written first and seen failing, its tests named after the entrance's kind, place and missing point.
 - [ ] 1.2 Draw each entrance with a stand-in kit and open the domain screen from F over the built opening rules. Verify: a test named after the scenario 'A level above the player's Adventure Rank is refused' written first and seen failing.
+- [ ] 1.3 Make an unlocked domain entrance reachable by a jump. `JUMP_LANDMARK_KINDS` holds only the statue kind, so no entrance is offered for a jump today. Verify: a test named after the scenario 'An unlocked entrance joins the jumps' written first and seen failing.
 
 ## 2. Levels and days
 

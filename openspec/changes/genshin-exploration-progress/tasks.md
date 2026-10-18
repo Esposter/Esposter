@@ -2,6 +2,7 @@
 
 - [x] 1.1 Compute a nation's percentage from its areas by the rule for each area's ratio and for summed totals. Verify: computeNationExplorationPercentage.test.ts written first and seen failing, named after the scenario 'Mondstadt's percentage uses summed totals when every ratio is zero'.
 - [x] 1.2 Pay each threshold a statue's unlock reaches, once, through the Reputation experience and the item rewards. Verify: a test named after the scenario 'Crossing a threshold pays its reward once' written first and seen failing.
+- [ ] 1.3 Decide how a threshold a statue's unlock crosses is paid when the areas or Reputation have not settled yet: deferred until they settle, or re-run then, rather than dropped. `useWorldMap`'s `payReputationExplores` returns early while either read is pending, and the next unlock measures from the advanced percentage, so the threshold is never paid. Verify: a test named after the chosen rule, written first and seen failing.
 
 ## 2. Doings
 
