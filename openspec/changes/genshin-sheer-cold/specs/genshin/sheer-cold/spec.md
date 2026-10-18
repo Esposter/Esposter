@@ -118,10 +118,16 @@ A full gauge SHALL deal its share of the character's max HP and a flat amount fo
 
 ### Requirement: The gauge shows as a bar across the top of the screen
 
-The bar SHALL show while the gauge holds any cold, and SHALL fill by the gauge's share of its full scale.
+The bar SHALL show while the gauge holds any cold, SHALL fill by the gauge's share of its full scale, and SHALL be labelled with the game's own name for the gauge.
 
 #### Scenario: Show the bar while the gauge holds cold
 
 - **GIVEN** the gauge holds cold
 - **WHEN** the screen is drawn
 - **THEN** the bar shows, filled by the gauge's share of its full scale
+
+#### Scenario: Label the bar with the game's name for the gauge
+
+- **GIVEN** the bar shows
+- **WHEN** assistive technology reads it
+- **THEN** it reads the game's own name for the gauge, Sheer Cold, in the reader's language

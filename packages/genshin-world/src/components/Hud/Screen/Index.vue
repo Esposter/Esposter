@@ -191,7 +191,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
          Middle, since the recordings show it beside the character wherever the character stands -->
     <HudQuickSwap v-if="quickSwapOpen" :game-text />
     <HudStamina :frame :game-text :max-stamina />
-    <HudSheerCold :frame />
+    <HudSheerCold :frame :game-text />
     <slot name="prompts" />
   </GameScreen>
 </template>
