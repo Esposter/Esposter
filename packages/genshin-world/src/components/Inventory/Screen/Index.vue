@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -7,6 +8,7 @@ import type { InventoryCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { equipGadget } from "#src/services/gadget/equipGadget";
 import { checkIsInventoryItemDestroyable } from "#src/services/inventory/checkIsInventoryItemDestroyable";
 import { computeInventoryTab } from "#src/services/inventory/computeInventoryTab";
 import { EQUIPMENT_CATEGORIES, INVENTORY_CURRENCIES, PRECIOUS_CURRENCIES } from "#src/services/inventory/constants";
@@ -25,6 +27,8 @@ import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategor
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The widget config's gadgets, whose equipable ones the gadget tab offers to equip to the quick-use slot
+  gadgetRows: readonly GadgetRow[];
   // The game's words in the reader's language
   gameText: GameText;
   // The tab the bag opens on
@@ -37,14 +41,22 @@ interface Props {
   wallet: Wallet;
 }
 
-const { gameText, initialCategory, inventory, materialDataMap, names, wallet } = defineProps<Props>();
-const emit = defineEmits<{ close: []; destroy: [destruction: InventoryDestruction] }>();
+const { gadgetRows, gameText, initialCategory, inventory, materialDataMap, names, wallet } = defineProps<Props>();
+const emit = defineEmits<{
+  close: [];
+  destroy: [destruction: InventoryDestruction];
+  "update:inventory": [inventory: Inventory];
+}>();
 const category = ref(initialCategory);
 const selectedId = ref("");
 const isDestroying = ref(false);
 const isConfirming = ref(false);
 // The entries ticked for a destroy, by id, across the bag's tabs until the mode is left
 const chosenIds = ref<string[]>([]);
+// The gadgets the game lets the player equip to the quick-use slot, by their item ids
+const equipableGadgetIds = computed(
+  () => new Set(gadgetRows.filter(({ isEquipable }) => isEquipable).map(({ id }) => id)),
+);
 const sort = ref(InventorySort.Level);
 const isDescending = ref(true);
 const tabLabels = computed(() =>
@@ -91,6 +103,7 @@ const cells = computed((): InventoryCell[] => {
       caption,
       id: String(id),
       isDestroyable: checkIsInventoryItemDestroyable(item) || undefined,
+      isEquipable: equipableGadgetIds.value.has(item.definition.id) || undefined,
       isSelected: chosenIds.value.includes(String(id)) || undefined,
       name,
       rarity,
@@ -132,6 +145,12 @@ const quickSelects = computed(() =>
 const toggleDestroy = () => {
   isDestroying.value = !isDestroying.value;
   chosenIds.value = [];
+};
+// The bag with the gadget of the entry equipped to the quick-use slot, where the game lets it be equipped
+const quickUse = (id: string) => {
+  const item = inventory.items.find((entry) => String(entry.id) === id);
+  const gadget = gadgetRows.find(({ id: gadgetId }) => gadgetId === item?.definition.id);
+  if (gadget) emit("update:inventory", equipGadget(inventory, gadget));
 };
 const chooseCell = (id: string) => {
   chosenIds.value = chosenIds.value.includes(id)
@@ -198,6 +217,7 @@ const currencies = computed(() =>
       :is-sortable="EQUIPMENT_CATEGORIES.includes(category) || undefined"
       :order-label="gameText[isDescending ? GameTextKey.SortDescending : GameTextKey.SortAscending]"
       :quick-selects
+      :quick-use-label="gameText[GameTextKey.InventoryQuickUseGadget]"
       :sort-labels
       :tab-labels
       :title="gameText[GameTextKey.Inventory]"
@@ -207,6 +227,7 @@ const currencies = computed(() =>
       @confirm-destroy="confirmDestroy()"
       @destroy="isConfirming = true"
       @quick-select="(rarity) => quickSelect(rarity)"
+      @quick-use="(id) => quickUse(id)"
       @toggle-destroy="toggleDestroy()"
     />
   </GameScreen>

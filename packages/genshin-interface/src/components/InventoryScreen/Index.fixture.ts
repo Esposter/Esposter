@@ -34,6 +34,7 @@ export const props = {
     { label: "2-Star Weapons", rarity: 2 },
     { label: "3-Star Weapons", rarity: 3 },
   ],
+  quickUseLabel: "Quick-Use Gadget",
   selectedId: "0",
   sort: InventorySort.Level,
   sortLabels: { [InventorySort.Level]: "Level", [InventorySort.Quality]: "Quality" },

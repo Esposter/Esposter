@@ -12,6 +12,7 @@ Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculu
 - **Made from instructions.** Most are crafted at the bench or forged once their instructions or diagram are used, which reputation and offerings give; a few come from quests and are kept.
 - **A gadget is a bag item of the widget material type.** Each of the slice's gadgets (the `gadgets/gadgets` record, about a dozen) has a `MaterialExcelConfigData` row of type `MATERIAL_WIDGET`, so the bag holds it as any material, filed under `ItemCategory.Gadget`, and `writeItems` writes its row beside the drops' and the forge's items.
 - **The equipped gadget is the bag's.** The bag's save holds the gadget equipped to the quick-use slot as `equippedGadgetItemId`, the gadget's item id, optional, so a bag saved before a gadget could be equipped holds none and no backfill is owed. The quick swap is not saved.
+- **The bag's quick-use action is provisional in place.** A gadget the game marks equipable shows the game's "Quick-Use Gadget" (`UI_BEYOND_HALL_WIDGET_USE_BUTTON_SET`) under its detail panel, and equipping it adds nothing else. The controller recording shows the equipped gadget's action at the bottom bar's X slot as "Remove", which the game words as "Gadget Unequipped"; the slot is the only reference for a gadget's action, so the button's place is estimated from it until the keyboard's bag is recorded.
 
 ## How it works
 
