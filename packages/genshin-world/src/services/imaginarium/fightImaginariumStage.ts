@@ -1,6 +1,6 @@
 import type { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
+import type { DomainChallengeProgress } from "#src/models/domains/DomainChallengeProgress";
 import type { ImaginariumMember } from "#src/models/imaginarium/ImaginariumMember";
-import type { DomainChallengeProgress } from "#src/services/domains/resolveDomainChallenge";
 
 import { checkIsImaginariumStageReady } from "#src/services/imaginarium/checkIsImaginariumStageReady";
 import { performImaginariumStage } from "#src/services/imaginarium/performImaginariumStage";

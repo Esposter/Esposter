@@ -1,13 +1,6 @@
-import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
+import type { DomainChallengeProgress } from "#src/models/domains/DomainChallengeProgress";
 
-export interface DomainChallengeProgress {
-  // The defeats the level asks for, which its waves spawn in full
-  defeatTarget: number;
-  defeats: number;
-  // The milliseconds the challenge has run, counted only while the world is open
-  elapsedMilliseconds: number;
-  timeLimitMilliseconds: number;
-}
+import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
 
 // How a challenge stands at a moment: a clear is the defeats reaching the target, then the party going down, then the
 // Time running out. A challenge with none of them is still running
