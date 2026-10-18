@@ -23,10 +23,11 @@ const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
 // As gcsim's Skill does. While the state lasts its clouds launch at 18 frames and every 45 frames after, as gcsim's cloudTask
 // Queues them (skill.go:221), and each lands its Anemo hit on the primary target's area 30 frames after its launch, the travel
 // Gcsim's default press gives. A cancel, or her swap out, stops the clouds not yet launched, and the ones in flight still land,
-// As gcsim's cancel does. Not built: the Swirl buff her state gives the party, the state's restriction of her actions to swap,
-// Dash and burst, the Yumemi Style Special Snacks her burst leaves, which are pick-ups the kit has no entity for, and the travel
-// A press's parameter sets, which the kit holds at the default. The press that cancels the state plays none of its skill's
-// Hits and sets no cooldown, as gcsim's does, through the skill's state-ending check
+// As gcsim's cancel does. While the state lasts she starts no attack, plunge or charged attack, as gcsim's ActionReady allows
+// Only her swap, dash and burst. The press that cancels the state plays none of its skill's hits and sets no cooldown, as
+// Gcsim's does, through the skill's state-ending check. Not built: the Swirl buff her state gives the party, the Yumemi Style
+// Special Snacks her burst leaves, which are pick-ups the kit has no entity for, and a press's parameter sets, which the kit
+// Holds at the default
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
 // Constellation 1 needs the Dreamdrifter state and its Twenty-Three Nights' Awaiting effect, which are not built
 // Constellation 2 needs the Dreamdrifter state's Elemental Mastery bonus for the party, which is not built
@@ -61,6 +62,10 @@ export const createMizukiKitBehaviour = ({ readHit, readSeconds }: KitRecordRead
   };
 
   return {
+    // While the state lasts she starts no attack, plunge or charged attack, as gcsim's ActionReady allows only her swap,
+    // Dash and burst
+    checkCanStartAttack: ({ activeCombatant, kitEffectState }) =>
+      !checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, DREAMDRIFTER_STATUS_ID),
     onKitEvent: (event, { kitEffectState }, { characterId }) => {
       if (
         event.kind === KitEventKind.CharacterSwapped &&
