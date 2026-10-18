@@ -38,4 +38,7 @@ export const VendorShopTypeMap: Partial<Record<string, number>> = {
   "7086": 1137,
   // Zherebtsov, Snezhnaya's Fishing Association, on the Snezhnaya fishing shop
   "7418": 1156,
+  // Tubby, the Serenitea Pot's steward, on the Realm Depot: the dump's one NPC row named Tubby, and the depot's shop type
+  // The depot is reached through him in the realm, which is not built yet, so this entry is provisional until it is
+  "13276": 1048,
 };
