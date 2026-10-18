@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
+import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -20,6 +21,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
+const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -44,11 +46,12 @@ const getDamageBonus = (
     createParty([TRAVELER_CHARACTER_ID]),
     kitEffectState.effects,
   ) ?? 0;
-// The wearer's HP lost to an enemy's strike of the given share, as the party records it
+// The wearer's HP lost to an enemy's strike of the given share, as the party records it, its fields set by overrides
 const takeEnemyHit = (
   module: ReturnType<typeof createVourukashasGlowSetModule>,
   context: KitContext,
   healthShare = -0.1,
+  overrides: Partial<PartyHealthChange> = {},
 ) =>
   module.onKitEvent?.(
     {
@@ -57,6 +60,7 @@ const takeEnemyHit = (
       healthShare,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
+      ...overrides,
     },
     context,
     wearer,
@@ -128,29 +132,8 @@ describe(createVourukashasGlowSetModule, () => {
     const context = createKitTestContext(wearer, { kitEffectState, party: createParty([TRAVELER_CHARACTER_ID]) });
 
     takeEnemyHit(module, context, 0.2);
-    module.onKitEvent?.(
-      {
-        bondOfLifeShare: 0,
-        characterId: TRAVELER_CHARACTER_ID,
-        healthShare: -0.1,
-        kind: KitEventKind.HealthChanged,
-        overflowHealthShare: 0,
-        sourceCharacterId: TRAVELER_CHARACTER_ID,
-      },
-      context,
-      wearer,
-    );
-    module.onKitEvent?.(
-      {
-        bondOfLifeShare: 0,
-        characterId: 2,
-        healthShare: -0.1,
-        kind: KitEventKind.HealthChanged,
-        overflowHealthShare: 0,
-      },
-      context,
-      wearer,
-    );
+    takeEnemyHit(module, context, -0.1, { sourceCharacterId: TRAVELER_CHARACTER_ID });
+    takeEnemyHit(module, context, -0.1, { characterId: OTHER_CHARACTER_ID });
     expect(getDamageBonus(module, AttackTag.ElementalSkill, kitEffectState)).toBeCloseTo(0.1);
   });
 
@@ -162,8 +145,8 @@ describe(createVourukashasGlowSetModule, () => {
     const context = createKitTestContext(wearer, { kitEffectState, party: createParty([TRAVELER_CHARACTER_ID]) });
 
     takeEnemyHit(module, context);
-    expect(getDamageBonus(module, AttackTag.ElementalSkill, kitEffectState, { ...wearer, characterId: 2 })).toBeCloseTo(
-      0.1,
-    );
+    expect(
+      getDamageBonus(module, AttackTag.ElementalSkill, kitEffectState, { ...wearer, characterId: OTHER_CHARACTER_ID }),
+    ).toBeCloseTo(0.1);
   });
 });
