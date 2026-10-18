@@ -7,7 +7,6 @@ import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedSce
 import type { DomainLevel, DomainSchedule, RewardItem, TreeArtifact } from "genshin-world";
 
 import {
-  ALL_DAYS_OF_WEEK,
   DOMAIN_DAY_PAIRS,
   DOMAIN_LEVEL_TYPE,
   DUNGEON_LEVEL_ENTITY_TABLE_NAME,
@@ -24,7 +23,7 @@ import {
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { REWARD_COUNT_DEFAULT } from "#src/services/genshinAssets/rewards/constants";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { DomainKind } from "genshin-world";
+import { ALL_DAYS_OF_WEEK, DomainKind } from "genshin-world";
 
 const getDungeon = (dungeonMap: ReadonlyMap<number, ExcelDungeonRow>, dungeonId: number): ExcelDungeonRow => {
   const dungeon = dungeonMap.get(dungeonId);
