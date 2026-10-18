@@ -1,6 +1,6 @@
 ## Purpose
 
-Diluc's kit as built: his strikes, charged attack, collision and plunges, Searing Onslaught's three presses and Dawn with its infusion, phoenix and A4, with his A1 and phase-0 passive left unbuilt.
+Diluc's kit as built: his strikes, charged attack, collision and plunges, Searing Onslaught's three presses and Dawn with its infusion, phoenix and A4, with his Relentless built apart from its +3 seconds duration clause, and his phase-0 passive left unbuilt.
 
 ## Requirements
 

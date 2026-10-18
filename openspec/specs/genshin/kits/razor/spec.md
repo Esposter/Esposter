@@ -1,6 +1,6 @@
 ## Purpose
 
-Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with his passives, other constellations and Hexerei kit left unbuilt.
+Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut built, and his other passives, other constellations and Hexerei kit left unbuilt.
 
 ## Requirements
 
@@ -85,12 +85,12 @@ From six constellations, a strike SHALL cast Lupus Fulguris's lightning while no
 - **THEN** the lightning is cast a frame after the strike
 - **AND** it stands for 10 seconds past the strike's hit
 
-### Requirement: Razor's passives and Hexerei kit not yet built
+### Requirement: Razor's other passives and Hexerei kit not yet built
 
-Razor's passives, his other constellations, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
+Razor's other passives, his other constellations, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Razor has a passive, a constellation or the Hexerei kit unlocked
+- **GIVEN** Razor has another passive, a constellation or the Hexerei kit unlocked
 - **WHEN** the player fights with Razor
 - **THEN** that effect has no effect

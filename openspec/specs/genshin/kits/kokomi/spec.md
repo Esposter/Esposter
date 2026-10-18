@@ -1,6 +1,6 @@
 ## Purpose
 
-Kokomi's kit as built: three strikes, a charged attack, Bake-Kurage's ripples and heal field, and Nereid's Ascension with its Ceremonial Garment stance, with her passives and constellations not built.
+Kokomi's kit as built: three strikes, a charged attack, Bake-Kurage's ripples and heal field, and Nereid's Ascension with its Ceremonial Garment stance, with her passives built and her constellations not built.
 
 ## Requirements
 
@@ -69,12 +69,12 @@ Kokomi's plunge attacks SHALL land half a second after they start, provisionally
 - **WHEN** the player starts a plunge attack
 - **THEN** the plunge lands half a second after it starts
 
-### Requirement: Kokomi's passives and constellations not yet built
+### Requirement: Kokomi's constellations not yet built
 
-Kokomi's passives and constellations SHALL NOT take effect.
+Kokomi's constellations SHALL NOT take effect.
 
-#### Scenario: Passives and constellations do nothing
+#### Scenario: Constellations do nothing
 
-- **GIVEN** Kokomi has a passive or constellation unlocked
+- **GIVEN** Kokomi has a constellation unlocked
 - **WHEN** the player fights with Kokomi
-- **THEN** that passive or constellation has no effect
+- **THEN** that constellation has no effect

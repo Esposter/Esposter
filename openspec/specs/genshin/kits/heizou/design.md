@@ -2,7 +2,7 @@
 
 Heizou's kit is its record and one behaviour module, `createHeizouKitBehaviour`, avatar 10000059: five strikes with the fourth's three hits, a charged attack, a collision and two plunges, Heartstopper Strike's press and its full hold with the Declension stacks and Conviction bonus, and Fudou Style Vacuum Slugger with its Windmuster Iris. His multipliers are read from proud skill groups 5931, 5932 and 5939; the charged attack's table index and stamina, the Iris's multiplier, the skill's and burst's cooldowns and the burst's energy cost are read from the same groups. Every hit of his is Anemo, at gcsim's Durability: 2U from Heartstopper Strike, none from the plunge collision and 1U from the rest. The hold is gcsim's full charge, which releases at three seconds with four stacks.
 
-The burst lands an aura check just before its hit, with no damage, element or poise. Each of the first four enemies it strikes in a cast is tagged, and one holding Pyro, Hydro, Electro or Cryo, the first of them in gcsim's priority, has a Windmuster Iris cast where it stands, which explodes 40 frames on in that element, 1U, round it. His passives and constellations are not built.
+The burst lands an aura check just before its hit, with no damage, element or poise. Each of the first four enemies it strikes in a cast is tagged, and one holding Pyro, Hydro, Electro or Cryo, the first of them in gcsim's priority, has a Windmuster Iris cast where it stands, which explodes 40 frames on in that element, 1U, round it. His Ascension 4 passive, Penetrative Reasoning, is built. His Ascension 1 passive and constellations are not built.
 
 ## Decisions
 

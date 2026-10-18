@@ -1,6 +1,6 @@
 ## Purpose
 
-Heizou's kit as built: his Anemo strikes, charged attack and plunges, Heartstopper Strike's press and full hold, and Fudou Style Vacuum Slugger with its Windmuster Iris, with his passives and constellations left unbuilt.
+Heizou's kit as built: his Anemo strikes, charged attack and plunges, Heartstopper Strike's press and full hold, and Fudou Style Vacuum Slugger with its Windmuster Iris, with his Ascension 1 passive and constellations left unbuilt.
 
 ## Requirements
 

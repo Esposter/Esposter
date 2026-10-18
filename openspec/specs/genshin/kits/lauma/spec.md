@@ -94,12 +94,12 @@ Lauma's elemental burst SHALL deal no damage of its own.
 - **WHEN** the player casts the elemental burst
 - **THEN** no damage is dealt
 
-### Requirement: Pale Hymn, Spirit Envoy and passives not yet built
+### Requirement: Pale Hymn, Spirit Envoy and her other passives not yet built
 
-Pale Hymn, the Spirit Envoy state and Lauma's passives and constellations SHALL NOT take effect.
+Pale Hymn, the Spirit Envoy state and Lauma's other passives and constellations SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lauma has Pale Hymn, the Spirit Envoy state or a passive or constellation unlocked
+- **GIVEN** Lauma has Pale Hymn, the Spirit Envoy state or another passive or constellation unlocked
 - **WHEN** the player fights with Lauma
 - **THEN** that effect has no effect

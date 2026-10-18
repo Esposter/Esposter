@@ -1,6 +1,6 @@
 ## Purpose
 
-Lynette's kit as built, with her strikes, charged attack, plunges, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit and Bogglecat Box ticks, and what is left of her Hold E, her vivid shots, her heal and passives.
+Lynette's kit as built, with her strikes, charged attack, plunges, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit and Bogglecat Box ticks, and what is left of her Hold E, her vivid shots, her heal, her Ascension 4 passive and her constellations.
 
 ## Requirements
 
@@ -45,10 +45,10 @@ Magic Trick: Astonishing Shift SHALL land an initial hit and place a Bogglecat B
 
 ### Requirement: Unbuilt Lynette effects
 
-Lynette's Hold E, the Bogglecat Box's vivid shots, her heal on Enigmatic Feint, and her Ascension and constellation passives SHALL NOT take effect.
+Lynette's Hold E, the Bogglecat Box's vivid shots, her heal on Enigmatic Feint, and her Ascension 4 passive and constellations SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lynette has a passive or constellation unlocked, or holds Enigmatic Feint
+- **GIVEN** Lynette has her Ascension 4 passive or a constellation unlocked, or holds Enigmatic Feint
 - **WHEN** the player fights with Lynette
 - **THEN** those effects have no effect
