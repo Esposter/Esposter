@@ -49,6 +49,7 @@ export const props = {
     [ItemCategory.Weapon]: "Weapons",
   },
   title: "Inventory",
+  useLabel: "Use",
 };
 // The two weapons chosen for a destroy, the first one ticked, with the count the game's own line fills
 const destroyingCells = [

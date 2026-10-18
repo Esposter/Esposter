@@ -3,4 +3,3 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-touches: ["packages/genshin-world/src/components/Inventory/**"]
-x-waiting: "the heal each food gives, read from the material table by the cooking proposal (cooking.md, Food's effects act through the kits)"

@@ -258,6 +258,8 @@ export enum GameTextKey {
   InventoryMaterials = "ITEM_MATERIAL",
   InventoryPreciousItems = "ITEM_CONSUME",
   InventoryQuest = "ITEM_QUEST",
+  // The detail panel's button that uses the selected entry of the bag
+  InventoryUse = "BAG_USE_BUTTON",
   InventoryWeapons = "ITEM_WEAPON",
   IronChunk = "4060716292",
   // An item and its count, its name in place of `{0}` and the count in place of `{1}`

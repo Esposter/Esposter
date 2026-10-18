@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { DishUse } from "#src/models/cooking/DishUse";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -8,6 +9,7 @@ import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { checkIsInventoryItemDestroyable } from "#src/services/inventory/checkIsInventoryItemDestroyable";
+import { checkIsInventoryItemUsable } from "#src/services/inventory/checkIsInventoryItemUsable";
 import { computeInventoryTab } from "#src/services/inventory/computeInventoryTab";
 import { EQUIPMENT_CATEGORIES, INVENTORY_CURRENCIES, PRECIOUS_CURRENCIES } from "#src/services/inventory/constants";
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
@@ -25,6 +27,8 @@ import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategor
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The dishes' uses by the item id each is eaten from, which decides the entries the bag offers a Use
+  dishUseMap: ReadonlyMap<number, DishUse>;
   // The game's words in the reader's language
   gameText: GameText;
   // The tab the bag opens on
@@ -37,8 +41,8 @@ interface Props {
   wallet: Wallet;
 }
 
-const { gameText, initialCategory, inventory, materialDataMap, names, wallet } = defineProps<Props>();
-const emit = defineEmits<{ close: []; destroy: [destruction: InventoryDestruction] }>();
+const { dishUseMap, gameText, initialCategory, inventory, materialDataMap, names, wallet } = defineProps<Props>();
+const emit = defineEmits<{ close: []; destroy: [destruction: InventoryDestruction]; use: [entryId: number] }>();
 const category = ref(initialCategory);
 const selectedId = ref("");
 const isDestroying = ref(false);
@@ -92,6 +96,7 @@ const cells = computed((): InventoryCell[] => {
       id: String(id),
       isDestroyable: checkIsInventoryItemDestroyable(item) || undefined,
       isSelected: chosenIds.value.includes(String(id)) || undefined,
+      isUsable: checkIsInventoryItemUsable(item, dishUseMap) || undefined,
       name,
       rarity,
     };
@@ -201,6 +206,7 @@ const currencies = computed(() =>
       :sort-labels
       :tab-labels
       :title="gameText[GameTextKey.Inventory]"
+      :use-label="gameText[GameTextKey.InventoryUse]"
       @cancel-destroy="isConfirming = false"
       @choose="(id) => chooseCell(id)"
       @close="emit('close')"
@@ -208,6 +214,7 @@ const currencies = computed(() =>
       @destroy="isConfirming = true"
       @quick-select="(rarity) => quickSelect(rarity)"
       @toggle-destroy="toggleDestroy()"
+      @use="(id) => emit('use', Number(id))"
     />
   </GameScreen>
 </template>

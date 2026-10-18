@@ -11,15 +11,11 @@ Using a food takes one from the bag and applies its heal to its target, never pa
 - Using a food takes one from the bag and heals the target the food names: the selected character for most recovery dishes, the whole party for some.
 - A healing food never raises a character's health past full.
 - Using a food with none in the bag is refused.
-- The heal each food gives is read from the game's material table once the cooking proposal reads it.
+- The heal each food gives is read from the game's material table.
 
 ## Capabilities
 
 - **genshin/inventory** (modified)
-
-## Waiting on
-
-- The heal each food gives, read from the material table by the cooking proposal: `openspec/changes/genshin-cooking/`.
 
 ## Impact
 
