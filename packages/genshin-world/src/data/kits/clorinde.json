@@ -25,6 +25,40 @@
   },
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9839 } },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "hits.impaleTheNightFullBol.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
+  },
+  "hits.impaleTheNightFullBol.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
+  "hits.impaleTheNightFullBol.0.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 9832 } },
+  "hits.impaleTheNightFullBol.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.impaleTheNightFullBol.1.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
+  },
+  "hits.impaleTheNightFullBol.1.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
+  "hits.impaleTheNightFullBol.1.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 9832 } },
+  "hits.impaleTheNightFullBol.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.impaleTheNightFullBol.2.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
+  },
+  "hits.impaleTheNightFullBol.2.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
+  "hits.impaleTheNightFullBol.2.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 9832 } },
+  "hits.impaleTheNightFullBol.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.impaleTheNightFullBol.length": { "cause": "Unclassified", "value": 3 },
+  "hits.impaleTheNightLowBol.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
+  },
+  "hits.impaleTheNightLowBol.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 9832 } },
+  "hits.impaleTheNightLowBol.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.impaleTheNightNoBol.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.6 }
+  },
+  "hits.impaleTheNightNoBol.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 9832 } },
+  "hits.impaleTheNightNoBol.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
