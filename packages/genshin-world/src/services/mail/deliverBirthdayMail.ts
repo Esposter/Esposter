@@ -5,12 +5,12 @@ import { GAME_TIME_ZONE } from "#src/services/time/constants";
 
 // A row of the birthday mail table: the mail sent on the birthday, and the game time from which it is the one in force
 export interface BirthdayMailRow {
-  effectiveDate: string;
+  effectiveDate: Temporal.PlainDateTime;
   mailId: number;
 }
 
 const getEffectiveAt = ({ effectiveDate }: BirthdayMailRow): Temporal.Instant =>
-  Temporal.PlainDateTime.from(effectiveDate.replace(" ", "T")).toZonedDateTime(GAME_TIME_ZONE).toInstant();
+  effectiveDate.toZonedDateTime(GAME_TIME_ZONE).toInstant();
 
 // The held mails with the Traveler's birthday mail added when it is due: on the birthday's day in the game's time zone,
 // The mail in force by then, the latest row taking effect by the birthday, and only once in a birthday. Without a
