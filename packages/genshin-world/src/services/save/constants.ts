@@ -10,6 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
+import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
@@ -189,6 +190,7 @@ const LONGEST_ABYSS_CYCLE_SAVE = {
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
+  adventureRankRewardsClaimed: [],
   characters: [],
   clearedCamps: [],
   clearedDomains: [],
@@ -250,6 +252,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_CHARACTER_COUNT * getListEntryLength(LONGEST_CHARACTER_SAVE) +
   MAX_CHARACTER_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   COMMISSIONS_PER_DAY * getListEntryLength(MAX_SAVE_NUMBER) +
+  MAX_ADVENTURE_RANK * getListEntryLength(MAX_ADVENTURE_RANK) +
   COMMISSIONS_PER_DAY *
     getListEntryLength({ commissionId: MAX_SAVE_NUMBER, count: MAX_SAVE_NUMBER, dealtRank: MAX_SAVE_NUMBER }) +
   MAX_COOKING_RECIPE_COUNT *
@@ -310,6 +313,7 @@ export const EMPTY_PARTY_SAVE: PartySave = {
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
+  adventureRankRewardsClaimed: [],
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],
   clearedCamps: [],

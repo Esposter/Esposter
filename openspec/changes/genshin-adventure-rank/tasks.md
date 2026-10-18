@@ -5,8 +5,8 @@
 
 ## 2. Katheryne's rewards
 
-- [ ] 2.1 Give a reached rank's reward once when Katheryne is spoken to, once she stands among Mondstadt's residents. Verify: tests named after the scenarios 'Katheryne gives a reached rank's reward once' and 'Katheryne gives nothing for a reward already claimed', seen failing first.
-- [ ] 2.2 Keep claimed rank rewards with the save. Verify: a test named after the scenario 'a claimed rank reward stays claimed after a reload', seen failing first.
+- [x] 2.1 Give a reached rank's reward once when Katheryne is spoken to, once she stands among Mondstadt's residents. Verify: tests named after the scenarios 'katheryne gives a reached rank's reward once' and 'katheryne gives nothing for a reward already claimed', seen failing first.
+- [x] 2.2 Keep claimed rank rewards with the save. Verify: a test named after the scenario 'a claimed rank reward stays claimed after a reload', seen failing first.
 
 ## 3. Rank gates
 

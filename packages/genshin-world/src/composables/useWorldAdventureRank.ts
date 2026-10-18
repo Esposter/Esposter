@@ -4,6 +4,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ComputedRef, Ref } from "vue";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { claimRankRewards } from "#src/services/adventureRank/claimRankRewards";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { computeWorldLevel } from "#src/services/adventureRank/computeWorldLevel";
@@ -20,6 +21,7 @@ export const useWorldAdventureRank = ({
   finishedMainQuestIds,
   getWorldNow,
   savedAdventureExp,
+  savedAdventureRankRewardsClaimed,
   savedWorldLevelAdjustment,
   setWallet,
   wallet,
@@ -28,12 +30,14 @@ export const useWorldAdventureRank = ({
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   getWorldNow: () => Temporal.Instant;
   savedAdventureExp: number;
+  savedAdventureRankRewardsClaimed: number[];
   savedWorldLevelAdjustment: WorldLevelAdjustment;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
 }) => {
   const adventureExp = shallowRef(savedAdventureExp);
   const worldLevelAdjustment = shallowRef(savedWorldLevelAdjustment);
+  const claimedRanks = shallowRef(savedAdventureRankRewardsClaimed);
   // The ascension quests are named by the string ids the ranks' locks hold
   const completedMainQuestIds = computed(() => new Set(Array.from(finishedMainQuestIds.value, String)));
   const standing = computed(() =>
@@ -59,9 +63,18 @@ export const useWorldAdventureRank = ({
     adventureExp.value = gain.adventureExp;
     if (gain.moraPaid > 0) setWallet({ ...wallet.value, [Currency.Mora]: wallet.value[Currency.Mora] + gain.moraPaid });
   };
+  // Katheryne gives each reached rank's reward once, and the ranks given are kept with the save, so a reload gives
+  // None again
+  const claimKatheryneRewards = () => {
+    const claim = claimRankRewards(adventureRankTables.levels, standing.value.rank, claimedRanks.value);
+    claimedRanks.value = claim.claimedRanks;
+    return claim.rewards;
+  };
   return {
     adventureExp,
     adventureExpProgress,
+    adventureRankRewardsClaimed: claimedRanks,
+    claimKatheryneRewards,
     completedMainQuestIds,
     gainWorldAdventureExp,
     isWorldLevelAdjustable,

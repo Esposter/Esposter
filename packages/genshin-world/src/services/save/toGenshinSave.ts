@@ -18,6 +18,7 @@ import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjus
 export const toGenshinSave = ({
   achievementProgressMap,
   adventureExp,
+  adventureRankRewardsClaimed,
   archiveKillsMap,
   archiveProgressMap,
   characterCopyCountMap,
@@ -56,6 +57,7 @@ export const toGenshinSave = ({
 }: GenshinSaveState): GenshinSave => ({
   achievements: toAchievementProgressSave(achievementProgressMap),
   adventureExp,
+  adventureRankRewardsClaimed,
   archive: { kills: Object.fromEntries(archiveKillsMap), progress: toArchiveProgressSave(archiveProgressMap) },
   characters: toCharacterSaves(characters, characterCopyCountMap),
   clearedCamps: [...clearedCamps],

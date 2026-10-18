@@ -23,6 +23,7 @@ export const readGenshinSave = (
   {
     achievements,
     adventureExp,
+    adventureRankRewardsClaimed,
     archive,
     characters,
     clearedCamps,
@@ -64,6 +65,7 @@ export const readGenshinSave = (
   return {
     achievementProgressMap: toAchievementProgressMap(achievements),
     adventureExp,
+    adventureRankRewardsClaimed,
     archiveKillsMap: new Map(Object.entries(archive.kills).map(([entryId, count]) => [Number(entryId), count])),
     archiveProgressMap: toArchiveProgressMap(archive.progress),
     characterCopyCountMap: new Map(characters.map(({ copyCount, id }) => [id, copyCount])),

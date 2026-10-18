@@ -38,6 +38,7 @@ import type { BannerKind } from "genshin-interface/save";
 export interface GenshinSaveState {
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   adventureExp: number;
+  adventureRankRewardsClaimed: number[];
   archiveKillsMap: ArchiveKills;
   archiveProgressMap: ArchiveProgress;
   characterCopyCountMap: ReadonlyMap<number, number>;

@@ -2,6 +2,7 @@ import type { Character } from "#src/models/character/Character";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { QuestRewardItem } from "#src/models/quest/Quest";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -38,12 +39,15 @@ export const useWorldQuestRewards = ({
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
 }) => {
-  events.on("finishQuest", ({ rewards }) => {
+  // A reward is paid through one path, whether a quest finishes or a talk gives it
+  const grantRewards = (rewards: QuestRewardItem[]) => {
     const granted = grantQuestRewards(rewards, inventory.value, wallet.value, names, materialDataMap);
     setInventory(granted.inventory);
     setWallet(granted.wallet);
     if (granted.characterExp > 0)
       setCharacters(gainCharacterExp(characters.value, getDeployedCharacterIds(), granted.characterExp, getMaxLevel));
     if (granted.adventureExp > 0) gainAdventureExp(granted.adventureExp);
-  });
+  };
+  events.on("finishQuest", ({ rewards }) => grantRewards(rewards));
+  return { grantRewards };
 };

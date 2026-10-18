@@ -8,6 +8,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
+import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
@@ -83,6 +84,7 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       adventureExp: maxNumber,
+      adventureRankRewardsClaimed: Array.from({ length: MAX_ADVENTURE_RANK - 1 }, (_value, index) => index + 2),
       archive: {
         kills: Object.fromEntries(
           Array.from({ length: MAX_ARCHIVE_KILL_COUNT }, (_value, index) => [

@@ -5,10 +5,11 @@ The [Adventure Rank](../../specs/genshin/adventure-rank/design.md) page holds th
 ## Decisions
 
 - **Every source states its own EXP.** Quests, chests, Teleport Waypoints and statues unlocked, Oculi, commissions and the handbook's Experience chapters each give Adventure EXP their own page or table sets, and spending Original Resin gives five for each one spent ([original resin](../../specs/genshin/original-resin/design.md)). Each source's page adds it through `gainAdventureExp`, which takes the completed main quests and returns the Mora a gain past rank 60 pays.
-- **A rank's reward is claimed from Katheryne.** Each rank's reward is its `rewardId` in `RewardExcelConfigData`, claimed by talking to Katheryne at any branch of the Adventurers' Guild, as the game hands it out.
+- **A rank's reward is claimed from Katheryne.** Each rank's reward is its `rewardId` in `PlayerLevelExcelConfigData`, joined to the reward row it names in `RewardExcelConfigData` and published with the level table. Talking to Katheryne at any branch of the Adventurers' Guild gives every reached rank's reward not yet claimed, once, as the game hands it out. Provisional: one talk paying all of them at once is the reading here, since the game's own talk is not read.
 - **What a rank opens is stated by its system.** Each page names the rank its system opens at, from the wiki's table of unlocks, since the game's own open-state table names each system only by a number. The Paimon menu's entry for a system not yet open stays disabled, as it already is for one not built. Of the menu's entries the table names three, Friends at 2, Co-Op Mode at 16 and the Battle Pass at 20 (`ScreenKindOpenRankMap`); the rest are open from the start.
 - **The Change World Level prompt is a plain dialog, its layout provisional.** Its button opens the prompt over the World Level dialog; Confirm makes the change through `toggleWorldLevel` and Cancel returns to the dialog. The prompt's frame and choices are the quit prompt's, measured from its 2026 recording; its levels and tips lines are placed by eye until the user's recording `world-level-dialog-2024.mkv` is measured. Its labels are the game's text ids, read through `GameTextKey`.
 - **A claimed reward is kept with the player's progress.** The ranks' rewards claimed are kept in the save beside the EXP and the quests' progress ([save data](../../specs/genshin/save-data/design.md)), since the world is the person's own.
+- **The claimed ranks are a required save field.** `adventureRankRewardsClaimed` lists the ranks claimed, from rank 2, with no default. A save written before it parses only once the backfill adds it as an empty list, the `backfills` skill's rule.
 - **Bosses and ley line outcrops stand at the World Level.** Their enemies and rewards follow the World Level as the wiki gives them, on the pages that build them.
 
 ## How it works
@@ -26,14 +27,14 @@ flowchart TD
 
 **Left to build, in order:**
 
-1. **Katheryne's rewards (tasks 2.1 and 2.2).** Waits on Katheryne standing among Mondstadt's residents in region data, which the [resident schedules](../genshin-resident-schedules/design.md) build: none of her name's text ids is a resident's yet. Her reward read, the ranks' rows of `RewardExcelConfigData`, waits with her, and so does the save of claimed rewards.
-2. **Adventure EXP from the claims no screen calls yet.** Commissions (`claimCommissionReward`), the Petrified Tree (`claimPetrifiedTree`), the Trounce Blossom (`claimTrounceBlossom`) and a Forge order (`obtainForgeOrder`) already add their EXP through `gainAdventureExp`, and the Mora past rank 60 with it, but nothing in the world calls those claims yet. The Forge screen keeps its own `adventureExp` model, so when it mounts it must be bound to the world's EXP for the gain to reach the rank.
+1. **The other Adventure EXP sources, as their pages land.** Each calls `gainWorldAdventureExp`; the quests carried by the [quests](../genshin-quests/design.md) page feed the holds as they complete.
+2. **The Paimon menu's rank gates**, as the systems' pages open.
 
-Built here: the sources the world reaches (quests, chests, Teleport Waypoints, statues and Oculi, offerings and spent Original Resin), the Paimon menu's rank gates (task 3.1) and the Change World Level prompt.
+Built here: the sources the world reaches (quests, chests, Teleport Waypoints, statues and Oculi, offerings and spent Original Resin), Katheryne's rewards (tasks 2.1 and 2.2), the Paimon menu's rank gates (task 3.1) and the Change World Level prompt.
 
 ## Data and measures
 
-- **Read from the game's tables:** the ranks' rows of `RewardExcelConfigData`, read when Katheryne lands.
+- **Read from the game's tables:** each rank's `rewardId` in `PlayerLevelExcelConfigData`, and the reward row it names in `RewardExcelConfigData`, published with the level table.
 - **Read from the wiki:** which rank opens each system.
 
 ## Key files

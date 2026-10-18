@@ -351,6 +351,8 @@ const { castView, closeFishing, fishingPointPlaces, isFishingOpen, isFishingPoin
 const {
   adventureExp,
   adventureExpProgress,
+  adventureRankRewardsClaimed,
+  claimKatheryneRewards,
   completedMainQuestIds,
   gainWorldAdventureExp,
   isWorldLevelAdjustable,
@@ -363,7 +365,19 @@ const {
   finishedMainQuestIds,
   getWorldNow,
   savedAdventureExp: savedState.adventureExp,
+  savedAdventureRankRewardsClaimed: savedState.adventureRankRewardsClaimed,
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
+  setWallet,
+  wallet,
+});
+// The rewards each quest's finish pays into the bag, the wallet and the rank, as it finishes
+const { grantRewards } = useWorldQuestRewards({
+  events,
+  gainAdventureExp: gainWorldAdventureExp,
+  inventory,
+  materialDataMap,
+  names: nameText,
+  setInventory,
   setWallet,
   wallet,
 });
@@ -863,6 +877,7 @@ useWorldSaveSync({
   getSaveState: () => ({
     achievementProgressMap: achievementProgressMap.value,
     adventureExp: adventureExp.value,
+    adventureRankRewardsClaimed: adventureRankRewardsClaimed.value,
     archiveKillsMap: archiveKillsMap.value,
     archiveProgressMap: archiveProgressMap.value,
     characterCopyCountMap: characterCopyCountMap.value,
@@ -1464,7 +1479,10 @@ defineExpose({ jumpTo, readCameraPosition });
               talkDuelGameId = getTalkDuelGameId(interactable.id);
               screenKind = getTalkScreenKind(interactable.id, getResidents());
               // Katheryne's talk opens the expedition screen in place of the talk, once she stands in the world
-              if (checkIsExpeditionTalk(interactable.id, getResidents())) screenKind = ScreenKind.Expedition;
+              if (checkIsExpeditionTalk(interactable.id, getResidents())) {
+                grantRewards(claimKatheryneRewards());
+                screenKind = ScreenKind.Expedition;
+              }
               shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
               // A Souvenir Shop stays closed until its region's offering is at its last level, a day vendor's outside their hours,
               // And no shop opens before the world's clock is read, so its talk is a dialogue until then
