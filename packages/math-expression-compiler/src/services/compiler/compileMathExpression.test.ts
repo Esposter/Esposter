@@ -246,4 +246,11 @@ describe("counting and primality", () => {
     expect(evaluateFormula("stirlingS2(3000, 2999)")).toBe(4498500);
     expect(evaluateFormula("stirlingS2(2000, 1000)")).toBe(Number.POSITIVE_INFINITY);
   });
+
+  test("a Stirling number with no part, or with as many parts as its count, is answered without the loop running on", () => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula("stirlingS2(1e12, 0)")).toBe(0);
+    expect(evaluateFormula("stirlingS2(1e12, 1e12)")).toBe(1);
+  });
 });
