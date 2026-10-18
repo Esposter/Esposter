@@ -41,7 +41,7 @@ flowchart LR
 
 ## Upstream
 
-The plugin's tracker holds a few hundred issues and pull requests, most of them closed, and it routes questions to its discussions. Every item has one verdict below, and the table is generated from the audit's verdict map, checked to name each item exactly once. Most of the in-scope items are the component set, the head and the escaping, and each in-scope defect or feature has the test that proves it, or a note on the reading that does. Items the page builder's editor owns are out of scope here, and so are MJML's own compiler's behaviours, which are MJML's to fix.
+The plugin's tracker holds a few hundred issues and pull requests, most of them closed, and it routes questions to its discussions. Every item has one verdict below, and the table is the audit's record, with one row per upstream item. Most of the in-scope items are the component set, the head and the escaping, and each in-scope defect or feature has the test that proves it, or a note on the reading that does. Items the page builder's editor owns are out of scope here, and so are MJML's own compiler's behaviours, which are MJML's to fix.
 
 Reproduced against the installed plugin, `grapesjs-mjml` 1.0.8, without GrapesJS, since the editor is not installed beside this package:
 
