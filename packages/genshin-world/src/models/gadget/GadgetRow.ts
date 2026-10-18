@@ -6,6 +6,7 @@ import { z } from "zod";
 // Gadgets, and those read as zero. The region is the one a Treasure Compass's city joins, and is empty for a gadget that
 // Names no city. The gather item is the one an Oculus Resonance Stone finds, read from the gather point type its widget
 // Names, and is zero for a gadget of another kind. The maximum points a collector holds are zero for any other gadget
+// The most of a device the scene holds and a player places are zero for a gadget that is no device
 export interface GadgetRow {
   cooldownGroup: number;
   cooldownOnFailSeconds: number;
@@ -14,6 +15,8 @@ export interface GadgetRow {
   id: number;
   isEquipable: boolean;
   kind: GadgetKind;
+  maxCountByPlayer: number;
+  maxCountInScene: number;
   maxPoints: number;
   region: string;
 }
@@ -26,6 +29,8 @@ export const gadgetRowSchema = z.object({
   id: z.int().positive(),
   isEquipable: z.boolean(),
   kind: z.enum(GadgetKind) satisfies z.ZodType<GadgetKind>,
+  maxCountByPlayer: z.int().nonnegative(),
+  maxCountInScene: z.int().nonnegative(),
   maxPoints: z.int().nonnegative(),
   region: z.string(),
 }) satisfies z.ZodType<GadgetRow>;

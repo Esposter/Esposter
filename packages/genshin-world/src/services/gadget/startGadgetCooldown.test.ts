@@ -14,6 +14,8 @@ describe(startGadgetCooldown, () => {
     id: 220003,
     isEquipable: true,
     kind: GadgetKind.Detector,
+    maxCountByPlayer: 0,
+    maxCountInScene: 0,
     maxPoints: 0,
     region: "",
   };

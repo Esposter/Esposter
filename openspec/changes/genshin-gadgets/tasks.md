@@ -16,4 +16,4 @@
 
 ## 4. Collectors and placed devices
 
-- [ ] 4.1 Build the collector and placed-device kinds one at a time, each as its own module, with a scenario for each kind added to this change's specs before its module is built. Verify: the new scenario written first and seen failing.
+- [x] 4.1 Build the collector and placed-device kinds one at a time, each as its own module, with a scenario for each kind added to this change's specs before its module is built. Verify: the new scenario written first and seen failing.

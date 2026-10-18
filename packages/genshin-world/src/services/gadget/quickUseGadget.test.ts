@@ -15,6 +15,8 @@ describe(quickUseGadget, () => {
     id: 1001,
     isEquipable: true,
     kind: GadgetKind.Detector,
+    maxCountByPlayer: 0,
+    maxCountInScene: 0,
     maxPoints: 0,
     region: "",
   };

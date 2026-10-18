@@ -83,3 +83,13 @@ A collector SHALL hold the points it gathers up to its maximum, and SHALL lose t
 - **GIVEN** a collector holds 4 of its 5 points
 - **WHEN** it gathers 2 more points
 - **THEN** it holds 5 points and the 1 point beyond its maximum is lost
+
+### Requirement: A placed device is refused past its limit in the scene or per player
+
+Placing a device SHALL be refused once the scene holds as many of that device as its scene limit, or the player has placed as many as its player limit.
+
+#### Scenario: A placed device is refused past its scene or player limit
+
+- **GIVEN** the scene holds as many of a device as its scene limit, or the player has placed as many as its player limit
+- **WHEN** the player places another of that device
+- **THEN** the placement is refused and no device is added

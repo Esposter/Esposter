@@ -44,6 +44,8 @@ export const toGadgetRows = (
               id: Number(id),
               isEquipable: widget.isEquipable ?? false,
               kind,
+              maxCountByPlayer: widget.maxCountByPlayer ?? 0,
+              maxCountInScene: widget.maxCountInScene ?? 0,
               maxPoints: widget.maxPoints ?? 0,
               region: cityRegion ?? "",
             },
