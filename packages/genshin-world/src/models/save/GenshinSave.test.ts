@@ -252,13 +252,13 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
-  // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
-  // Would only hide a save nobody brought to it
   test("refuses a party whose member on the field is not in the deployed team", () => {
     expect.hasAssertions();
     expect(partySaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE.party, activeIndex: 1 }).success).toBe(false);
   });
 
+  // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
+  // Would only hide a save nobody brought to it
   test("refuses a save written before the slices were added", () => {
     expect.hasAssertions();
     const predatingSave = {
