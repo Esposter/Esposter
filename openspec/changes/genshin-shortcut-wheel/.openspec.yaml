@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-10-18
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-touches:
+  ["packages/genshin-world/src/services/shortcutWheel/**", "packages/genshin-world/src/models/shortcutWheel/**"]
