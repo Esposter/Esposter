@@ -5,7 +5,7 @@
 
 ## 2. Companions
 
-- [ ] 2.1 Invite and dismiss companions within the Trust Rank's count. Verify: inviteHomeCompanion.test.ts, named after the scenarios 'A companion is invited within the Trust Rank's count' and 'A second companion is refused at Trust Rank one', with the Traveler and a character already living there refused.
+- [x] 2.1 Invite and dismiss companions within the Trust Rank's count. Verify: inviteHomeCompanion.test.ts, named after the scenarios 'A companion is invited within the Trust Rank's count' and 'A second companion is refused at Trust Rank one', with the Traveler and a character already living there refused.
 - [ ] 2.2 Give a companion its dialogue and one-time reward for a favoured gift set, once the placement editor places the furnishing sets. Verify: a test named after the scenario 'A favoured gift set gives the companion's reward once'.
 
 ## 3. Realm Depot

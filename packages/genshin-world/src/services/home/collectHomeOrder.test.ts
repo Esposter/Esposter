@@ -32,6 +32,7 @@ describe(collectHomeOrder, () => {
   const order: HomeOrder = { blueprintId: FURNISHING_ID, startedAt: EPOCH };
   const progress: HomeProgress = {
     accruedAt: EPOCH,
+    companionIds: [],
     learnedBlueprintIds: [FURNISHING_ID],
     madeBlueprintIds: [],
     orders: [order],
