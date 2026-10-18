@@ -14,19 +14,21 @@ export const renderPrintSheets = async (
   const printRoot = window.document.createElement("div");
   printRoot.className = PDF_PRINT_CLASS;
   printRoot.append(style);
-  for (let firstPageNumber = 1; firstPageNumber <= pdfDocument.numPages; firstPageNumber += PDF_PRINT_BATCH_SIZE) {
-    if (isCancelled()) return undefined;
+  // The next batch starts once this one has landed, so no print holds every page at once
+  const renderBatch = async (firstPageNumber: number): Promise<void> => {
+    if (isCancelled() || firstPageNumber > pdfDocument.numPages) return;
 
     const lastPageNumber = Math.min(firstPageNumber + PDF_PRINT_BATCH_SIZE - 1, pdfDocument.numPages);
     const pageNumbers = Array.from(
       { length: lastPageNumber - firstPageNumber + 1 },
       (_, index) => firstPageNumber + index,
     );
-    // oxlint-disable-next-line no-await-in-loop -- A batch lands before the next renders, so no print holds every page
     printRoot.append(
       ...(await Promise.all(pageNumbers.map((pageNumber) => renderPrintImage(pdfDocument, pageNumber)))),
     );
-  }
+    await renderBatch(lastPageNumber + 1);
+  };
+  await renderBatch(1);
 
   return isCancelled() ? undefined : printRoot;
 };

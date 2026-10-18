@@ -126,4 +126,88 @@ describe(usePdfDocument, () => {
 
     expect(task.destroy).toHaveBeenCalledExactlyOnceWith();
   });
+
+  test("#125 loading through a legacy renderer build", async () => {
+    expect.hasAssertions();
+
+    const legacyTask = createTask(Promise.resolve(pdfDocument));
+    const legacyGetDocument = vi.fn<PdfApi["getDocument"]>(() => legacyTask);
+    const scope = effectScope();
+    const state = scope.run(() => usePdfDocument({ renderer: createRenderer(legacyGetDocument), source: url }));
+    await flushPromises();
+
+    expect(legacyGetDocument).toHaveBeenCalledExactlyOnceWith({
+      cMapPacked: true,
+      cMapUrl: "",
+      standardFontDataUrl: "",
+      url,
+      wasmUrl: "",
+    });
+    expect(state?.pdfDocument.value).toBe(pdfDocument);
+    scope.stop();
+  });
+
+  test("#69 #70 loading progress rises to the whole file", async () => {
+    expect.hasAssertions();
+
+    const { promise, resolve } = Promise.withResolvers<PDFDocumentProxy>();
+    const task = createTask(promise);
+    const scope = effectScope();
+    const state = scope.run(() =>
+      usePdfDocument({ renderer: createRenderer(vi.fn<PdfApi["getDocument"]>(() => task)), source: url }),
+    );
+    await flushPromises();
+    task.onProgress?.({ loaded: 1, total: 4 });
+    const firstPart = state?.progress.value;
+    task.onProgress?.({ loaded: 4, total: 4 });
+    resolve(pdfDocument);
+    await flushPromises();
+
+    expect(firstPart).toStrictEqual({ loaded: 1, total: 4 });
+    expect(state?.progress.value).toStrictEqual({ loaded: 4, total: 4 });
+    scope.stop();
+  });
+
+  test("#227 #67 loading parameters reach the renderer as given", async () => {
+    expect.hasAssertions();
+
+    const getDocument = vi.fn<PdfApi["getDocument"]>(() => createTask(new Promise(() => {})));
+    const scope = effectScope();
+    scope.run(() =>
+      usePdfDocument({ parameters: { disableRange: true }, renderer: createRenderer(getDocument), source: url }),
+    );
+    await flushPromises();
+
+    expect(getDocument).toHaveBeenCalledExactlyOnceWith({
+      cMapPacked: true,
+      cMapUrl: "",
+      disableRange: true,
+      standardFontDataUrl: "",
+      url,
+      wasmUrl: "",
+    });
+    scope.stop();
+  });
+
+  test("opening a local file", async () => {
+    expect.hasAssertions();
+
+    const bytes = new Uint8Array([1, 2, 3]);
+    const getDocument = vi.fn<PdfApi["getDocument"]>(() => createTask(Promise.resolve(pdfDocument)));
+    const scope = effectScope();
+    const state = scope.run(() =>
+      usePdfDocument({ renderer: createRenderer(getDocument), source: new File([bytes], "report.pdf") }),
+    );
+    await flushPromises();
+
+    expect(getDocument).toHaveBeenCalledExactlyOnceWith({
+      cMapPacked: true,
+      cMapUrl: "",
+      data: bytes,
+      standardFontDataUrl: "",
+      wasmUrl: "",
+    });
+    expect(state?.pdfDocument.value).toBe(pdfDocument);
+    scope.stop();
+  });
 });

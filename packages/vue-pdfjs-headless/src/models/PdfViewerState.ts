@@ -1,5 +1,7 @@
 import type { PdfMatchesCount } from "#src/models/PdfMatchesCount";
-import type { ComputedRef, Ref } from "vue";
+import type { PdfOutline } from "#src/models/PdfOutline";
+import type { PdfPageOverlay } from "#src/models/PdfPageOverlay";
+import type { ComputedRef, Ref, ShallowRef } from "vue";
 
 export interface PdfViewerState {
   actualSize: () => void;
@@ -9,13 +11,17 @@ export interface PdfViewerState {
   fitWidth: () => void;
   findNext: () => void;
   findPrevious: () => void;
+  followBookmark: (item: PdfOutline[number]) => void;
   goToPage: (pageNumber: number) => void;
+  isFullscreen: Ref<boolean>;
   isMatchCase: Ref<boolean>;
   isNotFound: Ref<boolean>;
   isWholeWord: Ref<boolean>;
   isZoomInDisabled: ComputedRef<boolean>;
   matchesCount: Ref<PdfMatchesCount>;
   nextPage: () => void;
+  outline: ShallowRef<PdfOutline>;
+  overlays: ShallowRef<PdfPageOverlay[]>;
   pagesCount: Ref<number>;
   pagesRotation: Ref<number>;
   previousPage: () => void;
@@ -23,6 +29,7 @@ export interface PdfViewerState {
   rotate: () => void;
   scale: Ref<number>;
   searchQuery: Ref<string>;
+  toggleFullscreen: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
 }

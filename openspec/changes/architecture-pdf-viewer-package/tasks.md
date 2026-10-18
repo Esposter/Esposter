@@ -5,14 +5,14 @@
 
 ## 2. What the trackers asked for
 
-- [ ] 2.1 The renderer's legacy build, or any other, taken from the consumer. Verify: tests titled "#125 Loading through a legacy renderer build" and "#32 The package's build holds no renderer".
-- [ ] 2.2 Loading progress as state. Verify: a test titled "#69 #70 Loading progress rises to the whole file".
-- [ ] 2.3 Each rendered page's element and viewport for overlays, and area highlights through the viewport. Verify: tests titled "#84 #56 Placing an overlay on a page" and "#26 Highlighting an area of a page".
-- [ ] 2.4 Pinch zoom and Ctrl with the wheel, about the pointer. Verify: a test titled "#223 Pinching to zoom".
-- [ ] 2.5 The renderer's loading parameters as given, and a URL, bytes or a `File` as the source. Verify: tests titled "#227 #67 Loading parameters reach the renderer as given" and "Opening a local file".
-- [ ] 2.6 A list of terms highlighted on load. Verify: a test titled "#24 Highlighting a list of terms on load".
-- [ ] 2.7 The outline as bookmarks, and the thumbnail sidebar. Verify: tests titled "#44 Following a bookmark", "A document with no outline" and "The thumbnail sidebar marks the current page".
-- [ ] 2.8 Fullscreen on the consumer's container. Verify: a test titled "Leaving fullscreen with the Escape key".
+- [x] 2.1 The renderer's legacy build, or any other, taken from the consumer. Verify: tests titled "#125 Loading through a legacy renderer build" and "#32 The package's build holds no renderer".
+- [x] 2.2 Loading progress as state. Verify: a test titled "#69 #70 Loading progress rises to the whole file".
+- [x] 2.3 Each rendered page's element and viewport for overlays, and area highlights through the viewport. Verify: tests titled "#84 #56 Placing an overlay on a page" and "#26 Highlighting an area of a page".
+- [x] 2.4 Pinch zoom and Ctrl with the wheel, about the pointer. Verify: a test titled "#223 Pinching to zoom".
+- [x] 2.5 The renderer's loading parameters as given, and a URL, bytes or a `File` as the source. Verify: tests titled "#227 #67 Loading parameters reach the renderer as given" and "Opening a local file".
+- [x] 2.6 A list of terms highlighted on load. Verify: a test titled "#24 Highlighting a list of terms on load".
+- [x] 2.7 The outline as bookmarks, and the thumbnail sidebar. Verify: tests titled "#44 Following a bookmark", "A document with no outline" and "The thumbnail sidebar marks the current page".
+- [x] 2.8 Fullscreen on the consumer's container. Verify: a test titled "Leaving fullscreen with the Escape key".
 
 ## 3. Records
 
