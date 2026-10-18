@@ -5,6 +5,11 @@ import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 
+interface Mismatch {
+  actual: null | number;
+  entry: SnapshotEntry;
+  expected: number;
+}
 interface Snapshot {
   entries: SnapshotEntry[];
   mathjs: string;
@@ -46,8 +51,8 @@ const evaluateFormula = (formula: string, scope: Record<string, number>): null |
   );
 
 // The entries whose answer our evaluation does not give, where a fix row's recorded answer is the one we give
-const getMismatches = (entries: SnapshotEntry[]): { actual: null | number; entry: SnapshotEntry; expected: number }[] =>
-  entries.flatMap((entry) => {
+const getMismatches = (entries: SnapshotEntry[]): Mismatch[] =>
+  entries.flatMap((entry): Mismatch[] => {
     const recorded = entry.fix === undefined ? entry.value : entry.fix.value;
     const expected = decodeValue(recorded);
     const actual = evaluateFormula(entry.formula, entry.scope);
