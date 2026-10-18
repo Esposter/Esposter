@@ -290,6 +290,27 @@ describe(advanceAchievements, () => {
     });
   });
 
+  test("a monster trigger naming one monster counts every defeat of it, up to its progress", () => {
+    expect.hasAssertions();
+    const MONSTER_ID = "51";
+    const OTHER_MONSTER_ID = "52";
+    const defeatMonsters: Achievement = {
+      ...counted,
+      progress: 3,
+      trigger: { parameters: [[MONSTER_ID]], type: "TRIGGER_BATTLE_FOR_MONSTER_DIE_OR" },
+    };
+    const firstDefeat = advanceAchievements([defeatMonsters], new Map(), defeat(MONSTER_ID), EPOCH);
+    const secondDefeat = advanceAchievements([defeatMonsters], firstDefeat.progressMap, defeat(MONSTER_ID), EPOCH);
+    expect(
+      advanceAchievements([defeatMonsters], secondDefeat.progressMap, defeat(OTHER_MONSTER_ID), EPOCH),
+    ).toStrictEqual(secondDefeat);
+    expect(secondDefeat.progressMap).toStrictEqual(new Map([[COUNTED_ID, { count: 2 }]]));
+    expect(advanceAchievements([defeatMonsters], secondDefeat.progressMap, defeat(MONSTER_ID), EPOCH)).toStrictEqual({
+      primogems: PRIMOGEMS,
+      progressMap: new Map([[COUNTED_ID, { count: 3, finishedAt: EPOCH }]]),
+    });
+  });
+
   test("a material trigger counts the quantity the event gains", () => {
     expect.hasAssertions();
     const material: Achievement = {
