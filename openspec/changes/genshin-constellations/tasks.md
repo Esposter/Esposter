@@ -10,7 +10,7 @@
 
 ## 3. Traveler's sets
 
-- [ ] 3.1 Choose the Traveler's element set from the resonated statue and unlock each set by its source. Verify: tests named after the scenarios 'the Traveler's set follows the resonated statue's element' and 'a Traveler set stays locked until its source is done', seen failing first.
+- [x] 3.1 Choose the Traveler's element set from the resonated statue and unlock each set by its source. Verify: tests named after the scenarios 'the Traveler's set follows the resonated statue's element' and 'a Traveler set stays locked until its source is done', seen failing first.
 
 ## 4. Wish showing
 
