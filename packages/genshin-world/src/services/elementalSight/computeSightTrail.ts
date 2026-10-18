@@ -1,6 +1,7 @@
 import type { GroundPoint } from "genshin-engine";
 import type { Vector3Like } from "three";
 
+import { computeGroundRun } from "#src/services/elementalSight/computeGroundRun";
 import { SIGHT_REACH, SIGHT_TRAIL_STEP } from "#src/services/elementalSight/constants";
 
 // The points a sight trail runs through on the ground, one every step from the origin toward the end, and the end last
@@ -10,7 +11,7 @@ export const computeSightTrail = (
   end: GroundPoint,
   getGroundHeight: (x: number, z: number) => number,
 ): Vector3Like[] => {
-  const distance = Math.hypot(end.x - origin.x, end.z - origin.z);
+  const { distance } = computeGroundRun(origin, end);
   if (distance === 0) return [];
   const trailLength = Math.min(distance, SIGHT_REACH);
   const stepCount = Math.ceil(trailLength / SIGHT_TRAIL_STEP);

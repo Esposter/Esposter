@@ -3,6 +3,7 @@ import type { SightTrailRibbon } from "#src/models/sight/SightTrailRibbon";
 import type { GroundPoint } from "genshin-engine";
 import type { Vector3Like } from "three";
 
+import { computeGroundRun } from "#src/services/elementalSight/computeGroundRun";
 import { computeSightTrail } from "#src/services/elementalSight/computeSightTrail";
 import {
   SIGHT_TRAIL_CAPACITY,
@@ -64,9 +65,7 @@ export const writeSightTrails = (
     if (trailCount === SIGHT_TRAIL_CAPACITY) break;
     const points = computeSightTrail(character, end, getGroundHeight);
     if (points.length === 0) continue;
-    const distance = Math.hypot(end.x - character.x, end.z - character.z);
-    const directionX = (end.x - character.x) / distance;
-    const directionZ = (end.z - character.z) / distance;
+    const { directionX, directionZ } = computeGroundRun(character, end);
     writeTrail(ribbon, points, -directionZ * halfWidth, directionX * halfWidth, vertexCount, indexCount);
     trailCount++;
     vertexCount += points.length * 2;
