@@ -1,0 +1,66 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/parser/parseMathExpression.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.07971999999999753,
+              "name": "literals",
+              "p99": 0.12211800000004815,
+              "rme": 18.308886613806507,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.09738999999999577,
+              "name": "columns",
+              "p99": 0.18250199999996197,
+              "rme": 29.815757928532644,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "parseMathExpression > the column formula"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 3.644290000000001,
+              "name": "operators",
+              "p99": 4.819296999999967,
+              "rme": 12.053845041868692,
+              "sampleCount": 10
+            },
+            {
+              "mean": 5.878679999999997,
+              "name": "arguments",
+              "p99": 8.059350000000002,
+              "rme": 10.524706995450607,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "parseMathExpression > a sum of 1000 numbers"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 281.6501399999999,
+              "name": "operators",
+              "p99": 319.00593500000053,
+              "rme": 4.148617723121642,
+              "sampleCount": 10
+            },
+            {
+              "mean": 510.40033999999997,
+              "name": "arguments",
+              "p99": 558.20494,
+              "rme": 4.8335888422784565,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "parseMathExpression > a sum of 100000 numbers"
+        }
+      ]
+    }
+  ]
+}

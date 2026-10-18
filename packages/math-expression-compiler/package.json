@@ -39,6 +39,7 @@
     "access": "public"
   },
   "scripts": {
+    "bench": "vitest bench --run",
     "build": "tsdown",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -54,6 +55,7 @@
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "vitest": "catalog:"

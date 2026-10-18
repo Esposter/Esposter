@@ -1,0 +1,104 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/compiler/compileMathExpression.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.016259999999977025,
+              "name": "compile",
+              "p99": 0.026903999999965435,
+              "rme": 21.874108913075666,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.06853999999999587,
+              "name": "parse and compile",
+              "p99": 0.1041590000000133,
+              "rme": 20.294682807707616,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "compileMathExpression > compile the column formula"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.7565899999999715,
+              "name": "compile",
+              "p99": 1.700546999999939,
+              "rme": 40.5362068440563,
+              "sampleCount": 10
+            },
+            {
+              "mean": 6.948290000000009,
+              "name": "parse and compile",
+              "p99": 7.596774000000019,
+              "rme": 5.3456931873803955,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "compileMathExpression > compile a sum of 1000 numbers"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 61.3747699999999,
+              "name": "compile",
+              "p99": 77.92804500000048,
+              "rme": 9.171406616590223,
+              "sampleCount": 10
+            },
+            {
+              "mean": 556.9485299999999,
+              "name": "parse and compile",
+              "p99": 650.6121160000001,
+              "rme": 6.40681904821874,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "compileMathExpression > compile a sum of 100000 numbers"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.33184000000001107,
+              "name": "native",
+              "p99": 0.4576450000013756,
+              "rme": 11.174818529941046,
+              "sampleCount": 10
+            },
+            {
+              "mean": 31.835869999999705,
+              "name": "compiled",
+              "p99": 38.88685799999958,
+              "rme": 10.996174514978705,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "compileMathExpression > evaluate the column formula over 10000 rows"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 4.026950000000397,
+              "name": "folded",
+              "p99": 4.883518000000786,
+              "rme": 13.131586349087573,
+              "sampleCount": 10
+            },
+            {
+              "mean": 13.486399999999776,
+              "name": "unfolded",
+              "p99": 16.584485999998414,
+              "rme": 8.039981355948381,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "compileMathExpression > evaluate a formula whose subtree folds over 10000 rows"
+        }
+      ]
+    }
+  ]
+}
