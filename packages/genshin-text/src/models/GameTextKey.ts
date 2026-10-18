@@ -550,6 +550,8 @@ export enum GameTextKey {
   ReputationMondstadtMerchantDiscounts = "1610612133",
   ReputationMondstadtOutcropSearch = "1452899589",
   ReputationNotAchieved = "UI_WISHINGPOND_OFFERING_LEVEL_UNREACH",
+  // The button that takes a request the keeper offers, worded as the Reputation page's request shows it
+  ReputationRequestAccept = "REPUTATION_REQUEST_BUTTON_1",
   ReputationReward = "REPUTATION_CITY_REWARD",
   // The game over screen's button that revives the team at the nearest teleport waypoint
   // The notice a furnishing shows when the realm's area already holds its count of furnishings
