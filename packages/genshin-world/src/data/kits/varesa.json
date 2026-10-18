@@ -24,9 +24,7 @@
   "skillCharges": { "cause": "Unsourced", "value": 2 },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" },
   "burstVariant.hits.0.area": {
-    "file": "burst.go",
-    "line": 76,
-    "source": "Gcsim",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.5 }
   },
   "burstVariant.hits.0.poiseDamage": { "file": "burst.go", "line": 70, "source": "Gcsim", "value": 150 },
