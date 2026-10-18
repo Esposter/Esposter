@@ -7,6 +7,7 @@ import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
+import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
 import { createCritEnergyPassiveModule } from "#src/services/weapon/passives/createCritEnergyPassiveModule";
 import { createCrushPassiveModule } from "#src/services/weapon/passives/createCrushPassiveModule";
@@ -174,4 +175,12 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2057933859": createBoltOfPerceptionPassiveModule,
   // Archer's Message (Messenger)
   "3847632939": createArchersMessagePassiveModule,
+  // Composed (Sacrificial Sword)
+  "2041230531": createComposedPassiveModule,
+  // Composed (Sacrificial Greatsword)
+  "4267154851": createComposedPassiveModule,
+  // Composed (Sacrificial Fragments)
+  "1971972187": createComposedPassiveModule,
+  // Composed (Sacrificial Bow)
+  "4136879547": createComposedPassiveModule,
 };
