@@ -21,10 +21,12 @@ import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { Trial } from "#src/models/trial/Trial";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
+import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 
@@ -101,6 +103,7 @@ import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
+import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
@@ -661,6 +664,7 @@ getResultAsync(() => readConstellationTables(gameDataBaseUrl)).match(
 );
 const characterIdConstellationsMap = computed(() => getCharacterIdConstellationsMap(constellationKits.value));
 const {
+  characterIdKitMap,
   characterIdSkillGlyphsMap,
   characters,
   chargeParty,
@@ -680,6 +684,11 @@ const {
   events,
   gameDataBaseUrl,
   onPartyDown: () => {
+    // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing revives
+    if (trialArena.value) {
+      stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
+      return;
+    }
     // A domain's challenge ends in the party's fall: the team revives, and the leave to the entrance comes after the revive's
     // Jump to the nearest waypoint, so the entrance is where the player lands
     if (!domainArena.value) {
@@ -702,6 +711,23 @@ const {
   travelerBonusLines,
   travelerElement,
   wildlifePlaces,
+});
+// The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
+const { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials } = useWorldTrials({
+  artifactRarityDataMap,
+  characterDataMap: statTables.characterDataMap,
+  characterIdKitMap,
+  characters,
+  claimedStageIds: savedState.characterTrialClaimedStageIds,
+  gameDataBaseUrl,
+  inventory,
+  materialDataMap,
+  nameText,
+  party,
+  setInventory,
+  setWallet,
+  wallet,
+  weaponDataMap: statTables.weaponDataMap,
 });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
@@ -961,8 +987,8 @@ useWorldSaveSync({
     archiveKillsMap: archiveKillsMap.value,
     archiveProgressMap: archiveProgressMap.value,
     characterCopyCountMap: characterCopyCountMap.value,
-    characters: characters.value,
-    characterTrialClaimedStageIds: savedState.characterTrialClaimedStageIds,
+    characters: playerRoster.value?.characters ?? characters.value,
+    characterTrialClaimedStageIds: trialClaimedStageIds.value,
     clearedCamps: clearedCamps.value,
     clearedDomainIds: clearedDomainIds.value,
     commissionDay: commissionDay.value,
@@ -980,7 +1006,7 @@ useWorldSaveSync({
     mails: mails.value,
     namecardItemId: namecardItemId.value,
     openedChestIds: openedChestIds.value,
-    party,
+    party: playerRoster.value?.party ?? party,
     processingJobs: processingJobs.value,
     quests: questProgressMap.value,
     regionStatueProgressMap: regionStatueProgressMap.value,
@@ -1246,6 +1272,19 @@ const enterDomainLevel = (dungeonId: number) => {
   screenKind.value = ScreenKind.World;
   enterDomain(dungeonId);
 };
+// A banner's trial, opened from the Wish screen: the trial takes the player's roster and the world opens on its stand-in arena,
+// East of where the player stands (PROVISIONAL until the trial's scene is read)
+const openTrial = async (trial: Trial) => {
+  if (!(await enterTrial(trial))) return;
+  screenKind.value = ScreenKind.World;
+  jumpTo(
+    computeDomainScenePose({
+      heightOffset: 0,
+      position: { x: characterBody.position.x, z: characterBody.position.z },
+      rotation: characterBody.rotation.y,
+    }),
+  );
+};
 // The Domains tab lists every domain entrance the map has, the locked and the unlocked alike, each with what the player can do
 const handbookDomains = computed(() =>
   toHandbookDomains(
@@ -1465,6 +1504,11 @@ defineExpose({ jumpTo, readCameraPosition });
           const transitionAttacks = stepDomainChallenge({
             deltaMilliseconds: context.delta,
             isPlaying: !isPaused && screenKind === ScreenKind.World && domainClaimOffers === undefined,
+            partyDown: false,
+          });
+          stepTrial({
+            deltaMilliseconds: context.delta,
+            isPlaying: !isPaused && screenKind === ScreenKind.World,
             partyDown: false,
           });
           stepAbyss({
@@ -2012,7 +2056,9 @@ defineExpose({ jumpTo, readCameraPosition });
           :server-clock-offset-ms
           :wish-schedule
           :stella-fortuna-name-text-id-map
+          :trials
           @close="screenKind = ScreenKind.World"
+          @trial="openTrial"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
       </template>
