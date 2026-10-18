@@ -71,13 +71,20 @@ describe("weaponScreen", () => {
     expect.hasAssertions();
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
+    const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
     render(WeaponScreenContainer, {
-      props: { ...props, "onUpdate:inventory": onUpdateInventory, wallet: { ...props.wallet, [Currency.Mora]: 0 } },
+      props: {
+        ...props,
+        "onUpdate:inventory": onUpdateInventory,
+        "onUpdate:wallet": onUpdateWallet,
+        wallet: { ...props.wallet, [Currency.Mora]: 0 },
+      },
     });
 
     await page.getByText(oreName, { exact: true }).first().click();
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponEnhance], { exact: true }).last().click();
     expect(onUpdateInventory).not.toHaveBeenCalled();
+    expect(onUpdateWallet).not.toHaveBeenCalled();
   });
 
   // Enhance with an ore and a fodder weapon picked: both leave the bag, the ore's count drops by one and the weapon levels up
@@ -85,7 +92,10 @@ describe("weaponScreen", () => {
     expect.hasAssertions();
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
-    render(WeaponScreenContainer, { props: { ...props, "onUpdate:inventory": onUpdateInventory } });
+    const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
+    render(WeaponScreenContainer, {
+      props: { ...props, "onUpdate:inventory": onUpdateInventory, "onUpdate:wallet": onUpdateWallet },
+    });
 
     await page.getByText(oreName, { exact: true }).first().click();
     await page.getByText(fodderName, { exact: true }).first().click();
@@ -96,6 +106,8 @@ describe("weaponScreen", () => {
     expect(writtenInventory?.items.some((item) => item.id === FODDER_ENTRY_ID)).toBe(false);
     expect(countInventoryItem(writtenInventory?.items ?? [], ORE_ID)).toBe(2);
     expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).level).toBeGreaterThan(1);
+    expect(onUpdateWallet).toHaveBeenCalledTimes(1);
+    expect(onUpdateWallet.mock.calls[0]?.[0][Currency.Mora]).toBeLessThan(props.wallet[Currency.Mora]);
   });
 
   // Ascend is absent below the level cap and offered at it
