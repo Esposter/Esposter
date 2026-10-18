@@ -10,7 +10,7 @@ describe("vue-pdfjs-headless", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 20.06 KB (20542 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 20.28 KB (20768 bytes)"`);
   });
 
   test("types size", () => {

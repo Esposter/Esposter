@@ -8,8 +8,8 @@ interface Props {
   pixelRatio: number;
 }
 
-// The scale a page is drawn at for a canvas whose screen width shows it sharp. Past the largest canvas a device draws,
-// The scale is lowered until the canvas fits, which draws it softer rather than leaving it blank
+// The scale a page is drawn at for a canvas whose screen width shows it sharp. A canvas past the largest one a device draws
+// Is lowered to fit, which draws the page softer rather than leaving it blank
 export const getCanvasScale = ({ cssWidth, pageHeight, pageWidth, pixelRatio }: Props): number => {
   const scale = (cssWidth / pageWidth) * pixelRatio;
   if (pageWidth * pageHeight * scale ** 2 <= PDF_MAX_CANVAS_AREA) return scale;

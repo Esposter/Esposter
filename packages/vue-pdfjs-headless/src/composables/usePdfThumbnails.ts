@@ -57,11 +57,16 @@ export const usePdfThumbnails = ({
     return thumbnail;
   };
 
+  // Stops the thumbnails of the document in place and the observer that watches their rows
+  const disposeThumbnails = () => {
+    scope?.stop();
+    observer?.disconnect();
+  };
+
   watch(
     () => toValue(pdfDocument),
     (loaded) => {
-      scope?.stop();
-      observer?.disconnect();
+      disposeThumbnails();
       rows.clear();
       thumbnails.value = [];
       if (!loaded) return;
@@ -86,10 +91,7 @@ export const usePdfThumbnails = ({
     },
     { immediate: true },
   );
-  onScopeDispose(() => {
-    scope?.stop();
-    observer?.disconnect();
-  });
+  onScopeDispose(disposeThumbnails);
 
   return thumbnails;
 };
