@@ -1,7 +1,7 @@
 {
   "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8939 } },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "frames.salonMemberInitialTicks.length": { "cause": "Unclassified", "value": 3 },
   "frames.salonMemberInitialTicks.0": { "file": "skill.go", "line": 33, "source": "Gcsim", "value": 72.3333 },
   "frames.salonMemberInitialTicks.1": { "file": "skill.go", "line": 38, "source": "Gcsim", "value": 74.5 },
@@ -51,7 +51,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.242640687119286 }
   },
-  "hits.arkhe.hitmarkFrames": { "cause": "DiffersFromSource", "value": 30 },
+  "hits.arkhe.hitmarkFrames": { "cause": "Unsourced", "value": 30 },
   "hits.arkhe.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 8931 } },
   "hits.arkhe.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.ousiaBubble.area": {
@@ -66,10 +66,10 @@
   "hits.ousiaBubble.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8932 } },
   "hits.ousiaBubble.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.ousiaBubble.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 50.5548 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 48.4344 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 57.1707 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 79.6608 },
   "parameters.arkheHitCooldownSeconds.length": { "cause": "Unclassified", "value": 2 },
   "parameters.arkheHitCooldownSeconds.0": {
     "cause": "Unclassified",
@@ -123,7 +123,6 @@
     "cause": "Unclassified",
     "value": { "index": 5, "proudSkillGroupId": 8939 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "hits.arkhe.gauge": { "cause": "DiffersFromSource" }
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
+  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }
