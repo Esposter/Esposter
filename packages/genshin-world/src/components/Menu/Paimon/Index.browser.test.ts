@@ -7,6 +7,7 @@ import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
+import { defineComponent, h } from "vue";
 
 describe("menuPaimon", () => {
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
@@ -23,7 +24,13 @@ describe("menuPaimon", () => {
   test("a signed-in reader sees the account's name and avatar", async () => {
     expect.hasAssertions();
 
+    // NuxtImg is resolved only by the app's Nuxt runtime, so the test stands in an img that takes the alt and src the screen passes
+    const NuxtImgStub = defineComponent({
+      props: { alt: { required: true, type: String }, src: { required: true, type: String } },
+      setup: (componentProps) => () => h("img", { alt: componentProps.alt, src: componentProps.src }),
+    });
     render(MenuPaimon, {
+      global: { stubs: { NuxtImg: NuxtImgStub } },
       props: { ...props, accountAvatarUrl: "https://example.com/avatar.png", accountName: "Aether" },
     });
 
