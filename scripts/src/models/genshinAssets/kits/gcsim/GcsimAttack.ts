@@ -1,3 +1,5 @@
+import type { GcsimAttackBranch } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackBranch";
+
 // One `AttackInfo` literal of a gcsim character's action files, its fields as written: the talent variable its
 // Multiplier reads, through any loop or local naming it, its attack and ICD tags, strike type and element by their gcsim
 // Names, and its durability and poise where they evaluate to a number, else the variable the poise indexes by the
@@ -6,6 +8,8 @@
 // Of its file, as the attack's name
 export interface GcsimAttack {
   abil?: string;
+  // The if or else the attack's `Mult` set sits in, or the literal's own, which a call after the branches fires per branch
+  branch?: GcsimAttackBranch;
   attackTag?: string;
   durability?: number;
   element?: string;
