@@ -123,9 +123,12 @@ const mergeShopPurchases = (account: ShopPurchaseSave[], guest: ShopPurchaseSave
   }
   return [...purchaseMap.values()];
 };
+// Whether an ISO instant is later than another
+const checkIsLaterInstant = (instant: string, than: string): boolean =>
+  Temporal.Instant.compare(Temporal.Instant.from(instant), Temporal.Instant.from(than)) > 0;
 // Whether a processing's queue was started later than another
 const checkIsLaterJob = (job: ProcessingJobSave, than: ProcessingJobSave): boolean =>
-  Temporal.Instant.compare(Temporal.Instant.from(job.startedAt), Temporal.Instant.from(than.startedAt)) > 0;
+  checkIsLaterInstant(job.startedAt, than.startedAt);
 // A processing both copies hold a queue of keeps the copy started later, as a queue is one copy's whole, and a processing
 // Only one copy holds is kept. Each processing is listed once, by its id
 const mergeProcessingJobs = (
@@ -146,13 +149,11 @@ const checkIsLaterWorldLevelAdjustment = (
 ): boolean => {
   if (adjustment.changedAt === undefined) return false;
   if (than.changedAt === undefined) return true;
-  return (
-    Temporal.Instant.compare(Temporal.Instant.from(adjustment.changedAt), Temporal.Instant.from(than.changedAt)) > 0
-  );
+  return checkIsLaterInstant(adjustment.changedAt, than.changedAt);
 };
 // The day dealt later is the one the player is on, since a day is dealt again at each daily reset
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
-  Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
+  checkIsLaterInstant(day.dealtAt, than.dealtAt);
 
 // The camps both copies cleared, each once, since a camp cleared stays cleared
 const mergeClearedCamps = (account: ClearedCamp[], guest: ClearedCamp[]): ClearedCamp[] => [
@@ -163,10 +164,7 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
   const enemyRespawns = { ...account };
   for (const [spawnKey, guestRespawnAt] of Object.entries(guest)) {
     const accountRespawnAt = enemyRespawns[spawnKey];
-    if (
-      accountRespawnAt === undefined ||
-      Temporal.Instant.compare(Temporal.Instant.from(accountRespawnAt), Temporal.Instant.from(guestRespawnAt)) < 0
-    )
+    if (accountRespawnAt === undefined || checkIsLaterInstant(guestRespawnAt, accountRespawnAt))
       enemyRespawns[spawnKey] = guestRespawnAt;
   }
   return enemyRespawns;
