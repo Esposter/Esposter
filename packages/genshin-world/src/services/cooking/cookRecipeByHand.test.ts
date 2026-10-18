@@ -169,6 +169,11 @@ describe(cookRecipeByHand, () => {
     effect: CookingTalentEffect.SuspiciousDish,
     foodTypes: [CookingFoodType.Attack, CookingFoodType.Defense, CookingFoodType.Function, CookingFoodType.Heal],
   };
+  const HEAL_TALENT: CookingTalent = {
+    chance: 12,
+    effect: CookingTalentEffect.DoubleProduct,
+    foodTypes: [CookingFoodType.Heal],
+  };
 
   test("a perfect cook doubles a delicious dish", () => {
     expect.hasAssertions();
@@ -207,6 +212,32 @@ describe(cookRecipeByHand, () => {
     });
 
     expect(countInventoryItem(result?.inventory.items ?? [], SUSPICIOUS_ITEM_ID)).toBe(2);
+  });
+
+  test("a dish of the passive's food type is bonused", () => {
+    expect.hasAssertions();
+
+    const result = cookWithTalent({
+      recipe: createRecipe({ foodType: CookingFoodType.Heal }),
+      roll: 0.05,
+      stopPosition: DELICIOUS_STOP,
+      talent: HEAL_TALENT,
+    });
+
+    expect(countInventoryItem(result?.inventory.items ?? [], DELICIOUS_ITEM_ID)).toBe(2);
+  });
+
+  test("a dish of another food type is left unbonused", () => {
+    expect.hasAssertions();
+
+    const result = cookWithTalent({
+      recipe: createRecipe({ foodType: CookingFoodType.Attack }),
+      roll: 0.05,
+      stopPosition: DELICIOUS_STOP,
+      talent: HEAL_TALENT,
+    });
+
+    expect(countInventoryItem(result?.inventory.items ?? [], DELICIOUS_ITEM_ID)).toBe(1);
   });
 
   test("a talent's extra dish is refused when the bag has no room for it", () => {
