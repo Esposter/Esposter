@@ -2,7 +2,7 @@
 import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
-import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
+import { DIALOG_BODY_TRANSITION_DURATION, DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 import { prettify } from "@/util/text/prettify";
 
 interface Props<T> {
@@ -34,7 +34,7 @@ const formId = useId();
 const errorIcon = useTemplateRef("errorIcon");
 // Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
 // Component's effect scope, so its timer outlives unmount and emits into a destroyed component
-const { start: startClose } = useTimeoutFn(
+const { start: startClose, stop: stopClose } = useTimeoutFn(
   () => {
     emit("close");
   },
@@ -44,7 +44,11 @@ const { start: startClose } = useTimeoutFn(
 useConfirmBeforeNavigation(() => isDirty);
 
 watch(isOpen, (newIsOpen) => {
-  if (newIsOpen) return;
+  // A reopen inside the leave takes back the close, so the item the reader is back to edit is not reset under them
+  if (newIsOpen) {
+    stopClose();
+    return;
+  }
   // The form mounts with each open, so the verdict on this one does not carry over to the next
   isEditFormValid.value = true;
   startClose();
@@ -70,7 +74,7 @@ watch(isOpen, (newIsOpen) => {
   >
     <template #actions>
       <!-- Held through the dialog's leave with the form, so the bar rises out whole -->
-      <Transition :duration="{ enter: 0, leave: DIALOG_CLOSE_DURATION_MS }">
+      <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
         <div v-if="isOpen" contents>
           <StyledEditFormDialogErrorIcon
             ref="errorIcon"
@@ -89,7 +93,7 @@ watch(isOpen, (newIsOpen) => {
       </Transition>
     </template>
     <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
-    <Transition :duration="{ enter: 0, leave: DIALOG_CLOSE_DURATION_MS }">
+    <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
       <div v-if="isOpen" contents>
         <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
           <slot name="prepend-form" />

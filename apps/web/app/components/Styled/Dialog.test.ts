@@ -8,8 +8,11 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const getFooterButtonTexts = () =>
-  Array.from(document.body.querySelectorAll("dialog footer button"), ({ textContent }) => textContent.trim());
+// The actions row's buttons in order, or nothing when there is no row at all
+const getFooterButtonTexts = () => {
+  const footer = document.body.querySelector("dialog footer");
+  return footer ? Array.from(footer.querySelectorAll("button"), ({ textContent }) => textContent.trim()) : undefined;
+};
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -33,41 +36,47 @@ describe("styledDialog", () => {
   };
 
   // Every dialog is meant to reach for this shell, so what these pin are the shapes whose absence forces a consumer to
-  // Re-roll it: a dialog with nothing to confirm, and a third decision beside the other two
-  test("renders no actions row when there is nothing to confirm", async () => {
+  // Re-roll it: a dialog with nothing to confirm, and a third decision beside the other two. A third decision is a
+  // Button among the other two, so it belongs in the trailing group rather than at the opposite edge with the
+  // Annotations, where `prepend-actions` puts it. The row exists when it has content, not only when there is a confirm
+  // Button: a dialog whose only answers are cancel and an alternative still needs somewhere to put them
+  test.each([
+    {
+      description: "renders no actions row when there is nothing to confirm",
+      expected: undefined,
+      props: {},
+      slots: { default: body },
+    },
+    {
+      description: "renders the actions row when there is something to confirm",
+      expected: ["Cancel", confirmLabel],
+      props: { confirmLabel },
+      slots: { default: body },
+    },
+    {
+      description: "renders a third decision between cancel and confirm",
+      expected: ["Cancel", "a", confirmLabel],
+      props: { confirmLabel },
+      slots: { "prepend-confirm": prependConfirm },
+    },
+    {
+      description: "renders the actions row for an action slot with nothing to confirm",
+      expected: ["Cancel", "a"],
+      props: {},
+      slots: { "prepend-confirm": prependConfirm },
+    },
+    {
+      description: "renders the actions row for an action slot under an empty confirm label",
+      expected: ["Cancel", "a"],
+      props: { confirmLabel: "" },
+      slots: { "prepend-confirm": prependConfirm },
+    },
+  ])("$description", async ({ expected, props, slots }) => {
     expect.hasAssertions();
 
-    await mountDialog({}, { default: body });
+    await mountDialog(props, slots);
 
-    expect(document.body.querySelector("dialog footer")).toBeNull();
-  });
-
-  test("renders the actions row when there is something to confirm", async () => {
-    expect.hasAssertions();
-
-    await mountDialog({ confirmLabel }, { default: body });
-
-    expect(getFooterButtonTexts()).toStrictEqual(["Cancel", confirmLabel]);
-  });
-
-  // A third decision is a button among the other two, so it belongs in the trailing group rather than pushed to
-  // The opposite edge with the annotations — which is where it lands if it is passed as `prepend-actions`
-  test("renders a third decision between cancel and confirm", async () => {
-    expect.hasAssertions();
-
-    await mountDialog({ confirmLabel }, { "prepend-confirm": prependConfirm });
-
-    expect(getFooterButtonTexts()).toStrictEqual(["Cancel", "a", confirmLabel]);
-  });
-
-  // The row exists when the row has content, not only when there is a confirm button: a dialog whose only answers
-  // Are cancel and an alternative still needs somewhere to put them
-  test("renders the actions row for an action slot with nothing to confirm", async () => {
-    expect.hasAssertions();
-
-    await mountDialog({}, { "prepend-confirm": prependConfirm });
-
-    expect(getFooterButtonTexts()).toStrictEqual(["Cancel", "a"]);
+    expect(getFooterButtonTexts()).toStrictEqual(expected);
   });
 
   // The library's dialog is in the document whether or not it is open, so the shell is what keeps a closed one's body

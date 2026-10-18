@@ -3,7 +3,7 @@ import type { Promisable } from "type-fest";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
+import { DIALOG_BODY_TRANSITION_DURATION } from "@/services/ui/constants";
 
 interface Props {
   // What confirming does, awaited unless the write is optimistic (useDialogAnswer). A dialog whose confirm submits a
@@ -31,7 +31,7 @@ const isOpen = defineModel<boolean>({ default: false });
 const { confirm, confirmLabel, formId, isConfirmDisabled, isConfirmPending, isOptimistic, title } =
   defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
-const hasActions = computed(() => Boolean(confirmLabel ?? slots["prepend-actions"] ?? slots["prepend-confirm"]));
+const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions"] || slots["prepend-confirm"]));
 </script>
 
 <template>
@@ -39,7 +39,7 @@ const hasActions = computed(() => Boolean(confirmLabel ?? slots["prepend-actions
     Holds nothing and every open starts from what its model says -->
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title w="[min(36rem,90vw)]" :="$attrs">
     <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
-    <Transition :duration="{ enter: 0, leave: DIALOG_CLOSE_DURATION_MS }">
+    <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
       <div v-if="isOpen" contents>
         <div v-if="$slots.default" p-3 flex flex-1 flex-col gap-y-4 min-h-0 of-y-auto>
           <slot />

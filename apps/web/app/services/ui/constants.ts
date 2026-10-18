@@ -9,6 +9,8 @@ export const DISABLED_OPACITY = 0.38;
 // How long a dialog takes to leave, the four motion units of its closing transition, so a close that waits for it acts
 // Once the dialog is gone
 export const DIALOG_CLOSE_DURATION_MS = 200;
+// What a dialog's body is held through: no wait to enter, and the dialog's own leave, so it rises out with the dialog
+export const DIALOG_BODY_TRANSITION_DURATION = { enter: 0, leave: DIALOG_CLOSE_DURATION_MS };
 // How long a toast that closes itself stays, long enough to read one sentence
 export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // How many voxel blocks the loading bar is made of

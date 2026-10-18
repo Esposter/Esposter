@@ -13,7 +13,7 @@ const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isSavable, o
     v-if="editedItem"
     v-model="isEditFormDialogOpen"
     v-model:is-edit-form-valid="isEditFormValid"
-    :name="originalItem?.name ?? ''"
+    :name="originalItem?.name || ''"
     :edited-item
     :original-item
     :remove="() => saveItem(true)"
