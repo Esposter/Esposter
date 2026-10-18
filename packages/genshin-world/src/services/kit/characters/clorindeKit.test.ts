@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitSummon } from "#src/models/kit/KitSummon";
+import type { Party } from "#src/models/party/Party";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -27,14 +28,18 @@ const createClorindeCombatant = (constellationCount: number): Combatant => ({
   weaponType: WeaponType.Sword,
 });
 
-// Hunter's Vigil's press starts Night Vigil, then the stance action that `pickAction` gives is started with her Bond of
-// Life share, and the summons that action cast are returned
-const castNightVigilAction = (
-  bondOfLifeShare: number,
-  pickAction: (stance: Combatant) => KitAction | undefined,
-): KitSummon[] => {
+// A party with Clorinde on it, her Bond of Life share and her HP share set
+const createClorindeParty = (bondOfLifeShare: number, healthShare = 1): Party => {
   const party = createParty([CLORINDE_CHARACTER_ID]);
-  getPartyMember(party, CLORINDE_CHARACTER_ID).bondOfLifeShare = bondOfLifeShare;
+  const partyMember = getPartyMember(party, CLORINDE_CHARACTER_ID);
+  partyMember.bondOfLifeShare = bondOfLifeShare;
+  partyMember.healthShare = healthShare;
+  return party;
+};
+
+// Hunter's Vigil's press starts Night Vigil, then the stance action that `pickAction` gives is started in `party`, and the
+// Summons that action cast are returned
+const castNightVigilAction = (party: Party, pickAction: (stance: Combatant) => KitAction | undefined): KitSummon[] => {
   const kitEffectState = castKitAction(CLORINDE_KIT.elementalSkill, createClorindeCombatant(0));
   const stance = findKitStance(kitEffectState.effects, CLORINDE_CHARACTER_ID)?.combatant;
   if (stance === undefined) return [];
@@ -114,12 +119,12 @@ describe(createClorindeKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(
-      castNightVigilAction(0.5, (stance) => stance.kit.normalAttacks.at(1)).flatMap(({ hits }) =>
+      castNightVigilAction(createClorindeParty(0.5), (stance) => stance.kit.normalAttacks.at(1)).flatMap(({ hits }) =>
         hits.map(({ area }) => area.radius),
       ),
     ).toStrictEqual([14]);
     expect(
-      castNightVigilAction(1, (stance) => stance.kit.normalAttacks.at(1)).flatMap(({ hits }) =>
+      castNightVigilAction(createClorindeParty(1), (stance) => stance.kit.normalAttacks.at(1)).flatMap(({ hits }) =>
         hits.map(({ area }) => area.radius),
       ),
     ).toStrictEqual([0.6]);
@@ -128,9 +133,31 @@ describe(createClorindeKitBehaviour, () => {
   test("impale the night casts its three-hit variant at 100% bond of life share, and one hit below it", () => {
     expect.hasAssertions();
 
-    expect(castNightVigilAction(1, (stance) => stance.kit.elementalSkill).flatMap(({ hits }) => hits)).toHaveLength(3);
-    expect(castNightVigilAction(0.5, (stance) => stance.kit.elementalSkill).flatMap(({ hits }) => hits)).toHaveLength(
-      1,
-    );
+    expect(
+      castNightVigilAction(createClorindeParty(1), (stance) => stance.kit.elementalSkill).flatMap(({ hits }) => hits),
+    ).toHaveLength(3);
+    expect(
+      castNightVigilAction(createClorindeParty(0.5), (stance) => stance.kit.elementalSkill).flatMap(({ hits }) => hits),
+    ).toHaveLength(1);
+  });
+
+  test("impale the night clears the bond of life a low share carries, and heals her by the rest of its healing", () => {
+    expect.hasAssertions();
+    const party = createClorindeParty(0.5, 0.5);
+
+    castNightVigilAction(party, (stance) => stance.kit.elementalSkill);
+
+    const partyMember = getPartyMember(party, CLORINDE_CHARACTER_ID);
+    expect(partyMember.bondOfLifeShare).toBe(0);
+    expect(partyMember.healthShare).toBeGreaterThan(0.5);
+  });
+
+  test("impale the night heals her by nothing at no bond of life share", () => {
+    expect.hasAssertions();
+    const party = createClorindeParty(0, 0.5);
+
+    castNightVigilAction(party, (stance) => stance.kit.elementalSkill);
+
+    expect(getPartyMember(party, CLORINDE_CHARACTER_ID).healthShare).toBe(0.5);
   });
 });

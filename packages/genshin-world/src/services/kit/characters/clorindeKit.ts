@@ -6,6 +6,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
@@ -42,6 +43,8 @@ export const createClorindeKitBehaviour = ({ readHits, readParameter, readStance
   const impaleTheNightFullHits = readHits("impaleTheNightFullBondOfLife");
   const impaleTheNightLowHits = readHits("impaleTheNightLowBondOfLife");
   const impaleTheNightNoHits = readHits("impaleTheNightNoBondOfLife");
+  const impaleTheNightFullHealing = readParameter("impaleTheNightFullBondOfLifeHealing");
+  const impaleTheNightLowHealing = readParameter("impaleTheNightLowBondOfLifeHealing");
   // Swift Hunt's step casts its own entry of the list its share picks, the step's index in each list
   const swiftHuntStep = (index: number): KitActionBehaviour => ({
     onStart: ({ activeCombatant, body, kitEffectState, party }) => {
@@ -51,13 +54,31 @@ export const createClorindeKitBehaviour = ({ readHits, readParameter, readStance
         castKitSummon(kitEffectState, body, activeCombatant, [hit], { attackTag: AttackTag.NormalAttack });
     },
   });
-  // Impale the Night's variant: the full one at a full share, its no-share one at none, and the low one between
-  const impaleTheNight = ({ activeCombatant, body, kitEffectState, party }: KitContext): void => {
+  // Impale the Night's variant: the full one at a full share, its no-share one at none, and the low one between.
+  // The low and full ones clear the Bond of Life she carries and heal her by the share times their healing.
+  // As gcsim's skillHeal does, the Bond takes that heal before her HP does.
+  // The heal lands at the press, where gcsim queues its full heal six frames later.
+  const impaleTheNight = (context: KitContext): void => {
+    const { activeCombatant, body, kitEffectState, party } = context;
     const { bondOfLifeShare } = getPartyMember(party, activeCombatant.characterId);
-    let hits = impaleTheNightLowHits;
-    if (bondOfLifeShare >= BOND_OF_LIFE_FULL_SHARE) hits = impaleTheNightFullHits;
-    else if (Math.abs(bondOfLifeShare) < BOND_OF_LIFE_TOLERANCE) hits = impaleTheNightNoHits;
-    castKitSummon(kitEffectState, body, activeCombatant, hits, { attackTag: AttackTag.ElementalSkill });
+    if (Math.abs(bondOfLifeShare) < BOND_OF_LIFE_TOLERANCE) {
+      castKitSummon(kitEffectState, body, activeCombatant, impaleTheNightNoHits, {
+        attackTag: AttackTag.ElementalSkill,
+      });
+      return;
+    }
+    const isFull = bondOfLifeShare >= BOND_OF_LIFE_FULL_SHARE;
+    castKitSummon(kitEffectState, body, activeCombatant, isFull ? impaleTheNightFullHits : impaleTheNightLowHits, {
+      attackTag: AttackTag.ElementalSkill,
+    });
+    changeKitMemberHealth(
+      context,
+      activeCombatant,
+      activeCombatant.characterId,
+      bondOfLifeShare *
+        (isFull ? impaleTheNightFullHealing : impaleTheNightLowHealing) *
+        activeCombatant.attributes.maxHealth,
+    );
   };
   const nightVigil = readStance("nightVigil", {
     normalAttacks: [swiftHuntStep(0), swiftHuntStep(1), swiftHuntStep(2)],
