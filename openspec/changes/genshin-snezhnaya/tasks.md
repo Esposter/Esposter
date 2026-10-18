@@ -12,4 +12,4 @@
 ## 3. Snezhnograd
 
 - [ ] 3.1 Build Everfrozen Earth with Snezhnograd and the Zapolyarny Palace. Verify: a test named after the scenario 'Snezhnograd's main street is drawn in Everfrozen Earth'. Blocked until the `snezhnaya-capital` re-extraction finds the city.
-- [ ] 3.2 Build Volkodlak Tundra and White Birch Snowgrave, then Fellfrost Peak and Flamefeather Valley, in that order. Verify: the scenarios above for the tundra and the birches, rendered in each area.
+- [ ] 3.2 Build Volkodlak Tundra and White Birch Snowgrave, then Fellfrost Peak and Flamefeather Valley, in that order. Verify: tests named after the scenarios 'Tundra grass shows through the snow in Volkodlak Tundra' and 'A birch forest stands in snow', rendered in each area.
