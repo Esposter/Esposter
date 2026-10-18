@@ -2,11 +2,13 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitInfusion } from "#src/models/kit/KitInfusion";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createNaviaKitBehaviour, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
@@ -47,6 +49,13 @@ const shredAt = (constellationCount: number) => getBlastHit().enemyStatus?.(crea
 // The effects an action's start adds to the team's, given the team's effects it starts on
 const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
   action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+// The infusions Rosula Shardshot's press leaves on Navia at the ascension
+const castShotInfusions = (ascension: number): KitInfusion[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  startAction(NAVIA_KIT.elementalSkill, kitEffectState, { ...createNaviaCombatant(), ascension });
+  return kitEffectState.effects.filter((effect): effect is KitInfusion => effect.kind === "infusion");
+};
 
 describe(createNaviaKitBehaviour, () => {
   // The Crystal Shrapnel a shot leaves after five cannon hits, from a constellation count
@@ -173,5 +182,27 @@ describe(createNaviaKitBehaviour, () => {
         secondsRemaining: 8,
       },
     });
+  });
+});
+
+describe("undisclosed Distribution Channels", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castShotInfusions(1)).toStrictEqual([
+      {
+        characterId: NAVIA_CHARACTER_ID,
+        damageBonus: 0.4,
+        element: Element.Geo,
+        kind: "infusion",
+        secondsRemaining: 4,
+      },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(castShotInfusions(0)).toStrictEqual([]);
   });
 });
