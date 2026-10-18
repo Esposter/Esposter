@@ -13,6 +13,7 @@ export const USHI_ID = 116_051;
 const ARATAKI_ITTO_ID = 1_605;
 const USHI_DAMAGE = 1;
 const USHI_REDUCTION = 1;
+const USHI_USAGES = 1;
 
 // Attaches Superlative Superstrength to Arataki Itto on the side, when she is on it
 const attachSuperlativeToItto = (duel: GcgDuel, sideIndex: number): void => {
@@ -26,10 +27,15 @@ const attachSuperlativeToItto = (duel: GcgDuel, sideIndex: number): void => {
 export const ushi: GcgCardModule = {
   initialCounter: 1,
   initialRounds: 1,
+  // Its usage is counted into usages, which a refresh resets, so a Ushi placed again reduces once more. Its once-while-present
+  // trigger is counter, which a refresh leaves alone, so the Superlative attach does not arm again
   modifyDamageReceived: ({ duel, sideIndex }, value, zoneCard) => {
-    if (zoneCard.counter <= 0) return value;
-    zoneCard.counter -= 1;
-    attachSuperlativeToItto(duel, sideIndex);
+    if (zoneCard.usages >= USHI_USAGES) return value;
+    zoneCard.usages += 1;
+    if (zoneCard.counter > 0) {
+      zoneCard.counter -= 1;
+      attachSuperlativeToItto(duel, sideIndex);
+    }
     return Math.max(0, value - USHI_REDUCTION);
   },
   onEndPhase: ({ duel, sideIndex }) => {
