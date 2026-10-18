@@ -1,11 +1,8 @@
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 
-import {
-  REALM_DEPOT_SHOP_TYPE,
-  REALM_DEPOT_TABS,
-  SHOP_GOODS_TABLE_NAME,
-} from "#src/services/genshinAssets/shops/constants";
+import { REALM_DEPOT_SHOP_TYPE, REALM_DEPOT_TABS } from "#src/services/genshinAssets/shops/constants";
 import { toShopGoodSlice } from "#src/services/genshinAssets/shops/toShopGoodSlice";
+import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
