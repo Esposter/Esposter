@@ -1,8 +1,8 @@
 ## 1. The kept day
 
-- [ ] 1.1 Record the instant each day's four were dealt and deal the day again when that instant is before the latest daily reset. Verify: a test named after the scenario 'a day dealt before the daily reset is dealt again', seen failing first.
+- [x] 1.1 Record the instant each day's four were dealt and deal the day again when that instant is before the latest daily reset. Verify: a test named after the scenario 'a day dealt before the daily reset is dealt again', seen failing first.
 - [x] 1.2 Keep the day's four across reloads before the reset. Verify: a test named after the scenario 'the day's four survive a reload before the daily reset', seen failing first.
-- [ ] 1.3 Deal the day again when the save is loaded into the session and its `dealtAt` is before the latest daily reset, with the pool, held places and rank the session holds. Verify: a test named after the scenario 'a day dealt before the daily reset is dealt again' that asserts the four are dealt again through the session load, not only the predicate, seen failing first.
+- [x] 1.3 Deal the day again when the save is loaded into the session and its `dealtAt` is before the latest daily reset, with the pool, held places and rank the session holds. Verify: a test named after the scenario 'a day dealt before the daily reset is dealt again' that asserts the four are dealt again through the session load, not only the predicate, seen failing first.
 
 ## 2. Scene tasks
 

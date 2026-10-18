@@ -48,6 +48,7 @@ import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
+import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
@@ -219,6 +220,18 @@ const {
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
   setWallet,
   wallet,
+});
+// The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
+// The quests in progress that finish
+const { commissionDay } = useWorldCommissions({
+  events,
+  finishedMainQuestIds,
+  gameDataBaseUrl,
+  getWorldNow,
+  questProgressMap,
+  questsInProgress,
+  rank,
+  savedCommissionDay: savedState.commissionDay,
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, bookReading, readBook } = useWorldArchive({
@@ -494,7 +507,7 @@ useWorldSaveSync({
     archiveProgressMap: archiveProgressMap.value,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
-    commissionDay: savedState.commissionDay,
+    commissionDay: commissionDay.value,
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
