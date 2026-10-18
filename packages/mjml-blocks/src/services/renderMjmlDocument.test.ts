@@ -8,6 +8,7 @@ import {
   TEST_IMAGE_ID,
   TEST_MAX_NODES,
   TEST_REGISTRY,
+  TEST_RENDER_OPTIONS,
   TEST_RICH_TEXT,
   TEST_SECTION_ID,
   TEST_TEXT_ID,
@@ -77,7 +78,7 @@ describe(renderMjmlDocument, () => {
       ],
       root: { props: {} },
     });
-    expect(renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: false })).toStrictEqual({
+    expect(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS)).toStrictEqual({
       attributes: {},
       children: [
         {
@@ -105,10 +106,9 @@ describe(renderMjmlDocument, () => {
     expect.hasAssertions();
 
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse(EMAIL_DOCUMENT);
-    const { html } = await mjml2html(
-      renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: false }),
-      { validationLevel: "strict" },
-    );
+    const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
+      validationLevel: "strict",
+    });
     expect(html).toContain('href="https://example.com/?a=1&amp;b=&quot;2&quot;"');
     expect(html).not.toContain("&amp;amp;");
   });
@@ -116,10 +116,9 @@ describe(renderMjmlDocument, () => {
     expect.hasAssertions();
 
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse(EMAIL_DOCUMENT);
-    const { errors } = await mjml2html(
-      renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: false }),
-      { validationLevel: "strict" },
-    );
+    const { errors } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
+      validationLevel: "strict",
+    });
     expect(errors).toStrictEqual([]);
   });
   test("stamping writes an id that holds a quote as an escaped css class", () => {
@@ -175,7 +174,7 @@ describe(renderMjmlDocument, () => {
       ],
       root: { props: {} },
     });
-    const json = renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: false });
+    const json = renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS);
     expect(json).toStrictEqual({
       attributes: {},
       children: [
@@ -247,10 +246,9 @@ describe(renderMjmlDocument, () => {
       ],
       root: { props: {} },
     });
-    const { errors, html } = await mjml2html(
-      renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: false }),
-      { validationLevel: "strict" },
-    );
+    const { errors, html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
+      validationLevel: "strict",
+    });
     expect(errors).toStrictEqual([]);
     expect(html.match(/<body/gu)).toHaveLength(1);
   });
@@ -293,10 +291,9 @@ describe(renderMjmlDocument, () => {
         },
       },
     });
-    const { html } = await mjml2html(
-      renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: false }),
-      { validationLevel: "strict" },
-    );
+    const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
+      validationLevel: "strict",
+    });
     expect(html).toContain("https://fonts.example.com/a.css");
     expect(html).toContain(".a{color:red}");
     expect(html).toContain("Preview");
@@ -332,10 +329,9 @@ describe(renderMjmlDocument, () => {
       ],
       root: { props: { attributes: { all: { "font-family": "Arial" } } } },
     });
-    const { html } = await mjml2html(
-      renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: false }),
-      { validationLevel: "strict" },
-    );
+    const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
+      validationLevel: "strict",
+    });
     expect(html).toContain("font-family:Arial");
     expect(html).toContain("line-height:1;");
   });
@@ -362,10 +358,9 @@ describe(renderMjmlDocument, () => {
       ],
       root: { props: { body: { width: "800px" } } },
     });
-    const { html } = await mjml2html(
-      renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: false }),
-      { validationLevel: "strict" },
-    );
+    const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
+      validationLevel: "strict",
+    });
     expect(html).toContain("max-width:800px");
   });
   test("#406 the email compiles on the MJML 5 the package pins", () => {

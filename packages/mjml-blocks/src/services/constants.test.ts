@@ -1,6 +1,7 @@
 import type { MjmlDocument } from "#src/models/MjmlDocument";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
+import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
 
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { describe } from "vitest";
@@ -22,5 +23,6 @@ export const TEST_RICH_TEXT: MjmlRichTextDefinition<string> = {
 };
 export const TEST_REGISTRY: MjmlRegistry = createMjmlRegistry({ leafTypes: [], richText: TEST_RICH_TEXT });
 export const TEST_DOCUMENT: MjmlDocument = { content: [], root: { props: {} } };
+export const TEST_RENDER_OPTIONS: RenderMjmlDocumentOptions = { context: undefined, isStampingIds: false };
 
 describe.todo("constants");
