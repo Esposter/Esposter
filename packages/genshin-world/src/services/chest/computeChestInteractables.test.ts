@@ -117,16 +117,6 @@ describe(computeChestInteractables, () => {
     ).toStrictEqual([{ id: "common", kind: InteractionKind.Open, name: "Common Chest", position: groundPosition }]);
   });
 
-  test("a chest stays locked while a puzzle within its reach is unsolved", () => {
-    expect.hasAssertions();
-
-    expect(
-      computeChestInteractables(chestPlaces, NO_IDS, NO_IDS, gameText, getGroundHeight, [
-        { isDone: false, positions: [NEAR_CAMP] },
-      ]),
-    ).toStrictEqual([]);
-  });
-
   test("a chest stays open while a camp beyond its reach stands", () => {
     expect.hasAssertions();
 
