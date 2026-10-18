@@ -30,6 +30,7 @@ import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
+import WorldWaterfalls from "#src/components/World/Waterfalls/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
 import WorldWildlife from "#src/components/World/Wildlife/Index.vue";
 import { useAreaWeather } from "#src/composables/useAreaWeather";
@@ -496,6 +497,7 @@ onUnmounted(() => {
       :wind-uniforms
     />
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
+    <WorldWaterfalls :region-data-map :scene-export-map :water-uniforms />
     <WorldLandmarks
       :get-ground-height
       :hidden-kinds="hiddenLandmarkKinds"

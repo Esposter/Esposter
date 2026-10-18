@@ -10,14 +10,12 @@ The shapes and the flow are built: see [flowing water](../../specs/genshin/flowi
 
 - **A waterfall's sheet is read off its mesh in the witness.** The capitals' witness exports already place the game's falls, meshes named `Eff_Model_WaterFall_*` (about five in Mondstadt's, about thirty-five in Liyue's), in our scene's axes round the world's origin. A sheet's lip is the centre of its mesh's highest edge, `across` the direction of that edge on the ground, its width the edge's length and its drop the mesh's height, each read after the placement's own scale and turn. The `Eff_Stages_WaterFallSplash_*` and `WaterfallRipple` meshes at a fall's foot are the foam pool's references, not sheets.
 
+- **A sheet the game lays flat or gives no width is not drawn; a placement repeated at one lip is drawn once.** The fit keeps every record as the game places it, and the world decides what to draw. A sheet with no drop lies flat on the ground, so its streaks would paint a strip the game does not show as a fall, and one with no width has no area. The Mondstadt and Liyue records with either are dropped at draw time, and the region data keeps them. The placements the witness repeats at one lip, across, drop and width are drawn once, by the renderer rather than merged in the fit, so the data stays a copy of the game's placements.
+- **A region whose witness export stands in draws its own falls.** Where the game's exports for a region are in the scene, the world leaves that region's sheets out, as it leaves out the landmarks the exports draw.
+
 ## Still to build
 
-```text
-packages/genshin-world/src/components/World/Waterfalls/Index.vue
-```
-
-1. **The capitals' waterfalls.** Fitted: `fitWaterfallSheets` reads each region's witness and writes its sheets as `waterfalls` in `packages/genshin-world/src/data/regions/<region>.json`, Mondstadt and Liyue, and `RegionData` takes them. Not yet: `World/Waterfalls/Index.vue`, which draws each region's sheets with `createWaterfallGeometry` and `createWaterfallMaterial`, mounted where `World/Water` is. Its rendering is checked by eye. Open with the fit: the falls whose mesh is flat have no drop and the ones at the edge of a fall have no width, both kept as degenerate records, and a few placements repeat the same mesh at the same place, kept as drawn. Whether those are drawn is the renderer's call.
-2. **The rivers' courses**, from the water prefabs the streaming records place, named by their path hashes as `checkIsArchitectureName` names buildings, then each ribbon fitted to its mesh's centreline, width and level.
+1. **The rivers' courses**, from the water prefabs the streaming records place, named by their path hashes as `checkIsArchitectureName` names buildings, then each ribbon fitted to its mesh's centreline, width and level.
 
 ## Deferred compute
 

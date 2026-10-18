@@ -3,10 +3,12 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-needs: [game-exports]
+x-waiting: "the river courses (task 2.1) and the falls outside the capitals' witnesses (task 2.2) wait on the water prefabs' meshes, which the game exports have not produced yet; the mist and foam pool particles wait on a recording of the game's falls"
 x-touches:
   [
     "scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts",
     "scripts/src/services/genshinAssets/fit/fitWaterfallSheets.test.ts",
     "packages/genshin-world/src/components/World/Waterfalls/**",
+    "packages/genshin-world/src/services/world/getDrawnWaterfalls.ts",
     "packages/genshin-world/src/models/world/RegionData.ts",
   ]

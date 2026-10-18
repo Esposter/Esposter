@@ -26,26 +26,28 @@ flowchart TD
 
 **Built:** the flow on the water material, the river ribbon and its bend foam, the waterfall sheet and its streak material. Still water passes a zero flow in the [world's water](../water/design.md) component.
 
-**Fitted:** the falls the capitals' scenes place, Mondstadt's and Liyue's, each read off its mesh as a sheet into its region data's `waterfalls`. A fall the region data holds is not drawn yet.
+**Fitted and drawn:** the falls the capitals' scenes place, Mondstadt's and Liyue's, each read off its mesh as a sheet into its region data's `waterfalls`, and drawn in the world by `World/Waterfalls`. A sheet with no drop or no width is not drawn, a placement repeated at one lip is drawn once, and a region whose witness export stands in leaves its sheets out.
 
-**Not yet:** drawing those sheets in the world, where rivers stand in each region, which needs the game's own water surfaces, and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
+**Not yet:** where rivers stand in each region, which needs the game's own water surfaces, the falls outside the capitals' witnesses, and the mist and foam pool at a waterfall's foot. All are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
 
 ## Key files
 
-| File                                                              | Role                                                                          |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/nodes/createWaterMaterial.ts`        | The water material, which takes a flow and a bend foam that gather its foam   |
-| `packages/genshin-engine/src/water/createWaterFlowUniforms.ts`    | The still water's flow, zero                                                  |
-| `packages/genshin-engine/src/water/createRiverGeometry.ts`        | The river ribbon along a course, with its bends' foam on their outer bank     |
-| `packages/genshin-engine/src/water/constants.ts`                  | The bend foam's attribute and how tight a bend gathers full foam, provisional |
-| `packages/genshin-engine/src/water/createWaterfallGeometry.ts`    | The waterfall sheet hung from its lip                                         |
-| `packages/genshin-engine/src/nodes/createWaterfallMaterial.ts`    | The waterfall's streaks falling down its sheet                                |
-| `packages/genshin-engine/src/models/water/RiverCoursePoint.ts`    | A point along a river's course                                                |
-| `packages/genshin-engine/src/models/water/WaterfallSheet.ts`      | A waterfall's lip, width and drop                                             |
-| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`    | The falls of a region's witness, written to its region data as `waterfalls`   |
-| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.ts` | A fall's mesh read as its sheet: lip, across, width and drop                  |
-| `packages/genshin-world/src/models/world/waterfallSheetSchema.ts` | The region data's waterfall record                                            |
-| `packages/genshin-world/src/components/World/Water/Index.vue`     | The region's still water, passing it the zero flow                            |
+| File                                                               | Role                                                                          |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/nodes/createWaterMaterial.ts`         | The water material, which takes a flow and a bend foam that gather its foam   |
+| `packages/genshin-engine/src/water/createWaterFlowUniforms.ts`     | The still water's flow, zero                                                  |
+| `packages/genshin-engine/src/water/createRiverGeometry.ts`         | The river ribbon along a course, with its bends' foam on their outer bank     |
+| `packages/genshin-engine/src/water/constants.ts`                   | The bend foam's attribute and how tight a bend gathers full foam, provisional |
+| `packages/genshin-engine/src/water/createWaterfallGeometry.ts`     | The waterfall sheet hung from its lip                                         |
+| `packages/genshin-engine/src/nodes/createWaterfallMaterial.ts`     | The waterfall's streaks falling down its sheet                                |
+| `packages/genshin-engine/src/models/water/RiverCoursePoint.ts`     | A point along a river's course                                                |
+| `packages/genshin-engine/src/models/water/WaterfallSheet.ts`       | A waterfall's lip, width and drop                                             |
+| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`     | The falls of a region's witness, written to its region data as `waterfalls`   |
+| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.ts`  | A fall's mesh read as its sheet: lip, across, width and drop                  |
+| `packages/genshin-world/src/models/world/waterfallSheetSchema.ts`  | The region data's waterfall record                                            |
+| `packages/genshin-world/src/components/World/Water/Index.vue`      | The region's still water, passing it the zero flow                            |
+| `packages/genshin-world/src/components/World/Waterfalls/Index.vue` | The regions' sheets drawn as streaked falls, mounted beside the water         |
+| `packages/genshin-world/src/services/world/getDrawnWaterfalls.ts`  | The sheets drawn: no flat or zero-width sheet, a repeated placement once      |
 
 ## Notes
 
