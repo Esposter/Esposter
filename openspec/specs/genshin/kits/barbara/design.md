@@ -11,6 +11,7 @@ Barbara's kit is its record and one behaviour module, `createBarbaraKitBehaviour
 - **Barbara's charged attack follows a strike.** gcsim skips 14 frames of its windup after a normal attack, so it lands at 41 frames and ends at 75, as Lisa's does. Its circle of 3 metres round a point 5 metres ahead is priced as the 8-metre circle round her body, and her strikes round her body.
 - **Vitality Burst's Hydro DMG Bonus skips Barbara.** From two constellations, the loop's first tick gives every other member of the deployed team a 15% Hydro DMG Bonus for the loop's seconds, and her skill's cooldown is multiplied by 0.85 through `getSkillCooldownMultiplier`. The wiki's constellation page gives the bonus to "your active character"; gcsim gives it to each member but Barbara, which the kit follows, so an off-field member's summon reads it too.
 - **Encore is a status that counts its own seconds.** From Ascension 4, each skill cast starts a status holding the loop's full duration, and each particle the character on the field collects lengthens both the loop and the status by a second, until the status has added five. The loop's own field is found by its interval, as the heal is, so a loop that has ended takes nothing.
+- **The second droplet's hitmark, 78 frames, is Unsourced.** gcsim's skill hitmarks list 42 and 78, which the reader gives no candidate for, so the value stands and removing it breaks the build. Reading that list settles it.
 
 ## Not built
 
