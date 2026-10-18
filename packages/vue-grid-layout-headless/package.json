@@ -67,8 +67,7 @@
     "happy-dom": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
-    "vitest": "catalog:",
-    "vue": "catalog:"
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"
