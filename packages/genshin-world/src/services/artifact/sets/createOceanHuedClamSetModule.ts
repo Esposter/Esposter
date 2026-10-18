@@ -38,8 +38,8 @@ const setGatheredHp = (kitEffectState: KitEffectState, characterId: number, gath
 const findSeaDyedFoam = (effects: readonly KitEffect[]): KitField | undefined =>
   effects.find((effect): effect is KitField => effect.kind === "field" && effect.id === OCEAN_HUED_CLAM_FOAM_ID);
 
-// The foam's burst, which deals the share of the HP gathered on its wearer as Physical DMG to each standing enemy within its
-// Radius of the active character as it pops, and empties the gathered HP
+// The foam's burst, which deals the share of the HP gathered on its wearer as Physical DMG to each standing enemy
+// Within its radius of the active character as it pops, and empties the gathered HP
 const createSeaDyedFoamBurst =
   (characterId: number, damageShare: number) =>
   (context: KitContext): void => {
@@ -54,12 +54,12 @@ const createSeaDyedFoamBurst =
         strikeReactionDamage(enemy, undefined, damageShare * gatheredHp, owner, context);
   };
 
-// Ocean-Hued Clam. Its four-piece bonus makes a Sea-Dyed Foam when its wearer heals a party member, which bursts three seconds on
-// For the table's second param of the HP its wearer's heals gathered, as Physical DMG to the enemies within six of the active
-// Character as the foam pops. The heal the wearer gives while no foam stands gathers too, and the next foam takes it, as gcsim's accumulation does.
-// One foam stands at a time, so another wearer's heal gathers for nobody while it does. One foam can start every 3.5 seconds, and
-// It holds at most the fifth param's HP. The first param is its seconds, the second its DMG share, the third is zero and unread,
-// And the fourth the cooldown
+// Ocean-Hued Clam. Its four-piece bonus makes a Sea-Dyed Foam when its wearer heals a party member, which bursts three
+// Seconds on for the table's second param of the HP its wearer's heals gathered, as Physical DMG to the enemies within
+// Six of the active character as the foam pops. The heal the wearer gives while no foam stands gathers too, and the
+// Next foam takes it, as gcsim's accumulation does. One foam stands at a time, so another wearer's heal gathers for
+// Nobody while it does. One foam can start every 3.5 seconds, and it holds at most the fifth param's HP. The first
+// Param is its seconds, the second its DMG share, the third is zero and unread, and the fourth the cooldown
 export const createOceanHuedClamSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const foamSeconds = takeOne(bonus.params, 0);
   const damageShare = takeOne(bonus.params, 1);
