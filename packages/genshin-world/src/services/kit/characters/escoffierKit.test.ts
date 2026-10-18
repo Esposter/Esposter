@@ -1,10 +1,31 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
+import type { Combatant } from "#src/models/kit/Combatant";
+
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ESCOFFIER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ESCOFFIER_CHARACTER_ID);
+
+const createEscoffierCombatant = (ascension: number): Combatant => ({
+  ascension,
+  attributes: computeCharacterAttributes([]),
+  characterId: ESCOFFIER_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: ESCOFFIER_KIT,
+  level: 90,
+});
+
+// The ids of the fields Scoring Cuts leaves going, at the ascension
+const castScoringCutsFieldIds = (ascension: number): (string | undefined)[] => {
+  const context = createKitTestContext(createEscoffierCombatant(ascension));
+  ESCOFFIER_KIT.elementalBurst.onStart?.(context);
+  return context.kitEffectState.effects.flatMap((effect) => (effect.kind === "field" ? [effect.id] : []));
+};
 
 describe(createEscoffierKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -47,5 +68,19 @@ describe(createEscoffierKitBehaviour, () => {
     expect(takeOne(ESCOFFIER_KIT.lowPlunge.hits).poiseDamage).toBe(100);
     expect(Math.round(takeOne(ESCOFFIER_KIT.highPlunge.hits).hitmarkSeconds * 60)).toBe(43);
     expect(takeOne(ESCOFFIER_KIT.highPlunge.hits).poiseDamage).toBe(150);
+  });
+
+  describe("the Ascension 1 passive, Better to Salivate Than Medicate", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(castScoringCutsFieldIds(1)).toStrictEqual(["escoffier-scoring-cuts-heal", "escoffier-rehab-diet"]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(castScoringCutsFieldIds(0)).toStrictEqual(["escoffier-scoring-cuts-heal"]);
+    });
   });
 });
