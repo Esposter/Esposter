@@ -32,6 +32,12 @@ The gauge SHALL fill while the character stands in the subzero climate, and SHAL
 - **WHEN** time passes
 - **THEN** the gauge fills faster than it does on foot
 
+#### Scenario: Fill the gauge faster in a snowstorm
+
+- **GIVEN** the character stands in the subzero climate under a snowstorm, on foot
+- **WHEN** time passes
+- **THEN** the gauge fills faster than it does in the clear
+
 #### Scenario: Suppress the fill with an anti-cold dish
 
 - **GIVEN** the character stands in the subzero climate and the team holds an anti-cold from a dish

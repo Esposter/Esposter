@@ -8,6 +8,8 @@ export const SHEER_COLD_GAIN_PER_SECOND = 1;
 // The modifier swimming adds to the accumulation rate, the wiki's +180%. Modifiers stack additively, so the rate is the
 // Base rate times one plus the modifiers
 export const SHEER_COLD_SWIM_MODIFIER = 1.8;
+// The modifier a snowstorm adds to the accumulation rate, the wiki's +200%, stacking additively with the swim modifier
+export const SHEER_COLD_SNOWSTORM_MODIFIER = 2;
 // The percent heat drains the gauge each second in the subzero climate, the wiki's 5% per 0.2 seconds
 export const SHEER_COLD_HEAT_DRAIN_PER_SECOND = 25;
 // The percent the gauge drains each second outside the climate with no heat, the wiki's rate for leaving an area
