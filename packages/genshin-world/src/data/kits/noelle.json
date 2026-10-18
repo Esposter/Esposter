@@ -1,5 +1,5 @@
 {
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 24 },
+  "burst.hits.0.hitmarkFrames": { "file": "burst.go", "line": 109, "source": "Gcsim", "value": 0 },
   "burst.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 65 },
   "burst.hits.1.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3439 } },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 144 },
@@ -28,7 +28,7 @@
     "cause": "Unclassified",
     "value": { "index": 7, "proudSkillGroupId": 3432 }
   },
-  "chargedAttack.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 62 },
+  "chargedAttack.hits.1.hitmarkFrames": { "file": "charge.go", "line": 18, "source": "Gcsim", "value": 26 },
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "frames.sweepingTimeStart": { "cause": "Unclassified", "value": 80 },
   "hits.toBeCleaned.area": {
