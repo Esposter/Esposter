@@ -20,6 +20,13 @@ const schema = useZodSchema(
   () => editedItem.value.type,
 );
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+const chartTypeItems = computed(() =>
+  VisualTypeChartTypesMap[editedItem.value.type].map((value) => ({
+    meaning: UiIconMeaning.Chart,
+    title: value,
+    value,
+  })),
+);
 </script>
 
 <template>
@@ -63,17 +70,7 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
         </div>
         <div flex flex-col gap-1 w-64>
           <span text-sm text-muted>Chart type</span>
-          <UiSelect
-            v-model="editedItem.chart.type"
-            :items="
-              VisualTypeChartTypesMap[editedItem.type].map((value) => ({
-                meaning: UiIconMeaning.Chart,
-                title: value,
-                value,
-              }))
-            "
-            label="Chart type"
-          />
+          <UiSelect v-model="editedItem.chart.type" :items="chartTypeItems" label="Chart type" />
         </div>
       </div>
       <p v-if="VisualTypeDatasetShapeMap[editedItem.type] === VisualDatasetShape.None" text-muted>

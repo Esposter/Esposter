@@ -21,13 +21,13 @@ flowchart TD
 
 ## Data model
 
-A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` for its origin, `w` and `h` for its span, with `y` nonnegative. `layoutItemSchema` in `apps/web/shared/models/dashboard/data/LayoutItem.ts` validates it. The grid keys each tile by the visual's `id`, so a commit names the visual it changes and carries only those four fields.
+A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` for its origin, `w` and `h` for its span, with `y` nonnegative. `layoutItemSchema` in `apps/web/shared/models/dashboard/data/LayoutItem.ts` validates it. The grid keys each tile by the visual's `id`, so a commit names the visual it changes and carries its `id` with those four fields.
 
 ## Decisions
 
 - **The library is replaced, not patched.** `grid-layout-plus` carried the drag library, its layout shape and its own resize rules, and keeping it would keep the defects its [upstream verdicts](../../vue-grid-layout-headless/README.md) judge. The placement and gestures now live in the package, which the dashboard consumes like any other.
 - **Resize has one corner handle.** A dashboard resizes from its bottom-right corner, so that is the one handle the editor draws. Per-edge handles were rejected for this component, since each edge's resize would need the placement logic on its own side. The grid package builds them once, for every consumer.
-- **The grid emits changes, not a whole layout.** Emitting a new layout array on each move, which a parent would copy back, was rejected. The commit carries only the changed visuals and fires once on release, so the store and its autosave see one write per gesture rather than one per pointer move.
+- **The grid emits changes, not a whole layout.** Emitting a new layout array on each move, which a parent would copy back, was rejected. The commit carries only the changed visuals and fires once on release. The store applies it one visual at a time, and its autosave flushes once for the gesture rather than once per pointer move.
 - **Rendering compacts; it does not write back.** A saved layout can overlap: a new visual is placed at a fixed cell without checking its neighbours, so rendering a fitted layout can draw a visual above or below its saved row while the store keeps the saved cell. Writing the compacted layout back to the store on render was rejected: it would write on every open.
 - **A drag previews in the grid until release.** Writing each intermediate position to the store during a drag was rejected. The preview lives in the package's state until release, so a cancelled drag leaves no trace.
 - **Touch is captured only where the page is edited.** Setting `touch-action: none` on every tile was rejected, since it stops a phone from scrolling a published dashboard through its visuals. The published grid leaves touch alone, and the editor claims it for dragging.
@@ -37,7 +37,7 @@ A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` fo
 | File                                                                | Role                                                                        |
 | :------------------------------------------------------------------ | :-------------------------------------------------------------------------- |
 | `apps/web/app/components/Dashboard/Grid.vue`                        | The dashboard's markup over the package: tiles, corner handle, placeholder  |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`              | The editor binding: twelve columns, one store write per commit              |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`              | The editor binding: twelve columns, each changed visual of a commit stored  |
 | `apps/web/app/components/Dashboard/Index.vue`                       | The published view: breakpoint columns, nothing saved                       |
 | `apps/web/app/services/dashboard/constants.ts`                      | The dashboard's column counts, row heights, the grid margin and breakpoints |
 | `apps/web/app/services/dashboard/grid/getBreakpointColumnNumber.ts` | The column count a published view's width picks                             |

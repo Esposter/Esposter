@@ -1,23 +1,19 @@
 // @vitest-environment nuxt
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import DashboardGrid from "@/components/Dashboard/Grid.vue";
-import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
-import { getCellPosition, getCellSize, getColumnPitch } from "vue-grid-layout-headless/placement";
+import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe("dashboardGrid", () => {
+  // Twelve columns across 970px with the dashboard's 10px gap and padding start 80px apart, and rows 40px high 50px apart
   const columnNumber = 12;
   const gridWidth = 970;
-  const spacing = { gap: DASHBOARD_GRID_MARGIN, padding: DASHBOARD_GRID_MARGIN };
-  const cellPitch = getColumnPitch(gridWidth, columnNumber, spacing);
+  const columnPitch = 80;
   const pointerId = 1;
   const rowHeight = 40;
-  const rowPitch = rowHeight + DASHBOARD_GRID_MARGIN;
 
   beforeEach(() => {
-    vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(gridWidth);
     // A DOM without layout never reports the grid's width, so the observer reports the width the test lays it out at
     vi.stubGlobal(
       "ResizeObserver",
@@ -49,17 +45,19 @@ describe("dashboardGrid", () => {
     const wrapper = await mountSuspended(DashboardGrid, {
       props: { columnNumber, isEditable: true, rowHeight, visuals: [visual] },
     });
-    // A DOM without layout hits nothing, so the release is pointed at the grid it was pressed on, as a browser would hit it
-    document.elementsFromPoint = () => [];
-    vi.spyOn(document, "elementsFromPoint").mockReturnValue([wrapper.element]);
+    // A DOM without layout has no hit test, so the release hits the grid it was pressed on, as a browser would
+    document.elementsFromPoint = () => [wrapper.element];
+    onTestFinished(() => {
+      Reflect.deleteProperty(document, "elementsFromPoint");
+    });
     const tile = wrapper.get(".dashboard-grid-tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: columnPitch, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: columnPitch * 2, clientY: 0, pointerId });
 
     expect(wrapper.emitted("commit")).toBeUndefined();
 
-    await tile.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
+    await tile.trigger("pointerup", { clientX: columnPitch * 2, clientY: 0, pointerId });
 
     expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 2, id: visual.id, w: 2, x: 2, y: 0 }]]]);
   });
@@ -83,12 +81,7 @@ describe("dashboardGrid", () => {
       left: tile.element.style.left,
       top: tile.element.style.top,
       width: tile.element.style.width,
-    }).toStrictEqual({
-      height: `${getCellSize(2, rowPitch, spacing.gap)}px`,
-      left: `${getCellPosition(3, cellPitch, spacing.padding)}px`,
-      top: `${getCellPosition(1, rowPitch, spacing.padding)}px`,
-      width: `${getCellSize(2, cellPitch, spacing.gap)}px`,
-    });
+    }).toStrictEqual({ height: "90px", left: "250px", top: "60px", width: "150px" });
   });
 
   test("#54 Scrolling a published dashboard on a phone never captures the touch", async () => {
@@ -98,7 +91,10 @@ describe("dashboardGrid", () => {
       props: { columnNumber, rowHeight, visuals: [new Visual({ h: 2, w: 2, x: 0, y: 0 })] },
     });
 
-    expect(wrapper.get(".dashboard-grid-tile").attributes("style")).not.toContain("touch-action");
+    const tile = wrapper.get(".dashboard-grid-tile");
+    assert(tile.element instanceof HTMLElement);
+
+    expect(tile.element.style.touchAction).toBe("");
   });
 
   test("an editable tile takes a touch as its drag, so the page does not scroll under it", async () => {
@@ -108,6 +104,9 @@ describe("dashboardGrid", () => {
       props: { columnNumber, isEditable: true, rowHeight, visuals: [new Visual({ h: 2, w: 2, x: 0, y: 0 })] },
     });
 
-    expect(wrapper.get(".dashboard-grid-tile").attributes("style")).toContain("touch-action: none");
+    const tile = wrapper.get(".dashboard-grid-tile");
+    assert(tile.element instanceof HTMLElement);
+
+    expect(tile.element.style.touchAction).toBe("none");
   });
 });

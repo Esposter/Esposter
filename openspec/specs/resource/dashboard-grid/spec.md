@@ -2,19 +2,20 @@
 
 ## Purpose
 
-A dashboard's visuals sit on a grid the app draws itself: each is placed at its saved cell, dragged and resized in the editor, and reflowed by width on a published dashboard.
+A dashboard's visuals sit on a grid the app draws itself: each is placed at its saved column and size, dragged and resized in the editor, and reflowed by width on a published dashboard.
 
 ## Requirements
 
-### Requirement: A dashboard places each visual at its saved cell
+### Requirement: A dashboard places each visual at its saved column and size
 
-A dashboard SHALL draw each visual at the column, row, width and height it was saved with.
+A dashboard SHALL draw each visual at the column, width and height it was saved with, at its saved row or the highest row above it that it can rise to without overlapping another visual.
 
 #### Scenario: Opening a dashboard
 
 - **GIVEN** a dashboard whose visuals were saved at their cells
 - **WHEN** the dashboard is opened
-- **THEN** each visual is drawn at its own cell and size
+- **THEN** each visual is drawn at its own column and size
+- **AND** a visual with empty rows above it is drawn risen through them
 
 ### Requirement: A narrower screen reflows a dashboard without overlap
 
