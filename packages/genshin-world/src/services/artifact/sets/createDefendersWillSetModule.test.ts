@@ -3,8 +3,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
-import { ARTIFACT_SET_10003_ID } from "#src/services/artifact/constants";
-import { createArtifactSet10003Module } from "#src/services/artifact/sets/createArtifactSet10003Module";
+import { DEFENDERS_WILL_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createDefendersWillSetModule } from "#src/services/artifact/sets/createDefendersWillSetModule";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -24,10 +24,12 @@ const createCombatant = (deployedElements?: (Element | undefined)[]): Combatant 
   level: 1,
 });
 
-describe(createArtifactSet10003Module, () => {
-  const bonus = statTables.artifactSetDataMap.get(ARTIFACT_SET_10003_ID)?.bonuses.find((b) => b.pieceCount === 4);
+describe(createDefendersWillSetModule, () => {
+  const bonus = statTables.artifactSetDataMap
+    .get(DEFENDERS_WILL_ARTIFACT_SET_ID)
+    ?.bonuses.find((b) => b.pieceCount === 4);
   assert.exists(bonus);
-  const module = createArtifactSet10003Module(bonus);
+  const module = createDefendersWillSetModule(bonus);
 
   test("prices its wearer at 30% more Elemental RES to each different element its party holds", () => {
     expect.hasAssertions();

@@ -3,8 +3,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { ARTIFACT_SET_15003_ID } from "#src/services/artifact/constants";
-import { createArtifactSet15003Module } from "#src/services/artifact/sets/createArtifactSet15003Module";
+import { WANDERERS_TROUPE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createWanderersTroupeSetModule } from "#src/services/artifact/sets/createWanderersTroupeSetModule";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -24,10 +24,12 @@ const createCombatant = (weaponType: WeaponType): Combatant => ({
   weaponType,
 });
 
-describe(createArtifactSet15003Module, () => {
-  const bonus = statTables.artifactSetDataMap.get(ARTIFACT_SET_15003_ID)?.bonuses.find((b) => b.pieceCount === 4);
+describe(createWanderersTroupeSetModule, () => {
+  const bonus = statTables.artifactSetDataMap
+    .get(WANDERERS_TROUPE_ARTIFACT_SET_ID)
+    ?.bonuses.find((b) => b.pieceCount === 4);
   assert.exists(bonus);
-  const module = createArtifactSet15003Module(bonus);
+  const module = createWanderersTroupeSetModule(bonus);
 
   test.each([
     ["a Bow", WeaponType.Bow, [{ amount: 0.35, attribute: Attribute.ChargedAttackDamageBonus }]],

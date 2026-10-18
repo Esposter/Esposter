@@ -3,8 +3,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { ARTIFACT_SET_15001_ID } from "#src/services/artifact/constants";
-import { createArtifactSet15001Module } from "#src/services/artifact/sets/createArtifactSet15001Module";
+import { GLADIATORS_FINALE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createGladiatorsFinaleSetModule } from "#src/services/artifact/sets/createGladiatorsFinaleSetModule";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -24,10 +24,12 @@ const createCombatant = (weaponType: WeaponType): Combatant => ({
   weaponType,
 });
 
-describe(createArtifactSet15001Module, () => {
-  const bonus = statTables.artifactSetDataMap.get(ARTIFACT_SET_15001_ID)?.bonuses.find((b) => b.pieceCount === 4);
+describe(createGladiatorsFinaleSetModule, () => {
+  const bonus = statTables.artifactSetDataMap
+    .get(GLADIATORS_FINALE_ARTIFACT_SET_ID)
+    ?.bonuses.find((b) => b.pieceCount === 4);
   assert.exists(bonus);
-  const module = createArtifactSet15001Module(bonus);
+  const module = createGladiatorsFinaleSetModule(bonus);
 
   test.each([
     ["a Sword", WeaponType.Sword, [{ amount: 0.35, attribute: Attribute.NormalAttackDamageBonus }]],

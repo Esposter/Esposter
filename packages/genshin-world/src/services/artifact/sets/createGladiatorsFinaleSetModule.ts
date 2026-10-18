@@ -6,9 +6,9 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { createWeaponTypeAttackDamageSetModule } from "#src/services/artifact/sets/createWeaponTypeAttackDamageSetModule";
 import { takeOne } from "@esposter/shared";
 
-// The set table's id 15001's four-piece bonus: the Normal Attack DMG its wearer gains while it wields a Sword, a Claymore or
+// Gladiator's Finale's four-piece bonus: the Normal Attack DMG its wearer gains while it wields a Sword, a Claymore or
 // A Polearm, in the table's only param
-export const createArtifactSet15001Module = ({ params }: ArtifactSetBonus): ArtifactSetModule =>
+export const createGladiatorsFinaleSetModule = ({ params }: ArtifactSetBonus): ArtifactSetModule =>
   createWeaponTypeAttackDamageSetModule({
     amount: takeOne(params, 0),
     attribute: Attribute.NormalAttackDamageBonus,

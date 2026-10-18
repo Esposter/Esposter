@@ -4,8 +4,8 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
-import { ARTIFACT_SET_15015_ID } from "#src/services/artifact/constants";
-import { createArtifactSet15015Module } from "#src/services/artifact/sets/createArtifactSet15015Module";
+import { RETRACING_BOLIDE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createRetracingBolideSetModule } from "#src/services/artifact/sets/createRetracingBolideSetModule";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -31,10 +31,12 @@ const shieldedBonuses = [
   { amount: 0.4, attribute: Attribute.ChargedAttackDamageBonus },
 ];
 
-describe(createArtifactSet15015Module, () => {
-  const bonus = statTables.artifactSetDataMap.get(ARTIFACT_SET_15015_ID)?.bonuses.find((b) => b.pieceCount === 4);
+describe(createRetracingBolideSetModule, () => {
+  const bonus = statTables.artifactSetDataMap
+    .get(RETRACING_BOLIDE_ARTIFACT_SET_ID)
+    ?.bonuses.find((b) => b.pieceCount === 4);
   assert.exists(bonus);
-  const module = createArtifactSet15015Module(bonus);
+  const module = createRetracingBolideSetModule(bonus);
 
   test("prices its wearer at 40% more Normal and Charged Attack DMG while a shield is live on the wearer on the field", () => {
     expect.hasAssertions();
