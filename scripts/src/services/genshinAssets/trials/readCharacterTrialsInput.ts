@@ -6,6 +6,10 @@ import type { ExcelTrialAvatarTemplateRow } from "#src/models/genshinAssets/tria
 import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/ExcelTrialReliquaryRow";
 import type { TrialTables } from "#src/services/genshinAssets/trials/buildTrials";
 
+import {
+  RELIQUARY_AFFIX_TABLE_NAME,
+  RELIQUARY_MAIN_PROP_TABLE_NAME,
+} from "#src/services/genshinAssets/archive/constants";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import {
   TRIAL_AVATAR_TABLE_NAME,
@@ -19,9 +23,9 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The character trials' tables read off the dump, and the wiki's builds, in the shape the trials builder takes them
 export const readCharacterTrialsInput = (): TrialTables => ({
-  affixRows: readExcelTable<ExcelReliquaryAffixRow>("ReliquaryAffixExcelConfigData"),
+  affixRows: readExcelTable<ExcelReliquaryAffixRow>(RELIQUARY_AFFIX_TABLE_NAME),
   avatarRows: readExcelTable<ExcelTrialAvatarRow>(TRIAL_AVATAR_TABLE_NAME),
-  mainPropRows: readExcelTable<ExcelReliquaryMainPropRow>("ReliquaryMainPropExcelConfigData"),
+  mainPropRows: readExcelTable<ExcelReliquaryMainPropRow>(RELIQUARY_MAIN_PROP_TABLE_NAME),
   pieceMap: readReliquaryPieces(),
   reliquaryRows: readExcelTable<ExcelTrialReliquaryRow>(TRIAL_RELIQUARY_TABLE_NAME),
   rewardMap: readRewardMap(),
