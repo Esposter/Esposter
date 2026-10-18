@@ -6,6 +6,7 @@ import { z } from "zod";
 // Groups a scene task swaps, the quest a quest task is, the reward tier it pays from, the region it is preferred in and the
 // Text id of its title
 export interface Commission {
+  // A quest task the dump gives no place has the empty one
   centerPosition: string;
   enterDistance: number;
   exitDistance: number;
@@ -23,7 +24,7 @@ export interface Commission {
 }
 
 export const commissionSchema = z.object({
-  centerPosition: z.string().nonempty(),
+  centerPosition: z.string(),
   enterDistance: z.int().nonnegative(),
   exitDistance: z.int().nonnegative(),
   finishKind: z.enum(CommissionFinishKind),

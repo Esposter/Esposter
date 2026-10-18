@@ -7,7 +7,6 @@ import type { RewardItem } from "genshin-world";
 import { toCommissionTask } from "#src/services/genshinAssets/commissions/toCommissionTask";
 import { CityIdRegionMap } from "#src/services/genshinAssets/fishing/constants";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
-import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
@@ -36,11 +35,11 @@ const checkLevelBands = (levelRows: ExcelDailyTaskLevelRow[]): void => {
     );
 };
 
-// Mondstadt's daily tasks from the dump: each task, every reward tier's items by Adventure Rank band, and the items of
-// Katheryne's bonus by band. Every preview is read through the reward table, and each band's items are the preview's
-// Items with a count drawn from its range, so the world's claim draws them. Published as one record of the commissions
-// Dataset, keyed by Mondstadt
-export const buildMondstadtCommissions = (): Record<string, unknown> => {
+// Every region's daily tasks from the dump: each task, every reward tier's items by Adventure Rank band, and the items of
+// Katheryne's bonus by band, which each region's record shares. Every preview is read through the reward table, and each
+// Band's items are the preview's items with a count drawn from its range, so the world's claim draws them. Published as
+// One record a region, each task filed under the region its city is named for, and a city no region is named for left out
+export const buildCommissions = (): Record<string, unknown> => {
   const previews = new Map(
     readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData").map((preview) => [preview.id, preview]),
   );
@@ -75,10 +74,14 @@ export const buildMondstadtCommissions = (): Record<string, unknown> => {
       };
     })
     .toSorted((firstTier, secondTier) => firstTier.tier - secondTier.tier);
-  const tasks = readExcelTable<ExcelDailyTaskRow>("DailyTaskExcelConfigData")
-    .filter(({ cityId }) => cityId === MONDSTADT_CITY_ID)
-    .map((row) => toCommissionTask(row, CityIdRegionMap[MONDSTADT_CITY_ID]))
-    .toSorted((firstTask, secondTask) => firstTask.id - secondTask.id);
-  const slice = commissionSliceSchema.parse({ bonuses, rewardTiers, tasks });
-  return { [`${GameDataset.Commissions}/mondstadt`]: slice };
+  const rows = readExcelTable<ExcelDailyTaskRow>("DailyTaskExcelConfigData");
+  return Object.fromEntries(
+    Object.values(CityIdRegionMap).map((region) => {
+      const tasks = rows
+        .filter((row) => CityIdRegionMap[row.cityId] === region)
+        .map((row) => toCommissionTask(row, region))
+        .toSorted((firstTask, secondTask) => firstTask.id - secondTask.id);
+      return [`${GameDataset.Commissions}/${region}`, commissionSliceSchema.parse({ bonuses, rewardTiers, tasks })];
+    }),
+  );
 };

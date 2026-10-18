@@ -1,6 +1,6 @@
 # Commissions
 
-The game's daily commissions as the world holds them: Mondstadt's daily tasks read from the game's own tables, four dealt for the day, each finished one claimed for the reward of the Adventure Rank it was dealt at, and Katheryne's bonus on the day's fourth claim. This is the built part of the [commissions](../../../changes/genshin-commissions/design.md) proposal. Its scene swap, its handbook tab and its kept day are not built yet.
+The game's daily commissions as the world holds them: the daily tasks of each region the game's own tables name, read from them, four dealt for the day, each finished one claimed for the reward of the Adventure Rank it was dealt at, and Katheryne's bonus on the day's fourth claim. This is the built part of the [commissions](../../../changes/genshin-commissions/design.md) proposal. Its scene swap, its handbook tab and its kept day are not built yet.
 
 ## How it works
 
@@ -20,7 +20,7 @@ flowchart TD
 
 ## The daily tasks
 
-A commission is one daily task of Mondstadt's city, read from the game's daily task table. It names its pool, the scene point it is set at, the radius it begins and ends in, what finishes it and how far, the groups a scene task swaps, the quest a quest task is, and the reward tier it pays from. A **scene task** puts its own camp or objects in place of its area's while it is open; a **quest task** is one of the quests the world carries. A scene task is finished by enemies defeated, gadgets used or a challenge cleared, and a quest task has no finish of its own, since its quest finishes it.
+A commission is one daily task of a region's city, read from the game's daily task table. It names its pool, the scene point it is set at, the radius it begins and ends in, what finishes it and how far, the groups a scene task swaps, the quest a quest task is, and the reward tier it pays from. A **scene task** puts its own camp or objects in place of its area's while it is open; a **quest task** is one of the quests the world carries. A scene task is finished by enemies defeated, gadgets used or a challenge cleared, and a quest task has no finish of its own, since its quest finishes it.
 
 ## Dealing
 
@@ -43,7 +43,7 @@ The Adventure Treasure Pack the wiki lists is not paid. The preview names its it
 
 ## Data
 
-`pnpm -C scripts genshin:assets commissions` builds Mondstadt's daily tasks from the game text dump outside the repository and publishes them to the hosted game data as `commissions/mondstadt`. The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that is not the game's twelve bands. `readMondstadtCommissions` fetches the slice by its key from the hosted game data and checks it against its schema as it arrives.
+`pnpm -C scripts genshin:assets commissions` builds every region's daily tasks from the game text dump outside the repository and publishes one record a region to the hosted game data, as `commissions/<region>`, each task filed under the region its city is named for. The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that is not the game's twelve bands. `readCommissions` fetches a region's slice by its key from the hosted game data and checks it against its schema as it arrives.
 
 The three daily task tables are fetched rather than read from the dump, as the [game data formats](../game-data-formats/design.md) page covers, and nothing from them is committed.
 
@@ -52,26 +52,26 @@ The three daily task tables are fetched rather than read from the dump, as the [
 - **The scene swap.** The [proposal](../../../changes/genshin-commissions/design.md) owns how a scene task's groups stand in for its area's. The region data holds only hand-placed camps, and the area's groups are not extracted, so the slice carries each task's old and new group ids for that page to read.
 - **The handbook's Commissions tab and the commissions' words.** The tab lists the day's four, and the titles and descriptions are the game's text by their ids, in the reader's language. Neither has a consumer yet.
 - **The kept day.** The four dealt, their counts and their claims are not in the [save](../save-data/design.md), so a reload does not keep them, and the daily reset is not read.
-- **A quest task's finish.** It finishes with its quest, which the world does not report yet, so a quest task reads unfinished.
+- **A quest task's finish.** Its quest's completion emits `finishQuest`, and `advanceCommissionForQuest` advances the dealt task by it, but no session holds a dealt day to hear the event yet.
 - **Finishing counts.** `advanceCommission` counts a doing against a commission, but no defeat, gadget or challenge event is fed to it yet.
-- **Regions beyond Mondstadt.** Their pools join once their quests are done.
+- **Regions' pools joining.** Each region's pool joins the deal once its quest is done. The dump names the opening quest of Mondstadt, Liyue, Inazuma and Sumeru only, and its city 8 has no region name yet, so the other regions wait on the dump.
 - **Encounter Points' sources.** Quests, chests and certain items give them, and none of those give them yet.
 
 ## Key files
 
-| File                                                                          | Role                                                                 |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/commission/Commission.ts`                  | One daily task: its place, finish, groups and reward tier            |
-| `packages/genshin-world/src/models/commission/CommissionSlice.ts`             | The slice's shape: the tasks, the reward tiers and the bonus by band |
-| `packages/genshin-world/src/services/commission/dealCommissions.ts`           | Deals four at random, none held and none before Adventure Rank 12    |
-| `packages/genshin-world/src/services/commission/takeCommissionClaim.ts`       | Draws a claim's reward and, on the day's fourth, the bonus           |
-| `packages/genshin-world/src/services/commission/claimCommissionReward.ts`     | A dealt commission's claim: free when finished, one point when not   |
-| `packages/genshin-world/src/services/commission/computeCommissionBand.ts`     | The band an Adventure Rank falls in                                  |
-| `packages/genshin-world/src/services/commission/readMondstadtCommissions.ts`  | Fetches the slice by its key from the hosted game data               |
-| `packages/genshin-world/src/models/reward/RewardItem.ts`                      | An item a reward gives, with the least and the most a claim may draw |
-| `scripts/src/services/genshinAssets/commissions/buildMondstadtCommissions.ts` | The builder: the dump's tables into the record, for publishing       |
-| `scripts/src/services/genshinAssets/commissions/toCommissionTask.ts`          | One dump task read into a commission                                 |
-| `scripts/src/services/genshinAssets/rewards/toPreviewItems.ts`                | A reward preview's items, shared with the expeditions                |
+| File                                                                      | Role                                                                    |
+| :------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/commission/Commission.ts`              | One daily task: its place, finish, groups and reward tier               |
+| `packages/genshin-world/src/models/commission/CommissionSlice.ts`         | The slice's shape: the tasks, the reward tiers and the bonus by band    |
+| `packages/genshin-world/src/services/commission/dealCommissions.ts`       | Deals four at random, none held and none before Adventure Rank 12       |
+| `packages/genshin-world/src/services/commission/takeCommissionClaim.ts`   | Draws a claim's reward and, on the day's fourth, the bonus              |
+| `packages/genshin-world/src/services/commission/claimCommissionReward.ts` | A dealt commission's claim: free when finished, one point when not      |
+| `packages/genshin-world/src/services/commission/computeCommissionBand.ts` | The band an Adventure Rank falls in                                     |
+| `packages/genshin-world/src/services/commission/readCommissions.ts`       | Fetches a region's slice by its key from the hosted game data           |
+| `packages/genshin-world/src/models/reward/RewardItem.ts`                  | An item a reward gives, with the least and the most a claim may draw    |
+| `scripts/src/services/genshinAssets/commissions/buildCommissions.ts`      | The builder: the dump's tables into one record a region, for publishing |
+| `scripts/src/services/genshinAssets/commissions/toCommissionTask.ts`      | One dump task read into a commission                                    |
+| `scripts/src/services/genshinAssets/rewards/toPreviewItems.ts`            | A reward preview's items, shared with the expeditions                   |
 
 ## Sources
 
