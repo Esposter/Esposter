@@ -3,6 +3,7 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { notifyGcgSummonsDisappeared } from "#src/services/gcg/effects/notifyGcgSummonsDisappeared";
 import { takeOne } from "@esposter/shared";
 
 // Takes off a side's field the cards whose usages or rounds have run out, then the cards that what the side holds has spent,
@@ -13,10 +14,7 @@ export const pruneGcgZoneCards = (duel: GcgDuel, sideIndex: number): void => {
   const summonsBefore = [...side.summons];
   filterGcgSideCards(side, (zoneCard) => !checkIsGcgZoneCardSpent(zoneCard));
   filterGcgSideCards(side, (zoneCard) => !GcgCardIdModuleMap.get(zoneCard.cardId)?.isSpent?.(side, zoneCard));
-  const disappearedCount = summonsBefore.filter((summon) => !side.summons.includes(summon)).length;
-  for (const zoneCard of [...side.supports])
-    for (let disappearance = 0; disappearance < disappearedCount; disappearance += 1)
-      GcgCardIdModuleMap.get(zoneCard.cardId)?.onSummonDisappears?.({ duel, sideIndex }, zoneCard);
+  notifyGcgSummonsDisappeared(duel, sideIndex, summonsBefore);
 };
 
 const filterGcgSideCards = (side: GcgSideState, keep: (zoneCard: GcgZoneCard) => boolean): void => {
