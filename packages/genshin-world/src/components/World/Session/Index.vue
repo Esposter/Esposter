@@ -124,20 +124,20 @@ import { readConstellationTables } from "#src/services/character/readConstellati
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
 import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
 import { listOpenCookingRecipes } from "#src/services/cooking/listOpenCookingRecipes";
-import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
+import { CRAFTING_BENCH_INTERACTABLE_ID } from "#src/services/crafting/constants";
 import {
   DOMAIN_ARENA_PROMPT_OFFSET,
   DOMAIN_LEAVE_INTERACTABLE_ID,
   DOMAIN_TREE_INTERACTABLE_ID,
 } from "#src/services/domains/constants";
 import { computeForgeDefinitions } from "#src/services/forging/computeForgeDefinitions";
-import { computeForgeInteractables } from "#src/services/forging/computeForgeInteractables";
 import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS, FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
+import { computePlaceInteractables } from "#src/services/interaction/computePlaceInteractables";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
@@ -1435,13 +1435,23 @@ const interactables = computed<Interactable[]>(() => {
     // An unlocked domain entrance is entered on the key, its screen opened with its levels
     ...unlockedDomainEntrances.value.map((landmark) => toLandmarkInteractable(landmark, GameTextKey.DomainEnter)),
     ...domainArenaInteractables.value,
-    ...computeCraftingBenchInteractables(craftingBenchPlace, gameText[GameTextKey.CraftingTitle], getGroundHeight),
+    ...computePlaceInteractables(
+      CRAFTING_BENCH_INTERACTABLE_ID,
+      craftingBenchPlace,
+      gameText[GameTextKey.CraftingTitle],
+      getGroundHeight,
+    ),
     ...computeCookingStoveInteractables(
       cookingStovePlace.value,
       { cooking: gameText[GameTextKey.CookingTitle], processing: gameText[GameTextKey.ProcessingStart] },
       getGroundHeight,
     ),
-    ...computeForgeInteractables(blacksmithPlace.value, gameText[GameTextKey.ForgeTitle], getGroundHeight),
+    ...computePlaceInteractables(
+      FORGE_INTERACTABLE_ID,
+      blacksmithPlace.value,
+      gameText[GameTextKey.ForgeTitle],
+      getGroundHeight,
+    ),
     ...computeFishingInteractables(fishingPointPlaces.value, isFishingOpen.value, gameText, getGroundHeight),
     ...(homePotPoint.value ? [computeHomePotInteractable(gameText, homePotPoint.value, getGroundHeight)] : []),
   ];
