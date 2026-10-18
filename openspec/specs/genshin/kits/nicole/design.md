@@ -22,17 +22,18 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 - **A swap's upgrade is a pending field, so a later swap cancels it.** gcsim's `a1Src` token makes a queued upgrade return when a newer swap has set it. The kit keeps the pending upgrade as a field with the id `nicole-a1-swap` and removes it before a swap schedules its own. A Hexerei swapped in gets a task with no delay, as gcsim's `delay = 0` for `char.IsHexerei` does.
 - **A swap away takes the upgrade off the character it leaves before the sixth constellation.** gcsim's OnCharacterSwap subscriber deletes `a1Key` on the previous character unless `c6DeleteA1OnSwap` holds.
 - **The fourth ascension reads the element of the active character's hit.** gcsim's `a4Init` (`asc.go`) upgrades her own buff on each elemental hit by the active character. A physical hit carries no element in the kit, so it is excluded.
+- **The first constellation projects from each hit of the active character, on a cooldown of its own.** gcsim's `c1Init` (`cons.go`) takes any hit of the active character with no element filter, so a physical hit projects at the striker's element. Its six-second cooldown is Nicole's own (`nicole-c1-icd`), separate from the burst's three-second one, and it shares the burst's scheduling and Hexerei bonus, with multiplier six and a 4.5-metre circle about the enemy in place of the burst's own.
 
 ## Not built
 
-- **Her constellations wait.** The first and second are feasible with the kit's hooks. The fourth's flat damage sized by her attack and the sixth's defence ignore need hooks the kit does not have, and the sixth's self buff for the skill's remaining time waits with them.
+- **Her second and later constellations wait.** The second's team buff and RES ticker are feasible with the kit's hooks. The fourth's flat damage sized by her attack and the sixth's defence ignore need hooks the kit does not have, and the sixth's self buff for the skill's remaining time waits with them.
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                      |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module: her skill's shield and team buff, her burst's projections, and her first and fourth ascension buffs; her constellations wait |
-| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: her skill's shield and buff parameters (talent table group 13132) and her projection multiplier (group 13139)                                           |
+| File                                                              | Role                                                                                                                                                                                                                 |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module: her skill's shield and team buff, her burst's projections, and her first and fourth ascension buffs and first constellation's projection; her later constellations wait |
+| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: her skill's shield and buff parameters (talent table group 13132) and her projection multiplier (group 13139)                                                                                      |
 
 ## Sources
 
