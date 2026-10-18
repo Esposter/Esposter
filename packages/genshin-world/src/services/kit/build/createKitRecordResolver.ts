@@ -12,6 +12,7 @@ import type { KitRecord } from "#src/models/kit/record/KitRecord";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { KitTargeting } from "#src/models/kit/record/KitTargeting";
+import { checkIsKitHitShortOf } from "#src/services/kit/build/checkIsKitHitShortOf";
 import { MISSING_KIT_BEHAVIOUR_ID } from "#src/services/kit/build/constants";
 import { missingKitBehaviour } from "#src/services/kit/build/missingKitBehaviour";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
@@ -115,13 +116,14 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
       }),
     };
   };
-  const toHit = (hitRecord: KitHitRecord): KitHit => ({
-    ...toHitFields(hitRecord),
-    hitArea: hitRecord.area,
-    hitmarkSeconds: toKitSeconds(hitRecord.hitmarkFrames),
-    poiseDamage: hitRecord.poiseDamage,
-    talentMultiplier: getAdditiveScalingAttribute(hitRecord) === undefined ? toParameter(hitRecord.multiplier) : 0,
-  });
+  // A complete record maps to every field a hit holds, so the whole hit is the same mapping narrowed rather than a second
+  // One that restates it, each value computed once
+  const toHit = (hitRecord: KitHitRecord): KitHit => {
+    const fields = toHitFields(hitRecord);
+    if (!checkIsKitHitShortOf(fields, []))
+      throw new InvalidOperationError(Operation.Read, "hit", "maps to fields short of a whole hit");
+    return fields;
+  };
   const toAction = ({ animationFrames, hits, isAimed, staminaPerSecond, targeting }: KitActionRecord): KitAction => ({
     hits: hits.map((hitRecord) => toHit(hitRecord)),
     ...(isAimed && { isAimed }),
