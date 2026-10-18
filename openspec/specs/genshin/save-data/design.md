@@ -17,7 +17,7 @@ A system the world holds is saved only when its slice is in the save's schema (`
 - each kind of wish's counters, and the wish history: each draw's banner kind, item and moment, kept for the year ([wish](../wish/design.md));
 - the day's commissions: the four dealt, the moment they were dealt and the ones claimed ([commissions](../commissions/design.md));
 - each region's Statues of The Seven progress (the Oculi held toward its next level and the level reached), by region id, and the Oculi found, by id ([statues of the seven](../statues-of-the-seven/design.md));
-- the Seelies settled and the puzzles solved, by id ([puzzles](../puzzles/design.md));
+- the Seelies settled and the puzzles solved, by id ([puzzles](../puzzles/README.md));
 - the party: the teams set up in Party Setup, each with its name and its members by character id, and the team deployed ([party](../party/design.md));
 - Adventure EXP, Mondstadt's Reputation (its level and EXP) and each character's Companionship EXP, by character id;
 - the World Level adjustment: whether the player has lowered the World Level, and the ISO instant it last changed, left out until it has ([adventure rank](../adventure-rank/design.md)).
