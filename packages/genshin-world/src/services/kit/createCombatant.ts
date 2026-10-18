@@ -21,12 +21,13 @@ export const createCombatant = (
   statTables: StatTables,
   element = statTables.characterDataMap.get(character.id)?.element,
   travelerBonusLines: AttributeLine[] = [],
+  partyBonusLines: AttributeLine[] = [],
 ): Combatant => {
   const characterData = statTables.characterDataMap.get(character.id);
   return {
     ascension: character.ascension,
     attributes: computeCharacterAttributes(
-      getCharacterAttributeLines(character, statTables, travelerBonusLines),
+      getCharacterAttributeLines(character, statTables, travelerBonusLines, partyBonusLines),
       elementalResonances,
     ),
     characterId: character.id,
