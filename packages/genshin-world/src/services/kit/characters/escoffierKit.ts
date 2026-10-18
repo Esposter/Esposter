@@ -1,7 +1,9 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Element } from "#src/models/Element";
@@ -65,6 +67,18 @@ const startConstellation1 = (combatant: Combatant, kitEffectState: KitEffectStat
   });
 };
 
+// The CRIT DMG a Cryo strike gets from the window open on the Escoffier that owns it, read as the strike is priced
+const getConstellation1CriticalDamage = (
+  ownerCharacterId: number,
+  striker: Combatant,
+  hit: KitHit,
+  effects: readonly KitEffect[],
+): number =>
+  getKitHitElement(hit, striker) === Element.Cryo &&
+  checkIsKitStatusActive(effects, ownerCharacterId, CONSTELLATION_1_STATUS_ID)
+    ? CONSTELLATION_1_CRITICAL_DAMAGE
+    : 0;
+
 // The RES shred a hit of hers applies to the enemy it strikes, as the team stands
 const getAscension4Status = (combatant: Combatant): EnemyStatus | undefined => {
   const shred =
@@ -107,17 +121,10 @@ export const createEscoffierKitBehaviour = ({
   return {
     // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while her window is open, as gcsim's c1 buffs every Cryo attack
     getStrikeCriticalDamageBonus: ({ combatant, hit }, _enemy, _party, effects) =>
-      getKitHitElement(hit, combatant) === Element.Cryo &&
-      checkIsKitStatusActive(effects, combatant.characterId, CONSTELLATION_1_STATUS_ID)
-        ? CONSTELLATION_1_CRITICAL_DAMAGE
-        : 0,
+      getConstellation1CriticalDamage(combatant.characterId, combatant, hit, effects),
     // Constellation 1 reaches a deployed member's Cryo strike while the window of its member, whose kit this is, is open
     getPartyStrikeBonus: (member, { combatant, hit }, _enemy, _party, effects) => ({
-      criticalDamageBonus:
-        getKitHitElement(hit, combatant) === Element.Cryo &&
-        checkIsKitStatusActive(effects, member.characterId, CONSTELLATION_1_STATUS_ID)
-          ? CONSTELLATION_1_CRITICAL_DAMAGE
-          : 0,
+      criticalDamageBonus: getConstellation1CriticalDamage(member.characterId, combatant, hit, effects),
     }),
     burst: {
       hits: [{ enemyStatus: getAscension4Status }],
