@@ -32,9 +32,9 @@ const SKILL_HIT_PATHS: ReadonlyMap<string, readonly string[]> = new Map([
   ["Lumi Million Ton Crush DMG", ["skillChain.followUps.0.hits.0"]],
   ["Lumi Pound-Pound Pummeler DMG", ["skill.hits.0", "skill.hits.1"]],
 ]);
-// The length of a named list of hits a skill's label gives, which is the count its label repeats
 // The numbered array a slot's path sits in, `normalAttacks` for `normalAttacks.3`, and the element's index
 const SLOT_ARRAY_PATH_REGEX = /^(?<parent>.+?)\.(?<index>\d+)(?:\.|$)/u;
+// The length of a named list of hits a skill's label gives, which is the count its label repeats
 const NAMED_HIT_LIST_LENGTH_PATHS: ReadonlyMap<string, string> = new Map([
   ["Etched Into Bone and Soul DMG", "hits.etchedIntoBoneAndSoul.length"],
 ]);
