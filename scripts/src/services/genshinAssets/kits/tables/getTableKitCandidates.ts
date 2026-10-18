@@ -50,6 +50,7 @@ const BURST_PARAMETER_NAMES: ReadonlyMap<string, readonly string[]> = new Map([
   ["DMG Increase From Will to Win", ["manifestJudgmentWillToWinDamagePerPoint"]],
   ["Healing Duration", ["burstHealingDuration"]],
   ["Initial Healing Amount", ["burstInitialHealDefenseShare", "burstInitialHealFlat"]],
+  ["Lunar Reaction DMG Bonus", ["burstLunarReactionDamageBonus"]],
 ]);
 
 // A character's own elemental skill rows, each read onto the parameters its module reads by name. A row's parameters are
