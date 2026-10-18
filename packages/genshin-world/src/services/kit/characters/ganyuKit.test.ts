@@ -144,4 +144,16 @@ describe(createGanyuKitBehaviour, () => {
 
     expect(tickSummon?.body.position).toStrictEqual({ x: 0, z: 0 });
   });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+
+    expect(GANYU_KIT.getSkillChargeBonus?.(createGanyuCombatant(0, 2))).toBe(1);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+
+    expect(GANYU_KIT.getSkillChargeBonus?.(createGanyuCombatant(0, 1))).toBe(0);
+  });
 });

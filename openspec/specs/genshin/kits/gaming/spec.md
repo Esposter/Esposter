@@ -75,3 +75,19 @@ Suanni's Gilded Dance SHALL strike one circle of radius 5 metres round Gaming's 
 - **GIVEN** Gaming has less energy than the burst costs
 - **WHEN** the player casts Suanni's Gilded Dance
 - **THEN** the burst does not start
+
+### Requirement: Second constellation raises ATK for five seconds after an overflowing heal
+
+From constellation 2, when Gaming receives healing whose share overflows, his ATK SHALL be raised by 20% for five seconds.
+
+#### Scenario: An overflowing heal at constellation 2 raises ATK
+
+- **GIVEN** Gaming is at constellation 2
+- **WHEN** a heal lands on him with some of its share overflowing
+- **THEN** his ATK is raised by 20% for five seconds
+
+#### Scenario: A heal below constellation 2 changes nothing
+
+- **GIVEN** Gaming is at constellation 1
+- **WHEN** a heal lands on him with some of its share overflowing
+- **THEN** no ATK buff is added

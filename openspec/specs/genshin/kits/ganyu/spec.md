@@ -85,3 +85,19 @@ Ganyu's first constellation SHALL lower the Cryo RES of enemies that her arrows 
 - **GIVEN** Ganyu is at constellation 1
 - **WHEN** a Frostflake Arrow or its Bloom hits an enemy
 - **THEN** that enemy's Cryo RES is lowered
+
+### Requirement: Second constellation gives Trail of the Qilin a second charge
+
+From constellation 2, Trail of the Qilin SHALL hold one more charge than its base.
+
+#### Scenario: A Ganyu at constellation 2 has the extra charge
+
+- **GIVEN** Ganyu is at constellation 2
+- **WHEN** her skill's charge bonus is read
+- **THEN** it is one
+
+#### Scenario: A Ganyu below constellation 2 has no extra charge
+
+- **GIVEN** Ganyu is at constellation 1
+- **WHEN** her skill's charge bonus is read
+- **THEN** it is zero
