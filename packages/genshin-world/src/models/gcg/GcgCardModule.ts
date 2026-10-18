@@ -2,6 +2,7 @@ import type { Element } from "#src/models/Element";
 import type { GcgCostReduction } from "#src/models/gcg/GcgCostReduction";
 import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
+import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
@@ -25,7 +26,13 @@ export interface GcgCardModule {
   onCostPaid?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => void;
   onEndPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | undefined;
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
-  onSkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard) => GcgDamage | void;
+  // The hits the skill landed, its own damage and its standby piercing alike, with the reactions they triggered
+  onSkillUsed?: (
+    context: GcgEffectContext,
+    skill: GcgSkill,
+    zoneCard: GcgZoneCard,
+    dealt: GcgDealtDamage[],
+  ) => GcgDamage | void;
   onSwirl?: (context: GcgEffectContext, zoneCard: GcgZoneCard, element: Element) => void;
   onSwitch?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   permanentAura?: Element;

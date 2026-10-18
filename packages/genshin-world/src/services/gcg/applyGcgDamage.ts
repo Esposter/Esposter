@@ -1,6 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
+import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
@@ -42,14 +43,23 @@ import { takeOne } from "@esposter/shared";
 
 // One damage a skill deals to the opposing active character, from the side at sourceSideIndex. An element applies its aura
 // Or reacts with the aura there, a reaction's damage and effects settle with it, and a defeated character is cleared, with
-// A side that has none standing losing the duel, and a side whose active fell with one standing owing a replacement
-export const applyGcgDamage = (duel: GcgDuel, sourceSideIndex: number, damage: GcgDamage, rule: GcgRule): void => {
+// A side that has none standing losing the duel, and a side whose active fell with one standing owing a replacement. It
+// Returns each hit it landed on a standing character, with the reaction that hit triggered
+export const applyGcgDamage = (
+  duel: GcgDuel,
+  sourceSideIndex: number,
+  damage: GcgDamage,
+  rule: GcgRule,
+): GcgDealtDamage[] => {
   const targetSideIndex = 1 - sourceSideIndex;
   const standingBefore = listGcgStandingCharacters(duel);
+  const dealt: GcgDealtDamage[] = [];
   const hit = takeOne(duel.sides, targetSideIndex).characters.at(takeOne(duel.sides, targetSideIndex).activeIndex);
-  if (hit) hitGcgCharacter(duel, sourceSideIndex, hit, reduceGcgReceivedDamage(duel, targetSideIndex, damage), rule);
+  if (hit)
+    hitGcgCharacter(duel, sourceSideIndex, hit, reduceGcgReceivedDamage(duel, targetSideIndex, damage), rule, dealt);
   settleGcgDefeats(duel, standingBefore);
   for (const side of duel.sides) pruneGcgZoneCards(side);
+  return dealt;
 };
 
 const hitGcgCharacter = (
@@ -58,12 +68,16 @@ const hitGcgCharacter = (
   hit: GcgCharacterState,
   damage: GcgDamage,
   rule: GcgRule,
+  dealt: GcgDealtDamage[],
 ): void => {
-  if (damage.damageType === GcgDamageKind.Piercing) hurtGcgCharacter(hit, damage.value, true);
-  else if (damage.damageType === GcgDamageKind.Physical)
+  if (damage.damageType === GcgDamageKind.Piercing) {
+    recordGcgHit(dealt, hit, damage.damageType);
+    hurtGcgCharacter(hit, damage.value, true);
+  } else if (damage.damageType === GcgDamageKind.Physical) {
+    recordGcgHit(dealt, hit, damage.damageType);
     hurtGcgCharacter(hit, damage.value + takeGcgFrozenBonus(hit, damage.damageType), false);
-  else if (!checkIsGcgElementImmune([...hit.equipments, ...hit.statuses], damage.damageType)) {
-    applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule);
+  } else if (!checkIsGcgElementImmune([...hit.equipments, ...hit.statuses], damage.damageType)) {
+    applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule, dealt);
     const permanentAura = findGcgPermanentAura([...hit.equipments, ...hit.statuses]);
     if (permanentAura !== undefined) hit.aura = permanentAura;
   }
@@ -79,20 +93,23 @@ const applyGcgElementalDamage = (
   element: Element,
   value: number,
   rule: GcgRule,
+  dealt: GcgDealtDamage[],
 ): void => {
   const aura = hit.aura;
   const reaction = aura === GcgAura.None ? undefined : getGcgReactionKind(rule, aura, element);
   let damageValue = value + takeGcgFrozenBonus(hit, element);
   if (aura === GcgAura.None || reaction === undefined) {
+    recordGcgHit(dealt, hit, element);
     if (GCG_AURA_ELEMENTS.includes(element)) hit.aura = element;
     hurtGcgCharacter(hit, damageValue, false);
     return;
   }
+  recordGcgHit(dealt, hit, element, reaction);
   damageValue += GcgReactionKindBonusMap[reaction];
   hit.aura = GcgAura.None;
   if (reaction === GcgReactionKind.Frozen) hit.isFrozen = true;
   hurtGcgCharacter(hit, damageValue, false);
-  applyGcgReactionEffects(duel, sourceSideIndex, hit, reaction, aura);
+  applyGcgReactionEffects(duel, sourceSideIndex, hit, reaction, aura, dealt);
 };
 
 // The effects a reaction leaves after its hit: the piercing and the spread it sends to the other opposing characters, the
@@ -104,15 +121,21 @@ const applyGcgReactionEffects = (
   hit: GcgCharacterState,
   reaction: GcgReactionKind,
   aura: Element,
+  dealt: GcgDealtDamage[],
 ): void => {
   const sourceSide = takeOne(duel.sides, sourceSideIndex);
   const targetSide = takeOne(duel.sides, 1 - sourceSideIndex);
   const otherTargets = targetSide.characters.filter((character) => character !== hit && character.hp > 0);
   if (reaction === GcgReactionKind.Superconduct || reaction === GcgReactionKind.ElectroCharged)
-    for (const other of otherTargets) hurtGcgCharacter(other, GCG_PIERCING_DAMAGE, true);
+    for (const other of otherTargets) {
+      recordGcgHit(dealt, other, GcgDamageKind.Piercing);
+      hurtGcgCharacter(other, GCG_PIERCING_DAMAGE, true);
+    }
   else if (reaction === GcgReactionKind.Swirl) {
-    for (const other of otherTargets)
+    for (const other of otherTargets) {
+      recordGcgHit(dealt, other, aura);
       hurtGcgCharacter(other, GCG_SPREAD_DAMAGE + takeGcgFrozenBonus(other, aura), false);
+    }
     for (const zoneCard of listGcgFieldCards(sourceSide, undefined))
       GcgCardIdModuleMap.get(zoneCard.cardId)?.onSwirl?.({ duel, sideIndex: sourceSideIndex }, zoneCard, aura);
   } else if (reaction === GcgReactionKind.Burning)
@@ -187,13 +210,28 @@ const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
 
 // A piercing hit on each opposing character on standby, which no shield stops, as a skill's after-effect deals it past its
 // Target. A defeated character is cleared, as an active one's would be
-export const applyGcgStandbyPiercing = (duel: GcgDuel, sourceSideIndex: number, value: number): void => {
+export const applyGcgStandbyPiercing = (duel: GcgDuel, sourceSideIndex: number, value: number): GcgDealtDamage[] => {
   const standingBefore = listGcgStandingCharacters(duel);
   const targetSide = takeOne(duel.sides, 1 - sourceSideIndex);
+  const dealt: GcgDealtDamage[] = [];
   for (const [index, character] of targetSide.characters.entries())
-    if (index !== targetSide.activeIndex) hurtGcgCharacter(character, value, true);
+    if (index !== targetSide.activeIndex) {
+      recordGcgHit(dealt, character, GcgDamageKind.Piercing);
+      hurtGcgCharacter(character, value, true);
+    }
   settleGcgDefeats(duel, standingBefore);
   for (const side of duel.sides) pruneGcgZoneCards(side);
+  return dealt;
+};
+
+// Records a hit that lands on a standing character, with the reaction it triggered if it triggered one
+const recordGcgHit = (
+  dealt: GcgDealtDamage[],
+  hit: GcgCharacterState,
+  damageType: GcgDealtDamage["damageType"],
+  reaction?: GcgReactionKind,
+): void => {
+  if (hit.hp > 0) dealt.push({ damageType, ...(reaction === undefined ? {} : { reaction }) });
 };
 
 // Whether each character on each side stands before a hit lands, so a settle can tell the characters it defeats
