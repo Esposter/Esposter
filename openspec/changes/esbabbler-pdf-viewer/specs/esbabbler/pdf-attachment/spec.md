@@ -22,6 +22,12 @@ A PDF attachment SHALL show its first page in the message row, drawn sharp at th
 - **WHEN** the page is drawn
 - **THEN** it is drawn at the largest size the device allows rather than left blank
 
+#### Scenario: A draw cancelled by a newer one
+
+- **GIVEN** a PDF's first page is being drawn in a row
+- **WHEN** the row's width changes again before that draw ends
+- **THEN** the draw in flight is cancelled and only the newer one is drawn
+
 ### Requirement: Clicking a PDF outside a preview opens its viewer
 
 Clicking a PDF attachment outside a message preview SHALL open a dialog holding the PDF's viewer, and a preview SHALL open no viewer.
