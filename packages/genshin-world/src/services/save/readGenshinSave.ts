@@ -1,4 +1,5 @@
 import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
@@ -49,6 +50,7 @@ export const readGenshinSave = (
   nameText: Readonly<Record<string, string>>,
   weaponDataMap: ReadonlyMap<number, WeaponData>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>,
 ): GenshinSaveState => {
   const companionshipExpMap = new Map(
     Object.entries(companionshipExp).map(([characterId, exp]) => [Number(characterId), exp]),
@@ -73,7 +75,7 @@ export const readGenshinSave = (
     foundOculusIds: new Set(statues.foundOculusIds),
     frostbearingTreeProgress: offerings.frostbearingTree,
     homePlacements,
-    inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap),
+    inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap),
     openedChestIds: new Set(openedChests),
     party: toParty(party),
     processingJobs: toProcessingJobs(cooking.processingJobs),

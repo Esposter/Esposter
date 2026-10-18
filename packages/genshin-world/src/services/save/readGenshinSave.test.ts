@@ -230,13 +230,14 @@ describe(readGenshinSave, () => {
       NAMES,
       WEAPON_DATA_MAP,
       new Map(),
+      new Map(),
     );
 
   test("reads a save back to the same save once written", () => {
     expect.hasAssertions();
-    expect(toGenshinSave(readGenshinSave(EMPTY_GENSHIN_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
-      EMPTY_GENSHIN_SAVE,
-    );
+    expect(
+      toGenshinSave(readGenshinSave(EMPTY_GENSHIN_SAVE, NAMES, WEAPON_DATA_MAP, new Map(), new Map())),
+    ).toStrictEqual(EMPTY_GENSHIN_SAVE);
   });
 
   test("the deployed team and member on field return after a visit", () => {
@@ -256,6 +257,7 @@ describe(readGenshinSave, () => {
       NAMES,
       WEAPON_DATA_MAP,
       new Map(),
+      new Map(),
     );
 
     expect(cookingProgress).toStrictEqual({
@@ -274,6 +276,7 @@ describe(readGenshinSave, () => {
       NAMES,
       WEAPON_DATA_MAP,
       new Map(),
+      new Map(),
     );
 
     expect(regionStatueProgressMap).toStrictEqual(new Map());
@@ -282,7 +285,7 @@ describe(readGenshinSave, () => {
 
   test("reads every system a save holds back to the same save once written", () => {
     expect.hasAssertions();
-    expect(toGenshinSave(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
+    expect(toGenshinSave(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(
       POPULATED_SAVE,
     );
   });
@@ -310,7 +313,7 @@ describe(readGenshinSave, () => {
       },
     };
 
-    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
   });
 
   test("opened entries and counts survive a reload", () => {
@@ -323,16 +326,24 @@ describe(readGenshinSave, () => {
       },
     };
 
-    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
   });
 
   test("a held character survives a reload", () => {
     expect.hasAssertions();
-    const { characterCopyCountMap, characters } = readGenshinSave(HELD_SAVE, NAMES, WEAPON_DATA_MAP, new Map());
+    const { characterCopyCountMap, characters } = readGenshinSave(
+      HELD_SAVE,
+      NAMES,
+      WEAPON_DATA_MAP,
+      new Map(),
+      new Map(),
+    );
 
     expect(characters).toStrictEqual([HELD_CHARACTER]);
     expect(characterCopyCountMap).toStrictEqual(new Map([[CHARACTER_ID, CHARACTER_COPY_COUNT]]));
-    expect(toGenshinSave(readGenshinSave(HELD_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(HELD_SAVE);
+    expect(toGenshinSave(readGenshinSave(HELD_SAVE, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(
+      HELD_SAVE,
+    );
   });
 
   test("companionship EXP is restored on the character it was earned by", () => {
@@ -341,6 +352,7 @@ describe(readGenshinSave, () => {
       { ...HELD_SAVE, companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP } },
       NAMES,
       WEAPON_DATA_MAP,
+      new Map(),
       new Map(),
     );
 
@@ -351,12 +363,12 @@ describe(readGenshinSave, () => {
     expect.hasAssertions();
     const save = { ...EMPTY_GENSHIN_SAVE, companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP } };
 
-    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
   });
 
   test("reads a bag's forged and wished weapons back as weapons, each named and rarity from its own data", () => {
     expect.hasAssertions();
-    expect(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map()).inventory).toStrictEqual({
+    expect(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map(), new Map()).inventory).toStrictEqual({
       equippedGadgetItemId: EQUIPPED_GADGET_ID,
       items: [
         {
@@ -409,7 +421,7 @@ describe(readGenshinSave, () => {
       shopPurchases: [{ count: 2, goodsId: 7, lastPurchasedAt: Temporal.Instant.fromEpochMilliseconds(0).toString() }],
     };
 
-    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
   });
 
   test("a save written before the Sigils were added reads each Sigil as zero", () => {
@@ -419,6 +431,6 @@ describe(readGenshinSave, () => {
     );
     const save: GenshinSave = { ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } };
 
-    expect(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()).wallet[Currency.AnemoSigil]).toBe(0);
+    expect(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()).wallet[Currency.AnemoSigil]).toBe(0);
   });
 });

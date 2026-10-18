@@ -7,6 +7,7 @@ The [Archive](../../specs/genshin/archive/design.md) page holds the seven sectio
 - **An entry opens when its thing is first met.** A tutorial when shown; a viewpoint when taken in; a quest when finished; a book when picked up; an enemy or an animal when first defeated; an artifact set once all its pieces have been held. Opened entries are kept with the player's progress.
 - **Living Beings counts kills.** Each enemy's entry shows how many have been defeated, and each animal's waits on the wildlife's strike, and its model turns on the screen as the game's does, drawn by the [characters](../../specs/genshin/characters/README.md) reader once its model is built.
 - **A viewpoint is placed by the scene group record.** Each `ViewCodexExcelConfigData` row names its viewpoint by `groupId` and `configId`, and the [scene group record](../../specs/genshin/scene-groups/design.md) holds it as a gadget member of that group, placed at the official map's Viewpoint point that bears its name. A viewpoint the record leaves without a place is not offered until its place is estimated from the wiki, marked provisional.
+- **An artifact drop is one of its set's pieces.** The bag holds an artifact as its piece's item id with a level, and an artifact's affixes live on the character that wears it, so a chest's artifact draw pours out a piece of a set its pool names, not a rolled artifact. The piece's set and slot come from its reliquary piece, which is what the Archive reads.
 - **A viewpoint is taken in where it stands.** Each viewpoint is a place in the world that, reached, offers to be viewed, which opens its entry with its picture as the game does; its picture is drawn by the world from its place, never the game's image.
 
 ## How it works
@@ -30,7 +31,7 @@ flowchart LR
 
 The viewpoints wait on the hosted `sceneGroups/scene3` record, which the game-data lock does not publish yet; the other two wait on another unit each, the wildlife's strike and a shown tip.
 
-The artifact sets' caller is wherever the player's artifacts change, which the first artifact drop brings.
+The artifact sets' caller is the Archive's composable: it hands the artifacts the bag holds to `openArchiveArtifactSets` on every change to the bag, and again once the Archive's entries load, so a set opens as the drop that completes it reaches the bag.
 
 ## Data and measures
 

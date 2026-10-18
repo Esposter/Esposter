@@ -17,6 +17,8 @@ import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
+import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { Catalogue } from "#src/models/world/Catalogue";
 
 // The game's names and tables and the world's own records, read from the hosted game data before the world's screen
@@ -51,6 +53,10 @@ export interface WorldTables {
   nameText: Readonly<Record<string, string>>;
   // The characters and weapons Paimon's Bargains offers in turn, which its screen reads each month's pair and set from
   paimonsBargainsRotation: PaimonsBargainsRotation;
+  // The artifact pieces of the reliquary tables by item id, each with its set, which a bag entry of an artifact is defined from
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+  // The artifact sets of the reliquary tables, each with its pieces, which the chests roll their artifacts from
+  reliquarySets: readonly ReliquarySetData[];
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
   seelies: Seelie[];
   // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of

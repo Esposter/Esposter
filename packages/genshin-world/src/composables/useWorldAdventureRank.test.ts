@@ -12,7 +12,7 @@ import { computed, ref } from "vue";
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(useWorldAdventureRank, () => {
-  const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map());
+  const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map(), new Map());
   const ascensionQuestIds = new Set([25_001, 25_005, 25_009, 25_011]);
   const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
   const GAIN = 100;

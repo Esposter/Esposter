@@ -3,6 +3,10 @@ import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { InventoryItem } from "#src/models/inventory/InventoryItem";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
+import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameLanguage } from "genshin-text";
 import type { ComputedRef, Ref, ShallowRef } from "vue";
@@ -13,6 +17,8 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
 import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
 import { countArchiveDefeat } from "#src/services/archive/countArchiveDefeat";
+import { getArchiveArtifacts } from "#src/services/archive/getArchiveArtifacts";
+import { openArchiveArtifactSets } from "#src/services/archive/openArchiveArtifactSets";
 import { openArchiveEntries } from "#src/services/archive/openArchiveEntries";
 import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
 import { openTravelLogEntries } from "#src/services/archive/openTravelLogEntries";
@@ -33,7 +39,10 @@ export const useWorldArchive = ({
   events,
   finishedMainQuestIds,
   gameDataBaseUrl,
+  inventory,
   language,
+  reliquaryPieceEntryMap,
+  reliquarySets,
   screenKind,
 }: {
   archiveKillsMap: ShallowRef<ArchiveKills>;
@@ -42,7 +51,10 @@ export const useWorldArchive = ({
   events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   gameDataBaseUrl: string;
+  inventory: Ref<Inventory>;
   language: GameLanguage;
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+  reliquarySets: readonly ReliquarySetData[];
   screenKind: Ref<ScreenKind>;
 }) => {
   const archiveData = shallowRef<ArchiveData>();
@@ -76,6 +88,20 @@ export const useWorldArchive = ({
       },
     );
   };
+  // The Equipment entry of each artifact set the bag holds every piece of is opened, once the Archive's entries are read,
+  // Since an artifact set opens by what the bag holds whenever it is read
+  const openHeldArtifactSets = (items: readonly InventoryItem[]) => {
+    if (!archiveData.value) return;
+    const equipmentEntryIds = new Set(
+      archiveData.value.sectionEntriesMap[ArchiveSection.Equipment].map(({ id }) => id),
+    );
+    archiveProgressMap.value = openArchiveArtifactSets(
+      archiveProgressMap.value,
+      getArchiveArtifacts(items, reliquaryPieceEntryMap),
+      equipmentEntryIds,
+      reliquarySets,
+    );
+  };
   const isArchiveUnlocked = computed(() => finishedMainQuestIds.value.has(ARCHIVE_UNLOCK_QUEST_ID));
   watch(isArchiveUnlocked, (newIsArchiveUnlocked) => {
     if (!newIsArchiveUnlocked || archiveData.value) return;
@@ -89,6 +115,7 @@ export const useWorldArchive = ({
     }).match(
       (newArchiveData) => {
         archiveData.value = newArchiveData;
+        openHeldArtifactSets(inventory.value.items);
       },
       (error) => {
         console.error(error);
@@ -108,9 +135,11 @@ export const useWorldArchive = ({
       },
     );
   });
-  // Every change to the bag opens the entries of what the bag takes in
+  // Every change to the bag opens the entries of what the bag takes in, and the Equipment entry of each artifact set the bag
+  // Now holds every piece of
   events.on("bagChange", (nextInventory) => {
     archiveProgressMap.value = openArchiveEntries(archiveProgressMap.value, nextInventory.items);
+    openHeldArtifactSets(nextInventory.items);
   });
   // A defeated enemy's entry is opened and its defeat counted
   events.on("defeatEnemy", (enemy) => {
