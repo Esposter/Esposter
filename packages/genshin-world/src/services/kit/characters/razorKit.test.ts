@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
@@ -106,8 +107,18 @@ describe(createRazorKitBehaviour, () => {
       [Element.Electro, 0.24 * takeOne(firstStrike.hits).talentMultiplier],
     ]);
 
-    // Switching Barbara in ends the Wolf Within, so a strike after it casts no Soul Companion
-    stepKitEffects(1 / 60, { ...context, activeCombatant: { ...combatant, characterId: BARBARA_CHARACTER_ID } });
+    // Switching Barbara in ends the Wolf Within, as the swap's kit event does, so a strike after it casts no Soul Companion
+    const barbaraContext = { ...context, activeCombatant: { ...combatant, characterId: BARBARA_CHARACTER_ID } };
+    RAZOR_KIT.onKitEvent?.(
+      {
+        characterId: BARBARA_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: RAZOR_CHARACTER_ID,
+      },
+      barbaraContext,
+      combatant,
+    );
+    stepKitEffects(1 / 60, barbaraContext);
     firstStrike.onStart?.(context);
 
     expect(kitEffectState.effects).toStrictEqual([]);

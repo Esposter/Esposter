@@ -1,3 +1,4 @@
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
@@ -85,6 +86,16 @@ describe(createNingguangKitBehaviour, () => {
     const firedCount = fireStarJades();
     takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(context);
     landStrikes(stepEffects(1, context), context);
+    // The swap emits Ningguang's leaving, as stepActiveKit does on a swap
+    NINGGUANG_KIT.onKitEvent?.(
+      {
+        characterId: TRAVELER_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: NINGGUANG_CHARACTER_ID,
+      },
+      { ...context, activeCombatant: travelerCombatant },
+      combatant,
+    );
     stepEffects(1, { ...context, activeCombatant: travelerCombatant });
 
     expect([firedCount, fireStarJades()]).toStrictEqual([3, 0]);

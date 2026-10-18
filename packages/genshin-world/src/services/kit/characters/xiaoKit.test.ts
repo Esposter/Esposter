@@ -10,6 +10,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createXiaoKitBehaviour, XIAO_CHARACTER_ID } from "#src/services/kit/characters/xiaoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -89,10 +90,21 @@ describe(createXiaoKitBehaviour, () => {
     XIAO_KIT.elementalBurst.onStart?.(context);
     // Xiao's HP drains at 1.95 and 2.95 seconds, and he leaves the field before the third
     stepEffects(3, context);
+    // The swap ends what Xiao's leaving ends, as stepActiveKit does on a swap
+    endKitSwapEffects(context.kitEffectState.effects, XIAO_CHARACTER_ID);
     stepEffects(13, { ...context, activeCombatant: travelerCombatant });
 
     expect(getPartyMember(party, XIAO_CHARACTER_ID).healthShare).toBeCloseTo(0.97 ** 2, 10);
     expect(context.kitEffectState.effects).toStrictEqual([]);
+  });
+
+  test("a field effect continues while its character stays on the field", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createXiaoCombatant(1));
+    XIAO_KIT.elementalBurst.onStart?.(context);
+    stepEffects(1, context);
+
+    expect(context.kitEffectState.effects.some((effect) => effect.kind === "infusion")).toBe(true);
   });
 
   test.each([

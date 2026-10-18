@@ -8,6 +8,7 @@ import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -20,6 +21,7 @@ import { takeOne } from "@esposter/shared";
 const ELECTRO_SIGIL_MAX_COUNT = 3;
 const ELECTRO_SIGIL_SOURCE = "Electro Sigil";
 const LIGHTNING_FANG_SOURCE = "Lightning Fang";
+const WOLF_WITHIN_ID = "razor-wolf-within";
 // Awakening, from Ascension 1, cuts Claw and Thunder's cooldown by 18% and resets it as Lightning Fang hits, as the wiki's
 // Passive page and gcsim v2.47.2 (MIT) razor/asc.go give it
 // https://genshin-impact.fandom.com/wiki/Awakening
@@ -86,18 +88,12 @@ export const createRazorKitBehaviour = ({
     });
   // Lightning Fang's Wolf Within, cast from the burst's hit for its seconds while Razor stays on the field. Its first
   // Tick, at the hit, resets his skill's cooldown from Ascension 1 and gives him the Electro RES bonus that marks it
-  // Standing, and a tick on every step after ends both once he has left the field
+  // Standing, and leaving the field ends both through the swap's kit event
   const castWolfWithin = (kitEffectState: KitEffectState, owner: Combatant, centre: GroundPoint): void => {
-    const wolfWithin = castKitField(kitEffectState, owner.characterId, centre, {
+    castKitField(kitEffectState, owner.characterId, centre, {
+      id: WOLF_WITHIN_ID,
       nextTickSeconds: lightningFangHitmarkSeconds,
-      onTick: ({ activeCombatant, kitEffectState: tickKitEffectState, party }, tickIndex) => {
-        if (activeCombatant.characterId !== owner.characterId) {
-          removeKitEffects(
-            tickKitEffectState,
-            (effect) => effect === wolfWithin || checkIsRazorBuff(effect, owner.characterId, LIGHTNING_FANG_SOURCE),
-          );
-          return;
-        }
+      onTick: ({ kitEffectState: tickKitEffectState, party }, tickIndex) => {
         if (tickIndex > 0) return;
         if (owner.ascension >= AWAKENING_ASCENSION) getPartyMember(party, owner.characterId).skillCooldownSeconds = 0;
         buffKitMember(tickKitEffectState, owner.characterId, {
@@ -120,6 +116,16 @@ export const createRazorKitBehaviour = ({
         effect.hits.some((hit) => lupusFulgurisHits.includes(hit)),
     );
   return {
+    // Leaving the field ends the Wolf Within and the Electro RES bonus it gives, as gcsim's swap does
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
+      removeKitEffects(
+        kitEffectState,
+        (effect) =>
+          (effect.kind === "field" && effect.id === WOLF_WITHIN_ID && effect.characterId === combatant.characterId) ||
+          checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
+      );
+    },
     // Its sigils are cleared into energy after the burst's cost is spent, and the Wolf Within stands from its hit
     burst: {
       onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) => {
