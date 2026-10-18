@@ -65,6 +65,8 @@ Greps, per unit:
 
 9. `^[ \t]*//.{100,}\n[ \t]*// ?\S+( \S+)?\n[ \t]*//.{90,}` multiline (`rg -U`) over `*.ts`, `*.vue` — a one- or two-word comment line between two full ones. A wrap that broke one line at the width without reflowing the paragraph leaves the remainder standing alone, and the sentence reads past it. The fix is reflowing the whole paragraph, which is the rewrap grep 8 then re-reads; a paragraph's last line before a new paragraph starts is not this, which is why the shape needs the full line after it. An indented list item's own continuation is the one hit that stays.
 
+10. `^[ \t]*//[^\n]*\n[ \t]*export\b` multiline (`rg -U`) over `*.ts` — a `//` line directly above an export, the shape `formatting`'s doc-block rule says the swept tree holds there. A `*/` line directly above an export is the shape a pass must not leave, and that count is zero.
+
 Never swept anywhere: 3-line `//` blocks with every line short.
 
 Excluded: `apps/web/shared/types/nuxt.d.ts`, `apps/web/app/types/desmos.d.ts`, `packages/configuration/types/global.d.ts`, `packages/vue-phaserjs/auto-imports.d.ts` (vendored/generated) · `apps/web/app/util/math/random/getRandomValues.ts`, `packages/azure/src/services/table/getTableNullClause.ts` (source-URL references) · `*/tsdown.config.ts`, `@ts-expect-error` / `oxlint-disable` lines (directives) · doc blocks copied verbatim from an upstream type (`azure-mock`'s paging interfaces, the Desmos enums) — they are kept diff-identical to their source, same ground as an unimplemented interface stub.
