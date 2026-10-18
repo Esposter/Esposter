@@ -4,10 +4,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
-  "normalAttacks.1.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
-  },
   "normalAttacks.2.hits.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.7313000567495327 }
