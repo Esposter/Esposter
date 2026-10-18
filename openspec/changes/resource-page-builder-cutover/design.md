@@ -32,6 +32,7 @@ Two things stay, deliberately. A Program bound to a deleted email keeps its `ema
 
 - the catalog entries and `apps/web/package.json` dependencies for `grapesjs` and every `grapesjs-` plugin, `js-beautify` and `@types/js-beautify`, with MJML's Node package added for the server;
 - `useGrapesJsEditor`, `useSurveyInviteBlocks`, `setBlocks`, `readUploadFiles`, `GrapesJsBlock`, the plugin modules and their tests, `WebpageEditorPlugins`, `WebpageEditorStyleManager`, `FlexAlignmentItems`, `getEmailHtml`, `getEmailPreview`, `readEmailPreviewText`, `writeEmailPreviewText`, `createMergeFieldBlocks`, the survey invite block builders, the type shim for the two untyped plugins, `AGrapesJsEditor` and the two stock templates;
+- the `grapesjs` exception in `osv-scanner.toml`, whose advisory names a range the locked release was already outside;
 - the TUI and cdnjs entries in the security config, and the stock hosts in `apps/web/shared/services/grapesjs/constants.ts` and the image whitelist, keeping Mailjet's for MJML's social icons beside the email types; the `.gjs-mdl-container` override; the comments naming GrapesJS in `ResourceEditorComponentMap`;
 - the `grapesjs` skill, replaced by a page-builder skill, and the `grapesjs` ledger;
 - the live references outside those: the GrapesJS and `grapesjs-` plugin rows of the dependency ledger, the `grapes.min.css` import in the styling skill's style-blocks reference, the GrapesJS mention in the `useAdoptResourceContent` row of the vue-composable-patterns skill, and the `grapesjs` store row of the resource security ledger;
@@ -69,6 +70,7 @@ sequenceDiagram
 | `apps/web/server/db/migrations`                               | the custom migration binning every Email and Webpage row |
 | `apps/web/package.json`                                       | GrapesJS and its plugins out, MJML's Node package in     |
 | `pnpm-workspace.yaml`                                         | the catalog entries                                      |
+| `osv-scanner.toml`                                            | without the `grapesjs` exception                         |
 
 ## Sources
 

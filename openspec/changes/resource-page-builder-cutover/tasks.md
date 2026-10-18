@@ -14,5 +14,5 @@
 
 ## 4. Removing the old editor
 
-- [ ] 4.1 Remove the old editor's dependencies, security origins, modules and tests, add the server's email markup compiler, and replace its skill and ledger with the page-builder ones. Verify: a search of the app and the dependency list for the old editor's names returns no match.
+- [ ] 4.1 Remove the old editor's dependencies, security origins, OSV exception, modules and tests, add the server's email markup compiler, and replace its skill and ledger with the page-builder ones. Verify: a search of the app and the dependency list for the old editor's names returns no match.
 - [ ] 4.2 Rewrite the specs that name the old editor as built. Verify: a search of `openspec/specs` for the old editor's name returns no match.
