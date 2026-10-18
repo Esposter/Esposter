@@ -43,7 +43,7 @@ export const createGrassCulling = ({
           clipFromModel,
           createGrassBladePoint({ bladeHeight, captured, ground, grassTrail, offset: vec2(0), size, up, windUniforms }),
         );
-      const root = isInView(float(0));
+      const root = createFrustumVisibility(clipFromModel, vec3(ground.x, captured.a, ground.y));
       const tip = isInView(float(1));
       const top = createFrustumVisibility(
         clipFromModel,
