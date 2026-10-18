@@ -212,6 +212,7 @@ export const readGcsimAttacks = (
           return readGoNumber(field === undefined ? undefined : evaluateGoExpression(field.expression, resolveName));
         };
         const multiplierField = fieldMap.get("Mult");
+        const mult = evaluateNumber("Mult");
         const poiseDamage = evaluateNumber("PoiseDMG");
         const poiseField = fieldMap.get("PoiseDMG");
         const abilExpression = fieldMap.get("Abil")?.expression;
@@ -229,6 +230,7 @@ export const readGcsimAttacks = (
           file,
           internalCooldownTag: getName(fieldMap.get("ICDTag")?.expression),
           line: token.line,
+          ...(mult === undefined ? {} : { mult }),
           poiseDamage,
           poiseDamageVariable:
             poiseDamage === undefined && poiseField !== undefined ? getGoRootName(poiseField.expression) : undefined,

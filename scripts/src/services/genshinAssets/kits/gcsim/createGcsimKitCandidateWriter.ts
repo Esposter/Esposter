@@ -138,6 +138,11 @@ export const createGcsimKitCandidateWriter = (
         provenance: { cause: KitProvisionalCause.NoActionFile, rule: KitRule.NoActionFile, source: KitSource.Rule },
         value,
       }),
+    addNoPoiseRule: (path) =>
+      addKitCandidate(candidateMap, path, {
+        provenance: { cause: KitProvisionalCause.NoPoiseSource, rule: KitRule.NoPoiseSource, source: KitSource.Rule },
+        value: 0,
+      }),
     toFile,
   };
 };

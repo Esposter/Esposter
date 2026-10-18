@@ -12,7 +12,11 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
-import { readGoHitbox, SINGLE_TARGET_HIT_CONSTRUCTOR } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
+import {
+  readGoHitbox,
+  readGoStruckEnemyHitbox,
+  SINGLE_TARGET_HIT_CONSTRUCTOR,
+} from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
 import {
   findClosingParenthesis,
   readGoEnclosingFunction,
@@ -346,6 +350,10 @@ export const readGcsimQueuedAttacks = (
       )?.hitbox;
       const hitbox =
         ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
+      const struckEnemyHitbox =
+        ownHitbox === undefined && hitboxValueStart !== undefined
+          ? readGoStruckEnemyHitbox(tokens, hitboxValueStart, (name) => scope.resolveName(name, position), file)
+          : undefined;
       const attackLine = inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line;
       const attackName =
         inlineAttackPosition === undefined
@@ -391,6 +399,7 @@ export const readGcsimQueuedAttacks = (
             delayLine: callVariant.line ?? tokens[firstTask?.delayStart ?? delayStart ?? position]?.line ?? token.line,
             file,
             hitbox,
+            ...(struckEnemyHitbox === undefined ? {} : { struckEnemyHitbox }),
             ...(iteration.size > 0 && { iterations: Object.fromEntries(iteration) }),
             line: token.line,
             ...(holdValue !== undefined && { holdValue }),

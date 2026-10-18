@@ -280,4 +280,30 @@ func (c *char) Burst() {
       { element: "attributes.Anemo", elementLine: 30, iteration: { value: 1, variable: "i" }, line: 36 },
     ]);
   });
+
+  test("reads a literal's own number as its Mult, where a talent array does not name it", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "cons.go",
+        source: [
+          "package kaveh",
+          "",
+          "func (c *char) c6() {",
+          "\tai := info.AttackInfo{",
+          '\t\tAbil:       "Pairidaeza\'s Dreams (C6)",',
+          "\t\tAttackTag:  attacks.AttackTagNone,",
+          "\t\tDurability: 25,",
+          "\t\tElement:    attributes.Dendro,",
+          "\t\tMult:       0.618,",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+    const [attack] = readGcsimAttacks(sources, evaluateGoConstants(sources));
+
+    expect([attack?.mult, attack?.talentVariable]).toStrictEqual([0.618, undefined]);
+  });
 });

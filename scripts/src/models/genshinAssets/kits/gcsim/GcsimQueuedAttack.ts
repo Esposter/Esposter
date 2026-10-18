@@ -12,6 +12,9 @@ export interface GcsimQueuedAttack {
   file: string;
   holdValue?: number;
   hitbox?: GcsimHitbox;
+  // A circle centred on the enemy a hit struck, `combat.NewCircleHitOnTarget(t, nil, radius)` with an identifier as its target,
+  // Which gcsim passes from the hit's event. Kept apart from `hitbox`, so a call with it has no hitbox of its own
+  struckEnemyHitbox?: GcsimHitbox;
   // The values of the constant loops' variables this call is in, one iteration's, where a call is in a loop
   iterations?: Record<string, number>;
   line: number;

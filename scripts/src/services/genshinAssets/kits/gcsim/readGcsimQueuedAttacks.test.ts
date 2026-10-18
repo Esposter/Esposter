@@ -1020,4 +1020,36 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ]);
   });
+
+  test("reads a queue call's circle on the enemy it struck as the struck enemy's hitbox, and no hitbox of its own", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "cons.go",
+        source: [
+          "package kaveh",
+          "",
+          "func (c *char) c6(args ...interface{}) {",
+          "\tt, ok := args[0].(*enemy.Enemy)",
+          "\tap := combat.NewCircleHitOnTarget(t, nil, 4)",
+          "\tc.Core.QueueAttack(ai, ap, 0, 0.3*60)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+    const [queued] = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+
+    expect([queued?.hitbox, queued?.struckEnemyHitbox]).toStrictEqual([
+      undefined,
+      {
+        center: GcsimHitboxCenter.PrimaryTarget,
+        file: "cons.go",
+        line: 5,
+        name: "NewCircleHitOnTarget",
+        radius: 4,
+        shape: GcsimHitboxShape.Circle,
+      },
+    ]);
+  });
 });

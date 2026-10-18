@@ -81,6 +81,38 @@ const readNumber = (
   resolveName: (name: string) => GoValue | undefined,
 ): number | undefined => evaluateGoNumber(parseGoExpression(tokens, start).expression, resolveName);
 
+// The circle a hit centres on the enemy it struck: `combat.NewCircleHitOnTarget(t, nil, radius)` with an identifier as
+// Its target, which gcsim passes from the hit's event. The circle is centred on the primary target, as the hit's own
+// Strike is, and a call whose target is a getter or a position has none
+export const readGoStruckEnemyHitbox = (
+  tokens: readonly GoToken[],
+  start: number,
+  resolveName: (name: string) => GoValue | undefined,
+  file: string,
+): GcsimHitbox | undefined => {
+  let position = start;
+  while (tokens[position]?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "."))
+    position += 2;
+  const constructorToken = tokens[position];
+  if (constructorToken?.text !== "NewCircleHitOnTarget") return undefined;
+  const call = parseGoExpression(tokens, start).expression;
+  if (call.kind !== GoExpressionKind.Call || call.parameterStarts.length !== 3) return undefined;
+  const [targetStart, centerStart, radiusStart] = call.parameterStarts;
+  if (targetStart === undefined || centerStart === undefined || radiusStart === undefined) return undefined;
+  const targetText = readArgumentText(tokens, targetStart);
+  if (!/^\w+$/u.test(targetText) || readArgumentText(tokens, centerStart) !== "nil") return undefined;
+  const radius = readNumber(tokens, radiusStart, resolveName);
+  if (radius === undefined) return undefined;
+  return {
+    center: GcsimHitboxCenter.PrimaryTarget,
+    file,
+    line: constructorToken.line,
+    name: constructorToken.text,
+    radius,
+    shape: GcsimHitboxShape.Circle,
+  };
+};
+
 // The hitbox a queue call's attack pattern is written as, `combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 2)`
 // And its kin, in gcsim's shape and centre terms: a circle or box on the player, or on the primary target, with its
 // Offset, radius or size and fan angle. A constructor centred on any other target, or with a size or offset the

@@ -10,5 +10,6 @@ export interface GcsimKitCandidateWriter {
   addFrames: (path: string, ...names: string[]) => void;
   addHit: (path: string, hitSource: GcsimHitSource, targetingArea: AttackArea) => void;
   addNoActionFileRule: (path: string, value: number) => void;
+  addNoPoiseRule: (path: string) => void;
   toFile: (name: string, from?: string) => string;
 }
