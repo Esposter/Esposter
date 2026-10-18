@@ -98,7 +98,14 @@ export const stepKit = (
         : 0;
       kitState.actionSeconds += stepSeconds * (1 + speedBonus);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
+      const landedCount = landedHits.length;
       kitState.nextHitIndex = landKitHits(action.hits, kitState.nextHitIndex, kitState.actionSeconds, landedHits);
+      // A hook may add one hit after each hit of a normal attack that lands, as a passive's or a constellation's follow-up
+      if (kit.getNormalAttackExtraHit && kit.normalAttacks.includes(action))
+        for (const hit of landedHits.slice(landedCount)) {
+          const extraHit = kit.getNormalAttackExtraHit(context, hit);
+          if (extraHit) landedHits.push(extraHit);
+        }
       if (kitState.actionSeconds < action.seconds) {
         if (isAttackPressed && !isSkillOrBurst) kitState.isAttackQueued = true;
         return undefined;
