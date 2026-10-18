@@ -24,6 +24,7 @@ describe(useWorldCombat, () => {
       savedCharacters: [],
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
+      wildlifePlaces: [],
     });
 
     expect(characters.value).toStrictEqual([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);

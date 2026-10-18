@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Wildlife } from "#src/models/wildlife/Wildlife";
-import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
+import { WildlifeState } from "#src/models/wildlife/WildlifeState";
 import {
   WILDLIFE_CAPACITY,
   WILDLIFE_CAPSULE_HEIGHT,
@@ -11,7 +11,6 @@ import {
   WILDLIFE_COLOR,
   WILDLIFE_STEP_SECONDS,
 } from "#src/services/wildlife/constants";
-import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { stepWildlife } from "#src/services/wildlife/stepWildlife";
 import { composeHeadingMatrix } from "#src/services/world/composeHeadingMatrix";
 import { useLoop } from "@tresjs/core";
@@ -24,17 +23,15 @@ interface Props {
   // Whether a screen over the world holds it, as the game's menus hold its animals
   isHeld?: true;
   lightUniforms: LightUniforms;
-  // The animals' places in the region, each animal stood at its place and running from the character as it comes near
-  places: readonly WildlifePlace[];
   rampTexture: DataTexture;
   // The point the animals run from, the character's feet, which none is given while no character stands in the world
   target?: GroundPoint;
+  // The animals in the world, which the session's combat holds and this steps and draws, a struck one left out
+  wildlifeList: Wildlife[];
 }
 
-const { getGroundHeight, isHeld, lightUniforms, places, rampTexture, target } = defineProps<Props>();
+const { getGroundHeight, isHeld, lightUniforms, rampTexture, target, wildlifeList } = defineProps<Props>();
 const { onBeforeRender } = useLoop();
-// Each place's animal, made once as the places are, so each keeps its flight across the frames
-const wildlifeList: Wildlife[] = places.map((place) => createWildlife(place));
 const fixedStepLoop = createFixedStepLoop(WILDLIFE_STEP_SECONDS, () => {
   for (const wildlife of wildlifeList) stepWildlife(wildlife, target, WILDLIFE_STEP_SECONDS);
 });
@@ -52,8 +49,9 @@ const point = new Vector3();
 onBeforeRender(({ delta }) => {
   if (!isHeld) fixedStepLoop.advance(delta);
   let count = 0;
-  for (const { heading, position } of wildlifeList) {
+  for (const { heading, position, state } of wildlifeList) {
     if (count === WILDLIFE_CAPACITY) break;
+    if (state === WildlifeState.Struck) continue;
     point.set(position.x, getGroundHeight(position.x, position.z) + WILDLIFE_CAPSULE_HEIGHT / 2, position.z);
     wildlifeMesh.setMatrixAt(count, composeHeadingMatrix(matrix, point, heading));
     count += 1;
