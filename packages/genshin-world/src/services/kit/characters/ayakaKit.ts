@@ -100,8 +100,8 @@ const snowsweptSakuraHit: KitHitBehaviour = {
 
 // Constellation 6's start on a Charged Attack hit, as the hit strikes an enemy; Constellation 1's roll rides with it
 const chargedAttackHit: KitHitBehaviour = {
-  onStrike: (context, strike) => {
-    snowsweptSakuraHit.onStrike?.(context, strike);
+  onStrike: (context, strike, enemy) => {
+    snowsweptSakuraHit.onStrike?.(context, strike, enemy);
     const { combatant } = strike;
     if (combatant.constellationCount < CONSTELLATION_6) return;
     if (findKitStatus(context.kitEffectState.effects, combatant.characterId, USURAHI_BUTOU_STATUS_ID)) return;

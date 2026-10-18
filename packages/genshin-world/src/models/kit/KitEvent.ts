@@ -5,8 +5,8 @@ import type { KitChestOpenedEvent } from "#src/models/kit/KitChestOpenedEvent";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffectExpiredEvent } from "#src/models/kit/KitEffectExpiredEvent";
 import type { KitElementAppliedEvent } from "#src/models/kit/KitElementAppliedEvent";
-import type { KitElementalHitEvent } from "#src/models/kit/KitElementalHitEvent";
 import type { KitEnemyDefeatedEvent } from "#src/models/kit/KitEnemyDefeatedEvent";
+import type { KitEnemyHitEvent } from "#src/models/kit/KitEnemyHitEvent";
 import type { KitEnergyParticleCollectedEvent } from "#src/models/kit/KitEnergyParticleCollectedEvent";
 import type { KitFallRefusedEvent } from "#src/models/kit/KitFallRefusedEvent";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
@@ -32,7 +32,7 @@ export type KitEvent =
   | KitDamageTakenEvent
   | KitEffectExpiredEvent
   | KitElementAppliedEvent
-  | KitElementalHitEvent
+  | KitEnemyHitEvent
   | KitEnemyDefeatedEvent
   | KitEnergyParticleCollectedEvent
   | KitFallRefusedEvent

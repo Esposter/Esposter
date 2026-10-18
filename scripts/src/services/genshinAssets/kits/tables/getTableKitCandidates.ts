@@ -33,6 +33,8 @@ const SKILL_HIT_PATHS: ReadonlyMap<string, readonly string[]> = new Map([
   ["Lumi Pound-Pound Pummeler DMG", ["skill.hits.0", "skill.hits.1"]],
 ]);
 // The length of a named list of hits a skill's label gives, which is the count its label repeats
+// The numbered array a slot's path sits in, `normalAttacks` for `normalAttacks.3`, and the element's index
+const SLOT_ARRAY_PATH_REGEX = /^(?<parent>.+?)\.(?<index>\d+)(?:\.|$)/u;
 const NAMED_HIT_LIST_LENGTH_PATHS: ReadonlyMap<string, string> = new Map([
   ["Etched Into Bone and Soul DMG", "hits.etchedIntoBoneAndSoul.length"],
 ]);
@@ -58,11 +60,6 @@ const CHARACTER_SKILL_PARAMETER_NAME_MAP: Readonly<Record<string, Readonly<Recor
     "Impale the Night Healing": ["impaleTheNightLowBondOfLifeHealing", "impaleTheNightFullBondOfLifeHealing"],
     "Night Vigil Duration": ["nightVigilSeconds"],
     "Swift Hunt Bond of Life Gain": ["swiftHuntBondOfLifeGain"],
-  },
-  // Sigewinne's bubbles' healing and the final bounce's heal, each at its position in the label
-  Sigewinne: {
-    "Bolstering Bubblebalm Healing": ["bolsteringBubblebalmHealingShare", "bolsteringBubblebalmHealingFlat"],
-    "Final Bounce Healing": ["finalBounceHealingShare"],
   },
 };
 
@@ -91,12 +88,17 @@ export const getTableKitCandidates = ({
     for (const position of tableLabel.indexes.keys())
       addLabel(`${path}.hits.${position}.multiplier`, combatTalent, tableLabel, position);
   };
-  const addLength = (path: string, combatTalent: CombatTalent, { indexes, label }: KitTableLabel) => {
+  const addLength = (
+    path: string,
+    combatTalent: CombatTalent,
+    { indexes, label }: KitTableLabel,
+    count = indexes.length,
+  ) => {
     const index = indexes[0];
     if (index !== undefined)
       addKitCandidate(candidateMap, path, {
         provenance: { index, label, proudSkillGroupId: talentGroupIdMap[combatTalent], source: KitSource.Tables },
-        value: indexes.length,
+        value: count,
       });
   };
   const addHitLabel = (hitPaths: readonly string[], combatTalent: CombatTalent, tableLabel: KitTableLabel) => {
@@ -106,18 +108,33 @@ export const getTableKitCandidates = ({
   const addParameterLabel = (names: readonly string[], combatTalent: CombatTalent, tableLabel: KitTableLabel) => {
     for (const [position, name] of names.entries()) addLabel(`parameters.${name}`, combatTalent, tableLabel, position);
   };
-  // A folder-less character's skill and burst hits read their labels in hit order, a label spanning several hits giving
-  // One to each of its parameters, and each hit takes the next position across the labels
-  const addSlotHitLabels = (slot: string, combatTalent: CombatTalent, labelNames: readonly string[]) => {
-    let hitIndex = 0;
-    for (const name of labelNames) {
+  // A folder-less character's hit slot reads its labels in hit order, a label spanning several hits giving one to each
+  // Of its parameters, and each hit takes the next position across the labels. The slot's hit count is the labels' hits
+  // In all, and a slot under a numbered array counts that array's elements up to its index
+  const slotArrayLengthMap = new Map<
+    string,
+    { combatTalent: CombatTalent; count: number; tableLabel: KitTableLabel }
+  >();
+  const addSlotHitLabels = (path: string, combatTalent: CombatTalent, labelNames: readonly string[]) => {
+    const tableLabels = labelNames.map((name) => {
       const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find(({ label }) => label === name);
       if (tableLabel === undefined) throw new InvalidOperationError(Operation.Read, name, "has no label in its talent");
+      return tableLabel;
+    });
+    let hitIndex = 0;
+    for (const tableLabel of tableLabels)
       for (const position of tableLabel.indexes.keys()) {
-        addLabel(`${slot}.hits.${hitIndex}.multiplier`, combatTalent, tableLabel, position);
+        addLabel(`${path}.hits.${hitIndex}.multiplier`, combatTalent, tableLabel, position);
         hitIndex += 1;
       }
-    }
+    const [firstTableLabel] = tableLabels;
+    if (firstTableLabel === undefined) return;
+    addLength(`${path}.hits.length`, combatTalent, firstTableLabel, hitIndex);
+    const arrayGroups = SLOT_ARRAY_PATH_REGEX.exec(path)?.groups;
+    if (arrayGroups?.parent === undefined || arrayGroups.index === undefined) return;
+    const count = Number(arrayGroups.index) + 1;
+    if ((slotArrayLengthMap.get(arrayGroups.parent)?.count ?? 0) < count)
+      slotArrayLengthMap.set(arrayGroups.parent, { combatTalent, count, tableLabel: firstTableLabel });
   };
   const normalAttackLabels = labelMap.get(talentGroupIdMap[CombatTalent.NormalAttack]) ?? [];
   const hasChargedAttackCycle = normalAttackLabels.some(({ label }) => CHARGED_ATTACK_CYCLIC_LABELS.has(label));
@@ -165,10 +182,14 @@ export const getTableKitCandidates = ({
     else if (tableLabel.label === "Energy Cost") addLabel("burstEnergyCost", CombatTalent.ElementalBurst, tableLabel);
     else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalBurst, tableLabel);
   }
-  const slotHitLabels = characterIdSlotHitLabelsMap.get(characterId);
-  if (slotHitLabels !== undefined) {
-    addSlotHitLabels("burst", CombatTalent.ElementalBurst, slotHitLabels.burst);
-    addSlotHitLabels("skill", CombatTalent.ElementalSkill, slotHitLabels.skill);
+  const slotLabels = characterIdSlotHitLabelsMap.get(characterId);
+  for (const [path, { combatTalent, labels }] of Object.entries(slotLabels?.hits ?? {}))
+    addSlotHitLabels(path, combatTalent, labels);
+  for (const [parent, { combatTalent, count, tableLabel }] of slotArrayLengthMap)
+    addLength(`${parent}.length`, combatTalent, tableLabel, count);
+  for (const [path, { combatTalent, label, position }] of Object.entries(slotLabels?.values ?? {})) {
+    const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find((entry) => entry.label === label);
+    if (tableLabel !== undefined) addLabel(path, combatTalent, tableLabel, position);
   }
   return candidateMap;
 };

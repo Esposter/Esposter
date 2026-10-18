@@ -66,6 +66,117 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads a queue call's single-target hit as a circle of no radius on its primary target", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package jean",
+          "",
+          "func (c *char) burst() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalSkill}",
+          "\tc.Core.QueueAttackWithSnap(ai, snap, combat.NewSingleTargetHit(e.Key()), 3)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+      {
+        attackLine: undefined,
+        attackName: "ai",
+        delay: 3,
+        delayLine: 5,
+        file: "burst.go",
+        hitbox: {
+          center: GcsimHitboxCenter.PrimaryTarget,
+          file: "burst.go",
+          line: 5,
+          name: "NewSingleTargetHit",
+          radius: 0,
+          shape: GcsimHitboxShape.Circle,
+        },
+        line: 5,
+      },
+    ]);
+  });
+
+  test("reads a queue call's hitbox from the constructor its local is assigned in the call's own function, at the constructor's line", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package clorinde",
+          "",
+          "const skillDashHitmark = 11",
+          "",
+          "func (c *char) skillDashNoBOL(_ map[string]int) {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagNormal}",
+          "\tap := combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 0.6)",
+          "\tc.Core.QueueAttack(ai, ap, skillDashHitmark, skillDashHitmark, c.particleCB)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+      {
+        attackLine: undefined,
+        attackName: "ai",
+        delay: 11,
+        delayLine: 8,
+        file: "skill.go",
+        hitbox: {
+          center: GcsimHitboxCenter.PrimaryTarget,
+          file: "skill.go",
+          line: 7,
+          name: "NewCircleHitOnTarget",
+          radius: 0.6,
+          shape: GcsimHitboxShape.Circle,
+        },
+        line: 8,
+      },
+    ]);
+  });
+
+  test("reads no hitbox from a local a branch may reassign before the call, where its constructor is no longer the one called", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package clorinde",
+          "",
+          "func (c *char) skillDash(_ map[string]int) {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagNormal}",
+          "\tap := combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 0.6)",
+          "\tif c.Base.Cons >= 6 {",
+          "\t\tap = combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 0.8)",
+          "\t}",
+          "\tc.Core.QueueAttack(ai, ap, 11, 11, c.particleCB)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+      {
+        attackLine: undefined,
+        attackName: "ai",
+        delay: 11,
+        delayLine: 9,
+        file: "skill.go",
+        hitbox: undefined,
+        line: 9,
+      },
+    ]);
+  });
+
   test("reads no delay from a local a branch may change, `windup := 0` then `windup = 14` in the branch", () => {
     expect.hasAssertions();
 

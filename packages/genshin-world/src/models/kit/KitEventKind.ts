@@ -4,8 +4,8 @@
 // Mora or opened a chest in the world, a normal attack of the character on the field started or landed, a hit triggered
 // Reactions on an enemy, a status on an enemy struck on its own schedule, a taunt took an enemy's strike, or a shield
 // Took a strike on a party member for its owner. A charged attack of the character on the field landed, a skill was
-// Used, a hit of an element or on a weak point landed on an enemy, or a hit defeated one, or a hit felled an animal in
-// The world
+// Used, a hit landed on an enemy with the element it was dealt as, a hit on a weak point landed on an enemy, or a hit
+// Defeated one, or a hit felled an animal in the world, or a Nightsoul blessing drained a character's points
 export enum KitEventKind {
   BurstUsed = "BurstUsed",
   CharacterSwapped = "CharacterSwapped",
@@ -14,8 +14,8 @@ export enum KitEventKind {
   DamageTaken = "DamageTaken",
   ElementApplied = "ElementApplied",
   EffectExpired = "EffectExpired",
-  ElementalHit = "ElementalHit",
   EnemyDefeated = "EnemyDefeated",
+  EnemyHit = "EnemyHit",
   EnergyParticleCollected = "EnergyParticleCollected",
   FallRefused = "FallRefused",
   HealthChanged = "HealthChanged",

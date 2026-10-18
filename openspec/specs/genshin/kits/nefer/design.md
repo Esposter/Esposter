@@ -4,12 +4,17 @@ Nefer's kit is its record and one behaviour module, `createNeferKitBehaviour`, a
 
 ## Decisions
 
-- **Nefer borrows Nahida's, Keqing's and Bennett's hitmarks and areas, provisional.** Her strikes, skill and charged attack take Nahida's, a catalyst user of her role, and her burst takes Keqing's. Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.
+- **Nefer is a catalyst.** The installed game's avatar table gives her `weaponType` as `WEAPON_CATALYST`, so her donors are catalyst kits, each taken where its shape matches.
+- **Nefer borrows Nahida's hitmarks and areas for her normal attacks, charged attack and skill, provisional.** Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.
+- **Her burst borrows Nahida's charged attack area, and its hitmarks are that attack's hitmark fraction spread over the burst, Unsourced.** Keqing's burst was the donor before, but her Starward Sword strikes "nearby opponents" around herself, while Nefer's Sacred Vow deals damage to "opponents ahead", so the shapes differ. Nahida's burst records no hit, since Illusory Heart is a field, so the closest forward strike is her charged attack, Akara: an AoE in front, 69 frames, one hit at a 65-frame hitmark. Each of the burst's four hits takes that area. Its hitmarks 23, 45, 68 and 90 are 65 of 69 frames applied to the burst's 96 frames and split into quarters.
+- **Her Phantasm Performance is a stance whose charged attack borrows Kokomi's.** Kokomi's ceremonial garment is the closest catalyst stance charged attack: 76 frames, one hit at a 48-frame hitmark, a radius of 18.5. Phantasm Performance has seven hits against Kokomi's one, so its action takes Kokomi's 76 frames, and each hit's hitmark is Kokomi's 48 spread evenly over the action (7, 14, 21, 27, 34, 41 and 48), Unsourced. Every hit takes Kokomi's area. Poise, gauge and cooldown tag come from each hit's wiki row, and targeting from the stance rule.
+- **All seven hits are Grass, the shades' included.** The wiki says the shades' damage counts as Lunar-Bloom, and `Element` has no Lunar member, so those hits stay Grass until the coordinator rules on how a Moonsign hit is recorded.
 - **Nefer's skill reads its "Skill DMG" label for two hits, and her burst its "1-Hit DMG" and "2-Hit DMG" labels for four.**
 
 ## Not built
 
-- **Her Phantasm Performance is waiting on its record.** Her Shadow Dance and its Phantasm Performance hits (the Nefer and Shades strikes, and their charges) have labels of their own that Nefer's record does not read yet, so her skill deals the two hits above and not the performance.
+- **Phantasm Performance's behaviour waits on the side branch.** Its charges are a stance parameter on the record. The behaviour, reading the stance with `readStance` and entering it with `enterKitStance`, is not built.
+- **The Phantasm Performance measurement is owed.** Its action frames, hitmarks and areas are spread or borrowed until her official showcase is measured; the coordinator adds that measurement to the recordings list.
 
 ## Key files
 
@@ -20,6 +25,8 @@ Nefer's kit is its record and one behaviour module, `createNeferKitBehaviour`, a
 
 ## Sources
 
-- [Nefer](https://genshin-impact.fandom.com/wiki/Nefer) and [Category:Nefer Talents](https://genshin-impact.fandom.com/wiki/Category:Nefer_Talents), Genshin Impact Wiki: Nefer's multipliers, energy, cooldowns and costs.
+- [Nefer](https://genshin-impact.fandom.com/wiki/Nefer) and [Category:Nefer Talents](https://genshin-impact.fandom.com/wiki/Category:Nefer_Talents), Genshin Impact Wiki: Nefer's multipliers, energy, cooldowns and costs, and the burst and skill text read from the category page.
 - Nefer's clips, `Ani_Avatar_Lady_Catalyst_Nefer_*`, read with `genshin:assets timings` from the installed game.
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nahida), MIT at v2.47.2: Nahida's hitmarks and areas for Nefer's strikes and skill, and [Keqing](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/keqing)'s for her burst.
+- The installed game's avatar table, `weaponType` for avatar 10000122.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nahida), MIT at v2.47.2: Nahida's hitmarks and areas for Nefer's normal attacks, charged attack and skill.
+- The built records of Kokomi (10000054) and Nahida (10000073), for the donors above.

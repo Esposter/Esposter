@@ -6,6 +6,7 @@ import type { AttackArea } from "genshin-world";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
+import { readGcsimHoldHitmarks } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldHitmarks";
 
 // The hits of an ability with no hitmark constant, fired by its queue calls: each call of the file its frames are in
 // Firing its first literal, at its damage delay, joined to its multiplier by its place and to its own hitbox, else to the
@@ -35,10 +36,12 @@ export const addGcsimQueuedHits = (
   const file =
     findGcsimConstant(constantMap, framesName)?.file ??
     attacks.find(({ attackTag }) => attackTag !== undefined && attackTags.includes(attackTag))?.file;
-  const fileHits =
-    file === undefined
-      ? []
-      : getGcsimQueuedHits(gcsim, attackTags, file).filter(({ attack }) => !excludedAttacks.includes(attack));
+  // A call firing at a hold's hitmark is the hold's hit, which the hold reads, so it is none of this ability's
+  const heldHitmarks = readGcsimHoldHitmarks(gcsim);
+  const fileHits = (file === undefined ? [] : getGcsimQueuedHits(gcsim, attackTags, file)).filter(
+    ({ attack, delay, file: hitFile }) =>
+      !excludedAttacks.includes(attack) && !heldHitmarks.some((held) => held.file === hitFile && held.delay === delay),
+  );
   const [firstHit] = fileHits;
   if (firstHit === undefined) return;
   const queuedHits = fileHits.filter(({ attack }) => attack === firstHit.attack);

@@ -18,6 +18,15 @@ const getNoItemDefinition = (itemId: number): ItemDefinition => {
   throw new Error(`no definition asked for item ${itemId}`);
 };
 
+const getFishDefinition = (itemId: number): ItemDefinition => ({
+  category: ItemCategory.Material,
+  id: itemId,
+  name: "Fish",
+  rank: 1,
+  rarity: 1,
+  stackLimit: 99,
+});
+
 describe(buyShopGood, () => {
   const ADVENTURE_RANK = 4;
   const STARGLITTER_PRICE = 5;
@@ -33,8 +42,7 @@ describe(buyShopGood, () => {
     itemCount: 1,
     itemId: 223,
     minPlayerLevel: ADVENTURE_RANK,
-    priceCount: STARGLITTER_PRICE,
-    priceItemId: 221,
+    costs: [{ count: STARGLITTER_PRICE, itemId: 221 }],
     refresh: ShopRefresh.Monthly,
   };
   const limitedGood: ShopGood = { ...fateGood, buyLimit: 1 };
@@ -65,8 +73,7 @@ describe(buyShopGood, () => {
     itemCount: 1,
     itemId: GROCERY_ITEM_ID,
     minPlayerLevel: ADVENTURE_RANK,
-    priceCount: MORA_PRICE,
-    priceItemId: MORA_ITEM_ID,
+    costs: [{ count: MORA_PRICE, itemId: MORA_ITEM_ID }],
     refresh: ShopRefresh.None,
   };
 
@@ -207,8 +214,7 @@ describe(buyShopGood, () => {
       goodsId: 3002,
       itemCount: SIGIL_MORA_COUNT,
       itemId: MORA_ITEM_ID,
-      priceCount: SIGIL_PRICE,
-      priceItemId: ANEMO_SIGIL_ITEM_ID,
+      costs: [{ count: SIGIL_PRICE, itemId: ANEMO_SIGIL_ITEM_ID }],
     };
     const moraResult = buyShopGood(
       wallet,
@@ -225,8 +231,7 @@ describe(buyShopGood, () => {
     const materialGood: ShopGood = {
       ...groceryGood,
       goodsId: 3003,
-      priceCount: SIGIL_PRICE,
-      priceItemId: ANEMO_SIGIL_ITEM_ID,
+      costs: [{ count: SIGIL_PRICE, itemId: ANEMO_SIGIL_ITEM_ID }],
     };
     const materialResult = buyShopGood(
       wallet,
@@ -277,7 +282,7 @@ describe(buyShopGood, () => {
     stackLimit: 99,
   };
   // A good a player buys with fish from the bag, as a Fishing Association's bait is bought with Medaka
-  const fishPricedGood: ShopGood = { ...groceryGood, goodsId: 3002, priceCount: 2, priceItemId: FISH_ITEM_ID };
+  const fishPricedGood: ShopGood = { ...groceryGood, goodsId: 3002, costs: [{ count: 2, itemId: FISH_ITEM_ID }] };
 
   test("a good priced in a fish is paid from the bag and gives its item", () => {
     expect.hasAssertions();
@@ -308,6 +313,73 @@ describe(buyShopGood, () => {
     ).toBeUndefined();
   });
 
+  // A good bought with several fish at once, as a Windtangler is bought with four kinds, made up here in that shape
+  const SECOND_FISH_ITEM_ID = 9002;
+  const THIRD_FISH_ITEM_ID = 9003;
+  const FOURTH_FISH_ITEM_ID = 9004;
+  const multiFishGood: ShopGood = {
+    beginTime: EPOCH.toString(),
+    buyLimit: 0,
+    costs: [
+      { count: 2, itemId: FISH_ITEM_ID },
+      { count: 1, itemId: SECOND_FISH_ITEM_ID },
+      { count: 1, itemId: THIRD_FISH_ITEM_ID },
+      { count: 1, itemId: FOURTH_FISH_ITEM_ID },
+    ],
+    endTime: EPOCH.add({ hours: 24 * 365 }).toString(),
+    goodsId: 3003,
+    itemCount: 1,
+    itemId: GROCERY_ITEM_ID,
+    minPlayerLevel: ADVENTURE_RANK,
+    refresh: ShopRefresh.None,
+  };
+
+  test("a good priced in several fish is paid from the bag only when the bag holds every fish", () => {
+    expect.hasAssertions();
+
+    const inventory = {
+      items: [
+        { definition: getFishDefinition(FISH_ITEM_ID), id: 0, quantity: 2 },
+        { definition: getFishDefinition(SECOND_FISH_ITEM_ID), id: 1, quantity: 1 },
+        { definition: getFishDefinition(THIRD_FISH_ITEM_ID), id: 2, quantity: 1 },
+        { definition: getFishDefinition(FOURTH_FISH_ITEM_ID), id: 3, quantity: 1 },
+      ],
+      nextId: 4,
+      quickSwapItemIds: [],
+    };
+    const result = buyShopGood(
+      EMPTY_WALLET,
+      inventory,
+      getGroceryItemDefinition,
+      [],
+      multiFishGood,
+      ADVENTURE_RANK,
+      NOW,
+    );
+
+    expect(result?.inventory.items).toStrictEqual([
+      { definition: getGroceryItemDefinition(GROCERY_ITEM_ID), id: 4, quantity: 1 },
+    ]);
+  });
+
+  test("a good priced in several fish is refused when the bag lacks one of them", () => {
+    expect.hasAssertions();
+
+    const inventory = {
+      items: [
+        { definition: getFishDefinition(FISH_ITEM_ID), id: 0, quantity: 2 },
+        { definition: getFishDefinition(SECOND_FISH_ITEM_ID), id: 1, quantity: 1 },
+        { definition: getFishDefinition(THIRD_FISH_ITEM_ID), id: 2, quantity: 1 },
+      ],
+      nextId: 3,
+      quickSwapItemIds: [],
+    };
+
+    expect(
+      buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], multiFishGood, ADVENTURE_RANK, NOW),
+    ).toBeUndefined();
+  });
+
   // The Card Shop sells its cards for Lucky Coins, a material the bag holds, here made up in the same shape as the grocery
   const LUCKY_COIN_ITEM_ID = 3200;
   const CARD_ITEM_ID = 3300;
@@ -328,8 +400,7 @@ describe(buyShopGood, () => {
     ...groceryGood,
     goodsId: 9001,
     itemId: CARD_ITEM_ID,
-    priceCount: 2,
-    priceItemId: LUCKY_COIN_ITEM_ID,
+    costs: [{ count: 2, itemId: LUCKY_COIN_ITEM_ID }],
   };
 
   test("a card is bought with Lucky Coins", () => {

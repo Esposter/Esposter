@@ -8,6 +8,8 @@ export interface GcgCard {
   descriptionTextId: number;
   effects: string[];
   id: number;
+  // Whether a support card is a Companion Support Card, as the dump's ally tag marks it, and absent for other cards
+  isCompanion?: boolean;
   isLocation: boolean;
   kind: GcgCardKind;
   nameTextId: number;
