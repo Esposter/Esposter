@@ -1,6 +1,6 @@
 ## Purpose
 
-Charlotte's kit as built, with her three strikes, charged attack and Spiritbreath Thorn, plunges, Framing's press and its Snappy Silhouette marks, and Still Photo's cast heal and Kamera, with her hold and passives not built.
+Charlotte's kit as built, with her three strikes, charged attack and Spiritbreath Thorn, plunges, Framing's press and its Snappy Silhouette marks, and Still Photo's cast heal and Kamera, with her hold, passives and constellations not built.
 
 ## Requirements
 
@@ -97,3 +97,13 @@ Charlotte's strikes, charged attack and plunges SHALL keep their damage and pois
 - **WHEN** the hit lands on an enemy
 - **THEN** the hit deals no poise
 - **AND** the values stay provisional until a recording settles them
+
+### Requirement: Constellations are not built
+
+Charlotte's Constellations 1, 2, 4 and 6 SHALL NOT take effect, as each needs a status or a count that the kit does not hold yet: Constellation 1 needs a heal every two seconds for six seconds on the healed character, Constellation 2 needs Framing's Monsieur Verite hits counted per enemy, and Constellations 4 and 6 need the Focused Impression mark that her hold does not build.
+
+#### Scenario: Constellations do nothing
+
+- **GIVEN** Charlotte has any of Constellations 1, 2, 4 or 6
+- **WHEN** the player fights with Charlotte
+- **THEN** that constellation has no effect
