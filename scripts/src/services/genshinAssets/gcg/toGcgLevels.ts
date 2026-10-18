@@ -19,7 +19,7 @@ export const toGcgLevels = (
         ]),
     ),
     playerLevels: sortedLevelRows.map(({ level }, index) => ({
-      exp: sortedLevelRows.slice(0, index).reduce((total, { exp }) => total + exp, 0),
+      exp: sortedLevelRows.slice(0, index).reduce((total, { exp }) => total + (exp ?? 0), 0),
       level,
     })),
   };

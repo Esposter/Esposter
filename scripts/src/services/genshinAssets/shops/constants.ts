@@ -86,3 +86,8 @@ export const SOUVENIR_SIGIL_ITEM_IDS = {
   snezhnaya: 306,
   sumeru: 303,
 } as const;
+// The Card Shop, shop 217 in the shop table: its goods are filed under shop type 2000 and numbered from 217000, and every one
+// Is priced in Lucky Coins, the card game's currency, which the bag holds as a material
+export const GCG_CARD_SHOP_TYPE = 2000;
+export const GCG_CARD_SHOP_ID = 217;
+export const GCG_LUCKY_COIN_ITEM_ID = 107_021;
