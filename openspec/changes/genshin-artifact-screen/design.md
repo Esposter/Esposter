@@ -26,6 +26,8 @@ flowchart TD
 - **Unequipping refuses an empty slot.** The taken-off piece is returned for the caller to put back in the bag.
 - **Enhancing is gated on the Mora before anything changes.** The Mora is the materials' EXP plus each fodder's base EXP,
   from `getEnhancementMoraCost`, and a wallet short of it refuses the enhancement the way `enhanceWeapon` refuses one.
+  The Mora charges the base EXP and never the bonus the draw adds: the bonus is free, as the coordinator ruled for this
+  recreation, so the game's own charge is taken as the base EXP's.
   The bonus, the levels and the affix levels are then `enhanceArtifact`'s, unchanged.
 - **The fodder picker offers the bag's artifacts and the enhancement ores, and Auto Add is provisional.** The picker lists
   the bag's unlocked artifacts, the lowest star first and then the lowest level, and the bag's ores that give EXP: Sanctifying
@@ -33,7 +35,11 @@ flowchart TD
   Artifact Enhancement Material page (`ItemIdExperienceMap`). Auto Add takes unlocked artifacts up to four stars, the
   game's default, lowest star first, while the EXP still falls short of the top level. Its order and its stop are
   provisional, not measured from the game. The preview shows the level reached at the base EXP bonus, since the game draws
-  the bonus on confirm, so the level shown is the lowest it can be.
+  the bonus on confirm, so the level shown is the lowest it can be. The preview at the base bonus and the Auto Add order both stand as
+  provisional, as the coordinator ruled, until a measurement of the game replaces them.
+- **A full artifact tab refuses Unequip with the artifact inventory's own notice.** Unequipping into a full artifact
+  inventory leaves the piece worn and shows `BAG_FULL_EQUIPMENT_TIPS`, "No space left in Artifact Inventory...", the
+  notice the game names for the artifact tab, as the coordinator ruled over the generic "Inventory full".
 - **The set reader is one function.** `getActiveArtifactSetBonuses` reaches each set's bonuses by its piece count, and
   `getArtifactSetAttributeLines` sums what it returns. The Artifacts tab's set-bonus block reads the same list.
 
