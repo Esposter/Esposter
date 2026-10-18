@@ -12,10 +12,10 @@ export const UNLOCK_COOK_RECIPE_USE_OP = "ITEM_USE_UNLOCK_COOK_RECIPE";
 // The ability a dish's heal buff names, which heals by a share of its target's Max HP and a flat amount, the buff's
 // Description writing both as `X%+Y`, then any alternatives the game lists in full-width parentheses
 export const HEAL_BUFF_ABILITY_NAME = "ReHP_Ins&Con";
-export const HEAL_BUFF_DESCRIPTION_PATTERN = /^(?<percent>\d+)%\+(?<flat>\d+)(?:（[^）]*）)?$/u;
+export const HEAL_BUFF_DESCRIPTION_REGEX = /^(?<percent>\d+)%\+(?<flat>\d+)(?:（[^）]*）)?$/u;
 // The ability a dish's revive buff names, whose description writes the HP it restores to a fallen character
 export const REVIVE_BUFF_ABILITY_NAME = "revive_buff";
-export const REVIVE_BUFF_DESCRIPTION_PATTERN = /^恢复(?<flat>\d+)HP$/u;
+export const REVIVE_BUFF_DESCRIPTION_REGEX = /^恢复(?<flat>\d+)HP$/u;
 // The percent a heal's share is out of
 export const HEAL_PERCENT_TOTAL = 100;
 // The use a dish's item carries to add its buff, and the target each use names: the selected character, alive or down,

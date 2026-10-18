@@ -1,8 +1,8 @@
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
 
 import { SceneGroupSource } from "#src/models/sceneGroup/SceneGroupSource";
-import { COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
+import { COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
 import { computeInteractionPrompts } from "#src/services/interaction/computeInteractionPrompts";
 import { INTERACTION_REACH } from "#src/services/interaction/constants";
 import { InteractionKind } from "genshin-interface";

@@ -56,38 +56,36 @@ describe(startQuests, () => {
     ).toStrictEqual(new Map([["3", { objectiveCounts: [], stepIndex: 1 }]]));
   });
 
-  describe("a series", () => {
-    const seriesQuests: Quest[] = [
-      { ...createQuest("1"), kind: QuestKind.World, offerTalkIds: ["first"] },
-      { ...createQuest("2"), kind: QuestKind.World, offerTalkIds: ["second"] },
-    ];
-    const chapter: QuestChapter = {
-      id: "chapter",
-      journalTextId: "journalTextId",
-      questIds: ["1", "2"],
-      regionTextId: "regionTextId",
-      rewards: [],
-      titleTextId: "titleTextId",
-    };
-    const secondTalkEvent = { kind: QuestObjectiveKind.TalkTo, targetId: "second" };
+  const seriesQuests: Quest[] = [
+    { ...createQuest("1"), kind: QuestKind.World, offerTalkIds: ["first"] },
+    { ...createQuest("2"), kind: QuestKind.World, offerTalkIds: ["second"] },
+  ];
+  const chapter: QuestChapter = {
+    id: "chapter",
+    journalTextId: "journalTextId",
+    questIds: ["1", "2"],
+    regionTextId: "regionTextId",
+    rewards: [],
+    titleTextId: "titleTextId",
+  };
+  const secondTalkEvent = { kind: QuestObjectiveKind.TalkTo, targetId: "second" };
 
-    test("The next quest is offered once the one before is finished", () => {
-      expect.hasAssertions();
+  test("the next quest is offered once the one before is finished", () => {
+    expect.hasAssertions();
 
-      expect(
-        startQuests(seriesQuests, new Map([["1", { objectiveCounts: [], stepIndex: 1 }]]), secondTalkEvent, [chapter]),
-      ).toStrictEqual(
-        new Map([
-          ["1", { objectiveCounts: [], stepIndex: 1 }],
-          ["2", { objectiveCounts: [], stepIndex: 0 }],
-        ]),
-      );
-    });
+    expect(
+      startQuests(seriesQuests, new Map([["1", { objectiveCounts: [], stepIndex: 1 }]]), secondTalkEvent, [chapter]),
+    ).toStrictEqual(
+      new Map([
+        ["1", { objectiveCounts: [], stepIndex: 1 }],
+        ["2", { objectiveCounts: [], stepIndex: 0 }],
+      ]),
+    );
+  });
 
-    test("A later quest is not offered early", () => {
-      expect.hasAssertions();
+  test("A later quest is not offered early", () => {
+    expect.hasAssertions();
 
-      expect(startQuests(seriesQuests, new Map(), secondTalkEvent, [chapter])).toStrictEqual(new Map());
-    });
+    expect(startQuests(seriesQuests, new Map(), secondTalkEvent, [chapter])).toStrictEqual(new Map());
   });
 });

@@ -6,4 +6,4 @@ export enum DishTarget {
   Selected = "Selected",
 }
 
-export const dishTargetSchema = z.enum(DishTarget);
+export const dishTargetSchema = z.enum(DishTarget) satisfies z.ZodType<DishTarget>;

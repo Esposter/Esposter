@@ -26,7 +26,7 @@ const regionData: RegionData = {
 };
 
 describe(findQuestTargetPosition, () => {
-  test("Tracking a go-to step points the beam at its place", () => {
+  test("tracking a go-to step points the beam at its place", () => {
     expect.hasAssertions();
 
     const targetId = getQuestTargetId(quest, { objectiveCounts: [], stepIndex: 0 });

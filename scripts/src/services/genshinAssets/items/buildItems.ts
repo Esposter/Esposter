@@ -1,9 +1,9 @@
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
 import { MATERIAL_TYPE_NONE } from "#src/services/genshinAssets/gathering/constants";
-import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";

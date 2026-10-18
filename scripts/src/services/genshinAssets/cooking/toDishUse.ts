@@ -6,10 +6,10 @@ import {
   ADD_SERVER_BUFF_USE_OP,
   DISH_TARGET_MAP,
   HEAL_BUFF_ABILITY_NAME,
-  HEAL_BUFF_DESCRIPTION_PATTERN,
+  HEAL_BUFF_DESCRIPTION_REGEX,
   HEAL_PERCENT_TOTAL,
   REVIVE_BUFF_ABILITY_NAME,
-  REVIVE_BUFF_DESCRIPTION_PATTERN,
+  REVIVE_BUFF_DESCRIPTION_REGEX,
 } from "#src/services/genshinAssets/cooking/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -24,14 +24,14 @@ const getBuffs = (materialRow: MaterialRow, buffRows: BuffRow[], abilityName: st
 // The heal a description leads with, as the share of Max HP and the flat amount it writes. A description that is no heal
 // Form is a drawback the dish gives instead, so it has none
 const toHeal = (description: string): DishUse["heal"] => {
-  const match = HEAL_BUFF_DESCRIPTION_PATTERN.exec(description);
+  const match = HEAL_BUFF_DESCRIPTION_REGEX.exec(description);
   if (match?.groups === undefined) return undefined;
   return { flat: Number(match.groups.flat), healthShare: Number(match.groups.percent) / HEAL_PERCENT_TOTAL };
 };
 
 // The HP a revive description restores, which every revive writes in the one form
 const toRevive = (materialRow: MaterialRow, description: string): DishUse["revive"] => {
-  const match = REVIVE_BUFF_DESCRIPTION_PATTERN.exec(description);
+  const match = REVIVE_BUFF_DESCRIPTION_REGEX.exec(description);
   if (match?.groups === undefined)
     throw new InvalidOperationError(Operation.Read, String(materialRow.id), "names a revive this build does not read");
   return { flat: Number(match.groups.flat) };

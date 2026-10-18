@@ -1,4 +1,5 @@
 import type { Quest } from "#src/models/quest/Quest";
+import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { RegionData } from "#src/models/world/RegionData";
 
 import { QuestKind } from "#src/models/quest/QuestKind";
@@ -26,21 +27,21 @@ const regionData: RegionData = {
 };
 
 describe(getEnteredGoToEvents, () => {
-  test("Reaching a go-to place completes the step", () => {
+  test("reaching a go-to place completes the step", () => {
     expect.hasAssertions();
 
     const questEvents = getEnteredGoToEvents([regionData], { x: 30, z: 40 }, { x: 3, z: 4 });
 
     expect(questEvents).toStrictEqual([{ kind: QuestObjectiveKind.GoTo, targetId: "place" }]);
     expect(
-      questEvents.reduce((progress, questEvent) => advanceQuest(quest, progress, questEvent), {
+      questEvents.reduce<QuestProgress>((progress, questEvent) => advanceQuest(quest, progress, questEvent), {
         objectiveCounts: [],
         stepIndex: 0,
       }),
     ).toStrictEqual({ objectiveCounts: [], stepIndex: 1 });
   });
 
-  test("Standing outside the radius leaves the step open", () => {
+  test("standing outside the radius leaves the step open", () => {
     expect.hasAssertions();
 
     expect(getEnteredGoToEvents([regionData], { x: 30, z: 40 }, { x: 30, z: 41 })).toStrictEqual([]);

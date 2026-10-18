@@ -1,5 +1,5 @@
-import ForgeScreenContainer from "#src/components/Forge/Screen/Index.vue";
 import { props, variants } from "#src/components/Forge/Screen/Index.fixture";
+import ForgeScreenContainer from "#src/components/Forge/Screen/Index.vue";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
