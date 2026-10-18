@@ -16,7 +16,7 @@ export const MIZUKI_CHARACTER_ID = 10_000_109;
 
 // The Dreamdrifter state her press starts lasts five seconds, as gcsim (MIT) mizuki/skill.go's dreamDrifterBaseDuration
 // Gives it, and its id is gcsim's dreamDrifterStateKey
-const DREAMDRIFTER_STATUS_ID = "dreamdrifter-state";
+export const DREAMDRIFTER_STATUS_ID = "dreamdrifter-state";
 const DREAMDRIFTER_SECONDS = 5;
 // The summon her press casts for its clouds, the name it is found by among the team's effects
 const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
