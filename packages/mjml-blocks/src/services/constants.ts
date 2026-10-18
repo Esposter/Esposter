@@ -23,7 +23,8 @@ import { mjTable } from "#src/services/components/mjTable";
 import { mjText } from "#src/services/components/mjText";
 import { mjWrapper } from "#src/services/components/mjWrapper";
 
-export const ALL_ATTRIBUTES_KEY = "all";
+// The key the defaults for every component are held under: mj-all's own tag, as each type's defaults sit under its tag
+export const ALL_ATTRIBUTES_KEY = "mj-all";
 export const ALLOWED_URL_SCHEMES: string[] = ["http", "https", "mailto", "tel"];
 // The tags MJML's preset lists that the package leaves out: includes read the disk, and the other two target by selector
 export const EXCLUDED_MJML_TAGS: string[] = ["mj-include", "mj-html-attributes", "mj-class"];

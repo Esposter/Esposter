@@ -1,7 +1,6 @@
 import type { MjmlJson } from "#src/models/MjmlJson";
 import type { MjmlRootProps } from "#src/models/MjmlRootProps";
 
-import { ALL_ATTRIBUTES_KEY } from "#src/services/constants";
 import { escapeMjmlAttributes } from "#src/services/escapeMjmlAttributes";
 import { escapeText } from "@esposter/shared";
 
@@ -24,7 +23,7 @@ export const renderMjmlHead = (rootProps: MjmlRootProps): MjmlJson[] => {
       attributes: {},
       children: attributesByType.map(([type, attributes]) => ({
         attributes: escapeMjmlAttributes(attributes),
-        tagName: type === ALL_ATTRIBUTES_KEY ? "mj-all" : type,
+        tagName: type,
       })),
       tagName: "mj-attributes",
     });

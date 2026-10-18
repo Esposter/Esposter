@@ -11,7 +11,12 @@ describe(resolveMjmlAttribute, () => {
     const text = { props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" };
     expect(
       definition &&
-        resolveMjmlAttribute(definition, { attributes: { all: { "font-family": "Georgia" } } }, text, "font-family"),
+        resolveMjmlAttribute(
+          definition,
+          { attributes: { "mj-all": { "font-family": "Georgia" } } },
+          text,
+          "font-family",
+        ),
     ).toBe("Georgia");
   });
   test("a set attribute wins over the cascade", () => {

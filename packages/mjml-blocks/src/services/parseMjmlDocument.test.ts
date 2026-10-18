@@ -83,7 +83,7 @@ const EVERY_TYPE_CONTENT: BlockDocument = {
   ],
   root: {
     props: {
-      attributes: { all: { "font-family": "Arial" }, "mj-text": { color: "#000000" } },
+      attributes: { "mj-all": { "font-family": "Arial" }, "mj-text": { color: "#000000" } },
       body: { "background-color": "#ffffff", width: "600px" },
       breakpoint: { width: "480px" },
       dir: "ltr",
@@ -289,6 +289,17 @@ describe(parseMjmlDocument, () => {
       TEST_MAX_NODES,
     );
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-text>"']);
+  });
+  test("a tag named all among the defaults is refused, not read as every component's", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head><mj-attributes><all padding="0px"></all></mj-attributes></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['"all" is not in the registry']);
   });
   test("an attribute on the title is refused by name", () => {
     expect.hasAssertions();

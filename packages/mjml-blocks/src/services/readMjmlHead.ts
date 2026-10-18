@@ -1,6 +1,6 @@
 import type { HTMLElement } from "node-html-parser";
 
-import { ALL_ATTRIBUTES_KEY, MJML_HEAD_SINGLE_TAGS } from "#src/services/constants";
+import { MJML_HEAD_SINGLE_TAGS } from "#src/services/constants";
 import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
 
@@ -28,13 +28,10 @@ export const readMjmlHead = (head: HTMLElement): Record<string, unknown> => {
     readTagNames.add(child.rawTagName);
     switch (child.rawTagName) {
       case "mj-attributes":
-        for (const grandchild of child.children) {
-          const typeName = grandchild.rawTagName === "mj-all" ? ALL_ATTRIBUTES_KEY : grandchild.rawTagName;
-          // A second default for one tag is refused under its name, not kept over the first
-          if (Object.hasOwn(typeAttributesMap, typeName))
-            props[getMjmlRefusalKey(grandchild.rawTagName)] = grandchild.attributes;
-          else typeAttributesMap[typeName] = grandchild.attributes;
-        }
+        // Each default sits under its tag, mj-all included, and a second default for one tag is refused under its name
+        for (const { attributes, rawTagName } of child.children)
+          if (Object.hasOwn(typeAttributesMap, rawTagName)) props[getMjmlRefusalKey(rawTagName)] = attributes;
+          else typeAttributesMap[rawTagName] = attributes;
         break;
       case "mj-breakpoint":
         props.breakpoint = child.attributes;

@@ -150,6 +150,13 @@ A document the registry accepts SHALL render to MJML that compiles under MJML's 
 - **THEN** the read is refused
 - **AND** the refusal names the second default's tag, and the first default is kept
 
+#### Scenario: A tag named all among the defaults is refused, not read as every component's
+
+- **GIVEN** MJML source whose `mj-attributes` holds a tag named `all` rather than `mj-all`
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names `all` as a type the registry does not hold
+
 ### Requirement: The blocks run where there is no document object model
 
 The MJML blocks SHALL check, render, serialise and read back an email with no document object model and no UI framework present.

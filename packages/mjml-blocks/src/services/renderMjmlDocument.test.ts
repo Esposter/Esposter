@@ -277,7 +277,7 @@ describe(renderMjmlDocument, () => {
 
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
       content: [{ props: { children: [createTextSection()], id: TEST_WRAPPER_ID }, type: "mj-wrapper" }],
-      root: { props: { attributes: { all: { "font-family": "Arial" } } } },
+      root: { props: { attributes: { "mj-all": { "font-family": "Arial" } } } },
     });
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
