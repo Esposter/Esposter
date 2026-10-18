@@ -1,17 +1,25 @@
+import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
+import type { GcgSideState } from "#src/models/gcg/GcgSideState";
+import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
+import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { prepareGcgSide } from "#src/services/gcg/prepareGcgSide";
 import { readGcgDeck } from "#src/services/gcg/readGcgDeck";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
+import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("a skill's on-use hooks", () => {
   const SEED = 9;
@@ -53,5 +61,109 @@ describe("a skill's on-use hooks", () => {
       onstages: takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId),
       result,
     }).toStrictEqual({ defenderHp: DILUC_HP_AFTER_PYRONADO, onstages: [113_022], result: GcgActionResult.Done });
+  });
+});
+
+const createSide = (): GcgSideState => ({
+  activeIndex: 0,
+  cards: [],
+  characters: [
+    {
+      aura: GcgAura.None,
+      character: {
+        descriptionTextId: 2,
+        element: Element.Hydro,
+        hp: 10,
+        id: 1,
+        maxEnergy: 3,
+        nameTextId: 1,
+        skills: [],
+        weapon: "",
+      },
+      energy: 0,
+      equipments: [],
+      hp: 10,
+      isFrozen: false,
+      shield: 0,
+      statuses: [],
+    },
+  ],
+  deckCardIds: [],
+  dice: [],
+  drawPile: [],
+  hand: [],
+  hasDeclaredEnd: false,
+  hasPrepared: true,
+  hasRolled: true,
+  isReplacementPending: false,
+  onstages: [],
+  summons: [],
+  supports: [],
+  usedCardIds: [],
+  usedSkillIds: [],
+});
+
+const createDuel = (): GcgDuel => ({
+  actingSideIndex: 0,
+  firstSideIndex: 0,
+  nextFirstSideIndex: 0,
+  phase: GcgPhase.Action,
+  random: () => 0,
+  round: 1,
+  rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
+  sides: [createSide(), createSide()],
+});
+
+describe("a skill's any-side hooks", () => {
+  const SKILL_ID = 990_101;
+  const SUPPORT_ID = 990_201;
+  const DAMAGE_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Fire_2",
+    energyGain: 0,
+    id: SKILL_ID,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("should let a card on the opposing side hear the skill, with its own side in the context", () => {
+    expect.hasAssertions();
+    const onAnySkillUsed = vi.fn<NonNullable<GcgCardModule["onAnySkillUsed"]>>();
+    vi.spyOn(GcgCardIdModuleMap, "get").mockImplementation((cardId) =>
+      cardId === SUPPORT_ID ? { onAnySkillUsed } : undefined,
+    );
+    const duel = createDuel();
+    const supportZoneCard = { cardId: SUPPORT_ID, counter: 0, rounds: 0, usages: 0 };
+    takeOne(duel.sides, 1).supports.push(supportZoneCard);
+    expect(runGcgSkillUse({ duel, sideIndex: 0 }, DAMAGE_SKILL)).toBe(true);
+    expect(onAnySkillUsed.mock.calls).toStrictEqual([
+      [
+        { characterIndex: undefined, duel, sideIndex: 1, skill: DAMAGE_SKILL },
+        DAMAGE_SKILL,
+        supportZoneCard,
+        [{ damageType: Element.Pyro }],
+      ],
+    ]);
+  });
+
+  test("should prune a card that an opposing side's skill spends, from the side it is on", () => {
+    expect.hasAssertions();
+    vi.spyOn(GcgCardIdModuleMap, "get").mockImplementation((cardId) =>
+      cardId === SUPPORT_ID
+        ? {
+            initialUsages: 1,
+            onAnySkillUsed: (_context, _skill, zoneCard) => {
+              zoneCard.usages = 0;
+            },
+          }
+        : undefined,
+    );
+    const duel = createDuel();
+    takeOne(duel.sides, 1).supports.push({ cardId: SUPPORT_ID, counter: 0, rounds: 0, usages: 1 });
+    expect(runGcgSkillUse({ duel, sideIndex: 0 }, DAMAGE_SKILL)).toBe(true);
+    expect(takeOne(duel.sides, 1).supports).toStrictEqual([]);
   });
 });

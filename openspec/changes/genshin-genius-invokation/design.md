@@ -26,6 +26,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 - **Timaeus spends the Artifact's total cost.** Once per Round its free equip reduces the Artifact's remaining cost to none, and spends materials equal to the Artifact's total cost, read from the card. This is a provisional reading of "spend Transmutation Materials equal to the total cost".
 - **A play takes the choice the duel screen gives it.** `playGcgCard` takes a `GcgPlayChoice` after the paid dice and passes it to the card's `play` as its third argument. Toss-Up's selections are the first such choice; the duel screen that supplies them is not built yet. A reroll a card makes outside the roll phase throws through `rethrowGcgDice`, the same throw as the roll phase's one reroll, so both read the duel's random source.
 - **Toss-Up's rerolls count valid selections only.** A selection naming a die the side does not have is passed over and does not count toward its two rerolls.
+- **A card on either side hears a skill of either side.** `onAnySkillUsed` runs for each card on each side's field, after the using side's `onSkillUsed` hooks, with the card's own side in the context, so a card that answers the opposing side's skills (Chang the Ninth) hears them. The cards that hear a skill are those on the field when it is used, as before, and both sides' zone cards are pruned after it, so a card an opposing skill spends leaves its field then.
 
 ## Scope and order
 
