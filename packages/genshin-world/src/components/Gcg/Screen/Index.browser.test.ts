@@ -32,11 +32,14 @@ const clickDie = (dieIndex: number) => {
   document.querySelectorAll<HTMLButtonElement>("button.die").item(dieIndex)?.click();
 };
 const renderScreenWithTossUp = (onPlayCard: (...args: unknown[]) => void) => {
-  duel.sides[0].cards = [...duel.sides[0].cards, tossUpCard];
-  duel.sides[0].hand = [GCG_TOSS_UP_CARD_ID];
+  const [playerSide, opponentSide] = duel.sides;
   render(GcgScreen, {
     props: {
       ...screenFixtureProps,
+      duel: {
+        ...duel,
+        sides: [{ ...playerSide, cards: [...playerSide.cards, tossUpCard], hand: [GCG_TOSS_UP_CARD_ID] }, opponentSide],
+      },
       onPlayCard,
       textMap: { ...screenFixtureProps.textMap, [TOSS_UP_NAME_TEXT_ID]: "Toss-Up" },
     },
