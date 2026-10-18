@@ -1,6 +1,6 @@
 ## Purpose
 
-Dehya's kit as built, with her four strikes, a provisional charged attack, her plunges and Molten Inferno's initial hit, and what is left of her Sanctum, Ranging Flame, Flame-Mane's Fist and Incineration Drive, and her passives.
+Dehya's kit as built, with her four strikes, a provisional charged attack, her plunges and Molten Inferno's initial hit, and what is left of her Sanctum, Ranging Flame, Flame-Mane's Fist and Incineration Drive, her passives, and her constellations.
 
 ## Requirements
 
@@ -40,3 +40,13 @@ Molten Inferno SHALL deal an initial Pyro hit in a circle of radius 5 metres, la
 - **GIVEN** Dehya has less energy than Molten Inferno costs
 - **WHEN** the player casts Molten Inferno
 - **THEN** it does not cast
+
+### Requirement: Dehya's constellations
+
+Dehya's Constellations 1, 2, 4 and 6 SHALL NOT take effect: Constellation 1 waits on her Max HP being raised by 20%, Constellation 2 on the Sanctum that Molten Inferno: Ranging Flame recreates, and Constellations 4 and 6 on the Flame-Mane's Fist and Incineration Drive hits of Leonine Bite.
+
+#### Scenario: Constellations do nothing
+
+- **GIVEN** Dehya has any of her constellations unlocked
+- **WHEN** the player fights with Dehya
+- **THEN** that constellation has no effect
