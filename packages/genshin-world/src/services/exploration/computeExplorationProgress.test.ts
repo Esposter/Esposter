@@ -27,4 +27,10 @@ describe(computeExplorationProgress, () => {
 
     expect(computeExplorationProgress(area, new Set(["40", "41"]))).toBe(100);
   });
+
+  test("should read zero for an area with no total, not divide by it", () => {
+    expect.hasAssertions();
+
+    expect(computeExplorationProgress({ doings: [], total: 0 }, new Set())).toBe(0);
+  });
 });

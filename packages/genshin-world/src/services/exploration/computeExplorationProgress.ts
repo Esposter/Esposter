@@ -9,6 +9,8 @@ export const computeExplorationProgress = (
   { doings, total }: Pick<ExplorationArea, "doings" | "total">,
   exploredDoingIds: ReadonlySet<string>,
 ): number => {
+  // An area with no total has nothing to explore, so it reads zero rather than dividing by it
+  if (total === 0) return 0;
   const doneWeight = doings.reduce((sum, { id, weight }) => (exploredDoingIds.has(id) ? sum + weight : sum), 0);
   return Math.min(Math.floor((doneWeight * 100) / total), 100);
 };

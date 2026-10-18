@@ -14,10 +14,10 @@ export const computeNavigationMark = (
   const directionX = isBehind ? -x : x;
   const directionY = isBehind ? -y : y;
   const isOutOfView = isBehind || Math.abs(x) > 1 || Math.abs(y) > 1;
-  // A share of the screen is two units of normalised device coordinates, so the inset is taken off each edge twice
-  const scale = isOutOfView
-    ? (1 - 2 * NAVIGATION_MARK_INSET_SHARE) / Math.max(Math.abs(directionX), Math.abs(directionY))
-    : 1;
+  const reach = Math.max(Math.abs(directionX), Math.abs(directionY));
+  // A share of the screen is two units of normalised device coordinates, so the inset is taken off each edge twice. A
+  // Projection exactly on the centre has no edge to run to, so it stays put
+  const scale = isOutOfView && reach > 0 ? (1 - 2 * NAVIGATION_MARK_INSET_SHARE) / reach : 1;
   return {
     angle: Math.atan2(directionX * aspect, directionY),
     isOutOfView,

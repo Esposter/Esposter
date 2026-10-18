@@ -25,6 +25,14 @@ describe(computeNavigationMark, () => {
     });
   });
 
+  test("a landmark behind the camera projected on the centre is held in place, not off the screen", () => {
+    expect.hasAssertions();
+
+    const { angle, ...mark } = computeNavigationMark({ x: 0, y: 0 }, true, 1);
+    expect(Number.isFinite(angle)).toBe(true);
+    expect(mark).toStrictEqual({ isOutOfView: true, left: 0.5, top: 0.5 });
+  });
+
   test("a landmark behind the camera is held at the edge on its own side", () => {
     expect.hasAssertions();
 
