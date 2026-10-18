@@ -17,19 +17,17 @@ const SIGIL_ID = "sigilOfRemembrance";
 const SIGIL_LOCKOUT_ID = "farewellSongLockout";
 const SIGIL_MAXIMUM = 4;
 
-// The Parting Refrain at its rank: the wielder's Elemental Mastery rises by the rank's amount. Each Elemental Skill or Elemental
-// Burst hit it deals gains a Sigil of Remembrance, once every cooldown, whether or not it is on the field. At four Sigils they are
+// The Parting Refrain at its rank: the rank's Elemental Mastery is the table's line, which the passive does not repeat. Each Elemental Skill
+// Or Elemental Burst hit it deals gains a Sigil of Remembrance, once every cooldown, whether or not it is on the field. At four Sigils they are
 // Consumed and the deployed team gains Farewell Song for the rank's seconds, with the second Elemental Mastery and the second ATK
 // Share, and no Sigil is gained for the rank's lockout seconds after it
 export const createThePartingRefrainPassiveModule = (params: number[]): WeaponPassiveModule => {
-  const elementalMastery = takeOne(params, 0);
   const sigilCooldownSeconds = takeOne(params, 1);
   const farewellSeconds = takeOne(params, 2);
   const farewellElementalMastery = takeOne(params, 3);
   const farewellAttackPercent = takeOne(params, 4);
   const lockoutSeconds = takeOne(params, 5);
   return {
-    getPassiveBonuses: () => [{ amount: elementalMastery, attribute: Attribute.ElementalMastery }],
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       if (
         event.kind !== KitEventKind.DamageTaken ||

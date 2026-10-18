@@ -48,12 +48,10 @@ describe(createThePartingRefrainPassiveModule, () => {
     striker: wielder,
   });
 
-  test("the wielder's Elemental Mastery is raised by the rank's amount", () => {
+  test("the rank's Elemental Mastery is the table's line, so the passive adds no Elemental Mastery bonus", () => {
     expect.hasAssertions();
 
-    expect(thePartingRefrainPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 60, attribute: Attribute.ElementalMastery },
-    ]);
+    expect(thePartingRefrainPassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([]);
   });
 
   test("four Sigils from Elemental Skill and Burst hits raise the team's Elemental Mastery and ATK for twelve seconds", () => {
