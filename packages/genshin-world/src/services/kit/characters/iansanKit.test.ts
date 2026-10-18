@@ -5,16 +5,24 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
-import { createIansanKitBehaviour, IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
+import {
+  createIansanKitBehaviour,
+  IANSAN_CHARACTER_ID,
+  IANSAN_WARMING_UP_ID,
+} from "#src/services/kit/characters/iansanKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { triggerKitNightsoulBurst } from "#src/services/kit/triggerKitNightsoulBurst";
+import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
@@ -202,6 +210,62 @@ describe(createIansanKitBehaviour, () => {
     stepKitSeconds(context, 0.9);
     // 35 from the burst, 4 at 1 second, 1 at 2 and 3 seconds, then 1 gained at 3.6 seconds and 4 at 4 seconds
     expect(countIansanPoints(context)).toBe(47);
+  });
+
+  // Iansan on the field in Natlan with 1000 ATK, her burst landed and a Nightsoul burst set off, her HP at half so a heal shows
+  const createWarmingUpIansan = (ascension: number) => {
+    const combatant: Combatant = {
+      ...createIansanCombatant(),
+      ascension,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseHealth, value: 10_000 },
+        { attribute: Attribute.BaseAttack, value: 1000 },
+      ]),
+      regionId: NATLAN_REGION_ID,
+    };
+    const context = landIansanBurst(combatant);
+    triggerKitNightsoulBurst({} as Enemy, combatant, Element.Pyro, context);
+    getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare = 0.5;
+    return context;
+  };
+  const healthShareOf = (context: KitContext) => getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare;
+
+  test("a passive takes effect at its ascension phase: a Nightsoul burst gives Iansan Warming Up, and her restore heals the active character for 60% of her ATK", () => {
+    expect.hasAssertions();
+    const context = createWarmingUpIansan(4);
+    stepKitSeconds(context, 1.2);
+    // 60% of her 1200 ATK, with Precise Movement's 20% in it, is 720 HP of her 10,000 Max HP
+    expect(healthShareOf(context)).toBeCloseTo(0.572);
+  });
+
+  test("does not take effect below its ascension phase: Iansan below Ascension 4 gets no Warming Up heal", () => {
+    expect.hasAssertions();
+    const context = createWarmingUpIansan(3);
+    stepKitSeconds(context, 1.2);
+    expect(healthShareOf(context)).toBe(0.5);
+  });
+
+  test("a passive takes effect at its ascension phase: Warming Up's heal waits out a 2.8-second cooldown after each heal", () => {
+    expect.hasAssertions();
+    const context = createWarmingUpIansan(4);
+    stepKitSeconds(context, 1.2);
+    stepKitSeconds(context, 2);
+    expect(healthShareOf(context)).toBeCloseTo(0.572);
+    stepKitSeconds(context, 1);
+    expect(healthShareOf(context)).toBeCloseTo(0.644);
+  });
+
+  test("a passive takes effect at its ascension phase: Warming Up lasts 10 seconds from the Nightsoul burst", () => {
+    expect.hasAssertions();
+    const context = createWarmingUpIansan(4);
+    stepKitSeconds(context, 9.5);
+    expect(checkIsKitStatusActive(context.kitEffectState.effects, IANSAN_CHARACTER_ID, IANSAN_WARMING_UP_ID)).toBe(
+      true,
+    );
+    stepKitSeconds(context, 1);
+    expect(checkIsKitStatusActive(context.kitEffectState.effects, IANSAN_CHARACTER_ID, IANSAN_WARMING_UP_ID)).toBe(
+      false,
+    );
   });
 
   test("the burst's restore runs a second for its 12 seconds, and not after", () => {
