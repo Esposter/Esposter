@@ -138,6 +138,12 @@ const spendPaleHymn = (kitEffectState: KitEffectState, characterId: number): voi
     consumeKitResource(kitEffectState, characterId, LAUMA_PALE_HYMN_BURST_ID, 1);
 };
 
+// The Elemental Mastery ratio Constellation 2 adds to a Pale Hymn Bloom, or to a Lunar-Bloom, from Constellation 2 onward
+const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: boolean): number => {
+  if (constellationCount < C2_CONSTELLATION) return 0;
+  return isLunar ? C2_LUNAR_BLOOM_INCREASE : C2_BLOOM_INCREASE;
+};
+
 // Lauma's behaviour: Hymn of Hunting's press and its hold each plant the Frostgrove Sanctuary where she stands, whose
 // Ticks add the table's share of her Elemental Mastery, and every hit of the skill's sheds the table's Dendro and Hydro
 // RES. Hymn of Eternal Rest plays while the party holds Dew, spending up to three on a direct Lunar-Bloom hit
@@ -151,12 +157,6 @@ const spendPaleHymn = (kitEffectState: KitEffectState, characterId: number): voi
 // Constellation 1 needs the Threads of Life heal on Lunar-Bloom reactions and the Spirit Envoy's stamina, not built
 // Constellation 4 needs a hit event from the Sanctuary's ticks to restore her energy, which no kit event carries
 // Constellation 6 needs the Pale Hymn stacks it gives and an extra Lunar-Bloom Dendro hit per Sanctuary attack, not built
-// The Elemental Mastery ratio Constellation 2 adds to a Pale Hymn Bloom, or to a Lunar-Bloom, from Constellation 2 onward
-const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: boolean): number => {
-  if (constellationCount < C2_CONSTELLATION) return 0;
-  return isLunar ? C2_LUNAR_BLOOM_INCREASE : C2_BLOOM_INCREASE;
-};
-
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
