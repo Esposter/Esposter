@@ -8,6 +8,7 @@ import type { QuestEvent } from "#src/models/quest/QuestEvent";
 export interface WorldEventMap {
   achievementEvents: [AchievementEvent[]];
   bagChange: [Inventory];
+  chestOpened: [];
   defeatEnemy: [Enemy];
   parentQuestFinish: [];
   pickUpMora: [];

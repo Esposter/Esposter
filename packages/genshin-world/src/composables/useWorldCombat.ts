@@ -175,6 +175,10 @@ export const useWorldCombat = ({
   events.on("pickUpMora", () => {
     kitContext.outbox.push({ characterId: getActiveCharacterId(party), kind: KitEventKind.MoraPickedUp });
   });
+  // A chest opened in the world is an event of combat for the next step too, which an artifact set answers
+  events.on("chestOpened", () => {
+    kitContext.outbox.push({ characterId: getActiveCharacterId(party), kind: KitEventKind.ChestOpened });
+  });
   const clearKitEffects = () => {
     kitContext.kitEffectState.effects = [];
   };

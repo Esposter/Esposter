@@ -1,5 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -27,5 +28,23 @@ describe(useWorldCombat, () => {
     });
 
     expect(characters.value).toStrictEqual([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);
+  });
+
+  test("a chest opened in the world reaches the combat", () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const { kitContext } = useWorldCombat({
+      enemyTables,
+      events,
+      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+      onPartyRevived: () => {},
+      placeWorldDrops: () => {},
+      savedCharacters: [],
+      startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
+      statTables,
+    });
+    events.emit("chestOpened");
+
+    expect(kitContext.outbox).toStrictEqual([{ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.ChestOpened }]);
   });
 });
