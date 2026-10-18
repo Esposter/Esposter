@@ -21,9 +21,10 @@ const attachSuperlativeToItto = (duel: GcgDuel, sideIndex: number): void => {
   if (itto) placeGcgZoneCard(itto.statuses, SUPERLATIVE_SUPERSTRENGTH_ID, superlativeSuperstrength);
 };
 
-// Ushi, a summon that lasts the round: while it is present the active character takes 1 less DMG, and the first DMG she
-// Takes attaches Superlative Superstrength to Arataki Itto. At the End Phase it deals 1 Geo DMG, attaches Superlative
-// Superstrength to Itto, and is discarded. The first-DMG trigger rides the reduction, so it does not hear standby piercing
+// Ushi, a summon that lasts the round: while its usage is unspent, the active character takes 1 less DMG. The first DMG that
+// Reduction applies to attaches Superlative Superstrength to Arataki Itto, once while Ushi is present. At the End Phase it
+// Deals 1 Geo DMG, attaches Superlative Superstrength to Itto, and is discarded. The trigger rides the reduction, so it does not
+// Hear standby piercing
 export const ushi: GcgCardModule = {
   initialCounter: 1,
   initialRounds: 1,
