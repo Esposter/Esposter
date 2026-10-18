@@ -61,20 +61,24 @@ The editor around the frame is library parts: the palette and the layers tree in
 
 ## Key files
 
-| File                                                              | Role after the change                                                                     |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `apps/web/app/composables/ui/useCommands.ts`                      | every pointer and keyboard action registered as a command, listed in the shortcuts dialog |
-| `apps/web/app/composables/ui/useContextMenu.ts`                   | the right-click menu the node toolbar's overflow `Item` list also feeds                   |
-| `apps/web/app/composables/resource/useUploadResourceFile.ts`      | an image field's upload in the Content panel                                              |
-| `packages/configuration/src/getVitestBrowserConfiguration.ts`     | the shared browser configuration the app's browser suite takes                            |
-| `packages/headless-block-editor/src/services/getAcceptedTypes.ts` | the slot check every listed Move to target passes                                         |
-| `packages/headless-block-editor/src/services/pasteBlockNodes.ts`  | the paste a duplicate is, its copy placed straight after the node                         |
-| `apps/web/package.json`                                           | the browser suite's script, apart from the default run                                    |
+| File                                                                         | Role after the change                                                                     |
+| :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `apps/web/app/composables/ui/useCommands.ts`                                 | every pointer and keyboard action registered as a command, listed in the shortcuts dialog |
+| `apps/web/app/composables/ui/useContextMenu.ts`                              | the right-click menu the node toolbar's overflow `Item` list also feeds                   |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`                 | an image field's upload in the Content panel                                              |
+| `packages/configuration/src/getVitestBrowserConfiguration.ts`                | the shared browser configuration the app's browser suite takes                            |
+| `packages/headless-block-editor/src/services/getAcceptedTypes.ts`            | the slot check every listed Move to target passes                                         |
+| `packages/headless-block-editor/src/services/pasteBlockNodes.ts`             | the paste a duplicate is, its copy placed straight after the node                         |
+| `packages/headless-block-editor/src/services/getBlockLayerRows.ts`           | the layers tree's rows: every node in layer order, with its depth                         |
+| `packages/headless-block-editor/src/services/getAdjacentBlockNodePointer.ts` | the previous and next node in document order, across slot boundaries                      |
+| `packages/headless-block-editor/src/services/getAcceptingSlotPointers.ts`    | the slots Move to lists for a node, outside the node's own subtree                        |
+| `packages/headless-block-editor/src/services/moveOutAfterParent.ts`          | the move Alt+Left makes, to just after the parent                                         |
+| `packages/headless-block-editor/src/services/duplicateBlockNode.ts`          | the duplicate command, a paste of the node's copy after it                                |
+| `apps/web/package.json`                                                      | the browser suite's script, apart from the default run                                    |
 
 New code lands here:
 
 ```text
-packages/headless-block-editor/src/services/    document-order neighbours, the accepting slots, the move out, the layers rows and duplicate
 apps/web/vitest.browser.config.ts               the app's browser suite
 apps/web/shared/services/pageBuilder/            the device widths and the breakpoints they sit inside
 apps/web/app/store/pageBuilder/                  the selection and the device width, keyed by resource

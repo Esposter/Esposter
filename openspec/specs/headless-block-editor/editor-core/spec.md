@@ -131,3 +131,94 @@ The editor core SHALL render a document by rendering each node after its slots, 
 - **WHEN** it is rendered
 - **THEN** that node produces no output
 - **AND** its siblings render
+
+### Requirement: The core reads a document in order and lists where a node may go
+
+The editor core SHALL list a document's nodes in layer order with their depths, SHALL name a node's neighbours in that order, SHALL list only the slots that accept a node and never a slot inside the node, SHALL move a node out after its parent, and SHALL duplicate a node straight after itself.
+
+#### Scenario: The layer rows of a document
+
+- **GIVEN** a document of two sections, the first holding a heading
+- **WHEN** its layer rows are listed
+- **THEN** the first section is at depth 0, its heading at depth 1 and the second section at depth 0, in document order
+
+#### Scenario: A node's row comes before its slots' rows
+
+- **GIVEN** a section whose children hold a heading and a list, the list holding an item, followed by a second section
+- **WHEN** its layer rows are listed
+- **THEN** each node's row comes before the rows of its slots, and the item is at depth 2
+
+#### Scenario: Previous and next across a slot boundary
+
+- **GIVEN** a document of two sections, the first holding a heading
+- **WHEN** the next node after the heading is named
+- **THEN** it is the second section
+
+#### Scenario: Previous and next at both ends
+
+- **GIVEN** a document of two sections
+- **WHEN** the previous node before the first section is named
+- **THEN** no node is named
+
+#### Scenario: A pointer naming no node has no neighbour
+
+- **GIVEN** a document of two sections
+- **WHEN** the next node after a pointer naming no node is named
+- **THEN** no node is named
+
+#### Scenario: Accepting slots for a heading
+
+- **GIVEN** a registry whose root accepts only sections, and a document of two sections, the first holding a heading
+- **WHEN** the slots accepting the heading are listed
+- **THEN** they are the children slot of each section, in document order
+- **AND** the root's content is not listed
+
+#### Scenario: Accepting slots for a section
+
+- **GIVEN** a document of two sections
+- **WHEN** the slots accepting the first section are listed
+- **THEN** only the root's content is listed
+
+#### Scenario: Accepting slots never include the node's own subtree
+
+- **GIVEN** a registry whose sections accept sections in their children, and a document of two sections, the first holding a heading
+- **WHEN** the slots accepting the first section are listed
+- **THEN** the root's content and the second section's children are listed
+- **AND** no slot inside the first section is listed
+
+#### Scenario: A pointer naming no node accepts no slot
+
+- **GIVEN** a document of two sections
+- **WHEN** the slots accepting a pointer naming no node are listed
+- **THEN** no slot is listed
+
+#### Scenario: Moving a node out after its parent
+
+- **GIVEN** a registry whose root accepts headings, and a document whose first section holds a heading
+- **WHEN** the heading is moved out
+- **THEN** the heading sits straight after the first section, in the root's content
+
+#### Scenario: Moving out where the root refuses the node
+
+- **GIVEN** a registry whose root accepts only sections, and a document whose first section holds a heading
+- **WHEN** the heading is moved out
+- **THEN** no edit is made
+
+#### Scenario: Moving out a node already at the root
+
+- **GIVEN** a registry whose root accepts headings, and a document of two sections
+- **WHEN** the first section is moved out
+- **THEN** no edit is made
+
+#### Scenario: Duplicating a node places its copy after it
+
+- **GIVEN** a document whose first section holds a heading
+- **WHEN** the heading is duplicated
+- **THEN** a heading with a fresh id sits straight after it in the same slot
+- **AND** editing the copy's text leaves the original's text unchanged
+
+#### Scenario: Duplicating a pointer naming no node
+
+- **GIVEN** a document of two sections
+- **WHEN** a pointer naming no node is duplicated
+- **THEN** no edit is made

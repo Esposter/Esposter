@@ -1,6 +1,6 @@
 # Headless block editor core
 
-The editing model of a block editor: a registry-checked document whose root declares its own content and props, commands that return JSON Patch operations, the navigation a removal needs, and a fold that renders a checked document from its leaves up. It is built for the page builder's editors, which are its planned consumers in [the document model change](../../../changes/resource-page-builder-document-model/); the package's own tests run in the plain Node environment.
+The editing model of a block editor: a registry-checked document whose root declares its own content and props, commands that return JSON Patch operations, the navigation a canvas draws over it, and a fold that renders a checked document from its leaves up. It is built for the page builder's editors, which are its planned consumers in [the document model change](../../../changes/resource-page-builder-document-model/); the package's own tests run in the plain Node environment.
 
 ## How an edit runs
 
@@ -29,32 +29,40 @@ flowchart TD
 - **Refusals are empty operation lists, and an edit that cannot apply is an error.** A command refuses by returning nothing, so a history never records it. `applyBlockEdit` wraps `applyPatches` in `getResult`, so an operation that cannot apply, such as a prop update on a node no longer in the document, refuses the whole edit and leaves the document as it was.
 - **A paste re-mints every id.** `remintBlockNode` gives a copy and every node in its slots fresh ids, so a copy shares none with the original and a copy of a node from another editor is refused by the registry.
 - **Removal names the focus target in post-removal coordinates.** The next sibling takes the removed node's index, so its pointer is the same index; otherwise the previous sibling; otherwise the parent, and the root is the empty pointer.
+- **A document lists its nodes in layer order.** `getBlockLayerRows` walks each list in index order, putting a node's row before the rows of its slots, one depth lower and in the order its type's definition declares them. Previous and next are the rows beside a node, so a neighbour can sit across a slot boundary, and a slot whose value is not a list contributes nothing.
+- **Move to lists only slots outside the node's subtree.** `getAcceptingSlotPointers` checks each slot with `getAcceptedTypes`, the root's content first and then each node's slots in layer-row order, and it skips every slot under the node, its own slots included, so a node is never offered a place inside itself.
+- **Move out and duplicate are compositions.** `moveOutAfterParent` is a `moveBlockNode` into the parent's slot at the parent's index plus one; the removal shifts only the node's own siblings, never the parent, so the refusals are the move's own. `duplicateBlockNode` is a `pasteBlockNodes` of the node into its own slot at its index plus one, so the copy gets fresh ids the same way a paste does.
 - **The undo history is not the core's.** The bounded history that undoes a document's edits lives in `@esposter/shared`, [as its own capability](../../shared/bounded-history/design.md), so the core keeps no copy of it.
 - **A document folds from its leaves up.** `renderBlockNodes` renders each node of a slot in order, after each of the node's slots has rendered, and hands the consumer's render function the node, its type's definition and each slot's output. A node whose type the registry lacks renders nothing, so a fold over a document that skipped its parse still renders what the registry knows. Each renderer walks the tree through this one fold rather than its own recursion.
 
 ## Key files
 
-| File                                                                       | Role                                                                            |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `packages/headless-block-editor/src/models/BlockRegistry.ts`               | the registry: its root beside its types, generic over the type definition       |
-| `packages/headless-block-editor/src/models/BlockRootDefinition.ts`         | the root's declared content types and props schema                              |
-| `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts` | the document's shape, the root's content and props, the node limit and the walk |
-| `packages/headless-block-editor/src/services/checkBlockNodes.ts`           | the slot walk: registry membership, slot acceptance, props, ids, and recursion  |
-| `packages/headless-block-editor/src/services/createBlockNodesSchema.ts`    | a slot's children checked by the same walk                                      |
-| `packages/headless-block-editor/src/services/getAcceptedTypes.ts`          | the types a slot accepts; the root's content types come from the registry       |
-| `packages/headless-block-editor/src/services/moveBlockNode.ts`             | a move as a remove and an add, refused into its own subtree                     |
-| `packages/headless-block-editor/src/services/moveIntoPreviousSibling.ts`   | a move to the end of the previous sibling's accepting slot                      |
-| `packages/headless-block-editor/src/services/pasteBlockNodes.ts`           | copies with fresh ids, checked as the destination slot's children               |
-| `packages/headless-block-editor/src/services/renderBlockNodes.ts`          | the fold from the leaves up, through a consumer's render function               |
-| `packages/headless-block-editor/src/services/getFocusAfterRemoval.ts`      | the node that takes focus after a removal                                       |
-| `packages/headless-block-editor/src/services/applyBlockEdit.ts`            | an edit applied as one, or refused whole                                        |
-| `apps/web/shared/models/db/resource/JsonPatchOperation.ts`                 | the app's wire schema for an operation, beside its one consumer                 |
+| File                                                                         | Role                                                                            |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `packages/headless-block-editor/src/models/BlockRegistry.ts`                 | the registry: its root beside its types, generic over the type definition       |
+| `packages/headless-block-editor/src/models/BlockRootDefinition.ts`           | the root's declared content types and props schema                              |
+| `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts`   | the document's shape, the root's content and props, the node limit and the walk |
+| `packages/headless-block-editor/src/services/checkBlockNodes.ts`             | the slot walk: registry membership, slot acceptance, props, ids, and recursion  |
+| `packages/headless-block-editor/src/services/createBlockNodesSchema.ts`      | a slot's children checked by the same walk                                      |
+| `packages/headless-block-editor/src/services/getAcceptedTypes.ts`            | the types a slot accepts; the root's content types come from the registry       |
+| `packages/headless-block-editor/src/services/moveBlockNode.ts`               | a move as a remove and an add, refused into its own subtree                     |
+| `packages/headless-block-editor/src/services/moveIntoPreviousSibling.ts`     | a move to the end of the previous sibling's accepting slot                      |
+| `packages/headless-block-editor/src/services/pasteBlockNodes.ts`             | copies with fresh ids, checked as the destination slot's children               |
+| `packages/headless-block-editor/src/services/renderBlockNodes.ts`            | the fold from the leaves up, through a consumer's render function               |
+| `packages/headless-block-editor/src/services/getFocusAfterRemoval.ts`        | the node that takes focus after a removal                                       |
+| `packages/headless-block-editor/src/models/BlockLayerRow.ts`                 | a row of the layers tree: a node's depth, its pointer and its type              |
+| `packages/headless-block-editor/src/services/getBlockLayerRows.ts`           | every node in layer order, a node's row before its slots' rows                  |
+| `packages/headless-block-editor/src/services/getAdjacentBlockNodePointer.ts` | the node a row offset from another, past a slot boundary                        |
+| `packages/headless-block-editor/src/services/getAcceptingSlotPointers.ts`    | every slot that accepts a node, outside the node's own subtree                  |
+| `packages/headless-block-editor/src/services/moveOutAfterParent.ts`          | a move to just after the node's parent, in the slot that holds the parent       |
+| `packages/headless-block-editor/src/services/duplicateBlockNode.ts`          | a paste of the node's copy straight after it, in its own slot                   |
+| `packages/headless-block-editor/src/services/applyBlockEdit.ts`              | an edit applied as one, or refused whole                                        |
+| `apps/web/shared/models/db/resource/JsonPatchOperation.ts`                   | the app's wire schema for an operation, beside its one consumer                 |
 
 ## Notes
 
 - **The applier's schema stayed in the app.** The applier and its types live in `@esposter/shared`, but the zod schemas for a pointer and an operation, and their two limits, have only the resource content inputs as consumers. `scripts/src/workspace/sharedExportConsumers.test.ts` flags such exports in shared, so they sit beside `ReadResourceContentInput.ts` and `UpdateResourceContentInput.ts`. Shared keeps the operation types, `applyPatches` and the pointer parser.
 - **Not built: coalescing.** The diagram's merge of consecutive replaces of one path within one interaction has no scenario, so it waits for a consumer that needs it; the page builder's patch-entry change owns that decision.
-- **Not built: duplicate, and the navigation beyond removal.** Document-order neighbours, the Move-to list of accepting slots, moving out past a parent and the layers rows belong to the canvas change that draws them. The package carries the one navigation the removal scenario needs, plus `moveIntoPreviousSibling`, the move into the previous sibling.
 - **Not built: a slot type.** A slot is an entry of the registry's type `slots` record and a key of the node's props, not a model of its own.
 - **The node limit is the consumer's.** `pasteBlockNodes` checks the copies against the slot and the registry but not the destination's node count; the consumer passes the limit to `createBlockDocumentSchema` and refuses an over-limit result.
 - **Test titles are lowercase.** The repo's `prefer-lowercase-title` rule rejects capitals, so the scenario names are the same words in lowercase.
