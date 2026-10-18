@@ -37,6 +37,7 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 - **The Mail screen is built on the list screen's frame, provisionally.** Its words are `GameTextKey` members whose English text the main session writes, and its layout is the wiki's description until the parity loop traces it. Delete Read, the Gift Mail Box as its own list and the mail's Date line are not built.
 - **The mail's title, sender and body are published per language as `mailText/<language>`, read as achievements' text is.** The builder writes every mail's text ids, so the screen reads them in the reader's language and English stands in where a language lacks one.
 - **The mailbox loads as the world starts, so the birthday mail is due on login that day.** Expired mail is removed and the birthday mail delivered at load, before the Mail screen can open; the screen shows once the mailbox has loaded.
+- **A held mail whose row is gone is left off the list and kept in the save.** The mailbox reads the rows of the held mails the table names, through `readGameDataIndex`, so a mail with no entry in the index has no row: the load does not fail on it, the Mail screen lists only the mails with a row, and the save keeps the mail, since its expiry cannot be read and `removeExpiredMails` keeps a mail with no row.
 - **A claimed birthday mail is labelled as kept in the Gift Mail Box, in place of its expiry.** The Gift Mail Box keeps it past its expiry, so that label is the only difference the screen draws.
 - **The save writes the Traveler's birthday only once it is set.** A save with no birthday has no `travelerBirthday` key, so a reload of an unset birthday is the same save it was.
 - **The profile has no birthday setter yet.** The save holds the birthday and the delivery reads it; the setter is open, and the wiki says the birth date is chosen once in profile customization.
@@ -76,6 +77,7 @@ scripts/src/models/genshinAssets/mail/ExcelBirthdayMailRow.ts ← the birthday m
 packages/genshin-world/src/models/mail/MailData.ts     ← the mail's and the birthday rows' schemas, read from the game data
 packages/genshin-world/src/composables/useWorldMail.ts ← the mailbox read as the world starts, the birthday due, the claims applied
 packages/genshin-world/src/services/mail/readMailText.ts ← one language's mail text, read by its key
+packages/genshin-world/src/services/mail/readMailRows.ts ← the held mails' rows by id, the ones the mail table no longer names left out
 packages/genshin-world/src/services/mail/getMailExpiry.ts ← a mail's time left in its largest unit
 packages/genshin-world/src/services/mail/MailExpiryGameTextKeyMap.ts ← each expiry unit's line
 packages/genshin-world/src/services/mail/sortMails.ts  ← the held mails, pinned first then newest first

@@ -47,3 +47,9 @@ The mails a player holds, with their claim state, SHALL be saved with the save a
 - **GIVEN** a save with no mail list
 - **WHEN** the save is loaded
 - **THEN** the save is refused
+
+#### Scenario: A held mail whose row is gone is left off the list and kept in the save
+
+- **GIVEN** the player holds a mail whose row is no longer in the mail table
+- **WHEN** the mailbox loads
+- **THEN** the other mails load, the mail is left off the Mail screen, and the save keeps it
