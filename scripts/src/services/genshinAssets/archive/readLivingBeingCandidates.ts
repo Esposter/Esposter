@@ -36,7 +36,7 @@ export const readLivingBeingCandidates = (): ArchiveCandidate[] => {
     ],
   ]);
   return readExcelTable<ExcelAnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME).flatMap(
-    ({ describeId, id, isDisuse, sortOrder, type }) => {
+    ({ describeId, id, isDisuse, sortOrder, type = ANIMAL_CODEX_TYPE }) => {
       const nameTextMapHash = codexTypeNameTextMapHashMap.get(type)?.get(describeId);
       return isDisuse || nameTextMapHash === undefined ? [] : [{ id, nameTextMapHash, sortOrder }];
     },

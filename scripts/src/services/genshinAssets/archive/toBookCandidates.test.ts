@@ -1,6 +1,7 @@
 import type { ExcelBooksCodexRow } from "#src/models/genshinAssets/archive/ExcelBooksCodexRow";
 import type { ExcelDocumentRow } from "#src/models/genshinAssets/archive/ExcelDocumentRow";
 
+import { LOC_TEXT_ASSET_TYPE } from "#src/services/genshinAssets/archive/constants";
 import { toBookCandidates } from "#src/services/genshinAssets/archive/toBookCandidates";
 import { describe, expect, test } from "vitest";
 
@@ -10,7 +11,7 @@ describe(toBookCandidates, () => {
   const NAME_TEXT_MAP_HASH = 30;
   const materialRows = [{ id: MATERIAL_ID, nameTextMapHash: NAME_TEXT_MAP_HASH }];
   const documentRows: ExcelDocumentRow[] = [{ documentType: "Book", id: MATERIAL_ID, questIDList: [BODY_ID] }];
-  const localizationRows = [{ assetType: "LOC_TEXT", id: BODY_ID }];
+  const localizationRows = [{ id: BODY_ID, unnamed84: LOC_TEXT_ASSET_TYPE }];
 
   test("joins a codex row to its material's name and its document's body, keeping the codex's order", () => {
     expect.hasAssertions();

@@ -3,8 +3,8 @@ import type { ExcelLocalizationRow } from "#src/models/genshinAssets/archive/Exc
 import { GameLanguage } from "genshin-text";
 
 // The field of a localization row that names each language's readable text, by the table's own key for it
-export const LocalizationPathKeyMap: Record<GameLanguage, Exclude<keyof ExcelLocalizationRow, "assetType" | "id">> = {
-  [GameLanguage.ChineseSimplified]: "INAGBNHLPIE",
+export const LocalizationPathKeyMap: Record<GameLanguage, Exclude<keyof ExcelLocalizationRow, "id" | "unnamed84">> = {
+  [GameLanguage.ChineseSimplified]: "MBOPLLJEHCJ",
   [GameLanguage.ChineseTraditional]: "tcPath",
   [GameLanguage.English]: "enPath",
   [GameLanguage.French]: "frPath",

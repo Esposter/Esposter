@@ -45,9 +45,10 @@ export const buildBookBodyPublication = (
   };
 };
 
-// A book's body in one language, from the readable file its localization row names there, as the game shows it on a PC
+// A book's body in one language, from the readable file its localization row names there, as the game shows it on a PC.
+// The file's lines end in a carriage return and a line feed, and a body keeps the line feed alone
 const readBookBody = (localizationRow: ExcelLocalizationRow, language: GameLanguage): string => {
   const fileName = basename(localizationRow[LocalizationPathKeyMap[language]]);
   const text = readFileSync(join(READABLE_DIRECTORY, GameLanguageCodeMap[language], `${fileName}.txt`), "utf8");
-  return getPlainGameText(text).trim();
+  return getPlainGameText(text.replaceAll("\r\n", "\n")).trim();
 };
