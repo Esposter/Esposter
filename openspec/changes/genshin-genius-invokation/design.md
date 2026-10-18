@@ -24,6 +24,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 - **The side holds its deck's card ids.** `GcgSideState.deckCardIds` keeps the ids the deck was built with, copies included, so a rule that counts the deck (Timaeus's six Artifact Cards) reads the deck itself, not the distinct definitions in `cards`. Its builder takes them from the deck.
 - **A card enters with the counter its module gives.** `initialCounter` is read by `createGcgZoneCard` the way `initialUsages` and `initialRounds` are. Timaeus starts with two Transmutation Materials.
 - **Timaeus spends the Artifact's total cost.** Once per Round its free equip reduces the Artifact's remaining cost to none, and spends materials equal to the Artifact's total cost, read from the card. This is a provisional reading of "spend Transmutation Materials equal to the total cost".
+- **A play takes the choice the duel screen gives it.** `playGcgCard` takes a `GcgPlayChoice` after the paid dice and passes it to the card's `play` as its third argument. Toss-Up's selections are the first such choice; the duel screen that supplies them is not built yet. A reroll a card makes outside the roll phase throws through `rethrowGcgDice`, the same throw as the roll phase's one reroll, so both read the duel's random source.
 
 ## Scope and order
 

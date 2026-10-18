@@ -2,6 +2,7 @@ import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
+import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
@@ -17,7 +18,8 @@ import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveChara
 import { takeOne } from "@esposter/shared";
 
 // A fast action: the card at a hand index is played. A support takes its place in the support zone, equipment is equipped
-// To the target character, and an event is played and gone. The card's own module then takes its effect. Refused, and the
+// To the target character, and an event is played and gone. The card's own module then takes its effect, with the choice
+// The duel screen gave it, if any. Refused, and the
 // Duel left as it was, when the card has no module, its target or zone is not one it may take, or its cost is not covered
 export const playGcgCard = (
   duel: GcgDuel,
@@ -25,6 +27,7 @@ export const playGcgCard = (
   handIndex: number,
   targetIndex: number | undefined,
   paidDiceIndices: number[],
+  choice?: GcgPlayChoice,
 ): GcgActionResult => {
   const refusal = checkGcgActingSide(duel, sideIndex);
   if (refusal !== undefined) return refusal;
@@ -39,7 +42,7 @@ export const playGcgCard = (
     return GcgActionResult.Unpayable;
   side.hand = side.hand.filter((_cardId, index) => index !== handIndex);
   placeGcgCard(side, card, targetIndex, module);
-  module.play?.(context, targetIndex);
+  module.play?.(context, targetIndex, choice);
   const switchIndex = module.switchOnPlay?.(context);
   if (switchIndex !== undefined) switchGcgActiveCharacter(duel, sideIndex, switchIndex);
   const skill = module.skillOnPlay?.(context, targetIndex);
