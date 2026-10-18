@@ -1,9 +1,9 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 50 },
   "burst.hits.1.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
   "burst.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 56 },
   "burst.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "hits.ritesTick.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.5 }
@@ -12,21 +12,21 @@
   "hits.ritesTick.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 4539 } },
   "hits.ritesTick.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.animationFrames": { "cause": "DiffersFromSource", "value": 19 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 48.8 },
   "normalAttacks.1.animationFrames": { "cause": "DiffersFromSource", "value": 23 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 48 },
   "normalAttacks.2.animationFrames": { "cause": "DiffersFromSource", "value": 31 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 29.6 },
+  "normalAttacks.2.hits.1.poiseDamage": { "source": "Wiki", "value": 29.6 },
   "normalAttacks.3.animationFrames": { "cause": "DiffersFromSource", "value": 44 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.4.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 64.8 },
+  "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 39.36 },
+  "normalAttacks.4.hits.1.poiseDamage": { "source": "Wiki", "value": 39.36 },
   "parameters.ritesOfTerminationSeconds": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 4539 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "plunges.high.animationFrames": { "cause": "DiffersFromSource", "value": 24 },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.animationFrames": { "cause": "DiffersFromSource", "value": 24 },
@@ -38,5 +38,17 @@
   "skill.hits.1.element": { "cause": "Unclassified", "value": "Ice" },
   "skill.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
   "skill.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 38 },
-  "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4532 } }
+  "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4532 } },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 2 },
+  "burst.hits.1.element": { "cause": "Unclassified", "value": "Ice" },
+  "burst.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "burst.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4539 } },
+  "skill.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.1622776601683795 }
+  },
+  "skill.hits.1.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
+  }
 }
