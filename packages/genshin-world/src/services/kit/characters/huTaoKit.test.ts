@@ -46,6 +46,11 @@ const createHuTaoParty = (healthShare: number) => {
   return party;
 };
 
+const getCriticalRateBuffs = (kitEffectState: KitEffectState) =>
+  kitEffectState.effects.filter(
+    (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
+  );
+
 describe(createHuTaoKitBehaviour, () => {
   test("guide to Afterlife holds the Paramita stance, its Pyro infusion and an ATK share of her Max HP", () => {
     expect.hasAssertions();
@@ -155,9 +160,7 @@ describe("flutter By", () => {
     const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
     if (!stance) throw new Error("Guide to Afterlife held no stance");
     HU_TAO_KIT.onKitEvent?.({ effect: stance, kind: KitEventKind.EffectExpired }, context, combatant);
-    return kitEffectState.effects.filter(
-      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
-    );
+    return getCriticalRateBuffs(kitEffectState);
   };
 
   test("a passive takes effect at its ascension phase", () => {
@@ -315,9 +318,7 @@ describe("constellation 4 and 6", () => {
     });
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), statuses };
     HU_TAO_KIT.onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context, combatant);
-    return kitEffectState.effects.filter(
-      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
-    );
+    return getCriticalRateBuffs(kitEffectState);
   };
 
   // The CRIT Rate buffs on Hu Tao after she loses HP the given number of times, leaving her at the given share of her Max HP
@@ -337,9 +338,7 @@ describe("constellation 4 and 6", () => {
         context,
         combatant,
       );
-    return kitEffectState.effects.filter(
-      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
-    );
+    return getCriticalRateBuffs(kitEffectState);
   };
 
   test("at constellation 4, defeating an enemy Blood Blossom marked gives each other member CRIT Rate for 15 seconds", () => {
@@ -442,11 +441,7 @@ describe("constellation 4 and 6", () => {
     const context = createKitTestContext(combatant, { kitEffectState, party: createHuTaoParty(1) });
     HU_TAO_KIT.onKitEvent?.({ characterId: HU_TAO_CHARACTER_ID, kind: KitEventKind.FallRefused }, context, combatant);
 
-    expect(
-      kitEffectState.effects.filter(
-        (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
-      ),
-    ).toStrictEqual([
+    expect(getCriticalRateBuffs(kitEffectState)).toStrictEqual([
       {
         amount: 1,
         attribute: Attribute.CriticalRate,
