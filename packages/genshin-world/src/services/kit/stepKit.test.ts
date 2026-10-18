@@ -39,7 +39,7 @@ describe(stepKit, () => {
   };
 
   const STEP_SECONDS = 0.1;
-  // The steps the first strike takes to end, counting the one that starts it out
+  // The steps the first strike takes to end, counted after the step that starts it
   const STRIKE_STEP_COUNT = Math.ceil(takeOne(TRAVELER_KIT.normalAttacks, 0).seconds / STEP_SECONDS);
   const IDLE_INPUT: KitInput = {
     height: 0,
