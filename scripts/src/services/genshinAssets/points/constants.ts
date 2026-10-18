@@ -20,6 +20,8 @@ export const INTERACTIVE_MAP_INFO_BATCH_SIZE = 8;
 // Scene's transport points place as well
 export const INTERACTIVE_MAP_STATUE_LABEL_ID = 2;
 export const INTERACTIVE_MAP_WAYPOINT_LABEL_ID = 3;
+// The label of the Ley Line Blossoms, each ground point of which stands for one ley line outcrop's place
+export const INTERACTIVE_MAP_OUTCROP_LABEL_ID = 572;
 // A fit's residual is the root-mean-square distance of its matched pairs, in game units. Over this bar the map is not
 // The scene's and nothing is written: the points both place sit within about ten units of each other, so twenty is a
 // Second map's distance, not a rounding one

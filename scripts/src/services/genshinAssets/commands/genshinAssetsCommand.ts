@@ -39,6 +39,7 @@ import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand"
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
 import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
+import { outcropPlacesCommand } from "#src/services/genshinAssets/commands/outcropPlacesCommand";
 import { paletteCommand } from "#src/services/genshinAssets/commands/paletteCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
@@ -119,6 +120,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     forging: forgingCommand,
     domains: domainsCommand,
     waypoints: waypointsCommand,
+    "outcrop-places": outcropPlacesCommand,
     home: homeCommand,
     achievements: achievementsCommand,
     archive: archiveCommand,

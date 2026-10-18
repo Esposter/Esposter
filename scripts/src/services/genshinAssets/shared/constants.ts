@@ -410,6 +410,8 @@ export const REGION_MAX_DISTANCE = 100;
 // The regions whose Teleport Waypoints the waypoints command writes into their region data: Mondstadt, and the others as
 // Each one's map fit is checked
 export const WAYPOINT_REGIONS: readonly string[] = ["mondstadt"];
+// The regions whose ley line blossoms are placed as their outcrop places, for now Mondstadt alone
+export const OUTCROP_REGIONS: readonly string[] = ["mondstadt"];
 // A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept
 // Within one grid cell of it; a texel is the cloud where its alpha passes half, and its lit crown where its red (the
 // Light the painter put on it) does
