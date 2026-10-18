@@ -33,6 +33,7 @@ export enum ScreenKind {
   Reputation = "Reputation",
   Settings = "Settings",
   Shop = "Shop",
+  SpiralAbyss = "SpiralAbyss",
   Time = "Time",
   TrainingGuide = "TrainingGuide",
   Wish = "Wish",

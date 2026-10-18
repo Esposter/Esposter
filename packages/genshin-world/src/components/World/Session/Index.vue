@@ -15,6 +15,8 @@ import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
+import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
+import type { AbyssPeriodBlessing } from "#src/models/spiralAbyss/AbyssPeriodBlessing";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -52,6 +54,7 @@ import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
 import ShopScreen from "#src/components/Shop/Screen/Index.vue";
+import SpiralAbyssEntryScreen from "#src/components/SpiralAbyss/Entry/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
@@ -128,6 +131,9 @@ import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
+import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
+import { findAbyssPeriodAt } from "#src/services/spiralAbyss/findAbyssPeriodAt";
+import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
@@ -670,6 +676,18 @@ const reputation = shallowRef<ReputationProgress>(savedState.reputation);
 const reputationCity = shallowRef<ReputationCity>();
 const shopId = shallowRef(0);
 const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
+// The Moon Spire's periods from the hosted game data, and the blessing of the period the entrance opens its screen on
+const abyssPeriods = shallowRef<AbyssPeriod[]>([]);
+const abyssBlessing = shallowRef<AbyssPeriodBlessing | undefined>();
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(() => readAbyssPeriods(gameDataBaseUrl)).match(
+  (periods) => {
+    abyssPeriods.value = periods;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
 const reputationLevel = shallowRef(reputation.value.level);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
@@ -926,6 +944,14 @@ const domainArenaInteractables = computed<Interactable[]>(() => {
 });
 const interactables = computed<Interactable[]>(() => {
   // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
+  // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of Cape Oath
+  const { x: abyssX, z: abyssZ } = ABYSS_ENTRANCE_POSITION;
+  const abyssEntrance: Interactable = {
+    id: ABYSS_ENTRANCE_INTERACTABLE_ID,
+    kind: InteractionKind.Activate,
+    name: gameText[GameTextKey.AbyssMoonSpire],
+    position: { x: abyssX, y: getGroundHeight(abyssX, abyssZ), z: abyssZ },
+  };
   const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
     id,
     kind: InteractionKind.Activate,
@@ -946,6 +972,7 @@ const interactables = computed<Interactable[]>(() => {
     ...outcropInteractables.value,
     ...trounceBlossomInteractables.value,
     ...frostbearingTrees,
+    abyssEntrance,
     ...lockedJumpLandmarks.value.map((landmark) =>
       toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
     ),
@@ -1224,6 +1251,12 @@ defineExpose({ jumpTo, readCameraPosition });
             } else if (interactable?.kind === InteractionKind.Activate && domainEntranceLandmark) {
               openDomain(domainEntranceLandmark);
               screenKind = ScreenKind.Domain;
+            } else if (
+              interactable?.kind === InteractionKind.Activate &&
+              interactable.id === ABYSS_ENTRANCE_INTERACTABLE_ID
+            ) {
+              abyssBlessing.value = findAbyssPeriodAt(abyssPeriods.value, getWorldNow())?.blessing;
+              screenKind = ScreenKind.SpiralAbyss;
             } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
               resonateStatue(interactable.id, { id: interactable.id, position: characterBody.position });
@@ -1741,6 +1774,13 @@ defineExpose({ jumpTo, readCameraPosition });
       @close="screenKind = ScreenKind.World"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
+    />
+    <SpiralAbyssEntryScreen
+      v-if="screenKind === ScreenKind.SpiralAbyss"
+      :blessing="abyssBlessing"
+      :game-text
+      :name-text
+      @close="screenKind = ScreenKind.World"
     />
     <ShopScreen
       v-if="screenKind === ScreenKind.Shop"
