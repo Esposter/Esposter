@@ -9,6 +9,10 @@ export const STARTING_TEAM_CHARACTER_IDS: readonly number[] = [TRAVELER_CHARACTE
 export const PARTY_TEAM_SIZE = 4;
 // The seconds after a switch before the next is allowed
 export const PARTY_SWITCH_COOLDOWN_SECONDS = 1;
+// The seconds the member on the field plays its fall for, before the player is asked for the next member and may switch
+// Provisional: the wiki gives no length for a fall, which the game plays as the fallen animation and voice-over; estimated
+// Until a recording of a fall is measured
+export const PARTY_FALL_SECONDS = 2;
 // The teams every player starts with, Party 1 to 4, which can be renamed but never disbanded
 export const DEFAULT_PARTY_TEAM_COUNT = 4;
 // The most teams Party Setup keeps, the default ones included

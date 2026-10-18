@@ -20,6 +20,7 @@ export const createParty = (characterIds: number[]): Party => {
     activeIndex: 0,
     characterIdMemberMap: new Map(characterIds.map((characterId) => [characterId, createPartyMember()])),
     deployedTeamIndex: 0,
+    fallSecondsRemaining: 0,
     healthChanges: [],
     lunarChargedCloud: { secondsRemaining: 0, tickSeconds: 0 },
     lunarCrystallize: { contributorIds: new Set(), count: 0, harmonyCooldownSeconds: 0, moondrifts: [] },

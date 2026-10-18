@@ -7,7 +7,7 @@
 
 ## 2. Falls and game over
 
-- [ ] 2.1 Lock switching while a fall plays, and ask the player for the next member when it ends. Verify: tests named after the scenarios 'Switching is locked while the fall plays' and 'The player chooses the next member after a fall'.
+- [x] 2.1 Lock switching while a fall plays, and ask the player for the next member when it ends. Verify: tests named after the scenarios 'Switching is locked while the fall plays' and 'The player chooses the next member after a fall'.
 - [ ] 2.2 Replace the statue's revive with the game over screen's revive at the nearest waypoint. Verify: a test named after the scenario 'Game over offers revive at the nearest waypoint'.
 
 ## 3. Memory

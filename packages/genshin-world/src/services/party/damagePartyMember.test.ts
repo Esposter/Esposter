@@ -1,3 +1,4 @@
+import { PARTY_FALL_SECONDS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
@@ -17,16 +18,20 @@ describe(damagePartyMember, () => {
     });
   });
 
-  test("downs a member whose HP runs out, empties its energy and brings on the next member standing after it", () => {
+  test("downs a member whose HP runs out, empties its energy and starts the fall of the member on the field", () => {
     expect.hasAssertions();
 
     const party = createParty([1, 2, 3]);
-    party.characterIdMemberMap.set(2, { ...createPartyMember(), healthShare: 0 });
     getPartyMember(party, 1).energy = 1;
-    damagePartyMember(party, 1, 2);
+    damagePartyMember(party, 1, 1);
 
-    expect({ activeIndex: party.activeIndex, partyMember: getPartyMember(party, 1) }).toStrictEqual({
-      activeIndex: 2,
+    expect({
+      activeIndex: party.activeIndex,
+      fallSecondsRemaining: party.fallSecondsRemaining,
+      partyMember: getPartyMember(party, 1),
+    }).toStrictEqual({
+      activeIndex: 0,
+      fallSecondsRemaining: PARTY_FALL_SECONDS,
       partyMember: { ...createPartyMember(), healthShare: 0 },
     });
   });
