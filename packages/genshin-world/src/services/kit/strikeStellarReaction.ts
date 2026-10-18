@@ -11,11 +11,12 @@ import { sumLunarContributions } from "#src/services/combat/damage/sumLunarContr
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { priceReactionContributors } from "#src/services/kit/priceReactionContributors";
 import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
+import { getPartyStellarBaseDamageBonus } from "#src/services/party/getPartyStellarBaseDamageBonus";
 import { takeOne } from "@esposter/shared";
 
 // A Stellar reaction's own hit on an enemy, written into it in place, and whether it struck: the reaction's coefficient
-// On each contributor's level multiplier, elemental mastery and Stellar Glimmer reaction DMG bonus, with no Moonsign bonus,
-// Which only a Lunar reaction takes, weighted as the Glimmer damage is (provisional), against the enemy's RES to the element.
+// On each contributor's level multiplier, raised by the Base DMG Bonus of the deployed team's Stellar Jubilees, elemental
+// Mastery and Stellar Glimmer reaction DMG bonus, with no Moonsign bonus, which only a Lunar reaction takes, weighted as the Glimmer damage is (provisional), against the enemy's RES to the element.
 // With no contributor it strikes nothing
 export const strikeStellarReaction = (
   enemy: Enemy,
@@ -34,6 +35,13 @@ export const strikeStellarReaction = (
     owner && reactionType
       ? getDeployedReactionBonuses({ combatant: owner, element, enemy, reactionType }, context)
       : undefined;
+  const { characterIdCombatantMap, kitEffectState, party } = context;
+  const baseDamageBonus = getPartyStellarBaseDamageBonus(
+    characterIdCombatantMap,
+    kitEffectState.effects,
+    party,
+    context.body.position,
+  );
   const damages = priceReactionContributors(
     contributorIds,
     context,
@@ -42,7 +50,7 @@ export const strikeStellarReaction = (
         coefficient,
         takeOne(CharacterLevelMultiplierMap, level),
         attributeTotalMap[Attribute.ElementalMastery],
-        0,
+        baseDamageBonus,
         attributeTotalMap[Attribute.StellarGlimmerReactionDamageBonus] + (bonuses?.damageBonus ?? 0),
       ),
     reactionType ? { element, enemy, reactionType } : undefined,

@@ -158,6 +158,16 @@ A deployed member's party reaction bonus SHALL raise a Lunar or Stellar reaction
 - **THEN** the DMG Bonus adds to its reaction bonus, the CRIT Rate to its roll and the CRIT DMG to a CRIT hit
 - **AND** the whole is multiplied by one plus the Elevation
 
+### Requirement: A Stellar Jubilee's Base DMG Bonus
+
+A Stellar reaction's damage SHALL take the Base DMG Bonus each deployed Stellar Jubilee gives from its holder's stats, the bonuses of two Jubilees adding up.
+
+#### Scenario: A Stellar reaction's Base DMG takes the Base DMG Bonus each deployed Stellar Jubilee gives, two adding up
+
+- **GIVEN** two deployed members whose Stellar Jubilees each give a Base DMG Bonus of 7 percent
+- **WHEN** a Stellar Swirl is priced
+- **THEN** its base damage is raised by 14 percent
+
 ### Requirement: A shield
 
 A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character.
