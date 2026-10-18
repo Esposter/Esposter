@@ -2,6 +2,7 @@ import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
 import { blockNodeShapeSchema } from "#src/services/blockNodeShapeSchema";
+import { getRootAcceptedTypes } from "#src/services/getRootAcceptedTypes";
 import { z } from "zod";
 
 interface BlockCollection {
@@ -69,13 +70,6 @@ export const createBlockDocumentSchema = (registry: BlockRegistry, maxNodes: num
     .object({ content: z.array(blockNodeShapeSchema), root: z.object({ props: z.record(z.string(), z.unknown()) }) })
     .superRefine((document, context) => {
       const collection: BlockCollection = { count: 0, ids: new Set() };
-      checkBlockNodes(
-        context,
-        registry,
-        document.content,
-        registry.map(({ type }) => type),
-        ["content"],
-        collection,
-      );
+      checkBlockNodes(context, registry, document.content, getRootAcceptedTypes(registry), ["content"], collection);
       if (collection.count > maxNodes) addIssue(context, `holds more than ${maxNodes} nodes`, ["content"]);
     });

@@ -8,4 +8,10 @@ describe(getFocusAfterRemoval, () => {
 
     expect(getFocusAfterRemoval(TEST_DOCUMENT, "/content/0/props/children/0")).toBe("/content/0");
   });
+
+  test("a pointer that names no node", () => {
+    expect.hasAssertions();
+
+    expect(getFocusAfterRemoval(TEST_DOCUMENT, "/content/5/props/children/0")).toBe("");
+  });
 });
