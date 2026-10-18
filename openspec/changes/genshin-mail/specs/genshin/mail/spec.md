@@ -76,6 +76,18 @@ The Mail screen SHALL offer Delete Read, which removes every read mail whose att
 - **WHEN** the player presses Delete Read
 - **THEN** the mail is kept
 
+#### Scenario: Delete Read asks the player to confirm first
+
+- **GIVEN** the player holds a read mail that Delete Read would remove
+- **WHEN** the player presses Delete Read
+- **THEN** a confirm asks whether to delete all read mail and says that mail with unclaimed attachments is not deleted, and the mail stays until the player confirms
+
+#### Scenario: Cancelling the confirm keeps the read mail
+
+- **GIVEN** the player has pressed Delete Read and the confirm is open
+- **WHEN** the player cancels it
+- **THEN** the mail is kept
+
 ### Requirement: A pinned mail is listed first and kept from Delete Read, but still expires
 
 The Mail screen SHALL let the player pin a held mail to the top of the list, and a pinned mail SHALL NOT be removed by Delete Read. A pinned mail SHALL still expire, since the wiki's Mail page says pinned mail "cannot be deleted quickly" and "can still expire" (https://genshin-impact.fandom.com/wiki/Mail).

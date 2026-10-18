@@ -76,16 +76,30 @@ describe("mailScreen", () => {
       .toBeDisabled();
   });
 
-  // Delete Read is pressed once a read mail has nothing left to claim, and says so to the screen's owner
-  test("should delete read mail when delete read is pressed", async () => {
+  // Delete Read asks first, and says so to the screen's owner only once the player confirms it
+  test("should delete read mail once delete read is confirmed", async () => {
     expect.hasAssertions();
 
     const onDeleteRead = vi.fn<() => void>();
     render(MailScreen, { ...props, mails: [{ ...mail(true), isRead: true }], onDeleteRead });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).click();
 
     expect(onDeleteRead).toHaveBeenCalledTimes(1);
+  });
+
+  // Cancel closes the confirm and leaves every read mail where it is
+  test("should keep read mail when delete read is cancelled", async () => {
+    expect.hasAssertions();
+
+    const onDeleteRead = vi.fn<() => void>();
+    render(MailScreen, { ...props, mails: [{ ...mail(true), isRead: true }], onDeleteRead });
+
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }).click();
+
+    expect(onDeleteRead).not.toHaveBeenCalled();
   });
 
   // Delete Read is disabled while every held mail is unread or still holds an unclaimed attachment
