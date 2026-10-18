@@ -1,7 +1,6 @@
 {
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 } },
   "burst.hits.0.multiplier": { "cause": "DiffersFromSource", "value": 0 },
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 50 },
   "burst.hits.0.bubble.explosion.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
