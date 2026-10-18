@@ -9,6 +9,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Element } from "#src/models/Element";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -35,6 +36,14 @@ const CONSTELLATION_4_GEO_RESISTANCE_REDUCTION = 0.2;
 const CONSTELLATION_4_SECONDS = 8;
 const CONSTELLATION_4_STATUS_ID = "navia-c4-shred";
 
+// Undisclosed Distribution Channels, as the dump's Navia_PermanentSkill_1 row and gcsim v2.47.2 (MIT) navia/asc.go give it:
+// From Ascension 1, for 4 seconds after a shot fires, her normal attacks, charged attack and plunges deal Geo DMG and 40%
+// More of it. gcsim adds only the DMG Bonus, as her attacks are Geo there already
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/navia/asc.go
+const UNDISCLOSED_DISTRIBUTION_CHANNELS_ASCENSION = 1;
+const UNDISCLOSED_DISTRIBUTION_CHANNELS_DAMAGE_BONUS = 0.4;
+const UNDISCLOSED_DISTRIBUTION_CHANNELS_SECONDS = 4;
+
 const countShrapnel = (kitEffectState: KitEffectState, characterId: number): number =>
   findKitStatus(kitEffectState.effects, characterId, SHRAPNEL_STATUS_ID)?.stacks ?? 0;
 
@@ -53,10 +62,11 @@ export const NAVIA_CHARACTER_ID = 10_000_091;
 
 // Navia's behaviour: Rosula Shardshot's press and hold each spend her Crystal Shrapnel and fire Surging Blade off its
 // Cooldown, and As the Sunlit Sky's Singing Salute casts Cannon Fire Support, the blast and the cannon's hits gaining
-// Crystal Shrapnel. Her Ascension passives, the Shrapnel gained from party Crystallize shards and the shot's pellets past
-// Three stacks are not built, as the kit does not read the team's effects in a passive or a strike's DMG and no step
-// Gives a shard's reach to a hit. Constellation 4 is built, Constellation 6 keeps its excess Shrapnel, and the rest of her
-// Constellations are not
+// Crystal Shrapnel. From Ascension 1 a shot infuses her attacks with Geo and raises their DMG. Her Ascension 4 ATK from
+// the team's Pyro, Electro, Cryo and Hydro members is not built, as no passive reads the deployed team, nor are the
+// Shrapnel gained from party Crystallize shards and the shot's pellets past three stacks, as no step gives a shard's reach
+// to a hit. Constellation 4 is built, Constellation 6 keeps its excess Shrapnel, and the rest of her Constellations are not
+// built:
 // Constellation 1 needs Energy and skill cooldown cuts per Shrapnel consumed, which the kit does not build yet
 // Constellation 2 needs the CRIT Rate per Shrapnel on the shot and the burst's extra Cannon shot, not built
 // Constellation 6's CRIT DMG per Shrapnel past three needs a strike CRIT DMG hook, which the kit cannot apply
@@ -73,6 +83,14 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
     (surgingBladeHit: KitHit) =>
     ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
       const { characterId } = combatant;
+      if (combatant.ascension >= UNDISCLOSED_DISTRIBUTION_CHANNELS_ASCENSION)
+        addKitEffect(kitEffectState, {
+          characterId,
+          damageBonus: UNDISCLOSED_DISTRIBUTION_CHANNELS_DAMAGE_BONUS,
+          element: Element.Geo,
+          kind: "infusion",
+          secondsRemaining: UNDISCLOSED_DISTRIBUTION_CHANNELS_SECONDS,
+        });
       const shrapnel = findKitStatus(kitEffectState.effects, characterId, SHRAPNEL_STATUS_ID);
       if (shrapnel) {
         const keptShrapnel =
