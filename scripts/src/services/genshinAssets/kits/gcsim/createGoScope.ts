@@ -158,8 +158,23 @@ const findOkDefault = (
   return isOkDeclared ? defaultStart : undefined;
 };
 
+// The operators an update such as `+=` is split into before its `=`, `++` and `--` being tokens of their own
+const UPDATE_OPERATORS = new Set(["%", "*", "+", "-", "/"]);
+
+// Whether the name token at a position is set to a value by `:=` or `=`, or updated by `+=`, `*=`, `++` and the like
+const readAssignmentKind = (tokens: readonly GoToken[], position: number): "update" | "value" | undefined => {
+  const next = tokens[position + 1];
+  if (checkIsGoPunctuation(next, ":=") || checkIsGoPunctuation(next, "=")) return "value";
+  if (checkIsGoPunctuation(next, "++") || checkIsGoPunctuation(next, "--")) return "update";
+  return next?.kind === GoTokenKind.Punctuation &&
+    UPDATE_OPERATORS.has(next.text) &&
+    checkIsGoPunctuation(tokens[position + 2], "=")
+    ? "update"
+    : undefined;
+};
+
 // The latest assignment to a name in a function before a position, and whether a block of its own always reaches the
-// Position, so no branch between the two can skip it
+// Position, so no branch between the two can skip it. An update reads the value it changes, which no constant gives
 const findAssignment = (
   tokens: readonly GoToken[],
   scope: GoFunctionScope,
@@ -169,21 +184,21 @@ const findAssignment = (
 ): GoAssignment => {
   const okDefault = findOkDefault(tokens, scope, name, position, constantMap);
   if (okDefault !== undefined) return { kind: "dominating", valueStart: okDefault };
-  let latest: number | undefined;
+  let latest: { kind: "update" | "value"; position: number } | undefined;
   for (let previous = scope.bodyStart + 1; previous < position; previous++) {
-    const token = tokens[previous];
-    if (
-      token?.kind === GoTokenKind.Identifier &&
-      token.text === name &&
-      !checkIsGoPunctuation(tokens[previous - 1], ".") &&
-      (checkIsGoPunctuation(tokens[previous + 1], ":=") || checkIsGoPunctuation(tokens[previous + 1], "="))
-    )
-      latest = previous;
+    const kind =
+      tokens[previous]?.kind === GoTokenKind.Identifier &&
+      tokens[previous]?.text === name &&
+      !checkIsGoPunctuation(tokens[previous - 1], ".")
+        ? readAssignmentKind(tokens, previous)
+        : undefined;
+    if (kind !== undefined) latest = { kind, position: previous };
   }
   if (latest === undefined) return { kind: "none" };
-  const block = findBlock(tokens, latest);
+  if (latest.kind === "update") return { kind: "conditional" };
+  const block = findBlock(tokens, latest.position);
   return block.start < position && position < block.end
-    ? { kind: "dominating", valueStart: latest + 2 }
+    ? { kind: "dominating", valueStart: latest.position + 2 }
     : { kind: "conditional" };
 };
 

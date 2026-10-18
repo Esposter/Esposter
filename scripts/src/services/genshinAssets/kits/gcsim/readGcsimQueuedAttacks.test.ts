@@ -260,6 +260,33 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads no loop bound from a local a branch adds to, `dur += 240` in the branch, so its loop is not repeated", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package rosaria",
+          "",
+          "func (c *char) burst() {",
+          "\tdur := 510",
+          "\tif c.Base.Cons >= 2 {",
+          "\t\tdur += 240",
+          "\t}",
+          "\tfor i := 120; i < dur; i += 120 {",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, i)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
+      undefined,
+    ]);
+  });
+
   test("reads a parameter's delay from each call's argument, and none where a caller's argument is a local a branch may change", () => {
     expect.hasAssertions();
 
