@@ -20,10 +20,10 @@ import { applyReactionInternalCooldown } from "#src/services/combat/internalCool
 import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach/TransformativeReactionReachRadiusMap";
 import { addSuperconductStatus } from "#src/services/enemy/addSuperconductStatus";
 import { ENEMY_CAPSULE_RADIUS } from "#src/services/enemy/constants";
-import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
+import { dealKitEnemyDamage } from "#src/services/kit/dealKitEnemyDamage";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 
@@ -97,10 +97,14 @@ export const landReactionReach = (
             (additiveBaseDamageBonus + reactionAdditiveBaseDamageBonus) * getResistanceMultiplier(resistance)) *
           amplifyingMultiplier;
     enemyStrikeResultMap.set(enemy, {
-      energyDrops: damageEnemy(enemy, {
-        damage: reactionDamage + transformativeDamage,
-        poiseDamage: reachPoiseDamage + poiseDamage,
-      }),
+      // A reaction's damage is Elemental, so it sets off the Nightsoul burst on its own, as an elemental hit's does
+      energyDrops: dealKitEnemyDamage(
+        enemy,
+        { damage: reactionDamage + transformativeDamage, poiseDamage: reachPoiseDamage + poiseDamage },
+        true,
+        combatant,
+        context,
+      ),
       isCritical: false,
       reachingReactions,
       reactions,

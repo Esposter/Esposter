@@ -1,6 +1,7 @@
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -9,6 +10,7 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
@@ -27,6 +29,8 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -274,5 +278,38 @@ describe(landReactionReach, () => {
     expect(enemyStrikeResultMap.get(charged)?.reachingReactions).toStrictEqual([
       { element: Element.Pyro, reactionType: TransformativeReactionType.Overloaded },
     ]);
+  });
+
+  test("a Swirl's elemental damage alone sets off the team's Nightsoul burst, with no elemental hit of its own", () => {
+    expect.hasAssertions();
+    const bursts: KitEvent[] = [];
+    const natlanCombatant: Combatant = {
+      ...combatant,
+      kit: {
+        ...TRAVELER_KIT,
+        onKitEvent: (event: KitEvent) => {
+          if (event.kind === KitEventKind.NightsoulBurst) bursts.push(event);
+        },
+      },
+      regionId: NATLAN_REGION_ID,
+    };
+    const natlanContext = createKitTestContext(natlanCombatant, {
+      characterIdCombatantMap: new Map([[natlanCombatant.characterId, natlanCombatant]]),
+      enemyTables,
+      party: createParty([natlanCombatant.characterId]),
+    });
+    const origin = createSturdyEnemy(0);
+    const wet = createSturdyEnemy(2);
+    const swirl: TransformativeReaction = {
+      element: Element.Pyro,
+      reactionType: TransformativeReactionType.Swirl,
+      spreadGauge: SPREAD_GAUGE,
+    };
+
+    landReactionReach(natlanContext, origin, [origin, wet], swirl, natlanCombatant);
+
+    expect(wet.maxHealth - wet.health).toBeGreaterThan(0);
+    expect(bursts).toHaveLength(1);
+    expect(bursts[0]).toMatchObject({ kind: KitEventKind.NightsoulBurst, striker: natlanCombatant });
   });
 });

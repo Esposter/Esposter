@@ -224,7 +224,7 @@ describe(createIansanKitBehaviour, () => {
       regionId: NATLAN_REGION_ID,
     };
     const context = landIansanBurst(combatant);
-    triggerKitNightsoulBurst({} as Enemy, combatant, Element.Pyro, context);
+    triggerKitNightsoulBurst({} as Enemy, combatant, context);
     getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare = 0.5;
     return context;
   };

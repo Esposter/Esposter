@@ -4,7 +4,6 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
@@ -52,24 +51,17 @@ const createTeam = (size: number, regionId = NATLAN_REGION_ID) => {
 };
 
 describe(triggerKitNightsoulBurst, () => {
-  test("a party member's elemental hit triggers the team's Nightsoul burst while a Natlan member is in the party, and the kits hear it", () => {
+  test("a party member's damage triggers the team's Nightsoul burst while a Natlan member is in the party, and the kits hear it", () => {
     expect.hasAssertions();
     const { bursts, context, members } = createTeam(1);
-    triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, Element.Electro, context);
+    triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
     expect(bursts).toStrictEqual([{ enemy: ENEMY, kind: KitEventKind.NightsoulBurst, striker: members[0] }]);
-  });
-
-  test("a hit with no element triggers no Nightsoul burst", () => {
-    expect.hasAssertions();
-    const { bursts, context, members } = createTeam(1);
-    triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, undefined, context);
-    expect(bursts).toHaveLength(0);
   });
 
   test("a party with no Natlan member triggers no Nightsoul burst", () => {
     expect.hasAssertions();
     const { bursts, context, members } = createTeam(2, "mondstadt");
-    triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, Element.Hydro, context);
+    triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
     expect(bursts).toHaveLength(0);
   });
 
@@ -82,12 +74,12 @@ describe(triggerKitNightsoulBurst, () => {
       [4, 9],
     ] as const) {
       const { bursts, context, members } = createTeam(size);
-      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, Element.Pyro, context);
+      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
       stepTeamSeconds(context, interval - 0.5);
-      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, Element.Pyro, context);
+      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
       expect(bursts).toHaveLength(1);
       stepTeamSeconds(context, 1);
-      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, Element.Pyro, context);
+      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
       expect(bursts).toHaveLength(2);
     }
   });
