@@ -1,6 +1,6 @@
 ## Purpose
 
-Sayu's kit as built: Fuufuu Windwheel's press, short hold and roll, and Mujina Flurry's field and Muji-Muji Daruma ticks, with her passives, constellations and the roll's elemental kick left unbuilt.
+Sayu's kit as built: Fuufuu Windwheel's press, short hold and roll, and Mujina Flurry's field and Muji-Muji Daruma ticks, with her Constellation 4 Energy from Swirls built, and her passives, Constellations 1, 2 and 6, and the roll's elemental kick left unbuilt.
 
 ## Requirements
 
@@ -64,12 +64,28 @@ Mujina Flurry SHALL land an initial hit and leave a field that heals the active 
 - **WHEN** a Muji-Muji Daruma tick lands
 - **THEN** the tick strikes the enemies in reach and heals the active character
 
+### Requirement: Constellation 4 Energy from Swirls
+
+From Constellation 4, a Swirl Sayu triggers while she is on the field SHALL restore 1.2 Energy to her, once every 2 seconds.
+
+#### Scenario: Constellation 4 restores Energy on the field
+
+- **GIVEN** Sayu has Constellation 4 and is on the field
+- **WHEN** she triggers a Swirl
+- **THEN** she gains 1.2 Energy, and no more for 2 seconds
+
+#### Scenario: Off the field or below Constellation 4 changes nothing
+
+- **GIVEN** Sayu has Constellation 3, or is off the field at Constellation 4
+- **WHEN** she triggers a Swirl
+- **THEN** no Energy is gained
+
 ### Requirement: Unbuilt Sayu effects
 
-Sayu's passives, constellations and the roll's elemental kick SHALL NOT take effect.
+Sayu's passives, Constellations 1, 2 and 6, and the roll's elemental kick SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Sayu has a passive, a constellation or the roll's kick unlocked
+- **GIVEN** Sayu has a passive, Constellation 1, 2 or 6, or the roll's kick unlocked
 - **WHEN** the player fights with Sayu
 - **THEN** that effect has no effect

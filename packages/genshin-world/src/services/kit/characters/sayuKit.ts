@@ -1,11 +1,15 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim (MIT) sayu/burst.go, Muji-Muji Daruma a field of radius 10 a metre and a half ahead, each of its ticks a
@@ -18,8 +22,13 @@ const BURST_HEAL_HP_SHARE = 0.7;
 
 export const SAYU_CHARACTER_ID = 10_000_053;
 
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_COOLDOWN_ID = "sayu-constellation-4-cooldown";
+const CONSTELLATION_4_ENERGY = 1.2;
+const CONSTELLATION_4_SECONDS = 2;
+
 // Sayu's behaviour: Yoohoo Art: Mujina Flurry heals the active character as it is cast, and casts Muji-Muji Daruma, whose
-// Ticks strike as a summon and heal as a field. Her passives and constellations are not built, as no kit event reaches a
+// Ticks strike as a summon and heal as a field. Her passives and Constellations 1, 2 and 6 are not built, as no kit event reaches a
 // Value the fetched sources give. The roll's Elemental kick, which takes the element a roll absorbs, is not built, as the
 // Kit has no absorption check to read it
 // Constellation 1 needs the Muji-Muji Daruma's attacks on nearby opponents and its heals, which the kit does not build
@@ -36,6 +45,20 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
   const darumaTickIntervalSeconds = readSeconds("mujiMujiDarumaTickInterval");
   const darumaSeconds = readSeconds("mujiMujiDaruma");
   return {
+    // Skiving: New and Improved, from Constellation 4: a Swirl Sayu triggers on the field restores 1.2 Energy to her,
+    // Once every 2 seconds
+    onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
+      if (
+        event.kind !== KitEventKind.ReactionTriggered ||
+        event.striker.characterId !== combatant.characterId ||
+        combatant.constellationCount < CONSTELLATION_4 ||
+        activeCombatant.characterId !== combatant.characterId ||
+        !event.reactions.some(({ reactionType }) => reactionType === ReactionType.Swirl)
+      )
+        return;
+      if (startKitCooldown(kitEffectState, combatant.characterId, CONSTELLATION_4_COOLDOWN_ID, CONSTELLATION_4_SECONDS))
+        gainPartyMemberEnergy(party, combatant, CONSTELLATION_4_ENERGY);
+    },
     burst: {
       // The initial heal lands at the cast, on the active character, from the ATK the cast reads, and the Daruma is a field
       // Of its ticks, each a strike and a heal, cast where Sayu stands and priced by her as she stood then
