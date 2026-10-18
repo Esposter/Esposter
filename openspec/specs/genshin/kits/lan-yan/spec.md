@@ -1,6 +1,6 @@
 ## Purpose
 
-Lan Yan's kit as built, with her four strikes, charged attack, plunges and burst's three hits and Constellation 4, and what is left waiting on the stance and the element-absorbing shield.
+Lan Yan's kit as built, with her four strikes, charged attack, plunges and burst's three hits Constellation 4 and Constellation 6's skill charge, and what is left waiting on the stance and the element-absorbing shield.
 
 ## Requirements
 
@@ -69,9 +69,25 @@ From Constellation 4, Lan Yan's burst SHALL give each deployed team member 60 El
 - **WHEN** the player casts her burst again
 - **THEN** the bonus restarts at 12 seconds
 
+### Requirement: Constellation 6 skill charge
+
+From Constellation 6, Swallow-Wisp Pinion Dance SHALL have one more charge than its base.
+
+#### Scenario: Constellation 6 adds a charge
+
+- **GIVEN** Lan Yan has Constellation 6
+- **WHEN** her skill's charges are read
+- **THEN** it has one more charge than the base
+
+#### Scenario: Constellation 5 adds nothing
+
+- **GIVEN** Lan Yan has Constellation 5
+- **WHEN** her skill's charges are read
+- **THEN** no charge is added
+
 ### Requirement: Lan Yan's stance and shield not yet built
 
-Lan Yan's Feathermoon Rings, her element-absorbing shield and her Ascension and constellations 1, 2 and 6 SHALL NOT take effect.
+Lan Yan's Feathermoon Rings, her element-absorbing shield and her Ascension and constellations 1 and 2 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
