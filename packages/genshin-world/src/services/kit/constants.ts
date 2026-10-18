@@ -6,6 +6,9 @@ import { LocomotionState } from "genshin-engine";
 
 // The frames in a second of a kit's record, whose every count of frames is divided by it once, by `toKitSeconds`
 export const KIT_FRAMES_PER_SECOND = 60;
+// A tick falls due once the seconds left to it are within this of zero: a field counts them down by the step's seconds, and a
+// Sum of 1/60 second steps lands a hair above zero or below it on the frame the tick is due, far under a frame
+export const KIT_TICK_TOLERANCE_SECONDS = 1e-9;
 // The reach a kit's strikes, and a sword's attacks, target within: 5 metres and 6 high, the wiki's targeting reach
 export const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
 // The reach a kit's skill, burst and plunges target within: 15 metres and 10 high, the wiki's

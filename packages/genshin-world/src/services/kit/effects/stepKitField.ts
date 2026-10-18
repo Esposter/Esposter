@@ -1,6 +1,7 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
 
+import { KIT_TICK_TOLERANCE_SECONDS } from "#src/services/kit/constants";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 
 // A field's schedule run on by a step: a following field's centre is moved, in place, to where the body on the field
@@ -15,7 +16,7 @@ export const stepKitField = (field: KitField, stepSeconds: number, context: KitC
   }
   field.onStep?.(context, field);
   field.nextTickSeconds -= stepSeconds;
-  while (field.nextTickSeconds <= 0) {
+  while (field.nextTickSeconds <= KIT_TICK_TOLERANCE_SECONDS) {
     if (checkIsInKitField(field, position)) field.onTick(context, field.tickIndex);
     field.tickIndex++;
     field.nextTickSeconds += field.tickIntervalSeconds;
