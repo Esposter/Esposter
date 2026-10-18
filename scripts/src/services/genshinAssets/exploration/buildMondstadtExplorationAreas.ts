@@ -7,8 +7,9 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
-// Mondstadt's exploration areas, each with its total and the doings its progress counts, published as one record of the
-// Exploration dataset. An area the table gives no total is an error, since its progress would have no share
+// Mondstadt's exploration areas, each with its total, its reputation ratio and the doings its progress counts,
+// Published as one record of the exploration dataset. An area the table gives no total is an error, since its progress
+// Would have no share
 export const buildMondstadtExplorationAreas = (): Record<string, unknown> => {
   const totals = readExcelTable<ExcelExploreAreaTotalRow>("ExploreAreaTotalExpExcelConfigData");
   const events = readExcelTable<ExcelWorldAreaExploreEventRow>("WorldAreaExploreEventConfigData");
@@ -28,6 +29,7 @@ export const buildMondstadtExplorationAreas = (): Record<string, unknown> => {
           const doing = toExplorationDoing(event);
           return doing ? [doing] : [];
         }),
+      reputationRatio: total.reputationRatio,
       total: total.totalExp,
     };
   });
