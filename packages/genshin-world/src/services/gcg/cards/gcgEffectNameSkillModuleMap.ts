@@ -9,9 +9,11 @@ import { clawAndThunder } from "#src/services/gcg/cards/clawAndThunder";
 import { dandelionBreeze } from "#src/services/gcg/cards/dandelionBreeze";
 import { dawn } from "#src/services/gcg/cards/dawn";
 import { divineMaidensDeliverance } from "#src/services/gcg/cards/divineMaidensDeliverance";
+import { electroCrystalCoreSkill } from "#src/services/gcg/cards/electroCrystalCoreSkill";
 import { elementalSedimentation } from "#src/services/gcg/cards/elementalSedimentation";
 import { fantasticVoyage } from "#src/services/gcg/cards/fantasticVoyage";
 import { fatalRainscreen } from "#src/services/gcg/cards/fatalRainscreen";
+import { fieryRebirthSkill } from "#src/services/gcg/cards/fieryRebirthSkill";
 import { floralBrush } from "#src/services/gcg/cards/floralBrush";
 import { flowfireEdgeSkill } from "#src/services/gcg/cards/flowfireEdgeSkill";
 import { forbiddenCreation } from "#src/services/gcg/cards/forbiddenCreation";
@@ -100,6 +102,8 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_22012", oceanidMimicSummoning],
   ["Char_Skill_22013", theMyriadWilds],
   ["Char_Skill_22014", tideAndTorrent],
+  ["Char_Skill_23024", fieryRebirthSkill],
+  ["Char_Skill_24014", electroCrystalCoreSkill],
   ["Char_Skill_25012", blusteringBlade],
   ["Char_Skill_25013", frostyAssault],
   ["Char_Skill_26014", infusedStonehide],

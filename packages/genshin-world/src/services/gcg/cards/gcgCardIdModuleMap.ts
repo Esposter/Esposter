@@ -24,6 +24,7 @@ import { dawnWinery } from "#src/services/gcg/cards/dawnWinery";
 import { dendroCore } from "#src/services/gcg/cards/dendroCore";
 import { drunkenMist } from "#src/services/gcg/cards/drunkenMist";
 import { dunyarzad } from "#src/services/gcg/cards/dunyarzad";
+import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { elementalLifeformElectro } from "#src/services/gcg/cards/elementalLifeformElectro";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
@@ -33,6 +34,7 @@ import { ellin } from "#src/services/gcg/cards/ellin";
 import { emblemOfSeveredFate } from "#src/services/gcg/cards/emblemOfSeveredFate";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
 import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
 import { hanachirusato } from "#src/services/gcg/cards/hanachirusato";
 import { icyQuill } from "#src/services/gcg/cards/icyQuill";
@@ -182,6 +184,8 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
+  [123_022, fieryRebirth],
+  [124_014, electroCrystalCore],
   [125011, shadowswordLoneGale],
   [125012, shadowswordGallopingFrost],
   [126_011, stonehide],

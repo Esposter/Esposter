@@ -55,6 +55,9 @@ export interface GcgCardModule {
   // resolved, so a card that draws on the play reads the field as it now stands
   onCardPlayed?: (context: GcgEffectContext, playedCard: GcgCard, zoneCard: GcgZoneCard) => void;
   onCostPaid?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => void;
+  // A card attached to a character that has just been restored by a card's defeat replacement hears it, for the cards whose
+  // Own state the replacement settles
+  onDefeatReplaced?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onEndPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | undefined;
   // A character of the opposing side is defeated, for a card on this side's field: the context names the character the card is
   // Attached to, for the hooks that act on it
@@ -81,6 +84,8 @@ export interface GcgCardModule {
     subject: GcgCostSubject,
     zoneCard: GcgZoneCard,
   ) => GcgCostReduction | undefined;
+  // The HP a character is restored to, instead of being defeated, by a card attached to it that answers a defeat, or none
+  replaceDefeat?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => number | undefined;
   skillOnPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => GcgSkill | undefined;
   // The index of the character a card switches in when it is played, through the switch path (no die, no turn, the field's
   // Switch hooks), which the duel does after play and before the card's skill; undefined for no switch

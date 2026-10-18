@@ -182,6 +182,7 @@ const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
   for (const [sideIndex, side] of duel.sides.entries()) {
     for (const [characterIndex, character] of side.characters.entries()) {
       if (character.hp > 0) continue;
+      if (standingBefore[sideIndex]?.[characterIndex] && replaceGcgDefeat(duel, sideIndex, characterIndex)) continue;
       if (standingBefore[sideIndex]?.[characterIndex]) {
         side.hasDefeatedCharacter = true;
         defeatedSideIndices.push(sideIndex);
@@ -201,6 +202,22 @@ const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
     }
   }
   for (const sideIndex of defeatedSideIndices) notifyGcgOpposingDefeat(duel, 1 - sideIndex);
+};
+
+// A card attached to a character that would be defeated may answer it, restoring the character to the HP the card names.
+// Only the first card to answer takes it, and the cards then attached to the character hear the replacement
+const replaceGcgDefeat = (duel: GcgDuel, sideIndex: number, characterIndex: number): boolean => {
+  const character = takeOne(takeOne(duel.sides, sideIndex).characters, characterIndex);
+  const context: GcgEffectContext = { characterIndex, duel, sideIndex };
+  for (const zoneCard of [...character.equipments, ...character.statuses]) {
+    const hp = GcgCardIdModuleMap.get(zoneCard.cardId)?.replaceDefeat?.(context, zoneCard);
+    if (hp === undefined) continue;
+    character.hp = hp;
+    for (const heard of [...character.equipments, ...character.statuses])
+      GcgCardIdModuleMap.get(heard.cardId)?.onDefeatReplaced?.(context, heard);
+    return true;
+  }
+  return false;
 };
 
 // Tells the cards on a side's field that an opposing character was defeated, each with the index of the character it is
