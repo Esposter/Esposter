@@ -49,6 +49,7 @@ export const props = {
       total: 8,
     },
   ],
+  canUseLongTermEncounterPoints: false,
   completedCount: 11,
   dayCommissions: [],
   gameText: ENGLISH_GAME_TEXT,
@@ -60,6 +61,7 @@ export const props = {
   ],
   domains: [],
   isRewardClaimed: true,
+  longTermEncounterPoints: 0,
   nameText: {},
   totalCount: 11,
 };

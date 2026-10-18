@@ -11,7 +11,11 @@ import { advanceCommissionForQuest } from "#src/services/commission/advanceCommi
 import { computeCommissionDay } from "#src/services/commission/computeCommissionDay";
 import { computeEncounterPointOverflow } from "#src/services/commission/computeEncounterPointOverflow";
 import { computeEncounterPointStorage } from "#src/services/commission/computeEncounterPointStorage";
-import { LONG_TERM_MAJOR_VERSION, OCULUS_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
+import {
+  HALF_POINTS_PER_ENCOUNTER_POINT,
+  LONG_TERM_MAJOR_VERSION,
+  OCULUS_ENCOUNTER_HALF_POINTS,
+} from "#src/services/commission/constants";
 import { earnEncounterPoints } from "#src/services/commission/earnEncounterPoints";
 import { earnLongTermEncounterPoints } from "#src/services/commission/earnLongTermEncounterPoints";
 import { getCollectedEncounterHalfPoints } from "#src/services/commission/getCollectedEncounterHalfPoints";
@@ -19,6 +23,7 @@ import { getQuestEncounterHalfPoints } from "#src/services/commission/getQuestEn
 import { joinCommissionPool } from "#src/services/commission/joinCommissionPool";
 import { readCommissionSlices } from "#src/services/commission/readCommissionSlices";
 import { readEncounterPoints } from "#src/services/commission/readEncounterPoints";
+import { readLongTermEncounterPoints } from "#src/services/commission/readLongTermEncounterPoints";
 import { toHandbookDayCommissions } from "#src/services/handbook/toHandbookDayCommissions";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { getResultAsync } from "@esposter/shared";
@@ -116,9 +121,29 @@ export const useWorldCommissions = ({
   events.on("oculusFound", () => {
     earnEncounterHalfPoints(OCULUS_ENCOUNTER_HALF_POINTS);
   });
+  // The whole points held at the moment they are read, which a claim spends one of
+  const wholeEncounterPoints = computed(() =>
+    Math.floor(readEncounterPoints(encounterPoints.value, getWorldNow()).halfPoints / HALF_POINTS_PER_ENCOUNTER_POINT),
+  );
+  const wholeLongTermEncounterPoints = computed(() =>
+    Math.floor(
+      readLongTermEncounterPoints(longTermEncounterPoints.value, LONG_TERM_MAJOR_VERSION).halfPoints /
+        HALF_POINTS_PER_ENCOUNTER_POINT,
+    ),
+  );
   // The day's four as the Adventurer Handbook's Commissions tab lists them, none while no region's tasks are read
   const handbookDayCommissions = computed(() =>
-    commissionSlice.value ? toHandbookDayCommissions(commissionDay.value, commissionSlice.value) : [],
+    commissionSlice.value
+      ? toHandbookDayCommissions(commissionDay.value, commissionSlice.value, wholeEncounterPoints.value)
+      : [],
   );
-  return { commissionDay, commissionSlice, encounterPoints, handbookDayCommissions, longTermEncounterPoints };
+  return {
+    commissionDay,
+    commissionSlice,
+    encounterPoints,
+    handbookDayCommissions,
+    longTermEncounterPoints,
+    wholeEncounterPoints,
+    wholeLongTermEncounterPoints,
+  };
 };

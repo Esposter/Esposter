@@ -17,6 +17,8 @@ interface Props {
   commissions: HandbookCommission[];
   // The panel's ring and bar: how many of its investigations are done out of how many
   completedCount: number;
+  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
+  canUseLongTermEncounterPoints: boolean;
   // The day's four commissions, top to bottom, as the Commissions tab lists them
   dayCommissions: HandbookDayCommission[];
   // The Domains tab's rows, top to bottom: each domain with the one action the player can take with it
@@ -29,16 +31,30 @@ interface Props {
   isRewardClaimed?: true;
   // The names the commissions' titles cite, by their name text id, in the reader's language
   nameText: Readonly<Record<string, string>>;
+  // The Long-Term Encounter Points held, as whole points, which the Commissions tab's stage rewards count
+  longTermEncounterPoints: number;
   totalCount: number;
 }
 
-const { commissions, completedCount, dayCommissions, domains, gameText, investigationRewards, nameText, totalCount } =
-  defineProps<Props>();
+const {
+  canUseLongTermEncounterPoints,
+  commissions,
+  completedCount,
+  dayCommissions,
+  domains,
+  gameText,
+  investigationRewards,
+  longTermEncounterPoints,
+  nameText,
+  totalCount,
+} = defineProps<Props>();
 // A locked weekly boss is challenged by its entrance, and a weekly boss's first clear is claimed by its entry
 const emit = defineEmits<{
   challenge: [landmark: DomainEntranceLandmark];
+  claimCommission: [commissionId: number];
   claimFirstClear: [entryId: number];
   close: [];
+  useLongTermEncounterPoints: [];
 }>();
 // The book opens at its experience
 const tab = ref(HandbookTab.Experience);
@@ -156,6 +172,33 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
             <p class="commission-progress">{{ commission.progress }}/{{ commission.total }}</p>
           </div>
           <p v-if="commission.regionTextKey" class="commission-region">{{ gameText[commission.regionTextKey] }}</p>
+          <button
+            v-if="commission.isClaimable"
+            class="commission-claim"
+            type="button"
+            @click="emit('claimCommission', commission.commissionId)"
+          >
+            {{ gameText[GameTextKey.ClaimRewards] }}
+          </button>
+          <svg v-else-if="commission.isClaimed" class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
+            <path fill="#5aa02c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
+          </svg>
+        </li>
+        <!-- The Encounter Points stage rewards at the foot of the tab, where the game keeps the Long-Term Encounter Points -->
+        <li class="encounter-points">
+          <p class="encounter-points-title">{{ gameText[GameTextKey.AdventureEncounterRewards] }}</p>
+          <p class="encounter-points-stored">
+            {{ gameText[GameTextKey.LongTermEncounterPointsStored] }}
+            <span>{{ longTermEncounterPoints }}</span>
+          </p>
+          <button
+            class="encounter-points-use"
+            :disabled="!canUseLongTermEncounterPoints"
+            type="button"
+            @click="emit('useLongTermEncounterPoints')"
+          >
+            {{ gameText[GameTextKey.UseLongTermEncounterPoints] }}
+          </button>
         </li>
       </ol>
       <ol
@@ -575,6 +618,54 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   font-size: calc(var(--reference-pixel) * 48);
   font-weight: 600;
   translate: 0 -50%;
+}
+
+/* A claimable commission's button stands where the region's line does not, on the row's right */
+.commission-claim {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 83);
+  left: calc(var(--reference-pixel) * 1250);
+  padding: calc(var(--reference-pixel) * 12) calc(var(--reference-pixel) * 30);
+  color: #fff;
+  font-size: calc(var(--reference-pixel) * 44);
+  background: #5aa02c;
+  border: 0;
+  cursor: pointer;
+}
+
+/* The stage rewards sit under the four commissions, in the tab's own box */
+.encounter-points {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 1040);
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--reference-pixel) * 40);
+  width: calc(var(--reference-pixel) * 1670);
+  height: calc(var(--reference-pixel) * 150);
+  color: #555453;
+  font-size: calc(var(--reference-pixel) * 48);
+}
+
+.encounter-points-title,
+.encounter-points-stored {
+  margin: 0;
+  font-weight: 600;
+}
+
+.encounter-points-use {
+  margin-left: auto;
+  padding: calc(var(--reference-pixel) * 12) calc(var(--reference-pixel) * 30);
+  color: #fff;
+  font-size: calc(var(--reference-pixel) * 44);
+  background: #5aa02c;
+  border: 0;
+  cursor: pointer;
+}
+
+.encounter-points-use:disabled {
+  background: #a8a093;
+  cursor: default;
 }
 
 .commission-check {

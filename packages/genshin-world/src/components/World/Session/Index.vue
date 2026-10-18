@@ -79,6 +79,7 @@ import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
+import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldCooking } from "#src/composables/useWorldCooking";
 import { useWorldForging } from "#src/composables/useWorldForging";
@@ -398,7 +399,14 @@ const {
 });
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
 // The quests in progress that finish
-const { commissionDay, encounterPoints, handbookDayCommissions, longTermEncounterPoints } = useWorldCommissions({
+const {
+  commissionDay,
+  commissionSlice,
+  encounterPoints,
+  handbookDayCommissions,
+  longTermEncounterPoints,
+  wholeLongTermEncounterPoints,
+} = useWorldCommissions({
   events,
   finishedMainQuestIds,
   gameDataBaseUrl,
@@ -727,6 +735,30 @@ const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap,
   useWorldCooking(gameDataBaseUrl);
 const { blacksmithPlace, forgeRecipes } = useWorldForging(gameDataBaseUrl);
 const { friendshipLevels, friendshipNamecards } = useWorldFriendship(gameDataBaseUrl);
+// The claims a commission makes with the points held, from the handbook's Commissions tab
+const { canConvertLongTermPoint, claimCommission, convertLongTermPoint } = useWorldCommissionClaims({
+  adventureExp,
+  adventureRankTables,
+  characters,
+  commissionDay,
+  commissionSlice,
+  completedMainQuestIds,
+  encounterPoints,
+  friendshipLevels,
+  getWorldNow,
+  inventory,
+  longTermEncounterPoints,
+  materialDataMap,
+  names: nameText,
+  party,
+  rank,
+  setCharacters: (nextCharacters) => {
+    characters.value = nextCharacters;
+  },
+  setInventory,
+  setWallet,
+  wallet,
+});
 // The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
 const profileNamecards = computed(() =>
   computeProfileNamecardItemIds({
@@ -1909,15 +1941,19 @@ defineExpose({ jumpTo, readCameraPosition });
         <HandbookScreen
           :commissions="[]"
           :completed-count="0"
+          :can-use-long-term-encounter-points="canConvertLongTermPoint"
           :day-commissions="handbookDayCommissions"
           :domains="handbookDomains"
           :game-text
           :investigation-rewards="[]"
+          :long-term-encounter-points="wholeLongTermEncounterPoints"
           :name-text
           :total-count="0"
           @challenge="challengeWeeklyBoss"
+          @claim-commission="(commissionId) => claimCommission(commissionId)"
           @claim-first-clear="claimWeeklyBossFirstClearReward"
           @close="screenKind = ScreenKind.World"
+          @use-long-term-encounter-points="convertLongTermPoint()"
         />
       </template>
       <template #[ScreenKind.Character]>

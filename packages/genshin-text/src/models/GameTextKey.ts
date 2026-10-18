@@ -15,6 +15,8 @@ export enum GameTextKey {
   AcquaintFate = "1444439468",
   // The Constellation tab's button that activates the next constellation
   Activate = "UI_TALENT_UNLOCK",
+  // The Adventure Encounters panel's heading over the Encounter Points stage rewards, on the Commissions tab
+  AdventureEncounterRewards = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_REWARD",
   // The Paimon menu's profile card, its experience and rank, the world level and the player's UID with its copy
   AdventureExp = "UI_PLAYER_PROFILE_PLAYEREXP",
   AdventureRank = "UI_PLAYER_PROFILE_PLAYERLV",
@@ -435,6 +437,9 @@ export enum GameTextKey {
   LoginUserLabel = "2272745789",
   // The welcome card's greeting, the player's name in place of its `%s`
   LoginWelcome = "tips_enter_game",
+  // The Long-Term Encounter Points, their title and the count of them stored past the daily points
+  LongTermEncounterPoints = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_TITLE",
+  LongTermEncounterPointsStored = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM_POINT",
   LotusHead = "1050026324",
   LumidouceBell = "205491460",
   Lumitoile = "1497627716",
@@ -753,6 +758,8 @@ export enum GameTextKey {
   Uid = "UI_PLAYER_PROFILE_UID",
   // The offer that spends a Condensed Resin on a challenge's claim, by its English name
   UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
+  // The offer that converts a Long-Term Encounter Point for Original Resin on the Commissions tab, by its English name
+  UseLongTermEncounterPoints = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM",
   // The offer that spends Original Resin on a challenge's claim, by its English name
   UseOriginalResin = "UI_ABYSSUS_COST_BUTTON_ITEM_RESIN",
   Valberry = "2722402356",
