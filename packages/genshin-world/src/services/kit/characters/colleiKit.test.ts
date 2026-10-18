@@ -147,8 +147,8 @@ describe(createColleiKitBehaviour, () => {
     const combatant = createColleiCombatant(1);
 
     expect([
-      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }]),
-      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: true }]),
+      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }], []),
+      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: true }], []),
     ]).toStrictEqual([[{ amount: 0.2, attribute: Attribute.EnergyRecharge }], []]);
   });
 
@@ -156,6 +156,6 @@ describe(createColleiKitBehaviour, () => {
     expect.hasAssertions();
     const combatant = createColleiCombatant(0);
 
-    expect(COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }])).toStrictEqual([]);
+    expect(COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }], [])).toStrictEqual([]);
   });
 });

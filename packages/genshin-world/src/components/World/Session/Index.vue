@@ -1706,11 +1706,11 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === String(HOME_POT_GADGET_ID)
             ) {
-              if (homeRealmVisit) {
-                jumpTo(leaveHomeRealm(homeRealmVisit).pose);
-                homeRealmVisit = undefined;
+              if (homeRealmVisit.value) {
+                jumpTo(leaveHomeRealm(homeRealmVisit.value).pose);
+                homeRealmVisit.value = undefined;
               } else {
-                homeRealmVisit = computeHomeRealmVisit(
+                homeRealmVisit.value = computeHomeRealmVisit(
                   { position: characterBody.position, yaw: characterBody.rotation.y },
                   getGroundHeight(characterBody.position.x, characterBody.position.z),
                   HOME_STAND_IN_POT_REGION_ID,

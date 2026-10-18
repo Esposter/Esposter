@@ -11,11 +11,16 @@
   "plunges.low.animationFrames": { "cause": "Unsourced", "value": 75 },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 37 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.low.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+  },
   "skill.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 17.000624902374255 }
   },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11132 } },
   "skillCharges": { "cause": "Unsourced", "value": 2 },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" },
   "stances.fieryPassion.skill.hits.0.area": {
