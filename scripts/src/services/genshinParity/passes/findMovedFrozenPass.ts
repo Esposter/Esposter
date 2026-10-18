@@ -1,7 +1,8 @@
 import type { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPassResult";
 
-import { ROW_PREFIX, toParityPassRows } from "#src/services/genshinParity/passes/toParityPassRows";
+import { ROW_PREFIX } from "#src/services/genshinParity/passes/constants";
+import { toParityPassRows } from "#src/services/genshinParity/passes/toParityPassRows";
 
 // Whether the report holds rows for the pass that the measure now gives different ones
 const isRecordedDifferently = (result: ParityPassResult, recordedRows: readonly string[]): boolean => {

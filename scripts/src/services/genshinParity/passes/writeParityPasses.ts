@@ -1,10 +1,15 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPassResult";
 
-import { PARITY_PASS_ORDER, PARITY_PASSES_DIRECTORY, TABLE_HEADER } from "#src/services/genshinParity/passes/constants";
+import {
+  PARITY_PASS_ORDER,
+  PARITY_PASSES_DIRECTORY,
+  ROW_PREFIX,
+  TABLE_HEADER,
+} from "#src/services/genshinParity/passes/constants";
 import { getParityPassesPath } from "#src/services/genshinParity/passes/getParityPassesPath";
 import { readParityPassRows } from "#src/services/genshinParity/passes/readParityPassRows";
-import { ROW_PREFIX, toParityPassRows } from "#src/services/genshinParity/passes/toParityPassRows";
+import { toParityPassRows } from "#src/services/genshinParity/passes/toParityPassRows";
 import { mkdir, writeFile } from "node:fs/promises";
 
 const TITLE_PREFIX = "# ";
