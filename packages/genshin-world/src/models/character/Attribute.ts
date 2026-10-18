@@ -1,8 +1,8 @@
 // What a character's attributes are summed from, each spelt as the game's tables name it, so a table read from the game
 // Parses into them. A base is what its percentage multiplies, and its flat attribute is added after; every other is a
-// Total of its own, a percentage kept as a fraction. Movement and normal attack speeds name no row in those tables, so
-// Their keys are this repo's own, and so are those of the normal and charged attack damage bonuses and the Stellar Glimmer
-// Reaction DMG bonus
+// Total of its own, a percentage kept as a fraction. Movement and normal attack speeds, and the plunging attack bonus, name
+// No row in those tables, so their keys are this repo's own, and so are those of the normal and charged attack damage
+// Bonuses and the Stellar Glimmer Reaction DMG bonus
 export enum Attribute {
   AllDamageBonus = "FIGHT_PROP_ADD_HURT",
   AnemoDamageBonus = "FIGHT_PROP_WIND_ADD_HURT",
@@ -39,6 +39,7 @@ export enum Attribute {
   NormalAttackSpeed = "FIGHT_PROP_NORMAL_ATTACK_SPEED",
   PhysicalDamageBonus = "FIGHT_PROP_PHYSICAL_ADD_HURT",
   PhysicalResistance = "FIGHT_PROP_PHYSICAL_SUB_HURT",
+  PlungingAttackDamageBonus = "FIGHT_PROP_PLUNGING_ATTACK_ADD_HURT",
   PyroDamageBonus = "FIGHT_PROP_FIRE_ADD_HURT",
   PyroResistance = "FIGHT_PROP_FIRE_SUB_HURT",
   ShieldStrength = "FIGHT_PROP_SHIELD_COST_MINUS_RATIO",

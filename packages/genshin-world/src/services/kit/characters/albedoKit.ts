@@ -11,6 +11,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
@@ -38,6 +39,14 @@ const TECTONIC_TIDE_SOURCE = "albedo-tectonic-tide";
 // Constellation 1, Flower of Eden, from the wiki: each Transient Blossom of the Solar Isotoma regenerates 1.2 Energy for
 // Albedo, and his Solar Isotoma raises his DEF by 50% for 20 seconds
 const ALBEDO_CONSTELLATION_1 = 1;
+// Constellation 4: active party members within the standing Solar Isotoma's field have their Plunging Attack DMG raised 30%
+// for a second, as gcsim v2.47.2 (MIT) albedo/cons.go gives it. gcsim checks the field every 0.3 seconds, and here each step
+// checks it, refreshing the bonus while the active member stands in the field
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
+const ALBEDO_CONSTELLATION_4 = 4;
+const CONSTELLATION_4_PLUNGING_ATTACK_BONUS = 0.3;
+const CONSTELLATION_4_SECONDS = 1;
+const CONSTELLATION_4_SOURCE = "albedo-constellation-4";
 const TRANSIENT_BLOSSOM_ENERGY = 1.2;
 const SOLAR_ISOTOMA_DEFENSE_PERCENT = 0.5;
 const SOLAR_ISOTOMA_DEFENSE_SECONDS = 20;
@@ -94,9 +103,10 @@ const consumeFatalReckoningBonus = (kitEffectState: KitEffectState, combatant: C
 // The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its HP. Constellation 1's energy
 // and Constellation 2's Fatal Reckoning stacks follow each Transient Blossom, and Tectonic Tide adds the stacks as flat
 // Damage to each Fatal Blossom, though not to its own first hit, which the record plays and the kit cannot change per cast.
-// Constellations 4 and 6 are not built: Constellation 4's jump destroys a Silver Isotoma and needs a plunge's ground impact
-// DMG per member, and Constellation 6 needs the shield a Crystallize gives a member read at a strike, which the kit does not
-// Yet hold
+// Constellation 4's plunging attack bonus reaches the active member within the Solar Isotoma's field, and Constellation 6 is
+// Not built: it needs the shield a Crystallize gives a member read at a strike, which the kit does not yet hold. The Silver
+// Isotoma clause an earlier note named for Constellation 4 is not built: gcsim v2.47.2 does not model it, and the wiki text
+// Was not checked
 export const createAlbedoKitBehaviour = ({
   readHit,
   readHits,
@@ -161,6 +171,22 @@ export const createAlbedoKitBehaviour = ({
       if (combatant.constellationCount < ALBEDO_CONSTELLATION_1) return;
       const member = getPartyMember(party, characterId);
       member.energy = Math.min(combatant.kit.burstEnergyCost, member.energy + TRANSIENT_BLOSSOM_ENERGY);
+    },
+    // Constellation 4: the active member's plunges, while it stands in the standing Solar Isotoma's field
+    onStep: ({ body, kitEffectState, party }, combatant) => {
+      if (combatant.constellationCount < ALBEDO_CONSTELLATION_4) return;
+      const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
+      if (
+        !solarIsotoma ||
+        !checkIsInKitField({ centre: solarIsotoma.body.position, radius: solarIsotomaRadius }, body.position)
+      )
+        return;
+      buffKitTeam(kitEffectState, party, {
+        amount: CONSTELLATION_4_PLUNGING_ATTACK_BONUS,
+        attribute: Attribute.PlungingAttackDamageBonus,
+        secondsRemaining: CONSTELLATION_4_SECONDS,
+        source: CONSTELLATION_4_SOURCE,
+      });
     },
     // A new Solar Isotoma ends the one standing, as Fischl's Oz does
     skill: {

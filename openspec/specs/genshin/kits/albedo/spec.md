@@ -1,6 +1,6 @@
 ## Purpose
 
-Albedo's kit as built: his strikes, charged attack and plunges, with Solar Isotoma and its Transient Blossoms and Rite of Progeniture's Fatal Blossoms, with his Ascension 1 and 4 passives built, his Constellations 1 and 2 built, and his Constellations 4 and 6 left unbuilt.
+Albedo's kit as built: his strikes, charged attack and plunges, with Solar Isotoma and its Transient Blossoms and Rite of Progeniture's Fatal Blossoms, with his Ascension 1 and 4 passives built, his Constellations 1 and 2 built, his Constellation 4's plunging attack bonus in the field built, and his Constellation 6 left unbuilt.
 
 ## Requirements
 
@@ -79,3 +79,25 @@ From Constellation 2, each Transient Blossom SHALL add a stack of Fatal Reckonin
 - **GIVEN** Albedo has Constellation 1
 - **WHEN** Transient Blossoms are set off and Tectonic Tide is cast
 - **THEN** its Fatal Blossoms deal no Fatal Reckoning damage
+
+### Requirement: Constellation 4 raises the active member's plunges inside the Solar Isotoma
+
+From Constellation 4, the active party member SHALL have its Plunging Attack DMG raised 30% for a second while it stands within the standing Solar Isotoma's field, as gcsim v2.47.2 gives it.
+
+#### Scenario: A plunge inside the field gets the bonus
+
+- **GIVEN** Albedo has Constellation 4 and a Solar Isotoma stands
+- **WHEN** the active member stands within the field and plunges
+- **THEN** its plunge deals 30% more DMG
+
+#### Scenario: The bonus runs out a second after the member leaves the field
+
+- **GIVEN** the active member has stood within the field
+- **WHEN** it leaves the field and a second passes
+- **THEN** its plunges deal no extra DMG
+
+#### Scenario: Below Constellation 4 nothing is raised
+
+- **GIVEN** Albedo has Constellation 3
+- **WHEN** the active member stands within a standing Solar Isotoma's field
+- **THEN** its plunges deal no extra DMG

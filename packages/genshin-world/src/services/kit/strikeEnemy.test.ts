@@ -340,6 +340,31 @@ describe(strikeEnemy, () => {
     expect(boostedEnemy.health).toBeCloseTo(plainEnemy.health);
   });
 
+  test("raises a plunging attack's damage by the plunging attack bonus its character carries, and leaves a normal attack's alone", () => {
+    expect.hasAssertions();
+
+    const PLUNGING_ATTACK_DAMAGE_BONUS = 0.5;
+    const plungingHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.PlungingAttack };
+    const normalHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.NormalAttack };
+    const plungingBoostedCombatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.PlungingAttackDamageBonus, value: PLUNGING_ATTACK_DAMAGE_BONUS },
+      ]),
+    };
+    const plainEnemy = createSturdyEnemy();
+    const plungingEnemy = createSturdyEnemy();
+    const normalEnemy = createSturdyEnemy();
+
+    strikeEnemy(enemyTables, plainEnemy, normalHit, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, plungingEnemy, plungingHit, plungingBoostedCombatant, NEVER_CRITICAL);
+    strikeEnemy(enemyTables, normalEnemy, normalHit, plungingBoostedCombatant, NEVER_CRITICAL);
+
+    expect(plungingEnemy.health).toBeLessThan(plainEnemy.health);
+    expect(normalEnemy.health).toBeCloseTo(plainEnemy.health);
+  });
+
   test("raises an elemental hit's damage by the all-damage bonus too", () => {
     expect.hasAssertions();
 

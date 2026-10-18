@@ -16,7 +16,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALBEDO_CHARACTER_ID, createAlbedoKitBehaviour } from "#src/services/kit/characters/albedoKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -256,6 +257,48 @@ describe(createAlbedoKitBehaviour, () => {
       expect(firstFatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.3 * combatant.attributes.defense);
       expect(secondFatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
     });
+  });
+
+  // Constellation 4's plunging attack bonus, read off the active member's buffed attributes as its hits are priced
+  const createConstellation4Fixture = (constellationCount = 4) => {
+    const combatant = createAlbedoCombatant(0, constellationCount);
+    const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
+    const party = createParty([ALBEDO_CHARACTER_ID]);
+    const characterIdCombatantMap = new Map([[ALBEDO_CHARACTER_ID, combatant]]);
+    // The active member stands at the given x, the field's centre being the origin
+    const stand = (x: number) =>
+      createKitTestContext(combatant, { body: { facing: 0, height: 0, position: { x, z: 0 } }, kitEffectState, party });
+    const step = (x: number) => ALBEDO_KIT.onStep?.(stand(x), combatant, 1 / 60);
+    const getPlungingBonus = () =>
+      getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes
+        .attributeTotalMap[Attribute.PlungingAttackDamageBonus];
+    const wait = (seconds: number) => stepKitSeconds(stand(100), seconds);
+    return { getPlungingBonus, step, wait };
+  };
+
+  test("constellation 4 raises the active member's plunging attacks 30% while it stands in the standing Solar Isotoma's field", () => {
+    expect.hasAssertions();
+    const { getPlungingBonus, step } = createConstellation4Fixture();
+    step(0);
+    expect(getPlungingBonus()).toBeCloseTo(0.3);
+  });
+
+  test("constellation 4's bonus runs out a second after the active member leaves the field", () => {
+    expect.hasAssertions();
+    const { getPlungingBonus, step, wait } = createConstellation4Fixture();
+    step(0);
+    step(100);
+    wait(0.5);
+    expect(getPlungingBonus()).toBeCloseTo(0.3);
+    wait(0.5);
+    expect(getPlungingBonus()).toBe(0);
+  });
+
+  test("constellation 4 raises nothing before its constellation", () => {
+    expect.hasAssertions();
+    const { getPlungingBonus, step } = createConstellation4Fixture(3);
+    step(0);
+    expect(getPlungingBonus()).toBe(0);
   });
 });
 
