@@ -113,6 +113,22 @@ describe(strikeKitEnemies, () => {
     });
   });
 
+  test("sends the team's kits an enemy hit that carries the attack tag of the strike that landed it", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant = createCombatant(onKitEvent);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    strikeWithHit({ ...KIT_HIT, element: Element.Pyro }, enemy, combatant, AttackTag.NormalAttack);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      attackTag: AttackTag.NormalAttack,
+      element: Element.Pyro,
+      enemy,
+      kind: KitEventKind.EnemyHit,
+      striker: combatant,
+    });
+  });
+
   test("sends the team's kits a reaction that carries the attack tag of the strike that triggered it", () => {
     expect.hasAssertions();
 
@@ -327,7 +343,6 @@ describe(strikeKitEnemies, () => {
         secondsRemaining: 1,
       },
     ];
-    const SURVIVING_HEALTH = 1e9;
     const damageOf = (element: Element, effects: KitEffect[]): number => {
       const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
       enemy.health = SURVIVING_HEALTH;
