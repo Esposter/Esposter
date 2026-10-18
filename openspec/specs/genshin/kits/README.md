@@ -465,6 +465,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Nilou](nilou/design.md)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi                                                       |
 | [Ningguang](ningguang/design.md)           | Star Jades, Jade Screen and Starshatter                                                                       |
 | [Noelle](noelle/design.md)                 | Breastplate and Sweeping Time                                                                                 |
+| [Odette](odette/design.md)                 | Five strikes, the charged attack, the plunges, Adagio's press and Presto's hits; Polestar and vortex placed   |
 | [Ororon](ororon/design.md)                 | Three strikes, Aimed Shot, Spirit Orb and Dark Voices' Echo                                                   |
 | [Prune](prune/design.md)                   | Her normal attacks, charged attack, Ring-A-Ding-Ding's press and the burst's initial hit                      |
 | [Qiqi](qiqi/design.md)                     | Herald of Frost and Fortune-Preserving Talisman                                                               |
