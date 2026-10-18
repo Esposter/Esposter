@@ -156,6 +156,45 @@ describe(strikePartyMember, () => {
       strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState, characterIdCombatantMap),
     ).toStrictEqual([
       { amount: damage, characterId: 2, health: damage * 2, kind: KitEventKind.ShieldAbsorbed, struckCharacterId: 1 },
+      { isShielded: true, kind: KitEventKind.PartyMemberStruck, striker: enemy, struckCharacterId: 1 },
+    ]);
+  });
+
+  test("an enemy's strike on an unshielded member is told to the kits", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+    expect(
+      strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] }, characterIdCombatantMap),
+    ).toStrictEqual([
+      { isShielded: false, kind: KitEventKind.PartyMemberStruck, striker: enemy, struckCharacterId: 1 },
+    ]);
+  });
+
+  test("a strike a shield absorbs whole is told to the kits, the member losing no HP", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const damage = computeEnemyStrikeDamage(enemyTables, enemy, combatant);
+    const kitEffectState: KitEffectState = {
+      effects: [{ characterId: 1, health: damage * 3, kind: "shield", secondsRemaining: 12 }],
+    };
+
+    const struckEvents = strikePartyMember(
+      enemyTables,
+      party,
+      enemy,
+      combatant,
+      kitEffectState,
+      characterIdCombatantMap,
+    ).filter(({ kind }) => kind === KitEventKind.PartyMemberStruck);
+
+    expect(getPartyMember(party, 1).healthShare).toBe(1);
+    expect(struckEvents).toStrictEqual([
+      { isShielded: true, kind: KitEventKind.PartyMemberStruck, striker: enemy, struckCharacterId: 1 },
     ]);
   });
 });

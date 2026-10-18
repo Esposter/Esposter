@@ -6,7 +6,8 @@
 // Enemy's strike, a shield was cast onto the team, or a shield took a strike on a party member for its owner. A charged
 // Attack of the character on the field landed, a skill was used, a hit landed on an enemy with the element it was dealt
 // As, a hit on a weak point landed on an enemy, or a hit defeated one, or a hit felled an animal in the world, or a
-// Nightsoul burst went off on an enemy, or a Nightsoul blessing drained a character's points
+// Nightsoul burst went off on an enemy, or a Nightsoul blessing drained a character's points, or an enemy's strike
+// Landed on a party member, a shield taking it or not
 export enum KitEventKind {
   BurstUsed = "BurstUsed",
   CharacterSwapped = "CharacterSwapped",
@@ -27,6 +28,7 @@ export enum KitEventKind {
   NightsoulPointsGained = "NightsoulPointsGained",
   NormalAttackLanded = "NormalAttackLanded",
   NormalAttackStarted = "NormalAttackStarted",
+  PartyMemberStruck = "PartyMemberStruck",
   ReactionTriggered = "ReactionTriggered",
   ShieldAbsorbed = "ShieldAbsorbed",
   ShieldCast = "ShieldCast",
