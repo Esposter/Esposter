@@ -25,12 +25,12 @@ interface Props {
   autoAddLabel: string;
   // The Cancel button's label, which closes the picker without enhancing
   cancelLabel: string;
-  // Whether Confirm is disabled, which it is while no fodder or material is chosen, the Mora is short, or the artifact is maxed
-  confirmDisabled: boolean;
   // The Confirm button's label, which enhances the artifact with what is chosen
   confirmLabel: string;
   // The bag's artifacts offered as fodder, in the order Auto Add takes them
   fodders: EnhanceFodderOption[];
+  // Whether Confirm is disabled: no fodder or material is chosen, the Mora is short, or the artifact is maxed
+  isConfirmDisabled: boolean;
   // The level the artifact reaches with what is chosen, in the game's level words
   levelLabel: string;
   // The bag's enhancement materials, each with how many the bag holds and how many are chosen
@@ -48,9 +48,9 @@ interface Props {
 const {
   autoAddLabel,
   cancelLabel,
-  confirmDisabled,
   confirmLabel,
   fodders,
+  isConfirmDisabled,
   levelLabel,
   materials,
   moraCost,
@@ -111,7 +111,7 @@ const emit = defineEmits<{
     <div class="actions">
       <GameButton :kind="GameButtonKind.Pill" @click="emit('autoAdd')">{{ autoAddLabel }}</GameButton>
       <GameButton :kind="GameButtonKind.Pill" @click="emit('cancel')">{{ cancelLabel }}</GameButton>
-      <GameButton :disabled="confirmDisabled" :kind="GameButtonKind.Pill" @click="emit('confirm')">
+      <GameButton :disabled="isConfirmDisabled" :kind="GameButtonKind.Pill" @click="emit('confirm')">
         {{ confirmLabel }}
       </GameButton>
     </div>
