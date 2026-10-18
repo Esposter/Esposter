@@ -12,7 +12,12 @@ export const MENU_SCREEN_BEHAVIOUR: Readonly<ScreenBehaviour> = {
 };
 // The screens an NPC or a world object opens (the crafting bench, the forge, the duel board): held like a menu, their
 // Header their own component's, so they have no Paimon menu entry, no menu slot and no placeholder title
-export const NPC_SCREEN_KINDS = [ScreenKind.Crafting, ScreenKind.Forge, ScreenKind.GcgDuel] as const;
+export const NPC_SCREEN_KINDS = [
+  ScreenKind.Cooking,
+  ScreenKind.Crafting,
+  ScreenKind.Forge,
+  ScreenKind.GcgDuel,
+] as const;
 // What closes any screen to the world, beside its own shortcut: Escape and a pad's Start, which open the Paimon menu
 // From the world, and a pad's cancel
 export const CLOSING_INPUT_ACTIONS: readonly InputAction[] = [InputAction.Cancel, InputAction.OpenPaimonMenu];
