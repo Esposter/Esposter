@@ -1,4 +1,5 @@
 import type { Attribute } from "#src/models/character/Attribute";
+import type { AttributeDetailRow } from "#src/models/character/AttributeDetailRow";
 import type { GameText } from "genshin-text";
 
 import {
@@ -12,11 +13,6 @@ import { GameTextKey } from "genshin-text";
 export interface AttributeDetailGroup {
   rows: AttributeDetailRow[];
   title: string;
-}
-
-export interface AttributeDetailRow {
-  label: string;
-  value: string;
 }
 
 // The Details list's three groups, each under the game's title for it, with every attribute's total under the game's
