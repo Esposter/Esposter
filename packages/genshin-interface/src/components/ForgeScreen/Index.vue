@@ -29,6 +29,8 @@ interface Props {
   recipes: ForgeRecipeCell[];
   // The coins the selected recipe costs for its amount
   requiredCoins: number;
+  // The refusal words the game shows in place of Start for an order past the day's forge points, or none
+  refusalLabel: string;
   startLabel: string;
   supportLabel: string;
   // The title the game shows over the screen
@@ -54,6 +56,7 @@ const {
   queuesLabel,
   recipes,
   requiredCoins,
+  refusalLabel,
   startLabel,
   supportLabel,
   title,
@@ -88,7 +91,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
           <button
             class="recipe"
             :aria-pressed="recipe.id === recipeId"
-            :disabled="!recipe.isLearned"
+            :disabled="!recipe.isOpen"
             type="button"
             @click="recipeId = recipe.id"
           >
@@ -127,7 +130,8 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
           <span class="support-portrait" />
         </section>
         <p class="required">{{ requiredCoins }}</p>
-        <button class="start" type="button" @click="emit('start')">{{ startLabel }}</button>
+        <button v-if="!refusalLabel" class="start" type="button" @click="emit('start')">{{ startLabel }}</button>
+        <p v-else class="refusal">{{ refusalLabel }}</p>
       </div>
     </template>
     <ul v-else class="queues">
@@ -287,6 +291,14 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   left: calc(var(--unit) * 1011);
   font-size: calc(var(--unit) * 24);
   line-height: 1;
+}
+.refusal {
+  top: calc(var(--unit) * 963);
+  left: calc(var(--unit) * 1560);
+  width: calc(var(--unit) * 600);
+  font-size: calc(var(--unit) * 24);
+  line-height: 1;
+  text-align: right;
 }
 .start {
   top: calc(var(--unit) * 963);

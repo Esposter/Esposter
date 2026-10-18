@@ -26,10 +26,11 @@ export const props = {
   queuesLabel: "Forge Queues (1/3)",
   recipeId: 1,
   recipes: [
-    { forgeTimeLabel: "Forge Time: 3s", id: 1, isLearned: true, name: "Enhancement Ore" },
-    { forgeTimeLabel: "Forge Time: 6s", id: 2, isLearned: true, name: "Fine Enhancement Ore" },
-    { forgeTimeLabel: "Forge Time: 3m", id: 3, isLearned: false, name: "Mystic Enhancement Ore" },
+    { forgeTimeLabel: "Forge Time: 3s", id: 1, isOpen: true, name: "Enhancement Ore" },
+    { forgeTimeLabel: "Forge Time: 6s", id: 2, isOpen: true, name: "Fine Enhancement Ore" },
+    { forgeTimeLabel: "Forge Time: 3m", id: 3, isOpen: false, name: "Mystic Enhancement Ore" },
   ],
+  refusalLabel: "",
   requiredCoins: 25,
   startLabel: "Start",
   supportLabel: "Support Character",
@@ -38,4 +39,7 @@ export const props = {
   totalTimeLabel: "Total Forge Time: 15s",
   yieldCount: 1,
 };
-export const variants = { queues: { tab: ForgeTab.Queues } };
+export const variants = {
+  queues: { tab: ForgeTab.Queues },
+  refused: { refusalLabel: "Cannot forge any more Enhancement Ore today. Please wait till tomorrow." },
+};

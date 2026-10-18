@@ -9,6 +9,7 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
+import { computeForgeOrderDoneCount } from "#src/services/forging/computeForgeOrderDoneCount";
 import { drawForgeResult } from "#src/services/forging/drawForgeResult";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
@@ -40,8 +41,7 @@ export const collectForgeOrder = (
     weapons: Map<number, Pick<ItemDefinition, "name"> & WeaponData>;
   },
 ): { adventureExp: number; inventory: Inventory; order?: ForgeOrder } => {
-  const elapsedSeconds = now.since(order.startedAt).total({ unit: "second" });
-  const doneCount = Math.min(order.count, Math.max(Math.floor(elapsedSeconds / order.unitSeconds), 0));
+  const doneCount = computeForgeOrderDoneCount(order, now);
   if (doneCount === 0) return { adventureExp: 0, inventory, order };
   const missChance = talents
     .filter(({ forgeType, kind }) => forgeType === recipe.forgeType && kind === ForgeTalentKind.ExtraResult)
