@@ -20,6 +20,7 @@ import { startKitAction } from "#src/services/kit/startKitAction";
 import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
+import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
@@ -39,7 +40,7 @@ describe(stepKit, () => {
 
   const STEP_SECONDS = 0.1;
   // The steps the first strike takes to end, counting the one that starts it out
-  const STRIKE_STEP_COUNT = Math.ceil(TRAVELER_KIT.normalAttacks[0].seconds / STEP_SECONDS);
+  const STRIKE_STEP_COUNT = Math.ceil(takeOne(TRAVELER_KIT.normalAttacks, 0).seconds / STEP_SECONDS);
   const IDLE_INPUT: KitInput = {
     height: 0,
     isAttackHeld: false,
