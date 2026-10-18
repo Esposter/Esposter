@@ -31,6 +31,7 @@ export enum GameDataset {
   Kits = "kits",
   KitSources = "kitSources",
   Login = "login",
+  MaterialSources = "materialSources",
   NameText = "nameText",
   Oculi = "oculi",
   Offerings = "offerings",

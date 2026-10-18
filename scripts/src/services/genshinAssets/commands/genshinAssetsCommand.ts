@@ -34,6 +34,7 @@ import { kitsCommand } from "#src/services/genshinAssets/commands/kitsCommand";
 import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineCommand";
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
+import { materialSourcesCommand } from "#src/services/genshinAssets/commands/materialSourcesCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
@@ -124,6 +125,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     gcg: gcgCommand,
     gadgets: gadgetsCommand,
     shops: shopsCommand,
+    materialSources: materialSourcesCommand,
     wildlife: wildlifeCommand,
     reputation: reputationCommand,
     expeditions: expeditionsCommand,
