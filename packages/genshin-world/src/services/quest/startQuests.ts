@@ -10,8 +10,9 @@ import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 // The Archon quests start one after another from the prologue's first: the first one not yet finished starts once the
 // Ones before it are done. Every other quest starts when a talk offering it ends, the quest event the world records
 // For it, at its first shown step, unless its series orders a quest before it that is not yet finished. A quest with no
-// Series, or the first of one, is offered as its talk ends. An accepted quest, a Reputation request the keeper's board
-// Offers, starts at its first step once, if it is carried and has not started
+// Series, or the first of one, is offered as its talk ends. A quest whose parent quests are all finished starts once
+// The last of them is, at load and on any event. An accepted quest, a Reputation request the keeper's board offers,
+// Starts at its first step once, if it is carried and has not started
 export const startQuests = (
   quests: readonly Quest[],
   progressMap: ReadonlyMap<string, QuestProgress>,
