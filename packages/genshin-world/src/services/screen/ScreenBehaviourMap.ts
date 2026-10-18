@@ -38,6 +38,7 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.Reputation]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Settings]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Shop]: MENU_SCREEN_BEHAVIOUR,
+  [ScreenKind.SpiralAbyss]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Time]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.TrainingGuide]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Wish]: MENU_SCREEN_BEHAVIOUR,
