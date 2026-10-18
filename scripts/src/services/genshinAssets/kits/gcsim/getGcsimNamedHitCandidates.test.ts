@@ -97,6 +97,28 @@ describe(getGcsimNamedHitCandidates, () => {
     expect(getNamedHitKitCandidates(multiplierMap(0), namedHitCandidateMap).size).toBe(0);
   });
 
+  test("joins a named hit's fields to its variable's one literal where gcsim reassigns that literal's multiplier, and to none for two literals", () => {
+    expect.hasAssertions();
+
+    // Gcsim reassigns a literal's Mult in a closure, a second attack at the literal's own declaration, not a second literal
+    const reassigned = { ...gcsim.attacks[0], line: 14 };
+    const reassignedJoined = getNamedHitKitCandidates(
+      multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
+      getGcsimNamedHitCandidates({ ...gcsim, attacks: [...gcsim.attacks, reassigned] }, tables),
+    );
+    // A second literal of the variable, declared at its own line, is two literals, so the named hit takes none of them
+    const secondLiteral = { ...gcsim.attacks[0], line: 20, siteLine: 20 };
+    const twoLiteralsJoined = getNamedHitKitCandidates(
+      multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
+      getGcsimNamedHitCandidates({ ...gcsim, attacks: [...gcsim.attacks, secondLiteral] }, tables),
+    );
+
+    expect(reassignedJoined.get("hits.fieryRainArrows.0.element")?.map(({ value }) => value)).toStrictEqual([
+      Element.Pyro,
+    ]);
+    expect(twoLiteralsJoined.get("hits.fieryRainArrows.0.element")).toBeUndefined();
+  });
+
   test("gives a named hit the Lunar reaction its literal's attack tag names, from the tag's line, and none for another tag", () => {
     expect.hasAssertions();
 

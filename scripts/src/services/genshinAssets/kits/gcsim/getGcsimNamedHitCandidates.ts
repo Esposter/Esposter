@@ -47,7 +47,10 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
     const variableAttacks = attacks.filter(({ talentVariable }) => talentVariable === variable);
     if (variableAttacks.length === 0) continue;
     const [attack] = variableAttacks;
-    const joinedAttack = variableAttacks.length === 1 ? attack : undefined;
+    // Gcsim reassigns a literal's Mult in a closure, which reads as a second attack at the literal's own declaration, so the
+    // Literals are counted by where they are declared, not by the attacks read from them
+    const literalSites = new Set(variableAttacks.map(({ file, siteLine }) => `${file}:${siteLine}`));
+    const joinedAttack = literalSites.size === 1 ? attack : undefined;
     // The calls firing any of the variable's attacks, each by the variable, since a named list's calls may fire its literals in turn.
     // A list's hits are taken in the order they land, so a call a loop makes early and one it makes late sort by their delays.
     // Each call carries the declaration its attack is made from, which a list may take the calls of several keys from
