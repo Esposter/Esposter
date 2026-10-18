@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
@@ -80,6 +81,31 @@ describe(strikeKitEnemies, () => {
       reactions: [{ element: Element.Pyro, reactionType: ReactionType.Burning }],
       striker: combatant,
     });
+  });
+
+  test("prices the striker with its buffs on before the kit's strike hooks read it", () => {
+    expect.hasAssertions();
+    const getStrikeDamageBonus = vi.fn<NonNullable<Kit["getStrikeDamageBonus"]>>(() => 0);
+    const combatant = createCombatant(vi.fn<NonNullable<Kit["onKitEvent"]>>());
+    const hookCombatant: Combatant = { ...combatant, kit: { ...combatant.kit, getStrikeDamageBonus } };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const elementalMastery: KitBuff = {
+      amount: 100,
+      attribute: Attribute.ElementalMastery,
+      characterId: TRAVELER_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 5,
+    };
+    const context = createKitTestContext(hookCombatant, {
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      kitEffectState: { effects: [elementalMastery] },
+    });
+    strikeKitEnemies([{ body: context.body, combatant: hookCombatant, hit: KIT_HIT, target: enemy }], context);
+
+    expect(
+      getStrikeDamageBonus.mock.calls[0]?.[0].combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
+    ).toBe(100);
   });
 
   test("sends the team's kits no elemental hit for a hit with no element", () => {
