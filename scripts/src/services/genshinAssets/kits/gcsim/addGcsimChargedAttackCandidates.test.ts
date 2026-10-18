@@ -4,6 +4,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { addGcsimChargedAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates";
+import { addGcsimChargedAttackVariantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { CombatTalent, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -99,6 +100,7 @@ describe(addGcsimChargedAttackCandidates, () => {
       gcsim,
       WeaponType.Catalyst,
     );
+    addGcsimChargedAttackVariantCandidates(createGcsimKitCandidateWriter(candidateMap, gcsim, tables), gcsim);
 
     const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;
     expect(valueOf("chargedAttackVariant.hits.length")).toBe(1);
@@ -126,6 +128,10 @@ describe(addGcsimChargedAttackCandidates, () => {
       createGcsimKitCandidateWriter(candidateMap, fallbackGcsim, tables),
       fallbackGcsim,
       WeaponType.Catalyst,
+    );
+    addGcsimChargedAttackVariantCandidates(
+      createGcsimKitCandidateWriter(candidateMap, fallbackGcsim, tables),
+      fallbackGcsim,
     );
 
     const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;
