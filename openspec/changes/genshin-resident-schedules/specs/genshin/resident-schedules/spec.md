@@ -55,13 +55,13 @@ Each resident's spot SHALL be read from the world's clock every frame, so that a
 
 ### Requirement: Nod-Krai's residents keep the hours the wiki gives
 
-Each Nod-Krai resident SHALL keep the location and hours their wiki NPC page gives.
+Each Nod-Krai resident SHALL keep the hours their wiki NPC page gives, and stand at the spot the scene-group record places them, since the wiki's Nod-Krai NPC pages give no positions.
 
 #### Scenario: A Nod-Krai resident keeps the wiki's hours
 
 - **GIVEN** the player is in Nod-Krai at ten in the morning
 - **WHEN** the player looks for a resident whose page gives daytime hours
-- **THEN** the resident stands at the day spot the wiki gives
+- **THEN** the resident stands at the day spot the scene-group record places them
 
 ### Requirement: A vendor sells only in their hours
 
