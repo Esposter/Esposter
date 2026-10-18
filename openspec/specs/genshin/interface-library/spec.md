@@ -111,7 +111,7 @@ A dialogue reply SHALL be a translucent black pill at rest, and SHALL turn a whi
 
 ### Requirement: Every piece ships with its fixture and approved images
 
-Every component of the library SHALL be a folder holding its fixture and its approved images, and a component without its fixture SHALL fail the visual check.
+Every component of the library but the layout roots that draw nothing of their own (GameScreen, GameRect and TwoColumnScreen) SHALL be a folder holding its fixture and its approved images, and a component without its fixture SHALL fail the visual check.
 
 #### Scenario: A component without a fixture fails the visual check
 
