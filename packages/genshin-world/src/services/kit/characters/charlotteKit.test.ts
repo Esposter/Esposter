@@ -99,4 +99,18 @@ describe(createCharlotteKitBehaviour, () => {
     ]);
     expect(CHARLOTTE_KIT.getPassiveBonuses?.(createCharlotteCombatant(), 1, team, [])).toStrictEqual([]);
   });
+
+  test("each of two Fontaine members adds 5% Healing Bonus, and neither adds Cryo DMG Bonus", () => {
+    expect.hasAssertions();
+    const charlotte = { ...createCharlotteCombatant(), ascension: 4 };
+    const team: DeployedCombatant[] = [
+      { ...charlotte, isOnField: true },
+      { ...charlotte, characterId: 2, isOnField: false, regionId: "fontaine" },
+      { ...charlotte, characterId: 3, isOnField: false, regionId: "fontaine" },
+    ];
+    expect(CHARLOTTE_KIT.getPassiveBonuses?.(charlotte, 1, team, [])).toStrictEqual([
+      { amount: 0.1, attribute: Attribute.HealingBonus },
+      { amount: 0, attribute: Attribute.CryoDamageBonus },
+    ]);
+  });
 });
