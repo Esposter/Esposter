@@ -108,6 +108,13 @@ A document the registry accepts SHALL render to MJML that compiles under MJML's 
 - **THEN** the read is refused
 - **AND** the refusal names the second element or the text
 
+#### Scenario: A second body is refused by name, not merged
+
+- **GIVEN** MJML source holding a second `mj-body`, or a second `mj-head`
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the second tag
+
 ### Requirement: The blocks run where there is no document object model
 
 The MJML blocks SHALL check, render, serialise and read back an email with no document object model and no UI framework present.

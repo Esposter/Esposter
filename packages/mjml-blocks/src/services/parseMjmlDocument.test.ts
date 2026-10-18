@@ -224,6 +224,25 @@ describe(parseMjmlDocument, () => {
     expect(outsideText.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "#text"']);
   });
 
+  test("a second body is refused by name, not merged", () => {
+    expect.hasAssertions();
+
+    const body = parseMjmlDocument(
+      '<mjml><mj-body></mj-body><mj-body width="600px"></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(body.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "mj-body"']);
+
+    const head = parseMjmlDocument(
+      "<mjml><mj-head></mj-head><mj-head></mj-head><mj-body></mj-body></mjml>",
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(head.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "mj-head"']);
+  });
   test("#179 an id attribute is refused at its node, not taken as the node's id", () => {
     expect.hasAssertions();
 

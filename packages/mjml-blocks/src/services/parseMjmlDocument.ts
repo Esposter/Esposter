@@ -19,8 +19,16 @@ const readMjmlRoot = <TContent>(
   richText: MjmlRichTextDefinition<TContent>,
 ): { content: BlockNode[]; root: { props: Record<string, unknown> } } => {
   const props: Record<string, unknown> = { ...mjml.attributes, ...readMjmlStrayText(mjml) };
+  const readTagNames = new Set<string>();
   let content: BlockNode[] = [];
-  for (const child of mjml.children)
+  for (const child of mjml.children) {
+    // A second tag of a name already read is refused under that name, as an unknown tag is, rather than merged into the first
+    if (readTagNames.has(child.rawTagName)) {
+      props[child.rawTagName] = child.attributes;
+      continue;
+    }
+
+    readTagNames.add(child.rawTagName);
     switch (child.rawTagName) {
       case "mj-body":
         props.body = child.attributes;
@@ -32,6 +40,7 @@ const readMjmlRoot = <TContent>(
       default:
         props[child.rawTagName] = child.attributes;
     }
+  }
 
   return { content, root: { props } };
 };
