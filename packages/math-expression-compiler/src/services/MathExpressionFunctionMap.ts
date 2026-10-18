@@ -174,11 +174,10 @@ const checkIsMillerRabinPassing = (candidate: bigint, base: bigint, oddPart: big
   return false;
 };
 
-// Whether an integer is prime, by Miller-Rabin over fixed bases, which never trial-divides. Only the safe integers are
-// Decided: a value past them is null, which the evaluation makes an error
-const computeIsPrime = (value: number): boolean | null => {
-  if (!Number.isInteger(value) || value < 2) return false;
-  if (value > Number.MAX_SAFE_INTEGER) return null;
+// Whether an integer is prime, by Miller-Rabin over fixed bases, which never trial-divides. Every number past the safe
+// range is even, so it is composite, and the test is only run on the safe integers
+const computeIsPrime = (value: number): boolean => {
+  if (!Number.isInteger(value) || value < 2 || value > Number.MAX_SAFE_INTEGER) return false;
 
   const candidate = BigInt(value);
   for (const base of MILLER_RABIN_BASES) {
@@ -302,10 +301,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionFunction> =
   isNaN: unary((value) => toNumber(Number.isNaN(value))),
   isNegative: unary((value) => toNumber(value < 0)),
   isPositive: unary((value) => toNumber(value > 0)),
-  isPrime: unary((value) => {
-    const isPrime = computeIsPrime(value);
-    return isPrime === null ? null : toNumber(isPrime);
-  }),
+  isPrime: unary((value) => toNumber(computeIsPrime(value))),
   isZero: unary((value) => toNumber(value === 0)),
   larger: binary((left, right) => toNumber(left > right && !checkIsNearlyEqual(left, right))),
   largerEq: binary((left, right) => toNumber(left >= right || checkIsNearlyEqual(left, right))),

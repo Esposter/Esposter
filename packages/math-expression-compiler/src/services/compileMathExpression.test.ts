@@ -180,6 +180,12 @@ describe("counting and primality", () => {
     expect(evaluateFormula("isPrime(91)")).toBe(0);
     expect(evaluateFormula("isPrime(97)")).toBe(1);
     expect(evaluateFormula("isPrime(1.5)")).toBe(0);
-    expect(evaluateFormula("isPrime(9007199254740994)")).toBe(Number.NaN);
+  });
+
+  test("isPrime is false above the safe integers, where every number is even", () => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula("isPrime(9007199254740994)")).toBe(0);
+    expect(evaluateFormula("isPrime(1e16)")).toBe(0);
   });
 });
