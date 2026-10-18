@@ -21,6 +21,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -35,6 +36,10 @@ import { takeOne } from "@esposter/shared";
 // Each further one extends by 6 seconds
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_CUT_SECONDS = 1.2;
+const CONSTELLATION_1_ICD_SECONDS = 1;
+const CONSTELLATION_1_ICD_STATUS_ID = "alhaitham-c1-cut-icd";
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_6 = 6;
@@ -177,8 +182,8 @@ export const ALHAITHAM_CHARACTER_ID = 10_000_078;
 // Alhaitham's behaviour: Universality: An Elaboration on Form's tap and hold and Particular Field: Fetters of Phenomena make
 // The Mirrors, which infuse his attacks with Dendro and decay one at a time, and while he holds any, a hit of his normal
 // Attacks, charged attack or plunges sets off a Projection Attack. The burst consumes them for its extra hits. Ascension 1
-// And 4 and Constellations 2, 4 and 6 are built. Constellation 1's skill cooldown cut is not, as the kit has no cooldown
-// Reduction by seconds, and the low plunge after the hold is not, as a plunge has no variant the skill's hold can set
+// And 4 and Constellations 1, 2, 4 and 6 are built, Constellation 1's cut of Universality's running cooldown on a Projection
+// Attack's hit among them, and the low plunge after the hold is not, as a plunge has no variant the skill's hold can set
 export const createAlhaithamKitBehaviour = ({
   kit,
   readHits,
@@ -217,8 +222,22 @@ export const createAlhaithamKitBehaviour = ({
     constellation6Seconds,
   };
   // A Projection Attack's hits are those of the Mirrors he holds as it triggers, one, two or three
+  // A Projection Attack's hit cuts Universality's running cooldown by Constellation 1's seconds, once a second
   const projectionHitBehaviour: KitHitBehaviour = {
     additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, projectionElementalMasteryShare),
+    onStrike: ({ kitEffectState, party }, { combatant }) => {
+      if (combatant.constellationCount < CONSTELLATION_1) return;
+      if (
+        !startKitCooldown(
+          kitEffectState,
+          combatant.characterId,
+          CONSTELLATION_1_ICD_STATUS_ID,
+          CONSTELLATION_1_ICD_SECONDS,
+        )
+      )
+        return;
+      changeKitSkillCooldown(party, combatant.characterId, -CONSTELLATION_1_CUT_SECONDS);
+    },
   };
   const projectionAttacks = [
     readHits("projectionAttackOneMirror", projectionHitBehaviour),
