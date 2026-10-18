@@ -180,7 +180,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         );
       }
       const element = getKitHitElement(enemyHit, combatant);
-      emitKitEvent({ element, enemy, kind: KitEventKind.EnemyHit, striker: combatant }, context);
+      emitKitEvent({ attackTag, element, enemy, kind: KitEventKind.EnemyHit, striker: combatant }, context);
       if (enemyHit.weakPoint) emitKitEvent({ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }, context);
       emitKitEvent(
         {

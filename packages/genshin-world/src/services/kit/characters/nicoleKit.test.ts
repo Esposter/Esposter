@@ -5,10 +5,12 @@ import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Mock } from "vitest";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -26,6 +28,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const NICOLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NICOLE_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const TRAVELER_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createNicoleCombatant = (attack: number): Combatant => ({
@@ -66,7 +69,8 @@ const createProjectionScene = (onKitEvent: Kit["onKitEvent"], nicoleFields: Part
   return { context, enemy, nicole, traveler };
 };
 
-const createEnemyHit = (enemy: Enemy, striker: Combatant): KitEvent => ({
+const createEnemyHit = (enemy: Enemy, striker: Combatant, attackTag?: AttackTag): KitEvent => ({
+  attackTag,
   element: Element.Pyro,
   enemy,
   kind: KitEventKind.EnemyHit,
@@ -91,6 +95,30 @@ const getBuffs = (context: KitContext, characterId: number): KitBuff[] =>
 
 const emitSwap = (context: KitContext, characterId: number, previousCharacterId: number): void =>
   emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId }, context);
+
+// A strike of the Traveler's normal attack, dealt under the attack tag given, which the Nicole kit's strike hooks read
+const createTravelerStrike = (context: KitContext, traveler: Combatant, attackTag?: AttackTag): KitStrike => ({
+  attackTag,
+  body: context.body,
+  combatant: traveler,
+  hit: TRAVELER_HIT,
+});
+
+// The enemy hits a striker lands on an enemy, one after another, each reported to the team's kits
+const emitEnemyHits = (
+  context: KitContext,
+  enemy: Enemy,
+  striker: Combatant,
+  attackTag: AttackTag | undefined,
+  count: number,
+): void => {
+  for (let hit = 0; hit < count; hit += 1) emitKitEvent(createEnemyHit(enemy, striker, attackTag), context);
+};
+
+// The flat base damage Nicole's kit gives a strike as a deployed member of the team, zero when it gives none
+const getPartyAdditiveBonus = (context: KitContext, nicole: Combatant, strike: KitStrike, enemy: Enemy): number =>
+  NICOLE_KIT.getPartyStrikeBonus?.(nicole, strike, enemy, context.party, context.kitEffectState.effects)
+    ?.additiveBaseDamageBonus ?? 0;
 
 describe(createNicoleKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -499,5 +527,123 @@ describe(createNicoleKitBehaviour, () => {
 
     stepKitSeconds(context, 3.5);
     expect(enemy.statuses).toStrictEqual([]);
+  });
+
+  test("her fourth constellation gives an upgraded character 0.7 of her attack to each of its strikes", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole, traveler } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 4,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+
+    expect(
+      getPartyAdditiveBonus(context, nicole, createTravelerStrike(context, traveler, AttackTag.NormalAttack), enemy),
+    ).toBe(700);
+  });
+
+  test("her fourth constellation gives nothing below it", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole, traveler } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 3,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+
+    expect(
+      getPartyAdditiveBonus(context, nicole, createTravelerStrike(context, traveler, AttackTag.NormalAttack), enemy),
+    ).toBe(0);
+  });
+
+  test("her fourth constellation's bonus takes one of eight stacks on each hit its character lands", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole, traveler } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 4,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    const strike = createTravelerStrike(context, traveler, AttackTag.NormalAttack);
+
+    emitEnemyHits(context, enemy, traveler, AttackTag.NormalAttack, 7);
+    expect(getPartyAdditiveBonus(context, nicole, strike, enemy)).toBe(700);
+    emitEnemyHits(context, enemy, traveler, AttackTag.NormalAttack, 1);
+    expect(getPartyAdditiveBonus(context, nicole, strike, enemy)).toBe(0);
+  });
+
+  test("her fourth constellation's bonus neither reaches nor takes a stack from a hit with no attack tag", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole, traveler } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 4,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    emitEnemyHits(context, enemy, traveler, undefined, 8);
+
+    expect(
+      getPartyAdditiveBonus(context, nicole, createTravelerStrike(context, traveler, AttackTag.NormalAttack), enemy),
+    ).toBe(700);
+    expect(getPartyAdditiveBonus(context, nicole, createTravelerStrike(context, traveler), enemy)).toBe(0);
+  });
+
+  test("her fourth constellation waits 16 seconds before an upgraded character gets eight stacks again", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole, traveler } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 4,
+    });
+    const strike = createTravelerStrike(context, traveler, AttackTag.NormalAttack);
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    emitEnemyHits(context, enemy, traveler, AttackTag.NormalAttack, 8);
+
+    // Upgraded again 10 seconds on, within the cooldown, which leaves the spent stacks spent
+    stepKitSeconds(context, 7);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    expect(getPartyAdditiveBonus(context, nicole, strike, enemy)).toBe(0);
+
+    // Her skill is cast again past the cooldown, and the next upgrade gives eight stacks
+    stepKitSeconds(context, 7);
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    expect(getPartyAdditiveBonus(context, nicole, strike, enemy)).toBe(700);
+  });
+
+  test("her fourth constellation gives her own strikes 0.7 of her attack too", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 4,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    const strike: KitStrike = {
+      attackTag: AttackTag.ElementalSkill,
+      body: context.body,
+      combatant: nicole,
+      hit: TRAVELER_HIT,
+    };
+
+    expect(
+      NICOLE_KIT.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, context.party, context.kitEffectState.effects),
+    ).toBe(700);
   });
 });

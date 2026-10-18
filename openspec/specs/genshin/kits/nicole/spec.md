@@ -224,12 +224,46 @@ Her second constellation SHALL give each deployed member ATK 300 with her skill,
 - **WHEN** she casts her skill
 - **THEN** no ATK 300 constellation buff applies
 
-### Requirement: Nicole's later constellations not yet built
+### Requirement: Nicole's fourth constellation
 
-Nicole's fourth and sixth constellations SHALL NOT take effect yet.
+Her fourth constellation SHALL give an upgraded character 0.7 of Nicole's attack in flat base damage on each of its normal, charged, plunging, skill or burst hits, for eight hits, and an upgrade SHALL give the character those stacks again only once its 16-second cooldown has run out.
 
-#### Scenario: Later constellations do nothing for now
+#### Scenario: An upgraded character's hit gains 0.7 of her attack
 
-- **GIVEN** Nicole has constellation 4 or 6 unlocked
-- **WHEN** the player fights with Nicole
-- **THEN** no constellation effect beyond the second applies
+- **GIVEN** Nicole is at least constellation 4 and a character holds her first ascension's buff
+- **WHEN** that character lands a normal, charged, plunging, skill or burst hit
+- **THEN** the hit's flat base damage gains 0.7 of Nicole's attack, and one of the character's eight stacks is spent
+
+#### Scenario: Her own hit gains the same bonus
+
+- **GIVEN** Nicole is at least constellation 4 and holds her first ascension's buff
+- **WHEN** she lands a hit of the same attack kinds
+- **THEN** her hit's flat base damage gains 0.7 of her attack, from the same stacks
+
+#### Scenario: A projection gains nothing and spends no stack
+
+- **GIVEN** an upgraded character holds stacks
+- **WHEN** a projection of its hit lands
+- **THEN** the projection's damage gains no bonus and no stack is spent
+
+#### Scenario: An upgrade within the cooldown gives no fresh stacks
+
+- **GIVEN** an upgraded character has spent some of its stacks less than 16 seconds ago
+- **WHEN** it is upgraded again
+- **THEN** it keeps the stacks it has left
+
+#### Scenario: Below the fourth constellation nothing applies
+
+- **GIVEN** Nicole is below constellation 4
+- **WHEN** an upgraded character lands a hit
+- **THEN** its flat base damage gains nothing
+
+### Requirement: Nicole's sixth constellation not yet built
+
+Nicole's sixth constellation's defence ignore and self buff SHALL NOT take effect yet.
+
+#### Scenario: The sixth constellation does nothing for now
+
+- **GIVEN** Nicole has constellation 6 unlocked
+- **WHEN** an upgraded character lands a hit
+- **THEN** no defence is ignored on the hit

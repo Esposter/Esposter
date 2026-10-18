@@ -1,12 +1,14 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEnemyHitEvent } from "#src/models/kit/KitEnemyHitEvent";
 import type { KitHitbox } from "#src/models/kit/KitHitbox";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
@@ -114,6 +116,39 @@ const C2_STATUS_SECONDS = 1;
 const C2_TICKER_ID = "nicole-c2-ticker";
 const C2_HITBOX: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: C2_RADIUS } };
 
+// Her fourth constellation gives an upgraded character 0.7 of her attack in flat base damage on each of its hits that is a
+// Normal, charged, plunging, skill or burst attack, for eight stacks spent one each on the hits it lands. An upgrade gives
+// Them again only once the character's 16-second cooldown has run out, as gcsim's c4OnUpgrade does. A projection carries no
+// Attack tag, so it takes none
+const CONSTELLATION_4 = 4;
+const C4_RATIO = 0.7;
+const C4_STACKS = 8;
+const C4_SECONDS = 20;
+const C4_ID = "nicole-c4";
+const C4_ICD_SECONDS = 16;
+const C4_ICD_ID = "nicole-c4-icd";
+const C4_ATTACK_TAGS = new Set<AttackTag>([
+  AttackTag.ChargedAttack,
+  AttackTag.ElementalBurst,
+  AttackTag.ElementalSkill,
+  AttackTag.NormalAttack,
+  AttackTag.PlungingAttack,
+]);
+
+// The stacks of her fourth constellation a striker holds for a hit of the attack tag given, which the next hit it lands takes
+const getC4Stacks = (effects: readonly KitEffect[], striker: number, attackTag: AttackTag | undefined): number => {
+  if (attackTag === undefined || !C4_ATTACK_TAGS.has(attackTag)) return 0;
+  const status = findKitStatus(effects, striker, C4_ID);
+  return status && status.secondsRemaining > 0 ? (status.stacks ?? 0) : 0;
+};
+
+// Takes the stack a hit landed by its striker spends, as the hit lands on an enemy
+const takeC4Stack = (effects: readonly KitEffect[], { attackTag, striker }: KitEnemyHitEvent): void => {
+  if (getC4Stacks(effects, striker.characterId, attackTag) === 0) return;
+  const status = findKitStatus(effects, striker.characterId, C4_ID);
+  if (status) status.stacks = (status.stacks ?? 0) - 1;
+};
+
 // Schedules a projection of a hit onto the enemy it struck, landing 30 frames on as gcsim's projectionHitmark does. It deals
 // The striker's element and prices the Hexerei bonus at its tick
 const scheduleProjection = (
@@ -217,10 +252,15 @@ const upgradeAscensionBuff = (
   });
   if (nicole.constellationCount >= CONSTELLATION_2)
     startC2Ticker(kitEffectState, nicole.characterId, characterId, buffSeconds);
+  if (
+    nicole.constellationCount >= CONSTELLATION_4 &&
+    startKitCooldown(kitEffectState, characterId, C4_ICD_ID, C4_ICD_SECONDS)
+  )
+    addKitStatus(kitEffectState, characterId, { id: C4_ID, secondsRemaining: C4_SECONDS, stacks: C4_STACKS });
 };
 
-// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, her ascensions, and her first and second
-// Constellations. Her later constellations wait on hooks the kit has not got yet. Her strikes, charged attack, plunges, and
+// Nicole's behaviour: her skill's shield and team ATK buff, her burst's projections, her ascensions, and her first, second and
+// Fourth constellations. Her sixth constellation waits on hooks the kit has not got yet. Her strikes, charged attack, plunges, and
 // Her skill's and burst's own hits are her record's alone
 export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {
   const burstProjection = readParameter("burstProjection");
@@ -246,6 +286,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
     // Her burst projects a copy of the active character's hit onto the enemy it struck, as gcsim's OnEnemyHit hook
     // Does, at most four times and once each 3 seconds
     onKitEvent: (event, context, combatant) => {
+      if (event.kind === KitEventKind.EnemyHit) takeC4Stack(context.kitEffectState.effects, event);
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (combatant.ascension < ASCENSION_1) return;
         const { characterId, previousCharacterId } = event;
@@ -290,6 +331,17 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         PROJECTION_HITBOXES.get(event.striker.characterId) ?? DEFAULT_PROJECTION_HITBOX,
       );
     },
+    // Her fourth constellation's flat damage, on her own strikes and on the strikes of the member she is deployed with
+    getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
+      additiveBaseDamageBonus:
+        getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
+          ? C4_RATIO * member.attributes.attack
+          : 0,
+    }),
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
+      getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
+        ? C4_RATIO * strike.combatant.attributes.attack
+        : 0,
     skill: {
       // Revelation: Uncreated Light shields the team with a Pyro shield scaled by her attack, and gives each deployed member an
       // ATK buff scaled by her attack, capped at the skill's maximum
