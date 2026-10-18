@@ -120,12 +120,12 @@ describe(createClorindeKitBehaviour, () => {
 
     expect(
       castNightVigilAction(createClorindeParty(0.5), (stance) => stance.kit.normalAttacks.at(1)).flatMap(({ hits }) =>
-        hits.map(({ area }) => area.radius),
+        hits.map(({ hitArea }) => hitArea.radius),
       ),
     ).toStrictEqual([14]);
     expect(
       castNightVigilAction(createClorindeParty(1), (stance) => stance.kit.normalAttacks.at(1)).flatMap(({ hits }) =>
-        hits.map(({ area }) => area.radius),
+        hits.map(({ hitArea }) => hitArea.radius),
       ),
     ).toStrictEqual([0.6]);
   });
