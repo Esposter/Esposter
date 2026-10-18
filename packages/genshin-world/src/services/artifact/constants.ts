@@ -47,6 +47,20 @@ export const OBSIDIAN_CODEX_ARTIFACT_SET_ID = 15_038;
 export const RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID = 10_001;
 // Thundersoother's id in the set table
 export const THUNDERSOOTER_ARTIFACT_SET_ID = 14_002;
+// Blizzard Strayer's id in the set table
+export const BLIZZARD_STRAYER_ARTIFACT_SET_ID = 14_001;
+// Deepwood Memories' id in the set table
+export const DEEPWOOD_MEMORIES_ARTIFACT_SET_ID = 15_025;
+// Desert Pavilion Chronicle's id in the set table
+export const DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID = 15_027;
+// Finale of the Deep Galleries' id in the set table
+export const FINALE_OF_THE_DEEP_GALLERIES_ARTIFACT_SET_ID = 15_040;
+// Golden Troupe's id in the set table
+export const GOLDEN_TROUPE_ARTIFACT_SET_ID = 15_032;
+// Scholar's id in the set table
+export const SCHOLAR_ARTIFACT_SET_ID = 10_012;
+// Tenacity of the Millelith's id in the set table
+export const TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID = 15_017;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
