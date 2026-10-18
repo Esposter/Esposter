@@ -5,10 +5,12 @@ import {
   DAILY_FINISH_DEFAULT,
   DAILY_TASK_CENTER_POSITION_DEFAULT,
   DAILY_TASK_TYPE_DEFAULT,
+  QUEST_TASK_FINISH_PROGRESS,
 } from "#src/services/genshinAssets/commissions/constants";
 import { DailyTaskFinishKindMap } from "#src/services/genshinAssets/commissions/DailyTaskFinishKindMap";
 import { DailyTaskTypeKindMap } from "#src/services/genshinAssets/commissions/DailyTaskTypeKindMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { CommissionKind } from "genshin-world";
 
 // One daily task of the dump as the world holds it, its quest as an id and none for a scene task. A type or finish the maps
 // Do not name is an error, since the task would be dealt or finished wrongly
@@ -31,7 +33,7 @@ export const toCommissionTask = (row: ExcelDailyTaskRow): Commission => {
     enterDistance: row.enterDistance,
     exitDistance: row.exitDistance,
     finishKind,
-    finishProgress: row.finishProgress,
+    finishProgress: kind === CommissionKind.Quest ? QUEST_TASK_FINISH_PROGRESS : row.finishProgress,
     id: row.id,
     kind,
     newGroupIds: row.newGroupVec,

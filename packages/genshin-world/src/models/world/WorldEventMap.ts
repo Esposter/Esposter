@@ -9,6 +9,7 @@ export interface WorldEventMap {
   achievementEvents: [AchievementEvent[]];
   bagChange: [Inventory];
   defeatEnemy: [Enemy];
+  finishQuest: [questId: string];
   parentQuestFinish: [];
   pickUpMora: [];
   questEvent: [QuestEvent];
