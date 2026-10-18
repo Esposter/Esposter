@@ -22,6 +22,9 @@ export const YOIMIYA_CHARACTER_ID = 10_000_049;
 // Yoimiya's behaviour: Niwabi Fire-Dance's stance of Blazing Arrows for the table's seconds, ending as she leaves the
 // Field, and Ryuukin Saxifrage marking the first enemy its hit strikes with Aurous Blaze, whose explosion another
 // Member's hits set off. Her passives and constellations are not built yet
+// Constellation 1 needs Aurous Blaze's extra 4 seconds and its defeat effect, which the kit does not build
+// Constellation 4 needs Aurous Blaze's explosions to cut Niwabi Fire-Dance's cooldown, which the kit does not build
+// Constellation 6 needs the Niwabi Fire-Dance Normal Attacks' extra arrow chance, which the kit does not build
 export const createYoimiyaKitBehaviour = ({
   kit,
   readHit,
