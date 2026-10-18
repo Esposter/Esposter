@@ -61,7 +61,9 @@ const mergeStatueProgress = (account: StatueProgressSave, guest: StatueProgressS
   for (const [regionId, guestProgress] of Object.entries(guest.regions)) {
     const accountProgress = regions[regionId];
     regions[regionId] =
-      accountProgress && !checkIsFurtherOffering(guestProgress, accountProgress) ? accountProgress : guestProgress;
+      accountProgress && !checkIsFurtherByLevel(guestProgress, accountProgress, ({ heldCount }) => heldCount)
+        ? accountProgress
+        : guestProgress;
   }
   return { foundOculusIds: [...new Set([...account.foundOculusIds, ...guest.foundOculusIds])], regions };
 };
