@@ -2,6 +2,7 @@
 
 - [x] 1.1 Set the meadows' base wind and its gusts so they roll across the grass. Verify: a test named after the scenario 'Gusts roll across the meadows', written first and seen failing.
 - [ ] 1.2 Build the windmill with sails that turn in the wind. Verify: a test named after the scenario 'A windmill's sails turn in a gust'.
+      Blocked until the windmill's prefab meshes and its reference come from the PC's export: the tower and the sails are not built yet.
 - [ ] 1.3 Raise the wind at Stormterror's Lair to gale strength. Verify: a test named after the scenario 'Stormterror's Lair blows at gale strength'.
 
 ## 2. City landmarks
