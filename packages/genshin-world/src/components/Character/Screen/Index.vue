@@ -58,9 +58,9 @@ import { fillGameTextValues, fillLinePlaceholders, GameLanguage, GameTextKey } f
 interface Props {
   // The character the screen opens on, the one on the field
   activeCharacterId: number;
-  // The constellations each character's set holds, by its id, the ones its Activate button presses the next of
   // The player's Adventure Rank, which an ascension's phase requires
   adventureRank: number;
+  // The constellations each character's set holds, by its id, the ones its Activate button presses the next of
   characterIdConstellationsMap: ReadonlyMap<number, Constellation[]>;
   // The kit each character's combat talents are read from, the proud skill group each of them names
   characterTalentKits: CharacterTalentKit[];

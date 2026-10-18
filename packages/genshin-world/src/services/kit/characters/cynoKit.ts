@@ -253,8 +253,6 @@ export const createCynoKitBehaviour = ({
         if (ascension >= ASCENSION_1) castJudication(kitEffectState, body, characterId);
       },
     },
-    // Mortuary Rite's cooldown is the factor of Secret Rite's while Pactsworn Pathclearer holds, so the stance's skill
-    // Press waits out three seconds rather than seven and a half
     getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
       checkHasKitStatus(
         kitEffectState.effects,
@@ -263,6 +261,8 @@ export const createCynoKitBehaviour = ({
       )
         ? WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_BONUS
         : 0,
+    // Mortuary Rite's cooldown is the factor of Secret Rite's while Pactsworn Pathclearer holds, so the stance's skill
+    // Press waits out three seconds rather than seven and a half
     getSkillCooldownMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
       findKitStance(kitEffectState.effects, combatant.characterId) ? mortuaryRiteCooldownMultiplier : 1,
     normalAttacks: [

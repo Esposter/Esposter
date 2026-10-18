@@ -12,8 +12,9 @@ const HUNTERS_VIGIL_CRIT_DAMAGE = 0.7;
 const HUNTERS_VIGIL_CRIT_RATE = 0.1;
 const HUNTERS_VIGIL_CRIT_SECONDS = 12;
 
-// Clorinde's behaviour: none of her own, since her strikes, charged attack, plunges and Last Lightfall are her record's
-// Alone, and Hunter's Vigil's press plays its animation and starts its cooldown with no hit of its own. Not built: the
+// Clorinde's behaviour: Hunter's Vigil's Constellation 6 buff, and otherwise none of her own, since her strikes, charged
+// Attack, plunges and Last Lightfall are her record's alone, and Hunter's Vigil's press plays its animation and starts
+// Its cooldown with no hit of its own. Not built: the
 // Night Vigil stance the press starts, with its Swift Hunt, Impale the Night and Surging Blade, and Last Lightfall's Bond
 // Of Life. Her passives are not built either. Constellation 6's Glimbright Shade and its damage reduction need Night Vigil's state, which
 // Is not built. Constellation 1 needs Night Vigil's Electro DMG on her normal attacks, Constellation 2 the Ascension talent

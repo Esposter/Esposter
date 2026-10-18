@@ -38,7 +38,6 @@ const castTrumpCardKitty = (constellationCount: number): KitEffectState => {
 
 describe(createColleiKitBehaviour, () => {
   // The team's Elemental Mastery buffs from Trump-Card Kitty's cast, read off the effects the burst's start adds
-
   test("an active constellation's switch changes its character's kit", () => {
     expect.hasAssertions();
     const kitEffectState = castTrumpCardKitty(4);
