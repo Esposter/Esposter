@@ -10,14 +10,15 @@ Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehav
 - **The charged shot is the Fully-Charged Aimed Shot, the charge's first level.** It is gcsim's default, hitting at 86 frames of its 94, in a box as her first strike is, and costs no stamina, as Ganyu's does not.
 - **Plunges use the shared plunge reaches, with provisional talent indices.** gcsim names no plunge group for her, so the collision, low and high plunges read attack group indices 3, 4 and 5, inferred from their values' ratios (0.568, 1.136 and 1.419), and land at the start of their 0.4-second action.
 - **Her strikes, shot and plunges carry no poise, provisionally.** gcsim gives them none.
+- **Semi-Strict Bedrest is her Ascension 1 Hydro DMG Bonus.** From Ascension 1, each press of Rebound Hydrotherapy gives her an 8% Hydro DMG Bonus for 18 seconds, as a buff on herself, as gcsim's a1Self gives it.
 
 ## Not built
 
 - **The Mini-Stration Bubble, the shot's second charge level,** is gcsim's hitmark 103 of 112 frames and a second hit, waiting on a charge level that carries a follow-up hit.
 - **The bubbles' hold tiers,** which are gcsim's held press at 66 and 90 frames with their damage buffs, wait on a summon whose tier its cast chooses.
-- **The bubbles' healing and the final bounce's heal,** which heal her party by a Max HP share and a flat amount, wait on a party healing hook.
+- **The bubbles' healing and the final bounce's heal,** which heal her party by a Max HP share and a flat amount, wait on heal values the kit record does not hold. The party healing hook exists (`KitHit.healParty`, as Barbara's kit uses it), so the gap is the record's data, not a framework hook.
 - **Surging Blade,** the second damage gcsim gives the press, waits on a summon's second timed hit.
-- **Her ascension and constellation passives, and the droplets her press and burst spawn,** are not built.
+- **Her Ascension 1 Convalescence and Ascension 4 healing bonus, her constellation passives, and the droplets her press and burst spawn,** are not built. Convalescence adds a flat base to her off-field members' Elemental Skill hits, which no kit reaches, since a character's module cannot touch another kit's hits. Ascension 4 raises the healing she performs, and a heal reads the healed member's HealingBonus rather than its healer's, so no hook raises her own heals.
 
 ## Key files
 
