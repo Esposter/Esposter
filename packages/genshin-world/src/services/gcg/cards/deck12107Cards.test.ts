@@ -15,6 +15,7 @@ import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { breastplate } from "#src/services/gcg/cards/breastplate";
 import { fatalRainscreen } from "#src/services/gcg/cards/fatalRainscreen";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
@@ -241,13 +242,17 @@ describe("full Plate", () => {
     expect(fullPlate.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(3);
   });
 
-  test("at the end phase it is spent once no character on its side holds a shield", () => {
+  test("it stays on the field while its shield holds, and a hit that consumes the shield takes it off", () => {
     expect.hasAssertions();
-    const zoneCard = createGcgZoneCard(FULL_PLATE_ID, fullPlate);
-    fullPlate.onEndPhase?.({ duel: createShieldedDuel(1), sideIndex: 0 }, zoneCard);
-    expect(zoneCard.usages).toBe(1);
-    fullPlate.onEndPhase?.({ duel: createShieldedDuel(0), sideIndex: 0 }, zoneCard);
-    expect(zoneCard.usages).toBe(0);
+    const duel = createDuel([
+      createSideState([{ ...createCharacterState(1602), shield: 2 }]),
+      createSideState([createCharacterState(1203)]),
+    ]);
+    takeOne(duel.sides, 0).onstages.push(createGcgZoneCard(FULL_PLATE_ID, fullPlate));
+    applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
+    expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([FULL_PLATE_ID]);
+    applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 4 }, TEST_RULE);
+    expect(takeOne(duel.sides, 0).onstages).toStrictEqual([]);
   });
 });
 
@@ -324,17 +329,17 @@ describe("stone Force", () => {
     ).toStrictEqual({ damageType: Element.Geo, value: 2 });
   });
 
-  test("at the end phase it is spent once its character holds no Stonehide", () => {
+  test("it stays while its character holds a Stonehide, and a hit that spends the Stonehide takes it off with it", () => {
     expect.hasAssertions();
-    const zoneCard = createGcgZoneCard(STONE_FORCE_ID, stoneForce);
-    const withStonehide = createGcgZoneCard(STONEHIDE_ID, stonehide);
-    stoneForce.onEndPhase?.(
-      { characterIndex: 0, duel: createStoneForceDuel([zoneCard, withStonehide]), sideIndex: 0 },
-      zoneCard,
-    );
-    expect(zoneCard.usages).toBe(1);
-    stoneForce.onEndPhase?.({ characterIndex: 0, duel: createStoneForceDuel([zoneCard]), sideIndex: 0 }, zoneCard);
-    expect(zoneCard.usages).toBe(0);
+    const duel = createStoneForceDuel([
+      { ...createGcgZoneCard(STONEHIDE_ID, stonehide), usages: 2 },
+      createGcgZoneCard(STONE_FORCE_ID, stoneForce),
+    ]);
+    applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
+    const holder = takeOne(duel.sides, 0).characters.at(0);
+    expect(holder?.statuses.map(({ cardId }) => cardId)).toStrictEqual([STONEHIDE_ID, STONE_FORCE_ID]);
+    applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
+    expect(holder?.statuses).toStrictEqual([]);
   });
 });
 
