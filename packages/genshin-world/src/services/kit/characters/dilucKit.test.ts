@@ -41,6 +41,8 @@ const createHealthLossEvent = (characterId: number, sourceCharacterId?: number):
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
+  healthShareAfter: 0.4,
+  healthShareBefore: 0.5,
   ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
 });
 // A shield owned by one party member takes part of an enemy's strike on another, a tenth of the struck member's Max HP

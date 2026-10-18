@@ -296,6 +296,8 @@ describe(stepActiveKit, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.75,
+        healthShareBefore: 1,
       },
     ]);
   });
@@ -335,6 +337,8 @@ describe(stepActiveKit, () => {
         isFallRefused: true,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.1,
+        healthShareBefore: 1,
       },
       { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.FallRefused },
     ]);

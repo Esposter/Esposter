@@ -308,6 +308,8 @@ describe(createNilouKitBehaviour, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.4,
+        healthShareBefore: 0.5,
       },
       context,
       combatant,
@@ -339,6 +341,8 @@ describe(createNilouKitBehaviour, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.4,
+        healthShareBefore: 0.5,
       },
       {
         bondOfLifeShare: 0,
@@ -347,6 +351,8 @@ describe(createNilouKitBehaviour, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.4,
+        healthShareBefore: 0.5,
       },
     ];
     for (const healthChange of healthChanges) NILOU_KIT.onKitEvent?.(healthChange, context, combatant);
@@ -367,6 +373,8 @@ describe(createNilouKitBehaviour, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.4,
+        healthShareBefore: 0.5,
       },
       context,
       combatant,

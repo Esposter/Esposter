@@ -34,6 +34,8 @@ const reportHealing = (combatant: Combatant, overflowHealthShare: number): KitEf
       healthShare: 0.1,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,
+      healthShareAfter: 0.6,
+      healthShareBefore: 0.5,
       overflowHealthShare,
     },
     createKitTestContext(combatant, { kitEffectState }),

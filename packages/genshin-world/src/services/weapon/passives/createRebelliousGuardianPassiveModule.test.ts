@@ -27,6 +27,8 @@ describe(createRebelliousGuardianPassiveModule, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.4,
+        healthShareBefore: 0.5,
       },
       context,
       wielder,
@@ -62,6 +64,8 @@ describe(createRebelliousGuardianPassiveModule, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.6,
+        healthShareBefore: 0.5,
       },
       context,
       wielder,
@@ -74,6 +78,8 @@ describe(createRebelliousGuardianPassiveModule, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.4,
+        healthShareBefore: 0.5,
         sourceCharacterId: OTHER_CHARACTER_ID,
       },
       context,
@@ -94,6 +100,8 @@ describe(createRebelliousGuardianPassiveModule, () => {
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
+      healthShareAfter: 0.4,
+      healthShareBefore: 0.5,
     };
     rebelliousGuardianPassiveModule.onKitEvent?.(loss, context, wielder);
     rebelliousGuardianPassiveModule.onKitEvent?.(loss, context, wielder);

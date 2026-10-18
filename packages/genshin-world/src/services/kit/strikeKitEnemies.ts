@@ -172,7 +172,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         ? { ...targetedStrike, isFirstEnemyStruck: true }
         : targetedStrike;
       enemyHit.onStrike?.(context, enemyStrike, enemy);
-      if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, enemyHit);
+      if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, enemyHit, strike.attackTag);
       addPolestarField(kitEffectState, combatant.characterId, reactions, body.position);
       // The defeat the strike dealt is reported here, and a Stellar reaction's defeat by the damage point it deals
       const isDefeatedByStrike = enemy.state === EnemyState.Dead;

@@ -16,6 +16,8 @@ const createEnemyStrikeLoss = () => ({
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
+  healthShareAfter: 0.4,
+  healthShareBefore: 0.5,
 });
 
 describe(createItinerantHeroPassiveModule, () => {

@@ -21,6 +21,8 @@ const clearHealth = (bondOfLifeShare: number) => ({
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
+  healthShareAfter: 0.5,
+  healthShareBefore: 0.5,
 });
 
 describe(createFlowingPurityPassiveModule, () => {

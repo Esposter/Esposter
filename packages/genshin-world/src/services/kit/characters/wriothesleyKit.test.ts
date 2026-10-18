@@ -71,6 +71,8 @@ const createSelfDrain = (): KitHealthChangedEvent => ({
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
+  healthShareAfter: 0.455,
+  healthShareBefore: 0.5,
   sourceCharacterId: WRIOTHESLEY_CHARACTER_ID,
 });
 
@@ -212,6 +214,8 @@ describe(createWriothesleyKitBehaviour, () => {
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0.2,
+        healthShareAfter: 0.5,
+        healthShareBefore: 0.5,
       },
       context,
       combatant,

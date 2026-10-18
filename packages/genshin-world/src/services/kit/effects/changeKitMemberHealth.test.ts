@@ -60,6 +60,8 @@ describe(changeKitMemberHealth, () => {
         healthShare: 0.25,
         isFallRefused: false,
         overflowHealthShare: 0,
+        healthShareAfter: 0.75,
+        healthShareBefore: 0.5,
         sourceCharacterId: SOURCE_ID,
       },
     ]);
@@ -82,6 +84,8 @@ describe(changeKitMemberHealth, () => {
         healthShare: -0.25,
         isFallRefused: false,
         overflowHealthShare: 0,
+        healthShareAfter: 0.75,
+        healthShareBefore: 1,
         sourceCharacterId: SOURCE_ID,
       },
     ]);
@@ -108,6 +112,8 @@ describe(changeKitMemberHealth, () => {
         healthShare: -0.25,
         isFallRefused: false,
         overflowHealthShare: 0,
+        healthShareAfter: 0.75,
+        healthShareBefore: 1,
         sourceCharacterId: SOURCE_ID,
       },
     ]);
