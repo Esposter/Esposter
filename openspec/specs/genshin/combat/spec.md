@@ -135,6 +135,29 @@ Ascendant Gleam's reaction bonus SHALL be capped at 36 percent, and a skill or b
 - **THEN** that character's Ascendant Gleam lasts 20 seconds
 - **AND** it replaces the Ascendant Gleam lit before
 
+### Requirement: A reaction's Elevation
+
+A deployed member's party reaction bonus SHALL raise a Lunar or Stellar reaction's damage and a direct Lunar hit's by its Elevation, a multiplier of its own applied last, apart from the Base DMG Bonus and the DMG Bonus.
+
+#### Scenario: A Lunar contributor's damage is multiplied by its Elevation last
+
+- **GIVEN** a deployed member's kit gives a Lunar contributor an Elevation of 20 percent
+- **WHEN** the contributor's share of the Lunar reaction is priced
+- **THEN** its share, CRIT and all, is multiplied by 1.2
+
+#### Scenario: A Stellar reaction's damage, its flat base among it, is multiplied by its creator's Elevation last
+
+- **GIVEN** a deployed member's kit gives the reaction's creator a flat base and an Elevation of 20 percent
+- **WHEN** a Stellar Swirl it makes is priced
+- **THEN** its damage with the flat base is multiplied by 1.2
+
+#### Scenario: A direct Lunar hit takes the party reaction bonuses its Lunar reaction takes, and its Elevation last
+
+- **GIVEN** a deployed member's kit gives a Lunar-Bloom a DMG Bonus, a CRIT Rate, a CRIT DMG and an Elevation
+- **WHEN** a direct Lunar-Bloom hit is priced on an enemy
+- **THEN** the DMG Bonus adds to its reaction bonus, the CRIT Rate to its roll and the CRIT DMG to a CRIT hit
+- **AND** the whole is multiplied by one plus the Elevation
+
 ### Requirement: A shield
 
 A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character.

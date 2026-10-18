@@ -124,4 +124,32 @@ describe(strikeStellarReaction, () => {
       100 * getResistanceMultiplier(getEnemyResistance(kind, createSturdyEnemy(), Element.Anemo)),
     );
   });
+
+  test("a Stellar reaction's damage, its flat base among it, is multiplied by its creator's Elevation last", () => {
+    expect.hasAssertions();
+    const elevated: Combatant = {
+      ...combatant,
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ additiveBaseDamageBonus: 100, elevationBonus: 0.2 }) },
+    };
+    const flat: Combatant = {
+      ...combatant,
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ additiveBaseDamageBonus: 100 }) },
+    };
+    const damageOf = (creator: Combatant) => {
+      const enemy = createSturdyEnemy();
+      const context = createKitTestContext(creator, { enemyTables });
+      strikeStellarReaction(
+        enemy,
+        Element.Anemo,
+        STELLAR_SWIRL_ANEMO_COEFFICIENT,
+        new Set([TRAVELER_CHARACTER_ID]),
+        creator,
+        context,
+        StellarReactionType.StellarSwirl,
+      );
+      return enemy.maxHealth - enemy.health;
+    };
+
+    expect(damageOf(elevated)).toBeCloseTo(damageOf(flat) * (1 + 0.2));
+  });
 });

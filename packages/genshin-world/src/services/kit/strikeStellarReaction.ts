@@ -26,8 +26,10 @@ export const strikeStellarReaction = (
   context: KitContext,
   reactionType?: StellarReactionType,
 ): boolean => {
-  // A Stellar reaction its creator makes takes the party's reaction bonuses: the DMG Bonus with the Glimmer's, and the flat
-  // Base once, before the enemy's RES as strikeReactionDamage takes it. A hit that names no reaction, a Stellar Vortex's, takes none
+  // A Stellar reaction its creator makes takes the party's reaction bonuses: the DMG Bonus with the Glimmer's, the flat Base
+  // Once, before the enemy's RES as strikeReactionDamage takes it, and the Elevation over both last, as gcsim (MIT)
+  // Pkg/core/combat/reaction.go multiplies a contributor's damage and its flat damage alike. A hit that names no reaction, a
+  // Stellar Vortex's, takes none
   const bonuses =
     owner && reactionType
       ? getDeployedReactionBonuses({ combatant: owner, element, enemy, reactionType }, context)
@@ -49,7 +51,7 @@ export const strikeStellarReaction = (
   strikeReactionDamage(
     enemy,
     element,
-    sumLunarContributions(damages) + (bonuses?.additiveBaseDamageBonus ?? 0),
+    (sumLunarContributions(damages) + (bonuses?.additiveBaseDamageBonus ?? 0)) * (1 + (bonuses?.elevationBonus ?? 0)),
     owner,
     context,
   );

@@ -11,7 +11,9 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 // Each deployed contributor's damage from the price of its level and attributes, priced alone with its own CRIT, in the
 // Order the team lists them, as a reaction's contributors are weighted. A Lunar reaction's CRIT Rate, CRIT DMG and DMG Bonus
 // Take the party reaction bonuses read for that contributor's own share of it, with the element its hit is dealt in, so a
-// Kit's bonus reaches whichever contributor it names
+// Kit's bonus reaches whichever contributor it names, and its Elevation multiplies that share last, as gcsim (MIT)
+// Pkg/core/combat/reaction.go prices a contributor
+// Https://github.com/genshinsim/gcsim/blob/main/pkg/core/combat/reaction.go
 export const priceReactionContributors = (
   contributorIds: ReadonlySet<number>,
   context: KitContext,
@@ -33,7 +35,7 @@ export const priceReactionContributors = (
     );
     const { attributeTotalMap } = attributes;
     const bonuses = lunarReaction && getDeployedReactionBonuses({ ...lunarReaction, combatant }, context);
-    const damage = price(level, attributeTotalMap, bonuses?.damageBonus ?? 0);
+    const damage = price(level, attributeTotalMap, bonuses?.damageBonus ?? 0) * (1 + (bonuses?.elevationBonus ?? 0));
     const criticalRate = attributeTotalMap[Attribute.CriticalRate] + (bonuses?.criticalRateBonus ?? 0);
     const criticalDamage = attributeTotalMap[Attribute.CriticalDamage] + (bonuses?.criticalDamageBonus ?? 0);
     return [random() < criticalRate ? damage * (1 + criticalDamage) : damage];

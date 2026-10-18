@@ -53,6 +53,20 @@ describe(priceReactionContributors, () => {
     expect(priceWith(context, LunarReactionType.LunarCharged)).toStrictEqual([DAMAGE * (1 + criticalDamage + 0.5)]);
   });
 
+  test("a Lunar contributor's damage is multiplied by its Elevation last", () => {
+    expect.hasAssertions();
+    const contributor = createContributor({
+      ...TRAVELER_KIT,
+      getPartyReactionBonus: () => ({ criticalDamageBonus: 0.5, criticalRateBonus: 1, elevationBonus: 0.2 }),
+    });
+    const context = createKitTestContext(contributor, { random: () => ROLL });
+    const criticalDamage = contributor.attributes.attributeTotalMap[Attribute.CriticalDamage];
+
+    expect(priceWith(context, LunarReactionType.LunarCharged)).toStrictEqual([
+      DAMAGE * (1 + criticalDamage + 0.5) * (1 + 0.2),
+    ]);
+  });
+
   test("a Lunar contributor with no party reaction bonus rolls its own CRIT only", () => {
     expect.hasAssertions();
     const contributor = createContributor();
