@@ -7,7 +7,7 @@ import { TextNode } from "node-html-parser";
 // A head's components as the root's props: each one the root's schema reads, and a component it does not name kept under its own tag
 export const readMjmlHead = (head: HTMLElement): Record<string, unknown> => {
   const props: Record<string, unknown> = {};
-  const attributesByType: Record<string, Record<string, string>> = {};
+  const typeAttributesMap: Record<string, Record<string, string>> = {};
   const fonts: Record<string, string>[] = [];
   const styles: { css: string; inline: boolean }[] = [];
   for (const text of head.childNodes)
@@ -16,7 +16,7 @@ export const readMjmlHead = (head: HTMLElement): Record<string, unknown> => {
     switch (child.rawTagName) {
       case "mj-attributes":
         for (const grandchild of child.children)
-          attributesByType[grandchild.rawTagName === "mj-all" ? ALL_ATTRIBUTES_KEY : grandchild.rawTagName] =
+          typeAttributesMap[grandchild.rawTagName === "mj-all" ? ALL_ATTRIBUTES_KEY : grandchild.rawTagName] =
             grandchild.attributes;
         break;
       case "mj-breakpoint":
@@ -39,7 +39,7 @@ export const readMjmlHead = (head: HTMLElement): Record<string, unknown> => {
     }
   }
 
-  if (Object.keys(attributesByType).length > 0) props.attributes = attributesByType;
+  if (Object.keys(typeAttributesMap).length > 0) props.attributes = typeAttributesMap;
   if (fonts.length > 0) props.fonts = fonts;
   if (styles.length > 0) props.styles = styles;
   return props;

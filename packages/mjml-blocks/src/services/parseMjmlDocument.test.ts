@@ -18,7 +18,7 @@ const EVERY_TYPE_CONTENT: BlockDocument = {
     createNode("mj-raw", { content: "<p>kept</p>", position: "file-start" }),
     createNode("mj-hero", {
       "background-color": "#ffffff",
-      children: [createNode("mj-text", { content: "Hero", color: "#000000" })],
+      children: [createNode("mj-text", { color: "#000000", content: "Hero" })],
     }),
     createNode("mj-wrapper", {
       "background-url": "https://example.com/bg.png",
@@ -199,5 +199,20 @@ describe(parseMjmlDocument, () => {
       TEST_MAX_NODES,
     );
     expect(inHead.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "#text"']);
+  });
+
+  test("#179 an id attribute is refused at its node, not taken as the node's id", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-body><mj-section id="hero"></mj-section></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+
+    expect(result.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
+      { message: 'Unrecognized key: "#id"', path: ["content", 0, "props"] },
+    ]);
   });
 });

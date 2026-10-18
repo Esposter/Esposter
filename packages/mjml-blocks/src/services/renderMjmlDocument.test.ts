@@ -12,8 +12,8 @@ import {
 } from "#src/services/constants.test";
 import { renderMjmlDocument } from "#src/services/renderMjmlDocument";
 import { createBlockDocumentSchema } from "headless-block-editor";
-import { createRequire } from "node:module";
 import mjml2html from "mjml";
+import { createRequire } from "node:module";
 import { describe, expect, test } from "vitest";
 
 const MJML_PACKAGE = createRequire(import.meta.url)("mjml/package.json");

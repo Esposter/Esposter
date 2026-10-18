@@ -3,7 +3,7 @@ import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition"
 import type { BlockNode, BlockRegistry } from "headless-block-editor";
 import type { Node } from "node-html-parser";
 
-import { MJML_COMPONENT_SPECIFICATIONS, STRAY_TEXT_TYPE } from "#src/services/constants";
+import { MJML_COMPONENT_SPECIFICATIONS, STRAY_ID_ATTRIBUTE_KEY, STRAY_TEXT_TYPE } from "#src/services/constants";
 import { readMjmlContent } from "#src/services/readMjmlContent";
 import { normalizeString } from "@esposter/shared";
 import { getBlockTypeDefinition } from "headless-block-editor";
@@ -18,11 +18,12 @@ const readMjmlNode = <TContent>(
 ): BlockNode => {
   const type = element.rawTagName;
   const specification = MJML_COMPONENT_SPECIFICATIONS.find((specification) => specification.type === type);
-  const { alt, ...attributes } = element.attributes;
+  const { alt, id: idAttribute, ...attributes } = element.attributes;
   const isDecorative = specification?.hasAlternativeText === true && alt === "";
   const props: Record<string, unknown> = {
+    ...(isDecorative ? { ...attributes, decorative: true } : { ...attributes, ...(alt === undefined ? {} : { alt }) }),
+    ...(idAttribute === undefined ? {} : { [STRAY_ID_ATTRIBUTE_KEY]: idAttribute }),
     id: crypto.randomUUID(),
-    ...(isDecorative ? { ...attributes, decorative: true } : element.attributes),
   };
 
   if (specification?.contentKind === undefined) {

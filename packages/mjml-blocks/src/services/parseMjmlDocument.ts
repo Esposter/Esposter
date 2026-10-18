@@ -7,9 +7,9 @@ import type { z } from "zod";
 import { MJML_BLOCK_TEXT_TAGS, STRAY_TEXT_TYPE } from "#src/services/constants";
 import { readMjmlHead } from "#src/services/readMjmlHead";
 import { readMjmlNodes } from "#src/services/readMjmlNodes";
-import { createBlockDocumentSchema } from "headless-block-editor";
 import { normalizeString } from "@esposter/shared";
-import { TextNode, parse } from "node-html-parser";
+import { createBlockDocumentSchema } from "headless-block-editor";
+import { parse, TextNode } from "node-html-parser";
 
 // The document's root props and body from its mjml element, the head read into the root's props and the body into its content
 const readMjmlRoot = <TContent>(

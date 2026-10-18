@@ -231,3 +231,6 @@ export const MJML_BLOCK_TEXT_TAGS: string[] = [
 ];
 // The type a text between an element's children takes when it is not blank: no registry holds it, so the refusal names it
 export const STRAY_TEXT_TYPE: string = "#text";
+// The key an imported id attribute is kept under: no body component takes one, and a node's own id is the core's, so the
+// Strict props schema refuses it by this name rather than the import taking it as the node's id
+export const STRAY_ID_ATTRIBUTE_KEY: string = "#id";
