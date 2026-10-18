@@ -1,5 +1,6 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
+import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { GCSIM_PLUNGE_FILE } from "#src/services/genshinAssets/kits/constants";
@@ -7,8 +8,17 @@ import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/create
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { KitPlunge, STRIKE_TARGETING_AREA } from "genshin-world";
 import { posix } from "node:path";
+
+// The hitmark a constant gives a hit, when its value is a number
+const readHitmarkSpread = (constant: GoConstant | undefined) => {
+  const value = readGoNumber(constant?.value);
+  return constant === undefined || value === undefined
+    ? {}
+    : { hitmark: { file: constant.file, line: constant.line, value } };
+};
 
 // The plunges: each landing's hitmark and frames from `lowPlungeHitmark` and `lowPlungeFrames` and their high twins,
 // Its area from the `Low_Plunge` or `High_Plunge` hitbox, and the collision's from `Plunge`. With no plunge file, the
@@ -32,9 +42,7 @@ export const addGcsimPlungeCandidates = (
       path,
       {
         attack: plungeFallback.attacks.find((attack) => attack.talentVariable === talentVariable),
-        ...(typeof hitmark?.value === "number" && {
-          hitmark: { file: hitmark.file, line: hitmark.line, value: hitmark.value },
-        }),
+        ...readHitmarkSpread(hitmark),
       },
       STRIKE_TARGETING_AREA,
     );
@@ -54,9 +62,7 @@ export const addGcsimPlungeCandidates = (
         {
           areaHitbox: hitbox,
           attack: attacks.find(({ talentVariable }) => talentVariable === `${prefix}Plunge`),
-          ...(typeof hitmark?.value === "number" && {
-            hitmark: { file: hitmark.file, line: hitmark.line, value: hitmark.value },
-          }),
+          ...readHitmarkSpread(hitmark),
           talentLeaf: findGcsimTalentLeaf(config, `${prefix}Plunge`, []),
         },
         STRIKE_TARGETING_AREA,
@@ -83,9 +89,7 @@ export const addGcsimPlungeCandidates = (
       {
         areaHitbox: collisionHitbox,
         attack: attacks.find(({ talentVariable }) => talentVariable === "collision"),
-        ...(typeof collisionHitmark?.value === "number" && {
-          hitmark: { file: collisionHitmark.file, line: collisionHitmark.line, value: collisionHitmark.value },
-        }),
+        ...readHitmarkSpread(collisionHitmark),
         talentLeaf: findGcsimTalentLeaf(config, "collision", []),
       },
       STRIKE_TARGETING_AREA,

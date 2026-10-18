@@ -11,6 +11,7 @@ import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/eva
 import { getGoRootName } from "#src/services/genshinAssets/kits/gcsim/getGoRootName";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readGoAliases, resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
@@ -72,8 +73,7 @@ export const readGcsimAttacks = (
       }
       const evaluateNumber = (key: string): number | undefined => {
         const field = fieldMap.get(key);
-        const value = field === undefined ? undefined : evaluateGoExpression(field.expression, resolveName);
-        return typeof value === "number" ? value : undefined;
+        return readGoNumber(field === undefined ? undefined : evaluateGoExpression(field.expression, resolveName));
       };
       const multiplierField = fieldMap.get("Mult");
       const poiseDamage = evaluateNumber("PoiseDMG");

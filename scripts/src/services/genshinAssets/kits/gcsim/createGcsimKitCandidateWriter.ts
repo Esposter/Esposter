@@ -15,6 +15,7 @@ import {
   GCSIM_NO_INTERNAL_COOLDOWN_TAG,
   GCSIM_PHYSICAL_ELEMENT,
 } from "#src/services/genshinAssets/kits/constants";
+import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { GcsimInternalCooldownTagMap } from "#src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap";
@@ -46,7 +47,13 @@ export const createGcsimKitCandidateWriter = (
       const constant = findGcsimConstant(constantMap, ...names);
       const isList = Array.isArray(constant?.value);
       const frames = readFirstGoFrames(constant?.value);
-      if (constant !== undefined && typeof frames === "object" && frames !== null && !Array.isArray(frames))
+      if (
+        constant !== undefined &&
+        typeof frames === "object" &&
+        frames !== null &&
+        !Array.isArray(frames) &&
+        !checkIsGoFloat(frames)
+      )
         add(
           path,
           frames.animationFrames,

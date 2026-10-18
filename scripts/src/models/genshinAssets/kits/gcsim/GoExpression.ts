@@ -8,7 +8,7 @@ export type GoExpression =
   | { index: GoExpression; kind: GoExpressionKind.Index; target: GoExpression }
   | { kind: GoExpressionKind.Binary; left: GoExpression; operator: string; right: GoExpression }
   | { kind: GoExpressionKind.Identifier; name: string }
-  | { kind: GoExpressionKind.Number; value: number }
+  | { isFloat: boolean; kind: GoExpressionKind.Number; value: number }
   | { kind: GoExpressionKind.String; value: string }
   | { kind: GoExpressionKind.Unary; operand: GoExpression; operator: string }
   | { kind: GoExpressionKind.Unknown };

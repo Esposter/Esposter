@@ -3,12 +3,13 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 
 const BAG_PATH_REGEX = /^(?:frames|parameters)\.(?<name>[^.]+)$/u;
 
 // The first number of a constant, descending through each level's first element where it is a list of states
 const readFirstNumber = (value: GoValue | undefined): number | undefined =>
-  Array.isArray(value) ? readFirstNumber(value[0]) : typeof value === "number" ? value : undefined;
+  Array.isArray(value) ? readFirstNumber(value[0]) : readGoNumber(value);
 
 // A frames or parameters bag path the kit holds under one of its character's constants' names takes that constant, cited at
 // The line it is declared on, or at its first state's line where it is a list. The name is the join key, as holds and presses

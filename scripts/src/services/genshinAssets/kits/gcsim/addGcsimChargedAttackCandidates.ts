@@ -8,6 +8,7 @@ import {
   NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES,
 } from "#src/services/genshinAssets/kits/constants";
 import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
+import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
@@ -55,7 +56,12 @@ export const addGcsimChargedAttackCandidates = (
     add("chargedAttack.isAimed", true, toFile(aimedHitmarks.file), aimedHitmarks.line);
     add("chargedAttackStamina", 0, toFile(aimedHitmarks.file), aimedHitmarks.line);
     const aimedLevelFrames = Array.isArray(aimedFrames?.value) ? aimedFrames.value[GCSIM_AIM_CHARGE_LEVEL] : undefined;
-    if (aimedFrames !== undefined && typeof aimedLevelFrames === "object" && !Array.isArray(aimedLevelFrames))
+    if (
+      aimedFrames !== undefined &&
+      typeof aimedLevelFrames === "object" &&
+      !Array.isArray(aimedLevelFrames) &&
+      !checkIsGoFloat(aimedLevelFrames)
+    )
       add(
         "chargedAttack.animationFrames",
         aimedLevelFrames.animationFrames,

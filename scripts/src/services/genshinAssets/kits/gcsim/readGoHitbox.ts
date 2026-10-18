@@ -9,6 +9,7 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readArgumentStarts } from "#src/services/genshinAssets/kits/gcsim/readArgumentStarts";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 
 // The layout of a `combat` hitbox constructor's arguments: an on-target one takes its target first, a source one its
 // Source then its centre, each then its offset, its size (a circle's radius, a box's width and height) and a fan angle
@@ -63,7 +64,7 @@ const readOffset = (
   while (tokens[position] !== undefined && !checkIsGoPunctuation(tokens[position], "}")) {
     const key = tokens[position];
     if (key?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[position + 1], ":")) return undefined;
-    const value = evaluateGoExpression(parseGoExpression(tokens, position + 2).expression, resolveName);
+    const value = readGoNumber(evaluateGoExpression(parseGoExpression(tokens, position + 2).expression, resolveName));
     if (typeof value !== "number" || (key.text !== "X" && key.text !== "Y")) return undefined;
     offset[key.text === "X" ? 0 : 1] = value;
     position = parseGoExpression(tokens, position + 2).end;
@@ -76,10 +77,7 @@ const readNumber = (
   tokens: readonly GoToken[],
   start: number,
   resolveName: (name: string) => GoValue | undefined,
-): number | undefined => {
-  const value = evaluateGoExpression(parseGoExpression(tokens, start).expression, resolveName);
-  return typeof value === "number" ? value : undefined;
-};
+): number | undefined => readGoNumber(evaluateGoExpression(parseGoExpression(tokens, start).expression, resolveName));
 
 // The hitbox a queue call's attack pattern is written as, `combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 2)`
 // And its kin, in gcsim's shape and centre terms: a circle or box on the player, or on the primary target, with its
