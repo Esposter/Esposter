@@ -45,7 +45,8 @@ describe(claimPetrifiedTree, () => {
         adventureRankTables,
         wallet,
         EMPTY_INVENTORY,
-        [
+        { claimCount: 1, condensedResinCount: 0, resin: DOMAIN_RESIN },
+        () => [
           { count: MORA_COUNT, id: MORA_ITEM_ID },
           { count: REWARD_COUNT, id: REWARD_ITEM_ID },
         ],
@@ -78,6 +79,48 @@ describe(claimPetrifiedTree, () => {
     });
   });
 
+  test("claiming the tree for two claims spends both claims' resin and gives both claims' rewards", () => {
+    expect.hasAssertions();
+
+    expect(
+      claimPetrifiedTree(
+        adventureRankTables,
+        wallet,
+        EMPTY_INVENTORY,
+        { claimCount: 2, condensedResinCount: 0, resin: 2 * DOMAIN_RESIN },
+        () => [
+          { count: MORA_COUNT, id: MORA_ITEM_ID },
+          { count: REWARD_COUNT, id: REWARD_ITEM_ID },
+        ],
+        0,
+        noQuest,
+        epoch,
+        { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
+        materialDataMap,
+      ),
+    ).toStrictEqual({
+      adventureExp: 2 * DOMAIN_RESIN * ADVENTURE_EXP_PER_RESIN,
+      inventory: {
+        items: [
+          {
+            definition: {
+              category: ItemCategory.Material,
+              id: REWARD_ITEM_ID,
+              name: REWARD_NAME,
+              rank: 0,
+              rarity: 0,
+              stackLimit: REWARD_STACK_LIMIT,
+            },
+            id: 0,
+            quantity: 2 * REWARD_COUNT,
+          },
+        ],
+        nextId: 1,
+      },
+      wallet: { ...wallet, [Currency.Mora]: 2 * MORA_COUNT, [Currency.OriginalResin]: 100 - 2 * DOMAIN_RESIN },
+    });
+  });
+
   test("claiming the tree with too little resin is refused", () => {
     expect.hasAssertions();
 
@@ -86,7 +129,8 @@ describe(claimPetrifiedTree, () => {
         adventureRankTables,
         { ...EMPTY_WALLET, [Currency.OriginalResin]: DOMAIN_RESIN - 1 },
         EMPTY_INVENTORY,
-        [{ count: MORA_COUNT, id: MORA_ITEM_ID }],
+        { claimCount: 1, condensedResinCount: 0, resin: DOMAIN_RESIN },
+        () => [{ count: MORA_COUNT, id: MORA_ITEM_ID }],
         0,
         noQuest,
         epoch,
