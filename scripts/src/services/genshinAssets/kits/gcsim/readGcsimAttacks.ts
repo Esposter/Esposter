@@ -184,11 +184,20 @@ export const readGcsimAttacks = (
       return placed;
     };
     const attacks: GcsimAttack[] = [];
-    // A variant is only in its loop iteration, so the copies and sets after it take the variable's own attack instead
-    const readVariableAttack = (variableName: string, line: number) =>
+    // The variable's own attack as of the line, the one no loop iteration holds
+    const readOwnAttack = (variableName: string, line: number) =>
       attacks.findLast(
         (attack) => attack.variableName === variableName && attack.line < line && attack.iteration === undefined,
       );
+    // A variant is only in its loop iteration, so a copy or set after it takes the variable's own attack instead, and
+    // Only a variable with none takes the variants its loop literal left, one attack per iteration
+    const readVariableAttacks = (variableName: string, line: number): GcsimAttack[] => {
+      const ownAttack = readOwnAttack(variableName, line);
+      if (ownAttack !== undefined) return [ownAttack];
+      const priorAttacks = attacks.filter((attack) => attack.variableName === variableName && attack.line < line);
+      const literalLine = priorAttacks.at(-1)?.line;
+      return priorAttacks.filter((attack) => attack.line === literalLine);
+    };
     for (const [position, token] of tokens.entries()) {
       if (token.text === "AttackInfo" && checkIsGoPunctuation(tokens[position + 1], "{")) {
         // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens its body rather than a literal
@@ -257,24 +266,25 @@ export const readGcsimAttacks = (
         checkIsGoPunctuation(tokens[position + 1], "=") &&
         tokens[position - 2]?.kind === GoTokenKind.Identifier
       ) {
-        const literalAttack = readVariableAttack(tokens[position - 2]?.text ?? "", token.line);
+        const literalAttacks = readVariableAttacks(tokens[position - 2]?.text ?? "", token.line);
         const talentVariable = resolveGoAlias(
           aliasMap,
           getGoRootName(parseGoExpression(tokens, position + 2).expression),
           position,
         );
-        if (literalAttack === undefined || talentVariable === undefined) continue;
-        attacks.push(
-          withBranch(
-            {
-              ...literalAttack,
-              fieldLineMap: { ...literalAttack.fieldLineMap, Mult: token.line },
-              line: token.line,
-              talentVariable,
-            },
-            position,
-          ),
-        );
+        if (literalAttacks.length === 0 || talentVariable === undefined) continue;
+        for (const literalAttack of literalAttacks)
+          attacks.push(
+            withBranch(
+              {
+                ...literalAttack,
+                fieldLineMap: { ...literalAttack.fieldLineMap, Mult: token.line },
+                line: token.line,
+                talentVariable,
+              },
+              position,
+            ),
+          );
       } else if (
         token.text === ITERATION_POISE_FIELD &&
         checkIsGoPunctuation(tokens[position - 1], ".") &&
@@ -282,7 +292,7 @@ export const readGcsimAttacks = (
         tokens[position - 2]?.kind === GoTokenKind.Identifier
       ) {
         const iteration = readIterationAt(tokens, position, loops);
-        const copyAttack = readVariableAttack(tokens[position - 2]?.text ?? "", token.line);
+        const copyAttack = readOwnAttack(tokens[position - 2]?.text ?? "", token.line);
         const poiseDamage = readGoNumber(
           evaluateGoExpression(parseGoExpression(tokens, position + 2).expression, resolveName),
         );
@@ -302,11 +312,11 @@ export const readGcsimAttacks = (
         );
       } else {
         const copySource = readCopySource(tokens, position);
-        const sourceAttack = copySource === undefined ? undefined : readVariableAttack(copySource, token.line);
-        if (sourceAttack === undefined) continue;
-        attacks.push(
-          withBranch({ ...sourceAttack, line: token.line, siteLine: token.line, variableName: token.text }, position),
-        );
+        const sourceAttacks = copySource === undefined ? [] : readVariableAttacks(copySource, token.line);
+        for (const sourceAttack of sourceAttacks)
+          attacks.push(
+            withBranch({ ...sourceAttack, line: token.line, siteLine: token.line, variableName: token.text }, position),
+          );
       }
     }
     return attacks;

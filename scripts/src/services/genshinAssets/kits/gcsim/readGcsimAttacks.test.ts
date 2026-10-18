@@ -288,4 +288,64 @@ func (c *char) Burst() {
       { element: "attributes.Anemo", elementLine: 30, iteration: { value: 1, variable: "i" }, line: 36 },
     ]);
   });
+
+  test("gives a Mult set after a constant loop's literal one attack per iteration variant, under the variable it names", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "func (c *char) burst() {",
+      "\tele := []attributes.Element{attributes.Pyro, attributes.Cryo}",
+      "\tfor i := range 2 {",
+      "\t\tai := info.AttackInfo{",
+      "\t\t\tElement: ele[i],",
+      "\t\t\tMult:    burstA[c.TalentLvlBurst()],",
+      "\t\t}",
+      "\t\tai.Mult = burstB[c.TalentLvlBurst()]",
+      "\t\tc.Core.QueueAttack(ai, ap, 0, 1)",
+      "\t}",
+      "}",
+    ].join("\n");
+    const sources = [{ path: "burst.go", source }];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(
+        ({ element, iteration, line, talentVariable, variableName }) => ({
+          element,
+          iteration,
+          line,
+          talentVariable,
+          variableName,
+        }),
+      ),
+    ).toStrictEqual([
+      {
+        element: "attributes.Pyro",
+        iteration: { value: 0, variable: "i" },
+        line: 4,
+        talentVariable: "burstA",
+        variableName: "ai",
+      },
+      {
+        element: "attributes.Cryo",
+        iteration: { value: 1, variable: "i" },
+        line: 4,
+        talentVariable: "burstA",
+        variableName: "ai",
+      },
+      {
+        element: "attributes.Pyro",
+        iteration: { value: 0, variable: "i" },
+        line: 8,
+        talentVariable: "burstB",
+        variableName: "ai",
+      },
+      {
+        element: "attributes.Cryo",
+        iteration: { value: 1, variable: "i" },
+        line: 8,
+        talentVariable: "burstB",
+        variableName: "ai",
+      },
+    ]);
+  });
 });
