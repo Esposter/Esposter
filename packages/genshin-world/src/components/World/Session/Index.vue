@@ -1083,6 +1083,7 @@ useWorldSaveSync({
     homePlantings: savedState.homePlantings,
     homeProgress: savedState.homeProgress,
     inventory: inventory.value,
+    investigationDay: savedState.investigationDay,
     mails: mails.value,
     namecardItemId: namecardItemId.value,
     openedChestIds: openedChestIds.value,

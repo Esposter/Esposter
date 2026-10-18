@@ -8,6 +8,7 @@ import type { LongTermEncounterPointsSave } from "#src/models/commission/LongTer
 import type { ProcessingJobSave } from "#src/models/cooking/ProcessingJobSave";
 import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { InvestigationDaySave } from "#src/models/investigation/InvestigationDaySave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -156,6 +157,12 @@ const checkIsLaterWorldLevelAdjustment = (
 // The day dealt later is the one the player is on, since a day is dealt again at each daily reset
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
   Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
+// The day whose count began later is the one the player is on, since a day's count starts again at each daily reset, and
+// A day with no key has counted no investigation
+const checkIsLaterInvestigationDay = (day: InvestigationDaySave, than: InvestigationDaySave): boolean =>
+  day.dayKey !== "" &&
+  (than.dayKey === "" ||
+    Temporal.Instant.compare(Temporal.Instant.from(day.dayKey), Temporal.Instant.from(than.dayKey)) > 0);
 
 // The Encounter Points of the later daily reset are the ones the player holds, and on the same reset the larger count is
 const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPointsSave): EncounterPointsSave => {
@@ -271,6 +278,9 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
       : account.commissionDay,
+    investigationDay: checkIsLaterInvestigationDay(guest.investigationDay, account.investigationDay)
+      ? guest.investigationDay
+      : account.investigationDay,
     encounterPoints: mergeEncounterPoints(account.encounterPoints, guest.encounterPoints),
     longTermEncounterPoints: mergeLongTermEncounterPoints(
       account.longTermEncounterPoints,

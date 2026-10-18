@@ -15,6 +15,7 @@ import type { HomePlanting } from "#src/models/home/HomePlanting";
 import type { HomeProgress } from "#src/models/home/HomeProgress";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { InvestigationDay } from "#src/models/investigation/InvestigationDay";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { Party } from "#src/models/party/Party";
@@ -66,6 +67,7 @@ export interface GenshinSaveState {
   homePlantings: HomePlanting[];
   homeProgress: HomeProgress;
   inventory: Inventory;
+  investigationDay: InvestigationDay;
   mails: MailSave[];
   namecardItemId: number;
   openedChestIds: ReadonlySet<string>;
