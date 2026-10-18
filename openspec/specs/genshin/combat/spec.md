@@ -216,6 +216,23 @@ An enemy's strike on a party member SHALL be priced against the member as the te
 - **WHEN** an enemy strikes it
 - **THEN** it loses no HP
 
+### Requirement: An enemy's strike told to the team's kits
+
+An enemy's strike that lands on a party member SHALL be told to every deployed member's kit, with the enemy that struck, the member it landed on and whether a shield on the team took any of it, a strike a shield absorbed whole told as well as one that cost the member HP.
+
+#### Scenario: An enemy's strike on an unshielded member is told to the kits
+
+- **GIVEN** the member on the field holds no shield
+- **WHEN** an enemy's strike lands on it
+- **THEN** the kits are told that enemy struck that member, no shield taking any of it
+
+#### Scenario: A strike a shield absorbs whole is told to the kits, the member losing no HP
+
+- **GIVEN** the member on the field holds a shield that can absorb the whole of an enemy's strike
+- **WHEN** the strike lands on it
+- **THEN** the member loses no HP
+- **AND** the kits are told that enemy struck that member, a shield taking it
+
 ### Requirement: A shield
 
 A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character.

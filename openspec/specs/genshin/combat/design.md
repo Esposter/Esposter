@@ -154,7 +154,7 @@ flowchart TD
   HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
 ```
 
-The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field as the team's buffs leave it, takes it from the team's shields first, all at once, through `absorbKitShield`, and the world screen respawns the deployed team when all of it has fallen. A live taunt in aggro range takes the strike through `damageKitTaunt`.
+The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field as the team's buffs leave it, takes it from the team's shields first, all at once, through `absorbKitShield`, and the world screen respawns the deployed team when all of it has fallen. It returns a `ShieldAbsorbed` event for each shield that took any of it, then one `PartyMemberStruck` for the strike itself, with the enemy, the member and whether a shield took any of it, which the world screen puts on the kit outbox. A strike a shield absorbed whole sends it too, as gcsim emits `OnPlayerHit` ahead of the shields (`pkg/avatar/avatar.go:31`), so a kit counting the attacks a member takes reads it rather than `HealthChanged`, which has no striker and misses an absorbed strike. A live taunt in aggro range takes the strike through `damageKitTaunt`.
 
 ## Decisions
 
