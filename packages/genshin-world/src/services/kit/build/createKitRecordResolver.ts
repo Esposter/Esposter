@@ -167,6 +167,12 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
     }),
     highPlunge: toAction(record.plunges[KitPlunge.High]),
     lowPlunge: toAction(record.plunges[KitPlunge.Low]),
+    ...(record.plungeVariants && {
+      plungeVariants: record.plungeVariants.map((variantRecord) => ({
+        action: toAction(variantRecord),
+        checkIsActive: missingKitBehaviour,
+      })),
+    }),
     ...(record.moonsignBenediction && {
       moonsignBenediction: { lunarReactionTypes: record.moonsignBenediction.lunarReactionTypes },
     }),

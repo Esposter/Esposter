@@ -54,6 +54,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     onStep,
     plungeCollision = {},
     plunges = {},
+    plungeVariants = [],
     refusesFall,
     skill,
     skillChain = [],
@@ -88,6 +89,10 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   applyKitHitBehaviour(kit.plungeCollision, plungeCollision, "plungeCollision");
   applyKitActionBehaviour(kit.highPlunge, plunges[KitPlunge.High], `plunges.${KitPlunge.High}`);
   applyKitActionBehaviour(kit.lowPlunge, plunges[KitPlunge.Low], `plunges.${KitPlunge.Low}`);
+  const kitPlungeVariants = kit.plungeVariants ?? [];
+  checkHasCount("plungeVariants", plungeVariants.length, kitPlungeVariants.length);
+  for (const [index, variant] of kitPlungeVariants.entries())
+    applyKitVariantBehaviour(variant, plungeVariants[index], `plungeVariants.${index}`);
   applyKitActionBehaviour(kit.elementalSkill, skill, "skill");
   const followUps = kit.elementalSkillChain?.followUps ?? [];
   checkHasCount("skillChain", skillChain.length, followUps.length);

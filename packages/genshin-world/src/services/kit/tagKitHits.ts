@@ -21,7 +21,10 @@ export const tagKitHits = (kit: Kit): Kit => {
   tagActionHits(kit.normalAttacks, AttackTag.NormalAttack);
   tagActionHits([kit.chargedAttack], AttackTag.ChargedAttack);
   tagHit(kit.plungeCollision, AttackTag.PlungingAttack);
-  tagActionHits([kit.lowPlunge, kit.highPlunge], AttackTag.PlungingAttack);
+  tagActionHits(
+    [kit.lowPlunge, kit.highPlunge, ...(kit.plungeVariants ?? []).map(({ action }) => action)],
+    AttackTag.PlungingAttack,
+  );
   tagActionHits(
     kit.elementalBurstVariant ? [kit.elementalBurst, kit.elementalBurstVariant.action] : [kit.elementalBurst],
     AttackTag.ElementalBurst,
