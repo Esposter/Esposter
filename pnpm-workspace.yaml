@@ -246,8 +246,8 @@ catalog:
   unocss: ^66.11.0
   unplugin-auto-import: ^21.1.0
   unplugin-vue: ^8.0.0
-  # Nitro does not depend on unstorage: it loads the app's own copy for its `kv` mounts, which must be the 2 line,
-  # While the app's modules install 1
+  # @TODO: no upstream issue — Nitro 3 resolves unstorage from the app for the `kv` mounts Nuxt's storage options become,
+  # Needing 2 where the app's modules install 1. Remove this dependency when Nitro takes Nuxt's own copy (nuxt/nuxt)
   unstorage: ^2.0.0-alpha.11
   vite: ^8.3.4
   vite-plugin-glsl: ^1.6.2
