@@ -75,35 +75,27 @@ const emit = defineEmits<{
     </p>
     <p v-if="notice" class="notice">{{ notice }}</p>
     <ul class="fodders">
-      <li v-for="fodder of fodders" :key="fodder.id">
+      <li v-for="{ caption, id, isSelected, name, rarity } of fodders" :key="id">
         <button
           class="option"
-          :aria-pressed="fodder.isSelected"
-          :data-rarity="fodder.rarity"
+          :aria-pressed="isSelected"
+          :data-rarity="rarity"
           type="button"
-          @click="emit('fodder', fodder.id)"
+          @click="emit('fodder', id)"
         >
-          <span class="name">{{ fodder.name }}</span>
-          <span class="caption">{{ fodder.caption }}</span>
+          <span class="name">{{ name }}</span>
+          <span class="caption">{{ caption }}</span>
         </button>
       </li>
     </ul>
     <ul class="materials">
-      <li v-for="material of materials" :key="material.id" class="material">
-        <span class="name">{{ material.name }}</span>
-        <span class="count">{{ material.selectedCount }}/{{ material.count }}</span>
-        <GameButton
-          :disabled="material.selectedCount <= 0"
-          :kind="GameButtonKind.Pill"
-          @click="emit('material', material.id, -1)"
-        >
+      <li v-for="{ count, id, name, selectedCount } of materials" :key="id" class="material">
+        <span class="name">{{ name }}</span>
+        <span class="count">{{ selectedCount }}/{{ count }}</span>
+        <GameButton :disabled="selectedCount <= 0" :kind="GameButtonKind.Pill" @click="emit('material', id, -1)">
           -
         </GameButton>
-        <GameButton
-          :disabled="material.selectedCount >= material.count"
-          :kind="GameButtonKind.Pill"
-          @click="emit('material', material.id, 1)"
-        >
+        <GameButton :disabled="selectedCount >= count" :kind="GameButtonKind.Pill" @click="emit('material', id, 1)">
           +
         </GameButton>
       </li>

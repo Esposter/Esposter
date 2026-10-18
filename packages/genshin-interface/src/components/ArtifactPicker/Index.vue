@@ -27,10 +27,10 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
 <template>
   <PickerShell class="artifact-picker" :title="title">
     <ul class="options">
-      <li v-for="option of options" :key="option.id">
-        <button class="option" :data-rarity="option.rarity" type="button" @click="emit('choose', option.id)">
-          <span class="name">{{ option.name }}</span>
-          <span class="caption">{{ option.caption }}</span>
+      <li v-for="{ caption, id, name, rarity } of options" :key="id">
+        <button class="option" :data-rarity="rarity" type="button" @click="emit('choose', id)">
+          <span class="name">{{ name }}</span>
+          <span class="caption">{{ caption }}</span>
         </button>
       </li>
     </ul>
