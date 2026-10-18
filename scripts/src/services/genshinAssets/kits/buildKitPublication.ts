@@ -31,7 +31,7 @@ export const buildKitPublication = (
       sourceCandidateMap,
       readKitOverlay(overlayName),
       namedHitCandidateMap,
-      tables.talentGroupIdMap,
+      tables,
     );
     kits[String(characterId)] = record;
     kitSources[String(characterId)] = sources;

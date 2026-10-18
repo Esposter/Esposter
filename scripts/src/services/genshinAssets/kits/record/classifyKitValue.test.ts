@@ -54,6 +54,24 @@ describe(classifyKitValue, () => {
   ])("classifies a value when %s", (_case, value, candidates, mainCandidates, isTagPredated, expected) => {
     expect.hasAssertions();
 
-    expect(classifyKitValue(value, candidates, mainCandidates, isTagPredated)).toStrictEqual(expected);
+    expect(classifyKitValue(value, candidates, mainCandidates, isTagPredated, {})).toStrictEqual(expected);
+  });
+
+  test("reads a table reference as its value at every level, so a reference of another index with the same value is no difference", () => {
+    expect.hasAssertions();
+
+    const tableCandidate: KitCandidate = {
+      provenance: { index: 4, label: "CD", proudSkillGroupId: 5532, source: KitSource.Tables },
+      value: { index: 4, proudSkillGroupId: 5532 },
+    };
+    const talentMultiplierMap = { "5532": [{ level: 1, paramList: [0, 0, 0, 10, 10] }] };
+
+    expect(
+      classifyKitValue({ index: 3, proudSkillGroupId: 5532 }, [tableCandidate], [], false, talentMultiplierMap),
+    ).toBeUndefined();
+    expect(classifyKitValue(0, [tableCandidate], [], false, talentMultiplierMap)).toStrictEqual({
+      cause: KitProvisionalCause.DiffersFromSource,
+      value: 0,
+    });
   });
 });

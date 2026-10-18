@@ -1,9 +1,10 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
+import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
-import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 
 const SELECTABLE_SOURCES = [KitSource.Gcsim, KitSource.Tables, KitSource.Wiki] as const;
 
@@ -19,21 +20,23 @@ export const classifyKitValue = (
   candidates: readonly KitCandidate[],
   mainCandidates: readonly KitCandidate[],
   isTagPredated: boolean,
+  talentMultiplierMap: KitTables["talentMultiplierMap"],
 ): KitOverlayEntry | undefined => {
-  if (candidates.length > 0 && checkIsKitValueEqual(candidates[0]?.value, value)) return undefined;
+  const isEqual = (candidateValue: unknown) => checkIsKitValueResolvedEqual(candidateValue, value, talentMultiplierMap);
+  if (candidates.length > 0 && isEqual(candidates[0]?.value)) return undefined;
   const withValue = (cause: KitProvisionalCause): KitOverlayEntry =>
     value === undefined ? { cause } : { cause, value };
   const tagCandidate = findSourceCandidate(candidates, KitSource.Gcsim);
   const mainCandidate = findSourceCandidate(mainCandidates, KitSource.Gcsim);
   if (
     mainCandidate !== undefined &&
-    checkIsKitValueEqual(mainCandidate.value, value) &&
-    (tagCandidate === undefined || !checkIsKitValueEqual(tagCandidate.value, value))
+    isEqual(mainCandidate.value) &&
+    (tagCandidate === undefined || !isEqual(tagCandidate.value))
   )
     return withValue(isTagPredated ? KitProvisionalCause.Unclassified : KitProvisionalCause.ReadPastLicence);
   for (const source of SELECTABLE_SOURCES) {
     const candidate = findSourceCandidate(candidates, source);
-    if (candidate !== undefined && checkIsKitValueEqual(candidate.value, value)) return { source };
+    if (candidate !== undefined && isEqual(candidate.value)) return { source };
   }
   return withValue(
     candidates.some(({ provenance }) => provenance.source !== KitSource.Rule)

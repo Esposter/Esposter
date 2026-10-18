@@ -19,14 +19,9 @@ export const buildKitRecord = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
   namedHitCandidateMap: NamedHitCandidateMap,
-  talentGroupIdMap: KitTables["talentGroupIdMap"],
+  tables: KitTables,
 ): BuiltKit => {
-  const { provenanceMap, valueMap } = resolveKitValues(
-    sourceCandidateMap,
-    overlay,
-    namedHitCandidateMap,
-    talentGroupIdMap,
-  );
+  const { provenanceMap, valueMap } = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap, tables);
   const record = kitRecordSchema.parse(unflattenKitValues(valueMap));
   const values: Record<string, KitValueSource> = {};
   for (const path of flattenKitValues(record).keys()) {

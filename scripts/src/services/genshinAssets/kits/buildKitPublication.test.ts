@@ -48,7 +48,14 @@ describe(buildKitPublication, () => {
     notes: [],
     overlayName: "",
     ...(isPublished && {
-      publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), talentGroupIdMap).record,
+      publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), {
+        characterId,
+        labelMap: new Map(),
+        name: String(characterId),
+        talentGroupIdMap,
+        talentMultiplierMap: {},
+        weaponType: WeaponType.Sword,
+      }).record,
     }),
     sourceCandidateMap: SOURCE_CANDIDATE_MAP,
     tables: {

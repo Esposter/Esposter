@@ -10,7 +10,7 @@ import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/cand
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidateSources";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
-import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -22,7 +22,7 @@ export const resolveKitValues = (
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   overlay: KitOverlay,
   namedHitCandidateMap: NamedHitCandidateMap,
-  talentGroupIdMap: KitTables["talentGroupIdMap"],
+  tables: KitTables,
 ): ResolvedKitValues => {
   const valueMap = new Map<string, unknown>();
   const provenanceMap = new Map<string, KitValueSource>();
@@ -46,7 +46,7 @@ export const resolveKitValues = (
       const candidate = candidates?.find(
         ({ provenance, value }) =>
           provenance.source === entry.source &&
-          (entry.value === undefined || checkIsKitValueEqual(value, entry.value)) &&
+          (entry.value === undefined || checkIsKitValueResolvedEqual(value, entry.value, tables.talentMultiplierMap)) &&
           (!("file" in entry) || checkIsCitedBy(provenance, entry)),
       );
       if (candidate === undefined)
@@ -57,7 +57,7 @@ export const resolveKitValues = (
       valueMap.set(path, entry.value);
       provenanceMap.set(path, { cause: entry.cause, source: KitSource.Overlay });
     }
-  const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, talentGroupIdMap);
+  const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, tables.talentGroupIdMap);
   chooseDefaults(namedListKitCandidateMap);
   chooseDefaults(sourceCandidateMap);
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
