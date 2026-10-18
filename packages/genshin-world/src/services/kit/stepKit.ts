@@ -169,7 +169,7 @@ export const stepKit = (
   if (kitState.comboSeconds >= NORMAL_ATTACK_RESET_SECONDS) kitState.comboIndex = 0;
   const movementAction = enteredMovementAction ?? kitState.queuedMovementAction;
   kitState.queuedMovementAction = undefined;
-  if (movementAction && movementAction.canStart?.(context) !== false)
+  if (movementAction && checkCanStartKitAction(movementAction, context))
     return startKitAction(kitState, movementAction, landedHits, context);
   return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, context);
 };
