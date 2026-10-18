@@ -84,4 +84,36 @@ describe(createKiraraKitBehaviour, () => {
     expect(KIRARA_KIT.burstEnergyCost).toBe(60);
     expect(KIRARA_KIT.burstCooldownSeconds).toBe(15);
   });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = { ...createKiraraCombatant(), constellationCount: 6 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    KIRARA_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(
+      kitEffectState.effects.find(
+        (effect) => effect.kind === "buff" && effect.attribute === Attribute.HydroDamageBonus,
+      ),
+    ).toStrictEqual({
+      amount: 0.12,
+      attribute: Attribute.HydroDamageBonus,
+      characterId: KIRARA_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 15,
+    });
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = { ...createKiraraCombatant(), constellationCount: 5 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    KIRARA_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(
+      kitEffectState.effects.find(
+        (effect) => effect.kind === "buff" && effect.attribute === Attribute.HydroDamageBonus,
+      ),
+    ).toBeUndefined();
+  });
 });

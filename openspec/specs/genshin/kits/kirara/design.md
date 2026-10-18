@@ -5,6 +5,7 @@ Kirara's kit is its record and one behaviour module, `createKiraraKitBehaviour`,
 ## Decisions
 
 - **Kirara's strikes, charged attack, skill and burst are priced at 0 poise.** Provisional: `kiraraKit.ts` sets each at 0, gcsim giving none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
+- **Kirara's Constellation 6 buffs the whole deployed party, since the kit has no nearby check.** The constellation says nearby members, but the kit has no distance to read, so `buffKitTeam` gives every deployed member the buff, as the team buffs of the other kits do.
 
 ## Key files
 

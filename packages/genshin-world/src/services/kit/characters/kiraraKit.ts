@@ -1,9 +1,14 @@
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { Party } from "#src/models/party/Party";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { takeOne } from "@esposter/shared";
@@ -20,9 +25,37 @@ const CARDAMOM_COUNT = 6;
 
 export const KIRARA_CHARACTER_ID = 10_000_061;
 
+// Constellation 6, Countless Sights to See: her skill and burst give the team 12% of each element's DMG Bonus
+// For 15 seconds, applied to the whole deployed party as buffKitTeam applies it, since the kit has no nearby check
+const CONSTELLATION_6_DAMAGE_BONUS = 0.12;
+const CONSTELLATION_6_SECONDS = 15;
+const CONSTELLATION_6_ELEMENTAL_DAMAGE_ATTRIBUTES = [
+  Attribute.AnemoDamageBonus,
+  Attribute.CryoDamageBonus,
+  Attribute.DendroDamageBonus,
+  Attribute.ElectroDamageBonus,
+  Attribute.GeoDamageBonus,
+  Attribute.HydroDamageBonus,
+  Attribute.PyroDamageBonus,
+];
+
+const buffTeamElementalDamage = (kitEffectState: KitEffectState, party: Party, combatant: Combatant): void => {
+  if (combatant.constellationCount < 6) return;
+
+  for (const attribute of CONSTELLATION_6_ELEMENTAL_DAMAGE_ATTRIBUTES)
+    buffKitTeam(kitEffectState, party, {
+      amount: CONSTELLATION_6_DAMAGE_BONUS,
+      attribute,
+      secondsRemaining: CONSTELLATION_6_SECONDS,
+    });
+};
+
 // Kirara's behaviour: Tail-Flicking Flying Kick, its press and each hold, cast her shield and the 0.1 second Dendro
 // Self-infusion as they start, and Secret Art: Surprise Dispatch sets its Cat Grass Cardamoms, the detonated ones first
-// And the rest at expiry. Her passives and constellations are not built
+// And the rest at expiry. Her passives, and Constellations 1, 2 and 4, are not built
+// Constellation 1 needs an extra Cat Grass Cardamom scaled by her Max HP, which the summon's count does not read
+// Constellation 2 needs the Critical Transport Shields her crashes give members, which the kit does not build
+// Constellation 4 needs the shield-protected members' hits and the energy or shield they give, not built
 export const createKiraraKitBehaviour = ({
   kit,
   readHits,
@@ -44,7 +77,7 @@ export const createKiraraKitBehaviour = ({
   }));
   // The shield is a share of her Max HP and a flat amount, capped at its maximum's share and flat amount, as gcsim caps it
   const skillStart: KitActionBehaviour = {
-    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
       const { maxHealth } = combatant.attributes;
       castKitShield(kitEffectState, combatant.characterId, {
         element: Element.Dendro,
@@ -60,13 +93,16 @@ export const createKiraraKitBehaviour = ({
         kind: "infusion",
         secondsRemaining: SELF_INFUSION_SECONDS,
       });
+      buffTeamElementalDamage(kitEffectState, party, combatant);
     },
   };
   return {
     // The Cardamoms are a summon cast at her body
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, [...detonatedCardamoms, ...expiredCardamoms]),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
+        castKitSummon(kitEffectState, body, combatant, [...detonatedCardamoms, ...expiredCardamoms]);
+        buffTeamElementalDamage(kitEffectState, party, combatant);
+      },
     },
     skill: skillStart,
     skillHolds: kit.elementalSkillHolds?.map(() => skillStart),
