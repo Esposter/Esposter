@@ -28,9 +28,7 @@ flowchart LR
 
 1. **Geography's viewpoints**, at the places the scene group record gives each view codex row's gadget member, read from the hosted `sceneGroups/scene3` record.
 2. **Wildlife's Living Beings**, once an animal is struck and its kills count.
-3. **Tutorials' opening**, once a tip is shown.
-
-The viewpoints wait on the hosted `sceneGroups/scene3` record, which the game-data lock does not publish yet; the other two wait on another unit each, the wildlife's strike and a shown tip.
+   The tutorials' opening is built: the world raises `tipShown`, and the Archive's composable opens the tutorial's entry the first time its tip is shown. The viewpoints read the hosted `sceneGroups/scene3` record, which the game-data lock publishes with the view codex's gadgets among its members, so they wait on nothing but the building, and the wildlife waits on its strike.
 
 The artifact sets' caller is the Archive's composable: it hands the artifacts the bag holds to `openArchiveArtifactSets` on every change to the bag, and again once the Archive's entries load, so a set opens as the drop that completes it reaches the bag.
 

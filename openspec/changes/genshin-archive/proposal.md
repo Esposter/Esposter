@@ -2,7 +2,7 @@
 
 ## Why
 
-The Archive's seven sections, their entries read from the game's codex tables, the bag's opening, the artifact sets' rule and the unlock after its quest are built. What remains is what the other sections open by doings the world does not have yet: viewpoints taken in at their places, enemies defeated, and tutorials shown. Until those doings reach the Archive, its entries for them stay locked.
+The Archive's seven sections, their entries read from the game's codex tables, the bag's opening, the artifact sets' rule and the unlock after its quest are built. What remains is what the other sections open by doings the world does not have yet: viewpoints taken in at their places and enemies defeated. Until those doings reach the Archive, its entries for them stay locked.
 
 ## What Changes
 
@@ -21,7 +21,6 @@ Archive entries open and count from the doings the world does.
 ## Waiting on
 
 - The wildlife's strike, which the animals' Living Beings entries and their turning models need.
-- A shown tip, which the Tutorials section's opening needs.
 - Books placed in the world, since no world drop is a volume's material yet.
 
 ## Impact
