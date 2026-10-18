@@ -84,4 +84,27 @@ describe(getSurveySummaryCards, () => {
       { answeredCount: 1, answers: ["text"], name: "text", title: "text", type: SurveySummaryCardType.Text },
     ]);
   });
+
+  // A choice's own value may hold the separator, so its answer counts as that one choice rather than as its fragments
+  test("counts a checkbox choice whose value holds the separator as one choice", () => {
+    expect.hasAssertions();
+
+    const choiceQuestions = new Model({
+      elements: [{ choices: ["Yes; definitely", "Yes"], name: "checkbox", type: "checkbox" }],
+    }).getAllQuestions();
+
+    expect(getSurveySummaryCards(choiceQuestions, [{ checkbox: "Yes; definitely", rowKey }])).toStrictEqual([
+      {
+        answeredCount: 1,
+        average: undefined,
+        choices: [
+          { count: 1, label: "Yes; definitely" },
+          { count: 0, label: "Yes" },
+        ],
+        name: "checkbox",
+        title: "checkbox",
+        type: SurveySummaryCardType.Choice,
+      },
+    ]);
+  });
 });

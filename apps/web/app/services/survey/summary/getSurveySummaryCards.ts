@@ -15,11 +15,34 @@ import {
   QuestionTextModel,
 } from "survey-core";
 
-// A question taking several choices arrives as its choices joined by the separator, every other answer as its value
-const getAnsweredValues = (question: Question, value: ColumnValue): unknown[] => {
+// The longest choice value that the answer starts with, as one segment of the answer or as the whole of it
+const getLeadingChoiceValue = (answer: string, longestFirst: string[]) =>
+  longestFirst.find((value) => answer === value || answer.startsWith(`${value}${CHECKBOX_ANSWER_SEPARATOR}`));
+// A choice's value may hold the separator, so the answer is read against the choice values, not split on it
+const getCheckboxAnswerValues = (answer: string, choiceValues: string[]): string[] => {
+  const longestFirst = choiceValues.toSorted(
+    (firstChoiceValue, secondChoiceValue) => secondChoiceValue.length - firstChoiceValue.length,
+  );
+  const answeredValues: string[] = [];
+  let rest = answer;
+  while (rest.length > 0) {
+    const choiceValue = getLeadingChoiceValue(rest, longestFirst);
+    if (choiceValue === undefined) {
+      const separatorIndex = rest.indexOf(CHECKBOX_ANSWER_SEPARATOR);
+      if (separatorIndex === -1) break;
+      rest = rest.slice(separatorIndex + CHECKBOX_ANSWER_SEPARATOR.length);
+    } else {
+      answeredValues.push(choiceValue);
+      rest = rest.slice(choiceValue.length + CHECKBOX_ANSWER_SEPARATOR.length);
+    }
+  }
+  return answeredValues;
+};
+// A question taking several choices holds them in one answer, every other answer is its one value
+const getAnsweredValues = (question: Question, value: ColumnValue, choiceValues: string[]): string[] => {
   if (question instanceof QuestionCheckboxModel && typeof value === "string")
-    return value.split(CHECKBOX_ANSWER_SEPARATOR);
-  return [value];
+    return getCheckboxAnswerValues(value, choiceValues);
+  return [String(value)];
 };
 const getChoices = (question: Question): { label: string; value: unknown }[] => {
   if (question instanceof QuestionBooleanModel)
@@ -45,7 +68,8 @@ export const getSurveySummaryCards = (questions: Question[], rows: SurveyRespons
     const base = { answeredCount: answers.length, name, title };
     const choices = getChoices(question);
     if (choices.length > 0) {
-      const answeredValues = answers.map((value) => getAnsweredValues(question, value).map(String));
+      const choiceValues = choices.map(({ value }) => String(value));
+      const answeredValues = answers.map((value) => getAnsweredValues(question, value, choiceValues));
       return {
         ...base,
         average:
