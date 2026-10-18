@@ -1,4 +1,5 @@
 import type { Quest } from "#src/models/quest/Quest";
+import type { QuestChapter } from "#src/models/quest/QuestChapter";
 
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
@@ -53,5 +54,40 @@ describe(startQuests, () => {
     expect(
       startQuests([offeredQuest], new Map([["3", { objectiveCounts: [], stepIndex: 1 }]]), talkEvent),
     ).toStrictEqual(new Map([["3", { objectiveCounts: [], stepIndex: 1 }]]));
+  });
+
+  describe("a series", () => {
+    const seriesQuests: Quest[] = [
+      { ...createQuest("1"), kind: QuestKind.World, offerTalkIds: ["first"] },
+      { ...createQuest("2"), kind: QuestKind.World, offerTalkIds: ["second"] },
+    ];
+    const chapter: QuestChapter = {
+      id: "chapter",
+      journalTextId: "journalTextId",
+      questIds: ["1", "2"],
+      regionTextId: "regionTextId",
+      rewards: [],
+      titleTextId: "titleTextId",
+    };
+    const secondTalkEvent = { kind: QuestObjectiveKind.TalkTo, targetId: "second" };
+
+    test("The next quest is offered once the one before is finished", () => {
+      expect.hasAssertions();
+
+      expect(
+        startQuests(seriesQuests, new Map([["1", { objectiveCounts: [], stepIndex: 1 }]]), secondTalkEvent, [chapter]),
+      ).toStrictEqual(
+        new Map([
+          ["1", { objectiveCounts: [], stepIndex: 1 }],
+          ["2", { objectiveCounts: [], stepIndex: 0 }],
+        ]),
+      );
+    });
+
+    test("A later quest is not offered early", () => {
+      expect.hasAssertions();
+
+      expect(startQuests(seriesQuests, new Map(), secondTalkEvent, [chapter])).toStrictEqual(new Map());
+    });
   });
 });

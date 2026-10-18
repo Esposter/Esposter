@@ -1,4 +1,5 @@
 import type { Quest } from "#src/models/quest/Quest";
+import type { QuestChapter } from "#src/models/quest/QuestChapter";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 
@@ -8,11 +9,13 @@ import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 
 // The Archon quests start one after another from the prologue's first: the first one not yet finished starts once the
 // Ones before it are done. Every other quest starts when a talk offering it ends, the quest event the world records
-// For it, at its first shown step
+// For it, at its first shown step, unless its series orders a quest before it that is not yet finished. A quest with no
+// Series, or the first of one, is offered as its talk ends
 export const startQuests = (
   quests: readonly Quest[],
   progressMap: ReadonlyMap<string, QuestProgress>,
   questEvent?: QuestEvent,
+  chapters: readonly QuestChapter[] = [],
 ): Map<string, QuestProgress> => {
   const nextProgressMap = new Map(progressMap);
   const nextArchonQuest = quests.find(
@@ -21,8 +24,23 @@ export const startQuests = (
   if (nextArchonQuest && !progressMap.has(nextArchonQuest.id))
     nextProgressMap.set(nextArchonQuest.id, { objectiveCounts: [], stepIndex: 0 });
   if (questEvent?.kind !== QuestObjectiveKind.TalkTo) return nextProgressMap;
-  for (const { id, offerTalkIds } of quests)
-    if (!progressMap.has(id) && offerTalkIds.includes(questEvent.targetId))
-      nextProgressMap.set(id, { objectiveCounts: [], stepIndex: 0 });
+  // The quest each of a series' quests after its first is ordered after
+  const previousQuestIdMap = new Map(
+    chapters.flatMap(({ questIds }) =>
+      questIds.flatMap((questId, index) => {
+        const previousQuestId = questIds[index - 1];
+        return previousQuestId === undefined ? [] : [[questId, previousQuestId] as const];
+      }),
+    ),
+  );
+  for (const { id, offerTalkIds } of quests) {
+    if (progressMap.has(id) || !offerTalkIds.includes(questEvent.targetId)) continue;
+    const previousQuestId = previousQuestIdMap.get(id);
+    if (previousQuestId !== undefined) {
+      const previousQuest = quests.find(({ id: questId }) => questId === previousQuestId);
+      if (!previousQuest || !checkIsQuestFinished(previousQuest, progressMap.get(previousQuestId))) continue;
+    }
+    nextProgressMap.set(id, { objectiveCounts: [], stepIndex: 0 });
+  }
   return nextProgressMap;
 };
