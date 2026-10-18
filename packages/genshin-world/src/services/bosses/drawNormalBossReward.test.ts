@@ -37,5 +37,8 @@ describe(drawNormalBossReward, () => {
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 9, has no normal boss reward row]`,
     );
+    expect(() => drawNormalBossReward(-1, UNIQUE_DROP_ID, () => 0.9)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: -1, has no normal boss reward row]`,
+    );
   });
 });
