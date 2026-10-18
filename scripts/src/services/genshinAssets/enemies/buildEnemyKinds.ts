@@ -4,6 +4,7 @@ import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterC
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 
 import { ANIMAL_CODEX_TABLE_NAME, ANIMAL_CODEX_TYPE } from "#src/services/genshinAssets/archive/constants";
+import { collectEnemyKindIds } from "#src/services/genshinAssets/enemies/collectEnemyKindIds";
 import {
   BASE_ATTACK_PROPERTY,
   BASE_DEFENSE_PROPERTY,
@@ -47,48 +48,40 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const monsterDescribeRows = readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_NAME);
   const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME);
   const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);
-  const enemyKindIds = new Set(
-    regionDatas.flatMap(({ enemyCamps }) =>
-      enemyCamps.flatMap(({ members }) => members.map(({ enemyKindId }) => enemyKindId)),
-    ),
-  );
-  const enemyKinds = [...enemyKindIds]
-    .toSorted((firstId, secondId) => firstId - secondId)
-    .map((enemyKindId) => {
-      const monsterRow = monsterRows.find(({ id }) => id === enemyKindId);
-      if (!monsterRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster row");
-      const codexRow = animalCodexRows.find(
-        ({ describeId, type = ANIMAL_CODEX_TYPE }) =>
-          type === MONSTER_CODEX_TYPE && describeId === monsterRow.describeId,
-      );
-      if (!codexRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no archive entry");
-      const monsterDescribeRow = monsterDescribeRows.find(({ id }) => id === monsterRow.describeId);
-      if (!monsterDescribeRow)
-        throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster description");
-      return {
-        archiveEntryId: codexRow.id,
-        attackCurve: getGrowCurve(monsterRow, BASE_ATTACK_PROPERTY),
-        baseAttack: monsterRow.attackBase,
-        baseDefense: monsterRow.defenseBase,
-        baseHealth: monsterRow.hpBase,
-        defenseCurve: getGrowCurve(monsterRow, BASE_DEFENSE_PROPERTY),
-        elementResistances: {
-          Electric: monsterRow.elecSubHurt,
-          Fire: monsterRow.fireSubHurt,
-          Grass: monsterRow.grassSubHurt,
-          Ice: monsterRow.iceSubHurt,
-          Rock: monsterRow.rockSubHurt,
-          Water: monsterRow.waterSubHurt,
-          Wind: monsterRow.windSubHurt,
-        },
-        enemyFamily: codexRow.subType ?? DEFAULT_CODEX_SUBTYPE,
-        enemyType: monsterRow.securityLevel ?? DEFAULT_SECURITY_LEVEL,
-        healthCurve: getGrowCurve(monsterRow, BASE_HEALTH_PROPERTY),
-        id: enemyKindId,
-        nameTextId: String(monsterDescribeRow.nameTextMapHash),
-        physicalResistance: monsterRow.physicalSubHurt,
-      };
-    });
+  const enemyKinds = collectEnemyKindIds(regionDatas).map((enemyKindId) => {
+    const monsterRow = monsterRows.find(({ id }) => id === enemyKindId);
+    if (!monsterRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster row");
+    const codexRow = animalCodexRows.find(
+      ({ describeId, type = ANIMAL_CODEX_TYPE }) => type === MONSTER_CODEX_TYPE && describeId === monsterRow.describeId,
+    );
+    if (!codexRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no archive entry");
+    const monsterDescribeRow = monsterDescribeRows.find(({ id }) => id === monsterRow.describeId);
+    if (!monsterDescribeRow)
+      throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster description");
+    return {
+      archiveEntryId: codexRow.id,
+      attackCurve: getGrowCurve(monsterRow, BASE_ATTACK_PROPERTY),
+      baseAttack: monsterRow.attackBase,
+      baseDefense: monsterRow.defenseBase,
+      baseHealth: monsterRow.hpBase,
+      defenseCurve: getGrowCurve(monsterRow, BASE_DEFENSE_PROPERTY),
+      elementResistances: {
+        Electric: monsterRow.elecSubHurt,
+        Fire: monsterRow.fireSubHurt,
+        Grass: monsterRow.grassSubHurt,
+        Ice: monsterRow.iceSubHurt,
+        Rock: monsterRow.rockSubHurt,
+        Water: monsterRow.waterSubHurt,
+        Wind: monsterRow.windSubHurt,
+      },
+      enemyFamily: codexRow.subType ?? DEFAULT_CODEX_SUBTYPE,
+      enemyType: monsterRow.securityLevel ?? DEFAULT_SECURITY_LEVEL,
+      healthCurve: getGrowCurve(monsterRow, BASE_HEALTH_PROPERTY),
+      id: enemyKindId,
+      nameTextId: String(monsterDescribeRow.nameTextMapHash),
+      physicalResistance: monsterRow.physicalSubHurt,
+    };
+  });
   const curves = new Set(
     enemyKinds.flatMap(({ attackCurve, defenseCurve, healthCurve }) => [attackCurve, defenseCurve, healthCurve]),
   );

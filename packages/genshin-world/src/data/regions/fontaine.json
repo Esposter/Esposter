@@ -1,5 +1,6198 @@
 {
-  "enemyCamps": [],
+  "enemyCamps": [
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-1",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-105905",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2774.39, "z": -5637.44 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-2",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-98307",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 967.4, "z": -5469.04 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-3",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-97686",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2551.17, "z": -5231.24 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-4",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-88038",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1807.04, "z": -6147.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-5",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-62786",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1580.53, "z": -5057.83 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-6",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58179",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1573.5, "z": -4187.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-7",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58178",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1935.93, "z": -4207.69 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-8",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58177",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1927.06, "z": -4329.71 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-9",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58176",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2054.08, "z": -4890.68 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-10",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58175",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 776.4, "z": -5225.36 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-11",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58172",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2409.25, "z": -5568.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-12",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58169",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2041.29, "z": -5904.09 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-13",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58167",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 727.05, "z": -5251.47 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-14",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58166",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 723.99, "z": -5198.47 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-15",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58165",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2528.73, "z": -6230.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-16",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58064",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1126.92, "z": -4630.64 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-17",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58059",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 483.81, "z": -4666.4 }
+        },
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-58058",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 483.31, "z": -4661.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-18",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-57311",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2069.08, "z": -4719.16 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-19",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-56965",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2392.17, "z": -4790.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-20",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-105904",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2774.58, "z": -5666.94 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-21",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-105903",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2789.58, "z": -5655.94 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-22",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-105902",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2785.83, "z": -5668.69 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-23",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-105901",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2763.08, "z": -5579.68 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-105900",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2764.2, "z": -5583.55 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-105899",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2765.08, "z": -5587.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-24",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98962",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1984.94, "z": -4387.48 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98961",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1986.44, "z": -4392.1 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98958",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1989.32, "z": -4381.47 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57099",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1986.57, "z": -4384.1 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57098",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1988.57, "z": -4395.1 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98960",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1992.69, "z": -4394.1 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98957",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1995.7, "z": -4383.97 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98959",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1996.95, "z": -4388.85 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-25",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98534",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2797.96, "z": -5116.73 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-26",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98533",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2794.71, "z": -5126.73 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-27",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98532",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2783.22, "z": -5140.98 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-28",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-98531",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2773.84, "z": -5318.5 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-29",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-97692",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2785.71, "z": -5184.73 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-97691",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2786.46, "z": -5187.48 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-97690",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2787.33, "z": -5182.23 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-97689",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2784.21, "z": -5186.11 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-97688",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2784.46, "z": -5183.11 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-30",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91889",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2872.47, "z": -6045.63 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-91888",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2877.72, "z": -6050.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-31",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-63330",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1850.67, "z": -4815.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-32",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-62781",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1477.68, "z": -4303.33 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-62780",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1479.16, "z": -4302.83 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-62779",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1481.09, "z": -4299.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-33",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-60030",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2799.7, "z": -5231.49 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-60029",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2799.95, "z": -5228.24 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-60028",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2800.83, "z": -5229.74 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-60027",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2801.58, "z": -5227.12 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-60026",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2801.32, "z": -5232.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-34",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-58174",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2990.04, "z": -5810.53 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-58173",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2989.77, "z": -5807.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-35",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-58164",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1977.87, "z": -4261.01 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-58163",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1978.11, "z": -4254.26 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-58162",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1972.2, "z": -4256.26 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-36",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57537",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 374.93, "z": -4970.11 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57536",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 378.05, "z": -4971.2 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-37",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57317",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1433.83, "z": -4043.45 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57316",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1434.59, "z": -4039.7 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-38",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57305",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 672.59, "z": -4570.88 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-39",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57304",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 611.33, "z": -4586.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-40",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57288",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1944.22, "z": -4528.81 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57287",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1939.32, "z": -4532.36 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56444",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1942.56, "z": -4531.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-41",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57286",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2397.82, "z": -4868.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-42",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57285",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2364.33, "z": -4869.41 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57284",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2369.21, "z": -4861.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-43",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-57037",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1485.39, "z": -4430.16 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-44",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56975",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2061.18, "z": -4749.58 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56974",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2056.99, "z": -4751.83 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-45",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56970",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1439.05, "z": -4643.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-46",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56968",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2234.21, "z": -4525.87 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56967",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2234.21, "z": -4532.87 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56966",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2238.21, "z": -4539.87 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-47",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56915",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 484.16, "z": -5109.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-48",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56914",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 494.91, "z": -5102.84 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56913",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 497.11, "z": -5105.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-49",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56900",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1505.49, "z": -4827.67 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56898",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1508.58, "z": -4829.03 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56897",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1513.58, "z": -4830.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-50",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56899",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1495.58, "z": -4826.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-51",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56896",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1421.97, "z": -4793.17 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56895",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1424.48, "z": -4797.67 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-52",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56885",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1524.08, "z": -4636.26 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56884",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1517.58, "z": -4642.01 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-53",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56881",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1397.06, "z": -4704.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-54",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56880",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1387.02, "z": -4715.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-55",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56862",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2841.81, "z": -4962.07 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56861",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2841.31, "z": -4966.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-56",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56828",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1581.85, "z": -4161.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-57",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56812",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1935.26, "z": -4187.31 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-58",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56804",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1742.78, "z": -4366.1 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56803",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1739.82, "z": -4369.22 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56802",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1742.07, "z": -4370.47 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-59",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56732",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2057.43, "z": -4966.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-60",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56731",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2052.68, "z": -4982.82 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56730",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2053.43, "z": -4989.57 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-61",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56703",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 357.75, "z": -4751.96 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-62",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56701",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 387.5, "z": -4771.21 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56700",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 387.15, "z": -4769.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-63",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56669",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1911.56, "z": -3949.02 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-64",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56668",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1857.05, "z": -4216.57 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56667",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1860.55, "z": -4212.07 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56666",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1863.05, "z": -4216.57 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-65",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56591",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1039.25, "z": -4556.5 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56590",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1038.75, "z": -4562.75 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56589",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1039.5, "z": -4559.75 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-66",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56410",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 401.42, "z": -5042.59 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56409",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 402.17, "z": -5040.71 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-67",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56407",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 431.93, "z": -5094.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-68",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56385",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1422.79, "z": -4609.42 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-56384",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1421.72, "z": -4614.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-69",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51708",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 590.08, "z": -5896.86 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51680",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 590.58, "z": -5899.61 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51610",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 588.08, "z": -5901.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-70",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51707",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 589.58, "z": -5867.6 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51678",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 587.58, "z": -5869.1 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51607",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 587.83, "z": -5865.85 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-71",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51705",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1992.57, "z": -5335.26 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51671",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1992.32, "z": -5332.01 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-72",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51704",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1321.71, "z": -5383.27 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51670",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1321.46, "z": -5379.77 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51669",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1319.96, "z": -5386.27 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-73",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51682",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 580.58, "z": -5945.87 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51681",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 583.33, "z": -5948.62 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51611",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 580.08, "z": -5950.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-74",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51679",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 610.84, "z": -5894.36 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51609",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 611.34, "z": -5890.36 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51608",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 614.09, "z": -5893.36 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-75",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51677",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1582, "z": -5145.23 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51592",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1581.25, "z": -5142.48 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51591",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1584, "z": -5142.73 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-76",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51673",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 728.61, "z": -5519.54 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-77",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51616",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 77.49, "z": -5985.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-78",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51615",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 74.99, "z": -6001.13 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51614",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 73.49, "z": -5997.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-79",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51613",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 580.33, "z": -6108.4 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51612",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 585.08, "z": -6108.9 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-80",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51599",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 711.9, "z": -6393.21 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51598",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 714.9, "z": -6393.46 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51597",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 715.65, "z": -6390.21 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51596",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 715.65, "z": -6396.71 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51595",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 718.4, "z": -6393.71 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-81",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51594",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1106.42, "z": -6534.22 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51593",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1109.67, "z": -6531.72 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51232",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1108.17, "z": -6538.47 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51231",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1110.92, "z": -6536.22 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-82",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51590",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1838.29, "z": -5138.73 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-83",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51268",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2080.34, "z": -6269.17 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51267",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2077.59, "z": -6270.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-84",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51265",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 965.9, "z": -6204.16 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51264",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 965.65, "z": -6200.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-85",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51263",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 913.39, "z": -6235.67 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51262",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 914.89, "z": -6239.17 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51261",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 916.39, "z": -6234.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-86",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51242",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1960.07, "z": -5709.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-87",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51238",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2016.58, "z": -5848.1 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51237",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2018.33, "z": -5843.85 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51236",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2019.58, "z": -5847.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-88",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51235",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2000.32, "z": -5824.09 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-89",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51234",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1977.07, "z": -5852.6 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51233",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1979.82, "z": -5850.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-90",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51230",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1824.04, "z": -5602.81 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-91",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51229",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1889.05, "z": -5685.32 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51228",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1892.55, "z": -5685.32 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-92",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51227",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1933.31, "z": -5648.31 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51226",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1933.56, "z": -5654.07 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51225",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1936.56, "z": -5651.32 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-93",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51224",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2089.84, "z": -5941.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-94",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51223",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2123.59, "z": -5978.87 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51222",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2123.34, "z": -5984.12 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51221",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2127.59, "z": -5981.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-95",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51220",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1956.57, "z": -6011.13 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51219",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1959.57, "z": -6012.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-96",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51218",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1725.53, "z": -6113.89 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-97",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51217",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1740.28, "z": -6205.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-98",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51216",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1838.8, "z": -6214.91 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51215",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1841.8, "z": -6215.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-99",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51214",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2051.08, "z": -6199.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-100",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-51213",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2055.83, "z": -6250.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-101",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-97687",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 735.11, "z": -6031.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-102",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-57225",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 742.61, "z": -6269.17 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-57224",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 742.36, "z": -6260.92 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-57223",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 744.61, "z": -6264.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-103",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-57216",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 661.09, "z": -6115.65 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-57215",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 664.04, "z": -6112.48 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-104",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-57214",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 984.6, "z": -6348.85 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-57213",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 981.77, "z": -6343.18 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-57212",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 985, "z": -6344.98 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-105",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-53840",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 373.3, "z": -5965.87 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-106",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-52935",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 709.85, "z": -6243.92 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-52934",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 708.6, "z": -6247.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-107",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51286",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 761.09, "z": -6071.88 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51285",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 754.36, "z": -6068.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-108",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51284",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 773.87, "z": -6247.92 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51283",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 772.36, "z": -6244.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-109",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51282",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 827.37, "z": -6182.66 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51281",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 829.37, "z": -6180.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-110",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51280",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 767.37, "z": -6195.91 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51279",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 769.61, "z": -6192.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-111",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51278",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1257.7, "z": -6356.44 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51277",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1262.45, "z": -6347.94 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51276",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1257.44, "z": -6349.93 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51275",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1252.94, "z": -6347.19 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-112",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51274",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1132.17, "z": -6356.94 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51273",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1131.42, "z": -6359.69 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-113",
+      "members": [
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51272",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1066.41, "z": -6353.19 }
+        },
+        {
+          "enemyKindId": 22110301,
+          "id": "enemy-51271",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1065.91, "z": -6356.44 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-114",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-97685",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1971.07, "z": -4995.7 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-115",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-97683",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1952.06, "z": -5026.33 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-116",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-85879",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 801.04, "z": -6153.65 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-85878",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 802.54, "z": -6149.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-117",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-68470",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -548.99, "z": -5703.83 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-68469",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -548.24, "z": -5703.08 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-118",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-68468",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -538.36, "z": -5682.82 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-68467",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -533.36, "z": -5687.32 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-119",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-62069",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 645.65, "z": -5871.48 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-120",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-61553",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 113.35, "z": -6136.77 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-61552",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 119.79, "z": -6134.77 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51696",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 118.25, "z": -6138.9 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51695",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 116.75, "z": -6145.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-121",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-58168",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2717.76, "z": -4921.93 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57163",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2722.44, "z": -4929.86 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-122",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-58161",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1723.41, "z": -4043.29 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-58160",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1726.9, "z": -4043.54 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-123",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-58053",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 790.22, "z": -4601.26 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-124",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-58052",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 808.45, "z": -4597.51 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-125",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-58051",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 781.9, "z": -4627 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-126",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57291",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1932.75, "z": -4286.82 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57290",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1938.14, "z": -4286.84 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-127",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57173",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2710.04, "z": -4863.3 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57172",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2712.03, "z": -4862.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-128",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57170",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2758.33, "z": -4863.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-129",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57168",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2741.06, "z": -4976.07 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57167",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2743.7, "z": -4976.7 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-130",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57157",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2783.75, "z": -4894.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-131",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57152",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2727.29, "z": -4902.05 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57151",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2719.53, "z": -4896.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-132",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57123",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2889.34, "z": -4974.05 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-133",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-57122",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2921.08, "z": -4959.08 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-134",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56979",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1573, "z": -4542.75 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56978",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1573.5, "z": -4539.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-135",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56977",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1608.72, "z": -4522.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-136",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56964",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 682.36, "z": -4418.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-137",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56916",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 453.92, "z": -5160.09 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-138",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56912",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 496.86, "z": -5134.96 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-139",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56911",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 495.36, "z": -5122.97 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56910",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 501.36, "z": -5124.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-140",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56906",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1494.1, "z": -4664.28 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56883",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1500.58, "z": -4662.76 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-141",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56893",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1278.04, "z": -4730.77 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-142",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56882",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1487.32, "z": -4643.26 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-143",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56877",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1309.55, "z": -4721.78 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-144",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56875",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1326.3, "z": -4785.27 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-145",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56874",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1313.79, "z": -4766.79 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-146",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56864",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2623.51, "z": -4877.33 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-147",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56863",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2568.42, "z": -4951.45 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-148",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56860",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2829.57, "z": -4903.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-149",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56859",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2925.1, "z": -4851.56 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-150",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56858",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2972.58, "z": -4898.31 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56857",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2970.31, "z": -4904.05 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-151",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56855",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2858.82, "z": -4900.54 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-152",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56852",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2856.21, "z": -4826.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-153",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56851",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2852.7, "z": -4841.67 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-154",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56850",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2841.71, "z": -4829.17 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56849",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2841.91, "z": -4822.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-155",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56848",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2834.89, "z": -4852.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-156",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56846",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2734.39, "z": -4841.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-157",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56841",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2648.68, "z": -4856.93 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56840",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2645.93, "z": -4853.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-158",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56838",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2613.01, "z": -4849.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-159",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56837",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2596.24, "z": -4815.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-160",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56834",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1454.48, "z": -4141.56 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-161",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56829",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1576.85, "z": -4144.68 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-162",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56827",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1585.38, "z": -4163.16 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-163",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56826",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1657.14, "z": -4130.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-164",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56816",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1890.27, "z": -4021.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-165",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56815",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1893.55, "z": -4032.04 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-166",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56809",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1707.27, "z": -4547.13 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56808",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1711.6, "z": -4548.74 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56807",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1712.85, "z": -4552.74 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-167",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56806",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1666.11, "z": -4527.99 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56805",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1671.11, "z": -4533.24 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-168",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56799",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2102.76, "z": -4832.23 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-169",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56796",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2078.66, "z": -4825.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-170",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56762",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2017.32, "z": -4745.91 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56761",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2017.57, "z": -4748.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-171",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56742",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2020.67, "z": -4806.3 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56741",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2018.41, "z": -4810.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-172",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56737",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2005.18, "z": -4902.56 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-173",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56736",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2019.92, "z": -4908.06 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56734",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2016.17, "z": -4899.06 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-174",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56733",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2024.44, "z": -4917.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-175",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56729",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2056.95, "z": -5021.08 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-176",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56727",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2082.18, "z": -4997.82 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56726",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2082.44, "z": -4995.32 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-177",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56720",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2344.43, "z": -4727.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-178",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56719",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2259.97, "z": -4717.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-179",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56718",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2273.72, "z": -4718.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-180",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56708",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 964.49, "z": -5234.41 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56698",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 963.23, "z": -5239.16 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56697",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 963.35, "z": -5235.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-181",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56695",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 823.79, "z": -5250.33 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56694",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 823.05, "z": -5255.33 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-182",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56675",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1924.56, "z": -4113.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-183",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56674",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1898.55, "z": -4099.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-184",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56672",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1908.3, "z": -3947.27 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56671",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1911.43, "z": -3955.9 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-185",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56661",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2202.67, "z": -4851.89 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-186",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56646",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 711.15, "z": -5001.76 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-187",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56635",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 681.12, "z": -4883.49 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56634",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 680, "z": -4885.99 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-188",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56623",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 736.46, "z": -4847.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-189",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56622",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 758.46, "z": -4856.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-190",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56564",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 540.92, "z": -4443.23 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56563",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 536.42, "z": -4437.48 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56562",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 533.61, "z": -4444.47 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-191",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56497",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1121.73, "z": -4936.31 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-192",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56448",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1140.72, "z": -4864.05 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56447",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1136.46, "z": -4864.05 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-193",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56446",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2042.08, "z": -4410.85 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-194",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56443",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1939.06, "z": -4569.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-195",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56441",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1951.81, "z": -4549.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-196",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56440",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2007.57, "z": -4535.12 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56439",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2007.57, "z": -4530.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-197",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56437",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1994.07, "z": -4727.16 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-198",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56436",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1972.57, "z": -4782.67 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-199",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56432",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1982.57, "z": -4780.67 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-200",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56429",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 483.81, "z": -4613.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-201",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56428",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 465.81, "z": -4640.64 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56427",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 466.31, "z": -4636.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-202",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56416",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1398.22, "z": -4855.43 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56415",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1402.97, "z": -4857.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-203",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56400",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 506.82, "z": -4568.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-204",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-56399",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 511.32, "z": -4577.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-205",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-53322",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 190.76, "z": -5633.06 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-206",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51703",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 703.35, "z": -6134.4 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51658",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 701.35, "z": -6142.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-207",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51702",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 721.35, "z": -6108.39 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51656",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 720.85, "z": -6100.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-208",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51701",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 639.84, "z": -6057.39 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51700",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 647.34, "z": -6057.39 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51654",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 641.84, "z": -6064.89 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-209",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51687",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2101.34, "z": -5448.28 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51622",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2104.84, "z": -5455.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-210",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51685",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2072.33, "z": -5377.52 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51684",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2075.84, "z": -5380.02 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51620",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2068.58, "z": -5375.02 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-211",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51655",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 720.85, "z": -6119.9 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-212",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51647",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 584.58, "z": -6367.44 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-213",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51635",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 363.79, "z": -5759.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-214",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51634",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1023.91, "z": -5327.26 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51633",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1025.41, "z": -5323.26 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-215",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51625",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1986.07, "z": -5168.73 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-216",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51624",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2095.84, "z": -5465.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-217",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51623",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2115.59, "z": -5441.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-218",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51621",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2083.84, "z": -5450.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-219",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51617",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1936.06, "z": -5229.74 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-220",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51254",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 884.38, "z": -6551.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-221",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51253",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1699.77, "z": -6083.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-222",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51252",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2125.84, "z": -6112.14 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51251",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2123.84, "z": -6105.89 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51250",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2122.09, "z": -6110.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-223",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51249",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2009.07, "z": -6032.88 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51248",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2013.33, "z": -6031.13 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51247",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2009.57, "z": -6026.88 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-224",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51245",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2045.33, "z": -5863.35 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51244",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2047.08, "z": -5868.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-225",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-51243",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2114.59, "z": -5875.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-226",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-97684",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1952.94, "z": -5026.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-227",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-91353",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1076.41, "z": -5486.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-228",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-91352",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 848.38, "z": -5863.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-229",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-91351",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 986.77, "z": -5632.69 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-230",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-91350",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1272.2, "z": -5866.85 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-231",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-70841",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 751.99, "z": -6138.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-232",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-57096",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1983.07, "z": -4777.17 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-57095",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1979.69, "z": -4781.54 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-233",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56981",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1569.25, "z": -4540.63 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56980",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1570.75, "z": -4543.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-234",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56963",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 670.35, "z": -4420.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-235",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56962",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 673.73, "z": -4433.09 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-236",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56908",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1537.91, "z": -4540.81 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-237",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56905",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1480.85, "z": -4655.28 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56904",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1478.35, "z": -4661.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-238",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56901",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1518.34, "z": -4767.8 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-239",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56879",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1305.8, "z": -4729.27 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-240",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56878",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1310.96, "z": -4713.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-241",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56856",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2931.29, "z": -4933.79 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-242",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56844",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2695.89, "z": -4837.92 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56843",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2702.89, "z": -4842.42 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56842",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2707.3, "z": -4838.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-243",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56836",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1404.32, "z": -4124.68 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-244",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56833",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1447.03, "z": -4159.75 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-245",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56832",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1452.66, "z": -4144.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-246",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56822",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1698.07, "z": -4095.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-247",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56819",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1731.67, "z": -4081.73 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56818",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1735.42, "z": -4086.73 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-248",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56814",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1894.05, "z": -4017.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-249",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56800",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2096.88, "z": -4836.79 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-250",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56728",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2093.43, "z": -5008.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-251",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56725",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2096.13, "z": -4984.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-252",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56724",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2122.19, "z": -4961.81 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56723",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2121.44, "z": -4956.81 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-253",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56721",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2116.13, "z": -4933.81 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-254",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56717",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2274.96, "z": -4714.77 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-255",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56716",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2197.72, "z": -4806.44 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-256",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56670",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1905.05, "z": -3952.52 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-257",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56637",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 680.15, "z": -4883.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-258",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56560",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 868.28, "z": -4445.8 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56559",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 864.03, "z": -4450.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-259",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56541",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1160.33, "z": -4546.94 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56540",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1159.73, "z": -4549.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-260",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56494",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1142.95, "z": -4917.25 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56493",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1138.55, "z": -4910.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-261",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56492",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1138.52, "z": -4900.05 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-262",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56438",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2001.57, "z": -4689.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-263",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56431",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 808.24, "z": -4536.63 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56422",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 809.74, "z": -4536.25 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56421",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 806.99, "z": -4539.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-264",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56426",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 680.85, "z": -4629.14 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56425",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 681.35, "z": -4636.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-265",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56424",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 732.6, "z": -4540.88 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56423",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 728.85, "z": -4535.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-266",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56420",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 782.36, "z": -4526.12 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56419",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 784.36, "z": -4528.87 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-267",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56418",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 792.86, "z": -4505.87 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-56417",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 797.12, "z": -4509.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-268",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-51694",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 108.5, "z": -6131.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-269",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-51693",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 119.75, "z": -6132.9 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-270",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-51692",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 127.25, "z": -6150.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-271",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-51665",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 921.39, "z": -6581.98 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-51664",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 925.39, "z": -6581.98 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-272",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-51653",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 576.83, "z": -6188.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-273",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-51648",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 543.32, "z": -6338.68 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-274",
+      "members": [
+        {
+          "enemyKindId": 22020201,
+          "id": "enemy-87858",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1898.55, "z": -4210.69 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-275",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-85877",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 803.5, "z": -6152.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-276",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-70842",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 749.23, "z": -6138.02 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-277",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-57171",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2770.23, "z": -4875.11 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-278",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-56793",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2264.65, "z": -4717.27 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-279",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-51709",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 113, "z": -6140.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-280",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-51667",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 921.14, "z": -6586.73 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-281",
+      "members": [
+        {
+          "enemyKindId": 23020101,
+          "id": "enemy-82376",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2381.53, "z": -6197.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-282",
+      "members": [
+        {
+          "enemyKindId": 23020101,
+          "id": "enemy-51662",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 723.86, "z": -6425.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-283",
+      "members": [
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-69398",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -679.89, "z": -5080.72 }
+        },
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-69396",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -670.23, "z": -5080.6 }
+        },
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-69397",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -669.99, "z": -5088.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-284",
+      "members": [
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-69395",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -602.7, "z": -5229.87 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-285",
+      "members": [
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-68486",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -669.13, "z": -5480.79 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-286",
+      "members": [
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-68485",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -694.64, "z": -5164.24 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-287",
+      "members": [
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-68484",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -634.88, "z": -5154.98 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-288",
+      "members": [
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-68483",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -743.27, "z": -5148.48 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-289",
+      "members": [
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-68482",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -622.38, "z": -5073.34 }
+        },
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-68481",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -620.38, "z": -5077.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-290",
+      "members": [
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-68480",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -653.76, "z": -5075.85 }
+        },
+        {
+          "enemyKindId": 26140201,
+          "id": "enemy-68479",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -653.01, "z": -5072.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-291",
+      "members": [
+        {
+          "enemyKindId": 26140101,
+          "id": "enemy-68487",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -745.4, "z": -5052.22 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-292",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-68440",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -543.74, "z": -5699.45 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-293",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-57303",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 451.65, "z": -4612.76 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-294",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-57302",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 442.89, "z": -4602.25 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-295",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56976",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1571.92, "z": -4540.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-296",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56902",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1519.34, "z": -4761.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-297",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56892",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1277.81, "z": -4735.24 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-298",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56853",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2850.71, "z": -4820.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-299",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56847",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2805.87, "z": -4848.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-300",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56835",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1412.27, "z": -4130.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-301",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56831",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1465.55, "z": -4152.87 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-302",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56820",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1743.55, "z": -4075.98 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-303",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56813",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1893.05, "z": -4024.04 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-304",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56797",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2106.27, "z": -4825.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-305",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56735",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2020.92, "z": -4909.81 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-306",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56705",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1853.35, "z": -4814.01 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-307",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56449",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1139.52, "z": -4866.8 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-308",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-56395",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 673.34, "z": -4636.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-309",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-51686",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2097.59, "z": -5455.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-310",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-51651",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 587.08, "z": -6218.16 }
+        },
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-51650",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 583.08, "z": -6226.67 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-311",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-51629",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 552.83, "z": -5690.82 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-312",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-51246",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2041.83, "z": -5868.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-313",
+      "members": [
+        {
+          "enemyKindId": 26050601,
+          "id": "enemy-60995",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2102.2, "z": -4797.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-314",
+      "members": [
+        {
+          "enemyKindId": 26050601,
+          "id": "enemy-60994",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2078.19, "z": -4788.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-315",
+      "members": [
+        {
+          "enemyKindId": 26050601,
+          "id": "enemy-60993",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2019.16, "z": -4805.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-316",
+      "members": [
+        {
+          "enemyKindId": 26050601,
+          "id": "enemy-59512",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1955.76, "z": -4855.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-317",
+      "members": [
+        {
+          "enemyKindId": 26050601,
+          "id": "enemy-59511",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1968.72, "z": -4853.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-318",
+      "members": [
+        {
+          "enemyKindId": 26050601,
+          "id": "enemy-59510",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1951.64, "z": -4875.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-319",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-58066",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1190.43, "z": -4966.7 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-58065",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1194.43, "z": -4968.7 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-320",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-56692",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 751.32, "z": -5302.09 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-321",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-56691",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 731.68, "z": -5319.05 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-322",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54900",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2986.24, "z": -5144.23 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-323",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54899",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2980.49, "z": -5152.48 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-324",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54898",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3056, "z": -5125.97 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54897",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 3060, "z": -5125.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-325",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54886",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2699.19, "z": -6275.42 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54885",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2708.19, "z": -6278.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-326",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54883",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2754.2, "z": -6478.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-327",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54882",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2748.2, "z": -6452.2 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-328",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54880",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2665.94, "z": -6324.68 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54879",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2667.69, "z": -6328.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-329",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54878",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2549.67, "z": -6209.16 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54877",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2545.67, "z": -6217.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-330",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54875",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2508.91, "z": -6172.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-331",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54870",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2408.89, "z": -6084.64 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-332",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-54869",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2411.89, "z": -6101.14 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-333",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-51672",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 693.6, "z": -6323.18 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-334",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-51260",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1082.17, "z": -6131.4 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-51259",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1083.92, "z": -6139.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-335",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-51256",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1023.66, "z": -6165.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-336",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-51255",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1057.41, "z": -5991.87 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-337",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-57526",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1379.96, "z": -4111.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-338",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-57166",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2742.05, "z": -4979.32 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-339",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-56959",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2134.59, "z": -4715.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-340",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-56894",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1419.02, "z": -4797.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-341",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-56854",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2868.32, "z": -4887.04 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-342",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-56801",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1936.63, "z": -4658.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-343",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-56794",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2087.68, "z": -5003.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-344",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-56645",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 712.52, "z": -5002.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-345",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-54912",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2673.19, "z": -4811.42 }
+        },
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-54911",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2672.19, "z": -4820.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-346",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-54910",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2571.92, "z": -4848.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-347",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-51583",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 930.88, "z": -5613.06 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-348",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-51582",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 294.28, "z": -5553.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-349",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-51581",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 180.51, "z": -5637.31 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-350",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-51270",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2114.59, "z": -6110.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-351",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-51269",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1110.42, "z": -6528.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-352",
+      "members": [
+        {
+          "enemyKindId": 21020401,
+          "id": "enemy-57115",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2933.43, "z": -5000.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-353",
+      "members": [
+        {
+          "enemyKindId": 21020401,
+          "id": "enemy-56876",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1307.56, "z": -4717.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-354",
+      "members": [
+        {
+          "enemyKindId": 21020401,
+          "id": "enemy-56394",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 730.6, "z": -4541.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-355",
+      "members": [
+        {
+          "enemyKindId": 21020401,
+          "id": "enemy-53321",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1126.67, "z": -6245.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-356",
+      "members": [
+        {
+          "enemyKindId": 21020401,
+          "id": "enemy-51668",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1233.44, "z": -6437.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-357",
+      "members": [
+        {
+          "enemyKindId": 21020401,
+          "id": "enemy-51649",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 600.33, "z": -6230.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-358",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56907",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1490.33, "z": -4661.01 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-359",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56845",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2729.38, "z": -4827.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-360",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56839",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2645.26, "z": -4857.79 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-361",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56821",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1733.33, "z": -4086.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-362",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56798",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2104.87, "z": -4829.73 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-363",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56722",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2116.94, "z": -4941.06 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-364",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56673",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1913.56, "z": -4088.8 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-365",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56636",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 682.12, "z": -4884.99 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-366",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56442",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1946.81, "z": -4551.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-367",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-56435",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1985.07, "z": -4784.17 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-368",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-53324",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 768.36, "z": -5638.06 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-369",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-53323",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 745.86, "z": -6133.9 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-370",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-51666",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 916.64, "z": -6578.72 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-371",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-51657",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 720.85, "z": -6127.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-372",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-51626",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1988.07, "z": -5177.23 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-373",
+      "members": [
+        {
+          "enemyKindId": 23050101,
+          "id": "enemy-56707",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 652.22, "z": -5151.23 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-374",
+      "members": [
+        {
+          "enemyKindId": 23050101,
+          "id": "enemy-51661",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 689.35, "z": -6334.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-375",
+      "members": [
+        {
+          "enemyKindId": 23050101,
+          "id": "enemy-51266",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1075.92, "z": -6132.9 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-376",
+      "members": [
+        {
+          "enemyKindId": 20051201,
+          "id": "enemy-56280",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1513.49, "z": -6510.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-377",
+      "members": [
+        {
+          "enemyKindId": 24080101,
+          "id": "enemy-54909",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2457.15, "z": -5387.02 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-378",
+      "members": [
+        {
+          "enemyKindId": 26180101,
+          "id": "enemy-54757",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 2900.23, "z": -6028.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-379",
+      "members": [
+        {
+          "enemyKindId": 24070101,
+          "id": "enemy-51288",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 1714.52, "z": -5079.72 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-380",
+      "members": [
+        {
+          "enemyKindId": 26170101,
+          "id": "enemy-51287",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 284.78, "z": -5660.57 }
+        }
+      ]
+    },
+    {
+      "areaId": "fontaine",
+      "id": "fontaine-camp-381",
+      "members": [
+        {
+          "enemyKindId": 24030201,
+          "id": "enemy-51240",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": 902.89, "z": -6323.43 }
+        }
+      ]
+    }
+  ],
   "id": "fontaine",
   "landmarks": [
     {

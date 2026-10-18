@@ -1,5 +1,4931 @@
 {
-  "enemyCamps": [],
+  "enemyCamps": [
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-1",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-88026",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3340.83, "z": -9377.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-2",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-88013",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4579.55, "z": -9823.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-3",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-88012",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4592.55, "z": -9823.04 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-4",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-88011",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4601.05, "z": -9811.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-5",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-87966",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4042.46, "z": -9249.94 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-6",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-87855",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3610.38, "z": -10307.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-7",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-86474",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -594.11, "z": -15453.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-8",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-86473",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -314.31, "z": -15256.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-9",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-86472",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -987.67, "z": -16000.59 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-10",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-86471",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -841.15, "z": -15502.25 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-11",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-86470",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -832.02, "z": -15507.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-12",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-77549",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3237.07, "z": -10115.19 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-13",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-77548",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3275.43, "z": -10076.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-14",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-77226",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4161.97, "z": -9889.67 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-15",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-77225",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4165.23, "z": -9955.06 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-16",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-77090",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4142.44, "z": -10185.72 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-17",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-76393",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3375.46, "z": -9843.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-18",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-76099",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4205.57, "z": -9241.26 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-19",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-76091",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4301.4, "z": -9121.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-20",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-73499",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3671.09, "z": -9238.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-21",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-72500",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4003.19, "z": -8823.86 }
+        },
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-72499",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3999.69, "z": -8821.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-22",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-72498",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3826.92, "z": -8967.14 }
+        },
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-72497",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3824.41, "z": -8970.27 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-23",
+      "members": [
+        {
+          "enemyKindId": 26270201,
+          "id": "enemy-72496",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3244.69, "z": -9675.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-24",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-88010",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3620.88, "z": -9923.05 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-25",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86388",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -533.85, "z": -16161.36 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-26",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86387",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1034.93, "z": -16113.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-27",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86386",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1420.12, "z": -15864.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-28",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86385",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1454.5, "z": -15714.29 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86384",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1453.88, "z": -15711.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-29",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86383",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -466.71, "z": -16580.31 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86382",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -464.21, "z": -16578.56 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-30",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86381",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1753.81, "z": -15227.96 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86380",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1752.81, "z": -15233.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-31",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86379",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1353.36, "z": -15128.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-32",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86378",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1254.68, "z": -14945.52 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-86377",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1255.42, "z": -14951.02 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-33",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83332",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4675.72, "z": -10929.89 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83331",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4672.35, "z": -10930.02 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-34",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83330",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4672.94, "z": -10948.85 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83329",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4670.74, "z": -10949.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-35",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83328",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4464.45, "z": -10879.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-36",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83327",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4447.45, "z": -10884.59 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-37",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83326",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4438.24, "z": -11077.49 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83325",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4433.74, "z": -11074.49 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-38",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83324",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4420.52, "z": -11066.75 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-39",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-83323",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4271.69, "z": -10573.86 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-40",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-80122",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2708.32, "z": -10997.59 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-41",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-80121",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2704.32, "z": -11018.85 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-42",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79855",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2415.23, "z": -11099.94 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-43",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79654",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2170.5, "z": -11283.61 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79653",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2168.25, "z": -11286.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-44",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79623",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2256.9, "z": -11088 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-45",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79607",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2037.7, "z": -11052.35 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79606",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2034.76, "z": -11053.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-46",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79604",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1940.67, "z": -11199.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-47",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79571",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2822.41, "z": -10860.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-48",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79569",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2858.28, "z": -10794.26 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-49",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79567",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2886.01, "z": -10750.19 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-50",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-79303",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2195.69, "z": -11036.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-51",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76609",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3418.72, "z": -10052.82 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-52",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76608",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3435.98, "z": -10082.83 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76607",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3430.22, "z": -10085.58 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-53",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76605",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3376.46, "z": -10096.96 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-54",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76604",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3394.09, "z": -10117.84 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76603",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3392.59, "z": -10119.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-55",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76570",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4142.61, "z": -9161.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-56",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76089",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4193.33, "z": -9080.52 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-76088",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4196.08, "z": -9085.52 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-57",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-75161",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4161.68, "z": -9515.7 }
+        },
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-75160",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4159.67, "z": -9509.2 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-58",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-75157",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4147.52, "z": -9441.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-59",
+      "members": [
+        {
+          "enemyKindId": 21010401,
+          "id": "enemy-75151",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4025.8, "z": -9383.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-60",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-87965",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4038.45, "z": -9247.69 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-87964",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4037.95, "z": -9254.69 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-87963",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4035.2, "z": -9244.44 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-87962",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4030.45, "z": -9253.19 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-87961",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4038.2, "z": -9259.69 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-61",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86485",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -463.83, "z": -16572.44 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-62",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86484",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1809.21, "z": -14885.28 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86483",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1807.21, "z": -14883.03 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86482",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1804.47, "z": -14885.78 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-63",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86481",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1411.6, "z": -14893.59 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86480",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1406.97, "z": -14891.84 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86479",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1408.22, "z": -14897.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-64",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86478",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1688.54, "z": -14856.89 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86477",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1684.54, "z": -14864.39 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-86476",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1689.98, "z": -14866.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-65",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-84689",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4283.69, "z": -10893.43 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-84688",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4278.69, "z": -10896.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-66",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-83060",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4573.26, "z": -10893.39 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-83059",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4569.76, "z": -10897.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-67",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-82418",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4646.76, "z": -9745.74 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-82417",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4646.76, "z": -9751.24 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-68",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-82416",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4607.75, "z": -9745.74 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-82415",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4605.75, "z": -9741.24 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-82414",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4604.25, "z": -9746.24 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-69",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79698",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3292.17, "z": -10535.26 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79697",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3290.92, "z": -10534.51 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79696",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3290.13, "z": -10536.01 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-70",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79614",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2130.3, "z": -11092.62 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79613",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2131.55, "z": -11097.37 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79612",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2131.8, "z": -11101.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-71",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79573",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2804.91, "z": -10860.64 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-72",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79350",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3427.75, "z": -10427.25 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-73",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79349",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3414.25, "z": -10427 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-74",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79346",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3324.72, "z": -10435.74 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79345",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3328.47, "z": -10442.74 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-75",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79337",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3319.62, "z": -10519.83 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79336",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3314.12, "z": -10519.83 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-76",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79311",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2055.31, "z": -10882.92 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79310",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2050.31, "z": -10887.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-77",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79159",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3235.13, "z": -10950.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-78",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79158",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3265.38, "z": -10915.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-79",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79157",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3266.67, "z": -10812.08 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-80",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79155",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3217.13, "z": -10761.56 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-81",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-79154",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3199.62, "z": -10711.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-82",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-77019",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3766.91, "z": -10163.59 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-77018",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3762.91, "z": -10165.59 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-83",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-76554",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3667.34, "z": -9367.57 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-76553",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3663.09, "z": -9361.57 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-76552",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3661.89, "z": -9365.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-84",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-76373",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3361.91, "z": -9542.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-85",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-76372",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3280.82, "z": -9547 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-76371",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3285.08, "z": -9542.2 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-86",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-76370",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3302.58, "z": -9511.18 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-87",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-75135",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4018.95, "z": -9583 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-75134",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4024.71, "z": -9586.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-88",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-75116",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3587.91, "z": -9230.7 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-89",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-75112",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3437.72, "z": -9150.05 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-90",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73502",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3640.99, "z": -9395.07 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73501",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3639.99, "z": -9392.07 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73500",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3637.49, "z": -9391.82 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-91",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73498",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3891.93, "z": -9097.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-92",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73497",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3886.43, "z": -9082.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-93",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73495",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3680.07, "z": -9138.97 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73494",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3676.44, "z": -9139.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-94",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73378",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4881.3, "z": -9666.18 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73377",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4880.8, "z": -9659.18 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73375",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4874.8, "z": -9667.05 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73376",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4874.92, "z": -9658.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-95",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73244",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4646.74, "z": -9791.33 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73243",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4645.24, "z": -9789.08 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73242",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4642.49, "z": -9787.83 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-73241",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4642.43, "z": -9792.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-96",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72474",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3299.57, "z": -10236.86 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72473",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3298.57, "z": -10233.85 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72472",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3296.82, "z": -10237.61 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72471",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3307.08, "z": -10242.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-97",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72470",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4232.23, "z": -9352.71 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72469",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4231.99, "z": -9359.95 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72468",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4227.86, "z": -9355.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-98",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72467",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3164.81, "z": -9557.99 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72466",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3164.93, "z": -9562.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-99",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72465",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4224.23, "z": -9205.69 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72464",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4226.48, "z": -9211.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-100",
+      "members": [
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72463",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4993.11, "z": -9910.05 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72462",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4994.87, "z": -9906.43 }
+        },
+        {
+          "enemyKindId": 20010301,
+          "id": "enemy-72461",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4990.86, "z": -9906.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-101",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-86492",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1611.78, "z": -15224.96 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-102",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-86491",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -929.45, "z": -14998.67 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-103",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-83319",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5317.47, "z": -11626.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-104",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-83318",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4200.06, "z": -12117.25 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-105",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-79757",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1185.92, "z": -11791.5 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-106",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-78897",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3890.5, "z": -10841.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-107",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-78896",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3532.01, "z": -11155.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-108",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-78894",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2104.57, "z": -11174.23 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-109",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-78890",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3515.05, "z": -10614.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-110",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-78889",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2390.28, "z": -11153.47 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-111",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-78378",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3341.66, "z": -9539.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-112",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-76551",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4106.65, "z": -9405.72 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-113",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-76550",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4441.78, "z": -9119.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-114",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-76057",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4165.98, "z": -9770.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-115",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-76056",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3415.35, "z": -9895.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-116",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-75173",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4221.28, "z": -9471.04 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-117",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-75133",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4019.04, "z": -9588.7 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-118",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72303",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3863.04, "z": -10005.57 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-119",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72302",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3696.52, "z": -9442.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-120",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72301",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3867.43, "z": -9163.42 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-121",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72300",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3785.66, "z": -8950.76 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-122",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72299",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3412.08, "z": -9542.49 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-123",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72298",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3204.56, "z": -9275.19 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-124",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72297",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3401.59, "z": -9768.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-125",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72296",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4554.54, "z": -9731.52 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-126",
+      "members": [
+        {
+          "enemyKindId": 26260801,
+          "id": "enemy-72295",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4790.7, "z": -10012.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-127",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-86490",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -531.35, "z": -16161.11 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-128",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-86489",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1333.2, "z": -15147.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-129",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-86488",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1259.17, "z": -14942.77 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-130",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-86487",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1313.49, "z": -14822.54 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-131",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-86486",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1746.87, "z": -14870.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-132",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-83317",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4329, "z": -12025.16 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-133",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-83316",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4173.53, "z": -12084.54 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-134",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-83315",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4147.17, "z": -10817.44 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-135",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-78898",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3838.85, "z": -10854.77 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-136",
+      "members": [
+        {
+          "enemyKindId": 21040101,
+          "id": "enemy-72510",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4991.74, "z": -9921.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-137",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-86440",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1396.87, "z": -15868.32 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-138",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-86439",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1778.57, "z": -14799.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-139",
+      "members": [
+        {
+          "enemyKindId": 21030301,
+          "id": "enemy-72188",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4138.85, "z": -9153.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-140",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-86438",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1177.21, "z": -16158.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-141",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-83321",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4571.04, "z": -11839.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-142",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-79302",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2193.19, "z": -11045.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-143",
+      "members": [
+        {
+          "enemyKindId": 22010201,
+          "id": "enemy-79267",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2478.74, "z": -10415.74 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-144",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-86434",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1193.46, "z": -16140.11 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-145",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-86433",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1397.37, "z": -15873.32 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-146",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-86432",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1444, "z": -15714.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-147",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-86431",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -461.96, "z": -16573.31 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-148",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-86430",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1349.24, "z": -15128.19 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-149",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-86429",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1748.53, "z": -14859.2 }
+        },
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-86428",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1744.78, "z": -14860.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-150",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-83016",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4436.7, "z": -10900.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-151",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-83015",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4428.74, "z": -11100.5 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-152",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-83014",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4276.49, "z": -10582.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-153",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-79979",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2324.35, "z": -11110.49 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-154",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-79853",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2422.21, "z": -11102.99 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-155",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-79609",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2046.97, "z": -11047.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-156",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-79574",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2796.53, "z": -10879.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-157",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-79501",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2170.2, "z": -11279.64 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-158",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-77161",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4046.2, "z": -10246.98 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-159",
+      "members": [
+        {
+          "enemyKindId": 21020601,
+          "id": "enemy-75159",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4161.05, "z": -9523.85 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-160",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86427",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -527.59, "z": -16169.37 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86426",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -525.84, "z": -16167.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-161",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86425",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -985.92, "z": -15997.09 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86424",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -989.67, "z": -16004.59 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-162",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86423",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1179.71, "z": -16204.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-163",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86422",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1203.46, "z": -16195.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-164",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86421",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1181.46, "z": -16138.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-165",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86420",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1207.46, "z": -16142.36 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86419",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1206.21, "z": -16144.86 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-166",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86418",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1382.73, "z": -15870.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-167",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86417",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1402.99, "z": -15869.07 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86416",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1402.24, "z": -15875.57 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-168",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86415",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1471.26, "z": -15882.69 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86414",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1466.63, "z": -15878.82 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-169",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86413",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1464.51, "z": -15848.44 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-170",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86412",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1451.63, "z": -15715.41 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-171",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86411",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1435, "z": -15477.62 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86410",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1432.63, "z": -15475.12 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86409",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1430.87, "z": -15476.25 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-172",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86408",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -468.58, "z": -16577.31 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86407",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -466.08, "z": -16575.69 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-173",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86404",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1319.46, "z": -15138.3 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86403",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1316.71, "z": -15140.8 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-174",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86402",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1336.87, "z": -15140.12 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86401",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1332.87, "z": -15140.12 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86400",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1331.87, "z": -15142.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-175",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86399",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1266.4, "z": -14952.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-176",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86398",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1403.08, "z": -14888.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-177",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86397",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1416.58, "z": -14900.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-178",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86396",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1755.37, "z": -14855.63 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86395",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1746.87, "z": -14856.63 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86394",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1743.37, "z": -14860.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-179",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86393",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1775.57, "z": -14810.15 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86392",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1767.07, "z": -14814.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-180",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-86391",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1790.56, "z": -14843.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-181",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83314",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4610.55, "z": -11772.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-182",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83313",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4610.05, "z": -11782.38 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83312",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4602.05, "z": -11778.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-183",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83311",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4473.9, "z": -12374.84 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-184",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83310",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4328, "z": -12021.42 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83309",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4331.25, "z": -12023.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-185",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83308",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4186.08, "z": -12076.03 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83307",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4183.83, "z": -12075.28 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83306",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4180.32, "z": -12075.28 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-186",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83305",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4573.89, "z": -11840.74 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83304",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4569.64, "z": -11835.74 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83303",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4568.64, "z": -11842.49 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-187",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83302",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4523.88, "z": -11858.25 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83301",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4521.38, "z": -11853.25 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83300",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4523.88, "z": -11864.25 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-188",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83299",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4676.11, "z": -10951.9 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83298",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4673.99, "z": -10953.9 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83297",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4669.36, "z": -10949.4 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83296",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4671.74, "z": -10952.78 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-189",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83295",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4433.7, "z": -10892.59 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83292",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4424.3, "z": -10890.43 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83291",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4418.8, "z": -10885.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-190",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83294",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4446.2, "z": -10894.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-191",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83293",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4465.7, "z": -10884.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-192",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83290",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4400.23, "z": -10909.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-193",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83289",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4241.19, "z": -10557.36 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83288",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4235.19, "z": -10552.36 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-194",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83287",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4232.69, "z": -10562.86 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-195",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83286",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4656.91, "z": -11714.22 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83285",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4653.41, "z": -11715.97 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83284",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4649.41, "z": -11709.72 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83283",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4650.41, "z": -11715.22 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-196",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83282",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5125.74, "z": -11291.4 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83281",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5118.49, "z": -11294.9 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-197",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83280",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5103.48, "z": -11289.9 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83279",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5099.48, "z": -11286.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-198",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83278",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4450.22, "z": -11130.49 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-199",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83277",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4441.72, "z": -11115.98 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-200",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83276",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4431.22, "z": -11073.99 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83275",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4425.22, "z": -11079.99 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-201",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83274",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4423.52, "z": -11095.76 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-202",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83273",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4539.37, "z": -11005.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-203",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83272",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4539.87, "z": -11015.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-204",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83271",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4571.37, "z": -10996.96 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83270",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4567.37, "z": -10993.96 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83269",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4566.87, "z": -10998.96 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83268",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4565.87, "z": -11006.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-205",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83267",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4287.7, "z": -10587.36 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-83266",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4282.69, "z": -10591.36 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-206",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80120",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2693.57, "z": -11025.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-207",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80119",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2702.82, "z": -11009.59 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-208",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80118",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2726.08, "z": -11004.34 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-209",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80099",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2327.26, "z": -11109.62 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80098",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2326.17, "z": -11109.13 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79980",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2325.83, "z": -11106.18 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-210",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80024",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2289.45, "z": -11174.83 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80023",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2288.83, "z": -11178.08 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-211",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80022",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2307.33, "z": -11153.57 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-80021",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2306.71, "z": -11155.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-212",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79981",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2260.05, "z": -11115.69 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-213",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79978",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2352.35, "z": -11074.47 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79977",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2352.85, "z": -11082.97 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-214",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79948",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2907.81, "z": -11015.29 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79947",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2907.31, "z": -11012.92 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79946",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2906.06, "z": -11017.3 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-215",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79854",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2415.05, "z": -11102.75 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-216",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79656",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2230.79, "z": -11171.82 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79655",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2231.79, "z": -11176.32 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-217",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79622",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2253.98, "z": -11096.61 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79621",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2262.46, "z": -11091.86 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-218",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79615",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2201.97, "z": -10346.43 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-219",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79608",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2048.71, "z": -11056.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-220",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79602",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1913.68, "z": -11191.62 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79601",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1909.18, "z": -11194.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-221",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79600",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1910.89, "z": -11215.38 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-222",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79583",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2698.8, "z": -11296.67 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-223",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79572",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2804.03, "z": -10865.27 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-224",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79570",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2823.27, "z": -10853.03 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-225",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79568",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2858.68, "z": -10797.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-226",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79566",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2891.11, "z": -10753.05 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79565",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2884.6, "z": -10758.05 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-227",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-79564",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2895.86, "z": -10762.06 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-228",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-77160",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4052.21, "z": -10247.23 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-77159",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4052.21, "z": -10242.11 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-77158",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4048.7, "z": -10242.23 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-229",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-76606",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3376.84, "z": -10083.33 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-76601",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3374.09, "z": -10084.08 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-230",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-76602",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3388.34, "z": -10121.46 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-231",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-76600",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3423.1, "z": -10046.82 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-76599",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3417.35, "z": -10045.07 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-232",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-76598",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3450.35, "z": -10059.08 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-233",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-76597",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3445.35, "z": -10079.33 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-234",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-75156",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4154.08, "z": -9439.83 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-75155",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4153.33, "z": -9441.83 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-235",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-75150",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4029.05, "z": -9375.55 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-75149",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4027.3, "z": -9378.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-236",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-75117",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4060.54, "z": -9168.79 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-237",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-72509",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4123.84, "z": -9156.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-238",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-72508",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3655.63, "z": -9923.05 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-72507",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3654.64, "z": -9930.31 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-72506",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3660.14, "z": -9927.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-239",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-72505",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3542.62, "z": -9973.44 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-240",
+      "members": [
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-72504",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4160.47, "z": -9314.32 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-72503",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4159.85, "z": -9317.45 }
+        },
+        {
+          "enemyKindId": 21010101,
+          "id": "enemy-72502",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4158.35, "z": -9314.83 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-241",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-86390",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1334.23, "z": -15689.29 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-242",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-86389",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1491.42, "z": -14953.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-243",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-76071",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4170.82, "z": -9704.88 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-244",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-75107",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4068.46, "z": -9555.24 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-245",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-75106",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3876.18, "z": -9692.76 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-246",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-74752",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3711.15, "z": -9051.4 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-247",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-74746",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3606.13, "z": -8887.63 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-248",
+      "members": [
+        {
+          "enemyKindId": 26010101,
+          "id": "enemy-73949",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3201.56, "z": -10166.72 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-249",
+      "members": [
+        {
+          "enemyKindId": 21020401,
+          "id": "enemy-86376",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -1317.46, "z": -15142.8 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-250",
+      "members": [
+        {
+          "enemyKindId": 21020401,
+          "id": "enemy-83322",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4435.02, "z": -11082.25 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-251",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83265",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5082.43, "z": -11754.42 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83264",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5090.18, "z": -11760.18 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83262",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5084.3, "z": -11764.93 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-252",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83263",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5091.93, "z": -11771.56 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-253",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83261",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5076.13, "z": -11637.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-254",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83260",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5075.13, "z": -11626.85 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83259",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5071.38, "z": -11627.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-255",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83258",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5081.94, "z": -11667.48 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83254",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5077.83, "z": -11673.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-256",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83257",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5192.48, "z": -11738.49 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83256",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5187.73, "z": -11744.24 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83255",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5187.98, "z": -11735.49 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-257",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83253",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5097.33, "z": -11643.59 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-258",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83252",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5060.33, "z": -11616.58 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-259",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83251",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5068.33, "z": -11602.57 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-260",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83250",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5021.82, "z": -11543.55 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83248",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5014.82, "z": -11549.55 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-261",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83249",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5010.32, "z": -11540.04 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-262",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83247",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5290.16, "z": -11689.86 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83246",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5295.37, "z": -11687.59 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-83245",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5293.87, "z": -11686.08 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-263",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72871",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4075.46, "z": -8760.36 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-264",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72870",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4082.96, "z": -8803.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-265",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72869",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4075.72, "z": -8854.12 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-266",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72868",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4039.45, "z": -8868.62 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72867",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4036.7, "z": -8870.87 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-267",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72866",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4030.33, "z": -8943.51 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72865",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4033.33, "z": -8943.01 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-268",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72864",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3772.66, "z": -8825.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-269",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72863",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3720.15, "z": -8917.76 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-270",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72862",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3655.89, "z": -8853.87 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72861",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3660.51, "z": -8855 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-271",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72860",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3949.94, "z": -8965.89 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-272",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72859",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3872.17, "z": -9014.14 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72858",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3870.67, "z": -9007.65 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-273",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72857",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3917.93, "z": -8996.02 }
+        },
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72856",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3911.68, "z": -8996.27 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-274",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72855",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3885.93, "z": -9050.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-275",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72854",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3856.67, "z": -9076.66 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-276",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72853",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3862.4, "z": -9050.91 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-277",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72852",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3849.42, "z": -9016.15 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-278",
+      "members": [
+        {
+          "enemyKindId": 23010401,
+          "id": "enemy-72851",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3835.92, "z": -9018.9 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-279",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-83244",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5097.83, "z": -11789.62 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-280",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-83243",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5087.83, "z": -11792.13 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-281",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-81214",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4698.07, "z": -9770.53 }
+        },
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-81213",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4698.54, "z": -9778.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-282",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-81212",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4967.1, "z": -9735.27 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-283",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-81211",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4926.35, "z": -9755.53 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-284",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-81210",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4002.44, "z": -10071.58 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-285",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-81209",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3588.25, "z": -10092.96 }
+        },
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-81208",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3581.87, "z": -10089.21 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-286",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-79308",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2258.84, "z": -10784.41 }
+        },
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-79307",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2257.24, "z": -10789.89 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-287",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-79098",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2330.26, "z": -10853.92 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-288",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-78918",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2162.17, "z": -11005.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-289",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-77444",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4920.3, "z": -9842.77 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-290",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-77443",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4889.24, "z": -9804.75 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-291",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-77033",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3841.67, "z": -10225.61 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-292",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-76097",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4359.67, "z": -9193.55 }
+        },
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-76096",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4359.67, "z": -9199.31 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-293",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-76073",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4201.63, "z": -9749.4 }
+        },
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-76072",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4197.38, "z": -9745.39 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-294",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-73382",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3632.5, "z": -10355.84 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-295",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-73190",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3114.05, "z": -9726.02 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-296",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-73189",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3175.29, "z": -9483.47 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-297",
+      "members": [
+        {
+          "enemyKindId": 24090101,
+          "id": "enemy-73188",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3170.78, "z": -9471.22 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-298",
+      "members": [
+        {
+          "enemyKindId": 23050101,
+          "id": "enemy-83061",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -5075.13, "z": -11631.6 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-299",
+      "members": [
+        {
+          "enemyKindId": 23050101,
+          "id": "enemy-71609",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3902.05, "z": -8959.51 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-300",
+      "members": [
+        {
+          "enemyKindId": 25520101,
+          "id": "enemy-81382",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3789.41, "z": -10800.95 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-301",
+      "members": [
+        {
+          "enemyKindId": 24030201,
+          "id": "enemy-79046",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -2157.74, "z": -10345.35 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-302",
+      "members": [
+        {
+          "enemyKindId": 24090201,
+          "id": "enemy-74685",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -4633.06, "z": -9604.37 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-303",
+      "members": [
+        {
+          "enemyKindId": 26230301,
+          "id": "enemy-72501",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3323.08, "z": -10215.1 }
+        }
+      ]
+    },
+    {
+      "areaId": "natlan",
+      "id": "natlan-camp-304",
+      "members": [
+        {
+          "enemyKindId": 26220301,
+          "id": "enemy-71518",
+          "level": 18,
+          "patrol": [],
+          "position": { "x": -3741.65, "z": -9794.78 }
+        }
+      ]
+    }
+  ],
   "id": "natlan",
   "landmarks": [
     {
