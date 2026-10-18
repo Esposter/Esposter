@@ -80,6 +80,21 @@ describe(strikeElementalTicks, () => {
     expect(charged.elementalReactions).toStrictEqual([]);
   });
 
+  test("a reaction a tick triggers is recorded for the world, with the enemy it landed on", () => {
+    expect.hasAssertions();
+
+    const burning = createSturdyEnemy(0);
+    const wet = createSturdyEnemy(1);
+    burning.burningCombatant = combatant;
+    burning.elementalReactions.push(BURNING_TICK);
+    applyElement(wet.elementalState, Element.Hydro, 1);
+    const context = createContext([burning, wet]);
+
+    strikeElementalTicks(context);
+
+    expect(context.reactionTriggers.map(({ enemy }) => enemy)).toStrictEqual([wet]);
+  });
+
   test("deals a Burning tick from the combatant that lit it, its Pyro reaching an enemy within a metre and no farther", () => {
     expect.hasAssertions();
 

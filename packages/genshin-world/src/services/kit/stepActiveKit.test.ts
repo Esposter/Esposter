@@ -87,6 +87,7 @@ const createControls = (): ActiveKitControls => ({
   landedHits: [],
   strikeOre: noop,
   strikePuzzle: noop,
+  triggerReaction: noop,
 });
 
 describe(stepActiveKit, () => {

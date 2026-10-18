@@ -52,7 +52,7 @@ export const stepActiveKit = (
   input: KitInput,
   stepSeconds: number,
   context: KitContext,
-  { aimYaw, characterController, isAimHeld, landedHits, strikeOre, strikePuzzle }: ActiveKitControls,
+  { aimYaw, characterController, isAimHeld, landedHits, strikeOre, strikePuzzle, triggerReaction }: ActiveKitControls,
 ): void => {
   const {
     body,
@@ -163,6 +163,8 @@ export const stepActiveKit = (
   // The ores the step's reactions reached are struck once every strike has landed, from where each reaction landed
   for (const oreStrike of oreStrikes) strikeOre(oreStrike.body, oreStrike.hit);
   oreStrikes.length = 0;
+  for (const { enemy, reactions } of context.reactionTriggers) triggerReaction(enemy, reactions);
+  context.reactionTriggers.length = 0;
   // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in
   // It, and a change a kit makes as it hears one is sent at the next step
   const { healthChanges } = party;
