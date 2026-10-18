@@ -16,7 +16,7 @@ Chevreuse's kit is its record and one behaviour module, `createChevreuseKitBehav
 - **Her skill's heal is waiting on a timed party heal.** Short-Range Rapid Interdiction Fire heals the active character every 2 seconds for 12 seconds from her Max HP and a flat amount, which a kit has no hook for over time. It waits on that hook.
 - **Surging Blade is waiting on a conditional follow-up hit.** Each press or hold that hits anything sets off a circle of radius 2 round the target after a delay, once per 10 seconds, and a hit that fires only when an earlier one landed, under the character's own cooldown, has no hook yet.
 - **Her first ascension passive is waiting on the party-composition hook.** Coordinated Tactics applies only when the deployed team is all Pyro and Electro, which the kit cannot read as party composition yet, and it adds the Overloaded reaction's Pyro and Electro RES cut of 40% for 6 seconds to the enemies it hits. Her first constellation's energy on an Overloaded reaction by a member with that status waits on the same hook. Her dash's stamina cut is not built.
-- **Her constellations are not built.** The second's chain explosions after a hold, the fourth's cooldown waiver, the sixth's team heal and its stacked elemental damage bonus wait on the hooks above, and the constellations that raise talent levels are the [talents](../../../../changes/genshin-talents/design.md) page's.
+- **Her constellations are not built.** The second's chain explosions after a hold, the fourth's cooldown waiver, the sixth's team heal and its stacked elemental damage bonus wait on the hooks above, and the constellations that raise talent levels are the [talents](../../talents/design.md) page's.
 
 ## Key files
 

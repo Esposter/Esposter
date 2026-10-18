@@ -16,7 +16,7 @@ Beidou's kit is its record and one behaviour module, `createBeidouKitBehaviour`,
 
 ## Not built
 
-- **Beidou's Constellations 1, 2 and 4 and her utility passive are not built.** Sea Beast's Scourge's shield would be recast over by Tidecaller's, as a shield is keyed on its caster, and telling two shields of one caster apart is a change to the shield. Stunning Revenge follows a strike landing on Beidou, which never reaches the kit. Summoner of Storm and Crimson Tidewalker raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds, and Conqueror of Tides' swimming stamina is not combat.
+- **Beidou's Constellations 1, 2 and 4 and her utility passive are not built.** Sea Beast's Scourge's shield would be recast over by Tidecaller's, as a shield is keyed on its caster, and telling two shields of one caster apart is a change to the shield. Stunning Revenge follows a strike landing on Beidou, which never reaches the kit. Summoner of Storm and Crimson Tidewalker raise talent levels, which the [talents](../../talents/design.md) page holds, and Conqueror of Tides' swimming stamina is not combat.
 
 ## Key files
 

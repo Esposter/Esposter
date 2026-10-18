@@ -34,7 +34,7 @@ flowchart LR
   R -->|"buildKit: the record resolved and the behaviour joined"| T["the character's kit, built once: the Traveler's for a character with no module"]
 ```
 
-Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../../../changes/genshin-talents/design.md) and [constellations](../../../changes/genshin-constellations/design.md) pages'.
+Talent levels and constellations are read at the level the kit is built at: raising them is the [talents](../talents/design.md) and [constellations](../../../changes/genshin-constellations/design.md) pages'.
 
 ## Targeting
 

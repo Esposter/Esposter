@@ -12,7 +12,7 @@ Zhongli's kit is its record and one behaviour module, `createZhongliKitBehaviour
 
 ## Not built
 
-- **Resonant Waves, Chrysos, Bounty of Dominator and Zhongli's other constellations are not built.** Both act as the Jade Shield takes damage, and a shield runs nothing as it absorbs a strike, which Beidou's bonus on hits taken waits on too. The hold's drain of Geo from enemies and ores and its interruption resistance are not built, the skill's particles are not built, Jade, Shimmering through Darkness and Lazuli, Herald of the Order raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds, and Arcanum of Crystal is not combat.
+- **Resonant Waves, Chrysos, Bounty of Dominator and Zhongli's other constellations are not built.** Both act as the Jade Shield takes damage, and a shield runs nothing as it absorbs a strike, which Beidou's bonus on hits taken waits on too. The hold's drain of Geo from enemies and ores and its interruption resistance are not built, the skill's particles are not built, Jade, Shimmering through Darkness and Lazuli, Herald of the Order raise talent levels, which the [talents](../../talents/design.md) page holds, and Arcanum of Crystal is not combat.
 
 ## Key files
 

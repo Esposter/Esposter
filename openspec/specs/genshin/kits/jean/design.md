@@ -19,7 +19,7 @@ Jean's kit is its record and one behaviour module, `createJeanKitBehaviour`, on 
 
 ## Not built
 
-- **Jean's other constellations are not built.** People's Aegis's ATK SPD and Movement SPD have no attribute here, When the West Wind Arises and Outbursting Gust raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds, Lands of Dandelion's Anemo RES cut holds while an enemy stands in the field, which the field does not track, and Lion's Fang's DMG reduction has no hook in an enemy's strike.
+- **Jean's other constellations are not built.** People's Aegis's ATK SPD and Movement SPD have no attribute here, When the West Wind Arises and Outbursting Gust raise talent levels, which the [talents](../../talents/design.md) page holds, Lands of Dandelion's Anemo RES cut holds while an enemy stands in the field, which the field does not track, and Lion's Fang's DMG reduction has no hook in an enemy's strike.
 
 ## Key files
 
