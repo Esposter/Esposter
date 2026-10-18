@@ -2,6 +2,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
@@ -13,8 +14,7 @@ import { takeOne } from "@esposter/shared";
 export const switchGcgActiveCharacter = (duel: GcgDuel, sideIndex: number, characterIndex: number): void => {
   const side = takeOne(duel.sides, sideIndex);
   if (characterIndex === side.activeIndex) return;
-  side.activeIndex = characterIndex;
-  takeOne(side.characters, characterIndex).isSwitchedIn = true;
+  switchGcgSideActive(side, characterIndex);
   const heard = [
     ...side.characters.flatMap((character, index) =>
       [...character.equipments, ...character.statuses].map((zoneCard) => ({ characterIndex: index, zoneCard })),
