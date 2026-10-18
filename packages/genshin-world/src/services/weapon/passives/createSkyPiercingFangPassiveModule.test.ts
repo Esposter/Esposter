@@ -23,7 +23,7 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseAttack, value: 1000 }]);
 // Sky-Piercing Fang at its first rank: a burst gives Movement SPD and Normal Attack SPD of ten per cent each, and Normal and
 // Charged hits deal twenty per cent of ATK more for twelve seconds
-const skywardBladePassiveModule = createSkyPiercingFangPassiveModule([0.04, 0.1, 0.1, 0.2, 12]);
+const skyPiercingFangPassiveModule = createSkyPiercingFangPassiveModule([0.04, 0.1, 0.1, 0.2, 12]);
 const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
 const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): KitStrike => ({
   attackTag,
@@ -37,7 +37,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
 
     expect(
       context.kitEffectState.effects
@@ -53,11 +53,11 @@ describe(createSkyPiercingFangPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
 
     expect(
       [AttackTag.NormalAttack, AttackTag.ChargedAttack].map((attackTag) =>
-        skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+        skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
           createStrike(attackTag),
           enemy,
           context.party,
@@ -72,7 +72,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
     buffKitMember(context.kitEffectState, TRAVELER_CHARACTER_ID, {
       amount: 0.5,
       attribute: Attribute.AttackPercent,
@@ -92,7 +92,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
     );
 
     expect(
-      skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.NormalAttack, pricedWielder),
         enemy,
         context.party,
@@ -107,7 +107,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     expect(
-      skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.NormalAttack),
         enemy,
         context.party,
@@ -115,10 +115,10 @@ describe(createSkyPiercingFangPassiveModule, () => {
         context.characterIdCombatantMap,
       ),
     ).toBe(0);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
 
     expect(
-      skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.ElementalSkill),
         enemy,
         context.party,
@@ -132,11 +132,11 @@ describe(createSkyPiercingFangPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
+    skyPiercingFangPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
     stepKitSeconds(context, 12);
 
     expect(
-      skywardBladePassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+      skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.NormalAttack),
         enemy,
         context.party,
