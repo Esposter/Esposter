@@ -344,8 +344,11 @@ const equipOptions = computed(() =>
       }))
     : [],
 );
+// The notice the artifact panel shows, the game's card for a refusal, cleared by the next artifact action
+const artifactNotice = ref<string>();
 // The picked slot's Equip opens the picker over the bag's artifacts of that slot
 const openEquipAt = (index: number) => {
+  artifactNotice.value = undefined;
   equipSlot.value = ARTIFACT_SLOT_ORDER[index];
 };
 // The artifact the player chose is worn, and the piece it wore goes back to the bag
@@ -361,7 +364,11 @@ const unequipArtifactAt = (index: number) => {
   const slot = ARTIFACT_SLOT_ORDER[index];
   if (!character.value || !slot) return;
   const unequipped = unequipArtifactToBag(inventory.value, character.value, slot, { names: nameText, reliquarySets });
-  if (!unequipped) return;
+  if (unequipped.isBagFull) {
+    artifactNotice.value = gameText[GameTextKey.InventoryFull];
+    return;
+  }
+  artifactNotice.value = undefined;
   characters.value = characters.value.map((item) =>
     item.id === unequipped.character.id ? unequipped.character : item,
   );
@@ -371,6 +378,7 @@ const unequipArtifactAt = (index: number) => {
 const toggleArtifactLockAt = (index: number) => {
   const slot = ARTIFACT_SLOT_ORDER[index];
   if (!character.value || !slot) return;
+  artifactNotice.value = undefined;
   const toggled = toggleCharacterArtifactLock(character.value, slot);
   characters.value = characters.value.map((item) => (item.id === toggled.id ? toggled : item));
 };
@@ -424,6 +432,7 @@ const activate = () => {
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
         :enhance-label="gameText[GameTextKey.ArtifactActionEnhance]"
         :equip-disabled-slots="equipDisabledSlots"
+        :notice="artifactNotice"
         :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
         :lock-label="gameText[GameTextKey.ArtifactActionLock]"
         :no-set-bonus-label="noSetBonusLabel"

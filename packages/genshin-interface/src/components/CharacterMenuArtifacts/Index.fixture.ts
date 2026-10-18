@@ -17,6 +17,8 @@ export const props = {
 // Her Flower of Life worn and picked, so Unequip is offered in place of Equip, with its stats drawn under the details pill
 // And a two-piece bonus active. The piece's values and the bonus's effect are provisional samples, not the game's
 export const variants = {
+  // The bag is full, so the Unequip the player pressed left the piece worn and the game's card says why
+  bagFull: { notice: "Inventory full" },
   worn: {
     setBonusLines: ["2-Piece Set: Attack +18%"],
     slotStats: [
