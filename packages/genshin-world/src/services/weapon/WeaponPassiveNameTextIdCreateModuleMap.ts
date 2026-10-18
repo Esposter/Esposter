@@ -27,6 +27,7 @@ import { createElementalMasteryPassiveModule } from "#src/services/weapon/passiv
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
 import { createFinaleOfTheDeepPassiveModule } from "#src/services/weapon/passives/createFinaleOfTheDeepPassiveModule";
+import { createFlowerFeatherSongPassiveModule } from "#src/services/weapon/passives/createFlowerFeatherSongPassiveModule";
 import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
@@ -296,4 +297,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1828182147": createSamuraiConductPassiveModule,
   // Echoes of the Plentiful Land (Ring of Yaxche)
   "3167933899": createEchoesOfThePlentifulLandPassiveModule,
+  // Flower-Feather Song (Chain Breaker)
+  "4131533283": createFlowerFeatherSongPassiveModule,
 };
