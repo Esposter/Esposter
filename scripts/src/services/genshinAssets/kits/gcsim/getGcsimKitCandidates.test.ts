@@ -1225,4 +1225,33 @@ describe(getGcsimKitCandidates, () => {
       ),
     ).toStrictEqual([undefined, undefined, [1]]);
   });
+
+  test("gives a skill with no hold constant one hold, its hit the one call its hold parameter sets to 1 fires", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["skillPressFrames", toConstant(38)]]),
+      filePaths: [],
+      folder: "zhongli",
+      queuedAttacks: [
+        { attackLine: 4, attackName: undefined, delay: 48, delayLine: 5, file: "skill.go", holdValue: 1, line: 5 },
+      ],
+      talentArrayMap: new Map(),
+      talentFile: "zhongli.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+
+    expect(
+      ["skillHolds.length", "skillHolds.0.action.hits.0.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[1], [48]]);
+  });
 });

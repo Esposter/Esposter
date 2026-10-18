@@ -75,15 +75,17 @@ export const addGcsimSkillHoldCandidates = (
     }
   }
   // A hold no hitmark constant gives, the skill's hold parameter clamped to 1 for it, takes the hitmark of the one call
-  // Its delay reads with the hold set, as that call is the hold's hit
+  // Its delay reads with the hold set, as that call is the hold's hit, and it is the one hold the skill has
   const heldCalls = holds.length === 0 ? queuedAttacks.filter(({ holdValue }) => holdValue === 1) : [];
   const [heldCall] = heldCalls;
-  if (heldCalls.length === 1 && heldCall?.delay !== undefined)
+  if (heldCalls.length === 1 && heldCall?.delay !== undefined) {
+    add("skillHolds.length", 1, toFile(heldCall.file), heldCall.delayLine);
     addHit(
       "skillHolds.0.action.hits.0",
       { hitmark: { file: heldCall.file, line: heldCall.delayLine, value: heldCall.delay } },
       SKILL_TARGETING_AREA,
     );
+  }
   // A case of the hold's switch sets the cooldown the skill takes, in frames, which the table gives in seconds
   for (const [holdIndex, { file, frames, line }] of holdCooldowns.entries())
     add(`skillHolds.${holdIndex}.cooldownSeconds`, frames / GCSIM_FRAMES_PER_SECOND, toFile(file), line);
