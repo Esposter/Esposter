@@ -121,7 +121,9 @@ export enum GameTextKey {
   CondessenceCrystal = "3736537308",
   // Party Setup's button to add, rename and disband teams
   ConfigureTeam = "UI_TEXT_TEAM_MANAGEMENT",
-  // The quit prompt's first button, which goes back to the world
+  // A dialog's action that goes ahead, the generic word the game's own dialogs share beside Cancel
+  Confirm = "UI_BEYOND_CONFIRM",
+  // The quit prompt's Continue Game label, which the two-choice prompt no longer draws
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
@@ -165,10 +167,6 @@ export enum GameTextKey {
   EmbercoreFlower = "3599966252",
   EnhancementOre = "2429162676",
   Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
-  // The quit prompt's button that exits the game to the desktop
-  ExitToDesktop = "UI_LOGOUT_CONFIRM_EXIT_TO_DESKTOP",
-  // The quit prompt's button that leaves the world for the login interface
-  ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
   // The picker of the characters a send is made with, headed as the game heads its character list
   ExpeditionCharacterSelection = "UI_AVATAR_SELECT_PS4",
   // The expedition screen's words: the claim of a returned expedition, its recall, its send and its limit
@@ -437,6 +435,8 @@ export enum GameTextKey {
   QuestsInProgress = "UI_TEXT_DOING",
   // Party Setup's button that fills the team's empty slots with the next characters
   QuickSetup = "UI_BUTTON_FAST_TEAM",
+  // The quit prompt's question, which the game asks before the player leaves
+  QuitConfirmQuestion = "UI_LOGOUT_CONFIRM_DESC",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
   RainbowdropCrystal = "3831100636",
@@ -564,6 +564,8 @@ export enum GameTextKey {
   StrangeTooth = "2715317724",
   Sumeru = "Sumeru",
   SumeruRose = "691451364",
+  // The Paimon menu's link to the game's survey, drawn disabled
+  Survey = "UI_STC_GAMEENTRYPAGE_SURVEY",
   SweetFlower = "1330975132",
   // The touch layout's aim button a bow's wielder has, as the controls list name it, said in place of its glyph
   SwitchAimingMode = "CONTROL_TOGGLE_ATTACK_MODE",
@@ -599,6 +601,8 @@ export enum GameTextKey {
   // The offer that spends Original Resin on a challenge's claim, by its English name
   UseOriginalResin = "UI_ABYSSUS_COST_BUTTON_ITEM_RESIN",
   Valberry = "2722402356",
+  // The Paimon menu's link to the game's version highlights, drawn disabled
+  VersionHighlights = "UI_STC_GAMEENTRYPAGE_HANDBOOK",
   Viparyas = "3570846172",
   // The weapon screen's three actions, the equipment page's buttons: the weapon's level, its ascension and its refinement
   WeaponAscend = "UI_EQUIP_PAGE_STARUP_BUTTON",

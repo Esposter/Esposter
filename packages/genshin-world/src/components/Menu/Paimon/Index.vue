@@ -71,8 +71,16 @@ const closeWorldLevelDialog = async () => {
   await nextTick();
   worldLevelInfoButton.value?.focus();
 };
-// Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
+// Quit Game opens the quit prompt over the menu, which stays behind it dimmed and inert
+// Cancel closes the prompt back to the menu, and Confirm leaves through the quit event
 const isExitPrompted = ref(false);
+const quitGameButton = useTemplateRef("quitGameButton");
+// The Quit Game button is inert until the menu is patched, so the focus goes back to it on the tick after the prompt closes
+const closeExitPrompt = async () => {
+  isExitPrompted.value = false;
+  await nextTick();
+  quitGameButton.value?.focus();
+};
 // Back plays the menu's closing before it closes the world, the side bar and the panel fading out as they came in
 const isClosing = ref(false);
 let closeTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -96,7 +104,6 @@ onBeforeUnmount(() => {
        Past the panel, where Paimon floats. Every entry the game has is here in its order: one whose screen is not built
        Yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
   <GameScreen
-    v-if="!isExitPrompted"
     :class="{ closing: isClosing }"
     class="paimon-menu"
     role="dialog"
@@ -109,7 +116,7 @@ onBeforeUnmount(() => {
       '--menu-panel-delay': `${PAIMON_MENU_PANEL_DELAY_MS}ms`,
     }"
   >
-    <div class="menu" :inert="isWorldLevelDialogOpen || isClosing">
+    <div class="menu" :inert="isWorldLevelDialogOpen || isExitPrompted || isClosing">
       <div class="side-bar" />
       <GameButton
         ref="backButton"
@@ -136,6 +143,7 @@ onBeforeUnmount(() => {
         class="side-entry"
         :kind="GameButtonKind.Disc"
         :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
+        ref="quitGameButton"
         :tip="gameText[GameTextKey.QuitGame]"
         @click="isExitPrompted = true"
       >
@@ -206,8 +214,8 @@ onBeforeUnmount(() => {
       @close="closeWorldLevelDialog()"
       @toggle-world-level="emit('toggleWorldLevel')"
     />
+    <MenuExit v-if="isExitPrompted" :game-text @close="closeExitPrompt()" @quit="emit('quit')" />
   </GameScreen>
-  <MenuExit v-else :game-text @close="emit('close')" @quit="emit('quit')" />
 </template>
 
 <style scoped>
