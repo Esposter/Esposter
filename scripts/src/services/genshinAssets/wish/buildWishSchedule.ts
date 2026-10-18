@@ -14,7 +14,7 @@ const readWishScheduleEvents = async (
   title: string,
   nameIdsMap: ReadonlyMap<string, readonly number[]>,
 ): Promise<WishScheduleEvent[]> => {
-  const page = parseWishPage(await readWikiPageText(title));
+  const page = parseWishPage(title, await readWikiPageText(title));
   return page === undefined ? [] : [toWishScheduleEvent(title, page, nameIdsMap)];
 };
 

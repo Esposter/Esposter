@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GameButton from "#src/components/GameButton/Index.vue";
+import PickerShell from "#src/components/PickerShell/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 
 // One artifact the picker offers as fodder: its name, its caption, its rarity in stars and whether it is chosen
@@ -24,12 +25,12 @@ interface Props {
   autoAddLabel: string;
   // The Cancel button's label, which closes the picker without enhancing
   cancelLabel: string;
-  // Whether Confirm is disabled, which it is while no fodder or material is chosen, the Mora is short, or the artifact is maxed
-  confirmDisabled: boolean;
   // The Confirm button's label, which enhances the artifact with what is chosen
   confirmLabel: string;
   // The bag's artifacts offered as fodder, in the order Auto Add takes them
   fodders: EnhanceFodderOption[];
+  // Whether Confirm is disabled: no fodder or material is chosen, the Mora is short, or the artifact is maxed
+  isConfirmDisabled: boolean;
   // The level the artifact reaches with what is chosen, in the game's level words
   levelLabel: string;
   // The bag's enhancement materials, each with how many the bag holds and how many are chosen
@@ -47,9 +48,9 @@ interface Props {
 const {
   autoAddLabel,
   cancelLabel,
-  confirmDisabled,
   confirmLabel,
   fodders,
+  isConfirmDisabled,
   levelLabel,
   materials,
   moraCost,
@@ -67,43 +68,34 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="enhance-picker" role="dialog" aria-modal="true" :aria-label="title">
-    <p class="title">{{ title }}</p>
+  <PickerShell class="enhance-picker" :title="title">
     <p class="summary">
       <span class="level">{{ levelLabel }}</span>
       <span class="mora">{{ moraLabel }} {{ moraCost }}</span>
     </p>
     <p v-if="notice" class="notice">{{ notice }}</p>
     <ul class="fodders">
-      <li v-for="fodder of fodders" :key="fodder.id">
+      <li v-for="{ caption, id, isSelected, name, rarity } of fodders" :key="id">
         <button
           class="option"
-          :aria-pressed="fodder.isSelected"
-          :data-rarity="fodder.rarity"
+          :aria-pressed="isSelected"
+          :data-rarity="rarity"
           type="button"
-          @click="emit('fodder', fodder.id)"
+          @click="emit('fodder', id)"
         >
-          <span class="name">{{ fodder.name }}</span>
-          <span class="caption">{{ fodder.caption }}</span>
+          <span class="name">{{ name }}</span>
+          <span class="caption">{{ caption }}</span>
         </button>
       </li>
     </ul>
     <ul class="materials">
-      <li v-for="material of materials" :key="material.id" class="material">
-        <span class="name">{{ material.name }}</span>
-        <span class="count">{{ material.selectedCount }}/{{ material.count }}</span>
-        <GameButton
-          :disabled="material.selectedCount <= 0"
-          :kind="GameButtonKind.Pill"
-          @click="emit('material', material.id, -1)"
-        >
+      <li v-for="{ count, id, name, selectedCount } of materials" :key="id" class="material">
+        <span class="name">{{ name }}</span>
+        <span class="count">{{ selectedCount }}/{{ count }}</span>
+        <GameButton :disabled="selectedCount <= 0" :kind="GameButtonKind.Pill" @click="emit('material', id, -1)">
           -
         </GameButton>
-        <GameButton
-          :disabled="material.selectedCount >= material.count"
-          :kind="GameButtonKind.Pill"
-          @click="emit('material', material.id, 1)"
-        >
+        <GameButton :disabled="selectedCount >= count" :kind="GameButtonKind.Pill" @click="emit('material', id, 1)">
           +
         </GameButton>
       </li>
@@ -111,33 +103,17 @@ const emit = defineEmits<{
     <div class="actions">
       <GameButton :kind="GameButtonKind.Pill" @click="emit('autoAdd')">{{ autoAddLabel }}</GameButton>
       <GameButton :kind="GameButtonKind.Pill" @click="emit('cancel')">{{ cancelLabel }}</GameButton>
-      <GameButton :disabled="confirmDisabled" :kind="GameButtonKind.Pill" @click="emit('confirm')">
+      <GameButton :disabled="isConfirmDisabled" :kind="GameButtonKind.Pill" @click="emit('confirm')">
         {{ confirmLabel }}
       </GameButton>
     </div>
-  </div>
+  </PickerShell>
 </template>
 
 <style scoped>
 .enhance-picker {
-  position: absolute;
-  top: calc(var(--unit) * 120);
-  left: calc(var(--unit) * 120);
-  width: calc(var(--unit) * 640);
   max-height: calc(var(--unit) * 900);
-  display: flex;
-  flex-direction: column;
   gap: calc(var(--unit) * 12);
-  padding: calc(var(--unit) * 24);
-  border-radius: calc(var(--unit) * 12);
-  background: rgb(20 24 36 / 0.92);
-  color: #ece3d8;
-}
-
-.title {
-  margin: 0;
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
 }
 
 .summary,
@@ -183,10 +159,6 @@ const emit = defineEmits<{
 
 .material .name {
   flex: 1;
-}
-
-.caption {
-  opacity: 0.8;
 }
 
 .actions {

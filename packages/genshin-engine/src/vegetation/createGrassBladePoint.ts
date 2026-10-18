@@ -8,7 +8,7 @@ import { GRASS_BEND_PER_WIND, GRASS_DIP_PER_BEND, GRASS_TRAIL_BEND_SHARE } from 
 import { vec3 } from "three/tsl";
 
 interface GrassBladePointOptions {
-  // The blade's bottom in metres, which its height share is taken of
+  // The blade's full height in metres, which its height share is taken of
   bladeHeight: number;
   // Where the blade's cell stands: its footing on the ground and the ground's height under it
   captured: Node<"vec4">;

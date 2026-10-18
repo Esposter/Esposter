@@ -149,7 +149,10 @@ onBeforeUnmount(() => {
       '--menu-panel-delay': `${PAIMON_MENU_PANEL_DELAY_MS}ms`,
     }"
   >
-    <div class="menu" :inert="isWorldLevelDialogOpen || isExitPrompted || isClosing">
+    <div
+      class="menu"
+      :inert="isBirthdayDialogOpen || isNamecardDialogOpen || isWorldLevelDialogOpen || isExitPrompted || isClosing"
+    >
       <div class="side-bar" />
       <GameButton
         ref="backButton"
@@ -216,12 +219,6 @@ onBeforeUnmount(() => {
         <GameButton v-else class="set-birthday" :kind="GameButtonKind.Plain" @click="isBirthdayDialogOpen = true">
           {{ gameText[GameTextKey.BirthdaySet] }}
         </GameButton>
-        <MenuBirthdayDialog
-          v-if="isBirthdayDialogOpen"
-          :game-text
-          @close="isBirthdayDialogOpen = false"
-          @confirm="setBirthday"
-        />
         <GameButton
           class="namecard"
           :disabled="namecards.length === 0"
@@ -230,14 +227,6 @@ onBeforeUnmount(() => {
         >
           {{ equippedNamecard?.name }}
         </GameButton>
-        <MenuNamecardDialog
-          v-if="isNamecardDialogOpen"
-          :game-text
-          :namecard-item-id
-          :namecards
-          @close="isNamecardDialogOpen = false"
-          @pick="pickNamecard"
-        />
         <div class="contents">
           <GameButton
             v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
@@ -263,6 +252,20 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    <MenuBirthdayDialog
+      v-if="isBirthdayDialogOpen"
+      :game-text
+      @close="isBirthdayDialogOpen = false"
+      @confirm="setBirthday"
+    />
+    <MenuNamecardDialog
+      v-if="isNamecardDialogOpen"
+      :game-text
+      :namecard-item-id
+      :namecards
+      @close="isNamecardDialogOpen = false"
+      @pick="pickNamecard"
+    />
     <MenuWorldLevelDialog
       v-if="isWorldLevelDialogOpen"
       :game-text

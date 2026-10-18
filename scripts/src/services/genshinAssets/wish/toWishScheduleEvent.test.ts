@@ -56,6 +56,21 @@ describe(toWishScheduleEvent, () => {
     );
   });
 
+  test("an event banner featuring no five-star fails the build naming the banner", () => {
+    expect.hasAssertions();
+
+    for (const kind of [WishEventKind.CharacterEvent, WishEventKind.WeaponEvent])
+      expect(() =>
+        toWishScheduleEvent(
+          "a",
+          { endTime: 0, fiveStarNames: [], fourStarNames: ["c"], kind, kindNumber: 1, startTime: 0 },
+          new Map([["c", [2]]]),
+        ),
+      ).toThrowErrorMatchingInlineSnapshot(
+        `[InvalidOperationError: Invalid operation: Read, name: a, features no five-star]`,
+      );
+  });
+
   test("a name joining more than one item keeps every item it joins", () => {
     expect.hasAssertions();
 

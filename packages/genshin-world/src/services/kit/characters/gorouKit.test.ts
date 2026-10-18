@@ -190,15 +190,16 @@ describe(createGorouKitBehaviour, () => {
     expect(kitEffectState.effects.filter((effect) => checkIsField(effect))).toHaveLength(1);
   });
 
-  test("the crystal collapse's six ticks are set out at the cast, the first 2 seconds after it", () => {
+  test("the crystal collapse's five ticks are set out at the cast, the first at its task's 90 frames and its own 1 after the burst's hit", () => {
     expect.hasAssertions();
     const crystalCollapse = castKitAction(GOROU_KIT.elementalBurst, createGorouCombatant()).effects.find(
       (effect): effect is KitSummon => effect.kind === "summon",
     );
 
     expect(crystalCollapse?.isFollowing).toBe(true);
-    expect(crystalCollapse?.hits).toHaveLength(6);
-    expect(crystalCollapse?.hits[0]?.hitmarkSeconds).toBeCloseTo(121 / 60);
+    expect(crystalCollapse?.hits).toHaveLength(5);
+    expect(crystalCollapse?.hits[0]?.hitmarkSeconds).toBeCloseTo(122 / 60);
+    expect(crystalCollapse?.hits[4]?.hitmarkSeconds).toBeCloseTo(482 / 60);
   });
 
   test("the Ascension 1 passive, Heedless of the Wind and Weather, takes effect at its ascension phase", () => {

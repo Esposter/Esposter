@@ -97,9 +97,9 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
         <span>{{ selectedStats.mainStat.label }}</span>
         <span>{{ selectedStats.mainStat.value }}</span>
       </li>
-      <li v-for="(subStat, index) in selectedStats.subStats" :key="index" class="stat">
-        <span>{{ subStat.label }}</span>
-        <span>{{ subStat.value }}</span>
+      <li v-for="({ label, value }, index) in selectedStats.subStats" :key="index" class="stat">
+        <span>{{ label }}</span>
+        <span>{{ value }}</span>
       </li>
     </ul>
     <div class="set-bonus">

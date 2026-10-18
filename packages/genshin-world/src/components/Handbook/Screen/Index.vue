@@ -631,17 +631,22 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   translate: 0 -50%;
 }
 
-/* A claimable commission's button stands where the region's line does not, on the row's right */
-.commission-claim {
-  position: absolute;
-  top: calc(var(--reference-pixel) * 83);
-  left: calc(var(--reference-pixel) * 1250);
+.commission-claim,
+.encounter-points-use,
+.domain-action {
   padding: calc(var(--reference-pixel) * 12) calc(var(--reference-pixel) * 30);
   color: #fff;
   font-size: calc(var(--reference-pixel) * 44);
   background: #5aa02c;
   border: 0;
   cursor: pointer;
+}
+
+/* A claimable commission's button stands where the region's line does not, on the row's right */
+.commission-claim {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 83);
+  left: calc(var(--reference-pixel) * 1250);
 }
 
 /* The stage rewards sit under the four commissions, in the tab's own box */
@@ -667,12 +672,6 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 .encounter-points-use {
   margin-left: auto;
-  padding: calc(var(--reference-pixel) * 12) calc(var(--reference-pixel) * 30);
-  color: #fff;
-  font-size: calc(var(--reference-pixel) * 44);
-  background: #5aa02c;
-  border: 0;
-  cursor: pointer;
 }
 
 .encounter-points-use:disabled {
@@ -747,14 +746,5 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   color: #555453;
   font-size: calc(var(--reference-pixel) * 52);
   font-weight: 600;
-}
-
-.domain-action {
-  padding: calc(var(--reference-pixel) * 12) calc(var(--reference-pixel) * 30);
-  color: #fff;
-  font-size: calc(var(--reference-pixel) * 44);
-  background: #5aa02c;
-  border: 0;
-  cursor: pointer;
 }
 </style>

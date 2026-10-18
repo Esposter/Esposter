@@ -152,10 +152,9 @@ const addRerollGroup = () => {
 const playRerollChoice = () => {
   const handIndex = rerollHandIndex.value;
   if (handIndex === undefined) return;
-  const isPicked = selectedDieIndices.value.length > 0 && rerollGroups.value.length < GCG_TOSS_UP_REROLL_COUNT;
-  const groups = isPicked ? [...rerollGroups.value, selectedDieIndices.value] : rerollGroups.value;
+  addRerollGroup();
   emit("playCard", handIndex, undefined, paidDiceIndices.value, {
-    rerollDiceIndices: toGcgRemainingDiceIndices(groups, paidDiceIndices.value),
+    rerollDiceIndices: toGcgRemainingDiceIndices(rerollGroups.value, paidDiceIndices.value),
   });
   clearSelection();
 };
@@ -417,7 +416,6 @@ const playRerollChoice = () => {
 
 .synchro,
 .confirm button {
-  position: absolute;
   padding: calc(var(--unit) * 8) calc(var(--unit) * 24);
   border: none;
   border-radius: calc(var(--unit) * 24);
@@ -430,14 +428,18 @@ const playRerollChoice = () => {
 }
 
 .synchro {
+  position: absolute;
   top: calc(var(--unit) * 780);
   left: calc(var(--unit) * 1420);
 }
 
+/* The buttons take their places in the row, so a choice's Reroll, Confirm and Cancel never stack on one another */
 .confirm {
   position: absolute;
   top: calc(var(--unit) * 860);
   left: calc(var(--unit) * 1420);
+  display: flex;
+  gap: calc(var(--unit) * 16);
 }
 
 .concede {

@@ -22,10 +22,10 @@ const emit = defineEmits<{ close: []; heal: [characterId: number]; worship: [] }
     <button class="worship" type="button" @click="emit('worship')">{{ worshipTitle }}</button>
     <p class="pool">{{ Math.floor(poolAmount) }} / {{ poolMaximum }}</p>
     <ul class="members">
-      <li v-for="member in members" :key="member.id">
-        <button type="button" @click="emit('heal', member.id)">
-          <span class="name">{{ member.name }}</span>
-          <span class="health">{{ Math.round(member.healthShare * 100) }}%</span>
+      <li v-for="{ healthShare, id, name } of members" :key="id">
+        <button type="button" @click="emit('heal', id)">
+          <span class="name">{{ name }}</span>
+          <span class="health">{{ Math.round(healthShare * 100) }}%</span>
         </button>
       </li>
     </ul>

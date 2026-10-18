@@ -13,7 +13,9 @@ describe("shortcutWheel", () => {
   test("should draw each default entry as an option", async () => {
     expect.hasAssertions();
 
-    render(ShortcutWheel, { directionCount: ShortcutWheelDirectionCount.Eight, gameText: ENGLISH_GAME_TEXT });
+    render(ShortcutWheel, {
+      props: { directionCount: ShortcutWheelDirectionCount.Eight, gameText: ENGLISH_GAME_TEXT },
+    });
 
     await Promise.all(
       ShortcutWheelDirectionCountScreenKindsMap[ShortcutWheelDirectionCount.Eight].map(async (screenKind) => {
@@ -29,9 +31,7 @@ describe("shortcutWheel", () => {
     expect.hasAssertions();
 
     render(ShortcutWheel, {
-      directionCount: ShortcutWheelDirectionCount.Eight,
-      gameText: ENGLISH_GAME_TEXT,
-      pickedIndex: 0,
+      props: { directionCount: ShortcutWheelDirectionCount.Eight, gameText: ENGLISH_GAME_TEXT, pickedIndex: 0 },
     });
 
     const wishScreenKind = takeOne(

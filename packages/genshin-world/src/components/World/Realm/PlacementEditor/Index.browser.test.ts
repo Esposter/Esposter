@@ -13,7 +13,7 @@ describe("placementEditor", () => {
     expect.hasAssertions();
 
     const onPlace = vi.fn<(placement: HomePlacement) => void>();
-    render(PlacementEditorContainer, { props, onPlace });
+    render(PlacementEditorContainer, { attrs: { onPlace }, props });
 
     await page.getByText("Chair", { exact: true }).click();
     await page.getByRole("button", { name: props.gameText[GameTextKey.HomeDeploy] }).click();
@@ -32,7 +32,7 @@ describe("placementEditor", () => {
     expect.hasAssertions();
 
     const onPlace = vi.fn<(placement: HomePlacement) => void>();
-    render(PlacementEditorContainer, { props: { ...props, ...variants.atLoad }, onPlace });
+    render(PlacementEditorContainer, { attrs: { onPlace }, props: { ...props, ...variants.atLoad } });
 
     await page.getByText("Chair", { exact: true }).click();
 

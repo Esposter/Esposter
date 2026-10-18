@@ -12,18 +12,23 @@ const joinItemIds = (name: string, nameIdsMap: ReadonlyMap<string, readonly numb
   return [...ids];
 };
 
-// A banner page's entry in the schedule: its page title as its id, its kind and window, and each featured name joined to
-// The ids of the items it names
+// A banner page's entry in the schedule: its page title as its id, its kind and window, and each featured name joined
+// To the ids of the items it names. Every event banner features a five-star, so a page reading none fails the build
+// Rather than publishing a banner no wish can feature
 export const toWishScheduleEvent = (
   title: string,
   { endTime, fiveStarNames, fourStarNames, kind, kindNumber, startTime }: WishEventPage,
   nameIdsMap: ReadonlyMap<string, readonly number[]>,
-): WishScheduleEvent => ({
-  endTime,
-  fiveStarIds: fiveStarNames.flatMap((name) => joinItemIds(name, nameIdsMap)),
-  fourStarIds: fourStarNames.flatMap((name) => joinItemIds(name, nameIdsMap)),
-  id: title,
-  kind,
-  kindNumber,
-  startTime,
-});
+): WishScheduleEvent => {
+  if (fiveStarNames.length === 0) throw new InvalidOperationError(Operation.Read, title, "features no five-star");
+
+  return {
+    endTime,
+    fiveStarIds: fiveStarNames.flatMap((name) => joinItemIds(name, nameIdsMap)),
+    fourStarIds: fourStarNames.flatMap((name) => joinItemIds(name, nameIdsMap)),
+    id: title,
+    kind,
+    kindNumber,
+    startTime,
+  };
+};

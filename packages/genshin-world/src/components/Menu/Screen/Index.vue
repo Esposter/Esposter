@@ -61,8 +61,8 @@ const emit = defineEmits<{
     :is-world-level-lowered
     :namecard-item-id
     :namecards
-    :traveler-birthday
     :server-clock-offset-ms
+    :traveler-birthday
     :world-level
     :world-level-changed-at
     @close="screenKind = ScreenKind.World"

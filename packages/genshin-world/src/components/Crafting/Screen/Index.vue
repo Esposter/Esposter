@@ -158,9 +158,12 @@ const applyOfferingPickUp = (pickUp: DroppedItemPickUp) => {
   inventory.value = pickUp.inventory;
   wallet.value = pickUp.wallet;
 };
-// Back from the Mystic Offering returns to the bench's first recipe tab, which the offering's own tab is not
+// Back from the Mystic Offering returns to the bench's first recipe tab, which the offering's own tab is not, and
+// Closes the bench while no recipe tab is open to return to
 const closeMysticOffering = () => {
-  tabId.value = recipeTabCells.value.at(0)?.id ?? 0;
+  const firstRecipeTab = recipeTabCells.value.at(0);
+  if (firstRecipeTab === undefined) emit("close");
+  else tabId.value = firstRecipeTab.id;
 };
 // The picked recipe's results, rolled through the crafter's talent: the bag and wallet after the craft, with the
 // Talent's extra items put in the bag after the craft's own results, one that finds no room left out

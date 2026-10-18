@@ -147,6 +147,10 @@ const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(initialTab);
 const character = computed(() => characters.value.find(({ id }) => id === characterId.value));
+// The character written back in its place among the roster, the others left as they are
+const replaceCharacter = (replacement: Character) => {
+  characters.value = characters.value.map((item) => (item.id === replacement.id ? replacement : item));
+};
 // The Traveler's name is the game's own, and every other character's is the name its table cites
 const menuEntries = computed(() =>
   characters.value.map(({ id }) => ({
@@ -272,14 +276,6 @@ const levelUpResult = computed(() => {
     ? undefined
     : levelUpCharacter(character.value, { inventory: inventory.value, maxLevel, wallet: wallet.value });
 });
-// The chosen character raised one level, with the bag's materials and the wallet's Mora taken and the character written back
-const levelUpCharacterAt = () => {
-  const raised = levelUpResult.value;
-  if (!raised) return;
-  characters.value = characters.value.map((item) => (item.id === raised.character.id ? raised.character : item));
-  inventory.value = raised.inventory;
-  wallet.value = raised.wallet;
-};
 // Whether the chosen character sits at a level cap a Masterless Stella Fortuna lifts, with the items in the bag for it
 const isLiftable = computed(() => {
   const liftLevel = character.value ? MASTERLESS_LEVEL_LIFTS.get(character.value.level) : undefined;
@@ -288,13 +284,6 @@ const isLiftable = computed(() => {
     checkIsItemCountsHeld(inventory.value.items, [{ count: liftLevel.count, id: MASTERLESS_STELLA_FORTUNA_ID }], 1)
   );
 });
-// The chosen character lifted past its cap, with the bag's items taken and the character written back in its place
-const liftCharacter = () => {
-  if (!character.value || !isLiftable.value) return;
-  const lifted = liftCharacterLevel(character.value, { inventory: inventory.value });
-  characters.value = characters.value.map((item) => (item.id === lifted.character.id ? lifted.character : item));
-  inventory.value = lifted.inventory;
-};
 // The phase the chosen character enters at its next ascension, as the Attributes tab lists it: the Adventure Rank it needs
 // Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or where
 // The table carries no cost for that phase yet
@@ -320,14 +309,6 @@ const ascendResult = computed(() => {
     ? ascendCharacter(character.value, { adventureRank, inventory: inventory.value, phases, wallet: wallet.value })
     : undefined;
 });
-// The chosen character ascended, with its Mora and materials taken and the character written back in its place
-const ascendCharacterAt = () => {
-  const ascended = ascendResult.value;
-  if (!ascended) return;
-  characters.value = characters.value.map((item) => (item.id === ascended.character.id ? ascended.character : item));
-  inventory.value = ascended.inventory;
-  wallet.value = ascended.wallet;
-};
 const upgradeTalentAt = (index: number) => {
   const talent = COMBAT_TALENT_ORDER[index];
   if (!character.value || !talentGroupIds.value || !talent) return;
@@ -356,19 +337,6 @@ const equipOptions = computed(() =>
 );
 // The notice the artifact panel shows, the game's card for a refusal, cleared by the next artifact action
 const artifactNotice = ref<string>();
-// The picked slot's Equip opens the picker over the bag's artifacts of that slot
-const openEquipAt = (index: number) => {
-  artifactNotice.value = undefined;
-  equipSlot.value = ARTIFACT_SLOT_ORDER[index];
-};
-// The artifact the player chose is worn, and the piece it wore goes back to the bag
-const chooseEquipEntry = (id: string) => {
-  if (!character.value) return;
-  const equipped = equipBagArtifact(inventory.value, character.value, Number(id), { names: nameText, reliquarySets });
-  characters.value = characters.value.map((item) => (item.id === equipped.character.id ? equipped.character : item));
-  inventory.value = equipped.inventory;
-  equipSlot.value = undefined;
-};
 // The Enhance picker's state: the slot it is open for, the bag's artifacts chosen as fodder, and the ore counts chosen by item id
 const enhanceSlot = ref<ArtifactSlot>();
 const enhanceFodderIds = ref<number[]>([]);
@@ -440,13 +408,6 @@ const enhanceNotice = computed(() => (isEnhanceMaxed.value ? gameText[GameTextKe
 const isEnhanceConfirmDisabled = computed(
   () => enhanceMoraCost.value === 0 || enhanceMoraCost.value > wallet.value[Currency.Mora] || isEnhanceMaxed.value,
 );
-// The Enhance button opens the picker over the worn artifact's slot, with nothing chosen yet
-const openEnhanceAt = (index: number) => {
-  artifactNotice.value = undefined;
-  enhanceSlot.value = ARTIFACT_SLOT_ORDER[index];
-  enhanceFodderIds.value = [];
-  enhanceMaterialCounts.value = {};
-};
 const autoAddEnhanceFodders = () => {
   const artifact = enhanceArtifactWorn.value;
   if (!artifact) return;
@@ -473,49 +434,6 @@ const changeEnhanceMaterial = (id: string, delta: number) => {
     [itemId]: Math.min(Math.max(selected + delta, 0), held),
   };
 };
-// The worn artifact is enhanced first, and the chosen fodder and materials leave the bag only once it is
-const confirmEnhance = () => {
-  const slot = enhanceSlot.value;
-  if (!character.value || !slot || isEnhanceConfirmDisabled.value) return;
-  const enhanced = enhanceCharacterArtifact(character.value, slot, {
-    artifactRarityDataMap: statTables.artifactRarityDataMap,
-    fodders: enhanceFodders.value,
-    materialExperience: enhanceMaterialExperience.value,
-    random: Math.random,
-    wallet: wallet.value,
-  });
-  const taken = takeFodderArtifacts(inventory.value, enhanceFodderIds.value);
-  characters.value = characters.value.map((item) => (item.id === enhanced.character.id ? enhanced.character : item));
-  wallet.value = enhanced.wallet;
-  inventory.value = {
-    ...taken.inventory,
-    items: takeItemCounts(taken.inventory.items, enhanceMaterialItemCounts.value, 1),
-  };
-  enhanceSlot.value = undefined;
-};
-// The worn artifact in the picked slot goes back to the bag, and nothing moves where the bag has no room for it
-const unequipArtifactAt = (index: number) => {
-  const slot = ARTIFACT_SLOT_ORDER[index];
-  if (!character.value || !slot) return;
-  const unequipped = unequipArtifactToBag(inventory.value, character.value, slot, { names: nameText, reliquarySets });
-  if (unequipped.isBagFull) {
-    artifactNotice.value = gameText[GameTextKey.ArtifactInventoryFull];
-    return;
-  }
-  artifactNotice.value = undefined;
-  characters.value = characters.value.map((item) =>
-    item.id === unequipped.character.id ? unequipped.character : item,
-  );
-  inventory.value = unequipped.inventory;
-};
-// The picked slot's worn artifact is locked or unlocked, which keeps it out of fodder
-const toggleArtifactLockAt = (index: number) => {
-  const slot = ARTIFACT_SLOT_ORDER[index];
-  if (!character.value || !slot) return;
-  artifactNotice.value = undefined;
-  const toggled = toggleCharacterArtifactLock(character.value, slot);
-  characters.value = characters.value.map((item) => (item.id === toggled.id ? toggled : item));
-};
 // Per slot, whether the bag holds no piece for it, which Equip is disabled on
 const equipDisabledSlots = computed(() =>
   ARTIFACT_SLOT_ORDER.map((slot) => !inventory.value.items.some(({ artifact }) => artifact?.slot === slot)),
@@ -525,12 +443,6 @@ const constellations = computed(() => characterIdConstellationsMap.get(character
 const isActivateDisabled = computed(
   () => !character.value || getConstellationActivationRefusal(character.value, constellations.value) !== undefined,
 );
-// The next constellation activated, the character written back in its place
-const activate = () => {
-  characters.value = characters.value.map((item) =>
-    item.id === characterId.value ? activateConstellation(item, constellations.value) : item,
-  );
-};
 </script>
 
 <template>
@@ -557,9 +469,32 @@ const activate = () => {
         :max-stamina
         :name="characterName"
         :stat-tables
-        @ascend="ascendCharacterAt()"
-        @level-up="levelUpCharacterAt()"
-        @lift="liftCharacter()"
+        @ascend="
+          () => {
+            const ascended = ascendResult;
+            if (!ascended) return;
+            replaceCharacter(ascended.character);
+            inventory = ascended.inventory;
+            wallet = ascended.wallet;
+          }
+        "
+        @level-up="
+          () => {
+            const raised = levelUpResult;
+            if (!raised) return;
+            replaceCharacter(raised.character);
+            inventory = raised.inventory;
+            wallet = raised.wallet;
+          }
+        "
+        @lift="
+          () => {
+            if (!character || !isLiftable) return;
+            const lifted = liftCharacterLevel(character, { inventory });
+            replaceCharacter(lifted.character);
+            inventory = lifted.inventory;
+          }
+        "
       />
       <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />
       <CharacterMenuArtifacts
@@ -576,17 +511,58 @@ const activate = () => {
         :slot-stats="artifactSlotStats"
         :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
         :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
-        @enhance="openEnhanceAt"
-        @equip="openEquipAt"
-        @lock="toggleArtifactLockAt"
-        @unequip="unequipArtifactAt"
+        @enhance="
+          (index) => {
+            // The Enhance button opens the picker over the worn artifact's slot, with nothing chosen yet
+            artifactNotice = undefined;
+            enhanceSlot = ARTIFACT_SLOT_ORDER[index];
+            enhanceFodderIds = [];
+            enhanceMaterialCounts = {};
+          }
+        "
+        @equip="
+          (index) => {
+            artifactNotice = undefined;
+            equipSlot = ARTIFACT_SLOT_ORDER[index];
+          }
+        "
+        @lock="
+          (index) => {
+            // The picked slot's worn artifact is locked or unlocked, which keeps it out of fodder
+            const slot = ARTIFACT_SLOT_ORDER[index];
+            if (!character || !slot) return;
+            artifactNotice = undefined;
+            replaceCharacter(toggleCharacterArtifactLock(character, slot));
+          }
+        "
+        @unequip="
+          (index) => {
+            // The worn artifact in the picked slot goes back to the bag, and nothing moves where the bag
+            // Has no room for it
+            const slot = ARTIFACT_SLOT_ORDER[index];
+            if (!character || !slot) return;
+            const unequipped = unequipArtifactToBag(inventory, character, slot, { names: nameText, reliquarySets });
+            if (unequipped.isBagFull) {
+              artifactNotice = gameText[GameTextKey.ArtifactInventoryFull];
+              return;
+            }
+            artifactNotice = undefined;
+            replaceCharacter(unequipped.character);
+            inventory = unequipped.inventory;
+          }
+        "
       />
       <CharacterMenuConstellation
         v-else-if="character && tab === CharacterMenuTab.Constellation"
         :activate-label="gameText[GameTextKey.Activate]"
         :activated="constellationsActivated"
         :is-activate-disabled
-        @activate="activate()"
+        @activate="
+          () => {
+            if (!character) return;
+            replaceCharacter(activateConstellation(character, constellations));
+          }
+        "
       />
       <CharacterMenuTalents
         v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
@@ -610,16 +586,25 @@ const activate = () => {
       :close-label="gameText[GameTextKey.Cancel]"
       :options="equipOptions"
       :title="gameText[GameTextKey.ArtifactActionEquip]"
-      @choose="chooseEquipEntry"
+      @choose="
+        (id) => {
+          // The artifact the player chose is worn, and the piece it wore goes back to the bag
+          if (!character) return;
+          const equipped = equipBagArtifact(inventory, character, Number(id), { names: nameText, reliquarySets });
+          replaceCharacter(equipped.character);
+          inventory = equipped.inventory;
+          equipSlot = undefined;
+        }
+      "
       @close="equipSlot = undefined"
     />
     <ArtifactEnhancePicker
       v-if="enhanceSlot && character"
       :auto-add-label="gameText[GameTextKey.ArtifactAutoAdd]"
       :cancel-label="gameText[GameTextKey.Cancel]"
-      :confirm-disabled="isEnhanceConfirmDisabled"
       :confirm-label="gameText[GameTextKey.Confirm]"
       :fodders="enhanceFodderOptions"
+      :is-confirm-disabled="isEnhanceConfirmDisabled"
       :level-label="enhanceLevelLabel"
       :materials="enhanceMaterialOptions"
       :mora-cost="enhanceMoraCost"
@@ -628,7 +613,28 @@ const activate = () => {
       :title="gameText[GameTextKey.ArtifactActionEnhance]"
       @auto-add="autoAddEnhanceFodders"
       @cancel="enhanceSlot = undefined"
-      @confirm="confirmEnhance"
+      @confirm="
+        () => {
+          const slot = enhanceSlot;
+          if (!character || !slot || isEnhanceConfirmDisabled) return;
+          // The worn artifact is enhanced first, and the chosen fodder and materials leave the bag only once it is
+          const enhanced = enhanceCharacterArtifact(character, slot, {
+            artifactRarityDataMap: statTables.artifactRarityDataMap,
+            fodders: enhanceFodders,
+            materialExperience: enhanceMaterialExperience,
+            random: Math.random,
+            wallet,
+          });
+          const taken = takeFodderArtifacts(inventory, enhanceFodderIds);
+          replaceCharacter(enhanced.character);
+          wallet = enhanced.wallet;
+          inventory = {
+            ...taken.inventory,
+            items: takeItemCounts(taken.inventory.items, enhanceMaterialItemCounts, 1),
+          };
+          enhanceSlot = undefined;
+        }
+      "
       @fodder="toggleEnhanceFodder"
       @material="changeEnhanceMaterial"
     />

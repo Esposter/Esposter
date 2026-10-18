@@ -50,6 +50,7 @@ const CONSTELLATION_6 = 6;
 // Constellation 6's CRIT DMG on Geo lasts 12 seconds from each skill or burst, at the level the team's Geo count sets then
 const CONSTELLATION_6_SECONDS = 12;
 const CONSTELLATION_6_SOURCE = "gorou-c6";
+const CONSTELLATION_6_GEO_COUNT = 3;
 const CONSTELLATION_4 = 4;
 // Constellation 4 heals the active character half his DEF at the cast, every 1.5 seconds from the burst's hit, while General's Glory stands
 const CONSTELLATION_4_DEFENCE_SHARE = 0.5;
@@ -64,7 +65,7 @@ const countGeoCharacters = (characterIdCombatantMap: KitContext["characterIdComb
 
 // Constellation 6's CRIT DMG on Geo for a Geo count at the cast: one Geo character gives 10%, two 20%, three or more 40%
 const getConstellation6CriticalDamage = (geoCount: number): number => {
-  if (geoCount >= CRUNCH_GEO_COUNT) return 0.4;
+  if (geoCount >= CONSTELLATION_6_GEO_COUNT) return 0.4;
   return geoCount === 2 ? 0.2 : 0.1;
 };
 
@@ -128,17 +129,21 @@ export const createGorouKitBehaviour = ({
   const warBannerNextTickSeconds = readSeconds("generalsWarBannerFirstTick");
   const juugaFieldNextTickSeconds = readSeconds("generalsGloryFirstTick");
   const bannerTickSeconds = readSeconds("bannerTick");
-  const crystalCollapseFirstSeconds = readSeconds("crystalCollapseFirst");
   const crystalCollapseIntervalSeconds = readSeconds("crystalCollapseInterval");
   const burstDefenseDamageBonus = createDefenseDamageBonus(BURST_DEFENSE_SHARE);
   const crystalCollapseHit = readHit("crystalCollapse", { additiveBaseDamageBonus: burstDefenseDamageBonus });
-  // Crystal Collapse ticks for as long as the field lasts, each its interval after the last from the first's seconds
-  // After the burst's hit
+  // Crystal Collapse ticks from its own hitmark, the burst's hit with its task's 90 frames and its own 1, each its
+  // Interval after the last, while the field stands: gcsim's task finds the field spent on its end frame, so a tick that
+  // Falls there or past it is not set out
   const crystalCollapseHits = Array.from(
-    { length: Math.floor(juugaSeconds / crystalCollapseIntervalSeconds) },
+    {
+      length: Math.ceil(
+        (burstHitmarkSeconds + juugaSeconds - crystalCollapseHit.hitmarkSeconds) / crystalCollapseIntervalSeconds,
+      ),
+    },
     (_value, index) => ({
       ...crystalCollapseHit,
-      hitmarkSeconds: burstHitmarkSeconds + (crystalCollapseFirstSeconds + crystalCollapseIntervalSeconds * index),
+      hitmarkSeconds: crystalCollapseHit.hitmarkSeconds + crystalCollapseIntervalSeconds * index,
     }),
   );
 

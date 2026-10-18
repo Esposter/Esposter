@@ -7,4 +7,5 @@ export const props = {
   poolAmount: 2500,
   poolMaximum: 5000,
   title: "Statue's Blessing",
+  worshipTitle: "Worship Statue",
 };
