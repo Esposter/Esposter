@@ -4,6 +4,7 @@ import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { Character } from "#src/models/character/Character";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
+import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
@@ -47,6 +48,7 @@ export interface GenshinSaveState {
   cookingProgress: CookingProgress;
   craftedCountMap: ReadonlyMap<number, number>;
   craftingProgress: CraftingProgress;
+  encounterPoints: EncounterPoints;
   enemyRespawnMap: ReadonlyMap<string, string>;
   foundOculusIds: ReadonlySet<string>;
   frostbearingTreeProgress: OfferingProgressSave;

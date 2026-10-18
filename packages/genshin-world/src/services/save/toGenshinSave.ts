@@ -5,6 +5,7 @@ import { toAchievementProgressSave } from "#src/services/save/toAchievementProgr
 import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave";
 import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
+import { toEncounterPointsSave } from "#src/services/save/toEncounterPointsSave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toPartySave } from "#src/services/save/toPartySave";
 import { toProcessingJobSaves } from "#src/services/save/toProcessingJobSaves";
@@ -28,6 +29,7 @@ export const toGenshinSave = ({
   cookingProgress,
   craftedCountMap,
   craftingProgress,
+  encounterPoints,
   enemyRespawnMap,
   foundOculusIds,
   frostbearingTreeProgress,
@@ -57,6 +59,7 @@ export const toGenshinSave = ({
   clearedCamps: [...clearedCamps],
   clearedDomains: [...clearedDomainIds],
   commissionDay: toCommissionDaySave(commissionDay),
+  encounterPoints: toEncounterPointsSave(encounterPoints),
   companionshipExp: Object.fromEntries([
     ...companionshipExpMap,
     ...characters.map(({ friendshipExp, id }): [number, number] => [id, friendshipExp]),

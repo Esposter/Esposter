@@ -420,6 +420,22 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).commissionDay).toStrictEqual(guest.commissionDay);
   });
 
+  test("keeps the Encounter Points earned on the later daily reset", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 6 } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, encounterPoints: { earnedOn: "1970-01-02T00:00:00Z", halfPoints: 2 } };
+
+    expect(mergeGenshinSave(account, guest).encounterPoints).toStrictEqual(guest.encounterPoints);
+  });
+
+  test("keeps the larger count of Encounter Points when both copies earned them on the same daily reset", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 2 } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 6 } };
+
+    expect(mergeGenshinSave(account, guest).encounterPoints).toStrictEqual(guest.encounterPoints);
+  });
+
   test("keeps the Frostbearing Tree's progress of the copy that has reached the further level", () => {
     expect.hasAssertions();
     const account = {

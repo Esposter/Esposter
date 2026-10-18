@@ -5,6 +5,7 @@ import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
 import { CommissionKind } from "#src/models/commission/CommissionKind";
+import { QuestKind } from "#src/models/quest/QuestKind";
 import { readCommissionSlices } from "#src/services/commission/readCommissionSlices";
 import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -66,5 +67,36 @@ describe(useWorldCommissions, () => {
     expect(commissionDay.value.dealtCommissions).toHaveLength(4);
     expect(commissionDay.value.claimedCommissionIds).toStrictEqual([]);
     expect(commissionDay.value.dealtAt.toString()).toBe(now.toString());
+  });
+
+  test("a finished Archon quest earns four Encounter Points, and a World quest earns none", () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const todayReset = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
+    const { encounterPoints } = useWorldCommissions({
+      events,
+      finishedMainQuestIds: computed(() => new Set<number>()),
+      gameDataBaseUrl: "",
+      getWorldNow: () => todayReset.add({ hours: 1 }),
+      questProgressMap: shallowRef(new Map<string, QuestProgress>()),
+      questsInProgress: computed<Quest[]>(() => []),
+      rank: computed(() => RANK),
+      savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+      savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
+    });
+    events.emit(
+      "finishQuest",
+      { id: "archon", kind: QuestKind.World } as Quest,
+      {} as QuestProgress,
+      {} as QuestProgress,
+    );
+    expect(encounterPoints.value.halfPoints).toBe(0);
+    events.emit(
+      "finishQuest",
+      { id: "archon", kind: QuestKind.Archon } as Quest,
+      {} as QuestProgress,
+      {} as QuestProgress,
+    );
+    expect(encounterPoints.value.halfPoints).toBe(8);
   });
 });

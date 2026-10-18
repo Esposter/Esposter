@@ -14,7 +14,9 @@ The as-built [commissions](../../specs/genshin/commissions/design.md) page holds
 - **The kept day is the moment it was dealt.** The save holds the day's four, their counts, the claimed ids and the instant they were dealt, and nothing derived; a day dealt before the latest daily reset (`computeLastDailyReset`, 04:00 on the server's clock, the reset every system reads) is stale and is dealt again, as the weekly count reads its week from `computeLastWeeklyReset`. A day dealt with no commissions in it is dealt again too, since the rank may have reached the unlock since it was dealt.
 - **A quest task finishes with its quest.** Its finish count is its quest's one completion, which the builder writes into the record, since the dump leaves most quest tasks' count at zero. `useWorldQuests` emits `finishQuest` with the quest's id when a quest in progress completes, and `advanceCommissionForQuest` advances the dealt, unclaimed quest task whose quest it is by that one doing, so `checkIsCommissionFinished` reads it finished. Nothing listens to `finishQuest` until a dealt day is held by the session.
 - **A claim's rewards are routed as a blossom's claim is.** `routeCommissionClaim` sends the claim's Mora and the Mora its Adventure EXP pays past rank 60 into the wallet, its Adventure EXP into the rank through `gainAdventureExp`, its Companionship EXP to the deployed team's friendship through `gainCompanionshipExp`, and every other item into the bag through `addInventoryItem`. A bag that cannot take an item whole refuses the claim: it returns undefined, nothing is routed, and the claim is not recorded, as `claimResinReward` refuses a claim the bag cannot hold. Encounter Points are not in the wallet, so the claim's count is the caller's to keep.
-- **Encounter Points come from quests, chests and certain items.** Each of those pages gives them and the claim is built, so only the sources wait.
+- **An Archon or Story quest's completion earns four Encounter Points.** `getQuestEncounterHalfPoints` gives the amount by the quest's kind, and the other kinds give none until their amounts are settled. The wiki marks shorter Archon quests and some Event Story quests as giving less, so their amounts stay open with the other sources (section 6). The amounts are held in half points, so a half point from a chest or a collected item is held whole, and the claim's count is the whole points held.
+- **The points are held for the daily reset they were earned on, up to the storage.** The save holds `encounterPoints` as the reset they were earned on (`earnedOn`) and the half points held. `readEncounterPoints` reads a balance earned before the latest daily reset (`computeLastDailyReset`) as none, and `computeEncounterPointStorage` caps the held half points at four points less one for each daily commission finished that day, as the wiki's storage rule has it. Points held stay when the storage has since shrunk below them. Points past the storage are not kept until the long-term points land (section 6), and the claim does not yet take the half points back, since no caller passes the points to `claimCommissionReward`.
+- **The later reset's points win a merge.** A save merged from a guest and an account keeps the balance earned on the later daily reset, and on the same reset the larger count.
 
 ## Scope and order
 
@@ -37,7 +39,8 @@ packages/genshin-world/src/
 2. **Scene tasks**, swapping their area's camp while open. Waits on the area's camps, placed from the official map's enemy marks as the [spawned places](../genshin-spawned-places/design.md) proposal sets out.
 3. **Quest tasks**: a quest's completion reaching its commission, once the quests report a completion.
 4. **The handbook's Commissions tab** and the commissions' words.
-5. **Routing and the other regions**: a claim's Mora, items and EXP each sent where it is kept, Companionship EXP through the [friendship grant](../../specs/genshin/companionship/design.md), the other regions' pools, and the sources of Encounter Points.
+5. **Routing and the other regions**: a claim's Mora, items and EXP each sent where it is kept, Companionship EXP through the [friendship grant](../../specs/genshin/companionship/design.md), and the other regions' pools.
+6. **Encounter Points earned**: the quests' points, the storage they are held in, the daily reset they are kept to, and the save field. The other sources follow with their amounts (section 6).
 
 ## Data and measures
 
@@ -51,16 +54,20 @@ packages/genshin-world/src/
 
 ## Key files
 
-| File                                                              | Role after the change                                    |
-| :---------------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`            | A scene task's camp, swapped in for its area's own       |
-| `packages/genshin-world/src/services/quest/advanceQuest.ts`       | Advances a quest task's quest as any quest's is advanced |
-| `packages/genshin-world/src/services/handbook/constants.ts`       | The Commissions tab, filled with the day's four          |
-| `packages/genshin-world/src/components/Handbook/Screen/Index.vue` | Draws the day's commissions and the preferred region     |
+| File                                                                    | Role after the change                                    |
+| :---------------------------------------------------------------------- | :------------------------------------------------------- |
+| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`                  | A scene task's camp, swapped in for its area's own       |
+| `packages/genshin-world/src/services/quest/advanceQuest.ts`             | Advances a quest task's quest as any quest's is advanced |
+| `packages/genshin-world/src/services/handbook/constants.ts`             | The Commissions tab, filled with the day's four          |
+| `packages/genshin-world/src/services/commission/earnEncounterPoints.ts` | Holds a quest's points in the storage they are capped at |
+| `packages/genshin-world/src/composables/useWorldCommissions.ts`         | Earns a finished quest's points on `finishQuest`         |
+| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`       | Draws the day's commissions and the preferred region     |
 
 ## Sources
 
 - [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the scene tasks replacing their area's enemies and objects, the quest blocking a commission's place, the preferred region, and Encounter Points.
+- [Encounter Points](https://genshin-impact.fandom.com/wiki/Encounter_Points), Genshin Impact Wiki: the earn amounts (four for an Archon or Story quest, one for a Luxurious Chest in a Shrine of Depths, 0.5 for other chests and for certain items), the storage that falls by one for each daily commission finished, and the long-term points. Its change history stops at 4.1, so the amounts of the later kinds are open.
+- The dump's Encounter Points description (`TextMap` id 33283106, in the 6.6 dump) lists the kinds: quests, collected items, chests, events and anecdotes. The dump carries no table of per-kind amounts.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the daily task table with each task's place, radius, finish and swapped groups, read by the built part.
 
 ## Reference
