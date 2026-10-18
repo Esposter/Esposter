@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
+import { DASHBOARD_EDITOR_ROW_HEIGHT, DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
-import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
 const { visuals } = storeToRefs(visualStore);
+const { updateVisual } = visualStore;
 </script>
 
 <template>
@@ -17,33 +17,36 @@ const { visuals } = storeToRefs(visualStore);
     flex-1
   />
   <div v-else p-3 flex-1>
-    <GridLayout v-model:layout="visuals" :col-num="DASHBOARD_NO_COLUMNS" :row-height="40" :use-style-cursor="false">
-      <GridItem v-for="{ id, type, x, y, w, h } of visuals" :key="id" :i="id" :x :y :w :h>
-        <DashboardVisualPreviewContainer :id size-full :type />
-      </GridItem>
-    </GridLayout>
+    <DashboardGrid
+      :visuals
+      :column-number="DASHBOARD_NO_COLUMNS"
+      :row-height="DASHBOARD_EDITOR_ROW_HEIGHT"
+      is-editable
+      @commit="(changes) => changes.forEach((change) => updateVisual(change))"
+    >
+      <template #default="{ visual }">
+        <DashboardVisualPreviewContainer :id="visual.id" size-full :type="visual.type" />
+      </template>
+    </DashboardGrid>
   </div>
 </template>
 
 <style scoped>
 /* The grid is the page's background, and each tile a panel on its edge, in the library's tokens */
-:deep(.vgl-layout) {
+.dashboard-grid {
   width: 100%;
   min-height: 100%;
   background-color: var(--ui-background);
 }
 
-:deep(.vgl-item) {
+:deep(.dashboard-grid-tile) {
   cursor: pointer;
+  background-color: var(--ui-panel);
+  border-radius: var(--ui-container-radius);
+  box-shadow: var(--ui-frame-shadow);
 
   &:active:not(:focus-within) {
     background-image: var(--ui-pressed-overlay);
-  }
-
-  &:not(.vgl-item--placeholder) {
-    background-color: var(--ui-panel);
-    border-radius: var(--ui-container-radius);
-    box-shadow: var(--ui-frame-shadow);
   }
 }
 </style>

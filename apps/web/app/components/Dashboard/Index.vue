@@ -1,41 +1,26 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
-import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
-import { toRawDeep } from "@esposter/shared";
-import { GridItem, GridLayout } from "grid-layout-plus";
+import { DASHBOARD_PUBLISHED_ROW_HEIGHT } from "@/services/dashboard/constants";
+import { getBreakpointColumnNumber } from "@/services/dashboard/grid/getBreakpointColumnNumber";
 
 interface Props {
   visuals: Visual[];
 }
 
 const { visuals } = defineProps<Props>();
-// The main dashboard shouldn't actually modify any persisted data
-const layout = ref(structuredClone(toRawDeep(visuals)));
+const container = useTemplateRef("container");
+const { width } = useElementSize(container);
+// The published dashboard only shows its visuals, so a narrower screen reflows them and nothing here is saved
+const columnNumber = computed(() => getBreakpointColumnNumber(width.value));
 </script>
 
 <template>
-  <div>
-    <GridLayout
-      v-model:layout="layout"
-      :col-num="DASHBOARD_NO_COLUMNS"
-      :row-height="50"
-      :use-style-cursor="false"
-      :is-draggable="false"
-      :is-resizable="false"
-      responsive
-    >
-      <GridItem
-        v-for="visual of visuals"
-        :key="visual.id"
-        :i="visual.id"
-        :x="visual.x"
-        :y="visual.y"
-        :w="visual.w"
-        :h="visual.h"
-      >
+  <div ref="container">
+    <DashboardGrid :column-number="columnNumber" :row-height="DASHBOARD_PUBLISHED_ROW_HEIGHT" :visuals>
+      <template #default="{ visual }">
         <DashboardVisual :visual />
-      </GridItem>
-    </GridLayout>
+      </template>
+    </DashboardGrid>
   </div>
 </template>

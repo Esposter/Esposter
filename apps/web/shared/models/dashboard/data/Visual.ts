@@ -14,7 +14,6 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
   chart = new Chart();
   dataset?: VisualDatasetBinding;
   h = 4;
-  i: string;
   type = VisualType.Area;
   w = 4;
   x = 0;
@@ -23,7 +22,6 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
   constructor(init?: Partial<Visual>) {
     super();
     Object.assign(this, init);
-    this.i = this.id;
   }
 }
 
