@@ -1,7 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
-import { GCG_CRYSTALLIZE_SHIELD, GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
+import { GCG_CRYSTALLIZE_SHIELD } from "#src/services/gcg/constants";
+import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { takeOne } from "@esposter/shared";
 
 export const GENERALS_GLORY_ID = 116_062;
@@ -18,8 +19,7 @@ export const generalsGlory: GcgCardModule = {
     zoneCard.usages -= 1;
     const geoCount = side.characters.filter(({ character }) => character.element === Element.Geo).length;
     const active = side.characters.at(side.activeIndex);
-    if (geoCount >= GENERALS_GLORY_GEO_CHARACTERS && active)
-      active.shield = Math.min(GCG_SHIELD_LIMIT, active.shield + GCG_CRYSTALLIZE_SHIELD);
+    if (geoCount >= GENERALS_GLORY_GEO_CHARACTERS && active) addGcgShield(active, GCG_CRYSTALLIZE_SHIELD);
     return { damageType: Element.Geo, value: GENERALS_GLORY_DAMAGE };
   },
 };

@@ -1,7 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 
-import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
+import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 
 export const AEGIS_OF_ABYSSAL_FLAME_ID = 123_024;
@@ -20,6 +20,6 @@ export const aegisOfAbyssalFlame: GcgCardModule = {
 
 // Gives a character the Aegis of Abyssal Flame: its shield points, up to the shield limit, and the state
 export const attachGcgAegisOfAbyssalFlame = (character: GcgCharacterState): void => {
-  character.shield = Math.min(GCG_SHIELD_LIMIT, character.shield + AEGIS_SHIELD_POINTS);
+  addGcgShield(character, AEGIS_SHIELD_POINTS);
   placeGcgZoneCard(character.statuses, AEGIS_OF_ABYSSAL_FLAME_ID, aegisOfAbyssalFlame);
 };

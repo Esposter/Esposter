@@ -1,7 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
-import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
+import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { checkCanPlayGcgElementalResonance } from "#src/services/gcg/effects/createGcgElementalResonance";
 import { takeOne } from "@esposter/shared";
 
@@ -15,6 +15,6 @@ export const elementalResonanceEnduringRock: GcgCardModule = {
   play: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
     const active = side.characters.at(side.activeIndex);
-    if (active) active.shield = Math.min(GCG_SHIELD_LIMIT, active.shield + ENDURING_ROCK_SHIELD);
+    if (active) addGcgShield(active, ENDURING_ROCK_SHIELD);
   },
 };

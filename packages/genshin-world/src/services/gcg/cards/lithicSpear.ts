@@ -1,6 +1,6 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
+import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { createGcgWeaponCard } from "#src/services/gcg/effects/createGcgWeaponCard";
 import { takeOne } from "@esposter/shared";
 
@@ -17,6 +17,6 @@ export const lithicSpear: GcgCardModule = {
     const liyueCount = side.characters.filter(({ character }) => character.nation === LIYUE).length;
     const character = takeOne(side.characters, targetIndex);
     const granted = Math.min(liyueCount, LITHIC_SPEAR_MAX_SHIELD_POINTS);
-    character.shield = Math.min(GCG_SHIELD_LIMIT, character.shield + granted);
+    addGcgShield(character, granted);
   },
 };
