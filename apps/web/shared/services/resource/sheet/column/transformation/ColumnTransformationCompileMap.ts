@@ -8,6 +8,7 @@ import { compileMathTransformation } from "#shared/services/resource/sheet/colum
 import { compileRegexMatchTransformation } from "#shared/services/resource/sheet/column/transformation/compileRegexMatchTransformation";
 import { computeConvertToTransformation } from "#shared/services/resource/sheet/column/transformation/computeConvertToTransformation";
 import { computeDatePartTransformation } from "#shared/services/resource/sheet/column/transformation/computeDatePartTransformation";
+import { createStringValueReader } from "#shared/services/resource/sheet/column/transformation/createStringValueReader";
 import { computeSplitTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeSplitTransformation";
 import { computeStringPatternTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeStringPatternTransformation";
 import { computeStringTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeStringTransformation";
@@ -31,16 +32,10 @@ export const ColumnTransformationCompileMap = {
   },
   [ColumnTransformationType.Math]: compileMathTransformation,
   [ColumnTransformationType.RegexMatch]: compileRegexMatchTransformation,
-  [ColumnTransformationType.String]:
-    (transformation) =>
-    ({ readSource }) => {
-      const readValue = readSource(transformation.sourceColumnId);
-      return (row, rowIndex) => {
-        const value = readValue(row, rowIndex);
-        if (value === null) return null;
-        else return computeStringTransformation(String(value), transformation.stringTransformationType);
-      };
-    },
+  [ColumnTransformationType.String]: (transformation) =>
+    createStringValueReader(transformation.sourceColumnId, (value) =>
+      computeStringTransformation(value, transformation.stringTransformationType),
+    ),
   [ColumnTransformationType.StringPattern]:
     (transformation) =>
     ({ readSource }) => {
@@ -51,16 +46,10 @@ export const ColumnTransformationCompileMap = {
           transformation.pattern,
         );
     },
-  [ColumnTransformationType.StringSplit]:
-    (transformation) =>
-    ({ readSource }) => {
-      const readValue = readSource(transformation.sourceColumnId);
-      return (row, rowIndex) => {
-        const value = readValue(row, rowIndex);
-        if (value === null) return null;
-        else return computeSplitTransformation(String(value), transformation.delimiter, transformation.segmentIndex);
-      };
-    },
+  [ColumnTransformationType.StringSplit]: (transformation) =>
+    createStringValueReader(transformation.sourceColumnId, (value) =>
+      computeSplitTransformation(value, transformation.delimiter, transformation.segmentIndex),
+    ),
 } as const satisfies {
   [K in ColumnTransformationType]: ColumnTransformationCompiler<Extract<ColumnTransformation, { type: K }>>;
 };
