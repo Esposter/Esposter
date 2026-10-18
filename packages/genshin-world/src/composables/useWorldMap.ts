@@ -133,16 +133,27 @@ export const useWorldMap = ({
   // The areas, the Reputation and the regions are read in the background, so the thresholds settle once all of them are in
   watch([mondstadtReputation, explorationAreas, isJumpLandmarksLoaded], settleExplorationThresholds);
   // A finished quest pays the Reputation request it is, once: the event is emitted on the move that finishes it, and each
-  // Request binds its quest once, so a quest the groups repeat pays its first row's reward
+  // Request binds its quest once, so a quest the groups repeat pays its first row's reward. A quest finished before the
+  // Reputation has loaded is paid once it has, as the event is not emitted again
+  let unpaidQuestFinishes: ((requests: ReputationCity["requests"]) => void)[] = [];
   events.on("finishQuest", (quest, progress, nextProgress) => {
-    if (!mondstadtReputation.value) return;
-    for (const reward of getFinishedReputationRewards(
-      quest,
-      progress,
-      nextProgress,
-      getReputationRequestBindings(mondstadtReputation.value.requests),
-    ))
-      payReputationReward(reward);
+    const payQuestFinish = (requests: ReputationCity["requests"]) => {
+      for (const reward of getFinishedReputationRewards(
+        quest,
+        progress,
+        nextProgress,
+        getReputationRequestBindings(requests),
+      ))
+        payReputationReward(reward);
+    };
+    if (mondstadtReputation.value) payQuestFinish(mondstadtReputation.value.requests);
+    else unpaidQuestFinishes.push(payQuestFinish);
+  });
+  watch(mondstadtReputation, (reputationCity) => {
+    if (!reputationCity) return;
+    const pendingQuestFinishes = unpaidQuestFinishes;
+    unpaidQuestFinishes = [];
+    for (const payQuestFinish of pendingQuestFinishes) payQuestFinish(reputationCity.requests);
   });
   // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with, by its
   // Id and by its scene point, which the quest step that names a waypoint by its point finishes on

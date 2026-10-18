@@ -63,6 +63,16 @@ describe(useWorldMap, () => {
   const REQUEST_QUEST_ID = 901;
   const REQUEST_EXP = 80;
   const REQUEST_MORA = 500;
+  const requestQuest: Quest = {
+    descriptionTextId: "description",
+    id: String(REQUEST_QUEST_ID),
+    kind: QuestKind.World,
+    offerTalkIds: [],
+    steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.Defeat, targetId: "1" }], textId: "text" }],
+    talks: [],
+    titleTextId: "title",
+  };
+  const requestFinishedProgress: QuestProgress = { objectiveCounts: [], stepIndex: 1 };
   const NEXT_LEVEL_EXP = 1000;
   const TRANS_POINT_ID = 9;
   const TRANS_POINT_ADVENTURE_EXP = 20;
@@ -193,19 +203,28 @@ describe(useWorldMap, () => {
 
     const { events, reputation, wallet } = createWorldMap();
     await waitForReads();
-    const quest: Quest = {
-      descriptionTextId: "description",
-      id: String(REQUEST_QUEST_ID),
-      kind: QuestKind.World,
-      offerTalkIds: [],
-      steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.Defeat, targetId: "1" }], textId: "text" }],
-      talks: [],
-      titleTextId: "title",
-    };
-    const finishedProgress = { objectiveCounts: [], stepIndex: 1 };
 
-    events.emit("finishQuest", quest, { objectiveCounts: [0], stepIndex: 0 }, finishedProgress);
-    events.emit("finishQuest", quest, finishedProgress, finishedProgress);
+    events.emit("finishQuest", requestQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
+    events.emit("finishQuest", requestQuest, requestFinishedProgress, requestFinishedProgress);
+
+    expect(reputation.value).toStrictEqual({ exp: REQUEST_EXP, level: 1 });
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REQUEST_MORA });
+  });
+
+  test("a request finished before the Reputation loads is paid once it has", async () => {
+    expect.hasAssertions();
+
+    // The Reputation is still pending when the request finishes, and its finish is not emitted again once it lands
+    const reputationRead = Promise.withResolvers<ReputationCity>();
+    vi.mocked(readMondstadtReputation).mockReturnValue(reputationRead.promise);
+    const { events, reputation, wallet } = createWorldMap();
+    await waitForReads();
+
+    events.emit("finishQuest", requestQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
+    expect(reputation.value).toStrictEqual({ exp: 0, level: 1 });
+
+    reputationRead.resolve(reputationCity);
+    await waitForReads();
 
     expect(reputation.value).toStrictEqual({ exp: REQUEST_EXP, level: 1 });
     expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REQUEST_MORA });
