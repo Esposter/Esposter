@@ -5,6 +5,7 @@ import type { KitRecord } from "genshin-world";
 import { readPublishedGameDataEntries } from "#src/services/gameData/readPublishedGameDataEntries";
 import { readPublishedGameDataIndex } from "#src/services/gameData/readPublishedGameDataIndex";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
+import { mergeKitSourceCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitSourceCandidates";
 import { checkIsGcsimValueGiven } from "#src/services/genshinAssets/kits/checkIsGcsimValueGiven";
 import { GCSIM_PLUNGE_FALLBACK_FOLDER, GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsimFolder";
@@ -92,11 +93,11 @@ export const readKitInputs = async ({
         if (!checkIsGcsimValueGiven(gcsimCandidateMap.get(path))) notes.push(`gcsim gives no ${constant}`);
     const tableCandidateMap = getTableKitCandidates(tables);
     const gcsimTableCandidateMap = mergeKitCandidates(gcsimCandidateMap, tableCandidateMap);
-    const sourceCandidateMap = mergeKitCandidates(
+    const sourceCandidateMap = mergeKitSourceCandidates({
       gcsimCandidateMap,
-      getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables, overlay)),
       tableCandidateMap,
-    );
+      wikiCandidateMap: getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables, overlay)),
+    });
     inputs.push({
       characterId,
       gcsimFolder,
