@@ -6,6 +6,7 @@ import type { Texture } from "three";
 import { AVATAR_TEXTURE_FOLDER, AVATAR_TEXTURE_SLOTS } from "#src/services/character/avatar/constants";
 import { createAvatarTexture } from "#src/services/character/avatar/createAvatarTexture";
 import { createCharacterAvatar } from "#src/services/character/avatar/createCharacterAvatar";
+import { DATA_FETCH_TIMEOUT_MS } from "#src/services/constants";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "#src/services/scene/constants";
 import { readFileResponse } from "#src/services/shared/readFileResponse";
 import { readJson } from "#src/services/shared/readJson";
@@ -18,7 +19,7 @@ export const readCharacterAvatar = async (
   options: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,
 ): Promise<CharacterAvatar> => {
   const readBinary = async (): Promise<ArrayBuffer> =>
-    (await readFileResponse(`${componentUrl}/${AVATAR_BINARY_FILE_NAME}`)).arrayBuffer();
+    (await readFileResponse(`${componentUrl}/${AVATAR_BINARY_FILE_NAME}`, DATA_FETCH_TIMEOUT_MS)).arrayBuffer();
   const [manifest, buffer] = await Promise.all([
     readJson(`${componentUrl}/${AVATAR_MANIFEST_FILE_NAME}`) as Promise<AvatarManifest>,
     readBinary(),
@@ -38,7 +39,9 @@ export const readCharacterAvatar = async (
   }
   const textureFileEntries = await Promise.all(
     Array.from(textureFiles, async (file): Promise<[string, Texture]> => {
-      const blob = await (await readFileResponse(`${componentUrl}/${AVATAR_TEXTURE_FOLDER}/${file}`)).blob();
+      const blob = await (
+        await readFileResponse(`${componentUrl}/${AVATAR_TEXTURE_FOLDER}/${file}`, DATA_FETCH_TIMEOUT_MS)
+      ).blob();
       return [file, await createAvatarTexture(blob, colourFiles.has(file))];
     }),
   );
