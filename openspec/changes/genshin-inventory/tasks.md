@@ -5,4 +5,4 @@
 
 ## 2. An item with no material type
 
-- [ ] 2.1 Read the live dump for every item a source names that carries no material type, and decide whether the publish fails for it or the bag gives it a place. Verify: the decision is written into the design's Decisions, and a test named after the scenario "Picking up an item the materials table gives no type" is written first and seen failing, if the bag gains a place for it.
+- [x] 2.1 Read the live dump for every item a source names that carries no material type, and decide whether the publish fails for it or the bag gives it a place. Verify: the decision is written into the design's Decisions, and a test named after the scenario "Picking up an item the materials table gives no type" is written first and seen failing, if the bag gains a place for it.

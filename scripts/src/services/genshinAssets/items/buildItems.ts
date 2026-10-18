@@ -27,8 +27,8 @@ import { z } from "zod";
 // The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken
 // By the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon table. The
 // Recipes and the levels are the records their steps published, read from the dev account. An item the table lacks is
-// An error. An item the table gives no type is left out, as the dump leaves out MATERIAL_NONE and the gathering reader
-// Leaves such an item out. Returns the record the materials publish under
+// An error, and so is an item the table gives no type: the publish names every such item at once, so a typeless item a
+// Source adds fails the publish rather than showing in no tab. Returns the record the materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
@@ -67,12 +67,16 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   ]
     .filter((itemId) => !WALLET_ITEM_IDS.includes(itemId))
     .toSorted((firstId, secondId) => firstId - secondId);
+  const typelessItemIds: number[] = [];
   const items = itemIds.flatMap((itemId) => {
     const materialRow = materialRows.find(({ id }) => id === itemId);
     if (!materialRow)
       throw new InvalidOperationError(Operation.Read, String(itemId), "has no row in the material table");
-    const { materialType = MATERIAL_TYPE_NONE } = materialRow;
-    if (materialType === MATERIAL_TYPE_NONE) return [];
+    const { materialType } = materialRow;
+    if (materialType === undefined || materialType === MATERIAL_TYPE_NONE) {
+      typelessItemIds.push(itemId);
+      return [];
+    }
     return [
       {
         id: materialRow.id,
@@ -84,5 +88,11 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       },
     ];
   });
+  if (typelessItemIds.length > 0)
+    throw new InvalidOperationError(
+      Operation.Read,
+      typelessItemIds.join(", "),
+      "has no material type in the material table, so the bag would show it in no tab",
+    );
   return { [`${GameDataset.Items}/materials`]: items };
 };
