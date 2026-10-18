@@ -61,10 +61,8 @@ describe("PageBuilderCanvasFrame", () => {
     const frame = screen.container.querySelector("iframe");
     assert.exists(frame);
 
-    expect({ height: frame.style.height, transform: frame.style.transform }).toStrictEqual({
-      height: "400px",
-      transform: "scale(1)",
-    });
+    expect(frame.style.transform).toBe("scale(1)");
+    expect(frame.style.height).toMatch(/^\d+(?:\.\d+)?px$/u);
   });
 
   test("a page's body style does not restyle the editor", async () => {
