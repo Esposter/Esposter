@@ -788,6 +788,7 @@ export enum GameTextKey {
   WishDetails = "UI_GACHA_WISH_02_DETAIL",
   WishEpitomizedPath = "UI_GACHA_WISH",
   WishFatePoint = "UI_GACHA_WISH_POINT",
+  WishGoToTrial = "UI_REUNIONV2_GOTO_AVARTARTRIAL",
   WishHistory = "UI_GUIDE_BUTTON_HISTORY",
   WishProbabilityUp = "UI_GACHA_SHOW_PANEL_PROBABILITY_UP",
   WishRateUp = "UI_GACHA_SHOW_PANEL_DETAIL_03",
