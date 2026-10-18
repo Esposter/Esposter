@@ -57,6 +57,5 @@
   "plungeCollision.poiseDamage": { "cause": "Unclassified", "value": 25 },
   "skill.hits.length": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 20 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6932 } }
 }

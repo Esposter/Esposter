@@ -13,7 +13,7 @@ Built as well: Equitable Judgment, held, its length decided as it runs (`KitActi
 | `packages/genshin-world/src/services/kit/characters/neuvilletteKit.ts`                                      | `createNeuvilletteKitBehaviour`: the burst's three droplet ticks, and Equitable Judgment's length as its charged attack starts; his strikes, plunges and passives come from the record             |
 | `packages/genshin-world/src/services/kit/characters/neuvilletteEquitableJudgement.ts`                       | `createEquitableJudgementLength`: the judgement's length decided once its legal evaluation picks up droplets, and its waves, drains and droplet heals queued from then, cited to gcsim `charge.go` |
 | `packages/genshin-world/src/services/kit/checkIsInSourcewaterPickupArea.ts`                                 | The box and fan a charge's legal evaluation picks droplets up in, cited to gcsim `charge.go`                                                                                                       |
-| `packages/genshin-world/src/services/kit/effects/castSourcewaterDroplet.ts`, `absorbSourcewaterDroplets.ts` | A Sourcewater Droplet is a field nothing ticks, found by its id and absorbed once, up to a maximum                                                                                                 |
+| `packages/genshin-world/src/services/kit/effects/castSourcewaterDroplet.ts`, `absorbSourcewaterDroplets.ts` | A Sourcewater Droplet is a field nothing ticks, found by its id, stacked so that each one stands beside the others of its id, and absorbed once, up to a maximum                                   |
 
 ## Sources
 

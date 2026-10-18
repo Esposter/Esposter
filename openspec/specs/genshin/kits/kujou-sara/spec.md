@@ -1,6 +1,6 @@
 ## Purpose
 
-Kujou Sara's kit as built: five strikes, a fully charged shot, Tengu Stormcall's Cover with its Ambush, and Subjugation: Koukou Sendou's Titanbreaker with its Stormclusters, with Ascension 4's energy and Constellations 1 and 6 not built.
+Kujou Sara's kit as built: five strikes, a fully charged shot, Tengu Stormcall's Cover with its Ambush, Subjugation: Koukou Sendou's Titanbreaker with its Stormclusters, Ascension 4's Decorum and Constellation 6's mark, with Constellation 1 not built.
 
 ## Requirements
 
@@ -55,12 +55,50 @@ Subjugation: Koukou Sendou's Titanbreaker SHALL set off Stormclusters in four bo
 - **WHEN** the player casts Titanbreaker
 - **THEN** six bouts of six Stormcluster ticks land
 
-### Requirement: Energy, Constellation 1 and 6 not yet built
+### Requirement: Constellation 6's mark on the character the ATK Bonus reaches
 
-Ascension 4's energy and Constellations 1 and 6 SHALL NOT take effect.
+From Constellation 6, Kujou Sara's ATK Bonus SHALL also mark the character it reaches for six seconds, giving that character's Electro DMG 60% CRIT DMG, and its Lunar-Charged reactions 60% CRIT DMG.
 
-#### Scenario: Unbuilt effects do nothing
+#### Scenario: Electro strike of the marked character
 
-- **GIVEN** Kujou Sara has Ascension 4 or Constellation 1 or 6 unlocked
+- **GIVEN** Kujou Sara has Constellation 6 and the mark stands on a character
+- **WHEN** that character lands an Electro strike
+- **THEN** the strike takes 60% CRIT DMG
+
+#### Scenario: Lunar-Charged reaction by the marked character
+
+- **GIVEN** the mark stands on a character
+- **WHEN** that character causes a Lunar-Charged reaction
+- **THEN** the reaction takes 60% CRIT DMG
+
+#### Scenario: Mark runs out after six seconds
+
+- **GIVEN** the mark stands on a character
+- **WHEN** six seconds pass
+- **THEN** the mark is gone and its strikes take no CRIT DMG from it
+
+### Requirement: Decorum restores Energy from Ascension 4
+
+From Ascension 4, Kujou Sara's Ambush SHALL restore 1.2 Energy to every party member for each point of Energy Recharge she has, once every three seconds.
+
+#### Scenario: Ambush restores Energy from Ascension 4
+
+- **GIVEN** Kujou Sara has Ascension 4
+- **WHEN** an Ambush hits an opponent
+- **THEN** every party member gains Energy
+
+#### Scenario: Below Ascension 4 nothing is restored
+
+- **GIVEN** Kujou Sara has Ascension 3 or lower
+- **WHEN** an Ambush hits an opponent
+- **THEN** no Energy is restored
+
+### Requirement: Constellation 1 not yet built
+
+Constellation 1 SHALL NOT take effect.
+
+#### Scenario: Unbuilt effect does nothing
+
+- **GIVEN** Kujou Sara has Constellation 1
 - **WHEN** the player fights with Kujou Sara
 - **THEN** that effect has no effect

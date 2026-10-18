@@ -136,6 +136,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Yun Jin's hits deal no poise** — [Yun Jin](../../specs/genshin/kits/yun-jin/design.md): none stagger a poised enemy in a recording.
 - [ ] **Opening Flourish's tap and Geo burst give 1U of Geo** — [Yun Jin](../../specs/genshin/kits/yun-jin/design.md): a recording shows 1U from each.
 - [ ] **Opening Flourish's levels come at half a second and a second** — [Yun Jin](../../specs/genshin/kits/yun-jin/design.md): the levels come at those held times.
+- [ ] **Beidou's Ascension 1 counter window is measured in frames, from her hit to the Tidecaller press that counters it** — [Beidou](../../specs/genshin/kits/beidou/design.md): gcsim has no Ascension 1 file and the wiki says only "the precise moment", so no length is guessed; the passive also needs Tidecaller's hold, which the kit does not build.
 - [ ] **Kuki's burst strikes twelve times at half HP** — [Kuki](../../specs/genshin/kits/kuki/design.md): the game's burst gives twelve hits below half HP and seven above.
 - [ ] **Kuki's plunges reach 1, 3 and 5 metres** — [Kuki](../../specs/genshin/kits/kuki/design.md): the plunges match the reaches and poise of 10, 50 and 100.
 - [ ] **Nilou's plunge lands at 0.4 seconds** — [Nilou](../../specs/genshin/kits/nilou/design.md): her plunge lands at that point with poise 25, 100 and 150.

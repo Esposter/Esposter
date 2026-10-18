@@ -38,20 +38,20 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     chargedAttack,
     chargedAttackVariant,
     getChargedAttackStaminaMultiplier,
+    getConversionBonuses,
     getNormalAttackExtraHit,
     getNormalAttackSpeedBonus,
-    getPartyDendroCoreDamageBonus,
     getPartyReactionBonus,
     getPartyStrikeBonus,
     getPassiveBonuses,
     getSkillChargeBonus,
     getSkillCooldownMultiplier,
     getStrikeAdditiveBaseDamageBonus,
-    isSkillCooldownWaived,
     getStrikeCriticalDamageBonus,
     getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
     getStrikeDefenceIgnored,
+    isSkillCooldownWaived,
     jumpsSkillHoldToTop,
     keepsNormalAttackCombo,
     moonsignBenediction,
@@ -66,22 +66,23 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     skill,
     skillChain = [],
     skillHolds = [],
+    stellarJubilee,
   } = behaviour;
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
+  if (getConversionBonuses) kit.getConversionBonuses = getConversionBonuses;
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
   if (getNormalAttackSpeedBonus) kit.getNormalAttackSpeedBonus = getNormalAttackSpeedBonus;
-  if (getPartyDendroCoreDamageBonus) kit.getPartyDendroCoreDamageBonus = getPartyDendroCoreDamageBonus;
   if (getPartyReactionBonus) kit.getPartyReactionBonus = getPartyReactionBonus;
   if (getPartyStrikeBonus) kit.getPartyStrikeBonus = getPartyStrikeBonus;
   if (getPassiveBonuses) kit.getPassiveBonuses = getPassiveBonuses;
   if (getSkillChargeBonus) kit.getSkillChargeBonus = getSkillChargeBonus;
   if (getSkillCooldownMultiplier) kit.getSkillCooldownMultiplier = getSkillCooldownMultiplier;
   if (getStrikeAdditiveBaseDamageBonus) kit.getStrikeAdditiveBaseDamageBonus = getStrikeAdditiveBaseDamageBonus;
-  if (isSkillCooldownWaived) kit.isSkillCooldownWaived = isSkillCooldownWaived;
   if (getStrikeCriticalDamageBonus) kit.getStrikeCriticalDamageBonus = getStrikeCriticalDamageBonus;
   if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
   if (getStrikeDefenceIgnored) kit.getStrikeDefenceIgnored = getStrikeDefenceIgnored;
+  if (isSkillCooldownWaived) kit.isSkillCooldownWaived = isSkillCooldownWaived;
   if (jumpsSkillHoldToTop) kit.jumpsSkillHoldToTop = jumpsSkillHoldToTop;
   if (keepsNormalAttackCombo) kit.keepsNormalAttackCombo = keepsNormalAttackCombo;
   if (onKitEvent) kit.onKitEvent = onKitEvent;
@@ -92,6 +93,11 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     if (!kit.moonsignBenediction)
       throw new InvalidOperationError(Operation.Update, "moonsignBenediction", "its record holds none");
     kit.moonsignBenediction.getBaseDamageBonus = moonsignBenediction.getBaseDamageBonus;
+  }
+  if (stellarJubilee?.getBaseDamageBonus) {
+    if (!kit.stellarJubilee)
+      throw new InvalidOperationError(Operation.Update, "stellarJubilee", "its record holds none");
+    kit.stellarJubilee.getBaseDamageBonus = stellarJubilee.getBaseDamageBonus;
   }
   applyKitActionBehaviour(kit.elementalBurst, burst, "burst");
   applyKitVariantBehaviour(kit.elementalBurstVariant, burstVariant, "burstVariant");

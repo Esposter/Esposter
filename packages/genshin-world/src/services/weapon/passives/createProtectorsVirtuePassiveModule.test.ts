@@ -28,6 +28,8 @@ describe(createProtectorsVirtuePassiveModule, () => {
 
     expect(protectorsVirtuePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.HealthPercent },
+    ]);
+    expect(protectorsVirtuePassiveModule.getConversionBonuses?.(wielder, 1)).toStrictEqual([
       { amount: 0.012 * 10000, attribute: Attribute.Attack },
     ]);
   });

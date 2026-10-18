@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
 
@@ -16,6 +17,8 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
@@ -280,5 +283,40 @@ describe(getWeaponPassiveKit, () => {
         [],
       ),
     ).toBe(0.06);
+  });
+
+  test("Staff of Homa's ATK follows a teammate's Max HP buff on its wielder, from the buffed Max HP", () => {
+    expect.hasAssertions();
+
+    // Staff of Homa at its first rank, whose name's text id and rank parameters its table gives
+    const homaWeaponKit = getWeaponPassiveKit(
+      KIT,
+      { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
+      { ...WEAPON_DATA, passiveNameTextId: "3284643059", passiveRankParams: [[0.2, 0.008, 0.01]] },
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10000 }]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: homaWeaponKit,
+      level: 90,
+    };
+    // A teammate's kit writes the buff onto the wielder through buffKitMember, as its own action does
+    const kitEffectState: KitEffectState = { effects: [] };
+    buffKitMember(kitEffectState, TRAVELER_CHARACTER_ID, {
+      amount: 1000,
+      attribute: Attribute.Health,
+      secondsRemaining: 1,
+    });
+    const party = createParty([TRAVELER_CHARACTER_ID]);
+    const characterIdCombatantMap = new Map([[TRAVELER_CHARACTER_ID, combatant]]);
+    const unbuffed = getBuffedCombatant(combatant, [], party, characterIdCombatantMap);
+    const buffed = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+
+    expect(buffed.attributes.attack - unbuffed.attributes.attack).toBeCloseTo(
+      0.008 * (buffed.attributes.maxHealth - unbuffed.attributes.maxHealth),
+    );
   });
 });

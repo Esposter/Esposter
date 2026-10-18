@@ -81,6 +81,5 @@
   "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
   "plunges.low.hits.0.poiseDamage": { "source": "Wiki", "value": 50 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8832 } },
-  "skillCooldownSeconds": { "cause": "DiffersFromSource", "value": { "index": 7, "proudSkillGroupId": 8832 } },
   "skillHolds.length": { "cause": "Unclassified", "value": 0 }
 }

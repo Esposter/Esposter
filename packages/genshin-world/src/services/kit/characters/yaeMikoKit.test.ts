@@ -5,6 +5,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -140,5 +141,53 @@ describe("enlightened Blessing", () => {
     expect.hasAssertions();
 
     expect(getTotemStrikeDamageBonus(3)).toBe(0);
+  });
+});
+
+describe("constellation 6", () => {
+  test("the totems' strikes ignore 60% of an enemy's DEF from the sixth constellation, and none before it", () => {
+    expect.hasAssertions();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const party = createParty([YAE_MIKO_CHARACTER_ID]);
+    const combatant = { ...createYaeMikoCombatant(), constellationCount: 6 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    YAE_MIKO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const totem = takeOne(kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"));
+    const strike = { attackTag: totem.attackTag, body: totem.body, combatant, hit: takeOne(totem.hits) };
+
+    expect(YAE_MIKO_KIT.getStrikeDefenceIgnored?.(strike, enemy, party, kitEffectState.effects)).toBe(0.6);
+    expect(
+      YAE_MIKO_KIT.getStrikeDefenceIgnored?.(
+        { ...strike, combatant: { ...combatant, constellationCount: 5 } },
+        enemy,
+        party,
+        kitEffectState.effects,
+      ),
+    ).toBe(0);
+  });
+
+  test("a Tenko Thunderbolt ignores none, as the burst's strikes are not Elemental Skill DMG", () => {
+    expect.hasAssertions();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const party = createParty([YAE_MIKO_CHARACTER_ID]);
+    const combatant = { ...createYaeMikoCombatant(), constellationCount: 6 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState, party });
+    YAE_MIKO_KIT.elementalSkill.onStart?.(context);
+    YAE_MIKO_KIT.elementalBurst.onStart?.(context);
+    const thunderbolt = takeOne(
+      kitEffectState.effects.filter(
+        (effect): effect is KitSummon => effect.kind === "summon" && effect.id === undefined,
+      ),
+    );
+    const strike = {
+      attackTag: thunderbolt.attackTag,
+      body: thunderbolt.body,
+      combatant,
+      hit: takeOne(thunderbolt.hits),
+    };
+
+    expect(thunderbolt.attackTag).not.toBe(AttackTag.ElementalSkill);
+    expect(YAE_MIKO_KIT.getStrikeDefenceIgnored?.(strike, enemy, party, kitEffectState.effects)).toBe(0);
   });
 });
