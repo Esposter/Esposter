@@ -7,11 +7,15 @@ import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
 
 // The stamina each seal cuts a charged attack's cost by is 15%, 25% from Constellation 1, as gcsim (MIT) yanfei/asc.go
@@ -40,6 +44,21 @@ const SEAL_STATUS_IDS = ["yanfei-seal-0", "yanfei-seal-1", "yanfei-seal-2", "yan
 const SEAL_PYRO_BONUS_ASCENSION = 1;
 const SEAL_PYRO_BONUS_PER_SEAL = 0.05;
 const SEAL_PYRO_BONUS_SECONDS = 6;
+// Blazing Eye, as the dump's Feiyan_PermanentSkill_2 row (promote 4, param 0.8) and gcsim v2.47.2 (MIT) yanfei/asc.go
+// Give it: from Ascension 4, the first CRIT hit a charged attack of hers lands while she is on the field sets off 80% of
+// Her ATK as 1U of Pyro, Charged Attack DMG, in a circle of radius 3.5 round the enemy struck, 10 frames on. gcsim gives
+// It no poise
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/asc.go
+const BLAZING_EYE_ASCENSION = 4;
+const BLAZING_EYE_HIT: KitHit = {
+  attackTag: AttackTag.ChargedAttack,
+  element: Element.Pyro,
+  gauge: 1,
+  hitArea: { angle: 2 * Math.PI, height: 2, radius: 3.5 },
+  hitmarkSeconds: 10 / 60,
+  poiseDamage: 0,
+  talentMultiplier: 0.8,
+};
 
 const checkIsSealStatus = (effect: KitEffect, characterId: number): boolean =>
   effect.kind === "status" && effect.characterId === characterId && SEAL_STATUS_IDS.includes(effect.id);
@@ -72,8 +91,9 @@ export const YANFEI_CHARACTER_ID = 10_000_048;
 // Hits give her the full seals, three, four from Constellation 6. Her charged attack spends the seals as it starts, its
 // Hit a summon cast at the body, whose multiplier and radius the seals spent pick, with Done Deal's Pyro DMG bonus while
 // It is up, and Ascension 1's bonus set from them; each seal cuts its stamina, more from Constellation 1. Done Deal adds a
-// Seal each second while it stands. Her Ascension 4 shot, her Constellation 2 CRIT Rate and her Constellation 4 shield
-// Are not built, as no kit event reaches the enemy's health or the shield's health
+// Seal each second while it stands. From Ascension 4 the first CRIT hit of each charged attack sets off Blazing Eye round
+// The enemy struck. Her Constellation 2 CRIT Rate and her Constellation 4 shield are not built, as no kit event reaches
+// The enemy's health or the shield's health
 export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const doneDealDamageBonus = readParameter("doneDealChargedAttackDamageBonus");
   // The charged attack's hit at each count of seals spent, the count picking its reach and multiplier as she plays
@@ -82,6 +102,8 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordR
   const strikeHit: KitHitBehaviour = {
     onStrike: ({ kitEffectState }, { combatant }) => gainSeals(kitEffectState, combatant, 1),
   };
+  // The charged attacks' hits that may still set off Blazing Eye, each one until its first CRIT hit
+  const blazingEyeArmedHits = new WeakSet<KitHit>();
   const fullSealsHit: KitHitBehaviour = {
     onStrike: ({ kitEffectState }, { combatant }) =>
       setSeals(kitEffectState, combatant.characterId, getMaximumSeals(combatant)),
@@ -121,6 +143,7 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordR
           ...takeOne(chargedAttackHits, seals),
         };
         castKitSummon(kitEffectState, body, combatant, [hit]);
+        if (combatant.ascension >= BLAZING_EYE_ASCENSION) blazingEyeArmedHits.add(hit);
         removeKitEffects(kitEffectState, (effect) => checkIsSealStatus(effect, combatant.characterId));
       },
     },
@@ -132,6 +155,20 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordR
       return 1 - reduction * countSeals(kitEffectState, combatant.characterId);
     },
     normalAttacks: [{ hits: [strikeHit] }, { hits: [strikeHit] }, { hits: [strikeHit] }],
+    // A charged attack's first CRIT hit while she is on the field sets off Blazing Eye round the enemy it struck
+    onKitEvent: (event, { kitEffectState, party }, combatant) => {
+      if (
+        event.kind !== KitEventKind.DamageTaken ||
+        !event.isCritical ||
+        !blazingEyeArmedHits.has(event.hit) ||
+        getActiveCharacterId(party) !== combatant.characterId
+      )
+        return;
+      blazingEyeArmedHits.delete(event.hit);
+      castKitSummon(kitEffectState, { facing: 0, height: 0, position: event.enemy.position }, combatant, [
+        BLAZING_EYE_HIT,
+      ]);
+    },
     skill: { hits: [fullSealsHit] },
   };
 };

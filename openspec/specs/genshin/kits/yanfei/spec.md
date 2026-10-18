@@ -1,6 +1,6 @@
 ## Purpose
 
-Yanfei's kit as built, with her Scarlet Seals spent by the charged attack, Signed Edict and Done Deal, and what is left of her Ascension 4 shot and Constellations 2 and 4.
+Yanfei's kit as built, with her Scarlet Seals spent by the charged attack, Signed Edict and Done Deal, with both her passives, and what is left of her Constellations 2 and 4.
 
 ## Requirements
 
@@ -71,9 +71,20 @@ From Ascension 1, each seal spent SHALL give Yanfei 5% Pyro DMG Bonus for 6 seco
 - **WHEN** Yanfei uses her charged attack
 - **THEN** Done Deal's DMG Bonus applies to it
 
+### Requirement: A CRIT charged attack sets off Blazing Eye from Ascension 4
+
+From Ascension 4, the first CRIT hit each charged attack of Yanfei's lands while she is on the field SHALL set off 80% of her ATK as Pyro Charged Attack DMG round the enemy struck.
+
+#### Scenario: Blazing Eye on a CRIT charged attack
+
+- **GIVEN** Yanfei has reached Ascension 4 and is on the field
+- **WHEN** her charged attack lands a CRIT hit on an enemy
+- **THEN** a Pyro hit of 80% of her ATK strikes a circle of 3.5 metres round that enemy
+- **AND** a further CRIT hit of the same charged attack sets off none
+
 ### Requirement: Unbuilt effects
 
-Yanfei's Ascension 4 shot, her Constellation 2 CRIT Rate and her Constellation 4 shield SHALL have no effect in the world yet.
+Yanfei's Constellation 2 CRIT Rate and her Constellation 4 shield SHALL have no effect in the world yet.
 
 #### Scenario: Constellation 4 shield absent
 
