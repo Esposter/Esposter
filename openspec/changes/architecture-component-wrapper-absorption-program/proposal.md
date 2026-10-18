@@ -11,7 +11,7 @@ Every wrapper is replaced by a component of the app's own over the engine it wra
 - A chart, a code view, a PDF thumbnail and viewer, the dashboard grid, the flowchart's background, controls, minimap and resizer, and the schema form's bindings each become an app component.
 - Each wrapper's dependency, its config entries and the workarounds it forced are removed in the commit that removes its last import.
 - A replacement keeps every behaviour an upstream fix put in the wrapper, and fixes the wrapper's open defects it can reach.
-- **BREAKING:** none for a reader. The PDF dialog loses the evaluation watermark it shows today.
+- **BREAKING for a reader:** the PDF dialog loses the evaluation watermark it shows today. Nothing else a reader sees changes.
 
 ## Capabilities
 
