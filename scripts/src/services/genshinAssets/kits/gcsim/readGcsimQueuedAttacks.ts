@@ -13,13 +13,13 @@ import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluat
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { readGoHitbox, SINGLE_TARGET_HIT_CONSTRUCTOR } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
+import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import {
-  findClosingParenthesis,
   readGoEnclosingFunction,
   readGoMethodCallSites,
   readGoNamedFunctions,
 } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
-import { findClosingBrace, readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
+import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
@@ -102,7 +102,7 @@ const readTaskClosures = (tokens: readonly GoToken[]): TaskClosure[] => {
       checkIsGoPunctuation(tokens[funcStart + 1], "(") &&
       checkIsGoPunctuation(tokens[funcStart + 2], ")") &&
       checkIsGoPunctuation(tokens[bodyStart], "{");
-    const bodyEnd = isClosure ? findClosingBrace(tokens, bodyStart) : undefined;
+    const bodyEnd = isClosure ? findClosing(tokens, bodyStart, "{", "}") : undefined;
     if (bodyEnd === undefined || !checkIsGoPunctuation(tokens[bodyEnd + 1], ",")) continue;
     closures.push({ bodyEnd, bodyStart, delayStart: bodyEnd + 2 });
   }
@@ -173,9 +173,9 @@ const readReturnedClosures = (tokens: readonly GoToken[]): ReturnedClosure[] =>
       !checkIsGoPunctuation(tokens[position + 2], "(")
     )
       return [];
-    const parametersEnd = findClosingParenthesis(tokens, position + 2);
+    const parametersEnd = findClosing(tokens, position + 2, "(", ")");
     if (parametersEnd === undefined || !checkIsGoPunctuation(tokens[parametersEnd + 1], "{")) return [];
-    const bodyEnd = findClosingBrace(tokens, parametersEnd + 1);
+    const bodyEnd = findClosing(tokens, parametersEnd + 1, "{", "}");
     return bodyEnd === undefined ? [] : [{ bodyEnd, bodyStart: parametersEnd + 1 }];
   });
 
@@ -285,7 +285,7 @@ const readEnemyQueryLoops = (tokens: readonly GoToken[], scope: GoScope, file: s
       : position + 1;
     if (queryStart === undefined) return [];
     const query = parseGoExpression(tokens, queryStart).expression;
-    const bodyEnd = findClosingBrace(tokens, bodyStart);
+    const bodyEnd = findClosing(tokens, bodyStart, "{", "}");
     if (
       query.kind !== GoExpressionKind.Call ||
       query.callee.split(".").at(-1) !== ENEMIES_WITHIN_AREA_CALLEE ||

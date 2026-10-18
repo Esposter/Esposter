@@ -2,7 +2,7 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
-import { findClosingBrace } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
+import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 
 // A named function or method of a file, by its name and the position of that name, and the positions its body opens and
 // Closes at
@@ -13,15 +13,6 @@ export interface GoNamedFunction {
   nameIndex: number;
   parameters: string[];
 }
-
-// The position of the `)` closing the `(` at a position, else undefined
-export const findClosingParenthesis = (tokens: readonly GoToken[], openingPosition: number): number | undefined => {
-  let depth = 0;
-  for (let position = openingPosition; position < tokens.length; position++)
-    if (checkIsGoPunctuation(tokens[position], "(")) depth++;
-    else if (checkIsGoPunctuation(tokens[position], ")") && --depth === 0) return position;
-  return undefined;
-};
 
 // The names a parameter list declares, `(a, b int, c string)` giving `a`, `b` and `c`: a name with no type of its own takes
 // The type of the group after it
@@ -54,17 +45,17 @@ const readParameterNames = (tokens: readonly GoToken[], openingPosition: number,
 const readNamedFunction = (tokens: readonly GoToken[], funcPosition: number): GoNamedFunction | undefined => {
   let namePosition = funcPosition + 1;
   if (checkIsGoPunctuation(tokens[namePosition], "(")) {
-    const receiverEnd = findClosingParenthesis(tokens, namePosition);
+    const receiverEnd = findClosing(tokens, namePosition, "(", ")");
     if (receiverEnd === undefined) return undefined;
     namePosition = receiverEnd + 1;
   }
   const name = tokens[namePosition];
   if (name?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[namePosition + 1], "(")) return undefined;
-  const parametersEnd = findClosingParenthesis(tokens, namePosition + 1);
+  const parametersEnd = findClosing(tokens, namePosition + 1, "(", ")");
   if (parametersEnd === undefined) return undefined;
   let bodyStart = parametersEnd + 1;
   while (tokens[bodyStart] !== undefined && !checkIsGoPunctuation(tokens[bodyStart], "{")) bodyStart++;
-  const bodyEnd = findClosingBrace(tokens, bodyStart);
+  const bodyEnd = findClosing(tokens, bodyStart, "{", "}");
   return bodyEnd === undefined
     ? undefined
     : {

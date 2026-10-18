@@ -5,6 +5,7 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
+import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 
 // The most iterations a constant loop may take before its calls are read once, as a loop too long to expand
@@ -19,15 +20,6 @@ export interface ConstantLoop {
   bodyStart: number;
   iterations: Map<string, number>[];
 }
-
-// The position of the brace closing the one opening at the position, else Undefined
-export const findClosingBrace = (tokens: readonly GoToken[], openingPosition: number): number | undefined => {
-  let depth = 0;
-  for (let position = openingPosition; position < tokens.length; position++)
-    if (checkIsGoPunctuation(tokens[position], "{")) depth++;
-    else if (checkIsGoPunctuation(tokens[position], "}") && --depth === 0) return position;
-  return undefined;
-};
 
 // The `for` loop opening at the position when it ranges over a constant count, `for i := range 19 {` or `for range 2 {`,
 // Its values the counts from zero, and its body's braces, else Undefined
@@ -48,7 +40,7 @@ const readRangeLoop = (
     boundValue > MAX_LOOP_ITERATIONS
   )
     return undefined;
-  const bodyEnd = findClosingBrace(tokens, bound.end);
+  const bodyEnd = findClosing(tokens, bound.end, "{", "}");
   return bodyEnd === undefined
     ? undefined
     : {
@@ -87,7 +79,7 @@ const readSliceRangeLoop = (
     !slice.every((element) => typeof element === "number")
   )
     return undefined;
-  const bodyEnd = findClosingBrace(tokens, bodyStart);
+  const bodyEnd = findClosing(tokens, bodyStart, "{", "}");
   return bodyEnd === undefined
     ? undefined
     : {
@@ -151,7 +143,7 @@ const readConstantLoop = (
     if (values.length === MAX_LOOP_ITERATIONS) return undefined;
     values.push(value);
   }
-  const bodyEnd = findClosingBrace(tokens, stepEnd);
+  const bodyEnd = findClosing(tokens, stepEnd, "{", "}");
   return bodyEnd === undefined
     ? undefined
     : { bodyEnd, bodyStart: stepEnd, iterations: values.map((value) => new Map([[variable.text, value]])) };

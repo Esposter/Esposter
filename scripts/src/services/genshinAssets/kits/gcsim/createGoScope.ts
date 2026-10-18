@@ -9,6 +9,7 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
+import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import {
   readGoEnclosingFunction,
@@ -28,15 +29,6 @@ interface GoBlock {
 // None at all in the function
 type GoAssignment = { kind: "conditional" } | { kind: "dominating"; valueStart: number } | { kind: "none" };
 
-// The position of the bracket closing the one opening at the position, else the end of the tokens
-const findClosing = (tokens: readonly GoToken[], openingPosition: number, opening: string, closing: string): number => {
-  let depth = 0;
-  for (let position = openingPosition; position < tokens.length; position++)
-    if (checkIsGoPunctuation(tokens[position], opening)) depth++;
-    else if (checkIsGoPunctuation(tokens[position], closing) && --depth === 0) return position;
-  return tokens.length;
-};
-
 const checkIsCaseClause = (token: GoToken | undefined): boolean =>
   token?.kind === GoTokenKind.Identifier && (token.text === "case" || token.text === "default");
 
@@ -48,7 +40,7 @@ const findBlock = (tokens: readonly GoToken[], position: number): GoBlock => {
     const token = tokens[previous];
     if (checkIsGoPunctuation(token, "}")) depth++;
     else if (checkIsGoPunctuation(token, "{")) {
-      if (depth === 0) return { end: findClosing(tokens, previous, "{", "}"), start: previous };
+      if (depth === 0) return { end: findClosing(tokens, previous, "{", "}") ?? tokens.length, start: previous };
       depth--;
     } else if (depth === 0 && checkIsCaseClause(token)) {
       let end = tokens.length;
@@ -83,9 +75,9 @@ const readOtherClosures = (tokens: readonly GoToken[], scope: GoNamedFunction, p
       !checkIsGoPunctuation(tokens[position + 1], "(")
     )
       continue;
-    let start = findClosing(tokens, position + 1, "(", ")") + 1;
+    let start = (findClosing(tokens, position + 1, "(", ")") ?? tokens.length) + 1;
     while (start < tokens.length && !checkIsGoPunctuation(tokens[start], "{")) start++;
-    const end = findClosing(tokens, start, "{", "}");
+    const end = findClosing(tokens, start, "{", "}") ?? tokens.length;
     if (!(start < position && position < end)) blocks.push({ end, start });
   }
   return blocks;
