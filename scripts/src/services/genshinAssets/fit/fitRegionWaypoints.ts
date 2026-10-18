@@ -1,6 +1,5 @@
 import { toWaypointLandmarks } from "#src/services/genshinAssets/fit/toWaypointLandmarks";
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
-import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { CATALOGUE_PATH, WAYPOINT_REGIONS } from "#src/services/genshinAssets/shared/constants";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
@@ -15,9 +14,8 @@ import { readFile } from "node:fs/promises";
 // Replacing the waypoints an earlier run wrote. Each is paired with the scene's transport point it stands at, and only the
 // Official map points of the region's own map area are paired. A dry run counts them and writes nothing
 export const fitRegionWaypoints = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
-  const [{ origin, regionFiles }, { points, transform }, getWorldHeight, transportPoints] = await Promise.all([
+  const [{ origin, points, regionFiles, transform }, getWorldHeight, transportPoints] = await Promise.all([
     readFittedRegions(),
-    readFittedMapPoints(),
     readWorldGroundHeight(),
     readSceneTransportPoints(),
   ]);

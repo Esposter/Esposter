@@ -1,6 +1,5 @@
 import { toOutcropPlaces } from "#src/services/genshinAssets/fit/toOutcropPlaces";
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
-import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { OUTCROP_REGIONS } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
@@ -9,10 +8,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The Ley Line Blossoms of the official map in each region of OUTCROP_REGIONS, written into its region's data as its outcrop
 // Places, replacing the places an earlier run wrote. A dry run counts them and writes nothing
 export const fitRegionOutcrops = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
-  const [{ origin, regionFiles }, { points, transform }] = await Promise.all([
-    readFittedRegions(),
-    readFittedMapPoints(),
-  ]);
+  const { origin, points, regionFiles, transform } = await readFittedRegions();
   const reports = await Promise.all(
     regionFiles
       .filter(({ region }) => OUTCROP_REGIONS.includes(region))

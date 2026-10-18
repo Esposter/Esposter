@@ -1,3 +1,5 @@
+import type { InteractiveMapPoint } from "#src/models/genshinAssets/points/InteractiveMapPoint";
+import type { SimilarityTransform } from "#src/models/genshinAssets/points/SimilarityTransform";
 import type { RegionDataFile } from "#src/models/genshinAssets/residents/RegionDataFile";
 import type { RegionMapPoint } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 
@@ -12,11 +14,14 @@ import { join } from "node:path";
 
 // The regions the fit placed, each with its data file's path under the world package's data and the file as it holds it,
 // And the official map's ground points in those regions carried into the game's axes, which the places filed into a region
-// Are classified against. The origin is the one the places are carried round
+// Are classified against. The origin is the one the places are carried round, and the points and transform are the fit's
+// Own, which the outcrops and waypoints are placed from
 export const readFittedRegions = async (): Promise<{
   origin: [number, number, number];
+  points: InteractiveMapPoint[];
   regionFiles: { data: RegionDataFile; file: string; region: string }[];
   regionMapPoints: RegionMapPoint[];
+  transform: SimilarityTransform;
 }> => {
   const [origin, fittedMapPoints] = await Promise.all([
     readWorldOrigin(DerivedAssetComponent.Windrise),
@@ -30,5 +35,5 @@ export const readFittedRegions = async (): Promise<{
       return { data, file, region };
     }),
   );
-  return { origin, regionFiles, regionMapPoints };
+  return { origin, points: fittedMapPoints.points, regionFiles, regionMapPoints, transform: fittedMapPoints.transform };
 };

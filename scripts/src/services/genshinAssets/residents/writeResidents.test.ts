@@ -31,8 +31,10 @@ describe(writeResidents, () => {
     vi.clearAllMocks();
     vi.mocked(readFittedRegions).mockResolvedValue({
       origin: [0, 0, 0],
+      points: [],
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
       regionMapPoints: [],
+      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
     });
     vi.mocked(readPublishedGameData).mockResolvedValue({ buildings: {}, groups: {} } satisfies SceneGroups);
     vi.mocked(readDialogSpeakers).mockReturnValue([]);
