@@ -73,7 +73,7 @@ packages/genshin-world/src/models/mail/MailboxState.ts        ← the bag, the w
 packages/genshin-world/src/services/mail/claimMail.ts        ← one held mail's items into the bag and wallet, once
 packages/genshin-world/src/services/mail/claimAllMails.ts    ← every held mail claimed in order, the ones the bag cannot take left unclaimed
 packages/genshin-world/src/services/mail/deleteReadMails.ts  ← the held mails without the read ones that have nothing left to claim, and the pinned ones
-packages/genshin-world/src/services/mail/isGiftBoxed.ts      ← whether a held mail is in the Gift Mail Box: starred, or a birthday mail claimed
+packages/genshin-world/src/services/mail/isGiftBoxed.ts      ← whether a held mail is in the Gift Mail Box: a claimed birthday mail, or one the mail table flags
 packages/genshin-world/src/services/mail/removeExpiredMails.ts ← the mailbox without the mails past their expiry
 packages/genshin-world/src/services/mail/deliverBirthdayMail.ts ← the Traveler's birthday mail added when due
 scripts/src/services/genshinAssets/mail/buildMailPublication.ts ← the mail table as one entry per mail, and the birthday rows
