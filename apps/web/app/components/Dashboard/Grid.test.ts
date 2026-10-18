@@ -1,25 +1,49 @@
 // @vitest-environment nuxt
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import DashboardGrid from "@/components/Dashboard/Grid.vue";
+import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
+import { getCellPosition } from "@/services/dashboard/grid/getCellPosition";
+import { getCellSize } from "@/services/dashboard/grid/getCellSize";
+import { getColumnPitch } from "@/services/dashboard/grid/getColumnPitch";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe("dashboardGrid", () => {
-  // A 970 pixel grid of 12 columns leaves each column 70 pixels wide, so a cell is 80 pixels across and 50 down
   const columnNumber = 12;
   const gridWidth = 970;
-  const cellPitch = 80;
+  const cellPitch = getColumnPitch(gridWidth, columnNumber);
   const pointerId = 1;
   const rowHeight = 40;
+  const rowPitch = rowHeight + DASHBOARD_GRID_MARGIN;
 
   beforeEach(() => {
     vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(gridWidth);
+    // A DOM without layout never reports the grid's width, so the observer reports the width the test lays it out at
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        readonly #callback: ResizeObserverCallback;
+
+        constructor(callback: ResizeObserverCallback) {
+          this.#callback = callback;
+        }
+
+        disconnect() {}
+        observe() {
+          const entries = [{ contentRect: { height: 0, width: gridWidth } }] as ResizeObserverEntry[];
+          queueMicrotask(() => this.#callback(entries, this));
+        }
+        unobserve() {}
+      },
+    );
   });
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
-  test("A short drag is a click", async () => {
+  test("a short drag is a click", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(DashboardGrid, {
@@ -67,6 +91,74 @@ describe("dashboardGrid", () => {
     await grid.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
 
     expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 2, id: visual.id, w: 2, x: 2, y: 0 }]]]);
+  });
+
+  test("a second pointer's press waits for the first pointer's drag to end", async () => {
+    expect.hasAssertions();
+
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: {
+        columnNumber,
+        isEditable: true,
+        rowHeight,
+        visuals: [new Visual({ h: 2, w: 2, x: 0, y: 0 }), new Visual({ h: 2, w: 2, x: 4, y: 0 })],
+      },
+    });
+    const tiles = wrapper.findAll(".dashboard-grid-tile");
+    await takeOne(tiles, 0).trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await takeOne(tiles, 0).trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
+    await takeOne(tiles, 1).trigger("pointerdown", { clientX: cellPitch * 4, clientY: 0, pointerId: pointerId + 1 });
+    await takeOne(tiles, 1).trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId: pointerId + 1 });
+
+    expect(wrapper.find(".dashboard-grid-placeholder").exists()).toBe(true);
+    expect(wrapper.emitted("commit")).toBeUndefined();
+  });
+
+  test("a text selection elsewhere on the page does not stop a press from starting a drag", async () => {
+    expect.hasAssertions();
+
+    const text = document.createTextNode("a");
+    document.body.append(text);
+    onTestFinished(() => {
+      text.remove();
+      window.getSelection()?.removeAllRanges();
+    });
+    window.getSelection()?.selectAllChildren(document.body);
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { columnNumber, isEditable: true, rowHeight, visuals: [new Visual({ h: 2, w: 2, x: 0, y: 0 })] },
+    });
+    const tile = wrapper.get(".dashboard-grid-tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
+
+    expect(wrapper.find(".dashboard-grid-placeholder").exists()).toBe(true);
+  });
+
+  test("opening a dashboard draws each visual at its saved cell and size", async () => {
+    expect.hasAssertions();
+
+    // A full-width visual above the target keeps it from compacting up into the first row
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: {
+        columnNumber,
+        rowHeight,
+        visuals: [new Visual({ h: 1, w: columnNumber, x: 0, y: 0 }), new Visual({ h: 2, w: 2, x: 3, y: 1 })],
+      },
+    });
+    const tile = takeOne(wrapper.findAll(".dashboard-grid-tile"), 1);
+    assert(tile.element instanceof HTMLElement);
+
+    expect({
+      height: tile.element.style.height,
+      left: tile.element.style.left,
+      top: tile.element.style.top,
+      width: tile.element.style.width,
+    }).toStrictEqual({
+      height: `${getCellSize(2, rowPitch)}px`,
+      left: `${getCellPosition(3, cellPitch)}px`,
+      top: `${getCellPosition(1, rowPitch)}px`,
+      width: `${getCellSize(2, cellPitch)}px`,
+    });
   });
 
   test("#54 Scrolling a published dashboard on a phone never captures the touch", async () => {
