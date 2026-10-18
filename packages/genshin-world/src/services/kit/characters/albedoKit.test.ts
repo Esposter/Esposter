@@ -176,6 +176,15 @@ describe(createAlbedoKitBehaviour, () => {
     expect(kitEffectState.effects).toHaveLength(1);
   });
 
+  test("a Solar Isotoma whose seconds have run out casts no Fatal Blossoms", () => {
+    expect.hasAssertions();
+    const summons = castEffects(ALBEDO_KIT.elementalBurst, [
+      { ...createStandingSolarIsotoma(), secondsRemaining: 0 },
+    ]).filter(({ kind }) => kind === "summon");
+
+    expect(summons).toHaveLength(1);
+  });
+
   test("the Fatal Blossoms land seven times from 145 frames, every 5 frames, while the Solar Isotoma stands", () => {
     expect.hasAssertions();
     const blossomSummon = castEffects(ALBEDO_KIT.elementalBurst, [createStandingSolarIsotoma()]).findLast(
@@ -328,6 +337,19 @@ describe(createAlbedoKitBehaviour, () => {
     cast();
     hold(0, 0.8);
     expect(getPlungingBonus()).toBeCloseTo(0.3);
+  });
+
+  test("constellation 4 raises nothing from a Solar Isotoma whose seconds have run out", () => {
+    expect.hasAssertions();
+    const combatant = createAlbedoCombatant(0, 4);
+    const kitEffectState: KitEffectState = { effects: [{ ...createStandingSolarIsotoma(), secondsRemaining: 0 }] };
+    ALBEDO_KIT.onStep?.(
+      createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) }),
+      combatant,
+      1 / 60,
+    );
+
+    expect(kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
   });
 
   test("constellation 4 checks the field every 0.3 seconds from the Solar Isotoma's spawn, so the bonus waits for the first check", () => {

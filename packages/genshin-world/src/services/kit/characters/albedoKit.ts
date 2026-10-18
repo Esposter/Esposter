@@ -139,7 +139,9 @@ export const createAlbedoKitBehaviour = ({
             ? fatalBlossoms
             : fatalBlossoms.map((hit) => withFatalReckoningBonus(hit, fatalReckoningBonus));
         const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
-        if (solarIsotoma) castKitSummon(kitEffectState, solarIsotoma.body, solarIsotoma.combatant, blossoms);
+        // A field whose seconds have run out casts no blossoms, though the step has not dropped it yet
+        if (solarIsotoma && solarIsotoma.secondsRemaining > 0)
+          castKitSummon(kitEffectState, solarIsotoma.body, solarIsotoma.combatant, blossoms);
         if (combatant.ascension < TECTONIC_TIDE_ASCENSION) return;
         buffKitTeam(kitEffectState, party, {
           amount: TECTONIC_TIDE_ELEMENTAL_MASTERY,
@@ -196,8 +198,10 @@ export const createAlbedoKitBehaviour = ({
       )
         return;
       const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
+      // A field whose seconds have run out raises nothing, though the step has not dropped it yet
       if (
         !solarIsotoma ||
+        solarIsotoma.secondsRemaining <= 0 ||
         !checkIsInKitField({ centre: solarIsotoma.body.position, radius: solarIsotomaRadius }, body.position)
       )
         return;
