@@ -41,14 +41,39 @@ export const WEEKLY_BOSS_COMPANIONSHIP_EXP: number[] = [55, 60, 60, 65, 70, 70];
 export const WEEKLY_BOSS_ADVENTURE_EXP = 300;
 // Dvalin's Plume, Claw and Sigh, the talent materials a weekly boss's claim pays one of, which the wiki names as its exclusives
 export const WEEKLY_BOSS_TALENT_ITEM_IDS: number[] = [113003, 113004, 113005];
-// The talent count each row pays: its guaranteed count and the chance, as a fraction, of one more. Rows I to III pay none
+// The talent count each row pays: its guaranteed count and the chance, as a fraction, of one more. The wiki's tab pays none at
+// Rows I to III, but the game's own reward preview lists the three talent materials from III, so the preview decides that they
+// Drop there, and III's chance is provisional at the rate VI's extra item carries until the wiki gives one
 export const WEEKLY_BOSS_TALENT_DROPS: { chance: number; count: number }[] = [
   { chance: 0, count: 0 },
   { chance: 0, count: 0 },
-  { chance: 0, count: 0 },
+  { chance: 0.1, count: 0 },
   { chance: 0, count: 1 },
   { chance: 0.55, count: 1 },
   { chance: 0.1, count: 2 },
+];
+// The Northlander billets a weekly boss's claim pays one of, one per weapon class, and the chance, as a fraction, of one, from
+// The same tab; the reward preview lists all five
+export const WEEKLY_BOSS_BILLET_ITEM_IDS: number[] = [101101, 101102, 101103, 101104, 101105];
+export const WEEKLY_BOSS_BILLET_CHANCE = 0.12;
+// The average count of each star tier's Ascension Gem a claim pays, at each row, from the same tab: the two-star Sliver, the
+// Three-star Fragment, the four-star Chunk and the five-star Gemstone, zero where a row pays none. A claim's count of a tier is
+// The average rounded at random up or down, which keeps its mean
+export const WEEKLY_BOSS_GEM_AVERAGES: number[][] = [
+  [2.1416, 1.5913, 0, 0],
+  [2.4803, 1.6813, 0, 0],
+  [2.8181, 1.7717, 0.1881, 0],
+  [3.157, 1.8617, 0.2106, 0],
+  [3.4963, 1.958, 0.2325, 0.0233],
+  [3.8343, 2.423, 0.2556, 0.025],
+];
+// The gem of each star tier from each of the three families the wiki's page names, Varunada Lazurite, Vajrada Amethyst and
+// Vayuda Turquoise, one of which a claim's gem of that tier is, provisional as the wiki gives no split between them
+export const WEEKLY_BOSS_GEM_ITEM_IDS: number[][] = [
+  [104121, 104141, 104151],
+  [104122, 104142, 104152],
+  [104123, 104143, 104153],
+  [104124, 104144, 104154],
 ];
 // Dream Solvent, the other drop a weekly boss's claim pays, and the chance, as a fraction, of one, from the same tab
 export const WEEKLY_BOSS_DREAM_SOLVENT_ITEM_ID = 113021;
