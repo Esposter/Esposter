@@ -9,8 +9,8 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const wielder: Combatant = createWielderCombatant();
-// Footprint of the Rainbow at its first rank: sixteen per cent DEF for fifteen seconds after an Elemental Skill
-const pactOfFlowingSpringsPassiveModule = createPactOfFlowingSpringsPassiveModule([0.16, 15, 0, 0]);
+// A synthetic DEF raise of half for two seconds after an Elemental Skill, not the weapon's row
+const pactOfFlowingSpringsPassiveModule = createPactOfFlowingSpringsPassiveModule([0.5, 2, 0, 0]);
 
 describe(createPactOfFlowingSpringsPassiveModule, () => {
   test("the wielder's Elemental Skill raises its DEF by the rank's percentage for the rank's seconds", () => {
@@ -25,11 +25,11 @@ describe(createPactOfFlowingSpringsPassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 0.16,
+        amount: 0.5,
         attribute: Attribute.DefensePercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 15,
+        secondsRemaining: 2,
         source: "pactOfFlowingSprings",
       },
     ]);

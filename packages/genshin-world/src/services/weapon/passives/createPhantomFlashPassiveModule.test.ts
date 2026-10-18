@@ -17,8 +17,9 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Snare Hook at its first rank: sixty Elemental Mastery for twelve seconds after a reaction, sixty more under Ascendant Gleam
-const phantomFlashPassiveModule = createPhantomFlashPassiveModule([60, 12, 60, 0]);
+// Synthetic params, not the weapon's row: five Elemental Mastery for two seconds after a reaction, three more under
+// Ascendant Gleam
+const phantomFlashPassiveModule = createPhantomFlashPassiveModule([5, 2, 3, 0]);
 
 describe(createPhantomFlashPassiveModule, () => {
   test("a reaction the wielder causes raises its Elemental Mastery by the rank's amount for the rank's seconds", () => {
@@ -38,11 +39,11 @@ describe(createPhantomFlashPassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 60,
+        amount: 5,
         attribute: Attribute.ElementalMastery,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 2,
         source: "phantomFlash",
       },
     ]);

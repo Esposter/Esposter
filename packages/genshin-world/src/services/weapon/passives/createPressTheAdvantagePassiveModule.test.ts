@@ -15,8 +15,8 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Press the Advantage at its first rank: twelve per cent ATK for thirty seconds a stack
-const pressTheAdvantagePassiveModule = createPressTheAdvantagePassiveModule([0.12, 30]);
+// A synthetic fifth ATK for four seconds a stack, not the weapon's row
+const pressTheAdvantagePassiveModule = createPressTheAdvantagePassiveModule([0.2, 4]);
 const createDefeat = (striker: Combatant | undefined) => ({
   enemy,
   kind: KitEventKind.EnemyDefeated as const,
@@ -39,7 +39,7 @@ describe(createPressTheAdvantagePassiveModule, () => {
       context.kitEffectState.effects
         .filter((effect) => effect.kind === "buff")
         .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
-    ).toStrictEqual([{ amount: 0.12, attribute: Attribute.AttackPercent, secondsRemaining: 30 }]);
+    ).toStrictEqual([{ amount: 0.2, attribute: Attribute.AttackPercent, secondsRemaining: 4 }]);
   });
 
   test("a fourth defeat with three stacks live adds none", () => {
@@ -49,7 +49,7 @@ describe(createPressTheAdvantagePassiveModule, () => {
     for (let defeat = 0; defeat < 4; defeat++)
       pressTheAdvantagePassiveModule.onKitEvent?.(createDefeat(wielder), context, wielder);
 
-    expect(getStackSeconds(context)).toStrictEqual([30, 30, 30]);
+    expect(getStackSeconds(context)).toStrictEqual([4, 4, 4]);
   });
 
   test("a stack ends on its own timer and frees its place for the next defeat", () => {
@@ -57,16 +57,16 @@ describe(createPressTheAdvantagePassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     pressTheAdvantagePassiveModule.onKitEvent?.(createDefeat(wielder), context, wielder);
-    stepKitSeconds(context, 10);
+    stepKitSeconds(context, 2);
     pressTheAdvantagePassiveModule.onKitEvent?.(createDefeat(wielder), context, wielder);
     pressTheAdvantagePassiveModule.onKitEvent?.(createDefeat(wielder), context, wielder);
-    stepKitSeconds(context, 21);
+    stepKitSeconds(context, 3);
 
-    expect(getStackSeconds(context)).toStrictEqual([9, 9]);
+    expect(getStackSeconds(context)).toStrictEqual([1, 1]);
 
     pressTheAdvantagePassiveModule.onKitEvent?.(createDefeat(wielder), context, wielder);
 
-    expect(getStackSeconds(context)).toStrictEqual([9, 9, 30]);
+    expect(getStackSeconds(context)).toStrictEqual([1, 1, 4]);
   });
 
   test("a defeat with no striker or by another striker adds nothing", () => {

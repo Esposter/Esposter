@@ -17,8 +17,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Precise at its first rank, which reads its DMG percentage from the affix row's first number
-const precisePassiveModule = createPrecisePassiveModule([0.24]);
+// A synthetic DMG percentage of a fifth, not the weapon's row
+const precisePassiveModule = createPrecisePassiveModule([0.2]);
 const createStrike = (weakPoint: boolean): KitStrike => ({
   attackTag: AttackTag.ChargedAttack,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -32,7 +32,7 @@ describe(createPrecisePassiveModule, () => {
 
     expect(
       precisePassiveModule.getStrikeDamageBonus?.(createStrike(true), enemy, createParty([TRAVELER_CHARACTER_ID]), []),
-    ).toBeCloseTo(0.24);
+    ).toBeCloseTo(0.2);
   });
 
   test("a strike off a weak point is not raised", () => {
