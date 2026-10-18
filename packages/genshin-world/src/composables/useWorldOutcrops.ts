@@ -7,6 +7,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Outcrop } from "#src/models/leyLine/Outcrop";
 import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
+import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
@@ -15,16 +16,21 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { OutcropEvent } from "#src/models/leyLine/OutcropEvent";
 import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
+import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { advanceOutcrop } from "#src/services/leyLine/advanceOutcrop";
 import { advanceOutcropFight } from "#src/services/leyLine/advanceOutcropFight";
+import { checkIsOutcropDayCurrent } from "#src/services/leyLine/checkIsOutcropDayCurrent";
 import { computeDailyOutcrops } from "#src/services/leyLine/computeDailyOutcrops";
 import { computeOutcropClaimRewards } from "#src/services/leyLine/computeOutcropClaimRewards";
 import { computeOutcropInteractables } from "#src/services/leyLine/computeOutcropInteractables";
-import { OUTCROP_TOUCH_RADIUS } from "#src/services/leyLine/constants";
+import { OUTCROP_REGION_ID, OUTCROP_TOUCH_RADIUS } from "#src/services/leyLine/constants";
 import { createOutcropCamp } from "#src/services/leyLine/createOutcropCamp";
+import { readOutcropRegion } from "#src/services/leyLine/readOutcropRegion";
+import { RegionIdCityIdMap } from "#src/services/leyLine/RegionIdCityIdMap";
 import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
+import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The ley line outcrops standing in the region: a daily reset draws each open kind's blossom to a fitted place. A
@@ -39,13 +45,15 @@ export const useWorldOutcrops = ({
   completedMainQuestIds,
   enemyMap,
   events,
+  gameDataBaseUrl,
   gameText,
   getGroundHeight,
   inventory,
-  kindRules,
   materialDataMap,
   nameText,
   placements,
+  rank,
+  regionStatueProgressMap,
   setInventory,
   setWallet,
   wallet,
@@ -56,18 +64,32 @@ export const useWorldOutcrops = ({
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyMap: ReadonlyMap<string, Enemy>;
   events: WorldEvents;
+  gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
   inventory: Ref<Inventory>;
-  kindRules: Readonly<Ref<OutcropKindRule[]>>;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
   placements: Readonly<Ref<OutcropPlacement[]>>;
+  rank: Readonly<Ref<number>>;
+  regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, OfferingProgressSave>>>;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
 }) => {
   const outcrops = shallowRef<Outcrop[]>([]);
+  // The region's kinds, read by the key its publish wrote. A region no publish wrote opens no kind
+  const kindRules = shallowRef<OutcropKindRule[]>([]);
+  const regionKey: `leyLine/regions/${string}` = `leyLine/regions/${RegionIdCityIdMap[OUTCROP_REGION_ID]}`;
+  if (checkIsGameDataKey(regionKey))
+    getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
+      ({ kinds }) => {
+        kindRules.value = kinds;
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
   // The camp each touched outcrop spawned, by its place, which is in the world only while its outcrop is fighting
   const fightCamps = shallowRef<ReadonlyMap<number, EnemyCamp>>(new Map());
   const outcropCamps = computed(() =>
@@ -95,10 +117,18 @@ export const useWorldOutcrops = ({
         : outcrop,
     );
   };
-  // The daily reset starts every outcrop over, and drops the fights of the camps the last day spawned
-  const resetOutcrops = (adventureRank: number, unlockedCityIds: number[], random: () => number) => {
-    outcrops.value = computeDailyOutcrops(kindRules.value, placements.value, adventureRank, unlockedCityIds, random);
+  // The day's outcrops are drawn once the region's kinds and places are both loaded, and drawn again at the first daily
+  // Reset after the draw. A draw starts every outcrop over, and drops the fights of the camps the last day spawned
+  let drawnAt: Temporal.Instant | undefined;
+  const drawDayOutcrops = (now: Temporal.Instant, random: () => number) => {
+    if (kindRules.value.length === 0 || placements.value.length === 0) return;
+    if (drawnAt !== undefined && checkIsOutcropDayCurrent(drawnAt, now)) return;
+    const unlockedCityIds = [...regionStatueProgressMap.value.keys()].flatMap(
+      (regionId) => RegionIdCityIdMap[regionId] ?? [],
+    );
+    outcrops.value = computeDailyOutcrops(kindRules.value, placements.value, rank.value, unlockedCityIds, random);
     fightCamps.value = new Map();
+    drawnAt = now;
   };
   // A touch starts the fight of each waiting outcrop within reach of the point, and spawns its camp at its place
   const touchOutcropsNear = (x: number, z: number, random: () => number) => {
@@ -169,11 +199,12 @@ export const useWorldOutcrops = ({
     chooseOutcropClaim,
     claimPrompt,
     closeOutcropClaim,
+    drawDayOutcrops,
+    kindRules,
     openOutcropClaim,
     outcropCamps,
     outcropInteractables,
     outcrops,
-    resetOutcrops,
     touchOutcropsNear,
   };
 };

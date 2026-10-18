@@ -6,7 +6,6 @@ import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
-import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
@@ -622,14 +621,14 @@ const crafting = computed(() =>
   ),
 );
 // The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
-// With resin. No kind rule is hosted yet, so none is drawn until the outcrop region's data is read
-const outcropKindRules = ref<OutcropKindRule[]>([]);
+// With resin, and each day's are drawn at the daily reset
 // The places of the outcrop region, which its loaded data holds, and none while the region is not loaded
 const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
 const {
   chooseOutcropClaim,
   claimPrompt,
   closeOutcropClaim,
+  drawDayOutcrops,
   openOutcropClaim,
   outcropCamps,
   outcropInteractables,
@@ -641,13 +640,15 @@ const {
   completedMainQuestIds,
   enemyMap: kitContext.enemyMap,
   events,
+  gameDataBaseUrl,
   gameText,
   getGroundHeight,
   inventory,
-  kindRules: outcropKindRules,
   materialDataMap,
   nameText,
   placements: outcropPlaces,
+  rank,
+  regionStatueProgressMap,
   setInventory,
   setWallet,
   wallet,
@@ -853,6 +854,7 @@ defineExpose({ jumpTo, readCameraPosition });
             );
           else elementalSight.isOn = false;
           if (!isPaused && screenKind === ScreenKind.World) stepWorldPuzzles(context.delta, characterBody.position);
+          if (!isPaused && screenKind === ScreenKind.World) drawDayOutcrops(getWorldNow(), kitContext.random);
           if (!isPaused && screenKind === ScreenKind.World)
             touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)
