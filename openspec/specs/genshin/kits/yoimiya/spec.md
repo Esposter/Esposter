@@ -1,6 +1,6 @@
 ## Purpose
 
-Yoimiya's kit as built, with Niwabi Fire-Dance's Blazing Arrows and Ryuukin Saxifrage's initial hit with Aurous Blaze and its explosion, and her passives and constellations left unbuilt.
+Yoimiya's kit as built, with Niwabi Fire-Dance's Blazing Arrows and Ryuukin Saxifrage's initial hit with Aurous Blaze and its explosion, her Constellation 1 extension and defeat ATK, and her passives and Constellations 2, 4 and 6 left unbuilt.
 
 ## Requirements
 
@@ -74,11 +74,33 @@ Yoimiya's plunges SHALL land 0.4 seconds after they start, provisionally.
 - **WHEN** Yoimiya plunges
 - **THEN** the plunge lands 0.4 seconds after it starts
 
+### Requirement: Constellation 1 extends Aurous Blaze and raises ATK on a defeat
+
+From Constellation 1, Aurous Blaze SHALL last 4 seconds longer, and defeating an enemy it marks within its duration SHALL raise Yoimiya's ATK by 20% for 20 seconds.
+
+#### Scenario: Constellation 1 lengthens the mark
+
+- **GIVEN** Yoimiya has Constellation 1
+- **WHEN** Ryuukin Saxifrage marks an enemy with Aurous Blaze
+- **THEN** the mark lasts 14 seconds
+
+#### Scenario: A defeat within the mark raises ATK
+
+- **GIVEN** Yoimiya has Constellation 1
+- **WHEN** a hit by any party member defeats an enemy marked with Aurous Blaze
+- **THEN** Yoimiya's ATK is raised by 20% for 20 seconds
+
+#### Scenario: Constellation 0 changes nothing
+
+- **GIVEN** Yoimiya has no constellation
+- **WHEN** Ryuukin Saxifrage marks an enemy, and a hit then defeats it
+- **THEN** the mark lasts 10 seconds and no ATK is raised
+
 ### Requirement: Unbuilt passives and constellations
 
-Yoimiya's passives and constellations SHALL have no effect in the world yet.
+Yoimiya's passives and Constellations 2, 4 and 6 SHALL have no effect in the world yet.
 
-#### Scenario: Constellation has no effect
+#### Scenario: Constellation 2, 4 or 6 has no effect
 
-- **WHEN** Yoimiya holds a constellation
-- **THEN** no constellation effect is applied
+- **WHEN** Yoimiya holds Constellation 2, 4 or 6
+- **THEN** no effect of that constellation is applied
