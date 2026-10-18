@@ -75,9 +75,9 @@ Deleting or pinning a message SHALL ask the reader to confirm before it happens.
 - **WHEN** the confirmation appears
 - **THEN** the message is not pinned until the reader confirms
 
-### Requirement: Each kind of message renders in one of two shared layouts
+### Requirement: Each kind of message renders in a shared layout or, for a poll, its own card
 
-Each kind of message SHALL render in one of two shared layouts, an authored body or a system line with an icon and a timestamp, or, for a poll, in its own card.
+Each kind of message SHALL render in a shared layout, an authored body or a system line with an icon and a timestamp, or, for a poll, in its own card.
 
 #### Scenario: Authored messages share one body
 
