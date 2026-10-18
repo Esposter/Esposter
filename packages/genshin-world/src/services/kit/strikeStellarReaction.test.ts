@@ -18,6 +18,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -43,6 +44,20 @@ describe(strikeStellarReaction, () => {
     level: LEVEL,
   };
   const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
+  // The damage of a Stellar Swirl the creator makes on a fresh enemy, its one contributor
+  const damageOfStellarSwirl = (creator: Combatant): number => {
+    const enemy = createSturdyEnemy();
+    strikeStellarReaction(
+      enemy,
+      Element.Anemo,
+      STELLAR_SWIRL_ANEMO_COEFFICIENT,
+      new Set([TRAVELER_CHARACTER_ID]),
+      creator,
+      createKitTestContext(creator, { enemyTables }),
+      StellarReactionType.StellarSwirl,
+    );
+    return enemy.maxHealth - enemy.health;
+  };
 
   test("a Stellar Swirl's Anemo instance has a coefficient of 0.75", () => {
     expect.hasAssertions();
@@ -105,23 +120,55 @@ describe(strikeStellarReaction, () => {
       ...combatant,
       kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ additiveBaseDamageBonus: 100 }) },
     };
-    const damageOf = (creator: Combatant) => {
-      const enemy = createSturdyEnemy();
-      const context = createKitTestContext(creator, { enemyTables });
-      strikeStellarReaction(
-        enemy,
-        Element.Anemo,
-        STELLAR_SWIRL_ANEMO_COEFFICIENT,
-        new Set([TRAVELER_CHARACTER_ID]),
-        creator,
-        context,
-        StellarReactionType.StellarSwirl,
-      );
-      return enemy.maxHealth - enemy.health;
-    };
-
-    expect(damageOf(bonused) - damageOf(combatant)).toBeCloseTo(
+    expect(damageOfStellarSwirl(bonused) - damageOfStellarSwirl(combatant)).toBeCloseTo(
       100 * getResistanceMultiplier(getEnemyResistance(kind, createSturdyEnemy(), Element.Anemo)),
+    );
+  });
+
+  test("a Stellar reaction's damage, its flat base among it, is multiplied by its creator's Elevation last", () => {
+    expect.hasAssertions();
+    const elevated: Combatant = {
+      ...combatant,
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ additiveBaseDamageBonus: 100, elevationBonus: 0.2 }) },
+    };
+    const flat: Combatant = {
+      ...combatant,
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ additiveBaseDamageBonus: 100 }) },
+    };
+    expect(damageOfStellarSwirl(elevated)).toBeCloseTo(damageOfStellarSwirl(flat) * (1 + 0.2));
+  });
+
+  test("a Stellar reaction's Base DMG takes the Base DMG Bonus each deployed Stellar Jubilee gives, two adding up", () => {
+    expect.hasAssertions();
+    const stellarJubilee = { getBaseDamageBonus: () => 0.07, stellarReactionTypes: [StellarReactionType.StellarSwirl] };
+    const holder: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, stellarJubilee } };
+    const teammate: Combatant = { ...holder, characterId: TRAVELER_CHARACTER_ID + 1 };
+    const enemy = createSturdyEnemy();
+    const context = createKitTestContext(holder, {
+      characterIdCombatantMap: new Map([
+        [holder.characterId, holder],
+        [teammate.characterId, teammate],
+      ]),
+      enemyTables,
+      party: createParty([holder.characterId, teammate.characterId]),
+    });
+
+    strikeStellarReaction(
+      enemy,
+      Element.Anemo,
+      STELLAR_SWIRL_ANEMO_COEFFICIENT,
+      new Set([TRAVELER_CHARACTER_ID]),
+      holder,
+      context,
+    );
+
+    expect(enemy.maxHealth - enemy.health).toBeCloseTo(
+      takeOne(CharacterLevelMultiplierMap, LEVEL) *
+        0.75 *
+        (1 + 0.07 + 0.07) *
+        takeOne(LUNAR_CONTRIBUTION_WEIGHTS, 0) *
+        getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Anemo)),
+      6,
     );
   });
 });

@@ -1,6 +1,6 @@
 ## Purpose
 
-Yun Jin's kit as built, with Opening Flourish's tap and its two charge levels, each with a shield of a share of her Max HP and a flat share, and Cliffbreaker's Banner's initial hit, her Ascension 1 counter window, and what is left to build.
+Yun Jin's kit as built, with Opening Flourish's tap and its two charge levels, each with a shield of a share of her Max HP and a flat share, Cliffbreaker's Banner's initial hit, its DMG Increase on her normal attacks with Ascension 4's share, her Ascension 1 counter window, and what is left to build.
 
 ## Requirements
 
@@ -93,12 +93,72 @@ From Ascension 1, a hit that lands on Yun Jin while her skill is held SHALL open
 - **WHEN** an enemy's strike costs her HP while her skill is held
 - **THEN** no counter window opens
 
-### Requirement: Banner's increase, Ascension 4 and Constellations 1, 2 and 6 not built
+### Requirement: Cliffbreaker's Banner's DMG Increase on normal attacks
 
-The banner's DMG Increase on the party's normal attacks, Yun Jin's Ascension 4 passive and her Constellations 1, 2 and 6 SHALL have no effect yet.
+While Cliffbreaker's Banner stands, each hit of a deployed member's normal attack SHALL deal flat base damage equal to 0.3216 of Yun Jin's DEF plus Ascension 4's share of it, and each enemy a normal attack of any member damages SHALL spend one of the banner's 30 stacks. The banner SHALL stand for 12 seconds from its hit.
 
-#### Scenario: Party attacks under the banner
+#### Scenario: Burst sets the banner
+
+- **WHEN** the player casts Cliffbreaker's Banner
+- **THEN** a following normal attack's hit gains the increase
+
+#### Scenario: Increase scales with her DEF
+
+- **GIVEN** the banner stands and Yun Jin's DEF is buffed
+- **WHEN** her normal attack strikes
+- **THEN** the increase is 0.3216 of her buffed DEF
+
+#### Scenario: A teammate's normal attack gets the increase
 
 - **GIVEN** the banner stands
-- **WHEN** a party member strikes with a normal attack
-- **THEN** no DMG Increase from the banner applies
+- **WHEN** a teammate strikes with a normal attack
+- **THEN** the increase is 0.3216 of Yun Jin's DEF
+
+#### Scenario: Stacks run out
+
+- **GIVEN** the banner stands with 30 stacks
+- **WHEN** the normal attacks of the team have damaged 30 enemies
+- **THEN** no increase applies
+
+#### Scenario: Banner ends twelve seconds after its hit
+
+- **WHEN** 12 seconds pass from the burst's hit
+- **THEN** no increase applies
+
+#### Scenario: Charged attack and skill get none
+
+- **GIVEN** the banner stands
+- **WHEN** Yun Jin's charged attack or Opening Flourish strikes
+- **THEN** no increase applies
+
+### Requirement: Ascension 4 adds the team's Elemental Types' share
+
+From Ascension 4, the banner's increase SHALL add a share of Yun Jin's DEF by the number of distinct Elemental Types on the deployed team: 2.5% for one, 5% for two, 7.5% for three and 11.5% for four.
+
+#### Scenario: Four Elemental Types on the team
+
+- **GIVEN** Yun Jin has Ascension 4, the banner stands and the deployed team holds four Elemental Types
+- **WHEN** her normal attack strikes
+- **THEN** the increase is 0.3216 plus 0.115 of her DEF
+
+#### Scenario: One Elemental Type on the team
+
+- **GIVEN** Yun Jin has Ascension 4, the banner stands and the deployed team holds one Elemental Type
+- **WHEN** her normal attack strikes
+- **THEN** the increase is 0.3216 plus 0.025 of her DEF
+
+#### Scenario: Below Ascension 4 adds nothing
+
+- **GIVEN** Yun Jin has Ascension 3 and the banner stands
+- **WHEN** her normal attack strikes
+- **THEN** the increase is 0.3216 of her DEF
+
+### Requirement: Constellations 1, 2 and 6 not built
+
+Yun Jin's Constellations 1, 2 and 6 SHALL give no effect yet.
+
+#### Scenario: Constellations 1, 2 and 6 change nothing
+
+- **GIVEN** Yun Jin has Constellation 1, 2 or 6 and the banner stands
+- **WHEN** her normal attack strikes
+- **THEN** the increase is 0.3216 of her DEF

@@ -4,6 +4,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
@@ -21,6 +22,7 @@ describe(stepKitSummon, () => {
     level: 90,
   };
   const HIT_AREA = { angle: 2 * Math.PI, height: 2, radius: 2.5 };
+  const CONTEXT = createKitTestContext(COMBATANT);
 
   test("lands a hit at its cast in its first step, and only then", () => {
     expect.hasAssertions();
@@ -35,9 +37,9 @@ describe(stepKitSummon, () => {
     };
 
     const firstStrikes: KitStrike[] = [];
-    stepKitSummon(summon, 0.5, { x: 0, z: 0 }, firstStrikes);
+    stepKitSummon(summon, 0.5, { x: 0, z: 0 }, firstStrikes, CONTEXT);
     const secondStrikes: KitStrike[] = [];
-    stepKitSummon(summon, 0.5, { x: 0, z: 0 }, secondStrikes);
+    stepKitSummon(summon, 0.5, { x: 0, z: 0 }, secondStrikes, CONTEXT);
 
     expect([firstStrikes.length, secondStrikes.length]).toStrictEqual([1, 0]);
   });
@@ -58,12 +60,12 @@ describe(stepKitSummon, () => {
       secondsRemaining: 2,
     };
     const firstStrikes: KitStrike[] = [];
-    stepKitSummon(summon, 1, { x: 3, z: 4 }, firstStrikes);
+    stepKitSummon(summon, 1, { x: 3, z: 4 }, firstStrikes, CONTEXT);
 
     expect(firstStrikes.map(({ body: { position } }) => position)).toStrictEqual([{ x: 3, z: 4 }]);
 
     const secondStrikes: KitStrike[] = [];
-    stepKitSummon(summon, 1, { x: -2, z: 1 }, secondStrikes);
+    stepKitSummon(summon, 1, { x: -2, z: 1 }, secondStrikes, CONTEXT);
 
     expect(secondStrikes.map(({ body: { position } }) => position)).toStrictEqual([{ x: -2, z: 1 }]);
   });
@@ -80,12 +82,12 @@ describe(stepKitSummon, () => {
       secondsRemaining: 2,
     };
     const firstStrikes: KitStrike[] = [];
-    stepKitSummon(summon, 1, { x: 0, z: 0 }, firstStrikes);
+    stepKitSummon(summon, 1, { x: 0, z: 0 }, firstStrikes, CONTEXT);
 
     expect(firstStrikes).toHaveLength(1);
 
     const secondStrikes: KitStrike[] = [];
-    stepKitSummon(summon, 1, { x: 0, z: 0 }, secondStrikes);
+    stepKitSummon(summon, 1, { x: 0, z: 0 }, secondStrikes, CONTEXT);
 
     expect(secondStrikes).toHaveLength(0);
   });

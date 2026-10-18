@@ -24,6 +24,7 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
 import { checkIsBluntHit } from "#src/services/kit/checkIsBluntHit";
+import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getDirectLunarDamage } from "#src/services/kit/getDirectLunarDamage";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
@@ -98,42 +99,61 @@ export const strikeEnemy = (
     transformativeDamage,
   } = priceEnemyReactions(kind, enemy, reactions, combatant, element, context);
 
+  // A direct Lunar hit is priced as the Lunar reaction of its type is, so the party reaction bonuses that reaction takes on
+  // This enemy apply to it
+  const { lunarHit } = kitHit;
+  const lunarBonuses =
+    lunarHit &&
+    getDeployedReactionBonuses({ combatant, element, enemy, reactionType: lunarHit.lunarReactionType }, context);
   const isCritical =
     kitHit.isForcedCritical ||
     random() <
       attributeTotalMap[Attribute.CriticalRate] +
         (kitHit.criticalRateBonus ?? 0) +
+        (lunarBonuses?.criticalRateBonus ?? 0) +
         (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
   const resistance = getEnemyResistance(kind, enemy, element);
-  const damage = kitHit.lunarHit
-    ? getDirectLunarDamage(kitHit, kitHit.lunarHit, talentMultiplier, combatant, moonsign, resistance, isCritical)
-    : getDamage({
-        additiveBaseDamageBonus: additiveBaseDamageBonus + (kitHit.additiveBaseDamageBonus?.(combatant) ?? 0),
-        amplifyingMultiplier,
-        attackerLevel: combatant.level,
-        criticalDamage: attributeTotalMap[Attribute.CriticalDamage] + (kitHit.criticalDamageBonus ?? 0),
-        // The element's or the physical DMG Bonus, the all-damage bonus, the normal or charged attack bonus of the attack's tag,
-        // The plunging attack bonus on a plunge,
-        // A hit's own and an enemy's statuses' DMG taken add to the bonus each hit on it reads
-        damageBonus:
-          attributeTotalMap[
-            element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
-          ] +
-          attributeTotalMap[Attribute.AllDamageBonus] +
-          (kitHit.attackTag === AttackTag.NormalAttack ? attributeTotalMap[Attribute.NormalAttackDamageBonus] : 0) +
-          (kitHit.attackTag === AttackTag.ChargedAttack ? attributeTotalMap[Attribute.ChargedAttackDamageBonus] : 0) +
-          (kitHit.attackTag === AttackTag.PlungingAttack ? attributeTotalMap[Attribute.PlungingAttackDamageBonus] : 0) +
-          (kitHit.damageBonus ?? 0) +
-          enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
-        defense,
-        defenseIgnored: kitHit.defenseIgnored,
-        // The DEF each status takes off the enemy, which the defence multiplier reads against the attacker's level
-        defenseReduction: enemy.statuses.reduce((total, { defenseReduction }) => total + (defenseReduction ?? 0), 0),
-        isCritical,
-        resistance,
-        stat: attack,
-        talentMultiplier,
-      });
+  const damage =
+    lunarHit && lunarBonuses
+      ? getDirectLunarDamage(
+          kitHit,
+          lunarHit,
+          talentMultiplier,
+          combatant,
+          moonsign,
+          resistance,
+          isCritical,
+          lunarBonuses,
+        )
+      : getDamage({
+          additiveBaseDamageBonus: additiveBaseDamageBonus + (kitHit.additiveBaseDamageBonus?.(combatant) ?? 0),
+          amplifyingMultiplier,
+          attackerLevel: combatant.level,
+          criticalDamage: attributeTotalMap[Attribute.CriticalDamage] + (kitHit.criticalDamageBonus ?? 0),
+          // The element's or the physical DMG Bonus, the all-damage bonus, the normal or charged attack bonus of the attack's tag,
+          // The plunging attack bonus on a plunge,
+          // A hit's own and an enemy's statuses' DMG taken add to the bonus each hit on it reads
+          damageBonus:
+            attributeTotalMap[
+              element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
+            ] +
+            attributeTotalMap[Attribute.AllDamageBonus] +
+            (kitHit.attackTag === AttackTag.NormalAttack ? attributeTotalMap[Attribute.NormalAttackDamageBonus] : 0) +
+            (kitHit.attackTag === AttackTag.ChargedAttack ? attributeTotalMap[Attribute.ChargedAttackDamageBonus] : 0) +
+            (kitHit.attackTag === AttackTag.PlungingAttack
+              ? attributeTotalMap[Attribute.PlungingAttackDamageBonus]
+              : 0) +
+            (kitHit.damageBonus ?? 0) +
+            enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
+          defense,
+          defenseIgnored: kitHit.defenseIgnored,
+          // The DEF each status takes off the enemy, which the defence multiplier reads against the attacker's level
+          defenseReduction: enemy.statuses.reduce((total, { defenseReduction }) => total + (defenseReduction ?? 0), 0),
+          isCritical,
+          resistance,
+          stat: attack,
+          talentMultiplier,
+        });
   const energyDrops = damageEnemy(enemy, {
     damage: damage + transformativeDamage,
     poiseDamage: poiseDamage + reactionPoiseDamage,

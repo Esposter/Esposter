@@ -6,8 +6,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
@@ -19,6 +23,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const IFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IFA_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createIfaCombatant = (constellationCount = 0, ascension = 0): Combatant => ({
   ascension,
@@ -33,7 +38,11 @@ const createIfaCombatant = (constellationCount = 0, ascension = 0): Combatant =>
 
 // The DMG Bonus Ifa's party reaction hook adds to a reaction of the given type, read with her points in the given context
 const partyDamageBonusOf = (combatant: Combatant, reactionType: KitReaction["reactionType"], context: KitContext) =>
-  IFA_KIT.getPartyReactionBonus?.(combatant, { combatant, reactionType }, context)?.damageBonus ?? 0;
+  IFA_KIT.getPartyReactionBonus?.(
+    combatant,
+    { combatant, element: Element.Electro, enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), reactionType },
+    context,
+  )?.damageBonus ?? 0;
 
 describe(createIfaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -48,12 +57,12 @@ describe(createIfaKitBehaviour, () => {
     expect(multipliers).toStrictEqual([0.536072, 0.474672, 0.747584, 1.4704, 0.568288, 1.136335, 1.419344]);
   });
 
-  test("the three normal attacks hit at their hitmarks and cancel into a walk at their table frames", () => {
+  test("the three normal attacks hit at their hitmarks and end at their animation frames", () => {
     expect.hasAssertions();
     expect(
       IFA_KIT.normalAttacks.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))),
     ).toStrictEqual([[10], [13], [42]]);
-    expect(IFA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([27, 31, 88]);
+    expect(IFA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([27, 31, 90]);
   });
 
   test("the charged attack hits at 45 frames of an 86-frame animation, costing 50 stamina", () => {
