@@ -1,10 +1,10 @@
 import type { ViewerConfiguration } from "#src/models/ViewerConfiguration";
 
-import { ViewerMoments } from "#src/models/ViewerMoment";
 import { checkIsModelId } from "#src/services/checkIsModelId";
 import { checkIsViewerAddress } from "#src/services/checkIsViewerAddress";
 import { VIEWER_PATH } from "#src/services/constants";
 import { parseJsonObject } from "#src/services/parseJsonObject";
+import { readMotions } from "#src/services/readMotions";
 import { readStateFile } from "#src/services/readStateFile";
 
 // The viewer the file names, or nothing when there is none: the gate every reading and every reaction passes, so a
@@ -18,16 +18,4 @@ export const readViewerConfiguration = (): ViewerConfiguration | undefined => {
   if (typeof address !== "string" || !checkIsViewerAddress(address)) return undefined;
   if (typeof modelId !== "number" || !checkIsModelId(modelId)) return undefined;
   return { address, modelId, motions: readMotions(motions) };
-};
-
-const readMotions = (motions: unknown): ViewerConfiguration["motions"] => {
-  if (typeof motions !== "object" || motions === null) return {};
-
-  const result: ViewerConfiguration["motions"] = {};
-  for (const moment of ViewerMoments) {
-    const motion: unknown = Reflect.get(motions, moment);
-    if (typeof motion === "string" && motion) result[moment] = motion;
-  }
-
-  return result;
 };
