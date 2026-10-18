@@ -6,12 +6,13 @@ import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
+import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const FULL_HP = 10;
 
-const createCharacterState = (id: number): GcgCharacterState => ({
+const createCharacterState = (id: number, hp = FULL_HP): GcgCharacterState => ({
   aura: GcgAura.None,
   character: {
     descriptionTextId: 2,
@@ -25,7 +26,7 @@ const createCharacterState = (id: number): GcgCharacterState => ({
   },
   energy: 0,
   equipments: [],
-  hp: FULL_HP,
+  hp,
   isFrozen: false,
   shield: 0,
   statuses: [],
@@ -74,5 +75,29 @@ describe("lotus Flower Crisp", () => {
     expect(lotusFlowerCrisp.canPlay?.(context, 1)).toBe(false);
     expect(lotusFlowerCrisp.modifyDamageReceived?.(context, 5, takeOne(statuses, 0))).toBe(2);
     expect(takeOne(statuses, 0).usages).toBe(0);
+  });
+});
+
+describe("teyvat Fried Egg", () => {
+  test("a defeated character is revived to 1 HP and healed 1 HP, and holds the food for the round", () => {
+    expect.hasAssertions();
+    const duel = createDuel([createCharacterState(1), createCharacterState(2, 0)]);
+    const context: GcgEffectContext = { duel, sideIndex: 0 };
+    expect(teyvatFriedEgg.canPlay?.(context, 1)).toBe(true);
+    teyvatFriedEgg.play?.(context, 1);
+    const side = takeOne(duel.sides, 0);
+    expect({
+      hp: takeOne(side.characters, 1).hp,
+      statuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
+      usedCardIds: side.usedCardIds,
+    }).toStrictEqual({ hp: 2, statuses: [333_009], usedCardIds: [333_009] });
+  });
+
+  test("only one character is revived a round, and a standing character cannot be the target", () => {
+    expect.hasAssertions();
+    const duel = createDuel([createCharacterState(1), createCharacterState(2, 0), createCharacterState(3, 0)]);
+    const context: GcgEffectContext = { duel, sideIndex: 0 };
+    teyvatFriedEgg.play?.(context, 1);
+    expect([teyvatFriedEgg.canPlay?.(context, 2), teyvatFriedEgg.canPlay?.(context, 0)]).toStrictEqual([false, false]);
   });
 });
