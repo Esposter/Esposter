@@ -52,6 +52,7 @@ With no address, or an index that fails to load (which is logged), the host has 
 | `packages/genshin-world/src/composables/useCharacterPackIds.ts`                         | The ids the host's index lists, read once                                                 |
 | `packages/genshin-world/src/services/character/chooseCharacterPackReader.ts`            | A character's pack read from the browser's copy, else the host's, else none               |
 | `packages/genshin-world/src/services/character/readCharacterPackFile.ts`                | Reads any file of a host's pack by its path                                               |
+| `packages/genshin-world/src/services/character/fetchCharacterPackFile.ts`               | A pack file fetched under a timeout, failing any status but ok, and naming the absent one |
 | `packages/genshin-world/src/services/character/getCharacterPackFileUrl.ts`              | Where a file of a pack is served, by the character's id and the file's path               |
 | `packages/genshin-world/src/services/character/getCharacterPackFilePath.ts`             | A model's path cut into the path a pack serves the file at                                |
 | `packages/genshin-world/src/services/character/readCharacterTerms.ts`                   | A pack's terms, as a Result                                                               |
