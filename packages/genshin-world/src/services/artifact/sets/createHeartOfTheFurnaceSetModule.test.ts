@@ -27,6 +27,7 @@ const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
+const THIRD_CHARACTER_ID = 3;
 const bonusOf = (pieceCount: number) => {
   const bonus = statTables.artifactSetDataMap
     .get(HEART_OF_THE_FURNACE_ARTIFACT_SET_ID)
@@ -38,16 +39,18 @@ const createCombatant = (characterId: number, kit = KIT): Combatant => {
   const attributes = computeCharacterAttributes([]);
   return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
 };
-// A wearer of four pieces and another member, with the party in the order given
-const createTeam = (characterIds: number[]) => {
-  const wearer = createCombatant(
-    TRAVELER_CHARACTER_ID,
-    getPassiveKit(KIT, [createHeartOfTheFurnaceSetModule(bonusOf(4))]),
-  );
-  const other = createCombatant(OTHER_CHARACTER_ID);
+const WEARER_KIT = getPassiveKit(KIT, [createHeartOfTheFurnaceSetModule(bonusOf(4))]);
+// The traveller and two other members, the given ones wearing four pieces, with the party in the order given
+const createTeam = (characterIds: number[], wearerIds: number[] = [TRAVELER_CHARACTER_ID]) => {
+  const createMember = (characterId: number) =>
+    createCombatant(characterId, wearerIds.includes(characterId) ? WEARER_KIT : KIT);
+  const wearer = createMember(TRAVELER_CHARACTER_ID);
+  const other = createMember(OTHER_CHARACTER_ID);
+  const secondWearer = createMember(THIRD_CHARACTER_ID);
   const characterIdCombatantMap = new Map<number, Combatant>([
     [TRAVELER_CHARACTER_ID, wearer],
     [OTHER_CHARACTER_ID, other],
+    [THIRD_CHARACTER_ID, secondWearer],
   ]);
   const kitEffectState: KitEffectState = { effects: [] };
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -75,7 +78,7 @@ const createTeam = (characterIds: number[]) => {
     kitEffectState.effects
       .filter((effect) => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent)
       .map((effect) => (effect.kind === "buff" ? effect.amount : 0));
-  return { attackBuffs, context, other, reactionDamageBonus, trigger, wearer };
+  return { attackBuffs, context, other, reactionDamageBonus, secondWearer, trigger, wearer };
 };
 
 describe(createHeartOfTheFurnaceSetModule, () => {
@@ -161,5 +164,42 @@ describe(createHeartOfTheFurnaceSetModule, () => {
 
     stepKitSeconds(context, 1);
     expect(attackBuffs()).toStrictEqual([]);
+  });
+
+  test("two wearers of the set give the party one 50% bonus between them, not one each", () => {
+    expect.hasAssertions();
+
+    const { other, reactionDamageBonus, secondWearer, trigger, wearer } = createTeam(
+      [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID],
+      [TRAVELER_CHARACTER_ID, THIRD_CHARACTER_ID],
+    );
+
+    trigger(wearer, [StellarReactionType.StellarSwirl]);
+    trigger(secondWearer, [StellarReactionType.StellarSwirl]);
+
+    expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
+    expect(reactionDamageBonus(wearer, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
+  });
+
+  test("the party's 50% passes to the wearer whose Stellar Swirl still runs once the first one lapses", () => {
+    expect.hasAssertions();
+
+    const { context, other, reactionDamageBonus, secondWearer, trigger, wearer } = createTeam(
+      [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID],
+      [TRAVELER_CHARACTER_ID, THIRD_CHARACTER_ID],
+    );
+
+    trigger(wearer, [StellarReactionType.StellarSwirl]);
+    stepKitSeconds(context, 6);
+    trigger(secondWearer, [StellarReactionType.StellarSwirl]);
+
+    stepKitSeconds(context, 6);
+    expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
+
+    stepKitSeconds(context, 5);
+    expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
+
+    stepKitSeconds(context, 1);
+    expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBe(0);
   });
 });
