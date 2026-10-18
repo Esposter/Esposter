@@ -21,6 +21,10 @@ export const LISA_CHARACTER_ID = 10_000_006;
 // Lisa's behaviour: Violet Arc's press gives each enemy it strikes a stack of Conductive, as her charged attack does from
 // Ascension 1, and its hold strikes each enemy at the multiplier and poise of its stacks, consuming them. Lightning Rose
 // Is a summon whose discharges land from her body. A4's effect is not built
+// Constellation 1 needs a hit event from Violet Arc's hold, which no kit event carries, to regenerate energy
+// Constellation 2 needs a DEF buff for as long as the hold lasts, which the skill holds do not carry the length of
+// Constellation 4 needs the simultaneous bolt count of Lightning Rose, which the kit does not read
+// Constellation 6's text is not confirmed yet, so it is not built
 export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const discharges = readHits("discharges");
   const lightningRoseSeconds = readSeconds("lightningRose");

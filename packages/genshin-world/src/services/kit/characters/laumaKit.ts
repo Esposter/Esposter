@@ -46,10 +46,10 @@ export const LAUMA_CHARACTER_ID = 10_000_119;
 // Eternal Rest's Dew gives it; the Spirit Envoy state her charged attack's first press enters, which waits on a stance
 // That drains stamina; Light for the Frosty Night and her constellations; the Spirit Envoy's cooldown reduction of Cleansing
 // For the Spring, as the charged attack's cooldown is not read by a kit
-// Constellation 1 needs the Threads of Life state's effect on the active character, which the kit does not build
+// Constellation 1 needs the Threads of Life heal on Lunar-Bloom reactions and the Spirit Envoy's stamina, not built
 // Constellation 2 needs the Pale Hymn stacks her burst gains and the Bloom bonus they give, which are not built
-// Constellation 4 needs the Frostgrove Sanctuary's attacks to report hits and grant the effect its text gives
-// Constellation 6 needs an extra Lunar-Bloom Dendro hit per Sanctuary attack, scaled by her Elemental Mastery
+// Constellation 4 needs a hit event from the Sanctuary's ticks to restore her energy, which no kit event carries
+// Constellation 6 needs the Pale Hymn stacks and an extra Lunar-Bloom Dendro hit per Sanctuary attack, not built
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
