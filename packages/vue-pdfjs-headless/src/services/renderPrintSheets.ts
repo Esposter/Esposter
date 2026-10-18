@@ -14,7 +14,8 @@ export const renderPrintSheets = async (
   const printRoot = window.document.createElement("div");
   printRoot.className = PDF_PRINT_CLASS;
   printRoot.append(style);
-  // The next batch starts once this one has landed, so no print holds every page at once
+  // The next batch starts once this one has landed, so a batch limits how many pages render at the same time.
+  // Every page's image stays in the print root until afterprint, so by the end of a print every page is held there
   const renderBatch = async (firstPageNumber: number): Promise<void> => {
     if (isCancelled() || firstPageNumber > pdfDocument.numPages) return;
 

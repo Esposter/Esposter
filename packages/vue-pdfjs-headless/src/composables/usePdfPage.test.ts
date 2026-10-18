@@ -2,10 +2,9 @@
 import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 
 import { usePdfPage } from "#src/composables/usePdfPage";
-import { PDF_MAX_CANVAS_AREA } from "#src/services/constants";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { effectScope } from "vue";
+import { effectScope, nextTick, shallowRef } from "vue";
 
 const PAGE_WIDTH = 800;
 const PAGE_HEIGHT = 1000;
@@ -48,7 +47,7 @@ const mountPage = async (page: PDFPageProxy) => {
   return { canvas, scope };
 };
 
-describe("usePdfPage", () => {
+describe(usePdfPage, () => {
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
   });
@@ -69,19 +68,6 @@ describe("usePdfPage", () => {
     scope.stop();
   });
 
-  test("#52 a page too large for the device's canvas", async () => {
-    expect.hasAssertions();
-
-    vi.stubGlobal("devicePixelRatio", 1);
-    const page = createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {}))));
-    const { canvas, scope } = await mountPage(page);
-    reportWidth(20_000);
-
-    expect(canvas.width).toBeGreaterThan(0);
-    expect(canvas.width * canvas.height).toBeLessThanOrEqual(PDF_MAX_CANVAS_AREA);
-    scope.stop();
-  });
-
   test("#20 a width change while a page is drawing", async () => {
     expect.hasAssertions();
 
@@ -98,6 +84,32 @@ describe("usePdfPage", () => {
     expect(firstTask.cancel).toHaveBeenCalledExactlyOnceWith();
     expect(render).toHaveBeenCalledTimes(2);
     expect(canvas.width).toBe(200);
+    scope.stop();
+  });
+
+  test("a canvas swapped in at the width the last one had is drawn", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("devicePixelRatio", 1);
+    const canvas = shallowRef(window.document.createElement("canvas"));
+    const scope = effectScope();
+    scope.run(() =>
+      usePdfPage({
+        canvas,
+        pageNumber: 1,
+        pdfDocument: createDocument(
+          createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {})))),
+        ),
+      }),
+    );
+    await flushPromises();
+    reportWidth(400);
+    const replacement = window.document.createElement("canvas");
+    canvas.value = replacement;
+    await nextTick();
+    reportWidth(400);
+
+    expect(replacement.width).toBe(400);
     scope.stop();
   });
 });

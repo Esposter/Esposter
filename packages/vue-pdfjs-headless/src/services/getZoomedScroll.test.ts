@@ -11,7 +11,7 @@ describe(getZoomedScroll, () => {
 
     const scroll = getZoomedScroll({ point: POINT, ratio: RATIO, scroll: SCROLL });
 
-    // The content under the point sat at the scroll plus the point, and that offset doubles with the scale
-    expect(scroll + POINT).toBe((SCROLL + POINT) * RATIO);
+    // The content under the point sat 140 in, which doubles to 280, and the point's 40 is taken back off
+    expect(scroll).toBe(240);
   });
 });

@@ -1,7 +1,7 @@
 import type { PdfMatchesCount } from "#src/models/PdfMatchesCount";
 import type { PdfOutline } from "#src/models/PdfOutline";
 import type { PdfPageOverlay } from "#src/models/PdfPageOverlay";
-import type { PdfRenderer } from "#src/models/PdfRenderer";
+import type { PdfViewerApi } from "#src/models/PdfViewerApi";
 import type { PdfViewerState } from "#src/models/PdfViewerState";
 import type { PDFDocumentProxy, PageViewport } from "pdfjs-dist";
 import type {
@@ -12,18 +12,16 @@ import type {
 } from "pdfjs-dist/web/pdf_viewer.mjs";
 import type { MaybeRefOrGetter } from "vue";
 
+import { usePdfZoomGesture } from "#src/composables/usePdfZoomGesture";
 import {
   PDF_FULL_TURN,
   PDF_MAX_CANVAS_AREA,
   PDF_MAX_SCALE,
-  PDF_MIN_SCALE,
+  PDF_MIME_TYPE,
   PDF_ROTATION_STEP,
-  PDF_WHEEL_ZOOM_DIVISOR,
 } from "#src/services/constants";
-import { getZoomedScroll } from "#src/services/getZoomedScroll";
 import { renderPrintSheets } from "#src/services/renderPrintSheets";
-import { saveDocument } from "#src/services/saveDocument";
-import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
+import { downloadFile, getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { computed, onScopeDispose, ref, shallowRef, toValue, watch } from "vue";
 
 interface UsePdfViewerOptions {
@@ -31,13 +29,9 @@ interface UsePdfViewerOptions {
   // The terms highlighted on load, every match of each one
   highlightTerms?: MaybeRefOrGetter<string[]>;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
-  renderer: MaybeRefOrGetter<PdfRenderer | undefined>;
   viewer: MaybeRefOrGetter<HTMLDivElement | undefined>;
-}
-
-interface PinchPoint {
-  x: number;
-  y: number;
+  // The renderer's viewer module, the components its viewer is built from
+  viewerApi: MaybeRefOrGetter<PdfViewerApi | undefined>;
 }
 
 // Builds the renderer's viewer for a loaded document on the consumer's container.
@@ -46,8 +40,8 @@ export const usePdfViewer = ({
   container,
   highlightTerms = [],
   pdfDocument,
-  renderer,
   viewer,
+  viewerApi,
 }: UsePdfViewerOptions): PdfViewerState => {
   const currentPageNumber = ref(0);
   const isFullscreen = ref(false);
@@ -62,75 +56,34 @@ export const usePdfViewer = ({
   const scale = ref(0);
   const searchQuery = ref("");
   const isZoomInDisabled = computed(() => scale.value >= PDF_MAX_SCALE);
-  const pointers = new Map<number, PinchPoint>();
+  let abortController: AbortController | undefined;
   let containerElement: HTMLDivElement | undefined;
   let eventBus: PdfJsEventBus | undefined;
   let findController: PdfJsFindController | undefined;
   let linkService: PdfJsLinkService | undefined;
   let pdfViewer: PdfJsViewer | undefined;
-  let pinchDistance = 0;
   let resizeObserver: ResizeObserver | undefined;
   let printRoot: HTMLDivElement | undefined;
   // Bumped by every print and by the scope's end, so a print still drawing stops before it reaches the page
   let printGeneration = 0;
 
-  const measurePinch = () => {
-    const [first, second] = [...pointers.values()];
-    if (pointers.size !== 2 || !first || !second) return undefined;
-
-    return {
-      distance: Math.hypot(second.x - first.x, second.y - first.y),
-      point: { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 },
-    };
-  };
-  // Scales the viewer about a point of the screen, keeping the content under that point where it was
-  const zoomAbout = (ratio: number, point: PinchPoint) => {
-    if (!pdfViewer || !containerElement || !pdfViewer.currentScale) return;
-
-    const { currentScale } = pdfViewer;
-    const nextScale = Math.min(Math.max(currentScale * ratio, PDF_MIN_SCALE), PDF_MAX_SCALE);
-    const scaleRatio = nextScale / currentScale;
-    const { left, top } = containerElement.getBoundingClientRect();
-    const { scrollLeft, scrollTop } = containerElement;
-    pdfViewer.currentScale = nextScale;
-    containerElement.scrollLeft = getZoomedScroll({ point: point.x - left, ratio: scaleRatio, scroll: scrollLeft });
-    containerElement.scrollTop = getZoomedScroll({ point: point.y - top, ratio: scaleRatio, scroll: scrollTop });
-  };
-  const onPointerDown = (event: PointerEvent) => {
-    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    pinchDistance = measurePinch()?.distance ?? 0;
-  };
-  const onPointerMove = (event: PointerEvent) => {
-    if (!pointers.has(event.pointerId)) return;
-
-    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    const pinch = measurePinch();
-    if (pinch && pinchDistance > 0) zoomAbout(pinch.distance / pinchDistance, pinch.point);
-    pinchDistance = pinch?.distance ?? 0;
-  };
-  const onPointerEnd = (event: PointerEvent) => {
-    pointers.delete(event.pointerId);
-    pinchDistance = measurePinch()?.distance ?? 0;
-  };
-  const onWheel = (event: WheelEvent) => {
-    if (!event.ctrlKey) return;
-
-    event.preventDefault();
-    zoomAbout(Math.exp(-event.deltaY / PDF_WHEEL_ZOOM_DIVISOR), { x: event.clientX, y: event.clientY });
-  };
   const onFullscreenChange = () => {
     isFullscreen.value = window.document.fullscreenElement === containerElement;
   };
   const createViewer = (
-    currentRenderer: PdfRenderer,
+    currentViewerApi: PdfViewerApi,
     containerValue: HTMLDivElement,
     viewerElement: HTMLDivElement,
   ) => {
-    const { EventBus, FindState, LinkTarget, PDFFindController, PDFLinkService, PDFViewer } = currentRenderer.viewer;
+    const { EventBus, FindState, LinkTarget, PDFFindController, PDFLinkService, PDFViewer } = currentViewerApi;
     const bus = new EventBus();
     const links = new PDFLinkService({ eventBus: bus, externalLinkTarget: LinkTarget.BLANK });
     const controller = new PDFFindController({ eventBus: bus, linkService: links });
+    // One signal per viewer, so the viewer's own listeners and the ones added here end together
+    const viewerAbortController = new AbortController();
+    const { signal } = viewerAbortController;
     const instance = new PDFViewer({
+      abortSignal: signal,
       container: containerValue,
       eventBus: bus,
       findController: controller,
@@ -139,6 +92,7 @@ export const usePdfViewer = ({
       viewer: viewerElement,
     });
     links.setViewer(instance);
+    abortController = viewerAbortController;
     containerElement = containerValue;
     eventBus = bus;
     findController = controller;
@@ -173,17 +127,12 @@ export const usePdfViewer = ({
       if (!pdfViewer) return;
 
       const { currentScaleValue } = pdfViewer;
-      pdfViewer.currentScaleValue = currentScaleValue;
+      // Before a document sets a scale, pdf.js reports the value as null, which it rejects as an unknown zoom value
+      if (currentScaleValue) pdfViewer.currentScaleValue = currentScaleValue;
     });
     resizeObserver.observe(containerValue);
-    containerValue.addEventListener("pointerdown", onPointerDown);
-    containerValue.addEventListener("pointermove", onPointerMove);
-    containerValue.addEventListener("pointerup", onPointerEnd);
-    containerValue.addEventListener("pointercancel", onPointerEnd);
-    containerValue.addEventListener("pointerleave", onPointerEnd);
-    containerValue.addEventListener("wheel", onWheel, { passive: false });
-    window.document.addEventListener("fullscreenchange", onFullscreenChange);
-    window.addEventListener("afterprint", removePrint);
+    window.document.addEventListener("fullscreenchange", onFullscreenChange, { signal });
+    window.addEventListener("afterprint", removePrint, { signal });
     applyDocument(toValue(pdfDocument));
   };
   const loadOutline = getSynchronizedFunction(async (loaded: PDFDocumentProxy) => {
@@ -201,6 +150,12 @@ export const usePdfViewer = ({
     outline.value = [];
     pdfViewer.setDocument(loaded ?? null);
     linkService.setDocument(loaded ?? null);
+    // The renderer resets its page and rotation without an event, and the find controller reports nothing on reset.
+    // So a document that replaces another starts from the state a new viewer has.
+    currentPageNumber.value = 1;
+    pagesRotation.value = 0;
+    matchesCount.value = { current: 0, total: 0 };
+    isNotFound.value = false;
     // The find controller takes no empty document, so a cleared viewer keeps the last one it searched until it is loaded again
     if (loaded) findController.setDocument(loaded);
     if (loaded) pdfViewer.currentScaleValue = "auto";
@@ -279,7 +234,8 @@ export const usePdfViewer = ({
     if (!downloaded) return;
 
     await getResultAsync(async () => {
-      saveDocument(filename, await downloaded.getData());
+      // The bytes may sit on a shared buffer, which a Blob does not take, so the download is a copy
+      downloadFile(filename, new Uint8Array(await downloaded.getData()), PDF_MIME_TYPE);
     }).match(noop, console.error);
   });
   const print = getSynchronizedFunction(async () => {
@@ -298,12 +254,13 @@ export const usePdfViewer = ({
     }).match(noop, console.error);
   });
 
+  usePdfZoomGesture({ container, getViewer: () => pdfViewer });
   watch(
-    [() => toValue(renderer), () => toValue(container), () => toValue(viewer)],
-    ([currentRenderer, containerElementValue, viewerElement]) => {
-      if (pdfViewer || !currentRenderer || !containerElementValue || !viewerElement) return;
+    [() => toValue(viewerApi), () => toValue(container), () => toValue(viewer)],
+    ([currentViewerApi, containerElementValue, viewerElement]) => {
+      if (pdfViewer || !currentViewerApi || !containerElementValue || !viewerElement) return;
 
-      createViewer(currentRenderer, containerElementValue, viewerElement);
+      createViewer(currentViewerApi, containerElementValue, viewerElement);
     },
     { immediate: true },
   );
@@ -318,16 +275,11 @@ export const usePdfViewer = ({
   });
   onScopeDispose(() => {
     removePrint();
-    window.document.removeEventListener("fullscreenchange", onFullscreenChange);
-    if (!pdfViewer || !containerElement) return;
+    if (!pdfViewer) return;
 
-    window.removeEventListener("afterprint", removePrint);
-    containerElement.removeEventListener("pointerdown", onPointerDown);
-    containerElement.removeEventListener("pointermove", onPointerMove);
-    containerElement.removeEventListener("pointerup", onPointerEnd);
-    containerElement.removeEventListener("pointercancel", onPointerEnd);
-    containerElement.removeEventListener("pointerleave", onPointerEnd);
-    containerElement.removeEventListener("wheel", onWheel);
+    // Clearing the document first lets the renderer cancel what it draws, and aborting then releases its listeners
+    pdfViewer.setDocument(null);
+    abortController?.abort();
     resizeObserver?.disconnect();
     pdfViewer.cleanup();
   });

@@ -72,6 +72,8 @@ export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }
     (currentCanvas, _, onCleanup) => {
       if (!currentCanvas) return;
 
+      // A new element's first report is its own width, which may equal the last canvas's, so the width is not remembered across elements
+      cssWidth = 0;
       const observer = new ResizeObserver((entries) => {
         // A report that keeps the width is the canvas resizing its own height, which must not draw the page again
         const width = entries[0]?.contentRect.width ?? 0;

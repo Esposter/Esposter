@@ -1,7 +1,6 @@
 // @vitest-environment happy-dom
 import type { PdfApi } from "#src/models/PdfApi";
 import type { PdfRenderer } from "#src/models/PdfRenderer";
-import type { PdfViewerApi } from "#src/models/PdfViewerApi";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist";
 
 import { usePdfDocument } from "#src/composables/usePdfDocument";
@@ -30,7 +29,6 @@ describe(usePdfDocument, () => {
       getDocument,
     } as unknown as PdfApi,
     cMapUrl: "",
-    viewer: {} as PdfViewerApi,
     standardFontDataUrl: "",
     wasmUrl: "",
     workerSrc: "",

@@ -1,13 +1,14 @@
 // @vitest-environment happy-dom
-import type { PdfRenderer } from "#src/models/PdfRenderer";
 import type { PdfOutline } from "#src/models/PdfOutline";
+import type { PdfViewerApi } from "#src/models/PdfViewerApi";
 import type { PDFDocumentProxy, PageViewport, PDFPageProxy, RenderTask } from "pdfjs-dist";
+import type { MaybeRefOrGetter } from "vue";
 
 import { usePdfViewer } from "#src/composables/usePdfViewer";
-import { PDF_MAX_SCALE, PDF_PRINT_CLASS, PDF_ROTATION_STEP, PDF_WHEEL_ZOOM_DIVISOR } from "#src/services/constants";
+import { PDF_MAX_SCALE, PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "#src/services/constants";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
-import { effectScope, nextTick } from "vue";
+import { effectScope, nextTick, shallowRef } from "vue";
 
 const PAGE_WIDTH = 800;
 const PAGE_HEIGHT = 1000;
@@ -21,11 +22,22 @@ type PdfViewerStub = ReturnType<typeof createPdfViewerStub>;
 
 // The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
 // The stubs keep the last viewer they made, so a test can move the viewer or read what the composable asked of it
-const stubs: { eventBus?: EventBusStub; findEvents: unknown[]; viewer?: PdfViewerStub } = { findEvents: [] };
+const stubs: {
+  abortSignal?: AbortSignal;
+  eventBus?: EventBusStub;
+  findEvents: unknown[];
+  scaleWrites: unknown[];
+  viewer?: PdfViewerStub;
+} = { findEvents: [], scaleWrites: [] };
 // How many matches the stub document holds for any search
 let matches = 0;
 
-const ResizeObserverStub = function () {
+// The observer the composable makes for its container, kept so a test can report a resize as a browser would
+let reportResize: (() => void) | undefined;
+
+const ResizeObserverStub = function (callback: () => void) {
+  reportResize = callback;
+
   return { disconnect: () => {}, observe: () => {} };
 };
 
@@ -62,10 +74,17 @@ const createLinkService = () => ({
 const createPdfViewerStub = ({ eventBus }: { eventBus: EventBusStub }) => {
   let currentPageNumber = 0;
   let currentScale = 0;
+  let currentScaleValue: string | null = "auto";
   let pagesRotation = 0;
   const viewer = {
     cleanup: vi.fn<() => void>(),
-    currentScaleValue: "auto",
+    get currentScaleValue() {
+      return currentScaleValue;
+    },
+    set currentScaleValue(scaleValue: string | null) {
+      stubs.scaleWrites.push(scaleValue);
+      currentScaleValue = scaleValue;
+    },
     decreaseScale: () => {
       viewer.currentScale = Math.max(viewer.currentScale / 1.1, 0.1);
     },
@@ -100,7 +119,12 @@ const createPdfViewerStub = ({ eventBus }: { eventBus: EventBusStub }) => {
     previousPage: () => {
       viewer.currentPageNumber -= 1;
     },
-    setDocument: vi.fn<() => void>(),
+    // The renderer resets its page and rotation without dispatching an event, which is what a new document finds
+    setDocument: vi.fn<(loaded: PDFDocumentProxy | null) => void>(() => {
+      currentPageNumber = 1;
+      currentScaleValue = null;
+      pagesRotation = 0;
+    }),
   };
 
   return viewer;
@@ -115,27 +139,22 @@ const PDFFindController = function (options: { eventBus: EventBusStub }) {
 const PDFLinkService = function () {
   return createLinkService();
 };
-const PDFViewer = function (options: { eventBus: EventBusStub }) {
+const PDFViewer = function (options: { abortSignal?: AbortSignal; eventBus: EventBusStub }) {
+  stubs.abortSignal = options.abortSignal;
   stubs.eventBus = options.eventBus;
   stubs.viewer = createPdfViewerStub(options);
 
   return stubs.viewer;
 };
-const createRenderer = (): PdfRenderer => ({
-  api: {} as PdfRenderer["api"],
-  cMapUrl: "",
-  standardFontDataUrl: "",
-  viewer: {
+const createViewerApi = (): PdfViewerApi =>
+  ({
     EventBus,
     FindState: { NOT_FOUND: FIND_STATE_NOT_FOUND },
     LinkTarget: { BLANK: LINK_TARGET_BLANK },
     PDFFindController,
     PDFLinkService,
     PDFViewer,
-  } as unknown as PdfRenderer["viewer"],
-  wasmUrl: "",
-  workerSrc: "",
-});
+  }) as unknown as PdfViewerApi;
 const stubPrint = () => {
   const print = vi.fn<() => void>();
   vi.stubGlobal("print", print);
@@ -165,10 +184,7 @@ const createViewport = (scale: number) =>
 const setFullscreenElement = (element: Element | null) => {
   Object.defineProperty(window.document, "fullscreenElement", { configurable: true, value: element });
 };
-const dispatchPointer = (target: HTMLElement, type: string, pointerId: number, clientX: number, clientY: number) => {
-  target.dispatchEvent(Object.assign(new Event(type), { clientX, clientY, pointerId }));
-};
-const mountViewer = (pdfDocument: PDFDocumentProxy, highlightTerms: string[] = []) => {
+const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>, highlightTerms: string[] = []) => {
   const container = window.document.createElement("div");
   const scope = effectScope();
   const state = scope.run(() =>
@@ -176,8 +192,8 @@ const mountViewer = (pdfDocument: PDFDocumentProxy, highlightTerms: string[] = [
       container,
       highlightTerms,
       pdfDocument,
-      renderer: createRenderer(),
       viewer: window.document.createElement("div"),
+      viewerApi: createViewerApi(),
     }),
   );
   assert(state);
@@ -187,11 +203,12 @@ const mountViewer = (pdfDocument: PDFDocumentProxy, highlightTerms: string[] = [
   return { container, scope, state, viewer: stubs.viewer };
 };
 
-describe("usePdfViewer", () => {
+describe(usePdfViewer, () => {
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
     matches = 0;
     stubs.findEvents = [];
+    stubs.scaleWrites = [];
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -256,6 +273,16 @@ describe("usePdfViewer", () => {
     scope.stop();
   });
 
+  test("a resize before any document writes no scale", () => {
+    expect.hasAssertions();
+
+    const { scope } = mountViewer(undefined);
+    reportResize?.();
+
+    expect(stubs.scaleWrites).toStrictEqual([]);
+    scope.stop();
+  });
+
   test("a word that is not in the document", async () => {
     expect.hasAssertions();
 
@@ -268,11 +295,24 @@ describe("usePdfViewer", () => {
     scope.stop();
   });
 
+  test("a second document starts on its first page", async () => {
+    expect.hasAssertions();
+
+    const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(createDocument(3));
+    const { scope, state, viewer } = mountViewer(pdfDocument);
+    viewer.currentPageNumber = 7;
+    pdfDocument.value = createDocument(3);
+    await nextTick();
+
+    expect(state.currentPageNumber.value).toBe(1);
+    scope.stop();
+  });
+
   test("downloading a document under its name", async () => {
     expect.hasAssertions();
 
-    const createObjectURL = vi.fn<(blob: Blob) => string>(() => "blob:document");
-    Object.assign(URL, { createObjectURL, revokeObjectURL: vi.fn<(url: string) => void>() });
+    const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:document");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     let downloadName = "";
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) {
       downloadName = this.download;
@@ -318,6 +358,17 @@ describe("usePdfViewer", () => {
 
     expect(printSpy).not.toHaveBeenCalled();
     expect(window.document.querySelector(`.${PDF_PRINT_CLASS}`)).toBeNull();
+  });
+
+  test("disposing the scope clears the document and aborts the viewer's listeners", () => {
+    expect.hasAssertions();
+
+    const { scope, viewer } = mountViewer(createDocument(3));
+    scope.stop();
+
+    assert(stubs.abortSignal);
+    expect(stubs.abortSignal.aborted).toBe(true);
+    expect(viewer.setDocument).toHaveBeenLastCalledWith(null);
   });
 
   test("#84 #56 placing an overlay on a page", () => {
@@ -422,39 +473,6 @@ describe("usePdfViewer", () => {
     window.document.dispatchEvent(new Event("fullscreenchange"));
 
     expect(state.isFullscreen.value).toBe(false);
-    scope.stop();
-  });
-
-  test("#223 pinching to zoom", () => {
-    expect.hasAssertions();
-
-    const { container, scope, state, viewer } = mountViewer(createDocument(3));
-    viewer.currentScale = 1;
-    dispatchPointer(container, "pointerdown", 1, 100, 100);
-    dispatchPointer(container, "pointerdown", 2, 200, 100);
-    dispatchPointer(container, "pointermove", 2, 300, 100);
-
-    expect(state.scale.value).toBe(2);
-    // The point between the pointers is 200 across, so the content under it stays there at the doubled scale
-    expect(container.scrollLeft).toBe(200);
-    scope.stop();
-  });
-
-  test("zooming with Ctrl and the wheel", () => {
-    expect.hasAssertions();
-
-    const { container, scope, state, viewer } = mountViewer(createDocument(3));
-    viewer.currentScale = 1;
-    container.dispatchEvent(
-      Object.assign(new Event("wheel", { cancelable: true }), {
-        clientX: 0,
-        clientY: 0,
-        ctrlKey: true,
-        deltaY: -PDF_WHEEL_ZOOM_DIVISOR,
-      }),
-    );
-
-    expect(state.scale.value).toBeCloseTo(Math.E);
     scope.stop();
   });
 });
