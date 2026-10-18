@@ -74,7 +74,7 @@ A resident SHALL keep the spot it stands at while that spot is due to change and
 
 ### Requirement: Residents are generated from the scene's own records
 
-An operator generating the residents SHALL place each named NPC that has a talk once per fitted region, and SHALL leave out any NPC with no name or no talk.
+An operator generating the residents SHALL place each named NPC that has a talk once per fitted region, SHALL leave out any NPC with no name or no talk, and SHALL leave out the NPC a crafting bench stands for, since the bench is an interaction and no person.
 
 #### Scenario: An NPC placed more than once in a region is kept once
 
@@ -88,6 +88,13 @@ An operator generating the residents SHALL place each named NPC that has a talk 
 - **WHEN** the residents are generated
 - **THEN** the NPC is left out of the region's residents
 - **AND** the omission is counted in the generation's report
+
+#### Scenario: A crafting bench's NPC is left out and counted
+
+- **GIVEN** an NPC is the one a crafting bench's place is built from, in the bench's scene group
+- **WHEN** the residents are generated
+- **THEN** the NPC is left out of every region
+- **AND** the omission is counted in the generation's report as a crafting bench
 
 #### Scenario: A place outside every fitted region is left out
 
