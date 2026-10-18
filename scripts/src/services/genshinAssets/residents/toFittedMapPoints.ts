@@ -4,8 +4,8 @@ import type { SimilarityTransform } from "#src/models/genshinAssets/points/Simil
 
 import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegionMapPoints";
 
-// The regions the fit placed, and the official map's ground points in those regions carried into the game's axes. A region
-// The fit matched no statue or waypoint in is left out, since a place classified into it cannot be trusted
+// The regions the fit placed, and the official map's ground points in those regions carried into the game's axes.
+// A region the fit matched no statue or waypoint in is left out, since a place classified into it cannot be trusted
 export const toFittedMapPoints = ({
   points,
   regions,
