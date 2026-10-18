@@ -21,3 +21,17 @@ export const DungeonEntryTypeDomainKindMap: Partial<Record<string, DomainKind>> 
   DUNGEN_ENTRY_TYPE_RELIQUARY: DomainKind.Blessing,
   DUNGEN_ENTRY_TYPE_WEAPON_PROMOTE: DomainKind.Forgery,
 };
+// The dungeon table in the dump, read by its name, and the reward preview table a level's clear names its rewards in
+export const DUNGEON_TABLE_NAME = "DungeonExcelConfigData";
+export const REWARD_PREVIEW_TABLE_NAME = "RewardPreviewExcelConfigData";
+// The type a challenge domain's level is named by in the dungeon table
+export const DOMAIN_LEVEL_TYPE = "DUNGEON_DAILY_FIGHT";
+// The days of the week, Monday as 1, each of a Domain of Forgery's or Mastery's day pairs is set for, in the order its
+// Entry's day lists give them: Monday and Thursday, Tuesday and Friday, Wednesday and Saturday
+export const DOMAIN_DAY_PAIRS: number[][] = [
+  [1, 4],
+  [2, 5],
+  [3, 6],
+];
+// Every day of the week, which a Domain of Blessing is open on
+export const ALL_DAYS_OF_WEEK: number[] = [1, 2, 3, 4, 5, 6, 7];

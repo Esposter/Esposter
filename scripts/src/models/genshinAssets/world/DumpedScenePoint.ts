@@ -4,5 +4,5 @@ import type { DumpedVector } from "#src/models/genshinAssets/world/DumpedVector"
 // To, of which a fit reads only numbers and vectors
 export interface DumpedScenePoint {
   $type: string;
-  [field: string]: DumpedVector | number | string;
+  [field: string]: DumpedVector | number | number[] | string;
 }

@@ -6,7 +6,7 @@
 
 ## 2. Levels and days
 
-- [ ] 2.1 Read each domain's days and its levels by rank from the fetched tables. Verify: a test named after the scenario 'A domain closed today is refused' written first and seen failing.
+- [x] 2.1 Read each domain's days and its levels by rank from the fetched tables. Verify: a test named after the scenario 'A domain closed today is refused' written first and seen failing.
 
 ## 3. Entering and the challenge
 

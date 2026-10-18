@@ -13,6 +13,7 @@ import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand"
 import { commissionsCommand } from "#src/services/genshinAssets/commands/commissionsCommand";
 import { cookingCommand } from "#src/services/genshinAssets/commands/cookingCommand";
 import { craftingCommand } from "#src/services/genshinAssets/commands/craftingCommand";
+import { domainLevelsCommand } from "#src/services/genshinAssets/commands/domainLevelsCommand";
 import { domainsCommand } from "#src/services/genshinAssets/commands/domainsCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
@@ -121,6 +122,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     cooking: cookingCommand,
     forging: forgingCommand,
     domains: domainsCommand,
+    "domain-levels": domainLevelsCommand,
     waypoints: waypointsCommand,
     "outcrop-places": outcropPlacesCommand,
     "enemy-camps": enemyCampsCommand,
