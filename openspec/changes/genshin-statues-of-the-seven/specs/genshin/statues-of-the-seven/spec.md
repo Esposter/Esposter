@@ -91,14 +91,14 @@ Resonating with a statue SHALL change the Traveler's element to the element of t
 
 ### Requirement: F on a resonated statue opens the Statue's Blessing
 
-Pressing F at a resonated statue SHALL open the Statue's Blessing, which shows the healing pool, the party's portraits and the auto-recover switch and threshold.
+Pressing F at a resonated statue SHALL open the Statue's Blessing, which shows the healing pool and the party's portraits, and a click on a portrait SHALL heal that member from the pool.
 
 #### Scenario: F on a resonated statue opens the Blessing screen
 
 - **GIVEN** a resonated statue and a party
 - **WHEN** the player presses F at the statue
 - **THEN** the Statue's Blessing opens
-- **AND** it shows the healing pool, the party's portraits and the auto-recover switch and threshold
+- **AND** it shows the healing pool and the party's portraits
 
 ### Requirement: Auto-recover revives and heals the party near a statue
 
@@ -150,3 +150,9 @@ The statues' levels, held counts and found Oculi SHALL be kept with the world, a
 - **GIVEN** a region both saves hold, one of them further on by its level, or on the same level by its held count
 - **WHEN** the two saves are merged
 - **THEN** the merged save holds the region of the save further on, its level and held count as they are
+
+## REMOVED Requirements
+
+### Requirement: Statues stay jumps until the world wires them
+
+The world holds each region's level and the pool, so a resonated statue opens the Blessing rather than only jumping.

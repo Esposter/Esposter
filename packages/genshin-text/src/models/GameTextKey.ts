@@ -590,6 +590,8 @@ export enum GameTextKey {
   Starconch = "1463427132",
   Starshroom = "2119751124",
   Starsilver = "1269908988",
+  // The title of a Statue of The Seven's Blessing screen, which F on a resonated statue opens
+  StatueBlessing = "3126052466",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   StormbearerMountains = "490004829",

@@ -13,5 +13,7 @@
 
 ## 3. Statue's Blessing
 
-- [ ] 3.1 Open the Statue's Blessing with F on a resonated statue. Verify: a test named after 'F on a resonated statue opens the Blessing screen', built from the public clip named in the design.
+- [x] 3.1 Open the Statue's Blessing with F on a resonated statue, showing its healing pool and the party's portraits, and heal from a portrait. Verify: computeStatueInteractables.test.ts, named after 'F on a resonated statue opens the Blessing screen'. The layout is provisional until statue-blessing.mkv records it, and the public clip shows the Worship screen instead.
 - [x] 3.2 Revive and heal the party by auto-recover after two seconds near a statue. Verify: tests named after 'Standing by a statue for two seconds revives the fallen', 'Members under the threshold are healed when the pool holds enough' and 'A pool short of the threshold heals the first slots first'.
+- [ ] 3.3 Show the Worship Statue on F at a resonated statue, with the region's levels and what each pays. Blocked: the wiki's claim has no action in the model, since Oculi are offered on collection and a level's rewards are paid when reached, so the screen needs a decision on what it offers.
+- [ ] 3.4 Set auto-recover's switch and threshold on the Statue's Blessing, in the game's steps. Blocked: the switch's labels and the threshold's steps are not in the game data the recreation reads, so they wait on statue-blessing.mkv.
