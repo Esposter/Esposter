@@ -42,6 +42,7 @@ import { katheryne } from "#src/services/gcg/cards/katheryne";
 import { largeWindSpirit } from "#src/services/gcg/cards/largeWindSpirit";
 import { laurelCoronet } from "#src/services/gcg/cards/laurelCoronet";
 import { leaveItToMe } from "#src/services/gcg/cards/leaveItToMe";
+import { liben } from "#src/services/gcg/cards/liben";
 import { lightningStiletto } from "#src/services/gcg/cards/lightningStiletto";
 import { liyueHarborWharf } from "#src/services/gcg/cards/liyueHarborWharf";
 import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
@@ -161,6 +162,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [322_003, timaeus],
   [322_006, tubby],
   [322_007, timmie],
+  [322_008, liben],
   [322_009, changTheNinth],
   [322_010, ellin],
   [322011, ironTongueTian],
