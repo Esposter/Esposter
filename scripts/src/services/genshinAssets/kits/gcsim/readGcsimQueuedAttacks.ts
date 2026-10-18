@@ -317,6 +317,7 @@ export const readGcsimQueuedAttacks = (
           (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
           0,
         );
+        const holdValue = iteration.get("hold");
         queuedAttacks.push({
           attackLine,
           attackName,
@@ -325,6 +326,7 @@ export const readGcsimQueuedAttacks = (
           file,
           hitbox,
           line: token.line,
+          ...(holdValue !== undefined && { holdValue }),
         });
       }
     }

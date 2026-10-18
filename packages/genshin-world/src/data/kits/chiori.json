@@ -129,7 +129,7 @@
   },
   "skillHolds.0.action.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
   "skillHolds.0.action.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
-  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 37 },
+  "skillHolds.0.action.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 37 },
   "skillHolds.0.action.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalSkill" },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 9432 } },
   "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unsourced", "value": 50 },
