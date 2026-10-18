@@ -1,6 +1,12 @@
 import type { NoteEventTime } from "#src/models/NoteEventTime";
 
-import { CONTOUR_BINS_PER_SEMITONE, MIDI_PITCH_BEND_SEMITONES, MIDI_PITCH_BEND_STEPS } from "#src/constants";
+import {
+  CONTOUR_BINS_PER_SEMITONE,
+  MIDI_MAX_VELOCITY,
+  MIDI_MIN_VELOCITY,
+  MIDI_PITCH_BEND_SEMITONES,
+  MIDI_PITCH_BEND_STEPS,
+} from "#src/constants";
 
 interface MidiEvent {
   bytes: number[];
@@ -18,6 +24,11 @@ const writeVariableLength = (value: number) => {
   return bytes;
 };
 const toTicks = (seconds: number) => Math.round(seconds * MIDI_TICKS_PER_SECOND);
+// A note's amplitude as its velocity, clamped so a quiet note still sounds and a loud one stays a seven-bit value
+const toVelocity = (amplitude: number) => {
+  const velocity = Math.floor(amplitude * MIDI_MAX_VELOCITY);
+  return Math.min(MIDI_MAX_VELOCITY, Math.max(MIDI_MIN_VELOCITY, velocity));
+};
 const toUint16 = (value: number) => [(value >> 8) & 0xff, value & 0xff];
 const toUint32 = (value: number) => [(value >>> 24) & 0xff, (value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff];
 const writeChunk = (type: number[], data: number[]) => [...type, ...toUint32(data.length), ...data];
@@ -52,7 +63,7 @@ const writeNoteEvents = (notes: NoteEventTime[]): MidiEvent[] =>
     }))
     .toSorted((firstNote, secondNote) => firstNote.onTick - secondNote.onTick)
     .flatMap(({ amplitude, offTick, onTick, pitchMidi }) => [
-      { bytes: [0x90, pitchMidi, Math.floor(amplitude * 127)], tick: onTick },
+      { bytes: [0x90, pitchMidi, toVelocity(amplitude)], tick: onTick },
       { bytes: [0x80, pitchMidi, 0], tick: offTick },
     ]);
 

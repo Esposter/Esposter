@@ -33,6 +33,23 @@ describe(writeMidi, () => {
     );
   });
 
+  test.each<[number, string]>([
+    [
+      0.005,
+      "4d546864000000060001000201e04d54726b0000000800ff030000ff2f004d54726b0000001400ff030000c00000903c018740803c0000ff2f00",
+    ],
+    [
+      1.01,
+      "4d546864000000060001000201e04d54726b0000000800ff030000ff2f004d54726b0000001400ff030000c00000903c7f8740803c0000ff2f00",
+    ],
+  ])("#174 a quiet note still sounds and a loud one stays a velocity, amplitude %s", (amplitude, hex) => {
+    expect.hasAssertions();
+
+    expect(
+      Buffer.from(writeMidi([{ amplitude, durationSeconds: 1, pitchMidi: 60, startTimeSeconds: 0 }])).toString("hex"),
+    ).toBe(hex);
+  });
+
   test("#17 writes a bend as its share of the bend's range, held at its edge", () => {
     expect.hasAssertions();
 
@@ -49,7 +66,7 @@ describe(writeMidi, () => {
     expect.hasAssertions();
 
     expect(Buffer.from(writeMidi(RICH_NOTES)).toString("hex")).toBe(
-      "4d546864000000060001000201e04d54726b0000000800ff030000ff2f004d54726b0000006f00ff030000c0007690482e009040720090307f00e0554a00e0000053e02b5553e000604a80400009e02b1553e02b751e9028000080280000e07f7f00e000003580480042e07f7f8360e07f7f8360e07f7f835f803000890a903c3f00e000406be02b356ae02b556b803c0000ff2f00",
+      "4d546864000000060001000201e04d54726b0000000800ff030000ff2f004d54726b0000006f00ff030000c0007690482e009040720090307f00e0554a00e0000053e02b5553e000604a80400009e02b1553e02b751e9028010080280000e07f7f00e000003580480042e07f7f8360e07f7f8360e07f7f835f803000890a903c3f00e000406be02b356ae02b556b803c0000ff2f00",
     );
   });
 

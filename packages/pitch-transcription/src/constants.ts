@@ -3,7 +3,7 @@
 // Model's own training, from Basic Pitch's `constants.py`
 export const AUDIO_SAMPLE_RATE = 22050;
 export const FFT_HOP = 256;
-export const AUDIO_WINDOW_LENGTH_SECONDS = 2;
+const AUDIO_WINDOW_LENGTH_SECONDS = 2;
 export const AUDIO_WINDOW_SAMPLES: number = AUDIO_SAMPLE_RATE * AUDIO_WINDOW_LENGTH_SECONDS - FFT_HOP;
 export const ANNOTATIONS_FPS: number = Math.floor(AUDIO_SAMPLE_RATE / FFT_HOP);
 export const ANNOTATIONS_FRAMES_PER_WINDOW: number = ANNOTATIONS_FPS * AUDIO_WINDOW_LENGTH_SECONDS;
@@ -39,3 +39,6 @@ export const PITCH_BEND_STANDARD_DEVIATION = 5;
 // Centre
 export const MIDI_PITCH_BEND_SEMITONES = 2;
 export const MIDI_PITCH_BEND_STEPS: number = 2 ** 13;
+// A note's velocity is a seven-bit value, and a velocity of zero is a note off, so a note's is held between one and the top
+export const MIDI_MIN_VELOCITY = 1;
+export const MIDI_MAX_VELOCITY = 127;

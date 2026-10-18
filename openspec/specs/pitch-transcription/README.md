@@ -73,15 +73,15 @@ Reading the source turned up defects nobody has filed, each reproduced against t
 
 The MIDI writer was [@tonejs/midi](https://github.com/Tonejs/Midi) until it was rewritten here. Its tracker holds 107 issues, read by title and, for the ones on the writer's path, with their bodies and comments, judged by the [dependency admission triage](../architecture/dependency-admission/design.md). The writer's bytes are pinned to what the library wrote for the same notes, so a defect the library had on that path it still has, and the rows say which.
 
-| Upstream                                               | Verdict            | Proof                                                                                                                        |
-| ------------------------------------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| #80 — pitch bends                                      | In scope — feature | A bend's value and its tick in "#17 writes a bend as its share of the bend's range, held at its edge" in `writeMidi.test.ts` |
-| #174 — a velocity of 0 is a note off                   | Carried            | `createNotes` takes a note's amplitude from readings that cleared the frame threshold, so no note is written at velocity 0   |
-| #149, #182, #187 — the end of track                    | Carried            | The end of track sits at the last event's tick, as the library wrote it; pinned by the byte tests in `writeMidi.test.ts`     |
-| #162, #117 — ES modules under Node                     | Resolved           | No dependency: the package loads as ESM with no CommonJS interop, "loads under plain Node" in `index.test.ts`                |
-| #184 — control changes                                 | Out of scope       | The writer writes no control change; a caller needing one has no path here                                                   |
-| #52, #98, #116, #161 — reading tempos and the header   | Out of scope       | The writer never parses a file, and writes a fixed 120 beats a minute                                                        |
-| The rest — parsing, JSON, instruments, lyrics, loaders | Out of scope       | None is on the writer's path: the reads, the JSON conversions, the instrument tables, the browser loaders and the demos      |
+| Upstream                                               | Verdict            | Proof                                                                                                                                                 |
+| ------------------------------------------------------ | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #80 — pitch bends                                      | In scope — feature | A bend's value and its tick in "#17 writes a bend as its share of the bend's range, held at its edge" in `writeMidi.test.ts`                          |
+| #174 — a velocity of 0 is a note off                   | Carried            | `writeMidi` clamps the velocity to 1..127, proven by the test "#174 a quiet note still sounds and a loud one stays a velocity" in `writeMidi.test.ts` |
+| #149, #182, #187 — the end of track                    | Carried            | The end of track sits at the last event's tick, as the library wrote it; pinned by the byte tests in `writeMidi.test.ts`                              |
+| #162, #117 — ES modules under Node                     | Resolved           | No dependency: the package loads as ESM with no CommonJS interop, "loads under plain Node" in `index.test.ts`                                         |
+| #184 — control changes                                 | Out of scope       | The writer writes no control change; a caller needing one has no path here                                                                            |
+| #52, #98, #116, #161 — reading tempos and the header   | Out of scope       | The writer never parses a file, and writes a fixed 120 beats a minute                                                                                 |
+| The rest — parsing, JSON, instruments, lyrics, loaders | Out of scope       | None is on the writer's path: the reads, the JSON conversions, the instrument tables, the browser loaders and the demos                               |
 
 ## Key files
 
