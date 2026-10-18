@@ -3,13 +3,14 @@ import type { DryRunOptions } from "#src/models/genshinAssets/fit/DryRunOptions"
 import type { RegionGroundFit } from "#src/models/genshinAssets/fit/RegionGroundFit";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { checkHasOutline } from "#src/services/genshinAssets/fit/checkHasOutline";
 import { fitHud } from "#src/services/genshinAssets/fit/fitHud";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
 import { fitRegionGroundPieces } from "#src/services/genshinAssets/fit/fitRegionGroundPieces";
 import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses";
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
 import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseScene";
-import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
+import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 
 // A region's ground in pieces, one fit per area its catalogue outlines, each named `ground/<area>` so `--only ground`
@@ -18,10 +19,11 @@ import { runFits } from "#src/services/genshinAssets/fit/runFits";
 const readRegionGroundFits = async (
   region: DerivedAssetComponent,
 ): Promise<Record<string, () => Promise<GameDataBuild>>> => {
+  const areas = await readRegionAreas(region);
   let fitted: Promise<RegionGroundFit> | undefined;
-  const fitRegion = (): Promise<RegionGroundFit> => (fitted ??= fitRegionGroundPieces(region));
+  const fitRegion = (): Promise<RegionGroundFit> => (fitted ??= fitRegionGroundPieces(region, areas));
   return Object.fromEntries(
-    (await readGroundPieceAreas(region)).map(({ id }) => [
+    areas.filter(checkHasOutline).map(({ id }) => [
       `ground/${id}`,
       async () => {
         const fit = await fitRegion();
