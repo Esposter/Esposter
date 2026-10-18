@@ -4,6 +4,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
+import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { CombatTalent, Element, WeaponType } from "genshin-world";
@@ -225,12 +226,14 @@ describe(getGcsimKitCandidates, () => {
         names: [],
         talentVariables: [
           {
-            leaves: [{ path: [], reference: { label: "Burst DMG", selector: 0, type: "burst" } }],
+            leaves: [{ path: [], reference: { label: "Burst DMG", selector: 0, type: GcsimTalentType.Burst } }],
             line: 6,
             name: "burstDmg",
           },
           {
-            leaves: [{ path: [], reference: { label: "Soul Companion DMG", selector: 0, type: "burst" } }],
+            leaves: [
+              { path: [], reference: { label: "Soul Companion DMG", selector: 0, type: GcsimTalentType.Burst } },
+            ],
             line: 7,
             name: "wolfDmg",
           },

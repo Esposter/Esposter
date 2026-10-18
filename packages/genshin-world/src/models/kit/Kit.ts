@@ -7,6 +7,7 @@ import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitMoonsignBenediction } from "#src/models/kit/KitMoonsignBenediction";
@@ -93,6 +94,9 @@ export interface Kit {
   onKitEvent?: (event: KitEvent, context: KitContext, combatant: Combatant) => void;
   // Run on each step the character on the field sprints, to spend the sprint's seconds from the kit's state
   onSprint?: (context: KitContext, kitState: KitState) => void;
+  // Whether the kit refuses a fall its own character would take, given its own Combatant and the effects on it, which
+  // Leaves the character at 1 HP while the check holds, and a constellation's refusal starts its cooldown here
+  refusesFall?: (combatant: Combatant, kitEffectState: KitEffectState) => boolean;
   // Run on each step while the character is in the deployed team, on the field or off it, given its own Combatant and
   // The step's seconds, for a clock a constellation keeps while its character stands in the team
   onStep?: (context: KitContext, combatant: Combatant, stepSeconds: number) => void;

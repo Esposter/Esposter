@@ -40,6 +40,10 @@
   "parameters.gardenOfPuritySeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 6639 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 } },
-  "skill.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 360 },
-  "skill.hits.0.poiseDamage": { "source": "Wiki", "value": 100 }
+  "skill.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 35 },
+  "skill.hits.0.poiseDamage": { "cause": "Unsourced", "value": 100 },
+  "skill.hits.length": { "cause": "Unsourced", "value": 1 },
+  "skill.hits.0.element": { "cause": "Unsourced", "value": "Water" },
+  "skill.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 6632 } }
 }

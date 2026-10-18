@@ -19,6 +19,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createHuTaoKitBehaviour, HU_TAO_CHARACTER_ID } from "#src/services/kit/characters/huTaoKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { hitPartyMember } from "#src/services/kit/hitPartyMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
 import { createParty } from "#src/services/party/createParty";
@@ -373,5 +374,54 @@ describe("constellation 4 and 6", () => {
     expect.hasAssertions();
 
     expect(drainHuTao(5, 0.2)).toStrictEqual([]);
+  });
+
+  // Hu Tao's share of her Max HP after each of the given lethal hits, from full HP, at the given constellation
+  const takeLethalHits = (constellationCount: number, hits: number) => {
+    const combatant = { ...createHuTaoCombatant(), constellationCount };
+    const party = createParty([HU_TAO_CHARACTER_ID]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    return Array.from({ length: hits }, () => {
+      hitPartyMember(party, combatant, kitEffectState, combatant.attributes.maxHealth);
+      return getPartyMember(party, HU_TAO_CHARACTER_ID).healthShare;
+    });
+  };
+
+  test("at constellation 6, a lethal hit leaves Hu Tao at 1 HP, and a second within a minute takes her down", () => {
+    expect.hasAssertions();
+
+    const { attributes } = createHuTaoCombatant();
+
+    expect(takeLethalHits(6, 2)).toStrictEqual([1 / attributes.maxHealth, 0]);
+  });
+
+  test("below constellation 6, a lethal hit takes Hu Tao down", () => {
+    expect.hasAssertions();
+
+    expect(takeLethalHits(5, 1)).toStrictEqual([0]);
+  });
+
+  test("at constellation 6, a refused fall gives Hu Tao CRIT Rate of 100% for 10 seconds", () => {
+    expect.hasAssertions();
+
+    const combatant = { ...createHuTaoCombatant(), constellationCount: 6 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState, party: createHuTaoParty(1) });
+    HU_TAO_KIT.onKitEvent?.({ characterId: HU_TAO_CHARACTER_ID, kind: KitEventKind.FallRefused }, context, combatant);
+
+    expect(
+      kitEffectState.effects.filter(
+        (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
+      ),
+    ).toStrictEqual([
+      {
+        amount: 1,
+        attribute: Attribute.CriticalRate,
+        characterId: HU_TAO_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 10,
+        source: "hu-tao-c6",
+      },
+    ]);
   });
 });

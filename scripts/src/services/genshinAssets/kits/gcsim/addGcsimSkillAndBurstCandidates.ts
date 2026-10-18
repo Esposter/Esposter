@@ -12,6 +12,7 @@ import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsi
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
+import { takeOne } from "@esposter/shared";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
 // The skill and burst: their hitmarks from `<slot>Hitmark` or `<slot>Hitmarks`, or the skill's press's or tap's,
@@ -70,7 +71,7 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
     const queuedHits = getGcsimQueuedHits(gcsim, attackTags, hitmarks.file);
     const readQueuedAttack = (hitmark: number) => {
       const queuedAttacks = queuedHits.filter(({ delay }) => delay === hitmark);
-      return queuedAttacks.length === 1 ? queuedAttacks[0].attack : undefined;
+      return queuedAttacks.length === 1 ? takeOne(queuedAttacks).attack : undefined;
     };
     const hitboxes = config.abilityHitboxesMap.get(slot) ?? [];
     const isHitboxJoined = hitboxes.length === hitmarkValues.length;
