@@ -15,6 +15,7 @@ const { isFailed, isPasswordRequested, isPasswordWrong, pdfDocument, submitPassw
   renderer,
   source: () => url,
 });
+const isAnyFailed = computed(() => isFailed.value || isRendererFailed.value);
 
 onMounted(async () => {
   await getResultAsync(loadPdfRenderer).match(
@@ -32,8 +33,8 @@ onMounted(async () => {
 <template>
   <PdfThumbnail
     :style="isPreview ? { maxHeight: PREVIEW_MAX_HEIGHT } : { cursor: 'pointer' }"
-    :is-failed="isFailed || isRendererFailed"
-    :pdf-document="pdfDocument"
+    :is-failed="isAnyFailed"
+    :pdf-document
     @click="
       () => {
         if (!isPreview) isOpen = true;
@@ -42,13 +43,13 @@ onMounted(async () => {
   />
   <StyledDialog v-if="!isPreview" v-model="isOpen" :title="file.filename" w="[min(64rem,96vw)]">
     <PdfViewer
-      h="[64dvh]"
       :key="url"
+      h="[64dvh]"
       :filename="file.filename"
-      :is-failed="isFailed || isRendererFailed"
-      :is-password-requested="isPasswordRequested"
-      :is-password-wrong="isPasswordWrong"
-      :pdf-document="pdfDocument"
+      :is-failed="isAnyFailed"
+      :is-password-requested
+      :is-password-wrong
+      :pdf-document
       :renderer
       @submit-password="(password) => submitPassword(password)"
     />
