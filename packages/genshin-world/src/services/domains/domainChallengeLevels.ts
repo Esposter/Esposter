@@ -1,5 +1,9 @@
+import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
+
 export interface DomainChallengeEnemy {
   count: number;
+  // The enemy kind a boss wave names, which its camp spawns in place of a stand-in
+  enemyKindId?: EnemyKindId;
   name: string;
 }
 
@@ -10,6 +14,14 @@ export interface DomainChallengeLevel {
   // Each wave's enemy groups, the wave held as its groups' members
   waves: DomainChallengeEnemy[][];
 }
+
+// Confront Stormterror's tier, from the wiki's Confront Stormterror page: one fight with Stormterror Dvalin alone, untimed,
+// Its shield's time limits are its phases' and not the level's clock (PROVISIONAL)
+const STORMTERROR_TIER: DomainChallengeLevel = {
+  defeatTarget: 1,
+  timeLimitSeconds: Number.POSITIVE_INFINITY,
+  waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
+};
 
 // Each domain's challenge levels by its entry id and then by the level's recommended rank, PROVISIONAL from the wiki's
 // Domain Enemies table: the targets are the entry's tiers in ascending rank, and each target's enemies are its waves,
@@ -1881,5 +1893,14 @@ export const DOMAIN_CHALLENGE_LEVELS: Readonly<Record<number, Readonly<Record<nu
         ],
       ],
     },
+  },
+  // Confront Stormterror, a weekly boss's trounce domain, at each of its six tiers by the recommended rank
+  1006: {
+    25: STORMTERROR_TIER,
+    30: STORMTERROR_TIER,
+    35: STORMTERROR_TIER,
+    40: STORMTERROR_TIER,
+    45: STORMTERROR_TIER,
+    50: STORMTERROR_TIER,
   },
 };

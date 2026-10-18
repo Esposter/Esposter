@@ -17,14 +17,21 @@ export const createDomainArenaCamp = (
   enemyLevel: number,
   random: () => number,
 ): EnemyCamp => {
-  const count = wave.reduce((total, { count: groupCount }) => total + groupCount, 0);
+  const enemyKindIds = wave.flatMap(({ count, enemyKindId }) =>
+    Array.from(
+      { length: count },
+      () =>
+        enemyKindId ?? takeOne(OUTCROP_CAMP_ENEMY_KIND_IDS, Math.floor(random() * OUTCROP_CAMP_ENEMY_KIND_IDS.length)),
+    ),
+  );
+  const count = enemyKindIds.length;
   return {
     areaId,
     id: campId,
-    members: Array.from({ length: count }, (_, index) => {
+    members: enemyKindIds.map((enemyKindId, index) => {
       const angle = (index / count) * 2 * Math.PI;
       return {
-        enemyKindId: takeOne(OUTCROP_CAMP_ENEMY_KIND_IDS, Math.floor(random() * OUTCROP_CAMP_ENEMY_KIND_IDS.length)),
+        enemyKindId,
         id: String(index),
         level: enemyLevel,
         patrol: [],

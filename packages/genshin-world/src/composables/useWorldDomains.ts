@@ -16,6 +16,7 @@ import type { GroundPoint } from "genshin-engine";
 import type { Ref } from "vue";
 
 import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
+import { DomainKind } from "#src/models/domains/DomainKind";
 import { GameDataset } from "#src/models/data/GameDataset";
 import { domainScheduleSchema } from "#src/models/domains/DomainSchedule";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
@@ -28,7 +29,9 @@ import { computeDomainScenePose } from "#src/services/domains/computeDomainScene
 import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomainWaveAfterDefeat";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
+import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
+import { toWeeklyBossSchedule } from "#src/services/domains/toWeeklyBossSchedule";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { getResultAsync } from "@esposter/shared";
@@ -39,6 +42,7 @@ import { computed, shallowRef } from "vue";
 interface DomainArena {
   areaId: string;
   center: GroundPoint;
+  domainKind: DomainKind;
   enemyLevel: number;
   entryId: number;
   // The epoch millisecond the arena was entered, which names each wave's camp apart from the one before
@@ -111,13 +115,18 @@ export const useWorldDomains = ({
         )
       : [],
   );
+  // A weekly boss's trounce domain is read from the weekly record, which holds none before a publish, so its schedule is empty then
+  const readDomainSchedule = (landmark: DomainEntranceLandmark): Promise<DomainSchedule> =>
+    landmark.domainKind === DomainKind.Trounce
+      ? readWeeklyBossDomains(gameDataBaseUrl).then((domains) =>
+          toWeeklyBossSchedule(domains[String(landmark.entryId)] ?? { levels: [] }),
+        )
+      : readGameDataEntry(gameDataBaseUrl, GameDataset.Domains, String(landmark.entryId), domainScheduleSchema);
   const openDomain = (landmark: DomainEntranceLandmark) => {
     domainEntrance.value = landmark;
     domainSchedule.value = undefined;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() =>
-      readGameDataEntry(gameDataBaseUrl, GameDataset.Domains, String(landmark.entryId), domainScheduleSchema),
-    ).match(
+    getResultAsync(() => readDomainSchedule(landmark)).match(
       (schedule) => {
         if (domainEntrance.value?.id === landmark.id) domainSchedule.value = schedule;
       },
@@ -179,6 +188,7 @@ export const useWorldDomains = ({
     const arena: DomainArena = {
       areaId: entrance.areaId,
       center: scenePose.point,
+      domainKind: entrance.domainKind,
       enemyLevel: scheduledLevel.enemyLevel,
       entryId: entrance.entryId,
       level,
@@ -242,7 +252,8 @@ export const useWorldDomains = ({
     }
     if (outcome === DomainChallengeOutcome.Cleared) {
       domainChallenge.value = undefined;
-      isDomainTreeRaised.value = true;
+      // A weekly boss's defeat leaves its weekly blossom where it fell, so its trounce domain raises no tree
+      isDomainTreeRaised.value = arena.domainKind !== DomainKind.Trounce;
       return;
     }
     leaveDomain();
