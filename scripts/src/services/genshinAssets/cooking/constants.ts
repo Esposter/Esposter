@@ -18,13 +18,13 @@ export const REVIVE_BUFF_ABILITY_NAME = "revive_buff";
 export const REVIVE_BUFF_DESCRIPTION_REGEX = /^恢复(?<flat>\d+)HP$/u;
 // The percent a heal's share and a bonus's percentage are out of
 export const PERCENT_TOTAL = 100;
-// The abilities a dish's bonus buff names. Each of the attack and the defence writes a flat amount first, which is the
-// Stat it names; the critical one writes only percentages
-export const BONUS_ABILITY_NAMES = ["Atk_Team", "Def_Team", "Critical_Team"];
 export const BONUS_FLAT_ATTRIBUTE_MAP: Record<string, Attribute> = {
   Atk_Team: Attribute.Attack,
   Def_Team: Attribute.Defense,
 };
+// The abilities a dish's bonus buff names. Each of the attack and the defence writes a flat amount first, which is the
+// Stat it names; the critical one writes only percentages
+export const BONUS_ABILITY_NAMES = [...Object.keys(BONUS_FLAT_ATTRIBUTE_MAP), "Critical_Team"];
 // The stat a percentage clause names, the name written without the 提升 a clause may end it with
 export const BONUS_CLAUSE_ATTRIBUTE_MAP: Record<string, Attribute> = {
   元素充能: Attribute.EnergyRecharge,
