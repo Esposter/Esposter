@@ -123,6 +123,7 @@ import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#s
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
+import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecialStoryModeActive";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
@@ -1183,7 +1184,12 @@ defineExpose({ jumpTo, readCameraPosition });
         (context: TresContextWithClock) => {
           input.readInput(context.delta);
           hudFrame.seconds = context.elapsed;
-          if (!isPaused) screenKind = getNextScreenKind(screenKind, inputState.pressedActions);
+          if (!isPaused)
+            screenKind = getNextScreenKind(
+              screenKind,
+              inputState.pressedActions,
+              checkIsSpecialStoryModeActive(questsInProgress.value, questProgressMap.value),
+            );
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
             isHudHidden = !isHudHidden;
           if (!isPaused && screenKind === ScreenKind.World)
