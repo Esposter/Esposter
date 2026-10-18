@@ -57,6 +57,7 @@ import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passi
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
 import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passives/createLawsEquilibriumPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
+import { createManyOathsOfDawnAndDuskPassiveModule } from "#src/services/weapon/passives/createManyOathsOfDawnAndDuskPassiveModule";
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
 import { createOfferingUntoWindAndSunPassiveModule } from "#src/services/weapon/passives/createOfferingUntoWindAndSunPassiveModule";
 import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
@@ -371,4 +372,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "646104387": createOfferingUntoWindAndSunPassiveModule,
   // Purifying Crown (Fractured Halo)
   "3108076563": createPurifyingCrownPassiveModule,
+  // Many Oaths of Dawn and Dusk (Verdict)
+  "2378883547": createManyOathsOfDawnAndDuskPassiveModule,
 };
