@@ -47,11 +47,24 @@ describe(createMjmlAttributeSchema, () => {
     { attribute: "href", value: "javascript:alert(1)" },
     { attribute: "background-url", value: "data:text/html,x" },
     { attribute: "left-icon", value: "javascript:alert(1)" },
+    { attribute: "thumbnails-src", value: "ftp://host/x.png" },
   ])("$attribute refuses the scheme of $value", ({ attribute, value }) => {
     expect.hasAssertions();
 
     expect(createMjmlAttributeSchema(parseMjmlAttributeType("string"), attribute).safeParse(value).success).toBe(false);
   });
+
+  test.each([
+    { attribute: "background-color", grammar: "color", value: "rgb(1,2,3) junk" },
+    { attribute: "background-color", grammar: "color", value: "x rgb(1,2,3)" },
+    { attribute: "cellpadding", grammar: "integer", value: "5px" },
+    { attribute: "cellpadding", grammar: "integer", value: "a1" },
+  ])("$grammar $attribute refuses $value, a value that only contains a valid one", ({ attribute, grammar, value }) => {
+    expect.hasAssertions();
+
+    expect(createMjmlAttributeSchema(parseMjmlAttributeType(grammar), attribute).safeParse(value).success).toBe(false);
+  });
+
   test("an address accepts an allowed scheme", () => {
     expect.hasAssertions();
 

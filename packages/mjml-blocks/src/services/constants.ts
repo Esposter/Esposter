@@ -215,8 +215,8 @@ const MJML_COLOR_NAMES: string[] = [
   "yellowgreen",
 ];
 export const MJML_COLOR_MATCHERS: RegExp[] = [
-  /rgba\(\d{1,3},\s?\d{1,3},\s?\d{1,3},\s?\d(\.\d{1,3})?\)/iu,
-  /rgb\(\d{1,3},\s?\d{1,3},\s?\d{1,3}\)/iu,
+  /^rgba\(\d{1,3},\s?\d{1,3},\s?\d{1,3},\s?\d(?:\.\d{1,3})?\)$/iu,
+  /^rgb\(\d{1,3},\s?\d{1,3},\s?\d{1,3}\)$/iu,
   /^#([0-9a-f]{3}){1,2}$/iu,
   new RegExp(`^(${MJML_COLOR_NAMES.join("|")})$`, "u"),
 ];

@@ -26,7 +26,7 @@ const createTypeSchema = (type: MjmlAttributeType): z.ZodType<string> => {
     case MjmlAttributeKind.Enum:
       return z.string().refine((value) => type.options.includes(value));
     case MjmlAttributeKind.Integer:
-      return z.string().regex(/\d+/u);
+      return z.string().regex(/^\d+$/u);
     case MjmlAttributeKind.String:
       return z.string();
     case MjmlAttributeKind.Unit:
