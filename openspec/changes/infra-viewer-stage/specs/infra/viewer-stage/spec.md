@@ -46,7 +46,7 @@ The persona voice SHALL stop the sound and clear the bubble on the viewer when a
 
 ### Requirement: Attention and the end of a turn move the character when the reader has mapped them
 
-The persona SHALL play the motion mapped to attention wanted on the model, and SHALL clear the expression when a turn ends, and SHALL send nothing for a moment with no mapping.
+The persona SHALL play the motion mapped to attention wanted on the model, and SHALL clear the expression when a turn ends, and SHALL send no motion for a moment with no mapping.
 
 #### Scenario: Attention wanted turns the character
 
