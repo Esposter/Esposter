@@ -1,16 +1,6 @@
+import { computeModularPower } from "#src/services/function/computeModularPower";
 import { MILLER_RABIN_BASES } from "#src/services/function/constants";
 
-const computeModularPower = (base: bigint, exponent: bigint, modulus: bigint): bigint => {
-  let result = 1n;
-  let square = base % modulus;
-  let remaining = exponent;
-  while (remaining > 0n) {
-    if (remaining % 2n === 1n) result = (result * square) % modulus;
-    square = (square * square) % modulus;
-    remaining /= 2n;
-  }
-  return result;
-};
 // Whether a window of Miller-Rabin rounds passes for one base: the power is one or minus one, or squaring it reaches minus one.
 // The squaring runs only while the power of two below the number's own factor allows
 const checkIsMillerRabinPassing = (candidate: bigint, base: bigint, oddPart: bigint, twos: number): boolean => {
@@ -23,9 +13,10 @@ const checkIsMillerRabinPassing = (candidate: bigint, base: bigint, oddPart: big
   }
   return false;
 };
+
 // Whether an integer is prime, by Miller-Rabin over fixed bases, which never trial-divides.
 // Past the safe integers every number is even, so composite, and the test runs only on the safe ones
-export const checkIsPrime = (value: number): boolean => {
+export const computeIsPrime = (value: number): boolean => {
   if (!Number.isInteger(value) || value < 2 || value > Number.MAX_SAFE_INTEGER) return false;
 
   const candidate = BigInt(value);
