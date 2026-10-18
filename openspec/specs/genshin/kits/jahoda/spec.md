@@ -1,6 +1,6 @@
 ## Purpose
 
-Jahoda's kit as built: her three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit and heals, Constellation 6's Moonsign buff, and her Moonsign Benediction, Rooftop Dash, as her record holds it, with her robots, Meowball and the rest of her Moonsign kit not yet built.
+Jahoda's kit as built: her three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit, heals and robots, Constellation 6's Moonsign buff, and her Moonsign Benediction, Rooftop Dash, as her record holds it, with her robots, Meowball and the rest of her Moonsign kit not yet built.
 
 ## Requirements
 
@@ -85,6 +85,40 @@ Hidden Aces SHALL heal the active character every 87 frames from its 12th frame 
 - **GIVEN** Jahoda is at 50% of her health and a partner at 40%
 - **WHEN** the player casts Hidden Aces
 - **THEN** the partner's health does not change
+
+### Requirement: Hidden Aces' robots absorb an aura and strike the three nearest enemies
+
+Hidden Aces SHALL have two robots at Ascendant Gleam, each of which SHALL absorb the aura its circle holds at its first check and strike the three nearest enemies with that element.
+
+#### Scenario: A robot absorbs an aura at its first check and strikes 41 frames later
+
+- **GIVEN** Jahoda is at Ascendant Gleam and an enemy holding a Pyro aura stands within her robots' circle
+- **WHEN** the player casts Hidden Aces
+- **THEN** the first robot's Pyro strikes land on the nearest enemies on frames 47, 187, 327, 467, 607 and 747, and on no frame after
+
+#### Scenario: A robot that finds no aura checks again 46 frames later
+
+- **GIVEN** an enemy takes a Hydro aura after the first check, at frame 6
+- **WHEN** the player casts Hidden Aces
+- **THEN** the robot absorbs it at frame 52 and its first strike lands on frame 93
+
+#### Scenario: A strike lands on the three nearest enemies
+
+- **GIVEN** four enemies stand at 1, 2, 3 and 4 metres from Jahoda, the nearest holding a Pyro aura
+- **WHEN** the robot's first strike lands
+- **THEN** it lands on the enemies at 1, 2 and 3 metres, nearest first
+
+#### Scenario: The second robot checks 41 frames after the first
+
+- **GIVEN** an enemy holding a Pyro aura stands within the circles from the start
+- **WHEN** the player casts Hidden Aces
+- **THEN** the second robot absorbs at frame 47 and strikes on frames 88, 228, 368, 508, 648 and 788
+
+#### Scenario: The robots are not cast at Nascent Gleam
+
+- **GIVEN** the team is at Nascent Gleam
+- **WHEN** the player casts Hidden Aces
+- **THEN** no robot checks an aura
 
 ### Requirement: Plunges land at once with the shared reach
 
