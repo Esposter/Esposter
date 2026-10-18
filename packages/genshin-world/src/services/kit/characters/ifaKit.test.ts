@@ -14,7 +14,9 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { createIfaKitBehaviour, IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
+import { IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -143,6 +145,34 @@ describe(createIfaKitBehaviour, () => {
     IFA_KIT.elementalSkill.onStart?.(context);
     expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBe(0);
     expect(partyDamageBonusOf(combatant, LunarReactionType.LunarCharged, context)).toBe(0);
+  });
+
+  test("a passive takes effect at its ascension phase: Ifa's Rescue Essentials count the Nightsoul points of her whole party, not her own alone", () => {
+    expect.hasAssertions();
+    const combatant = createIfaCombatant(0, 1);
+    const context = createKitTestContext(combatant, { party: createParty([IFA_CHARACTER_ID, IANSAN_CHARACTER_ID]) });
+    enterKitNightsoulBlessing(context.kitEffectState, IFA_CHARACTER_ID, {
+      points: 40,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, {
+      points: 40,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBeCloseTo(1.2);
+  });
+
+  test("a passive takes effect at its ascension phase: the party's points give Ifa no Rescue Essentials once her own blessing has ended", () => {
+    expect.hasAssertions();
+    const combatant = createIfaCombatant(0, 1);
+    const context = createKitTestContext(combatant, { party: createParty([IFA_CHARACTER_ID, IANSAN_CHARACTER_ID]) });
+    IFA_KIT.elementalSkill.onStart?.(context);
+    enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, {
+      points: 80,
+      secondsRemaining: Number.POSITIVE_INFINITY,
+    });
+    IFA_KIT.elementalSkill.onStart?.(context);
+    expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBe(0);
   });
 
   test("a passive takes effect at its ascension phase: her Rescue Essentials are cleared with her blessing, so no DMG Bonus remains once it ends", () => {
