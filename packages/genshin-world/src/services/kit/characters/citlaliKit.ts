@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
@@ -6,12 +7,16 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
@@ -59,17 +64,52 @@ const SPIRIT_VESSEL_POINTS = 3;
 const SPIRIT_VESSEL_RANDOM_MINIMUM_FRAMES = 30;
 const SPIRIT_VESSEL_RANDOM_FRAMES = 31;
 
+// Ascension 1 gives Citlali sixteen points when a Melt or Frozen lands on an enemy during the Blessing, once each eight seconds,
+// And lowers the enemy's Hydro and Pyro RES by 20% for twelve seconds, as gcsim (MIT) citlali/asc.go's a1Hook does (lines 23 to 55)
+const ASCENSION_1 = 1;
+const ASCENSION_1_POINTS = 16;
+const ASCENSION_1_POINTS_COOLDOWN_SECONDS = 8;
+const ASCENSION_1_POINTS_COOLDOWN_ID = "citlali-a1-nightsoul-cooldown";
+const ASCENSION_1_RESISTANCE_ID = "citlali-a1-resistance";
+const ASCENSION_1_RESISTANCE_REDUCTION = 0.2;
+const ASCENSION_1_RESISTANCE_SECONDS = 12;
+const ASCENSION_1_REACTION_TYPES = new Set<ReactionType>([ReactionType.Frozen, ReactionType.Melt]);
+
 // The flat base damage a hit adds from a share of its striker's Elemental Mastery, from Ascension 4
 const createElementalMasteryFlatDamage =
   (share: number) =>
   (combatant: Combatant): number =>
     combatant.ascension >= ASCENSION_4 ? elementalMasteryMultiplier(combatant, share) : 0;
 
+// Lowers the enemy's Hydro and Pyro RES and gives Citlali her Ascension 1 points for a Melt or Frozen that lands on it, as
+// gcsim's a1Hook does: nothing outside the Blessing, and the points once each eight seconds, on a timer the status holds
+const triggerAscension1Reaction = (context: KitContext, characterId: number, enemy: Enemy) => {
+  const { kitEffectState } = context;
+  if (!hasKitNightsoulBlessing(kitEffectState.effects, characterId)) return;
+  if (!checkIsKitStatusActive(kitEffectState.effects, characterId, ASCENSION_1_POINTS_COOLDOWN_ID)) {
+    addKitStatus(kitEffectState, characterId, {
+      id: ASCENSION_1_POINTS_COOLDOWN_ID,
+      secondsRemaining: ASCENSION_1_POINTS_COOLDOWN_SECONDS,
+    });
+    generateKitNightsoulPoints(context, ASCENSION_1_POINTS, NIGHTSOUL_MAXIMUM, characterId);
+  }
+  addEnemyStatus(enemy, {
+    damageTakenBonus: 0,
+    id: ASCENSION_1_RESISTANCE_ID,
+    resistanceReduction: {
+      [Element.Hydro]: ASCENSION_1_RESISTANCE_REDUCTION,
+      [Element.Pyro]: ASCENSION_1_RESISTANCE_REDUCTION,
+    },
+    secondsRemaining: ASCENSION_1_RESISTANCE_SECONDS,
+  });
+};
+
 // Citlali's behaviour: her skill's press enters the Nightsoul Blessing for 20 seconds with its points plus 24, and her burst
 // Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
 // Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage landing on every hit,
-// and the Spirit Vessel skulls her burst summons on the first three enemies within 7 metres. Not built: Ascension 1 and
-// Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start below 50 points and outlast its points
+// the Spirit Vessel skulls her burst summons on the first three enemies within 7 metres, and her Ascension 1 Melt and Frozen
+// passive. Not built: Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start below 50 points
+// and outlast its points
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/citlali/burst.go
 export const createCitlaliKitBehaviour = ({
   kit,
@@ -190,6 +230,13 @@ export const createCitlaliKitBehaviour = ({
     onKitEvent: (event, context, combatant) => {
       if (event.kind === KitEventKind.NightsoulBurst && combatant.ascension >= ASCENSION_4)
         generateKitNightsoulPoints(context, ASCENSION_4_BURST_POINTS, NIGHTSOUL_MAXIMUM, combatant.characterId);
+      // Ascension 1 answers each Melt or Frozen on an enemy from anyone on the team, as gcsim's OnMelt and OnFrozen do
+      else if (
+        event.kind === KitEventKind.ReactionTriggered &&
+        combatant.ascension >= ASCENSION_1 &&
+        event.reactions.some(({ reactionType }) => ASCENSION_1_REACTION_TYPES.has(reactionType))
+      )
+        triggerAscension1Reaction(context, combatant.characterId, event.enemy);
     },
     skill: {
       onStart: (context) => {

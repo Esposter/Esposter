@@ -7,6 +7,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -132,6 +133,14 @@ const stepFrameLandings = (context: KitContext, frames: number) => {
   }
   return landings;
 };
+
+// A reaction a hit raised on an enemy, as the team's kits hear it from the striker's hit
+const raiseReaction = (context: KitContext, combatant: Combatant, enemy: Enemy, reactionType: ReactionType) =>
+  CITLALI_KIT.onKitEvent?.(
+    { enemy, kind: KitEventKind.ReactionTriggered, reactions: [{ reactionType }], striker: combatant },
+    context,
+    combatant,
+  );
 
 describe(createCitlaliKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -446,5 +455,65 @@ describe(createCitlaliKitBehaviour, () => {
       205,
     );
     expect(landing?.strike.hit.talentMultiplier).toBeCloseTo(3.192);
+  });
+
+  test("a passive takes effect at its ascension phase: a Melt during the Blessing gives Citlali sixteen points from Ascension 1", () => {
+    expect.hasAssertions();
+    const combatant = createCitlaliCombatantAt(1);
+    const enemy = createSturdyEnemy(3);
+    const context = createKitTestContext(combatant);
+    CITLALI_KIT.elementalSkill.onStart?.(context);
+    const points = countPoints(context);
+    raiseReaction(context, combatant, enemy, ReactionType.Melt);
+    expect(countPoints(context) - points).toBe(16);
+  });
+
+  test("does not take effect below its ascension phase: a Melt during the Blessing gives Citlali no points below Ascension 1", () => {
+    expect.hasAssertions();
+    const combatant = createCitlaliCombatantAt(0);
+    const enemy = createSturdyEnemy(3);
+    const context = createKitTestContext(combatant);
+    CITLALI_KIT.elementalSkill.onStart?.(context);
+    const points = countPoints(context);
+    raiseReaction(context, combatant, enemy, ReactionType.Melt);
+    expect(countPoints(context)).toBe(points);
+  });
+
+  test("the Ascension 1 points come at most every eight seconds: a Frozen within eight seconds of a Melt gives none, and one after gives sixteen more", () => {
+    expect.hasAssertions();
+    const combatant = createCitlaliCombatantAt(1);
+    const enemy = createSturdyEnemy(3);
+    const context = createKitTestContext(combatant);
+    CITLALI_KIT.elementalSkill.onStart?.(context);
+    raiseReaction(context, combatant, enemy, ReactionType.Melt);
+    const points = countPoints(context);
+    stepKitSeconds(context, 7);
+    raiseReaction(context, combatant, enemy, ReactionType.Frozen);
+    expect(countPoints(context)).toBe(points);
+    stepKitSeconds(context, 2);
+    raiseReaction(context, combatant, enemy, ReactionType.Frozen);
+    expect(countPoints(context)).toBe(points + 16);
+  });
+
+  test("a Melt during the Blessing lowers the enemy's Hydro and Pyro resistance by 20% for twelve seconds", () => {
+    expect.hasAssertions();
+    const combatant = createCitlaliCombatantAt(1);
+    const enemy = createSturdyEnemy(3);
+    const context = createKitTestContext(combatant);
+    CITLALI_KIT.elementalSkill.onStart?.(context);
+    raiseReaction(context, combatant, enemy, ReactionType.Melt);
+    const status = enemy.statuses.find(({ resistanceReduction }) => resistanceReduction !== undefined);
+    expect(status?.resistanceReduction).toEqual({ [Element.Hydro]: 0.2, [Element.Pyro]: 0.2 });
+    expect(status?.secondsRemaining).toBe(12);
+  });
+
+  test("a Melt outside the Blessing gives Citlali no points and lowers no resistance", () => {
+    expect.hasAssertions();
+    const combatant = createCitlaliCombatantAt(1);
+    const enemy = createSturdyEnemy(3);
+    const context = createKitTestContext(combatant);
+    raiseReaction(context, combatant, enemy, ReactionType.Melt);
+    expect(countPoints(context)).toBe(0);
+    expect(enemy.statuses).toEqual([]);
   });
 });

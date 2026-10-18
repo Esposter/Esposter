@@ -1,6 +1,6 @@
 ## Purpose
 
-Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, the Opal Fire with Itzpapa's Frostfall Storm, the Opal Shield and the Spirit Vessel skulls. Her Ascension 1 and constellations wait on their hooks.
+Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, the Opal Fire with Itzpapa's Frostfall Storm, the Opal Shield and the Spirit Vessel skulls. Her constellations wait on their hooks.
 
 ## Requirements
 
@@ -155,6 +155,42 @@ At Ascension 4 Citlali SHALL gain four Nightsoul points on each Nightsoul burst 
 - **GIVEN** Citlali is at Ascension 4 with 1000 Elemental Mastery
 - **WHEN** Ice Storm's hit is priced
 - **THEN** it adds 12000 flat damage
+
+### Requirement: Ascension 1
+
+At Ascension 1 a Melt or Frozen on an enemy during the Nightsoul Blessing SHALL give Citlali sixteen Nightsoul points, once each eight seconds, and SHALL lower that enemy's Hydro and Pyro RES by 20% for twelve seconds.
+
+#### Scenario: A Melt during the Blessing gives sixteen points from Ascension 1
+
+- **GIVEN** Citlali is at Ascension 1 and her skill's press has entered the Blessing with 24 points
+- **WHEN** a Melt lands on an enemy
+- **THEN** she holds 40 points
+
+#### Scenario: A Melt gives no points below Ascension 1
+
+- **GIVEN** Citlali is at Ascension 0 and her skill's press has entered the Blessing
+- **WHEN** a Melt lands on an enemy
+- **THEN** she still holds 24 points
+
+#### Scenario: The points come at most once in eight seconds
+
+- **GIVEN** a Melt has given her points
+- **WHEN** a Frozen lands on an enemy seven seconds later
+- **THEN** she gains no points
+- **WHEN** a Frozen lands on an enemy nine seconds after the Melt
+- **THEN** she gains sixteen points
+
+#### Scenario: A Melt lowers the enemy's Hydro and Pyro RES for twelve seconds
+
+- **GIVEN** Citlali is at Ascension 1 and in the Blessing
+- **WHEN** a Melt lands on an enemy
+- **THEN** the enemy's Hydro and Pyro RES are lowered by 20% for twelve seconds
+
+#### Scenario: Outside the Blessing a Melt gives nothing
+
+- **GIVEN** Citlali is at Ascension 1 and out of the Blessing
+- **WHEN** a Melt lands on an enemy
+- **THEN** she gains no points and the enemy's RES is unchanged
 
 ### Requirement: The Opal Shield
 
