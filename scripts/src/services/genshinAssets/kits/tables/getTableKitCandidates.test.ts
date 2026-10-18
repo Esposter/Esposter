@@ -291,6 +291,7 @@ describe(getTableKitCandidates, () => {
               { indexes: [9], label: "Phantasm Performance 2-Hit DMG (Shades)" },
               { indexes: [10], label: "Phantasm Performance 3-Hit DMG (Shades)" },
               { indexes: [3], label: "Shadow Dance Duration" },
+              { indexes: [2], label: "Phantasm Performance Charges" },
             ],
           ],
           [12_231, [{ indexes: [10], label: "Shadow Dance Charged Attack Stamina Cost" }]],
@@ -326,6 +327,7 @@ describe(getTableKitCandidates, () => {
         "stances.phantasmPerformance.chargedAttack.hits.5.multiplier",
         "stances.phantasmPerformance.chargedAttack.hits.6.multiplier",
         "stances.phantasmPerformance.chargedAttackStamina",
+        "parameters.phantasmPerformanceCharges",
         "parameters.shadowDanceSeconds",
       ].toSorted(),
     );
@@ -338,6 +340,7 @@ describe(getTableKitCandidates, () => {
       proudSkillGroupId: 12_231,
     });
     expect(values["parameters.shadowDanceSeconds"]).toStrictEqual({ index: 3, proudSkillGroupId: 12_232 });
+    expect(values["parameters.phantasmPerformanceCharges"]).toStrictEqual({ index: 2, proudSkillGroupId: 12_232 });
   });
 
   test("gives Zibai's Lunar Phase Shift its skill's Spirit Steed's Stride, its four strikes one by one, its charged attack and its seconds", () => {
@@ -356,6 +359,7 @@ describe(getTableKitCandidates, () => {
               { indexes: [0], label: "Spirit Steed's Stride 1-Hit DMG" },
               { indexes: [1], label: "Spirit Steed's Stride 2-Hit DMG" },
               { indexes: [3], label: "Lunar Phase Shift Duration" },
+              { indexes: [2], label: "Lunar Phase Shift 4-Hit Additional DMG" },
             ],
           ],
           [
@@ -384,6 +388,7 @@ describe(getTableKitCandidates, () => {
         "stances.lunarPhaseShift.normalAttacks.2.hits.0.multiplier",
         "stances.lunarPhaseShift.normalAttacks.2.hits.1.multiplier",
         "stances.lunarPhaseShift.normalAttacks.3.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.3.hits.1.multiplier",
         "stances.lunarPhaseShift.skill.hits.0.multiplier",
         "stances.lunarPhaseShift.skill.hits.1.multiplier",
         "parameters.lunarPhaseShiftSeconds",
@@ -395,6 +400,10 @@ describe(getTableKitCandidates, () => {
     });
     expect(values["stances.lunarPhaseShift.skill.hits.1.multiplier"]).toStrictEqual({
       index: 1,
+      proudSkillGroupId: 12_632,
+    });
+    expect(values["stances.lunarPhaseShift.normalAttacks.3.hits.1.multiplier"]).toStrictEqual({
+      index: 2,
       proudSkillGroupId: 12_632,
     });
   });
