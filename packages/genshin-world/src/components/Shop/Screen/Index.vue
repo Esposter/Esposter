@@ -124,7 +124,8 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
     adventureRank,
     now.value,
   );
-  if (bought.purchases === purchases.value) return;
+  // A refused purchase hands back the wallet and bag it was given; a purchase of a good with no buy limit keeps the purchases as they were
+  if (bought.inventory === inventory.value && bought.wallet === wallet.value) return;
   inventory.value = bought.inventory;
   purchases.value = bought.purchases;
   wallet.value = bought.wallet;

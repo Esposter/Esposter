@@ -7,23 +7,26 @@ import ShopScreen from "#src/components/Shop/Screen/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
+import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
+import { page } from "vitest/browser";
 import { defineComponent, h, nextTick } from "vue";
 
 // Made-up tabs, goods, items and names, which the test reads back on the screen rather than any game value
 const TREASURE_TAB_ID = 1;
 const FURNISHING_TAB_ID = 2;
 const PRICE_ITEM_ID = 301;
-const TREASURE_ITEM_ID = 302;
-const FURNISHING_ITEM_ID = 303;
+// The goods' made-up items avoid the sigil ids 301 to 303, which a shop trades as currencies and so gives to the wallet
+const TREASURE_ITEM_ID = 900_302;
+const FURNISHING_ITEM_ID = 900_303;
 const gameText = {
   ...ENGLISH_GAME_TEXT,
   [GameTextKey.InventoryFurnishings]: "made up furnishings",
   [GameTextKey.RealmDepotTreasures]: "made up treasures",
 };
-const nameText = { "301": "made up currency", "302": "made up treasure", "303": "made up furnishing" };
+const nameText = { "301": "made up currency", "900302": "made up treasure", "900303": "made up furnishing" };
 const materialDataMap = new Map<number, MaterialData>(
   [PRICE_ITEM_ID, TREASURE_ITEM_ID, FURNISHING_ITEM_ID].map((id) => [
     id,
@@ -33,7 +36,10 @@ const materialDataMap = new Map<number, MaterialData>(
 const good = (goodsId: number, itemId: number, tabId: number): ShopGood => ({
   beginTime: new Date(0).toISOString(),
   buyLimit: 0,
-  endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ days: 36_500 }).toString(),
+  // An instant takes time units only, so the far end is counted in hours
+  endTime: Temporal.Instant.fromEpochMilliseconds(0)
+    .add({ hours: 36_500 * 24 })
+    .toString(),
   goodsId,
   itemCount: 1,
   itemId,
@@ -50,6 +56,33 @@ const wallet: Wallet = {
   primogemResinRefillDay: Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate(),
 };
 
+// The Shop screen over the test's goods, bag and wallet, with the listeners and the bag given in options
+interface ShopRenderOptions {
+  inventory?: Inventory;
+  onClose?: () => void;
+  "onUpdate:inventory"?: (inventory: Inventory) => void;
+  "onUpdate:wallet"?: (wallet: Wallet) => void;
+  wallet?: Wallet;
+}
+const renderShop = (options: ShopRenderOptions = {}) =>
+  render(
+    defineComponent({
+      setup: () => () =>
+        h(ShopScreen, {
+          adventureRank: 60,
+          gameText,
+          goods: [good(1, TREASURE_ITEM_ID, TREASURE_TAB_ID), good(2, FURNISHING_ITEM_ID, FURNISHING_TAB_ID)],
+          inventory,
+          materialDataMap,
+          nameText,
+          purchases: [],
+          reputationLevel: 1,
+          wallet,
+          ...options,
+        }),
+    }),
+  );
+
 // The tabs' and the goods' names as the screen shows them
 const readTabNames = () => Array.from(document.querySelectorAll(".tab"), (tab) => tab.textContent?.trim());
 const readGoodNames = () => Array.from(document.querySelectorAll(".good-name"), (name) => name.textContent?.trim());
@@ -59,22 +92,7 @@ describe("shopScreen", () => {
   test("tubby's depot opens on its first tab", async () => {
     expect.hasAssertions();
 
-    render(
-      defineComponent({
-        setup: () => () =>
-          h(ShopScreen, {
-            adventureRank: 60,
-            gameText,
-            goods: [good(1, TREASURE_ITEM_ID, TREASURE_TAB_ID), good(2, FURNISHING_ITEM_ID, FURNISHING_TAB_ID)],
-            inventory,
-            materialDataMap,
-            nameText,
-            purchases: [],
-            reputationLevel: 1,
-            wallet,
-          }),
-      }),
-    );
+    renderShop();
 
     expect(readTabNames()).toStrictEqual(["made up treasures", "made up furnishings"]);
     expect(readGoodNames()).toStrictEqual(["made up treasure"]);
@@ -83,5 +101,38 @@ describe("shopScreen", () => {
     await nextTick();
 
     expect(readGoodNames()).toStrictEqual(["made up furnishing"]);
+  });
+
+  // A good picked on the screen and bought spends its costs and gives the good
+  test("buying a good from the screen spends its costs and gives the good", async () => {
+    expect.hasAssertions();
+
+    const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
+    const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
+    renderShop({
+      "onUpdate:inventory": onUpdateInventory,
+      "onUpdate:wallet": onUpdateWallet,
+      wallet: { ...wallet, [Currency.PyroSigil]: 1 },
+    });
+
+    await page.getByText("made up treasure", { exact: true }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.ShopPurchase] }).click();
+
+    expect(onUpdateWallet).toHaveBeenCalledTimes(1);
+    expect(onUpdateWallet.mock.calls[0]?.[0][Currency.PyroSigil]).toBe(0);
+    expect(onUpdateInventory).toHaveBeenCalledTimes(1);
+    expect(countInventoryItem(onUpdateInventory.mock.calls[0]?.[0].items ?? [], TREASURE_ITEM_ID)).toBe(1);
+  });
+
+  // The close button gives the close back to the shop's owner
+  test("closing the shop gives the close back to its owner", async () => {
+    expect.hasAssertions();
+
+    const onClose = vi.fn<() => void>();
+    renderShop({ onClose });
+
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Back] }).click();
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
