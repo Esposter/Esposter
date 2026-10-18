@@ -14,6 +14,7 @@ describe(computeAbyssChamberStars, () => {
       { kind: AbyssStarConditionKind.MonolithHealth, threshold: MONOLITH_MARK },
     ],
     halfMonsterDescribeIds: [],
+    monsterLevel: 1,
     id: 1,
     index: 1,
   };

@@ -19,6 +19,7 @@ export const toAbyssFloor = (row: ExcelTowerFloorRow, levelRows: ExcelTowerLevel
         halfMonsterDescribeIds: toAbyssHalfMonsterDescribeIds(levelRow, row.teamNum),
         id: levelRow.levelId,
         index: levelRow.levelIndex,
+        monsterLevel: levelRow.monsterLevel,
       })),
     id: row.floorId,
     index: row.floorIndex,

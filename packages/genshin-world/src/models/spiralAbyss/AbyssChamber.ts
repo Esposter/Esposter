@@ -11,6 +11,8 @@ export interface AbyssChamber {
   halfMonsterDescribeIds: number[][];
   id: number;
   index: number;
+  // The level the chamber's monsters are at, read off its level row
+  monsterLevel: number;
 }
 
 export const abyssChamberSchema = z.object({
@@ -18,4 +20,5 @@ export const abyssChamberSchema = z.object({
   halfMonsterDescribeIds: z.array(z.array(z.int().positive())),
   id: z.int().positive(),
   index: z.int().positive(),
+  monsterLevel: z.int().positive(),
 }) satisfies z.ZodType<AbyssChamber>;
