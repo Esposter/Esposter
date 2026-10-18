@@ -127,6 +127,7 @@ describe(buildItems, () => {
             id: GADGET_ITEM_ID,
             isEquipable: true,
             kind: GadgetKind.Detector,
+            region: "",
           },
         ]);
       if (key === "shops/mondstadtGeneralGoods") return Promise.resolve([{ itemId: GROCERY_ITEM_ID }]);

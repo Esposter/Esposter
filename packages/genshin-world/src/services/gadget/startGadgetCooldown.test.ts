@@ -13,6 +13,7 @@ describe(startGadgetCooldown, () => {
     id: 220003,
     isEquipable: true,
     kind: GadgetKind.Detector,
+    region: "",
   };
 
   test("a use that works starts the cooldown of its group", () => {

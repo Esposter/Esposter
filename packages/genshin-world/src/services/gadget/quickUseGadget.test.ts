@@ -14,6 +14,7 @@ describe(quickUseGadget, () => {
     id: 1001,
     isEquipable: true,
     kind: GadgetKind.Detector,
+    region: "",
   };
 
   test("z uses the equipped gadget", () => {

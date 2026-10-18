@@ -3,7 +3,8 @@ import { z } from "zod";
 
 // A gadget as the widget config gives it: its item id, its kind, whether it can be equipped on Z, its cooldown in seconds, its
 // Cooldown on a failed use and its cooldown group. The config gives no cooldown on a failed use or a group for some
-// Gadgets, and those read as zero
+// Gadgets, and those read as zero. The region is the one a Treasure Compass's city joins, and is empty for a gadget that
+// Names no city
 export interface GadgetRow {
   cooldownGroup: number;
   cooldownOnFailSeconds: number;
@@ -11,6 +12,7 @@ export interface GadgetRow {
   id: number;
   isEquipable: boolean;
   kind: GadgetKind;
+  region: string;
 }
 
 export const gadgetRowSchema = z.object({
@@ -20,4 +22,5 @@ export const gadgetRowSchema = z.object({
   id: z.int().positive(),
   isEquipable: z.boolean(),
   kind: z.enum(GadgetKind) satisfies z.ZodType<GadgetKind>,
+  region: z.string(),
 }) satisfies z.ZodType<GadgetRow>;
