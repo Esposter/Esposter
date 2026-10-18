@@ -9,7 +9,7 @@ const STICK_IN_16X9 = 199.5;
 const STICK_UP = 172.5;
 const CANVAS_INSET_ON_WIDE_SCREEN = 59;
 
-export const TouchStickPositionMap: Readonly<Record<TouchStickShape, [number, number]>> = {
+export const TouchStickShapePositionMap: Readonly<Record<TouchStickShape, [number, number]>> = {
   [TouchStickShape.Ratio16x9]: [STICK_IN_16X9, STICK_UP],
   [TouchStickShape.Ratio19Point5x9]: [STICK_IN_16X9 + 87 - CANVAS_INSET_ON_WIDE_SCREEN, STICK_UP],
   [TouchStickShape.Ratio20x9]: [STICK_IN_16X9 + 95 - CANVAS_INSET_ON_WIDE_SCREEN, STICK_UP],
