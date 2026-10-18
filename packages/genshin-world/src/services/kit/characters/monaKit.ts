@@ -113,7 +113,7 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
       const { characterId, constellationCount } = activeCombatant;
       if (
         constellationCount < CONSTELLATION_2 ||
-        hit !== kit.normalAttacks[chainIndex].hits.at(-1) ||
+        hit !== kit.normalAttacks[chainIndex]?.hits.at(-1) ||
         checkIsKitStatusActive(kitEffectState.effects, characterId, FOLLOW_UP_STATUS_ID) ||
         random() >= FOLLOW_UP_CHANCE
       )

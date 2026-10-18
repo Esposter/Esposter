@@ -11,6 +11,7 @@ import { describe, expect, test } from "vitest";
 
 const PROUD_SKILL_GROUP_ID = 1;
 const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = { [PROUD_SKILL_GROUP_ID]: [{ level: 1, paramList: [0.5] }] };
+const TALENT_LEVEL_MAP = { [PROUD_SKILL_GROUP_ID]: 1 };
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 const createHit = (hitmarkFrames: number): KitHitRecord => ({
   area: { angle: 2 * Math.PI, height: 2, radius: 1 },
@@ -37,7 +38,7 @@ const RECORD: KitRecord = {
   skillCooldownSeconds: 15,
   skillHolds: [],
 };
-const kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, createAlyoshaKitBehaviour);
+const kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, createAlyoshaKitBehaviour);
 
 describe(createAlyoshaKitBehaviour, () => {
   test("four strikes in sequence", () => {

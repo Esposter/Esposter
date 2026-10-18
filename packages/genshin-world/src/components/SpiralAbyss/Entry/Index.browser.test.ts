@@ -1,5 +1,6 @@
 import { props } from "#src/components/SpiralAbyss/Entry/Index.fixture";
 import SpiralAbyssEntry from "#src/components/SpiralAbyss/Entry/Index.vue";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -27,6 +28,9 @@ describe("spiralAbyssEntry", () => {
     await page.getByRole("button", { exact: true, name: "9" }).click();
     await page.getByRole("button", { exact: true, name: "2" }).click();
 
-    expect(onChoose).toHaveBeenCalledExactlyOnceWith(props.floors[0].id, props.floors[0].chambers[1].id);
+    expect(onChoose).toHaveBeenCalledExactlyOnceWith(
+      takeOne(props.floors).id,
+      takeOne(takeOne(props.floors).chambers, 1).id,
+    );
   });
 });

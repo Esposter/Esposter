@@ -3,8 +3,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.7677669529663689 }
   },
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "frames.burstLastTickMargin": { "cause": "Unclassified", "value": 5 },
   "frames.burstFirstTick": { "cause": "Unclassified", "value": 137 },
   "frames.burstTickInterval": { "cause": "Unclassified", "value": 113 },
@@ -14,19 +14,18 @@
   "hits.burstTick.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.burstTick.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4339 } },
   "hits.burstTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 5.5 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 7.7 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 8.75 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 16.9 },
   "parameters.forbiddenCreationAbsorbedMultiplier": {
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 4339 }
   },
   "parameters.forbiddenCreationSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 4339 } },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 10 },
-  "plunges.high.animationFrames": { "cause": "DiffersFromSource", "value": 24 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.animationFrames": { "cause": "DiffersFromSource", "value": 24 },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 5 },
+  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 24 },
+  "plunges.high.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 46 },
+  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 24 },
+  "plunges.low.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 45 }
 }

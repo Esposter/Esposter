@@ -16,15 +16,17 @@ Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehav
 
 - **The Mini-Stration Bubble, the shot's second charge level,** is gcsim's hitmark 103 of 112 frames and a second hit, waiting on a charge level that carries a follow-up hit.
 - **The bubbles' hold tiers,** which are gcsim's held press at 66 and 90 frames with their damage buffs, wait on a summon whose tier its cast chooses.
-- **The bubbles' healing and the final bounce's heal,** which heal her party by a Max HP share and a flat amount, wait on heal values the kit record does not hold. The party healing hook exists (`KitHit.healParty`, as Barbara's kit uses it), so the gap is the record's data, not a framework hook.
+- **The bubbles' healing and the final bounce's heal,** which heal her party by a Max HP share and a flat amount, wait on the publish that carries their parameters into her record. The party healing hook exists (`KitHit.healParty`, as Barbara's kit uses it), so the gap is the record's data, not a framework hook. The builder reads them from her skill's labels as `bolsteringBubblebalmHealingShare`, `bolsteringBubblebalmHealingFlat` and `finalBounceHealingShare`. The dump's tables carry the final bounce at 0.5 at every level, the constant gcsim fixes. Each bounce's heal to the other members is `healKitOtherMembers`, already in place.
 - **Surging Blade,** the second damage gcsim gives the press, waits on a summon's second timed hit.
 - **Her Ascension 1 Convalescence and Ascension 4 healing bonus, her constellation passives, and the droplets her press and burst spawn,** are not built. Convalescence adds a flat base to her off-field members' Elemental Skill hits, which no kit reaches, since a character's module cannot touch another kit's hits. Ascension 4 raises the healing she performs, and a heal reads the healed member's HealingBonus rather than its healer's, so no hook raises her own heals.
 
 ## Key files
 
-| File                                                                 | Role                                                                                                                                                    |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/sigewinneKit.ts` | `createSigewinneKitBehaviour`, Sigewinne's kit with her strikes, Fully-Charged Aimed Shot, plunges, Bolstering Bubblebalm and Super Saturated Syringing |
+| File                                                                      | Role                                                                                                                                                    |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/sigewinneKit.ts`      | `createSigewinneKitBehaviour`, Sigewinne's kit with her strikes, Fully-Charged Aimed Shot, plunges, Bolstering Bubblebalm and Super Saturated Syringing |
+| `packages/genshin-world/src/services/kit/effects/healKitOtherMembers.ts`  | Heals each deployed member other than the healer, which a bubble's bounce does with no chance roll and no shield gate                                   |
+| `scripts/src/services/genshinAssets/kits/tables/getTableKitCandidates.ts` | Sigewinne's three skill parameters, read from her bubble's healing and final bounce labels                                                              |
 
 ## Sources
 

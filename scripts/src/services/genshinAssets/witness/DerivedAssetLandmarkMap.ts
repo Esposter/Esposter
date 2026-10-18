@@ -168,6 +168,7 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
       share: [1, 0.85, 0.5],
     },
   },
+  [DerivedAssetComponent.Traveler]: {},
   // Rigid architecture only, never decoration: the statue's own meshes. Points on the statue's axis, which a round part
   // Holds from any heading: the centre of its dish and the top of its figure; the two ends of the dish's brim, the face
   // Centres of its widest ring; and the two outermost vertices of the plinth's rim, read off the rim's band of vertices

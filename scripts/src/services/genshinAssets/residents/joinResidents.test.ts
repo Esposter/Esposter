@@ -22,6 +22,7 @@ describe(joinResidents, () => {
         new Map([[1002, 7]]),
         getAreaId,
         new Set(),
+        new Map(),
       ),
     ).toStrictEqual({
       craftingBench: 0,
@@ -47,6 +48,7 @@ describe(joinResidents, () => {
         new Map([[1002, 7]]),
         getAreaId,
         new Set(),
+        new Map(),
       ),
     ).toStrictEqual({ craftingBench: 0, noName: 1, noTalk: 0, regions: new Map(), repeated: 0 });
   });
@@ -70,6 +72,7 @@ describe(joinResidents, () => {
         ]),
         getAreaId,
         new Set([1002]),
+        new Map(),
       ),
     ).toStrictEqual({
       craftingBench: 1,
@@ -95,6 +98,7 @@ describe(joinResidents, () => {
         new Map([[1005, 8]]),
         getAreaId,
         new Set([1002]),
+        new Map(),
       ),
     ).toStrictEqual({
       craftingBench: 0,
@@ -104,6 +108,51 @@ describe(joinResidents, () => {
         [
           "mondstadt",
           [{ areaId, day: { position: { x: 3, z: 4 }, rotation: 0.25 }, id: "1005", nameTextId: "102", talkId: "8" }],
+        ],
+      ]),
+      repeated: 0,
+    });
+  });
+
+  test("gives a resident with a night spot in the map that spot, and leaves a resident with none with only the day spot", () => {
+    expect.hasAssertions();
+
+    expect(
+      joinResidents(
+        [
+          { npcId: 1002, position: { x: 1, z: 2 }, region: "mondstadt", rotation: 0.5 },
+          { npcId: 1005, position: { x: 3, z: 4 }, region: "mondstadt", rotation: 0.25 },
+        ],
+        new Map([
+          [1002, "101"],
+          [1005, "102"],
+        ]),
+        new Map([
+          [1002, 7],
+          [1005, 8],
+        ]),
+        getAreaId,
+        new Set(),
+        new Map([[1002, { position: { x: 5, z: 6 }, rotation: 0.75 }]]),
+      ),
+    ).toStrictEqual({
+      craftingBench: 0,
+      noName: 0,
+      noTalk: 0,
+      regions: new Map([
+        [
+          "mondstadt",
+          [
+            {
+              areaId,
+              day: { position: { x: 1, z: 2 }, rotation: 0.5 },
+              id: "1002",
+              nameTextId: "101",
+              night: { position: { x: 5, z: 6 }, rotation: 0.75 },
+              talkId: "7",
+            },
+            { areaId, day: { position: { x: 3, z: 4 }, rotation: 0.25 }, id: "1005", nameTextId: "102", talkId: "8" },
+          ],
         ],
       ]),
       repeated: 0,

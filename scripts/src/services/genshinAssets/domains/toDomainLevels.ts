@@ -23,7 +23,7 @@ import {
 } from "#src/services/genshinAssets/domains/treeRewardCounts";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { REWARD_COUNT_DEFAULT } from "#src/services/genshinAssets/rewards/constants";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { DomainKind } from "genshin-world";
 
 const getDungeon = (dungeonMap: ReadonlyMap<number, ExcelDungeonRow>, dungeonId: number): ExcelDungeonRow => {
@@ -186,12 +186,16 @@ export const toDomainLevels = (
     const isOnePair = matches.every((other) => other.pair === match.pair);
     const counterpartPair = Math.min(...matches.map(({ pair }) => pair));
     const scheduledDaysOfWeek = isOnePair ? (DOMAIN_DAY_PAIRS[match.pair] ?? []) : SUNDAY_DAYS_OF_WEEK;
-    const bookRewards = toBookRewards(
-      match.kind,
-      match.entry.descriptionCycleRewardList[counterpartPair],
-      rarities,
-      dungeon.limitLevel,
-    );
+    // A Trounce level pays no books: the books belong to the Forgery and Mastery domains alone
+    const bookRewards =
+      match.kind === DomainKind.Trounce
+        ? []
+        : toBookRewards(
+            match.kind,
+            takeOne(match.entry.descriptionCycleRewardList, counterpartPair),
+            rarities,
+            dungeon.limitLevel,
+          );
     addLevel(
       match.entry.id,
       match.kind,

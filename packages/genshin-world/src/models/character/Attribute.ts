@@ -1,7 +1,8 @@
 // What a character's attributes are summed from, each spelt as the game's tables name it, so a table read from the game
 // Parses into them. A base is what its percentage multiplies, and its flat attribute is added after; every other is a
 // Total of its own, a percentage kept as a fraction. Movement and normal attack speeds, and the plunging attack bonus, name
-// No row in those tables, so their keys are this repo's own
+// No row in those tables, so their keys are this repo's own, and so are those of the normal and charged attack damage
+// Bonuses and the Stellar Glimmer Reaction DMG bonus
 export enum Attribute {
   AllDamageBonus = "FIGHT_PROP_ADD_HURT",
   AnemoDamageBonus = "FIGHT_PROP_WIND_ADD_HURT",
@@ -11,6 +12,7 @@ export enum Attribute {
   BaseAttack = "FIGHT_PROP_BASE_ATTACK",
   BaseDefense = "FIGHT_PROP_BASE_DEFENSE",
   BaseHealth = "FIGHT_PROP_BASE_HP",
+  ChargedAttackDamageBonus = "FIGHT_PROP_CHARGED_ADD_HURT",
   CooldownReduction = "FIGHT_PROP_SKILL_CD_MINUS_RATIO",
   CriticalDamage = "FIGHT_PROP_CRITICAL_HURT",
   CriticalRate = "FIGHT_PROP_CRITICAL",
@@ -33,7 +35,7 @@ export enum Attribute {
   HydroResistance = "FIGHT_PROP_WATER_SUB_HURT",
   IncomingHealingBonus = "FIGHT_PROP_HEALED_ADD",
   MovementSpeed = "FIGHT_PROP_MOVE_SPEED",
-  NormalAndChargedAttackDamageBonus = "FIGHT_PROP_NORMAL_AND_CHARGED_ADD_HURT",
+  NormalAttackDamageBonus = "FIGHT_PROP_NORMAL_ADD_HURT",
   NormalAttackSpeed = "FIGHT_PROP_NORMAL_ATTACK_SPEED",
   PhysicalDamageBonus = "FIGHT_PROP_PHYSICAL_ADD_HURT",
   PhysicalResistance = "FIGHT_PROP_PHYSICAL_SUB_HURT",
@@ -41,6 +43,7 @@ export enum Attribute {
   PyroDamageBonus = "FIGHT_PROP_FIRE_ADD_HURT",
   PyroResistance = "FIGHT_PROP_FIRE_SUB_HURT",
   ShieldStrength = "FIGHT_PROP_SHIELD_COST_MINUS_RATIO",
+  StellarGlimmerReactionDamageBonus = "FIGHT_PROP_STELLAR_GLIMMER_ADD_HURT",
 }
 
 export const Attributes: readonly Attribute[] = Object.values(Attribute);

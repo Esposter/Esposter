@@ -141,7 +141,7 @@ describe(createXiaoKitBehaviour, () => {
     expect.hasAssertions();
     const combatant = { ...createXiaoCombatant(0), constellationCount: 4 };
 
-    expect(XIAO_KIT.getPassiveBonuses?.(combatant, 0.4)).toStrictEqual([
+    expect(XIAO_KIT.getPassiveBonuses?.(combatant, 0.4, [], [])).toStrictEqual([
       { amount: 1, attribute: Attribute.DefensePercent },
     ]);
   });
@@ -151,8 +151,8 @@ describe(createXiaoKitBehaviour, () => {
     const combatant = { ...createXiaoCombatant(0), constellationCount: 3 };
 
     expect([
-      XIAO_KIT.getPassiveBonuses?.(combatant, 0.4),
-      XIAO_KIT.getPassiveBonuses?.({ ...combatant, constellationCount: 4 }, 0.5),
+      XIAO_KIT.getPassiveBonuses?.(combatant, 0.4, [], []),
+      XIAO_KIT.getPassiveBonuses?.({ ...combatant, constellationCount: 4 }, 0.5, [], []),
     ]).toStrictEqual([[], []]);
   });
 });

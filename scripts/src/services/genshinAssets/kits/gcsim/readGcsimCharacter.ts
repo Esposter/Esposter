@@ -8,6 +8,7 @@ import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcs
 import { readGcsimConfig } from "#src/services/genshinAssets/kits/gcsim/readGcsimConfig";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { readGcsimTalentParameters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters";
+import { readGcsimHoldCooldowns } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns";
 import { readGcsimTravels } from "#src/services/genshinAssets/kits/gcsim/readGcsimTravels";
 import { selectGcsimGenderConstants } from "#src/services/genshinAssets/kits/gcsim/selectGcsimGenderConstants";
 import { posix } from "node:path";
@@ -37,6 +38,7 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
     constantMap,
     filePaths: [...fileMap.keys()],
     folder,
+    holdCooldowns: readGcsimHoldCooldowns(goSources, constantMap),
     queuedAttacks: readGcsimQueuedAttacks(goSources, constantMap),
     talentFile,
     talentParameterMap: readGcsimTalentParameters(talentSource),

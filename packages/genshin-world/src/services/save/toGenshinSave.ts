@@ -7,7 +7,10 @@ import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toEncounterPointsSave } from "#src/services/save/toEncounterPointsSave";
+import { toHomePlantingSave } from "#src/services/save/toHomePlantingSave";
+import { toHomeProgressSave } from "#src/services/save/toHomeProgressSave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
+import { toInvestigationDaySave } from "#src/services/save/toInvestigationDaySave";
 import { toPartySave } from "#src/services/save/toPartySave";
 import { toProcessingJobSaves } from "#src/services/save/toProcessingJobSaves";
 import { toShopPurchaseSaves } from "#src/services/save/toShopPurchaseSaves";
@@ -19,6 +22,8 @@ import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjus
 export const toGenshinSave = ({
   achievementProgressMap,
   adventureExp,
+  cardGameExp,
+  cardGameRewardedGameIds,
   adventureRankRewardsClaimed,
   archiveKillsMap,
   archiveProgressMap,
@@ -38,7 +43,10 @@ export const toGenshinSave = ({
   foundOculusIds,
   frostbearingTreeProgress,
   homePlacements,
+  homePlantings,
+  homeProgress,
   inventory,
+  investigationDay,
   mails,
   namecardItemId,
   openedChestIds,
@@ -62,6 +70,8 @@ export const toGenshinSave = ({
 }: GenshinSaveState): GenshinSave => ({
   achievements: toAchievementProgressSave(achievementProgressMap),
   adventureExp,
+  cardGameExp,
+  cardGameRewardedGameIds,
   adventureRankRewardsClaimed,
   archive: { kills: Object.fromEntries(archiveKillsMap), progress: toArchiveProgressSave(archiveProgressMap) },
   characters: toCharacterSaves(characters, characterCopyCountMap),
@@ -83,7 +93,10 @@ export const toGenshinSave = ({
   crafting: { craftedCounts: Object.fromEntries(craftedCountMap), learnedRecipeIds: craftingProgress.learnedRecipeIds },
   enemyRespawns: Object.fromEntries(enemyRespawnMap),
   homePlacements,
+  homePlantings: homePlantings.map((planting) => toHomePlantingSave(planting)),
+  homeProgress: toHomeProgressSave(homeProgress),
   inventory: toInventorySave(inventory),
+  investigationDay: toInvestigationDaySave(investigationDay),
   mails,
   namecardItemId,
   offerings: { frostbearingTree: frostbearingTreeProgress },

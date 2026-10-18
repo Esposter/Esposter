@@ -30,6 +30,12 @@ Each side SHALL roll eight dice each round and MAY reroll any dice it names once
 - **WHEN** the side names some dice to reroll
 - **THEN** only the named dice are rerolled
 
+#### Scenario: A card's extra reroll keeps the roll open
+
+- **GIVEN** a side has rolled its dice and a card on its field grants it another reroll in the roll phase
+- **WHEN** the side names some dice to reroll
+- **THEN** those dice are rerolled and the side's roll stays open, so the side may reroll again or name no dice to pass
+
 ### Requirement: A combat action passes the turn unless the other side has declared its end
 
 A combat action SHALL pass the turn to the other side unless that side has already declared the round's end.

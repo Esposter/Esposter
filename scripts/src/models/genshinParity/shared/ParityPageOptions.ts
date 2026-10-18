@@ -11,6 +11,9 @@ export interface ParityPageOptions {
   isClockFaked?: boolean;
   // Whether frames are drawn as fast as they can be rather than at the display's refresh, for a frame's time to be read
   isFrameRateUnlimited?: boolean;
+  // Whether the page counts as opened at its load event rather than once its network is idle, for a reading taken at the
+  // Ready signal, so a fetch issued after ready is not in it
+  isOpenedAtLoad?: boolean;
   // The motion the page holds at its start, for a shot at times
   motion?: ParityMotion;
   // The page's address up to its query: the dev server's by default, a preview server's when a load run measures a build

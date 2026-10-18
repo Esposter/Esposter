@@ -15,6 +15,37 @@ describe(createSkinnedMeshFinder, () => {
     expect(skinnedMeshFinder.find()).toBe(skinnedMesh);
   });
 
+  test("finds a skinned mesh attached under a model that arrives after the first look", () => {
+    expect.hasAssertions();
+
+    const body = new Group();
+    const skinnedMeshFinder = createSkinnedMeshFinder(body);
+    expect(skinnedMeshFinder.find()).toBeUndefined();
+
+    const model = new Group();
+    body.add(model);
+    expect(skinnedMeshFinder.find()).toBeUndefined();
+
+    const skinnedMesh = new SkinnedMesh();
+    model.add(skinnedMesh);
+    expect(skinnedMeshFinder.find()).toBe(skinnedMesh);
+  });
+
+  test("finds none once a skinned mesh under a model is taken away", () => {
+    expect.hasAssertions();
+
+    const body = new Group();
+    const model = new Group();
+    const skinnedMesh = new SkinnedMesh();
+    model.add(skinnedMesh);
+    body.add(model);
+    const skinnedMeshFinder = createSkinnedMeshFinder(body);
+    expect(skinnedMeshFinder.find()).toBe(skinnedMesh);
+
+    model.remove(skinnedMesh);
+    expect(skinnedMeshFinder.find()).toBeUndefined();
+  });
+
   test("finds none once the model is taken away from the body", () => {
     expect.hasAssertions();
 

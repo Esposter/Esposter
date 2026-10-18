@@ -1,6 +1,6 @@
 ## Purpose
 
-Freminet's kit as built, with his four strikes, charged attack, plunges, Pressurized Floe's upward thrust and Shadowhunter's Ambush, and what is left of his Pers Time stance, Spiritbreath Thorn, stalking state and passives.
+Freminet's kit as built, with his four strikes, charged attack, plunges, Pressurized Floe's upward thrust, Spiritbreath Thorn and Shadowhunter's Ambush, and what is left of his Pers Time stance, stalking state and passives.
 
 ## Requirements
 

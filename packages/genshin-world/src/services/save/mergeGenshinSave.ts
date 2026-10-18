@@ -8,6 +8,7 @@ import type { LongTermEncounterPointsSave } from "#src/models/commission/LongTer
 import type { ProcessingJobSave } from "#src/models/cooking/ProcessingJobSave";
 import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { InvestigationDaySave } from "#src/models/investigation/InvestigationDaySave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -18,6 +19,7 @@ import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { countHeldItems } from "#src/services/offering/countHeldItems";
+import { computeLastDailyReset } from "#src/services/time/computeLastDailyReset";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKind } from "genshin-interface/save";
 
@@ -156,6 +158,18 @@ const checkIsLaterWorldLevelAdjustment = (
 // The day dealt later is the one the player is on, since a day is dealt again at each daily reset
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
   Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
+// The game day's investigations of the two copies: a copy with no key has counted none, and copies counted on the same
+// Game day keep the larger count, the conservative one against the cap, while otherwise the later day's counter is kept
+const mergeInvestigationDay = (account: InvestigationDaySave, guest: InvestigationDaySave): InvestigationDaySave => {
+  if (guest.dayKey === "") return account;
+  if (account.dayKey === "") return guest;
+  const accountKey = Temporal.Instant.from(account.dayKey);
+  const guestKey = Temporal.Instant.from(guest.dayKey);
+  if (Temporal.Instant.compare(computeLastDailyReset(accountKey), computeLastDailyReset(guestKey)) === 0)
+    return guest.count > account.count ? guest : account;
+
+  return Temporal.Instant.compare(guestKey, accountKey) > 0 ? guest : account;
+};
 
 // The Encounter Points of the later daily reset are the ones the player holds, and on the same reset the larger count is
 const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPointsSave): EncounterPointsSave => {
@@ -235,13 +249,14 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     const accountProgress = quests[questId];
     quests[questId] = accountProgress ? mergeQuestProgress(accountProgress, guestProgress) : guestProgress;
   }
-  // A mail is kept once by its id, and a read or claimed mail stays so whichever save it was read or claimed in
+  // A mail is kept once by its id, and a read, claimed or pinned mail stays so whichever save it was read, claimed or pinned in
   const mails = account.mails.map((accountMail) => {
     const guestMail = guest.mails.find(({ id }) => id === accountMail.id);
     return guestMail
       ? {
           ...accountMail,
           isClaimed: accountMail.isClaimed || guestMail.isClaimed,
+          isPinned: accountMail.isPinned || guestMail.isPinned,
           isRead: accountMail.isRead || guestMail.isRead,
         }
       : accountMail;
@@ -255,6 +270,10 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       ...new Set([...account.adventureRankRewardsClaimed, ...guest.adventureRankRewardsClaimed]),
     ].toSorted((firstRank, secondRank) => firstRank - secondRank),
     archive: mergeArchive(account.archive, guest.archive),
+    cardGameExp: Math.max(account.cardGameExp, guest.cardGameExp),
+    cardGameRewardedGameIds: [
+      ...new Set([...account.cardGameRewardedGameIds, ...guest.cardGameRewardedGameIds]),
+    ].toSorted((firstGame, secondGame) => firstGame - secondGame),
     characters: mergeCharacters(account.characters, guest.characters),
     characterTrials: {
       claimedStageIds: [
@@ -266,6 +285,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
       : account.commissionDay,
+    investigationDay: mergeInvestigationDay(account.investigationDay, guest.investigationDay),
     encounterPoints: mergeEncounterPoints(account.encounterPoints, guest.encounterPoints),
     longTermEncounterPoints: mergeLongTermEncounterPoints(
       account.longTermEncounterPoints,
@@ -283,6 +303,8 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     },
     enemyRespawns: mergeEnemyRespawns(account.enemyRespawns, guest.enemyRespawns),
     homePlacements: account.homePlacements,
+    homePlantings: account.homePlantings,
+    homeProgress: account.homeProgress,
     inventory: account.inventory,
     offerings: {
       frostbearingTree: checkIsFurtherOffering(guest.offerings.frostbearingTree, account.offerings.frostbearingTree)

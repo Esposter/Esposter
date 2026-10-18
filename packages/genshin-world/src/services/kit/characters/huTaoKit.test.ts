@@ -187,7 +187,7 @@ describe("sanguine Rouge", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), ascension: 4 };
 
-    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [])).toStrictEqual([
+    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [], [])).toStrictEqual([
       { amount: 0.33, attribute: Attribute.PyroDamageBonus },
     ]);
   });
@@ -196,7 +196,7 @@ describe("sanguine Rouge", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), ascension: 3 };
 
-    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [])).toStrictEqual([]);
+    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [], [])).toStrictEqual([]);
   });
 });
 
@@ -292,6 +292,7 @@ describe("constellation 4 and 6", () => {
     for (let drain = 0; drain < drains; drain++)
       HU_TAO_KIT.onKitEvent?.(
         {
+          bondOfLifeShare: 0,
           characterId: HU_TAO_CHARACTER_ID,
           healthShare: -0.1,
           kind: KitEventKind.HealthChanged,

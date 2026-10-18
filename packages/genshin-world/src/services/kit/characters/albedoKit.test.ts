@@ -86,6 +86,7 @@ const getBlossomDamageBonus = (ascension: number): number | undefined => {
     { body: blossom.body, combatant, hit: takeOne(blossom.hits) },
     { ...enemy, health: enemy.maxHealth / 4 },
     createParty([ALBEDO_CHARACTER_ID]),
+    [],
   );
 };
 

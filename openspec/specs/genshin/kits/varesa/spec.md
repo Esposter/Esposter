@@ -67,12 +67,35 @@ Varesa's high plunge SHALL land at 38 frames of a 77-frame animation, her low pl
 - **WHEN** the player starts a low plunge
 - **THEN** the low plunge lands at 37 frames of its 75-frame animation
 
-### Requirement: Varesa's blessing and plunge chain not yet built
+### Requirement: Nightsoul points and the timed Blessing
 
-Varesa's Fiery Passion forms, Nightsoul points, the apex state, Volcanic Kablam, the Follow-Up Strike and Varesa's Ascension and constellation effects SHALL NOT take effect.
+Varesa's skill's press SHALL gain 20 Nightsoul points, up to 40. Her high and low plunges SHALL each gain 25, and her burst SHALL fill them to 40. Full points outside the Blessing SHALL enter it for 15 seconds with those points.
+
+#### Scenario: The skill's press gains 20 points, up to 40
+
+- **GIVEN** Varesa holds no Nightsoul points
+- **WHEN** the player presses Rush twice and then a third time
+- **THEN** she holds 20 points after the first press and 40 after the second, and the third press leaves her at 40
+
+#### Scenario: A plunge gains 25 points, and filling them enters the Blessing for 15 seconds
+
+- **GIVEN** Varesa holds no Nightsoul points and is out of the Blessing
+- **WHEN** she performs a high plunge and then a low plunge
+- **THEN** the Blessing is entered with 40 points after the low plunge
+- **AND** the Blessing ends 15 seconds later
+
+#### Scenario: The burst fills her points to 40 and enters the Blessing
+
+- **GIVEN** Varesa is out of the Blessing with no points
+- **WHEN** the player casts Flying Kick
+- **THEN** she holds 40 points and is in the Blessing
+
+### Requirement: Varesa's Fiery Passion forms, apex state and follow-up not yet built
+
+Varesa's Fiery Passion forms, the apex state, Volcanic Kablam, the Follow-Up Strike and her Ascension and constellation effects SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Varesa has a Nightsoul effect, the Follow-Up Strike or a constellation unlocked
+- **GIVEN** Varesa has the apex state, the Follow-Up Strike or a constellation unlocked
 - **WHEN** the player fights with Varesa
 - **THEN** that effect has no effect

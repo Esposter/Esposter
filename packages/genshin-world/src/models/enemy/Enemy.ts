@@ -2,6 +2,7 @@ import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { InternalCooldown } from "#src/models/combat/InternalCooldown";
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { EnemyFamily } from "#src/models/enemy/EnemyFamily";
+import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { EnemyKindTraits } from "#src/models/enemy/EnemyKindTraits";
 import type { EnemyShield } from "#src/models/enemy/EnemyShield";
 import type { EnemyState } from "#src/models/enemy/EnemyState";
@@ -32,7 +33,7 @@ export interface Enemy {
   elementalReactions: Reaction[];
   elementalState: ElementalState;
   enemyFamily: EnemyFamily;
-  enemyKindId: number;
+  enemyKindId: EnemyKindId;
   heading: number;
   health: number;
   hitSeconds: number;

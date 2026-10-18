@@ -38,5 +38,8 @@ export const deliverBirthdayMail = (
       id === inForce.mailId && Temporal.Instant.compare(Temporal.Instant.from(deliveredAt), birthdayStart) >= 0,
   );
   if (isDelivered) return [...mails];
-  return [...mails, { deliveredAt: now.toString(), id: inForce.mailId, isClaimed: false, isRead: false }];
+  return [
+    ...mails,
+    { deliveredAt: now.toString(), id: inForce.mailId, isClaimed: false, isPinned: false, isRead: false },
+  ];
 };

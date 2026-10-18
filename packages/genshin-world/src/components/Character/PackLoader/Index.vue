@@ -31,8 +31,6 @@ const zipInput = useTemplateRef("zipInput");
 const folderInput = useTemplateRef("folderInput");
 const isChoosing = ref(false);
 const isConfirmingRemoval = ref(false);
-// The key of the reader whose terms are open, so they close once the character's pack changes or goes
-const termsCharacterPackReaderKey = ref("");
 const isPending = ref(false);
 // The reasons the releases picked were skipped, each naming its release
 const errorMessages = ref<string[]>([]);
@@ -112,21 +110,6 @@ onMounted(() => {
       <button type="button" @click="characterPacks = undefined">Cancel</button>
     </div>
   </div>
-  <!-- The terms bundled with the model the character is drawn from, the credit the release carries, read as it ships
-       Them whichever copy the model is read from -->
-  <div
-    v-else-if="characterPackReader && characterPackReader.key === termsCharacterPackReaderKey"
-    class="terms"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="character-model-terms-title"
-  >
-    <p id="character-model-terms-title">The terms of this character's model, as its release ships them</p>
-    <CharacterTerms :key="characterPackReader.key" :character-pack-reader />
-    <div class="actions">
-      <button type="button" @click="termsCharacterPackReaderKey = ''">Close</button>
-    </div>
-  </div>
   <div class="loader">
     <p v-if="isPending">Reading the releases…</p>
     <p v-for="errorMessage in errorMessages" :key="errorMessage" role="alert">{{ errorMessage }}</p>
@@ -149,9 +132,6 @@ onMounted(() => {
       <button type="button" @click="isConfirmingRemoval = false">Cancel</button>
     </template>
     <template v-else>
-      <button v-if="characterPackReader" type="button" @click="termsCharacterPackReaderKey = characterPackReader.key">
-        The model's terms
-      </button>
       <button v-if="isCharacterPackKept" type="button" @click="isConfirmingRemoval = true">
         Remove this character's model
       </button>
@@ -175,6 +155,11 @@ onMounted(() => {
       type="file"
       @change="pickCharacterPacks(folderInput)"
     />
+  </div>
+  <!-- The terms bundled with the model the character is drawn from, the credit the release carries, read as it ships
+       Shown beside the loader whichever copy the model is read from, so the player needs no button to reach them -->
+  <div v-if="characterPackReader" class="model-terms">
+    <CharacterTerms :key="characterPackReader.key" :character-pack-reader />
   </div>
 </template>
 
@@ -255,5 +240,27 @@ button {
   display: flex;
   justify-content: flex-end;
   gap: calc(var(--unit) * 16);
+}
+
+/* The model's terms above the loader, scrolled within their own height, the Terms view taking the panel's styles */
+.model-terms {
+  position: absolute;
+  right: calc(var(--unit) * 120);
+  bottom: calc(var(--unit) * 120);
+  width: calc(var(--unit) * 720);
+  max-height: calc(var(--unit) * 400);
+  overflow: auto;
+  padding: calc(var(--unit) * 20);
+  border-radius: calc(var(--unit) * 16);
+  background: rgb(236 229 216 / 0.9);
+  color: #3b4255;
+  font-size: calc(var(--unit) * 18);
+  user-select: text;
+}
+
+.model-terms pre {
+  margin: 0;
+  font: inherit;
+  white-space: pre-wrap;
 }
 </style>

@@ -2,6 +2,8 @@
 // Share, never past all of it or below none, the share of a heal that went past all of it, and the character whose kit
 // Made the change, none for an enemy's strike, a drown or a heal that names no healer
 export interface PartyHealthChange {
+  // The share of the heal a Bond of Life took before it restored the HP, none when no Bond of Life was standing
+  bondOfLifeShare: number;
   characterId: number;
   healthShare: number;
   // Whether a kit refused the fall the change would have brought, leaving the member standing at the share it keeps

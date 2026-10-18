@@ -248,4 +248,17 @@ describe(stepEnemy, () => {
 
     expect(enemy.moveIndex).toBe(0);
   });
+
+  test("an attack cooldown and a broken poise run out on the step their seconds do, not one step late", () => {
+    expect.hasAssertions();
+
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const { length } = PoiseTypeSettingsMap[enemy.traits.poiseType];
+    enemy.attackCooldownSeconds = 5;
+    enemy.poise = 0;
+    enemy.poiseBrokenSeconds = 5;
+    for (let step = 0; step < 300; step++) stepEnemy(enemy, undefined, ENEMY_STEP_SECONDS);
+
+    expect([enemy.attackCooldownSeconds, enemy.poise]).toStrictEqual([0, length]);
+  });
 });

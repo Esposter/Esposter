@@ -1,4 +1,4 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 }
+  "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 30 },
+  "skill.hits.0.poiseDamage": { "source": "Wiki", "value": 50 }
 }

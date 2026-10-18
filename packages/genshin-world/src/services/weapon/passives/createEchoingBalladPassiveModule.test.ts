@@ -43,7 +43,7 @@ describe(createEchoingBalladPassiveModule, () => {
   test("the rank's CRIT DMG is a passive bonus on the wielder", () => {
     expect.hasAssertions();
 
-    expect(echoingBalladPassiveModule.getPassiveBonuses?.(wielder, 1, [])).toStrictEqual([
+    expect(echoingBalladPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.CriticalDamage },
     ]);
   });

@@ -1,8 +1,8 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.5 } },
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 200 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 80 },
   "frames.snappyMark": { "cause": "Unsourced", "value": 408 },
   "frames.thornHitmark": { "cause": "Unsourced", "value": 97 },
   "hits.kamera.length": { "cause": "Unsourced", "value": 8 },
@@ -55,19 +55,19 @@
   "hits.kamera.7.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 8839 } },
   "hits.kamera.7.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.thorn.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
-  "hits.thorn.hitmarkFrames": { "cause": "DiffersFromSource", "value": 1 },
+  "hits.thorn.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.thorn.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 8831 } },
   "hits.thorn.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.snappyMark.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0 }
   },
-  "hits.snappyMark.hitmarkFrames": { "cause": "DiffersFromSource", "value": 1 },
+  "hits.snappyMark.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.snappyMark.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 8832 } },
   "hits.snappyMark.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 9.346 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 8.133 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 12.113 },
   "parameters.spiritbreathThornCooldownSeconds": {
     "cause": "Unsourced",
     "value": { "index": 9, "proudSkillGroupId": 8831 }
@@ -76,13 +76,11 @@
   "parameters.stillPhotoAttackShare": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8839 } },
   "parameters.kameraFlatHealth": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8839 } },
   "parameters.kameraAttackShare": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 8839 } },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.gauge": { "source": "Gcsim", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 5 },
+  "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
+  "plunges.low.hits.0.poiseDamage": { "source": "Wiki", "value": 50 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8832 } },
   "skillCooldownSeconds": { "cause": "DiffersFromSource", "value": { "index": 7, "proudSkillGroupId": 8832 } },
-  "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 },
-  "hits.thorn.gauge": { "cause": "DiffersFromSource" },
-  "hits.snappyMark.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "skillHolds.length": { "cause": "Unclassified", "value": 0 }
 }

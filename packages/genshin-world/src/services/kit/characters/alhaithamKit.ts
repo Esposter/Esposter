@@ -25,6 +25,7 @@ import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkill
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
@@ -168,10 +169,6 @@ const addConstellation6Buffs = (
     });
   }
 };
-
-// The Elemental Mastery a hit's flat damage takes, from its striker's total at the multiplier
-const elementalMasteryMultiplier = (combatant: Combatant, multiplier: number): number =>
-  combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * multiplier;
 
 // The Mirrors a skill makes as it lands: two when the character holds none, and one otherwise
 const getSkillMirrorGain = (effects: readonly KitEffect[], characterId: number): number =>

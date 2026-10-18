@@ -1,9 +1,26 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createMizukiKitBehaviour, MIZUKI_CHARACTER_ID } from "#src/services/kit/characters/mizukiKit";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const MIZUKI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MIZUKI_CHARACTER_ID);
+const DREAMDRIFTER_STATUS_ID = "dreamdrifter-state";
+
+const createMizukiCombatant = (): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: MIZUKI_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: MIZUKI_KIT,
+  level: 90,
+});
 
 describe(createMizukiKitBehaviour, () => {
   test("reads each talent multiplier, cooldown and cost from her proud skill groups, to four decimal places", () => {
@@ -44,5 +61,32 @@ describe(createMizukiKitBehaviour, () => {
       normalAttackHitmarkFrames: [17, 29, 47],
       skillHitmarkFrames: [2],
     });
+  });
+
+  test("the skill's press enters the Dreamdrifter state, which lasts five seconds", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMizukiCombatant());
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    expect(checkIsKitStatusActive(context.kitEffectState.effects, MIZUKI_CHARACTER_ID, DREAMDRIFTER_STATUS_ID)).toBe(
+      true,
+    );
+    stepKitSeconds(context, 4.9);
+    expect(checkIsKitStatusActive(context.kitEffectState.effects, MIZUKI_CHARACTER_ID, DREAMDRIFTER_STATUS_ID)).toBe(
+      true,
+    );
+    stepKitSeconds(context, 0.2);
+    expect(checkIsKitStatusActive(context.kitEffectState.effects, MIZUKI_CHARACTER_ID, DREAMDRIFTER_STATUS_ID)).toBe(
+      false,
+    );
+  });
+
+  test("a press in the Dreamdrifter state cancels it", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMizukiCombatant());
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    expect(checkIsKitStatusActive(context.kitEffectState.effects, MIZUKI_CHARACTER_ID, DREAMDRIFTER_STATUS_ID)).toBe(
+      false,
+    );
   });
 });

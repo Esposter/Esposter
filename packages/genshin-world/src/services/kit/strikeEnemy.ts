@@ -24,7 +24,6 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
 import { checkIsBluntHit } from "#src/services/kit/checkIsBluntHit";
-import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { getDirectLunarDamage } from "#src/services/kit/getDirectLunarDamage";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
@@ -109,17 +108,17 @@ export const strikeEnemy = (
         additiveBaseDamageBonus: additiveBaseDamageBonus + (kitHit.additiveBaseDamageBonus?.(combatant) ?? 0),
         amplifyingMultiplier,
         attackerLevel: combatant.level,
-        criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
-        // The element's or the physical DMG Bonus, the all-damage bonus, the normal and charged attack bonus on those attacks,
-        // The plunging attack bonus on a plunge, a hit's own and an enemy's statuses' DMG taken add to the bonus each hit reads
+        criticalDamage: attributeTotalMap[Attribute.CriticalDamage] + (kitHit.criticalDamageBonus ?? 0),
+        // The element's or the physical DMG Bonus, the all-damage bonus, the normal or charged attack bonus of the attack's tag,
+        // The plunging attack bonus on a plunge,
+        // A hit's own and an enemy's statuses' DMG taken add to the bonus each hit on it reads
         damageBonus:
           attributeTotalMap[
             element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
           ] +
           attributeTotalMap[Attribute.AllDamageBonus] +
-          (checkIsNormalOrChargedAttack(kitHit.attackTag)
-            ? attributeTotalMap[Attribute.NormalAndChargedAttackDamageBonus]
-            : 0) +
+          (kitHit.attackTag === AttackTag.NormalAttack ? attributeTotalMap[Attribute.NormalAttackDamageBonus] : 0) +
+          (kitHit.attackTag === AttackTag.ChargedAttack ? attributeTotalMap[Attribute.ChargedAttackDamageBonus] : 0) +
           (kitHit.attackTag === AttackTag.PlungingAttack ? attributeTotalMap[Attribute.PlungingAttackDamageBonus] : 0) +
           (kitHit.damageBonus ?? 0) +
           enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),

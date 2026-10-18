@@ -13,7 +13,7 @@ describe(damagePartyMember, () => {
     damagePartyMember(party, 1, 0.25);
 
     expect({ healthChanges: party.healthChanges, partyMember: getPartyMember(party, 1) }).toStrictEqual({
-      healthChanges: [{ characterId: 1, healthShare: -0.25, overflowHealthShare: 0 }],
+      healthChanges: [{ bondOfLifeShare: 0, characterId: 1, healthShare: -0.25, overflowHealthShare: 0 }],
       partyMember: { ...createPartyMember(), healthShare: 0.75 },
     });
   });
@@ -52,7 +52,9 @@ describe(damagePartyMember, () => {
     damagePartyMember(party, 1, 1, undefined, { healthShare: 0.1, refuses: () => true });
 
     expect({ healthChanges: party.healthChanges, partyMember: getPartyMember(party, 1) }).toStrictEqual({
-      healthChanges: [{ characterId: 1, healthShare: -0.9, isFallRefused: true, overflowHealthShare: 0 }],
+      healthChanges: [
+        { bondOfLifeShare: 0, characterId: 1, healthShare: -0.9, isFallRefused: true, overflowHealthShare: 0 },
+      ],
       partyMember: { ...createPartyMember(), healthShare: 0.1 },
     });
   });

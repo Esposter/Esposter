@@ -29,4 +29,12 @@ describe(selectLaidGroundKeys, () => {
       "ground/gamma",
     ]);
   });
+
+  test("lays none of mondstadt's keys, whose plateau overlaps windrise's base", () => {
+    expect.hasAssertions();
+
+    expect(selectLaidGroundKeys(["ground/mondstadt", "ground/mondstadt/0", "ground/gamma"])).toStrictEqual([
+      "ground/gamma",
+    ]);
+  });
 });

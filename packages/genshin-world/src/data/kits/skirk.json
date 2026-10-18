@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 6 },
+  "burst.hits.length": { "cause": "Unclassified", "value": 6 },
   "burst.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.899494936611665 }
@@ -34,25 +34,25 @@
   "burst.hits.5.hitmarkFrames": { "cause": "Unsourced", "value": 158 },
   "burst.hits.5.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 11439 } },
   "burstEnergyCost": { "cause": "Unsourced", "value": 0 },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
+  "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.sevenPhaseFlash": { "cause": "Unsourced", "value": 754 },
   "frames.sevenPhaseFlashDelay": { "cause": "Unsourced", "value": 19 },
-  "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 11 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 5 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 6 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 20 },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 9 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 33 },
-  "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 13 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 57 },
+  "normalAttacks.1.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 7 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 52.1 },
+  "normalAttacks.2.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 8 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 33.9 },
+  "normalAttacks.2.hits.1.hitmarkFrames": { "source": "Gcsim", "value": 22 },
+  "normalAttacks.2.hits.1.poiseDamage": { "source": "Wiki", "value": 33.9 },
+  "normalAttacks.3.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 11 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 63.6 },
+  "normalAttacks.4.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 35 },
+  "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 86.7 },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 },
-  "skillCooldownSeconds": { "cause": "DiffersFromSource", "value": 20.883333333333333 },
-  "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 },
+  "skillCooldownSeconds": { "cause": "Unsourced", "value": 20.883333333333333 },
+  "skillHolds.length": { "cause": "Unclassified", "value": 0 },
   "stances.sevenPhaseFlash.burst.animationFrames": { "cause": "Unsourced", "value": 41 },
   "stances.sevenPhaseFlash.burst.hits.length": { "cause": "Unsourced", "value": 0 },
   "stances.sevenPhaseFlash.burst.targeting": { "cause": "Unsourced", "value": "Skill" },
@@ -104,7 +104,7 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 12 },
+  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 12 },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 11432 }
@@ -119,7 +119,7 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 11 },
+  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 11 },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 11432 }
@@ -188,17 +188,11 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 25 },
+  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 25 },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 6, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "stances.sevenPhaseFlash.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" },
-  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "stances.sevenPhaseFlash.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" }
 }

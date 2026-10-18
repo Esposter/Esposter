@@ -1,7 +1,7 @@
 ## 1. Strongbox record
 
 - [x] 1.1 Build each strongbox from its reward preview's display item and its set's offer row, with the set's five-star pieces. Verify: tests named after the scenarios 'a strongbox takes its set and pieces from its display item and offer row' and 'a strongbox with no offer row is left out'.
-- [ ] 1.2 Read the record from the hosted game data by its key and check it against its shape. Verify: a test named after the scenario 'a strongbox record that does not match its shape is refused', seen failing first.
+- [x] 1.2 Read the record from the hosted game data by its key and check it against its shape. Verify: a test named after the scenario 'a strongbox record that does not match its shape is refused', seen failing first.
 
 ## 2. Rolling a strongbox
 
@@ -21,4 +21,4 @@
 
 ## 5. Words
 
-- [ ] 5.1 Add the offering's `GameTextKey` members, each by its text id. Verify: a test named after the scenario 'the offering's tip fills its artifact counts', seen failing first.
+- [x] 5.1 Add the offering's `GameTextKey` members, each by its text id. Verify: a test named after the scenario 'the offering's tip fills its artifact counts', seen failing first. The six members are in `GameTextKey` already, each by its `UI_MELTING_*` text id, and the tip and the confirm both fill through `computeMysticOfferingText`.

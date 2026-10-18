@@ -115,6 +115,38 @@ describe(strikeEnemy, () => {
     ]);
   });
 
+  test("adds the CRIT DMG a hit is given to the CRIT DMG its critical damage is priced from", () => {
+    expect.hasAssertions();
+
+    const CRITICAL_DAMAGE_BONUS = 0.5;
+    const boostedEnemy = createSturdyEnemy();
+    const plainEnemy = createSturdyEnemy();
+    const createCombatantWithCriticalRate = (): Combatant => ({
+      ascension: 0,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.CriticalDamage, value: 0.5 },
+        { attribute: Attribute.CriticalRate, value: 0.1 },
+      ]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: TRAVELER_KIT,
+      level: LEVEL,
+    });
+
+    strikeEnemy(
+      enemyTables,
+      boostedEnemy,
+      { ...TRAVELER_KIT.plungeCollision, criticalDamageBonus: CRITICAL_DAMAGE_BONUS },
+      createCombatantWithCriticalRate(),
+      () => 0,
+    );
+    strikeEnemy(enemyTables, plainEnemy, TRAVELER_KIT.plungeCollision, createCombatantWithCriticalRate(), () => 0);
+
+    expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
+  });
+
   test("adds the CRIT Rate a strike is given to the rate its CRIT roll is made against", () => {
     expect.hasAssertions();
 
@@ -260,15 +292,15 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
-  test("raises a normal attack's damage by the normal and charged attack bonus its character carries", () => {
+  test("raises a normal attack's damage by the normal attack bonus its character carries", () => {
     expect.hasAssertions();
 
-    const NORMAL_AND_CHARGED_DAMAGE_BONUS = 0.5;
+    const NORMAL_ATTACK_DAMAGE_BONUS = 0.5;
     const enemy = createSturdyEnemy();
     const kitHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.NormalAttack };
     const damage = getDamage({
       attackerLevel: LEVEL,
-      damageBonus: NORMAL_AND_CHARGED_DAMAGE_BONUS,
+      damageBonus: NORMAL_ATTACK_DAMAGE_BONUS,
       defense,
       resistance: kind.physicalResistance,
       stat: ATTACK,
@@ -278,7 +310,7 @@ describe(strikeEnemy, () => {
       ...createCombatant(),
       attributes: computeCharacterAttributes([
         { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.NormalAndChargedAttackDamageBonus, value: NORMAL_AND_CHARGED_DAMAGE_BONUS },
+        { attribute: Attribute.NormalAttackDamageBonus, value: NORMAL_ATTACK_DAMAGE_BONUS },
       ]),
     };
 
@@ -287,7 +319,35 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
-  test("leaves a skill's damage unchanged by the normal and charged attack bonus its character carries", () => {
+  test("raises a charged attack's damage by the charged attack bonus, and not by the normal attack bonus", () => {
+    expect.hasAssertions();
+
+    const CHARGED_ATTACK_DAMAGE_BONUS = 0.5;
+    const enemy = createSturdyEnemy();
+    const kitHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.ChargedAttack };
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      damageBonus: CHARGED_ATTACK_DAMAGE_BONUS,
+      defense,
+      resistance: kind.physicalResistance,
+      stat: ATTACK,
+      talentMultiplier: kitHit.talentMultiplier,
+    });
+    const combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.NormalAttackDamageBonus, value: 0.25 },
+        { attribute: Attribute.ChargedAttackDamageBonus, value: CHARGED_ATTACK_DAMAGE_BONUS },
+      ]),
+    };
+
+    strikeEnemy(enemyTables, enemy, kitHit, combatant, NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("leaves a skill's damage unchanged by the normal and charged attack bonuses its character carries", () => {
     expect.hasAssertions();
 
     const kitHit = { ...TRAVELER_KIT.plungeCollision, attackTag: AttackTag.ElementalSkill };
@@ -301,7 +361,8 @@ describe(strikeEnemy, () => {
       ...createCombatant(),
       attributes: computeCharacterAttributes([
         { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.NormalAndChargedAttackDamageBonus, value: 0.5 },
+        { attribute: Attribute.NormalAttackDamageBonus, value: 0.5 },
+        { attribute: Attribute.ChargedAttackDamageBonus, value: 0.5 },
       ]),
     };
 

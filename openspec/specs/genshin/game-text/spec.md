@@ -96,6 +96,22 @@ A numbered interface string SHALL show its values in place, with a number that h
 - **WHEN** the string is shown
 - **THEN** the pattern is shown as written and not read as a replacement
 
+### Requirement: A game string's line breaks are real line breaks
+
+The game writes a line break in its text as a backslash and an n. Every chunk the writer publishes or generates SHALL hold a real line break in its place, and a screen SHALL show the string's line breaks without splitting on the escaped form.
+
+#### Scenario: A line break in an interface string is a real line break
+
+- **GIVEN** a text map string holding a backslash and an n between two words
+- **WHEN** the interface string is written
+- **THEN** the chunk holds the two words with a real line break between them
+
+#### Scenario: A size tag is dropped with its words kept
+
+- **GIVEN** a text map string holding a size tag around some words
+- **WHEN** the interface string is written
+- **THEN** the chunk holds the words without the tag
+
 ### Requirement: Colour tags split a game string into coloured runs
 
 A game string's colour tags SHALL split it into runs, each shown in the colour its tag gives, and every other markup SHALL be dropped.

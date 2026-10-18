@@ -1,5 +1,6 @@
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe("domain challenge levels", () => {
@@ -18,7 +19,7 @@ describe("domain challenge levels", () => {
     expect.hasAssertions();
 
     expect(
-      Object.values(DOMAIN_CHALLENGE_LEVELS[13]).map(({ defeatTarget, waves }) => ({
+      Object.values(takeOne(DOMAIN_CHALLENGE_LEVELS, 13)).map(({ defeatTarget, waves }) => ({
         defeatTarget,
         enemies: waves.flat().reduce((total, { count }) => total + count, 0),
       })),
@@ -34,7 +35,7 @@ describe("domain challenge levels", () => {
     expect.hasAssertions();
 
     expect(
-      Object.values(DOMAIN_CHALLENGE_LEVELS[1006]).map(({ defeatTarget, timeLimitSeconds, waves }) => ({
+      Object.values(takeOne(DOMAIN_CHALLENGE_LEVELS, 1006)).map(({ defeatTarget, timeLimitSeconds, waves }) => ({
         defeatTarget,
         timeLimitSeconds,
         waves,

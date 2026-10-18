@@ -19,9 +19,27 @@ describe(recordAbyssChamberClear, () => {
     { kind: AbyssStarConditionKind.LeftTime, threshold: 150 },
     { kind: AbyssStarConditionKind.LeftTime, threshold: 210 },
   ];
-  const firstChamber: AbyssChamber = { conditions: CONDITIONS, id: FIRST_CHAMBER_ID, index: 1 };
-  const secondChamber: AbyssChamber = { conditions: CONDITIONS, id: SECOND_CHAMBER_ID, index: 2 };
-  const thirdChamber: AbyssChamber = { conditions: CONDITIONS, id: THIRD_CHAMBER_ID, index: 3 };
+  const firstChamber: AbyssChamber = {
+    conditions: CONDITIONS,
+    halfMonsterDescribeIds: [],
+    id: FIRST_CHAMBER_ID,
+    index: 1,
+    monsterLevel: 1,
+  };
+  const secondChamber: AbyssChamber = {
+    conditions: CONDITIONS,
+    halfMonsterDescribeIds: [],
+    id: SECOND_CHAMBER_ID,
+    index: 2,
+    monsterLevel: 1,
+  };
+  const thirdChamber: AbyssChamber = {
+    conditions: CONDITIONS,
+    halfMonsterDescribeIds: [],
+    id: THIRD_CHAMBER_ID,
+    index: 3,
+    monsterLevel: 1,
+  };
   const floor: AbyssFloor = {
     chambers: [firstChamber, secondChamber, thirdChamber],
     id: 1,
@@ -146,6 +164,8 @@ describe(recordAbyssChamberClear, () => {
       [
         1,
         {
+          bondOfLifeClearedShare: 0,
+          bondOfLifeShare: 0,
           burstCooldownSeconds: 0,
           elementalState: createElementalState(),
           energy: 40,
@@ -156,6 +176,8 @@ describe(recordAbyssChamberClear, () => {
       [
         2,
         {
+          bondOfLifeClearedShare: 0,
+          bondOfLifeShare: 0,
           burstCooldownSeconds: 0,
           elementalState: createElementalState(),
           energy: 0,

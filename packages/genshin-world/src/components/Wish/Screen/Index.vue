@@ -3,6 +3,7 @@ import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { Trial } from "#src/models/trial/Trial";
 import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
 import type { WishItem } from "#src/models/wish/WishItem";
 import type { WishPity } from "#src/models/wish/WishPity";
@@ -17,6 +18,7 @@ import { addStellaFortuna } from "#src/services/character/addStellaFortuna";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
+import { findBannerTrial } from "#src/services/trial/findBannerTrial";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKindFateMap } from "#src/services/wish/BannerKindFateMap";
 import { BannerKindGameTextKeyMap } from "#src/services/wish/BannerKindGameTextKeyMap";
@@ -50,6 +52,8 @@ interface Props {
   statTables: StatTables;
   // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
   stellaFortunaNameTextIdMap: ReadonlyMap<number, string>;
+  // The character trials, each offered on the banner whose featured five-star is its character
+  trials: readonly Trial[];
   // The wish schedule's event banners, each offered only inside its window
   wishSchedule: WishScheduleEvent[];
 }
@@ -64,9 +68,9 @@ const pityMap = defineModel<Readonly<Record<BannerKind, WishPity>>>("pityMap", {
 // The draws the wish history keeps, which the draws of each set are appended to
 const wishHistory = defineModel<WishDrawSave[]>("wishHistory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const { gameText, nameText, serverClockOffsetMs, statTables, stellaFortunaNameTextIdMap, wishSchedule } =
+const { gameText, nameText, serverClockOffsetMs, statTables, stellaFortunaNameTextIdMap, trials, wishSchedule } =
   defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: []; trial: [trial: Trial] }>();
 // The draws the History popup lists, each named from the stat tables and its banner labelled in the reader's language
 const historyCells = computed(() =>
   toWishHistoryCells(
@@ -183,6 +187,14 @@ const fatePoints = computed(() =>
     : [],
 );
 const banner = computed(() => banners.value.find(({ id }) => id === bannerId.value));
+// The trial the open banner's featured character has, which the card's button opens, and the game's words the button is labelled with
+const bannerTrial = computed(() =>
+  banner.value ? findBannerTrial(trials, banner.value.featuredFiveStars) : undefined,
+);
+const trialLabel = computed(() => (bannerTrial.value ? gameText[GameTextKey.WishGoToTrial] : undefined));
+const openTrial = () => {
+  if (bannerTrial.value) emit("trial", bannerTrial.value);
+};
 // The Character Event banner's card, the banner the world builds its card for
 const bannerCard = computed(() =>
   bannerKind.value === BannerKind.CharacterEvent
@@ -282,9 +294,11 @@ const wish = (count: number) => {
       :shop-label="gameText[GameTextKey.Shop]"
       :sets
       :title="gameText[GameTextKey.Wish]"
+      :trial-label="trialLabel"
       @buy="buyFate()"
       @close="emit('close')"
       @dismiss="results = []"
+      @trial="openTrial"
       @wish="(count) => wish(count)"
     />
   </GameScreen>
