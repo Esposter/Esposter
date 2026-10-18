@@ -3,11 +3,7 @@ import type { GroundPoint } from "genshin-engine";
 import type { DomainEntranceLandmark } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import {
-  DOMAIN_ENTRANCE_REGION_MAX_DISTANCE,
-  DUNGEON_ENTRY_TABLE_NAME,
-  DungeonEntryTypeDomainKindMap,
-} from "#src/services/genshinAssets/domains/constants";
+import { DUNGEON_ENTRY_TABLE_NAME, DungeonEntryTypeDomainKindMap } from "#src/services/genshinAssets/domains/constants";
 import { readDomainScenePoints } from "#src/services/genshinAssets/domains/readDomainScenePoints";
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
@@ -16,7 +12,7 @@ import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/c
 import { REGION_DATA_DIRECTORY } from "#src/services/genshinAssets/residents/constants";
 import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
 import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegionMapPoints";
-import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
+import { OPEN_WORLD_SCENE_ID, REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -73,7 +69,7 @@ export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }):
       noPointCount++;
       continue;
     }
-    const region = classifyPlacementRegion(place.position, regionMapPoints, DOMAIN_ENTRANCE_REGION_MAX_DISTANCE);
+    const region = classifyPlacementRegion(place.position, regionMapPoints, REGION_MAX_DISTANCE);
     if (region === undefined) {
       noRegionCount++;
       continue;

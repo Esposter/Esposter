@@ -6,11 +6,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
-import {
-  REGION_DATA_DIRECTORY,
-  RESIDENT_DUEL_GAME_ID_MAP,
-  RESIDENT_REGION_MAX_DISTANCE,
-} from "#src/services/genshinAssets/residents/constants";
+import { REGION_DATA_DIRECTORY, RESIDENT_DUEL_GAME_ID_MAP } from "#src/services/genshinAssets/residents/constants";
 import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
 import { joinResidents } from "#src/services/genshinAssets/residents/joinResidents";
 import { mapSpeakerTalkIds } from "#src/services/genshinAssets/residents/mapSpeakerTalkIds";
@@ -18,6 +14,7 @@ import { readDialogSpeakers } from "#src/services/genshinAssets/residents/readDi
 import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegionMapPoints";
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
+import { REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { NPC_TABLE_NAME } from "#src/services/genshinText/constants";
 import { mapNpcStandingTalkIds } from "#src/services/genshinText/mapNpcStandingTalkIds";
@@ -62,7 +59,7 @@ export const writeResidents = async (): Promise<string> => {
     ),
   );
   const placements = npcPlaces.flatMap(([npcId, place]) => {
-    const region = classifyPlacementRegion(place.position, regionMapPoints, RESIDENT_REGION_MAX_DISTANCE);
+    const region = classifyPlacementRegion(place.position, regionMapPoints, REGION_MAX_DISTANCE);
     return region === undefined ? [] : [toResidentPlace(npcId, place, region, origin)];
   });
   const npcs = readExcelTable<DumpedNpc>(NPC_TABLE_NAME);

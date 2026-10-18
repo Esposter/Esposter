@@ -11,6 +11,3 @@ export const DungeonEntryTypeDomainKindMap: Partial<Record<string, DomainKind>> 
   DUNGEN_ENTRY_TYPE_RELIQUARY: DomainKind.Blessing,
   DUNGEN_ENTRY_TYPE_WEAPON_PROMOTE: DomainKind.Forgery,
 };
-// How near an entrance's nearest official map point must lie, in game units, for the entrance to be placed in that
-// Point's region, the reach a resident's place is filed under too
-export const DOMAIN_ENTRANCE_REGION_MAX_DISTANCE = 100;
