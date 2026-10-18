@@ -183,7 +183,7 @@ describe("sanguine Rouge", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), ascension: 4 };
 
-    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5)).toStrictEqual([
+    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [])).toStrictEqual([
       { amount: 0.33, attribute: Attribute.PyroDamageBonus },
     ]);
   });
@@ -192,6 +192,6 @@ describe("sanguine Rouge", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), ascension: 3 };
 
-    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5)).toStrictEqual([]);
+    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [])).toStrictEqual([]);
   });
 });

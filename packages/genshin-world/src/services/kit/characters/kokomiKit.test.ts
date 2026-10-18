@@ -96,7 +96,7 @@ describe("flawless Strategy", () => {
     expect.hasAssertions();
     const combatant = { ...createKokomiCombatant(), ascension: 0 };
 
-    expect(KOKOMI_KIT.getPassiveBonuses?.(combatant, 1)).toStrictEqual([
+    expect(KOKOMI_KIT.getPassiveBonuses?.(combatant, 1, [])).toStrictEqual([
       { amount: 0.25, attribute: Attribute.HealingBonus },
       { amount: -1, attribute: Attribute.CriticalRate },
     ]);

@@ -47,7 +47,11 @@ export interface Kit {
   getNormalAttackSpeedBonus?: (context: KitContext) => number;
   // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands and
   // Its HP as a share of its Max HP, which a bonus at low or high HP reads, its current HP being that share of its Max HP
-  getPassiveBonuses?: (combatant: Combatant, healthShare: number) => { amount: number; attribute: Attribute }[];
+  getPassiveBonuses?: (
+    combatant: Combatant,
+    healthShare: number,
+    effects: readonly KitEffect[],
+  ) => { amount: number; attribute: Attribute }[];
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
   getSkillChargeBonus?: (combatant: Combatant) => number;

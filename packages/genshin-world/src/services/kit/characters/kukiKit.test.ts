@@ -137,7 +137,7 @@ describe("breaking Free", () => {
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(KUKI_KIT.getPassiveBonuses?.(createKukiCombatant(1), 0.5)).toStrictEqual([
+    expect(KUKI_KIT.getPassiveBonuses?.(createKukiCombatant(1), 0.5, [])).toStrictEqual([
       { amount: 0.15, attribute: Attribute.HealingBonus },
     ]);
   });
@@ -145,6 +145,6 @@ describe("breaking Free", () => {
   test("a passive does not take effect below its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(KUKI_KIT.getPassiveBonuses?.(createKukiCombatant(0), 0.5)).toStrictEqual([]);
+    expect(KUKI_KIT.getPassiveBonuses?.(createKukiCombatant(0), 0.5, [])).toStrictEqual([]);
   });
 });

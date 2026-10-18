@@ -132,4 +132,32 @@ describe(getBuffedCombatant, () => {
       getBuffedCombatant(combatant, [], healthParty).attributes.attributeTotalMap[Attribute.CriticalRate],
     ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.5);
   });
+
+  test("hands a passive the effects on the team, so a bonus reads a status the team holds", () => {
+    expect.hasAssertions();
+
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: {
+        ...DILUC_KIT,
+        getPassiveBonuses: (_combatant, _healthShare, effects) => [
+          { amount: 0.1 * effects.length, attribute: Attribute.CriticalRate },
+        ],
+      },
+      level: 90,
+    };
+    const statusEffects: KitEffect[] = [
+      { characterId: CHARACTER_ID, id: "focus", kind: "status", secondsRemaining: 10 },
+    ];
+
+    expect(
+      getBuffedCombatant(combatant, statusEffects, createParty([CHARACTER_ID])).attributes.attributeTotalMap[
+        Attribute.CriticalRate
+      ],
+    ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.1);
+  });
 });

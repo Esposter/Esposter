@@ -56,7 +56,7 @@ const getCriticalRateLines = (refinement: number, kit: Kit = KIT) => {
     kit: weaponKit,
     level: 90,
   };
-  return (weaponKit.getPassiveBonuses?.(combatant, 1) ?? []).filter(
+  return (weaponKit.getPassiveBonuses?.(combatant, 1, []) ?? []).filter(
     ({ attribute }) => attribute === Attribute.CriticalRate,
   );
 };
