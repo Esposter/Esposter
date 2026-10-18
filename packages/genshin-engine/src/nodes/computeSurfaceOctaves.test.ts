@@ -1,5 +1,5 @@
 import { computeSurfaceOctaves } from "#src/nodes/computeSurfaceOctaves";
-import { SURFACE_DETAIL_BAND_SIGMAS, SURFACE_OCTAVE_TEXEL_FREQUENCIES } from "#src/nodes/constants";
+import { SURFACE_DETAIL_BAND_SIGMAS } from "#src/nodes/constants";
 import { describe, expect, test } from "vitest";
 
 // A base map's texel spans 2 metres where the ground draws it, 512 texels over a 1,024-metre tile
@@ -27,8 +27,6 @@ describe(computeSurfaceOctaves, () => {
       variance: 1,
     });
 
-    expect(octaves.map(({ frequency }) => frequency)).toStrictEqual(
-      SURFACE_OCTAVE_TEXEL_FREQUENCIES.map((texelFrequency) => texelFrequency / BASE_MAP_METRES_PER_TEXEL),
-    );
+    expect(octaves.map(({ frequency }) => frequency)).toStrictEqual([0.45, 0.15, 0.05, 0.0165, 0.0055]);
   });
 });
