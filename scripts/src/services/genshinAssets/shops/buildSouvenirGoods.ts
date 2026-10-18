@@ -2,7 +2,7 @@ import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelSho
 
 import { buildShopGoodSlice } from "#src/services/genshinAssets/shops/buildShopGoodSlice";
 import { SOUVENIR_SIGIL_ITEM_IDS } from "#src/services/genshinAssets/shops/constants";
-import { getShopGoodPrice } from "#src/services/genshinAssets/shops/getShopGoodPrice";
+import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodCosts";
 
 // The Souvenir Shops' goods, one record of the shops dataset for each region, the goods priced in that region's Sigil
 // The Cryo Sigil prices no good in the table, so Snezhnaya gets no slice until a Souvenir Shop prices in it
@@ -17,4 +17,7 @@ export const buildSouvenirGoods = (): Record<string, unknown> => ({
 });
 
 const buildSouvenirSlice = (sigilItemId: number, stem: string): Record<string, unknown> =>
-  buildShopGoodSlice((row: ExcelShopGoodsRow) => getShopGoodPrice(row)?.id === sigilItemId, stem);
+  buildShopGoodSlice(
+    (row: ExcelShopGoodsRow) => getShopGoodCosts(row).some(({ itemId }) => itemId === sigilItemId),
+    stem,
+  );

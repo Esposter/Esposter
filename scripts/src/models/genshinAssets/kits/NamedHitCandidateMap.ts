@@ -5,6 +5,8 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 export interface NamedHitCall {
   delay?: number;
   fieldMap: Map<string, KitCandidate[]>;
+  file: string;
+  line: number;
   site: string;
 }
 

@@ -26,6 +26,7 @@ export interface Kit {
   burstEnergyCost: number;
   chargedAttack: KitAction;
   chargedAttackStamina: number;
+  chargedAttackVariant?: KitVariant;
   elementalBurst: KitAction;
   // The action the burst plays instead while its check holds on the step it starts, if it has one, such as a burst that
   // Hits harder at low HP
@@ -81,6 +82,29 @@ export interface Kit {
   // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation raises
   // It on the strike, against some enemies only, given the enemy as it stands, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
+  // The CRIT DMG a strike of the kit's own adds as it lands on an enemy, if a constellation raises it on the strike, given the
+  // Enemy as it stands, the deployed team and the effects on it
+  getStrikeCriticalDamageBonus?: (
+    strike: KitStrike,
+    enemy: Enemy,
+    party: Party,
+    effects: readonly KitEffect[],
+  ) => number;
+  // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
+  // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team and the effects on
+  // It. A member's own strikes are priced by its own hooks, not this one
+  getPartyStrikeBonus?: (
+    member: Combatant,
+    strike: KitStrike,
+    enemy: Enemy,
+    party: Party,
+    effects: readonly KitEffect[],
+  ) => {
+    additiveBaseDamageBonus?: number;
+    criticalDamageBonus?: number;
+    criticalRateBonus?: number;
+    damageBonus?: number;
+  };
   highPlunge: KitAction;
   // Whether an action that ends keeps the normal attack string where it stands, rather than starting it over, as a
   // Constellation's exception to the actions that break it

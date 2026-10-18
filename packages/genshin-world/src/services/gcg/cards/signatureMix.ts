@@ -2,8 +2,8 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { drunkenMist } from "#src/services/gcg/cards/drunkenMist";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const DRUNKEN_MIST_ID = 111_023;
@@ -17,7 +17,7 @@ export const signatureMix: GcgSkillModule = {
     const side = takeOne(duel.sides, sideIndex);
     const user = side.characters.at(side.activeIndex);
     if (user) healGcgCharacter(user, SIGNATURE_MIX_HEAL);
-    side.summons.push(createGcgZoneCard(DRUNKEN_MIST_ID, drunkenMist));
+    placeGcgZoneCard(side.summons, DRUNKEN_MIST_ID, drunkenMist);
   },
   getDamage: () => ({ damageType: Element.Cryo, value: SIGNATURE_MIX_DAMAGE }),
 };

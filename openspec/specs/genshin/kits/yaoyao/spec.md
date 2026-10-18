@@ -146,11 +146,40 @@ Constellation 2 SHALL give Yaoyao 3 energy when a radish strikes an enemy while 
 - **WHEN** the skill Yuegui throws its third or sixth radish at Constellation 6
 - **THEN** a Mega Radish lands at the same target, healing the active character by 7.5% of Yaoyao's Max HP
 
-### Requirement: Unbuilt Ascension 1 and Constellation 1 stamina
+### Requirement: Ascension 1's radishes while dashing or jumping
 
-Ascension 1's passive and Constellation 1's stamina restore SHALL have no effect in the world yet.
+While Moonjade Descent lasts at Ascension 1, Yaoyao SHALL throw a burst radish every 0.6 seconds at a random enemy within 8 metres of her, while she dashes or jumps, and SHALL throw none while she stands or no enemy stands within 8 metres. The radish heals as a burst radish does. A swap that ends the burst SHALL end the throws.
 
-#### Scenario: Ascension 1 gives no locomotion bonus
+#### Scenario: a dash or a jump throws on each 0.6-second interval
 
 - **WHEN** Yaoyao is dashing or jumping during Moonjade Descent at Ascension 1
-- **THEN** no extra radish is thrown
+- **THEN** a radish is thrown at an enemy within 8 metres 36 frames after the burst's cast, and again 36 frames later
+
+#### Scenario: standing still or with no enemy in reach throws nothing
+
+- **WHEN** Yaoyao stands still during Moonjade Descent at Ascension 1, or the nearest enemy stands beyond 8 metres while she dashes
+- **THEN** no radish is thrown
+
+#### Scenario: a swap ends the throws with the burst
+
+- **WHEN** a swap ends Moonjade Descent at Ascension 1
+- **THEN** no radish is thrown after it
+
+### Requirement: Constellation 1's stamina restore
+
+At Constellation 1, each radish heal SHALL restore 15 stamina to the party's pool, once each five seconds, as gcsim's Constellation 1 does on each radish heal behind its own cooldown. A heal inside the cooldown SHALL restore nothing.
+
+#### Scenario: a radish heal restores 15 stamina, and the next heal inside five seconds restores none
+
+- **WHEN** a skill radish heals Yaoyao at Constellation 1 with 50 stamina in the pool, and the next heals fall 60 and 120 frames after it
+- **THEN** the pool holds 65 stamina after the first heal, and still 65 after the later two
+
+#### Scenario: a heal five seconds on restores again
+
+- **WHEN** a radish heals Yaoyao 360 frames after the restore at Constellation 1
+- **THEN** the pool gains 15 stamina again
+
+#### Scenario: no restore without Constellation 1
+
+- **WHEN** a radish heals Yaoyao below Constellation 1
+- **THEN** the pool is unchanged

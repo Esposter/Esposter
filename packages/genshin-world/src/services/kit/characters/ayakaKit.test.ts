@@ -1,8 +1,11 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -14,15 +17,21 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AYAKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYAKA_CHARACTER_ID);
+const normalHit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
+const chargedHit = takeOne(AYAKA_KIT.chargedAttack.hits);
 const createAyakaCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseHealth, value: 10_000 },
+    { attribute: Attribute.Attack, value: 1000 },
+  ]),
   characterId: AYAKA_CHARACTER_ID,
   constellationCount,
   elementalResonances: [],
@@ -39,6 +48,42 @@ const strikeWithFirstNormalAttack = (constellationCount: number, random: () => n
   const hit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
   hit.onStrike?.(context, { body: context.body, combatant, hit }, createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""));
   return partyMember.skillCooldownSeconds;
+};
+
+const STURDY_HEALTH = 1e9;
+const NEVER_CRITICAL = (): number => 1;
+
+// A Frostflake strike on a sturdy enemy, which the hit lands on with the statuses it leaves
+const strikeFrostflake = (hit: KitHit, combatant: Combatant): Enemy => {
+  const enemy: Enemy = {
+    ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    health: STURDY_HEALTH,
+    maxHealth: STURDY_HEALTH,
+  };
+  strikeEnemy(enemyTables, enemy, hit, combatant, NEVER_CRITICAL);
+  return enemy;
+};
+
+// The DEF each status on the enemy takes off it, which a constellation's DEF cut leaves as one
+const readDefenceReductions = (enemy: Enemy): number[] =>
+  enemy.statuses.flatMap(({ defenseReduction }) => (defenseReduction === undefined ? [] : [defenseReduction]));
+
+// The DMG Bonus Ayaka's kit gives one of her strikes, with the effects her Hyouka left on her
+const readStrikeDamageBonus = (
+  combatant: Combatant,
+  kitEffectState: KitEffectState,
+  attackTag: AttackTag,
+  hit: KitHit,
+): number => {
+  const context = createKitTestContext(combatant);
+  return (
+    AYAKA_KIT.getStrikeDamageBonus?.(
+      { attackTag, body: context.body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      context.party,
+      kitEffectState.effects,
+    ) ?? 0
+  );
 };
 
 describe(createAyakaKitBehaviour, () => {
@@ -109,5 +154,109 @@ describe(createAyakaKitBehaviour, () => {
     expect(kitEffectState.effects).toStrictEqual([
       { characterId: AYAKA_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 5 },
     ]);
+  });
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(0), ascension: 1 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    AYAKA_KIT.elementalSkill.onStart?.(context);
+
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.NormalAttack, normalHit)).toBe(0.3);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0.3);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ElementalSkill, normalHit)).toBe(0);
+
+    stepKitEffects(6, context);
+
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.NormalAttack, normalHit)).toBe(0);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(0), ascension: 0 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    AYAKA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.NormalAttack, normalHit)).toBe(0);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
+  });
+
+  test("a constellation takes effect at its constellation phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(6) };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 1 });
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(2.98);
+
+    chargedHit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit: chargedHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
+
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(2.98);
+    stepKitEffects(0.5, context);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
+    chargedHit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit: chargedHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
+    stepKitEffects(9.5, context);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
+    stepKitEffects(0.5, context);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(2.98);
+  });
+
+  test("a constellation does not take effect below its constellation phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(5) };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 1 });
+
+    chargedHit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit: chargedHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
+
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
+  });
+
+  test("a constellation's DEF cut takes effect at its constellation phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(4) };
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] } });
+    AYAKA_KIT.elementalBurst.onStart?.(context);
+    const strikes = stepKitTestEffects(7, context);
+
+    expect(strikes.map(({ hit }) => readDefenceReductions(strikeFrostflake(hit, combatant)))).toStrictEqual(
+      strikes.map(() => [0.3]),
+    );
+  });
+
+  test("a constellation's DEF cut does not take effect below its constellation phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(3) };
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] } });
+    AYAKA_KIT.elementalBurst.onStart?.(context);
+    const strikes = stepKitTestEffects(7, context);
+
+    expect(strikes.map(({ hit }) => readDefenceReductions(strikeFrostflake(hit, combatant)))).toStrictEqual(
+      strikes.map(() => []),
+    );
+  });
+
+  test("a constellation's DEF cut does not take effect on a hit that deals no damage", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(4) };
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] } });
+    AYAKA_KIT.elementalBurst.onStart?.(context);
+    const strikes = stepKitTestEffects(7, context);
+
+    expect(
+      strikes.map(({ hit }) => readDefenceReductions(strikeFrostflake({ ...hit, talentMultiplier: 0 }, combatant))),
+    ).toStrictEqual(strikes.map(() => []));
   });
 });

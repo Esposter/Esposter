@@ -1,14 +1,25 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ESCOFFIER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ESCOFFIER_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createEscoffierCombatant = (ascension: number): Combatant => ({
   ascension,
@@ -80,5 +91,149 @@ describe(createEscoffierKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(castScoringCutsFieldIds(0)).toStrictEqual(["escoffier-scoring-cuts-heal"]);
+  });
+  describe("ascension 4's Hydro and Cryo RES shred", () => {
+    // The RES Low-Temperature Cooking's first Frosty Parfait tick shreds from the enemy it hits, as the team stands
+    const getShred = (ascension: number, deployedElements: (Element | undefined)[]): number | undefined => {
+      const combatant = { ...createEscoffierCombatant(ascension), deployedElements };
+      const kitEffectState: KitEffectState = { effects: [] };
+      ESCOFFIER_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+      const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+      return summon?.hits[0]?.enemyStatus?.(combatant)?.resistanceReduction?.[Element.Cryo];
+    };
+
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getShred(4, [Element.Hydro, Element.Cryo, Element.Pyro, Element.Pyro])).toBeCloseTo(0.1);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getShred(3, [Element.Hydro, Element.Cryo, Element.Hydro, Element.Cryo])).toBeUndefined();
+    });
+
+    test("the shred steps up with each Hydro or Cryo member, to 55% for four", () => {
+      expect.hasAssertions();
+
+      expect(getShred(4, [Element.Hydro, Element.Cryo, Element.Hydro, Element.Cryo])).toBeCloseTo(0.55);
+    });
+  });
+});
+
+describe("escoffier kit constellation 1", () => {
+  const TEAMMATE_CHARACTER_ID = 10_000_001;
+  const CRYO_HYDRO_TEAM = [Element.Cryo, Element.Hydro];
+  const CONSTELLATION_1_BONUS = 0.6;
+
+  const createTeamCombatant = (
+    ascension: number,
+    constellationCount: number,
+    deployedElements: Element[],
+  ): Combatant => ({ ...createEscoffierCombatant(ascension), constellationCount, deployedElements });
+
+  // A normal attack's first hit, of the element given
+  const readNormalAttackHit = (element: Element): KitHit => ({
+    ...takeOne(takeOne(ESCOFFIER_KIT.normalAttacks).hits),
+    element,
+  });
+
+  // The CRIT DMG her kit adds to a strike of her own, read as the context stands after her skill
+  const readOwnCriticalDamageBonus = (context: KitContext, element: Element): number =>
+    ESCOFFIER_KIT.getStrikeCriticalDamageBonus?.(
+      {
+        attackTag: AttackTag.NormalAttack,
+        body: context.body,
+        combatant: context.activeCombatant,
+        hit: readNormalAttackHit(element),
+      },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      context.party,
+      context.kitEffectState.effects,
+    ) ?? 0;
+
+  // The CRIT DMG her kit adds to a strike of a teammate's, of the element given, read once her skill is pressed
+  const readTeammateCriticalDamageBonus = (combatant: Combatant, element: Element): number => {
+    const context = createKitTestContext(combatant);
+    ESCOFFIER_KIT.elementalSkill.onStart?.(context);
+    return (
+      ESCOFFIER_KIT.getPartyStrikeBonus?.(
+        combatant,
+        {
+          attackTag: AttackTag.NormalAttack,
+          body: context.body,
+          combatant: { ...createEscoffierCombatant(0), characterId: TEAMMATE_CHARACTER_ID },
+          hit: readNormalAttackHit(element),
+        },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        context.party,
+        context.kitEffectState.effects,
+      )?.criticalDamageBonus ?? 0
+    );
+  };
+
+  test("a constellation's CRIT DMG takes effect at its constellation phase", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createTeamCombatant(4, 1, CRYO_HYDRO_TEAM));
+    ESCOFFIER_KIT.elementalSkill.onStart?.(context);
+
+    expect(readOwnCriticalDamageBonus(context, Element.Cryo)).toBe(CONSTELLATION_1_BONUS);
+  });
+
+  test("a constellation's CRIT DMG does not take effect below its constellation phase", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createTeamCombatant(4, 0, CRYO_HYDRO_TEAM));
+    ESCOFFIER_KIT.elementalSkill.onStart?.(context);
+
+    expect(readOwnCriticalDamageBonus(context, Element.Cryo)).toBe(0);
+  });
+
+  test("a constellation's CRIT DMG does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createTeamCombatant(3, 1, CRYO_HYDRO_TEAM));
+    ESCOFFIER_KIT.elementalSkill.onStart?.(context);
+
+    expect(readOwnCriticalDamageBonus(context, Element.Cryo)).toBe(0);
+  });
+
+  test("a constellation's CRIT DMG does not take effect while the deployed team holds another element", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createTeamCombatant(4, 1, [Element.Cryo, Element.Electro]));
+    ESCOFFIER_KIT.elementalSkill.onStart?.(context);
+
+    expect(readOwnCriticalDamageBonus(context, Element.Cryo)).toBe(0);
+  });
+
+  test("a constellation's CRIT DMG does not take effect on her own strike of another element", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createTeamCombatant(4, 1, CRYO_HYDRO_TEAM));
+    ESCOFFIER_KIT.elementalSkill.onStart?.(context);
+
+    expect(readOwnCriticalDamageBonus(context, Element.Hydro)).toBe(0);
+  });
+
+  test("a constellation's CRIT DMG lasts 15 seconds from her skill", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createTeamCombatant(4, 1, CRYO_HYDRO_TEAM));
+    ESCOFFIER_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 14);
+    expect(readOwnCriticalDamageBonus(context, Element.Cryo)).toBe(CONSTELLATION_1_BONUS);
+    stepKitSeconds(context, 2);
+    expect(readOwnCriticalDamageBonus(context, Element.Cryo)).toBe(0);
+  });
+
+  test("a constellation's CRIT DMG reaches a teammate's Cryo strike", () => {
+    expect.hasAssertions();
+
+    expect(readTeammateCriticalDamageBonus(createTeamCombatant(4, 1, CRYO_HYDRO_TEAM), Element.Cryo)).toBe(
+      CONSTELLATION_1_BONUS,
+    );
+  });
+
+  test("a constellation's CRIT DMG does not reach a teammate's strike of another element", () => {
+    expect.hasAssertions();
+
+    expect(readTeammateCriticalDamageBonus(createTeamCombatant(4, 1, CRYO_HYDRO_TEAM), Element.Hydro)).toBe(0);
   });
 });

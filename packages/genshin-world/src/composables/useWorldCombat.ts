@@ -22,6 +22,7 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
 import { DATA_FETCH_RETRY_MS, WORLD_RANDOM_SEED } from "#src/services/constants";
@@ -38,6 +39,7 @@ import { createWorldParty } from "#src/services/party/createWorldParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
+import { getDeployedElements } from "#src/services/party/getDeployedElements";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { chargePartyMember } from "#src/services/wildlife/chargePartyMember";
@@ -45,7 +47,7 @@ import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
-import { createSeededRandom } from "genshin-engine";
+import { createSeededRandom, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { computed, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
@@ -136,15 +138,12 @@ export const useWorldCombat = ({
   // The field's combat and its party member are what the HUD's Health and skills read
   const characterIdCombatantMap = computed(() => {
     const combatantMap = new Map<number, Combatant>();
-    // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
+    // The deployed team's elements, read off its members' records and the Traveler's element, which the resonances and each
+    // Member's combat read, and the resonances hold on every member
     const { characterDataMap } = statTables;
-    const getElement = (characterId: number) =>
-      characterId === TRAVELER_CHARACTER_ID ? travelerElement.value : characterDataMap.get(characterId)?.element;
+    const deployedElements = getDeployedElements(deployedCharacterIds.value, characterDataMap, travelerElement.value);
     const elementalResonances = getElementalResonances(
-      deployedCharacterIds.value.flatMap((characterId) => {
-        const element = getElement(characterId);
-        return element ? [element] : [];
-      }),
+      deployedElements.flatMap((element) => (element ? [element] : [])),
     );
     for (const character of characters.value.filter(({ id }) => deployedCharacterIds.value.includes(id))) {
       const kit = characterIdKitMap.value.get(character.id);
@@ -156,9 +155,10 @@ export const useWorldCombat = ({
             kit,
             elementalResonances,
             statTables,
-            getElement(character.id),
+            getCharacterElement(character.id, characterDataMap, travelerElement.value),
             travelerBonusLines.value,
             partyBonusLines.value,
+            deployedElements,
           ),
         );
     }
@@ -202,6 +202,8 @@ export const useWorldCombat = ({
   // The world's combat state, which the character on the field steps into: it starts with the active character standing at
   // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
   // Seeded source, so a session's rolls repeat
+  // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps
+  const stamina = createStamina(STAMINA_MAX);
   const kitContext: KitContext = {
     activeCombatant: startingCombatant,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -212,6 +214,9 @@ export const useWorldCombat = ({
     enemyTables,
     expiredEffects: [],
     kitEffectState: { effects: [] },
+    locomotionState: LocomotionState.Idle,
+    hexereiCount: 0,
+    stamina,
     oreStrikes: [],
     reactionTriggers: [],
     outbox: [],

@@ -4,6 +4,7 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { GcsimMultiplierKey } from "#src/models/genshinAssets/kits/gcsim/GcsimMultiplierKey";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
@@ -62,7 +63,11 @@ export const createGcsimKitCandidateWriter = (
     },
     // A hit's area from its hitbox, its multiplier from its talent parameter joined through the config's `talents` and
     // The talent file's labels, and the rest from its `AttackInfo` fields, its poise else from the poise variable's
-    addHit: (path, { areaHitbox, attack, hitmark, poiseDamage, talentLeaf }, targetingArea) => {
+    addHit: (
+      path,
+      { areaHitbox, attack, hitmark, multiplierKey = GcsimMultiplierKey.Multiplier, poiseDamage, talentLeaf },
+      targetingArea,
+    ) => {
       if (hitmark !== undefined) add(`${path}.hitmarkFrames`, hitmark.value, toFile(hitmark.file), hitmark.line);
       if (areaHitbox !== undefined) {
         const area = toGcsimArea(areaHitbox, targetingArea);
@@ -75,7 +80,7 @@ export const createGcsimKitCandidateWriter = (
         const index = parameter?.indexes[selector] ?? parameter?.indexes[0];
         if (parameter !== undefined && index !== undefined)
           add(
-            `${path}.multiplier`,
+            `${path}.${multiplierKey}`,
             { index, proudSkillGroupId: talentGroupIdMap[GcsimTalentTypeCombatTalentMap[type]] },
             toFile(talentFile),
             parameter.line,

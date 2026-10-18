@@ -45,12 +45,66 @@ Nicole's burst SHALL deal Pyro damage in a 6.5-metre circle on the primary targe
 - **WHEN** the player casts the burst
 - **THEN** the burst does not start
 
-### Requirement: Projections and passives not yet built
+### Requirement: Nicole's skill shields the team and buffs its ATK
 
-Nicole's burst projections and her passives SHALL NOT take effect.
+Nicole's elemental skill SHALL shield the team with a Pyro shield scaled by her attack, and SHALL give each deployed member an ATK buff scaled by her attack and capped, both 8 frames after the cast and each lasting 20 seconds.
 
-#### Scenario: Projections and passives do nothing
+#### Scenario: Shield lands 8 frames after the cast
 
-- **GIVEN** Nicole has a passive unlocked or her burst is cast
+- **WHEN** the player presses Nicole's skill
+- **THEN** a Pyro shield of 2.21184 times her attack plus 1386.6697, at level 1, covers the team 8 frames later, for 20 seconds
+
+#### Scenario: Team ATK buff is capped
+
+- **WHEN** the skill's buff lands on a deployed member at level 1
+- **THEN** the member gets 8.25% of Nicole's attack as ATK, up to 330, for 20 seconds
+
+### Requirement: Nicole's burst projections
+
+Nicole's burst SHALL project a copy of each hit the active character lands on an enemy while its status lasts, physical hits included. A projection SHALL land 30 frames after its hit, at most four times and once each 3 seconds.
+
+#### Scenario: Projection lands 30 frames after the hit that starts it
+
+- **GIVEN** Nicole's burst has started and 109 frames have passed
+- **WHEN** the active character's hit lands on an enemy
+- **THEN** a projection lands on that enemy 30 frames later
+
+#### Scenario: No projection before the status starts
+
+- **GIVEN** Nicole's burst has started
+- **WHEN** a hit lands 108 frames into the burst
+- **THEN** no projection lands
+
+#### Scenario: One projection each 3 seconds
+
+- **GIVEN** Nicole's burst is active
+- **WHEN** two hits land 1 second apart
+- **THEN** only one projection lands
+
+#### Scenario: Projections stop at four
+
+- **GIVEN** Nicole's burst is active
+- **WHEN** five hits land 3.1 seconds apart
+- **THEN** four projections land
+
+#### Scenario: Physical hit is projected at her element
+
+- **GIVEN** Nicole's burst has started and 109 frames have passed
+- **WHEN** the active character's physical hit lands on an enemy
+- **THEN** a projection lands on that enemy 30 frames later, dealt as Nicole's element
+
+#### Scenario: Only the active character's hit projects
+
+- **GIVEN** Nicole's burst is active and another character is active
+- **WHEN** that other character's hit lands on an enemy
+- **THEN** no projection lands
+
+### Requirement: Nicole's passives not yet built
+
+Nicole's passives SHALL NOT take effect.
+
+#### Scenario: Passives do nothing
+
+- **GIVEN** Nicole has a passive unlocked
 - **WHEN** the player fights with Nicole
-- **THEN** no projection or passive effect applies
+- **THEN** no passive effect applies

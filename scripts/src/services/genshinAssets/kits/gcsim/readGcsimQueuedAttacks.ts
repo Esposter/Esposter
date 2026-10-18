@@ -23,6 +23,20 @@ const HITBOX_ARGUMENT_INDEX_MAP = new Map([
   ["QueueAttack", 1],
   ["QueueAttackWithSnap", 2],
 ]);
+type GoScope = ReturnType<typeof createGoScope>;
+
+// The position a queue call's attack pattern is read from: the argument itself, or where its bare local was assigned in
+// The call's own function, as `ap := combat.NewCircleHitOnTarget(...)` is passed as `ap`, else none
+const readHitboxStart = (
+  tokens: readonly GoToken[],
+  start: number,
+  position: number,
+  scope: GoScope,
+): number | undefined => {
+  const expression = parseGoExpression(tokens, start).expression;
+  return expression.kind === GoExpressionKind.Identifier ? scope.resolveAssignment(expression.name, position) : start;
+};
+
 // The position of the `AttackInfo` literal an argument begins with, `info.AttackInfo{` or `combat.AttackInfo{`, else
 // Undefined
 const findInlineAttackPosition = (tokens: readonly GoToken[], start: number): number | undefined => {
@@ -115,10 +129,12 @@ export const readGcsimQueuedAttacks = (
       const inlineAttackPosition = findInlineAttackPosition(tokens, attackStart);
       const delayExpression = delayStart === undefined ? undefined : parseGoExpression(tokens, delayStart).expression;
       const hitboxStart = argumentStarts[HITBOX_ARGUMENT_INDEX_MAP.get(token.text) ?? -1];
+      const hitboxValueStart =
+        hitboxStart === undefined ? undefined : readHitboxStart(tokens, hitboxStart, position, scope);
       const hitbox =
-        hitboxStart === undefined
+        hitboxValueStart === undefined
           ? undefined
-          : readGoHitbox(tokens, hitboxStart, (name) => scope.resolveName(name, position), file);
+          : readGoHitbox(tokens, hitboxValueStart, (name) => scope.resolveName(name, position), file);
       const attackLine = inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line;
       const attackName =
         inlineAttackPosition === undefined

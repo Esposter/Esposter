@@ -15,7 +15,12 @@ export const createInfusionStingerPassiveModule = (params: number[]): WeaponPass
   const seconds = takeOne(params, 2);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.ElementalHit || event.striker.characterId !== combatant.characterId) return;
+      if (
+        event.kind !== KitEventKind.EnemyHit ||
+        event.element === undefined ||
+        event.striker.characterId !== combatant.characterId
+      )
+        return;
       addPassiveStack(kitEffectState, combatant.characterId, {
         cooldownSeconds: INFUSION_STINGER_COOLDOWN_SECONDS,
         id: "infusionStinger",

@@ -1,10 +1,12 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsAmountReached } from "#src/services/checkIsAmountReached";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
+import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -26,16 +28,45 @@ const CONSTELLATION_1_ENERGY = 15;
 const CONSTELLATION_1_POINTS = 6;
 const CONSTELLATION_1_POINTS_ID = "iansan-constellation-1-points";
 
+// Ascension 1's Precise Movement, as gcsim (MIT) iansan/asc.go gives it: the Stormflight's first strike on an enemy gives
+// Her 20% ATK for 15 seconds. Every strike of the Stormflight lands at its one hitmark, so giving it on each strike is the
+// Same as on the first, and a strike restarts the status rather than stacking it
+const ASCENSION_1 = 1;
+const PRECISE_MOVEMENT_ID = "iansan-precise-movement";
+const PRECISE_MOVEMENT_ATTACK_PERCENT = 0.2;
+const PRECISE_MOVEMENT_SECONDS = 15;
+
 // Iansan's behaviour: her skill's press enters the Nightsoul Blessing with its points, which drain six a second for the 16
 // Seconds it lasts. gcsim ends the blessing when the points fall to 0.2, and the kit ends it when they reach none, a gap of
-// A thirtieth of a second. Not built: the Electro Swift Stormflight that swaps her charged attack in the blessing, the burst's
+// A thirtieth of a second. Not built: the burst's
 // Party ATK bonus and its conversion of the points into ATK, and the points her Ascension and constellations add. Her
 // Strikes and plunges are her record's alone
 // Constellation 1's energy from each 6 Nightsoul points consumed is built
+// Ascension 1's Precise Movement is built on the Stormflight's strikes; its points on the burst are not
 // Constellation 2 needs Precise Movement on the burst, which the kit does not build
 // Constellation 4 needs the Surging Force stacks after another character's burst, which the kit does not read
 // Constellation 6 needs the Kinetic Energy Scale's extra 3 seconds and Extreme Force on overflow, not built
 export const createIansanKitBehaviour = (): KitBehaviour => ({
+  // The Electro Swift Stormflight plays in place of her charged attack while her blessing lasts
+  chargedAttackVariant: {
+    checkIsActive: ({ activeCombatant, kitEffectState }) =>
+      hasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
+    hits: [
+      {
+        onStrike: ({ activeCombatant, kitEffectState }) => {
+          if (activeCombatant.ascension >= ASCENSION_1)
+            addKitStatus(kitEffectState, activeCombatant.characterId, {
+              id: PRECISE_MOVEMENT_ID,
+              secondsRemaining: PRECISE_MOVEMENT_SECONDS,
+            });
+        },
+      },
+    ],
+  },
+  getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) =>
+    checkIsKitStatusActive(effects, combatant.characterId, PRECISE_MOVEMENT_ID)
+      ? [{ amount: PRECISE_MOVEMENT_ATTACK_PERCENT, attribute: Attribute.AttackPercent }]
+      : [],
   onKitEvent: (event, { kitEffectState, party }, combatant) => {
     const { characterId, constellationCount } = combatant;
     if (

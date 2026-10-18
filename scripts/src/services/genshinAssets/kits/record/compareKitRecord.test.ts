@@ -2,6 +2,7 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitRecord } from "genshin-world";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { describe, expect, test } from "vitest";
@@ -29,5 +30,28 @@ describe(compareKitRecord, () => {
     );
 
     expect(overlay).toStrictEqual({});
+  });
+
+  test("keeps a committed value that neither the record nor a source gives, so the overlay the build reads holds it", () => {
+    expect.hasAssertions();
+
+    const committedOverlay = {
+      "burstVariant.hits.0.poiseDamage": { cause: KitProvisionalCause.Unsourced, value: 150 },
+    };
+
+    const { overlay } = compareKitRecord(
+      {} as KitRecord,
+      new Map(),
+      new Map(),
+      false,
+      committedOverlay,
+      new Map(),
+      new Map(),
+      tables,
+    );
+
+    expect(overlay["burstVariant.hits.0.poiseDamage"]).toStrictEqual(
+      committedOverlay["burstVariant.hits.0.poiseDamage"],
+    );
   });
 });
