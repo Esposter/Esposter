@@ -11,6 +11,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passives/createByakuyaKougetsuPassiveModule";
@@ -44,10 +46,10 @@ describe(createByakuyaKougetsuPassiveModule, () => {
     kind: KitEventKind.DamageTaken as const,
     striker: wielder,
   };
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
+  const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): KitStrike => ({
     attackTag,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
+    combatant,
     hit: TRAVELER_KIT.plungeCollision,
   });
 
@@ -64,7 +66,37 @@ describe(createByakuyaKougetsuPassiveModule, () => {
           context.kitEffectState.effects,
         ),
       ),
-    ).toStrictEqual([0.01 * wielder.attributes.attributeTotalMap[Attribute.Health], 0]);
+    ).toStrictEqual([0.01 * wielder.attributes.maxHealth, 0]);
+  });
+
+  test("a Health buff on the wielder raises the Normal Attack's base damage through her buffed Max HP", () => {
+    expect.hasAssertions();
+
+    const combatant: Combatant = {
+      ...wielder,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+    };
+    const context = createKitTestContext(combatant);
+    buffKitMember(context.kitEffectState, TRAVELER_CHARACTER_ID, {
+      amount: 0.2,
+      attribute: Attribute.HealthPercent,
+      secondsRemaining: 12,
+    });
+    const buffedCombatant = getBuffedCombatant(
+      combatant,
+      context.kitEffectState.effects,
+      context.party,
+      context.characterIdCombatantMap,
+    );
+
+    expect(
+      byakuyaKougetsuPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
+        createStrike(AttackTag.NormalAttack, buffedCombatant),
+        enemy,
+        context.party,
+        context.kitEffectState.effects,
+      ),
+    ).toStrictEqual(0.01 * 12_000);
   });
 
   test("a Normal Attack after an Elemental Burst restores 0.6 Energy", () => {

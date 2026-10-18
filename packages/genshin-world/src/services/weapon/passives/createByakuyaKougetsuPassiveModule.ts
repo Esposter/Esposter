@@ -1,6 +1,5 @@
 import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
 
-import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -23,7 +22,7 @@ export const createByakuyaKougetsuPassiveModule = (params: number[]): WeaponPass
   return {
     getStrikeAdditiveBaseDamageBonus: (strike) => {
       if (strike.attackTag !== AttackTag.NormalAttack) return 0;
-      return maxHealthShare * strike.combatant.attributes.attributeTotalMap[Attribute.Health];
+      return maxHealthShare * strike.combatant.attributes.maxHealth;
     },
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       const { characterId } = combatant;
