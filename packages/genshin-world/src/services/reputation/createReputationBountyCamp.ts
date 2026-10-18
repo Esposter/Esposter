@@ -4,6 +4,9 @@ import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBoun
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { isEnemyKindId } from "#src/services/enemy/isEnemyKindId";
 
+// The id of the camp a bounty spawns, which the defeat of its target is read against
+export const getReputationBountyCampId = (bountyId: number): string => `reputation-bounty-${bountyId}`;
+
 // The camp a taken bounty spawns: its one target standing at the hunt's spawn point, in the region the hunt names, at the
 // Level the caller reads. A target kind the world does not place is an Error, since the bounty could never spawn it.
 // PROVISIONAL: the region's id stands in for the camp's area, which nothing compares a camp's area against yet
@@ -16,7 +19,7 @@ export const createReputationBountyCamp = (hunt: ReputationBountyHunt, enemyLeve
     );
   return {
     areaId: String(hunt.regionId),
-    id: `reputation-bounty-${hunt.bountyId}`,
+    id: getReputationBountyCampId(hunt.bountyId),
     members: [
       {
         enemyKindId: hunt.targetEnemyKindId,
