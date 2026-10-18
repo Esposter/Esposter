@@ -1,7 +1,6 @@
-import { dynamicJsonImportPlugin } from "#parity/dynamicJsonImportPlugin";
 import { regionDataPlugin } from "#parity/regionDataPlugin";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
-import { getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
+import { dynamicJsonImportPlugin, getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
 import { templateCompilerOptions } from "@tresjs/core";
 import { dirname, resolve } from "node:path";
 import { defaultClientConditions, defineConfig } from "vite";
