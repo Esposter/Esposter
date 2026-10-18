@@ -57,5 +57,6 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "plungeCollision.gauge": { "cause": "DiffersFromSource" },
+  "frames.blazingEyeHitmark": { "file": "asc.go", "line": 67, "source": "Gcsim", "value": 10 }
 }

@@ -1,3 +1,4 @@
+import type { Except } from "type-fest";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitEffect } from "#src/models/kit/KitEffect";
@@ -46,16 +47,15 @@ const SEAL_PYRO_BONUS_PER_SEAL = 0.05;
 const SEAL_PYRO_BONUS_SECONDS = 6;
 // Blazing Eye, as the dump's Feiyan_PermanentSkill_2 row (promote 4, param 0.8) and gcsim v2.47.2 (MIT) yanfei/asc.go
 // Give it: from Ascension 4, the first CRIT hit a charged attack of hers lands while she is on the field sets off 80% of
-// Her ATK as 1U of Pyro, Charged Attack DMG, in a circle of radius 3.5 round the enemy struck, 10 frames on. gcsim gives
-// It no poise
+// Her ATK as 1U of Pyro, Charged Attack DMG, in a circle of radius 3.5 round the enemy struck, 10 frames on, which the
+// Record's frames give. gcsim gives it no poise
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yanfei/asc.go
 const BLAZING_EYE_ASCENSION = 4;
-const BLAZING_EYE_HIT: KitHit = {
+const BLAZING_EYE_HIT: Except<KitHit, "hitmarkSeconds"> = {
   attackTag: AttackTag.ChargedAttack,
   element: Element.Pyro,
   gauge: 1,
   hitArea: { angle: 2 * Math.PI, height: 2, radius: 3.5 },
-  hitmarkSeconds: 10 / 60,
   poiseDamage: 0,
   talentMultiplier: 0.8,
 };
@@ -98,7 +98,8 @@ const CONSTELLATION_2_HEALTH_SHARE = 0.5;
 // Seal each second while it stands. From Ascension 4 the first CRIT hit of each charged attack sets off Blazing Eye round
 // The enemy struck. Her Constellation 2 CRIT Rate reads the enemy's health, and her Constellation 4 shield is not built, as no
 // Kit event reaches the shield's health. Constellation 4 needs the Done Deal shield's Pyro absorption at 250%, which the kit does not build
-export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordReader): KitBehaviour => {
+export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
+  const blazingEyeHit: KitHit = { ...BLAZING_EYE_HIT, hitmarkSeconds: readSeconds("blazingEyeHitmark") };
   const doneDealDamageBonus = readParameter("doneDealChargedAttackDamageBonus");
   // The charged attack's hit at each count of seals spent, the count picking its reach and multiplier as she plays
   const chargedAttackHits = readHits("scarletSealChargedAttacks");
@@ -177,7 +178,7 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordR
         return;
       blazingEyeArmedHits.delete(event.hit);
       castKitSummon(kitEffectState, { facing: 0, height: 0, position: event.enemy.position }, combatant, [
-        BLAZING_EYE_HIT,
+        blazingEyeHit,
       ]);
     },
     skill: { hits: [fullSealsHit] },
