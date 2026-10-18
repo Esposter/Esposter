@@ -33,6 +33,10 @@ import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomai
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
 import { toWeeklyBossSchedule } from "#src/services/domains/toWeeklyBossSchedule";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
+import { claimWeeklyBossFirstClear } from "#src/services/bosses/claimWeeklyBossFirstClear";
+import { checkIsWeeklyBossFirstClaimable } from "#src/services/bosses/checkIsWeeklyBossFirstClaimable";
+import { markWeeklyBossTopClear } from "#src/services/bosses/markWeeklyBossTopClear";
+import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -45,6 +49,8 @@ interface DomainArena {
   domainKind: DomainKind;
   enemyLevel: number;
   entryId: number;
+  // Whether the level is its domain's highest tier, which a weekly boss's clear of marks for its first clear to claim
+  isTopTier: boolean;
   // The epoch millisecond the arena was entered, which names each wave's camp apart from the one before
   startedAt: number;
   level: DomainChallengeLevel;
@@ -66,6 +72,7 @@ interface DomainChallengeRun {
 export const useWorldDomains = ({
   adventureExp,
   adventureRankTables,
+  clearedDomainIds,
   completedMainQuestIds,
   events,
   gameDataBaseUrl,
@@ -83,6 +90,7 @@ export const useWorldDomains = ({
 }: {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
+  clearedDomainIds: Ref<ReadonlySet<string>>;
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   events: WorldEvents;
   gameDataBaseUrl: string;
@@ -191,6 +199,8 @@ export const useWorldDomains = ({
       domainKind: entrance.domainKind,
       enemyLevel: scheduledLevel.enemyLevel,
       entryId: entrance.entryId,
+      isTopTier:
+        scheduledLevel.recommendedRank >= Math.max(...schedule.levels.map(({ recommendedRank }) => recommendedRank)),
       level,
       startedAt: now,
       treeRewards: scheduledLevel.treeRewards,
@@ -252,13 +262,26 @@ export const useWorldDomains = ({
     }
     if (outcome === DomainChallengeOutcome.Cleared) {
       domainChallenge.value = undefined;
-      // A weekly boss's defeat leaves its weekly blossom where it fell, so its trounce domain raises no tree
+      // A weekly boss's defeat leaves its weekly blossom where it fell, so its trounce domain raises no tree. Its highest
+      // Tier's clear marks the boss's first clear to claim in the handbook
       isDomainTreeRaised.value = arena.domainKind !== DomainKind.Trounce;
+      if (arena.domainKind === DomainKind.Trounce && arena.isTopTier)
+        clearedDomainIds.value = markWeeklyBossTopClear(clearedDomainIds.value, arena.entryId);
       return;
     }
     leaveDomain();
   };
 
+  // A weekly boss's first clear, claimed once from the handbook: its talent materials go into the bag, and the claim is recorded
+  const claimWeeklyBossFirstClearReward = (entryId: number) => {
+    if (!checkIsWeeklyBossFirstClaimable(clearedDomainIds.value, entryId)) return;
+    const claim = claimWeeklyBossFirstClear(clearedDomainIds.value, String(entryId));
+    const granted = grantRewardItems(wallet.value, inventory.value, claim.rewards, nameText, materialDataMap);
+    if (!granted) return;
+    setWallet(granted.wallet);
+    setInventory(granted.inventory);
+    clearedDomainIds.value = claim.clearedDomainIds;
+  };
   // Pressing F at the raised tree offers the claims the held resin affords, and offers none where it affords none
   const openDomainTreeClaim = (now: Temporal.Instant) => {
     if (!isDomainTreeRaised.value) return;
@@ -294,6 +317,7 @@ export const useWorldDomains = ({
 
   return {
     chooseDomainTreeClaim,
+    claimWeeklyBossFirstClearReward,
     closeDomainTreeClaim,
     domainArena,
     domainCamps,

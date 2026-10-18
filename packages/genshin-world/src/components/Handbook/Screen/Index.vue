@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { HandbookCommission } from "#src/models/handbook/HandbookCommission";
 import type { HandbookDayCommission } from "#src/models/handbook/HandbookDayCommission";
+import type { HandbookDomain } from "#src/models/handbook/HandbookDomain";
 import type { HandbookReward } from "#src/models/handbook/HandbookReward";
+import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { GameText } from "genshin-text";
 
 import { HandbookTab } from "#src/models/handbook/HandbookTab";
@@ -17,6 +19,8 @@ interface Props {
   completedCount: number;
   // The day's four commissions, top to bottom, as the Commissions tab lists them
   dayCommissions: HandbookDayCommission[];
+  // The Domains tab's rows, top to bottom: each domain with the one action the player can take with it
+  domains: HandbookDomain[];
   // The game's words in the reader's language
   gameText: GameText;
   // The panel's rewards, in the game's order
@@ -28,9 +32,14 @@ interface Props {
   totalCount: number;
 }
 
-const { commissions, completedCount, dayCommissions, gameText, investigationRewards, nameText, totalCount } =
+const { commissions, completedCount, dayCommissions, domains, gameText, investigationRewards, nameText, totalCount } =
   defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+// A locked weekly boss is challenged by its entrance, and a weekly boss's first clear is claimed by its entry
+const emit = defineEmits<{
+  challenge: [landmark: DomainEntranceLandmark];
+  claimFirstClear: [entryId: number];
+  close: [];
+}>();
 // The book opens at its experience
 const tab = ref(HandbookTab.Experience);
 // Each tab with its label in the reader's language
@@ -153,7 +162,27 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
         v-else-if="tab === HandbookTab.Domains"
         class="domains"
         :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Domains]]"
-      ></ol>
+      >
+        <li v-for="domain of domains" :key="domain.entryId" class="domain">
+          <p class="domain-title">{{ gameText[domain.titleTextKey] }}</p>
+          <button
+            v-if="domain.isQuickChallengeable"
+            class="domain-action"
+            type="button"
+            @click="emit('challenge', domain.landmark)"
+          >
+            {{ gameText[GameTextKey.BossQuickChallenge] }}
+          </button>
+          <button
+            v-if="domain.isFirstClearClaimable"
+            class="domain-action"
+            type="button"
+            @click="emit('claimFirstClear', domain.entryId)"
+          >
+            {{ gameText[GameTextKey.ClaimRewards] }}
+          </button>
+        </li>
+      </ol>
       <div class="ribbon">
         <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">
           <svg viewBox="0 0 67 67" aria-hidden="true">
@@ -583,5 +612,46 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   height: calc(var(--reference-pixel) * 67);
   fill: #d4bfb3;
   stroke: #d4bfb3;
+}
+/* The Domains tab's rows stack under the tab's top, each a card with its title and its one action on the right */
+.domains {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 317);
+  left: calc(var(--reference-pixel) * 1121);
+  width: calc(var(--reference-pixel) * 1670);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--reference-pixel) * 20);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.domain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--reference-pixel) * 24);
+  padding: calc(var(--reference-pixel) * 24) calc(var(--reference-pixel) * 40);
+  background: #ebe3d8;
+  box-shadow:
+    inset 0 0 0 calc(var(--reference-pixel) * 5) #dfd8cc,
+    inset 0 0 0 calc(var(--reference-pixel) * 6) #f7f2e8;
+}
+
+.domain-title {
+  margin: 0;
+  color: #555453;
+  font-size: calc(var(--reference-pixel) * 52);
+  font-weight: 600;
+}
+
+.domain-action {
+  padding: calc(var(--reference-pixel) * 12) calc(var(--reference-pixel) * 30);
+  color: #fff;
+  font-size: calc(var(--reference-pixel) * 44);
+  background: #5aa02c;
+  border: 0;
+  cursor: pointer;
 }
 </style>

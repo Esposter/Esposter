@@ -85,6 +85,7 @@ export enum GameTextKey {
   BlossomOfRevelation = "UI_BLOSSOM_CHEST_TIMEOUT_EXP",
   // The blossom of an outcrop that gives Mora, by its English name
   BlossomOfWealth = "UI_BLOSSOM_CHEST_TIMEOUT_MORA",
+  BossQuickChallenge = "UI_BOSS_QUICKSTART_TITLE",
   BrilliantChrysanthemum = "2302571844",
   BulleFruit = "457891068",
   Cacahuatl = "1982182708",
@@ -112,6 +113,7 @@ export enum GameTextKey {
   Chest = "219181593",
   // The City Reputation the Paimon menu names, and the Reputation Reward its screen titles over its nation
   CityReputation = "81370119",
+  ClaimRewards = "UI_ACTIVITY_GET_RWARD",
   ClearwaterJade = "2720928108",
   // A domain closed on the day, named as a closed hall or event names it
   Closed = "UI_BEYOND_HALL_LIST_HALL_LEFTTIME_CLOSE",
