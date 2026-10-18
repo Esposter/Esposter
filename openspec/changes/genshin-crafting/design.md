@@ -22,7 +22,7 @@ flowchart LR
 
 **Still to build, in order:**
 
-1. **The bench's place**, Mondstadt's first, read from the hosted `sceneGroups/scene3` record's Craft NPC member, the wiki placing it in the Market District as the record does. Its prompt goes through the interaction page. The screen's learned recipes and crafted counts are already the world's, held in `useWorldSave`, so the bench binds them with its `craftedCountMap` model and its `progress` prop.
+1. **The bench's place**, Mondstadt's first, is the Craft NPC member of the hosted `sceneGroups/scene3` record, the wiki placing it in the Market District as the record does. `pnpm -C scripts genshin:assets crafting` carries it into the region's axes, as a resident's place is carried, and publishes it as `craftingBenchPlaces/mondstadt`, which the world reads beside the recipes; the runtime cannot carry it itself, since the origin is read from the assets. Its prompt goes through the interaction page. The screen's learned recipes and crafted counts are already the world's, held in `useWorldSave`, so the bench binds them with its `craftedCountMap` model and its `progress` prop.
 
 ## Data and measures
 
