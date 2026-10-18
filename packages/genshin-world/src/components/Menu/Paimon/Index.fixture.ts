@@ -8,6 +8,8 @@ export const props = {
   adventureRank: 1,
   checkIsBuilt: () => true,
   gameText: ENGLISH_GAME_TEXT,
+  isWorldLevelAdjustable: false,
+  isWorldLevelLowered: false,
   worldLevel: 0,
 };
 export const variants = {

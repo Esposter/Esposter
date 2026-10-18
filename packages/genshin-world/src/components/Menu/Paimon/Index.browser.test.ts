@@ -12,12 +12,93 @@ describe("menuPaimon", () => {
     expect.hasAssertions();
 
     const onOpen = vi.fn<(screenKind: ScreenKind) => void>();
-    render(MenuPaimon, {
-      attrs: { onOpen },
-      props: { ...props, isWorldLevelAdjustable: false, isWorldLevelLowered: false },
-    });
+    render(MenuPaimon, { attrs: { onOpen }, props });
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Settings] }).click();
 
     expect(onOpen).toHaveBeenCalledExactlyOnceWith(ScreenKind.Settings);
+  });
+
+  test("a signed-in reader sees the account's name and avatar", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, {
+      props: { ...props, accountAvatarUrl: "https://example.com/avatar.png", accountName: "Aether" },
+    });
+
+    await expect.element(page.getByText("Aether", { exact: true })).toBeInTheDocument();
+    await expect
+      .element(page.getByRole("img", { name: "Aether" }))
+      .toHaveAttribute("src", "https://example.com/avatar.png");
+  });
+
+  test("a signed-out reader sees the default name", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props });
+
+    await expect
+      .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.PlayerDefaultName], { exact: true }))
+      .toBeInTheDocument();
+  });
+
+  test("a profile field appears once its system is built", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props });
+
+    await expect.element(page.getByText(String(props.adventureRank), { exact: true })).toBeInTheDocument();
+    await expect.element(page.getByText(String(props.worldLevel), { exact: true })).toBeInTheDocument();
+  });
+
+  test("a profile field stays out until its system is built", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props });
+
+    await expect.element(page.getByText(/^\d{6,}$/u)).not.toBeInTheDocument();
+  });
+
+  test("community and Feedback show as disabled entries", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props });
+
+    await expect
+      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Community], exact: true }))
+      .toBeDisabled();
+    await expect
+      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Feedback], exact: true }))
+      .toBeDisabled();
+  });
+
+  test("training Guide is absent from the contents", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props });
+
+    await expect
+      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.TrainingGuide], exact: true }))
+      .not.toBeInTheDocument();
+  });
+
+  test("choosing Time opens the Time screen", async () => {
+    expect.hasAssertions();
+
+    const onOpen = vi.fn<(screenKind: ScreenKind) => void>();
+    render(MenuPaimon, { attrs: { onOpen }, props });
+    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Time], exact: true }).click();
+
+    expect(onOpen).toHaveBeenCalledExactlyOnceWith(ScreenKind.Time);
+  });
+
+  test("choosing Quit Game opens the quit prompt", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props });
+    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.QuitGame], exact: true }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.ContinueGame], exact: true }))
+      .toBeInTheDocument();
   });
 });

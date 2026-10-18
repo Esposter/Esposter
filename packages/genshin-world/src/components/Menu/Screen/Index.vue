@@ -10,6 +10,9 @@ import { checkIsNpcScreenKind } from "#src/services/screen/checkIsNpcScreenKind"
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
 
 interface Props {
+  // The signed-in account's avatar and name, which the profile card shows over the Traveler's when the player is signed in
+  accountAvatarUrl?: string;
+  accountName?: string;
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
   adventureRank: number;
@@ -36,6 +39,8 @@ const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
        World does not have yet under its title, every one closing back to the world -->
   <MenuPaimon
     v-if="screenKind === ScreenKind.PaimonMenu"
+    :account-avatar-url="accountAvatarUrl"
+    :account-name="accountName"
     :adventure-exp-progress
     :adventure-rank
     :check-is-built="(titledScreenKind) => Boolean(slots[titledScreenKind])"

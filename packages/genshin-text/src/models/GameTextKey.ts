@@ -403,6 +403,8 @@ export enum GameTextKey {
   PlayerDieNone = "PlayerDieNone",
   // The prompt asking the player for the next member after a fall, in the game's words for a character to select
   PleaseSelectCharacter = "UI_ACTIVITY_WEEK_ACTIVE_UNSELECTED_TIPS",
+  // The name a new player's profile holds until the player sets one, shown by the Paimon menu's profile card
+  PlayerDefaultName = "Player_Default_Name",
   PluieLotus = "2192902588",
   PortableBearing = "3720804436",
   // The Precious Chest, the richest tier the wallet rewards, as the game names it
