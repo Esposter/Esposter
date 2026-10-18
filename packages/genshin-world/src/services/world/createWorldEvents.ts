@@ -6,6 +6,7 @@ export const createWorldEvents = (): WorldEvents => {
   const listenerMap: { [K in keyof WorldEventMap]: ((...payload: WorldEventMap[K]) => void)[] } = {
     achievementEvents: [],
     bagChange: [],
+    campCleared: [],
     chestOpened: [],
     defeatEnemy: [],
     finishQuest: [],

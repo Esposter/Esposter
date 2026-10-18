@@ -18,6 +18,8 @@ describe(mergeGenshinSave, () => {
   const CHEST_ID = "chest-1";
   const OTHER_CHEST_ID = "chest-2";
   const OCULUS_ID = "1";
+  const CLEARED_CAMP = { id: "made-up-camp-1", position: { x: 1, z: 2 } };
+  const OTHER_CLEARED_CAMP = { id: "made-up-camp-2", position: { x: 3, z: 4 } };
   const SHARED_OCULUS_ID = "2";
   const GUEST_OCULUS_ID = "3";
   const REGION_ID = "mondstadt";
@@ -135,6 +137,14 @@ describe(mergeGenshinSave, () => {
       settledSeelieIds: [SEELIE_ID, OTHER_SEELIE_ID],
       solvedPuzzleIds: [PUZZLE_ID],
     });
+  });
+
+  test("unions the cleared camps of both copies, each camp once", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, clearedCamps: [CLEARED_CAMP] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, clearedCamps: [CLEARED_CAMP, OTHER_CLEARED_CAMP] };
+
+    expect(mergeGenshinSave(account, guest).clearedCamps).toStrictEqual([CLEARED_CAMP, OTHER_CLEARED_CAMP]);
   });
 
   test("keeps a domain cleared on either save cleared after the merge", () => {

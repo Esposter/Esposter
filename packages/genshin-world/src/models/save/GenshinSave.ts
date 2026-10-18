@@ -6,6 +6,7 @@ import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
+import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
 import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { homePlacementSaveSchema } from "#src/models/home/HomePlacementSave";
@@ -23,6 +24,7 @@ import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import {
   MAX_CHARACTER_COUNT,
+  MAX_CLEARED_CAMP_COUNT,
   MAX_GENSHIN_SAVE_LENGTH,
   MAX_SHOP_PURCHASE_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
@@ -41,6 +43,8 @@ export const genshinSaveSchema = z
     archive: archiveSaveSchema,
     // The characters the player holds, each once by its id, with the copies a wish has granted it
     characters: createUniqueArraySchema(characterSaveSchema, "id").max(MAX_CHARACTER_COUNT),
+    // The camps the player has cleared, each once by its id, with the point it stands at
+    clearedCamps: createUniqueArraySchema(clearedCampSchema, "id").max(MAX_CLEARED_CAMP_COUNT),
     // The day's four commissions and the moment they were dealt, a day dealt before the daily reset being dealt again
     // The one-time domains cleared, each once, so a repeat clear gives nothing
     clearedDomains: clearedDomainSaveSchema,
