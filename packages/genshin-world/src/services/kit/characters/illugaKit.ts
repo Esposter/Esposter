@@ -67,7 +67,6 @@ const createAedonHit = (combatant: Combatant): KitHit => ({
   additiveBaseDamageBonus: ({ attributes }) =>
     attributes.attributeTotalMap[Attribute.ElementalMastery] * AEDON_ELEMENTAL_MASTERY_SHARE +
     attributes.defense * AEDON_DEFENSE_SHARE,
-  attackTag: AttackTag.ElementalBurst,
   element: Element.Geo,
   hitArea: takeOne(combatant.kit.elementalBurst.hits).hitArea,
   hitmarkSeconds: 0,
@@ -165,8 +164,11 @@ export const createIllugaKitBehaviour = ({ readParameter }: KitRecordReader): Ki
             effect.id === AEDON_STACKS_STATUS_ID,
         );
       const summons = Math.floor(total / AEDON_NIGHTINGALE_SONG_STACKS);
+      // Aedon's hit is considered Elemental Burst DMG by the talent's text, as gcsim has no folder for Illuga
       for (let summon = 0; summon < summons; summon++)
-        castKitSummon(kitEffectState, context.body, combatant, [createAedonHit(combatant)]);
+        castKitSummon(kitEffectState, context.body, combatant, [createAedonHit(combatant)], {
+          attackTag: AttackTag.ElementalBurst,
+        });
     },
     onStep: (context, combatant) => {
       const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
