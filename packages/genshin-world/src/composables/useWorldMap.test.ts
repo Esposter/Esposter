@@ -1,14 +1,18 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
+import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
+import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
 
 import { useWorldMap } from "#src/composables/useWorldMap";
+import { DomainKind } from "#src/models/domains/DomainKind";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readMondstadtExplorationAreas } from "#src/services/exploration/readMondstadtExplorationAreas";
 import { EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -48,6 +52,7 @@ describe(useWorldMap, () => {
   const REWARD_EXP = 200;
   const REWARD_MORA = 300;
   const NEXT_LEVEL_EXP = 1000;
+  const TRANS_POINT_ID = 9;
   // A statue standing within the pointer's reach of the origin, where the character is
   const statue: StatueLandmark = {
     areaId: AREA_ID,
@@ -57,11 +62,31 @@ describe(useWorldMap, () => {
     position: { x: 20, z: 0 },
     rotation: 0,
   };
+  // A Teleport Waypoint and a domain's entrance far from the origin, so the statue alone is in the pointer's reach there
+  const waypoint: WaypointLandmark = {
+    arrival: { heightOffset: 0, position: { x: 500, z: 0 }, rotation: 0 },
+    areaId: AREA_ID,
+    heightOffset: 0,
+    id: `${REGION_ID}-waypoint-${TRANS_POINT_ID}`,
+    kind: LandmarkKind.TeleportWaypoint,
+    position: { x: 500, z: 0 },
+    rotation: 0,
+  };
+  const domainEntrance: DomainEntranceLandmark = {
+    areaId: AREA_ID,
+    domainKind: DomainKind.Blessing,
+    entryId: 1,
+    heightOffset: 0,
+    id: "first-domain-entrance",
+    kind: LandmarkKind.DomainEntrance,
+    position: { x: 600, z: 0 },
+    rotation: 0,
+  };
   const region: RegionData = {
     enemyCamps: [],
     goToPlaces: [],
     id: REGION_ID,
-    landmarks: [statue],
+    landmarks: [statue, waypoint, domainEntrance],
     residents: [],
     waterfalls: [],
   };
@@ -96,15 +121,17 @@ describe(useWorldMap, () => {
   };
   // The composable under test, given the landmarks already unlocked, with the Reputation and the wallet it pays into
   const createWorldMap = (unlockedLandmarkIds: ReadonlySet<string> = new Set<string>()) => {
+    const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
     const reputation = shallowRef({ exp: 0, level: 1 });
     const wallet = ref(EMPTY_WALLET);
     return {
+      gainWorldAdventureExp,
       reputation,
       wallet,
       ...useWorldMap({
         catalogue: { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] },
         events: createWorldEvents(),
-        gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
+        gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
         regionDataBaseUrl: "region-data",
         reputation,
@@ -181,7 +208,50 @@ describe(useWorldMap, () => {
     await waitForReads();
 
     // The statue is loaded and in reach of the origin, so the pointer would take it were it still locked
-    expect(jumpLandmarks.value).toStrictEqual([statue]);
+    expect(jumpLandmarks.value).toStrictEqual([statue, waypoint]);
     expect(findPointedLandmark(lockedJumpLandmarks.value, { x: 0, z: 0 }, undefined)).toBeUndefined();
+  });
+
+  test("interacting with a locked waypoint unlocks it", async () => {
+    expect.hasAssertions();
+
+    const { activateLandmark, unlockedLandmarks } = createWorldMap();
+    await waitForReads();
+
+    activateLandmark(waypoint.id);
+
+    expect(unlockedLandmarks.value).toStrictEqual([waypoint]);
+  });
+
+  test("interacting with a locked domain entrance unlocks it", async () => {
+    expect.hasAssertions();
+
+    const { activateLandmark, lockedDomainEntranceLandmarks, unlockedLandmarkIds } = createWorldMap();
+    await waitForReads();
+    expect(lockedDomainEntranceLandmarks.value).toStrictEqual([domainEntrance]);
+
+    activateLandmark(domainEntrance.id);
+
+    expect(unlockedLandmarkIds.value).toStrictEqual(new Set([domainEntrance.id]));
+    expect(lockedDomainEntranceLandmarks.value).toStrictEqual([]);
+  });
+
+  test("an unlocked waypoint is offered as a jump", async () => {
+    expect.hasAssertions();
+
+    const { unlockedLandmarks } = createWorldMap(new Set([waypoint.id]));
+    await waitForReads();
+
+    expect(unlockedLandmarks.value).toStrictEqual([waypoint]);
+  });
+
+  test("a locked waypoint is not offered as a place to revive", async () => {
+    expect.hasAssertions();
+
+    // The player is defeated beside the locked waypoint, with only the statue unlocked, which the revive takes instead
+    const { unlockedLandmarks } = createWorldMap(new Set([statue.id]));
+    await waitForReads();
+
+    expect(findNearestLandmark(unlockedLandmarks.value, waypoint.position)).toStrictEqual(statue);
   });
 });

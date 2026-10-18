@@ -48,7 +48,11 @@ export const useWorldMap = ({
 }) => {
   // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
   // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
-  const { isLoaded: isJumpLandmarksLoaded, jumpLandmarks } = useJumpLandmarks(regionDataBaseUrl, catalogue);
+  const {
+    domainEntranceLandmarks,
+    isLoaded: isJumpLandmarksLoaded,
+    jumpLandmarks,
+  } = useJumpLandmarks(regionDataBaseUrl, catalogue);
   // The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
   const explorationAreas = useExplorationAreas(gameDataBaseUrl);
   // Mondstadt's Reputation, read as the world opens: its levels, and the exploration thresholds a statue's unlock can pass
@@ -67,6 +71,10 @@ export const useWorldMap = ({
   // The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to
   const lockedJumpLandmarks = computed(() =>
     jumpLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)),
+  );
+  // The domain entrances the player has yet to unlock, which the prompt list offers to resonate with, as it does a waypoint
+  const lockedDomainEntranceLandmarks = computed(() =>
+    domainEntranceLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)),
   );
 
   // The Primogems and Adventure EXP a statue pays on its first unlock, from the open world's transport points by its scene
@@ -140,6 +148,7 @@ export const useWorldMap = ({
     jumpLandmarks,
     jumpPose,
     jumpTo,
+    lockedDomainEntranceLandmarks,
     lockedJumpLandmarks,
     unlockedLandmarkIds,
     unlockedLandmarks,
