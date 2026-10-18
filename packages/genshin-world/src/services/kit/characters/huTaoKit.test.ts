@@ -15,7 +15,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createHuTaoKitBehaviour, HU_TAO_CHARACTER_ID } from "#src/services/kit/characters/huTaoKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
 import { createParty } from "#src/services/party/createParty";
@@ -117,6 +117,22 @@ describe(createHuTaoKitBehaviour, () => {
 
     const tick = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     expect(tick?.target).toBe(enemy);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = { ...createHuTaoCombatant(), constellationCount: 1 };
+    const kitEffectState = castKitAction(HU_TAO_KIT.elementalSkill, combatant);
+
+    expect(HU_TAO_KIT.getChargedAttackStaminaMultiplier?.(createKitTestContext(combatant, { kitEffectState }))).toBe(0);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = createHuTaoCombatant();
+    const kitEffectState = castKitAction(HU_TAO_KIT.elementalSkill, combatant);
+
+    expect(HU_TAO_KIT.getChargedAttackStaminaMultiplier?.(createKitTestContext(combatant, { kitEffectState }))).toBe(1);
   });
 });
 
