@@ -1,6 +1,6 @@
 ## 1. The pointer to a near locked jump landmark
 
-- [x] 1.1 Point the HUD to the nearest locked jump landmark within 30 metres, holding it until 40 metres or unlock. Verify: `findPointedLandmark.test.ts` asserting the scenarios "A locked waypoint 29 metres away is pointed to", "A locked waypoint 31 metres away is not pointed to", "The pointer holds until the player passes 40 metres", "The pointer goes past 40 metres" and "An unlocked waypoint is never pointed to", written first and seen failing.
+- [x] 1.1 Point the HUD to the nearest locked jump landmark within 30 metres, holding it until 40 metres or unlock. Verify: `findPointedLandmark.test.ts` asserting the scenarios "A locked waypoint 29 metres away is pointed to", "A locked waypoint 31 metres away is not pointed to", "The pointer holds until the player passes 40 metres" and "The pointer goes past 40 metres", and `useWorldMap.test.ts` asserting "An unlocked waypoint is never pointed to", written first and seen failing.
 - [x] 1.2 Draw the pointed landmark's mark at its screen point, held at the screen's edge with its arrow turned toward it when out of view. Verify: a test named after the scenario "A pointed landmark out of view sits at the screen's edge", written first and seen failing.
 - [x] 1.3 Take the pointer's look from the public clip `ay49p0gLFT8` into the waypoint-pointer references, and queue its comparison for the user's eyes. Verify: the reference frame is written under the waypoint-pointer references folder, and the comparison is listed for the user's eye check.
 

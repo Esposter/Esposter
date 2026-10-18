@@ -366,21 +366,28 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
 // The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
 const reputation = shallowRef<ReputationProgress>(savedState.reputation);
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
-const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unlockedLandmarkIds, unlockedLandmarks } =
-  useWorldMap({
-    catalogue,
-    events,
-    gainWorldAdventureExp,
-    gameDataBaseUrl,
-    regionDataBaseUrl,
-    reputation,
-    setReputation: (nextReputation) => {
-      reputation.value = nextReputation;
-    },
-    setWallet,
-    unlockedLandmarkIds: savedState.unlockedLandmarkIds,
-    wallet,
-  });
+const {
+  activateLandmark,
+  explorationAreas,
+  jumpPose,
+  jumpTo,
+  lockedJumpLandmarks,
+  unlockedLandmarkIds,
+  unlockedLandmarks,
+} = useWorldMap({
+  catalogue,
+  events,
+  gainWorldAdventureExp,
+  gameDataBaseUrl,
+  regionDataBaseUrl,
+  reputation,
+  setReputation: (nextReputation) => {
+    reputation.value = nextReputation;
+  },
+  setWallet,
+  unlockedLandmarkIds: savedState.unlockedLandmarkIds,
+  wallet,
+});
 // The Companionship EXP, the day's commissions, the statues and the Traveler's name no source changes yet, so they are
 // Carried as they were saved
 useWorldSaveSync({
@@ -408,8 +415,6 @@ useWorldSaveSync({
     worldLevelAdjustment: worldLevelAdjustment.value,
   }),
 });
-// The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to
-const lockedJumpLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)));
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, and each jump landmark still locked, which it resonates with. Each
 // Stands on the ground beneath its point

@@ -44,14 +44,4 @@ describe(findPointedLandmark, () => {
 
     expect(findPointedLandmark([statue], { x: 0, z: 0 }, statue.id)).toBeUndefined();
   });
-
-  test("an unlocked waypoint is never pointed to", () => {
-    expect.hasAssertions();
-
-    // The pointed statue is unlocked, so it is no longer among the locked landmarks, and the locked one stands
-    // 20 metres off
-    const lockedStatue = createStatue("locked", 20);
-
-    expect(findPointedLandmark([lockedStatue], { x: 0, z: 0 }, "unlocked")).toStrictEqual(lockedStatue);
-  });
 });
