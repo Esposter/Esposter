@@ -98,6 +98,7 @@ export const RAIDEN_CHARACTER_ID = 10_000_052;
 // Resolve from particles, Ascension 4 and Constellations 1, 4 and 6 are built. The Eye's bonus to another member's
 // Burst, Constellation 2's DEF ignored, the Musou Isshin plunges and the skill's particles are not, as no kit reaches
 // Another kit's pricing, a hit's DEF ignored, a stance's plunges or a particle a skill makes
+// Constellation 2 needs a DEF ignore on the Musou no Hitotachi strikes, which no strike hook carries
 export const createRaidenKitBehaviour = ({
   kit,
   readHit,

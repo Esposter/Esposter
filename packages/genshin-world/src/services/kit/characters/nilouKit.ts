@@ -57,6 +57,8 @@ const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: A
 // The dance as its skill. Constellations 1 and 6 are built. Ascension 1 and 4, Constellations 2 and 4 and the Pirouette's
 // Later steps are not, nor is Dance of Abzendegi's Lingering Aeon, as it lands on the enemy the first hit struck and no hook
 // Gives that enemy to a later hit, and Constellations 3 and 5 raise talent levels, which no kit reads yet
+// Constellation 2 needs the Golden Chalice's Bounty state for the Hydro RES cut, which the kit does not build
+// Constellation 4 needs the third dance step's hit as an event, which the kit does not emit, for its buffs
 export const createNilouKitBehaviour = ({
   kit,
   readAction,
