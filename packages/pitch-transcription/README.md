@@ -42,6 +42,7 @@ const bentNotes = addPitchBends(readings.contours, notes);
 const timedNotes = convertNotesToSeconds(bentNotes);
 // Each note's startTimeSeconds, durationSeconds, pitchMidi, amplitude and pitchBends
 const midiBytes = writeMidi(timedNotes);
+await session.release();
 ```
 
 A worker or a server that already holds the readings imports note creation from `pitch-transcription/notes`, which never loads ONNX Runtime. `pitch-transcription` takes `onnxruntime-common` as a peer, and the runtime the session runs on is yours to choose: `onnxruntime-node` under Node, `onnxruntime-web` in a browser.

@@ -15,8 +15,10 @@ export const mixDownChannels = (audio: AudioChannels | Float32Array): Float32Arr
     );
   if (audio.numberOfChannels === 1) return audio.getChannelData(0);
   const mixed = new Float32Array(audio.getChannelData(0).length);
-  for (let channel = 0; channel < audio.numberOfChannels; channel++)
-    for (const [index, sample] of audio.getChannelData(channel).entries())
-      mixed[index] = (mixed[index] ?? 0) + sample / audio.numberOfChannels;
+  for (let channel = 0; channel < audio.numberOfChannels; channel++) {
+    const channelData = audio.getChannelData(channel);
+    for (let index = 0; index < channelData.length; index++)
+      mixed[index] = (mixed[index] ?? 0) + (channelData[index] ?? 0) / audio.numberOfChannels;
+  }
   return mixed;
 };
