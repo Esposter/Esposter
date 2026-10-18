@@ -20,14 +20,14 @@ import {
 import { z } from "zod";
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
-// Takes or yields, every gadget of the gadgets slice, every offering the Frostbearing Tree's levels take or pay, and
-// Every item a Reputation level pays, each read from the game's Material table with its name's text id, which
-// `genshin:text names` writes into the name-text Chunks. The wallet's currencies are no items: Mora, Primogems and the
-// Rest are held by the wallet, and Adventure EXP is Taken by the Adventure Rank, so none is written. A weapon a recipe
-// Yields is no item either, it is in the weapon table. The recipes and the levels are the records their steps
-// Published, read from the dev account. An item the table lacks Is an error. An item the table gives no type is left
-// Out, as the dump leaves out MATERIAL_NONE and the gathering reader Leaves such an item out. Returns the record the
-// Materials publish under
+// Takes or yields, every gadget of the gadgets slice, every offering the Frostbearing Tree's levels take or pay, every
+// Item a Reputation level pays, and every item the Mondstadt grocery sells, each read from the game's Material table with
+// Its name's text id, which `genshin:text names` writes into the name-text chunks. The wallet's currencies are no items:
+// Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken by the Adventure Rank, so none is
+// Written. A weapon a recipe yields is no item either, it is in the weapon table. The recipes and the levels are the
+// Records their steps published, read from the dev account. An item the table lacks is an error. An item the table gives
+// No type is left out, as the dump leaves out MATERIAL_NONE and the gathering reader leaves such an item out. Returns the
+// Record the materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
@@ -45,6 +45,9 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     .array(offeringLevelSchema)
     .parse(await readPublishedGameData("offerings/frostbearingTree"));
   const { levels: reputationLevels } = reputationCitySchema.parse(await readPublishedGameData("reputation/mondstadt"));
+  const groceryGoods = z
+    .array(z.object({ itemId: z.int() }))
+    .parse(await readPublishedGameData("shops/mondstadtGeneralGoods"));
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const itemIds = [
     ...new Set([
@@ -57,6 +60,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...frostbearingTreeLevels.filter(({ itemCount }) => itemCount > 0).map(({ itemId }) => itemId),
       ...frostbearingTreeLevels.flatMap(({ rewards }) => rewards.map(({ itemId }) => itemId)),
       ...reputationLevels.flatMap(({ reward }) => reward.items.map(({ id }) => id)),
+      ...groceryGoods.map(({ itemId }) => itemId),
     ]),
   ]
     .filter((itemId) => !WALLET_ITEM_IDS.includes(itemId))
