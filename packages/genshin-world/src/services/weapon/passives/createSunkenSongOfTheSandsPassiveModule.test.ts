@@ -12,6 +12,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createSunkenSongOfTheSandsPassiveModule } from "#src/services/weapon/passives/createSunkenSongOfTheSandsPassiveModule";
@@ -121,6 +122,26 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
     ]).toStrictEqual([
       [{ amount: 0.002 * maximumHealth, attribute: Attribute.ElementalMastery, secondsRemaining: 20 }],
       [],
+    ]);
+  });
+
+  test("the third stack's team share reads the wielder's Max HP as its buffs raise it", () => {
+    expect.hasAssertions();
+
+    const context = createContext();
+    buffKitMember(context.kitEffectState, TRAVELER_CHARACTER_ID, {
+      amount: 0.5,
+      attribute: Attribute.HealthPercent,
+      secondsRemaining: 20,
+    });
+    sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
+    stepKitSeconds(context, 0.5);
+    sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
+    stepKitSeconds(context, 0.5);
+    sunkenSongOfTheSandsPassiveModule.onKitEvent?.(elementalSkillHit, context, wielder);
+
+    expect(readMemberBuffs(context.kitEffectState.effects, otherMemberCharacterId)).toStrictEqual([
+      { amount: 0.002 * 15_000, attribute: Attribute.ElementalMastery, secondsRemaining: 20 },
     ]);
   });
 
