@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { PDFDocumentLoadingTask } from "pdfjs-dist";
+import type { PDFDocumentLoadingTask, RenderTask } from "pdfjs-dist";
 
 import PdfThumbnail from "@/components/Pdf/Thumbnail.vue";
 import { PDF_MAX_CANVAS_AREA } from "@/services/pdf/constants";
@@ -8,7 +8,12 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/pdf/loadPdfDocument"), () => ({ loadPdfDocument: vi.fn() }));
+vi.mock(import("@/services/pdf/loadPdfDocument"), () => ({ loadPdfDocument: vi.fn<typeof loadPdfDocument>() }));
+
+const createTask = (promise: Promise<unknown>) =>
+  ({ destroy: vi.fn<PDFDocumentLoadingTask["destroy"]>(), promise }) as unknown as PDFDocumentLoadingTask;
+const mountThumbnail = (thumbnailUrl: string) =>
+  mountSuspended(PdfThumbnail, { attachTo: document.body, props: { url: thumbnailUrl } });
 
 // The thumbnail draws the first page at the width its row gives it, so the observer's report stands in for a row
 // Changing width, and the mocked page answers with the viewport a page of this size has at each scale
@@ -21,19 +26,15 @@ describe("pdfThumbnail", () => {
   const SECOND_WIDTH = 600;
   const LARGE_WIDTH = 4096;
   let reportWidth: ((width: number) => void) | undefined;
-  const renders: { cancel: ReturnType<typeof vi.fn>; promise: Promise<void> }[] = [];
+  const renders: Pick<RenderTask, "cancel" | "promise">[] = [];
   const page = {
     getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
-    render: vi.fn(() => {
-      const render = { cancel: vi.fn(), promise: new Promise<void>(() => {}) };
+    render: vi.fn<() => Pick<RenderTask, "cancel" | "promise">>(() => {
+      const render = { cancel: vi.fn<() => void>(), promise: new Promise<void>(() => {}) };
       renders.push(render);
       return render;
     }),
   };
-  const createTask = (promise: Promise<unknown>) =>
-    ({ destroy: vi.fn(), promise }) as unknown as PDFDocumentLoadingTask;
-  const mountThumbnail = (thumbnailUrl: string) =>
-    mountSuspended(PdfThumbnail, { attachTo: document.body, props: { url: thumbnailUrl } });
 
   vi.stubGlobal(
     "ResizeObserver",
@@ -59,7 +60,7 @@ describe("pdfThumbnail", () => {
   });
 
   const loadPage = () => {
-    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve({ getPage: async () => page })));
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve({ getPage: () => Promise.resolve(page) })));
   };
 
   // A row whose width changes draws its page again at the new width, rather than keeping the first one

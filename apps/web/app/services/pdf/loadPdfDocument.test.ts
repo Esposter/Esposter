@@ -5,10 +5,11 @@ import { describe, expect, test, vi } from "vitest";
 
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- a `?url` asset has no module type to import
 vi.mock("pdfjs-dist/build/pdf.worker?url", () => ({ default: "/assets/pdf.worker.mjs" }));
-vi.mock(import("pdfjs-dist"), () => ({
-  GlobalWorkerOptions: {},
-  getDocument: vi.fn(),
-}) as unknown as typeof import("pdfjs-dist"));
+vi.mock(
+  import("pdfjs-dist"),
+  () =>
+    ({ GlobalWorkerOptions: {}, getDocument: vi.fn<typeof getDocument>() }) as unknown as typeof import("pdfjs-dist"),
+);
 
 describe("loadPdfDocument", () => {
   const url = "/files/document.pdf";

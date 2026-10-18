@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
-import type { PDFDocumentLoadingTask } from "pdfjs-dist";
+import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist";
+import type { EventBus, PDFFindController, PDFLinkService, PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
 
 import PdfViewer from "@/components/Pdf/Viewer.vue";
 import { PDF_MAX_CANVAS_AREA, PDF_MAX_SCALE, PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "@/services/pdf/constants";
@@ -8,62 +9,83 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
-// The renderer's viewer components stand in for their real ones, which need a canvas and a worker. Each stub records
-// The last instance made, so a test can read what the toolbar told it to do
+// The renderer's viewer components stand in for their real ones, which need a canvas and a worker. Each constructor the
+// Viewer calls with `new` makes a stub, and the last one made is kept so a test can read what the toolbar told it to do
 const pdfjsStubs = vi.hoisted(() => {
-  class EventBusStub {
-    static last: EventBusStub | undefined;
-    dispatch = vi.fn<(name: string, data: object) => void>();
-    listeners = new Map<string, (event: unknown) => void>();
-
-    constructor() {
-      EventBusStub.last = this;
-    }
-
-    on(name: string, listener: (event: unknown) => void) {
-      this.listeners.set(name, listener);
-    }
+  type Listener = (event: unknown) => void;
+  interface EventBusStubInstance {
+    dispatch: EventBus["dispatch"];
+    listeners: Map<string, Listener>;
+    on: (name: string, listener: Listener) => void;
   }
-  class PdfJsViewerStub {
-    static last: PdfJsViewerStub | undefined;
-    currentPageNumber = 0;
-    currentScaleValue = "auto";
-    pagesRotation = 0;
+  type PdfJsViewerStubInstance = Pick<
+    PDFViewer,
+    | "currentPageNumber"
+    | "currentScaleValue"
+    | "decreaseScale"
+    | "increaseScale"
+    | "nextPage"
+    | "pagesRotation"
+    | "previousPage"
+    | "setDocument"
+  >;
+  const last: { eventBus?: EventBusStubInstance; pdfJsViewer?: PdfJsViewerStubInstance } = {};
 
-    constructor() {
-      PdfJsViewerStub.last = this;
-    }
+  const EventBusStub = function () {
+    const listeners = new Map<string, Listener>();
+    last.eventBus = {
+      dispatch: vi.fn<EventBus["dispatch"]>(),
+      listeners,
+      on: (name, listener) => {
+        listeners.set(name, listener);
+      },
+    };
 
-    decreaseScale = vi.fn();
-    increaseScale = vi.fn();
-    nextPage = vi.fn();
-    previousPage = vi.fn();
-    setDocument = vi.fn();
-  }
-  class LinkServiceStub {
-    setDocument = vi.fn();
-    setViewer = vi.fn();
-  }
-  class FindControllerStub {
-    setDocument = vi.fn();
-  }
+    return last.eventBus;
+  };
+  const PdfJsViewerStub = function () {
+    last.pdfJsViewer = {
+      currentPageNumber: 0,
+      currentScaleValue: "auto",
+      decreaseScale: vi.fn<PDFViewer["decreaseScale"]>(),
+      increaseScale: vi.fn<PDFViewer["increaseScale"]>(),
+      nextPage: vi.fn<PDFViewer["nextPage"]>(),
+      pagesRotation: 0,
+      previousPage: vi.fn<PDFViewer["previousPage"]>(),
+      setDocument: vi.fn<PDFViewer["setDocument"]>(),
+    };
 
+    return last.pdfJsViewer;
+  };
   const FindState = { NOT_FOUND: 1 };
 
-  return { EventBusStub, FindControllerStub, FindState, LinkServiceStub, PdfJsViewerStub };
+  return { EventBusStub, FindState, last, PdfJsViewerStub };
 });
 
-vi.mock(import("@/services/pdf/loadPdfDocument"), () => ({ loadPdfDocument: vi.fn() }));
-vi.mock(import("@/services/pdf/loadPdfViewer"), () => ({
-  loadPdfViewer: async () => ({
-    EventBus: pdfjsStubs.EventBusStub,
-    FindState: pdfjsStubs.FindState,
-    LinkTarget: { BLANK: 2 },
-    PDFFindController: pdfjsStubs.FindControllerStub,
-    PDFLinkService: pdfjsStubs.LinkServiceStub,
-    PDFViewer: pdfjsStubs.PdfJsViewerStub,
-  }),
-}));
+// Nothing a test reads is kept on the link service or the find controller, so each is a bare constructor
+const LinkServiceStub = function () {
+  return { setDocument: vi.fn<PDFLinkService["setDocument"]>(), setViewer: vi.fn<PDFLinkService["setViewer"]>() };
+};
+const FindControllerStub = function () {
+  return { setDocument: vi.fn<PDFFindController["setDocument"]>() };
+};
+
+vi.mock(import("@/services/pdf/loadPdfDocument"), () => ({ loadPdfDocument: vi.fn<typeof loadPdfDocument>() }));
+vi.mock(
+  import("@/services/pdf/loadPdfViewer"),
+  () =>
+    ({
+      loadPdfViewer: () =>
+        Promise.resolve({
+          EventBus: pdfjsStubs.EventBusStub,
+          FindState: pdfjsStubs.FindState,
+          LinkTarget: { BLANK: 2 },
+          PDFFindController: FindControllerStub,
+          PDFLinkService: LinkServiceStub,
+          PDFViewer: pdfjsStubs.PdfJsViewerStub,
+        }),
+    }) as unknown as typeof import("@/services/pdf/loadPdfViewer"),
+);
 vi.mock(import("pdfjs-dist"), () => ({ PasswordResponses: { INCORRECT_PASSWORD: 2, NEED_PASSWORD: 1 } }));
 
 describe("pdfViewer", () => {
@@ -84,13 +106,17 @@ describe("pdfViewer", () => {
     render: () => ({ promise: Promise.resolve() }),
   };
   const pdfDocument = {
-    getData: vi.fn(),
-    getPage: vi.fn<(pageNumber: number) => Promise<typeof pdfPage>>(async () => pdfPage),
+    getData: vi.fn<PDFDocumentProxy["getData"]>(),
+    getPage: vi.fn<(pageNumber: number) => Promise<typeof pdfPage>>(() => Promise.resolve(pdfPage)),
     numPages: PAGES_COUNT,
   };
-  const destroy = vi.fn();
+  const destroy = vi.fn<PDFDocumentLoadingTask["destroy"]>();
   const createTask = (promise: Promise<unknown>) =>
-    ({ destroy, onPassword: vi.fn(), promise }) as unknown as PDFDocumentLoadingTask;
+    ({
+      destroy,
+      onPassword: vi.fn<(updatePassword: (password: string) => void, reason: number) => void>(),
+      promise,
+    }) as unknown as PDFDocumentLoadingTask;
   const mountViewer = () => mountSuspended(PdfViewer, { attachTo: document.body, props: { filename, url } });
   const findButton = (component: Awaited<ReturnType<typeof mountViewer>>, label: string) =>
     component.findAll("button").find((button) => button.text() === label || button.attributes("aria-label") === label);
@@ -178,7 +204,7 @@ describe("pdfViewer", () => {
     await flushPromises();
 
     expect(updatePassword).toHaveBeenCalledWith(PASSWORD);
-    expect(pdfjsStubs.PdfJsViewerStub.last?.setDocument).toHaveBeenCalledWith(pdfDocument);
+    expect(pdfjsStubs.last.pdfJsViewer?.setDocument).toHaveBeenCalledWith(pdfDocument);
     expect(component.find('input[type="password"]').exists()).toBe(false);
   });
 
@@ -217,7 +243,7 @@ describe("pdfViewer", () => {
     const component = await mountViewer();
     await flushPromises();
 
-    expect(pdfjsStubs.PdfJsViewerStub.last?.setDocument).toHaveBeenCalledWith(longDocument);
+    expect(pdfjsStubs.last.pdfJsViewer?.setDocument).toHaveBeenCalledWith(longDocument);
     expect(component.text()).toContain(`of ${LONG_PAGES_COUNT}`);
   });
 
@@ -230,7 +256,7 @@ describe("pdfViewer", () => {
     await component.find('input[type="number"]').setValue(String(PAGE_NUMBER));
     await findButton(component, "Go")?.trigger("click");
 
-    expect(pdfjsStubs.PdfJsViewerStub.last?.currentPageNumber).toBe(PAGE_NUMBER);
+    expect(pdfjsStubs.last.pdfJsViewer?.currentPageNumber).toBe(PAGE_NUMBER);
   });
 
   test("zooming past the largest scale", async () => {
@@ -239,12 +265,12 @@ describe("pdfViewer", () => {
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
     const component = await mountViewer();
     await flushPromises();
-    pdfjsStubs.EventBusStub.last?.listeners.get("scalechanging")?.({ scale: PDF_MAX_SCALE });
+    pdfjsStubs.last.eventBus?.listeners.get("scalechanging")?.({ scale: PDF_MAX_SCALE });
     await flushPromises();
     await findButton(component, "Zoom in")?.trigger("click");
 
     expect(findButton(component, "Zoom in")?.attributes("disabled")).toBeDefined();
-    expect(pdfjsStubs.PdfJsViewerStub.last?.increaseScale).not.toHaveBeenCalled();
+    expect(pdfjsStubs.last.pdfJsViewer?.increaseScale).not.toHaveBeenCalled();
   });
 
   test("searching for a word", async () => {
@@ -254,15 +280,20 @@ describe("pdfViewer", () => {
     const component = await mountViewer();
     await flushPromises();
     await component.find('input[type="search"]').setValue(SEARCH_QUERY);
-    pdfjsStubs.EventBusStub.last?.listeners.get("updatefindmatchescount")?.({
+    pdfjsStubs.last.eventBus?.listeners.get("updatefindmatchescount")?.({
       matchesCount: { current: CURRENT_MATCH, total: TOTAL_MATCHES },
     });
     await flushPromises();
 
-    expect(pdfjsStubs.EventBusStub.last?.dispatch).toHaveBeenCalledWith(
-      "find",
-      expect.objectContaining({ query: SEARCH_QUERY }),
-    );
+    expect(pdfjsStubs.last.eventBus?.dispatch).toHaveBeenCalledExactlyOnceWith("find", {
+      caseSensitive: false,
+      entireWord: false,
+      findPrevious: false,
+      highlightAll: true,
+      matchDiacritics: false,
+      query: SEARCH_QUERY,
+      type: "",
+    });
     expect(component.text()).toContain(`${CURRENT_MATCH} of ${TOTAL_MATCHES}`);
   });
 
@@ -273,7 +304,7 @@ describe("pdfViewer", () => {
     const component = await mountViewer();
     await flushPromises();
     await component.find('input[type="search"]').setValue(SEARCH_QUERY);
-    pdfjsStubs.EventBusStub.last?.listeners.get("updatefindcontrolstate")?.({
+    pdfjsStubs.last.eventBus?.listeners.get("updatefindcontrolstate")?.({
       matchesCount: { current: 0, total: 0 },
       state: pdfjsStubs.FindState.NOT_FOUND,
     });
@@ -290,13 +321,13 @@ describe("pdfViewer", () => {
     await flushPromises();
     await findButton(component, "Fit width")?.trigger("click");
 
-    expect(pdfjsStubs.PdfJsViewerStub.last?.currentScaleValue).toBe("page-width");
+    expect(pdfjsStubs.last.pdfJsViewer?.currentScaleValue).toBe("page-width");
     await findButton(component, "Fit page")?.trigger("click");
 
-    expect(pdfjsStubs.PdfJsViewerStub.last?.currentScaleValue).toBe("page-fit");
+    expect(pdfjsStubs.last.pdfJsViewer?.currentScaleValue).toBe("page-fit");
     await findButton(component, "Actual size")?.trigger("click");
 
-    expect(pdfjsStubs.PdfJsViewerStub.last?.currentScaleValue).toBe("page-actual");
+    expect(pdfjsStubs.last.pdfJsViewer?.currentScaleValue).toBe("page-actual");
   });
 
   test("rotating turns the pages a step", async () => {
@@ -307,7 +338,7 @@ describe("pdfViewer", () => {
     await flushPromises();
     await findButton(component, "Rotate")?.trigger("click");
 
-    expect(pdfjsStubs.PdfJsViewerStub.last?.pagesRotation).toBe(PDF_ROTATION_STEP);
+    expect(pdfjsStubs.last.pdfJsViewer?.pagesRotation).toBe(PDF_ROTATION_STEP);
   });
 
   test("downloading", async () => {
