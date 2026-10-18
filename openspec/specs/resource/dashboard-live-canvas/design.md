@@ -39,6 +39,10 @@ flowchart LR
 | `apps/web/app/components/Dashboard/Visual/Preview/Container.vue` | the editor tile: inert visual, corner actions, edit form                           |
 | `apps/web/app/components/Dashboard/Editor/Content.vue`           | passes each tile its visual rather than only its id and type                       |
 
+## Notes
+
+- **Waiting on the user's eye.** The tile's look (the inert chart, the corner row, the error state with Retry) is checked in a browser by the user, not by the tests. It is open until that check passes.
+
 ## Sources
 
 - [Microsoft Learn — Report view in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-view) — the editing canvas draws visuals over the added data, and a selected visual's type is changed in place.
