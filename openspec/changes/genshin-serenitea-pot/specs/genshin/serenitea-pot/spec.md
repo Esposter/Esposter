@@ -146,6 +146,13 @@ The Realm Depot SHALL offer its goods priced in Realm Currency, and the wallet S
 - **WHEN** the weekly refresh comes round
 - **THEN** the player can buy the good again
 
+#### Scenario: Tubby's depot opens on its first tab
+
+- **GIVEN** a player in the realm
+- **WHEN** the player talks to Tubby
+- **THEN** the Realm Depot opens on its first tab, with that tab's goods
+- **AND** the goods of each other tab are shown on that tab, one tab's click away
+
 ### Requirement: A garden's fields and a pond yield over real time
 
 A garden's fields SHALL grow their seeds, and a pond SHALL hold its fish, as real time passes in the realm.
