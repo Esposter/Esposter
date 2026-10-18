@@ -4,7 +4,6 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
 import {
-  ARTIFACT_START_LEVEL,
   WEAPON_START_ASCENSION,
   WEAPON_START_EXPERIENCE,
   WEAPON_START_LEVEL,
@@ -38,14 +37,12 @@ describe(addInventoryItem, () => {
     });
   });
 
-  test("takes each weapon and artifact in as an entry of its own at its starting state", () => {
+  test("takes each weapon in as an entry of its own at its starting state", () => {
     expect.hasAssertions();
 
     const weapon = createDefinition(ItemCategory.Weapon, 0);
-    const artifact = createDefinition(ItemCategory.Artifact, 1);
-    const { inventory } = addInventoryItem(emptyInventory, weapon, 2);
 
-    expect(addInventoryItem(inventory, artifact, 1)).toStrictEqual({
+    expect(addInventoryItem(emptyInventory, weapon, 2)).toStrictEqual({
       inventory: {
         items: [
           {
@@ -66,12 +63,21 @@ describe(addInventoryItem, () => {
             quantity: 1,
             refinement: WEAPON_START_REFINEMENT,
           },
-          { definition: artifact, id: 2, level: ARTIFACT_START_LEVEL, quantity: 1 },
         ],
-        nextId: 3,
+        nextId: 2,
       },
       overflow: 0,
     });
+  });
+
+  test("refuses an artifact, which the bag takes in only as the artifact it was rolled as", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      addInventoryItem(emptyInventory, createDefinition(ItemCategory.Artifact, 1), 1),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: addInventoryItem, takes an artifact only as its rolled one]`,
+    );
   });
 
   test.each([ItemCategory.Weapon, ItemCategory.Furnishing])(

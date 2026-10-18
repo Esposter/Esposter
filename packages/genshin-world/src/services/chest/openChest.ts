@@ -1,7 +1,7 @@
+import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { ChestKindRewardMap } from "#src/services/chest/ChestKindRewardMap";
@@ -21,7 +21,7 @@ export const openChest = (
   random: () => number,
   sigilCurrency: Currency,
   isDropFallingAway: boolean,
-  reliquarySets: readonly ReliquarySetData[],
+  artifactDropTables: ArtifactDropTables,
 ): {
   adventureExp: number;
   bagDrops: DroppedItem[];
@@ -34,7 +34,7 @@ export const openChest = (
   const moraCount = drawChestCount(reward.mora, random);
   const primogemCount = drawChestCount(reward.primogem, random);
   const sigilCount = drawChestCount(reward.sigil, random);
-  const chestDrops = rollChestDrops(kind, random, reliquarySets);
+  const chestDrops = rollChestDrops(kind, random, artifactDropTables);
   return {
     adventureExp: reward.adventureExp,
     bagDrops: isDropFallingAway ? chestDrops : [],

@@ -22,6 +22,7 @@ const createReliquarySet = (id: number, slots: ArtifactSlot[]): ReliquarySetData
     rank: 1,
     rarity: 5,
     slot,
+    startingMinorCount: 0,
   })),
 });
 

@@ -2,11 +2,9 @@ import type { Artifact } from "#src/models/artifact/Artifact";
 import type { TalentLevels } from "#src/models/character/TalentLevels";
 import type { Weapon } from "#src/models/weapon/Weapon";
 
+import { artifactSchema } from "#src/models/artifact/Artifact";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { Attribute } from "#src/models/character/Attribute";
-import { attributeLineSchema } from "#src/models/character/AttributeLine";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
@@ -28,19 +26,7 @@ export interface CharacterSave {
 }
 
 export const characterSaveSchema = z.object({
-  artifacts: createUniqueArraySchema(
-    z.object({
-      experience: z.int().nonnegative(),
-      isLocked: z.boolean(),
-      level: z.int().nonnegative(),
-      mainAffix: z.enum(Attribute),
-      minorAffixes: createUniqueArraySchema(attributeLineSchema, "attribute").max(MAX_MINOR_AFFIX_COUNT),
-      rarity: z.int().positive(),
-      setId: z.int().positive(),
-      slot: z.enum(ArtifactSlot),
-    }),
-    "slot",
-  ).max(Object.values(ArtifactSlot).length),
+  artifacts: createUniqueArraySchema(artifactSchema, "slot").max(Object.values(ArtifactSlot).length),
   ascension: z.int().nonnegative(),
   constellationCount: z.int().nonnegative().max(CONSTELLATION_COUNT),
   copyCount: z.int().nonnegative(),

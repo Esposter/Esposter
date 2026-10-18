@@ -9,6 +9,7 @@ import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeOpenedChestCountMap, () => {
+  const NO_ARTIFACT_DROP_TABLES = { artifactMainAffixPools: [], artifactRarityDataMap: new Map(), reliquarySets: [] };
   const AREA_ID = "galesong-hill";
   const areas: Pick<CatalogueArea, "id" | "outline">[] = [
     {
@@ -35,7 +36,15 @@ describe(computeOpenedChestCountMap, () => {
   test("reopening a chest adds nothing to the count", () => {
     expect.hasAssertions();
 
-    const opening = openChest(insideChest, new Set(), EMPTY_WALLET, () => 0, Currency.AnemoSigil, false);
+    const opening = openChest(
+      insideChest,
+      new Set(),
+      EMPTY_WALLET,
+      () => 0,
+      Currency.AnemoSigil,
+      false,
+      NO_ARTIFACT_DROP_TABLES,
+    );
     const reopening = openChest(
       insideChest,
       opening.openedChestIds,
@@ -43,6 +52,7 @@ describe(computeOpenedChestCountMap, () => {
       () => 0,
       Currency.AnemoSigil,
       false,
+      NO_ARTIFACT_DROP_TABLES,
     );
     expect(computeOpenedChestCountMap(areas, [insideChest], reopening.openedChestIds)).toStrictEqual(
       new Map([[AREA_ID, 1]]),

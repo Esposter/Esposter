@@ -4,8 +4,6 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
 import {
-  ARTIFACT_START_LEVEL,
-  EQUIPMENT_CATEGORIES,
   WEAPON_START_ASCENSION,
   WEAPON_START_EXPERIENCE,
   WEAPON_START_LEVEL,
@@ -13,35 +11,37 @@ import {
 } from "#src/services/inventory/constants";
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
 
-// The bag after taking in so many of an item, as the game takes a pick up. Each weapon or artifact is an entry of its
-// Own at its starting state; anything else fills its stack up to the item's own limit, or opens a new one while the bag
-// Holds fewer kinds than its limit. A tab counted on its own takes no more pieces than its room, and whatever does not
-// Fit is left over
+// The bag after taking in so many of an item, as the game takes a pick up. Each weapon is an entry of its own at its
+// Starting state, and an artifact is taken in only as the artifact it was rolled as, through addInventoryArtifact.
+// Anything else fills its stack up to the item's own limit, or opens a new one while the bag holds fewer kinds than its
+// Limit. A tab counted on its own takes no more pieces than its room, and whatever does not fit is left over
 export const addInventoryItem = (
   { items, nextId }: Inventory,
   definition: ItemDefinition,
   quantity: number,
 ): InventoryAddition => {
+  if (definition.category === ItemCategory.Artifact)
+    throw new InvalidOperationError(
+      Operation.Create,
+      addInventoryItem.name,
+      "takes an artifact only as its rolled one",
+    );
   const categoryRoom = ItemCategoryRoomMap[definition.category];
   const tabRoom =
     categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, definition.category);
-  if (EQUIPMENT_CATEGORIES.includes(definition.category)) {
+  if (definition.category === ItemCategory.Weapon) {
     const addedCount = Math.max(Math.min(quantity, tabRoom), 0);
-    const isWeapon = definition.category === ItemCategory.Weapon;
     const addedItems = Array.from({ length: addedCount }, (_value, index) => ({
+      ascension: WEAPON_START_ASCENSION,
       definition,
+      experience: WEAPON_START_EXPERIENCE,
       id: nextId + index,
+      level: WEAPON_START_LEVEL,
       quantity: 1,
-      ...(isWeapon
-        ? {
-            ascension: WEAPON_START_ASCENSION,
-            experience: WEAPON_START_EXPERIENCE,
-            level: WEAPON_START_LEVEL,
-            refinement: WEAPON_START_REFINEMENT,
-          }
-        : { level: ARTIFACT_START_LEVEL }),
+      refinement: WEAPON_START_REFINEMENT,
     }));
     return {
       inventory: { items: [...items, ...addedItems], nextId: nextId + addedCount },
