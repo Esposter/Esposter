@@ -194,7 +194,12 @@ export const saveResourceContent = async (
   );
   // Guarded on the version this save established: the bump is what orders two saves, and this write lands after
   // The transaction that made it, so unguarded a save that committed first could overwrite a later one's links
-  if (hasResourceLinksChanged) await writeResourceLinks(savedResource.contentVersion);
+  // A failed write clears the set rather than keeping the previous one, which the committed content no longer backs
+  if (hasResourceLinksChanged)
+    await getResultAsync(() => writeResourceLinks(savedResource.contentVersion)).match(noop, async (error) => {
+      await clearResourceLinks(ctx.db);
+      throw error;
+    });
 
   resourceEventEmitter.emit("saveResourceContent", [
     { content: parsedContent, contentVersion: savedResource.contentVersion, id },
