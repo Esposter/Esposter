@@ -61,7 +61,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@pulumi/pulumi`                        | —                     | Keep — SDK        | the infrastructure SDK                                                                                 |
 | `@standard-schema/spec`                 | —                     | Keep — types      | the Standard Schema interface                                                                          |
 | `@takumi-rs/core`                       | —                     | Keep — framework  | the SEO module's OG image renderer                                                                     |
-| `@tensorflow/tfjs`                      | —                     | Keep — engine     | pitch transcription's model runtime                                                                    |
 | `@tiptap/core`                          | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-code-block-lowlight` | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-file-handler`        | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
@@ -171,6 +170,8 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `node-pty`                              | —                     | Keep — engine     | native pseudo-terminals                                                                                |
 | `nuxt`                                  | —                     | Keep — framework  | the framework                                                                                          |
 | `ohash`                                 | —                     | Keep — free       | the framework installs it                                                                              |
+| `onnxruntime-common`                    | —                     | Keep — engine     | the inference interface pitch transcription takes as its peer, which Transformers.js already installs  |
+| `onnxruntime-node`                      | —                     | Keep — engine     | the Node runtime that runs pitch transcription's model and the Genshin music fit                       |
 | `oxfmt`                                 | —                     | Keep — tooling    | the formatter                                                                                          |
 | `oxlint`                                | —                     | Keep — tooling    | the linter                                                                                             |
 | `oxlint-tsgolint`                       | —                     | Keep — tooling    | oxlint's type-aware rules                                                                              |

@@ -1,15 +1,16 @@
 {
   "name": "pitch-transcription",
   "version": "4.2.0",
-  "description": "The pitched notes in a recording — Spotify's Basic Pitch model on current TensorFlow.js, its readings turned into notes with pitch bends and written as MIDI.",
+  "description": "The pitched notes in a recording — Spotify's Basic Pitch model on ONNX Runtime, its readings turned into notes with pitch bends and written as MIDI.",
   "keywords": [
     "audio",
     "basic-pitch",
     "midi",
     "music",
+    "onnx",
+    "onnxruntime",
     "pitch",
     "polyphonic",
-    "tensorflow",
     "transcription",
     "typescript"
   ],
@@ -70,7 +71,6 @@
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
-    "@tensorflow/tfjs": "catalog:",
     "@types/node": "catalog:",
     "onnxruntime-common": "catalog:",
     "onnxruntime-node": "catalog:",
@@ -79,7 +79,6 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@tensorflow/tfjs": "catalog:",
     "onnxruntime-common": "catalog:"
   }
 }

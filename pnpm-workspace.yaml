@@ -12,7 +12,6 @@ bail: false
 
 allowBuilds:
   "@parcel/watcher": true
-  core-js: true
   esbuild: true
   # Its postinstall only writes the browser service worker (`msw init public/`); tests intercept in node
   msw: false
@@ -92,7 +91,6 @@ catalog:
   "@pulumi/pulumi": ^3.268.0
   "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.16.2
-  "@tensorflow/tfjs": ^4.22.0
   "@tiptap/core": ^3.32.0
   "@tiptap/extension-code-block-lowlight": ^3.32.0
   "@tiptap/extension-file-handler": ^3.32.0

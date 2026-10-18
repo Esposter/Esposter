@@ -7,8 +7,3 @@ reason = "The advisory affects grapesjs below 0.19.5; the locked 0.23.6 release 
 id = "GHSA-vfj7-8cjw-p6xm"
 ignoreUntil = 2027-01-16
 reason = "The affected braces parser receives build-time globs for repository-owned content and CLI paths; no request or user content supplies patterns. Revisit if dynamic patterns are introduced."
-
-[[IgnoredVulns]]
-id = "GHSA-hp3w-g68c-fv3c"
-ignoreUntil = 2027-01-16
-reason = "sprintf-js is reached only through dev-dependency TensorFlow argparse, with code-defined format strings and no server runtime path. Revisit if this dependency chain moves into production use."
