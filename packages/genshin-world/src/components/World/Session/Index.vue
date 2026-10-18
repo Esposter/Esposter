@@ -64,6 +64,7 @@ import { computeCraftingBenchInteractables } from "#src/services/crafting/comput
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
+import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
@@ -449,6 +450,7 @@ const {
   explorationAreas,
   jumpPose,
   jumpTo,
+  lockedDomainEntranceLandmarks,
   lockedJumpLandmarks,
   unlockedLandmarkIds,
   unlockedLandmarks,
@@ -506,10 +508,9 @@ const crafting = computed(() =>
   ),
 );
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
-// Whose talk the world holds, named by its text, each jump landmark still locked, which it resonates with, and the
-// Crafting bench, named by its title. Each stands on the ground beneath its point
+// Whose talk the world holds, named by its text, each locked jump landmark and domain entrance, which it resonates with,
+// And the Crafting bench, named by its title. Each stands on the ground beneath its point
 const interactables = computed<Interactable[]>(() => {
-  // A jump landmark is a Statue of The Seven until waypoints join the jumps, so each locked one is named by the statue
   // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
   const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
     id,
@@ -517,18 +518,24 @@ const interactables = computed<Interactable[]>(() => {
     name: gameText[GameTextKey.FrostbearingTree],
     position: { x, y: getGroundHeight(x, z), z },
   }));
-  const statues = lockedJumpLandmarks.value.map(({ id, position: { x, z } }) => ({
+  // A locked landmark is resonated with on the key, named by the game's text for its kind
+  const toLandmarkInteractable = ({ id, position: { x, z } }: Landmark, textKey: GameTextKey): Interactable => ({
     id,
     kind: InteractionKind.Activate,
-    name: gameText[GameTextKey.StatueOfTheSeven],
+    name: gameText[textKey],
     position: { x, y: getGroundHeight(x, z), z },
-  }));
+  });
   return [
     ...pickUpInteractables.value,
     ...residentInteractables.value,
     ...chestInteractables.value,
     ...frostbearingTrees,
-    ...statues,
+    ...lockedJumpLandmarks.value.map((landmark) =>
+      toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
+    ),
+    ...lockedDomainEntranceLandmarks.value.map((landmark) =>
+      toLandmarkInteractable(landmark, GameTextKey.DomainEntrance),
+    ),
     ...computeCraftingBenchInteractables(craftingBenchPlace, gameText[GameTextKey.CraftingTitle], getGroundHeight),
   ];
 });

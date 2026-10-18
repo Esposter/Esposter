@@ -10,6 +10,12 @@ A Teleport Waypoint or a domain entrance SHALL unlock when the player interacts 
 - **WHEN** the player interacts with the waypoint
 - **THEN** the waypoint is unlocked
 
+#### Scenario: Interacting with a locked domain entrance unlocks it
+
+- **GIVEN** a domain entrance is locked and the player stands at it
+- **WHEN** the player interacts with the domain entrance
+- **THEN** the domain entrance is unlocked
+
 #### Scenario: A waypoint unlocked by a quest step opens with that step
 
 - **GIVEN** a waypoint is named by a quest step and the step is not yet taken
