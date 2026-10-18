@@ -125,7 +125,7 @@ With auto-recover on and a threshold set, standing by a statue for two seconds S
 
 ### Requirement: The statues' state is kept with the world and merged between saves
 
-The statues' levels, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep every found Oculus and offer the held Oculi of each region a copy started.
+The statues' levels, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the save further on by its level and then its held count.
 
 #### Scenario: A new player starts with no region started and no Oculus found
 
@@ -139,9 +139,14 @@ The statues' levels, held counts and found Oculi SHALL be kept with the world, a
 - **WHEN** the two saves are merged
 - **THEN** the merged save holds every Oculus either save found
 
-#### Scenario: A region a copy started takes its Oculi offered from level one
+#### Scenario: A region only one save holds is kept as it is
 
-- **GIVEN** a region started in one save and not in the other, with Oculi found in the region by either save
+- **GIVEN** a region one save holds and the other does not
 - **WHEN** the two saves are merged
-- **THEN** the started region offers those Oculi from level one
-- **AND** any level the offered Oculi reach pays no reward
+- **THEN** the merged save holds that region as it is
+
+#### Scenario: A region both saves hold is the save further on
+
+- **GIVEN** a region both saves hold, one of them further on by its level, or on the same level by its held count
+- **WHEN** the two saves are merged
+- **THEN** the merged save holds the region of the save further on, its level and held count as they are
