@@ -107,7 +107,6 @@ export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecor
     // Constellation 4: a drain that takes him under 20% HP shields him, once every 60 seconds
     onKitEvent: (event, context, combatant) => {
       const { characterIdCombatantMap, kitEffectState, party } = context;
-      const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
       // Ascension 4: a freeze Frostgnaw makes drops a Cryo particle while its use still has one of its two to spend
       if (event.kind === KitEventKind.ReactionTriggered) {
         if (
