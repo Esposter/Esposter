@@ -1,30 +1,10 @@
+import type { KitSlotLabels } from "#src/models/genshinAssets/kits/tables/KitSlotLabels";
+
 import { CombatTalent } from "genshin-world";
 
 const BURST = CombatTalent.ElementalBurst;
 const NORMAL_ATTACK = CombatTalent.NormalAttack;
 const SKILL = CombatTalent.ElementalSkill;
-
-// The hit slot of a folder-less character's record a path names, the talent its labels sit in, and the labels its hits
-// Read their multipliers from, in hit order. A label spanning several hits gives one to each of its parameters
-interface KitSlotHitLabels {
-  combatTalent: CombatTalent;
-  labels: readonly string[];
-}
-
-// The value of a folder-less character's record a path names, the talent and label it reads, and the position in the
-// Label's parameters that names it, the first where none is given
-interface KitSlotValueLabel {
-  combatTalent: CombatTalent;
-  label: string;
-  position?: number;
-}
-
-// The labels a folder-less character's record reads from its tables, by each slot's path in the record: the hit slots
-// And the other values, such as a stance's stamina or a duration
-interface KitSlotLabels {
-  hits?: Record<string, KitSlotHitLabels>;
-  values?: Record<string, KitSlotValueLabel>;
-}
 
 // The labels of each folder-less character, keyed by its avatar id. Nefer's Phantasm Performance replaces her charged
 // Attack while Shadow Dance holds, and Zibai's Lunar Phase Shift replaces her strikes, charged attack and Spirit Steed's
