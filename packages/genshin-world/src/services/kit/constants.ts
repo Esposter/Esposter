@@ -102,6 +102,10 @@ export const POLESTAR_PHYSICAL_RES_REDUCTION = 0.4;
 export const POLESTAR_SHRED_STATUS_ID = "polestar-shred";
 // The source the Starlight Prism's Cryo and Electro DMG Bonus buffs are held under, so each step restarts them
 export const POLESTAR_BUFF_SOURCE = "polestar";
+// The status every deployed member carries while the body stands inside a Polestar Field, the Radiance: Stellar-Conduct
+// State a kit reads its character's Radiance from, as gcsim's PolestarFieldKey status each think of the field gives
+// Every character while the player stands in its area (pkg/reactable/stellarconduct_gadget.go:160)
+export const RADIANCE_STELLAR_CONDUCT_STATUS_ID = "radiance-stellar-conduct";
 // Stellar Swirls a vortex takes before it explodes at once: three after its level-up (gcsim sswMaxStacks)
 export const STELLAR_VORTEX_MAX_STACKS = 6;
 // A Stellar Vortex's explosion radius at Lv. 1 and at Lv. 2 (gcsim sswStackRadius)

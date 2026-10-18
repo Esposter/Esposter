@@ -14,9 +14,12 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { addPolestarField } from "#src/services/kit/addPolestarField";
+import { RADIANCE_STELLAR_CONDUCT_STATUS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -105,5 +108,26 @@ describe("createPolestarFieldHooks", () => {
     stepKitSeconds(context, POLESTAR_TICK_SECONDS + 1);
 
     expect(buffAmounts(context.kitEffectState, Attribute.CryoDamageBonus)).toStrictEqual([expect.closeTo(0.2, 9)]);
+  });
+
+  test.each<[string, number, boolean]>([
+    ["standing inside the field puts every deployed member in", 0, true],
+    ["standing outside the field puts no member in", 16, false],
+  ])("the body %s Radiance: Stellar-Conduct", (_description, x, isInRadiance) => {
+    expect.hasAssertions();
+    const OTHER_CHARACTER_ID = 1;
+    const context = createKitTestContext(combatant, {
+      body: { facing: 0, height: 0, position: { x, z: 0 } },
+      party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    });
+    addPolestarField(context.kitEffectState, TRAVELER_CHARACTER_ID, [STELLAR_CONDUCT], ORIGIN);
+
+    stepKitSeconds(context, 1);
+
+    expect(
+      [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID].map((characterId) =>
+        checkIsKitStatusActive(context.kitEffectState.effects, characterId, RADIANCE_STELLAR_CONDUCT_STATUS_ID),
+      ),
+    ).toStrictEqual([isInRadiance, isInRadiance]);
   });
 });
