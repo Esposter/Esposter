@@ -32,10 +32,13 @@ describe(createHeritagePassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     heritagePassiveModule.onKitEvent?.(createCharacterSwapped(), context, wielder);
 
-    const [buff] = getAttackBuffs(kitEffectState);
-    expect(buff?.amount).toBeCloseTo(0.24);
-    expect(buff?.characterId).toBe(OTHER_CHARACTER_ID);
-    expect(buff?.secondsRemaining).toBe(10);
+    expect(
+      getAttackBuffs(kitEffectState).map(({ amount, characterId, secondsRemaining }) => ({
+        amount,
+        characterId,
+        secondsRemaining,
+      })),
+    ).toStrictEqual([{ amount: 0.24, characterId: OTHER_CHARACTER_ID, secondsRemaining: 10 }]);
   });
 
   test("a second swap inside the rank's cooldown gains nothing", () => {
