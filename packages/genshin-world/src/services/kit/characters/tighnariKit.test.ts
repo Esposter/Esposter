@@ -5,6 +5,9 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -43,6 +46,29 @@ const startBurst = (constellationCount: number): KitBuff[] => {
       kitEffectState,
       party: createParty([TIGHNARI_CHARACTER_ID, OTHER_CHARACTER_ID]),
     }),
+  );
+  return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
+};
+
+// The buffs the burst gives the party as it starts, then a reaction of the given kind and attack tag lands on an enemy
+const triggerReaction = (reactionType: ReactionType, attackTag: AttackTag, constellationCount: number): KitBuff[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  const combatant = { ...createTighnariCombatant(0, 0), constellationCount };
+  const context = createKitTestContext(combatant, {
+    kitEffectState,
+    party: createParty([TIGHNARI_CHARACTER_ID, OTHER_CHARACTER_ID]),
+  });
+  TIGHNARI_KIT.elementalBurst.onStart?.(context);
+  TIGHNARI_KIT.onKitEvent?.(
+    {
+      attackTag,
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      kind: KitEventKind.ReactionTriggered,
+      reactions: [{ element: Element.Pyro, reactionType }],
+      striker: combatant,
+    },
+    context,
+    combatant,
   );
   return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
 };
@@ -179,6 +205,47 @@ describe(createTighnariKitBehaviour, () => {
       expect.hasAssertions();
 
       expect(startBurst(3)).toStrictEqual([]);
+    });
+  });
+  describe("constellation 4's reaction raise", () => {
+    test("a Constellation 4 burst reaction of Burning raises every member's Elemental Mastery to 120 for 8 seconds", () => {
+      expect.hasAssertions();
+
+      expect(
+        triggerReaction(ReactionType.Burning, AttackTag.ElementalBurst, 4).map(
+          ({ amount, attribute, characterId, secondsRemaining }) => ({
+            amount,
+            attribute,
+            characterId,
+            secondsRemaining,
+          }),
+        ),
+      ).toStrictEqual([
+        { amount: 120, attribute: Attribute.ElementalMastery, characterId: TIGHNARI_CHARACTER_ID, secondsRemaining: 8 },
+        { amount: 120, attribute: Attribute.ElementalMastery, characterId: OTHER_CHARACTER_ID, secondsRemaining: 8 },
+      ]);
+    });
+
+    test("a Constellation 4 burst reaction that is not raised leaves the 60 as it is", () => {
+      expect.hasAssertions();
+
+      expect(
+        triggerReaction(ReactionType.ElectroCharged, AttackTag.ElementalBurst, 4).map(({ amount }) => amount),
+      ).toStrictEqual([60, 60]);
+    });
+
+    test("a Constellation 4 normal attack's reaction raises nothing", () => {
+      expect.hasAssertions();
+
+      expect(
+        triggerReaction(ReactionType.Burning, AttackTag.NormalAttack, 4).map(({ amount }) => amount),
+      ).toStrictEqual([60, 60]);
+    });
+
+    test("a Constellation 3 burst reaction raises nothing", () => {
+      expect.hasAssertions();
+
+      expect(triggerReaction(ReactionType.Burning, AttackTag.ElementalBurst, 3)).toStrictEqual([]);
     });
   });
 });
