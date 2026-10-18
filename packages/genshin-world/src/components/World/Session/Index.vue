@@ -1017,7 +1017,7 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === ABYSS_ENTRANCE_INTERACTABLE_ID
             ) {
-              abyssBlessing.value = findAbyssPeriodAt(abyssPeriods.value, getWorldNow())?.blessing;
+              abyssBlessing = findAbyssPeriodAt(abyssPeriods, getWorldNow())?.blessing;
               screenKind = ScreenKind.SpiralAbyss;
             } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
