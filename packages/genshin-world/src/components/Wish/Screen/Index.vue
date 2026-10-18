@@ -67,8 +67,6 @@ const wallet = defineModel<Wallet>("wallet", { required: true });
 const { gameText, nameText, serverClockOffsetMs, statTables, stellaFortunaNameTextIdMap, wishSchedule } =
   defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-// The banners the world offers now, their pools read from the stat tables and named in the reader's language: the
-// Permanent ones and each event banner the schedule has open at the game's time
 // The draws the History popup lists, each named from the stat tables and its banner labelled in the reader's language
 const historyCells = computed(() =>
   toWishHistoryCells(
@@ -84,6 +82,8 @@ const historyCells = computed(() =>
     Temporal.Now.timeZoneId(),
   ),
 );
+// The banners the world offers now, their pools read from the stat tables and named in the reader's language: the
+// Permanent ones and each event banner the schedule has open at the game's time
 const banners = computed(() =>
   createBanners(
     statTables,
