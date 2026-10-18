@@ -39,6 +39,36 @@ describe(toCommissionTask, () => {
     });
   });
 
+  test("should read a quest task the dump leaves its type, finish and center position out of as the defaults", () => {
+    expect.hasAssertions();
+    const questRow: ExcelDailyTaskRow = {
+      cityId: 1,
+      enterDistance: 40,
+      exitDistance: 60,
+      finishProgress: 0,
+      id: ID,
+      newGroupVec: [],
+      oldGroupVec: [],
+      poolId: 1001,
+      questId: 7,
+      taskRewardId: 2,
+    };
+    expect(toCommissionTask(questRow)).toStrictEqual({
+      centerPosition: "",
+      enterDistance: 40,
+      exitDistance: 60,
+      finishKind: "None",
+      finishProgress: 0,
+      id: ID,
+      kind: "Quest",
+      newGroupIds: [],
+      oldGroupIds: [],
+      poolId: 1001,
+      questId: "7",
+      rewardTier: 2,
+    });
+  });
+
   test("should refuse a finish the maps do not name", () => {
     expect.hasAssertions();
     expect(() => toCommissionTask({ ...row, finishType: "DAILY_FINISH_UNKNOWN" })).toThrowErrorMatchingInlineSnapshot(
