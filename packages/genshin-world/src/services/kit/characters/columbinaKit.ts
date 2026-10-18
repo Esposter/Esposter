@@ -28,6 +28,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { MOONRIDGE_DEW_MAXIMUM_COUNT } from "#src/services/party/constants";
@@ -429,14 +430,9 @@ export const createColumbinaKitBehaviour = ({
         // Constellation 1's Gravity Ripple fires on each press, once every fifteen seconds
         if (
           combatant.constellationCount >= CONSTELLATION_1 &&
-          !checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, CONSTELLATION_1_ICD_ID)
-        ) {
+          startKitCooldown(kitEffectState, combatant.characterId, CONSTELLATION_1_ICD_ID, CONSTELLATION_1_ICD_SECONDS)
+        )
           fireGravityRipple(context, combatant, gravity, false);
-          addKitStatus(kitEffectState, combatant.characterId, {
-            id: CONSTELLATION_1_ICD_ID,
-            secondsRemaining: CONSTELLATION_1_ICD_SECONDS,
-          });
-        }
       },
     },
   };
