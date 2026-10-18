@@ -2,7 +2,7 @@
 
 ## Why
 
-Each region's statues are the game's anchor for exploring it: a statue fills in its area of the map and is a jump point. The level rules, the stamina they raise and the healing pool are built and tested as rules, but no screen or world state calls them. The player needs to find Oculi, see them offered to their region, resonate with statues and use the Statue's Blessing for the statues to do anything in play.
+Each region's statues are the game's anchor for exploring it: a statue fills in its area of the map and is a jump point. The level rules, the stamina they raise and the healing pool are built and tested as rules, and the world now holds the levels and the pool, the Blessing screen showing the pool and healing from it. The Worship Statue and auto-recover's switch are not built yet. The player needs to find Oculi, see them offered to their region, resonate with statues and use the Statue's Blessing for the statues to do anything in play.
 
 ## What Changes
 
@@ -13,7 +13,7 @@ The player finds a region's Oculi, levels its statues with them, resonates with 
 - A region starts at level one on its first resonance, and that first level's rewards are paid once.
 - Each level pays the game's rewards for its region: Adventure EXP, Primogems and Sigils everywhere, and each region's own items.
 - Resonating with a statue changes the Traveler's element to its region's, with that element's constellations coming with the levels.
-- F on a resonated statue opens the Statue's Blessing, with its healing pool, the party's portraits and the auto-recover switch and threshold.
+- F on a resonated statue opens the Statue's Blessing, with its healing pool and the party's portraits, a click healing a member from the pool. The Worship Statue and the auto-recover switch and threshold are open tasks 3.3 and 3.4.
 - Standing by a statue for two seconds with auto-recover on revives the fallen and heals members under the threshold from the pool.
 - The statues' state is kept with the world and merged between two saves, so no found Oculus is left unoffered.
 

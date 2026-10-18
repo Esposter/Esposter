@@ -8,5 +8,7 @@ x-touches:
     "packages/genshin-world/src/services/statue/**",
     "packages/genshin-world/src/models/save/**",
     "packages/genshin-world/src/services/save/**",
+    "packages/genshin-world/src/components/Statue/**",
+    "packages/genshin-interface/src/components/BlessingScreen/**",
   ]
-x-waiting: "statue-blessing.mkv, an English PC recording of the Statue's Blessing screen for task 3.1, since an anonymous YouTube search found no public clip that shows the screen"
+x-waiting: "statue-blessing.mkv, for the Blessing screen's layout, which stays provisional until the recording shows the screen"
