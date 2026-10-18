@@ -213,6 +213,7 @@ describe(useWorldMap, () => {
         recordedDoingIds,
         regionDataBaseUrl: "region-data",
         reputation,
+        savedRequestClaimedAts: [],
         setReputation: (nextReputation) => {
           reputation.value = nextReputation;
         },

@@ -1036,6 +1036,7 @@ const {
   jumpTo,
   lockedJumpLandmarks,
   payReputationReward,
+  requestClaimedAts,
   unlockedLandmarkIds,
   unlockedLandmarks,
 } = useWorldMap({
@@ -1049,6 +1050,7 @@ const {
   recordedDoingIds,
   regionDataBaseUrl,
   reputation,
+  savedRequestClaimedAts: savedState.reputationRequestClaimedAts,
   setReputation: (nextReputation) => {
     reputation.value = nextReputation;
   },
@@ -1120,6 +1122,7 @@ useWorldSaveSync({
     reputation: reputation.value,
     reputationBountyClaimedAts: bountyClaimedAts.value,
     reputationBountyHunt: bountyHunt.value,
+    reputationRequestClaimedAts: requestClaimedAts.value,
     settledSeelieIds: settledSeelieIds.value,
     shopPurchases: shopPurchases.value,
     shownTipIds: shownTipIds.value,
