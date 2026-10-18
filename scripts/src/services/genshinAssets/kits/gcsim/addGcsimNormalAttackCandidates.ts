@@ -14,6 +14,7 @@ import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGo
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
+import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
@@ -55,7 +56,7 @@ const readStanceHitbox = (
 // Multiplier is the normal attack's times the stance's skill factor, written as its own leaf
 export const addGcsimNormalAttackCandidates = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
-  { attacks, config, constantMap }: GcsimCharacter,
+  { attacks, config, constantMap, travelMap }: GcsimCharacter,
   stance?: GcsimStanceNormalAttack,
 ): void => {
   const normalHitmarks = findGcsimConstant(constantMap, "attackHitmarks", "attackReleases");
@@ -92,7 +93,11 @@ export const addGcsimNormalAttackCandidates = (
       const hitPoise = readGoNumber(Array.isArray(strikePoise) ? strikePoise[hitIndex] : strikePoise);
       const hitSource: GcsimHitSource = {
         attack,
-        hitmark: { file: normalHitmarks.file, line: hitmarkLine, value: hitmark },
+        hitmark: {
+          file: normalHitmarks.file,
+          line: hitmarkLine,
+          value: getGcsimLandingFrames(travelMap, normalHitmarks.name, hitmark),
+        },
         ...(poiseVariable !== undefined &&
           typeof hitPoise === "number" && { poiseDamage: { line: poiseVariable.line, value: hitPoise } }),
       };
