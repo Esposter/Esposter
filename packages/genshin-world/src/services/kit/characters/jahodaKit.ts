@@ -90,6 +90,10 @@ const readFlaskElement = (kitEffectState: KitEffectState, characterId: number): 
     ),
   );
 
+// Ends the Meowballs still running, as gcsim's Skill and drain end their ticks
+const removeMeowballs = (kitEffectState: KitEffectState): void =>
+  removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === MEOWBALL_FIELD_ID);
+
 // The body a flask's absorb check or drain acts from, standing on a field's centre
 const absorbedArea = (centre: KitBody["position"]): KitBody => ({ facing: 0, height: 0, position: centre });
 
@@ -202,7 +206,7 @@ export const createJahodaKitBehaviour = ({
   // Those an earlier drain started and still run, as gcsim's drain stops them
   const startMeowballs = (context: KitContext, combatant: Combatant, element: Element): void => {
     const { body, kitEffectState } = context;
-    removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === MEOWBALL_FIELD_ID);
+    removeMeowballs(kitEffectState);
     castKitField(kitEffectState, combatant.characterId, body.position, {
       id: MEOWBALL_FIELD_ID,
       nextTickSeconds: meowballFirstSeconds,
@@ -257,6 +261,8 @@ export const createJahodaKitBehaviour = ({
     kitEffectState,
   }: KitContext): void => {
     const { characterId } = combatant;
+    // A press starts a new pursuit, which ends the Meowballs still running, as gcsim's Skill zeroes the flask and stops their ticks
+    removeMeowballs(kitEffectState);
     const pursuit = castKitField(kitEffectState, characterId, position, {
       id: PURSUIT_FIELD_ID,
       isFollowing: true,
