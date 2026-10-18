@@ -20,13 +20,12 @@ import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flatte
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
-import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
-import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
 import { getResult } from "@esposter/shared";
 
-// The overlay a kit's published record needs for its sources to reproduce it, each entry classified: first every value
-// The record holds, against its sources and the rules over the record's own actions and hits, then every value the
-// Build would still give that the record lacks. The build from the overlay is then checked value by value against it.
+// The overlay a kit's published record needs for its sources to reproduce it, each entry classified: every value the
+// Record holds, against its sources and the rules over the record's own actions and hits. A path only the sources or
+// The rules give is an addition the publish makes, so it takes no entry. The build from the overlay is then checked value
+// By value against the record.
 // A cause the committed overlay holds is kept while its value stands, as keepCommittedKitCause keeps it
 export const compareKitRecord = (
   publishedRecord: KitRecord,
