@@ -5,6 +5,7 @@ import type { Vector3 } from "three";
 import { AREA_WEATHER_CHANGE_SECONDS, REGION_RECHECK_DISTANCE, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { checkIsInCity } from "#src/services/world/checkIsInCity";
+import { computeShownAreaWeather } from "#src/services/world/computeShownAreaWeather";
 import { getNextAreaWeather } from "#src/services/world/getNextAreaWeather";
 import { useLoop, useTres } from "@tresjs/core";
 import { createSeededRandom, WeatherKind } from "genshin-engine";
@@ -51,5 +52,5 @@ export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
     areaWeather.value = getNextAreaWeather(areaWeather.value, weathers, random);
   });
 
-  return computed(() => (isInCity.value ? WeatherKind.Clear : areaWeather.value));
+  return computed(() => computeShownAreaWeather(areaWeather.value, isInCity.value));
 };
