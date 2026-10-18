@@ -1,21 +1,34 @@
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { openKitCounterWindow } from "#src/services/kit/effects/openKitCounterWindow";
 import { takeOne } from "@esposter/shared";
 
 export const YUNJIN_CHARACTER_ID = 10_000_064;
 
+// Measured: gcsim (MIT) yunjin/burst.go, Cliffbreaker's Banner lasts 720 frames from its hitmark, with 30 stacks, each
+// Normal attack hit spending one while it stands, and yunjin/zz_yunjin.dm.go gives its DEF share 0.3216 at the talent
+// Level the record reads, the level of its 2.44 burst multiplier
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yunjin/burst.go
+const BANNER_SECONDS = 12;
+const BANNER_STACKS = 30;
+const BANNER_DEFENSE_SHARE = 0.3216;
+const BANNER_STATUS_ID = "yunjin-cliffbreaker-banner";
 const ASCENSION_1 = 1;
 // Unsourced, provisional: gcsim (MIT) yunjin/asc.go leaves Ascension 1 unimplemented, so no gcsim parameter gives the
 // Length of the counter window, and this half second is the kit's own value
@@ -27,9 +40,21 @@ const CONSTELLATION_4_DEFENSE_BONUS = 0.2;
 const CONSTELLATION_4_SECONDS = 12;
 const CONSTELLATION_4_SOURCE = "yunjin-constellation-4";
 
+// Whether the banner stands on a character: its status running, with a stack left for the increase to spend
+const checkIsBannerStanding = (effects: readonly KitEffect[], characterId: number): boolean =>
+  checkIsKitStatusActive(effects, characterId, BANNER_STATUS_ID) &&
+  countKitResource(effects, characterId, BANNER_STATUS_ID) > 0;
+
+// Spends one of the banner's stacks, as each enemy a normal attack of hers damages does while it stands
+const spendBannerStack = (effects: readonly KitEffect[], characterId: number): void => {
+  const banner = findKitStatus(effects, characterId, BANNER_STATUS_ID);
+  if (banner) banner.stacks = countKitResource(effects, characterId, BANNER_STATUS_ID) - 1;
+};
+
 // Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they start.
-// Cliffbreaker's Banner's DEF-scaled DMG Increase on each of the party's normal attacks, which the kit prices from the
-// Striker's stats alone, is not built, nor her Ascension 4 passive. Ascension 1's counter window is built.
+// Cliffbreaker's Banner's DEF-scaled DMG Increase is built on her own normal attacks, as the owner ruled.
+// The party's share, which gcsim also gives, is not built. Her Ascension 4 passive is not built either.
+// Ascension 1's counter window is built.
 // Constellation 4's DEF is built, from her own Crystallize
 // Constellation 1 needs the Opening Flourish cooldown cut, which the kit does not build
 // Constellation 2 needs the Cliffbreaker's Banner's Normal Attack DMG bonus for the party, not built
@@ -50,8 +75,25 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
       });
   };
   return {
+    // Cliffbreaker's Banner is set as the burst starts, its seconds counted from its hit, as gcsim counts them from the
+    // Hitmark: the burst's animation holds a normal attack past that hit, so nothing reads the banner before it lands
+    burst: {
+      onStart: ({ activeCombatant, kitEffectState }) =>
+        addKitStatus(kitEffectState, activeCombatant.characterId, {
+          id: BANNER_STATUS_ID,
+          secondsRemaining: takeOne(kit.elementalBurst.hits).hitmarkSeconds + BANNER_SECONDS,
+          stacks: BANNER_STACKS,
+        }),
+    },
     // True to Oneself, from Ascension 1: a hit on her while her skill is held opens the window its release reads
     onKitEvent: (event, context, combatant) => {
+      if (
+        event.kind === KitEventKind.DamageTaken &&
+        event.striker.characterId === combatant.characterId &&
+        event.attackTag === AttackTag.NormalAttack &&
+        checkIsBannerStanding(context.kitEffectState.effects, combatant.characterId)
+      )
+        spendBannerStack(context.kitEffectState.effects, combatant.characterId);
       if (combatant.ascension >= ASCENSION_1)
         openKitCounterWindow(context, event, combatant.characterId, {
           id: ASCENSION_1_COUNTER_WINDOW_ID,
@@ -75,6 +117,12 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
         source: CONSTELLATION_4_SOURCE,
       });
     },
+    // Cliffbreaker's Banner's DMG Increase on her own normal attacks while it stands: a share of her DEF as flat base
+    // Damage, priced from the striker as its buffs leave it
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
+      strike.attackTag === AttackTag.NormalAttack && checkIsBannerStanding(effects, strike.combatant.characterId)
+        ? BANNER_DEFENSE_SHARE * strike.combatant.attributes.defense
+        : 0,
     // While the window stands, her skill's release plays its top level, whatever seconds it was held
     jumpsSkillHoldToTop: ({ activeCombatant, kitEffectState }) =>
       checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, ASCENSION_1_COUNTER_WINDOW_ID),

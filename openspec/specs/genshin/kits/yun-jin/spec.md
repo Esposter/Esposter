@@ -93,9 +93,41 @@ From Ascension 1, a hit that lands on Yun Jin while her skill is held SHALL open
 - **WHEN** an enemy's strike costs her HP while her skill is held
 - **THEN** no counter window opens
 
-### Requirement: Banner's increase, Ascension 4 and Constellations 1, 2 and 6 not built
+### Requirement: Cliffbreaker's Banner's DMG Increase on her normal attacks
 
-The banner's DMG Increase on the party's normal attacks, Yun Jin's Ascension 4 passive and her Constellations 1, 2 and 6 SHALL have no effect yet.
+While Cliffbreaker's Banner stands, each hit of Yun Jin's normal attack SHALL deal flat base damage equal to 0.3216 of her DEF, and each enemy one of her normal attacks damages SHALL spend one of the banner's 30 stacks. The banner SHALL stand for 12 seconds from its hit.
+
+#### Scenario: Burst sets the banner
+
+- **WHEN** the player casts Cliffbreaker's Banner
+- **THEN** a following normal attack's hit gains the increase
+
+#### Scenario: Increase scales with her DEF
+
+- **GIVEN** the banner stands and Yun Jin's DEF is buffed
+- **WHEN** her normal attack strikes
+- **THEN** the increase is 0.3216 of her buffed DEF
+
+#### Scenario: Stacks run out
+
+- **GIVEN** the banner stands with 30 stacks
+- **WHEN** her normal attacks have damaged 30 enemies
+- **THEN** no increase applies
+
+#### Scenario: Banner ends twelve seconds after its hit
+
+- **WHEN** 12 seconds pass from the burst's hit
+- **THEN** no increase applies
+
+#### Scenario: Charged attack and skill get none
+
+- **GIVEN** the banner stands
+- **WHEN** Yun Jin's charged attack or Opening Flourish strikes
+- **THEN** no increase applies
+
+### Requirement: Party increase, Ascension 4 and Constellations 1, 2 and 6 not built
+
+The banner's DMG Increase on each party member's normal attacks, Yun Jin's Ascension 4 passive and her Constellations 1, 2 and 6 SHALL have no effect yet.
 
 #### Scenario: Party attacks under the banner
 

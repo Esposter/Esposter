@@ -3,12 +3,15 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -20,10 +23,13 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYunjinKitBehaviour, YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
 import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKit } from "#src/services/kit/stepKit";
+import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
@@ -244,5 +250,102 @@ describe("Ascension 1's counter window", () => {
     strikeYunjin(context, combatant);
 
     expect(holdAndRelease(context, 12)).toBe(YUNJIN_KIT.elementalSkill);
+  });
+});
+
+describe("Cliffbreaker's Banner's DMG Increase", () => {
+  const BURST_HIT_SECONDS = takeOne(YUNJIN_KIT.elementalBurst.hits).hitmarkSeconds;
+  const NORMAL_ATTACK_HIT = takeOne(takeOne(YUNJIN_KIT.normalAttacks).hits);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const party = createParty([YUNJIN_CHARACTER_ID]);
+  // The flat base damage a strike of hers adds as it is priced against the enemy, with the effects on the team given
+  const getIncrease = (strike: KitStrike, kitEffectState: KitEffectState) =>
+    YUNJIN_KIT.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, kitEffectState.effects);
+  const strikeOf = (combatant: Combatant, hit: KitHit, attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: createKitTestContext(combatant).body,
+    combatant,
+    hit,
+  });
+
+  test("the burst puts the banner up, so a normal attack's hit gains the increase", () => {
+    expect.hasAssertions();
+    const combatant = createYunjinCombatant();
+    const kitEffectState = castStart(YUNJIN_KIT.elementalBurst, combatant);
+
+    expect(getIncrease(strikeOf(combatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack), kitEffectState)).toBeGreaterThan(
+      0,
+    );
+  });
+
+  test("the increase is the burst's DEF share of her buffed DEF", () => {
+    expect.hasAssertions();
+    const combatant = createYunjinCombatant();
+    const kitEffectState = castStart(YUNJIN_KIT.elementalBurst, combatant);
+    buffKitMember(kitEffectState, YUNJIN_CHARACTER_ID, {
+      amount: 0.2,
+      attribute: Attribute.DefensePercent,
+      secondsRemaining: 12,
+      source: "yunjin-test-defense",
+    });
+    const buffedCombatant = getBuffedCombatant(
+      combatant,
+      kitEffectState.effects,
+      party,
+      new Map([[YUNJIN_CHARACTER_ID, combatant]]),
+    );
+
+    expect(
+      getIncrease(strikeOf(buffedCombatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack), kitEffectState),
+    ).toBeCloseTo(0.3216 * 960);
+  });
+
+  test("the increase ends twelve seconds after the banner's hit", () => {
+    expect.hasAssertions();
+    const combatant = createYunjinCombatant();
+    const context = createKitTestContext(combatant);
+    YUNJIN_KIT.elementalBurst.onStart?.(context);
+    const normalAttack = strikeOf(combatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack);
+
+    stepKitSeconds(context, BURST_HIT_SECONDS + 11);
+    expect(getIncrease(normalAttack, context.kitEffectState)).toBeGreaterThan(0);
+    stepKitSeconds(context, 1.1);
+    expect(getIncrease(normalAttack, context.kitEffectState)).toBe(0);
+  });
+
+  test("a charged attack or a skill gets no increase", () => {
+    expect.hasAssertions();
+    const combatant = createYunjinCombatant();
+    const kitEffectState = castStart(YUNJIN_KIT.elementalBurst, combatant);
+
+    expect([
+      getIncrease(strikeOf(combatant, takeOne(YUNJIN_KIT.chargedAttack.hits), AttackTag.ChargedAttack), kitEffectState),
+      getIncrease(
+        strikeOf(combatant, takeOne(YUNJIN_KIT.elementalSkill.hits), AttackTag.ElementalSkill),
+        kitEffectState,
+      ),
+    ]).toStrictEqual([0, 0]);
+  });
+
+  test("each enemy her normal attack damages spends one of the banner's 30 stacks", () => {
+    expect.hasAssertions();
+    const combatant = createYunjinCombatant();
+    const context = createKitTestContext(combatant);
+    YUNJIN_KIT.elementalBurst.onStart?.(context);
+    const normalAttack = strikeOf(combatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack);
+    const damageTaken: KitEvent = {
+      attackTag: AttackTag.NormalAttack,
+      enemy,
+      hit: NORMAL_ATTACK_HIT,
+      isCritical: false,
+      isDefeated: false,
+      kind: KitEventKind.DamageTaken,
+      striker: combatant,
+    };
+
+    for (let spent = 0; spent < 29; spent++) YUNJIN_KIT.onKitEvent?.(damageTaken, context, combatant);
+    expect(getIncrease(normalAttack, context.kitEffectState)).toBeGreaterThan(0);
+    YUNJIN_KIT.onKitEvent?.(damageTaken, context, combatant);
+    expect(getIncrease(normalAttack, context.kitEffectState)).toBe(0);
   });
 });
