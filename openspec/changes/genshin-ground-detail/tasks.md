@@ -1,6 +1,6 @@
 ## 1. Each surface's detail at its own texture's scale
 
-- [x] 1.1 Measure each surface's detail at its own texture's metres per texel and remove the shared constant. Verify: a test named after the scenario "A base-map surface's detail reads at its texture's texel size", written first and seen failing.
+- [ ] 1.1 Measure each surface's detail at its own texture's metres per texel and remove the shared constant. Verify: a test named after the scenario "A base-map surface's detail reads at its texture's texel size", written first and seen failing.
 - [x] 1.2 Read the Ground's structure with its layers drawn in the surface pass, and record its reading in the pass's snapshot. Verify: the surface pass's snapshot records the Ground's structure with its layers drawn, missing its gate by a wide margin.
 
 ## 2. Windrise's layers
