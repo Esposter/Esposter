@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
-  // How many of the item, on the strip across the tile's foot
-  count: number;
+  // How many of the item, on the strip across the tile's foot: a number, or the range a reward rolls as words ("4~5")
+  count: number | string;
   // The item's rarity in stars, which colours the tile
   rarity: number;
 }
