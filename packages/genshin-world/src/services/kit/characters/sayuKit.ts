@@ -11,6 +11,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim (MIT) sayu/burst.go, Muji-Muji Daruma a field of radius 10 a metre and a half ahead, each of its ticks a
@@ -40,10 +41,15 @@ const withAscension4Radius = (hit: KitHit): KitHit => ({
   hitArea: { ...hit.hitArea, radius: ASCENSION_4_DARUMA_RADIUS },
 });
 
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_COOLDOWN_ID = "sayu-constellation-4-cooldown";
+const CONSTELLATION_4_ENERGY = 1.2;
+const CONSTELLATION_4_SECONDS = 2;
+
 // Sayu's behaviour: Yoohoo Art: Mujina Flurry heals the active character as it is cast, and casts Muji-Muji Daruma, whose
-// Ticks strike as a summon and heal as a field. Ascension 1's heal on a Swirl and Ascension 4's wider Daruma are built, and
-// Her constellations are not. The roll's Elemental kick, which takes the element a roll absorbs, is not built, as the kit
-// Has no absorption check to read it
+// Ticks strike as a summon and heal as a field. Ascension 1's heal on a Swirl, Ascension 4's wider Daruma and
+// Constellation 4's Energy on a Swirl are built. Her Constellations 1, 2 and 6 are not built. The roll's
+// Elemental kick, which takes the element a roll absorbs, is not built, as the kit has no absorption check to read it
 // Constellation 1 needs the Muji-Muji Daruma's attacks on nearby opponents and its heals, which the kit does not build
 // Constellation 2 needs the roll's time spent rolling, which the kit does not read, for the kick's DMG
 // Constellation 6 needs an Elemental Mastery bonus on the Muji-Muji Daruma's attacks and heals, not built
@@ -91,7 +97,17 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
     // Seconds, from the Elemental Mastery she stands with
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered) return;
-      const { activeCombatant, kitEffectState } = context;
+      const { activeCombatant, kitEffectState, party } = context;
+      // Skiving: New and Improved, from Constellation 4: a Swirl Sayu triggers on the field restores 1.2 Energy to her,
+      // once every 2 seconds
+      if (
+        combatant.constellationCount >= CONSTELLATION_4 &&
+        event.striker.characterId === combatant.characterId &&
+        activeCombatant.characterId === combatant.characterId &&
+        event.reactions.some(({ reactionType }) => reactionType === ReactionType.Swirl) &&
+        startKitCooldown(kitEffectState, combatant.characterId, CONSTELLATION_4_COOLDOWN_ID, CONSTELLATION_4_SECONDS)
+      )
+        gainPartyMemberEnergy(party, combatant, CONSTELLATION_4_ENERGY);
       if (
         combatant.ascension < ASCENSION_1 ||
         event.striker.characterId !== combatant.characterId ||
