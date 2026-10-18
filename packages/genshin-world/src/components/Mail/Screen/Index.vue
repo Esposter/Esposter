@@ -49,6 +49,7 @@ const emit = defineEmits<{
   claim: [mailId: number];
   claimAll: [];
   close: [];
+  deleteGift: [mailId: number];
   deleteRead: [];
   read: [mailId: number];
   pin: [mailId: number];
@@ -63,6 +64,8 @@ const sortedEntries = computed<MailEntry[]>(() =>
 const selectedMailId = ref<number>();
 // Delete Read asks first, and the screen's owner hears of it only once the player confirms
 const isConfirmingDeleteRead = ref(false);
+// Delete on a Gift Mail Box mail asks first, the same way, and closes when the player picks another mail or tab
+const isConfirmingDeleteGift = ref(false);
 // The Mailbox tab lists the mails outside the Gift Mail Box, and the Gift Mail Box tab the mails inside it
 const isGiftBoxTab = ref(false);
 const visibleEntries = computed(() =>
@@ -81,9 +84,18 @@ const confirmDeleteRead = () => {
   isConfirmingDeleteRead.value = false;
   emit("deleteRead");
 };
+const confirmDeleteGift = (mailId: number) => {
+  isConfirmingDeleteGift.value = false;
+  emit("deleteGift", mailId);
+};
 const selectMail = (mailId: number) => {
   selectedMailId.value = mailId;
+  isConfirmingDeleteGift.value = false;
   emit("read", mailId);
+};
+const selectTab = (isGift: boolean) => {
+  isGiftBoxTab.value = isGift;
+  isConfirmingDeleteGift.value = false;
 };
 // A currency's name is the game's, and an item's its material row's, read in the reader's language
 const getItemName = (itemId: number): string => {
@@ -103,8 +115,8 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 <template>
   <!-- The game's mailbox, which the Paimon menu opens: its mails down the left, pinned first and each with its sender and
        time left, and the selected mail on the right with its text and the items it gives, claimed once. Claim All claims
-       every mail's items the bag can take, and Delete Read, once confirmed, removes every read mail with nothing left to claim. A pin
-       keeps a mail at the top of the list, and the Gift Mail Box, the tab beside the Mailbox, lists the birthday mail kept there. Its date is the date it was received. Not yet built:
+       every mail's items the bag can take, and Delete Read, once confirmed, removes every read mail with nothing left to claim. Delete on a
+       Gift Mail Box mail, once its warning is confirmed, removes that one mail. A pin keeps a mail at the top of the list, and the Gift Mail Box, the tab beside the Mailbox, lists the birthday mail kept there. Its date is the date it was received. Not yet built:
        the look the English client draws -->
   <MenuListScreen :game-text :title="gameText[GameTextKey.Mail]" @close="emit('close')">
     <template #tabs>
@@ -112,7 +124,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         class="mailbox-tab"
         :aria-pressed="!isGiftBoxTab"
         :kind="GameButtonKind.Pill"
-        @click="isGiftBoxTab = false"
+        @click="selectTab(false)"
       >
         {{ gameText[GameTextKey.MailBox] }}
       </GameButton>
@@ -120,7 +132,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         class="gift-box-tab"
         :aria-pressed="isGiftBoxTab"
         :kind="GameButtonKind.Pill"
-        @click="isGiftBoxTab = true"
+        @click="selectTab(true)"
       >
         {{ gameText[GameTextKey.MailGiftBox] }}
       </GameButton>
@@ -204,6 +216,33 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         <GameButton class="pin" :kind="GameButtonKind.Pill" @click="emit('pin', selectedEntry.mail.id)">
           {{ gameText[selectedEntry.mail.isPinned ? GameTextKey.MailCancelStar : GameTextKey.MailStar] }}
         </GameButton>
+        <GameButton
+          v-if="isGiftBoxed(selectedEntry.mail, selectedEntry.row, birthdayMailIds) && !isConfirmingDeleteGift"
+          class="delete-gift"
+          :kind="GameButtonKind.Pill"
+          @click="isConfirmingDeleteGift = true"
+        >
+          {{ gameText[GameTextKey.MailDelete] }}
+        </GameButton>
+        <section
+          v-if="isConfirmingDeleteGift"
+          class="confirm-gift"
+          role="dialog"
+          :aria-label="gameText[GameTextKey.MailGiftDeleteWarningTitle]"
+        >
+          <p class="confirm-title">{{ gameText[GameTextKey.MailGiftDeleteWarningTitle] }}</p>
+          <p class="confirm-text">{{ gameText[GameTextKey.MailGiftDeleteWarning] }}</p>
+          <GameButton class="cancel" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteGift = false">
+            {{ gameText[GameTextKey.Cancel] }}
+          </GameButton>
+          <GameButton
+            class="confirm-button"
+            :kind="GameButtonKind.Pill"
+            @click="confirmDeleteGift(selectedEntry.mail.id)"
+          >
+            {{ gameText[GameTextKey.MailDelete] }}
+          </GameButton>
+        </section>
       </MenuListScreenDetail>
     </template>
   </MenuListScreen>
@@ -225,6 +264,15 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
   margin: 0 0 calc(var(--unit) * 12);
   font-size: calc(var(--unit) * 24);
   white-space: pre-line;
+}
+
+.confirm-gift {
+  margin-top: calc(var(--unit) * 24);
+}
+
+.confirm-title {
+  margin: 0 0 calc(var(--unit) * 12);
+  font-size: calc(var(--unit) * 30);
 }
 
 /* Provisional: the mail's marks are not yet traced off the game, so they take the list screen's unit and the quest

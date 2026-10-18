@@ -516,6 +516,7 @@ const { achievementData } = useWorldAchievements({
 const {
   claim: claimMail,
   claimAll: claimAllMails,
+  deleteGift: deleteGiftMail,
   deleteRead: deleteReadMails,
   isBagFull: isMailBagFull,
   mailData,
@@ -2034,6 +2035,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @claim="(mailId) => claimMail(mailId)"
           @claim-all="claimAllMails()"
           @close="screenKind = ScreenKind.World"
+          @delete-gift="(mailId) => deleteGiftMail(mailId)"
           @delete-read="deleteReadMails()"
           @read="(mailId) => markMailRead(mailId)"
           @pin="(mailId) => toggleMailPin(mailId)"

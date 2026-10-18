@@ -150,6 +150,34 @@ describe("mailScreen", () => {
     expect(onPin).toHaveBeenCalledWith(BIRTHDAY_MAIL_ID);
   });
 
+  // Delete on a gift mail asks first, and gives the mail's id back to the screen's owner only once the player confirms it
+  test("should delete a gift mail once its delete is confirmed", async () => {
+    expect.hasAssertions();
+
+    const onDeleteGift = vi.fn<(mailId: number) => void>();
+    render(MailScreen, { ...props, mails: [mail(true)], onDeleteGift });
+
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDelete] }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDelete] }).click();
+
+    expect(onDeleteGift).toHaveBeenCalledWith(BIRTHDAY_MAIL_ID);
+  });
+
+  // Cancel closes the warning and leaves the gift mail in the Gift Mail Box
+  test("should keep the gift mail when its delete is cancelled", async () => {
+    expect.hasAssertions();
+
+    const onDeleteGift = vi.fn<(mailId: number) => void>();
+    render(MailScreen, { ...props, mails: [mail(true)], onDeleteGift });
+
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDelete] }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }).click();
+
+    expect(onDeleteGift).not.toHaveBeenCalled();
+  });
+
   // A pinned mail offers to delete its pin in place of pinning it again
   test("should offer to delete the pin of a pinned mail", async () => {
     expect.hasAssertions();
