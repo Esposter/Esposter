@@ -7,8 +7,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { MIRRORED_NYMPH_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createMirroredNymphSetModule } from "#src/services/artifact/sets/createMirroredNymphSetModule";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -27,15 +27,10 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 const OTHER_CHARACTER_ID = 2;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createWearer = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
+  ...createSetWearer(KIT),
   kit: getPassiveKit(KIT, [
     createMirroredNymphSetModule(getArtifactSetBonus(statTables, MIRRORED_NYMPH_ARTIFACT_SET_ID, 4)),
   ]),
-  level: 1,
 });
 // An enemy the given combatant's attack of the given kind hits, as the kit sends it
 const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>

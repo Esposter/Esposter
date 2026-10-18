@@ -6,8 +6,8 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { OCEAN_HUED_CLAM_ARTIFACT_SET_ID, OCEAN_HUED_CLAM_FOAM_ID } from "#src/services/artifact/constants";
 import { createOceanHuedClamSetModule } from "#src/services/artifact/sets/createOceanHuedClamSetModule";
+import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
@@ -37,18 +37,14 @@ const createSturdyEnemy = (id = "enemy", position = { x: 0, z: 0 }) => ({
   position,
 });
 const createWearer = (maxHealth = 10_000, characterId = TRAVELER_CHARACTER_ID): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  attributes.maxHealth = maxHealth;
+  const wearer = createSetWearer(KIT);
+  wearer.attributes.maxHealth = maxHealth;
   return {
-    ascension: 0,
-    attributes,
+    ...wearer,
     characterId,
-    constellationCount: 0,
-    elementalResonances: [],
     kit: getPassiveKit(KIT, [
       createOceanHuedClamSetModule(getArtifactSetBonus(statTables, OCEAN_HUED_CLAM_ARTIFACT_SET_ID, 4)),
     ]),
-    level: 1,
   };
 };
 // A heal of the given share of the healed member's Max HP, by the given source
