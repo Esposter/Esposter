@@ -1,7 +1,8 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
-import { KIT_TICK_TOLERANCE_SECONDS, SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import { FLOAT_RESIDUE } from "#src/services/floatResidue";
+import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 
 // A task a character's kit runs on a schedule while its seconds last, as gcsim queues one that repeats on its
@@ -20,9 +21,7 @@ export const schedulePeriodicKitTask = (
 ): void => {
   // A tick that falls at untilSeconds exactly is passed over, so the count is the ticks strictly before it
   const tickCount =
-    firstSeconds < untilSeconds
-      ? Math.ceil((untilSeconds - firstSeconds) / intervalSeconds - KIT_TICK_TOLERANCE_SECONDS)
-      : 0;
+    firstSeconds < untilSeconds ? Math.ceil((untilSeconds - firstSeconds) / intervalSeconds - FLOAT_RESIDUE) : 0;
   castKitField(
     kitEffectState,
     characterId,

@@ -30,6 +30,7 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 export const NICOLE_CHARACTER_ID = 10_000_131;
 
@@ -91,59 +92,69 @@ const PROJECTION_HIT_AREA = { angle: 0, height: 0, radius: 0 };
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
 const CONSTELLATION_6 = 6;
-const A1_AMOUNT = 300;
-const A1_SOURCE = "nicole-a1";
-const A1_SWAP_SECONDS = 3;
-const A1_SWAP_ID = "nicole-a1-swap";
-const A4_SECONDS = 8;
+const ASCENSION_1_AMOUNT = 300;
+const ASCENSION_1_SOURCE = "nicole-a1";
+const ASCENSION_1_SWAP_SECONDS = 3;
+const ASCENSION_1_SWAP_ID = "nicole-a1-swap";
+const ASCENSION_4_SECONDS = 8;
 
 // Her first constellation projects Arcane Projection: Unity from each hit of the active character, at six times the hit's
 // Damage with a 6-second internal cooldown of its own, in a circle of 4.5 metres about the enemy it struck, as gcsim's cons.go does
 const CONSTELLATION_1 = 1;
-const C1_MULTIPLIER = 6;
-const C1_ICD_SECONDS = 6;
-const C1_ICD_ID = "nicole-c1-icd";
-const C1_HITBOX: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: PROJECTION_RADIUS } };
+const CONSTELLATION_1_MULTIPLIER = 6;
+const CONSTELLATION_1_ICD_SECONDS = 6;
+const CONSTELLATION_1_ICD_ID = "nicole-c1-icd";
+const CONSTELLATION_1_HITBOX: KitHitbox = {
+  offset: { x: 0, z: 0 },
+  shape: { kind: "circle", radius: PROJECTION_RADIUS },
+};
 
 // Her second constellation gives each deployed member ATK 300 with her skill, and while an upgraded character's buff stands,
 // Lowers the RES of that character's element by a quarter on each enemy within 10 metres of the team, every 0.3 seconds for
 // A second, as gcsim's cons.go does
 const CONSTELLATION_2 = 2;
-const C2_AMOUNT = 300;
-const C2_SOURCE = "nicole-c2";
-const C2_RADIUS = 10;
-const C2_RES_REDUCTION = 0.25;
-const C2_TICK_SECONDS = 0.3;
-const C2_STATUS_SECONDS = 1;
-const C2_TICKER_ID = "nicole-c2-ticker";
-const C2_HITBOX: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: C2_RADIUS } };
+const CONSTELLATION_2_AMOUNT = 300;
+const CONSTELLATION_2_SOURCE = "nicole-c2";
+const CONSTELLATION_2_RADIUS = 10;
+const CONSTELLATION_2_RES_REDUCTION = 0.25;
+const CONSTELLATION_2_TICK_SECONDS = 0.3;
+const CONSTELLATION_2_STATUS_SECONDS = 1;
+const CONSTELLATION_2_TICKER_ID = "nicole-c2-ticker";
+const CONSTELLATION_2_HITBOX: KitHitbox = {
+  offset: { x: 0, z: 0 },
+  shape: { kind: "circle", radius: CONSTELLATION_2_RADIUS },
+};
 
 // Her sixth constellation ignores 40% of the defence of each hit an upgraded character lands, its own and the team's,
 // As gcsim's c6Init does, and its upgrades last for as long as her skill's buff stands, her own and each one she gives the
 // Team, as gcsim's c6SelfBuffDur and c6OnUpgrade do
-const C6_DEFENCE_IGNORED = 0.4;
+const CONSTELLATION_6_DEFENCE_IGNORED = 0.4;
 
 // Whether a character holds an ascension upgrade, which her second constellation's RES reduction and her sixth's defence
 // Ignored read
 const checkIsUpgraded = (effects: readonly KitEffect[], characterId: number): boolean =>
-  effects.some((effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === A1_SOURCE);
+  effects.some(
+    (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === ASCENSION_1_SOURCE,
+  );
 
 // The share of its enemy's defence a hit ignores under her sixth constellation, when its striker holds her upgrade
 const getC6DefenceIgnored = (constellationCount: number, striker: Combatant, effects: readonly KitEffect[]): number =>
-  constellationCount >= CONSTELLATION_6 && checkIsUpgraded(effects, striker.characterId) ? C6_DEFENCE_IGNORED : 0;
+  constellationCount >= CONSTELLATION_6 && checkIsUpgraded(effects, striker.characterId)
+    ? CONSTELLATION_6_DEFENCE_IGNORED
+    : 0;
 
 // Her fourth constellation gives an upgraded character 0.7 of her attack in flat base damage on each of its hits that is a
 // Normal, charged, plunging, skill or burst attack, for eight stacks spent one each on the hits it lands. An upgrade gives
 // Them again only once the character's 16-second cooldown has run out, as gcsim's c4OnUpgrade does. A projection carries no
 // Attack tag, so it takes none
 const CONSTELLATION_4 = 4;
-const C4_RATIO = 0.7;
-const C4_STACKS = 8;
-const C4_SECONDS = 20;
-const C4_ID = "nicole-c4";
-const C4_ICD_SECONDS = 16;
-const C4_ICD_ID = "nicole-c4-icd";
-const C4_ATTACK_TAGS = new Set<AttackTag>([
+const CONSTELLATION_4_RATIO = 0.7;
+const CONSTELLATION_4_STACKS = 8;
+const CONSTELLATION_4_SECONDS = 20;
+const CONSTELLATION_4_ID = "nicole-c4";
+const CONSTELLATION_4_ICD_SECONDS = 16;
+const CONSTELLATION_4_ICD_ID = "nicole-c4-icd";
+const CONSTELLATION_4_ATTACK_TAGS = new Set<AttackTag>([
   AttackTag.ChargedAttack,
   AttackTag.ElementalBurst,
   AttackTag.ElementalSkill,
@@ -153,15 +164,15 @@ const C4_ATTACK_TAGS = new Set<AttackTag>([
 
 // The stacks of her fourth constellation a striker holds for a hit of the attack tag given, which the next hit it lands takes
 const getC4Stacks = (effects: readonly KitEffect[], striker: number, attackTag: AttackTag | undefined): number => {
-  if (attackTag === undefined || !C4_ATTACK_TAGS.has(attackTag)) return 0;
-  const status = findKitStatus(effects, striker, C4_ID);
+  if (attackTag === undefined || !CONSTELLATION_4_ATTACK_TAGS.has(attackTag)) return 0;
+  const status = findKitStatus(effects, striker, CONSTELLATION_4_ID);
   return status && status.secondsRemaining > 0 ? (status.stacks ?? 0) : 0;
 };
 
 // Takes the stack a hit landed by its striker spends, as the hit lands on an enemy
 const takeC4Stack = (effects: readonly KitEffect[], { attackTag, striker }: KitEnemyHitEvent): void => {
   if (getC4Stacks(effects, striker.characterId, attackTag) === 0) return;
-  const status = findKitStatus(effects, striker.characterId, C4_ID);
+  const status = findKitStatus(effects, striker.characterId, CONSTELLATION_4_ID);
   if (status) status.stacks = (status.stacks ?? 0) - 1;
 };
 
@@ -211,8 +222,7 @@ const startC2Ticker = (
   characterId: number,
   seconds: number,
 ): void => {
-  const id = `${C2_TICKER_ID}-${characterId}`;
-  removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === id);
+  const id = `${CONSTELLATION_2_TICKER_ID}${ID_SEPARATOR}${characterId}`;
   castKitField(
     kitEffectState,
     nicoleCharacterId,
@@ -224,16 +234,16 @@ const startC2Ticker = (
         const element = tick.characterIdCombatantMap.get(characterId)?.element;
         if (element === undefined || !checkIsUpgraded(tick.kitEffectState.effects, characterId)) return;
         for (const enemy of tick.enemyMap.values())
-          if (checkIsInKitHitbox(C2_HITBOX, tick.body.position, enemy.position))
+          if (checkIsInKitHitbox(CONSTELLATION_2_HITBOX, tick.body.position, enemy.position))
             addEnemyStatus(enemy, {
               damageTakenBonus: 0,
-              id: `${C2_SOURCE}-${element}`,
-              resistanceReduction: { [element]: C2_RES_REDUCTION },
-              secondsRemaining: C2_STATUS_SECONDS,
+              id: `${CONSTELLATION_2_SOURCE}${ID_SEPARATOR}${element}`,
+              resistanceReduction: { [element]: CONSTELLATION_2_RES_REDUCTION },
+              secondsRemaining: CONSTELLATION_2_STATUS_SECONDS,
             });
       },
       secondsRemaining: seconds,
-      tickIntervalSeconds: C2_TICK_SECONDS,
+      tickIntervalSeconds: CONSTELLATION_2_TICK_SECONDS,
     },
   );
 };
@@ -254,23 +264,23 @@ const upgradeAscensionBuff = (
   );
   const buffSeconds = Math.min(seconds, skillBuff?.secondsRemaining ?? 0);
   if (buffSeconds <= 0) return;
-  removeKitEffects(
-    kitEffectState,
-    (effect) => effect.kind === "buff" && effect.characterId === characterId && effect.source === A1_SOURCE,
-  );
   buffKitMember(kitEffectState, characterId, {
-    amount: A1_AMOUNT,
+    amount: ASCENSION_1_AMOUNT,
     attribute: Attribute.Attack,
     secondsRemaining: buffSeconds,
-    source: A1_SOURCE,
+    source: ASCENSION_1_SOURCE,
   });
   if (nicole.constellationCount >= CONSTELLATION_2)
     startC2Ticker(kitEffectState, nicole.characterId, characterId, buffSeconds);
   if (
     nicole.constellationCount >= CONSTELLATION_4 &&
-    startKitCooldown(kitEffectState, characterId, C4_ICD_ID, C4_ICD_SECONDS)
+    startKitCooldown(kitEffectState, characterId, CONSTELLATION_4_ICD_ID, CONSTELLATION_4_ICD_SECONDS)
   )
-    addKitStatus(kitEffectState, characterId, { id: C4_ID, secondsRemaining: C4_SECONDS, stacks: C4_STACKS });
+    addKitStatus(kitEffectState, characterId, {
+      id: CONSTELLATION_4_ID,
+      secondsRemaining: CONSTELLATION_4_SECONDS,
+      stacks: CONSTELLATION_4_STACKS,
+    });
   // Her sixth constellation upgrades each other deployed member with her own upgrade, as gcsim's c6OnUpgrade does
   if (characterId === nicole.characterId && nicole.constellationCount >= CONSTELLATION_6)
     for (const memberId of getDeployedCharacterIds(party))
@@ -312,16 +322,17 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
           removeKitEffects(
             context.kitEffectState,
             (effect) =>
-              effect.kind === "buff" && effect.characterId === previousCharacterId && effect.source === A1_SOURCE,
+              effect.kind === "buff" &&
+              effect.characterId === previousCharacterId &&
+              effect.source === ASCENSION_1_SOURCE,
           );
-        // A swap made before the last one's upgrade lands cancels that upgrade, as gcsim's a1Src token does
-        removeKitEffects(context.kitEffectState, (effect) => effect.kind === "field" && effect.id === A1_SWAP_ID);
+        // A swap made before the last one's upgrade lands is replaced by this swap's task, as gcsim's a1Src token does
         scheduleKitTask(
           context.kitEffectState,
           combatant.characterId,
-          checkIsKitHexerei(characterId) ? 0 : A1_SWAP_SECONDS,
+          checkIsKitHexerei(characterId) ? 0 : ASCENSION_1_SWAP_SECONDS,
           (tick) => upgradeAscensionBuff(tick, combatant, characterId),
-          { id: A1_SWAP_ID },
+          { id: ASCENSION_1_SWAP_ID },
         );
         return;
       }
@@ -333,14 +344,25 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
           context,
           combatant,
           combatant.characterId,
-          combatant.constellationCount >= CONSTELLATION_6 ? Infinity : A4_SECONDS,
+          combatant.constellationCount >= CONSTELLATION_6 ? Infinity : ASCENSION_4_SECONDS,
         );
       // Her first constellation projects each hit of the active character on a cooldown of its own, with no burst's status needed
       if (
         combatant.constellationCount >= CONSTELLATION_1 &&
-        startKitCooldown(context.kitEffectState, combatant.characterId, C1_ICD_ID, C1_ICD_SECONDS)
+        startKitCooldown(
+          context.kitEffectState,
+          combatant.characterId,
+          CONSTELLATION_1_ICD_ID,
+          CONSTELLATION_1_ICD_SECONDS,
+        )
       )
-        scheduleProjection(context.kitEffectState, combatant, event, C1_MULTIPLIER, C1_HITBOX);
+        scheduleProjection(
+          context.kitEffectState,
+          combatant,
+          event,
+          CONSTELLATION_1_MULTIPLIER,
+          CONSTELLATION_1_HITBOX,
+        );
       const burst = findKitStatus(context.kitEffectState.effects, combatant.characterId, BURST_STATUS_ID);
       if (!burst || burst.secondsRemaining <= 0 || (burst.stacks ?? 0) >= PROJECTION_LIMIT) return;
       if (!startKitCooldown(context.kitEffectState, combatant.characterId, PROJECTION_ICD_ID, PROJECTION_ICD_SECONDS))
@@ -358,13 +380,13 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
     getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
       additiveBaseDamageBonus:
         getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
-          ? C4_RATIO * member.attributes.attack
+          ? CONSTELLATION_4_RATIO * member.attributes.attack
           : 0,
       defenseIgnored: getC6DefenceIgnored(member.constellationCount, strike.combatant, effects),
     }),
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
       getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
-        ? C4_RATIO * strike.combatant.attributes.attack
+        ? CONSTELLATION_4_RATIO * strike.combatant.attributes.attack
         : 0,
     getStrikeDefenceIgnored: (strike, _enemy, _party, effects) =>
       getC6DefenceIgnored(strike.combatant.constellationCount, strike.combatant, effects),
@@ -377,7 +399,9 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
           kitEffectState,
           (effect) =>
             effect.kind === "buff" &&
-            (effect.source === SKILL_BUFF_SOURCE || effect.source === A1_SOURCE || effect.source === C2_SOURCE),
+            (effect.source === SKILL_BUFF_SOURCE ||
+              effect.source === ASCENSION_1_SOURCE ||
+              effect.source === CONSTELLATION_2_SOURCE),
         );
         scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(SKILL_SNAPSHOT_FRAMES), (tick) => {
           castKitShield(tick.kitEffectState, combatant.characterId, {
@@ -395,10 +419,10 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
             });
             if (combatant.constellationCount >= CONSTELLATION_2)
               buffKitMember(tick.kitEffectState, characterId, {
-                amount: C2_AMOUNT,
+                amount: CONSTELLATION_2_AMOUNT,
                 attribute: Attribute.Attack,
                 secondsRemaining: SKILL_SECONDS,
-                source: C2_SOURCE,
+                source: CONSTELLATION_2_SOURCE,
               });
           }
         });

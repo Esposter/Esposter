@@ -61,7 +61,7 @@ export const startNextKitAction = (
         chargeSeconds !== undefined && spendKitChargeSkip(context.kitEffectState, context.activeCombatant.characterId)
           ? chargeSeconds
           : 0;
-      return startKitAction(kitState, chargedAttackAction, landedHits, context, startSeconds);
+      return startKitAction(kitState, chargedAttackAction, landedHits, context, { startSeconds });
     }
   }
 
@@ -89,7 +89,7 @@ export const startNextKitAction = (
   if (isSkillTriggered && isSkillOrBurstState && kit.elementalSkill.checkIsStateEndingPress?.(context)) {
     kitState.skillChainCount = 0;
     kitState.skillChainSeconds = 0;
-    return startKitAction(kitState, { ...kit.elementalSkill, hits: [] }, landedHits, context);
+    return startKitAction(kitState, kit.elementalSkill, landedHits, context, { isHitless: true });
   }
   if (isSkillTriggered && isSkillOrBurstState && (isChaining || isSkillReady)) {
     if (isChaining) {

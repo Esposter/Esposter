@@ -1,6 +1,7 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
-import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
+import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
 
@@ -25,7 +26,7 @@ export const createMualaniKitBehaviour = (): KitBehaviour => ({
   skill: {
     onStart: ({ activeCombatant, kitEffectState }) => {
       const { characterId } = activeCombatant;
-      if (checkHasKitNightsoulBlessing(kitEffectState.effects, characterId))
+      if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
         exitKitNightsoulBlessing(kitEffectState, characterId);
       else
         enterKitNightsoulBlessing(kitEffectState, characterId, {

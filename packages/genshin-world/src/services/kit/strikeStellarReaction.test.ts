@@ -4,6 +4,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/CharacterLevelMultiplierMap";
@@ -58,6 +59,24 @@ describe(strikeStellarReaction, () => {
     );
     return enemy.maxHealth - enemy.health;
   };
+
+  test("a Stellar reaction on an enemy already Dead strikes nothing", () => {
+    expect.hasAssertions();
+    const enemy = { ...createSturdyEnemy(), health: 0, state: EnemyState.Dead };
+    const context = createKitTestContext(combatant, { enemyTables });
+
+    expect(
+      strikeStellarReaction(
+        enemy,
+        Element.Anemo,
+        STELLAR_SWIRL_ANEMO_COEFFICIENT,
+        new Set([TRAVELER_CHARACTER_ID]),
+        combatant,
+        context,
+        StellarReactionType.StellarSwirl,
+      ),
+    ).toBe(false);
+  });
 
   test("a Stellar Swirl's Anemo instance has a coefficient of 0.75", () => {
     expect.hasAssertions();

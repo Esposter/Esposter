@@ -43,7 +43,7 @@ const getEnteredMovementAction = (
 // Whether a queued dash or jump may start in the state the body is in as its action ends: on foot, or in a state
 // A movement continues in, which a glide is not
 const checkIsQueuedMovementStartState = (state: LocomotionState): boolean =>
-  [...ON_FOOT_LOCOMOTION_STATES, ...MOVEMENT_LOCOMOTION_STATES].includes(state);
+  ON_FOOT_LOCOMOTION_STATES.includes(state) || MOVEMENT_LOCOMOTION_STATES.includes(state);
 
 // One fixed step of a character's kit, written in place. A plunge strikes its collision every interval it falls and
 // Lands its low or high plunge by the drop. Otherwise the action playing moves on its hitmarks, a normal attack faster
@@ -90,7 +90,7 @@ export const stepKit = (
 
   if (locomotionState === LocomotionState.Plunge) {
     if (!wasPlunging) {
-      endKitAction(kitState, kit, false);
+      endKitAction(kitState, kit, { keepsCombo: false });
       kitState.isAttackQueued = false;
       kitState.queuedMovementAction = undefined;
       kitState.plungeStartHeight = height;
@@ -168,7 +168,7 @@ export const stepKit = (
       queueKitHits(action, kitState, context);
       isStrikeEnded = kit.normalAttacks.includes(action);
     } else kitState.isAttackQueued = false;
-    endKitAction(kitState, kit, kit.keepsNormalAttackCombo?.(context, action) === true);
+    endKitAction(kitState, kit, { keepsCombo: kit.keepsNormalAttackCombo?.(context, action) === true });
   }
 
   kitState.comboSeconds += stepSeconds;

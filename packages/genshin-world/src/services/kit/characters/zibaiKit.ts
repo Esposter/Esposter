@@ -1,5 +1,6 @@
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
@@ -28,6 +29,12 @@ const MOONSIGN_RADIANCE_COOLDOWN_SECONDS = 4;
 const SPIRIT_STEED_STRIDE_RADIANCE = 70;
 const SPIRIT_STEED_STRIDE_COUNT_STATUS_ID = "spirit-steed-stride";
 const SPIRIT_STEED_STRIDES_PER_SHIFT = 4;
+
+// Whether Zibai's Lunar Phase Shift stands on her. Spirit Steed's Stride costs no cooldown within it.
+// Radiance alone gates it, as gcsim v2.47.2 has no Zibai to read a cooldown from, and the cooldown her cast left
+// Running on the party does not hold it back
+const checkIsInLunarPhaseShift = ({ activeCombatant: { characterId }, kitEffectState }: KitContext): boolean =>
+  findKitStance(kitEffectState.effects, characterId) !== undefined;
 
 // Zibai's behaviour: Heaven and Earth Made Manifest enters the Lunar Phase Shift for its record's seconds, at most 15 as
 // The wiki gives it, where her normal attacks and charged attack are Geo and her skill is Spirit Steed's Stride. The shift
@@ -84,6 +91,8 @@ export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecord
     },
   };
   return {
+    getSkillCooldownMultiplier: (context) => (checkIsInLunarPhaseShift(context) ? 0 : 1),
+    isSkillCooldownWaived: checkIsInLunarPhaseShift,
     onKitEvent: (event, context, combatant) => {
       const { characterId } = combatant;
       const { kitEffectState } = context;

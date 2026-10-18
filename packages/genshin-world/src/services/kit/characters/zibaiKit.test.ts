@@ -1,6 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -15,18 +17,31 @@ import {
   PHASE_SHIFT_RADIANCE_STATUS_ID,
   ZIBAI_CHARACTER_ID,
 } from "#src/services/kit/characters/zibaiKit";
+import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { landKitHits } from "#src/services/kit/landKitHits";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { createParty } from "#src/services/party/createParty";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const ZIBAI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ZIBAI_CHARACTER_ID);
 
 const MAX_HEALTH = 10_000;
+const SKILL_PRESS: KitInput = {
+  height: 0,
+  isAttackHeld: false,
+  isAttackPressed: false,
+  isBurstPressed: false,
+  isSkillHeld: false,
+  isSkillPressed: true,
+  locomotionState: LocomotionState.Idle,
+};
 
 // A combatant whose kit is a Moonsign benediction, the member a team's Ascendant Gleam counts
 const withMoonsignBenediction = (combatant: Combatant): Combatant => ({
@@ -72,9 +87,11 @@ describe(createZibaiKitBehaviour, () => {
     ZIBAI_KIT.elementalSkill.onStart?.(context);
     const stance = findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID);
     const normalAttackHits = stance?.combatant.kit.normalAttacks.flatMap((action) => action.hits) ?? [];
+    const chargedAttackHits = stance?.combatant.kit.chargedAttack.hits ?? [];
 
     expect(stance?.combatant.kit.normalAttacks).toHaveLength(4);
     expect(normalAttackHits.every((hit) => hit.element === Element.Geo)).toBe(true);
+    expect(new Set(chargedAttackHits.map(({ element }) => element))).toStrictEqual(new Set([Element.Geo]));
     expect(stance?.secondsRemaining).toBeGreaterThan(0);
   });
 
@@ -165,5 +182,24 @@ describe(createZibaiKitBehaviour, () => {
 
     ZIBAI_KIT.onStep?.(context, combatant, 2);
     expect(stride()?.canStart?.(context)).toBe(true);
+  });
+
+  test("spirit steed's stride starts 8 seconds into a shift, the cooldown its cast left running notwithstanding", () => {
+    expect.hasAssertions();
+    const combatant = createZibaiCombatant();
+    const context = createKitTestContext(combatant);
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    const press = (kit: Kit) =>
+      startNextKitAction(createKitState(), kit, SKILL_PRESS, partyMember, stamina, true, [], context);
+    const stanceKit = () => findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID)?.combatant.kit;
+
+    expect(press(ZIBAI_KIT)).toBe(ZIBAI_KIT.elementalSkill);
+    ZIBAI_KIT.elementalSkill.onStart?.(context);
+    ZIBAI_KIT.onStep?.(context, combatant, 8);
+
+    expect(stanceKit()).toBeDefined();
+    expect(press(stanceKit() ?? ZIBAI_KIT)).toBe(stanceKit()?.elementalSkill);
+    expect(partyMember.skillCooldownSeconds).toBe(ZIBAI_KIT.skillCooldownSeconds);
   });
 });

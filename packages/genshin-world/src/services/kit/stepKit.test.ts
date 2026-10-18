@@ -4,6 +4,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
+import type { Stamina } from "genshin-engine";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -39,7 +40,7 @@ describe(stepKit, () => {
   };
 
   const STEP_SECONDS = 0.1;
-  // The steps the first strike takes to end, counting the one that starts it out
+  // The steps the first strike takes to end, counted after the step that starts it
   const STRIKE_STEP_COUNT = Math.ceil(takeOne(TRAVELER_KIT.normalAttacks, 0).seconds / STEP_SECONDS);
   const IDLE_INPUT: KitInput = {
     height: 0,
@@ -165,13 +166,8 @@ describe(stepKit, () => {
     expect.hasAssertions();
 
     const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
-    const kitState = createKitState();
-    const partyMember = createPartyMember();
-    const stamina = createStamina(STAMINA_MAX);
+    const { stamina, step } = createFixture(kit);
     stamina.value = 0;
-    const context = createKitTestContext(TRAVELER_COMBATANT);
-    const step = (input: Partial<KitInput>) =>
-      stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
     step({ isAttackHeld: true, isAttackPressed: true });
     for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
 
@@ -183,13 +179,8 @@ describe(stepKit, () => {
     expect.hasAssertions();
 
     const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
-    const kitState = createKitState();
-    const partyMember = createPartyMember();
-    const stamina = createStamina(STAMINA_MAX);
+    const { stamina, step } = createFixture(kit);
     stamina.value = 1;
-    const context = createKitTestContext(TRAVELER_COMBATANT);
-    const step = (input: Partial<KitInput>) =>
-      stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
     step({ isAttackHeld: true, isAttackPressed: true });
     for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
 
@@ -241,7 +232,7 @@ describe(stepKit, () => {
     const { partyMember, step } = createFixture(kit);
     partyMember.skillCooldownSeconds = TRAVELER_KIT.skillCooldownSeconds;
 
-    expect(step({ isSkillPressed: true })?.hits).toStrictEqual([]);
+    expect(step({ isSkillPressed: true })).toBe(kit.elementalSkill);
     expect(partyMember.skillCooldownSeconds).toBe(TRAVELER_KIT.skillCooldownSeconds);
   });
 
@@ -361,13 +352,13 @@ describe(stepKit, () => {
   });
 
   // A charged attack started with its hold reached and its strike ended, read off the start alone, so no strike's timing decides it
-  const startChargedAttack = (kit: Kit, stamina: { value: number }) =>
+  const startChargedAttack = (kit: Kit, stamina: Stamina) =>
     startNextKitAction(
       { ...createKitState(), attackHeldSeconds: CHARGED_ATTACK_HOLD_SECONDS },
       kit,
       { ...IDLE_INPUT, isAttackHeld: true },
       createPartyMember(),
-      stamina as ReturnType<typeof createStamina>,
+      stamina,
       true,
       [],
       createKitTestContext(TRAVELER_COMBATANT),

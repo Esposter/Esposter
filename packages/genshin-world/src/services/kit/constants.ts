@@ -117,7 +117,3 @@ export const STELLAR_VORTEX_LEVEL_TWO_RADIUS = 8;
 // Measured: gcsim v2.47.2 template/sourcewaterdroplet/sourcewaterdroplet.go, a droplet lasts 878 frames
 export const SOURCEWATER_DROPLET_FIELD_ID = "sourcewater-droplet";
 export const SOURCEWATER_DROPLET_SECONDS = 878 / KIT_FRAMES_PER_SECOND;
-
-// A tick falls due once the seconds left to it are within this of none: a field counts its seconds down a step at a time,
-// And the float sum of a frame's seconds drifts a sub-nanosecond past the frame it is due on, which would land it a frame late
-export const KIT_TICK_TOLERANCE_SECONDS = 1e-9;

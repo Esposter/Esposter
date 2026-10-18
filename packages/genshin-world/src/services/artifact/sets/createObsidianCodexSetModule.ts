@@ -3,8 +3,9 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
@@ -22,7 +23,7 @@ export const createObsidianCodexSetModule = (bonus: ArtifactSetBonus): PassiveMo
     return {
       getStrikeDamageBonus: (strike, _enemy, party, effects) =>
         getActiveCharacterId(party) === strike.combatant.characterId &&
-        checkHasKitNightsoulBlessing(effects, strike.combatant.characterId)
+        checkHasKitStatus(effects, strike.combatant.characterId, NIGHTSOUL_BLESSING_STATUS_ID)
           ? damageBonus
           : 0,
     };

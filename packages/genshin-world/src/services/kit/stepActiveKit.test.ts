@@ -232,6 +232,23 @@ describe(stepActiveKit, () => {
     });
   });
 
+  test("sends the team's kits a skill as it starts, for a press that ends the state the skill holds", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      elementalSkill: { ...TRAVELER_KIT.elementalSkill, checkIsStateEndingPress: () => true },
+      onKitEvent,
+    };
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, kit)]);
+    stepActiveKit(createKitState(), { ...IDLE_INPUT, isSkillPressed: true }, 0.1, context, createControls());
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      characterId: TRAVELER_CHARACTER_ID,
+      kind: KitEventKind.SkillUsed,
+    });
+  });
+
   test("sends the team's kits a charged attack that lands, with the action it landed", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();

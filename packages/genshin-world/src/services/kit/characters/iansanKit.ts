@@ -5,9 +5,10 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsAmountReached } from "#src/services/checkIsAmountReached";
+import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -118,7 +119,7 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
   // The Electro Swift Stormflight plays in place of her charged attack while her blessing lasts
   chargedAttackVariant: {
     checkIsActive: ({ activeCombatant, kitEffectState }) =>
-      checkHasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
+      checkHasKitStatus(kitEffectState.effects, activeCombatant.characterId, NIGHTSOUL_BLESSING_STATUS_ID),
     hits: [
       {
         onStrike: ({ activeCombatant, kitEffectState }) => {
@@ -190,7 +191,7 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
     onStart: ({ activeCombatant, kitEffectState }) => {
       const { characterId } = activeCombatant;
       scheduleKitTask(kitEffectState, characterId, toKitSeconds(BURST_POINTS_FRAMES), (context) => {
-        if (checkHasKitNightsoulBlessing(context.kitEffectState.effects, characterId))
+        if (checkHasKitStatus(context.kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
           generateKitNightsoulPoints(context, BURST_POINTS, NIGHTSOUL_POINTS, characterId);
         else
           enterKitNightsoulBlessing(context.kitEffectState, characterId, {
@@ -205,7 +206,7 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
         { firstSeconds: 1, intervalSeconds: 1, untilSeconds: BURST_RESTORE_SECONDS },
         (context) => {
           // The restore stops once the blessing it lands in ends, as gcsim's does when the blessing exits
-          if (!checkHasKitNightsoulBlessing(context.kitEffectState.effects, characterId)) return;
+          if (!checkHasKitStatus(context.kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID)) return;
           const points = restorePreciseMovementPoints(context.kitEffectState, characterId);
           if (points <= 0) return;
           generateKitNightsoulPoints(context, points, NIGHTSOUL_POINTS, characterId);

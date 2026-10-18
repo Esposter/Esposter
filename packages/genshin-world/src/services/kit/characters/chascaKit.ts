@@ -5,9 +5,10 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
+import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
-import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
@@ -67,19 +68,19 @@ export const createChascaKitBehaviour = ({ readHit, readSecondsList }: KitRecord
     },
     onSprint: ({ activeCombatant, kitEffectState }) => {
       const { characterId } = activeCombatant;
-      if (checkHasKitNightsoulBlessing(kitEffectState.effects, characterId))
+      if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
         drainKitNightsoulPoints(kitEffectState, characterId, NIGHTSOUL_SPRINT_DRAIN);
     },
     onStep: ({ kitEffectState, party }, { characterId }, stepSeconds) => {
-      if (checkHasKitNightsoulBlessing(kitEffectState.effects, characterId))
+      if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
         changeKitSkillCooldown(party, characterId, stepSeconds);
     },
     skill: {
       checkIsStateEndingPress: ({ activeCombatant, kitEffectState }) =>
-        checkHasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
+        checkHasKitStatus(kitEffectState.effects, activeCombatant.characterId, NIGHTSOUL_BLESSING_STATUS_ID),
       onStart: ({ activeCombatant, kitEffectState }) => {
         const { characterId } = activeCombatant;
-        if (checkHasKitNightsoulBlessing(kitEffectState.effects, characterId))
+        if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
           exitKitNightsoulBlessing(kitEffectState, characterId);
         else
           enterKitNightsoulBlessing(kitEffectState, characterId, {

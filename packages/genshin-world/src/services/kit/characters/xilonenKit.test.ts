@@ -5,10 +5,10 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createXilonenKitBehaviour, XILONEN_CHARACTER_ID } from "#src/services/kit/characters/xilonenKit";
-import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -100,9 +100,13 @@ describe(createXilonenKitBehaviour, () => {
     const context = createKitTestContext(createXilonenCombatant());
     XILONEN_KIT.elementalSkill.onStart?.(context);
     stepKitSeconds(context, 8.5);
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(true);
+    expect(checkHasKitStatus(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      true,
+    );
     stepKitSeconds(context, 0.6);
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
+    expect(checkHasKitStatus(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      false,
+    );
   });
 
   test("a press inside the Nightsoul Blessing leaves it", () => {
@@ -110,7 +114,9 @@ describe(createXilonenKitBehaviour, () => {
     const context = createKitTestContext(createXilonenCombatant());
     XILONEN_KIT.elementalSkill.onStart?.(context);
     XILONEN_KIT.elementalSkill.onStart?.(context);
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
+    expect(checkHasKitStatus(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      false,
+    );
   });
 
   test("a sprint in the Nightsoul Blessing drains five points", () => {
@@ -175,7 +181,9 @@ describe(createXilonenKitBehaviour, () => {
     stepKitSeconds(context, 3);
     expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeDefined();
     stepKitSeconds(context, 2);
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
+    expect(checkHasKitStatus(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      false,
+    );
     expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
   });
 
@@ -194,7 +202,9 @@ describe(createXilonenKitBehaviour, () => {
       context,
       combatant,
     );
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBe(false);
+    expect(checkHasKitStatus(context.kitEffectState.effects, XILONEN_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      false,
+    );
     expect(findKitStance(context.kitEffectState.effects, XILONEN_CHARACTER_ID)).toBeUndefined();
   });
 });

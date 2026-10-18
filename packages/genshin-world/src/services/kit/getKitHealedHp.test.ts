@@ -19,73 +19,44 @@ const member: Combatant = {
   level: 1,
 };
 const combatantMap = new Map([[TRAVELER_CHARACTER_ID, member]]);
+const healthChanged = {
+  bondOfLifeShare: 0,
+  characterId: TRAVELER_CHARACTER_ID,
+  healthShare: 0,
+  kind: KitEventKind.HealthChanged,
+  isFallRefused: false,
+  overflowHealthShare: 0,
+} as const;
 
 describe(getKitHealedHp, () => {
   test("counts the HP a heal restores as its share of the healed member's Max HP", () => {
     expect.hasAssertions();
 
-    expect(
-      getKitHealedHp(
-        {
-          bondOfLifeShare: 0,
-          characterId: TRAVELER_CHARACTER_ID,
-          healthShare: 0.25,
-          isFallRefused: false,
-          kind: KitEventKind.HealthChanged,
-          overflowHealthShare: 0,
-        },
-        combatantMap,
-      ),
-    ).toBe(0.25 * member.attributes.maxHealth);
+    expect(getKitHealedHp({ ...healthChanged, healthShare: 0.25 }, combatantMap)).toBe(
+      0.25 * member.attributes.maxHealth,
+    );
   });
 
   test("counts the overflow past full HP, which a heal on a member at full HP leaves", () => {
     expect.hasAssertions();
 
-    expect(
-      getKitHealedHp(
-        {
-          bondOfLifeShare: 0,
-          characterId: TRAVELER_CHARACTER_ID,
-          healthShare: 0,
-          isFallRefused: false,
-          kind: KitEventKind.HealthChanged,
-          overflowHealthShare: 0.1,
-        },
-        combatantMap,
-      ),
-    ).toBe(0.1 * member.attributes.maxHealth);
+    expect(getKitHealedHp({ ...healthChanged, overflowHealthShare: 0.1 }, combatantMap)).toBe(
+      0.1 * member.attributes.maxHealth,
+    );
   });
 
   test("counts the share a Bond of Life took before the HP was restored", () => {
     expect.hasAssertions();
 
-    expect(
-      getKitHealedHp(
-        {
-          bondOfLifeShare: 0.2,
-          characterId: TRAVELER_CHARACTER_ID,
-          healthShare: 0.1,
-          isFallRefused: false,
-          kind: KitEventKind.HealthChanged,
-          overflowHealthShare: 0,
-        },
-        combatantMap,
-      ),
-    ).toBe(0.3 * member.attributes.maxHealth);
+    expect(getKitHealedHp({ ...healthChanged, bondOfLifeShare: 0.2, healthShare: 0.1 }, combatantMap)).toBe(
+      0.3 * member.attributes.maxHealth,
+    );
   });
 
   test("heals nothing for a drain, or for a member the team does not build", () => {
     expect.hasAssertions();
 
-    const drain = {
-      bondOfLifeShare: 0,
-      characterId: TRAVELER_CHARACTER_ID,
-      healthShare: -0.2,
-      isFallRefused: false,
-      kind: KitEventKind.HealthChanged,
-      overflowHealthShare: 0,
-    } as const;
+    const drain = { ...healthChanged, healthShare: -0.2 };
 
     expect(getKitHealedHp(drain, combatantMap)).toBe(0);
     expect(getKitHealedHp({ ...drain, healthShare: 0.2 }, new Map())).toBe(0);

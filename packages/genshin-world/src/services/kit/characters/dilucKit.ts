@@ -10,6 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsStrikeOn } from "#src/services/kit/checkIsStrikeOn";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -231,14 +232,7 @@ export const createDilucKitBehaviour = ({
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (combatant.constellationCount < CONSTELLATION_2) return;
       const { characterId } = combatant;
-      const isHit =
-        event.kind === KitEventKind.ShieldAbsorbed
-          ? event.struckCharacterId === characterId
-          : event.kind === KitEventKind.HealthChanged &&
-            event.characterId === characterId &&
-            event.healthShare < 0 &&
-            event.sourceCharacterId === undefined;
-      if (!isHit) return;
+      if (!checkIsStrikeOn(event, characterId)) return;
       if (checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_2_INTERVAL_STATUS_ID)) return;
       addKitStatus(kitEffectState, characterId, {
         id: CONSTELLATION_2_INTERVAL_STATUS_ID,

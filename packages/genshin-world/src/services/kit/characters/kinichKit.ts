@@ -5,9 +5,10 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
@@ -123,7 +124,7 @@ export const createKinichKitBehaviour = ({
       // In the blessing the press is the Scalespiker Cannon, not built, so it does nothing there
       onStart: (context, target) => {
         const { activeCombatant: combatant, kitEffectState } = context;
-        if (checkHasKitNightsoulBlessing(kitEffectState.effects, combatant.characterId)) return;
+        if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, NIGHTSOUL_BLESSING_STATUS_ID)) return;
         enterKitNightsoulBlessing(kitEffectState, combatant.characterId, {
           nightsoulRate: { maximum: NIGHTSOUL_MAXIMUM, perSecond: NIGHTSOUL_POINTS_PER_SECOND },
           points: 0,

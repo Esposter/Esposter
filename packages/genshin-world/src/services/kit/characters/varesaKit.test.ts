@@ -9,7 +9,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createVaresaKitBehaviour, VARESA_CHARACTER_ID } from "#src/services/kit/characters/varesaKit";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { checkHasKitNightsoulBlessing } from "#src/services/kit/effects/checkHasKitNightsoulBlessing";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -116,11 +116,17 @@ describe(createVaresaKitBehaviour, () => {
     expect.hasAssertions();
     const context = createKitTestContext(createVaresaCombatant());
     VARESA_KIT.highPlunge.onStart?.(context);
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, VARESA_CHARACTER_ID)).toBe(false);
+    expect(checkHasKitStatus(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      false,
+    );
     VARESA_KIT.lowPlunge.onStart?.(context);
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, VARESA_CHARACTER_ID)).toBe(true);
+    expect(checkHasKitStatus(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      true,
+    );
     stepKitSeconds(context, 14.9);
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, VARESA_CHARACTER_ID)).toBe(true);
+    expect(checkHasKitStatus(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      true,
+    );
     stepKitSeconds(context, 0.2);
     expect(
       findKitStatus(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID),
@@ -132,7 +138,9 @@ describe(createVaresaKitBehaviour, () => {
     const context = createKitTestContext(createVaresaCombatant());
     VARESA_KIT.elementalBurst.onStart?.(context);
     expect(countKitResource(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(40);
-    expect(checkHasKitNightsoulBlessing(context.kitEffectState.effects, VARESA_CHARACTER_ID)).toBe(true);
+    expect(checkHasKitStatus(context.kitEffectState.effects, VARESA_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID)).toBe(
+      true,
+    );
   });
 
   test("a burst inside the Nightsoul Blessing is the Fiery Passion Flying Kick, and one outside it is her burst", () => {

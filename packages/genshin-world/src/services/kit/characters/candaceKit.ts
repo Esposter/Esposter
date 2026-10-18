@@ -3,7 +3,6 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitShield } from "#src/models/kit/KitShield";
@@ -11,6 +10,7 @@ import type { KitShield } from "#src/models/kit/KitShield";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsStrikeOn } from "#src/services/kit/checkIsStrikeOn";
 import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -59,15 +59,6 @@ const infuse = (kitEffectState: KitEffectState, { characterId, weaponType }: Com
 
 export const CANDACE_CHARACTER_ID = 10_000_072;
 const ASCENSION_1 = 1;
-
-// An enemy's strike on a character: its HP lost with no kit as the source, or a shield on it absorbing a strike. A drown
-// Reads the same as the HP loss, as the record gives it no cause
-const checkIsStrikeOn = (event: KitEvent, characterId: number): boolean =>
-  (event.kind === KitEventKind.HealthChanged &&
-    event.characterId === characterId &&
-    event.healthShare < 0 &&
-    event.sourceCharacterId === undefined) ||
-  (event.kind === KitEventKind.ShieldAbsorbed && event.struckCharacterId === characterId);
 
 // Candace's behaviour: Sacred Rite: Heron's Sanctum's tap and charged hold each cast her shield until their hit lands, and
 // Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on the
