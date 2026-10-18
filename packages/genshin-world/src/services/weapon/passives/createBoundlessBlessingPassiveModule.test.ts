@@ -99,6 +99,8 @@ describe(createBoundlessBlessingPassiveModule, () => {
         bondOfLifeShare: 0,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.5,
+        healthShareBefore: 0.5,
       },
       context,
       wielder,

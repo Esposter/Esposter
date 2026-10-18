@@ -59,6 +59,8 @@ describe(changeKitMemberHealth, () => {
         characterId: MEMBER_ID,
         healthShare: 0.25,
         overflowHealthShare: 0,
+        healthShareAfter: 0.75,
+        healthShareBefore: 0.5,
         sourceCharacterId: SOURCE_ID,
       },
     ]);
@@ -80,6 +82,8 @@ describe(changeKitMemberHealth, () => {
         characterId: MEMBER_ID,
         healthShare: -0.25,
         overflowHealthShare: 0,
+        healthShareAfter: 0.75,
+        healthShareBefore: 1,
         sourceCharacterId: SOURCE_ID,
       },
     ]);
@@ -105,6 +109,8 @@ describe(changeKitMemberHealth, () => {
         characterId: MEMBER_ID,
         healthShare: -0.25,
         overflowHealthShare: 0,
+        healthShareAfter: 0.75,
+        healthShareBefore: 1,
         sourceCharacterId: SOURCE_ID,
       },
     ]);

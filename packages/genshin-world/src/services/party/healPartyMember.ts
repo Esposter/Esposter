@@ -1,3 +1,4 @@
+import type { AttackTag } from "#src/models/combat/AttackTag";
 import type { Party } from "#src/models/party/Party";
 
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -11,6 +12,7 @@ export const healPartyMember = (
   characterId: number,
   healedHealthShare: number,
   sourceCharacterId?: number,
+  attackTag?: AttackTag,
 ): void => {
   const partyMember = getPartyMember(party, characterId);
   if (partyMember.healthShare === 0 || healedHealthShare <= 0) return;
@@ -23,8 +25,11 @@ export const healPartyMember = (
   const healthShare = partyMember.healthShare - previousHealthShare;
   party.healthChanges.push({
     bondOfLifeShare,
+    ...(attackTag === undefined ? {} : { attackTag }),
     characterId,
     healthShare,
+    healthShareAfter: partyMember.healthShare,
+    healthShareBefore: previousHealthShare,
     overflowHealthShare: restoredHealthShare - healthShare,
     ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
   });

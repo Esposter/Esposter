@@ -38,6 +38,8 @@ describe(createSeasonedSymphonyPassiveModule, () => {
     healthShare: 0.2,
     kind: KitEventKind.HealthChanged as const,
     overflowHealthShare: 0,
+    healthShareAfter: 0.7,
+    healthShareBefore: 0.5,
     sourceCharacterId,
   });
 

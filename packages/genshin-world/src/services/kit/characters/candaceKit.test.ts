@@ -266,6 +266,8 @@ describe(createCandaceKitBehaviour, () => {
     healthShare: -0.1,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
+    healthShareAfter: 0.4,
+    healthShareBefore: 0.5,
   });
   const strikeOnKuki = (): KitEvent => ({
     bondOfLifeShare: 0,
@@ -273,6 +275,8 @@ describe(createCandaceKitBehaviour, () => {
     healthShare: -0.1,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
+    healthShareAfter: 0.4,
+    healthShareBefore: 0.5,
   });
 
   test("the Ascension 1 passive, Aegis of Crossed Arrows, takes effect at its ascension phase", () => {

@@ -37,6 +37,8 @@ describe(createAeonWavePassiveModule, () => {
     healthShare: 0.1,
     kind: KitEventKind.HealthChanged as const,
     overflowHealthShare: 0,
+    healthShareAfter: 0.6,
+    healthShareBefore: 0.5,
   };
 
   test("a change in the wielder's HP adds a stack of Charged Attack DMG for four seconds", () => {

@@ -201,6 +201,8 @@ describe("Ascension 1's counter window", () => {
         healthShare: -0.1,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
+        healthShareAfter: 0.4,
+        healthShareBefore: 0.5,
       },
       context,
       combatant,

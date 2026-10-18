@@ -131,6 +131,8 @@ describe(createFurinaKitBehaviour, () => {
       bondOfLifeShare: 0,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
+      healthShareAfter: 0.4,
+      healthShareBefore: 0.5,
     };
     const readFanfare = (): number | undefined =>
       findKitStatus(kitEffectState.effects, FURINA_CHARACTER_ID, "furina-fanfare")?.stacks;
@@ -174,6 +176,8 @@ describe(createFurinaKitBehaviour, () => {
       bondOfLifeShare: 0,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0.1,
+      healthShareAfter: 0.5,
+      healthShareBefore: 0.5,
       sourceCharacterId: TEAMMATE_CHARACTER_ID,
     };
     FURINA_KIT.onKitEvent?.(overheal, context, furina);
@@ -205,6 +209,8 @@ describe(createFurinaKitBehaviour, () => {
         bondOfLifeShare: 0,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0.1,
+        healthShareAfter: 0.5,
+        healthShareBefore: 0.5,
         sourceCharacterId: TEAMMATE_CHARACTER_ID,
       },
       context,

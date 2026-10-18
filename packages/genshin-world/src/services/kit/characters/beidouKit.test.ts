@@ -37,6 +37,8 @@ const createDamageTakenEvent = (characterId: number): KitHealthChangedEvent => (
   bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
+  healthShareAfter: 0.4,
+  healthShareBefore: 0.5,
 });
 // The extra hit a normal attack of Beidou's adds after its hit, as the kit's hook gives it at the attack's first hit
 const getStunningRevengeHit = (combatant: Combatant, activeCombatant: Combatant, kitEffectState: KitEffectState) =>

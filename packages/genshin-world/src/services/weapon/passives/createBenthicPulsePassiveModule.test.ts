@@ -29,6 +29,8 @@ const healthGained: KitEvent = {
   bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
+  healthShareAfter: 1,
+  healthShareBefore: 0.5,
 };
 
 describe(createBenthicPulsePassiveModule, () => {

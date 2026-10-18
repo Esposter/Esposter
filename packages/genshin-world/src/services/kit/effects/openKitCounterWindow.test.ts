@@ -29,6 +29,8 @@ const createStrike = (healthShare: number, sourceCharacterId?: number): KitHealt
   healthShare,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
+  healthShareAfter: 0.5,
+  healthShareBefore: 0.5,
   ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
 });
 

@@ -29,6 +29,8 @@ const createEnemyStrikeLoss = () => ({
   bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged as const,
   overflowHealthShare: 0,
+  healthShareAfter: 0.4,
+  healthShareBefore: 0.5,
 });
 
 describe(createItinerantHeroPassiveModule, () => {

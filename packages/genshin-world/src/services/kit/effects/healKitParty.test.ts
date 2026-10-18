@@ -3,6 +3,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -119,5 +120,25 @@ describe(healKitParty, () => {
       0.5 + (healParty.attackShare * striker.attributes.attack) / striker.attributes.maxHealth,
       5,
     );
+  });
+
+  test("the heal carries the attack tag of the strike that rolled it", () => {
+    expect.hasAssertions();
+    const noelle = createCombatant(NOELLE_CHARACTER_ID, 10_000);
+    const party = createParty([NOELLE_CHARACTER_ID]);
+    getPartyMember(party, NOELLE_CHARACTER_ID).healthShare = 0.5;
+    healKitParty(
+      createKitTestContext(noelle, {
+        characterIdCombatantMap: new Map([[NOELLE_CHARACTER_ID, noelle]]),
+        kitEffectState: { effects: [SHIELD] },
+        party,
+      }),
+      noelle,
+      noelle,
+      { ...NOELLE_HIT, healParty: { chance: () => 1, defenseShare: 0, flatHealth: 100 } },
+      AttackTag.NormalAttack,
+    );
+
+    expect(party.healthChanges.map(({ attackTag }) => attackTag)).toStrictEqual([AttackTag.NormalAttack]);
   });
 });

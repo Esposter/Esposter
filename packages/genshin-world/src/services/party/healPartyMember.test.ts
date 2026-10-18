@@ -1,3 +1,4 @@
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -14,7 +15,15 @@ describe(healPartyMember, () => {
 
     expect({ healthChanges: party.healthChanges, healthShare: getPartyMember(party, 1).healthShare }).toStrictEqual({
       healthChanges: [
-        { bondOfLifeShare: 0, characterId: 1, healthShare: 0.5, overflowHealthShare: 0.25, sourceCharacterId: 2 },
+        {
+          bondOfLifeShare: 0,
+          characterId: 1,
+          healthShare: 0.5,
+          healthShareAfter: 1,
+          healthShareBefore: 0.5,
+          overflowHealthShare: 0.25,
+          sourceCharacterId: 2,
+        },
       ],
       healthShare: 1,
     });
@@ -48,7 +57,16 @@ describe(healPartyMember, () => {
       healthShare: partyMember.healthShare,
     }).toStrictEqual({
       bondOfLifeShare: 0,
-      healthChanges: [{ bondOfLifeShare: 0.25, characterId: 1, healthShare: 0.25, overflowHealthShare: 0 }],
+      healthChanges: [
+        {
+          bondOfLifeShare: 0.25,
+          characterId: 1,
+          healthShare: 0.25,
+          healthShareAfter: 0.75,
+          healthShareBefore: 0.5,
+          overflowHealthShare: 0,
+        },
+      ],
       healthShare: 0.75,
     });
   });
@@ -68,7 +86,16 @@ describe(healPartyMember, () => {
       healthShare: partyMember.healthShare,
     }).toStrictEqual({
       bondOfLifeShare: 0.25,
-      healthChanges: [{ bondOfLifeShare: 0.25, characterId: 1, healthShare: 0, overflowHealthShare: 0 }],
+      healthChanges: [
+        {
+          bondOfLifeShare: 0.25,
+          characterId: 1,
+          healthShare: 0,
+          healthShareAfter: 0.5,
+          healthShareBefore: 0.5,
+          overflowHealthShare: 0,
+        },
+      ],
       healthShare: 0.5,
     });
   });
@@ -87,5 +114,26 @@ describe(healPartyMember, () => {
       bondOfLifeClearedShare: partyMember.bondOfLifeClearedShare,
       bondOfLifeShare: partyMember.bondOfLifeShare,
     }).toStrictEqual({ bondOfLifeClearedShare: 0.5, bondOfLifeShare: 0 });
+  });
+
+  test("records the member's HP before and after the heal, and the attack that healed it", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1, 2]);
+    getPartyMember(party, 1).healthShare = 0.5;
+    healPartyMember(party, 1, 0.25, 2, AttackTag.NormalAttack);
+
+    expect(party.healthChanges).toStrictEqual([
+      {
+        attackTag: AttackTag.NormalAttack,
+        bondOfLifeShare: 0,
+        characterId: 1,
+        healthShare: 0.25,
+        healthShareAfter: 0.75,
+        healthShareBefore: 0.5,
+        overflowHealthShare: 0,
+        sourceCharacterId: 2,
+      },
+    ]);
   });
 });

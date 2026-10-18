@@ -163,7 +163,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, enemyHit);
       healKitStriker(context, combatant, pricedCombatant, enemyHit);
       enemyHit.onStrike?.(context, strike, enemy);
-      if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, enemyHit);
+      if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, enemyHit, strike.attackTag);
       addPolestarField(kitEffectState, combatant.characterId, reactions, body.position);
       if (reactions.some(({ reactionType }) => reactionType === ReactionType.StellarSwirl))
         strikeStellarReaction(

@@ -34,6 +34,8 @@ const createEnemyStrikeLoss = () => ({
   bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged as const,
   overflowHealthShare: 0,
+  healthShareAfter: 0.4,
+  healthShareBefore: 0.5,
 });
 
 describe(createFalconsDefiancePassiveModule, () => {
@@ -50,6 +52,8 @@ describe(createFalconsDefiancePassiveModule, () => {
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: wielder.attributes.attack / wielder.attributes.maxHealth,
         overflowHealthShare: 0,
+        healthShareAfter: 0.625,
+        healthShareBefore: 0.5,
         sourceCharacterId: TRAVELER_CHARACTER_ID,
       },
     ]);

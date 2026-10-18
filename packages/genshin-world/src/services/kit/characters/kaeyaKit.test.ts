@@ -66,6 +66,8 @@ const drainKaeya = (combatant: Combatant, context: KitContext, remainingHealthSh
       bondOfLifeShare: 0,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
+      healthShareAfter: 0.25,
+      healthShareBefore: 0.5,
     },
     context,
     combatant,

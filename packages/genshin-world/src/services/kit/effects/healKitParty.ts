@@ -1,3 +1,4 @@
+import type { AttackTag } from "#src/models/combat/AttackTag";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -13,6 +14,7 @@ export const healKitParty = (
   combatant: Combatant,
   pricedCombatant: Combatant,
   kitHit: KitHit,
+  attackTag?: AttackTag,
 ): boolean => {
   const { healParty } = kitHit;
   if (!healParty) return false;
@@ -33,6 +35,6 @@ export const healKitParty = (
     healParty.defenseShare * pricedCombatant.attributes.defense +
     (healParty.attackShare ?? 0) * pricedCombatant.attributes.attack +
     (healParty.maxHealthShare ?? 0) * pricedCombatant.attributes.maxHealth;
-  changeKitTeamHealth(context, combatant, healedHp);
+  changeKitTeamHealth(context, combatant, healedHp, attackTag);
   return true;
 };

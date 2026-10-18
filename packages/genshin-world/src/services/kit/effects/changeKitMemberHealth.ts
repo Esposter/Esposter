@@ -1,3 +1,4 @@
+import type { AttackTag } from "#src/models/combat/AttackTag";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
@@ -17,6 +18,7 @@ export const changeKitMemberHealth = (
   source: Combatant,
   characterId: number,
   health: number,
+  attackTag?: AttackTag,
 ): void => {
   const member = characterIdCombatantMap.get(characterId);
   if (!member) return;
@@ -42,5 +44,6 @@ export const changeKitMemberHealth = (
     characterId,
     (health * (1 + healingBonus + incomingHealingBonus)) / maxHealth,
     source.characterId,
+    attackTag,
   );
 };

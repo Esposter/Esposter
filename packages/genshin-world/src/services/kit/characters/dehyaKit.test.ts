@@ -41,6 +41,8 @@ const drainDehya = (ascension: number): { context: KitContext; partyMember: Part
       bondOfLifeShare: 0,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
+      healthShareAfter: 0.4,
+      healthShareBefore: 0.5,
     },
     context,
     combatant,

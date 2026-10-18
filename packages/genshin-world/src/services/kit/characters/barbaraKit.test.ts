@@ -71,6 +71,8 @@ const reportJeanFall = (combatant: Combatant, party: Party, kitEffectState: KitE
       bondOfLifeShare: 0,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
+      healthShareAfter: 0,
+      healthShareBefore: 1,
     },
     createKitTestContext({ ...combatant, characterId: JEAN_CHARACTER_ID }, { kitEffectState, party }),
     combatant,
