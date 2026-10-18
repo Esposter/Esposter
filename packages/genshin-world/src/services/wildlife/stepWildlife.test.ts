@@ -78,7 +78,7 @@ describe(stepWildlife, () => {
     expect(wildlife.state).toBe(WildlifeState.Idle);
   });
 
-  test("a struck animal stays where it fell", () => {
+  test("a struck animal does not flee", () => {
     expect.hasAssertions();
 
     const wildlife = createNearWildlife();

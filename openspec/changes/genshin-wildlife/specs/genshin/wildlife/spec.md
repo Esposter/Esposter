@@ -17,7 +17,7 @@ A bird or beast struck down SHALL give its item drops once, where it fell, and S
 - **WHEN** the player strikes it again
 - **THEN** no drop is given
 
-#### Scenario: A struck animal stays where it fell
+#### Scenario: A struck animal does not flee
 
 - **GIVEN** an animal struck down within the player's reach
 - **WHEN** the player stays near it
