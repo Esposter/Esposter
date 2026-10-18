@@ -67,6 +67,7 @@ export const MAX_OFFERING_ITEM_KIND_COUNT = 8;
 export const MAX_ARCHIVE_ENTRY_COUNT = 4096;
 // The Living Beings the Archive counts defeats of, one entry each, bounded by the codex's rows with room to spare
 export const MAX_ARCHIVE_KILL_COUNT = 4096;
+export const MAX_SHOWN_TIP_COUNT = 4096;
 // The enemies a player defeats in the camps with no boss among them, one entry each, bounded by the 7421 enemy members
 // The mapped regions' data holds, counted on 2026-10-18, with room to spare
 export const MAX_ENEMY_RESPAWN_COUNT = 8192;
@@ -258,6 +259,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_OFFERING_ITEM_KIND_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   Object.keys(ArchiveSection).length * MAX_ARCHIVE_ENTRY_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ARCHIVE_KILL_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
+  MAX_SHOWN_TIP_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_WISH_HISTORY_COUNT *
     getListEntryLength({ bannerKind: LONGEST_BANNER_KIND, itemId: MAX_SAVE_NUMBER, time: MAX_SAVE_INSTANT }) +
   MAX_INVENTORY_ITEM_COUNT * LONGEST_INVENTORY_ITEM_LENGTH;
@@ -300,6 +302,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   reputation: EMPTY_REPUTATION_SAVE,
   shopPurchases: [],
   statues: { foundOculusIds: [], regions: {} },
+  tips: { shown: [] },
   travelerName: "",
   unlockedLandmarks: [],
   wallet: {

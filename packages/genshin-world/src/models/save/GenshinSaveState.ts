@@ -59,6 +59,7 @@ export interface GenshinSaveState {
   reputation: ReputationProgress;
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];
+  shownTipIds: ReadonlySet<number>;
   solvedPuzzleIds: ReadonlySet<string>;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;

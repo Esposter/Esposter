@@ -131,6 +131,14 @@ describe(mergeGenshinSave, () => {
     });
   });
 
+  test("keeps a tip shown on either copy shown after the merge", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, tips: { shown: [1001] } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, tips: { shown: [1002, 1001] } };
+
+    expect(mergeGenshinSave(account, guest).tips).toStrictEqual({ shown: [1001, 1002] });
+  });
+
   test("unions the settled Seelies and the solved puzzles of both copies", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, puzzles: { settledSeelieIds: [SEELIE_ID], solvedPuzzleIds: [PUZZLE_ID] } };

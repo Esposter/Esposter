@@ -252,6 +252,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     statues: mergeStatueProgress(account.statues, guest.statues),
+    tips: { shown: [...new Set([...account.tips.shown, ...guest.tips.shown])] },
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],
     wallet: {

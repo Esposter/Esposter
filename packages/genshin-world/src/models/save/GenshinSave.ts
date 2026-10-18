@@ -22,6 +22,7 @@ import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
 import { shopPurchaseSaveSchema } from "#src/models/shop/ShopPurchaseSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
+import { tipSaveSchema } from "#src/models/tip/TipSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import {
@@ -73,6 +74,8 @@ export const genshinSaveSchema = z
     shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT).default([]),
     // The statues' progress in each region, and the Oculi found
     statues: statueProgressSaveSchema,
+    // The tips the world has shown, each once by its id
+    tips: tipSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,
