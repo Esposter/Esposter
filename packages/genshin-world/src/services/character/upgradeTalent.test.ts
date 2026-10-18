@@ -84,4 +84,16 @@ describe(upgradeTalent, () => {
       `[InvalidOperationError: Invalid operation: Update, name: upgradeTalent, 500 Mora]`,
     );
   });
+
+  test("refuses a level whose items the bag lacks", () => {
+    expect.hasAssertions();
+    expect(() =>
+      upgradeTalent(CHARACTER, CombatTalent.NormalAttack, UPGRADES, {
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 },
+        wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: upgradeTalent, materials for NormalAttack]`,
+    );
+  });
 });
