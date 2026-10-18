@@ -1,6 +1,7 @@
 import type { ArchiveData } from "#src/models/archive/ArchiveData";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
+import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
@@ -183,6 +184,18 @@ export const useWorldPickups = ({
   };
   // The ores a character's hit reaches are struck: each standing ore in the hit's area takes the hit's share, and one that
   // Breaks drops its pieces where it lies and is kept as picked at the instant it broke
+  // An ore's break: its drops are placed where it stood and counted as obtained. The gathering ores and the mining
+  // Outcrops break alike
+  const breakOre = ({ id, kind, position }: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => {
+    const dropCount = rollOreDropCount(random);
+    placeWorldDrops(
+      { id, position },
+      Array.from({ length: dropCount }, () => ({ count: 1, itemId: kind })),
+    );
+    events.emit("achievementEvents", [
+      { kind: AchievementEventKind.MaterialObtained, quantity: dropCount, targetId: String(kind) },
+    ]);
+  };
   const strikeGatheringOres = (body: KitBody, hit: OreHit, random: () => number) => {
     const now = getWorldNow();
     for (const { id, kind, position } of gatheringPlaces.value) {
@@ -200,20 +213,14 @@ export const useWorldPickups = ({
         oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value, [id, brokenShare]]);
         continue;
       }
-      const dropCount = rollOreDropCount(random);
-      placeWorldDrops(
-        { id, position },
-        Array.from({ length: dropCount }, () => ({ count: 1, itemId: kind })),
-      );
-      events.emit("achievementEvents", [
-        { kind: AchievementEventKind.MaterialObtained, quantity: dropCount, targetId: String(kind) },
-      ]);
+      breakOre({ id, kind, position }, random);
       gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [id, now]]);
       oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value].filter(([oreId]) => oreId !== id));
     }
   };
   return {
     bagFullHint,
+    breakOre,
     materialSources,
     pickUpGatheringPlace,
     pickUpInteractables,

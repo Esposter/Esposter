@@ -1,18 +1,13 @@
-import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { KitBody } from "#src/models/kit/KitBody";
-import type { WorldDrop } from "#src/models/world/WorldDrop";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
-import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { computeDailyMiningOutcrops } from "#src/services/gathering/computeDailyMiningOutcrops";
 import { computeStandingMiningOutcrops } from "#src/services/gathering/computeStandingMiningOutcrops";
 import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPoiseMap";
 import { readMiningOutcropPlaces } from "#src/services/gathering/readMiningOutcropPlaces";
-import { rollOreDropCount } from "#src/services/gathering/rollOreDropCount";
 import { strikeOre } from "#src/services/gathering/strikeOre";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { checkIsOutcropDayCurrent } from "#src/services/leyLine/checkIsOutcropDayCurrent";
@@ -25,17 +20,15 @@ import { shallowRef } from "vue";
 // Its outcrops to stand at them until the next reset. A strike breaks one like an ore, dropping its Magical Crystal Chunks
 // And leaving it gone until the next reset's draw
 export const useMiningOutcrops = ({
-  events,
+  breakOre,
   gameDataBaseUrl,
   getWorldNow,
-  placeWorldDrops,
   rank,
   regionIds,
 }: {
-  events: WorldEvents;
+  breakOre: (place: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => void;
   gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
-  placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   rank: Readonly<Ref<number>>;
   regionIds: Readonly<Ref<string[]>>;
 }) => {
@@ -100,14 +93,7 @@ export const useMiningOutcrops = ({
         brokenShareMap.value = new Map([...brokenShareMap.value, [id, brokenShare]]);
         continue;
       }
-      const dropCount = rollOreDropCount(random);
-      placeWorldDrops(
-        { id, position },
-        Array.from({ length: dropCount }, () => ({ count: 1, itemId: kind })),
-      );
-      events.emit("achievementEvents", [
-        { kind: AchievementEventKind.MaterialObtained, quantity: dropCount, targetId: String(kind) },
-      ]);
+      breakOre({ id, kind, position }, random);
       minedAtMap.value = new Map([...minedAtMap.value, [id, now]]);
       brokenShareMap.value = new Map([...brokenShareMap.value].filter(([oreId]) => oreId !== id));
       standingMiningOutcrops.value = standingMiningOutcrops.value.filter((place) => place.id !== id);
