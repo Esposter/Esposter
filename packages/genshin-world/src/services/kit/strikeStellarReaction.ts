@@ -29,7 +29,9 @@ export const strikeStellarReaction = (
   // A Stellar reaction its creator makes takes the party's reaction bonuses: the DMG Bonus with the Glimmer's, and the flat
   // Base once, before the enemy's RES as strikeReactionDamage takes it. A hit that names no reaction, a Stellar Vortex's, takes none
   const bonuses =
-    owner && reactionType ? getDeployedReactionBonuses({ combatant: owner, reactionType }, context) : undefined;
+    owner && reactionType
+      ? getDeployedReactionBonuses({ combatant: owner, element, reactionType }, context)
+      : undefined;
   const damages = priceReactionContributors(
     contributorIds,
     context,
@@ -41,7 +43,7 @@ export const strikeStellarReaction = (
         0,
         attributeTotalMap[Attribute.StellarGlimmerReactionDamageBonus] + (bonuses?.damageBonus ?? 0),
       ),
-    reactionType,
+    reactionType ? { element, reactionType } : undefined,
   );
   if (damages.length === 0) return false;
   strikeReactionDamage(

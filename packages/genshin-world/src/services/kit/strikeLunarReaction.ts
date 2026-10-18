@@ -27,6 +27,7 @@ export const strikeLunarReaction = (
   context: KitContext,
 ): boolean => {
   const { characterIdCombatantMap, kitEffectState, party } = context;
+  const element = LunarReactionElementMap[lunarReactionType];
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   const damages = priceReactionContributors(
     contributorIds,
@@ -39,15 +40,9 @@ export const strikeLunarReaction = (
         moonsign.baseDamageBonusMap[lunarReactionType] ?? 0,
         moonsign.reactionBonus + partyDamageBonus,
       ),
-    lunarReactionType,
+    { element, reactionType: lunarReactionType },
   );
   if (damages.length === 0) return false;
-  strikeReactionDamage(
-    enemy,
-    LunarReactionElementMap[lunarReactionType],
-    sumLunarContributions(damages),
-    owner,
-    context,
-  );
+  strikeReactionDamage(enemy, element, sumLunarContributions(damages), owner, context);
   return true;
 };

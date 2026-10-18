@@ -48,6 +48,40 @@ describe(priceEnemyReactions, () => {
     );
   });
 
+  test("a Swirl's party reaction bonus is read with the element the Swirl absorbed", () => {
+    expect.hasAssertions();
+    const creator = createCombatant({
+      ...TRAVELER_KIT,
+      getPartyReactionBonus: (_member, { element }) => (element === Element.Hydro ? { damageBonus: 0.6 } : {}),
+    });
+    const context = createKitTestContext(creator, { enemyTables });
+    const hydroSwirl = { element: Element.Hydro, reactionType: TransformativeReactionType.Swirl };
+
+    const { transformativeDamage: hydroSwirlDamage } = priceEnemyReactions(
+      kind,
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      [hydroSwirl],
+      creator,
+      Element.Anemo,
+      context,
+    );
+    const { transformativeDamage: pyroSwirlDamage } = priceEnemyReactions(
+      kind,
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      [swirl],
+      creator,
+      Element.Anemo,
+      context,
+    );
+
+    expect(hydroSwirlDamage).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Swirl, LEVEL, 0, kind.elementResistances[Element.Hydro], 0.6),
+    );
+    expect(pyroSwirlDamage).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Swirl, LEVEL, 0, kind.elementResistances[Element.Pyro]),
+    );
+  });
+
   test("a transformative reaction its strike triggers takes its creator's party reaction flat base before the enemy's RES", () => {
     expect.hasAssertions();
     const creator = createCombatant({

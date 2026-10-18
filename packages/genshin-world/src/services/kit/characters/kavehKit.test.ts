@@ -5,6 +5,7 @@ import type { KitStance } from "#src/models/kit/KitStance";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKavehKitBehaviour, KAVEH_CHARACTER_ID } from "#src/services/kit/characters/kavehKit";
@@ -92,8 +93,11 @@ describe(createKavehKitBehaviour, () => {
   test("a Constellation 4 Kaveh's Bloom DMG bonus is 60% on the Bloom he makes, and none on another reaction", () => {
     expect.hasAssertions();
     const bloomDamageBonus = (member: Combatant, reactionType: TransformativeReactionType) =>
-      KAVEH_KIT.getPartyReactionBonus?.(member, { combatant: member, reactionType }, createKitTestContext(member))
-        ?.damageBonus ?? 0;
+      KAVEH_KIT.getPartyReactionBonus?.(
+        member,
+        { combatant: member, element: Element.Dendro, reactionType },
+        createKitTestContext(member),
+      )?.damageBonus ?? 0;
     expect([
       bloomDamageBonus({ ...createKavehCombatant(), constellationCount: 3 }, TransformativeReactionType.Bloom),
       bloomDamageBonus({ ...createKavehCombatant(), constellationCount: 4 }, TransformativeReactionType.Bloom),
@@ -109,7 +113,7 @@ describe(createKavehKitBehaviour, () => {
     expect(
       KAVEH_KIT.getPartyReactionBonus?.(
         kaveh,
-        { combatant: teammate, reactionType: TransformativeReactionType.Bloom },
+        { combatant: teammate, element: Element.Dendro, reactionType: TransformativeReactionType.Bloom },
         createKitTestContext(kaveh),
       )?.damageBonus ?? 0,
     ).toBe(0);

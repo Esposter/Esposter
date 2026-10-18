@@ -1,6 +1,7 @@
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -64,7 +65,7 @@ describe(landReactionReach, () => {
 
     const origin = createSturdyEnemy(0);
     const near = createSturdyEnemy(3);
-    const getPartyReactionBonus = vi.fn(() => ({}));
+    const getPartyReactionBonus = vi.fn<NonNullable<Kit["getPartyReactionBonus"]>>(() => ({}));
     const blooming: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, getPartyReactionBonus } };
     const bloomContext = createKitTestContext(blooming, { enemyTables });
     const bloom: TransformativeReaction = { element: Element.Dendro, reactionType: TransformativeReactionType.Bloom };
@@ -72,8 +73,8 @@ describe(landReactionReach, () => {
     landReactionReach(bloomContext, origin, [origin, near], bloom, blooming);
 
     expect(getPartyReactionBonus).toHaveBeenCalledWith(
-      expect.objectContaining({ characterId: combatant.characterId }),
-      { combatant: blooming, reactionType: TransformativeReactionType.Bloom },
+      { ...blooming, isOnField: true },
+      { combatant: blooming, element: Element.Dendro, reactionType: TransformativeReactionType.Bloom },
       bloomContext,
     );
   });

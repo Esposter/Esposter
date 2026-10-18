@@ -56,7 +56,7 @@ export const landReactionReach = (
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
   // The reaction's party bonuses, its creator's own kit's among them, as the team's hooks read it
   const { additiveBaseDamageBonus: reactionAdditiveBaseDamageBonus, damageBonus } = getDeployedReactionBonuses(
-    { combatant, reactionType },
+    { combatant, element, reactionType },
     context,
   );
   const reactionBonus = damageBonus + teamReactionBonus;

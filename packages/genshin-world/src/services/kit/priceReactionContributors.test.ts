@@ -31,7 +31,10 @@ describe(priceReactionContributors, () => {
   });
   const price = () => DAMAGE;
   const priceWith = (context: KitContext, reactionType: LunarReactionType | StellarReactionType) =>
-    priceReactionContributors(new Set([TRAVELER_CHARACTER_ID]), context, price, reactionType);
+    priceReactionContributors(new Set([TRAVELER_CHARACTER_ID]), context, price, {
+      element: Element.Electro,
+      reactionType,
+    });
 
   test("a Lunar contributor's CRIT Rate and CRIT DMG take the party reaction bonus that reads its share", () => {
     expect.hasAssertions();
