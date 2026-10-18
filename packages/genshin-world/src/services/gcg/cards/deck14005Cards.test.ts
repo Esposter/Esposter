@@ -29,6 +29,14 @@ const TRUMP_CARD_KITTY_SKILL: GcgSkill = {
   kind: GcgSkillKind.ElementalBurst,
 };
 
+const FLORAL_BRUSH_SKILL: GcgSkill = {
+  costs: [],
+  effect: "Char_Skill_17012",
+  energyGain: 1,
+  id: 17_012,
+  kind: GcgSkillKind.ElementalSkill,
+};
+
 const createCharacterState = (id: number): GcgCharacterState => ({
   aura: GcgAura.None,
   character: {
@@ -93,6 +101,18 @@ describe("cuilein-Anbar", () => {
     runGcgEndPhase(duel);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 2, FULL_HP]);
     expect(zoneCard.usages).toBe(1);
+  });
+});
+
+describe("floral Brush", () => {
+  test("the skill deals 3 Dendro", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(COLLEI_ID)]),
+      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
   });
 });
 
