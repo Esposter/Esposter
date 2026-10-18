@@ -71,6 +71,19 @@ describe("menuPaimon", () => {
       .toBeDisabled();
   });
 
+  test("version Highlights and Survey show as disabled entries", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props });
+
+    await expect
+      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.VersionHighlights], exact: true }))
+      .toBeDisabled();
+    await expect
+      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Survey], exact: true }))
+      .toBeDisabled();
+  });
+
   test("training Guide is absent from the contents", async () => {
     expect.hasAssertions();
 
@@ -98,7 +111,13 @@ describe("menuPaimon", () => {
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.QuitGame], exact: true }).click();
 
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.ContinueGame], exact: true }))
+      .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.QuitConfirmQuestion], { exact: true }))
+      .toBeInTheDocument();
+    await expect
+      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Cancel], exact: true }))
+      .toBeInTheDocument();
+    await expect
+      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Confirm], exact: true }))
       .toBeInTheDocument();
   });
 });
