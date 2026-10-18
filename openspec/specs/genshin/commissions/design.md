@@ -55,7 +55,7 @@ The three daily task tables are fetched rather than read from the dump, as the [
 - **A quest task's finish.** Its quest's completion emits `finishQuest`, and `advanceCommissionForQuest` advances the dealt task by it, but no session holds a dealt day to hear the event yet.
 - **Finishing counts.** `advanceCommission` counts a doing against a commission, but no defeat, gadget or challenge event is fed to it yet.
 - **Regions' pools joining.** Each region's pool joins the deal once its quest is done. The dump names the opening quest of Mondstadt, Liyue, Inazuma and Sumeru only, and its city 8 has no region name yet, so the other regions wait on the dump.
-- **Encounter Points' sources.** Quests, chests and certain items give them, and none of those give them yet.
+- **Encounter Points' sources.** A finished Archon or Story quest gives four, held up to the storage of four less one for each daily commission finished, which `computeEncounterPointStorage` reads. Chests and certain items give none yet.
 
 ## Key files
 

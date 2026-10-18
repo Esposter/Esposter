@@ -100,3 +100,25 @@ A commission claim SHALL send its Mora to the player's wallet, its items to the 
 - **WHEN** the player claims a further commission
 - **THEN** no Mora, items or Companionship EXP are granted
 - **AND** the claim is not recorded
+
+### Requirement: Quest Earns Encounter Points
+
+A finished Archon quest or Story quest SHALL earn four Encounter Points, held up to the storage, which falls by one Encounter Point for each daily commission finished that day. Points earned before the latest daily reset SHALL NOT be held.
+
+#### Scenario: a finished Archon quest earns four Encounter Points
+
+- **GIVEN** no Encounter Points held and no commission finished
+- **WHEN** an Archon quest completes
+- **THEN** four Encounter Points are held
+
+#### Scenario: the storage shrinks by one for each daily commission finished
+
+- **GIVEN** two of the day's commissions finished
+- **WHEN** a Story quest completes
+- **THEN** two Encounter Points are held, not four
+
+#### Scenario: Encounter Points earned before the daily reset are gone
+
+- **GIVEN** Encounter Points held from before the latest daily reset
+- **WHEN** the player reads them after that reset
+- **THEN** none are held

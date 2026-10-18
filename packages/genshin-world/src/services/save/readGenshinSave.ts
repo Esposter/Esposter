@@ -7,6 +7,7 @@ import { toAchievementProgressMap } from "#src/services/save/toAchievementProgre
 import { toArchiveProgressMap } from "#src/services/save/toArchiveProgressMap";
 import { toCharacters } from "#src/services/save/toCharacters";
 import { toCommissionDay } from "#src/services/save/toCommissionDay";
+import { toEncounterPoints } from "#src/services/save/toEncounterPoints";
 import { toInventory } from "#src/services/save/toInventory";
 import { toParty } from "#src/services/save/toParty";
 import { toProcessingJobs } from "#src/services/save/toProcessingJobs";
@@ -28,6 +29,7 @@ export const readGenshinSave = (
     companionshipExp,
     cooking,
     crafting,
+    encounterPoints,
     enemyRespawns,
     homePlacements,
     inventory,
@@ -69,6 +71,7 @@ export const readGenshinSave = (
       Object.entries(crafting.craftedCounts).map(([recipeId, count]) => [Number(recipeId), count]),
     ),
     craftingProgress: { learnedRecipeIds: crafting.learnedRecipeIds },
+    encounterPoints: toEncounterPoints(encounterPoints),
     enemyRespawnMap: new Map(Object.entries(enemyRespawns)),
     foundOculusIds: new Set(statues.foundOculusIds),
     frostbearingTreeProgress: offerings.frostbearingTree,

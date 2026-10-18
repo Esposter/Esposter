@@ -5,6 +5,7 @@ import { archiveSaveSchema } from "#src/models/archive/ArchiveSave";
 import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
+import { encounterPointsSaveSchema } from "#src/models/commission/EncounterPointsSave";
 import { cookingSaveSchema } from "#src/models/cooking/CookingSave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
@@ -55,6 +56,8 @@ export const genshinSaveSchema = z
     // The cooking: the dishes learned, each dish's proficiency and each processing's queue, each by its id
     cooking: cookingSaveSchema,
     crafting: craftingSaveSchema,
+    // The Encounter Points held and the daily reset they were earned on, with no default, as the other slices have none
+    encounterPoints: encounterPointsSaveSchema,
     // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
     // On the server's clock
     enemyRespawns: enemyRespawnSaveSchema,

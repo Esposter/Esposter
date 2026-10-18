@@ -9,7 +9,7 @@ import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
-import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
@@ -158,6 +158,7 @@ describe("genshinSaveSchema", () => {
         ),
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
       },
+      encounterPoints: { earnedOn: maxInstant, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
       enemyRespawns: Object.fromEntries(
         Array.from({ length: MAX_ENEMY_RESPAWN_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

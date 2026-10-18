@@ -3,6 +3,7 @@ import type { WorldLevelAdjustmentSave } from "#src/models/adventureRank/WorldLe
 import type { ArchiveSave } from "#src/models/archive/ArchiveSave";
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave";
+import type { EncounterPointsSave } from "#src/models/commission/EncounterPointsSave";
 import type { ProcessingJobSave } from "#src/models/cooking/ProcessingJobSave";
 import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
@@ -154,6 +155,16 @@ const checkIsLaterWorldLevelAdjustment = (
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
   Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
 
+// The Encounter Points of the later daily reset are the ones the player holds, and on the same reset the larger count is
+const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPointsSave): EncounterPointsSave => {
+  const order = Temporal.Instant.compare(
+    Temporal.Instant.from(account.earnedOn),
+    Temporal.Instant.from(guest.earnedOn),
+  );
+  if (order === 0) return { ...account, halfPoints: Math.max(account.halfPoints, guest.halfPoints) };
+  return order > 0 ? account : guest;
+};
+
 // The camps both copies cleared, each once, since a camp cleared stays cleared
 const mergeClearedCamps = (account: ClearedCamp[], guest: ClearedCamp[]): ClearedCamp[] => [
   ...new Map([...account, ...guest].map((camp) => [camp.id, camp])).values(),
@@ -224,6 +235,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
       : account.commissionDay,
+    encounterPoints: mergeEncounterPoints(account.encounterPoints, guest.encounterPoints),
     companionshipExp,
     cooking: {
       learnedRecipeIds: [...new Set([...account.cooking.learnedRecipeIds, ...guest.cooking.learnedRecipeIds])],

@@ -11,7 +11,7 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
-import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
@@ -175,6 +175,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   clearedCamps: [],
   clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
+  encounterPoints: { earnedOn: MAX_SAVE_INSTANT, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
   companionshipExp: {},
   cooking: { learnedRecipeIds: [], processingJobs: {}, proficiencies: {} },
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
@@ -286,6 +287,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   clearedCamps: [],
   clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
+  encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 0 },
   companionshipExp: {},
   cooking: { learnedRecipeIds: [], processingJobs: {}, proficiencies: {} },
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
