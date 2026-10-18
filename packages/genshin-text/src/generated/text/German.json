@@ -73,6 +73,7 @@
   "1737243758": "Warnung: Vor dem Spielen unbedingt lesen!",
   "1747175596": "Brocken weißes Eisen",
   "1761418508": "Trauerblume",
+  "1809596508": "Verarbeitung starten",
   "1823058028": "Frostglocke",
   "1859043748": "Beryllmuschel",
   "1860729186": "Zum Aktivieren drücken",
@@ -379,6 +380,7 @@
   "UI_MAPMARK_MarkGoddess_TITLE": "Statue der Sieben",
   "UI_MAPMARK_MarkTransPoint_TITLE": "Teleportationspunkt",
   "UI_MAP_AREA1_TITLE_7": "Mondstadt",
+  "UI_PC_Quick_Switch": "Wechseln",
   "UI_PIC_MAIN_PCPS_C": "Fotografieren",
   "UI_PLAYER_PROFILE_CHARACTER_NEW": "Figurenhandbuch",
   "UI_PLAYER_PROFILE_MAIL": "Nachrichten",
@@ -530,5 +532,6 @@
   "UI_WORLDLEVEL_TITLE": "Weltstufe",
   "UI_WORLDLEVEL_UP_BUTTON": "Weltstufe zurücksetzen",
   "VIDEO_RETREAT": "Zurück",
+  "WIDGET_QUICK_SWITCH_GUIDE2_2": "Wähle ein Hilfsmittel aus, um es einzuwechseln.",
   "tips_enter_game": "Willkommen, %s"
 }
