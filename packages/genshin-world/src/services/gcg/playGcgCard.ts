@@ -13,6 +13,7 @@ import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 
 // A fast action: the card at a hand index is played. A support takes its place in the support zone, equipment is equipped
@@ -39,6 +40,8 @@ export const playGcgCard = (
   side.hand = side.hand.filter((_cardId, index) => index !== handIndex);
   placeGcgCard(side, card, targetIndex, module);
   module.play?.(context, targetIndex);
+  const switchIndex = module.switchOnPlay?.(context);
+  if (switchIndex !== undefined) switchGcgActiveCharacter(duel, sideIndex, switchIndex);
   const skill = module.skillOnPlay?.(context, targetIndex);
   if (skill) runGcgSkillUse(context, skill);
   for (const sideState of duel.sides) pruneGcgZoneCards(sideState);

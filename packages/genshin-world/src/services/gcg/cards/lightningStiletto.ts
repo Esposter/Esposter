@@ -12,9 +12,9 @@ const STELLAR_RESTORATION_ID = 14_032;
 export const lightningStiletto: GcgCardModule = {
   canPlay: ({ duel, sideIndex }) =>
     takeOne(duel.sides, sideIndex).characters.some(({ character, hp }) => character.id === KEQING_ID && hp > 0),
-  play: ({ duel, sideIndex }) => {
-    const side = takeOne(duel.sides, sideIndex);
-    side.activeIndex = side.characters.findIndex(({ character }) => character.id === KEQING_ID);
+  switchOnPlay: ({ duel, sideIndex }) => {
+    const index = takeOne(duel.sides, sideIndex).characters.findIndex(({ character }) => character.id === KEQING_ID);
+    return index === -1 ? undefined : index;
   },
   skillOnPlay: () => ({
     costs: [],

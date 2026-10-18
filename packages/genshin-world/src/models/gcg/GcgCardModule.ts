@@ -36,4 +36,7 @@ export interface GcgCardModule {
     zoneCard: GcgZoneCard,
   ) => GcgCostReduction | undefined;
   skillOnPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => GcgSkill | undefined;
+  // The index of the character a card switches in when it is played, through the switch path (no die, no turn, the field's
+  // Switch hooks), which the duel does after play and before the card's skill; undefined for no switch
+  switchOnPlay?: (context: GcgEffectContext) => number | undefined;
 }
