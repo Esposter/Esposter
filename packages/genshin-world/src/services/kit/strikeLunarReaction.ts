@@ -9,10 +9,10 @@ import { getLunarDamage } from "#src/services/combat/damage/getLunarDamage";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { LunarReactionElementMap } from "#src/services/combat/damage/LunarReactionElementMap";
 import { sumLunarContributions } from "#src/services/combat/damage/sumLunarContributions";
-import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
+import { damageKitEnemy } from "#src/services/kit/damageKitEnemy";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
@@ -55,10 +55,12 @@ export const strikeLunarReaction = (
   const kind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
   const resistance = getEnemyResistance(kind, enemy, LunarReactionElementMap[lunarReactionType]);
   collectKitEnergyDrops(
-    damageEnemy(enemy, {
-      damage: sumLunarContributions(damages) * getResistanceMultiplier(resistance),
-      poiseDamage: 0,
-    }),
+    damageKitEnemy(
+      enemy,
+      { damage: sumLunarContributions(damages) * getResistanceMultiplier(resistance), poiseDamage: 0 },
+      owner,
+      context,
+    ),
     owner?.element,
     context,
   );

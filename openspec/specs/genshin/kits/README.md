@@ -85,6 +85,7 @@ flowchart TD
   STRIKES -->|"the hit was dealt as an element"| ELEMENTAL["ElementalHit"]
   STRIKES -->|"the hit landed on a weak point"| WEAKPOINT["WeakPointHit"]
   STRIKES -->|"the hit took the enemy's last health"| DEFEATED["EnemyDefeated"]
+  STEP -->|"an elemental tick, a Lunar hit or a reach took the enemy's last health"| DEFEATED
   STRIKES -->|"collectKitEnergyDrops: the enemy dropped energy, which the team took"| PARTICLE["EnergyParticleCollected"]
   STEP -->|"the outbox: Mora the character on the field picked up since the last step"| MORA["MoraPickedUp"]
   STEP -->|"last: each change to a member's HP the party recorded since the last step"| HEALTH["HealthChanged"]
@@ -120,7 +121,7 @@ flowchart TD
 - **ChargedAttackLanded** carries a charged attack of the character on the field as its first hitmark falls, whether or not it struck anything, as a normal attack does.
 - **ElementalHit** carries an enemy, the element a hit was dealt as (its own, or the striker's where it carries a gauge) and the striker, sent for each enemy the element lands on.
 - **WeakPointHit** carries an enemy and the striker of a hit whose `KitHit.weakPoint` is set. No kit sets the flag yet: the game data this repo reads carries no weak-point rows, so the event waits on its source.
-- **EnemyDefeated** carries the enemy and the striker of the strike that took its last health, sent after its `DamageTaken`. A defeat by anything but a strike, such as a status's tick or a reaction's reach, is not sent yet.
+- **EnemyDefeated** carries the enemy and the striker, the combatant that owns the damage that took its last health, if one does. A strike sends it after its `DamageTaken`; an elemental tick, a reaction's reach and a Lunar hit send it too, and only from a standing enemy, so a dead one is never defeated twice.
 - **EnergyParticleCollected** carries the particles or orbs an enemy dropped: how many, which of the two, their element, none for a clear one, and the member on the field, who collects them. It is sent once the team has taken their energy, every standing member by the game's rule, the one on the field in full and the others a share by the party's size, as gcsim distributes a particle before announcing it. Every drop is collected where it falls, a strike's, a reaction's reach or an elemental tick's alike (`collectKitEnergyDrops`). Wishes Unnumbered's Resolve answers it.
 - **MoraPickedUp** carries the character on the field as it picks up Mora lying in the world. A pick up is an interaction outside the step, so the pickups emit it as a world event (`pickUpMora`), which the combat puts on the outbox for the next step to send. Lucky Dog's four-piece answers it ([artifact enhancement](../artifact-enhancement/design.md)).
 - **HealthChanged** carries a recorded change to a member's HP, as the party's `healthChanges` hold it, with no character for an enemy's strike or a drown. `healPartyMember` and `damagePartyMember` record every change wherever it is made, so a strike between steps is heard as well as a kit's own, and the step sends the changes last and empties them: a change a handler makes as it hears one is sent on the next step. Let the People Rejoice's Fanfare and Endless Waltz answer it.

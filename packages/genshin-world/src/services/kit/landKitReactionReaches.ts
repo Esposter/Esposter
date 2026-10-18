@@ -3,6 +3,7 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
@@ -66,6 +67,8 @@ export const landKitReactionReaches = (
         reactionTriggers.push({ enemy, reactions });
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
       }
+      if (enemy.state === EnemyState.Dead)
+        emitKitEvent({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context);
     }
   }
 };

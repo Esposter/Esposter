@@ -10,10 +10,10 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
-import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
+import { damageKitEnemy } from "#src/services/kit/damageKitEnemy";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
@@ -55,7 +55,7 @@ const strikeOwnedTicks = (
   }
   collectKitEnergyDrops(
     [
-      ...damageEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage }),
+      ...damageKitEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage }, combatant, context),
       ...getReactionParticleDrops(context.party, reactions, combatant.elementalResonances),
     ],
     combatant.element,

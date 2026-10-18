@@ -1,5 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -7,6 +8,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
@@ -22,7 +24,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeLunarCharged } from "#src/services/kit/strikeLunarCharged";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -86,5 +88,33 @@ describe(strikeLunarCharged, () => {
 
     expect(enemy.health).toBe(STURDY_HEALTH);
     expect(enemy.elementalState.auras.get(AuraType.Electro)?.gauge).toBeCloseTo(0.8);
+  });
+
+  test("sends the team's kits a defeat for a Lunar-Charged hit that takes its enemy's health to nothing", () => {
+    expect.hasAssertions();
+
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const member: Combatant = { ...createMember(TRAVELER_CHARACTER_ID, 100), kit: { ...TRAVELER_KIT, onKitEvent } };
+    const enemy = { ...createSturdyEnemy(), health: 1 };
+    const lunarReactionTypes = [LunarReactionType.LunarCharged];
+    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
+    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
+    enemy.electroChargedCombatant = member;
+
+    strikeLunarCharged(
+      enemy,
+      createKitTestContext(member, {
+        characterIdCombatantMap: new Map([[member.characterId, member]]),
+        enemyMap: new Map([["", enemy]]),
+        enemyTables,
+        party: createParty([member.characterId]),
+      }),
+    );
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      enemy,
+      kind: KitEventKind.EnemyDefeated,
+      striker: member,
+    });
   });
 });
