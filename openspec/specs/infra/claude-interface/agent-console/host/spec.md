@@ -52,9 +52,9 @@ The host SHALL answer the browser's private-network preflight and SHALL refuse e
 - **WHEN** it arrives
 - **THEN** the host refuses it and sends no cross-origin headers
 
-### Requirement: The printed link pairs one page within ten minutes
+### Requirement: The printed link pairs one page within its lifetime
 
-The host SHALL print a one-time pairing link whose code pairs one page within ten minutes.
+The host SHALL print a one-time pairing link whose code pairs one page for the lifetime `PRINTED_PAIRING_CODE_DURATION_MS` names.
 
 #### Scenario: Pairing from the printed link
 

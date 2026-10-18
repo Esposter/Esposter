@@ -64,11 +64,11 @@ A path in a reply or tool input SHALL open the file view only when it matches a 
 
 ### Requirement: A file too large or binary is shown with its reason and no text
 
-A file over 512 kilobytes, or one holding a NUL byte, SHALL be shown with its reason and no text.
+A file over the limit `REPOSITORY_FILE_MAX_BYTE_LENGTH` declares, or one holding a NUL byte, SHALL be shown with its reason and no text.
 
 #### Scenario: A file larger than the limit
 
-- **GIVEN** a file over 512 kilobytes
+- **GIVEN** a file over that limit
 - **WHEN** it is opened
 - **THEN** the view says the file is too large and shows no text
 
