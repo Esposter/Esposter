@@ -41,4 +41,26 @@ describe(readConstantLoops, () => {
       ],
     ]);
   });
+
+  test("leaves the blank identifier out of a slice loop's iterations, which names no variable", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package chongyun",
+      "",
+      "var burstHitmarks = []int{50, 59, 67}",
+      "",
+      "func (c *char) burst() {",
+      "\tfor _, hitmark := range burstHitmarks {",
+      "\t\tc.Core.QueueAttack(ap, 0, 0, hitmark)",
+      "\t}",
+      "}",
+    ].join("\n");
+    const tokens = tokenizeGo(source);
+    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+
+    expect(
+      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+    ).toStrictEqual([[new Map([["hitmark", 50]]), new Map([["hitmark", 59]]), new Map([["hitmark", 67]])]]);
+  });
 });

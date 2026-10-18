@@ -1,10 +1,11 @@
+import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
 import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
+import type { GoScope } from "#src/models/genshinAssets/kits/gcsim/GoScope";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
-import type { ConstantLoop, GoScope } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
@@ -18,6 +19,7 @@ import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/
 import { readGoMethodCallSites } from "#src/services/genshinAssets/kits/gcsim/readGoMethodCallSites";
 import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
+import { sumOptionalDelays } from "#src/services/genshinAssets/kits/gcsim/sumOptionalDelays";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
@@ -203,19 +205,16 @@ const readCallSiteDelays = (
     )
     .map((iteration) => {
       const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, site);
-      const closureDelay = closureDelayExpressions
-        .map((expression) => evaluateGoNumber(expression, resolveIteration))
-        .reduce<number | undefined>(
-          (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
-          0,
-        );
+      const closureDelay = sumOptionalDelays(
+        closureDelayExpressions.map((expression) => evaluateGoNumber(expression, resolveIteration)),
+      );
       // A `Tasks.Add` delay the reader cannot evaluate gives the call its own delay alone, as a call it reads no delay for
       const argumentDelay =
         argumentDelayExpression === undefined ? undefined : evaluateGoNumber(argumentDelayExpression, resolveIteration);
-      if (argumentDelay !== undefined)
+      if (argumentDelayStart !== undefined && argumentDelay !== undefined)
         return {
           delay: closureDelay === undefined ? undefined : closureDelay + argumentDelay,
-          line: tokens[argumentDelayStart ?? site]?.line,
+          line: tokens[argumentDelayStart]?.line,
         };
       return {
         delay: isReturned ? undefined : closureDelay,
@@ -225,7 +224,7 @@ const readCallSiteDelays = (
 };
 
 // The ways a method's queue call is run by the calls made of the method in this file, each call's parameter values and
-// The delay its closures add, one variant per distinct pair
+// The delay its closures add with the line that delay is on, one variant per distinct triple of them
 const readCallVariants = (
   tokens: readonly GoToken[],
   scope: GoScope,
@@ -364,8 +363,9 @@ export const readGcsimQueuedAttacks = (
         enclosingFunction === undefined || sites.length === 0
           ? parameterIterations.map((parameters) => ({ delay: isReturned ? undefined : 0, parameters }))
           : readCallVariants(tokens, scope, loops, taskClosures, sites, enclosingFunction.parameters, isReturned);
+      const loopIterations = readIterations(loops, position);
       for (const callVariant of callVariants)
-        for (const loopIteration of readIterations(loops, position)) {
+        for (const loopIteration of loopIterations) {
           const iteration = new Map([...loopIteration, ...callVariant.parameters]);
           const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
           // The hitbox's numbers resolve through the iteration as the delay's do, so a loop's hit takes its own radius
@@ -373,12 +373,10 @@ export const readGcsimQueuedAttacks = (
             hitboxValueStart === undefined ? undefined : readGoHitbox(tokens, hitboxValueStart, resolveIteration, file);
           const hitbox =
             ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
-          const delayValues = [delayExpression, ...taskDelayExpressions].map((expression) =>
-            expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
-          );
-          const delay = delayValues.reduce<number | undefined>(
-            (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
-            0,
+          const delay = sumOptionalDelays(
+            [delayExpression, ...taskDelayExpressions].map((expression) =>
+              expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
+            ),
           );
           const holdValue = iteration.get("hold");
           queuedAttacks.push({

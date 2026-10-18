@@ -1,15 +1,10 @@
+import type { GoAliasBinding } from "#src/models/genshinAssets/kits/gcsim/GoAliasBinding";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { getGoRootName } from "#src/services/genshinAssets/kits/gcsim/getGoRootName";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-
-// Each binding of a local name, where it is bound in the file's tokens and the name its right-hand side is rooted in
-export interface GoAliasBinding {
-  position: number;
-  rootName: string;
-}
 
 // The locals of a file that name a slice of another name, `for i, mult := range attack[c.NormalCounter]` or
 // `mult := attack[0]`, each by every binding the name takes in the file, since a function may bind it again

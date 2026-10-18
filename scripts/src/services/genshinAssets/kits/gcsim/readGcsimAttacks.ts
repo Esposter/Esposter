@@ -1,10 +1,10 @@
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimAttackIteration } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackIteration";
+import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
-import type { ConstantLoop } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";

@@ -4,7 +4,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
-import { characterIdSlotHitLabelsMap } from "#src/services/genshinAssets/kits/tables/characterIdSlotHitLabelsMap";
+import { CharacterIdSlotHitLabelsMap } from "#src/services/genshinAssets/kits/tables/CharacterIdSlotHitLabelsMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CombatTalent, KitPlunge } from "genshin-world";
 
@@ -32,9 +32,9 @@ const SKILL_HIT_PATHS: ReadonlyMap<string, readonly string[]> = new Map([
   ["Lumi Million Ton Crush DMG", ["skillChain.followUps.0.hits.0"]],
   ["Lumi Pound-Pound Pummeler DMG", ["skill.hits.0", "skill.hits.1"]],
 ]);
-// The length of a named list of hits a skill's label gives, which is the count its label repeats
 // The numbered array a slot's path sits in, `normalAttacks` for `normalAttacks.3`, and the element's index
 const SLOT_ARRAY_PATH_REGEX = /^(?<parent>.+?)\.(?<index>\d+)(?:\.|$)/u;
+// The length of a named list of hits a skill's label gives, which is the count its label repeats
 const NAMED_HIT_LIST_LENGTH_PATHS: ReadonlyMap<string, string> = new Map([
   ["Etched Into Bone and Soul DMG", "hits.etchedIntoBoneAndSoul.length"],
 ]);
@@ -53,17 +53,6 @@ const BURST_PARAMETER_NAMES: ReadonlyMap<string, readonly string[]> = new Map([
   ["Lunar Reaction DMG Bonus", ["burstLunarReactionDamageBonus"]],
 ]);
 
-// A character's own elemental skill rows, each read onto the parameters its module reads by name. A row's parameters are
-// Taken in order, one name to each, so Impale the Night Healing's low and full heals are its first and second parameters
-const CHARACTER_SKILL_PARAMETER_NAME_MAP: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
-  Clorinde: {
-    "Bond of Life Conversion": ["bondOfLifeConversionHealing"],
-    "Impale the Night Healing": ["impaleTheNightLowBondOfLifeHealing", "impaleTheNightFullBondOfLifeHealing"],
-    "Night Vigil Duration": ["nightVigilSeconds"],
-    "Swift Hunt Bond of Life Gain": ["swiftHuntBondOfLifeGain"],
-  },
-};
-
 // Every value a character's published tables give its kit, by its path in the record, each as its group and parameter
 // Index: the normal attack's labels, `3-Hit DMG` each hit of the third strike in turn, the charged attack's, a spin's
 // And its final blow's or a bow's fully charged shot's among them, its stamina's and the plunges', the skill's cooldown
@@ -72,7 +61,6 @@ const CHARACTER_SKILL_PARAMETER_NAME_MAP: Readonly<Record<string, Readonly<Recor
 export const getTableKitCandidates = ({
   characterId,
   labelMap,
-  name,
   talentGroupIdMap,
 }: KitTables): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
@@ -161,7 +149,6 @@ export const getTableKitCandidates = ({
       addLabel(`plunges.${KitPlunge.High}.hits.0.multiplier`, CombatTalent.NormalAttack, tableLabel, 1);
     }
   }
-  const characterSkillParameterNameMap = CHARACTER_SKILL_PARAMETER_NAME_MAP[name] ?? {};
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalSkill]) ?? []) {
     const hitPaths = SKILL_HIT_PATHS.get(tableLabel.label);
     const parameterNames = SKILL_PARAMETER_NAMES.get(tableLabel.label);
@@ -173,10 +160,7 @@ export const getTableKitCandidates = ({
       addHitLabel(hitPaths, CombatTalent.ElementalSkill, tableLabel);
       const listLengthPath = NAMED_HIT_LIST_LENGTH_PATHS.get(tableLabel.label);
       if (listLengthPath !== undefined) addLength(listLengthPath, CombatTalent.ElementalSkill, tableLabel);
-    } else if (parameterNames === undefined)
-      for (const [position, parameterName] of (characterSkillParameterNameMap[tableLabel.label] ?? []).entries())
-        addLabel(`parameters.${parameterName}`, CombatTalent.ElementalSkill, tableLabel, position);
-    else addParameterLabel(parameterNames, CombatTalent.ElementalSkill, tableLabel);
+    } else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalSkill, tableLabel);
   }
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalBurst]) ?? []) {
     const parameterNames = BURST_PARAMETER_NAMES.get(tableLabel.label);
@@ -184,7 +168,7 @@ export const getTableKitCandidates = ({
     else if (tableLabel.label === "Energy Cost") addLabel("burstEnergyCost", CombatTalent.ElementalBurst, tableLabel);
     else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalBurst, tableLabel);
   }
-  const slotLabels = characterIdSlotHitLabelsMap.get(characterId);
+  const slotLabels = CharacterIdSlotHitLabelsMap.get(characterId);
   for (const [path, { combatTalent, labels }] of Object.entries(slotLabels?.hits ?? {}))
     addSlotHitLabels(path, combatTalent, labels);
   for (const [parent, { combatTalent, count, tableLabel }] of slotArrayLengthMap)
