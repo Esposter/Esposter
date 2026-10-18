@@ -3,6 +3,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -44,5 +45,44 @@ describe(readOreHit, () => {
       readOreHit({ ...combatant, weaponType }, { ...hit, actionAttackTag, attackTag: AttackTag.ElementalSkill })
         .isMelee,
     ).toBe(isMelee);
+  });
+
+  test("a claymore's normal and charged attacks are blunt, a sword's are not", () => {
+    expect.hasAssertions();
+
+    const claymore = { ...combatant, weaponType: WeaponType.Claymore };
+
+    expect(readOreHit(claymore, { ...hit, actionAttackTag: AttackTag.NormalAttack }).isBlunt).toBe(true);
+    expect(readOreHit(claymore, { ...hit, actionAttackTag: AttackTag.ChargedAttack }).isBlunt).toBe(true);
+    expect(readOreHit(combatant, { ...hit, actionAttackTag: AttackTag.NormalAttack }).isBlunt).toBe(false);
+  });
+
+  test("a plunge by a sword, a claymore or a polearm is blunt, a catalyst's is not", () => {
+    expect.hasAssertions();
+
+    const plunge = { ...hit, actionAttackTag: AttackTag.PlungingAttack };
+
+    expect(readOreHit(combatant, plunge).isBlunt).toBe(true);
+    expect(readOreHit({ ...combatant, weaponType: WeaponType.Claymore }, plunge).isBlunt).toBe(true);
+    expect(readOreHit({ ...combatant, weaponType: WeaponType.Polearm }, plunge).isBlunt).toBe(true);
+    expect(readOreHit({ ...combatant, weaponType: WeaponType.Catalyst }, plunge).isBlunt).toBe(false);
+  });
+
+  test("geo damage is blunt, by the element the hit deals over the character's own", () => {
+    expect.hasAssertions();
+
+    const geoCombatant = { ...combatant, element: Element.Geo };
+
+    expect(readOreHit(geoCombatant, hit).isBlunt).toBe(true);
+    expect(readOreHit(geoCombatant, { ...hit, element: Element.Pyro }).isBlunt).toBe(false);
+    expect(readOreHit(combatant, { ...hit, element: Element.Geo }).isBlunt).toBe(true);
+  });
+
+  test("a kit's own blunt flag does not make a hit blunt", () => {
+    expect.hasAssertions();
+
+    expect(readOreHit(combatant, { ...hit, actionAttackTag: AttackTag.NormalAttack, isBlunt: true }).isBlunt).toBe(
+      false,
+    );
   });
 });
