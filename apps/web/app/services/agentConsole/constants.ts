@@ -1,3 +1,6 @@
+import type { AgentConsoleSession } from "@/models/agentConsole/AgentConsoleSession";
+import type { InjectionKey } from "vue";
+
 import { RoutePath } from "@esposter/shared";
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from "agent-console-server/contracts";
 
@@ -61,3 +64,5 @@ export const PAIRING_CODE_BYTE_LENGTH = 32;
 // The side pane's width until the reader drags its edge, and the range that drag is held to
 export const AGENT_CONSOLE_PANE_DEFAULT_WIDTH = 420;
 export const AGENT_CONSOLE_PANE_MIN_WIDTH = 240;
+// The session a part of the console reads and writes, which the side chat's drawer provides in place of the console's
+export const AGENT_CONSOLE_SESSION_KEY: InjectionKey<AgentConsoleSession> = Symbol("agentConsoleSession");

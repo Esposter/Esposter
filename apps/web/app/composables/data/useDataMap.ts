@@ -45,14 +45,19 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
   const initializeData = (newData: TItem) => {
     data.value = newData;
   };
+  // Forgets a key's slice outright, so a key that is discarded holds nothing once it is no longer asked about
+  const deleteData = (key: string) => {
+    dataMap.value.delete(key);
+  };
   const resetData = () => {
     const currentIdValue = toValue(currentId);
     if (!currentIdValue) return;
-    dataMap.value.delete(currentIdValue);
+    deleteData(currentIdValue);
   };
 
   return {
     data,
+    deleteData,
     getBoundData,
     getData,
     getDataRef,

@@ -3,7 +3,6 @@ import type { ConversationEvent } from "@/models/agentConsole/ConversationEvent"
 
 import { TOKEN_COUNT_FORMAT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
-import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { AgentEventType } from "agent-console-server/contracts";
 
 interface Props {
@@ -11,8 +10,7 @@ interface Props {
 }
 
 const { event } = defineProps<Props>();
-const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
+const { toolCallMap } = useAgentConsoleSession();
 </script>
 
 <template>

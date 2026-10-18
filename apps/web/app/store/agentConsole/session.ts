@@ -2,13 +2,12 @@ import type { ConnectionSessionSummary } from "@/models/agentConsole/ConnectionS
 import type { DiffComment } from "@/models/agentConsole/DiffComment";
 import type { AgentEvent, SessionSummary } from "agent-console-server/contracts";
 
-import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
+import { createSessionReads } from "@/services/agentConsole/createSessionReads";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { toDiffCommentKey } from "@/services/agentConsole/toDiffCommentKey";
 import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
-import { AgentEventType, SessionState } from "agent-console-server/contracts";
 
 // Every paired host's sessions and each one's view of its event log. The log is the only state: everything the page
 // Shows is folded from it as it arrives, so a reconnect that replays the log rebuilds every part of the page
@@ -16,16 +15,9 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const sessions = ref<ConnectionSessionSummary[]>([]);
   // Kept through a reload of the page, so the session comes back once its host replays it
   const currentSessionId = useSessionStorage(SessionStorageKey.AgentConsoleSessionId, "");
-  const { data: sessionView, getDataRef } = useDataMap(currentSessionId, createSessionView);
-  const currentSession = computed(() => sessions.value.find(({ id }) => id === currentSessionId.value));
-  const conversationEvents = computed(() => sessionView.value.conversationEvents);
-  const fileEdits = computed(() => [...sessionView.value.fileEditMap.values()].flat());
-  const diffCommentMap = computed(() => sessionView.value.diffCommentMap);
-  const fileOriginMap = computed(() => sessionView.value.fileOriginMap);
-  const pendingPermissionRequests = computed(() => [...sessionView.value.pendingPermissionRequestMap.values()]);
-  const timelineLanes = computed(() => [...sessionView.value.timelineLaneMap.values()]);
-  const streamDraft = computed(() => sessionView.value.streamDraft);
-  const toolCallMap = computed(() => sessionView.value.toolCallMap);
+  const { data: sessionView, deleteData, getDataRef } = useDataMap(currentSessionId, createSessionView);
+  // The console's current session's reads; the side chat reads its own session through the same factory
+  const sessionReads = createSessionReads(currentSessionId, getDataRef, sessions);
   // The first theme that finds its own line in a session-start hook's context presents that session, and its scene,
   // Which is handed the same context
   const themeContext = computed(() => {
@@ -44,26 +36,6 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const themeStyle = computed(() =>
     Object.fromEntries(Object.entries(themeContext.value.palette).map(([token, value]) => [`--ui-${token}`, value])),
   );
-  const capabilities = computed(() => sessionView.value.latestEventMap[AgentEventType.Capabilities]);
-  const contextUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.ContextUsage]);
-  // Warns before automatic compaction rather than at it, which is the moment a person can still choose to compact
-  const isContextNearCompaction = computed(() =>
-    contextUsage.value?.autoCompactThreshold
-      ? contextUsage.value.totalTokens >= contextUsage.value.autoCompactThreshold * CONTEXT_WARNING_RATIO
-      : false,
-  );
-  const rateLimit = computed(() => sessionView.value.latestEventMap[AgentEventType.RateLimit]);
-  const sessionSettings = computed(() => sessionView.value.latestEventMap[AgentEventType.SessionSettings]);
-  const sessionState = computed(() => sessionView.value.latestEventMap[AgentEventType.SessionState]?.state);
-  // A turn is under way, a permission request or a compaction inside it included: what Escape and the stop button end
-  const isTurnRunning = computed(() =>
-    [SessionState.Compacting, SessionState.RequiresAction, SessionState.Running].includes(
-      sessionState.value ?? SessionState.Idle,
-    ),
-  );
-  const todoUpdate = computed(() => sessionView.value.latestEventMap[AgentEventType.TodoUpdate]);
-  const turnResult = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnResult]);
-  const turnUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnUsage]);
 
   // A host's list replaces only that host's sessions, so every other host's stay as they were
   const storeSessions = (connectionId: string, newSessions: SessionSummary[]) => {
@@ -90,36 +62,20 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   };
 
   return {
+    ...sessionReads,
     avatar,
-    capabilities,
     clearDiffComments,
-    contextUsage,
-    conversationEvents,
-    currentSession,
     currentSessionId,
+    deleteData,
     deleteDiffComment,
-    diffCommentMap,
-    fileEdits,
-    fileOriginMap,
-    isContextNearCompaction,
-    isTurnRunning,
-    pendingPermissionRequests,
-    rateLimit,
+    getDataRef,
     saveDiffComment,
     sessions,
-    sessionSettings,
-    sessionState,
     storeEvents,
     storeSessionReset,
     storeSessions,
-    streamDraft,
     themeScene,
     themeSessionStartContext,
     themeStyle,
-    timelineLanes,
-    todoUpdate,
-    toolCallMap,
-    turnResult,
-    turnUsage,
   };
 });

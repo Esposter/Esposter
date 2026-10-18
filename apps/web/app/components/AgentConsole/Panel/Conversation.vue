@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { getEventSearchText } from "@/services/agentConsole/getEventSearchText";
-import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { SessionState } from "agent-console-server/contracts";
 
-const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { conversationEvents, sessionState, streamDraft } = storeToRefs(agentConsoleSessionStore);
+const { conversationEvents, sessionState, streamDraft } = useAgentConsoleSession();
 const searchQuery = ref("");
 const displayEvents = computed(() => {
   const normalizedSearchQuery = searchQuery.value.toLowerCase();

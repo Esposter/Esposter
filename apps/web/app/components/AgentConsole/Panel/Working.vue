@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ELAPSED_TICK_MS, TOKEN_COUNT_FORMAT } from "@/services/agentConsole/constants";
 import { WorkingVerbs } from "@/services/agentConsole/WorkingVerbs";
-import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { takeOne } from "@esposter/shared";
 import { AgentEventType, SessionState, TodoStatus } from "agent-console-server/contracts";
 
-const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { conversationEvents, sessionState, todoUpdate, turnUsage } = storeToRefs(agentConsoleSessionStore);
+const { conversationEvents, sessionState, todoUpdate, turnUsage } = useAgentConsoleSession();
 // Mounted once per turn, so the verb holds for the turn and changes with the next
 const verb = takeOne(WorkingVerbs, Math.floor(Math.random() * WorkingVerbs.length));
 // The terminal's line names the task in progress while there is one, and the turn's verb otherwise

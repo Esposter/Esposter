@@ -6,7 +6,6 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MessageActionCommandTypeMap } from "@/services/agentConsole/MessageActionCommandTypeMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
-import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 
 interface Props {
   isPrompt?: true;
@@ -17,8 +16,7 @@ interface Props {
 const { isPrompt, messageUuid, text } = defineProps<Props>();
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { sendCommand } = agentConsoleConnectionStore;
-const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
+const { sessionId } = useAgentConsoleSession();
 const { copied, copy } = useClipboard({ legacy: true });
 // One quiet mark over the message's corner rather than a row of buttons under it, so it takes no room of its own;
 // What it can do opens from it
@@ -51,13 +49,7 @@ const items = computed<UiMenuItem<MessageActionType>[]>(() => [
       @select="
         (value) => {
           if (value === MessageActionType.Copy) copy(text);
-          else
-            sendCommand({
-              isSideChat: false,
-              messageUuid,
-              sessionId: currentSessionId,
-              type: MessageActionCommandTypeMap[value],
-            });
+          else sendCommand({ isSideChat: false, messageUuid, sessionId, type: MessageActionCommandTypeMap[value] });
         }
       "
     >
