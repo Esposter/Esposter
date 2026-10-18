@@ -47,7 +47,7 @@ export const props = {
   catalogue: await readCatalogue(GAME_DATA_LOCAL_BASE_URL),
   characterDataMap,
   characterIdSkillGlyphsMap,
-  frame: { gadgetCooldown: 0, pivotX: 0.5, pivotY: 0.5, seconds: 0, stamina: STAMINA_MAX },
+  frame: { gadgetCooldown: 0, pivotX: 0.5, pivotY: 0.5, seconds: 0, sheerCold: 0, stamina: STAMINA_MAX },
   gameText: ENGLISH_GAME_TEXT,
   input: createInput(window),
   interfaceRects: await readHudInterfaceRects(GAME_DATA_LOCAL_BASE_URL),
@@ -84,7 +84,11 @@ export const props = {
     parentQuestIds: [],
     rewards: [],
     steps: [
-      { id: "albedo", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "albedoStep" },
+      {
+        id: "albedo",
+        objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["0"] }],
+        textId: "albedoStep",
+      },
     ],
     talks: [],
     titleTextId: "albedo",

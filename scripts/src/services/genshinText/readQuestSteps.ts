@@ -5,19 +5,20 @@ import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
 import { QuestBanType, QuestObjectiveKind } from "genshin-world";
 
-// A quest's shown steps in order, and the talks offering it, read off its file in the dump's binary output by shape,
-// Since the dump scrambles every field's name each patch. Its sub quests are the array whose items hold conditions; a
-// Step's id is the number in its quest's hundred; its order the field numbering the steps from one; its finish
-// Conditions the list the most steps fill, where its fail conditions are a list only some do; and its words the field
-// Holding a hash the text map has. A step with no words is the game's own bookkeeping, never shown, and one whose
-// Conditions ask nothing of the Traveler is left out and noted. A step's objectives are every condition that asks
-// Something, all of which the step needs done. A quest a talk offers opens on such a hidden step finishing on that talk,
-// So the talks the first step finishes on offer the quest when that step has no words
 // Whether a sub quest holds a condition in any of its fields, and how many of a list's sub quests do
 const hasCondition = (subQuest: Record<string, unknown>) =>
   Object.values(subQuest).some((value) => readQuestConditions(value).length > 0);
 const countConditioned = (subQuestList: Record<string, unknown>[]) =>
   subQuestList.filter((subQuest) => hasCondition(subQuest)).length;
+
+// A quest's shown steps in order, and the talks offering it, read off its file in the dump's binary output by shape,
+// Since the dump scrambles every field's name each patch. Its sub quests are the list holding the most conditioned sub
+// Quests; a step's id is the number in its quest's hundred; its order the field numbering the steps from one; its finish
+// Conditions the list the most steps fill, where its fail conditions are a list only some do; and its words the field
+// Holding a hash the text map has. A step with no words is the game's own bookkeeping, never shown, and one whose
+// Conditions ask nothing of the Traveler is left out and noted. A step's objectives are every condition that asks
+// Something, all of which the step needs done. A quest a talk offers opens on such a hidden step finishing on that talk,
+// So the talks the first step finishes on offer the quest when that step has no words
 export const readQuestSteps = (
   questBinary: Record<string, unknown>,
   questId: number,
@@ -84,7 +85,7 @@ export const readQuestSteps = (
       const targetId = String(parameters[targetIndex] ?? "");
       if (kind === QuestObjectiveKind.TalkTo && !checkTalkIsPlayable(targetId)) return [];
       const isCounted = [QuestObjectiveKind.Collect, QuestObjectiveKind.Defeat].includes(kind);
-      return [{ count: isCounted ? Math.max(Number(parameters[1] ?? 0), 1) : 1, kind, targetId }];
+      return [{ count: isCounted ? Math.max(Number(parameters[1] ?? 0), 1) : 1, kind, targetIds: [targetId] }];
     });
     if (objectives.length === 0) {
       notes.push(`${questId}'s step ${id} asks nothing of the Traveler its conditions name`);

@@ -30,7 +30,30 @@ describe(getDeployedCombatants, () => {
       [1, pyro],
       [3, cryo],
     ]);
-    expect(getDeployedCombatants(createParty([1, 2, 3]), combatants)).toStrictEqual([pyro, cryo]);
+    expect(getDeployedCombatants(createParty([1, 2, 3]), combatants)).toStrictEqual([
+      { ...pyro, isOnField: true },
+      { ...cryo, isOnField: false },
+    ]);
+  });
+
+  test("flags only the member at the active index as on the field", () => {
+    expect.hasAssertions();
+    const pyro = createCombatant(1, Element.Pyro);
+    const cryo = createCombatant(3, Element.Cryo);
+    const party = createParty([1, 3]);
+    party.activeIndex = 1;
+    expect(
+      getDeployedCombatants(
+        party,
+        new Map([
+          [1, pyro],
+          [3, cryo],
+        ]),
+      ),
+    ).toStrictEqual([
+      { ...pyro, isOnField: false },
+      { ...cryo, isOnField: true },
+    ]);
   });
 
   test("reads nothing for a character outside the party", () => {

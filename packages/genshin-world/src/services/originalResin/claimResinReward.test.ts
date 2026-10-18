@@ -116,6 +116,7 @@ describe(claimResinReward, () => {
           },
         ],
         nextId: 1,
+        quickSwapItemIds: [],
       },
       wallet: { ...wallet, [Currency.Mora]: MORA_COUNT, [Currency.OriginalResin]: 100 - RESIN },
     });
@@ -139,7 +140,7 @@ describe(claimResinReward, () => {
       ),
     ).toStrictEqual({
       adventureExp: 0,
-      inventory: { items: [], nextId: 1 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
       wallet: { ...wallet, [Currency.Mora]: MORA_COUNT },
     });
   });

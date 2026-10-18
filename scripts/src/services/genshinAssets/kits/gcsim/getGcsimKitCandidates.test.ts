@@ -32,6 +32,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "razor.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -72,6 +73,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "razor.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -118,6 +120,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "itto.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -152,6 +155,7 @@ describe(getGcsimKitCandidates, () => {
           fieldLineMap: {},
           file: "burst.go",
           line: 6,
+          siteLine: 6,
           variableName: "ai",
         },
       ],
@@ -163,6 +167,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [{ attackName: "ai", delay: 55, delayLine: 7, file: "burst.go", line: 7 }],
       talentFile: "zz_jean.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -200,6 +205,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "mona.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -235,6 +241,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "navia.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -268,6 +275,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "barbara.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -304,6 +312,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "aino.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -341,6 +350,7 @@ describe(getGcsimKitCandidates, () => {
       queuedAttacks: [],
       talentFile: "aino.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const fallback: GcsimCharacter = {
@@ -403,6 +413,7 @@ describe(getGcsimKitCandidates, () => {
       ],
       talentFile: "razor.go",
       talentParameterMap: new Map(),
+      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {

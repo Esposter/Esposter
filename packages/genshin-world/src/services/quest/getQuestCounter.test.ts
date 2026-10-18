@@ -9,8 +9,8 @@ describe(getQuestCounter, () => {
   const step: QuestStep = {
     id: "0",
     objectives: [
-      { count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" },
-      { count: 2, kind: QuestObjectiveKind.Collect, targetId: "0" },
+      { count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["0"] },
+      { count: 2, kind: QuestObjectiveKind.Collect, targetIds: ["0"] },
     ],
     textId: "textId",
   };

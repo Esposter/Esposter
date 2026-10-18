@@ -142,6 +142,17 @@ describe(stepActiveKit, () => {
     ]);
   });
 
+  test("sends the team's kits a swap with no character before it when the battle opens on one", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: undefined },
+    ]);
+  });
+
   test("sends the team's kits a burst as it starts, with the member that used it and its energy cost", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
@@ -151,6 +162,7 @@ describe(stepActiveKit, () => {
     stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context, controls);
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: undefined },
       { characterId: TRAVELER_CHARACTER_ID, energyCost: TRAVELER_KIT.burstEnergyCost, kind: KitEventKind.BurstUsed },
     ]);
   });
@@ -218,9 +230,11 @@ describe(stepActiveKit, () => {
     stepActiveKit(kitState, IDLE_INPUT, 0.1, context, controls);
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: undefined },
       {
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: -0.25,
+        bondOfLifeShare: 0,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
       },

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
+import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import type { GameText } from "genshin-text";
 import type { VNode } from "vue";
@@ -25,6 +26,8 @@ interface Props {
   // The namecard the player equipped, 0 for none, and the held namecards the profile can show
   namecardItemId: number;
   namecards: ProfileNamecard[];
+  // The Traveler's birthday once it is set, which the profile card shows and its setter sets once
+  travelerBirthday?: TravelerBirthdaySave;
   // The server's clock minus this machine's, which the World Level's cooldown is read against
   serverClockOffsetMs?: number;
   worldLevel: number;
@@ -35,7 +38,12 @@ interface Props {
 const slots = defineSlots<Partial<Record<TitledScreenKind, () => VNode>>>();
 const screenKind = defineModel<ScreenKind>("screenKind", { required: true });
 const { gameText } = defineProps<Props>();
-const emit = defineEmits<{ pickNamecard: [itemId: number]; quit: []; toggleWorldLevel: [] }>();
+const emit = defineEmits<{
+  pickNamecard: [itemId: number];
+  quit: [];
+  setBirthday: [birthday: TravelerBirthdaySave];
+  toggleWorldLevel: [];
+}>();
 </script>
 
 <template>
@@ -53,6 +61,7 @@ const emit = defineEmits<{ pickNamecard: [itemId: number]; quit: []; toggleWorld
     :is-world-level-lowered
     :namecard-item-id
     :namecards
+    :traveler-birthday
     :server-clock-offset-ms
     :world-level
     :world-level-changed-at
@@ -60,6 +69,7 @@ const emit = defineEmits<{ pickNamecard: [itemId: number]; quit: []; toggleWorld
     @open="(titledScreenKind) => (screenKind = titledScreenKind)"
     @pick-namecard="(itemId) => emit('pickNamecard', itemId)"
     @quit="emit('quit')"
+    @set-birthday="(birthday) => emit('setBirthday', birthday)"
     @toggle-world-level="emit('toggleWorldLevel')"
   />
   <slot

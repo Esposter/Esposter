@@ -43,7 +43,7 @@ describe(createBlackWingPassiveModule, () => {
   test("the rank's CRIT Rate and Normal Attack SPD are passive bonuses on the wielder", () => {
     expect.hasAssertions();
 
-    expect(blackWingPassiveModule.getPassiveBonuses?.(wielder, 1, [])).toStrictEqual([
+    expect(blackWingPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.08, attribute: Attribute.CriticalRate },
       { amount: 0.12, attribute: Attribute.NormalAttackSpeed },
     ]);

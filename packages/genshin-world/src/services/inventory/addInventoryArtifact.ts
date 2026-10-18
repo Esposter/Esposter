@@ -5,6 +5,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { ItemCategory } from "genshin-interface";
 
 // The bag after taking in one artifact as it was rolled, as the game takes a drop: an entry of its own holding the artifact
 // And its stats, so each artifact keeps its own. The artifacts tab's room decides whether it fits, and one that does not
@@ -14,9 +15,9 @@ export const addInventoryArtifact = (
   definition: ItemDefinition,
   artifact: Artifact,
 ): InventoryAddition => {
-  const categoryRoom = ItemCategoryRoomMap[definition.category];
+  const categoryRoom = ItemCategoryRoomMap[ItemCategory.Artifact];
   const tabRoom =
-    categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, definition.category);
+    categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, ItemCategory.Artifact);
   if (tabRoom < 1) return { inventory: { items, nextId, quickSwapItemIds }, overflow: 1 };
   return {
     inventory: {

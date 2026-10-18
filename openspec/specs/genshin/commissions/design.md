@@ -1,6 +1,6 @@
 # Commissions
 
-The game's daily commissions as the world holds them: the daily tasks of each region the game's own tables name, read from them, four dealt for the day, each finished one claimed for the reward of the Adventure Rank it was dealt at, and Katheryne's bonus on the day's fourth claim. This is the built part of the [commissions](../../../changes/genshin-commissions/design.md) proposal. Its scene swap, its handbook tab and its kept day are not built yet.
+The game's daily commissions as the world holds them: the daily tasks of each region the game's own tables name, read from them, four dealt for the day, each finished one claimed for the reward of the Adventure Rank it was dealt at, and Katheryne's bonus once the day's four are claimed. This is the built part of the [commissions](../../../changes/genshin-commissions/design.md) proposal. Its scene swap, its handbook tab and its kept day are not built yet.
 
 ## How it works
 
@@ -14,8 +14,8 @@ flowchart TD
   KEPT --> FIN{"A scene task's count reached?"}
   FIN -->|"yes"| CLAIM["Claimed: the reward of its tier's band for the dealt rank"]
   POINT["An Encounter Point spent"] -->|"unfinished"| CLAIM
-  CLAIM --> FOURTH{"The day's fourth claim?"}
-  FOURTH -->|"yes"| BONUS["Katheryne's bonus: the band of the rank held now"]
+  CLAIM --> FOURTH{"The day's four claimed?"}
+  FOURTH -->|"yes, bonus not given"| BONUS["Talking to Katheryne gives her bonus: the band of the rank held now"]
 ```
 
 ## The daily tasks
@@ -37,7 +37,7 @@ A claim returns the items drawn, Mora and the Adventure EXP and Companionship EX
 
 ## Katheryne's bonus
 
-The fourth claim of the day also draws Katheryne's bonus, for the band the rank the player holds at that moment falls in. The bonus is the game's score preview for each band, read from its level table. Its Primogems and Adventure EXP are the same in every band, and its Mora and Companionship EXP rise with the band.
+Katheryne gives the day's bonus once its four commissions are claimed, when the player talks to her, for the band the rank the player holds at that moment falls in. The day records it as given, so a second talk gives nothing. The bonus is the game's score preview for each band, read from its level table, and its Primogems and Adventure EXP are the same in every band, while its Mora and Companionship EXP rise with the band. The game's text gives the bonus once the four are obtained by any means (`UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_INFO_DESC`), so the bonus is not paid on the fourth claim itself. The save holds the flag as a required field, and no read path tolerates its absence. The stored saves written before the flag existed are backfilled once from outside the app: a day of four claims is marked given, and any other day is not.
 
 The Adventure Treasure Pack the wiki lists is not paid. The preview names its item at a count of zero in every band, so the reader leaves it out. Whether the game gives it on the bonus is a recording still owed on the [roadmap](../../../changes/genshin-roadmap/tasks.md).
 
@@ -64,7 +64,8 @@ The three daily task tables are fetched rather than read from the dump, as the [
 | `packages/genshin-world/src/models/commission/Commission.ts`              | One daily task: its place, finish, groups and reward tier               |
 | `packages/genshin-world/src/models/commission/CommissionSlice.ts`         | The slice's shape: the tasks, the reward tiers and the bonus by band    |
 | `packages/genshin-world/src/services/commission/dealCommissions.ts`       | Deals four at random, none held and none before Adventure Rank 12       |
-| `packages/genshin-world/src/services/commission/takeCommissionClaim.ts`   | Draws a claim's reward and, on the day's fourth, the bonus              |
+| `packages/genshin-world/src/services/commission/takeCommissionClaim.ts`   | Draws a claim's reward for the rank it was dealt at                     |
+| `packages/genshin-world/src/services/commission/takeKatheryneBonus.ts`    | Draws Katheryne's bonus once the four are claimed, and records it given |
 | `packages/genshin-world/src/services/commission/claimCommissionReward.ts` | A dealt commission's claim: free when finished, one point when not      |
 | `packages/genshin-world/src/services/commission/computeCommissionBand.ts` | The band an Adventure Rank falls in                                     |
 | `packages/genshin-world/src/services/commission/readCommissions.ts`       | Fetches a region's slice by its key from the hosted game data           |

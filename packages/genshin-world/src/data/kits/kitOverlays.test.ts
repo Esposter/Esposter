@@ -42,7 +42,7 @@ describe("kitOverlays", () => {
         const record = await readGameDataEntry(GAME_DATA_LOCAL_BASE_URL, "kits", characterId, kitRecordSchema);
         // An entry naming a source chooses among the sources' values rather than holding one
         return Object.entries(expandKitOverlay(overlay))
-          .filter(([, entry]) => entry.cause !== undefined)
+          .filter(([, entry]) => entry.cause !== undefined && !("donor" in entry))
           .map(([valuePath, { value }]) => ({
             committed: [`${overlayName}:${valuePath}`, value],
             published: [

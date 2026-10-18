@@ -26,6 +26,7 @@ const getPassiveBonusPairs = (ascension: number, healthShare: number): [Attribut
       },
       healthShare,
       [],
+      [],
     ) ?? []
   ).map(({ amount, attribute }) => [attribute, Math.round(amount * 1000) / 1000]);
 

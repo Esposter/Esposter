@@ -35,7 +35,13 @@ const drainDehya = (ascension: number): { context: KitContext; partyMember: Part
   const partyMember = getPartyMember(context.party, DEHYA_CHARACTER_ID);
   partyMember.healthShare = 0.35;
   createDehyaKitBehaviour().onKitEvent?.(
-    { characterId: DEHYA_CHARACTER_ID, healthShare: -0.1, kind: KitEventKind.HealthChanged, overflowHealthShare: 0 },
+    {
+      characterId: DEHYA_CHARACTER_ID,
+      healthShare: -0.1,
+      bondOfLifeShare: 0,
+      kind: KitEventKind.HealthChanged,
+      overflowHealthShare: 0,
+    },
     context,
     combatant,
   );

@@ -178,6 +178,7 @@ describe("useWorldOutcrops", () => {
         },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     };
     outcrops.openOutcropClaim(1, epoch);
     expect(outcrops.claimPrompt.value?.canRestore).toBe(true);

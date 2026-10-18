@@ -11,4 +11,4 @@
 
 ## 3. Counts
 
-- [ ] 3.1 Check each kind's count in each region against the wiki's count and report the difference. Verify: tests named after 'A kind short of the wiki's count is reported' and 'A kind matching the wiki's count reports nothing'.
+- [ ] 3.1 Check each kind's count in each region against the wiki's count and report the difference. Oculi and chests are checked (`reportKindCount`). Enemy kinds stay open: the wiki's Hilichurl family page, the Mondstadt region page and a wiki search give no per-region count of any enemy kind (checked with the browser User-Agent from the wave notes). Verify: tests named after 'A kind short of the wiki's count is reported' and 'A kind matching the wiki's count reports nothing'.

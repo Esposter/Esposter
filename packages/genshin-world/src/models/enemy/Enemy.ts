@@ -3,6 +3,7 @@ import type { InternalCooldown } from "#src/models/combat/InternalCooldown";
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import type { EnemyKindTraits } from "#src/models/enemy/EnemyKindTraits";
+import type { EnemyShield } from "#src/models/enemy/EnemyShield";
 import type { EnemyState } from "#src/models/enemy/EnemyState";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { MoondriftHarmonyHit } from "#src/models/enemy/MoondriftHarmonyHit";
@@ -31,7 +32,7 @@ export interface Enemy {
   elementalReactions: Reaction[];
   elementalState: ElementalState;
   enemyFamily: EnemyFamily;
-  enemyKindId: number;
+  enemyKindId: EnemyKindId;
   heading: number;
   health: number;
   hitSeconds: number;
@@ -48,6 +49,8 @@ export interface Enemy {
   poise: number;
   poiseBrokenSeconds: number;
   position: GroundPoint;
+  // The shield a kind holds on top of its health, none for a kind that holds none
+  shield?: EnemyShield;
   state: EnemyState;
   stateSeconds: number;
   statuses: EnemyStatus[];

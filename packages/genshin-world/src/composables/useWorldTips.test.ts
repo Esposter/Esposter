@@ -20,6 +20,7 @@ const quest = (id: string): Quest => ({
   kind: QuestKind.World,
   mainId: id,
   offerTalkIds: [],
+  parentQuestIds: [],
   rewards: [],
   steps: [],
   talks: [],
@@ -130,5 +131,13 @@ describe(useWorldTips, () => {
     expect(showingTip.value).toBeUndefined();
     events.emit("worldLevelUp", 2);
     expect(showingTip.value?.id).toBe(1);
+  });
+
+  test("the first unlock of a domain entrance shows the tip on the dungeon entry to be explored, whatever entry it enters", () => {
+    expect.hasAssertions();
+    const entryTrigger: TipTrigger = { paramList: ["50"], triggerType: TipTriggerType.DungeonEntryToBeExplored };
+    const { events, showingTip } = createWorldTips([tip(1, entryTrigger)]);
+    events.emit("domainEntryUnlocked", 2);
+    expect(showingTip.value).toStrictEqual(tip(1, entryTrigger));
   });
 });

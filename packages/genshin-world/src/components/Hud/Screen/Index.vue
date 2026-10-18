@@ -23,12 +23,14 @@ import HudPaimonButton from "#src/components/Hud/PaimonButton/Index.vue";
 import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudQuickSwap from "#src/components/Hud/QuickSwap/Index.vue";
+import HudSheerCold from "#src/components/Hud/SheerCold/Index.vue";
 import HudShortcuts from "#src/components/Hud/Shortcuts/Index.vue";
 import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import HudStick from "#src/components/Hud/Stick/Index.vue";
 import HudTouch from "#src/components/Hud/Touch/Index.vue";
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
+import { formatTrialCountdown } from "#src/services/trial/formatTrialCountdown";
 import { GameRect, GameScreen } from "genshin-interface";
 
 interface Props {
@@ -74,6 +76,8 @@ interface Props {
   // The name the player chose for the Traveler, which the party shows in place of the game's own, empty while none is
   // Chosen
   travelerName: string;
+  // The seconds a character trial's clock has left, none outside a trial
+  trialSecondsRemaining?: number;
 }
 
 defineSlots<{
@@ -103,6 +107,7 @@ const {
   quickSwapOpen,
   trackedQuest,
   travelerName,
+  trialSecondsRemaining,
 } = defineProps<Props>();
 const emit = defineEmits<{ map: []; menu: [] }>();
 </script>
@@ -111,12 +116,15 @@ const emit = defineEmits<{ map: []; menu: [] }>();
   <!-- The heads-up display over the world: only the pieces the world backs, each in its place. The Paimon button and
        The minimap in the top left with the quest tracker under them, the shortcuts in the top right, the party down the
        Right, the member on the field's health at the bottom's middle, the skill and burst at the bottom right, the
-       Stamina meter where it places itself, and on a touch screen the stick at the bottom left, the touch layout's
-       Action buttons beside the skill and burst and the look's drag under them all. Everything between the pieces lets
-       The pointer through to the world, and a press on a piece stays the piece's, never reaching the world's input as
-       An attack -->
+       Stamina meter where it places itself, the Sheer Cold gauge across the top, and on a touch screen the stick at the
+       bottom left, the touch layout's Action buttons beside the skill and burst and the look's drag under them all.
+       Everything between the pieces lets The pointer through to the world, and a press on a piece stays the piece's,
+       never reaching the world's input as An attack -->
   <GameScreen class="hud" :is-touch @mousedown.stop>
     <HudTouch v-if="isTouch" :input />
+    <p v-if="trialSecondsRemaining !== undefined" class="trial-countdown">
+      {{ formatTrialCountdown(trialSecondsRemaining) }}
+    </p>
     <!-- The page as the game's tree under `GrpMainPage` nests it: each piece a `GameRect` placed by its RectTransform
          inside its game parent's -->
     <GameRect #default="{ rect: hudRect }" :rect="interfaceRects[HudInterfaceRectName.MainPage]">
@@ -190,6 +198,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
          Middle, since the recordings show it beside the character wherever the character stands -->
     <HudQuickSwap v-if="quickSwapOpen" :game-text />
     <HudStamina :frame :game-text :max-stamina />
+    <HudSheerCold :frame :game-text />
     <slot name="prompts" />
   </GameScreen>
 </template>
@@ -201,6 +210,14 @@ const emit = defineEmits<{ map: []; menu: [] }>();
 
 /* Provisional: the quest tracker has no rect of its own in the HUD's tree, so it stays at its measured place under the
    Minimap until the tree's rect for it is found */
+/* Provisional: the trial's clock has no rect of its own in the HUD's tree, so it is centred at the top until the tree's rect for it is found */
+.trial-countdown {
+  position: absolute;
+  top: calc(var(--unit) * 24);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .quest {
   position: absolute;
   top: calc(var(--unit) * 270);

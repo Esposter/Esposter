@@ -2,7 +2,7 @@ import type { Artifact } from "#src/models/artifact/Artifact";
 import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
-import type { CraftingStrongbox } from "#src/models/crafting/CraftingStrongbox";
+import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { ReliquaryPieceData } from "#src/models/reliquary/ReliquaryPieceData";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
@@ -29,7 +29,7 @@ const names = { TEST_PIECE: "Test Piece", TEST_STRONGBOX: "Artifact Strongbox: T
 const reliquaryPieceEntryMap = new Map<number, ReliquaryPieceEntry>(
   PIECES.map((piece) => [piece.itemId, { ...piece, setId: SET_ID }]),
 );
-const strongbox: CraftingStrongbox = {
+const strongbox: CraftingStrongboxData = {
   id: SET_ID,
   nameTextId: "TEST_STRONGBOX",
   needCount: 3,

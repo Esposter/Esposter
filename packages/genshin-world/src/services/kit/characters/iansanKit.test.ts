@@ -4,11 +4,12 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { createIansanKitBehaviour, IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const IANSAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IANSAN_CHARACTER_ID);
@@ -74,5 +75,34 @@ describe(createIansanKitBehaviour, () => {
     expect(
       findKitStatus(context.kitEffectState.effects, IANSAN_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID),
     ).toBeUndefined();
+  });
+
+  test("a Constellation 1 blessing gives Iansan 15 energy for each 6 points consumed, then waits 18 seconds for the next", () => {
+    expect.hasAssertions();
+    const combatant = createIansanCombatant(1);
+    const kitEffectState = castKitAction(IANSAN_KIT.elementalSkill, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    stepKitSeconds(context, 1);
+    expect(getPartyMember(context.party, IANSAN_CHARACTER_ID).energy).toBe(15);
+
+    stepKitSeconds(context, 9);
+    castKitAction(IANSAN_KIT.elementalSkill, combatant, kitEffectState);
+    stepKitSeconds(context, 9.5);
+    expect(getPartyMember(context.party, IANSAN_CHARACTER_ID).energy).toBe(15);
+
+    castKitAction(IANSAN_KIT.elementalSkill, combatant, kitEffectState);
+    stepKitSeconds(context, 1.5);
+    expect(getPartyMember(context.party, IANSAN_CHARACTER_ID).energy).toBe(30);
+  });
+
+  test("a Constellation 0 blessing gives Iansan no energy", () => {
+    expect.hasAssertions();
+    const combatant = createIansanCombatant();
+    const context = createKitTestContext(combatant, {
+      kitEffectState: castKitAction(IANSAN_KIT.elementalSkill, combatant),
+    });
+    stepKitSeconds(context, 9);
+
+    expect(getPartyMember(context.party, IANSAN_CHARACTER_ID).energy).toBe(0);
   });
 });

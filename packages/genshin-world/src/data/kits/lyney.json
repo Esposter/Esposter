@@ -1,12 +1,7 @@
 {
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 } },
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 288 },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8439 } },
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 111 },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 113 },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 10, "proudSkillGroupId": 8431 } },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.propArrowPyrotechnicStrikeHitmark": { "cause": "Unclassified", "value": 387 },
   "frames.miracleParadePyrotechnicStrikeHitmark": { "cause": "Unclassified", "value": 563 },
   "hitFields.pyrotechnicStrike.area": {
@@ -20,12 +15,6 @@
     "value": { "index": 14, "proudSkillGroupId": 8431 }
   },
   "hitFields.pyrotechnicStrike.poiseDamage": { "cause": "Unclassified", "value": 90 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 25 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8432 } }
 }

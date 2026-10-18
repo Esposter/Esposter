@@ -16,6 +16,7 @@ describe(inviteHomeCompanion, () => {
   ];
   const progress: HomeProgress = {
     accruedAt: Temporal.Instant.fromEpochMilliseconds(0),
+    claimedRewardIds: [],
     companionIds: [],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],

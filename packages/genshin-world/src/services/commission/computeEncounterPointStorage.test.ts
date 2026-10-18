@@ -33,6 +33,7 @@ const slice: CommissionSlice = {
 const createDay = (finishedCount: number): CommissionDay => ({
   claimedCommissionIds: [],
   dealtAt: Temporal.Instant.fromEpochMilliseconds(0),
+  isBonusClaimed: false,
   dealtCommissions: COMMISSION_IDS.map((commissionId) => ({
     commissionId,
     count: commissionId <= finishedCount ? 1 : 0,

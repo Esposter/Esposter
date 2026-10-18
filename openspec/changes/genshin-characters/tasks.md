@@ -9,8 +9,8 @@
 
 ## 3. Scale
 
-- [ ] 3.1 Measure the Traveler's height from the game's own model and replace the reckoned unit with it. Verify: a test named after the scenario 'the Traveler's height matches the game's model', seen failing first.
+- [x] 3.1 Measure the Traveler's height from the game's own model and replace the reckoned unit with it. Verify: a test named after the scenario 'the Traveler's height matches the game's model', seen failing first.
 
 ## 4. Terms
 
-- [ ] 4.1 Mount the terms view beside the chosen character on party screens once the party builds Party Setup. Verify: a test named after the scenario 'a chosen character's terms show beside it', seen failing first.
+- [x] 4.1 Show the terms view beside the character the Character screen shows, in the loader at its foot, in place of its button and dialog. Verify: a test named after the scenario 'a chosen character's terms show beside it', seen failing first.

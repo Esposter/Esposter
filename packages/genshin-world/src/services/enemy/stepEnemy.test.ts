@@ -1,6 +1,7 @@
 import type { BossMove } from "#src/models/bosses/BossMove";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
+import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import {
   ENEMY_AGGRO_RANGE,
@@ -12,6 +13,7 @@ import {
   ENEMY_LEASH_DISTANCE,
   ENEMY_RECOVERY_SECONDS,
   ENEMY_RUN_SPEED,
+  ENEMY_STAGGER_SECONDS,
   ENEMY_STEP_SECONDS,
   ENEMY_WALK_SPEED,
   ENEMY_WINDUP_SECONDS,
@@ -150,6 +152,41 @@ describe(stepEnemy, () => {
     expect(enemy).toStrictEqual({ ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), stateSeconds: resetSeconds });
   });
 
+  test("a shield stands again at full once its stagger passes", () => {
+    expect.hasAssertions();
+
+    const enemyCampMember = { ...ENEMY_CAMP_MEMBER, enemyKindId: EnemyKindId.StormterrorDvalin };
+    const enemy = createEnemy(enemyTables, [], enemyCampMember, "");
+    enemy.shield = { health: 0, maxHealth: 100 };
+    setEnemyState(enemy, EnemyState.Stagger);
+    stepEnemy(enemy, undefined, ENEMY_STAGGER_SECONDS / 2);
+
+    expect(enemy.shield).toStrictEqual({ health: 0, maxHealth: 100 });
+
+    stepEnemy(enemy, undefined, ENEMY_STAGGER_SECONDS / 2);
+
+    expect(enemy).toStrictEqual({
+      ...createEnemy(enemyTables, [], enemyCampMember, ""),
+      shield: { health: 100, maxHealth: 100 },
+      state: EnemyState.Chase,
+    });
+  });
+
+  test("an enemy arriving home is healed with its shield restored", () => {
+    expect.hasAssertions();
+
+    const enemyCampMember = { ...ENEMY_CAMP_MEMBER, enemyKindId: EnemyKindId.StormterrorDvalin };
+    const enemy = createEnemy(enemyTables, [], enemyCampMember, "");
+    enemy.shield = { health: 0, maxHealth: 100 };
+    setEnemyState(enemy, EnemyState.Return);
+    stepEnemy(enemy, undefined, ENEMY_STEP_SECONDS);
+
+    expect(enemy).toStrictEqual({
+      ...createEnemy(enemyTables, [], enemyCampMember, ""),
+      shield: { health: 100, maxHealth: 100 },
+    });
+  });
+
   test("a death passes once, after its length", () => {
     expect.hasAssertions();
 
@@ -210,5 +247,18 @@ describe(stepEnemy, () => {
     stepEnemy(enemy, undefined, ENEMY_RECOVERY_SECONDS, moves);
 
     expect(enemy.moveIndex).toBe(0);
+  });
+
+  test("an attack cooldown and a broken poise run out on the step their seconds do, not one step late", () => {
+    expect.hasAssertions();
+
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const { length } = PoiseTypeSettingsMap[enemy.traits.poiseType];
+    enemy.attackCooldownSeconds = 5;
+    enemy.poise = 0;
+    enemy.poiseBrokenSeconds = 5;
+    for (let step = 0; step < 300; step++) stepEnemy(enemy, undefined, ENEMY_STEP_SECONDS);
+
+    expect([enemy.attackCooldownSeconds, enemy.poise]).toStrictEqual([0, length]);
   });
 });

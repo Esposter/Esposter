@@ -43,7 +43,7 @@ flowchart LR
 | `scripts/src/models/genshinAssets/crafting/ExcelReliquaryOfferPurchaseRow.ts` | The offer row: the set link and the per-slot piece pairs                 |
 | `scripts/src/models/genshinAssets/crafting/ExcelDisplayItemRow.ts`            | The display item: its name text and its set id                           |
 | `scripts/src/services/genshinAssets/commands/craftingCommand.ts`              | Publishes the strongbox record with the recipes                          |
-| `packages/genshin-world/src/models/crafting/CraftingStrongbox.ts`             | The record and its schema                                                |
+| `packages/genshin-world/src/models/crafting/CraftingStrongboxData.ts`         | The record and its schema                                                |
 | `packages/genshin-world/src/services/crafting/readCraftingStrongboxes.ts`     | Reads the record by its key, checked against its shape                   |
 | `packages/genshin-world/src/services/artifact/rollPieceArtifact.ts`           | The piece-to-artifact step through `rollArtifact`, shared with the chest |
 | `packages/genshin-world/src/services/chest/rollChestDrops.ts`                 | The chest's artifact roll, now calling the shared step                   |

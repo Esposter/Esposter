@@ -4,6 +4,7 @@ import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/archive/Exc
 import { BLESSING_ARTIFACT_SET_NAMES } from "#src/services/genshinAssets/domains/treeRewardCounts";
 import { resolveBlessingArtifactSetIds } from "#src/services/genshinAssets/domains/resolveBlessingArtifactSetIds";
 import { describe, expect, test } from "vitest";
+import { takeOne } from "@esposter/shared";
 
 const NAME_HASH_OFFSET = 3000;
 const SET_ID_OFFSET = 10_000;
@@ -36,9 +37,9 @@ describe(resolveBlessingArtifactSetIds, () => {
   test("a name resolves to the set its equip affix's text names", () => {
     expect.hasAssertions();
 
-    expect(resolveBlessingArtifactSetIds({ 1: [NAMES[1]] }, reliquarySets, equipAffixes, textMap)).toStrictEqual({
-      1: [SET_ID_OFFSET + 1],
-    });
+    expect(
+      resolveBlessingArtifactSetIds({ 1: [takeOne(NAMES, 1)] }, reliquarySets, equipAffixes, textMap),
+    ).toStrictEqual({ 1: [SET_ID_OFFSET + 1] });
   });
 
   test("a name no set answers to is refused", () => {

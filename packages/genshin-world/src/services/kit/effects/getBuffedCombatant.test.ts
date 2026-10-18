@@ -21,6 +21,7 @@ const DILUC_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DILUC_CHARACT
 
 describe(getBuffedCombatant, () => {
   const CHARACTER_ID = 1;
+  const OTHER_CHARACTER_ID = 2;
   const party = createParty([CHARACTER_ID]);
 
   test("adds a flat ATK buff to the attack and a damage bonus to its attribute, and ignores another character's buff", () => {
@@ -133,7 +134,7 @@ describe(getBuffedCombatant, () => {
     ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.5);
   });
 
-  test("hands a passive the effects on the team, so a bonus reads a status the team holds", () => {
+  test("hands a passive the deployed combatants on the team, so a bonus counts the members the team holds", () => {
     expect.hasAssertions();
 
     const combatant: Combatant = {
@@ -144,20 +145,21 @@ describe(getBuffedCombatant, () => {
       elementalResonances: [],
       kit: {
         ...DILUC_KIT,
-        getPassiveBonuses: (_combatant, _healthShare, effects) => [
-          { amount: 0.1 * effects.length, attribute: Attribute.CriticalRate },
+        getPassiveBonuses: (_combatant, _healthShare, deployedCombatants) => [
+          { amount: 0.1 * deployedCombatants.length, attribute: Attribute.CriticalRate },
         ],
       },
       level: 90,
     };
-    const statusEffects: KitEffect[] = [
-      { characterId: CHARACTER_ID, id: "focus", kind: "status", secondsRemaining: 10 },
-    ];
+    const otherCombatant: Combatant = { ...combatant, characterId: OTHER_CHARACTER_ID };
+    const characterIdCombatantMap = new Map([
+      [CHARACTER_ID, combatant],
+      [OTHER_CHARACTER_ID, otherCombatant],
+    ]);
 
     expect(
-      getBuffedCombatant(combatant, statusEffects, createParty([CHARACTER_ID]), new Map()).attributes.attributeTotalMap[
-        Attribute.CriticalRate
-      ],
-    ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.1);
+      getBuffedCombatant(combatant, [], createParty([CHARACTER_ID, OTHER_CHARACTER_ID]), characterIdCombatantMap)
+        .attributes.attributeTotalMap[Attribute.CriticalRate],
+    ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.2);
   });
 });

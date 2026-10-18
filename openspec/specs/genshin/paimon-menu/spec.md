@@ -147,11 +147,11 @@ The profile card SHALL show the Traveler's rank and World Level, and the info ic
 - **WHEN** the player presses the info icon beside the World Level
 - **THEN** the World Level dialog opens over the dimmed menu
 
-#### Scenario: Birthday before the profile is backed
+#### Scenario: Birthday before it is set
 
-- **GIVEN** the profile is not yet backed
+- **GIVEN** the Traveler's birthday is not set
 - **WHEN** the profile card is shown
-- **THEN** the Birthday row stands over an empty value
+- **THEN** the Birthday row stands over a Set Birthday button
 
 ### Requirement: The World Level dialog shows its help text and lowering button
 

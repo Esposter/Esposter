@@ -1,13 +1,15 @@
 import type { SubCommandsDef } from "citty";
 
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
+import { findMovedFrozenPass } from "#src/services/genshinParity/passes/findMovedFrozenPass";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
+import { readParityPassRows, writeParityPasses } from "#src/services/genshinParity/passes/writeParityPasses";
 import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
-import { writeParityPasses } from "#src/services/genshinParity/passes/writeParityPasses";
 import { defineCommand } from "citty";
 
 export const passesCommand: SubCommandsDef[string] = defineCommand({
@@ -19,7 +21,7 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
     },
     pass: {
       description:
-        "One pass's measure alone, for a pass taken up ahead of one before it that still fails, rewriting only its own rows of the component's report",
+        "Run the passes up to and including this one, refused while an earlier pass still fails, and rewrite only the rows of the passes run",
       options: Object.values(ParityPass),
       type: "enum",
     },
@@ -31,7 +33,9 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const component = parseDerivedAssetComponent(args.component);
+    const recordedRows = await readParityPassRows(component);
     const results = await runParityPasses(component, args.pass);
+    const movedPass = findMovedFrozenPass({ passAlone: args.pass, recordedRows, results });
     for (const {
       isHeld,
       measure: { notes, readings },
@@ -44,6 +48,12 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
         );
       for (const note of notes) console.log(`  ${note}`);
     }
+    if (movedPass)
+      throw new InvalidOperationError(
+        Operation.Update,
+        "passes",
+        `${movedPass} is frozen, and ${args.pass} moved it: reopen ${movedPass} rather than compensating for it`,
+      );
     await writeParityPasses(component, results, { isPassAlone: args.pass !== undefined });
   },
 });

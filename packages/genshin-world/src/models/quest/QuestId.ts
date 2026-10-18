@@ -11,12 +11,8 @@ export enum QuestId {
   ReputationParent20740 = "20740",
   ReputationParent20741 = "20741",
   ReputationParent20743 = "20743",
-  ReputationParent311 = "311",
   ReputationParent384 = "384",
   ReputationParent396 = "396",
-  ReputationParent418 = "418",
-  ReputationParent70061 = "70061",
-  ReputationParent70078 = "70078",
   ReputationParent70102 = "70102",
   ReputationParent70104 = "70104",
   ReputationParent70106 = "70106",
@@ -32,7 +28,6 @@ export enum QuestId {
   ReputationParent70824 = "70824",
   ReputationParent70825 = "70825",
   ReputationParent71012 = "71012",
-  ReputationParent76096 = "76096",
   ReputationRequest7070001 = "7070001",
   ReputationRequest7070101 = "7070101",
   ReputationRequest7070201 = "7070201",
@@ -55,11 +50,10 @@ export enum QuestId {
 }
 
 // The parent quest of each Mondstadt Reputation quest the city pays for, in the order the city reads them. Each is carried
-// Whole, and a finish of it pays the reward its Reputation quest row names
+// Whole, and a finish of it pays the reward its Reputation quest row names. Parents 311, 418, 70061, 70078 and 76096
+// Are not carried: 311 and 418 finish on the game's script notices, the other three on scripted talks with no lines.
+// The reader takes no steps from any of them, so they have nothing to carry
 const ReputationParentQuestIds: readonly QuestId[] = [
-  QuestId.ReputationParent70078,
-  QuestId.ReputationParent70061,
-  QuestId.ReputationParent76096,
   QuestId.ReputationParent70123,
   QuestId.ReputationParent70121,
   QuestId.ReputationParent70106,
@@ -68,7 +62,6 @@ const ReputationParentQuestIds: readonly QuestId[] = [
   QuestId.ReputationParent70102,
   QuestId.ReputationParent70141,
   QuestId.ReputationParent71012,
-  QuestId.ReputationParent418,
   QuestId.ReputationParent70825,
   QuestId.ReputationParent70824,
   QuestId.ReputationParent70821,
@@ -81,7 +74,6 @@ const ReputationParentQuestIds: readonly QuestId[] = [
   QuestId.ReputationParent20740,
   QuestId.ReputationParent396,
   QuestId.ReputationParent384,
-  QuestId.ReputationParent311,
 ];
 
 // The Mondstadt keeper's delivery requests, each a sub quest its request row names. The three that ask for any one of a

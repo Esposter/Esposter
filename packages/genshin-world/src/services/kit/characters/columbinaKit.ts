@@ -6,7 +6,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
