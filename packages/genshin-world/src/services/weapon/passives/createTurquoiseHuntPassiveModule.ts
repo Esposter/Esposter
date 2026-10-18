@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
@@ -21,7 +21,7 @@ const CANOPY_REACTIONS = [{ reactionType: ReactionType.Burning }, { reactionType
 // Cooldown; a Burning or Burgeon a nearby party member triggers gives it three, once every reaction cooldown, whether or not
 // That member is on the field. Each stack raises its Elemental Skill and Burst DMG by the rank's share for its seconds, up to
 // The rank's maximum, and each stack runs its own seconds
-export const createTurquoiseHuntPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createTurquoiseHuntPassiveModule = (params: number[]): PassiveModule => {
   const skillCooldownSeconds = takeOne(params, 0);
   const reactionCooldownSeconds = takeOne(params, 1);
   const damageBonusPerStack = takeOne(params, 2);

@@ -1,11 +1,11 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { takeOne } from "@esposter/shared";
 
 // Cull the Weak at its rank: defeating an opponent restores its wielder the rank's share of Max HP
-export const createCullTheWeakPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createCullTheWeakPassiveModule = (params: number[]): PassiveModule => {
   const healthShare = takeOne(params, 0);
   return {
     onKitEvent: (event, context, combatant) => {

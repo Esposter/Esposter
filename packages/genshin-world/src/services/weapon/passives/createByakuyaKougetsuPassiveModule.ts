@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -16,7 +16,7 @@ const BYAKUYA_KOUGETSU_COOLDOWN_ID = "byakuyaKougetsuCooldown";
 // Rank's seconds after the wielder uses an Elemental Burst, each Normal Attack it lands restores the rank's Energy to it, once
 // Every cooldown. The rank's Healing Bonus line is a table line the weapon carries whatever its conditions, so this passive
 // Does not repeat it
-export const createByakuyaKougetsuPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createByakuyaKougetsuPassiveModule = (params: number[]): PassiveModule => {
   const maxHealthShare = takeOne(params, 1);
   const seconds = takeOne(params, 2);
   const energy = takeOne(params, 3);

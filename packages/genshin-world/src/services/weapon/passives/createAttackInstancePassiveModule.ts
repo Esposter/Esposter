@@ -1,6 +1,6 @@
 import type { AttackTag } from "#src/models/combat/AttackTag";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -32,7 +32,7 @@ export const createAttackInstancePassiveModule = ({
   maximumInstances,
   masteryShare,
   seconds,
-}: AttackInstancePassive): WeaponPassiveModule => {
+}: AttackInstancePassive): PassiveModule => {
   const cooldownId = `${id}Cooldown`;
   return {
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) => {

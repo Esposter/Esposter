@@ -4,6 +4,7 @@ import type { Kit } from "#src/models/kit/Kit";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ArtifactSetIdCreateModuleMap } from "#src/services/artifact/ArtifactSetIdCreateModuleMap";
+import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A character's kit with the sets its artifacts make pricing and answering the events of combat after it: each bonus its
@@ -27,19 +28,6 @@ export const getArtifactSetKit = (
     },
   ).flat();
   if (artifactSetModules.length === 0) return kit;
-  // The kit's own passives first, then each module's
-  const passives = [kit, ...artifactSetModules];
-  return {
-    ...kit,
-    getPassiveBonuses: (combatant, healthShare, deployedCombatants, effects) =>
-      passives.flatMap(
-        ({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? [],
-      ),
-    onKitEvent: (event, context, combatant) => {
-      kit.onKitEvent?.(event, context, combatant);
-      // A hit on wildlife triggers a weapon's passive, never an artifact set's, as the wiki notes
-      if (event.kind === KitEventKind.WildlifeStruck) return;
-      for (const { onKitEvent } of artifactSetModules) onKitEvent?.(event, context, combatant);
-    },
-  };
+  // A hit on wildlife triggers a weapon's passive, never an artifact set's, as the wiki notes
+  return getPassiveKit(kit, artifactSetModules, ({ kind }) => kind !== KitEventKind.WildlifeStruck);
 };

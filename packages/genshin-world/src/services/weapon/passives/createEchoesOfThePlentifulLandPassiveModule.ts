@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -12,7 +12,7 @@ const MAX_HEALTH_STEP = 1000;
 // Echoes of the Plentiful Land at its rank: an Elemental Skill its wielder uses grants the Jade-Forged Crown, which raises
 // Its Normal Attack DMG by the rank's share for each whole thousand of its Max HP, up to the rank's maximum, for the rank's
 // Seconds
-export const createEchoesOfThePlentifulLandPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createEchoesOfThePlentifulLandPassiveModule = (params: number[]): PassiveModule => {
   const amountPerStep = takeOne(params, 0);
   const maximumAmount = takeOne(params, 1);
   const seconds = takeOne(params, 2);

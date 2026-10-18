@@ -37,7 +37,7 @@ flowchart TD
 
 ## Set bonuses in combat
 
-A set's bonus that is only attributes is summed with the rest of a character's lines. A bonus that waits on combat adds no line: it is a module of its set's, an `ArtifactSetModule`, which adds bonuses to its wearer's pricing and answers the events of combat as a kit's passive does, read as its wearer's own.
+A set's bonus that is only attributes is summed with the rest of a character's lines. A bonus that waits on combat adds no line: it is a module of its set's, a `PassiveModule` (the type a weapon's passive shares), which adds bonuses to its wearer's pricing and answers the events of combat as a kit's passive does, read as its wearer's own.
 
 ```mermaid
 flowchart TD
@@ -82,54 +82,55 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 
 ## Key files
 
-| File                                                                                         | Role                                                                                              |
-| :------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/artifact/Artifact.ts`                                     | Gains its EXP and its lock                                                                        |
-| `packages/genshin-world/src/models/artifact/ArtifactRarityData.ts`                           | A rarity's levels, costs, fodder base, affix levels and groups                                    |
-| `packages/genshin-world/src/models/artifact/ArtifactMainAffixPool.ts`                        | A slot's main affix pool                                                                          |
-| `packages/genshin-world/src/models/artifact/ArtifactExpMaterial.ts`                          | An item's EXP                                                                                     |
-| `packages/genshin-world/src/services/artifact/constants.ts`                                  | The recovery rate, the EXP bonus and the wiki's weights                                           |
-| `packages/genshin-world/src/services/artifact/rollArtifact.ts`                               | A drop's artifact: main affix and minor affixes                                                   |
-| `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`                            | Feeding EXP, the bonus, levels and the affix levels passed                                        |
-| `packages/genshin-world/src/services/artifact/enhanceMinorAffixes.ts`                        | The minor affix added or raised at an affix level                                                 |
-| `packages/genshin-world/src/services/artifact/getFodderEnhancement.ts`                       | A fodder's EXP and Mora, refusing a locked artifact                                               |
-| `packages/genshin-world/src/services/artifact/enhanceCharacterArtifact.ts`                   | A worn piece enhanced with materials and fodders, refused when the wallet lacks the Mora          |
-| `packages/genshin-world/src/services/artifact/equipCharacterArtifact.ts`                     | A worn piece replaced in its slot, the piece it replaced returned                                 |
-| `packages/genshin-world/src/services/artifact/unequipCharacterArtifact.ts`                   | A worn piece taken off its slot, refusing an empty slot                                           |
-| `packages/genshin-world/src/services/artifact/getActiveArtifactSetBonuses.ts`                | Each set bonus the worn pieces reach by piece count, read by the attribute sum and the set block  |
-| `packages/genshin-world/src/models/artifact/ActiveArtifactSetBonus.ts`                       | A set bonus a character's artifacts reach, named by its set                                       |
-| `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`                     | The Mora an enhancement costs                                                                     |
-| `packages/genshin-world/src/models/artifact/ArtifactSetBonus.ts`                             | A set's bonus: its attributes, its numbers and its piece count                                    |
-| `packages/genshin-world/src/models/artifact/ArtifactSetModule.ts`                            | What a set's bonus that waits on combat adds to its wearer's pricing and the events it answers    |
-| `packages/genshin-world/src/services/artifact/ArtifactSetIdCreateModuleMap.ts`               | Each set with a module, by its id                                                                 |
-| `packages/genshin-world/src/services/artifact/getArtifactSetKit.ts`                          | A character's kit with its sets' modules answering after it                                       |
-| `packages/genshin-world/src/services/artifact/sets/createInstructorSetModule.ts`             | Instructor's four-piece                                                                           |
-| `packages/genshin-world/src/services/artifact/sets/createBerserkerSetModule.ts`              | Berserker's four-piece                                                                            |
-| `packages/genshin-world/src/services/artifact/sets/createExileSetModule.ts`                  | The Exile's four-piece                                                                            |
-| `packages/genshin-world/src/services/artifact/sets/createTravelingDoctorSetModule.ts`        | Traveling Doctor's four-piece                                                                     |
-| `packages/genshin-world/src/services/artifact/sets/createLuckyDogSetModule.ts`               | Lucky Dog's four-piece                                                                            |
-| `packages/genshin-world/src/services/artifact/sets/createAdventurerSetModule.ts`             | Adventurer's four-piece                                                                           |
-| `packages/genshin-world/src/services/artifact/sets/createDefendersWillSetModule.ts`          | Defender's Will's four-piece                                                                      |
-| `packages/genshin-world/src/services/artifact/sets/createMartialArtistSetModule.ts`          | Martial Artist's two- and four-piece                                                              |
-| `packages/genshin-world/src/services/artifact/sets/createMaidenBelovedSetModule.ts`          | Maiden Beloved's four-piece                                                                       |
-| `packages/genshin-world/src/services/artifact/sets/createGladiatorsFinaleSetModule.ts`       | Gladiator's Finale's four-piece                                                                   |
-| `packages/genshin-world/src/services/artifact/sets/createWanderersTroupeSetModule.ts`        | Wanderer's Troupe's four-piece                                                                    |
-| `packages/genshin-world/src/services/artifact/sets/createNoblesseObligeSetModule.ts`         | Noblesse Oblige's four-piece                                                                      |
-| `packages/genshin-world/src/services/artifact/sets/createRetracingBolideSetModule.ts`        | Retracing Bolide's four-piece                                                                     |
-| `packages/genshin-world/src/services/artifact/sets/createHeartOfDepthSetModule.ts`           | Heart of Depth's four-piece                                                                       |
-| `packages/genshin-world/src/services/artifact/sets/createAfterSkillAttackDamageSetModule.ts` | The shared shape: an attack DMG bonus after the Elemental Skill                                   |
-| `packages/genshin-world/src/services/artifact/sets/createAttributePassiveSetModule.ts`       | The shared shape: attributes given on every attack                                                |
-| `packages/genshin-world/src/services/artifact/sets/createWeaponTypeAttackDamageSetModule.ts` | The shared shape: an attack DMG bonus while a weapon type is wielded                              |
-| `packages/genshin-world/src/services/artifact/sets/createUsedActionTeamBuffSetModule.ts`     | The shared shape: a team buff after the wearer's skill or burst                                   |
-| `packages/genshin-world/src/models/kit/KitMoraPickedUpEvent.ts`                              | The character on the field picked up Mora, the event Lucky Dog's four-piece answers               |
-| `packages/genshin-world/src/models/kit/KitChestOpenedEvent.ts`                               | The character on the field opened a chest in the world, the event Adventurer's four-piece answers |
-| `packages/genshin-world/src/composables/useWorldCombat.ts`                                   | Queues each Mora picked up and each chest opened as a kit event for the next step                 |
-| `packages/genshin-world/src/composables/useWorldChests.ts`                                   | Opens a chest in the world and tells the combat once it opens                                     |
-| `packages/genshin-world/src/services/shared/drawWeightedValue.ts`                            | One draw in proportion to weights, from a seeded random source                                    |
-| `scripts/src/services/genshinAssets/stats/getArtifactRarityDatas.ts`                         | Writes the rarity tables from the reliquary, level and affix rows                                 |
-| `scripts/src/services/genshinAssets/stats/getArtifactMainAffixPools.ts`                      | Writes the main affix pools                                                                       |
-| `scripts/src/services/genshinAssets/stats/getArtifactExpMaterials.ts`                        | Writes the EXP items                                                                              |
-| `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`                            | Writes each set's bonuses and their numbers                                                       |
+| File                                                                                         | Role                                                                                                       |
+| :------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/artifact/Artifact.ts`                                     | Gains its EXP and its lock                                                                                 |
+| `packages/genshin-world/src/models/artifact/ArtifactRarityData.ts`                           | A rarity's levels, costs, fodder base, affix levels and groups                                             |
+| `packages/genshin-world/src/models/artifact/ArtifactMainAffixPool.ts`                        | A slot's main affix pool                                                                                   |
+| `packages/genshin-world/src/models/artifact/ArtifactExpMaterial.ts`                          | An item's EXP                                                                                              |
+| `packages/genshin-world/src/services/artifact/constants.ts`                                  | The recovery rate, the EXP bonus and the wiki's weights                                                    |
+| `packages/genshin-world/src/services/artifact/rollArtifact.ts`                               | A drop's artifact: main affix and minor affixes                                                            |
+| `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`                            | Feeding EXP, the bonus, levels and the affix levels passed                                                 |
+| `packages/genshin-world/src/services/artifact/enhanceMinorAffixes.ts`                        | The minor affix added or raised at an affix level                                                          |
+| `packages/genshin-world/src/services/artifact/getFodderEnhancement.ts`                       | A fodder's EXP and Mora, refusing a locked artifact                                                        |
+| `packages/genshin-world/src/services/artifact/enhanceCharacterArtifact.ts`                   | A worn piece enhanced with materials and fodders, refused when the wallet lacks the Mora                   |
+| `packages/genshin-world/src/services/artifact/equipCharacterArtifact.ts`                     | A worn piece replaced in its slot, the piece it replaced returned                                          |
+| `packages/genshin-world/src/services/artifact/unequipCharacterArtifact.ts`                   | A worn piece taken off its slot, refusing an empty slot                                                    |
+| `packages/genshin-world/src/services/artifact/getActiveArtifactSetBonuses.ts`                | Each set bonus the worn pieces reach by piece count, read by the attribute sum and the set block           |
+| `packages/genshin-world/src/models/artifact/ActiveArtifactSetBonus.ts`                       | A set bonus a character's artifacts reach, named by its set                                                |
+| `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`                     | The Mora an enhancement costs                                                                              |
+| `packages/genshin-world/src/models/artifact/ArtifactSetBonus.ts`                             | A set's bonus: its attributes, its numbers and its piece count                                             |
+| `packages/genshin-world/src/models/kit/PassiveModule.ts`                                     | What a passive, a weapon's or a set's, adds to its wielder's or wearer's pricing and the events it answers |
+| `packages/genshin-world/src/services/artifact/ArtifactSetIdCreateModuleMap.ts`               | Each set with a module, by its id                                                                          |
+| `packages/genshin-world/src/services/artifact/getArtifactSetKit.ts`                          | A character's kit with its sets' modules answering after it                                                |
+| `packages/genshin-world/src/services/kit/getPassiveKit.ts`                                   | A kit with passive modules composed beside it, each hook, and the events the modules hear                  |
+| `packages/genshin-world/src/services/artifact/sets/createInstructorSetModule.ts`             | Instructor's four-piece                                                                                    |
+| `packages/genshin-world/src/services/artifact/sets/createBerserkerSetModule.ts`              | Berserker's four-piece                                                                                     |
+| `packages/genshin-world/src/services/artifact/sets/createExileSetModule.ts`                  | The Exile's four-piece                                                                                     |
+| `packages/genshin-world/src/services/artifact/sets/createTravelingDoctorSetModule.ts`        | Traveling Doctor's four-piece                                                                              |
+| `packages/genshin-world/src/services/artifact/sets/createLuckyDogSetModule.ts`               | Lucky Dog's four-piece                                                                                     |
+| `packages/genshin-world/src/services/artifact/sets/createAdventurerSetModule.ts`             | Adventurer's four-piece                                                                                    |
+| `packages/genshin-world/src/services/artifact/sets/createDefendersWillSetModule.ts`          | Defender's Will's four-piece                                                                               |
+| `packages/genshin-world/src/services/artifact/sets/createMartialArtistSetModule.ts`          | Martial Artist's two- and four-piece                                                                       |
+| `packages/genshin-world/src/services/artifact/sets/createMaidenBelovedSetModule.ts`          | Maiden Beloved's four-piece                                                                                |
+| `packages/genshin-world/src/services/artifact/sets/createGladiatorsFinaleSetModule.ts`       | Gladiator's Finale's four-piece                                                                            |
+| `packages/genshin-world/src/services/artifact/sets/createWanderersTroupeSetModule.ts`        | Wanderer's Troupe's four-piece                                                                             |
+| `packages/genshin-world/src/services/artifact/sets/createNoblesseObligeSetModule.ts`         | Noblesse Oblige's four-piece                                                                               |
+| `packages/genshin-world/src/services/artifact/sets/createRetracingBolideSetModule.ts`        | Retracing Bolide's four-piece                                                                              |
+| `packages/genshin-world/src/services/artifact/sets/createHeartOfDepthSetModule.ts`           | Heart of Depth's four-piece                                                                                |
+| `packages/genshin-world/src/services/artifact/sets/createAfterSkillAttackDamageSetModule.ts` | The shared shape: an attack DMG bonus after the Elemental Skill                                            |
+| `packages/genshin-world/src/services/artifact/sets/createAttributePassiveSetModule.ts`       | The shared shape: attributes given on every attack                                                         |
+| `packages/genshin-world/src/services/artifact/sets/createWeaponTypeAttackDamageSetModule.ts` | The shared shape: an attack DMG bonus while a weapon type is wielded                                       |
+| `packages/genshin-world/src/services/artifact/sets/createUsedActionTeamBuffSetModule.ts`     | The shared shape: a team buff after the wearer's skill or burst                                            |
+| `packages/genshin-world/src/models/kit/KitMoraPickedUpEvent.ts`                              | The character on the field picked up Mora, the event Lucky Dog's four-piece answers                        |
+| `packages/genshin-world/src/models/kit/KitChestOpenedEvent.ts`                               | The character on the field opened a chest in the world, the event Adventurer's four-piece answers          |
+| `packages/genshin-world/src/composables/useWorldCombat.ts`                                   | Queues each Mora picked up and each chest opened as a kit event for the next step                          |
+| `packages/genshin-world/src/composables/useWorldChests.ts`                                   | Opens a chest in the world and tells the combat once it opens                                              |
+| `packages/genshin-world/src/services/shared/drawWeightedValue.ts`                            | One draw in proportion to weights, from a seeded random source                                             |
+| `scripts/src/services/genshinAssets/stats/getArtifactRarityDatas.ts`                         | Writes the rarity tables from the reliquary, level and affix rows                                          |
+| `scripts/src/services/genshinAssets/stats/getArtifactMainAffixPools.ts`                      | Writes the main affix pools                                                                                |
+| `scripts/src/services/genshinAssets/stats/getArtifactExpMaterials.ts`                        | Writes the EXP items                                                                                       |
+| `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`                            | Writes each set's bonuses and their numbers                                                                |
 
 ## Notes
 

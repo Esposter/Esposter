@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 
 // Gilding at its rank: after its wielder uses a burst, on each interval for the seconds given it regenerates energy to the
 // Wielder and a share of Max HP to each member of the deployed team
-export const createGildingPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createGildingPassiveModule = (params: number[]): PassiveModule => {
   const seconds = takeOne(params, 0);
   const intervalSeconds = takeOne(params, 1);
   const energy = takeOne(params, 2);

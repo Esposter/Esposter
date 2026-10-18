@@ -1,5 +1,5 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
-import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 // Instructor's four-piece bonus, its seconds and its Elemental Mastery in the set table's order: a reaction its wearer
 // Triggers on the field gives every member of the deployed team that Elemental Mastery for those seconds. A reaction its
 // Summon triggers once it has left the field gives none, and a second one restarts the buff rather than stacking it
-export const createInstructorSetModule = ({ params }: ArtifactSetBonus): ArtifactSetModule => {
+export const createInstructorSetModule = ({ params }: ArtifactSetBonus): PassiveModule => {
   const seconds = takeOne(params, 0);
   const elementalMastery = takeOne(params, 1);
   return {

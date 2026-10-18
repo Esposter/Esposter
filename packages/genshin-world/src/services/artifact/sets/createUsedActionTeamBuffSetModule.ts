@@ -1,5 +1,5 @@
 import type { Attribute } from "#src/models/character/Attribute";
-import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
@@ -18,7 +18,7 @@ export const createUsedActionTeamBuffSetModule = ({
   attribute: Attribute;
   seconds: number;
   source: string;
-}): ArtifactSetModule => ({
+}): PassiveModule => ({
   onKitEvent: (event, { kitEffectState, party }, combatant) => {
     if (event.characterId !== combatant.characterId) return;
     const action =

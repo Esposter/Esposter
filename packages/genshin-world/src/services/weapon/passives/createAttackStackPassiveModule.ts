@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import type { PassiveStack } from "#src/services/weapon/passives/addPassiveStack";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -12,7 +12,7 @@ const ATTACK_STACK_SECONDS = 6;
 // Attack striking several enemies adds one stack between them, the cooldown holding back the rest
 export const createAttackStackPassiveModule = (
   passive: Pick<PassiveStack, "cooldownSeconds" | "id" | "perStackBonuses">,
-): WeaponPassiveModule => ({
+): PassiveModule => ({
   onKitEvent: (event, { kitEffectState }, combatant) => {
     if (
       event.kind !== KitEventKind.DamageTaken ||

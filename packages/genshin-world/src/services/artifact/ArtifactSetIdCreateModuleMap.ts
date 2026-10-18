@@ -1,5 +1,5 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
-import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import {
   ADVENTURER_ARTIFACT_SET_ID,
@@ -35,7 +35,7 @@ import { createWanderersTroupeSetModule } from "#src/services/artifact/sets/crea
 // Each set whose bonus waits on combat, by the set table's id, and how that bonus is built as a module from its row. A set
 // The world carries with no module here gives only its attributes
 export const ArtifactSetIdCreateModuleMap: Readonly<
-  Partial<Record<number, (bonus: ArtifactSetBonus) => ArtifactSetModule>>
+  Partial<Record<number, (bonus: ArtifactSetBonus) => PassiveModule>>
 > = {
   [ADVENTURER_ARTIFACT_SET_ID]: createAdventurerSetModule,
   [BERSERKER_ARTIFACT_SET_ID]: createBerserkerSetModule,

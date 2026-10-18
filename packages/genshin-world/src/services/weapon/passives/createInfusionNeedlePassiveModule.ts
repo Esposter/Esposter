@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -11,7 +11,7 @@ const INFUSION_NEEDLE_SECONDS = 5;
 
 // Infusion Needle at its rank: after its wielder picks up an elemental orb or particle, each normal or charged attack it
 // Lands deals an extra hit of the rank's share of ATK, for five seconds. Provisional: one extra hit per attack, not per hit
-export const createInfusionNeedlePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createInfusionNeedlePassiveModule = (params: number[]): PassiveModule => {
   const attackShare = takeOne(params, 0);
   return {
     onKitEvent: (event, context, combatant) => {

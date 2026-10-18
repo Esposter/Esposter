@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -17,7 +17,7 @@ const AEON_WAVE_MAXIMUM_STACKS = 3;
 // DMG, up to three, once every cooldown and each stack running its seconds. A third stack, or a refresh of it, restores the
 // Rank's energy to the wielder once every twelve seconds. The rank's HP line is a table line the weapon carries whatever its
 // Conditions, so this passive does not repeat it
-export const createAeonWavePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createAeonWavePassiveModule = (params: number[]): PassiveModule => {
   const stackSeconds = takeOne(params, 0);
   const stackCooldownSeconds = takeOne(params, 1);
   const damageBonusPerStack = takeOne(params, 2);

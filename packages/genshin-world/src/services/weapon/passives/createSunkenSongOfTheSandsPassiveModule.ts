@@ -1,6 +1,6 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStatus } from "#src/models/kit/KitStatus";
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -35,7 +35,7 @@ const refreshSoonestGrandHymnHold = (kitEffectState: KitEffectState, characterId
 // Wielder's Max HP as Elemental Mastery, up to three and once every cooldown, each stack running the rank's seconds. Whenever
 // The stacks stand at three after a trigger, each other member of the deployed team gains the rank's share of the wielder's Max
 // HP as Elemental Mastery for the rank's seconds, and a trigger at three restarts that buff
-export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): PassiveModule => {
   const stackShare = takeOne(params, 1);
   const stackSeconds = takeOne(params, 2);
   const cooldownSeconds = takeOne(params, 3);

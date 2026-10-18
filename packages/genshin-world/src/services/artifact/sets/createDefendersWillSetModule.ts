@@ -1,5 +1,5 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
-import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
@@ -17,7 +17,7 @@ const ELEMENT_RESISTANCE_ATTRIBUTE_MAP: Readonly<Record<Element, Attribute>> = {
 
 // Defender's Will's four-piece bonus: the Elemental RES its wearer gains to each different element its team holds,
 // At the amount in the table's only param, so one element counts once however many members draw in it
-export const createDefendersWillSetModule = ({ params }: ArtifactSetBonus): ArtifactSetModule => {
+export const createDefendersWillSetModule = ({ params }: ArtifactSetBonus): PassiveModule => {
   const amount = takeOne(params, 0);
   return {
     getPassiveBonuses: (combatant) =>

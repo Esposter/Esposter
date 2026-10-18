@@ -2,6 +2,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
+import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { WeaponPassiveNameTextIdCreateModuleMap } from "#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap";
 
 // A character's kit with its weapon's passive answering beside it: the module of the passive the weapon's table names,
@@ -11,25 +12,5 @@ export const getWeaponPassiveKit = (kit: Kit, weapon: Weapon, weaponData: undefi
   const createModule = weaponData && WeaponPassiveNameTextIdCreateModuleMap[weaponData.passiveNameTextId];
   const params = weaponData?.passiveRankParams[weapon.refinement - 1];
   if (!createModule || !params) return kit;
-  const passive = createModule(params);
-  return {
-    ...kit,
-    getPassiveBonuses: (combatant, healthShare, deployedCombatants, effects) => [
-      ...(kit.getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? []),
-      ...(passive.getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? []),
-    ],
-    getStrikeDamageBonus: (strike, enemy, party, effects) =>
-      (kit.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0) +
-      (passive.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0),
-    getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects) =>
-      (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0) +
-      (passive.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0),
-    getStrikeCriticalRateBonus: (strike, enemy, party, effects) =>
-      (kit.getStrikeCriticalRateBonus?.(strike, enemy, party, effects) ?? 0) +
-      (passive.getStrikeCriticalRateBonus?.(strike, enemy, party, effects) ?? 0),
-    onKitEvent: (event, context, combatant) => {
-      kit.onKitEvent?.(event, context, combatant);
-      passive.onKitEvent?.(event, context, combatant);
-    },
-  };
+  return getPassiveKit(kit, [createModule(params)]);
 };

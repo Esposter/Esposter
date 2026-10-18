@@ -1,5 +1,5 @@
 import type { Attribute } from "#src/models/character/Attribute";
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -10,7 +10,7 @@ import { takeOne } from "@esposter/shared";
 export const createHealBuffPassiveModule = (
   params: number[],
   { attribute, source }: { attribute: Attribute; source: string },
-): WeaponPassiveModule => {
+): PassiveModule => {
   const amount = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   return {
