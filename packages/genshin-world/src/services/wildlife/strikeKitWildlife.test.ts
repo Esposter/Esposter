@@ -32,4 +32,14 @@ describe(strikeKitWildlife, () => {
     expect(whitePigeon.state).toBe(WildlifeState.Idle);
     expect(placeWildlifeDrops).not.toHaveBeenCalled();
   });
+
+  test("a hit returns the animals it struck and skips one already struck", () => {
+    expect.hasAssertions();
+
+    const whitePigeon = createWildlife({ id: "pigeon", kind: WildlifeKind.WhitePigeon, position: { x: 0, z: -2 } });
+    const struckPigeon = createWildlife({ id: "struck", kind: WildlifeKind.WhitePigeon, position: { x: 0, z: -1 } });
+    struckPigeon.state = WildlifeState.Struck;
+    const placeWildlifeDrops = vi.fn<(wildlife: Wildlife, droppedItems: DroppedItem[]) => void>();
+    expect(strikeKitWildlife(AREA, BODY, [whitePigeon, struckPigeon], placeWildlifeDrops)).toStrictEqual([whitePigeon]);
+  });
 });

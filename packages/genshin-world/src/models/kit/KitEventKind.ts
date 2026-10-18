@@ -4,7 +4,7 @@
 // a normal attack of the character on the field landed, a hit triggered reactions on an enemy, a status on an enemy struck
 // on its own schedule, a taunt took an enemy's strike, or a shield took a strike on a party member for its owner. A charged
 // attack of the character on the field landed, a skill was used, a hit of an element or on a weak point landed on an enemy,
-// or a hit defeated one
+// or a hit defeated one, or a hit felled an animal in the world
 export enum KitEventKind {
   BurstUsed = "BurstUsed",
   CharacterSwapped = "CharacterSwapped",
@@ -25,4 +25,5 @@ export enum KitEventKind {
   StatusTicked = "StatusTicked",
   TauntDamaged = "TauntDamaged",
   WeakPointHit = "WeakPointHit",
+  WildlifeStruck = "WildlifeStruck",
 }

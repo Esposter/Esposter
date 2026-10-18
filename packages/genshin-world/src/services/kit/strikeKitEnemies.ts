@@ -162,7 +162,9 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       if (enemy.state === EnemyState.Dead)
         emitKitEvent({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context);
     }
-    if (target === undefined) strikeKitWildlife(hit.hitArea, body, wildlifeList, placeWildlifeDrops);
+    if (target === undefined)
+      for (const wildlife of strikeKitWildlife(hit.hitArea, body, wildlifeList, placeWildlifeDrops))
+        emitKitEvent({ kind: KitEventKind.WildlifeStruck, striker: combatant, wildlife }, context);
 
     landKitReactionReaches(reaches, pricedCombatant, context);
     if (isStruck) strikes[struckCount++] = strike;

@@ -17,6 +17,7 @@ import type { KitSkillUsedEvent } from "#src/models/kit/KitSkillUsedEvent";
 import type { KitStatusTickedEvent } from "#src/models/kit/KitStatusTickedEvent";
 import type { KitTauntDamagedEvent } from "#src/models/kit/KitTauntDamagedEvent";
 import type { KitWeakPointHitEvent } from "#src/models/kit/KitWeakPointHitEvent";
+import type { KitWildlifeStruckEvent } from "#src/models/kit/KitWildlifeStruckEvent";
 
 // What happens in combat that a kit's passives and constellations answer, sent to every kit of the deployed team
 export type KitEvent =
@@ -38,4 +39,5 @@ export type KitEvent =
   | KitSkillUsedEvent
   | KitStatusTickedEvent
   | KitTauntDamagedEvent
-  | KitWeakPointHitEvent;
+  | KitWeakPointHitEvent
+  | KitWildlifeStruckEvent;
