@@ -33,5 +33,7 @@ export interface GcgSideState {
   summons: GcgZoneCard[];
   supports: GcgZoneCard[];
   usedCardIds: number[];
+  // The ids of the effects that run once a Match rather than once a Round, each recorded once it has run
+  usedMatchIds?: number[];
   usedSkillIds: number[];
 }

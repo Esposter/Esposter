@@ -8,6 +8,7 @@ import { aquilaFavonia } from "#src/services/gcg/cards/aquilaFavonia";
 import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
 import { aurousBlaze } from "#src/services/gcg/cards/aurousBlaze";
 import { bakeKurage } from "#src/services/gcg/cards/bakeKurage";
+import { beaconOfTheReedSea } from "#src/services/gcg/cards/beaconOfTheReedSea";
 import { blessingOfTheDivineRelicsInstallation } from "#src/services/gcg/cards/blessingOfTheDivineRelicsInstallation";
 import { brokenRimesEcho } from "#src/services/gcg/cards/brokenRimesEcho";
 import { burningFlame } from "#src/services/gcg/cards/burningFlame";
@@ -36,9 +37,11 @@ import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { elementalLifeformElectro } from "#src/services/gcg/cards/elementalLifeformElectro";
+import { elementalResonanceEnduringRock } from "#src/services/gcg/cards/elementalResonanceEnduringRock";
 import { elementalResonanceHighVoltage } from "#src/services/gcg/cards/elementalResonanceHighVoltage";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
 import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalResonanceWovenIce";
+import { elementalResonanceWovenStone } from "#src/services/gcg/cards/elementalResonanceWovenStone";
 import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
 import { ellin } from "#src/services/gcg/cards/ellin";
 import { embersRekindled } from "#src/services/gcg/cards/embersRekindled";
@@ -47,6 +50,9 @@ import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
 import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { generalsGlory } from "#src/services/gcg/cards/generalsGlory";
+import { generalsWarBanner } from "#src/services/gcg/cards/generalsWarBanner";
+import { grandNarukamiShrine } from "#src/services/gcg/cards/grandNarukamiShrine";
 import { hanachirusato } from "#src/services/gcg/cards/hanachirusato";
 import { hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
 import { icyQuill } from "#src/services/gcg/cards/icyQuill";
@@ -70,6 +76,7 @@ import { jueyunGuoba } from "#src/services/gcg/cards/jueyunGuoba";
 import { kantenSenmyouBlessing } from "#src/services/gcg/cards/kantenSenmyouBlessing";
 import { katheryne } from "#src/services/gcg/cards/katheryne";
 import { kidKujirai } from "#src/services/gcg/cards/kidKujirai";
+import { kingsSquire, kingsSquireInEffect } from "#src/services/gcg/cards/kingsSquire";
 import { knightsOfFavoniusLibrary } from "#src/services/gcg/cards/knightsOfFavoniusLibrary";
 import { largeWindSpirit } from "#src/services/gcg/cards/largeWindSpirit";
 import { laurelCoronet } from "#src/services/gcg/cards/laurelCoronet";
@@ -107,10 +114,14 @@ import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { rana } from "#src/services/gcg/cards/rana";
 import { ravenBow } from "#src/services/gcg/cards/ravenBow";
 import { reflection } from "#src/services/gcg/cards/reflection";
+import { rushingHound } from "#src/services/gcg/cards/rushingHound";
 import { sacredCryoPearl } from "#src/services/gcg/cards/sacredCryoPearl";
 import { sacrificialBow } from "#src/services/gcg/cards/sacrificialBow";
 import { sacrificialGreatsword } from "#src/services/gcg/cards/sacrificialGreatsword";
 import { sacrificialSword } from "#src/services/gcg/cards/sacrificialSword";
+import { sangonomiyaShrine } from "#src/services/gcg/cards/sangonomiyaShrine";
+import { scorpionBlessing } from "#src/services/gcg/cards/scorpionBlessing";
+import { scorpocalypse } from "#src/services/gcg/cards/scorpocalypse";
 import { sendOff } from "#src/services/gcg/cards/sendOff";
 import { sesshouSakura } from "#src/services/gcg/cards/sesshouSakura";
 import { shadowswordGallopingFrost } from "#src/services/gcg/cards/shadowswordGallopingFrost";
@@ -118,12 +129,14 @@ import { shadowswordLoneGale } from "#src/services/gcg/cards/shadowswordLoneGale
 import { shatteringIce } from "#src/services/gcg/cards/shatteringIce";
 import { shimenawasReminiscence } from "#src/services/gcg/cards/shimenawasReminiscence";
 import { sinOfPride } from "#src/services/gcg/cards/sinOfPride";
+import { pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { starsigns } from "#src/services/gcg/cards/starsigns";
 import { stoneAndContracts } from "#src/services/gcg/cards/stoneAndContracts";
 import { stoneForce } from "#src/services/gcg/cards/stoneForce";
 import { stonehide } from "#src/services/gcg/cards/stonehide";
 import { strategize } from "#src/services/gcg/cards/strategize";
 import { streamingSurge } from "#src/services/gcg/cards/streamingSurge";
+import { sumeruCity } from "#src/services/gcg/cards/sumeruCity";
 import { superlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
 import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { sweetMadame } from "#src/services/gcg/cards/sweetMadame";
@@ -131,6 +144,7 @@ import { talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
 import { tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
 import { tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
 import { tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
+import { tenshukaku } from "#src/services/gcg/cards/tenshukaku";
 import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
 import { theShrinesSacredShade } from "#src/services/gcg/cards/theShrinesSacredShade";
@@ -147,8 +161,10 @@ import { ushi } from "#src/services/gcg/cards/ushi";
 import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
 import { vermillionHereafterBonus } from "#src/services/gcg/cards/vermillionHereafter";
 import { viridescentVenerersDiadem } from "#src/services/gcg/cards/viridescentVenerersDiadem";
+import { vourukashasGlow } from "#src/services/gcg/cards/vourukashasGlow";
 import { wagner } from "#src/services/gcg/cards/wagner";
 import { wangshuInn } from "#src/services/gcg/cards/wangshuInn";
+import { weepingWillowOfTheLake } from "#src/services/gcg/cards/weepingWillowOfTheLake";
 import { whenTheCraneReturned } from "#src/services/gcg/cards/whenTheCraneReturned";
 import { whiteIronGreatsword } from "#src/services/gcg/cards/whiteIronGreatsword";
 import { whiteTassel } from "#src/services/gcg/cards/whiteTassel";
@@ -314,4 +330,21 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [GCG_BURNING_FLAME_ID, burningFlame],
   [GCG_CATALYZING_FIELD_ID, catalyzingField],
   [GCG_DENDRO_CORE_ID, dendroCore],
+  [116_061, generalsWarBanner],
+  [116_062, generalsGlory],
+  [123_031, pyroScorpion],
+  [123_032, scorpionBlessing],
+  [216_061, rushingHound],
+  [223_031, scorpocalypse],
+  [301_103, kingsSquireInEffect],
+  [311_206, kingsSquire],
+  [311_306, beaconOfTheReedSea],
+  [312_022, vourukashasGlow],
+  [321_007, tenshukaku],
+  [321_008, grandNarukamiShrine],
+  [321_009, sangonomiyaShrine],
+  [321_010, sumeruCity],
+  [321_016, weepingWillowOfTheLake],
+  [331_601, elementalResonanceWovenStone],
+  [331_602, elementalResonanceEnduringRock],
 ]);

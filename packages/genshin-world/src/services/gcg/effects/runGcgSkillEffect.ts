@@ -3,6 +3,7 @@ import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
+import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { takeOne } from "@esposter/shared";
@@ -22,6 +23,7 @@ export const runGcgSkillEffect = (
   const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
   if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing, skill));
   skillModule?.afterDamage?.(context);
-  takeOne(context.duel.sides, context.sideIndex).usedSkillIds.push(skill.id);
+  // A Technique is an action of its own, not a skill, so no skill rule reads it as used
+  if (skill.kind !== GcgSkillKind.Technique) takeOne(context.duel.sides, context.sideIndex).usedSkillIds.push(skill.id);
   return dealt;
 };

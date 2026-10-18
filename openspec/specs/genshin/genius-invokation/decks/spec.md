@@ -291,3 +291,23 @@ Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Eleme
 - **GIVEN** Shimenawa's Reminiscence is attached to Abyss Lector, who is standby, and Kujou Sara is active
 - **WHEN** Sara pays for an Elemental Skill
 - **THEN** it costs one Elemental Die less, and the artifact is used for the round
+
+### Requirement: A Technique is an action its character's equipment gives, not a skill
+
+A Technique that a character's equipment gives SHALL be used by that character, paying its dice as a skill is paid, and SHALL NOT be recorded as a used skill, so a rule that reduces a skill already used this Round does not read it.
+
+#### Scenario: Ellin does not reduce a repeated Burning Assault
+
+- **GIVEN** Spirit of Omen: Pyro Scorpion is equipped to Eremite, Ellin is on her side, and Burning Assault was used this Round
+- **WHEN** Eremite uses Burning Assault again with one die
+- **THEN** the use is unpayable, since it still costs 2 Matching dice
+
+### Requirement: A character hears the DMG it takes, whichever hit lands it
+
+A character still standing that loses HP or shield SHALL hear the DMG it takes through its cards and Passive skills, whether the damage is its side's active hit, a reaction's piercing or spread, or standby piercing. Spirit of Omen's Power is the card that needs it.
+
+#### Scenario: Standby piercing takes the Eremite to 7 HP or less
+
+- **GIVEN** Eremite stands on standby at 8 HP with Spirit of Omen's Power
+- **WHEN** piercing DMG takes her to 6 HP
+- **THEN** she gains 1 Energy

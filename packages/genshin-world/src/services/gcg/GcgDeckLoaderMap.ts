@@ -18,6 +18,7 @@ export const GcgDeckLoaderMap: ReadonlyMap<number, (gameDataBaseUrl: string) => 
   [13_005, (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "gcg/deck13005", z.unknown())],
   [14_405, (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "gcg/deck14405", z.unknown())],
   [14_410, (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "gcg/deck14410", z.unknown())],
+  [15_004, (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "gcg/deck15004", z.unknown())],
   [30_111, (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "gcg/deck30111", z.unknown())],
   [30_112, (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "gcg/deck30112", z.unknown())],
 ]);

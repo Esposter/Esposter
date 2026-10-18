@@ -11,6 +11,11 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { MINTY_MEAT_ROLLS_ID, mintyMeatRolls } from "#src/services/gcg/cards/mintyMeatRolls";
+import {
+  BURNING_ASSAULT_SKILL,
+  PYRO_SCORPION_ID,
+  pyroScorpion,
+} from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { SWEEPING_TIME_ID, sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -170,5 +175,24 @@ describe(useGcgSkill, () => {
       result: GcgActionResult.Done,
       usedCardIds: [],
     });
+  });
+
+  test("should use the Technique its equipped card gives the character, paying its Matching dice", () => {
+    expect.hasAssertions();
+
+    const character = createCharacterState([]);
+    character.equipments = [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)];
+    const attacker = createSideState(character, [Element.Pyro, Element.Pyro]);
+    const defender = createSideState(createCharacterState([]), []);
+    const duel = createDuel(attacker, defender);
+
+    const result = useGcgSkill(duel, 0, BURNING_ASSAULT_SKILL.id, [0, 1]);
+
+    expect({
+      defenderHp: takeOne(defender.characters, 0).hp,
+      dice: attacker.dice,
+      result,
+      usedSkillIds: attacker.usedSkillIds,
+    }).toStrictEqual({ defenderHp: 8, dice: [], result: GcgActionResult.Done, usedSkillIds: [] });
   });
 });

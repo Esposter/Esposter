@@ -55,6 +55,8 @@ export interface GcgCardModule {
   // resolved, so a card that draws on the play reads the field as it now stands
   onCardPlayed?: (context: GcgEffectContext, playedCard: GcgCard, zoneCard: GcgZoneCard) => void;
   onCostPaid?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => void;
+  // A character's own cards hear it take DMG and survive it, once the damage has landed: its equipments, then its statuses
+  onDamageTaken?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   // A card attached to a character that has just been restored by a card's defeat replacement hears it, for the cards whose
   // Own state the replacement settles
   onDefeatReplaced?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
@@ -89,6 +91,8 @@ export interface GcgCardModule {
   // The HP a character is restored to, instead of being defeated, by a card attached to it that answers a defeat, or none
   replaceDefeat?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => number | undefined;
   skillOnPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => GcgSkill | undefined;
+  // The Techniques a card gives the character it is equipped to, each a combat action of its own, by skill id
+  skills?: GcgSkill[];
   // The dice an opposing card adds to a cost the other side pays (its context is the card's own side), or none
   surchargeCost?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => number | undefined;
   // The index of the character a card switches in when it is played, through the switch path (no die, no turn, the field's

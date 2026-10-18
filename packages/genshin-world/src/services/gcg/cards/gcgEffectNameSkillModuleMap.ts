@@ -2,6 +2,7 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { astableAnemohypostasisCreation } from "#src/services/gcg/cards/astableAnemohypostasisCreation";
 import { baneOfAllEvil } from "#src/services/gcg/cards/baneOfAllEvil";
+import { blazingStrike } from "#src/services/gcg/cards/blazingStrike";
 import { blusteringBlade } from "#src/services/gcg/cards/blusteringBlade";
 import { breastplate } from "#src/services/gcg/cards/breastplate";
 import { chonghuasLayeredFrost } from "#src/services/gcg/cards/chonghuasLayeredFrost";
@@ -26,6 +27,8 @@ import { hide } from "#src/services/gcg/cards/hide";
 import { icyPaws } from "#src/services/gcg/cards/icyPaws";
 import { illusoryTorrent } from "#src/services/gcg/cards/illusoryTorrent";
 import { infusedStonehide } from "#src/services/gcg/cards/infusedStonehide";
+import { inuzakaAllRoundDefense } from "#src/services/gcg/cards/inuzakaAllRoundDefense";
+import { juugaForwardUntoVictory } from "#src/services/gcg/cards/juugaForwardUntoVictory";
 import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoSkill";
 import { kamisatoArtSoumetsu } from "#src/services/gcg/cards/kamisatoArtSoumetsu";
 import { koukouSendou } from "#src/services/gcg/cards/koukouSendou";
@@ -46,8 +49,12 @@ import { rockPaperScissorsCombo } from "#src/services/gcg/cards/rockPaperScissor
 import { rockPaperScissorsScissors } from "#src/services/gcg/cards/rockPaperScissorsScissors";
 import { royalDescent } from "#src/services/gcg/cards/royalDescent";
 import { ryuukinSaxifrage } from "#src/services/gcg/cards/ryuukinSaxifrage";
+import { searingGlare } from "#src/services/gcg/cards/searingGlare";
 import { searingOnslaught } from "#src/services/gcg/cards/searingOnslaught";
 import { signatureMix } from "#src/services/gcg/cards/signatureMix";
+import { burningAssault } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
+import { spiritOfOmensAwakening } from "#src/services/gcg/cards/spiritOfOmensAwakening";
+import { spiritOfOmensPower } from "#src/services/gcg/cards/spiritOfOmensPower";
 import { springSpiritSummoning } from "#src/services/gcg/cards/springSpiritSummoning";
 import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gcg/cards/stellarRestoration";
 import { starwardSword } from "#src/services/gcg/cards/starwardSword";
@@ -122,4 +129,11 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_30023", hide],
   ["Char_Skill_33024", flowfireEdgeSkill],
   ["Char_Skill_34063", elementalSedimentation],
+  ["Card_Vehicle_1230311", burningAssault],
+  ["Char_Skill_16062", inuzakaAllRoundDefense],
+  ["Char_Skill_16063", juugaForwardUntoVictory],
+  ["Char_Skill_23031", searingGlare],
+  ["Char_Skill_23032", blazingStrike],
+  ["Char_Skill_23033", spiritOfOmensAwakening],
+  ["Char_Skill_23034", spiritOfOmensPower],
 ]);
