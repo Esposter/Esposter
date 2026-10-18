@@ -1,8 +1,8 @@
 import { BERNOULLI_CLOSED_FORM_INDEX } from "#src/services/function/constants";
 
-// The Bernoulli number of an index, by the recurrence that starts from one below the closed form's index, whose work grows
-// With the square of the index where the closed form's grows with the index. Above one the odd ones are zero, which is
-// Exact rather than the rounding residue the recurrence leaves behind
+// The Bernoulli number of an index, by the recurrence below the closed form's index and by the closed form from it. The
+// Recurrence's work grows with the square of the index where the closed form's grows with the index. Above one the odd
+// Ones are zero, which is exact rather than the rounding residue the recurrence leaves behind
 export const computeBernoulliNumber = (index: number): number => {
   if (index === 1) return -0.5;
   if (index > 1 && index % 2 === 1) return 0;
