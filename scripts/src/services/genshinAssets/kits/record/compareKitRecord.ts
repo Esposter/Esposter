@@ -14,6 +14,7 @@ import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candi
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
@@ -78,16 +79,26 @@ export const compareKitRecord = (
         committedEntry.cause === KitProvisionalCause.Unclassified);
     if (isUnreasonedDonorValue) return;
     const entry = keepCommittedKitCause(
-      classifyKitValue(value, candidateMap.get(path) ?? [], mainCandidateMap.get(path) ?? [], isTagPredated),
+      classifyKitValue(
+        value,
+        candidateMap.get(path) ?? [],
+        mainCandidateMap.get(path) ?? [],
+        isTagPredated,
+        tables.talentMultiplierMap,
+      ),
       committedEntry,
       value,
+      tables.talentMultiplierMap,
     );
     // A source choice names its value where the path's first candidate of that source is another value
     const sourceChoice =
       entry !== undefined && "source" in entry
         ? sourceCandidateMap.get(path)?.find(({ provenance }) => provenance.source === entry.source)
         : undefined;
-    const isValueNeeded = entry !== undefined && "source" in entry && !checkIsKitValueEqual(sourceChoice?.value, value);
+    const isValueNeeded =
+      entry !== undefined &&
+      "source" in entry &&
+      !checkIsKitValueResolvedEqual(sourceChoice?.value, value, tables.talentMultiplierMap);
     if (entry !== undefined) overlay[path] = isValueNeeded ? { ...entry, value } : entry;
   };
   const candidateMap = mergeKitCandidateSources({
