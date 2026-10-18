@@ -14,7 +14,7 @@ Xingqiu's kit is its record and one behaviour module, `createXingqiuKitBehaviour
 ## Provisional constants
 
 - **Xingqiu's plunges are provisional.** His plunges take the index's no-file rule. The plunges' poise and blunt are the wiki's Guhua Style.
-- **Each sword reaches 5 metres round where its wave was cast, provisionally.** gcsim drops each sword as a circle of 0.5 metres on the primary target, which an area does not hold, so a sword reaches the 5 metres an attack targets within, as Ayaka's charged attack does, and strikes each enemy there rather than the one the wiki's notes aim it at. Each is 1U of Hydro under the Elemental Burst internal cooldown at the wiki's 25 poise, priced as it lands rather than as the burst snapshots it, as the wiki's notes give it.
+- **Each sword reaches 5 metres round where its wave was cast, provisionally.** gcsim drops each sword as a circle of 0.5 metres on the primary target, which an area does not hold, so a sword reaches the 5 metres an attack targets within, as Ayaka's charged attack does, and strikes each enemy there rather than the one the wiki's notes aim it at. The record holds the 5 as `DiffersFromSource`, since the rule prices gcsim's circle on the primary target as the burst's 15-metre targeting plus 0.5, which a summon cast where the wave began would reach as its own 15.5. Each is 1U of Hydro under the Elemental Burst internal cooldown at the wiki's 25 poise, priced as it lands rather than as the burst snapshots it, as the wiki's notes give it.
 
 ## Not built
 
