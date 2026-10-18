@@ -21,6 +21,8 @@ A headless block editor: a typed node tree over a registry, the commands that ed
 pnpm i headless-block-editor
 ```
 
+A registry declares its root, the content types the root accepts and the props schema its props pass, beside its types. `renderBlockNodes` folds a checked document into a consumer's output, rendering each node once its slots have rendered.
+
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.

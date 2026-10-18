@@ -20,32 +20,78 @@ describe(createBlockDocumentSchema, () => {
     const document: BlockDocument = {
       content: [
         {
-          props: { id: TEST_LIST_ID, items: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }] },
-          type: "list",
+          props: {
+            children: [
+              {
+                props: { id: TEST_LIST_ID, items: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }] },
+                type: "list",
+              },
+            ],
+            id: TEST_SECTION_ID,
+          },
+          type: "section",
         },
       ],
-      root: { props: {} },
+      root: TEST_DOCUMENT.root,
     };
     const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
 
     expect(success).toBe(false);
-    expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["content", 0, "props", "items", 0]]);
+    expect(error?.issues.map((issue) => issue.path)).toStrictEqual([
+      ["content", 0, "props", "children", 0, "props", "items", 0],
+    ]);
+  });
+
+  test("a root holding a type its content does not accept", () => {
+    expect.hasAssertions();
+
+    const document: BlockDocument = {
+      content: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }],
+      root: TEST_DOCUMENT.root,
+    };
+    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
+
+    expect(success).toBe(false);
+    expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["content", 0]]);
+  });
+
+  test("root props its schema refuses", () => {
+    expect.hasAssertions();
+
+    const document: BlockDocument = { content: TEST_DOCUMENT.content, root: { props: {} } };
+    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
+
+    expect(success).toBe(false);
+    expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["root", "props", "title"]]);
   });
 
   test.each<[string, BlockDocument, (number | string)[]]>([
     [
       "a prop its type's schema refuses",
-      { content: [{ props: { id: TEST_HEADING_ID, text: 5 }, type: "heading" }], root: { props: {} } },
-      ["content", 0, "props", "text"],
+      {
+        content: [
+          {
+            props: { children: [{ props: { id: TEST_HEADING_ID, text: 5 }, type: "heading" }], id: TEST_SECTION_ID },
+            type: "section",
+          },
+        ],
+        root: TEST_DOCUMENT.root,
+      },
+      ["content", 0, "props", "children", 0, "props", "text"],
     ],
     [
       "a node with no string id",
-      { content: [{ props: { text: "" }, type: "heading" }], root: { props: {} } },
-      ["content", 0, "props", "id"],
+      {
+        content: [
+          { props: { children: [{ props: { text: "" }, type: "heading" }], id: TEST_SECTION_ID }, type: "section" },
+        ],
+        root: TEST_DOCUMENT.root,
+      },
+      ["content", 0, "props", "children", 0, "props", "id"],
     ],
     [
       "a slot that is not a list",
-      { content: [{ props: { children: "", id: TEST_SECTION_ID }, type: "section" }], root: { props: {} } },
+      { content: [{ props: { children: "", id: TEST_SECTION_ID }, type: "section" }], root: TEST_DOCUMENT.root },
       ["content", 0, "props", "children"],
     ],
   ])("%s", (_title, document, expectedPath) => {
@@ -60,10 +106,18 @@ describe(createBlockDocumentSchema, () => {
   test("a document from another registry", () => {
     expect.hasAssertions();
 
-    const otherRegistry: BlockRegistry = TEST_REGISTRY.filter((definition) => definition.type !== "list");
+    const otherRegistry: BlockRegistry = {
+      ...TEST_REGISTRY,
+      types: TEST_REGISTRY.types.filter((definition) => definition.type !== "list"),
+    };
     const document: BlockDocument = {
-      content: [{ props: { id: TEST_LIST_ID, items: [] }, type: "list" }],
-      root: { props: {} },
+      content: [
+        {
+          props: { children: [{ props: { id: TEST_LIST_ID, items: [] }, type: "list" }], id: TEST_SECTION_ID },
+          type: "section",
+        },
+      ],
+      root: TEST_DOCUMENT.root,
     };
 
     expect(createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(TEST_DOCUMENT).success).toBe(
@@ -97,7 +151,7 @@ describe(createBlockDocumentSchema, () => {
           type: "section",
         },
       ],
-      root: { props: {} },
+      root: TEST_DOCUMENT.root,
     };
 
     expect(createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT + 2).safeParse(document).success).toBe(

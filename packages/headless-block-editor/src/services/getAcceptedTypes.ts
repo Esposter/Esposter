@@ -6,7 +6,7 @@ import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { getRootAcceptedTypes } from "#src/services/getRootAcceptedTypes";
 import { parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
-// The types a slot accepts: the root's content accepts every registry type, and a node's slot the types its definition allows
+// The types a slot accepts: the content types the registry's root declares for the root, and a node's slot the types its definition allows
 // Or none when the pointer names no slot of a node
 export const getAcceptedTypes = (document: BlockDocument, registry: BlockRegistry, slotPointer: string): string[] => {
   if (slotPointer === "/content") return getRootAcceptedTypes(registry);

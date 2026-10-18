@@ -9,7 +9,7 @@ import {
 } from "#src/services/constants.test";
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { pasteBlockNodes } from "#src/services/pasteBlockNodes";
-import { applyPatches } from "@esposter/shared";
+import { applyPatches, JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(pasteBlockNodes, () => {
@@ -44,5 +44,21 @@ describe(pasteBlockNodes, () => {
     expect(
       pasteBlockNodes(TEST_DOCUMENT, TEST_REGISTRY, [{ props: { id: TEST_IMAGE_ID }, type: "image" }], "/content", 2),
     ).toStrictEqual([]);
+  });
+
+  test("pasting a child its root does not accept into a slot that does", () => {
+    expect.hasAssertions();
+
+    const copiedHeading: BlockNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
+
+    expect(
+      pasteBlockNodes(TEST_DOCUMENT, TEST_REGISTRY, [copiedHeading], "/content/0/props/children", 1),
+    ).toStrictEqual([
+      {
+        op: JsonPatchOperationType.Add,
+        path: "/content/0/props/children/1",
+        value: { props: { id: expect.any(String), text: "" }, type: "heading" },
+      },
+    ]);
   });
 });
