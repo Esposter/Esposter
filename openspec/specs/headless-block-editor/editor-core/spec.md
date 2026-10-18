@@ -17,6 +17,13 @@ The editor core SHALL accept a document only when every node's type is in the re
 - **THEN** the document is refused
 - **AND** the refusal names the slot
 
+#### Scenario: A node's props its type's schema refuses
+
+- **GIVEN** a registry whose heading type takes a text prop
+- **WHEN** a document holding a heading whose text is a number is checked
+- **THEN** the document is refused
+- **AND** the refusal names the prop
+
 #### Scenario: A document from another registry
 
 - **GIVEN** a document built with one editor's registry
@@ -80,7 +87,7 @@ Pasting nodes SHALL give every pasted node a fresh id, and SHALL refuse nodes wh
 
 ### Requirement: The history undoes and redoes edits in order within its bound
 
-The editor core's history SHALL undo edits newest first and redo them last undone first, so a redo reverses the undo order, SHALL drop the redo entries when a new edit is made, and SHALL drop its oldest entry once it holds as many as the consumer's limit.
+The editor core's history SHALL undo edits newest first and redo them last undone first, so a redo reverses the undo order, SHALL drop the redo entries when a new edit is made, and SHALL drop its oldest entry when a new entry would take it past the consumer's limit.
 
 #### Scenario: A new edit after undo
 
