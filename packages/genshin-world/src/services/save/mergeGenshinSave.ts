@@ -6,6 +6,7 @@ import type { OfferingProgressSave } from "#src/models/offering/OfferingProgress
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
+import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { BannerKind } from "genshin-interface/save";
 
@@ -50,6 +51,17 @@ const checkIsFurtherReputation = (reputation: ReputationProgress, than: Reputati
 // The Frostbearing Tree's progress is the further of the two, by its level and then by the items held toward the next
 const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
   checkIsFurtherByLevel(progress, than, ({ heldCount }) => heldCount);
+// The statues' found Oculi are the union of both copies', and each region is the copy further on, as the Frostbearing
+// Tree's is, so a region only one copy holds is kept as it is
+const mergeStatueProgress = (account: StatueProgressSave, guest: StatueProgressSave): StatueProgressSave => {
+  const regions = { ...account.regions };
+  for (const [regionId, guestProgress] of Object.entries(guest.regions)) {
+    const accountProgress = regions[regionId];
+    regions[regionId] =
+      accountProgress && !checkIsFurtherOffering(guestProgress, accountProgress) ? accountProgress : guestProgress;
+  }
+  return { foundOculusIds: [...new Set([...account.foundOculusIds, ...guest.foundOculusIds])], regions };
+};
 // A character is the copy further on by its level and then its constellations, kept whole so its weapon and artifacts stay
 // One copy's. A tie on both keeps the account's
 const checkIsFurtherCharacter = (character: CharacterSave, than: CharacterSave): boolean =>
@@ -95,7 +107,7 @@ const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySa
 // Later, since the one change of it the player made last is the one they still stand by. The day's commissions are the
 // Copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the account
 // Has chosen none. The characters both copies hold are the copy further on, and a character only the guest holds is
-// Kept
+// Kept. The statues' found Oculi union, and each statue region is the copy further on, as the Frostbearing Tree's is
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -141,7 +153,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     openedChests: account.openedChests,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
-    statues: account.statues,
+    statues: mergeStatueProgress(account.statues, guest.statues),
     travelerName: account.travelerName || guest.travelerName,
     unlockedLandmarks: [...new Set([...account.unlockedLandmarks, ...guest.unlockedLandmarks])],
     wallet: {
