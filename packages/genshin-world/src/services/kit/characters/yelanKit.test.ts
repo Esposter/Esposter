@@ -22,8 +22,8 @@ import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

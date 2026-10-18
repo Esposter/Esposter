@@ -18,7 +18,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 

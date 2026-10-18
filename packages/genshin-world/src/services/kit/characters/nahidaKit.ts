@@ -18,8 +18,8 @@ import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 export const NAHIDA_CHARACTER_ID = 10_000_073;

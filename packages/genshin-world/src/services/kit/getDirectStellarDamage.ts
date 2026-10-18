@@ -4,7 +4,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
-import { getReactionDamage } from "#src/services/combat/damage/getReactionDamage";
+import { getLunarReactionDamage } from "#src/services/combat/damage/getLunarReactionDamage";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getStellarConductCoefficient } from "#src/services/combat/damage/getStellarConductCoefficient";
 import { RADIANCE_STELLAR_CONDUCT_STATUS_ID } from "#src/services/kit/constants";
@@ -37,7 +37,7 @@ export const getDirectStellarDamage = (
           findKitStatus(kitEffectState.effects, combatant.characterId, RADIANCE_STELLAR_CONDUCT_STATUS_ID)?.stacks ?? 0,
         )
       : 1;
-  const stellarDamage = getReactionDamage(
+  const stellarDamage = getLunarReactionDamage(
     coefficient,
     talentMultiplier * attack,
     attributeTotalMap[Attribute.ElementalMastery],

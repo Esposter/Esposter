@@ -18,7 +18,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { getDamage } from "#src/services/combat/damage/getDamage";
 import { getLunarDamage } from "#src/services/combat/damage/getLunarDamage";
-import { getReactionDamage } from "#src/services/combat/damage/getReactionDamage";
+import { getLunarReactionDamage } from "#src/services/combat/damage/getLunarReactionDamage";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getStellarConductCoefficient } from "#src/services/combat/damage/getStellarConductCoefficient";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
@@ -777,7 +777,7 @@ describe(strikeEnemy, () => {
         talentMultiplier: 2,
       };
       const damage =
-        getReactionDamage(coefficient, 2 * ATTACK, ELEMENTAL_MASTERY, BASE_DAMAGE_BONUS, REACTION_BONUS) *
+        getLunarReactionDamage(coefficient, 2 * ATTACK, ELEMENTAL_MASTERY, BASE_DAMAGE_BONUS, REACTION_BONUS) *
         getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Cryo));
       const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
       addKitStatus(context.kitEffectState, CHARACTER_ID, {
@@ -815,7 +815,7 @@ describe(strikeEnemy, () => {
       talentMultiplier: 2,
     };
     const damage =
-      getReactionDamage(1, 2 * ATTACK, 0, 0, PARTY_DAMAGE_BONUS) *
+      getLunarReactionDamage(1, 2 * ATTACK, 0, 0, PARTY_DAMAGE_BONUS) *
       getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Electro)) *
       (1 + combatant.attributes.attributeTotalMap[Attribute.CriticalDamage] + PARTY_CRITICAL_DAMAGE_BONUS) *
       (1 + ELEVATION_BONUS);

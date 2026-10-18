@@ -5,8 +5,8 @@ import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/Elem
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
-import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 const PRIMORDIAL_JADE_REGALIA_SOURCE = "primordialJadeRegalia";
