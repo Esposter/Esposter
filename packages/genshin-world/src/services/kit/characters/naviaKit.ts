@@ -45,10 +45,11 @@ const CONSTELLATION_4_STATUS_ID = "navia-c4-shred";
 
 // Measured: gcsim v2.47.2 (MIT) navia/cons.go, Constellation 2's CRIT Rate of 12% for each shrapnel the press consumes, three at
 // Most, and one Cannon Fire Support shot 30 frames after the blade strikes an enemy, three metres round the point of its hit.
-// Gcsim places that point 1.2 metres from the enemy at random, so the shot lands centred on the enemy it was fired at
+// Gcsim draws that point uniformly over the disk of 1.2 metres about the enemy, from its random source
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_CRITICAL_RATE_PER_SHRAPNEL = 0.12;
 const CONSTELLATION_2_MAXIMUM_SHRAPNEL = 3;
+const CONSTELLATION_2_CANNON_OFFSET_METRES = 1.2;
 const CONSTELLATION_2_CANNON_RADIUS_METRES = 3;
 const CONSTELLATION_2_CANNON_HITMARK_SECONDS = 30 / 60;
 
@@ -122,9 +123,21 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
       onStrike: (context, strike, enemy) => {
         if (isCannonShotFired || enemy === undefined) return;
         isCannonShotFired = true;
-        castKitSummon(context.kitEffectState, { ...strike.body, position: enemy.position }, strike.combatant, [
-          constellation2CannonHit,
-        ]);
+        // The point is drawn over the disk about the enemy, its bearing first and then its distance, from the world's source
+        const bearing = context.random() * 2 * Math.PI;
+        const distance = CONSTELLATION_2_CANNON_OFFSET_METRES * Math.sqrt(context.random());
+        castKitSummon(
+          context.kitEffectState,
+          {
+            ...strike.body,
+            position: {
+              x: enemy.position.x + distance * Math.sin(bearing),
+              z: enemy.position.z + distance * Math.cos(bearing),
+            },
+          },
+          strike.combatant,
+          [constellation2CannonHit],
+        );
       },
     };
   };
