@@ -7,6 +7,9 @@ import { Element } from "#src/models/Element";
 // The seconds a Stardread shockwave waits after it fires before it may fire again
 export const STARDREAD_COOLDOWN_SECONDS = 2;
 
+// The name text hash of the blessing the period from 16 October 2026 gives, the Stardread Moon, which picks this module
+export const STARDREAD_NAME_TEXT_HASH = 1867767671;
+
 // The Stardread Moon's blessing, as the wiki's page for the period from 16 October 2026 gives it: a shockwave of True DMG at an
 // Opponent's position when a character triggers Superconduct, Cryo Swirl, Frozen or Shatter on it, at most once every two
 // Seconds. The Stellar-Conduct and Stellar Swirl the page also names are not reactions the engine holds, so they do not trigger
