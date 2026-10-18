@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -22,7 +23,7 @@ const combatant: Combatant = {
   kit: TRAVELER_KIT,
   level: 1,
 };
-const createStrike = (healthShare: number, sourceCharacterId?: number): KitEvent => ({
+const createStrike = (healthShare: number, sourceCharacterId?: number): KitHealthChangedEvent => ({
   bondOfLifeShare: 0,
   characterId: TRAVELER_CHARACTER_ID,
   healthShare,
