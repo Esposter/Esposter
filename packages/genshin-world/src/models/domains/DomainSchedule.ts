@@ -9,7 +9,7 @@ import { z } from "zod";
 export const domainLevelSchema = z.object({
   dungeonId: z.int(),
   // The ley line disorder the level's fight runs under, named by the dump's level config. The modifiers the fight models are in
-  // Services/domains/applyDomainDisorders, and a disorder not there changes nothing yet
+  // Services/domains/DisorderDefinitionMap, and a disorder not there changes nothing yet
   disorder: z.string(),
   enemyLevel: z.int(),
   recommendedRank: z.int(),

@@ -18,3 +18,5 @@ export const DOMAIN_ARENA_SPREAD = 6;
 export const DOMAIN_LEAVE_INTERACTABLE_ID = "domain-leave";
 export const DOMAIN_TREE_INTERACTABLE_ID = "domain-tree";
 export const DOMAIN_ARENA_PROMPT_OFFSET = 4;
+// The source a disorder's bonus is given under, so the leave ends the disorders' bonuses and no other buff
+export const DOMAIN_DISORDER_SOURCE = "domainDisorder";

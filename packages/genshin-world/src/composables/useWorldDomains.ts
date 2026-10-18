@@ -2,6 +2,7 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { StormterrorFight } from "#src/models/bosses/StormterrorFight";
+import type { DomainDisorderTrigger } from "#src/models/domains/DomainDisorderTrigger";
 import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
@@ -21,7 +22,6 @@ import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { DomainChallengeLevel } from "#src/services/domains/domainChallengeLevels";
-import type { DomainDisorderTrigger } from "#src/services/domains/applyDomainDisorders";
 import type { GroundPoint } from "genshin-engine";
 import type { Ref } from "vue";
 
@@ -39,11 +39,9 @@ import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevel
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomainWaveAfterDefeat";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
-import {
-  applyDomainDisorder,
-  clearDomainDisorders,
-  triggerDomainDisorder,
-} from "#src/services/domains/applyDomainDisorders";
+import { applyDomainDisorder } from "#src/services/domains/applyDomainDisorder";
+import { clearDomainDisorders } from "#src/services/domains/clearDomainDisorders";
+import { triggerDomainDisorder } from "#src/services/domains/triggerDomainDisorder";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
 import { drawDomainArtifacts } from "#src/services/domains/drawDomainArtifacts";
 import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
