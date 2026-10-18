@@ -1,4 +1,3 @@
-import type { Artifact } from "#src/models/artifact/Artifact";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { ReliquaryPieceData } from "#src/models/reliquary/ReliquaryPieceData";
@@ -6,6 +5,8 @@ import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
+import { FLOWER_ITEM_DEFINITION } from "#src/services/artifact/constants.test";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { createCharacter } from "#src/services/artifact/createCharacter.test";
 import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
 import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
@@ -15,29 +16,9 @@ import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
-const createArtifact = (setId: number): Artifact => ({
-  experience: 0,
-  isLocked: false,
-  itemId: 101,
-  level: 0,
-  mainAffix: Attribute.Health,
-  minorAffixes: [],
-  rarity: 5,
-  setId,
-  slot: ArtifactSlot.FlowerOfLife,
-});
-
 describe(unequipArtifactToBag, () => {
-  const flowerDefinition: ItemDefinition = {
-    category: ItemCategory.Artifact,
-    id: 101,
-    name: "Flower Piece",
-    rank: 1,
-    rarity: 5,
-    stackLimit: 1,
-  };
   const variantName = "Four Affix Flower Piece";
-  const variantDefinition: ItemDefinition = { ...flowerDefinition, id: 102, name: variantName };
+  const variantDefinition: ItemDefinition = { ...FLOWER_ITEM_DEFINITION, id: 102, name: variantName };
   const flowerPiece = {
     itemId: 101,
     nameTextId: "101",
@@ -77,7 +58,7 @@ describe(unequipArtifactToBag, () => {
   test("unequipping puts the worn piece in the bag as an entry of its own", () => {
     expect.hasAssertions();
 
-    const artifact = createArtifact(1);
+    const artifact = createArtifact();
     expect(
       unequipArtifactToBag(
         { items: [], nextId: 1, quickSwapItemIds: [] },
@@ -88,7 +69,7 @@ describe(unequipArtifactToBag, () => {
     ).toStrictEqual({
       character: createCharacter([]),
       inventory: {
-        items: [{ artifact, definition: flowerDefinition, id: 1, quantity: 1 }],
+        items: [{ artifact, definition: FLOWER_ITEM_DEFINITION, id: 1, quantity: 1 }],
         nextId: 2,
         quickSwapItemIds: [],
       },
@@ -121,7 +102,7 @@ describe(unequipArtifactToBag, () => {
 
     const unequipped = unequipArtifactToBag(
       { equippedGadgetItemId: 1, items: [], nextId: 1, quickSwapItemIds: [] },
-      createCharacter([createArtifact(1)]),
+      createCharacter([createArtifact()]),
       ArtifactSlot.FlowerOfLife,
       options,
     );
@@ -135,10 +116,10 @@ describe(unequipArtifactToBag, () => {
 
     const room = ItemCategoryRoomMap[ItemCategory.Artifact];
     assert.exists(room);
-    const artifact = createArtifact(1);
+    const artifact = createArtifact();
     const items = Array.from({ length: room }, (_value, index) => ({
-      artifact: createArtifact(1),
-      definition: flowerDefinition,
+      artifact: createArtifact(),
+      definition: FLOWER_ITEM_DEFINITION,
       id: index,
       quantity: 1,
     }));
@@ -174,7 +155,7 @@ describe(unequipArtifactToBag, () => {
     expect(() =>
       unequipArtifactToBag(
         { items: [], nextId: 0, quickSwapItemIds: [] },
-        createCharacter([createArtifact(2)]),
+        createCharacter([createArtifact({ setId: 2 })]),
         ArtifactSlot.FlowerOfLife,
         options,
       ),

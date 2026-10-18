@@ -1,22 +1,8 @@
-import type { Artifact } from "#src/models/artifact/Artifact";
-
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { Attribute } from "#src/models/character/Attribute";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { createCharacter } from "#src/services/artifact/createCharacter.test";
 import { toggleCharacterArtifactLock } from "#src/services/artifact/toggleCharacterArtifactLock";
 import { describe, expect, test } from "vitest";
-
-const createArtifact = (): Artifact => ({
-  experience: 0,
-  isLocked: false,
-  itemId: 101,
-  level: 0,
-  mainAffix: Attribute.Health,
-  minorAffixes: [],
-  rarity: 5,
-  setId: 1,
-  slot: ArtifactSlot.FlowerOfLife,
-});
 
 describe(toggleCharacterArtifactLock, () => {
   test("toggling a worn artifact locks it, and toggling it again unlocks it", () => {
@@ -24,7 +10,7 @@ describe(toggleCharacterArtifactLock, () => {
 
     const character = createCharacter([createArtifact()]);
     const locked = toggleCharacterArtifactLock(character, ArtifactSlot.FlowerOfLife);
-    expect(locked).toStrictEqual(createCharacter([{ ...createArtifact(), isLocked: true }]));
+    expect(locked).toStrictEqual(createCharacter([createArtifact({ isLocked: true })]));
     expect(toggleCharacterArtifactLock(locked, ArtifactSlot.FlowerOfLife)).toStrictEqual(character);
   });
 
