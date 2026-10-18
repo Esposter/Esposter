@@ -179,7 +179,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Camp locks a chest** — `chest-camp-lock.mkv`, waits on [chests](../genshin-chests/design.md).
 - [ ] **Boss claim Companionship EXP** — `companionship-claim-boss.mkv`, waits on [companionship](../genshin-companionship/design.md).
 - [ ] **Domain claim Companionship EXP** — `companionship-claim-domain.mkv`, waits on [companionship](../genshin-companionship/design.md).
-- [ ] **Fourth commission bonus** — `commission-bonus.mkv`, waits on [commissions](../genshin-commissions/design.md).
+- [x] `commission-bonus.mkv` — **Fourth commission bonus**, found as `captures/yt-x_vRlUlTm8A-commissions.mp4` (https://www.youtube.com/watch?v=x_vRlUlTm8A, 0–29.9 s), cut to `commission-bonus.mkv`, the English PC client at 1080p and 60 frames a second, a match. The Katheryne branch shows the day's 4/4 marked 'Daily rewards claimed' beside the Bonus Rewards panel, from about 13 s; the fourth claim's own turn-in is before the cut, and the pack's icon carries no count in the panel. Read by [commissions](../../specs/genshin/commissions/design.md).
 - [ ] **Timed monument** — `monument-timed.mkv`, waits on [puzzles](../genshin-puzzles/design.md).
 - [ ] **Seelie route** — `seelie-led-home.mkv`, waits on [puzzles](../genshin-puzzles/design.md).
 - [ ] **Mondstadt monuments** — `monument-mondstadt-pillars.mkv`, waits on [puzzles](../genshin-puzzles/design.md).
