@@ -103,9 +103,23 @@ Moonjade Descent SHALL spawn a Yuegui two metres behind Yaoyao at 104, 162 and 2
 - **WHEN** the player swaps off Yaoyao during her burst
 - **THEN** the Yuegui her burst spawned throws no further radish
 
-### Requirement: Unbuilt Mega Radish, constellations and passives
+### Requirement: Radish heals' riders
 
-Yaoyao's Mega Radish, her constellations and her passives SHALL have no effect in the world yet.
+Constellation 1 SHALL give the active character 15% Dendro DMG Bonus for eight seconds after each radish heals her. Ascension 4 SHALL heal the active character each second for five seconds after each radish heals her, by 0.8% of Yaoyao's Max HP, a newer radish heal replacing the one running.
+
+#### Scenario: Constellation 1 gives Dendro DMG Bonus after a radish heal
+
+- **WHEN** a radish heals the active character while Yaoyao holds Constellation 1
+- **THEN** the active character gains 15% Dendro DMG Bonus for eight seconds
+
+#### Scenario: Ascension 4 heals each second after a radish heal
+
+- **WHEN** a radish heals the active character while Yaoyao is at Ascension 4
+- **THEN** the active character is healed by 0.8% of Yaoyao's Max HP each second, for five seconds
+
+### Requirement: Unbuilt Mega Radish, Constellations 2, 4 and 6, and passives
+
+Yaoyao's Mega Radish, her Constellations 2, 4 and 6, her Constellation 1 stamina restore, and her Ascension 1 passive SHALL have no effect in the world yet.
 
 #### Scenario: Yuegui throws no Mega Radish
 
