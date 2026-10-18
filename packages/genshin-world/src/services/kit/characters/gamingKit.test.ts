@@ -21,6 +21,7 @@ const getPassiveBonuses = (ascension: number, healthShare: number) =>
       level: 90,
     },
     healthShare,
+    [],
   );
 
 describe(createGamingKitBehaviour, () => {

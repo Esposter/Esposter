@@ -20,6 +20,7 @@ const getPassiveBonuses = (ascension: number) =>
       level: 90,
     },
     1,
+    [],
   );
 
 describe(createFlinsKitBehaviour, () => {

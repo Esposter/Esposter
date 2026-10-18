@@ -190,6 +190,6 @@ describe(createXingqiuKitBehaviour, () => {
   ])("at Ascension %i, Blades Amidst Raindrops adds %j to his pricing", (ascension, bonuses) => {
     expect.hasAssertions();
 
-    expect(XINGQIU_KIT.getPassiveBonuses?.(createXingqiuCombatant(ascension, 0), 1)).toStrictEqual(bonuses);
+    expect(XINGQIU_KIT.getPassiveBonuses?.(createXingqiuCombatant(ascension, 0), 1, [])).toStrictEqual(bonuses);
   });
 });

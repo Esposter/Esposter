@@ -121,7 +121,7 @@ describe(getArtifactSetKit, () => {
       level: 1,
     };
 
-    expect(kit.getPassiveBonuses?.(combatant, 0.5)).toStrictEqual([
+    expect(kit.getPassiveBonuses?.(combatant, 0.5, [])).toStrictEqual([
       { amount: 1, attribute: Attribute.Attack },
       { amount: 0.24, attribute: Attribute.CriticalRate },
     ]);
