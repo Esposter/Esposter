@@ -14,8 +14,6 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { getAmplifyingMultiplier } from "#src/services/combat/damage/getAmplifyingMultiplier";
 import { getCatalyzeBonus } from "#src/services/combat/damage/getCatalyzeBonus";
-import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
-import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { TransformativeReactionPoiseDamageMap } from "#src/services/combat/damage/TransformativeReactionPoiseDamageMap";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
 import { applySimultaneousReactionInternalCooldown } from "#src/services/combat/internalCooldown/applySimultaneousReactionInternalCooldown";
@@ -23,6 +21,7 @@ import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach
 import { addSuperconductStatus } from "#src/services/enemy/addSuperconductStatus";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
+import { getPartyTransformativeDamage } from "#src/services/kit/getPartyTransformativeDamage";
 
 // The reactions an element of the combatant's triggered on an enemy, priced from the combatant, written into the enemy
 // In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them, and
@@ -83,8 +82,14 @@ export const priceEnemyReactions = (
       const resistance = getEnemyResistance(kind, enemy, reactionElement);
       transformativeDamage +=
         applyReactionInternalCooldown(enemy.internalCooldownMap, characterId, reactionType, reactionElement, seconds) *
-        (getTransformativeDamage(reactionType, level, elementalMastery, resistance, partyBonus.damageBonus) +
-          partyBonus.additiveBaseDamageBonus * getResistanceMultiplier(resistance));
+        getPartyTransformativeDamage(
+          reactionType,
+          level,
+          elementalMastery,
+          resistance,
+          partyBonus.damageBonus,
+          partyBonus.additiveBaseDamageBonus,
+        );
     }
   }
   return { additiveBaseDamageBonus, amplifyingMultiplier, poiseDamage, reachingReactions, transformativeDamage };

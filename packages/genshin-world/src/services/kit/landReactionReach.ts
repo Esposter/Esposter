@@ -13,8 +13,6 @@ import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { applyBurningInternalCooldown } from "#src/services/combat/aura/applyBurningInternalCooldown";
-import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
-import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { TransformativeReactionPoiseDamageMap } from "#src/services/combat/damage/TransformativeReactionPoiseDamageMap";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
 import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach/TransformativeReactionReachRadiusMap";
@@ -25,6 +23,7 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
+import { getPartyTransformativeDamage } from "#src/services/kit/getPartyTransformativeDamage";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 
 // A reaction that landed on an enemy, or burst from a Dendro Core, reaching every other standing enemy within its radius
@@ -95,8 +94,14 @@ export const landReactionReach = (
             element,
             elementalState.seconds,
           ) *
-          (getTransformativeDamage(reactionType, level, elementalMastery, resistance, damageBonus) +
-            (additiveBaseDamageBonus + reactionAdditiveBaseDamageBonus) * getResistanceMultiplier(resistance)) *
+          getPartyTransformativeDamage(
+            reactionType,
+            level,
+            elementalMastery,
+            resistance,
+            damageBonus,
+            additiveBaseDamageBonus + reactionAdditiveBaseDamageBonus,
+          ) *
           amplifyingMultiplier;
     enemyStrikeResultMap.set(enemy, {
       energyDrops: damageEnemy(enemy, {
