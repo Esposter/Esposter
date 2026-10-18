@@ -8,4 +8,8 @@ export const FREMINET_CHARACTER_ID = 10_000_085;
 // On a stance that counts its stacks. Spiritbreath Thorn hits past the skill's animation, so it waits on a timed hit.
 // Shadowhunter's Ambush's stalking state, its skill cooldown lowered to three seconds and its reset of the skill's
 // Cooldown wait on a status that outlives the action. His passives and constellations are not built
+// Constellation 1 needs Shattering Pressure's CRIT Rate, which the skill does not build yet
+// Constellation 2 needs Shattering Pressure's energy at Pressure Level 4, which the skill does not build yet
+// Constellation 4 needs his Frozen, Shatter and Superconduct reactions and a stacked ATK buff, neither built
+// Constellation 6 needs those reactions and a stacked CRIT DMG buff of up to three stacks, which are not built
 export const createFreminetKitBehaviour = (): KitBehaviour => ({});
