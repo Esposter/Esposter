@@ -1,6 +1,6 @@
 # Mining outcrops
 
-The rules a region's mining outcrops follow, the Magical Crystal Chunks a player mines for: the Adventure Rank that opens them, and when a mined one comes back. A mining outcrop is drawn each day at the daily reset, 04:00 in the game's time zone, the reset the world's ley line outcrops are drawn at too, and a mined one stays gone until the day's next draw. Their places are built per region by `genshin:assets mining-outcrops`, which the main session publishes,, the Magical Crystal Chunk points the fit places, but nothing draws them in the world yet, so none is drawn, mined or marked, and the [proposal](../../../changes/genshin-gathering/design.md) keeps the draw.
+The rules a region's mining outcrops follow, the Magical Crystal Chunks a player mines for: the Adventure Rank that opens them, and when a mined one comes back. A mining outcrop is drawn each day at the daily reset, 04:00 in the game's time zone, the reset the world's ley line outcrops are drawn at too, and a mined one stays gone until the day's next draw. Their places are built per region by `genshin:assets mining-outcrops`, which the main session publishes, the Magical Crystal Chunk points the fit places, but nothing draws them in the world yet, so none is drawn, mined or marked, and the [proposal](../../../changes/genshin-gathering/design.md) keeps the draw.
 
 ## How it works
 
