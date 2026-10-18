@@ -12,3 +12,6 @@ export const countKitHexereiMembers = (characterIds: Iterable<number>): number =
   for (const characterId of characterIds) if (HEXEREI_CHARACTER_IDS.has(characterId)) count++;
   return count;
 };
+
+// Whether a character is Hexerei, as the set above flags it
+export const checkIsKitHexerei = (characterId: number): boolean => HEXEREI_CHARACTER_IDS.has(characterId);

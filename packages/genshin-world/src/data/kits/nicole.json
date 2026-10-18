@@ -1,4 +1,5 @@
 {
+  "parameters.burstProjection": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 13139 } },
   "parameters.skillBuffMax": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 13132 } },
   "parameters.skillBuffRatio": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 13132 } },
   "parameters.skillShieldAtk": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 13132 } },
