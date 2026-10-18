@@ -69,7 +69,7 @@ export const useWorldCommissions = ({
       console.error(error);
     },
   );
-  events.on("finishQuest", (questId) => {
+  events.on("finishQuest", ({ id: questId }) => {
     if (commissionSlice.value)
       commissionDay.value = advanceCommissionForQuest(commissionDay.value, commissionSlice.value, questId);
   });

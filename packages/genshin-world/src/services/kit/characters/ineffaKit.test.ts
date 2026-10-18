@@ -197,9 +197,9 @@ describe("panoramic Permutation Protocol", () => {
         combatant,
       );
     const holders = (): number[] =>
-      kitEffectState.effects
-        .filter((effect) => effect.kind === "buff" && effect.source === PERMUTATION_SOURCE)
-        .map((effect) => effect.characterId);
+      kitEffectState.effects.flatMap((effect) =>
+        effect.kind === "buff" && effect.source === PERMUTATION_SOURCE ? [effect.characterId] : [],
+      );
 
     swapTo(OTHER_CHARACTER_ID, INEFFA_CHARACTER_ID);
     expect(holders()).toStrictEqual([INEFFA_CHARACTER_ID, OTHER_CHARACTER_ID]);

@@ -7,6 +7,7 @@ import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { Ref, ShallowRef } from "vue";
 
+import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
 import { findOculus } from "#src/services/statue/findOculus";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
@@ -54,13 +55,18 @@ export const useWorldStatues = ({
     placeWorldDrops(source, paid.overflowItems);
     return paid.adventureExp;
   };
+  // A region's statue levels, read by the key its publish wrote. A region no publish wrote has no levels to pay
+  const readRegionStatueLevels = (regionId: string): Promise<StatueLevel[]> => {
+    const key: `statueLevels/${string}` = `statueLevels/${regionId}`;
+    return checkIsGameDataKey(key) ? readStatueLevels(gameDataBaseUrl, key) : Promise.resolve([]);
+  };
   // Touching an Oculus collects it once: its Adventure EXP and the levels it completes are paid
   // A touch that lands while an Oculus's levels are still arriving waits for them, rather than reading them again
   const collectingOculusIds = new Set<string>();
   const collectOculus = (regionId: string, source: Pick<WorldDrop, "id" | "position">) => {
     if (collectingOculusIds.has(source.id)) return;
     collectingOculusIds.add(source.id);
-    getResultAsync(() => readStatueLevels(gameDataBaseUrl, regionId)).match(
+    getResultAsync(() => readRegionStatueLevels(regionId)).match(
       (levels) => {
         collectingOculusIds.delete(source.id);
         const progress = regionStatueProgressMap.value.get(regionId) ?? { heldCount: 0, level: 0 };
@@ -79,7 +85,7 @@ export const useWorldStatues = ({
   const resonateStatue = (landmarkId: string, source: Pick<WorldDrop, "id" | "position">) => {
     const regionId = getStatueRegionId(landmarkId);
     if (regionId === undefined) return;
-    getResultAsync(() => readStatueLevels(gameDataBaseUrl, regionId)).match(
+    getResultAsync(() => readRegionStatueLevels(regionId)).match(
       (levels) => {
         const progress = regionStatueProgressMap.value.get(regionId) ?? { heldCount: 0, level: 0 };
         const resonated = resonateRegion({ ...progress, levels });

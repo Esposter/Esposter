@@ -9,6 +9,7 @@ import { AINO_CHARACTER_ID, createAinoKitBehaviour } from "#src/services/kit/cha
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const AINO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AINO_CHARACTER_ID);
@@ -29,7 +30,7 @@ const getFirstWaterBallBonus = (combatant: Combatant): number => {
   const kitEffectState: KitEffectState = { effects: [] };
   const context = createKitTestContext(combatant, { kitEffectState });
   AINO_KIT.elementalBurst.onStart?.(context);
-  const [{ hit }] = stepKitTestEffects(20, context);
+  const { hit } = takeOne(stepKitTestEffects(20, context));
   return hit.additiveBaseDamageBonus?.(combatant) ?? 0;
 };
 

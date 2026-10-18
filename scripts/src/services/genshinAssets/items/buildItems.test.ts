@@ -133,7 +133,9 @@ describe(buildItems, () => {
       if (key === "reputation/mondstadt")
         return Promise.resolve({
           bounties: [],
+          bountyTargets: [],
           explores: [],
+          huntingRegions: [],
           levels: [
             {
               functionIds: [],
