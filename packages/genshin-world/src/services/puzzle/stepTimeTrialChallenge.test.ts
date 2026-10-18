@@ -43,11 +43,12 @@ describe(strikeTimeTrialTarget, () => {
     targetCount: TARGET_COUNT,
   });
 
-  test("solves the challenge once every target is struck in time", () => {
+  test("finishing every target in time spawns the chest", () => {
     expect.hasAssertions();
 
     const challenge = createChallenge();
     startTimeTrialChallenge(challenge);
+    stepTimeTrialChallenge(challenge, LIMIT_SECONDS / 2);
     strikeTimeTrialTarget(challenge);
     strikeTimeTrialTarget(challenge);
 
@@ -67,7 +68,7 @@ describe(stepTimeTrialChallenge, () => {
     targetCount: TARGET_COUNT,
   });
 
-  test("fails the challenge once its clock runs out before every target", () => {
+  test("a missed target before the timer ends gives no chest", () => {
     expect.hasAssertions();
 
     const challenge = createChallenge();
