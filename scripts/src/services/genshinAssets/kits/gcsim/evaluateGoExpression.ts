@@ -1,4 +1,5 @@
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
+import type { GoOperand } from "#src/models/genshinAssets/kits/gcsim/GoOperand";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
@@ -10,20 +11,14 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 const CONVERSION_CALLEES = new Set(["float64", "int"]);
 
-// A number an operand holds, and whether it is a float: one by its whole-valued wrapper, or by a fraction it holds
-interface Operand {
-  isFloat: boolean;
-  value: number;
-}
-
-const readOperand = (value: GoValue | undefined): Operand | undefined => {
+const readOperand = (value: GoValue | undefined): GoOperand | undefined => {
   const number = readGoNumber(value);
   return number === undefined
     ? undefined
     : { isFloat: checkIsGoFloat(value) || !Number.isInteger(number), value: number };
 };
 
-const applyOperator = (operator: string, left: Operand, right: Operand): GoValue | undefined => {
+const applyOperator = (operator: string, left: GoOperand, right: GoOperand): GoValue | undefined => {
   const isFloat = left.isFloat || right.isFloat;
   let value: number;
   if (operator === "+") value = left.value + right.value;
