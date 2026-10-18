@@ -1,6 +1,6 @@
 # Save Data
 
-The [save data](../../specs/genshin/save-data/design.md) page holds the save, its lease, the shared blob path and the slices already kept. What is left is what the world holds that the save does not yet.
+The [save data](../../../specs/genshin/save-data/design.md) page holds the save, its lease, the shared blob path and the slices already kept. What is left is what the world holds that the save does not yet.
 
 ## Decisions
 
