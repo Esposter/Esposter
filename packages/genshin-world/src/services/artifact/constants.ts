@@ -100,6 +100,8 @@ export const SILKEN_MOON_SERENADE_ARTIFACT_SET_ID = 15_042;
 export const FLOWER_OF_PARADISE_LOST_ARTIFACT_SET_ID = 15_028;
 // Aubade of Morningstar and Moon's id in the set table
 export const AUBADE_OF_MORNINGSTAR_AND_MOON_ARTIFACT_SET_ID = 15_043;
+// Heart of the Furnace's id in the set table
+export const HEART_OF_THE_FURNACE_ARTIFACT_SET_ID = 15_048;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one

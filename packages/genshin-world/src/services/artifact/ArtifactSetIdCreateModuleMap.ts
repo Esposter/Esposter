@@ -23,6 +23,7 @@ import {
   GLADIATORS_FINALE_ARTIFACT_SET_ID,
   GOLDEN_TROUPE_ARTIFACT_SET_ID,
   HEART_OF_DEPTH_ARTIFACT_SET_ID,
+  HEART_OF_THE_FURNACE_ARTIFACT_SET_ID,
   HUSK_OF_OPULENT_DREAMS_ARTIFACT_SET_ID,
   INSTRUCTOR_ARTIFACT_SET_ID,
   LAVAWALKER_ARTIFACT_SET_ID,
@@ -74,6 +75,7 @@ import { createGildedDreamsSetModule } from "#src/services/artifact/sets/createG
 import { createGladiatorsFinaleSetModule } from "#src/services/artifact/sets/createGladiatorsFinaleSetModule";
 import { createGoldenTroupeSetModule } from "#src/services/artifact/sets/createGoldenTroupeSetModule";
 import { createHeartOfDepthSetModule } from "#src/services/artifact/sets/createHeartOfDepthSetModule";
+import { createHeartOfTheFurnaceSetModule } from "#src/services/artifact/sets/createHeartOfTheFurnaceSetModule";
 import { createHuskOfOpulentDreamsSetModule } from "#src/services/artifact/sets/createHuskOfOpulentDreamsSetModule";
 import { createInstructorSetModule } from "#src/services/artifact/sets/createInstructorSetModule";
 import { createLavawalkerSetModule } from "#src/services/artifact/sets/createLavawalkerSetModule";
@@ -130,6 +132,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [GLADIATORS_FINALE_ARTIFACT_SET_ID]: createGladiatorsFinaleSetModule,
   [GOLDEN_TROUPE_ARTIFACT_SET_ID]: createGoldenTroupeSetModule,
   [HEART_OF_DEPTH_ARTIFACT_SET_ID]: createHeartOfDepthSetModule,
+  [HEART_OF_THE_FURNACE_ARTIFACT_SET_ID]: createHeartOfTheFurnaceSetModule,
   [HUSK_OF_OPULENT_DREAMS_ARTIFACT_SET_ID]: createHuskOfOpulentDreamsSetModule,
   [INSTRUCTOR_ARTIFACT_SET_ID]: createInstructorSetModule,
   [LAVAWALKER_ARTIFACT_SET_ID]: createLavawalkerSetModule,
