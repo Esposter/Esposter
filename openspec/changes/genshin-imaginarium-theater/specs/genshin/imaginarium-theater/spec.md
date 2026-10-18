@@ -96,6 +96,18 @@ An act's events SHALL be rerollable, and a run SHALL rewind to its last boss sta
 - **WHEN** the player rerolls the events
 - **THEN** the act offers a fresh set of events
 
+#### Scenario: A Mystery Cache's reroll option gives two chances
+
+- **GIVEN** the run holds some rerolls
+- **WHEN** the player takes a Mystery Cache option that gives chances to reroll
+- **THEN** the run holds two more rerolls
+
+#### Scenario: A reroll is refused with no rerolls left
+
+- **GIVEN** the run has no rerolls left
+- **WHEN** the player rerolls the events
+- **THEN** the act keeps its events
+
 #### Scenario: A run rewinds to its last boss stage
 
 - **GIVEN** the run has rewinds left
