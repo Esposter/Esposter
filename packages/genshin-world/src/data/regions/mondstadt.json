@@ -469,13 +469,6 @@
     },
     {
       "areaId": "starfell-valley",
-      "day": { "position": { "x": 377.27, "z": -377.57 }, "rotation": 1.142 },
-      "id": "10256",
-      "nameTextId": "1387903181",
-      "talkId": "61025601"
-    },
-    {
-      "areaId": "starfell-valley",
       "day": { "position": { "x": 364.4, "z": -407.68 }, "rotation": -0.7086 },
       "id": "30276",
       "nameTextId": "1492888944",
