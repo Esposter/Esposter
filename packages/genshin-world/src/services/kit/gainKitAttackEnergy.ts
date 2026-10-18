@@ -2,8 +2,8 @@ import type { KitState } from "#src/models/kit/KitState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Party } from "#src/models/party/Party";
 
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { ATTACK_ENERGY } from "#src/services/combat/energy/constants";
+import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { rollKitAttackEnergy } from "#src/services/kit/rollKitAttackEnergy";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -17,7 +17,7 @@ export const gainKitAttackEnergy = (
 ): void => {
   for (const { attackTag, combatant } of struckStrikes)
     if (
-      (attackTag === AttackTag.NormalAttack || attackTag === AttackTag.ChargedAttack) &&
+      checkIsNormalOrChargedAttack(attackTag) &&
       combatant.weaponType !== undefined &&
       rollKitAttackEnergy(kitState, combatant.weaponType, random)
     )

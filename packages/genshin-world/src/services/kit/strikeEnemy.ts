@@ -21,6 +21,7 @@ import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
+import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { getDirectLunarDamage } from "#src/services/kit/getDirectLunarDamage";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
@@ -91,13 +92,16 @@ export const strikeEnemy = (
         amplifyingMultiplier,
         attackerLevel: combatant.level,
         criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
-        // The element's or the physical DMG Bonus, the all-damage bonus, a hit's own and an enemy's statuses' DMG taken
-        // Add to the bonus each hit on it reads
+        // The element's or the physical DMG Bonus, the all-damage bonus, the normal and charged attack bonus on those attacks,
+        // A hit's own and an enemy's statuses' DMG taken add to the bonus each hit on it reads
         damageBonus:
           attributeTotalMap[
             element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
           ] +
           attributeTotalMap[Attribute.AllDamageBonus] +
+          (checkIsNormalOrChargedAttack(kitHit.attackTag)
+            ? attributeTotalMap[Attribute.NormalAndChargedAttackDamageBonus]
+            : 0) +
           (kitHit.damageBonus ?? 0) +
           enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
         defense,
