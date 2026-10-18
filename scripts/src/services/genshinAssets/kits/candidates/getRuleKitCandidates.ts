@@ -7,6 +7,9 @@ import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/add
 import { KIT_LENGTH_KEY, UNMEASURED_HOLD_SECONDS } from "#src/services/genshinAssets/kits/constants";
 import { Element, KitPlunge, KitTargeting } from "genshin-world";
 
+// Every stance's normal attacks, whichever stance a kit names, by the length its normal attacks carry
+const STANCE_NORMAL_ATTACKS_LENGTH_REGEX = /^(?<actionsPath>stances\.[^.]+\.normalAttacks)\.length$/u;
+
 // The values the builder's rules give a kit's record, by their paths, over the actions and hits its sources and overlay
 // Already give it: each action's targeting zone by its slot, a hit's poise where no source gives one, no hold, a hold's
 // Threshold and the collision's hitmark. A rule is the last candidate for its path, so it holds only where no source
@@ -27,11 +30,18 @@ export const getRuleKitCandidates = (
   };
   const nodePaths = [...valueMap].flatMap(([path, value]) => (value === undefined ? [] : [path]));
   const checkHasNode = (path: string) => nodePaths.some((nodePath) => nodePath.startsWith(`${path}.`));
+  const stanceNormalAttackPaths = [...valueMap.keys()].flatMap((path) => {
+    const actionsPath = STANCE_NORMAL_ATTACKS_LENGTH_REGEX.exec(path)?.groups?.actionsPath;
+    return actionsPath === undefined
+      ? []
+      : Array.from({ length: readLength(actionsPath) }, (_value, index) => `${actionsPath}.${index}`);
+  });
   const actionTargetingEntries: [string, KitTargeting][] = [
     ...Array.from({ length: readLength("normalAttacks") }, (_value, index): [string, KitTargeting] => [
       `normalAttacks.${index}`,
       KitTargeting.Strike,
     ]),
+    ...stanceNormalAttackPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Strike]),
     ["chargedAttack", KitTargeting.Strike],
     [`plunges.${KitPlunge.Low}`, KitTargeting.Strike],
     [`plunges.${KitPlunge.High}`, KitTargeting.Strike],
