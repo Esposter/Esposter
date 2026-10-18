@@ -4,11 +4,13 @@ import type { KitField } from "#src/models/kit/KitField";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createLynetteKitBehaviour, LYNETTE_CHARACTER_ID } from "#src/services/kit/characters/lynetteKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const LYNETTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LYNETTE_CHARACTER_ID);
@@ -71,5 +73,49 @@ describe(createLynetteKitBehaviour, () => {
       nextTickSeconds: 122 / 60,
       tickIntervalSeconds: 59 / 60,
     });
+  });
+
+  // Magic Trick cast by Lynette at the given ascension, with a Pyro and a Hydro member beside her, and the ATK buffs it
+  // Gives the team
+  const readSynergyBuffs = (ascension: number): KitEffectState["effects"] => {
+    const lynette = { ...createLynetteCombatant(), ascension, element: Element.Anemo };
+    const pyro = { ...createLynetteCombatant(), characterId: 1, element: Element.Pyro };
+    const hydro = { ...createLynetteCombatant(), characterId: 2, element: Element.Hydro };
+    const kitEffectState: KitEffectState = { effects: [] };
+    LYNETTE_KIT.elementalBurst.onStart?.(
+      createKitTestContext(lynette, {
+        characterIdCombatantMap: new Map([
+          [LYNETTE_CHARACTER_ID, lynette],
+          [pyro.characterId, pyro],
+          [hydro.characterId, hydro],
+        ]),
+        kitEffectState,
+        party: createParty([LYNETTE_CHARACTER_ID, pyro.characterId, hydro.characterId]),
+      }),
+    );
+    return kitEffectState.effects.filter(
+      (effect) => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent,
+    );
+  };
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readSynergyBuffs(1)).toStrictEqual(
+      [LYNETTE_CHARACTER_ID, 1, 2].map((characterId) => ({
+        amount: 0.08 + 2 * 0.04,
+        attribute: Attribute.AttackPercent,
+        characterId,
+        kind: "buff",
+        secondsRemaining: 10,
+        source: "lynette-sophisticated-synergy",
+      })),
+    );
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readSynergyBuffs(0)).toStrictEqual([]);
   });
 });
