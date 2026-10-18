@@ -21,6 +21,8 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import {
   ARTIFACT_SLOT_ORDER,
   COMBAT_TALENT_ORDER,
+  MASTERLESS_LEVEL_LIFTS,
+  MASTERLESS_STELLA_FORTUNA_ID,
   TRAVELER_CHARACTER_ID,
   WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
@@ -28,8 +30,10 @@ import { getCharacterElement } from "#src/services/character/getCharacterElement
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { getTalentRows } from "#src/services/character/getTalentRows";
+import { liftCharacterLevel } from "#src/services/character/liftCharacterLevel";
 import { TalentUpgradeRefusalGameTextKeyMap } from "#src/services/character/TalentUpgradeRefusalGameTextKeyMap";
 import { upgradeCharacterTalent } from "#src/services/character/upgradeCharacterTalent";
+import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
@@ -207,6 +211,21 @@ const talentPanel = computed(() => {
 });
 // The combat talent the Talents tab's Upgrade raises by one, which only a press on an enabled row can reach, so the raise
 // Never refuses
+// Whether the chosen character sits at a level cap a Masterless Stella Fortuna lifts, with the items in the bag for it
+const isLiftable = computed(() => {
+  const liftLevel = character.value ? MASTERLESS_LEVEL_LIFTS.get(character.value.level) : undefined;
+  return (
+    liftLevel !== undefined &&
+    checkIsItemCountsHeld(inventory.value.items, [{ count: liftLevel.count, id: MASTERLESS_STELLA_FORTUNA_ID }], 1)
+  );
+});
+// The chosen character lifted past its cap, with the bag's items taken and the character written back in its place
+const liftCharacter = () => {
+  if (!character.value || !isLiftable.value) return;
+  const lifted = liftCharacterLevel(character.value, { inventory: inventory.value });
+  characters.value = characters.value.map((item) => (item.id === lifted.character.id ? lifted.character : item));
+  inventory.value = lifted.inventory;
+};
 const upgradeTalentAt = (index: number) => {
   const talent = COMBAT_TALENT_ORDER[index];
   if (!character.value || !talentGroupIds.value || !talent) return;
@@ -250,9 +269,11 @@ const activate = () => {
         v-if="character && tab === CharacterMenuTab.Attributes"
         :character
         :game-text
+        :is-liftable="isLiftable"
         :max-stamina
         :name="characterName"
         :stat-tables
+        @lift="liftCharacter"
       />
       <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />
       <CharacterMenuArtifacts
