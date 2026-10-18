@@ -28,6 +28,7 @@ import { ellin } from "#src/services/gcg/cards/ellin";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
 import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { icyQuill } from "#src/services/gcg/cards/icyQuill";
 import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
@@ -63,6 +64,7 @@ import { mintyMeatRolls } from "#src/services/gcg/cards/mintyMeatRolls";
 import { mondstadtHashBrown } from "#src/services/gcg/cards/mondstadtHashBrown";
 import { mushroomPizza } from "#src/services/gcg/cards/mushroomPizza";
 import { mushroomPizzaInEffect } from "#src/services/gcg/cards/mushroomPizzaInEffect";
+import { mysticalAbandon } from "#src/services/gcg/cards/mysticalAbandon";
 import { naganoharaMeteorSwarm } from "#src/services/gcg/cards/naganoharaMeteorSwarm";
 import { niwabiEnshou } from "#src/services/gcg/cards/niwabiEnshou";
 import { northernSmokedChicken } from "#src/services/gcg/cards/northernSmokedChicken";
@@ -93,6 +95,7 @@ import { strategize } from "#src/services/gcg/cards/strategize";
 import { streamingSurge } from "#src/services/gcg/cards/streamingSurge";
 import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { sweetMadame } from "#src/services/gcg/cards/sweetMadame";
+import { talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
 import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
 import { theWolfWithin } from "#src/services/gcg/cards/theWolfWithin";
@@ -120,6 +123,8 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [111_023, drunkenMist],
   [111_031, icicle],
   [111041, chonghuaFrostField],
+  [111071, icyQuill],
+  [111073, talismanSpirit],
   [11_054, kamisatoArtSenho],
   [111_051, frostflakeSekiNoTo],
   [111_052, cryoElementalInfusion],
@@ -155,6 +160,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [211_051, kantenSenmyouBlessing],
   [213_011, flowingFlame],
   [213_021, crossfire],
+  [211071, mysticalAbandon],
   [213051, naganoharaMeteorSwarm],
   [222011, streamingSurge],
   [225011, transcendentAutomaton],
