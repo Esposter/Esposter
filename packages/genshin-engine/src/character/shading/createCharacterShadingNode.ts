@@ -22,6 +22,7 @@ import { createToneNode } from "#src/character/shading/createToneNode";
 import { createToonThresholdNode } from "#src/character/shading/createToonThresholdNode";
 import { selectRegionNode } from "#src/character/shading/selectRegionNode";
 import { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
+import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import {
   cameraViewMatrix,
   float,
@@ -33,11 +34,19 @@ import {
   step,
   texture,
   uv,
+  vec2,
   vec3,
   vec4,
 } from "three/tsl";
 
 const toVec3 = ([red, green, blue]: Vector3Tuple): Node<"vec3"> => vec3(red, green, blue);
+
+// The diffuse with a PMX sphere laid over it as MMD lays it, multiplied or added, read through the normal's view-space x
+// And negated y, the file's top the surface that faces up
+const laySphere = (diffuse: Node<"vec3">, sphere: NonNullable<CharacterShadingInputs["sphere"]>): Node<"vec3"> => {
+  const sample = texture(sphere.texture, vec2(normalView.x, normalView.y.negate()).mul(0.5).add(0.5)).rgb;
+  return sphere.mode === PmxSphereMode.Add ? diffuse.add(sample) : diffuse.mul(sample);
+};
 
 // A colour by the region a pixel is in: the first region's colour, unless a later region's is selected
 const selectRegionColor = (region: Node<"float">, colors: ShadingRegionColours): Node<"vec3"> =>
@@ -68,7 +77,8 @@ export const createCharacterShadingNode = (
   const region = createShadingRegionNode(lightMap.a, regionToggles);
   const tint = selectRegionColor(region, { ...regionTints, one: color });
   const mainSample = inputs.mainTexture ? texture(inputs.mainTexture, uv()) : vec4(1);
-  const materialColour = mainSample.rgb.mul(tint);
+  const diffuseColour = mainSample.rgb.mul(tint);
+  const materialColour = inputs.sphere ? laySphere(diffuseColour, inputs.sphere) : diffuseColour;
 
   const sunTerm = normalView.dot(sunDirectionView).mul(HALF_LAMBERT_SCALE).add(HALF_LAMBERT_OFFSET);
   const threshold = createToonThresholdNode({

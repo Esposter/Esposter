@@ -13,7 +13,7 @@ import { float, texture, uv, vec4 } from "three/tsl";
 
 // One of a character's materials, shaded as the game's own character shader draws a body, its inputs taken from the PMX
 // Material: its diffuse is the main texture and its colour, its toon the ramp (its own read up its one column, a shared
-// One across its row), its sphere the metal map, and its specular and edge carry over. The regions and the lightmap
+// One across its row), its sphere laid over the diffuse by its mode, and its specular and edge carry over. The regions and the lightmap
 // Take their defaults, as the shading page's inputs table sets out. A material is drawn opaque, writing its depth,
 // Unless its diffuse alpha is below one or its texture has clear texels, and then it is blended and drawn from both
 // Faces. Every opaque material is outlined, as the game outlines every character: one whose edge the file sets in that
@@ -46,7 +46,10 @@ export const createCharacterMaterial = ({
   const shadingInputs = createCharacterShadingInputs({
     color,
     mainTexture: diffuseTexture,
-    metalTexture: sphereTexture && sphereMode !== PmxSphereMode.Disabled ? sphereTexture : undefined,
+    sphere:
+      sphereTexture && (sphereMode === PmxSphereMode.Multiply || sphereMode === PmxSphereMode.Add)
+        ? { mode: sphereMode, texture: sphereTexture }
+        : undefined,
     // A pack's own toon is one column read down its rows, where the shared ramps and the world's are one row across
     rampLayout: packToonTexture ? RampLayout.Vertical : RampLayout.Horizontal,
     rampTexture: packToonTexture ?? (isToonShared ? getSharedToonRamp(toonIndex) : undefined) ?? rampTexture,

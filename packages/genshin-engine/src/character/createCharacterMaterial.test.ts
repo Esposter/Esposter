@@ -1,10 +1,33 @@
 import type { PmxMaterial } from "#src/models/character/PmxMaterial";
+import type { Texture } from "three";
+import type { Node } from "three/webgpu";
 
 import { createCharacterMaterial } from "#src/character/createCharacterMaterial";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { createLightUniforms } from "#src/nodes/createLightUniforms";
 import { DataTexture, DoubleSide, FrontSide } from "three";
+import { OperatorNode, TextureNode } from "three/webgpu";
 import { describe, expect, test } from "vitest";
+
+// Whether a node is the texture's sample, the texture read or one channel of it
+const isSample = (node: Node, texture: Texture): boolean =>
+  (node instanceof TextureNode && node.value === texture) ||
+  [...node.getChildren()].some((child) => child instanceof TextureNode && child.value === texture);
+
+// The operators that take the texture's sample as a direct operand, each named once, read off the graph the output draws
+const getSampleOperators = (root: Node | null, texture: Texture): string[] => {
+  const operators = new Set<string>();
+  const visited = new Set<Node>();
+  const visit = (node: Node): void => {
+    if (visited.has(node)) return;
+    visited.add(node);
+    if (node instanceof OperatorNode && [node.aNode, node.bNode].some((operand) => isSample(operand, texture)))
+      operators.add(node.op);
+    for (const child of node.getChildren()) visit(child);
+  };
+  if (root) visit(root);
+  return [...operators];
+};
 
 describe(createCharacterMaterial, () => {
   const pmxMaterial: PmxMaterial = {
@@ -58,19 +81,24 @@ describe(createCharacterMaterial, () => {
     expect(characterMaterial.edge?.color).toStrictEqual([0.5, 0, 0, 1]);
   });
 
-  test("draws its sphere as the metal map where its mode names one, and sets it for release", () => {
+  test("lays its sphere over the diffuse where its mode is Multiply or Add, and the lit colour carries it", () => {
     expect.hasAssertions();
 
     const sphereTexture = new DataTexture();
-    const characterMaterial = createCharacterMaterial({
-      lightUniforms: createLightUniforms(),
-      pmxMaterial: { ...pmxMaterial, isOutlined: false, sphereMode: PmxSphereMode.Multiply, sphereTextureIndex: 1 },
-      rampTexture: new DataTexture(),
-      sphereTexture,
-    });
+    const withSphereMode = (sphereMode: PmxSphereMode.Add | PmxSphereMode.Multiply) =>
+      createCharacterMaterial({
+        lightUniforms: createLightUniforms(),
+        pmxMaterial: { ...pmxMaterial, isOutlined: false, sphereMode, sphereTextureIndex: 1 },
+        rampTexture: new DataTexture(),
+        sphereTexture,
+      });
+    const multiplied = withSphereMode(PmxSphereMode.Multiply);
+    const added = withSphereMode(PmxSphereMode.Add);
 
-    expect(characterMaterial.sphereMap).toBe(sphereTexture);
-    expect(characterMaterial.edge).toBeUndefined();
+    expect(getSampleOperators(multiplied.outputNode, sphereTexture)).toStrictEqual(["*"]);
+    expect(getSampleOperators(added.outputNode, sphereTexture)).toStrictEqual(["+"]);
+    expect(multiplied.sphereMap).toBe(sphereTexture);
+    expect(multiplied.edge).toBeUndefined();
   });
 
   test("outlines a solid material whose file sets no edge by the world's outline, and leaves a transparent one bare", () => {
@@ -96,14 +124,16 @@ describe(createCharacterMaterial, () => {
   test("keeps the sphere off a material whose mode is disabled", () => {
     expect.hasAssertions();
 
+    const sphereTexture = new DataTexture();
     const characterMaterial = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
       pmxMaterial: { ...pmxMaterial, isOutlined: false },
       rampTexture: new DataTexture(),
-      sphereTexture: new DataTexture(),
+      sphereTexture,
     });
 
     expect(characterMaterial.sphereMap).toBeUndefined();
+    expect(getSampleOperators(characterMaterial.outputNode, sphereTexture)).toStrictEqual([]);
   });
 
   test("is drawn at no opacity as hidden, so its depth hides nothing", () => {
