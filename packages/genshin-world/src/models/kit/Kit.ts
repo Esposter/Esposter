@@ -44,8 +44,8 @@ export interface Kit {
   // Constellation raises it, given the kit's effects as they stand
   getNormalAttackSpeedBonus?: (context: KitContext) => number;
   // The hit a kit's own normal attack adds after each of its hits that lands, if a constellation gives one, given the
-  // Hit that landed
-  getNormalAttackExtraHit?: (context: KitContext, hit: KitHit) => KitHit | undefined;
+  // Hit that landed and the normal attack's place in the kit's chain, from 0, so a hook can tell its last hit or its attack
+  getNormalAttackExtraHit?: (context: KitContext, hit: KitHit, chainIndex: number) => KitHit | undefined;
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
   getSkillChargeBonus?: (combatant: Combatant) => number;

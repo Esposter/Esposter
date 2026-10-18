@@ -379,4 +379,42 @@ describe(stepKit, () => {
 
     expect(landedHits).toStrictEqual([firstHit, extraHit]);
   });
+
+  test("hands the extra-hit hook the normal attack's place in its chain, the first attack's being 0 and the next's 1", () => {
+    expect.hasAssertions();
+    const chainIndexes: number[] = [];
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      getNormalAttackExtraHit: (_context, _hit, chainIndex) => {
+        chainIndexes.push(chainIndex);
+        return undefined;
+      },
+    };
+    const kitState = createKitState();
+    const landedHits: KitHit[] = [];
+    const step = (isAttackPressed: boolean, stepSeconds: number): void => {
+      stepKit(
+        kitState,
+        kit,
+        { ...IDLE_INPUT, isAttackPressed },
+        createPartyMember(),
+        createStamina(STAMINA_MAX),
+        stepSeconds,
+        landedHits,
+        createKitTestContext(TRAVELER_COMBATANT),
+      );
+    };
+    // Plays a normal attack out, as a press starts it and the steps with no press run it
+    const playOutAttack = (): void => {
+      step(true, 0);
+      for (let index = 0; index < 200 && kitState.action; index++) step(false, 0.05);
+    };
+
+    playOutAttack();
+    expect([...new Set(chainIndexes)]).toStrictEqual([0]);
+
+    chainIndexes.length = 0;
+    playOutAttack();
+    expect([...new Set(chainIndexes)]).toStrictEqual([1]);
+  });
 });
