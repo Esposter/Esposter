@@ -7,14 +7,19 @@ import { rethrowGcgDice } from "#src/services/gcg/effects/rethrowGcgDice";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { takeOne } from "@esposter/shared";
 
-// A side's one reroll of its dice in the roll phase: any dice it names are thrown again, and none named passes. Once both
-// Sides have rolled, the action phase opens with the round's first side
+// A side's one reroll of its dice in the roll phase, and any extra reroll a card grants it: any dice it names are thrown
+// Again, and none named passes. Once both sides have rolled, the action phase opens with the round's first side
 export const rerollGcgDice = (duel: GcgDuel, sideIndex: number, diceIndices: number[]): GcgActionResult => {
   if (duel.phase !== GcgPhase.Roll) return GcgActionResult.WrongPhase;
   const side = takeOne(duel.sides, sideIndex);
   if (side.hasRolled) return GcgActionResult.WrongPhase;
   else if (!checkIsGcgIndexSelection(diceIndices, side.dice.length)) return GcgActionResult.Unavailable;
   rethrowGcgDice(side, diceIndices, duel.random);
+  // A card's extra reroll keeps the roll open after named dice, so the side may reroll again or name none to pass
+  if (diceIndices.length > 0 && side.extraRerolls) {
+    side.extraRerolls -= 1;
+    return GcgActionResult.Done;
+  }
   side.hasRolled = true;
   if (duel.sides.every((rolledSide) => rolledSide.hasRolled)) {
     duel.phase = GcgPhase.Action;

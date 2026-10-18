@@ -5,6 +5,7 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
+import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
@@ -13,18 +14,24 @@ import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
 import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
 import { instructorsCap } from "#src/services/gcg/cards/instructorsCap";
+import { knightsOfFavoniusLibrary } from "#src/services/gcg/cards/knightsOfFavoniusLibrary";
 import { liben } from "#src/services/gcg/cards/liben";
+import { GCG_DIE_FACES } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
+import { runGcgRollPhase } from "#src/services/gcg/runGcgRollPhase";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
+import { startGcgRound } from "#src/services/gcg/startGcgRound";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const FULL_HP = 10;
 const COLLEI_ID = 1701;
 const LIBEN_ID = 322_008;
+const KNIGHTS_OF_FAVONIUS_LIBRARY_ID = 321_002;
 const KEQING_ID = 1403;
 const OTHER_CHARACTER_ID = 1401;
 const OPPOSING_CHARACTER_ID = 1203;
@@ -284,5 +291,56 @@ describe("liben", () => {
     expect(side.supports).toStrictEqual([zoneCard]);
     expect(side.hand).toStrictEqual([]);
     expect(side.dice).toStrictEqual([]);
+  });
+});
+
+describe("knights of Favonius Library", () => {
+  // A random source that throws the Cryo face for every die it rolls
+  const cryoRandom = (): number => (GCG_DIE_FACES.indexOf(Element.Cryo) + 0.5) / GCG_DIE_FACES.length;
+
+  test("when played, the chosen dice are rerolled once", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      { ...createSideState([createCharacterState(COLLEI_ID)]), dice: [Element.Hydro, Element.Pyro] },
+      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+    ]);
+    duel.random = cryoRandom;
+    knightsOfFavoniusLibrary.play?.({ duel, sideIndex: 0 }, undefined, { rerollDiceIndices: [[0]] });
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Cryo, Element.Pyro]);
+  });
+
+  test("the roll phase gives another reroll: naming dice rerolls them and keeps the roll open, and naming none passes", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      {
+        ...createSideState([createCharacterState(COLLEI_ID)]),
+        dice: [Element.Hydro, Element.Pyro],
+        hasRolled: false,
+        supports: [createGcgZoneCard(KNIGHTS_OF_FAVONIUS_LIBRARY_ID, knightsOfFavoniusLibrary)],
+      },
+      { ...createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]), hasRolled: true },
+    ]);
+    duel.phase = GcgPhase.Roll;
+    duel.random = cryoRandom;
+    runGcgRollPhase(duel);
+    expect(rerollGcgDice(duel, 0, [0])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0)).toMatchObject({ dice: [Element.Cryo, Element.Pyro], hasRolled: false });
+    expect(rerollGcgDice(duel, 0, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0).hasRolled).toBe(true);
+    expect(duel.phase).toBe(GcgPhase.Action);
+  });
+
+  test("without the card, naming dice in the roll phase is the side's one reroll, and ends its roll", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(COLLEI_ID)]),
+      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+    ]);
+    duel.phase = GcgPhase.Roll;
+    duel.random = cryoRandom;
+    startGcgRound(duel);
+    expect(rerollGcgDice(duel, 0, [0])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0).hasRolled).toBe(true);
+    expect(rerollGcgDice(duel, 0, [])).toBe(GcgActionResult.WrongPhase);
   });
 });

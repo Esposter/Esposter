@@ -10,6 +10,7 @@ export const startGcgRound = (duel: GcgDuel): void => {
   for (const side of duel.sides) {
     side.dice = rollGcgDice(GCG_DICE_COUNT, duel.random);
     side.hasRolled = false;
+    side.extraRerolls = 0;
   }
   runGcgRollPhase(duel);
   duel.phase = GcgPhase.Roll;

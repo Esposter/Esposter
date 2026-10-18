@@ -10,7 +10,7 @@ The engine is the duel's own rules: how a duel starts, how its dice, rounds, tur
 ## Dice, rolls and turns
 
 - **Preparation switches once, then chooses.** A side's switched cards go back into its draw pile, which is shuffled and drawn from to refill its hand. Then it chooses its active character, and the first round's roll starts once both sides have.
-- **Rolls and rerolls.** Each side rolls eight dice a round, each face one of the seven elements or Omni, equally likely, from the seeded source. Each side then has one reroll of any dice it names, and naming none passes.
+- **Rolls and rerolls.** Each side rolls eight dice a round, each face one of the seven elements or Omni, equally likely, from the seeded source. Each side then has one reroll of any dice it names, and naming none passes. A card may grant a side another reroll in the roll phase (Knights of Favonius Library): naming dice then rerolls them and keeps the roll open, until the side names none.
 - **Combat actions pass the turn.** Using a skill, switching for one die of any face and declaring the round's end are combat actions. Each passes the turn unless the other side has already declared its end.
 - **Tuning is a fast action.** It discards a card to set one die to the active character's element, and the turn stays.
 - **Playing a card is a fast action.** A card passes no turn.
