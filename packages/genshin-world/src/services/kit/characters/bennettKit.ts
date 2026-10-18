@@ -57,6 +57,17 @@ const getSkillCooldownMultiplier = (context: KitContext): number => {
 
 export const BENNETT_CHARACTER_ID = 10_000_032;
 
+// Impasse Conqueror at constellation 2 raises Energy Recharge by 30% while Bennett's HP is under 70% of its Max HP, and not
+// From 70% up. As the wiki's constellation table gives it: https://genshin-impact.fandom.com/wiki/Bennett
+const IMPASSE_CONQUEROR_CONSTELLATION = 2;
+const IMPASSE_CONQUEROR_ENERGY_RECHARGE = 0.3;
+const IMPASSE_CONQUEROR_HP_THRESHOLD = 0.7;
+// Impasse Conqueror's Energy Recharge, read off the HP share a passive is given, as the character stands
+const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
+  combatant.constellationCount >= IMPASSE_CONQUEROR_CONSTELLATION && healthShare < IMPASSE_CONQUEROR_HP_THRESHOLD
+    ? [{ amount: IMPASSE_CONQUEROR_ENERGY_RECHARGE, attribute: Attribute.EnergyRecharge }]
+    : [];
+
 // Bennett's behaviour: Fantastic Voyage casts its field where he stands, from its start to the table's seconds past its
 // First tick. Each tick, from the second, heals the character on it under 70% of its HP by the table's flat HP and share
 // Of Bennett's Max HP, and gives one above 70% the table's share of Bennett's base ATK, which Grand Expectation lifts to
@@ -109,6 +120,7 @@ export const createBennettKitBehaviour = ({ readParameter, readSeconds }: KitRec
         });
     };
   return {
+    getPassiveBonuses,
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitField(kitEffectState, combatant.characterId, body.position, {
