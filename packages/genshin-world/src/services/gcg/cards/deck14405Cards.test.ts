@@ -410,6 +410,20 @@ describe("ushi", () => {
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ usages }) => usages)).toStrictEqual([3]);
   });
 
+  test("placed again by Masatsu Zetsugi, it reduces the next DMG once more, and its Superlative attach stays spent", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([withSkills(createCharacterState(ITTO_ID, Element.Geo), [MASATSU])]),
+      createSideState([createCharacterState(XIAO_ID, Element.Anemo)]),
+    ]);
+    takeOne(duel.sides, 0).summons.push(createGcgZoneCard(USHI_ID, ushi));
+    applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
+    runGcgSkillUse({ duel, sideIndex: 0 }, MASATSU);
+    applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
+    expect(takeOne(takeOne(duel.sides, 0).characters, 0).hp).toBe(6);
+    expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ usages }) => usages)).toStrictEqual([2]);
+  });
+
   test("at the End Phase it is discarded, deals 1 Geo DMG and attaches Superlative Superstrength to Arataki Itto", () => {
     expect.hasAssertions();
     const duel = createDuel([
