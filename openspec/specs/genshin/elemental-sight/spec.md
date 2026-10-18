@@ -147,3 +147,45 @@ A white ring SHALL mark the edge of the range while the sight is on.
 - **GIVEN** the sight on
 - **WHEN** the scene is drawn
 - **THEN** a white ring marks the edge of the reach
+
+### Requirement: A sight trail leads from the character toward its end
+
+While Elemental Sight is on, a sight trail SHALL run on the ground from the character toward its placed end.
+
+#### Scenario: A Seelie's court draws a trail while the sight is on
+
+- **GIVEN** a Seelie's court is placed in the world and Elemental Sight is on
+- **WHEN** the player stands in the open world
+- **THEN** a trail runs from the character toward the court
+
+#### Scenario: No trail is drawn while the sight is off
+
+- **GIVEN** a Seelie's court is placed in the world and Elemental Sight is off
+- **WHEN** the player stands in the open world
+- **THEN** no trail is drawn
+
+### Requirement: A sight trail stops at the sight's reach
+
+A sight trail SHALL stop at the sight's reach when its end lies beyond it, and SHALL draw nothing when its end is where the character stands.
+
+#### Scenario: An end past the reach stops the trail at the reach
+
+- **GIVEN** a trail's end lies beyond the sight's reach
+- **WHEN** Elemental Sight is on
+- **THEN** the trail ends at the reach
+
+#### Scenario: A trail whose end is where the character stands draws nothing
+
+- **GIVEN** a trail's end is at the character's own position
+- **WHEN** Elemental Sight is on
+- **THEN** no trail is drawn
+
+### Requirement: A sight trail stays bright when the sight mutes the scene
+
+A sight trail SHALL stay white and bright while the sight mutes the rest of the scene, since white is the colour of what no element affects.
+
+#### Scenario: A trail stays bright while the sight mutes the scene
+
+- **GIVEN** Elemental Sight is on and the scene is muted
+- **WHEN** a trail is on screen
+- **THEN** the trail is drawn white and bright
