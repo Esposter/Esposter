@@ -14,7 +14,7 @@ export const fightImaginariumStage = (
   if (!checkIsImaginariumStageReady(principalCast)) return { isFought: false, principalCast };
   return {
     isFought: true,
-    outcome: resolveDomainChallenge(progress, { partyDown: isPartyDown }),
+    outcome: resolveDomainChallenge(progress, { isPartyDown }),
     principalCast: performImaginariumStage(principalCast),
   };
 };

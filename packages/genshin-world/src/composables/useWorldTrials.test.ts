@@ -49,7 +49,7 @@ const RETURN_POSE: WorldJumpPose = { heightOffset: 0, point: { x: 12, z: -3 }, y
 const TIMED_OUT_STEP = {
   deltaMilliseconds: TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS,
   isPlaying: true,
-  partyDown: false,
+  isPartyDown: false,
 };
 
 vi.mock(import("#src/services/trial/readCharacterTrials"), () => ({
@@ -147,7 +147,7 @@ describe(useWorldTrials, () => {
     await flushReads();
 
     await enterTrial(takeOne(trials.value), RETURN_POSE);
-    stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
+    stepTrial({ deltaMilliseconds: 0, isPlaying: false, isPartyDown: true });
     expect(trialArena.value).toBeUndefined();
     expect(characters.value).toBe(ownedCharacters);
     expect(trialClaimedStageIds.value.size).toBe(0);
@@ -180,7 +180,7 @@ describe(useWorldTrials, () => {
     await flushReads();
     await enterTrial(takeOne(trials.value), RETURN_POSE);
 
-    expect(stepTrial({ deltaMilliseconds: 1, isPlaying: true, partyDown: false })).toBeUndefined();
+    expect(stepTrial({ deltaMilliseconds: 1, isPlaying: true, isPartyDown: false })).toBeUndefined();
     expect(stepTrial(TIMED_OUT_STEP)).toStrictEqual(RETURN_POSE);
   });
 
@@ -190,7 +190,7 @@ describe(useWorldTrials, () => {
     await flushReads();
     await enterTrial(takeOne(trials.value), RETURN_POSE);
 
-    expect(stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true })).toStrictEqual(RETURN_POSE);
+    expect(stepTrial({ deltaMilliseconds: 0, isPlaying: false, isPartyDown: true })).toStrictEqual(RETURN_POSE);
   });
 
   test("a trial's countdown reads the seconds its clock has left", async () => {
@@ -200,7 +200,7 @@ describe(useWorldTrials, () => {
     await enterTrial(takeOne(trials.value), RETURN_POSE);
     expect(trialSecondsRemaining.value).toBe(300);
 
-    stepTrial({ deltaMilliseconds: 1500, isPlaying: true, partyDown: false });
+    stepTrial({ deltaMilliseconds: 1500, isPlaying: true, isPartyDown: false });
     expect(trialSecondsRemaining.value).toBe(299);
     stepTrial(TIMED_OUT_STEP);
     expect(trialSecondsRemaining.value).toBeUndefined();

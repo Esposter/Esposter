@@ -115,7 +115,7 @@ describe("stepDomainChallenge", () => {
     // The quick challenge reads the weekly schedule, then enters the tier the rank of 40 reaches and starts the fight there
     await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
     const campId = domains.domainCamps.value[0]?.id ?? "";
-    const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPlaying: true, partyDown: false });
+    const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPlaying: true, isPartyDown: false });
 
     expect(step()).toStrictEqual([]);
     events.emit("shieldBreak", createBrokenBoss(campId));
