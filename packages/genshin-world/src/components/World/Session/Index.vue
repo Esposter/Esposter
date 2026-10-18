@@ -1193,14 +1193,12 @@ useWorldSaveSync({
     worldLevelAdjustment: worldLevelAdjustment.value,
   }),
 });
+// A character's name in the reader's language, read from the game's text by its data's name
+const getCharacterName = (characterId: number) =>
+  nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ""] || "";
 // The roster the expedition picker lists in the game's order, each named by the game's text, and the characters down,
 // Whom no expedition is sent with
-const expeditionCharacters = computed(() =>
-  characters.value.map(({ id }) => ({
-    id,
-    name: nameText[statTables.characterDataMap.get(id)?.nameTextId ?? ""] || "",
-  })),
-);
+const expeditionCharacters = computed(() => characters.value.map(({ id }) => ({ id, name: getCharacterName(id) })));
 // Each character's passives it has unlocked at its ascension, by their proud skill groups, which the expedition talents are
 // Read from. A character with no talent kit has none
 const characterPassiveGroupIdMap = computed(
@@ -1226,11 +1224,7 @@ const downCharacterIds = computed(
 const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataMap, reliquarySets };
 // The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
 const crafting = computed(() =>
-  computeCraftingCrafters(
-    getDeployedCharacterIds(party),
-    getActiveCharacterId(party),
-    (characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ""] || "",
-  ),
+  computeCraftingCrafters(getDeployedCharacterIds(party), getActiveCharacterId(party), getCharacterName),
 );
 // The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
 // With resin, and each day's are drawn at the daily reset
@@ -2376,7 +2370,7 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:power="restorativePower"
       :game-text
       :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
-      :get-name="(characterId) => nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ''] || ''"
+      :get-name="getCharacterName"
       :get-now="getWorldNow"
       :party
       :statue-count="resonatedRegionIds.length"
