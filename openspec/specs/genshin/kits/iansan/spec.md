@@ -1,6 +1,6 @@
 ## Purpose
 
-Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, and what is left waiting on the Nightsoul state and the party ATK buff.
+Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, and what is left waiting on the Stormflight swap and the party ATK buff.
 
 ## Requirements
 
@@ -73,3 +73,19 @@ Iansan's burst SHALL deal an Electro hit in a circle of 5 metres round her body,
 - **GIVEN** the burst is cooling down
 - **WHEN** the player casts the burst again
 - **THEN** nothing happens
+
+### Requirement: Skill press enters the Nightsoul Blessing
+
+Iansan's skill press SHALL enter her Nightsoul Blessing with 54 Nightsoul points, which drain six a second and which lasts 16 seconds, and the blessing SHALL end when its points reach none.
+
+#### Scenario: Press enters the blessing and its points drain
+
+- **WHEN** the player presses Iansan's skill
+- **THEN** Iansan is in the Nightsoul Blessing with 54 points
+- **AND** her points drop by six a second
+
+#### Scenario: The blessing ends when its points run out
+
+- **GIVEN** Iansan is in the Nightsoul Blessing
+- **WHEN** nine seconds pass with no point gained
+- **THEN** she is no longer in the blessing
