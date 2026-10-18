@@ -2,7 +2,7 @@ import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomai
 import { describe, expect, test } from "vitest";
 
 describe(computeDomainWaveAfterDefeat, () => {
-  const WAVES = [[{ count: 2, name: "Pyro Slime" }], [{ count: 1, name: "Large Pyro Slime" }]];
+  const WAVES = [[{ count: 2, name: "" }], [{ count: 1, name: "" }]];
 
   test("the next wave spawns when the last enemy of the current one falls", () => {
     expect.hasAssertions();

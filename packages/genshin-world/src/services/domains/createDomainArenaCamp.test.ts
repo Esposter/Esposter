@@ -29,7 +29,7 @@ describe(createDomainArenaCamp, () => {
       "starfell-valley",
       "domain-1006-1-0",
       { x: 0, z: 0 },
-      [{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }],
+      [{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "" }],
       60,
       () => 0,
     );
