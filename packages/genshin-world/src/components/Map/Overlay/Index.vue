@@ -35,7 +35,7 @@ import {
 } from "#src/services/map/constants";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
-import { GameButton, GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -260,10 +260,10 @@ onMounted(() => {
     <section v-if="chosenLandmark" class="teleport-panel">
       <h2 class="teleport-name">{{ chosenArea?.name }}</h2>
       <p class="teleport-kind">{{ gameText[computeJumpLandmarkTextKey(chosenLandmark)] }}</p>
-      <GameButton class="teleport" @click="emit('jump', computeJumpPose(chosenLandmark))">
+      <GameButton class="teleport" :kind="GameButtonKind.Pill" @click="emit('jump', computeJumpPose(chosenLandmark))">
         {{ gameText[GameTextKey.Teleport] }}
       </GameButton>
-      <GameButton class="teleport-back" @click="chosenLandmark = undefined">
+      <GameButton class="teleport-back" :kind="GameButtonKind.Plain" @click="chosenLandmark = undefined">
         {{ gameText[GameTextKey.Back] }}
       </GameButton>
     </section>
