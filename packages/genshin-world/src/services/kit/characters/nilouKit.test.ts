@@ -149,6 +149,7 @@ describe(createNilouKitBehaviour, () => {
         },
         enemy,
         party,
+        [],
       );
     const illusion = takeOne(sword.slice(2));
 

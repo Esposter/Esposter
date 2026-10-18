@@ -147,12 +147,13 @@ export const createKeqingKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour
       {
         onStart: (context) => {
           const { activeCombatant: combatant, kitEffectState } = context;
-          addKitEffect(kitEffectState, {
-            characterId: combatant.characterId,
-            element: Element.Electro,
-            kind: "infusion",
-            secondsRemaining: ELECTRO_INFUSION_SECONDS,
-          });
+          if (combatant.ascension >= THUNDERING_PENANCE_ASCENSION)
+            addKitEffect(kitEffectState, {
+              characterId: combatant.characterId,
+              element: Element.Electro,
+              kind: "infusion",
+              secondsRemaining: ELECTRO_INFUSION_SECONDS,
+            });
           if (recastHit && combatant.constellationCount >= CONSTELLATION_1) addConstellation1Hits(context, recastHit);
         },
       },

@@ -68,6 +68,22 @@ The Adventurer Handbook's Commissions tab SHALL list the day's four with each on
 - **WHEN** the player opens the Commissions tab of the Adventurer Handbook
 - **THEN** the four commissions are listed with their preferred regions
 
+### Requirement: Adventure Encounters Panel Opens At Adventure Rank 24
+
+The Adventure Encounters panel at the foot of the Commissions tab SHALL show, and its Encounter Points SHALL be spent, only from Adventure Rank 24 on. Below that rank the panel is hidden, and no unfinished commission is offered a point claim. From that rank the panel SHALL show the daily points held beside the storage's limit.
+
+#### Scenario: the panel is hidden below Adventure Rank 24
+
+- **GIVEN** the player's Adventure Rank is 23 and two Encounter Points held
+- **WHEN** the Commissions tab is opened
+- **THEN** the stage rewards panel is not shown, and an unfinished commission is offered no point claim
+
+#### Scenario: the panel shows the daily points held at Adventure Rank 24
+
+- **GIVEN** the player's Adventure Rank is 24, two Encounter Points held and no commission finished
+- **WHEN** the Commissions tab is opened
+- **THEN** the panel shows two of four daily points, and the Long-Term Encounter Points held
+
 ### Requirement: Region Pool Joins At Quest
 
 A region's commissions SHALL join the deal once that region's quest is done.

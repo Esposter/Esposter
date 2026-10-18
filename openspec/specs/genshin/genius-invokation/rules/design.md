@@ -10,7 +10,7 @@ The engine is the duel's own rules: how a duel starts, how its dice, rounds, tur
 ## Dice, rolls and turns
 
 - **Preparation switches once, then chooses.** A side's switched cards go back into its draw pile, which is shuffled and drawn from to refill its hand. Then it chooses its active character, and the first round's roll starts once both sides have.
-- **Rolls and rerolls.** Each side rolls eight dice a round, each face one of the seven elements or Omni, equally likely, from the seeded source. Each side then has one reroll of any dice it names, and naming none passes.
+- **Rolls and rerolls.** Each side rolls eight dice a round, each face one of the seven elements or Omni, equally likely, from the seeded source. Each side then has one reroll of any dice it names, and naming none passes. A card may grant a side another reroll in the roll phase (Knights of Favonius Library): naming dice then rerolls them and keeps the roll open, until the side names none.
 - **Combat actions pass the turn.** Using a skill, switching for one die of any face and declaring the round's end are combat actions. Each passes the turn unless the other side has already declared its end.
 - **Tuning is a fast action.** It discards a card to set one die to the active character's element, and the turn stays.
 - **Playing a card is a fast action.** A card passes no turn.
@@ -24,13 +24,13 @@ The engine is the duel's own rules: how a duel starts, how its dice, rounds, tur
 
 ## Elements, reactions and damage
 
-- **Elements apply, and Anemo and Geo do not.** Cryo, Hydro, Pyro, Electro and Dendro damage sets its aura. Anemo and Geo damage reacts with an aura and sets none, and Physical and Piercing damage reacts with nothing. A reaction consumes the aura it reacts with, and its element does not apply.
+- **Elements apply, and Anemo and Geo do not.** Cryo, Hydro, Pyro, Electro and Dendro damage sets its aura. Anemo and Geo damage reacts with an aura and sets none, and Physical and Piercing damage reacts with nothing. A reaction consumes the aura it reacts with, and its element does not apply. An element a card's effect applies with no damage reacts with the aura the same way, but the reaction deals no damage, since a non-DMG application's DMG-dealing effects are ignored; its other effects still land.
 - **A reaction's bonus joins its instance.** Melt, Vaporize and Overloaded add two. Superconduct, Electro-Charged, Frozen, Crystallize, Burning, Bloom and Quicken add one. Swirl adds none.
 - **The reactions leave their cards on the attacker's side.** Burning summons Burning Flame, which deals one Pyro at each end phase, spends a usage, and stacks to two usages. Bloom leaves Dendro Core onstage, which adds two to the next Pyro or Electro damage its side's skills deal, for one usage. Quicken leaves Catalyzing Field onstage, which adds one to the next Dendro or Electro damage, for two usages. The numbers are the game's own card descriptions, read through the text map. A second reaction of the same kind joins the card already there, up to the card's most usages, rather than a second copy.
 - **Frozen and shields.** A Frozen target takes two more from a Pyro or Physical hit, and that hit removes the status, which otherwise lasts to the round's end. A shield takes damage before HP, and piercing skips it. Crystallize grants the attacker's active character one point, at most two.
 - **Piercing and spread.** Superconduct and Electro-Charged pierce the other opposing characters for one. A Swirl spreads one of its aura's elements to each of them as damage only: it sets no aura and reacts with none. The wiki does not say whether a spread applies or reacts, so this is a settled call. A recording of a duel can overturn it ([References sought](../../../../changes/genshin-roadmap/tasks.md)).
 - **Overloaded forces the switch.** An Overloaded active character is switched to the next standing character in order, with no choice given.
-- **Phases run hooks.** The roll-phase hooks run once a side's dice are rolled, the action-phase hooks when the action phase opens, and the end-phase hooks in the end phase before the draws. An end-phase hook may return damage, which the phase deals, so a summon's end-phase damage is dealt by the phase rather than by the summon. A card may also name the Piercing DMG it deals to each opposing character on standby, which the phase deals before the hook's damage.
+- **Phases run hooks.** The roll-phase hooks run once a side's dice are rolled, the action-phase hooks when the action phase opens, and the end-phase hooks in the end phase before the draws. An end-phase hook may return damage, which the phase deals, so a summon's end-phase damage is dealt by the phase rather than by the summon. A card may also name the Piercing DMG it deals to each opposing character on standby, which the phase deals before the hook's damage. A defeat is heard too: once a defeat is settled, the cards on the other side's field hear it, each with the character it is attached to, so an artifact can act on an opposing defeat (Gambler's Earrings).
 - **The end phase is not a phase of its own.** It runs as the round closes, and the next round's roll follows it.
 
 ```mermaid
@@ -63,26 +63,28 @@ flowchart TD
 
 ## Key files
 
-| File                                                             | Role                                                                          |
-| :--------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gcg/buildGcgStandardRule.ts` | Builds the standard rule's record from the dump's rule and reaction tables    |
-| `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`    | The rule row, with each listed reaction joined to its element pair            |
-| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts` | Fetches the rule by its key and checks it against its schema                  |
-| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`       | Opens a duel between two decks                                                |
-| `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`      | A side's preparation, and the first roll once both have prepared              |
-| `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`       | A side's one reroll, and the action phase once both have rolled               |
-| `packages/genshin-world/src/services/gcg/useGcgSkill.ts`         | A skill paid in dice and energy, then the turn passes                         |
-| `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`      | A hit's Frozen, reaction, shield and piercing, and its defeats                |
-| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`  | The round's end, and the end phase once both sides declare                    |
-| `packages/genshin-world/src/services/gcg/endGcgRound.ts`         | The end phase: Frozen lapses, the draws, and the next round or the concession |
-| `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`  | A switch for one die of any face, less where the field reduces it             |
-| `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`          | Tuning a die by a discarded card, as a fast action                            |
-| `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts` | The free replacement a defeated active owes                                   |
-| `packages/genshin-world/src/services/gcg/payGcgCost.ts`          | The dice a cost takes from the dice chosen, Omni standing in                  |
-| `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`  | The reaction an element pair makes under a rule                               |
-| `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`     | The roll-phase hooks of each side's field                                     |
-| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`   | The action-phase hooks, then the spent cards taken off                        |
-| `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`      | The end-phase hooks, the rounds aged, then the spent cards taken off          |
+| File                                                                                  | Role                                                                                                 |
+| :------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gcg/buildGcgStandardRule.ts`                      | Builds the standard rule's record from the dump's rule and reaction tables                           |
+| `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`                         | The rule row, with each listed reaction joined to its element pair                                   |
+| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts`                      | Fetches the rule by its key and checks it against its schema                                         |
+| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`                            | Opens a duel between two decks                                                                       |
+| `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`                           | A side's preparation, and the first roll once both have prepared                                     |
+| `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`                            | A side's one reroll, and the action phase once both have rolled                                      |
+| `packages/genshin-world/src/services/gcg/useGcgSkill.ts`                              | A skill paid in dice and energy, then the turn passes                                                |
+| `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`                           | A hit's Frozen, reaction, shield and piercing, and its defeats                                       |
+| `packages/genshin-world/src/services/gcg/effects/applyGcgNonDamageReactionEffects.ts` | The effects a reaction leaves that deal no DMG: Frozen, shield, the Overloaded switch, and the cards |
+| `packages/genshin-world/src/services/gcg/effects/applyGcgApplication.ts`              | An element a card applies with no damage, which reacts with the aura its character holds             |
+| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`                       | The round's end, and the end phase once both sides declare                                           |
+| `packages/genshin-world/src/services/gcg/endGcgRound.ts`                              | The end phase: Frozen lapses, the draws, and the next round or the concession                        |
+| `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`                       | A switch for one die of any face, less where the field reduces it                                    |
+| `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`                               | Tuning a die by a discarded card, as a fast action                                                   |
+| `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts`                      | The free replacement a defeated active owes                                                          |
+| `packages/genshin-world/src/services/gcg/payGcgCost.ts`                               | The dice a cost takes from the dice chosen, Omni standing in                                         |
+| `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`                       | The reaction an element pair makes under a rule                                                      |
+| `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`                          | The roll-phase hooks of each side's field                                                            |
+| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`                        | The action-phase hooks, then the spent cards taken off                                               |
+| `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`                           | The end-phase hooks, the rounds aged, then the spent cards taken off                                 |
 
 ## Sources
 

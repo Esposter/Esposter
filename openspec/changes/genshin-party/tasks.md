@@ -7,7 +7,7 @@
 
 ## 2. Falls and game over
 
-- [ ] 2.1 Lock switching while a fall plays, and ask the player for the next member when it ends. The HUD prompt is not yet wired: no component calls checkIsNextMemberAsked. Verify: tests named after the scenarios 'Switching is locked while the fall plays' and 'The player chooses the next member after a fall'.
+- [x] 2.1 Lock switching while a fall plays, and ask the player for the next member when it ends. The HUD prompt is wired: `Hud/Party/Index.vue` shows it from `checkIsNextMemberAsked`, and `Character/Index.vue` steps the fall each fixed step with `stepPartyFall`. Verify: tests named after the scenarios 'Switching is locked while the fall plays' and 'The player chooses the next member after a fall'.
 - [ ] 2.2 Replace the statue's revive with the game over screen's revive at the nearest waypoint. The game over screen is not built, so the revive is not yet replaced: a fallen team revives on its own at the nearest unlocked waypoint (findNearestTeleportWaypoint). Verify: a test named after the scenario 'Game over offers revive at the nearest waypoint'.
 
 ## 3. Memory

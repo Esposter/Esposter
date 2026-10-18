@@ -40,10 +40,12 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     getNormalAttackExtraHit,
     getNormalAttackSpeedBonus,
     getPassiveBonuses,
+    getReactionDamageBonus,
     getSkillChargeBonus,
     getSkillCooldownMultiplier,
     getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
+    keepsNormalAttackCombo,
     moonsignBenediction,
     normalAttacks = [],
     onKitEvent,
@@ -59,10 +61,12 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getNormalAttackExtraHit) kit.getNormalAttackExtraHit = getNormalAttackExtraHit;
   if (getNormalAttackSpeedBonus) kit.getNormalAttackSpeedBonus = getNormalAttackSpeedBonus;
   if (getPassiveBonuses) kit.getPassiveBonuses = getPassiveBonuses;
+  if (getReactionDamageBonus) kit.getReactionDamageBonus = getReactionDamageBonus;
   if (getSkillChargeBonus) kit.getSkillChargeBonus = getSkillChargeBonus;
   if (getSkillCooldownMultiplier) kit.getSkillCooldownMultiplier = getSkillCooldownMultiplier;
   if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
+  if (keepsNormalAttackCombo) kit.keepsNormalAttackCombo = keepsNormalAttackCombo;
   if (onKitEvent) kit.onKitEvent = onKitEvent;
   if (onSprint) kit.onSprint = onSprint;
   if (onStep) kit.onStep = onStep;

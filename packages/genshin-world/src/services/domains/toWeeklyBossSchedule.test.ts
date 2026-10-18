@@ -7,14 +7,17 @@ describe(toWeeklyBossSchedule, () => {
     expect.hasAssertions();
 
     expect(toWeeklyBossSchedule({ levels: [{ dungeonId: 1, enemyLevel: 2, recommendedRank: 3 }] })).toStrictEqual({
+      artifactSetIds: [],
       kind: DomainKind.Trounce,
       levels: [
         {
           dungeonId: 1,
+          disorder: "",
           enemyLevel: 2,
           recommendedRank: 3,
           resinCost: 0,
           scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+          treeArtifacts: [],
           treeRewards: [],
         },
       ],

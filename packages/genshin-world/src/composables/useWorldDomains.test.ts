@@ -3,6 +3,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 
 import { useWorldDomains } from "#src/composables/useWorldDomains";
@@ -14,7 +15,9 @@ import { PoiseType } from "#src/models/enemy/PoiseType";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
+import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { GameTextKey } from "genshin-text";
@@ -41,7 +44,7 @@ const domainEntrance: DomainEntranceLandmark = {
   titleTextKey: GameTextKey.DomainEntrance24,
 };
 
-// A boss in the arena's camp, staggered by a poise break, with every other field made up
+// A boss in the arena's camp, staggered by its shield's break, with every other field made up
 const createBrokenBoss = (campId: string): Enemy => ({
   attackCooldownSeconds: 0,
   campId,
@@ -74,6 +77,7 @@ const createBrokenBoss = (campId: string): Enemy => ({
 
 const createDomains = () => {
   const events = createWorldEvents();
+  const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
   const domains = useWorldDomains({
     adventureExp: ref(0),
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
@@ -84,8 +88,9 @@ const createDomains = () => {
     events,
     gameDataBaseUrl: "",
     getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
+    kitEffectState: { effects: [] },
     inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
-    jumpTo: vi.fn<() => void>(),
+    jumpTo,
     kitEffectState: { effects: [] },
     materialDataMap: new Map(),
     nameText: {},
@@ -100,7 +105,7 @@ const createDomains = () => {
     wallet: ref<Wallet>(EMPTY_WALLET),
     weaponDataMap: new Map(),
   });
-  return { domains, events };
+  return { domains, events, jumpTo };
 };
 
 describe("stepDomainChallenge", () => {
@@ -114,13 +119,34 @@ describe("stepDomainChallenge", () => {
     const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPlaying: true, partyDown: false });
 
     expect(step()).toStrictEqual([]);
-    events.emit("poiseBreak", createBrokenBoss(campId));
+    events.emit("shieldBreak", createBrokenBoss(campId));
     // Phase 1 allows one shield break, so the first break ends it and its transition attack starts
     expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
     // Phase 2 allows three breaks in total, so the second break is the second of the three and moves nothing
-    events.emit("poiseBreak", createBrokenBoss(campId));
+    events.emit("shieldBreak", createBrokenBoss(campId));
     expect(step()).toStrictEqual([]);
-    events.emit("poiseBreak", createBrokenBoss(campId));
+    events.emit("shieldBreak", createBrokenBoss(campId));
     expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
+  });
+});
+
+describe("entering and leaving a domain", () => {
+  test("entering a domain fades into its scene", async () => {
+    expect.hasAssertions();
+
+    const { domains, jumpTo } = createDomains();
+    await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
+    expect(jumpTo).toHaveBeenCalledTimes(1);
+    expect(jumpTo).toHaveBeenLastCalledWith(computeDomainScenePose(domainEntrance.arrival));
+  });
+
+  test("leaving a domain fades back to its entrance", async () => {
+    expect.hasAssertions();
+
+    const { domains, jumpTo } = createDomains();
+    await domains.quickChallengeDomain(domainEntrance, 40, true);
+    domains.leaveDomain();
+    expect(domains.domainArena.value).toBeUndefined();
+    expect(jumpTo).toHaveBeenLastCalledWith(computeJumpPose(domainEntrance));
   });
 });

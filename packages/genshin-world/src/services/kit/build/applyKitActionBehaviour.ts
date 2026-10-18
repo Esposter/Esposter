@@ -11,7 +11,8 @@ export const applyKitActionBehaviour = (
   behaviour: KitActionBehaviour | undefined,
   path: string,
 ): KitAction => {
-  const { hits = [], onStart } = behaviour ?? {};
+  const { decideLength, hits = [], onStart } = behaviour ?? {};
+  if (decideLength) action.decideLength = decideLength;
   if (hits.length > action.hits.length)
     throw new InvalidOperationError(Operation.Update, path, `its record holds ${action.hits.length} hits`);
   if (onStart) action.onStart = onStart;

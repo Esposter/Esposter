@@ -10,7 +10,7 @@ export const standingTalksCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish the standing talk of every resident the regions' data places, and its words in every language",
+      "Publish the standing talk of every resident the regions' data places and the favour talk of every companion's gift set, and their words in every language",
     name: "standing-talks",
   },
   run: async ({ args }) => {

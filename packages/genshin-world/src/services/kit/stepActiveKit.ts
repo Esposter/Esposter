@@ -93,8 +93,8 @@ export const stepActiveKit = (
   context.activeCombatant = combatant;
   const { fieldCharacterId } = kitEffectState;
   kitEffectState.fieldCharacterId = characterId;
-  if (fieldCharacterId !== undefined && fieldCharacterId !== characterId) {
-    endKitSwapEffects(kitEffectState.effects, fieldCharacterId);
+  if (fieldCharacterId !== characterId) {
+    if (fieldCharacterId !== undefined) endKitSwapEffects(kitEffectState.effects, fieldCharacterId);
     emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId }, context);
   }
   sendKitOutbox(context);

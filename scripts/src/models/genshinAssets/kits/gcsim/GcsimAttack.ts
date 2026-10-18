@@ -2,8 +2,10 @@
 // Multiplier reads, through any loop or local naming it, its attack and ICD tags, strike type and element by their gcsim
 // Names, and its durability and poise where they evaluate to a number, else the variable the poise indexes by the
 // Attack's place in its string. The line is the literal's, and each field keeps its own. The name the literal is
-// Assigned to with `:=`, which a call passes it by
+// Assigned to with `:=`, which a call passes it by. Its `Abil` is the text the literal gives it, a string or a string constant
+// Of its file, as the attack's name
 export interface GcsimAttack {
+  abil?: string;
   attackTag?: string;
   durability?: number;
   element?: string;
@@ -13,6 +15,9 @@ export interface GcsimAttack {
   line: number;
   poiseDamage?: number;
   poiseDamageVariable?: string;
+  // The line of the declaration the attack is made from: its literal's, or a copy's own line, shared by every `Mult` set
+  // Under it, so the calls of one declaration can be told from another's
+  siteLine: number;
   talentVariable?: string;
   variableName?: string;
 }

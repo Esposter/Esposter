@@ -12,8 +12,9 @@ import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
 import { takeOne } from "@esposter/shared";
 
 // A Stellar reaction's own hit on an enemy, written into it in place, and whether it struck: the reaction's coefficient
-// On each contributor's level multiplier and elemental mastery, with no Moonsign bonus, which only a Lunar reaction takes,
-// Weighted as the Glimmer damage is (provisional), against the enemy's RES to the element. With no contributor it strikes nothing
+// On each contributor's level multiplier, elemental mastery and Stellar Glimmer reaction DMG bonus, with no Moonsign bonus,
+// Which only a Lunar reaction takes, weighted as the Glimmer damage is (provisional), against the enemy's RES to the element.
+// With no contributor it strikes nothing
 export const strikeStellarReaction = (
   enemy: Enemy,
   element: Element,
@@ -28,7 +29,7 @@ export const strikeStellarReaction = (
       takeOne(CharacterLevelMultiplierMap, level),
       attributeTotalMap[Attribute.ElementalMastery],
       0,
-      0,
+      attributeTotalMap[Attribute.StellarGlimmerReactionDamageBonus],
     ),
   );
   if (damages.length === 0) return false;

@@ -61,11 +61,40 @@ Xilonen's burst SHALL be cast without a hit or a heal until Ocelotlicue Point is
 - **WHEN** the player casts Xilonen's burst
 - **THEN** no damage or heal is dealt
 
-### Requirement: Nightsoul Blessing and Samplers not built
+### Requirement: Nightsoul Blessing from the skill's press
 
-Xilonen's Nightsoul Blessing, its Blade Roller strikes and its Samplers SHALL have no effect in the world yet.
+Xilonen's skill press SHALL enter the Nightsoul Blessing with 45 points, which drain five a second. The Blessing SHALL last nine seconds, and a sprint in it SHALL drain five points.
 
-#### Scenario: Skill press starts no blessing
+#### Scenario: The press enters the Blessing with 45 points, which drain five a second
 
-- **WHEN** the player presses Xilonen's skill
-- **THEN** no Nightsoul Blessing starts and her normal strikes stay the same
+- **GIVEN** Xilonen is out of the Blessing
+- **WHEN** the player presses Yohual's Scratch and two seconds pass
+- **THEN** the Blessing holds 35 points
+
+#### Scenario: The Blessing lasts nine seconds
+
+- **GIVEN** Xilonen entered the Blessing 8.5 seconds ago
+- **WHEN** another 0.6 seconds pass
+- **THEN** the Blessing has ended
+
+#### Scenario: A press inside the Blessing leaves it
+
+- **GIVEN** Xilonen is in the Blessing
+- **WHEN** the player presses Yohual's Scratch
+- **THEN** the Blessing ends
+
+#### Scenario: A sprint in the Blessing drains five points
+
+- **GIVEN** Xilonen has just entered the Blessing with 45 points
+- **WHEN** she sprints
+- **THEN** the Blessing holds 40 points
+
+### Requirement: Blade Roller strikes and Samplers not built
+
+Xilonen's Blade Roller strikes, her charged attack's restriction in the Blessing and her Samplers SHALL have no effect yet.
+
+#### Scenario: Her strikes stay the same in the Blessing
+
+- **GIVEN** Xilonen is in the Blessing
+- **WHEN** the player presses her normal attack
+- **THEN** her normal strikes stay the same

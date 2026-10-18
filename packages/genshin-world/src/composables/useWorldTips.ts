@@ -71,6 +71,11 @@ export const useWorldTips = ({
       ),
     );
   });
+  // The first unlock of a domain entrance triggers the dungeon-entry tips. Their parameter names a dungeon entry whose meaning is
+  // Not read yet, so any entry's first unlock fires them, and the save keeps each shown once
+  events.on("domainEntryUnlocked", () => {
+    queueTips(getTipsTriggered(tips, shownTipIds.value, TipTriggerType.DungeonEntryToBeExplored, () => true));
+  });
   // A World Level reached triggers the tips naming that level
   events.on("worldLevelUp", (worldLevel) => {
     queueTips(

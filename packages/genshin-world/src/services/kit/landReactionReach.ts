@@ -53,6 +53,7 @@ export const landReactionReach = (
 
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
+  const reactionBonus = combatant.kit.getReactionDamageBonus?.(combatant, reactionType) ?? 0;
   // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
   const reachedEnemies = Array.from(enemies, (enemy) => ({
     distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
@@ -89,7 +90,7 @@ export const landReactionReach = (
             element,
             elementalState.seconds,
           ) *
-          (getTransformativeDamage(reactionType, level, elementalMastery, resistance) +
+          (getTransformativeDamage(reactionType, level, elementalMastery, resistance, reactionBonus) +
             additiveBaseDamageBonus * getResistanceMultiplier(resistance)) *
           amplifyingMultiplier;
     enemyStrikeResultMap.set(enemy, {

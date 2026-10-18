@@ -1,3 +1,4 @@
+import type { ExcelGcgLevelLockRow } from "#src/models/genshinAssets/gcg/ExcelGcgLevelLockRow";
 import type { ExcelGcgLevelRow } from "#src/models/genshinAssets/gcg/ExcelGcgLevelRow";
 import type { ExcelGcgWeekLevelRow } from "#src/models/genshinAssets/gcg/ExcelGcgWeekLevelRow";
 
@@ -9,6 +10,10 @@ describe(toGcgLevels, () => {
     { exp: 750, level: 2, rewardId: 2 },
     { exp: 300, level: 1, rewardId: 1 },
     { exp: 950, level: 3, rewardId: 3 },
+  ];
+  const LEVEL_LOCK_ROWS: ExcelGcgLevelLockRow[] = [
+    { levelId: 20_002, unlockLevel: 4, unlockMainQuestId: 70_667 },
+    { levelId: 20_001, unlockLevel: 2, unlockMainQuestId: 70_666 },
   ];
   const WEEK_LEVEL_ROWS: ExcelGcgWeekLevelRow[] = [
     {
@@ -24,7 +29,7 @@ describe(toGcgLevels, () => {
   test("should total each level's EXP from level one, and name each challenger's duels by their level", () => {
     expect.hasAssertions();
 
-    expect(toGcgLevels(LEVEL_ROWS, WEEK_LEVEL_ROWS)).toStrictEqual({
+    expect(toGcgLevels(LEVEL_ROWS, WEEK_LEVEL_ROWS, LEVEL_LOCK_ROWS)).toStrictEqual({
       challengerGames: {
         9701: [
           { gameId: 1021, level: 1 },
@@ -35,6 +40,10 @@ describe(toGcgLevels, () => {
         { exp: 0, level: 1 },
         { exp: 300, level: 2 },
         { exp: 1050, level: 3 },
+      ],
+      playerLevelLocks: [
+        { unlockLevel: 2, unlockMainQuestId: "70666" },
+        { unlockLevel: 4, unlockMainQuestId: "70667" },
       ],
     });
   });

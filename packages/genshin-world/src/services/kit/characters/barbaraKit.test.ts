@@ -61,7 +61,13 @@ const collectParticles = (
 // Jean falls on a team with Barbara, the kit hearing the fall as Jean's HP's change to nothing
 const reportJeanFall = (combatant: Combatant, party: Party, kitEffectState: KitEffectState): void =>
   BARBARA_KIT.onKitEvent?.(
-    { characterId: JEAN_CHARACTER_ID, healthShare: -1, kind: KitEventKind.HealthChanged, overflowHealthShare: 0 },
+    {
+      characterId: JEAN_CHARACTER_ID,
+      healthShare: -1,
+      bondOfLifeShare: 0,
+      kind: KitEventKind.HealthChanged,
+      overflowHealthShare: 0,
+    },
     createKitTestContext({ ...combatant, characterId: JEAN_CHARACTER_ID }, { kitEffectState, party }),
     combatant,
   );

@@ -90,7 +90,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   const { data } = await sharp(difference).greyscale().raw().toBuffer({ resolveWithObject: true });
   // The scored pixels are the reference's own rectangles and glyphs, its whole region when it names none, so a mask's
   // Leftover never counts
-  const silhouetteInks = await readSilhouetteInks(referencePath, reference.silhouettes ?? []);
+  const silhouetteInks = await readSilhouetteInks(referencePath, region, reference.silhouettes ?? []);
   const scoredMask = readScoredMask(reference, silhouetteInks, region, region.width, region.height);
   const cellMeans = Array.from({ length: GRID_SIZE * GRID_SIZE }, () => ({ count: 0, sum: 0 }));
   for (let index = 0; index < data.length; index++) {

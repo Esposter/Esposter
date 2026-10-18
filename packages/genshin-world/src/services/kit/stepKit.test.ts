@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
@@ -12,6 +13,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { startKitAction } from "#src/services/kit/startKitAction";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
@@ -442,5 +444,25 @@ describe(stepKit, () => {
     chainIndexes.length = 0;
     playOutAttack();
     expect([...new Set(chainIndexes)]).toStrictEqual([1]);
+  });
+
+  test("an action whose length is decided as it runs plays the length its decision gives from the step its seconds reach the decision's", () => {
+    expect.hasAssertions();
+    const { kitState, step } = createFixture();
+    const action: KitAction = {
+      ...TRAVELER_KIT.chargedAttack,
+      decideLength: { atSeconds: 0.45, decide: () => 1.7 },
+      seconds: 0.7,
+    };
+    startKitAction(kitState, action, []);
+    const stepFor = (stepCount: number) => {
+      for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) step();
+    };
+    stepFor(7);
+    expect(kitState.action).toBe(action);
+    stepFor(9);
+    expect(kitState.action).toBe(action);
+    stepFor(2);
+    expect(kitState.action).toBeUndefined();
   });
 });

@@ -1,6 +1,7 @@
 import type { Party } from "#src/models/party/Party";
 
 import { VERDANT_DEW_GATHER_SECONDS, VERDANT_DEW_MAXIMUM_COUNT } from "#src/services/party/constants";
+import { runDownSeconds } from "#src/services/runDownSeconds";
 
 // The party's Verdant Dew some seconds on, written in place: while a Lunar-Bloom lets it gather and the party holds
 // Fewer than the most, the seconds gather toward the next Dew, which is gained once they reach a Dew's, and what was
@@ -14,5 +15,5 @@ export const stepVerdantDew = ({ verdantDew }: Party, stepSeconds: number): void
       verdantDew.gatheredSeconds = 0;
     }
   }
-  verdantDew.gatheringSeconds = Math.max(0, verdantDew.gatheringSeconds - stepSeconds);
+  verdantDew.gatheringSeconds = Math.max(0, runDownSeconds(verdantDew.gatheringSeconds, stepSeconds));
 };

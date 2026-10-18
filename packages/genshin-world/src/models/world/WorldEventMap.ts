@@ -19,6 +19,8 @@ export interface WorldEventMap {
   campCleared: [camp: ClearedCamp];
   chestOpened: [];
   defeatEnemy: [Enemy];
+  // The first unlock of a domain entrance, by the entry id it enters. A domain's weekly boss entrance opens by its quests, so it raises none
+  domainEntryUnlocked: [entryId: number];
   // The party entering combat, once an enemy is aggravated on it
   enterCombat: [];
   // A quest's progress moving from its progress before to the one that finishes it, emitted once on that move
@@ -33,11 +35,11 @@ export interface WorldEventMap {
   parentQuestFinish: [mainId: string];
   partyHealthChanged: [change: PartyHealthChange];
   pickUpMora: [];
-  // An enemy whose poise a hit broke, emitted once for each time its poise breaks
-  poiseBreak: [enemy: Enemy];
   questEvent: [QuestEvent];
   // A reaction a hit or a tick triggered on an enemy, which the Spiral Abyss's period blessings answer
   reactionTriggered: [enemy: Enemy, reactions: Reaction[]];
+  // An enemy whose shield a hit broke, emitted once for each time its shield breaks
+  shieldBreak: [enemy: Enemy];
   // The player jumping to a waypoint, a landmark or a map point, with the pose the character is placed at
   teleport: [pose: WorldJumpPose];
   // A tip the world shows for the first time in the save, with the tip it shows

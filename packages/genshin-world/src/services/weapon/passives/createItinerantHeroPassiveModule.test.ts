@@ -26,6 +26,7 @@ const itinerantHeroPassiveModule = createItinerantHeroPassiveModule([0.12]);
 const createEnemyStrikeLoss = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
+  bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged as const,
   overflowHealthShare: 0,
 });

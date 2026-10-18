@@ -671,6 +671,7 @@ onUnmounted(() => {
       <CharacterModel
         v-else-if="characterPackReader && failedCharacterPackKey !== characterPackReader.key"
         :key="characterPackReader.key"
+        :character-id="activeCharacterId"
         :character-pack-reader
         :light-uniforms
         :ramp-texture

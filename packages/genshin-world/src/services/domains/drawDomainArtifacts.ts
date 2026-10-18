@@ -4,7 +4,8 @@ import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { rollArtifactOfSet } from "#src/services/artifact/rollArtifactOfSet";
+import { drawArtifactPiece } from "#src/services/artifact/drawArtifactPiece";
+import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
 import { drawChancedCount } from "#src/services/reward/drawChancedCount";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
@@ -27,7 +28,7 @@ export const drawDomainArtifacts = (
       const set = takeOne(sets, Math.floor(random() * sets.length));
       const slots = Object.values(ArtifactSlot);
       const slot = takeOne(slots, Math.floor(random() * slots.length));
-      return rollArtifactOfSet(set, slot, treeArtifact.rarity, random, tables);
+      return rollPieceArtifact(set.id, drawArtifactPiece(set, slot, treeArtifact.rarity, random), random, tables);
     }),
   );
 };

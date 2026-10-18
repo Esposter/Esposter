@@ -26,7 +26,20 @@ flowchart TD
 - **Unequipping refuses an empty slot.** The taken-off piece is returned for the caller to put back in the bag.
 - **Enhancing is gated on the Mora before anything changes.** The Mora is the materials' EXP plus each fodder's base EXP,
   from `getEnhancementMoraCost`, and a wallet short of it refuses the enhancement the way `enhanceWeapon` refuses one.
+  The Mora charges the base EXP and never the bonus the draw adds: the bonus is free, as the coordinator ruled for this
+  recreation, so the game's own charge is taken as the base EXP's.
   The bonus, the levels and the affix levels are then `enhanceArtifact`'s, unchanged.
+- **The fodder picker offers the bag's artifacts and the enhancement ores, and Auto Add is provisional.** The picker lists
+  the bag's unlocked artifacts, the lowest star first and then the lowest level, and the bag's ores that give EXP: Sanctifying
+  Unction at 2,500 and Sanctifying Essence at 10,000, from the dump's `ITEM_USE_ADD_RELIQUARY_EXP` and the wiki's
+  Artifact Enhancement Material page (`ItemIdExperienceMap`). Auto Add takes unlocked artifacts up to four stars, the
+  game's default, lowest star first, while the EXP still falls short of the top level. Its order and its stop are
+  provisional, not measured from the game. The preview shows the level reached at the base EXP bonus, since the game draws
+  the bonus on confirm, so the level shown is the lowest it can be. The preview at the base bonus and the Auto Add order both stand as
+  provisional, as the coordinator ruled, until a measurement of the game replaces them.
+- **A full artifact tab refuses Unequip with the artifact inventory's own notice.** Unequipping into a full artifact
+  inventory leaves the piece worn and shows `BAG_FULL_EQUIPMENT_TIPS`, "No space left in Artifact Inventory...", the
+  notice the game names for the artifact tab, as the coordinator ruled over the generic "Inventory full".
 - **The set reader is one function.** `getActiveArtifactSetBonuses` reaches each set's bonuses by its piece count, and
   `getArtifactSetAttributeLines` sums what it returns. The Artifacts tab's set-bonus block reads the same list.
 
@@ -39,18 +52,16 @@ What works today and what this change adds:
   fixture and worn variant in the visual suite, and the character screen's Artifacts tab, which passes the panel its
   words, slot names, stats and the set block's lines. Their tests are named in the change's tasks, and the existing
   character, kit and save suites cover what they share.
-- **Not built, and why:** the main stat's value, which waits on the main affix pools the drop reads (task 6.3), the
-  panel's parity reference and approval, equipping from the bag, unequipping to it and fodder taken from it. Each of the
-  bag moves needs a bag piece to hold its rolled state, and the bag does not yet: an entry is saved with its level alone
-  (`InventoryItemSave`), so a piece cannot leave the bag equipped or enter it as fodder. The character-screen agent's
-  change (`agent/w6-character-screen`) makes each bag artifact an individual, rolled at its drop and saved with a unique
-  instance id, and that branch lands before this change does.
+- **Not built, and why:** the panel's parity reference and approval (task 5.4), which waits on a browser run, and the
+  bag moves' picker (task 6.2): equipping from the bag, unequipping to it and fodder taken from it. The bag holds each
+  piece as an entry of its own with a unique `id` (task 6.1, landed on `eye` with the character-screen change), so the
+  moves need only their services and the screen's wiring.
 
 ## Decisions
 
 - **The screen returns, and the world reads the rarity and EXP tables back.** A worn artifact's enhancement needs
   `stats/artifactRarities` for its levels and affix levels, and `stats/artifactExpMaterials` for the EXP each material
-  gives. Both are read by `readStatTables` now. The main affix pools stay unread until the drop that rolls an artifact
+  gives. Both are read by `readStatTables` now. The main affix curves are read for the main stat's value, and the main affix pools for the drop that rolls an artifact
   reads them. Rejected: deleting the path, since chest drops are being wired to roll artifacts into the bag, and a bag
   piece with nowhere to go is the gap this change closes.
 - **Equip and unequip are pure services over the character.** The bag is written by the caller, so the services do not
@@ -99,6 +110,9 @@ type `rollArtifact` returns and writes no second artifact model. Its dev backfil
 | `packages/genshin-world/src/models/character/StatTables.ts`                    | Carries the rarity and EXP maps the enhancement reads                                                                            |
 | `packages/genshin-world/src/models/character/RawStatTables.ts`                 | The two tables as they are fetched                                                                                               |
 | `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`              | Unchanged: the EXP, levels and affix levels a worn artifact gains                                                                |
+| `packages/genshin-world/src/services/artifact/getAutoAddFodders.ts`            | The fodder Auto Add takes: unlocked artifacts up to the star cap, lowest star first, while the EXP falls short                   |
+| `packages/genshin-world/src/services/artifact/getMaterialExperience.ts`        | The EXP the chosen enhancement ores give, each ore's EXP times its count                                                         |
+| `packages/genshin-world/src/services/artifact/ItemIdExperienceMap.ts`          | The EXP each enhancement ore gives by item id, from the dump and the wiki                                                        |
 | `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`       | Unchanged: the Mora an enhancement costs, checked before it runs                                                                 |
 | `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`   | The Artifacts panel: the slots, the picked slot's name, the stats, the set bonus block and the actions, in the shared button row |
 | `packages/genshin-text/src/models/GameTextKey.ts`                              | The panel's eleven artifact members: the five slot names, the set block's heading, line and empty words, and the actions         |
@@ -109,8 +123,8 @@ type `rollArtifact` returns and writes no second artifact model. Its dev backfil
 | `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`              | Each bonus's effect text hash, read from its affix row at that piece count                                                       |
 | `packages/genshin-world/src/services/artifact/ArtifactSlotGameTextKeyMap.ts`   | Each artifact slot by the game's name for it, read by the character screen                                                       |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`             | The Artifacts tab's props: the labels, the slot names, the stats and the set block's lines, from the game text and the tables    |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The bag's add, on the chest drop path: the character-screen agent's change, not this one's (not built)                           |
-| `packages/genshin-world/src/services/save/toInventorySave.ts`                  | The bag's save of an artifact, on the chest drop path: the character-screen agent's change, not this one's (not built)           |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The bag's add, which takes a dropped artifact in through `addInventoryArtifact`, landed on `eye` with task 6.1                   |
+| `packages/genshin-world/src/services/save/toInventorySave.ts`                  | The bag's save of an artifact entry, landed on `eye` with task 6.1                                                               |
 
 New files, as a tree:
 

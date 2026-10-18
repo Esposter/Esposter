@@ -1,6 +1,6 @@
 {
   "burstEnergyCost": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 4839 } },
-  "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 0 },
   "hits.scarletSealChargedAttacks.length": { "cause": "Unsourced", "value": 5 },
   "hits.scarletSealChargedAttacks.0.area": {
     "cause": "TargetCentred",
@@ -47,16 +47,15 @@
     "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 4831 }
   },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 10.94 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 9.77 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 14.25 },
   "parameters.doneDealChargedAttackDamageBonus": {
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 4839 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 5 },
+  "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
+  "plunges.low.hits.0.poiseDamage": { "source": "Wiki", "value": 50 },
   "frames.blazingEyeHitmark": { "file": "asc.go", "line": 67, "source": "Gcsim", "value": 10 }
 }

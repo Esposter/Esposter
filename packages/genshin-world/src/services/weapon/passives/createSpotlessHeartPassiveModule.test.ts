@@ -20,7 +20,10 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = {
   ascension: 0,
-  attributes: computeCharacterAttributes([]),
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseDefense, value: 800 },
+    { attribute: Attribute.Defense, value: 100 },
+  ]),
   characterId: TRAVELER_CHARACTER_ID,
   constellationCount: 0,
   elementalResonances: [],
@@ -60,7 +63,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         context.party,
         context.kitEffectState.effects,
       ),
-    ).toBe(0.4 * wielder.attributes.attributeTotalMap[Attribute.Defense]);
+    ).toBe(0.4 * wielder.attributes.defense);
     expect(
       spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.NormalAttack),
@@ -86,7 +89,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         context.party,
         context.kitEffectState.effects,
       ),
-    ).toBe(0.4 * wielder.attributes.attributeTotalMap[Attribute.Defense]);
+    ).toBe(0.4 * wielder.attributes.defense);
 
     stepKitSeconds(context, 0.2);
 
@@ -128,6 +131,6 @@ describe(createSpotlessHeartPassiveModule, () => {
         context.party,
         context.kitEffectState.effects,
       ),
-    ).toBe(0.4 * wielder.attributes.attributeTotalMap[Attribute.Defense]);
+    ).toBe(0.4 * wielder.attributes.defense);
   });
 });

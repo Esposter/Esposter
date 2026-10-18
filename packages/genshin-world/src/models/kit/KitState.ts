@@ -9,6 +9,8 @@ import type { LocomotionState } from "genshin-engine";
 // Next character's afresh
 export interface KitState {
   action?: KitAction;
+  // The seconds the action plays, which its `decideLength` may set as it runs in place of its own seconds
+  actionLengthSeconds: number;
   actionSeconds: number;
   // The normal and charged attack hits on an enemy since the last that gave the character energy, each raising the
   // Chance the next one does

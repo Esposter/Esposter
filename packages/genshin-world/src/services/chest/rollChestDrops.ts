@@ -4,7 +4,8 @@ import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { rollArtifactOfSet } from "#src/services/artifact/rollArtifactOfSet";
+import { drawArtifactPiece } from "#src/services/artifact/drawArtifactPiece";
+import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
 import { ChestDropPoolMap } from "#src/services/chest/ChestDropPoolMap";
 import {
   CHEST_HIGH_RARITY_ARTIFACT_SET_IDS,
@@ -16,7 +17,7 @@ import { takeOne } from "@esposter/shared";
 
 // One artifact of the sets a pool names, rolled as the game drops one. Its set is drawn evenly among those the reliquary
 // Tables hold, its slot evenly among the five and its stars evenly among those its set gives, and the artifact is rolled
-// At them (see rollArtifactOfSet). The wiki gives no chance of the set, the slot or the stars, so those draws are provisional
+// At them (see drawArtifactPiece). The wiki gives no chance of the set, the slot or the stars, so those draws are provisional
 const rollArtifactDrop = (
   artifactSets: readonly ReliquarySetData[],
   random: () => number,
@@ -30,7 +31,7 @@ const rollArtifactDrop = (
     ? CHEST_HIGH_RARITY_ARTIFACT_STARS
     : CHEST_LOW_RARITY_ARTIFACT_STARS;
   const rarity = takeOne(stars, Math.floor(random() * stars.length));
-  return [rollArtifactOfSet(set, slot, rarity, random, tables)];
+  return [rollPieceArtifact(set.id, drawArtifactPiece(set, slot, rarity, random), random, tables)];
 };
 
 // What one opening of a chest of a kind pours out: one weapon picked from its pool when the pool names any, one artifact

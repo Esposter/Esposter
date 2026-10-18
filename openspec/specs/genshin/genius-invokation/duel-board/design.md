@@ -4,8 +4,8 @@ The duel board is the screen a duel is played on, and the session that runs it. 
 
 ## How a duel is opened
 
-- **A duel is opened by its game id.** A seat names the game of the card game's own table it duels with (`duelGameId`). `genshin:assets gcg` publishes one small map, `gcg/games`, of the seated games from the game table: each game's opponent deck, and the player's deck the game names. A game whose opponent deck is not published fails the run, and one whose player deck is not published plays the placeholder deck 3 until it is.
-- **No duel is seated yet.** A seat is placed only on a challenger NPC that a built region's residents hold. The game's NPC is read from the dump's GCG week-level table, whose `npcId` names the challenger and whose `levelCondList` names each game's id. Two challengers have built decks: Marjorie, NPC 9701 on games 1021 to 1025 with deck 11005, and Ellin, NPC 9704 on games 1031 to 1035 with deck 11002. Neither has a resident row in `data/regions/*.json`, so `RESIDENT_DUEL_GAME_ID_MAP` is empty. The other built decks belong to player-versus-player games or the tutorial quest's levels, which name no NPC. Duels open from their challengers once their region's residents are written.
+- **A duel is opened by its game id.** A seat names the game of the card game's own table it duels with (`duelGameId`), and the week game its weekly guest challenge offers (`weekGame`: the game, the level it is offered at, and the week's Lucky Coins and Player EXP at that level). `genshin:assets gcg` publishes one small map, `gcg/games`, of the seated games and the week games from the game table: each game's opponent deck, and the player's deck the game names. A game whose opponent deck is not published fails the run, and one whose player deck is not published plays the placeholder deck 3 until it is.
+- **The seated duels.** A seat is placed on a resident of a built region, through the residents builder's own points. The game's NPC is read from the dump's GCG week-level table, whose `npcId` names the challenger and whose `levelCondList` names each game's id. Marjorie's duel (game 1021, deck 11005) sits on her Souvenir shop row, NPC 1435; Ellin (NPC 9704, game 1031, deck 11002) stands at the Knights of Favonius headquarters' point; and Kimiya (NPC 9715, game 1104, deck 13105) stands beside Sumeru's crafting bench. Ellin's and Kimiya's points are provisional. Furuya Noboru, Patton and Kurisu are not seated, since no point the scene holds is theirs. A resident holds one duel game, so Kimiya's game 1105 is not offered. The other built decks belong to player-versus-player games or the tutorial quest's levels, which name no NPC.
 - **A talk offers the duel as a reply on its opening line.** The reply is the game's own "I challenge you to a duel!" (text id `191219274`), offered after the talk's own replies. Choosing it leaves the talk for the board, and the board's leave returns to the world.
 - **A challenger's duel is offered from their standing talk.** Every resident holds their standing talk whatever the quests hold ([dialogue](../../dialogue/design.md)), and `mergeTalks` merges the talk sources in order, so a quest's talk of an id wins over a standing talk of the same id. A seated challenger's talk is that standing talk, and the duel reply is added to its opening line, so no talk is written for a duel.
 
@@ -17,7 +17,7 @@ flowchart LR
   SESSION --> BOARD["The board: the player's choices"]
   BOARD --> ENGINE["The engine plays the choice, then the opponent's turns"]
   ENGINE --> BOARD
-  ENGINE -->|"the duel ends"| WORLD["The board's leave returns to the world"]
+  ENGINE -->|"the duel ends"| WORLD["The board's leave returns to the world, with whether the player won"]
 ```
 
 ## The board and the session

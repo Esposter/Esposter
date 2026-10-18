@@ -194,6 +194,7 @@ Paths relative to the repository root.
 | `packages/genshin-world/src/models/save/numericSaveIdSchema.ts`                        | a record's numeric id key, the id's own decimal                                                   |
 | `packages/genshin-world/src/models/achievement/AchievementProgressSave.ts`             | the achievements' progress slice, each finish moment an ISO string                                |
 | `packages/genshin-world/src/models/adventureRank/AdventureExpSave.ts`                  | the Adventure EXP slice                                                                           |
+| `packages/genshin-world/src/models/gcg/CardGameExpSave.ts`                             | the card game's Player EXP slice, the EXP its Player Level is read from                           |
 | `packages/genshin-world/src/models/adventureRank/WorldLevelAdjustmentSave.ts`          | the World Level adjustment slice, its change moment as an ISO string                              |
 | `packages/genshin-world/src/models/friendship/CompanionshipExpSave.ts`                 | the Companionship EXP slice, by character id                                                      |
 | `packages/genshin-world/src/models/reputation/ReputationProgressSave.ts`               | Mondstadt's Reputation slice                                                                      |

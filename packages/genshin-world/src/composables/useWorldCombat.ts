@@ -289,6 +289,7 @@ export const useWorldCombat = ({
     respawnParty();
   };
   return {
+    characterIdKitMap,
     characterIdSkillGlyphsMap,
     characters,
     chargeParty,

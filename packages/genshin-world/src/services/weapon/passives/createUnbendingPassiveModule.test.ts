@@ -43,7 +43,7 @@ describe(createUnbendingPassiveModule, () => {
     damagePartyMember(party, TRAVELER_CHARACTER_ID, 0.4);
 
     expect(
-      unbendingPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party),
+      unbendingPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
     ).toBeCloseTo(0.3);
   });
 
@@ -51,9 +51,13 @@ describe(createUnbendingPassiveModule, () => {
     expect.hasAssertions();
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
-    expect(unbendingPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party)).toBe(0);
+    expect(unbendingPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, [])).toBe(
+      0,
+    );
 
     damagePartyMember(party, TRAVELER_CHARACTER_ID, 0.4);
-    expect(unbendingPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party)).toBe(0);
+    expect(unbendingPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(
+      0,
+    );
   });
 });

@@ -15,6 +15,8 @@ export enum GameTextKey {
   AcquaintFate = "1444439468",
   // The Constellation tab's button that activates the next constellation
   Activate = "UI_TALENT_UNLOCK",
+  // The Adventure Encounters panel's heading over the Encounter Points stage rewards, on the Commissions tab
+  AdventureEncounterRewards = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_REWARD",
   // The Paimon menu's profile card, its experience and rank, the world level and the player's UID with its copy
   AdventureExp = "UI_PLAYER_PROFILE_PLAYEREXP",
   AdventureRank = "UI_PLAYER_PROFILE_PLAYERLV",
@@ -37,9 +39,15 @@ export enum GameTextKey {
   // Takes the worn one off
   ArtifactActionEnhance = "UI_EQUIP_PAGE_LEVEL_UP",
   ArtifactActionEquip = "UI_EQUIP_BUTTON",
+  // The lock button's words: Lock keeps a worn or bag artifact out of fodder, and Unlock lets it be fodder again
+  ArtifactActionLock = "EQUIP_LOCK_TIP_1",
   ArtifactActionUnequip = "UI_ACTIVITY_POTION_BUFF_REMOVE_BUTTON",
+  ArtifactActionUnlock = "EQUIP_LOCK_TIP_2",
   // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
   // Is active
+  ArtifactAutoAdd = "UI_FAST_ADD_BUTTON",
+  ArtifactInventoryFull = "BAG_FULL_EQUIPMENT_TIPS",
+  ArtifactLevelMax = "EQUIP_RELIC_LEVEL_MAX",
   ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
   ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
   ArtifactSetBonusNone = "UI_RELIC_NO_SUITE",
@@ -97,6 +105,14 @@ export enum GameTextKey {
   BirdEgg = "2577348708",
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
+  // The same confirm line for the twenty-ninth of February, which names that date itself
+  BirthdayConfirmLeapDayTip = "Birthday_CONFIRM_TIPS_02",
+  // The Set Birthday dialog's confirm line once a date is picked, its month and day filled in
+  BirthdayConfirmTip = "Birthday_CONFIRM_TIPS_01",
+  // The warning under the confirm line that the birthday cannot be edited once it is confirmed
+  BirthdayConfirmWarning = "UI_FRIEND_BIRTHDAY_EDIT_WARNING",
+  // The profile's button that opens the birthday dialog while the Traveler's birthday is not set
+  BirthdaySet = "UI_FRIEND_BIRTHDAY_EDIT",
   // The blossom of an outcrop that gives Character EXP materials, by its English name
   BlossomOfRevelation = "UI_BLOSSOM_CHEST_TIMEOUT_EXP",
   // The blossom of an outcrop that gives Mora, by its English name
@@ -435,6 +451,8 @@ export enum GameTextKey {
   LoginUserLabel = "2272745789",
   // The welcome card's greeting, the player's name in place of its `%s`
   LoginWelcome = "tips_enter_game",
+  // The count of Long-Term Encounter Points stored past the daily points, under the stage rewards
+  LongTermEncounterPointsStored = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM_POINT",
   LotusHead = "1050026324",
   LumidouceBell = "205491460",
   Lumitoile = "1497627716",
@@ -443,18 +461,27 @@ export enum GameTextKey {
   LuxuriousChest = "94050446",
   MagicalCrystalChunk = "2057452708",
   Mail = "UI_PLAYER_PROFILE_MAIL",
+  MailBox = "UI_MAIL_TITLE",
+  MailCancelStar = "UI_MAIL_CANCEL_STAR",
   MailClaim = "UI_MAIL_GET_BUTTON",
   MailClaimAll = "UI_MAIL_GET_ALL_BUTTON",
   MailClaimed = "UI_MAIL_HAS_GET_TIP",
+  MailDelete = "UI_MAIL_DELETE_BUTTON",
+  MailDeleteRead = "UI_PLAYER_PROFILE_MAIL_DELETE",
+  MailDeleteReadConfirm = "UI_MAIL_DELETE_ALL_DESC",
+  MailDetailDate = "MAIL_DETAIL_DATE",
   MailExpiresInDay = "MAIL_EXPIRE_TIME_DAY",
   MailExpiresInHour = "MAIL_EXPIRE_TIME_HOUR",
   MailExpiresInLessThanMinute = "MAIL_EXPIRE_TIME_WITHIN_ONE_MINUTE",
   MailExpiresInMinute = "MAIL_EXPIRE_TIME_MINUTE",
   MailFull = "UI_MAIL_FULL",
   MailGiftBox = "UI_MAIL_FAVORITES_TITLE_1",
+  MailGiftDeleteWarning = "UI_MAIL_FAVORITES_WARNING_DESC",
+  MailGiftDeleteWarningTitle = "UI_MAIL_FAVORITES_WARNING_TITLE",
   MailNoMail = "UI_MAIL_NO_MAIL_TIP_TITLE",
   MailNoMailDescription = "UI_MAIL_NO_MAIL_TIP_DESC",
   MailSender = "MAIL_DETAIL_SENDER",
+  MailStar = "UI_MAIL_STAR",
 
   Map = "UI_STC_MAP_TITLE",
   Marcotte = "1070567836",
@@ -562,6 +589,16 @@ export enum GameTextKey {
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RealmCurrency = "1255754076",
+  // The Realm Depot's tab of furnishing blueprints
+  RealmDepotBlueprints = "2594539160",
+  // The Realm Depot's tab of creatures of the realm
+  RealmDepotCreatures = "346464176",
+  // The Realm Depot's tab of riches of the realm
+  RealmDepotRiches = "3882361568",
+  // The Realm Depot's tab of realm treasures
+  RealmDepotTreasures = "2009922312",
+  // The Realm Depot's tab of wood
+  RealmDepotWood = "2474820128",
   // A domain level's recommended Adventure Rank, filled with the rank
   RecommendedLevel = "UI_QUEST_RECOMMEND_LEVEL",
   RedBerryshroom = "1096616044",
@@ -755,6 +792,8 @@ export enum GameTextKey {
   Uid = "UI_PLAYER_PROFILE_UID",
   // The offer that spends a Condensed Resin on a challenge's claim, by its English name
   UseCondensedResin = "UI_ABYSSUS_COST_BUTTON_ITEM_CONDENSE_RESIN",
+  // The offer that converts a Long-Term Encounter Point for Original Resin on the Commissions tab, by its English name
+  UseLongTermEncounterPoints = "UI_ADVENTURE_INVESTIGATION_DAILY_ATTENDANCE_ACCUMULATED_INFO_NUM",
   // The offer that spends Original Resin on a challenge's claim, by its English name
   UseOriginalResin = "UI_ABYSSUS_COST_BUTTON_ITEM_RESIN",
   Valberry = "2722402356",
@@ -782,6 +821,7 @@ export enum GameTextKey {
   WishDetails = "UI_GACHA_WISH_02_DETAIL",
   WishEpitomizedPath = "UI_GACHA_WISH",
   WishFatePoint = "UI_GACHA_WISH_POINT",
+  WishGoToTrial = "UI_REUNIONV2_GOTO_AVARTARTRIAL",
   WishHistory = "UI_GUIDE_BUTTON_HISTORY",
   WishProbabilityUp = "UI_GACHA_SHOW_PANEL_PROBABILITY_UP",
   WishRateUp = "UI_GACHA_SHOW_PANEL_DETAIL_03",

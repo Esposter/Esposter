@@ -30,7 +30,7 @@ const stepFieldFrames = (field: KitField, context: KitContext, frames: number): 
   for (let frame = 0; frame < frames; frame++) stepKitField(field, FIXED_STEP_SECONDS, context);
 };
 
-describe("stepKitField", () => {
+describe(stepKitField, () => {
   const COMBATANT: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),
@@ -41,7 +41,7 @@ describe("stepKitField", () => {
     level: 90,
   };
 
-  test.each([13, 29, 48, 63, 104, 162, 221])(
+  test.each([13, 29, 48, 63, 104, 120, 162, 221])(
     "a tick due at %i frames falls on that frame's step, not the one after",
     (dueFrames) => {
       expect.hasAssertions();

@@ -9,10 +9,11 @@ import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEn
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { GameText } from "genshin-text";
 
+import { computeMysticOfferingText } from "#src/services/crafting/computeMysticOfferingText";
 import { craftStrongbox } from "#src/services/crafting/craftStrongbox";
 import { getStrongboxCandidates } from "#src/services/crafting/getStrongboxCandidates";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
+import { GameTextKey } from "genshin-text";
 import { computed, ref } from "vue";
 
 interface Props {
@@ -81,13 +82,7 @@ const create = () => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.MysticOffering]">
     <h2>{{ gameText[GameTextKey.MysticOffering] }}</h2>
     <p>
-      {{
-        fillGameTextValues(
-          gameText[GameTextKey.MysticOfferingRequirement],
-          pickedStrongbox?.needCount ?? 0,
-          pickedStrongbox?.rarity ?? 0,
-        )
-      }}
+      {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingRequirement], pickedStrongbox) }}
     </p>
     <ul>
       <li v-for="strongbox in strongboxes" :key="strongbox.id">
@@ -110,13 +105,7 @@ const create = () => {
     </GameButton>
     <template v-if="isConfirming">
       <p>
-        {{
-          fillGameTextValues(
-            gameText[GameTextKey.MysticOfferingConfirm],
-            pickedStrongbox?.needCount ?? 0,
-            pickedStrongbox?.rarity ?? 0,
-          )
-        }}
+        {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingConfirm], pickedStrongbox) }}
       </p>
       <GameButton :kind="GameButtonKind.Row" @click="isConfirming = false">{{
         gameText[GameTextKey.Cancel]
