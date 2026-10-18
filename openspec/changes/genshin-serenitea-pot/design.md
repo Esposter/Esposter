@@ -30,6 +30,10 @@ Tubby's making, the Trust Rank, Adeptal Energy and the realm's Realm Currency an
 
 - **A realm's placements are a save slice of their own.** `homePlacements` holds each furnishing placed in a realm, by its item id, the area of its scene it stands in, where it stands and its turn, in the order placed. It follows the other slices: a model beside the save's schema, a converter each way, and a merge that keeps the account's copy, as the bag and the party do, since a realm belongs to the account. Its list is bounded by `MAX_HOME_PLACEMENT_COUNT`, 22,712, the most the eight realms' areas hold at the furnishing counts the wiki's Load page gives (449 an exterior area, 149 a room). The dump's own scenes hold fewer, so the bound is a ceiling. A stored save that predates the slice has no `homePlacements`, and is refused rather than defaulted, so it is backfilled to an empty list.
 
+- **Realm Currency and Realm Bounty settle on one clock.** Both stores fill from the `accruedAt` the realm shares, so `settleHomeStores` settles both to the claim's time, and a claim pays out and empties only its own store. A clock read before the last settle moves nothing and keeps the later `accruedAt`, so no span counts twice. Each store fills at the Adeptal Energy rank the realm's comfort reaches when it is settled, the rank in force as the spec's accrual requirement reads. The fill rates and limits are the game's tables and stand until a recording of a store's hour confirms them; no such recording has been found on the wiki or YouTube.
+
+- **The save written before the placements slice is backfilled, not defaulted.** The genshin save is one blob per player, `{userId}/save.json` in the `genshin-assets` container, holding the session lease beside the save. A blob without `homePlacements` fails the schema and is never overwritten, so the start and the save answer an error until it is brought to shape. The run is the backfills skill's: a scratchpad script adds `homePlacements: []` to each blob that lacks it, keeps the session field and the zstd frame, and writes under the listed etag, a dry run and then a write on dev, then prod, re-running until nothing changes, then deleting the script. It is owed once this schema reaches dev; the main session runs it, and nothing is committed.
+
 ## How it works
 
 ```mermaid
@@ -73,6 +77,8 @@ flowchart TD
 | `packages/genshin-world/src/models/world/BuildingKit.ts`        | The kits a furnishing is drawn by                        |
 | `packages/genshin-world/src/models/inventory/Currency.ts`       | Gains Realm Currency, once its game text name has a key  |
 | `packages/genshin-world/src/models/inventory/Inventory.ts`      | Furnishings and blueprints, in the bag's Furnishings tab |
+| `packages/genshin-world/src/services/home/settleHomeStores.ts`  | Settles Realm Currency and Realm Bounty on the one clock |
+| `packages/genshin-world/src/services/home/claimHomeCurrency.ts` | Pays out the Realm Currency a store holds at the claim   |
 
 ## Sources
 

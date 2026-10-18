@@ -11,6 +11,7 @@ describe(claimHomeBounty, () => {
   const FIRST_CHARACTER_ID = 1;
   const SECOND_CHARACTER_ID = 2;
   const RATE = 4;
+  const COIN_RATE = 3;
   const LIMIT = 10;
   const COMFORT = 0;
   const TOP_EXP = 30;
@@ -62,5 +63,19 @@ describe(claimHomeBounty, () => {
       { ...character, friendshipExp: RATE, id: SECOND_CHARACTER_ID },
     ]);
     expect(result.progress).toStrictEqual({ ...progress, accruedAt: now, realmBounty: 0 });
+  });
+
+  test("a bounty claim keeps the realm currency earned since the last claim", () => {
+    expect.hasAssertions();
+
+    const now = EPOCH.add({ seconds: HOME_RATE_PERIOD_SECONDS });
+
+    const result = claimHomeBounty([character], progress, now, {
+      ...options,
+      comfortLevels: [{ bountyRate: RATE, coinRate: COIN_RATE, comfort: COMFORT, level: 1 }],
+      trustLevels: [{ bountyStoreLimit: LIMIT, coinStoreLimit: LIMIT, exp: 0, level: 1, npcCount: 2 }],
+    });
+
+    expect(result.progress.realmCurrency).toBe(COIN_RATE);
   });
 });
