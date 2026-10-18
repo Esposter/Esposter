@@ -76,7 +76,15 @@ describe(dealKitEnemyDamage, () => {
     expect(bursts).toHaveLength(0);
   });
 
-  test("elemental damage on an enemy already Dead, which takes no health, sets off no Nightsoul burst", () => {
+  test("elemental damage a shield takes whole sets off the team's Nightsoul burst", () => {
+    expect.hasAssertions();
+    const { bursts, context, striker } = createNatlanTeam();
+    const enemy = { ...createSturdyEnemy(), shield: { health: 2, maxHealth: 2 } };
+    dealKitEnemyDamage(enemy, { damage: 1, poiseDamage: 0 }, true, striker, context);
+    expect(bursts).toHaveLength(1);
+  });
+
+  test("elemental damage on an enemy already Dead sets off no Nightsoul burst", () => {
     expect.hasAssertions();
     const { bursts, context, striker } = createNatlanTeam();
     const enemy = { ...createSturdyEnemy(), health: 0, state: EnemyState.Dead };
