@@ -65,7 +65,7 @@ prints, so the rule is enforced rather than swept.
 - Generated barrels (the generated `index.ts`) and `snapshot.json` — machine state.
 - Literals a postinstall-evaluated or JSON config must repeat, which the skill names as the one sanctioned duplication.
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
-  dispatch map, the four names `initTRPC` hands out. One-export-per-file cannot reach them without making that
+  dispatch map, the four names `initTRPC` hands out. One-function-per-file cannot reach them without making that
   state a module global, which trades a file boundary for a wider one.
 - A local type in a package's `src` that its own file alone reads (`createTileStreamer`'s `CachedTile`,
   `toContentBlockParam`'s SDK-derived block): a `models/` file is a module, and the generated barrel publishes every

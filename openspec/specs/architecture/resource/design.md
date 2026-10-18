@@ -64,7 +64,7 @@ Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by i
 
 Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](../../resource/recycle-bin/design.md)).
 
-Each type owns one content schema (Zod, interface-first, one export per file) in `apps/web/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break. A field holding another resource's id is declared with `createResourceLinkSchema(ResourceLinkType.X)`, never a bare `z.uuid()` — the declaration is what the [resource-link index](../resource-links/design.md) reads, so a reference written any other way is one nothing can find.
+Each type owns one content schema (Zod, interface-first, one function per file) in `apps/web/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break. A field holding another resource's id is declared with `createResourceLinkSchema(ResourceLinkType.X)`, never a bare `z.uuid()` — the declaration is what the [resource-link index](../resource-links/design.md) reads, so a reference written any other way is one nothing can find.
 
 ## Capabilities
 
