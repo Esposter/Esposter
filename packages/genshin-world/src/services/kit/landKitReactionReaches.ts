@@ -28,16 +28,7 @@ export const landKitReactionReaches = (
   combatant: Combatant,
   context: KitContext,
 ): void => {
-  const {
-    characterIdCombatantMap,
-    enemyMap,
-    enemyTables,
-    kitEffectState,
-    oreStrikes,
-    party,
-    random,
-    reactionTriggers,
-  } = context;
+  const { characterIdCombatantMap, enemyMap, kitEffectState, oreStrikes, party, random, reactionTriggers } = context;
   if (reaches.length === 0) return;
   const { lunarReactionTypes } = getPartyMoonsign(
     characterIdCombatantMap,
@@ -50,7 +41,7 @@ export const landKitReactionReaches = (
     const oreHit = readReactionOreHit(reaction.reactionType);
     if (oreHit) oreStrikes.push({ body: { facing: 0, height: 0, position: origin.position }, hit: oreHit });
     for (const [enemy, { energyDrops, reachingReactions, reactions }] of landReactionReach(
-      enemyTables,
+      context,
       origin,
       enemyMap.values(),
       reaction,
