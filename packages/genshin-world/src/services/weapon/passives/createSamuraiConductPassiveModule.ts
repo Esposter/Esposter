@@ -2,9 +2,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -29,13 +28,9 @@ export const createSamuraiConductPassiveModule = (params: number[]): PassiveModu
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== combatant.characterId ||
         event.attackTag !== AttackTag.ElementalSkill ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, SAMURAI_CONDUCT_COOLDOWN_ID)
+        !startKitCooldown(context.kitEffectState, combatant.characterId, SAMURAI_CONDUCT_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: SAMURAI_CONDUCT_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       const partyMember = getPartyMember(context.party, combatant.characterId);
       partyMember.energy = Math.max(0, partyMember.energy - energySpent);
       for (let tick = 1; tick * SAMURAI_CONDUCT_TICK_SECONDS <= seconds; tick++)

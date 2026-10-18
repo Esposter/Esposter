@@ -4,6 +4,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
 
@@ -36,13 +37,9 @@ export const createByakuyaKougetsuPassiveModule = (params: number[]): PassiveMod
         event.striker.characterId !== characterId ||
         event.attackTag !== AttackTag.NormalAttack ||
         !checkIsKitStatusActive(kitEffectState.effects, characterId, BYAKUYA_KOUGETSU_ID) ||
-        checkIsKitStatusActive(kitEffectState.effects, characterId, BYAKUYA_KOUGETSU_COOLDOWN_ID)
+        !startKitCooldown(kitEffectState, characterId, BYAKUYA_KOUGETSU_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      addKitStatus(kitEffectState, characterId, {
-        id: BYAKUYA_KOUGETSU_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       gainPartyMemberEnergy(party, combatant, energy);
     },
   };

@@ -9,8 +9,8 @@ import { addKitHold } from "#src/services/kit/effects/addKitHold";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
@@ -56,11 +56,10 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Passi
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== combatant.characterId ||
         event.attackTag !== AttackTag.ElementalSkill ||
-        checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, GRAND_HYMN_COOLDOWN_ID)
+        !startKitCooldown(kitEffectState, combatant.characterId, GRAND_HYMN_COOLDOWN_ID, cooldownSeconds)
       )
         return;
       const { characterId } = combatant;
-      addKitStatus(kitEffectState, characterId, { id: GRAND_HYMN_COOLDOWN_ID, secondsRemaining: cooldownSeconds });
       if (countKitHolds(kitEffectState.effects, characterId, GRAND_HYMN_ID) < GRAND_HYMN_MAXIMUM_STACKS)
         addKitHold(kitEffectState, characterId, {
           id: GRAND_HYMN_ID,

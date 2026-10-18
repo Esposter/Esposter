@@ -4,9 +4,8 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { checkIsReactionNamed } from "#src/services/weapon/passives/checkIsReactionNamed";
 import { takeOne } from "@esposter/shared";
 
@@ -38,9 +37,8 @@ export const createTurquoiseHuntPassiveModule = (params: number[]): PassiveModul
         event.kind === KitEventKind.DamageTaken &&
         event.striker.characterId === characterId &&
         event.attackTag === AttackTag.ElementalSkill &&
-        !checkIsKitStatusActive(kitEffectState.effects, characterId, SKILL_COOLDOWN_ID)
+        startKitCooldown(kitEffectState, characterId, SKILL_COOLDOWN_ID, skillCooldownSeconds)
       ) {
-        addKitStatus(kitEffectState, characterId, { id: SKILL_COOLDOWN_ID, secondsRemaining: skillCooldownSeconds });
         addKitHold(kitEffectState, characterId, {
           id: CANOPYS_FAVOR_ID,
           maximum: maximumStacks,
@@ -50,12 +48,8 @@ export const createTurquoiseHuntPassiveModule = (params: number[]): PassiveModul
         event.kind === KitEventKind.ReactionTriggered &&
         event.striker.characterId !== characterId &&
         checkIsReactionNamed(event.reactions, CANOPY_REACTIONS) &&
-        !checkIsKitStatusActive(kitEffectState.effects, characterId, REACTION_COOLDOWN_ID)
+        startKitCooldown(kitEffectState, characterId, REACTION_COOLDOWN_ID, reactionCooldownSeconds)
       ) {
-        addKitStatus(kitEffectState, characterId, {
-          id: REACTION_COOLDOWN_ID,
-          secondsRemaining: reactionCooldownSeconds,
-        });
         for (let stack = 0; stack < REACTION_STACKS; stack++)
           addKitHold(kitEffectState, characterId, {
             id: CANOPYS_FAVOR_ID,

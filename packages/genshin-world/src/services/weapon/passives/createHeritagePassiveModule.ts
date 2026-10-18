@@ -2,9 +2,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const HERITAGE_COOLDOWN_ID = "heritageCooldown";
@@ -19,13 +18,9 @@ export const createHeritagePassiveModule = (params: number[]): PassiveModule => 
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (
         event.kind !== KitEventKind.CharacterSwapped ||
-        checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, HERITAGE_COOLDOWN_ID)
+        !startKitCooldown(kitEffectState, combatant.characterId, HERITAGE_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      addKitStatus(kitEffectState, combatant.characterId, {
-        id: HERITAGE_COOLDOWN_ID,
-        secondsRemaining: cooldownSeconds,
-      });
       buffKitMember(kitEffectState, event.characterId, {
         amount: percentage,
         attribute: Attribute.AttackPercent,

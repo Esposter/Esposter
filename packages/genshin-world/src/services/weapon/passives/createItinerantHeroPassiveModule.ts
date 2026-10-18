@@ -2,9 +2,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const ITINERANT_HERO_DISABLED_ID = "itinerantHeroDisabled";
@@ -24,13 +23,14 @@ export const createItinerantHeroPassiveModule = (params: number[]): PassiveModul
         event.characterId !== combatant.characterId ||
         event.healthShare >= 0 ||
         event.sourceCharacterId !== undefined ||
-        checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, ITINERANT_HERO_DISABLED_ID)
+        !startKitCooldown(
+          context.kitEffectState,
+          combatant.characterId,
+          ITINERANT_HERO_DISABLED_ID,
+          ITINERANT_HERO_SECONDS,
+        )
       )
         return;
-      addKitStatus(context.kitEffectState, combatant.characterId, {
-        id: ITINERANT_HERO_DISABLED_ID,
-        secondsRemaining: ITINERANT_HERO_SECONDS,
-      });
       buffKitMember(context.kitEffectState, combatant.characterId, {
         amount: -damageBonus,
         attribute: Attribute.AllDamageBonus,

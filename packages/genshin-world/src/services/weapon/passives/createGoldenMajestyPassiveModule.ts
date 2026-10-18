@@ -3,10 +3,9 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const GOLDEN_MAJESTY_ID = "goldenMajesty";
@@ -43,13 +42,14 @@ export const createGoldenMajestyPassiveModule = (params: number[]): PassiveModul
       if (
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== combatant.characterId ||
-        checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, GOLDEN_MAJESTY_COOLDOWN_ID)
+        !startKitCooldown(
+          kitEffectState,
+          combatant.characterId,
+          GOLDEN_MAJESTY_COOLDOWN_ID,
+          GOLDEN_MAJESTY_COOLDOWN_SECONDS,
+        )
       )
         return;
-      addKitStatus(kitEffectState, combatant.characterId, {
-        id: GOLDEN_MAJESTY_COOLDOWN_ID,
-        secondsRemaining: GOLDEN_MAJESTY_COOLDOWN_SECONDS,
-      });
       addKitHold(kitEffectState, combatant.characterId, {
         id: GOLDEN_MAJESTY_ID,
         maximum: GOLDEN_MAJESTY_MAXIMUM_STACKS,

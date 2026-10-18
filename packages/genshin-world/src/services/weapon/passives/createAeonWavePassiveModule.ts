@@ -2,9 +2,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
@@ -37,13 +36,9 @@ export const createAeonWavePassiveModule = (params: number[]): PassiveModule => 
       if (
         !isStackAdded ||
         findKitStatus(kitEffectState.effects, characterId, AEON_WAVE_ID)?.stacks !== AEON_WAVE_MAXIMUM_STACKS ||
-        checkIsKitStatusActive(kitEffectState.effects, characterId, AEON_WAVE_ENERGY_COOLDOWN_ID)
+        !startKitCooldown(kitEffectState, characterId, AEON_WAVE_ENERGY_COOLDOWN_ID, energyCooldownSeconds)
       )
         return;
-      addKitStatus(kitEffectState, characterId, {
-        id: AEON_WAVE_ENERGY_COOLDOWN_ID,
-        secondsRemaining: energyCooldownSeconds,
-      });
       gainPartyMemberEnergy(party, combatant, energy);
     },
   };

@@ -2,8 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { createStellarGlimmerBuffPassiveModule } from "#src/services/weapon/passives/createStellarGlimmerBuffPassiveModule";
 import { takeOne } from "@esposter/shared";
@@ -25,14 +24,9 @@ export const createSongOfTheVigilPassiveModule = (params: number[]): PassiveModu
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
       if (
-        !checkIsKitStatusActive(context.kitEffectState.effects, combatant.characterId, SONG_OF_THE_VIGIL_COOLDOWN_ID)
-      ) {
-        addKitStatus(context.kitEffectState, combatant.characterId, {
-          id: SONG_OF_THE_VIGIL_COOLDOWN_ID,
-          secondsRemaining: cooldownSeconds,
-        });
+        startKitCooldown(context.kitEffectState, combatant.characterId, SONG_OF_THE_VIGIL_COOLDOWN_ID, cooldownSeconds)
+      )
         gainPartyMemberEnergy(context.party, combatant, energy);
-      }
       stellarBuffPassiveModule.onKitEvent?.(event, context, combatant);
     },
   };
