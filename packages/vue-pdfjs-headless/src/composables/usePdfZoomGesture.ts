@@ -32,6 +32,8 @@ export const usePdfZoomGesture = ({ container, getViewer }: UsePdfZoomGestureOpt
       point: { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 },
     };
   };
+  // Zero unless two pointers are down, so a pinch starts only from a measured distance
+  const measurePinchDistance = () => measurePinch()?.distance ?? 0;
   // Scales the viewer about a point of the screen, keeping the content under that point where it was
   const zoomAbout = (ratio: number, point: PinchPoint) => {
     const viewer = getViewer();
@@ -49,7 +51,7 @@ export const usePdfZoomGesture = ({ container, getViewer }: UsePdfZoomGestureOpt
   };
   const onPointerDown = (event: PointerEvent) => {
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    pinchDistance = measurePinch()?.distance ?? 0;
+    pinchDistance = measurePinchDistance();
   };
   const onPointerMove = (event: PointerEvent) => {
     if (!pointers.has(event.pointerId)) return;
@@ -61,7 +63,7 @@ export const usePdfZoomGesture = ({ container, getViewer }: UsePdfZoomGestureOpt
   };
   const onPointerEnd = (event: PointerEvent) => {
     pointers.delete(event.pointerId);
-    pinchDistance = measurePinch()?.distance ?? 0;
+    pinchDistance = measurePinchDistance();
   };
   const onWheel = (event: WheelEvent) => {
     if (!event.ctrlKey) return;
@@ -77,12 +79,48 @@ export const usePdfZoomGesture = ({ container, getViewer }: UsePdfZoomGestureOpt
       if (!element) return;
 
       const { signal } = abortController;
-      element.addEventListener("pointerdown", onPointerDown, { signal });
-      element.addEventListener("pointermove", onPointerMove, { signal });
-      element.addEventListener("pointerup", onPointerEnd, { signal });
-      element.addEventListener("pointercancel", onPointerEnd, { signal });
-      element.addEventListener("pointerleave", onPointerEnd, { signal });
-      element.addEventListener("wheel", onWheel, { passive: false, signal });
+      element.addEventListener(
+        "pointerdown",
+        (event) => {
+          onPointerDown(event);
+        },
+        { signal },
+      );
+      element.addEventListener(
+        "pointermove",
+        (event) => {
+          onPointerMove(event);
+        },
+        { signal },
+      );
+      element.addEventListener(
+        "pointerup",
+        (event) => {
+          onPointerEnd(event);
+        },
+        { signal },
+      );
+      element.addEventListener(
+        "pointercancel",
+        (event) => {
+          onPointerEnd(event);
+        },
+        { signal },
+      );
+      element.addEventListener(
+        "pointerleave",
+        (event) => {
+          onPointerEnd(event);
+        },
+        { signal },
+      );
+      element.addEventListener(
+        "wheel",
+        (event) => {
+          onWheel(event);
+        },
+        { passive: false, signal },
+      );
     },
     { immediate: true },
   );
