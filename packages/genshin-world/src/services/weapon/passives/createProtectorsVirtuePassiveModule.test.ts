@@ -23,11 +23,10 @@ describe(createProtectorsVirtuePassiveModule, () => {
     level: 1,
   };
 
-  test("the rank's share raises the wielder's HP, and its ATK bonus is the rank's share of its Max HP", () => {
+  test("the rank's HP is the table's line, so the passive keeps only the ATK bonus of its share of Max HP", () => {
     expect.hasAssertions();
 
-    expect(protectorsVirtuePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.HealthPercent },
+    expect(protectorsVirtuePassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([
       { amount: 0.012 * 10000, attribute: Attribute.Attack },
     ]);
   });
