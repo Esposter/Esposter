@@ -11,6 +11,7 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
 import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
@@ -44,6 +45,8 @@ export const playGcgCard = (
   side.hand = side.hand.filter((_cardId, index) => index !== handIndex);
   placeGcgCard(side, card, targetIndex, module);
   module.play?.(context, targetIndex, choice);
+  for (const zoneCard of listGcgFieldCards(side, undefined))
+    GcgCardIdModuleMap.get(zoneCard.cardId)?.onCardPlayed?.(context, card, zoneCard);
   const switchIndex = module.switchOnPlay?.(context);
   if (switchIndex !== undefined) switchGcgActiveCharacter(duel, sideIndex, switchIndex);
   const skill = module.skillOnPlay?.(context, targetIndex);
