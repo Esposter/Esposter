@@ -88,6 +88,12 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 - **WHEN** it lands on an ore
 - **THEN** the ore takes no poise from it
 
+#### Scenario: Claymore attacks, plunges and Geo damage strike blunt
+
+- **GIVEN** a claymore's normal attack, a sword's or polearm's plunge, or a Geo hit lands on an ore
+- **WHEN** the hit is dealt
+- **THEN** the ore takes its poise as a blunt hit, against the blunt requirement
+
 #### Scenario: Converted poise from an infusion does not reach an ore
 
 - **GIVEN** a hit's damage has been converted by an infusion
