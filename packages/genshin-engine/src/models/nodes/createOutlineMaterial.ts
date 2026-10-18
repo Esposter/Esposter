@@ -9,6 +9,7 @@ import {
   normalLocal,
   positionLocal,
   tangentLocal,
+  transformNormal,
   vec3,
   vec4,
 } from "three/tsl";
@@ -16,7 +17,8 @@ import { NodeMaterial } from "three/webgpu";
 
 // An outline's material: the mesh pushed out along its normal by the thickness, in screen space so its width holds, and
 // Drawn from behind in the colour given. Three builds the same material per toon material, which the outline pass shares.
-// A placed copy's outline is pushed out from the place its matrix gives the vertex, the normal turned by the same matrix
+// A placed copy's outline is pushed out from the place its matrix gives the vertex, along the normal that matrix's
+// Normal matrix turns, as its fill turns it, so a non-uniform scale does not tilt the outline off the surface
 export const createOutlineMaterial = (
   colorNode: Node<"vec4">,
   thicknessNode: Node<"float">,
@@ -27,11 +29,12 @@ export const createOutlineMaterial = (
   material.name = "Toon_Outline";
   material.side = BackSide;
   const outlineNormal = normalLocal.negate();
+  const outlineDirection = instanceMatrix ? transformNormal(outlineNormal, instanceMatrix) : outlineNormal;
   const placed = (point: Node<"vec3">): Node<"vec3"> =>
     instanceMatrix ? instanceMatrix.mul(vec4(point, 1)).xyz : point;
   const mvp = cameraProjectionMatrix.mul(modelViewMatrix);
   const pos = mvp.mul(vec4(placed(positionLocal), 1));
-  const pos2 = mvp.mul(vec4(placed(positionLocal.add(outlineNormal)), 1));
+  const pos2 = pos.add(mvp.mul(vec4(outlineDirection, 0)));
   // Subtract pos2 from pos because a back face's normal is negative
   const norm = normalize(pos.sub(pos2));
   material.vertexNode = pos.add(norm.mul(thicknessNode).mul(pos.w));
