@@ -17,6 +17,9 @@ import {
   MONSTER_TABLE_NAME,
   REGIONS_DIRECTORY,
 } from "#src/services/genshinAssets/enemies/constants";
+import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reputation/constants";
+import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
+import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -30,10 +33,10 @@ const getGrowCurve = ({ id, propGrowCurves }: MonsterRow, property: string): str
   if (!growCurve) throw new InvalidOperationError(Operation.Read, String(id), `grows ${property} by no curve`);
   return growCurve;
 };
-// The kinds every region's camps place, each read from the game's monster table with its family from the archive and
-// Its name's text id, and every level curve they name, as the records of the enemies dataset. A kind the tables lack is an
-// Error. The resistances are keyed by the world's elements, spelt as the game's tables spell them, which the world's
-// Schema checks. Returns the records the kinds and curves publish under
+// The kinds every region's camps place and every Mondstadt bounty hunts, each read from the game's monster table with its
+// Family from the archive and its name's text id, and every level curve they name, as the records of the enemies dataset.
+// A kind the tables lack is an Error. The resistances are keyed by the world's elements, spelt as the game's tables spell
+// Them, which the world's schema checks. Returns the records the kinds and curves publish under
 export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const regionsDirectory = join(WORLD_DATA_DIRECTORY, REGIONS_DIRECTORY);
   const regionFilenames = await readdir(regionsDirectory);
@@ -48,7 +51,11 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const monsterDescribeRows = readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_NAME);
   const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME);
   const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);
-  const enemyKinds = collectEnemyKindIds(regionDatas).map((enemyKindId) => {
+  const monsterNames = readMonsterNames();
+  const bountyKindIds = Object.values(MONDSTADT_BOUNTY_TARGET_NAMES).flatMap((names) =>
+    toBountyTargetIds(names, monsterNames),
+  );
+  const enemyKinds = collectEnemyKindIds(regionDatas, bountyKindIds).map((enemyKindId) => {
     const monsterRow = monsterRows.find(({ id }) => id === enemyKindId);
     if (!monsterRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster row");
     const codexRow = animalCodexRows.find(
