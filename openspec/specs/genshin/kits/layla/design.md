@@ -5,6 +5,7 @@ Layla's kit is its record and one behaviour module, `createLaylaKitBehaviour`, o
 ## Decisions
 
 - **Layla's plunges take Bennett's timings and poise.** gcsim has no plunge file for her, so her record lands the collision, low and high plunge at Bennett's frames, 36 for the low hit and 38 for the high, with 100 and 150 poise and her own multipliers. Her animation would move them if it showed otherwise.
+- **Constellation 1's Curtain absorbs 20% more, as its shield's health is scaled.** The shield the skill sets is the one it sets for Layla; the team shields the same constellation gives members not under a Curtain need the Cryo effectiveness a shield does not carry, so they wait.
 
 ## Key files
 
