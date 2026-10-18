@@ -22,7 +22,10 @@ export const talkSchema = z
     npcIds: z.array(z.string().min(1)),
     startLineId: z.string().min(1),
   })
-  .refine(({ lines, startLineId }) => {
-    const lineIds = new Set(lines.map(({ id }) => id));
-    return [startLineId, ...lines.flatMap(({ nextLineIds }) => nextLineIds)].every((lineId) => lineIds.has(lineId));
-  }, "Talk line ids must name lines the talk holds") satisfies z.ZodType<Talk>;
+  .refine(
+    ({ lines, startLineId }) => {
+      const lineIds = new Set(lines.map(({ id }) => id));
+      return [startLineId, ...lines.flatMap(({ nextLineIds }) => nextLineIds)].every((lineId) => lineIds.has(lineId));
+    },
+    { error: "Talk line ids must name lines the talk holds" },
+  ) satisfies z.ZodType<Talk>;

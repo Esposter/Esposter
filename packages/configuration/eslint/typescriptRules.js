@@ -209,6 +209,14 @@ export default {
         "CallExpression[callee.property.name=/^(refine|superRefine)$/] > ObjectExpression.arguments > Property[key.name='message']",
     },
     {
+      // A refinement's text goes under its `error` key, so a bare string as the second argument is a second spelling of
+      // The same parameter, and the object form is the one the rule above leaves alone
+      message:
+        'A refinement\'s text goes under `error` — `.refine(check, { error: "…" })` — never as a bare string in the second argument. See the zod skill.',
+      selector:
+        "CallExpression[callee.property.name=/^(refine|superRefine)$/] > :matches(Literal, TemplateLiteral):nth-child(2)",
+    },
+    {
       // The Pulumi logical name is the Azure resource name here, so an alias can never serve the rename it is
       // Suggested for — a rename replaces through the name property whatever the URN says. A resource's options are
       // The third argument of its constructor, which is the construct this reads rather than a path: nothing else

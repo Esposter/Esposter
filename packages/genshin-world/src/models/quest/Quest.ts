@@ -53,15 +53,18 @@ export const questSchema = z
     talks: createUniqueArraySchema(talkSchema, "id"),
     titleTextId: z.string().min(1),
   })
-  .refine(({ offerTalkIds, steps, talks }) => {
-    const talkIds = new Set(talks.map(({ id }) => id));
-    return (
-      offerTalkIds.every((talkId) => talkIds.has(talkId)) &&
-      steps
-        .flatMap(({ objectives }) => objectives)
-        .every(
-          ({ kind, targetIds }) =>
-            kind !== QuestObjectiveKind.TalkTo || targetIds.every((targetId) => talkIds.has(targetId)),
-        )
-    );
-  }, "Talk-to objectives and offers must name talks the quest runs") satisfies z.ZodType<Quest>;
+  .refine(
+    ({ offerTalkIds, steps, talks }) => {
+      const talkIds = new Set(talks.map(({ id }) => id));
+      return (
+        offerTalkIds.every((talkId) => talkIds.has(talkId)) &&
+        steps
+          .flatMap(({ objectives }) => objectives)
+          .every(
+            ({ kind, targetIds }) =>
+              kind !== QuestObjectiveKind.TalkTo || targetIds.every((targetId) => talkIds.has(targetId)),
+          )
+      );
+    },
+    { error: "Talk-to objectives and offers must name talks the quest runs" },
+  ) satisfies z.ZodType<Quest>;

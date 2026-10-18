@@ -137,6 +137,6 @@ export const genshinSaveSchema = z
     wishPity: wishPityMapSaveSchema,
     worldLevelAdjustment: worldLevelAdjustmentSaveSchema,
   })
-  .refine((save) => JSON.stringify(save).length <= MAX_GENSHIN_SAVE_LENGTH, "The save is too large");
+  .refine((save) => JSON.stringify(save).length <= MAX_GENSHIN_SAVE_LENGTH, { error: "The save is too large" });
 
 export type GenshinSave = z.infer<typeof genshinSaveSchema>;

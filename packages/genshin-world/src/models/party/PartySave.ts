@@ -16,7 +16,7 @@ export const partySaveSchema = z
   })
   .refine(
     ({ activeIndex, deployedTeamIndex, teams }) => (teams[deployedTeamIndex]?.characterIds.length ?? 0) > activeIndex,
-    "The member on the field is not in the deployed team",
+    { error: "The member on the field is not in the deployed team" },
   );
 
 export type PartySave = z.infer<typeof partySaveSchema>;

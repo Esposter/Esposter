@@ -8,6 +8,8 @@ export const achievementProgressSaveSchema = z
     numericSaveIdSchema,
     z.object({ count: z.int().nonnegative(), finishedAt: z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH).optional() }),
   )
-  .refine((progressMap) => Object.keys(progressMap).length <= MAX_ACHIEVEMENT_COUNT, "Too many achievements");
+  .refine((progressMap) => Object.keys(progressMap).length <= MAX_ACHIEVEMENT_COUNT, {
+    error: "Too many achievements",
+  });
 
 export type AchievementProgressSave = z.infer<typeof achievementProgressSaveSchema>;

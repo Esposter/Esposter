@@ -12,7 +12,7 @@ export const walletSaveSchema = z.object({
     .refine(
       (currencies) =>
         Object.values(Currency).every((currency) => SIGIL_CURRENCIES.includes(currency) || currency in currencies),
-      "A save holds every currency but the Sigils",
+      { error: "A save holds every currency but the Sigils" },
     ),
   originalResinChangedAt: z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH),
   primogemResinRefillCount: z.int().nonnegative(),

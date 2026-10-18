@@ -112,6 +112,30 @@ describe("typescriptRules", () => {
         violations: 0,
       },
       {
+        filePath: "refineBareString.ts",
+        name: "refineBareString",
+        source: `export const a = z.string().refine(b, "c");`,
+        violations: 1,
+      },
+      {
+        filePath: "refineBareTemplate.ts",
+        name: "refineBareTemplate",
+        source: "export const a = z.string().refine(b, `c`);",
+        violations: 1,
+      },
+      {
+        filePath: "refineCheckOnly.ts",
+        name: "refineCheckOnly",
+        source: "export const a = z.string().refine(b);",
+        violations: 0,
+      },
+      {
+        filePath: "otherStringArgument.ts",
+        name: "otherStringArgument",
+        source: `export const a = b.c(d, "e");`,
+        violations: 0,
+      },
+      {
         filePath: "localStorageRegistry.ts",
         name: "localStorageRegistry",
         source: `export const a = () => useLocalStorage(LocalStorageKey.A, "");`,
