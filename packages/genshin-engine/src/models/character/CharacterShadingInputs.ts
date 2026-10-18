@@ -1,6 +1,7 @@
 import type { CharacterMaterialKind } from "#src/models/character/CharacterMaterialKind";
 import type { FaceDraw } from "#src/models/character/FaceDraw";
 import type { OutlineRegions } from "#src/models/character/OutlineRegions";
+import type { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import type { RampLayout } from "#src/models/character/RampLayout";
 import type { ShadingRegionColours } from "#src/models/character/ShadingRegionColours";
 import type { ShadingRegionToggles } from "#src/models/character/ShadingRegionToggles";
@@ -65,6 +66,9 @@ export interface CharacterShadingInputs {
   rampTexture: Texture;
   rampWidth: number;
   regionTints: Record<"five" | "four" | "three" | "two", Vector3Tuple>;
+  // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It is not
+  // The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that branch
+  sphere?: { mode: PmxSphereMode.Add | PmxSphereMode.Multiply; texture: Texture };
   // The region the lightmap's alpha selects, and each region's own tint
   regionToggles: ShadingRegionToggles;
   // Each region's first shadow colour, "_FirstShadowMultColor" and its later regions, the colour a face in shadow keeps
