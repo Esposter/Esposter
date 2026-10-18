@@ -33,7 +33,7 @@ const checkCanStartAttack = ({ activeCombatant, kitEffectState }: KitContext): b
 // As gcsim's cancel does. While the state lasts she starts no attack, plunge or charged attack, as gcsim's ActionReady allows
 // Only her swap, dash and burst. The press that cancels the state plays none of its skill's hits and sets no cooldown, as
 // Gcsim's does, through the skill's state-ending check. Not built: the Swirl buff her state gives the party, the Yumemi Style
-// Special Snacks her burst leaves, which are pick-ups the kit has no entity for, and a press's parameter sets, which the kit
+// Special Snacks her burst leaves, which are pick-ups the kit does not leave yet, and a press's parameter sets, which the kit
 // Holds at the default
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
 // Constellation 1 needs the Dreamdrifter state and its Twenty-Three Nights' Awaiting effect, which are not built

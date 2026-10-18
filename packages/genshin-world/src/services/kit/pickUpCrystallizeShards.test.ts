@@ -1,8 +1,10 @@
 import type { KitCrystallizeShard } from "#src/models/kit/KitCrystallizeShard";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitShield } from "#src/models/kit/KitShield";
 
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import {
   CRYSTALLIZE_SHARD_PICKUP_DELAY_SECONDS,
   CRYSTALLIZE_SHARD_PICKUP_RADIUS,
@@ -32,9 +34,11 @@ describe(pickUpCrystallizeShards, () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [shard] };
-    pickUpCrystallizeShards(kitEffectState, { x: 0, z: 0 });
+    const outbox: KitEvent[] = [];
+    pickUpCrystallizeShards(kitEffectState, CHARACTER_ID, { x: 0, z: 0 }, outbox);
 
     expect(kitEffectState.effects).toStrictEqual([shard]);
+    expect(outbox).toStrictEqual([]);
   });
 
   test("grants a shard's Crystallize shield in reach, overwriting the team's last one and keeping a character's own", () => {
@@ -51,7 +55,7 @@ describe(pickUpCrystallizeShards, () => {
     };
     const shard = createShard(Element.Hydro, CRYSTALLIZE_SHARD_PICKUP_RADIUS);
     const kitEffectState: KitEffectState = { effects: [ownShield, crystallizeShield, shard] };
-    pickUpCrystallizeShards(kitEffectState, { x: 0, z: 0 });
+    pickUpCrystallizeShards(kitEffectState, CHARACTER_ID, { x: 0, z: 0 }, []);
 
     expect(kitEffectState.effects).toStrictEqual([
       ownShield,
@@ -65,6 +69,21 @@ describe(pickUpCrystallizeShards, () => {
         kind: "shield",
         secondsRemaining: CRYSTALLIZE_SHIELD_SECONDS,
       },
+    ]);
+  });
+
+  test("sends the shard's pickup by the character on the field, with the shard's element, for each shard it picks up", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = {
+      effects: [createShard(Element.Hydro, 0), createShard(Element.Pyro, CRYSTALLIZE_SHARD_PICKUP_RADIUS)],
+    };
+    const outbox: KitEvent[] = [];
+    pickUpCrystallizeShards(kitEffectState, CHARACTER_ID, { x: 0, z: 0 }, outbox);
+
+    expect(outbox).toStrictEqual([
+      { characterId: CHARACTER_ID, element: Element.Hydro, kind: KitEventKind.CrystallizeShardPickedUp },
+      { characterId: CHARACTER_ID, element: Element.Pyro, kind: KitEventKind.CrystallizeShardPickedUp },
     ]);
   });
 });

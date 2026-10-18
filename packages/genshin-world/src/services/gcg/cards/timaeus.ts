@@ -5,8 +5,8 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { drawRandomGcgCard } from "#src/services/gcg/effects/drawRandomGcgCard";
 import { takeOne } from "@esposter/shared";
+import { TIMAEUS_ID } from "#src/services/gcg/cards/constants";
 
-const TIMAEUS_ID = 322_003;
 const ARTIFACTS_IN_DECK_TO_DRAW = 6;
 
 const sumGcgCostCounts = (costs: GcgCost[]): number => costs.reduce((total, cost) => total + cost.count, 0);

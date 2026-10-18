@@ -1,13 +1,13 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { SESSHOU_SAKURA_ID } from "#src/services/gcg/cards/sesshouSakura";
-import { TENKO_THUNDERBOLTS_ID, tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
-import { THE_SHRINES_SACRED_SHADE_ID } from "#src/services/gcg/cards/theShrinesSacredShade";
+import { SESSHOU_SAKURA_ID } from "#src/services/gcg/cards/constants";
+import { tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
+import { TENKO_THUNDERBOLTS_ID } from "#src/services/gcg/cards/constants";
+import { THE_SHRINES_SACRED_SHADE_ID } from "#src/services/gcg/cards/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
-export const TENKO_KENSHIN_ID = 14_083;
 const TENKO_KENSHIN_DAMAGE = 4;
 
 // Great Secret Art: Tenko Kenshin, Yae Miko's Elemental Burst: 4 Electro DMG, and with a Sesshou Sakura on her side, it is

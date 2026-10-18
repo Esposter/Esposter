@@ -53,6 +53,8 @@ export interface KitHit {
   internalCooldownTag?: InternalCooldownTag;
   // Whether the hit always lands as a critical hit, which its strike rolls no CRIT Rate for
   isForcedCritical?: true;
+  // Whether the hit's stagger level is Air, as the wiki's impulse types 5 to 9 are, which launches an enemy it staggers
+  isLaunching?: true;
   // Whether the hit lands as its hitmark falls, given the context it lands in, for a hit a condition such as a Moonsign
   // Level gates. A hit with none always lands
   landsWhen?: (context: KitContext) => boolean;

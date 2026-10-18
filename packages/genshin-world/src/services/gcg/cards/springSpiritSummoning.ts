@@ -1,7 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { ICY_QUILL_ID, icyQuill } from "#src/services/gcg/cards/icyQuill";
+import { icyQuill } from "#src/services/gcg/cards/icyQuill";
+import { ICY_QUILL_ID } from "#src/services/gcg/cards/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";

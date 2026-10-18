@@ -13,6 +13,7 @@ import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
 import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
+import { LARGE_WIND_SPIRIT_ID } from "#src/services/gcg/cards/constants";
 
 describe("the Large Wind Spirit's Swirl conversion", () => {
   const SEED = 6;

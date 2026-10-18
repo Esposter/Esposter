@@ -5,8 +5,8 @@ import { drunkenMist } from "#src/services/gcg/cards/drunkenMist";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { DRUNKEN_MIST_ID } from "#src/services/gcg/cards/constants";
 
-const DRUNKEN_MIST_ID = 111_023;
 // Signature Mix, Diona's elemental burst: 1 Cryo DMG, the character heals for 2 HP, and a Drunken Mist is summoned (the
 // Wiki's Signature Mix (Character Card Skill))
 const SIGNATURE_MIX_DAMAGE = 1;

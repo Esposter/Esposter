@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
@@ -12,7 +12,7 @@ const FALCONS_DEFIANCE_COOLDOWN_ID = "falconsDefianceCooldown";
 // A loss of HP naming no other character regenerates the wielder's HP by the rank's share of ATK and queues a hit at the
 // Rank's multiplier of ATK on the surrounding opponents, once every rank's cooldown in seconds. The hit's element and area
 // Are not named by the text, so it is physical on the small AoE, provisionally
-export const createFalconsDefiancePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createFalconsDefiancePassiveModule = (params: number[]): PassiveModule => {
   const healShare = takeOne(params, 1);
   const talentMultiplier = takeOne(params, 2);
   const cooldownSeconds = takeOne(params, 3);

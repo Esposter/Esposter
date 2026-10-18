@@ -11,6 +11,8 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -61,6 +63,8 @@ describe(runGcgEndPhase, () => {
     const attacker = createSideState([createCharacterState(Element.Pyro)]);
     attacker.summons.push({ cardId: GCG_BURNING_FLAME_ID, counter: 0, rounds: 0, usages: 1 });
     const duel: GcgDuel = {
+      cardModules: GcgCardIdModuleMap,
+      skillModules: GcgEffectNameSkillModuleMap,
       actingSideIndex: 0,
       firstSideIndex: 0,
       nextFirstSideIndex: 0,

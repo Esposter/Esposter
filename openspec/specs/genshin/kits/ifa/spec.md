@@ -79,6 +79,28 @@ Ifa's skill SHALL start its 7.5-second cooldown when pressed and SHALL deal no h
 - **WHEN** the player presses the skill again within 7.5 seconds
 - **THEN** nothing happens
 
+### Requirement: Second constellation counts the party's points above 60 three times over
+
+From her second constellation, with her first ascension, the party's Nightsoul points above 60 SHALL count three times over toward Rescue Essentials, and the cap SHALL rise by 50 to 200 points. The rule is gcsim's (`internal/characters/ifa/cons.go`, lines 29 to 45). The in-game text of this constellation is not read: the wiki's Constellation table lists only levels 1, 3 and 6, and the dump's talent rows were not decoded for it. Below her second constellation the points count once and the cap is 150.
+
+#### Scenario: Constellation 2 counts 80 party points as 140
+
+- **GIVEN** Ifa is at her second constellation and her first ascension, and her party holds 80 Nightsoul points across her blessing and Iansan's
+- **WHEN** a Swirl the party makes is priced
+- **THEN** it takes a DMG Bonus of 2.1, which is 1.5% of 140 points
+
+#### Scenario: Constellation 2 lifts the cap to 200 points
+
+- **GIVEN** Ifa is at her second constellation and her first ascension, and her party holds 200 Nightsoul points
+- **WHEN** a Swirl the party makes is priced
+- **THEN** it takes a DMG Bonus of 3.0, which is 1.5% of 200 points
+
+#### Scenario: Below her second constellation the points above 60 count once
+
+- **GIVEN** Ifa is at her first constellation and her first ascension, and her party holds 80 Nightsoul points
+- **WHEN** a Swirl the party makes is priced
+- **THEN** it takes a DMG Bonus of 1.2, which is 1.5% of 80 points
+
 ### Requirement: Fourth constellation adds 100 Elemental Mastery for 15 seconds after her burst
 
 From constellation 4, Ifa SHALL gain 100 Elemental Mastery for 15 seconds when her burst starts. Her wind current's three extra seconds are not built.
@@ -113,7 +135,7 @@ Ifa's skill press SHALL enter her Nightsoul Blessing with 80 Nightsoul points, w
 
 ### Requirement: First ascension's Rescue Essentials add to the party's reactions
 
-From her first ascension, Ifa's Rescue Essentials SHALL add 1.5% DMG to each Swirl and Electro-Charged reaction her party makes, and 0.2% to each Lunar-Charged, for each of her Nightsoul points up to 150. The points SHALL be the ones she holds, and they SHALL be cleared when her blessing ends. Below her first ascension they SHALL add nothing. Stellar Swirl SHALL NOT take them yet.
+From her first ascension, Ifa's Rescue Essentials SHALL add 1.5% DMG to each Swirl and Electro-Charged reaction her party makes, and 0.2% to each Lunar-Charged, for each of her Nightsoul points up to 150, or up to 200 from her second constellation. The points SHALL be the Nightsoul points of her whole deployed party, up to 150, and they SHALL count only while her own blessing lasts. Below her first ascension they SHALL add nothing. Stellar Swirl SHALL NOT take them yet.
 
 #### Scenario: Swirl and Electro-Charged take 1.5% a point, up to 150 points
 
@@ -121,6 +143,19 @@ From her first ascension, Ifa's Rescue Essentials SHALL add 1.5% DMG to each Swi
 - **WHEN** a Swirl or Electro-Charged the party makes is priced
 - **THEN** it takes a DMG Bonus of 1.2
 - **AND** with 200 points it takes the DMG Bonus of 150 points, 2.25
+
+#### Scenario: A direct Lunar-Charged hit takes the same DMG Bonus
+
+- **GIVEN** Ifa is at her first ascension and in the Nightsoul Blessing with 80 points
+- **WHEN** a direct Lunar-Charged hit the party makes is priced
+- **THEN** it takes a DMG Bonus of 0.16 into its reaction bonus, as a Lunar-Charged reaction does
+
+#### Scenario: The party's points count, not Ifa's alone
+
+- **GIVEN** Ifa is at her first ascension and in the Nightsoul Blessing with 40 points
+- **AND** a party member is in the Nightsoul Blessing with 40 points
+- **WHEN** a Swirl the party makes is priced
+- **THEN** it takes a DMG Bonus of 1.2
 
 #### Scenario: Lunar-Charged takes 0.2% a point
 

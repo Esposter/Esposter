@@ -20,6 +20,9 @@ export interface Party {
   healthChanges: PartyHealthChange[];
   lunarChargedCloud: LunarChargedCloud;
   lunarCrystallize: PartyLunarCrystallize;
+  // The seconds left before the team's Nightsoul burst may go off again, none once it runs out, as the team holds one burst's
+  // Interval for the whole team rather than for a character
+  nightsoulBurstCooldownSeconds: number;
   // The seconds left before each source may drop its particle again, none once it is spent
   particleCooldownSecondsMap: Map<ParticleSource, number>;
   switchedSeconds: number;

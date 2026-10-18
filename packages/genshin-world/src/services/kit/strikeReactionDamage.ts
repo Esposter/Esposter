@@ -10,10 +10,10 @@ import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { damageKitEnemy } from "#src/services/kit/damageKitEnemy";
 
 // A reaction's own hit written into the enemy in place: its damage before RES, taken against the enemy's RES to the
-// Element, its energy dropping to the team as the element of the member who owns it
+// Element, or Physical when it has none, its energy dropping to the team as the element of the member who owns it
 export const strikeReactionDamage = (
   enemy: Enemy,
-  element: Element,
+  element: Element | undefined,
   damage: number,
   owner: Combatant | undefined,
   context: KitContext,
@@ -22,7 +22,13 @@ export const strikeReactionDamage = (
   const kind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
   const resistance = getEnemyResistance(kind, enemy, element);
   collectKitEnergyDrops(
-    damageKitEnemy(enemy, { damage: damage * getResistanceMultiplier(resistance), poiseDamage: 0 }, owner, context),
+    damageKitEnemy(
+      enemy,
+      { damage: damage * getResistanceMultiplier(resistance), poiseDamage: 0 },
+      element !== undefined,
+      owner,
+      context,
+    ),
     owner?.element,
     context,
   );

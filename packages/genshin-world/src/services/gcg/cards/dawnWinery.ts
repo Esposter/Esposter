@@ -2,8 +2,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
 import { takeOne } from "@esposter/shared";
+import { DAWN_WINERY_ID } from "#src/services/gcg/cards/constants";
 
-const DAWN_WINERY_ID = 321_004;
 const DAWN_WINERY_SWITCH_LIMIT = 2;
 
 // Dawn Winery: when its side switches characters, one die of any face less is spent, twice a round

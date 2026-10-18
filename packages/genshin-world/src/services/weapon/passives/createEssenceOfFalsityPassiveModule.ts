@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
@@ -16,7 +16,7 @@ const LUNAR_BLOOM_REACTIONS = [{ reactionType: ReactionType.LunarBloom }];
 // Lies, raising its Elemental Mastery by the first amount for the first seconds, and Lunar-Bloom DMG it deals gives it Moon of
 // Truth, raising its CRIT DMG by the second amount for the second seconds. While both stand, each raise is increased by the
 // Rank's last share, read from the effects as they stand, so ending either one drops the increase
-export const createEssenceOfFalsityPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createEssenceOfFalsityPassiveModule = (params: number[]): PassiveModule => {
   const elementalMastery = takeOne(params, 0);
   const criticalDamage = takeOne(params, 1);
   const secretOfLiesSeconds = takeOne(params, 2);

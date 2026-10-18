@@ -17,6 +17,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -63,6 +64,7 @@ const createConstellation6Context = (constellationCount: number, isPartnerMoonsi
       [partner.characterId, partner],
     ]),
     enemyMap: new Map([[enemy.id, enemy]]),
+    enemyTables,
     party: createParty([combatant.characterId, partner.characterId]),
   });
   JAHODA_KIT.elementalSkill.onStart?.(context);
@@ -296,5 +298,58 @@ describe(createJahodaKitBehaviour, () => {
     expect(new Set(strikes.map(({ hit }) => hit.internalCooldownTag))).toStrictEqual(
       new Set([InternalCooldownTag.JahodaRobotStrike]),
     );
+  });
+
+  test("at Ascendant Gleam, a full flask's drain fires ten Meowballs from 129 frames, every 116 frames, at the absorbed element", () => {
+    expect.hasAssertions();
+    const { context, pursuit } = createConstellation6Context(0, true);
+    fillFlaskUntilDrained(pursuit, context);
+    const meowballs: { element?: Element; frame: number }[] = [];
+    for (let frame = 1; frame <= 1300; frame++)
+      for (const { hit, hitbox } of stepKitTestEffects(1 / 60, context))
+        if (hitbox !== undefined) meowballs.push({ element: hit.element, frame });
+    expect(meowballs.map(({ frame }) => frame)).toStrictEqual([129, 245, 361, 477, 593, 709, 825, 941, 1057, 1173]);
+    expect(new Set(meowballs.map(({ element }) => element))).toStrictEqual(new Set([Element.Pyro]));
+  });
+
+  test("below Ascendant Gleam, a full flask's drain fires no Meowball", () => {
+    expect.hasAssertions();
+    const { context, pursuit } = createConstellation6Context(0, false);
+    fillFlaskUntilDrained(pursuit, context);
+    const strikes = [];
+    for (let frame = 0; frame < 1300; frame++) strikes.push(...stepKitTestEffects(1 / 60, context));
+    expect(strikes.filter(({ hitbox }) => hitbox !== undefined)).toHaveLength(0);
+  });
+
+  test("each Meowball gives Jahoda 2 energy, and no Meowball gives it again within 3.5 seconds of the last", () => {
+    expect.hasAssertions();
+    const { context, pursuit } = createConstellation6Context(0, true);
+    fillFlaskUntilDrained(pursuit, context);
+    // The enemy outlasts the Meowballs, so each one that falls reaches it
+    for (const enemy of context.enemyMap.values()) enemy.health = 1_000_000_000;
+    const energyBefore = getPartyMember(context.party, JAHODA_CHARACTER_ID).energy;
+    for (let frame = 0; frame < 1300; frame++) {
+      stepKitEffects(1 / 60, context);
+      if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
+    }
+    // Five Meowballs fall 3.5 seconds or more after the last that gave energy: those on the 129th, 361st, 593rd, 825th and 1057th frames
+    expect(getPartyMember(context.party, JAHODA_CHARACTER_ID).energy - energyBefore).toBe(10);
+  });
+
+  test("a full flask drained again at Ascendant Gleam replaces the Meowballs still running", () => {
+    expect.hasAssertions();
+    const { context, pursuit } = createConstellation6Context(0, true);
+    fillFlaskUntilDrained(pursuit, context);
+    const strikes = [];
+    for (let frame = 0; frame < 400; frame++) strikes.push(...stepKitTestEffects(1 / 60, context));
+    JAHODA_KIT.elementalSkill.onStart?.(context);
+    const secondPursuit = context.kitEffectState.effects.find(
+      (effect) => effect.kind === "field" && effect.id === "jahoda-pursuit",
+    );
+    if (secondPursuit?.kind !== "field") throw new Error("The second press casts no pursuit");
+    fillFlaskUntilDrained(secondPursuit, context);
+    for (let frame = 0; frame < 1300; frame++) strikes.push(...stepKitTestEffects(1 / 60, context));
+    // The first run strikes three times before the second drain, which stops it, and the second run strikes ten times
+    expect(strikes.filter(({ hitbox }) => hitbox !== undefined)).toHaveLength(13);
   });
 });
