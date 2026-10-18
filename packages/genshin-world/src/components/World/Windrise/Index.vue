@@ -408,6 +408,7 @@ const sheerCold = useSheerCold(
   },
   () => [],
   getAntiColdRatio,
+  () => areaWeather.value,
   (damage) => emit("coldDamage", damage),
 );
 watch(sheerCold, (value) => emit("sheerCold", value));
