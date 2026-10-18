@@ -5,7 +5,7 @@ import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 // The order the record holds them
 export interface KitActionBehaviour extends Pick<
   KitAction,
-  "chargeSeconds" | "checkIsStateEndingPress" | "decideLength" | "onStart"
+  "canStart" | "chargeSeconds" | "checkIsStateEndingPress" | "decideLength" | "onStart"
 > {
   hits?: KitHitBehaviour[];
 }

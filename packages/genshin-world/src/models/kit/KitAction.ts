@@ -13,6 +13,9 @@ export interface KitAction {
   checkIsStateEndingPress?: (context: KitContext) => boolean;
   // Whether the action is an aimed shot, which turns the body to the camera's aim while the aim is held, not to a target
   isAimed?: true;
+  // Whether the action may start as it is pressed, read from the state the team holds then: a cost it holds short of its
+  // Amount refuses the start, which starts nothing and spends nothing
+  canStart?: (context: KitContext) => boolean;
   // Run as the action starts, played by the character on the field at the enemy it targets, if it targets one
   onStart?: (context: KitContext, target?: Enemy) => void;
   // The length the action plays, if it is decided as it runs: once its seconds reach `atSeconds`, `decide` returns the
