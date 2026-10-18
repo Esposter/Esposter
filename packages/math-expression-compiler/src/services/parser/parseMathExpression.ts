@@ -1,0 +1,483 @@
+import type { MathExpressionError } from "#src/models/shared/MathExpressionError";
+import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
+import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
+import type { MathExpressionSignature } from "#src/models/function/MathExpressionSignature";
+import type { Result } from "neverthrow";
+
+import { MathExpressionLogicalOperator } from "#src/models/shared/MathExpressionLogicalOperator";
+import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
+import { MathExpressionParameterType } from "#src/models/function/MathExpressionParameterType";
+import { MathExpressionTokenType } from "#src/models/parser/MathExpressionTokenType";
+import { computeNumberLiteral } from "#src/services/parser/computeNumberLiteral";
+import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/parser/constants";
+import { failMathExpression } from "#src/services/parser/failMathExpression";
+import { failMathExpressionAt } from "#src/services/parser/failMathExpressionAt";
+import { getMathExpressionColumn } from "#src/services/parser/getMathExpressionColumn";
+import { getMathExpressionParameterType } from "#src/services/shared/getMathExpressionParameterType";
+import { getMathExpressionSignatures } from "#src/services/shared/getMathExpressionSignatures";
+import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
+import { matchMathExpressionSignature } from "#src/services/shared/matchMathExpressionSignature";
+import { err, ok } from "neverthrow";
+
+// The operators of each level, from the loosest binding to the tightest, as the function each one computes. Each
+// Level's parse reads its operands from the level below, so the precedence is the order of the functions
+const RELATIONAL_OPERATORS: Readonly<Record<string, string>> = {
+  "!=": "unequal",
+  "<": "smaller",
+  "<=": "smallerEq",
+  "==": "equal",
+  ">": "larger",
+  ">=": "largerEq",
+};
+const SHIFT_OPERATORS: Readonly<Record<string, string>> = {
+  "<<": "leftShift",
+  ">>": "rightArithShift",
+  ">>>": "rightLogShift",
+};
+const ADD_OPERATORS: Readonly<Record<string, string>> = { "+": "add", "-": "subtract" };
+const MULTIPLY_OPERATORS: Readonly<Record<string, string>> = {
+  "%": "mod",
+  "*": "multiply",
+  ".*": "dotMultiply",
+  "./": "dotDivide",
+  "/": "divide",
+  mod: "mod",
+};
+const UNARY_OPERATORS: Readonly<Record<string, string>> = {
+  "+": "unaryPlus",
+  "-": "unaryMinus",
+  not: "not",
+  "~": "bitNot",
+};
+const POWER_OPERATORS: Readonly<Record<string, string>> = { ".^": "dotPow", "^": "pow" };
+const PLACEHOLDER: MathExpressionNode = { type: MathExpressionNodeType.Number, value: Number.NaN };
+
+const checkHasOperator = (operators: Readonly<Record<string, string>>, token: string): boolean =>
+  Object.hasOwn(operators, token);
+
+// Reads the token as the state's own string, so a comparison is never against a literal the state narrowed earlier.
+// TypeScript keeps a narrowing of a property across the calls that advance the tokenizer (microsoft/TypeScript#9998).
+const checkIsToken = (state: MathExpressionParserState, token: string): boolean => state.token === token;
+
+const checkCanNest = (state: MathExpressionParserState): boolean => {
+  if (state.depth < MAX_MATH_EXPRESSION_DEPTH) return true;
+
+  failMathExpression(state, `Formula nests deeper than ${MAX_MATH_EXPRESSION_DEPTH} levels`);
+  return false;
+};
+
+const restore = (state: MathExpressionParserState, snapshot: MathExpressionParserState): void => {
+  Object.assign(state, snapshot);
+};
+
+const checkIsSignedNumber = (node: MathExpressionNode): boolean => {
+  if (node.type === MathExpressionNodeType.Number) return true;
+  return (
+    node.type === MathExpressionNodeType.Unary &&
+    (node.name === "unaryMinus" || node.name === "unaryPlus") &&
+    node.operand.type === MathExpressionNodeType.Number
+  );
+};
+
+// A constant of the implicit product, which a name or a parenthesis after it does not multiply again: `2 3` is an error
+const checkIsConstantOperand = (node: MathExpressionNode): boolean => {
+  if (node.type === MathExpressionNodeType.Number) return true;
+  return (
+    node.type === MathExpressionNodeType.Unary &&
+    (node.name === "unaryMinus" || node.name === "unaryPlus" || node.name === "bitNot") &&
+    node.operand.type === MathExpressionNodeType.Number
+  );
+};
+
+// The operators that a number cannot follow in an implicit product, where a factorial is still an operand
+const checkIsOperatorOperand = (node: MathExpressionNode): boolean => {
+  if (node.type === MathExpressionNodeType.Unary) return node.name !== "factorial";
+  return (
+    node.type === MathExpressionNodeType.Binary ||
+    node.type === MathExpressionNodeType.Comparison ||
+    node.type === MathExpressionNodeType.Logical
+  );
+};
+
+const parseSequence = (
+  state: MathExpressionParserState,
+  closing: string,
+  parseItem: (state: MathExpressionParserState) => MathExpressionNode,
+): MathExpressionNode[] => {
+  const nodes: MathExpressionNode[] = [];
+  if (checkIsToken(state, closing)) return nodes;
+
+  while (state.error === null) {
+    nodes.push(parseItem(state));
+    if (!checkIsToken(state, ",")) break;
+    getMathExpressionToken(state);
+  }
+  if (state.error === null && !checkIsToken(state, closing))
+    failMathExpression(state, closing === ")" ? "Parenthesis ) expected" : "Parenthesis ] expected");
+  return nodes;
+};
+
+const getArityMessage = (name: string, minArity: number, maxArity: number): string => {
+  if (maxArity === Number.POSITIVE_INFINITY) return `"${name}" takes at least ${minArity} arguments`;
+  if (minArity === maxArity) return `"${name}" takes ${minArity} arguments`;
+  return `"${name}" takes ${minArity} or ${maxArity} arguments`;
+};
+
+// A call no signature takes is an arity error when no signature has its count of arguments, else a list in the wrong place
+const getSignatureError = (
+  name: string,
+  signatures: readonly MathExpressionSignature[],
+  parameterTypes: MathExpressionParameterType[],
+): string => {
+  const count = parameterTypes.length;
+  const fitting = signatures.filter((signature) => count >= signature.minArity && count <= signature.maxArity);
+  if (fitting.length === 0)
+    return getArityMessage(
+      name,
+      Math.min(...signatures.map((signature) => signature.minArity)),
+      Math.max(...signatures.map((signature) => signature.maxArity)),
+    );
+  if (parameterTypes.includes(MathExpressionParameterType.List)) return `"${name}" does not take a list argument`;
+  return `"${name}" takes a list argument`;
+};
+
+// A list is a call's argument alone, and holds numbers only, so a list inside it is refused as any other value is
+const parseList = (state: MathExpressionParserState): MathExpressionNode => {
+  getMathExpressionToken(state);
+  const elements = parseSequence(state, "]", parseAssignment);
+  if (state.error !== null) return PLACEHOLDER;
+
+  getMathExpressionToken(state);
+  return { elements, type: MathExpressionNodeType.List };
+};
+
+const parseArgument = (state: MathExpressionParserState): MathExpressionNode =>
+  checkIsToken(state, "[") ? parseList(state) : parseAssignment(state);
+
+// Every error of a call is reported at the function's name, which the caller read before the call's parenthesis
+const parseCall = (state: MathExpressionParserState, name: string, column: number): MathExpressionNode => {
+  const signatures = getMathExpressionSignatures(name);
+  if (signatures === undefined) {
+    failMathExpressionAt(state, `Unknown function "${name}"`, column);
+    return PLACEHOLDER;
+  }
+
+  getMathExpressionToken(state);
+  const argumentNodes = parseSequence(state, ")", parseArgument);
+  if (state.error !== null) return PLACEHOLDER;
+
+  getMathExpressionToken(state);
+  const parameterTypes = argumentNodes.map((argument) => getMathExpressionParameterType(argument));
+  if (matchMathExpressionSignature(signatures, parameterTypes) === undefined) {
+    failMathExpressionAt(state, getSignatureError(name, signatures, parameterTypes), column);
+    return PLACEHOLDER;
+  }
+  return { arguments: argumentNodes, name, type: MathExpressionNodeType.Call };
+};
+
+const parseSymbol = (state: MathExpressionParserState): MathExpressionNode => {
+  if (state.tokenType === MathExpressionTokenType.Number) {
+    const value = computeNumberLiteral(state.token);
+    if (value === null) {
+      failMathExpression(state, `String "${state.token.split("i")[0]}" is out of range`);
+      getMathExpressionToken(state);
+      return PLACEHOLDER;
+    }
+
+    getMathExpressionToken(state);
+    return { type: MathExpressionNodeType.Number, value };
+  }
+
+  const isName =
+    state.tokenType === MathExpressionTokenType.Symbol ||
+    (state.tokenType === MathExpressionTokenType.Delimiter && getMathExpressionSignatures(state.token) !== undefined);
+  if (isName) {
+    const name = state.token;
+    const column = getMathExpressionColumn(state);
+    const isSymbol = state.tokenType === MathExpressionTokenType.Symbol;
+    getMathExpressionToken(state);
+    if (checkIsToken(state, "(")) return parseCall(state, name, column);
+    if (isSymbol) return { name, type: MathExpressionNodeType.Name };
+  }
+
+  if (checkIsToken(state, "(")) {
+    getMathExpressionToken(state);
+    const operand = parseAssignment(state);
+    if (state.error === null && !checkIsToken(state, ")")) failMathExpression(state, "Parenthesis ) expected");
+    if (state.error !== null) return PLACEHOLDER;
+
+    getMathExpressionToken(state);
+    return { operand, type: MathExpressionNodeType.Group };
+  }
+
+  failMathExpression(state, checkIsToken(state, "") ? "Unexpected end of expression" : "Value expected");
+  return PLACEHOLDER;
+};
+
+const parseLeftHand = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseSymbol(state);
+  while (state.error === null && (checkIsToken(state, "!") || checkIsToken(state, "'"))) {
+    const name = checkIsToken(state, "!") ? "factorial" : "ctranspose";
+    getMathExpressionToken(state);
+    node = { name, operand: node, type: MathExpressionNodeType.Unary };
+  }
+  return node;
+};
+
+const parseNullish = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseLeftHand(state);
+  while (state.error === null && checkIsToken(state, "??")) {
+    getMathExpressionToken(state);
+    const right = parseLeftHand(state);
+    node = { left: node, operator: MathExpressionLogicalOperator.Nullish, right, type: MathExpressionNodeType.Logical };
+  }
+  return node;
+};
+
+const parsePower = (state: MathExpressionParserState): MathExpressionNode => {
+  const base = parseNullish(state);
+  if (state.error !== null || !checkHasOperator(POWER_OPERATORS, state.token)) return base;
+
+  const name = POWER_OPERATORS[state.token] ?? "pow";
+  getMathExpressionToken(state);
+  const exponent = parseUnary(state);
+  return { left: base, name, right: exponent, type: MathExpressionNodeType.Binary };
+};
+
+const parseUnary = (state: MathExpressionParserState): MathExpressionNode => {
+  if (!checkHasOperator(UNARY_OPERATORS, state.token)) return parsePower(state);
+  if (!checkCanNest(state)) return PLACEHOLDER;
+
+  const name = UNARY_OPERATORS[state.token] ?? "unaryPlus";
+  getMathExpressionToken(state);
+  state.depth++;
+  const operand = parseUnary(state);
+  state.depth--;
+  return { name, operand, type: MathExpressionNodeType.Unary };
+};
+
+// A `%` after an operand is a percentage unless an operand follows it, when it is the modulo operator
+const parsePercentage = (state: MathExpressionParserState): MathExpressionNode => {
+  const node = parseUnary(state);
+  if (state.error !== null || !checkIsToken(state, "%")) return node;
+
+  const snapshot = { ...state };
+  getMathExpressionToken(state);
+  // A sign after the sign is the start of the next term, so the percent sign is always a percentage before one
+  const isSignNext = checkIsToken(state, "+") || checkIsToken(state, "-");
+  if (!isSignNext) parseUnary(state);
+  const isModulo = !isSignNext && state.error === null;
+  restore(state, snapshot);
+  if (isModulo) return node;
+
+  getMathExpressionToken(state);
+  return { operand: node, type: MathExpressionNodeType.Percentage };
+};
+
+// A division of one signed number by another, followed by a name or a parenthesis, is taken first, so `1/2 col0` is
+// `(1/2) * col0`, as mathjs reads it
+const parseDivisionBeforeProduct = (state: MathExpressionParserState): MathExpressionNode => {
+  const dividend = parsePercentage(state);
+  if (state.error !== null || !checkIsToken(state, "/") || !checkIsSignedNumber(dividend)) return dividend;
+
+  const snapshot = { ...state };
+  getMathExpressionToken(state);
+  const divisor = parsePercentage(state);
+  // Mathjs takes only an unsigned divisor into the exception: a signed one binds to the name after it, so 1/-2 col0 is 1/-6
+  const isProductFactor =
+    state.error === null &&
+    divisor.type === MathExpressionNodeType.Number &&
+    (state.tokenType === MathExpressionTokenType.Symbol || checkIsToken(state, "("));
+  if (isProductFactor) return { left: dividend, name: "divide", right: divisor, type: MathExpressionNodeType.Binary };
+
+  restore(state, snapshot);
+  return dividend;
+};
+
+const parseImplicitProduct = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseDivisionBeforeProduct(state);
+  let last = node;
+  while (state.error === null) {
+    const isFactorStart =
+      state.tokenType === MathExpressionTokenType.Symbol ||
+      checkIsToken(state, "(") ||
+      (state.tokenType === MathExpressionTokenType.Number &&
+        !checkIsConstantOperand(last) &&
+        !checkIsOperatorOperand(last));
+    if (!isFactorStart) break;
+
+    last = parseDivisionBeforeProduct(state);
+    node = { left: node, name: "multiply", right: last, type: MathExpressionNodeType.Binary };
+  }
+  return node;
+};
+
+const parseMultiplyDivide = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseImplicitProduct(state);
+  while (state.error === null && checkHasOperator(MULTIPLY_OPERATORS, state.token)) {
+    const name = MULTIPLY_OPERATORS[state.token] ?? "multiply";
+    getMathExpressionToken(state);
+    const right = parseImplicitProduct(state);
+    node = { left: node, name, right, type: MathExpressionNodeType.Binary };
+  }
+  return node;
+};
+
+const parseAddSubtract = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseMultiplyDivide(state);
+  while (state.error === null && checkHasOperator(ADD_OPERATORS, state.token)) {
+    const name = ADD_OPERATORS[state.token] ?? "add";
+    getMathExpressionToken(state);
+    const right = parseMultiplyDivide(state);
+    node = { left: node, name, right, type: MathExpressionNodeType.Binary };
+  }
+  return node;
+};
+
+const parseShift = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseAddSubtract(state);
+  while (state.error === null && checkHasOperator(SHIFT_OPERATORS, state.token)) {
+    const name = SHIFT_OPERATORS[state.token] ?? "leftShift";
+    getMathExpressionToken(state);
+    const right = parseAddSubtract(state);
+    node = { left: node, name, right, type: MathExpressionNodeType.Binary };
+  }
+  return node;
+};
+
+// Comparisons chain: `a < b < c` holds when each adjacent pair does, so the operands are kept in order
+const parseRelational = (state: MathExpressionParserState): MathExpressionNode => {
+  const first = parseShift(state);
+  const names: string[] = [];
+  const operands: MathExpressionNode[] = [first];
+  while (state.error === null && checkHasOperator(RELATIONAL_OPERATORS, state.token)) {
+    names.push(RELATIONAL_OPERATORS[state.token] ?? "equal");
+    getMathExpressionToken(state);
+    operands.push(parseShift(state));
+  }
+  if (names.length === 0) return first;
+  return { names, operands, type: MathExpressionNodeType.Comparison };
+};
+
+const parseBitwiseAnd = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseRelational(state);
+  while (state.error === null && checkIsToken(state, "&")) {
+    getMathExpressionToken(state);
+    const right = parseRelational(state);
+    node = { left: node, name: "bitAnd", right, type: MathExpressionNodeType.Binary };
+  }
+  return node;
+};
+
+const parseBitwiseXor = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseBitwiseAnd(state);
+  while (state.error === null && checkIsToken(state, "^|")) {
+    getMathExpressionToken(state);
+    const right = parseBitwiseAnd(state);
+    node = { left: node, name: "bitXor", right, type: MathExpressionNodeType.Binary };
+  }
+  return node;
+};
+
+const parseBitwiseOr = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseBitwiseXor(state);
+  while (state.error === null && checkIsToken(state, "|")) {
+    getMathExpressionToken(state);
+    const right = parseBitwiseXor(state);
+    node = { left: node, name: "bitOr", right, type: MathExpressionNodeType.Binary };
+  }
+  return node;
+};
+
+const parseLogicalAnd = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseBitwiseOr(state);
+  while (state.error === null && checkIsToken(state, "and")) {
+    getMathExpressionToken(state);
+    const right = parseBitwiseOr(state);
+    node = { left: node, operator: MathExpressionLogicalOperator.And, right, type: MathExpressionNodeType.Logical };
+  }
+  return node;
+};
+
+const parseLogicalXor = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseLogicalAnd(state);
+  while (state.error === null && checkIsToken(state, "xor")) {
+    getMathExpressionToken(state);
+    const right = parseLogicalAnd(state);
+    node = { left: node, name: "xor", right, type: MathExpressionNodeType.Binary };
+  }
+  return node;
+};
+
+const parseLogicalOr = (state: MathExpressionParserState): MathExpressionNode => {
+  let node = parseLogicalXor(state);
+  while (state.error === null && checkIsToken(state, "or")) {
+    getMathExpressionToken(state);
+    const right = parseLogicalXor(state);
+    node = { left: node, operator: MathExpressionLogicalOperator.Or, right, type: MathExpressionNodeType.Logical };
+  }
+  return node;
+};
+
+// The true branch is an assignment, so a conditional may nest inside it; the false branch is right associative
+const parseConditional = (state: MathExpressionParserState): MathExpressionNode => {
+  const condition = parseLogicalOr(state);
+  if (state.error !== null || !checkIsToken(state, "?")) return condition;
+
+  getMathExpressionToken(state);
+  if (checkIsToken(state, ":")) {
+    failMathExpression(state, "The true-expression of a conditional operator may not be empty");
+    return PLACEHOLDER;
+  }
+  const whenTrue = parseAssignment(state);
+  if (state.error === null && !checkIsToken(state, ":"))
+    failMathExpression(state, "False part of conditional expression expected");
+
+  if (state.error !== null) return PLACEHOLDER;
+
+  getMathExpressionToken(state);
+  const whenFalse = parseConditional(state);
+  return { condition, type: MathExpressionNodeType.Conditional, whenFalse, whenTrue };
+};
+
+// An assignment binds a plain name, and the value on its right is an assignment in turn
+const parseAssignment = (state: MathExpressionParserState): MathExpressionNode => {
+  if (!checkCanNest(state)) return PLACEHOLDER;
+
+  state.depth++;
+  const left = parseConditional(state);
+  let node = left;
+  if (state.error === null && checkIsToken(state, "="))
+    if (left.type === MathExpressionNodeType.Name) {
+      getMathExpressionToken(state);
+      const value = parseAssignment(state);
+      node = { name: left.name, type: MathExpressionNodeType.Assignment, value };
+    } else failMathExpression(state, "Invalid left hand side of assignment operator =");
+
+  state.depth--;
+  return node;
+};
+
+// Parses a whole formula into its tree, or returns the first error it meets, positioned as mathjs positions it
+export const parseMathExpression = (formula: string): Result<MathExpressionNode, MathExpressionError> => {
+  const state: MathExpressionParserState = {
+    depth: 0,
+    error: null,
+    index: 0,
+    nestingLevel: 0,
+    source: formula,
+    token: "",
+    tokenType: MathExpressionTokenType.Null,
+  };
+  getMathExpressionToken(state);
+  const node = parseAssignment(state);
+  if (state.error === null && !checkIsToken(state, ""))
+    failMathExpression(
+      state,
+      state.tokenType === MathExpressionTokenType.Delimiter
+        ? `Unexpected operator ${state.token}`
+        : `Unexpected part "${state.token}"`,
+    );
+
+  return state.error === null ? ok(node) : err(state.error);
+};
