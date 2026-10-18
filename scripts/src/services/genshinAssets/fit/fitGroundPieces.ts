@@ -1,17 +1,11 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { GroundPiece } from "#src/models/genshinAssets/fit/GroundPiece";
+import type { GroundPiecesFit } from "#src/models/genshinAssets/fit/GroundPiecesFit";
 import type { GroundSource } from "#src/models/genshinAssets/fit/GroundSource";
 
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { fitGroundPiece } from "#src/services/genshinAssets/fit/fitGroundPiece";
 import { splitGroundPiece } from "#src/services/genshinAssets/fit/splitGroundPiece";
 import { GROUND_GATE_SAMPLES } from "#src/services/genshinAssets/shared/constants";
-
-export interface GroundPiecesFit {
-  build: GameDataBuild;
-  // Whether some part of the piece is left unfitted: the piece itself when it cannot split, or a quarter refused in turn
-  isRefused: boolean;
-}
 
 // A piece fitted, and where its bar misses its gate, its four quarters fitted the same way, until each holds its gate or
 // Reads on fewer samples than a gate needs. A piece that cannot split is refused in place

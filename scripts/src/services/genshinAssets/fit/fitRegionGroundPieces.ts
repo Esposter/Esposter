@@ -1,3 +1,4 @@
+import type { RegionGroundFit } from "#src/models/genshinAssets/fit/RegionGroundFit";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 
@@ -5,14 +6,6 @@ import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces
 import { readGroundSource } from "#src/services/genshinAssets/fit/readGroundSource";
 import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas";
 import { toGroundPiece } from "#src/services/genshinAssets/fit/toGroundPiece";
-
-export interface RegionGroundFit {
-  isQualified: boolean;
-  // What holds the region back when it does not qualify, its refused areas and its outline-less ones
-  reason: string;
-  // Each outlined area's build, in the catalogue's order
-  pieces: { areaId: string; build: GameDataBuild }[];
-}
 
 // A region's ground fitted in pieces, all or nothing: its pieces publish only when every one of its areas holds, since a
 // Region swaps its plateau for them only then. An area with no outline has no piece, so the plateau's ground under it

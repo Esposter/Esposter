@@ -1,5 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
-import type { RegionGroundFit } from "#src/services/genshinAssets/fit/fitRegionGroundPieces";
+import type { RegionGroundFit } from "#src/models/genshinAssets/fit/RegionGroundFit";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitHud } from "#src/services/genshinAssets/fit/fitHud";
