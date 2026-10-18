@@ -12,7 +12,9 @@ Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`,
 
 ## Not built
 
-- **The Oriole-Song hooks wait on the shared stack service.** The stack service is built; his burst, second and fourth constellations do not yet hook into it.
+- **His burst starts Haunted Night's Oriole-Song, and that is built.** Shadowless Reflection starts it for 20 seconds with 21 stacks of Nightingale's Song, both as the wiki's talent text gives them, through the shared stack service.
+- **The stacks are not spent yet.** Nightingale's Song's stacks are spent on the Geo hits nearby party members deal, and the Geo DMG bonus they give is not built; the wiki's text for that bonus is not read in full.
+- **Constellations 2 and 4 are not built.** Constellation 2's text is not in the wiki cache, and Constellation 4 (Solarhunting Wolf) needs its Oriole-Song stacks and damage.
 
 ## Key files
 
