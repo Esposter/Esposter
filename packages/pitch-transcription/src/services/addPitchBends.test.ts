@@ -7,13 +7,13 @@ const toContourRow = (peakBins: number[]) =>
   Array.from({ length: CONTOUR_BINS }, (_value, bin) => (peakBins.includes(bin) ? 1 : 0));
 
 describe(addPitchBends, () => {
-  const MIDDLE_PITCH = 60;
-  const MIDDLE_BIN = (MIDDLE_PITCH - MIDI_OFFSET) * CONTOUR_BINS_PER_SEMITONE;
+  const middlePitch = 60;
+  const middleBin = (middlePitch - MIDI_OFFSET) * CONTOUR_BINS_PER_SEMITONE;
 
   test.each<[string, number, number[][], number[]]>([
-    ["the middle of the range", MIDDLE_PITCH, [[MIDDLE_BIN + 1], [MIDDLE_BIN - 1]], [1, -1]],
+    ["the middle of the range", middlePitch, [[middleBin + 1], [middleBin - 1]], [1, -1]],
     ["the bottom edge, the search clipped at bin 0", MIDI_OFFSET, [[1]], [1]],
-    ["a tie, to the lower bin", MIDDLE_PITCH, [[MIDDLE_BIN - 1, MIDDLE_BIN + 1]], [-1]],
+    ["a tie, to the lower bin", middlePitch, [[middleBin - 1, middleBin + 1]], [-1]],
   ])(
     "reads each frame's bend as its contour's offset in bins from the note's pitch, %s",
     (_label, pitchMidi, peakBinsByFrame, expected) => {
