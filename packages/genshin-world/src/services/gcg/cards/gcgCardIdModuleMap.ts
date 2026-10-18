@@ -1,5 +1,6 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
 import { aurousBlaze } from "#src/services/gcg/cards/aurousBlaze";
 import { blessingOfTheDivineRelicsInstallation } from "#src/services/gcg/cards/blessingOfTheDivineRelicsInstallation";
 import { brokenRimesEcho } from "#src/services/gcg/cards/brokenRimesEcho";
@@ -133,6 +134,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [312_201, wineStainedTricorne],
   [312_301, witchsScorchingHat],
   [312_302, crimsonWitchOfFlames],
+  [312_602, archaicPetra],
   [312401, thunderSummonersCrown],
   [312501, viridescentVenerersDiadem],
   [312_601, maskOfSolitudeBasalt],
