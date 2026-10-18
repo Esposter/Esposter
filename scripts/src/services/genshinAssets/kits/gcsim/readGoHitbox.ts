@@ -4,11 +4,11 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
+import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-import { readArgumentStarts } from "#src/services/genshinAssets/kits/gcsim/readArgumentStarts";
 
 // The layout of a `combat` hitbox constructor's arguments: an on-target one takes its target first, a source one its
 // Source then its centre, each then its offset, its size (a circle's radius, a box's width and height) and a fan angle
@@ -93,13 +93,10 @@ export const readGoHitbox = (
     position += 2;
   const constructorToken = tokens[position];
   const hitboxConstructor = HITBOX_CONSTRUCTORS.get(constructorToken?.text ?? "");
-  if (
-    constructorToken === undefined ||
-    hitboxConstructor === undefined ||
-    !checkIsGoPunctuation(tokens[position + 1], "(")
-  )
-    return undefined;
-  const argumentStarts = readArgumentStarts(tokens, position + 1);
+  if (constructorToken === undefined || hitboxConstructor === undefined) return undefined;
+  const call = parseGoExpression(tokens, start).expression;
+  if (call.kind !== GoExpressionKind.Call) return undefined;
+  const argumentStarts = call.parameterStarts;
   const { fanAngle: hasFanAngle, onTarget, shape } = hitboxConstructor;
   const sizeCount = shape === GcsimHitboxShape.Circle ? 1 : 2;
   const offsetIndex = onTarget ? 1 : 2;
