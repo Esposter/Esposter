@@ -50,7 +50,6 @@ packages/genshin-world/src/
 | :----------------------------------------------------------- | :------------------------------------------------------- |
 | `packages/genshin-world/src/composables/useJumpLandmarks.ts` | Keeps the waypoints among the jumps once they are fitted |
 | `packages/genshin-world/src/services/map/constants.ts`       | `JUMP_LANDMARK_KINDS` gains the waypoint                 |
-| `packages/genshin-world/src/components/Hud/Screen/Index.vue` | Points toward a near locked waypoint                     |
 
 ## Sources
 
