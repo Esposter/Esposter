@@ -3,4 +3,4 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-touches: ["packages/genshin-world/src/services/archive/**"]
-x-waiting: "the viewpoints (1.1, 1.2) wait on the hosted scene group record `sceneGroups/scene3`, which `packages/genshin-world/src/generated/gameDataLock.json` does not publish (`pnpm -C scripts genshin:assets scene-groups` produces it from the install); the tutorials (3.1) wait on a shown tip, a world event nothing raises yet; the artifact sets (5.1) wait on the first artifact drop reaching the bag, which no world drop yields yet"
+x-waiting: "the viewpoints (1.1, 1.2) wait on the hosted scene group record `sceneGroups/scene3`, which `packages/genshin-world/src/generated/gameDataLock.json` does not publish (`pnpm -C scripts genshin:assets scene-groups` produces it from the install); the tutorials (3.1) wait on a shown tip, a world event nothing raises yet"

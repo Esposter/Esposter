@@ -8,7 +8,7 @@ import { effectScope, nextTick } from "vue";
 
 describe(useWorldSave, () => {
   const PRIMOGEMS = 160;
-  const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map());
+  const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map(), new Map());
 
   test("emits one grant for every change made in one tick", async () => {
     expect.hasAssertions();
@@ -59,6 +59,7 @@ describe(useWorldSave, () => {
     const cookingSavedState = readGenshinSave(
       { ...EMPTY_GENSHIN_SAVE, cooking: { learnedRecipeIds: [1], processingJobs: {}, proficiencies: { 1: 2 } } },
       {},
+      new Map(),
       new Map(),
       new Map(),
     );

@@ -6,6 +6,7 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
@@ -27,6 +28,7 @@ import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { placeDroppedItems } from "#src/services/interaction/placeDroppedItems";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
@@ -49,6 +51,7 @@ export const useWorldPickups = ({
   inventory,
   materialDataMap,
   nameText,
+  reliquaryPieceEntryMap,
   serverClockOffsetMs,
   setInventory,
   setWallet,
@@ -62,6 +65,7 @@ export const useWorldPickups = ({
   getWorldNow: () => Temporal.Instant;
   inventory: Ref<Inventory>;
   materialDataMap: ReadonlyMap<number, MaterialData>;
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   nameText: Readonly<Record<string, string>>;
   serverClockOffsetMs: number;
   setInventory: (nextInventory: Inventory) => void;
@@ -101,7 +105,7 @@ export const useWorldPickups = ({
       name:
         itemId === MORA_ITEM_ID
           ? gameText[GameTextKey.Mora]
-          : getItemDefinition(itemId, nameText, materialDataMap).name,
+          : getDroppedItemDefinition(itemId, nameText, materialDataMap, reliquaryPieceEntryMap).name,
       position: { x, y: getGroundHeight(x, z), z },
     }));
     const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
@@ -149,7 +153,14 @@ export const useWorldPickups = ({
       worldDrops.value = worldDrops.value.filter((drop) => drop !== worldDrop);
       return;
     }
-    const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, nameText, materialDataMap);
+    const pickUp = pickUpDroppedItem(
+      worldDrop,
+      inventory.value,
+      wallet.value,
+      nameText,
+      materialDataMap,
+      reliquaryPieceEntryMap,
+    );
     setInventory(pickUp.inventory);
     setWallet(pickUp.wallet);
     bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";

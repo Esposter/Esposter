@@ -26,6 +26,8 @@ import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbear
 import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
 import { pairSeelieCourts } from "#src/services/puzzle/pairSeelieCourts";
 import { readMondstadtPuzzlePlaces } from "#src/services/puzzle/readMondstadtPuzzlePlaces";
+import { createReliquaryPieceEntryMap } from "#src/services/reliquary/createReliquaryPieceEntryMap";
+import { readReliquarySets } from "#src/services/reliquary/readReliquarySets";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
@@ -92,6 +94,7 @@ getResultAsync(() =>
       measureLoadStep("shop-goods", readShopGoodMap(props.gameDataBaseUrl)),
       measureLoadStep("paimons-bargains-rotation", readPaimonsBargainsRotation(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-levels", readFrostbearingTreeLevels(props.gameDataBaseUrl)),
+      measureLoadStep("reliquary-sets", readReliquarySets(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -116,6 +119,7 @@ getResultAsync(() =>
     shopIdShopGoodMap,
     paimonsBargainsRotation,
     frostbearingTreeLevels,
+    reliquarySets,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -131,6 +135,8 @@ getResultAsync(() =>
       monumentPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.ElementalMonument),
       nameText,
       paimonsBargainsRotation,
+      reliquaryPieceEntryMap: createReliquaryPieceEntryMap(reliquarySets),
+      reliquarySets,
       seelies: pairSeelieCourts(
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.Seelie),
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.SeelieCourt).map(({ position }) => position),

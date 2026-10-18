@@ -5,6 +5,8 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
+import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
@@ -17,7 +19,7 @@ import { openChest } from "#src/services/chest/openChest";
 import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChestPlaces";
 import { checkIsDropFallingAway } from "#src/services/interaction/checkIsDropFallingAway";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
@@ -41,6 +43,8 @@ export const useWorldChests = ({
   openedChestIds,
   placeWorldDrops,
   puzzleChestPlaces,
+  reliquaryPieceEntryMap,
+  reliquarySets,
   setInventory,
   setWallet,
   wallet,
@@ -58,6 +62,8 @@ export const useWorldChests = ({
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   puzzleChestPlaces: Readonly<Ref<ChestPlace[]>>;
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+  reliquarySets: readonly ReliquarySetData[];
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
@@ -103,6 +109,7 @@ export const useWorldChests = ({
       random,
       Currency.AnemoSigil,
       checkIsDropFallingAway(getGroundHeight(x, z), waterLevel),
+      reliquarySets,
     );
     setWallet(opening.wallet);
     gainWorldAdventureExp(opening.adventureExp);
@@ -110,7 +117,8 @@ export const useWorldChests = ({
     let nextInventory = inventory.value;
     const overflowDrops: DroppedItem[] = [];
     for (const { count, itemId } of opening.bagDrops) {
-      const addition = addInventoryItem(nextInventory, getItemDefinition(itemId, nameText, materialDataMap), count);
+      const definition = getDroppedItemDefinition(itemId, nameText, materialDataMap, reliquaryPieceEntryMap);
+      const addition = addInventoryItem(nextInventory, definition, count);
       nextInventory = addition.inventory;
       if (addition.overflow > 0) overflowDrops.push({ count: addition.overflow, itemId });
       events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(itemId) });
