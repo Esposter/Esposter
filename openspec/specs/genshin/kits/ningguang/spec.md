@@ -1,6 +1,6 @@
 ## Purpose
 
-Ningguang's kit as built: two strikes, a charged attack, her Star Jades, Jade Screen with Starshatter's gems, and Shock Effect's reset, with Strategic Reserve and the screen's endurance not built.
+Ningguang's kit as built: two strikes, a charged attack, her Star Jades, Jade Screen with Starshatter's gems, Shock Effect's reset and Piercing Fragments' wider gems, with Strategic Reserve and the screen's endurance not built.
 
 ## Requirements
 
@@ -109,9 +109,20 @@ From Ascension 1, Backup Plan's free charged attack SHALL take effect.
 - **WHEN** the player uses the charged attack
 - **THEN** the free charged attack applies
 
+### Requirement: Piercing Fragments widens the gems
+
+From one constellation, each strike's gem SHALL be a 3.5-metre circle, so it strikes enemies up to 8.5 metres from Ningguang.
+
+#### Scenario: Piercing Fragments widens a strike's gem
+
+- **GIVEN** Ningguang has one constellation
+- **WHEN** a strike's gem lands
+- **THEN** the gem is a 3.5-metre circle centred on the primary target
+- **AND** it strikes enemies up to 8.5 metres from her
+
 ### Requirement: Unbuilt Ningguang effects
 
-Strategic Reserve, the screen's endurance, Exquisite be the Jade and Outshining All Beneath SHALL NOT take effect.
+Strategic Reserve, the screen's endurance, the skill's particles, Exquisite be the Jade and Outshining All Beneath SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

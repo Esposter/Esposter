@@ -39,7 +39,7 @@ While Soukai Kanka lasts, Ayato's normal attacks SHALL be Shunsuiken strikes tha
 
 #### Scenario: Namisen stacks stop at their cap
 
-- **GIVEN** Namisen stacks are at their cap of four or five
+- **GIVEN** Namisen stacks are at their cap, four below Constellation 2 and five from it
 - **WHEN** a Shunsuiken strike lands on an enemy
 - **THEN** no further stack is added
 

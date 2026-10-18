@@ -20,7 +20,7 @@ Zhongli's normal attack SHALL be six strikes, the fifth of four hits, followed b
 
 ### Requirement: Stone Steles
 
-Dominus Lapidis SHALL summon a Stone Stele 3 metres ahead of Zhongli, which resonates every 2 seconds and stands for 30 seconds.
+Dominus Lapidis SHALL summon a Stone Stele 3 metres ahead of Zhongli, which resonates every 2 seconds and stands for 1860 frames, about 31 seconds.
 
 #### Scenario: Press summons a stele
 
