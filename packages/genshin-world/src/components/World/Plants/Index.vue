@@ -13,10 +13,11 @@ import {
 } from "#src/services/windrise/constants";
 import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
 import { bakeTreeImpostor } from "#src/services/world/bakeTreeImpostor";
+import { composePlantPlaceMatrix } from "#src/services/world/composePlantPlaceMatrix";
 import { withFinalizer } from "@esposter/shared";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import { createImpostorMaterial, createInstancedMesh, createToonMaterial, createTreeGeometry } from "genshin-engine";
-import { Euler, Group, InstancedMesh, Matrix4, PlaneGeometry, Quaternion, SphereGeometry, Vector3 } from "three";
+import { Group, InstancedMesh, Matrix4, PlaneGeometry, SphereGeometry, Vector3 } from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
@@ -37,10 +38,6 @@ const { renderer } = useTres();
 const { onBeforeRender } = useLoop();
 const plantsGroup = new Group();
 const matrix = new Matrix4();
-const position = new Vector3();
-const quaternion = new Quaternion();
-const euler = new Euler();
-const scale = new Vector3();
 const domeFactor = new Vector3(...PLANT_DOME_SCALE);
 const domeGeometry = new SphereGeometry(1, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2);
 // The domes stand in the ground's own green and detail
@@ -53,8 +50,7 @@ const domeMaterial = createToonMaterial({
 const oakTreeGeometries: BufferGeometry[] = [];
 const oakTreeMaterials: ToonNodeMaterial[] = [];
 let oakImpostor: Impostor | undefined;
-// Each place's matrix, a prefab's instances in one instanced draw: its ground under it, its turn about the vertical and
-// Its scale, with the factor a stand-in's own geometry takes
+// Each place's matrix, a prefab's instances in one instanced draw, each standing where the game places it
 const addInstances = (
   geometry: BufferGeometry,
   material: ToonNodeMaterial,
@@ -62,20 +58,8 @@ const addInstances = (
   factor: Vector3,
 ): void => {
   const mesh = createInstancedMesh(geometry, material, places.length);
-  for (const [
-    index,
-    {
-      position: { x, z },
-      rotation,
-      scale: placeScale,
-    },
-  ] of places.entries()) {
-    const [scaleX = 1, scaleY = 1, scaleZ = 1] = placeScale;
-    position.set(x, getGroundHeight(x, z), z);
-    quaternion.setFromEuler(euler.set(0, rotation, 0));
-    scale.set(scaleX * factor.x, scaleY * factor.y, scaleZ * factor.z);
-    mesh.setMatrixAt(index, matrix.compose(position, quaternion, scale));
-  }
+  for (const [index, place] of places.entries())
+    mesh.setMatrixAt(index, composePlantPlaceMatrix(matrix, place, getGroundHeight, factor));
   mesh.instanceMatrix.needsUpdate = true;
   plantsGroup.add(mesh);
 };

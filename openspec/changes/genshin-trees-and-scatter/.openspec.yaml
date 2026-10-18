@@ -10,5 +10,8 @@ x-touches:
     "scripts/src/services/genshinAssets/world/checkIsPlantName.test.ts",
     "scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts",
     "packages/genshin-world/src/components/World/Plants/Index.vue",
+    "packages/genshin-world/src/services/world/composeHeadingMatrix.ts",
+    "packages/genshin-world/src/services/world/composePlantPlaceMatrix.ts",
+    "packages/genshin-world/src/services/world/composePlantPlaceMatrix.test.ts",
     "scripts/src/services/genshinAssets/scene/WindrisePlantArrangementFamilies.ts",
   ]
