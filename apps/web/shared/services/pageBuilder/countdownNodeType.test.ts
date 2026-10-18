@@ -54,8 +54,8 @@ describe("countdownNodeType", () => {
 
     const endsAt = toDateInput(localDayFromEpoch(1));
 
-    expect(serializeHtml([countdownNodeType.render(createCountdown(endsAt))]).split(">")[0]).toStrictEqual(
-      `<div aria-atomic="false" aria-live="off" class="countdown" data-end-text="${TEST_LABEL}" data-ends-at="${endsAt}" role="timer"`,
+    expect(serializeHtml([countdownNodeType.render(createCountdown(endsAt))])).toStrictEqual(
+      `<div aria-atomic="false" aria-live="off" class="countdown" data-end-text="${TEST_LABEL}" data-ends-at="${endsAt}" role="timer"><span class="countdown-unit" data-unit="day"><span class="countdown-value"></span> days</span><span class="countdown-unit" data-unit="hour"><span class="countdown-value"></span> hours</span><span class="countdown-unit" data-unit="minute"><span class="countdown-value"></span> minutes</span><span class="countdown-unit" data-unit="second"><span class="countdown-value"></span> seconds</span><span class="countdown-end" hidden=""></span></div>`,
     );
   });
 

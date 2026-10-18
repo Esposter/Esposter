@@ -36,6 +36,8 @@ describe("customHtmlNodeType", () => {
   test("an svg xlink href is removed", () => {
     expect.hasAssertions();
 
-    expect(renderCustomHtml('<svg><a xlink:href="javascript:alert(1)">x</a></svg>')).not.toContain("javascript");
+    expect(renderCustomHtml('<svg><a xlink:href="javascript:alert(1)">x</a></svg>')).toStrictEqual(
+      '<div class="custom-html">x</div>',
+    );
   });
 });
