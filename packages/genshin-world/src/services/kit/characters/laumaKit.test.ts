@@ -34,11 +34,11 @@ import { describe, expect, test } from "vitest";
 
 const LAUMA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAUMA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const createCombatant = (elementalMastery: number): Combatant => ({
+const createCombatant = (elementalMastery: number, constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementalMastery }]),
   characterId: LAUMA_CHARACTER_ID,
-  constellationCount: 0,
+  constellationCount,
   elementalResonances: [],
   kit: LAUMA_KIT,
   level: 90,
@@ -320,6 +320,9 @@ describe("pale hymn", () => {
 // (MIT) lauma/burst.go and the burst's proud skill group
 const BLOOM_INCREASE = 2.7776;
 const LUNAR_BLOOM_INCREASE = 2.2224;
+// Constellation 2's extra Elemental Mastery ratio for each Bloom and each Lunar-Bloom, as gcsim v2.47.2 (MIT) lauma/cons.go gives them
+const C2_BLOOM_INCREASE = 5;
+const C2_LUNAR_BLOOM_INCREASE = 4;
 
 // The base damage Pale Hymn adds to a reaction of the given kind, with Lauma at the given Elemental Mastery and the
 // Party's effects as given
@@ -327,8 +330,9 @@ const readPaleHymnBaseDamageBonus = (
   elementalMastery: number,
   reactionType: ReactionType,
   kitEffectState: KitEffectState,
+  constellationCount = 0,
 ): number => {
-  const combatant = createCombatant(elementalMastery);
+  const combatant = createCombatant(elementalMastery, constellationCount);
   return (
     LAUMA_KIT.getPartyReactionBonus?.(
       combatant,
@@ -400,6 +404,38 @@ describe("pale hymn's base damage bonus", () => {
 
     expect(readPaleHymnBaseDamageBonus(1000, TransformativeReactionType.Bloom, kitEffectState)).toBeCloseTo(
       1000 * BLOOM_INCREASE,
+    );
+  });
+
+  test("adds 5 more Elemental Mastery to each Bloom from Constellation 2, and none from Constellation 1", () => {
+    expect.hasAssertions();
+    const kitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
+      id: LAUMA_PALE_HYMN_BURST_ID,
+      secondsRemaining: 15,
+      stacks: 18,
+    });
+
+    expect({
+      constellation1: readPaleHymnBaseDamageBonus(1000, TransformativeReactionType.Bloom, kitEffectState, 1),
+      constellation2: readPaleHymnBaseDamageBonus(1000, TransformativeReactionType.Bloom, kitEffectState, 2),
+    }).toStrictEqual({
+      constellation1: expect.closeTo(1000 * BLOOM_INCREASE),
+      constellation2: expect.closeTo(1000 * (BLOOM_INCREASE + C2_BLOOM_INCREASE)),
+    });
+  });
+
+  test("adds 4 more Elemental Mastery to each Lunar-Bloom from Constellation 2", () => {
+    expect.hasAssertions();
+    const kitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
+      id: LAUMA_PALE_HYMN_BURST_ID,
+      secondsRemaining: 15,
+      stacks: 18,
+    });
+
+    expect(readPaleHymnBaseDamageBonus(1000, LunarReactionType.LunarBloom, kitEffectState, 2)).toBeCloseTo(
+      1000 * (LUNAR_BLOOM_INCREASE + C2_LUNAR_BLOOM_INCREASE),
     );
   });
 });

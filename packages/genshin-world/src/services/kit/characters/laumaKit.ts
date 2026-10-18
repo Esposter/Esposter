@@ -69,6 +69,13 @@ const MOON_SONG_DEW_ID = "lauma-moon-song-dew";
 const MOON_SONG_ICD_ID = "lauma-moon-song-icd";
 const PALE_HYMN_GAIN_ID = "lauma-pale-hymn-gain";
 // The reactions a Pale Hymn is spent on: Bloom and its kin, and the Lunar-Bloom her Benediction turns Bloom into
+// Constellation 2 adds Elemental Mastery to each Bloom's and each Lunar-Bloom's Pale Hymn ratio, as gcsim v2.47.2 (MIT)
+// Lauma/cons.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go
+const C2_CONSTELLATION = 2;
+const C2_BLOOM_INCREASE = 5;
+const C2_LUNAR_BLOOM_INCREASE = 4;
+
 const PALE_HYMN_REACTION_TYPES = new Set<ReactionType>([
   TransformativeReactionType.Bloom,
   TransformativeReactionType.Burgeon,
@@ -142,9 +149,14 @@ const spendPaleHymn = (kitEffectState: KitEffectState, characterId: number): voi
 // Constellations; the Spirit Envoy's cooldown reduction of Cleansing for the Spring, as the charged attack's cooldown is not
 // Read by a kit
 // Constellation 1 needs the Threads of Life heal on Lunar-Bloom reactions and the Spirit Envoy's stamina, not built
-// Constellation 2 needs the Bloom bonus its Pale Hymn scaling adds, which is not built
 // Constellation 4 needs a hit event from the Sanctuary's ticks to restore her energy, which no kit event carries
 // Constellation 6 needs the Pale Hymn stacks it gives and an extra Lunar-Bloom Dendro hit per Sanctuary attack, not built
+// The Elemental Mastery ratio Constellation 2 adds to a Pale Hymn Bloom, or to a Lunar-Bloom, from Constellation 2 onward
+const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: boolean): number => {
+  if (constellationCount < C2_CONSTELLATION) return 0;
+  return isLunar ? C2_LUNAR_BLOOM_INCREASE : C2_BLOOM_INCREASE;
+};
+
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
@@ -226,12 +238,15 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
     },
     skill: pressBehaviour,
     // Pale Hymn adds her Elemental Mastery to the base damage of each Bloom and Lunar-Bloom the party makes while it holds
-    // Any, as gcsim (MIT) lauma/burst.go does, with her own Elemental Mastery
+    // Any, as gcsim (MIT) lauma/burst.go does, with her own Elemental Mastery, and Constellation 2 adds to each ratio as
+    // Lauma/cons.go does
     getPartyReactionBonus: (member, { reactionType }, { kitEffectState }) => {
       if (!PALE_HYMN_REACTION_TYPES.has(reactionType) || !checkHasPaleHymn(kitEffectState.effects, member.characterId))
         return {};
+      const isLunar = reactionType === LunarReactionType.LunarBloom;
       const increase =
-        reactionType === LunarReactionType.LunarBloom ? paleHymnLunarBloomIncrease : paleHymnBloomIncrease;
+        (isLunar ? paleHymnLunarBloomIncrease : paleHymnBloomIncrease) +
+        readConstellationPaleHymnIncrease(member.constellationCount, isLunar);
       return { additiveBaseDamageBonus: member.attributes.attributeTotalMap[Attribute.ElementalMastery] * increase };
     },
     // A hold with no Dew plays the press, and with Dew Hymn of Eternal Rest, spending it on its Lunar-Bloom hit
