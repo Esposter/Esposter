@@ -1,5 +1,7 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -7,6 +9,9 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -15,6 +20,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
 import { COLUMBINA_CHARACTER_ID, createColumbinaKitBehaviour } from "#src/services/kit/characters/columbinaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -32,6 +38,59 @@ const createColumbinaCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Catalyst,
 });
+
+const OTHER_CHARACTER_ID = 10_000_052;
+const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+const c6Enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+// Columbina and another member at the given constellation, with her burst's window just started
+const createBurstContext = (constellationCount: number) => {
+  const columbina = { ...createColumbinaCombatant(), constellationCount };
+  const other = { ...createColumbinaCombatant(), characterId: OTHER_CHARACTER_ID };
+  const context = createKitTestContext(columbina, {
+    characterIdCombatantMap: new Map([
+      [COLUMBINA_CHARACTER_ID, columbina],
+      [OTHER_CHARACTER_ID, other],
+    ]),
+    kitEffectState: { effects: [] },
+    party: createParty([COLUMBINA_CHARACTER_ID, OTHER_CHARACTER_ID]),
+  });
+  COLUMBINA_KIT.elementalBurst.onStart?.(context);
+  return { columbina, context, other };
+};
+// A Lunar reaction the striker triggers on the enemy, which the kit reads as an event
+const triggerLunarReaction = (
+  context: KitContext,
+  columbina: Combatant,
+  striker: Combatant,
+  reactionType: ReactionType,
+): void =>
+  COLUMBINA_KIT.onKitEvent?.(
+    { enemy: c6Enemy, kind: KitEventKind.ReactionTriggered, reactions: [{ reactionType }], striker },
+    context,
+    columbina,
+  );
+// The CRIT DMG a hit of the given element adds to a striker's strike, as Columbina's hook gives it to a party member
+const readPartyCriticalDamage = (
+  context: KitContext,
+  columbina: Combatant,
+  striker: Combatant,
+  element: Element,
+): number =>
+  COLUMBINA_KIT.getPartyStrikeBonus?.(
+    columbina,
+    { body: kitBody, combatant: striker, hit: { ...takeOne(COLUMBINA_KIT.elementalBurst.hits), element } },
+    c6Enemy,
+    context.party,
+    context.kitEffectState.effects,
+  )?.criticalDamageBonus ?? 0;
+// The CRIT DMG a hit of the given element adds to Columbina's own strike, as her own hook gives it
+const readOwnCriticalDamage = (context: KitContext, columbina: Combatant, element: Element): number =>
+  COLUMBINA_KIT.getStrikeCriticalDamageBonus?.(
+    { body: kitBody, combatant: columbina, hit: { ...takeOne(COLUMBINA_KIT.elementalBurst.hits), element } },
+    c6Enemy,
+    context.party,
+    context.kitEffectState.effects,
+  ) ?? 0;
 
 describe(createColumbinaKitBehaviour, () => {
   const combatant = createColumbinaCombatant();
@@ -137,6 +196,7 @@ describe(createColumbinaKitBehaviour, () => {
   });
 
   test("her Benediction's Base DMG bonus is the curve of her max HP", () => {
+    expect.hasAssertions();
     expect(COLUMBINA_KIT.moonsignBenediction?.getBaseDamageBonus?.(combatant)).toBeCloseTo(
       getBenedictionBaseDamageBonus(combatant.attributes.maxHealth),
     );
@@ -181,5 +241,60 @@ describe(createColumbinaKitBehaviour, () => {
       expect(getCriticalRateBonus(1, 2)).toBeCloseTo(0.1);
       expect(getCriticalRateBonus(1, 5)).toBeCloseTo(0.15);
     });
+  });
+
+  test("constellation 6 gives each party member's Electro and Hydro strikes 80% CRIT DMG for eight seconds after a Lunar-Charged reaction in the burst's 1.2 seconds", () => {
+    expect.hasAssertions();
+    const { columbina, context, other } = createBurstContext(6);
+    triggerLunarReaction(context, columbina, other, LunarReactionType.LunarCharged);
+    const afterHit = {
+      electro: readPartyCriticalDamage(context, columbina, other, Element.Electro),
+      geo: readPartyCriticalDamage(context, columbina, other, Element.Geo),
+      hydro: readPartyCriticalDamage(context, columbina, other, Element.Hydro),
+    };
+    stepKitTestEffects(8, context);
+
+    expect({
+      afterExpiry: readPartyCriticalDamage(context, columbina, other, Element.Electro),
+      afterHit,
+    }).toStrictEqual({ afterExpiry: 0, afterHit: { electro: 0.8, geo: 0, hydro: 0.8 } });
+  });
+
+  test("constellation 6's buff needs the Lunar reaction within the burst's 1.2 seconds, and nothing below Constellation 6 gains it", () => {
+    expect.hasAssertions();
+    const sixth = createBurstContext(6);
+    triggerLunarReaction(sixth.context, sixth.columbina, sixth.other, LunarReactionType.LunarCharged);
+    const late = createBurstContext(6);
+    stepKitTestEffects(1.2, late.context);
+    triggerLunarReaction(late.context, late.columbina, late.other, LunarReactionType.LunarCharged);
+    const fifth = createBurstContext(5);
+    triggerLunarReaction(fifth.context, fifth.columbina, fifth.other, LunarReactionType.LunarCharged);
+
+    expect({
+      fifth: readPartyCriticalDamage(fifth.context, fifth.columbina, fifth.other, Element.Electro),
+      inWindow: readPartyCriticalDamage(sixth.context, sixth.columbina, sixth.other, Element.Electro),
+      late: readPartyCriticalDamage(late.context, late.columbina, late.other, Element.Electro),
+    }).toStrictEqual({ fifth: 0, inWindow: 0.8, late: 0 });
+  });
+
+  test("constellation 6's Lunar-Charged and Lunar-Crystallize buffs both hold a Hydro strike, which takes 160% CRIT DMG", () => {
+    expect.hasAssertions();
+    const { columbina, context, other } = createBurstContext(6);
+    triggerLunarReaction(context, columbina, other, LunarReactionType.LunarCharged);
+    triggerLunarReaction(context, columbina, other, LunarReactionType.LunarCrystallize);
+
+    expect({
+      electro: readPartyCriticalDamage(context, columbina, other, Element.Electro),
+      geo: readPartyCriticalDamage(context, columbina, other, Element.Geo),
+      hydro: readPartyCriticalDamage(context, columbina, other, Element.Hydro),
+    }).toStrictEqual({ electro: 0.8, geo: 0.8, hydro: 1.6 });
+  });
+
+  test("constellation 6 gives Columbina's own Electro strikes the same 80% CRIT DMG after a Lunar-Charged reaction", () => {
+    expect.hasAssertions();
+    const { columbina, context } = createBurstContext(6);
+    triggerLunarReaction(context, columbina, columbina, LunarReactionType.LunarCharged);
+
+    expect(readOwnCriticalDamage(context, columbina, Element.Electro)).toBe(0.8);
   });
 });

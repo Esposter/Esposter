@@ -111,3 +111,31 @@ Columbina SHALL count toward the Moonsign level, turn her team's Electro-Charged
 - **GIVEN** Columbina's max HP is 10,000 and a party member's Lunar reaction deals damage
 - **WHEN** the damage is priced
 - **THEN** its Base DMG carries a 2% bonus, and at 35,000 max HP or more the bonus is 7%
+
+### Requirement: Constellation 6 adds CRIT DMG to strikes after a Lunar reaction in the burst's window
+
+Columbina at Constellation 6 SHALL give each party member's strikes of the elements a Lunar reaction covers 80% CRIT DMG for 8 seconds, once that reaction forms within the 1.2 seconds her burst's window holds open.
+
+#### Scenario: A Lunar-Charged reaction in the burst's window buffs the team's Electro and Hydro strikes
+
+- **GIVEN** Columbina is at Constellation 6 and has just cast her burst
+- **WHEN** a party member's Lunar-Charged reaction forms within the 1.2 seconds
+- **THEN** every party member's Electro and Hydro strikes gain 80% CRIT DMG for 8 seconds, Columbina's own included, and a Geo strike gains none
+
+#### Scenario: A Lunar reaction after the window does not buff
+
+- **GIVEN** Columbina is at Constellation 6 and 1.2 seconds have passed since her burst
+- **WHEN** a Lunar-Charged reaction forms
+- **THEN** no party member gains the buff
+
+#### Scenario: A Lunar-Charged and a Lunar-Crystallize reaction add on a Hydro strike
+
+- **GIVEN** Columbina is at Constellation 6, and within her burst's window a Lunar-Charged and a Lunar-Crystallize reaction both form
+- **WHEN** a party member's Hydro strike is priced
+- **THEN** it gains 160% CRIT DMG, as each reaction's buff adds
+
+#### Scenario: Below Constellation 6 nothing buffs
+
+- **GIVEN** Columbina is at Constellation 5 and casts her burst
+- **WHEN** a Lunar-Charged reaction forms within the window
+- **THEN** no party member gains the buff
