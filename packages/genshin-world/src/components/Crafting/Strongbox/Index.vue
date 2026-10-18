@@ -50,32 +50,10 @@ const candidates = computed(() =>
 const isReady = computed(
   () => pickedStrongbox.value !== undefined && pickedIds.value.length === pickedStrongbox.value.needCount,
 );
-
-const pickStrongbox = (id: number) => {
-  pickedStrongboxId.value = id;
-  pickedIds.value = [];
-  isConfirming.value = false;
-};
-const togglePick = (id: number) => {
-  pickedIds.value = pickedIds.value.includes(id)
-    ? pickedIds.value.filter((pickedId) => pickedId !== id)
-    : [...pickedIds.value, id];
-};
-const create = () => {
-  if (pickedStrongbox.value === undefined) return;
-  const pickUp = craftStrongbox(props.inventory, props.wallet, pickedStrongbox.value, pickedIds.value, {
-    artifactDropTables: props.artifactDropTables,
-    materialDataMap: props.materialDataMap,
-    names: props.names,
-    random: props.random,
-    reliquaryPieceEntryMap: props.reliquaryPieceEntryMap,
-    weaponDataMap: props.weaponDataMap,
-  });
-  isConfirming.value = false;
-  if (pickUp === undefined) return;
-  pickedIds.value = [];
-  emit("craft", pickUp);
-};
+// Whether the picks already take the strongbox's count, so an artifact not yet picked is held back from the offering
+const isOfferingFull = computed(
+  () => pickedStrongbox.value !== undefined && pickedIds.value.length >= pickedStrongbox.value.needCount,
+);
 </script>
 
 <template>
@@ -88,14 +66,31 @@ const create = () => {
     </p>
     <ul>
       <li v-for="strongbox in strongboxes" :key="strongbox.id">
-        <GameButton :kind="GameButtonKind.Row" @click="pickStrongbox(strongbox.id)">
+        <GameButton
+          :kind="GameButtonKind.Row"
+          @click="
+            () => {
+              pickedStrongboxId = strongbox.id;
+              pickedIds = [];
+              isConfirming = false;
+            }
+          "
+        >
           {{ names[strongbox.nameTextId] ?? "" }}
         </GameButton>
       </li>
     </ul>
     <ul>
       <li v-for="item in candidates" :key="item.id">
-        <GameButton :kind="GameButtonKind.Row" @click="togglePick(item.id)">
+        <GameButton
+          :kind="GameButtonKind.Row"
+          :disabled="isOfferingFull && !pickedIds.includes(item.id)"
+          @click="
+            pickedIds = pickedIds.includes(item.id)
+              ? pickedIds.filter((pickedId) => pickedId !== item.id)
+              : [...pickedIds, item.id]
+          "
+        >
           {{ item.definition.name }}
         </GameButton>
       </li>
@@ -112,7 +107,27 @@ const create = () => {
       <GameButton :kind="GameButtonKind.Row" @click="isConfirming = false">{{
         gameText[GameTextKey.Cancel]
       }}</GameButton>
-      <GameButton :kind="GameButtonKind.Row" @click="create()">{{ gameText[GameTextKey.Confirm] }}</GameButton>
+      <GameButton
+        :kind="GameButtonKind.Row"
+        @click="
+          () => {
+            if (pickedStrongbox === undefined) return;
+            const pickUp = craftStrongbox(props.inventory, props.wallet, pickedStrongbox, pickedIds, {
+              artifactDropTables: props.artifactDropTables,
+              materialDataMap: props.materialDataMap,
+              names: props.names,
+              random: props.random,
+              reliquaryPieceEntryMap: props.reliquaryPieceEntryMap,
+              weaponDataMap: props.weaponDataMap,
+            });
+            isConfirming = false;
+            if (pickUp === undefined) return;
+            pickedIds = [];
+            emit('craft', pickUp);
+          }
+        "
+        >{{ gameText[GameTextKey.Confirm] }}</GameButton
+      >
     </template>
     <GameButton :kind="GameButtonKind.Row" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
   </GameScreen>
