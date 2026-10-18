@@ -2,13 +2,13 @@
 import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
 import type { Layout } from "@jsonforms/core";
 
-import { useJsonFormsLayout } from "@jsonforms/vue";
+import { mapStateToLayoutProps } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps<Layout> {}
 // JSON Forms derives whether a node is enabled or read only when the form leaves them unset, which a boolean prop
 // Would read as false
 const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const { layout } = useJsonFormsLayout(props);
+const layout = computed(() => mapStateToLayoutProps(props.form.state, props));
 const isGroup = computed(() => layout.value.uischema.type === "Group");
 const labelId = useId();
 </script>
@@ -27,10 +27,11 @@ const labelId = useId();
   >
     <span v-if="isGroup && layout.label" :id="labelId" text-heading-color>{{ layout.label }}</span>
     <UiSchemaFormDispatch
-      v-for="(element, index) of layout.uischema.elements"
+      v-for="(element, index) of props.uischema.elements"
       :key="index"
       :cells="layout.cells"
       :enabled="layout.enabled"
+      :form
       :path="layout.path"
       :renderers="layout.renderers"
       :schema="layout.schema"

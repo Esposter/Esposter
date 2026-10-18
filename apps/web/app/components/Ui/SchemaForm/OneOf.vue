@@ -5,14 +5,14 @@ import type { JsonSchema } from "@jsonforms/core";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSchemaFormVariantValue } from "@/services/ui/schemaForm/getSchemaFormVariantValue";
-import { createCombinatorRenderInfos } from "@jsonforms/core";
-import { useJsonFormsOneOfControl } from "@jsonforms/vue";
+import { createCombinatorRenderInfos, mapDispatchToControlProps, mapStateToOneOfProps } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps {}
 // JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
 // Would read as false
 const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const { control, handleChange } = useJsonFormsOneOfControl(props);
+const control = computed(() => ({ ...props, ...mapStateToOneOfProps(props.form.state, props) }));
+const { handleChange } = mapDispatchToControlProps(props.form.dispatch);
 const variants = computed(() => (control.value.schema.oneOf ?? []) as JsonSchema[]);
 const renderInfos = computed(() =>
   createCombinatorRenderInfos(
@@ -62,6 +62,7 @@ const items = computed<UiSelectItem<string>[]>(() =>
       v-if="selectedRenderInfo"
       :cells="control.cells"
       :enabled="control.enabled"
+      :form
       :path="control.path"
       :renderers="control.renderers"
       :schema="selectedRenderInfo.schema"

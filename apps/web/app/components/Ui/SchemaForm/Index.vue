@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T">
+import type { UiSchemaFormBinding } from "@/models/ui/UiSchemaFormBinding";
 import type { UiSchemaFormConfiguration } from "@/models/ui/UiSchemaFormConfiguration";
-import type { CoreActions, JsonFormsCore, JsonFormsSubStates, JsonSchema } from "@jsonforms/core";
+import type { CoreActions, Dispatch, JsonFormsCore, JsonFormsSubStates, JsonSchema } from "@jsonforms/core";
 import type { z } from "zod";
 
 import { SchemaFormRenderers } from "@/services/ui/schemaForm/SchemaFormRenderers";
@@ -36,8 +37,8 @@ const config = computed<UiSchemaFormConfiguration>(() => {
 const jsonFormsSchema = computed(() => schema as JsonSchema);
 const uischema = computed(() => Generate.uiSchema(jsonFormsSchema.value, undefined, undefined, jsonFormsSchema.value));
 const options = { validationMode: "NoValidation" } as const;
-// What JSON Forms' bindings read. Shallow, because its reducers return a new core for every change, so the property
-// Being replaced is the only change to track, and the renderers inside are never proxied
+// What the renderers read through the form. Shallow, because its reducers return a new core for every change, so the
+// Property being replaced is the only change to track, and the renderers inside are never proxied
 const jsonforms = shallowReactive<JsonFormsSubStates & { core: JsonFormsCore }>({
   cells: [],
   config: configReducer(undefined, Actions.setConfig(config.value)),
@@ -47,10 +48,13 @@ const jsonforms = shallowReactive<JsonFormsSubStates & { core: JsonFormsCore }>(
   uischemas: [],
 });
 // A field's change runs through the core, and the value it leaves is written back unless it is the one already held
-const dispatch = (action: CoreActions) => {
+const dispatch: Dispatch<CoreActions> = (action) => {
   jsonforms.core = coreReducer(jsonforms.core, action);
   if (!checkIsDeepEqual(jsonforms.core.data, modelValue.value)) modelValue.value = jsonforms.core.data;
+  return action;
 };
+// Every renderer of the form takes this, and reads the state and writes its changes through the dispatch
+const form: UiSchemaFormBinding = { dispatch, state: { jsonforms } };
 
 watch([modelValue, jsonFormsSchema, uischema], ([newModelValue, newJsonFormsSchema, newUischema]) => {
   dispatch(Actions.updateCore(newModelValue, newJsonFormsSchema, newUischema, options));
@@ -58,13 +62,8 @@ watch([modelValue, jsonFormsSchema, uischema], ([newModelValue, newJsonFormsSche
 watch(config, (newConfig) => {
   jsonforms.config = configReducer(undefined, Actions.setConfig(newConfig));
 });
-
-/* oxlint-disable no-restricted-globals -- JSON Forms' renderers read `jsonforms` and `dispatch` by injection */
-provide("jsonforms", jsonforms);
-provide("dispatch", dispatch);
-/* oxlint-enable no-restricted-globals */
 </script>
 
 <template>
-  <UiSchemaFormDispatch :schema="jsonforms.core.schema" :uischema="jsonforms.core.uischema" path="" />
+  <UiSchemaFormDispatch :form :schema="jsonforms.core.schema" :uischema="jsonforms.core.uischema" path="" />
 </template>

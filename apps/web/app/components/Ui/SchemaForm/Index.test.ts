@@ -37,7 +37,7 @@ describe("uiSchemaForm", () => {
       expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([{ name: "a" }]);
     });
 
-    test("renders its fields without Vue proxying the renderer components", async () => {
+    test("#2025 and PR 2623: renders its fields without Vue proxying the renderer components", async () => {
       expect.hasAssertions();
 
       const warn = vi.spyOn(console, "warn").mockImplementation(noop);
@@ -49,6 +49,35 @@ describe("uiSchemaForm", () => {
       expect(warn.mock.calls.filter(([warning]) => String(warning).includes("made a reactive object"))).toStrictEqual(
         [],
       );
+    });
+
+    test("draws the ranked fields of a schema with a node nothing draws, and no notice for that node", async () => {
+      expect.hasAssertions();
+
+      const noRendererNotice = "No applicable renderer found.";
+      const nothingSchema = zodToJsonSchema(z.object({ name: z.string(), nothing: z.null() }));
+      const component = await mountSuspended(UiSchemaForm, {
+        props: { modelValue: { name: "", nothing: null }, schema: nothingSchema },
+      });
+      await flushPromises();
+
+      expect(component.findAll("input")).toHaveLength(1);
+      expect(component.text()).toContain("Name");
+      expect(component.text()).not.toContain(noRendererNotice);
+    });
+
+    test("#2003: editing a field nested in a list changes the form's value once, at its own path", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiSchemaForm, {
+        props: { modelValue: { items: [{ name: "" }, { name: "" }] }, schema: arraySchema },
+      });
+      await flushPromises();
+      const [, secondItemInput] = component.findAll("input");
+      await secondItemInput.setValue("a");
+      await flushPromises();
+
+      expect(component.emitted("update:modelValue")).toStrictEqual([[{ items: [{ name: "" }, { name: "a" }] }]]);
     });
 
     test("shows the Zod schema's issue on the field at its path once the field is changed", async () => {

@@ -3,14 +3,21 @@ import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRenderer
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { composePaths, createDefaultValue, findUISchema, getFirstPrimitiveProp } from "@jsonforms/core";
-import { useJsonFormsArrayControl } from "@jsonforms/vue";
+import {
+  composePaths,
+  createDefaultValue,
+  findUISchema,
+  getFirstPrimitiveProp,
+  mapDispatchToArrayControlProps,
+  mapStateToArrayControlProps,
+} from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps {}
 // JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
 // Would read as false
 const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const { addItem, control, moveDown, moveUp, removeItems } = useJsonFormsArrayControl(props);
+const control = computed(() => ({ ...props, ...mapStateToArrayControlProps(props.form.state, props) }));
+const { addItem, moveDown, moveUp, removeItems } = mapDispatchToArrayControlProps(props.form.dispatch);
 const items = computed<unknown[]>(() => control.value.data ?? []);
 const isMaxItems = computed(() => items.value.length >= (control.value.arraySchema.maxItems ?? Infinity));
 const isMinItems = computed(() => items.value.length <= (control.value.arraySchema.minItems ?? 0));
@@ -80,6 +87,7 @@ const getItemLabel = (item: unknown, index: number) => {
         <UiSchemaFormDispatch
           :cells="control.cells"
           :enabled="control.enabled"
+          :form
           :path="composePaths(control.path, String(index))"
           :renderers="control.renderers"
           :schema="control.schema"

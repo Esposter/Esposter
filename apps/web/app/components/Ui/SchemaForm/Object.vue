@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
 
-import { findUISchema, Generate } from "@jsonforms/core";
-import { useJsonFormsControlWithDetail } from "@jsonforms/vue";
+import { findUISchema, Generate, mapStateToControlWithDetailProps } from "@jsonforms/core";
 
 interface Props extends UiSchemaFormRendererProps {}
 // JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
 // Would read as false
 const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
-const { control } = useJsonFormsControlWithDetail(props);
+const control = computed(() => ({ ...props, ...mapStateToControlWithDetailProps(props.form.state, props) }));
 // An object's fields laid out as a group under its label, or stacked bare where the object is the form itself
 const detailUiSchema = computed(() =>
   findUISchema(
@@ -33,6 +32,7 @@ const detailUiSchema = computed(() =>
     v-if="control.visible"
     :cells="control.cells"
     :enabled="control.enabled"
+    :form
     :path="control.path"
     :renderers="control.renderers"
     :schema="control.schema"
