@@ -806,7 +806,7 @@ describe(getGcsimKitCandidates, () => {
         {
           leaves: [0, 1, 2, 3].map((index) => ({
             path: [index],
-            reference: { label: `Blade Roller ${index + 1}-Hit DMG`, selector: 0, type: "attack" },
+            reference: { label: `Blade Roller ${index + 1}-Hit DMG`, selector: 0, type: GcsimTalentType.Attack },
           })),
           name: "attackE",
         },
@@ -861,11 +861,18 @@ describe(getGcsimKitCandidates, () => {
       ],
       talentVariables: [
         {
-          leaves: [{ path: [], reference: { label: "Soulseeker Shell DMG", selector: 0, type: "burst" } }],
+          leaves: [
+            { path: [], reference: { label: "Soulseeker Shell DMG", selector: 0, type: GcsimTalentType.Burst } },
+          ],
           name: "burstSoulseeker",
         },
         {
-          leaves: [{ path: [], reference: { label: "Radiant Soulseeker Shell DMG", selector: 0, type: "burst" } }],
+          leaves: [
+            {
+              path: [],
+              reference: { label: "Radiant Soulseeker Shell DMG", selector: 0, type: GcsimTalentType.Burst },
+            },
+          ],
           name: "burstRadiant",
         },
       ],
@@ -927,7 +934,9 @@ describe(getGcsimKitCandidates, () => {
       talentParameters: [["skill|Continuous Attack DMG", { indexes: [0], line: 3 }]],
       talentVariables: [
         {
-          leaves: [{ path: [], reference: { label: "Continuous Attack DMG", selector: 0, type: "skill" } }],
+          leaves: [
+            { path: [], reference: { label: "Continuous Attack DMG", selector: 0, type: GcsimTalentType.Skill } },
+          ],
           name: "cloudDMG",
         },
       ],
@@ -987,11 +996,18 @@ describe(getGcsimKitCandidates, () => {
       ],
       talentVariables: [
         {
-          leaves: [{ path: [], reference: { label: "Fiery Passion Rush DMG", selector: 0, type: "skill" } }],
+          leaves: [
+            { path: [], reference: { label: "Fiery Passion Rush DMG", selector: 0, type: GcsimTalentType.Skill } },
+          ],
           name: "fieryRush",
         },
         {
-          leaves: [{ path: [], reference: { label: "Fiery Passion Flying Kick DMG", selector: 0, type: "burst" } }],
+          leaves: [
+            {
+              path: [],
+              reference: { label: "Fiery Passion Flying Kick DMG", selector: 0, type: GcsimTalentType.Burst },
+            },
+          ],
           name: "fieryKick",
         },
       ],
