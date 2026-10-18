@@ -3,7 +3,9 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { applyElement } from "#src/services/combat/aura/applyElement";
@@ -13,6 +15,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKazuhaKitBehaviour, KAZUHA_CHARACTER_ID } from "#src/services/kit/characters/kazuhaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -73,5 +76,56 @@ describe(createKazuhaKitBehaviour, () => {
       `${Element.Anemo} 1.2`,
       ...Array.from({ length: 4 }, () => [`${Element.Cryo} 0.36`, `${Element.Anemo} 1.2`]).flat(),
     ]);
+  });
+});
+
+describe("poetics of Fuubutsu", () => {
+  const TEAMMATE_CHARACTER_ID = 1;
+
+  // The buffs a Pyro Swirl Kazuha triggers gives the team, with her at the given ascension and Elemental Mastery
+  const readSwirlBuffs = (ascension: number, elementalMastery: number): KitEffectState["effects"] => {
+    const combatant = {
+      ...createKazuhaCombatant(),
+      ascension,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseHealth, value: 10_000 },
+        { attribute: Attribute.ElementalMastery, value: elementalMastery },
+      ]),
+    };
+    const context = createKitTestContext(combatant, {
+      party: createParty([KAZUHA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
+    });
+    KAZUHA_KIT.onKitEvent?.(
+      {
+        enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ element: Element.Pyro, reactionType: ReactionType.Swirl }],
+        striker: combatant,
+      },
+      context,
+      combatant,
+    );
+    return context.kitEffectState.effects;
+  };
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readSwirlBuffs(4, 1000)).toStrictEqual(
+      [KAZUHA_CHARACTER_ID, TEAMMATE_CHARACTER_ID].map((characterId) => ({
+        amount: 0.0004 * 1000,
+        attribute: Attribute.PyroDamageBonus,
+        characterId,
+        kind: "buff",
+        secondsRemaining: 8,
+        source: "kazuha-poetics-of-fuubutsu",
+      })),
+    );
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readSwirlBuffs(3, 1000)).toStrictEqual([]);
   });
 });
