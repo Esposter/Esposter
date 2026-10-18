@@ -4,8 +4,15 @@ import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/eval
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { describe, expect, test } from "vitest";
 
-const createChargeSource = (callerArguments: string[]) => [
-  "package neuvillette",
+// The package clause every fixture's Go source opens with, which no reader inspects
+const GO_PACKAGE_CLAUSE = "package character";
+
+// A charge source: its caller's calls of the short charge, and the short charge's body, which fires the attack at its windup
+const createChargeSource = (
+  callerArguments: string[],
+  shortBody = ["\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)"],
+) => [
+  GO_PACKAGE_CLAUSE,
   "",
   "const shortChargeHitmark = 27",
   "",
@@ -14,7 +21,7 @@ const createChargeSource = (callerArguments: string[]) => [
   "}",
   "",
   "func (c *char) chargeAttackShort(windup int) {",
-  "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+  ...shortBody,
   "}",
 ];
 
@@ -26,7 +33,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package jean",
+          GO_PACKAGE_CLAUSE,
           "",
           "const burstStart = 40",
           "",
@@ -87,7 +94,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package varesa",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tc.Core.QueueAttack(",
@@ -129,7 +136,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package jean",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalSkill}",
@@ -166,7 +173,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package clorinde",
+          GO_PACKAGE_CLAUSE,
           "",
           "const skillDashHitmark = 11",
           "",
@@ -206,7 +213,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package clorinde",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) skillDash(_ map[string]int) {",
           "\tai := info.AttackInfo{AttackTag: attacks.AttackTagNormal}",
@@ -240,7 +247,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "charge.go",
         source: [
-          "package neuvillette",
+          GO_PACKAGE_CLAUSE,
           "",
           "const shortChargeHitmark = 27",
           "",
@@ -267,7 +274,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package rosaria",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tdur := 510",
@@ -294,7 +301,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package xiangling",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tc.QueueCharTask(func() {",
@@ -325,7 +332,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "charge.go",
         source: [
-          "package neuvillette",
+          GO_PACKAGE_CLAUSE,
           "",
           "const shortChargeHitmark = 27",
           "",
@@ -361,7 +368,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package jean",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) first() {",
           "\tdelay := 40",
@@ -387,7 +394,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package layla",
+          GO_PACKAGE_CLAUSE,
           "",
           "const (",
           "\tburstStart = 36",
@@ -430,7 +437,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package fischl",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tfor i := 0; i < 3; i++ {",
@@ -453,7 +460,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package venti",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tfor i := range 3 {",
@@ -486,7 +493,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package noelle",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tgetExt := func() int {",
@@ -515,7 +522,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package layla",
+          GO_PACKAGE_CLAUSE,
           "",
           "const (",
           "\ttickRelease = 56",
@@ -543,7 +550,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package aloy",
+          GO_PACKAGE_CLAUSE,
           "",
           "const (",
           "\tskillRelease = 20",
@@ -581,7 +588,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package aloy",
+          GO_PACKAGE_CLAUSE,
           "",
           "const (",
           "\tskillRelease = 20",
@@ -612,7 +619,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package amber",
+          GO_PACKAGE_CLAUSE,
           "",
           "const burstStart = 40",
           "",
@@ -637,7 +644,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package ayaka",
+          GO_PACKAGE_CLAUSE,
           "",
           "const burstHitmark = 104",
           "",
@@ -671,7 +678,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package odette",
+          GO_PACKAGE_CLAUSE,
           "",
           "var burstHitmarks = []int{112, 112 + 16, 112 + 16 + 12}",
           "",
@@ -700,7 +707,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package odette",
+          GO_PACKAGE_CLAUSE,
           "",
           "var burstHitmarks = []int{112, 112 + 16, 112 + 16 + 12}",
           "",
@@ -729,7 +736,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package flins",
+          GO_PACKAGE_CLAUSE,
           "",
           "const burstHitmarkInitial = 93",
           "",
@@ -754,21 +761,14 @@ describe(readGcsimQueuedAttacks, () => {
     const sources = [
       {
         path: "charge.go",
-        source: [
-          "package neuvillette",
-          "",
-          "const shortChargeHitmark = 27",
-          "",
-          "func (c *char) ChargeAttack() {",
-          "\tc.chargeAttackShort(0)",
-          "}",
-          "",
-          "func (c *char) chargeAttackShort(windup int) {",
-          "\tc.QueueCharTask(func() {",
-          "\t\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
-          "\t}, windup+3)",
-          "}",
-        ].join("\n"),
+        source: createChargeSource(
+          ["0"],
+          [
+            "\tc.QueueCharTask(func() {",
+            "\t\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+            "\t}, windup+3)",
+          ],
+        ).join("\n"),
       },
     ];
 
@@ -782,7 +782,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package chiori",
+          GO_PACKAGE_CLAUSE,
           "",
           "var (",
           "\tskillHitmarks = []int{21, 37}",
@@ -821,7 +821,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package odette",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) skill() {",
           "\tc.Core.Tasks.Add(func() {",
@@ -854,7 +854,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package collei",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tc.Core.Tasks.Add(func() {",
@@ -876,14 +876,14 @@ describe(readGcsimQueuedAttacks, () => {
     ).toStrictEqual([[12, 68]]);
   });
 
-  test("reads no delay from a method's call outside any task closure, which runs at its caller's own time", () => {
+  test("reads a method's queue call's own delay, 0, and adds none from its call outside any task closure, at its caller's time", () => {
     expect.hasAssertions();
 
     const sources = [
       {
         path: "skill.go",
         source: [
-          "package odette",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) skill() {",
           "\tc.danceDoubleTicker(0)",
@@ -908,7 +908,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package prune",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tc.Core.Tasks.Add(c.burstTick(), 137)",
@@ -935,7 +935,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package prune",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tc.Core.Tasks.Add(c.tick(), 137)",
@@ -961,7 +961,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package durin",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tc.Core.Tasks.Add(c.burstTick(), ceil(windupDelay))",
@@ -986,7 +986,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package durin",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\tc.Core.Tasks.Add(c.burstTick(c.burstSrc), ceil(burstFirstTickDelay))",
@@ -1013,7 +1013,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package navia",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) c2() info.AttackCBFunc {",
           "\treturn func(a info.AttackCB) {",
@@ -1036,7 +1036,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package xianyun",
+          GO_PACKAGE_CLAUSE,
           "",
           "const skillRadius = 1.5",
           "",
@@ -1073,7 +1073,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package xianyun",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) skill() {",
           "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
@@ -1106,7 +1106,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "skill.go",
         source: [
-          "package xianyun",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) skill() {",
           "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
