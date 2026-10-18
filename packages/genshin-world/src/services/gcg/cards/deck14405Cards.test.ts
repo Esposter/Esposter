@@ -11,6 +11,7 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
+import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
@@ -38,6 +39,7 @@ import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
+import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
@@ -623,6 +625,22 @@ describe("hanachirusato", () => {
     takeOne(duel.sides, 0).summons.push({ ...createGcgZoneCard(BAKE_KURAGE_ID, bakeKurage), usages: 1 });
     runGcgEndPhase(duel);
     expect(takeOne(duel.sides, 0).supports.map(({ counter }) => counter)).toStrictEqual([3]);
+  });
+
+  test("a Guardian's Oath that destroys its Summon counts it for Cleansing Ritual Progress", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(KOKOMI_ID, Element.Hydro)]),
+      createSideState([createCharacterState(XIAO_ID, Element.Anemo)]),
+    ]);
+    const oath: GcgCard = { ...TALENT_CARD, id: 332_014, kind: GcgCardKind.Event };
+    const side = takeOne(duel.sides, 0);
+    side.supports.push(createGcgZoneCard(HANACHIRUSATO_ID, hanachirusato));
+    side.summons.push(createGcgZoneCard(BAKE_KURAGE_ID, bakeKurage));
+    side.cards.push(oath);
+    side.hand.push(oath.id);
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(side.supports.map(({ counter }) => counter)).toStrictEqual([1]);
   });
 
   test("with three Progress, playing a Weapon costs two Elemental Dice less and discards it", () => {
