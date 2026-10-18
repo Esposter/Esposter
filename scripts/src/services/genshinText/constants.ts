@@ -173,5 +173,12 @@ export const DUMP_FETCH_BATCH_SIZE = 8;
 export const DUMP_FILE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 
 // The keys a published record or data file holds a name's or a description's text hash under: a `nameTextId` the item and
-// Character tables cite, and the `nameTextHash` and `descriptionTextHash` the Spiral Abyss's blessings and Benedictions hold
-export const NAME_TEXT_ID_KEYS: readonly string[] = ["descriptionTextHash", "nameTextHash", "nameTextId"];
+// Character tables cite, the `nameTextHash` and `descriptionTextHash` the Spiral Abyss's blessings and Benedictions hold,
+// And a weapon's passive name and each refinement rank's description, which the weapons record holds as a list
+export const NAME_TEXT_ID_KEYS: readonly string[] = [
+  "descriptionTextHash",
+  "nameTextHash",
+  "nameTextId",
+  "passiveNameTextId",
+  "passiveRankDescriptionTextIds",
+];
