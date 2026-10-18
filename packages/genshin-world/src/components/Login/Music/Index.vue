@@ -9,7 +9,7 @@ import {
   LOGIN_MASTER_LIMITER_OPTIONS,
 } from "#src/services/login/constants";
 import { loadMusicRecordings } from "#src/services/login/music/loadMusicRecordings";
-import { getStoredChannelGain } from "#src/services/menu/getStoredChannelGain";
+import { followChannelGain } from "#src/services/menu/followChannelGain";
 import { getResultAsync } from "@esposter/shared";
 import { useEventListener } from "@vueuse/core";
 import { createMusicPlayer, createSoundEffectBuffer } from "genshin-engine";
@@ -31,14 +31,17 @@ const { isDoorOpened, music, musicRecordingBaseUrl, sounds } = defineProps<Props
 // As the game's mix passes it, both through one context. The browser's autoplay policy may
 // Start the context suspended, and then the music waits for the first pointer or key press anywhere on the window, and
 // Starts there from its beginning. The music starts once its recordings are decoded, or without them where they cannot
-// Be fetched, unless the screen has gone by then. Each channel passes the gain its stored volume sets, as the Settings screen keeps it
+// Be fetched, unless the screen has gone by then. Each channel's gain follows the volume its stored settings set
+// On the Settings screen or in another tab, so a change to it is heard at once
 let close: (() => Promise<void>) | undefined;
 let playDoorSound: (() => void) | undefined;
 onMounted(() => {
   const context = new AudioContext();
   let isClosed = false;
   let player: MusicPlayer | undefined;
-  const musicBus = new GainNode(context, { gain: getStoredChannelGain(VolumeSetting.Music) });
+  const volumeScope = effectScope();
+  const musicBus = new GainNode(context);
+  volumeScope.run(() => followChannelGain(musicBus, VolumeSetting.Music));
   musicBus.connect(context.destination);
   const start = (recordingBufferMap: ReadonlyMap<string, AudioBuffer>): void => {
     if (isClosed) return;
@@ -53,7 +56,8 @@ onMounted(() => {
   const doorSound = createSoundEffectBuffer(context, sounds.door);
   const effectsBus = new DynamicsCompressorNode(context, LOGIN_EFFECTS_COMPRESSOR_OPTIONS);
   effectsBus.connect(new DynamicsCompressorNode(context, LOGIN_MASTER_LIMITER_OPTIONS)).connect(context.destination);
-  const sfxBus = new GainNode(context, { gain: getStoredChannelGain(VolumeSetting.Sfx) });
+  const sfxBus = new GainNode(context);
+  volumeScope.run(() => followChannelGain(sfxBus, VolumeSetting.Sfx));
   sfxBus.connect(effectsBus);
   playDoorSound = () => {
     const source = new AudioBufferSourceNode(context, { buffer: doorSound });
@@ -72,6 +76,7 @@ onMounted(() => {
       );
   close = async () => {
     isClosed = true;
+    volumeScope.stop();
     player?.stop();
     await context.close();
   };

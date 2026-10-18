@@ -55,6 +55,12 @@ The Volume, Music Volume and SFX Volume rows SHALL each set a level from 1 to 10
 - **WHEN** the player sets Volume to 5
 - **THEN** the music and the sound effects play at half the level they play at with Volume at 10
 
+#### Scenario: A volume changed while the music plays is heard at once
+
+- **GIVEN** the music is playing
+- **WHEN** the player sets Music Volume to 4 on this device, or another tab of the game does
+- **THEN** the music plays at level 4 without a reload
+
 #### Scenario: A volume beyond the row's range stops at its limit
 
 - **GIVEN** the Audio tab is open
