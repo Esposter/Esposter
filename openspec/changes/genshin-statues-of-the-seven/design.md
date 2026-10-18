@@ -4,7 +4,7 @@ Each region's statues stand for its Archon, and they are the game's anchor for e
 
 ## Decisions
 
-- **Oculi are found once.** Each region's Oculi, Anemoculi in Mondstadt, Geoculi in Liyue and so on, stand where the [spawned places](../genshin-spawned-places/design.md) fit them, since the game's servers spawn them. They are collected by touching them and never come back. Each gives one of its kind and Adventure EXP. Within a short distance one shows on the minimap with a sound, as the game signals it.
+- **Oculi are found once.** Each region's Oculi, Anemoculi in Mondstadt, Geoculi in Liyue and so on, stand where the [spawned places](../genshin-spawned-places/design.md) fit them, since the game's servers spawn them. They are collected by touching them and never come back. Each gives one of its kind and 60 Adventure EXP, the wiki's figure for it (`OCULUS_ADVENTURE_EXP`). Within a short distance one shows on the minimap with a sound, as the game signals it.
 - **A found Oculus is offered at once.** It joins its region's held count as it is found, and the levels it completes are reached there and then, so no held stack shows in the bag. The levels a region reaches are paid in the order the offer reaches them.
 - **A region starts at its first resonance.** Resonating with a statue starts its region at level 1 and pays level 1's row once, which takes no Oculi. An Oculus found in a region not yet started is held until that first resonance starts it.
 - **Levels pay the game's rewards by region.** Adventure EXP, Primogems and Sigils everywhere, and each later region's own items, Liyue's Stones of Remembrance, the Shrine of Depths keys and the Traveler's Memories of Inazuma, Sumeru, Fontaine and Snezhnaya, and Natlan's Acquaint Fates, as the wiki lists them, each joining with that region's page.
@@ -65,6 +65,7 @@ packages/genshin-world/src/models/statue/StatueProgressSave.ts
 
 - [Statue of The Seven](https://genshin-impact.fandom.com/wiki/Statue_of_The_Seven), Genshin Impact Wiki: filling in the map, reviving and healing, the Traveler's element, the region's shared levels and their rewards by region, and the Restorative Power pool.
 - [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: Oculi offered to their statue, one and Adventure EXP each, never respawning, and the minimap's mark with its sound.
+- [Adventure EXP](https://genshin-impact.fandom.com/wiki/Adventure_EXP), Genshin Impact Wiki: collecting Oculi awards 60 Adventure Rank EXP per Oculus, the value `OCULUS_ADVENTURE_EXP` holds.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the statues' rows, their Oculi, rewards and stamina actions.
 
 ## Reference
