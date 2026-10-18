@@ -44,4 +44,14 @@ describe(getFinishedQuestEvents, () => {
     ]);
     expect(getFinishedQuestEvents(quest, finished, finished)).toStrictEqual([]);
   });
+
+  test("finishes no main quest when a Reputation request is done, only its sub quest", () => {
+    expect.hasAssertions();
+
+    const request: Quest = { ...quest, id: "2", mainId: "1", steps: [createStep("20")] };
+
+    expect(
+      getFinishedQuestEvents(request, { objectiveCounts: [], stepIndex: 0 }, { objectiveCounts: [], stepIndex: 1 }),
+    ).toStrictEqual([{ kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: "20" }]);
+  });
 });

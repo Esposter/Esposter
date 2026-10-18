@@ -53,6 +53,14 @@ export const useWorldTips = ({
       ),
     ]);
   });
+  // A main quest finished triggers the parent-quest tips naming it
+  events.on("parentQuestFinish", (mainId) => {
+    queueTips(
+      getTipsTriggered(tips, shownTipIds.value, TipTriggerType.FinishParentQuestOr, (paramList) =>
+        paramList.includes(mainId),
+      ),
+    );
+  });
   // A change to the bag triggers the obtain tips whose item the bag holds one of. A parameter names items by their ids joined by ';'
   events.on("bagChange", (inventory) => {
     queueTips(

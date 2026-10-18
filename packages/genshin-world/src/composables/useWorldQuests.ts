@@ -113,8 +113,10 @@ export const useWorldQuests = ({
     }
     questProgressMap.value = startQuests(quests.value, nextProgressMap, questEvent, questChapters.value);
     events.emit("achievementEvents", achievementEvents);
-    if (achievementEvents.some(({ kind }) => kind === AchievementEventKind.ParentQuestFinished))
-      events.emit("parentQuestFinish");
+    for (const { targetId } of achievementEvents.filter(
+      ({ kind }) => kind === AchievementEventKind.ParentQuestFinished,
+    ))
+      events.emit("parentQuestFinish", targetId);
   };
   events.on("questEvent", doQuestEvent);
   return {

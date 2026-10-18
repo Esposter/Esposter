@@ -19,7 +19,8 @@ export interface WorldEventMap {
   defeatEnemy: [Enemy];
   // A quest's progress moving from its progress before to the one that finishes it, emitted once on that move
   finishQuest: [quest: Quest, progress: QuestProgress, nextProgress: QuestProgress];
-  parentQuestFinish: [];
+  // A main quest finished, by its id, once its last step is done. A Reputation request finishes no main quest
+  parentQuestFinish: [mainId: string];
   pickUpMora: [];
   questEvent: [QuestEvent];
   // The player jumping to a waypoint, a landmark or a map point, with the pose the character is placed at
