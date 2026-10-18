@@ -24,7 +24,7 @@ describe(joinResidents, () => {
         new Set(),
       ),
     ).toStrictEqual({
-      invisible: 0,
+      craftingBench: 0,
       noName: 0,
       noTalk: 1,
       regions: new Map([
@@ -48,10 +48,10 @@ describe(joinResidents, () => {
         getAreaId,
         new Set(),
       ),
-    ).toStrictEqual({ invisible: 0, noName: 1, noTalk: 0, regions: new Map(), repeated: 0 });
+    ).toStrictEqual({ craftingBench: 0, noName: 1, noTalk: 0, regions: new Map(), repeated: 0 });
   });
 
-  test("leaves out an NPC the table marks invisible, since it is an interaction point rather than a person", () => {
+  test("leaves out the NPC a crafting bench stands for, since a bench is an interaction point rather than a person", () => {
     expect.hasAssertions();
 
     expect(
@@ -72,7 +72,32 @@ describe(joinResidents, () => {
         new Set([1002]),
       ),
     ).toStrictEqual({
-      invisible: 1,
+      craftingBench: 1,
+      noName: 0,
+      noTalk: 0,
+      regions: new Map([
+        [
+          "mondstadt",
+          [{ areaId, day: { position: { x: 3, z: 4 }, rotation: 0.25 }, id: "1005", nameTextId: "102", talkId: "8" }],
+        ],
+      ]),
+      repeated: 0,
+    });
+  });
+
+  test("keeps an NPC no crafting bench stands for, whatever the game's table says of it", () => {
+    expect.hasAssertions();
+
+    expect(
+      joinResidents(
+        [{ npcId: 1005, position: { x: 3, z: 4 }, region: "mondstadt", rotation: 0.25 }],
+        new Map([[1005, "102"]]),
+        new Map([[1005, 8]]),
+        getAreaId,
+        new Set([1002]),
+      ),
+    ).toStrictEqual({
+      craftingBench: 0,
       noName: 0,
       noTalk: 0,
       regions: new Map([
