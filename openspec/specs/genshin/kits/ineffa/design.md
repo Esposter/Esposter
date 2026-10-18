@@ -4,7 +4,7 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 
 ## Not yet built
 
-- **Her Ascension 4 passive, Panoramic Permutation Protocol, is built as the burst's Elemental Mastery. Her Ascension 1 passive and Constellations 1 and 6 are not built.** Constellation 4's Energy is built, see the Decisions. Ascension 1 and Constellations 1 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), so they wait only on her kit's next pass. Constellation 2 is not built either: it places a shield 37 frames after the burst, which the passives' step adds once the shield's amount is set against the framework.
+- **Her Ascension 1 passive and Constellations 1 and 6 are not built.** Ascension 1 and Constellations 1 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), so they wait only on her kit's next pass. Constellation 2 is not built either: it places a shield 37 frames after the burst, which the passives' step adds once the shield's amount is set against the framework.
 - **Birgitta's Electro particles wait on the particle hook.** gcsim gives her particles an internal cooldown, and the framework produces none yet, so her energy goes ungenerated.
 
 ## Decisions
@@ -16,6 +16,7 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 - **The plunges are borrowed.** There is no gcsim plunge file for Ineffa; her plunges take the standard reach, timing and poise of [how a kit is read](../README.md#how-a-kit-is-read), the manual verification list holding the question.
 - **Her strikes, charged attack and burst have no poise.** gcsim gives them none, so each reads 0.
 - **Constellation 4's energy goes to Ineffa herself, on her party's reactions.** gcsim's `cons.go` gives her 5 Energy on any Lunar-Charged reaction on an enemy, with a 4 second internal cooldown, and her own reactions count. The hook reads the reactions of any party member, her own included, and holds the cooldown as a status.
+- **Her Ascension 4 passive, Panoramic Permutation Protocol, is built as the burst's Elemental Mastery.**
 
 ## Key files
 
