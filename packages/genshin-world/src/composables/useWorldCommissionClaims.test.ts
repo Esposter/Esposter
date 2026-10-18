@@ -7,7 +7,6 @@ import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { RewardItem } from "#src/models/reward/RewardItem";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
@@ -16,11 +15,8 @@ import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKin
 import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import {
-  COMMISSION_RANK_BAND_COUNT,
-  LONG_TERM_MAJOR_VERSION,
-  LONG_TERM_RESIN_COST,
-} from "#src/services/commission/constants";
+import { LONG_TERM_MAJOR_VERSION, LONG_TERM_RESIN_COST } from "#src/services/commission/constants";
+import { createEmptyBands } from "#src/services/commission/createEmptyBands.test";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { createParty } from "#src/services/party/createParty";
 import { computed, shallowRef } from "vue";
@@ -28,8 +24,6 @@ import { describe, expect, test, vi } from "vitest";
 
 // No Adventure EXP is routed by these claims, so the rank's tables are left empty rather than read from the game data
 const adventureRankTables: AdventureRankTables = { levels: [], locks: [], worldLevelRows: [] };
-
-const emptyBands = (): RewardItem[][] => Array.from({ length: COMMISSION_RANK_BAND_COUNT }, (): RewardItem[] => []);
 
 describe(useWorldCommissionClaims, () => {
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
@@ -59,7 +53,7 @@ describe(useWorldCommissionClaims, () => {
   };
   const materialDataMap = new Map<number, MaterialData>();
   // Rank 12 is the third band, which pays Mora at its minimum, so a claim's routing is seen in the wallet
-  const moraBands = emptyBands();
+  const moraBands = createEmptyBands();
   moraBands[2] = [{ itemId: MORA_ITEM_ID, maxCount: MORA_REWARD, minCount: MORA_REWARD }];
   const commission: Commission = {
     centerPosition: "Event_1",
@@ -78,7 +72,7 @@ describe(useWorldCommissionClaims, () => {
     rewardTier: REWARD_TIER,
   };
   // Katheryne's bonus pays Mora at the same band in a different amount, so the bonus is told from the reward
-  const bonusBands = emptyBands();
+  const bonusBands = createEmptyBands();
   bonusBands[2] = [{ itemId: MORA_ITEM_ID, maxCount: BONUS_MORA, minCount: BONUS_MORA }];
   const slice: CommissionSlice = {
     bonuses: bonusBands,

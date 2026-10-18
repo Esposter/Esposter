@@ -1,16 +1,14 @@
 import type { Commission } from "#src/models/commission/Commission";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
-import type { RewardItem } from "#src/models/reward/RewardItem";
 
 import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
 import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { claimCommissionReward } from "#src/services/commission/claimCommissionReward";
-import { COMMISSION_RANK_BAND_COUNT } from "#src/services/commission/constants";
+import { createEmptyBands } from "#src/services/commission/createEmptyBands.test";
+import { minimumRoll } from "#src/services/commission/minimumRoll.test";
 import { describe, expect, test } from "vitest";
 
-const emptyBands = (): RewardItem[][] => Array.from({ length: COMMISSION_RANK_BAND_COUNT }, (): RewardItem[] => []);
-const minimumRoll = () => 0;
 const maximumRoll = () => 0.999;
 
 describe(claimCommissionReward, () => {
@@ -20,7 +18,7 @@ describe(claimCommissionReward, () => {
   const MORA_ID = 202;
   const REWARD_TIER = 2;
   // Rank 12 is the third band, so the band's items name the one a claim paid from
-  const rewardBands = emptyBands();
+  const rewardBands = createEmptyBands();
   rewardBands[2] = [{ itemId: MORA_ID, maxCount: 20, minCount: 10 }];
   const commissionOf = (id: number): Commission => ({
     centerPosition: `Event_${id}`,
@@ -39,7 +37,7 @@ describe(claimCommissionReward, () => {
     rewardTier: REWARD_TIER,
   });
   const slice: CommissionSlice = {
-    bonuses: emptyBands(),
+    bonuses: createEmptyBands(),
     rewardTiers: [{ bands: rewardBands, tier: REWARD_TIER }],
     tasks: [1, 2, 3, 4].map((id) => commissionOf(id)),
   };
