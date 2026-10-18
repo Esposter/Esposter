@@ -8,24 +8,35 @@ import { drawChestCount } from "#src/services/chest/drawChestCount";
 import { rollChestDrops } from "#src/services/chest/rollChestDrops";
 
 // Opening a chest once: its Primogems, Mora and Sigils roll within their ranges into the wallet, the Sigils being the
-// Region's own, `sigilCurrency`, its Adventure EXP is paid to the Adventure Rank, what it pours out is rolled from its
-// Pool, and the chest is kept as opened. A chest already opened, or of a kind with no reward yet, is left as it is, so it
-// Stays openable. The random number is supplied by the caller, so the roll is seeded wherever its caller is
+// Region's own, `sigilCurrency`, its Adventure EXP is paid to the Adventure Rank, and what it holds is rolled from its
+// Pool and kept apart by where it stands: poured out where the chest stands, or sent straight to the bag where a drop
+// Would fall away there. The chest is kept as opened. A chest already opened, or of a kind with no reward yet, is left
+// As it is, so it stays openable. The random number is supplied by the caller, so the roll is seeded wherever its caller
+// Is
 export const openChest = (
   { id, kind }: ChestPlace,
   openedChestIds: ReadonlySet<string>,
   wallet: Wallet,
   random: () => number,
   sigilCurrency: Currency,
-): { adventureExp: number; drops: DroppedItem[]; openedChestIds: ReadonlySet<string>; wallet: Wallet } => {
+  isDropFallingAway: boolean,
+): {
+  adventureExp: number;
+  bagDrops: DroppedItem[];
+  drops: DroppedItem[];
+  openedChestIds: ReadonlySet<string>;
+  wallet: Wallet;
+} => {
   const reward = ChestKindRewardMap[kind];
-  if (!reward || openedChestIds.has(id)) return { adventureExp: 0, drops: [], openedChestIds, wallet };
+  if (!reward || openedChestIds.has(id)) return { adventureExp: 0, bagDrops: [], drops: [], openedChestIds, wallet };
   const moraCount = drawChestCount(reward.mora, random);
   const primogemCount = drawChestCount(reward.primogem, random);
   const sigilCount = drawChestCount(reward.sigil, random);
+  const chestDrops = rollChestDrops(kind, random);
   return {
     adventureExp: reward.adventureExp,
-    drops: rollChestDrops(kind, random),
+    bagDrops: isDropFallingAway ? chestDrops : [],
+    drops: isDropFallingAway ? [] : chestDrops,
     openedChestIds: new Set([...openedChestIds, id]),
     wallet: {
       ...wallet,
