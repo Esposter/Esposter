@@ -42,7 +42,7 @@ export const addGcsimQueuedHits = (
   const queuedHits = fileHits.filter(({ attack }) => attack === firstHit.attack);
   const hitboxes = config.abilityHitboxesMap.get(abilityName) ?? [];
   const isHitboxJoined = hitboxes.length === queuedHits.length;
-  add(`${path}.hits.length`, queuedHits.length, toFile(firstHit.file), firstHit.line);
+  add(`${path}.hits.length`, queuedHits.length, toFile(firstHit.file), firstHit.callLine);
   for (const [hitIndex, { attack, delay, file: hitFile, hitbox, line }] of queuedHits.entries())
     addHit(
       `${path}.hits.${hitIndex}`,
