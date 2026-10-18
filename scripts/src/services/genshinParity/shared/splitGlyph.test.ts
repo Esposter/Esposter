@@ -11,7 +11,7 @@ describe(splitGlyph, () => {
     const stroke = [235, 248, 249];
     const data = Uint8Array.from([terrain, terrain, stroke, terrain, water, stroke, terrain].flat());
 
-    expect(splitGlyph(data, 3, data.length / 3, 1, ink)).toStrictEqual(Uint8Array.from([0, 0, 1, 0, 0, 1, 0]));
+    expect(splitGlyph(data, 3, data.length / 3, 1, ink, terrain)).toStrictEqual(Uint8Array.from([0, 0, 1, 0, 0, 1, 0]));
   });
 
   test("takes the ground from the box's border, so a glyph covering over half its box keeps its paper", () => {
