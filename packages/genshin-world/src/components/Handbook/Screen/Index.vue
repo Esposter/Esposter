@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HandbookCommission } from "#src/models/handbook/HandbookCommission";
+import type { HandbookDayCommission } from "#src/models/handbook/HandbookDayCommission";
 import type { HandbookReward } from "#src/models/handbook/HandbookReward";
 import type { GameText } from "genshin-text";
 
@@ -14,16 +15,21 @@ interface Props {
   commissions: HandbookCommission[];
   // The panel's ring and bar: how many of its investigations are done out of how many
   completedCount: number;
+  // The day's four commissions, top to bottom, as the Commissions tab lists them
+  dayCommissions: HandbookDayCommission[];
   // The game's words in the reader's language
   gameText: GameText;
   // The panel's rewards, in the game's order
   investigationRewards: HandbookReward[];
   // The panel's reward footer, shown once every reward is taken
   isRewardClaimed?: true;
+  // The names the commissions' titles cite, by their name text id, in the reader's language
+  nameText: Readonly<Record<string, string>>;
   totalCount: number;
 }
 
-const { commissions, completedCount, gameText, investigationRewards, totalCount } = defineProps<Props>();
+const { commissions, completedCount, dayCommissions, gameText, investigationRewards, nameText, totalCount } =
+  defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // The book opens at its experience
 const tab = ref(HandbookTab.Experience);
@@ -62,65 +68,81 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
           {{ label }}
         </button>
       </div>
-      <div class="chapter-checks" aria-hidden="true">
-        <span v-for="index in 9" :key="index" class="chapter-check">
-          <svg viewBox="0 0 252 228"><path :d="CHECK_MARK_PATH" /></svg>
-        </span>
-      </div>
-      <div class="chapter-navigator">
-        <span class="chapter-arrow" aria-hidden="true">
-          <svg viewBox="0 0 29 50"><path d="M25 5L7 25l18 20" /></svg>
-        </span>
-        <p class="chapter-title" role="heading" aria-level="2">{{ gameText[GameTextKey.HandbookChapterNine] }}</p>
-        <span class="chapter-arrow chapter-arrow-next" aria-hidden="true">
-          <svg viewBox="0 0 29 50"><path d="M4 5l18 20L4 45" /></svg>
-        </span>
-      </div>
-      <section class="panel" :aria-label="gameText[GameTextKey.HandbookInvestigationProgress]">
-        <p class="panel-title">{{ gameText[GameTextKey.HandbookInvestigationProgress] }}</p>
-        <div class="panel-ring">
-          <span class="panel-count">{{ completedCount }}/{{ totalCount }}</span>
+      <template v-if="tab === HandbookTab.Experience">
+        <div class="chapter-checks" aria-hidden="true">
+          <span v-for="index in 9" :key="index" class="chapter-check">
+            <svg viewBox="0 0 252 228"><path :d="CHECK_MARK_PATH" /></svg>
+          </span>
         </div>
-        <div class="panel-bar">
-          <span v-for="(isLit, index) of progressSegments" :key="index" class="panel-segment" :data-lit="isLit" />
+        <div class="chapter-navigator">
+          <span class="chapter-arrow" aria-hidden="true">
+            <svg viewBox="0 0 29 50"><path d="M25 5L7 25l18 20" /></svg>
+          </span>
+          <p class="chapter-title" role="heading" aria-level="2">{{ gameText[GameTextKey.HandbookChapterNine] }}</p>
+          <span class="chapter-arrow chapter-arrow-next" aria-hidden="true">
+            <svg viewBox="0 0 29 50"><path d="M4 5l18 20L4 45" /></svg>
+          </span>
         </div>
-        <p class="panel-rewards-title">{{ gameText[GameTextKey.HandbookRewards] }}</p>
-        <div class="panel-rewards">
-          <ItemTile
-            v-for="({ count, rarity }, index) of investigationRewards"
+        <section class="panel" :aria-label="gameText[GameTextKey.HandbookInvestigationProgress]">
+          <p class="panel-title">{{ gameText[GameTextKey.HandbookInvestigationProgress] }}</p>
+          <div class="panel-ring">
+            <span class="panel-count">{{ completedCount }}/{{ totalCount }}</span>
+          </div>
+          <div class="panel-bar">
+            <span v-for="(isLit, index) of progressSegments" :key="index" class="panel-segment" :data-lit="isLit" />
+          </div>
+          <p class="panel-rewards-title">{{ gameText[GameTextKey.HandbookRewards] }}</p>
+          <div class="panel-rewards">
+            <ItemTile
+              v-for="({ count, rarity }, index) of investigationRewards"
+              :key="index"
+              class="reward"
+              :count
+              :rarity
+            />
+          </div>
+          <p v-if="isRewardClaimed" class="panel-claimed">
+            <span class="panel-claimed-mark" aria-hidden="true">✓</span>
+            {{ gameText[GameTextKey.HandbookRewardsClaimed] }}
+          </p>
+        </section>
+        <ol class="commissions" :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Experience]]">
+          <li
+            v-for="(commission, index) of commissions"
             :key="index"
-            class="reward"
-            :count
-            :rarity
-          />
-        </div>
-        <p v-if="isRewardClaimed" class="panel-claimed">
-          <span class="panel-claimed-mark" aria-hidden="true">✓</span>
-          {{ gameText[GameTextKey.HandbookRewardsClaimed] }}
-        </p>
-      </section>
-      <ol class="commissions" :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Experience]]">
+            class="commission"
+            :style="{ top: `calc(var(--reference-pixel) * ${index * COMMISSION_STEP})` }"
+          >
+            <div class="commission-text">
+              <p class="commission-title">{{ gameText[commission.titleKey] }}</p>
+              <p class="commission-progress">{{ commission.progress }}/{{ commission.total }}</p>
+            </div>
+            <ItemTile
+              v-for="({ count, rarity }, rewardIndex) of commission.rewards"
+              :key="rewardIndex"
+              class="commission-reward"
+              :count
+              :rarity
+              :style="{ left: `calc(var(--reference-pixel) * ${1018 + rewardIndex * 159})` }"
+            />
+            <svg class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
+              <path fill="#5aa02c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
+            </svg>
+          </li>
+        </ol>
+      </template>
+      <ol v-else class="commissions" :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Commissions]]">
         <li
-          v-for="(commission, index) of commissions"
+          v-for="(commission, index) of dayCommissions"
           :key="index"
           class="commission"
           :style="{ top: `calc(var(--reference-pixel) * ${index * COMMISSION_STEP})` }"
         >
           <div class="commission-text">
-            <p class="commission-title">{{ gameText[commission.titleKey] }}</p>
+            <p class="commission-title">{{ nameText[commission.nameTextId] }}</p>
             <p class="commission-progress">{{ commission.progress }}/{{ commission.total }}</p>
           </div>
-          <ItemTile
-            v-for="({ count, rarity }, rewardIndex) of commission.rewards"
-            :key="rewardIndex"
-            class="commission-reward"
-            :count
-            :rarity
-            :style="{ left: `calc(var(--reference-pixel) * ${1018 + rewardIndex * 159})` }"
-          />
-          <svg class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
-            <path fill="#5aa02c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
-          </svg>
+          <p v-if="commission.regionTextKey" class="commission-region">{{ gameText[commission.regionTextKey] }}</p>
         </li>
       </ol>
       <div class="ribbon">
@@ -503,6 +525,18 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   top: calc(var(--reference-pixel) * 53);
   width: calc(var(--reference-pixel) * 141);
   height: calc(var(--reference-pixel) * 141);
+}
+
+/* The preferred region sits where a row's rewards stand, centred on the title's line */
+.commission-region {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 121);
+  left: calc(var(--reference-pixel) * 1018);
+  margin: 0;
+  color: #82644a;
+  font-size: calc(var(--reference-pixel) * 48);
+  font-weight: 600;
+  translate: 0 -50%;
 }
 
 .commission-check {

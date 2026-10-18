@@ -170,6 +170,7 @@ export enum GameTextKey {
   FlamingFlowerStamen = "2387249548",
   FluorescentFungus = "3996649804",
   // The Amount line over the forge slider, "Amount: {0}"
+  Fontaine = "Fontaine",
   ForgeAmount = "UI_FORGE_PAGE_ITEM_COUNT",
   // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
   // Recipe names; a recipe's own id for the same words repeats the English of these
@@ -248,6 +249,7 @@ export enum GameTextKey {
   Horsetail = "1247603844",
   HydroSigil = "33541556",
   IcyPebble = "2856476780",
+  Inazuma = "Inazuma",
   IntertwinedFate = "4203128180",
   Inventory = "UI_STC_BAGPAGE_BAG",
   // The bag's tabs, and a tab's room as its name, its count and its limit fill `{0} {1}/{2}`
@@ -302,6 +304,7 @@ export enum GameTextKey {
   // Game's strings read "Lv." in English; this is the one abbreviated in every language ("Niv.", "St."), which the
   // Narrow badge fits, where the Statue's spells "Niveau" and "Stufe" out
   LevelShort = "2960839764",
+  Liyue = "Liyue",
   Loading = "UI_BEYOND_RECOMMEND_EMPTY_LOADING",
   // The door's prompt, worded per platform in the game's text and the PC's kept
   LoginBegin = "3535917252",
@@ -345,6 +348,7 @@ export enum GameTextKey {
   Mushroom = "1926602188",
   MysticEnhancementOre = "3267705996",
   NakuWeed = "3623663804",
+  Natlan = "Natlan",
   NilotpalaLotus = "774700468",
   NoctilucousJade = "2726159796",
   NocturnalBlossom = "2957600892",
@@ -488,6 +492,7 @@ export enum GameTextKey {
   SmallLampGrass = "144892988",
   Snapdragon = "3558597948",
   // The weapons' and artifacts' sort, by level or quality, ascending or descending
+  Snezhnaya = "Snezhnaya",
   SortAscending = "UI_RelicIterations_Ordering_Ascending",
   SortDescending = "UI_RelicIterations_Ordering_Descending",
   SortLevel = "SORT_BY_LEVEL",
@@ -510,6 +515,7 @@ export enum GameTextKey {
   // A story the Profile tab shows before its Friendship Level is reached, with the level and the story's title
   StoryUnlocksAt = "2616170868",
   StrangeTooth = "2715317724",
+  Sumeru = "Sumeru",
   SumeruRose = "691451364",
   SweetFlower = "1330975132",
   // The touch layout's aim button a bow's wielder has, as the controls list name it, said in place of its glyph

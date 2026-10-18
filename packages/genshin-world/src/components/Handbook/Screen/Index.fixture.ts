@@ -50,6 +50,7 @@ export const props = {
     },
   ],
   completedCount: 11,
+  dayCommissions: [],
   gameText: ENGLISH_GAME_TEXT,
   investigationRewards: [
     { count: 1, rarity: 5 },
@@ -58,5 +59,6 @@ export const props = {
     { count: 150, rarity: 5 },
   ],
   isRewardClaimed: true,
+  nameText: {},
   totalCount: 11,
 };

@@ -6,8 +6,8 @@
 
 ## 2. Scene tasks
 
-- [ ] 2.1 Replace an area's enemies and objects with a scene task's while the task is open. Verify: a test named after the scenario 'a scene task replaces its area's enemies while it is open', seen failing first.
-- [ ] 2.2 Restore the area's own enemies and objects when the scene task is done and the area reloads. Verify: a test named after the scenario 'the area's own enemies return when the scene task is done', seen failing first.
+- [ ] 2.1 Replace an area's enemies and objects with a scene task's while the task is open. Verify: a test named after the scenario 'a scene task replaces its area's enemies while it is open', seen failing first. Open: the camps a scene task swaps in come from the spawned places' camp clustering, whose tasks 1.1 to 3.1 in `genshin-spawned-places` are not built, and the commission record names no area for the swap to stand in.
+- [ ] 2.2 Restore the area's own enemies and objects when the scene task is done and the area reloads. Verify: a test named after the scenario 'the area's own enemies return when the scene task is done', seen failing first. Open: the area's own groups are not extracted from the dump, so there is no set to restore; this waits on 2.1.
 
 ## 3. Quest tasks and blocking
 
@@ -16,7 +16,7 @@
 
 ## 4. Handbook
 
-- [ ] 4.1 Show the day's four on the Commissions tab with each preferred region. Verify: a test named after the scenario 'the Commissions tab lists the day's four with the preferred region', seen failing first.
+- [x] 4.1 Show the day's four on the Commissions tab with each preferred region. Verify: a test named after the scenario 'the Commissions tab lists the day's four with the preferred region', seen failing first.
 
 ## 5. Region pools and routing
 
