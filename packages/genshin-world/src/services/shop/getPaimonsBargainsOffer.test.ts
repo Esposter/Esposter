@@ -18,7 +18,9 @@ describe(getPaimonsBargainsOffer, () => {
       [10_000_024, 10_000_034],
       [10_000_027, 10_000_025],
     ],
+    characterPrice: { buyLimit: 2, priceCount: 5, priceItemId: 221 },
     royalWeaponIds: [11_404, 12_404, 13_408, 14_404, 15_404],
+    weaponPrice: { buyLimit: 3, priceCount: 4, priceItemId: 221 },
   };
 
   test("two characters are offered each month", () => {
