@@ -42,7 +42,7 @@ flowchart TD
 | `packages/genshin-world/src/services/gathering/computeDailyMiningOutcrops.ts`    | A region's count drawn from its places, none below Adventure Rank 30 |
 | `packages/genshin-world/src/services/gathering/computeStandingMiningOutcrops.ts` | The places standing at an instant: the day's draw, not mined since   |
 | `packages/genshin-world/src/components/World/StandIns/Index.vue`                 | The stand-in at each standing place, shared with the Oculi           |
-| `packages/genshin-world/src/services/leyLine/computeMiningOutcropRespawn.ts`     | The respawn: the next 04:00 reset after the mining                   |
+| `packages/genshin-world/src/services/time/computeNextDailyReset.ts`              | The respawn: the next 04:00 reset after the mining                   |
 | `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`    | Whether a mined or unmined outcrop stands at an instant              |
 
 ## Sources
