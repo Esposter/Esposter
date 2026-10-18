@@ -113,6 +113,9 @@ export interface Kit {
     damageBonus?: number;
   };
   highPlunge: KitAction;
+  // Whether a skill with holds releases at its top level whatever seconds it was held, as a counter window on its
+  // Character does, given the context the release starts in
+  jumpsSkillHoldToTop?: (context: KitContext) => boolean;
   // Whether an action that ends keeps the normal attack string where it stands, rather than starting it over, as a
   // Constellation's exception to the actions that break it
   keepsNormalAttackCombo?: (context: KitContext, action: KitAction) => boolean;

@@ -119,6 +119,7 @@ export const replayScriptedMinute = ({
     expiredEffects: [],
     kitEffectState: { effects: [] },
     locomotionState: LocomotionState.Idle,
+    isSkillHeld: false,
     hexereiCount: 0,
     stamina: createStamina(STAMINA_MAX),
     oreStrikes: [],

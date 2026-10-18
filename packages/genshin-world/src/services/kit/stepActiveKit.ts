@@ -67,6 +67,7 @@ export const stepActiveKit = (
   }: ActiveKitControls,
 ): void => {
   context.locomotionState = input.locomotionState;
+  context.isSkillHeld = input.isSkillHeld;
   context.stamina = characterController.stamina;
   context.hexereiCount = countKitHexereiMembers(context.characterIdCombatantMap.keys());
   const {

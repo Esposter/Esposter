@@ -1,8 +1,10 @@
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitShield } from "#src/models/kit/KitShield";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -16,9 +18,15 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYunjinKitBehaviour, YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
+import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
+import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { stepKit } from "#src/services/kit/stepKit";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const YUNJIN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YUNJIN_CHARACTER_ID);
@@ -150,5 +158,91 @@ describe(createYunjinKitBehaviour, () => {
       readReactionBuffs(3, [{ element: Element.Geo, reactionType: ReactionType.Crystallize }]),
       readReactionBuffs(4, [{ element: Element.Electro, reactionType: ReactionType.Superconduct }]),
     ]).toStrictEqual([[], []]);
+  });
+});
+
+describe("Ascension 1's counter window", () => {
+  const FRAME_SECONDS = 1 / KIT_FRAMES_PER_SECOND;
+  const IDLE_INPUT: KitInput = {
+    height: 0,
+    isAttackHeld: false,
+    isAttackPressed: false,
+    isBurstPressed: false,
+    isSkillHeld: false,
+    isSkillPressed: false,
+    locomotionState: LocomotionState.Idle,
+  };
+  const LEVEL_1_ACTION = YUNJIN_KIT.elementalSkillHolds?.[0]?.action;
+  const TOP_LEVEL_ACTION = YUNJIN_KIT.elementalSkillHolds?.at(-1)?.action;
+  const ascension1Combatant: Combatant = { ...createYunjinCombatant(), ascension: 1 };
+
+  // A strike on Yun Jin, as the party hears an enemy's hit on her
+  const strikeYunjin = (context: KitContext, combatant: Combatant) =>
+    YUNJIN_KIT.onKitEvent?.(
+      {
+        bondOfLifeShare: 0,
+        characterId: YUNJIN_CHARACTER_ID,
+        healthShare: -0.1,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+      context,
+      combatant,
+    );
+
+  // Her skill held for the frames given and let go on the frame after, each frame's effects stepped as the world steps
+  // them, so the window runs out in the time it would; the action the release starts is returned
+  const holdAndRelease = (context: KitContext, heldFrames: number): KitAction | undefined => {
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    const stepFrame = (input: KitInput) => {
+      stepKitEffects(FRAME_SECONDS, context);
+      return stepKit(kitState, YUNJIN_KIT, input, partyMember, stamina, FRAME_SECONDS, [], context);
+    };
+    for (let frame = 0; frame < heldFrames; frame++) stepFrame({ ...IDLE_INPUT, isSkillHeld: true });
+    return stepFrame(IDLE_INPUT);
+  };
+
+  test("a strike on her while her skill is held opens the window", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(ascension1Combatant, { isSkillHeld: true });
+
+    expect(YUNJIN_KIT.jumpsSkillHoldToTop?.(context)).toBe(false);
+    strikeYunjin(context, ascension1Combatant);
+    expect(YUNJIN_KIT.jumpsSkillHoldToTop?.(context)).toBe(true);
+  });
+
+  test("a release within the window plays the top hold level, however short the hold was", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(ascension1Combatant, { isSkillHeld: true });
+    strikeYunjin(context, ascension1Combatant);
+
+    expect(holdAndRelease(context, 12)).toBe(TOP_LEVEL_ACTION);
+  });
+
+  test("a release after the window closed does not, and plays the level its held seconds reach", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(ascension1Combatant, { isSkillHeld: true });
+    strikeYunjin(context, ascension1Combatant);
+
+    expect(holdAndRelease(context, 36)).toBe(LEVEL_1_ACTION);
+  });
+
+  test("a strike on her outside a hold opens nothing", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(ascension1Combatant);
+    strikeYunjin(context, ascension1Combatant);
+
+    expect(holdAndRelease(context, 12)).toBe(YUNJIN_KIT.elementalSkill);
+  });
+
+  test("a strike on her during a hold opens nothing below Ascension 1", () => {
+    expect.hasAssertions();
+    const combatant = createYunjinCombatant();
+    const context = createKitTestContext(combatant, { isSkillHeld: true });
+    strikeYunjin(context, combatant);
+
+    expect(holdAndRelease(context, 12)).toBe(YUNJIN_KIT.elementalSkill);
   });
 });

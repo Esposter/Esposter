@@ -25,6 +25,7 @@ export interface KitBehaviour extends Partial<
     | "getStrikeCriticalDamageBonus"
     | "getStrikeCriticalRateBonus"
     | "getStrikeDamageBonus"
+    | "jumpsSkillHoldToTop"
     | "keepsNormalAttackCombo"
     | "onKitEvent"
     | "onSprint"
