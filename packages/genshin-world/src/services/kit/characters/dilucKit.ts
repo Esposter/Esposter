@@ -15,6 +15,8 @@ import { takeOne } from "@esposter/shared";
 const DILUC_INFUSION_SECONDS = 8;
 const DILUC_A4_EXTRA_INFUSION_SECONDS = 4;
 const DILUC_A4_PYRO_DAMAGE_BONUS = 0.2;
+const DILUC_RELENTLESS_ASCENSION = 1;
+const DILUC_RELENTLESS_STAMINA_MULTIPLIER = 0.5;
 
 // Measured: gcsim v2.47.2 (MIT) diluc/burst.go, the phoenix spawns a metre ahead of the body and moves 14 metres a second,
 // Striking eight times from its launch, and exploding 1.7 seconds after its launch, 24.8 metres on
@@ -87,5 +89,9 @@ export const createDilucKitBehaviour = ({
         );
       },
     },
+    // Relentless, from Ascension 1: his charged attacks cost half their stamina
+    // Its +3s duration clause is not built, since the talent text does not name what that duration is
+    getChargedAttackStaminaMultiplier: ({ activeCombatant }) =>
+      activeCombatant.ascension >= DILUC_RELENTLESS_ASCENSION ? DILUC_RELENTLESS_STAMINA_MULTIPLIER : 1,
   };
 };

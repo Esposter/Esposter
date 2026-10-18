@@ -9,6 +9,8 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, a
 - **Dawn's phoenix is priced by the same ICD as its slash.** Its ticks and explosion are 2U of Pyro each under the Elemental Burst internal cooldown, and carry the slash's 100 poise, as gcsim's copy of the attack does. Their area is a circle to the far corner of gcsim's box, provisional until areas hold boxes. gcsim places tick _i_ at 1 + 2.8*i* metres; the phoenix's own clock puts it 2.8 metres further, which the kit follows.
 - **Its stamina drains a second as it plays.** The table's 40 a second is drained each step of the charge, so its 1.2 seconds cost 48 in all, and the charge starts with any stamina. The game holds the charge up to 5 seconds and stops it when the stamina runs out, which the kit does not model.
 - **Poise is the wiki's where gcsim gives none.** gcsim sets no poise on Diluc's skill, burst or collision; the wiki's advanced properties give 120, 100 and 35.
+- **Relentless, from Ascension 1, halves the charged attack's stamina.** The talent text's 50% cut is priced by the charged-attack stamina hook at Ascension 1 and above. Its "+3s duration" clause is not built, since the talent text does not name what that duration is; gcsim models neither part.
+- **Blessing of Phoenix, from Ascension 4,** lengthens Dawn's infusion by 4 seconds to 12 and gives a 20% Pyro DMG Bonus for as long, as gcsim's Pyro bonus does.
 
 ## Provisional constants
 
@@ -16,7 +18,7 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, a
 
 ## Not built
 
-- **Diluc's A1 and the phase-0 passive are not built.** gcsim models no combat effect for either.
+- **Relentless's "+3s duration" clause and the phase-0 passive, Tradition of the Dawn Knight, are not built.** The first has no named referent in the talent text, and the second refunds ore when crafting, outside combat.
 
 ## Key files
 
