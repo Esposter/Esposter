@@ -106,8 +106,8 @@ const restorePreciseMovementPoints = (kitEffectState: KitEffectState, characterI
 
 // Iansan's behaviour: her skill's press enters the Nightsoul Blessing with its points, which drain six a second for the 16
 // Seconds it lasts. gcsim ends the blessing when the points fall to 0.2, and the kit ends it when they reach none, a gap of
-// A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and a second after it lands her restore
-// Starts, running for the burst's 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
+// A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and her restore's first tick falls
+// A second after the press, for 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
 // Burst's Party ATK bonus and its conversion of the points into ATK, the restore's share of the movement of the other
 // Members on the field, which no kit event carries, so Warming Up does not heal on those points, and the points her
 // Constellations add. Her strikes and plunges are her record's alone
