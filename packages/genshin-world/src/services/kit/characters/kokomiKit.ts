@@ -34,6 +34,9 @@ const SONG_OF_PEARLS_HEALING_BONUS_SHARE = 0.15;
 const FLAWLESS_STRATEGY_HEALING_BONUS = 0.25;
 const FLAWLESS_STRATEGY_CRITICAL_RATE = -1;
 
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_NORMAL_ATTACK_SPEED_BONUS = 0.1;
+
 // A garment attack's hit adds its share of her Max HP to its damage, and from Ascension 4 Song of Pearls' share of her
 // Healing Bonus of her Max HP as well. Its heal is rolled every time, whether or not she holds a shield, as gcsim's heal
 // On each normal and charged attack is
@@ -135,8 +138,9 @@ export const createKokomiKitBehaviour = ({
     },
     // Constellation 4, The Moon Overlooks the Waters: her Normal Attack SPD is raised while she dons the garment
     getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>
-      activeCombatant.constellationCount >= 4 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
-        ? 0.1
+      activeCombatant.constellationCount >= CONSTELLATION_4 &&
+      findKitStance(kitEffectState.effects, activeCombatant.characterId)
+        ? CONSTELLATION_4_NORMAL_ATTACK_SPEED_BONUS
         : 0,
     getPassiveBonuses,
     skill: createBakeKurage(bakeKurageRipples),
