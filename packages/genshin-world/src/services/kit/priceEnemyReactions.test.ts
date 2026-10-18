@@ -82,6 +82,39 @@ describe(priceEnemyReactions, () => {
     );
   });
 
+  test("a transformative reaction's party reaction bonus is read with the enemy it lands on", () => {
+    expect.hasAssertions();
+    const markedEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const creator = createCombatant({
+      ...TRAVELER_KIT,
+      getPartyReactionBonus: (_member, { enemy }) => (enemy === markedEnemy ? { damageBonus: 0.6 } : {}),
+    });
+    const context = createKitTestContext(creator, { enemyTables });
+    const resistance = kind.elementResistances[Element.Pyro];
+
+    const { transformativeDamage: markedDamage } = priceEnemyReactions(
+      kind,
+      markedEnemy,
+      [swirl],
+      creator,
+      Element.Anemo,
+      context,
+    );
+    const { transformativeDamage: unmarkedDamage } = priceEnemyReactions(
+      kind,
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      [swirl],
+      creator,
+      Element.Anemo,
+      context,
+    );
+
+    expect(markedDamage).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Swirl, LEVEL, 0, resistance, 0.6),
+    );
+    expect(unmarkedDamage).toBeCloseTo(getTransformativeDamage(TransformativeReactionType.Swirl, LEVEL, 0, resistance));
+  });
+
   test("a transformative reaction its strike triggers takes its creator's party reaction flat base before the enemy's RES", () => {
     expect.hasAssertions();
     const creator = createCombatant({

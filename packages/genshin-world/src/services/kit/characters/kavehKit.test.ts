@@ -8,12 +8,16 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKavehKitBehaviour, KAVEH_CHARACTER_ID } from "#src/services/kit/characters/kavehKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const KAVEH_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAVEH_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(createKavehKitBehaviour, () => {
   // The effects the burst's start adds to the team's, which its owner holds
@@ -95,7 +99,12 @@ describe(createKavehKitBehaviour, () => {
     const bloomDamageBonus = (member: Combatant, reactionType: TransformativeReactionType) =>
       KAVEH_KIT.getPartyReactionBonus?.(
         member,
-        { combatant: member, element: Element.Dendro, reactionType },
+        {
+          combatant: member,
+          element: Element.Dendro,
+          enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+          reactionType,
+        },
         createKitTestContext(member),
       )?.damageBonus ?? 0;
     expect([
@@ -113,7 +122,12 @@ describe(createKavehKitBehaviour, () => {
     expect(
       KAVEH_KIT.getPartyReactionBonus?.(
         kaveh,
-        { combatant: teammate, element: Element.Dendro, reactionType: TransformativeReactionType.Bloom },
+        {
+          combatant: teammate,
+          element: Element.Dendro,
+          enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+          reactionType: TransformativeReactionType.Bloom,
+        },
         createKitTestContext(kaveh),
       )?.damageBonus ?? 0,
     ).toBe(0);

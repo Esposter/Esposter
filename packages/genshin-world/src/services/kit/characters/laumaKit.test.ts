@@ -333,7 +333,7 @@ const readPaleHymnBaseDamageBonus = (
   return (
     LAUMA_KIT.getPartyReactionBonus?.(
       combatant,
-      { combatant, element: Element.Dendro, reactionType },
+      { combatant, element: Element.Dendro, enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), reactionType },
       createKitTestContext(combatant, { kitEffectState }),
     )?.additiveBaseDamageBonus ?? 0
   );

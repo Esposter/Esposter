@@ -121,33 +121,29 @@ describe(strikeLunarCharged, () => {
     });
   });
 
-  test("a contributor's party reaction bonus is read with Electro, the element a Lunar-Charged deals its damage in", () => {
+  test("a contributor's party reaction bonus is read with Electro, the element a Lunar-Charged deals its damage in, and the enemy it strikes", () => {
     expect.hasAssertions();
+    const getPartyReactionBonus = vi.fn<NonNullable<Kit["getPartyReactionBonus"]>>(() => ({}));
     const member: Combatant = {
       ...createMember(TRAVELER_CHARACTER_ID, 0),
-      kit: {
-        ...TRAVELER_KIT,
-        getPartyReactionBonus: (_member, { element }) => (element === Element.Electro ? { damageBonus: 0.6 } : {}),
-      },
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus },
     };
     const enemy = createSturdyEnemy();
     const lunarReactionTypes = [LunarReactionType.LunarCharged];
     applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
     applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
+    const context = createKitTestContext(member, {
+      enemyMap: new Map([["", enemy]]),
+      enemyTables,
+      party: createParty([member.characterId]),
+    });
 
-    strikeLunarCharged(
-      enemy,
-      createKitTestContext(member, {
-        enemyMap: new Map([["", enemy]]),
-        enemyTables,
-        party: createParty([member.characterId]),
-      }),
-    );
+    strikeLunarCharged(enemy, context);
 
-    expect(STURDY_HEALTH - enemy.health).toBeCloseTo(
-      0.6 *
-        getLunarDamage(LunarReactionType.LunarCharged, takeOne(CharacterLevelMultiplierMap, LEVEL), 0, 0, 0.6) *
-        getResistanceMultiplier(kind.elementResistances[Element.Electro]),
+    expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
+      { ...member, isOnField: true },
+      { combatant: member, element: Element.Electro, enemy, reactionType: LunarReactionType.LunarCharged },
+      context,
     );
   });
 

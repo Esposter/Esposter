@@ -8,12 +8,16 @@ import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { priceReactionContributors } from "#src/services/kit/priceReactionContributors";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const DAMAGE = 100;
 // A roll between the base CRIT Rate and the raised one, so only a raised rate crits
 const ROLL = 0.5;
@@ -33,6 +37,7 @@ describe(priceReactionContributors, () => {
   const priceWith = (context: KitContext, reactionType: LunarReactionType | StellarReactionType) =>
     priceReactionContributors(new Set([TRAVELER_CHARACTER_ID]), context, price, {
       element: Element.Electro,
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       reactionType,
     });
 

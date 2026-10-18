@@ -72,9 +72,9 @@ describe(landReactionReach, () => {
 
     landReactionReach(bloomContext, origin, [origin, near], bloom, blooming);
 
-    expect(getPartyReactionBonus).toHaveBeenCalledWith(
+    expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
       { ...blooming, isOnField: true },
-      { combatant: blooming, element: Element.Dendro, reactionType: TransformativeReactionType.Bloom },
+      { combatant: blooming, element: Element.Dendro, enemy: near, reactionType: TransformativeReactionType.Bloom },
       bloomContext,
     );
   });

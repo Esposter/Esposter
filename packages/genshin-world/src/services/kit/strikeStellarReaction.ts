@@ -30,7 +30,7 @@ export const strikeStellarReaction = (
   // Base once, before the enemy's RES as strikeReactionDamage takes it. A hit that names no reaction, a Stellar Vortex's, takes none
   const bonuses =
     owner && reactionType
-      ? getDeployedReactionBonuses({ combatant: owner, element, reactionType }, context)
+      ? getDeployedReactionBonuses({ combatant: owner, element, enemy, reactionType }, context)
       : undefined;
   const damages = priceReactionContributors(
     contributorIds,
@@ -43,7 +43,7 @@ export const strikeStellarReaction = (
         0,
         attributeTotalMap[Attribute.StellarGlimmerReactionDamageBonus] + (bonuses?.damageBonus ?? 0),
       ),
-    reactionType ? { element, reactionType } : undefined,
+    reactionType ? { element, enemy, reactionType } : undefined,
   );
   if (damages.length === 0) return false;
   strikeReactionDamage(

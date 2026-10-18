@@ -9,6 +9,9 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
@@ -20,6 +23,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const IFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IFA_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createIfaCombatant = (constellationCount = 0, ascension = 0): Combatant => ({
   ascension,
@@ -34,8 +38,11 @@ const createIfaCombatant = (constellationCount = 0, ascension = 0): Combatant =>
 
 // The DMG Bonus Ifa's party reaction hook adds to a reaction of the given type, read with her points in the given context
 const partyDamageBonusOf = (combatant: Combatant, reactionType: KitReaction["reactionType"], context: KitContext) =>
-  IFA_KIT.getPartyReactionBonus?.(combatant, { combatant, element: Element.Electro, reactionType }, context)
-    ?.damageBonus ?? 0;
+  IFA_KIT.getPartyReactionBonus?.(
+    combatant,
+    { combatant, element: Element.Electro, enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), reactionType },
+    context,
+  )?.damageBonus ?? 0;
 
 describe(createIfaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {

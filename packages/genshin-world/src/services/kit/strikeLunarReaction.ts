@@ -40,7 +40,7 @@ export const strikeLunarReaction = (
         moonsign.baseDamageBonusMap[lunarReactionType] ?? 0,
         moonsign.reactionBonus + partyDamageBonus,
       ),
-    { element, reactionType: lunarReactionType },
+    { element, enemy, reactionType: lunarReactionType },
   );
   if (damages.length === 0) return false;
   strikeReactionDamage(enemy, element, sumLunarContributions(damages), owner, context);
