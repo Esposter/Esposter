@@ -336,7 +336,7 @@ const {
 });
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
 // The quests in progress that finish
-const { commissionDay, encounterPoints, handbookDayCommissions } = useWorldCommissions({
+const { commissionDay, encounterPoints, handbookDayCommissions, longTermEncounterPoints } = useWorldCommissions({
   events,
   finishedMainQuestIds,
   gameDataBaseUrl,
@@ -346,6 +346,7 @@ const { commissionDay, encounterPoints, handbookDayCommissions } = useWorldCommi
   rank,
   savedCommissionDay: savedState.commissionDay,
   savedEncounterPoints: savedState.encounterPoints,
+  savedLongTermEncounterPoints: savedState.longTermEncounterPoints,
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, bookReading, readBook } = useWorldArchive({
@@ -807,6 +808,7 @@ useWorldSaveSync({
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
     encounterPoints: encounterPoints.value,
+    longTermEncounterPoints: longTermEncounterPoints.value,
     enemyRespawnMap: enemyRespawnMap.value,
     foundOculusIds: foundOculusIds.value,
     frostbearingTreeProgress: frostbearingTreeProgress.value,

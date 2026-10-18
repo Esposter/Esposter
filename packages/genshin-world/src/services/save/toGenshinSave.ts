@@ -31,6 +31,7 @@ export const toGenshinSave = ({
   craftingProgress,
   encounterPoints,
   enemyRespawnMap,
+  longTermEncounterPoints,
   foundOculusIds,
   frostbearingTreeProgress,
   homePlacements,
@@ -60,6 +61,7 @@ export const toGenshinSave = ({
   clearedDomains: [...clearedDomainIds],
   commissionDay: toCommissionDaySave(commissionDay),
   encounterPoints: toEncounterPointsSave(encounterPoints),
+  longTermEncounterPoints,
   companionshipExp: Object.fromEntries([
     ...companionshipExpMap,
     ...characters.map(({ friendshipExp, id }): [number, number] => [id, friendshipExp]),

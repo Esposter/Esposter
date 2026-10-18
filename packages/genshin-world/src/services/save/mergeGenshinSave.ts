@@ -4,6 +4,7 @@ import type { ArchiveSave } from "#src/models/archive/ArchiveSave";
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave";
 import type { EncounterPointsSave } from "#src/models/commission/EncounterPointsSave";
+import type { LongTermEncounterPointsSave } from "#src/models/commission/LongTermEncounterPointsSave";
 import type { ProcessingJobSave } from "#src/models/cooking/ProcessingJobSave";
 import type { EnemyRespawnSave } from "#src/models/enemy/EnemyRespawnSave";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
@@ -165,6 +166,15 @@ const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPoin
   if (order === 0) return { ...account, halfPoints: Math.max(account.halfPoints, guest.halfPoints) };
   return order > 0 ? account : guest;
 };
+// The later major version's Long-Term Encounter Points are held, and within one major version the larger count, as the daily
+// Points of one day are
+const mergeLongTermEncounterPoints = (
+  account: LongTermEncounterPointsSave,
+  guest: LongTermEncounterPointsSave,
+): LongTermEncounterPointsSave => {
+  if (account.majorVersion !== guest.majorVersion) return account.majorVersion > guest.majorVersion ? account : guest;
+  return { ...account, halfPoints: Math.max(account.halfPoints, guest.halfPoints) };
+};
 
 // The camps both copies cleared, each once, since a camp cleared stays cleared
 const mergeClearedCamps = (account: ClearedCamp[], guest: ClearedCamp[]): ClearedCamp[] => [
@@ -237,6 +247,10 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       ? guest.commissionDay
       : account.commissionDay,
     encounterPoints: mergeEncounterPoints(account.encounterPoints, guest.encounterPoints),
+    longTermEncounterPoints: mergeLongTermEncounterPoints(
+      account.longTermEncounterPoints,
+      guest.longTermEncounterPoints,
+    ),
     companionshipExp,
     cooking: {
       learnedRecipeIds: [...new Set([...account.cooking.learnedRecipeIds, ...guest.cooking.learnedRecipeIds])],

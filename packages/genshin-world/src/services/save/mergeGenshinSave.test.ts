@@ -663,4 +663,20 @@ describe(mergeGenshinSave, () => {
 
     expect(mergeGenshinSave(account, EMPTY_GENSHIN_SAVE).spiralAbyss).toStrictEqual(account.spiralAbyss);
   });
+
+  test("keeps the Long-Term Encounter Points of the later major version", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, longTermEncounterPoints: { halfPoints: 6, majorVersion: 5 } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, longTermEncounterPoints: { halfPoints: 2, majorVersion: 6 } };
+
+    expect(mergeGenshinSave(account, guest).longTermEncounterPoints).toStrictEqual(guest.longTermEncounterPoints);
+  });
+
+  test("keeps the larger count of Long-Term Encounter Points within one major version", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, longTermEncounterPoints: { halfPoints: 2, majorVersion: 6 } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, longTermEncounterPoints: { halfPoints: 6, majorVersion: 6 } };
+
+    expect(mergeGenshinSave(account, guest).longTermEncounterPoints).toStrictEqual(guest.longTermEncounterPoints);
+  });
 });
