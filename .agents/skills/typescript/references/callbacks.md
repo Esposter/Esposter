@@ -1,5 +1,8 @@
 # Callbacks
 
-Read when handing a function to an array method, a lifecycle hook or an event listener. The one-line rule is in `SKILL.md`; this page is why, and the one exception.
+Read when handing a function to an array method, a lifecycle hook or an event listener. The one-line rule is in `SKILL.md`; this page is why, and the exceptions.
 
-- **Never pass a function reference as a callback** — wrap it: `array.map((item) => fn(item))`, `onUnmounted(() => { reset(); })`. A bare reference forwards every argument the caller supplies (`.map` passes the index) and loses `this` binding on a method. Applies to array methods, lifecycle hooks and event listeners alike — except for the native coercion functions, where `unicorn/prefer-native-coercion-functions` demands the bare reference and is right to: `Number`, `String` and `Boolean` each read one argument and ignore the index, so the wrapper only hides which of the three is being called.
+- **Array methods** — `no-restricted-syntax` (`packages/configuration/eslint/restrictedSyntaxes.js`) reports a bare reference passed as the callback of `every`, `filter`, `find`, `findIndex`, `findLast`, `findLastIndex`, `flatMap`, `forEach`, `map`, `reduce`, `reduceRight` and `some`. Wrap it: `array.map((item) => fn(item))`, `array.reduce((accumulator, item) => fn(accumulator, item), 0)`. A bare reference forwards every argument the method supplies (`.map` passes the index, `.reduce` the accumulator), and a method reference loses `this` binding.
+- **Lifecycle hooks** — wrap them: `onUnmounted(() => { reset(); })`.
+- **Event listeners** — a listener is passed by reference when it must be removed later, because `removeEventListener` matches the very reference `addEventListener` received; a listener nothing removes is wrapped like a hook.
+- **The exception** — `Number`, `String` and `Boolean` are passed bare, and the array-method enforcer above excepts them. `unicorn/prefer-native-coercion-functions` demands the bare reference: each reads one argument and ignores the index, so the wrapper only hides which of the three is being called.

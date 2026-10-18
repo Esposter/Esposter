@@ -54,7 +54,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 ## Functions
 
 - **Always arrow functions** — `const fn = () => { ... }`. The `function` keyword is only for cases where `this` binding is required: class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be an arrow function.
-- **Never pass a function reference as a callback** — wrap it, `array.map((item) => fn(item))`, except `Number`, `String` and `Boolean` (`references/callbacks.md`).
+- **A bare function reference handed to an array method is wrapped** — `no-restricted-syntax` in `packages/configuration/eslint/restrictedSyntaxes.js` enforces it; the why, the hooks and listeners, and the `Number`/`String`/`Boolean` exception are `references/callbacks.md`.
 - **Prefer inferred return types** — annotate only a narrower contract or a public API boundary (`references/function-signatures.md`).
 - **Syntax is never extracted into a helper** — the `over-engineering` skill (`references/syntax-extraction.md`).
 - **Use `RegExp.escape(value)` when embedding a string in a regular expression** — do not hand-roll a local `escapeRegExp` helper; ESLint enforces the named-helper ban in `restrictedSyntaxes`.

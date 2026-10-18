@@ -7,6 +7,30 @@ describe("restrictedSyntaxes", () => {
     entries: restrictedSyntaxes,
     fixtures: [
       {
+        filePath: "arrayMethodReference.ts",
+        name: "arrayMethodReference",
+        source: "const doubled = [1].map(double);",
+        violations: 1,
+      },
+      {
+        filePath: "arrayMethodWrapped.ts",
+        name: "arrayMethodWrapped",
+        source: "const doubled = [1].map((item) => double(item));",
+        violations: 0,
+      },
+      {
+        filePath: "arrayMethodCoercion.ts",
+        name: "arrayMethodCoercion",
+        source: "const numbers = ['1'].map(Number);",
+        violations: 0,
+      },
+      {
+        filePath: "arrayReduceReference.ts",
+        name: "arrayReduceReference",
+        source: "const total = [1].reduce(add, 0);",
+        violations: 1,
+      },
+      {
         filePath: "localEscapeRegExp.ts",
         name: "localEscapeRegExp",
         source: "const escapeRegExp = (value: string) => RegExp(value);",

@@ -123,4 +123,13 @@ export default [
       "`createSharedComposable` is banned — shared reactive state lives in a Pinia store. See the vue-composable-patterns skill.",
     selector: "CallExpression[callee.name='createSharedComposable']",
   },
+  {
+    // An array method hands its callback the index or accumulator as well as the item, so a bare reference forwards
+    // Arguments its own signature never asked for. The three native coercion functions read one argument and ignore
+    // The rest, which is why `unicorn/prefer-native-coercion-functions` requires them bare and they are excepted here.
+    message:
+      "Wrap a function passed to an array method — `(item) => fn(item)`, or `(accumulator, item) => fn(accumulator, item)` for `reduce`. A bare reference forwards the index. See the typescript skill's callbacks reference.",
+    selector:
+      "CallExpression[callee.property.name=/^(every|filter|find|findIndex|findLast|findLastIndex|flatMap|forEach|map|reduce|reduceRight|some)$/][arguments.0.type=/^(Identifier|MemberExpression)$/]:not([arguments.0.name=/^(Boolean|Number|String)$/])",
+  },
 ];
