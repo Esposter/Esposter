@@ -5,9 +5,6 @@ export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [
   LandmarkKind.StatueOfTheSeven,
   LandmarkKind.TeleportWaypoint,
 ];
-// Provisional: the game's own arrival point for each statue, its scene point's transport place. How far in front of a
-// Landmark a jump lands, in metres, clear of a statue's plinth
-export const JUMP_STANDOFF_DISTANCE = 8;
 // How near a locked jump landmark the HUD points to it, and how far it stays pointed to once the player is past the
 // Show distance, in metres, as the wiki gives the two. The gap between them keeps the pointer from flickering at the show distance
 export const NAVIGATION_POINTER_SHOW_DISTANCE = 30;

@@ -5,5 +5,5 @@
 
 ## 2. Arrival
 
-- [ ] 2.1 Read each landmark's arrival place and turn from the scene's transport points, naming the fields against the fitted statues. Verify: a test named after the scenario 'A jump lands at the game's arrival point' written first and seen failing.
-- [ ] 2.2 Replace the provisional stand-off in the jump's pose with each landmark's arrival. Verify: the same test, seen passing against the arrival and failing against the stand-off.
+- [x] 2.1 Read each landmark's arrival place and turn from the scene's transport points, naming the fields against the fitted statues. Verify: a test named after the scenario 'A jump lands at the game's arrival point' written first and seen failing.
+- [x] 2.2 Replace the provisional stand-off in the jump's pose with each landmark's arrival. Verify: the same test, seen passing against the arrival and failing against the stand-off.
