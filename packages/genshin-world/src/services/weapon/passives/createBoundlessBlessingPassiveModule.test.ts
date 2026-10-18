@@ -40,7 +40,7 @@ describe(createBoundlessBlessingPassiveModule, () => {
   test("the rank's Movement SPD is a passive bonus on the wielder", () => {
     expect.hasAssertions();
 
-    expect(boundlessBlessingPassiveModule.getPassiveBonuses?.(wielder, 1, [])).toStrictEqual([
+    expect(boundlessBlessingPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.1, attribute: Attribute.MovementSpeed },
     ]);
   });

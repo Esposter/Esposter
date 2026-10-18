@@ -48,11 +48,13 @@ export interface Kit {
   getNormalAttackSpeedBonus?: (context: KitContext) => number;
   // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands, its
   // HP as a share of its Max HP, which a bonus at low or high HP reads, and the deployed team's built combatants, each
-  // Flagged with whether it is on the field, which a bonus gated on the field reads
+  // Flagged with whether it is on the field, which a bonus gated on the field reads, and the effects on the team, which
+  // A bonus gated on a status reads
   getPassiveBonuses?: (
     combatant: Combatant,
     healthShare: number,
     deployedCombatants: readonly DeployedCombatant[],
+    effects: readonly KitEffect[],
   ) => { amount: number; attribute: Attribute }[];
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
@@ -60,8 +62,8 @@ export interface Kit {
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
-  // Against some enemies only, given the enemy as it stands and the deployed team
-  getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
+  // Against some enemies only, given the enemy as it stands, the deployed team and the effects on it
+  getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
   // Stats, given the enemy as it stands, the deployed team, the effects on it and the team's characters by ID, which a
   // Buffed stat reads

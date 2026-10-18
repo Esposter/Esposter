@@ -65,6 +65,7 @@ const getTotemStrikeDamageBonus = (ascension: number): number | undefined => {
     { attackTag: totem.attackTag, body: totem.body, combatant, hit: takeOne(totem.hits) },
     createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     createParty([YAE_MIKO_CHARACTER_ID]),
+    [],
   );
 };
 

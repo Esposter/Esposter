@@ -40,10 +40,10 @@ describe(createUndyingAdmirationPassiveModule, () => {
     expect.hasAssertions();
 
     expect(
-      undyingAdmirationPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party),
+      undyingAdmirationPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, []),
     ).toBe(0.16);
     expect(
-      undyingAdmirationPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party),
+      undyingAdmirationPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
     ).toBe(0);
   });
 
