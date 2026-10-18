@@ -6,6 +6,7 @@ Lohen's kit is its record and one behaviour module, `createLohenKitBehaviour`, a
 
 - **Lohen borrows Xiangling's hitmarks and areas, provisional.** His strikes, charged attack and burst all take hers, a polearm user of his role.
 - **Lohen's burst reads its "Skill DMG" label for six hits.**
+- **The sweep's causes.** gcsim has no action file for Lohen, so every frame, area and hit count his strikes, charged attack, plunges and burst take from a donor is `NoActionFile` in his overlay. His own elements, multipliers, the skill's animation and its zero hits are `Unsourced`, as no source gives them.
 
 ## Not built
 
