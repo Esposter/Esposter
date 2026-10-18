@@ -4,6 +4,7 @@ import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildGcgDeck } from "#src/services/genshinAssets/gcg/buildGcgDeck";
 import { buildGcgGames } from "#src/services/genshinAssets/gcg/buildGcgGames";
+import { buildGcgLevels } from "#src/services/genshinAssets/gcg/buildGcgLevels";
 import { buildGcgStandardRule } from "#src/services/genshinAssets/gcg/buildGcgStandardRule";
 import { GcgDeckIdCreatedCardIdsMap } from "#src/services/genshinAssets/gcg/constants";
 import { defineCommand } from "citty";
@@ -20,6 +21,7 @@ export const gcgCommand: SubCommandsDef[string] = defineCommand({
     const builtObjects: Record<string, unknown>[] = [
       buildGcgStandardRule(),
       buildGcgGames(),
+      buildGcgLevels(),
       ...Array.from(GcgDeckIdCreatedCardIdsMap, ([deckId, createdCardIds]) => buildGcgDeck(deckId, createdCardIds)),
     ];
     console.log(

@@ -86,6 +86,20 @@ describe("the tutorial deck's cards and skills", () => {
     }).toStrictEqual({ defenderHp: 8, fields: [113_031], result: GcgActionResult.Done });
   });
 
+  test("a card the player cannot pay for is refused", async () => {
+    expect.hasAssertions();
+
+    const duel = await openTutorialDuel(Array.from({ length: 6 }, () => Element.Pyro));
+    takeOne(duel.sides, 0).hand = [312_302, ...takeOne(duel.sides, 0).hand.slice(1)];
+    const played = playGcgCard(duel, 0, CRIMSON_WITCH_OF_FLAMES_HAND_INDEX, DILUC_INDEX, []);
+
+    expect({
+      equipmentIds: takeOne(takeOne(duel.sides, 0).characters, DILUC_INDEX).equipments.map(({ cardId }) => cardId),
+      handHead: takeOne(duel.sides, 0).hand[0],
+      played,
+    }).toStrictEqual({ equipmentIds: [], handHead: 312_302, played: GcgActionResult.Unpayable });
+  });
+
   test("should make the first switch away from Mona in a round a fast action", async () => {
     expect.hasAssertions();
 

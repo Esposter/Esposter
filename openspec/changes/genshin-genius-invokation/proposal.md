@@ -23,8 +23,9 @@ Finish Genius Invokation TCG beyond its tutorial: every card's effect, seated op
 
 ## Waiting on
 
-- The Player Level's slice is published through the hosted game data, which is not yet built.
+- The Player Level's slice is built and its dry run is clean. Its real publish, which adds the `gcg/levels` key to the lock, is the main session's. The tutorial's start waits on quest 70665 being carried, since the world has no finish event for it.
 - The seated challengers wait on the talks system's split.
+- The challengers' decks 12103, 13001, 14002, 12105 and 13003 carry no card list in the 7.1 dump, so their cards cannot be modelled yet.
 
 ## Impact
 

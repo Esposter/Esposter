@@ -306,4 +306,64 @@ describe(buyShopGood, () => {
       buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], fishPricedGood, ADVENTURE_RANK, NOW),
     ).toBeUndefined();
   });
+
+  // The Card Shop sells its cards for Lucky Coins, a material the bag holds, here made up in the same shape as the grocery
+  const LUCKY_COIN_ITEM_ID = 3200;
+  const CARD_ITEM_ID = 3300;
+  const CARD_NAME_TEXT_ID = "2";
+  const CARD_NAME = "Card";
+  const luckyCoinMaterial: MaterialData = { ...groceryMaterial, id: LUCKY_COIN_ITEM_ID };
+  const cardMaterial: MaterialData = { ...groceryMaterial, id: CARD_ITEM_ID };
+  const getCardShopItemDefinition = (itemId: number) =>
+    getItemDefinition(
+      itemId,
+      { [GROCERY_NAME_TEXT_ID]: GROCERY_NAME, [CARD_NAME_TEXT_ID]: CARD_NAME },
+      new Map([
+        [LUCKY_COIN_ITEM_ID, luckyCoinMaterial],
+        [CARD_ITEM_ID, cardMaterial],
+      ]),
+    );
+  const cardShopGood: ShopGood = {
+    ...groceryGood,
+    goodsId: 9001,
+    itemId: CARD_ITEM_ID,
+    priceCount: 2,
+    priceItemId: LUCKY_COIN_ITEM_ID,
+  };
+
+  test("a card is bought with Lucky Coins", () => {
+    expect.hasAssertions();
+
+    const inventory = {
+      items: [{ definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 3 }],
+      nextId: 1,
+    };
+    const result = buyShopGood(
+      EMPTY_WALLET,
+      inventory,
+      getCardShopItemDefinition,
+      [],
+      cardShopGood,
+      ADVENTURE_RANK,
+      NOW,
+    );
+
+    expect(result?.inventory.items).toStrictEqual([
+      { definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 1 },
+      { definition: getCardShopItemDefinition(CARD_ITEM_ID), id: 1, quantity: 1 },
+    ]);
+  });
+
+  test("a card the player cannot afford is not sold", () => {
+    expect.hasAssertions();
+
+    const inventory = {
+      items: [{ definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 1 }],
+      nextId: 1,
+    };
+
+    expect(
+      buyShopGood(EMPTY_WALLET, inventory, getCardShopItemDefinition, [], cardShopGood, ADVENTURE_RANK, NOW),
+    ).toBeUndefined();
+  });
 });
