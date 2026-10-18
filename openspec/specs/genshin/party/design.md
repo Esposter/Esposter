@@ -77,6 +77,7 @@ The character on the field fights through its kit, which prices every character'
 | `packages/genshin-world/src/services/party/addEnduringRockStatus.ts`                    | The Geo RES an enemy struck under Enduring Rock loses, given before its damage is read                          |
 | `packages/genshin-world/src/services/party/ReactionElementalMasteryMap.ts`              | The Elemental Mastery each reaction gives every party member under Sprawling Greenery                           |
 | `packages/genshin-world/src/services/party/addSprawlingGreeneryBuffs.ts`                | Each reaction's timed Elemental Mastery, one buff per party member for each reaction                            |
+| `packages/genshin-world/src/services/party/getMovementSpeedLocomotion.ts`               | The walking, running, sprinting and dashing speeds raised by a character's Movement SPD                         |
 | `packages/genshin-world/src/services/party/getImpetuousWindsLocomotion.ts`              | The walking, running, sprinting and dashing speeds raised by Impetuous Winds                                    |
 | `packages/genshin-world/src/services/party/getImpetuousWindsSkillCooldownMultiplier.ts` | Impetuous Winds' factor on a skill's cooldown, or none without it                                               |
 | `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts`                 | A hit's pricing: its buffs, its passives' bonuses at its HP in the party and Enduring Rock's DMG                |

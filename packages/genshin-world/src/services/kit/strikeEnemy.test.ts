@@ -158,6 +158,52 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
+  test("raises a physical hit's damage by the all-damage bonus its character carries", () => {
+    expect.hasAssertions();
+
+    const ALL_DAMAGE_BONUS = 0.5;
+    const enemy = createSturdyEnemy();
+    const { talentMultiplier } = TRAVELER_KIT.plungeCollision;
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      damageBonus: ALL_DAMAGE_BONUS,
+      defense,
+      resistance: kind.physicalResistance,
+      stat: ATTACK,
+      talentMultiplier,
+    });
+    const combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.AllDamageBonus, value: ALL_DAMAGE_BONUS },
+      ]),
+    };
+
+    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, combatant, NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("raises an elemental hit's damage by the all-damage bonus too", () => {
+    expect.hasAssertions();
+
+    const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Hydro };
+    const plainEnemy = createSturdyEnemy();
+    const boostedEnemy = createSturdyEnemy();
+    const boostedCombatant = {
+      ...createCombatant(Element.Pyro),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.AllDamageBonus, value: 0.5 },
+      ]),
+    };
+    strikeEnemy(enemyTables, plainEnemy, kitHit, createCombatant(Element.Pyro), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, boostedEnemy, kitHit, boostedCombatant, NEVER_CRITICAL);
+
+    expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
+  });
+
   test("applies the element a hit deals over its character's own", () => {
     expect.hasAssertions();
 

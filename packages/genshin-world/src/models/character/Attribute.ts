@@ -1,7 +1,9 @@
 // What a character's attributes are summed from, each spelt as the game's tables name it, so a table read from the game
 // Parses into them. A base is what its percentage multiplies, and its flat attribute is added after; every other is a
-// Total of its own, a percentage kept as a fraction
+// Total of its own, a percentage kept as a fraction. Movement and normal attack speeds name no row in those tables, so
+// Their keys are this repo's own
 export enum Attribute {
+  AllDamageBonus = "FIGHT_PROP_ADD_HURT",
   AnemoDamageBonus = "FIGHT_PROP_WIND_ADD_HURT",
   AnemoResistance = "FIGHT_PROP_WIND_SUB_HURT",
   Attack = "FIGHT_PROP_ATTACK",
@@ -30,6 +32,8 @@ export enum Attribute {
   HydroDamageBonus = "FIGHT_PROP_WATER_ADD_HURT",
   HydroResistance = "FIGHT_PROP_WATER_SUB_HURT",
   IncomingHealingBonus = "FIGHT_PROP_HEALED_ADD",
+  MovementSpeed = "FIGHT_PROP_MOVE_SPEED",
+  NormalAttackSpeed = "FIGHT_PROP_NORMAL_ATTACK_SPEED",
   PhysicalDamageBonus = "FIGHT_PROP_PHYSICAL_ADD_HURT",
   PhysicalResistance = "FIGHT_PROP_PHYSICAL_SUB_HURT",
   PyroDamageBonus = "FIGHT_PROP_FIRE_ADD_HURT",

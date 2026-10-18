@@ -5,6 +5,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -259,6 +260,24 @@ describe(stepKit, () => {
     skillFixture.step({ locomotionState: LocomotionState.Jump });
 
     expect(skillFixture.kitState.action).toBe(TRAVELER_KIT.elementalSkill);
+  });
+
+  test("plays a normal attack faster by the Normal ATK SPD its character's attributes raise", () => {
+    expect.hasAssertions();
+    const kitState = createKitState();
+    const combatant = {
+      ...TRAVELER_COMBATANT,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.NormalAttackSpeed, value: 0.2 }]),
+    };
+    const context = createKitTestContext(combatant);
+    const stepWith = (input: KitInput, stepSeconds: number): void => {
+      stepKit(kitState, TRAVELER_KIT, input, createPartyMember(), createStamina(STAMINA_MAX), stepSeconds, [], context);
+    };
+
+    stepWith({ ...IDLE_INPUT, isAttackPressed: true }, 0);
+    stepWith(IDLE_INPUT, 0.1);
+
+    expect(kitState.actionSeconds).toBeCloseTo(0.1 * 1.2);
   });
 
   test("plays a normal attack faster by the Normal ATK SPD its character's infusion raises", () => {
