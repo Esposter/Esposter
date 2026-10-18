@@ -7,6 +7,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
+import { Currency } from "#src/models/inventory/Currency";
 import { computeChestInteractables } from "#src/services/chest/computeChestInteractables";
 import { openChest } from "#src/services/chest/openChest";
 import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChestPlaces";
@@ -14,9 +15,9 @@ import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // Mondstadt's chests, fetched by their key as the world opens, and each unopened one offered to open on the ground
-// Beneath its point. Opening a chest rolls its Primogems and Mora into the wallet, pays its Adventure EXP to the
-// Adventure Rank and pours its drops out where it stands, and the chest is kept as opened. A load that fails is logged
-// And left off, so no chest is offered rather than a wrong one
+// Beneath its point. Opening a chest rolls its Primogems, Mora and Anemo Sigils into the wallet, pays its Adventure EXP
+// To the Adventure Rank and pours its drops out where it stands, and the chest is kept as opened. A load that fails is
+// Logged and left off, so no chest is offered rather than a wrong one
 export const useWorldChests = ({
   events,
   gainWorldAdventureExp,
@@ -56,7 +57,7 @@ export const useWorldChests = ({
     const chestPlace = chestPlaces.value.find(({ id }) => id === chestId);
     if (!chestPlace) return;
     const previousOpenedChestIds = openedChestIds.value;
-    const opening = openChest(chestPlace, previousOpenedChestIds, wallet.value, random);
+    const opening = openChest(chestPlace, previousOpenedChestIds, wallet.value, random, Currency.AnemoSigil);
     setWallet(opening.wallet);
     gainWorldAdventureExp(opening.adventureExp);
     openedChestIds.value = opening.openedChestIds;
