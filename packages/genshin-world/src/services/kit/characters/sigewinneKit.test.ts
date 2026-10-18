@@ -16,7 +16,7 @@ import { describe, expect, test } from "vitest";
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 const SIGEWINNE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SIGEWINNE_CHARACTER_ID);
-const { record: sigewinneRecord, toParameter } = await readCharacterKitRecord(SIGEWINNE_CHARACTER_ID);
+const { readHits, record: sigewinneRecord, toParameter } = await readCharacterKitRecord(SIGEWINNE_CHARACTER_ID);
 const createSigewinneCombatant = (health: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: health }]),
@@ -76,37 +76,43 @@ describe(createSigewinneKitBehaviour, () => {
     expect(SIGEWINNE_KIT.chargedAttackStamina).toBe(toParameter(sigewinneRecord.chargedAttackStamina));
   });
 
-  test("the press casts five bubbles 107 frames apart from 35 frames, each a share of her Max HP", () => {
+  test("the press casts a bubble at each of its record's bounce frames, each a share of her Max HP", () => {
     expect.hasAssertions();
     const combatant = createSigewinneCombatant(1000);
     const [summon] = castSummons(SIGEWINNE_KIT.elementalSkill, combatant);
+    const bounces = readHits("bolsteringBubblebalmBounces");
 
-    expect(toFrames(SIGEWINNE_KIT.elementalSkill.seconds)).toBe(41);
-    expect(summon?.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([35, 142, 249, 356, 463]);
+    expect(toFrames(SIGEWINNE_KIT.elementalSkill.seconds)).toBe(sigewinneRecord.skill.animationFrames);
+    expect(summon?.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      bounces.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
     expect(takeOne(summon?.hits ?? []).additiveBaseDamageBonus?.(combatant)).toBeCloseTo(
-      0.0228 * combatant.attributes.maxHealth,
+      toParameter(takeOne(bounces).multiplier) * combatant.attributes.maxHealth,
       3,
     );
   });
 
-  test("her burst strikes six waves from 99 frames, 25 apart, each a share of her Max HP", () => {
+  test("her burst strikes six waves at its record's hitmarks, each a share of her Max HP", () => {
     expect.hasAssertions();
     const combatant = createSigewinneCombatant(1000);
 
-    expect(toFrames(SIGEWINNE_KIT.elementalBurst.seconds)).toBe(241);
-    expect(SIGEWINNE_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([
-      99, 124, 149, 174, 199, 224,
-    ]);
+    expect(toFrames(SIGEWINNE_KIT.elementalBurst.seconds)).toBe(sigewinneRecord.burst.animationFrames);
+    expect(SIGEWINNE_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      sigewinneRecord.burst.hits.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
     for (const hit of SIGEWINNE_KIT.elementalBurst.hits)
-      expect(hit.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.117708 * combatant.attributes.maxHealth, 3);
+      expect(hit.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(
+        toParameter(takeOne(sigewinneRecord.burst.hits).multiplier) * combatant.attributes.maxHealth,
+        3,
+      );
   });
 
-  test("her burst costs 70 energy on an 18 second cooldown, and her press's cooldown is 18 seconds", () => {
+  test("her burst costs its record's energy on its record's cooldown, and her press cools down on its record's", () => {
     expect.hasAssertions();
 
-    expect(SIGEWINNE_KIT.burstEnergyCost).toBe(70);
-    expect(SIGEWINNE_KIT.burstCooldownSeconds).toBe(18);
-    expect(SIGEWINNE_KIT.skillCooldownSeconds).toBe(18);
+    expect(SIGEWINNE_KIT.burstEnergyCost).toBe(toParameter(sigewinneRecord.burstEnergyCost));
+    expect(SIGEWINNE_KIT.burstCooldownSeconds).toBe(toParameter(sigewinneRecord.burstCooldownSeconds));
+    expect(SIGEWINNE_KIT.skillCooldownSeconds).toBe(toParameter(sigewinneRecord.skillCooldownSeconds));
   });
 
   test("a passive takes effect at its ascension phase: a skill press gives her an 8% Hydro DMG Bonus", () => {

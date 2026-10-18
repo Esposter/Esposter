@@ -1,3 +1,4 @@
+import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
 import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -47,6 +48,12 @@ export const readCharacterKitRecord = async (characterId: number) => {
     if (hits === undefined) throw new InvalidOperationError(Operation.Read, name, "is not a hit of the record");
     return Array.isArray(hits) ? hits : [hits];
   };
+  // The actions a name of the record holds, which may be one action or a list of them
+  const readActions = (name: string): KitActionRecord[] => {
+    const actions = record.actions?.[name];
+    if (actions === undefined) throw new InvalidOperationError(Operation.Read, name, "is not an action of the record");
+    return Array.isArray(actions) ? actions : [actions];
+  };
   // A parameter of the record, resolved off its talent's table at the level the talent plays at, as the kit resolves it
   const readRecordParameter = (name: string): number => {
     const parameter = record.parameters?.[name];
@@ -54,7 +61,7 @@ export const readCharacterKitRecord = async (characterId: number) => {
       throw new InvalidOperationError(Operation.Read, name, "is not a single parameter of the record");
     return toParameter(parameter);
   };
-  return { readFrame, readFrameList, readHits, readRecordParameter, record, toParameter };
+  return { readActions, readFrame, readFrameList, readHits, readRecordParameter, record, toParameter };
 };
 
 describe.todo("readCharacterKitRecord");

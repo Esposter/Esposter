@@ -24,7 +24,17 @@ import { assert, describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ITTO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ITTO_CHARACTER_ID);
-const { readRecordParameter, record: ittoRecord } = await readCharacterKitRecord(ITTO_CHARACTER_ID);
+const {
+  readActions,
+  readFrame,
+  readRecordParameter,
+  record: ittoRecord,
+  toParameter,
+} = await readCharacterKitRecord(ITTO_CHARACTER_ID);
+const ROYAL_DESCENT_SECONDS = toKitSeconds(readFrame("royalDescent"));
+const ROYAL_DESCENT_DEFENSE_SHARE = readRecordParameter("royalDescentDefenseShare");
+// The Arataki Kesagiri at three stacks, the charged attack Itto's three normal attacks leave him holding
+const THREE_STACK_KESAGIRI = takeOne(readActions("kesagiris"), 2);
 const createIttoCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -58,12 +68,12 @@ describe(createIttoKitBehaviour, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 0.576 * combatant.attributes.defense,
+        amount: ROYAL_DESCENT_DEFENSE_SHARE * combatant.attributes.defense,
         attribute: Attribute.Attack,
         characterId: ITTO_CHARACTER_ID,
         isEndedOnSwap: true,
         kind: "buff",
-        secondsRemaining: 13.25,
+        secondsRemaining: ROYAL_DESCENT_SECONDS,
       },
       {
         characterId: ITTO_CHARACTER_ID,
@@ -72,7 +82,7 @@ describe(createIttoKitBehaviour, () => {
         isEndedOnSwap: true,
         kind: "infusion",
         normalAttackSpeedBonus: 0.1,
-        secondsRemaining: 13.25,
+        secondsRemaining: ROYAL_DESCENT_SECONDS,
       },
     ]);
   });
@@ -91,12 +101,12 @@ describe(createIttoKitBehaviour, () => {
     expect(context.kitEffectState.effects).toStrictEqual([
       { amount: 100, attribute: Attribute.Defense, characterId: ITTO_CHARACTER_ID, kind: "buff", secondsRemaining: 1 },
       {
-        amount: 0.576 * 100,
+        amount: ROYAL_DESCENT_DEFENSE_SHARE * 100,
         attribute: Attribute.Attack,
         characterId: ITTO_CHARACTER_ID,
         isEndedOnSwap: true,
         kind: "buff",
-        secondsRemaining: 13.25,
+        secondsRemaining: ROYAL_DESCENT_SECONDS,
       },
       {
         characterId: ITTO_CHARACTER_ID,
@@ -105,7 +115,7 @@ describe(createIttoKitBehaviour, () => {
         isEndedOnSwap: true,
         kind: "infusion",
         normalAttackSpeedBonus: 0.1,
-        secondsRemaining: 13.25,
+        secondsRemaining: ROYAL_DESCENT_SECONDS,
       },
     ]);
   });
@@ -147,13 +157,10 @@ describe(createIttoKitBehaviour, () => {
       findKitStance(kitEffectState.effects, ITTO_CHARACTER_ID)?.combatant.kit ?? ITTO_KIT;
 
     expect(chargedAttackStamina).toBe(0);
-    expect(
-      chargedAttack.hits.map(({ hitmarkSeconds, talentMultiplier }) => [hitmarkSeconds, talentMultiplier]),
-    ).toStrictEqual([
-      [51 / 60, 0.9116],
-      [(57 + 24) / 60, 0.9116],
-      [(57 + 32 + 71 - 25) / 60, 1.9092],
-    ]);
+    expect(chargedAttack.hits.map(({ hitmarkSeconds }) => hitmarkSeconds)).toStrictEqual(
+      THREE_STACK_KESAGIRI.hits.map(({ hitmarkFrames }) => toKitSeconds(hitmarkFrames)),
+    );
+    expect(chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier)).toStrictEqual([0.9116, 0.9116, 1.9092]);
 
     chargedAttack.onStart?.(context);
 
@@ -161,7 +168,7 @@ describe(createIttoKitBehaviour, () => {
     expect(kitEffectState.effects.map(({ kind, secondsRemaining }) => ({ kind, secondsRemaining }))).toStrictEqual([
       { kind: "stance", secondsRemaining: chargedAttack.seconds },
     ]);
-    expect(chargedAttack.seconds).toBe((57 + 32 + 109 - 25) / 60);
+    expect(chargedAttack.seconds).toBe(toKitSeconds(THREE_STACK_KESAGIRI.animationFrames));
   });
 
   test("the skill's Ushi holds Itto's Max HP for its seconds, and gives a stack the first time its hit strikes and another as it leaves", () => {
@@ -213,7 +220,7 @@ describe(createIttoKitBehaviour, () => {
 
     expect(talentMultipliers).toStrictEqual([0.792318, 0.76368, 0.916416, 1.172249]);
     expect(ITTO_KIT.chargedAttack.hits[0]?.talentMultiplier).toBe(0.90472);
-    expect(ITTO_KIT.chargedAttackStamina).toBe(20);
+    expect(ITTO_KIT.chargedAttackStamina).toBe(toParameter(ittoRecord.chargedAttackStamina));
     expect(ITTO_KIT.plungeCollision.talentMultiplier).toBe(0.818335);
     expect(ITTO_KIT.lowPlunge.hits[0]?.talentMultiplier).toBe(1.636323);
     expect(ITTO_KIT.highPlunge.hits[0]?.talentMultiplier).toBe(2.043855);
@@ -227,7 +234,11 @@ describe(createIttoKitBehaviour, () => {
       burstCooldownSeconds: ITTO_KIT.burstCooldownSeconds,
       burstEnergyCost: ITTO_KIT.burstEnergyCost,
       skillCooldownSeconds: ITTO_KIT.skillCooldownSeconds,
-    }).toStrictEqual({ burstCooldownSeconds: 18, burstEnergyCost: 70, skillCooldownSeconds: 10 });
+    }).toStrictEqual({
+      burstCooldownSeconds: toParameter(ittoRecord.burstCooldownSeconds),
+      burstEnergyCost: toParameter(ittoRecord.burstEnergyCost),
+      skillCooldownSeconds: toParameter(ittoRecord.skillCooldownSeconds),
+    });
   });
 });
 

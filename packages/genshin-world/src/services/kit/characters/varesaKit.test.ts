@@ -18,7 +18,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const VARESA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, VARESA_CHARACTER_ID);
-const { record: varesaRecord } = await readCharacterKitRecord(VARESA_CHARACTER_ID);
+const { record: varesaRecord, toParameter } = await readCharacterKitRecord(VARESA_CHARACTER_ID);
 
 const createVaresaCombatant = (): Combatant => ({
   ascension: 0,
@@ -51,23 +51,27 @@ describe(createVaresaKitBehaviour, () => {
     expect.hasAssertions();
     expect(
       VARESA_KIT.normalAttacks.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))),
-    ).toStrictEqual([[23], [7], [33]]);
-    expect(VARESA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual([49, 30, 59]);
+    ).toStrictEqual(varesaRecord.normalAttacks.map(({ hits }) => hits.map(({ hitmarkFrames }) => hitmarkFrames)));
+    expect(VARESA_KIT.normalAttacks.map(({ seconds }) => Math.round(seconds * 60))).toStrictEqual(
+      varesaRecord.normalAttacks.map(({ animationFrames }) => animationFrames),
+    );
   });
 
-  test("the charged attack hits at 69 frames of a 143-frame animation, costing 50 stamina", () => {
+  test("the charged attack hits at its record's hitmark of its animation, costing its record's stamina", () => {
     expect.hasAssertions();
-    expect(Math.round(takeOne(VARESA_KIT.chargedAttack.hits).hitmarkSeconds * 60)).toBe(69);
-    expect(Math.round(VARESA_KIT.chargedAttack.seconds * 60)).toBe(143);
-    expect(VARESA_KIT.chargedAttackStamina).toBe(50);
+    expect(Math.round(takeOne(VARESA_KIT.chargedAttack.hits).hitmarkSeconds * 60)).toBe(
+      takeOne(varesaRecord.chargedAttack.hits).hitmarkFrames,
+    );
+    expect(Math.round(VARESA_KIT.chargedAttack.seconds * 60)).toBe(varesaRecord.chargedAttack.animationFrames);
+    expect(VARESA_KIT.chargedAttackStamina).toBe(toParameter(varesaRecord.chargedAttackStamina));
   });
 
-  test("the skill has two charges on a 9-second cooldown, and the burst costs 70 energy for 18 seconds", () => {
+  test("the skill has two charges, and its cooldown and the burst's cooldown and energy come from the record", () => {
     expect.hasAssertions();
     expect(VARESA_KIT.elementalSkillCharges).toBe(2);
-    expect(VARESA_KIT.skillCooldownSeconds).toBe(9);
-    expect(VARESA_KIT.burstCooldownSeconds).toBe(18);
-    expect(VARESA_KIT.burstEnergyCost).toBe(70);
+    expect(VARESA_KIT.skillCooldownSeconds).toBe(toParameter(varesaRecord.skillCooldownSeconds));
+    expect(VARESA_KIT.burstCooldownSeconds).toBe(toParameter(varesaRecord.burstCooldownSeconds));
+    expect(VARESA_KIT.burstEnergyCost).toBe(toParameter(varesaRecord.burstEnergyCost));
   });
 
   test("the plunges land at their record's hitmarks, and the collision at its record's", () => {
@@ -139,13 +143,15 @@ describe(createVaresaKitBehaviour, () => {
     expect(VARESA_KIT.elementalBurstVariant?.checkIsActive(context)).toBe(true);
   });
 
-  test("the Fiery Passion Flying Kick lands at 88 frames of 122 with Poise 150", () => {
+  test("the Fiery Passion Flying Kick lands at its record's hitmark of its animation, with Poise 150", () => {
     expect.hasAssertions();
     expect(
       VARESA_KIT.elementalBurstVariant?.action.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)),
-    ).toStrictEqual([88]);
+    ).toStrictEqual(varesaRecord.burstVariant?.hits.map(({ hitmarkFrames }) => hitmarkFrames));
     expect(VARESA_KIT.elementalBurstVariant?.action.hits.map(({ poiseDamage }) => poiseDamage)).toStrictEqual([150]);
-    expect(Math.round((VARESA_KIT.elementalBurstVariant?.action.seconds ?? 0) * 60)).toBe(122);
+    expect(Math.round((VARESA_KIT.elementalBurstVariant?.action.seconds ?? 0) * 60)).toBe(
+      varesaRecord.burstVariant?.animationFrames,
+    );
   });
 
   test("the Fiery Passion Flying Kick fills her Nightsoul points to 40, as her burst does", () => {

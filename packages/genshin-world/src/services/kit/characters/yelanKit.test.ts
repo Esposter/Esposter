@@ -22,12 +22,18 @@ import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const YELAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YELAN_CHARACTER_ID);
-const { record: yelanRecord, toParameter } = await readCharacterKitRecord(YELAN_CHARACTER_ID);
+const {
+  readHits,
+  readRecordParameter,
+  record: yelanRecord,
+  toParameter,
+} = await readCharacterKitRecord(YELAN_CHARACTER_ID);
 // The seconds stepped as a step runs them: the team's effects, then each deployed kit's clock
 const stepYelanSeconds = (context: KitContext, seconds: number): void => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
@@ -60,12 +66,12 @@ describe(createYelanKitBehaviour, () => {
     expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
-  test("the fully charged arrow lands at 96 frames, with its animation", () => {
+  test("the fully charged arrow lands at its record's hitmark, with its animation", () => {
     expect.hasAssertions();
     const arrowHitmark = Math.round(takeOne(YELAN_KIT.chargedAttack.hits).hitmarkSeconds * 60);
 
-    expect(arrowHitmark).toBe(96);
-    expect(Math.round(YELAN_KIT.chargedAttack.seconds * 60)).toBe(96);
+    expect(arrowHitmark).toBe(takeOne(yelanRecord.chargedAttack.hits).hitmarkFrames);
+    expect(Math.round(YELAN_KIT.chargedAttack.seconds * 60)).toBe(yelanRecord.chargedAttack.animationFrames);
   });
 
   test("lingering Lifeline's damage is a share of the caster's Max HP, on its record's hitmark and cooldown", () => {
@@ -73,12 +79,14 @@ describe(createYelanKitBehaviour, () => {
     const lifelineHit = takeOne(YELAN_KIT.elementalSkill.hits);
 
     expect(lifelineHit.talentMultiplier).toBe(0);
-    expect(lifelineHit.additiveBaseDamageBonus?.(createYelanCombatant())).toBeCloseTo(0.226136 * 10_000);
+    expect(lifelineHit.additiveBaseDamageBonus?.(createYelanCombatant())).toBeCloseTo(
+      toParameter(takeOne(yelanRecord.skill.hits).multiplier) * 10_000,
+    );
     expect(Math.round(lifelineHit.hitmarkSeconds * 60)).toBe(takeOne(yelanRecord.skill.hits).hitmarkFrames);
     expect(YELAN_KIT.skillCooldownSeconds).toBe(toParameter(yelanRecord.skillCooldownSeconds));
   });
 
-  test("depth-Clarion Dice lasts 15 seconds from its hit, costs 70 energy and waves each second of it", () => {
+  test("depth-Clarion Dice lasts its record's seconds from its hit, costs its record's energy and waves each second of it", () => {
     expect.hasAssertions();
     const field = castKitAction(YELAN_KIT.elementalBurst, createYelanCombatant()).effects.find(
       (effect): effect is KitField => effect.kind === "field",
@@ -87,10 +95,16 @@ describe(createYelanKitBehaviour, () => {
     field?.onTick(createKitTestContext(createYelanCombatant(), { kitEffectState }), 0);
     const throws = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
-    expect(field?.secondsRemaining).toBeCloseTo(76 / 60 + 15 + 0.1);
+    expect(field?.secondsRemaining).toBeCloseTo(
+      toKitSeconds(takeOne(yelanRecord.burst.hits).hitmarkFrames) +
+        readRecordParameter("depthClarionDiceSeconds") +
+        0.1,
+    );
     expect(field?.tickIntervalSeconds).toBe(1);
-    expect(YELAN_KIT.burstEnergyCost).toBe(70);
-    expect(throws?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([20, 26, 32]);
+    expect(YELAN_KIT.burstEnergyCost).toBe(toParameter(yelanRecord.burstEnergyCost));
+    expect(throws?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual(
+      readHits("exquisiteThrow").map(({ hitmarkFrames }) => hitmarkFrames),
+    );
   });
 
   test("a Lingering Lifeline hit throws Exquisite Throws only while Depth-Clarion Dice's field stands", () => {
