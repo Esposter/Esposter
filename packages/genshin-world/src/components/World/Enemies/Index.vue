@@ -2,6 +2,7 @@
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
+import type { CombatState } from "#src/models/combat/CombatState";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
@@ -13,6 +14,7 @@ import type { RegionData } from "#src/models/world/RegionData";
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 import type { DataTexture, Scene } from "three";
 
+import { CombatEvent } from "#src/models/combat/CombatEvent";
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
@@ -38,6 +40,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { EnemyStateColorMap } from "#src/services/enemy/EnemyStateColorMap";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
+import { stepCombat } from "#src/services/enemy/stepCombat";
 import { stepEnemy } from "#src/services/enemy/stepEnemy";
 import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
@@ -107,6 +110,9 @@ const emit = defineEmits<{
   // Each camp as a lock on the chests within its reach, done once every member is dead or not spawned
   campLocks: [locks: ChestLockSource[]];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
+  // The party entering combat once an enemy is aggravated on it, and leaving it once none has been for the grace period
+  enterCombat: [];
+  leaveCombat: [];
   // A boss comes back at its spawn, so the blossom it left is gone
   respawn: [spawnKey: string];
   // A defeated member of a camp with no boss comes back at this instant, which the save keeps
@@ -119,6 +125,8 @@ const getCampEnemyTypes = (members: EnemyCamp["members"]) =>
   members.map(({ enemyKindId }) => getEnemyKind(enemyTables.enemyKindMap, enemyKindId).enemyType);
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
 const spawnKeyDefeatedAtMap = new Map<string, Temporal.Instant>();
+// The party's combat as the enemies aggravated on it hold it, kept for the page's life
+const combat: CombatState = { clearSeconds: 0, isInCombat: false };
 const loadedCampIds = new Set<string>();
 // The camps' locks as last emitted, by each camp's done flag in order, cleared on every load so the next step
 // Emits them
@@ -216,6 +224,9 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
   if (isAnyDefeated)
     for (const [spawnKey, { state, stateSeconds }] of enemyMap)
       if (state === EnemyState.Dead && stateSeconds >= ENEMY_DEATH_SECONDS) enemyMap.delete(spawnKey);
+  const combatEvent = stepCombat(combat, enemyMap.values(), ENEMY_STEP_SECONDS);
+  if (combatEvent === CombatEvent.Enter) emit("enterCombat");
+  else if (combatEvent === CombatEvent.Leave) emit("leaveCombat");
   wakeEnemyCamps([...enemyMap.values()]);
   const campLocks = getCampLocks();
   const campLocksKey = campLocks.map(({ isDone }) => (isDone ? "1" : "0")).join("");

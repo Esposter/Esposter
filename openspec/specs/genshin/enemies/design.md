@@ -87,7 +87,8 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 | `packages/genshin-world/src/services/enemy/checkIsEnemyRespawned.ts`   | Whether a defeated camp member is back at a moment, on the respawn time its camp gives                  |
 | `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`       | Mora, Character EXP and materials by level band                                                         |
 | `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`      | What the wiki gives of each kind: poise, energy and drop family                                         |
-| `packages/genshin-world/src/services/enemy/constants.ts`               | The AI's ranges, speeds and timings, the respawn timers, the hit's look                                 |
+| `packages/genshin-world/src/services/enemy/constants.ts`               | The AI's ranges, speeds and timings, the respawn timers, the hit's look, the combat's grace             |
+| `packages/genshin-world/src/services/enemy/stepCombat.ts`              | The party's combat, entered once an enemy is aggravated on it and left after the grace period           |
 | `packages/genshin-world/src/models/enemy/Enemy.ts`                     | One enemy: its state, health, elements and internal cooldowns                                           |
 | `packages/genshin-world/src/services/kit/strikeEnemy.ts`               | A kit's hit landing on an enemy: its elements, damage and poise                                         |
 | `packages/genshin-world/src/services/kit/strikePartyMember.ts`         | An enemy's strike on the member on the field                                                            |
@@ -96,7 +97,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 | `packages/genshin-world/src/services/enemy/readEnemyTables.ts`         | The kinds and their level curves, read as the world opens                                               |
 | `packages/genshin-world/src/models/enemy/EnemyTables.ts`               | Each kind by its id, and the level curves its stats grow along                                          |
 | `packages/genshin-world/src/data/regions/mondstadt.json`               | Windrise's hilichurl camp                                                                               |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`        | Spawns, steps and draws the enemies in reach, at the body or a taunt                                    |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`        | Spawns, steps and draws the enemies in reach, at the body or a taunt, and emits the party's combat      |
 | `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`        | Builds the kinds and their level curves from the game's tables                                          |
 
 ## Notes
@@ -106,6 +107,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - **Character EXP is computed, not yet given.** The party's levels take it, since a quest's finish gives its Character EXP through `raiseCharacterByExp`, but nothing grants a defeat's roll yet, so a defeat's EXP is rolled and left. A defeat's drops are placed and picked up by the world's screen, and the component emits `strike` and `defeat` for it.
 - **A boss's defeat lasts the page's life.** A boss's return waits on its blossom or the next jump, which the save does not hold, so a reload brings the boss back. Every other defeat's return instant is kept by the save, so a reload keeps the enemy away until it is due.
 - **Windrise's camp stands where we put it.** Its place and level are ours until the game's own spawns are read.
+- **The party's combat leaves after a provisional grace.** The party is in combat while an enemy is in an engaged state on it, and leaves once none has been for `COMBAT_CLEAR_SECONDS`, 5 seconds, provisional until a recording measures it: the wiki gives the clear timers but no figure.
 
 ## Sources
 

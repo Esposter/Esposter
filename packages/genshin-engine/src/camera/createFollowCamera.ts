@@ -45,10 +45,13 @@ export const createFollowCamera = ({
     euler.set(pitch, yaw, 0, "YXZ");
     camera.quaternion.setFromEuler(euler);
   };
+  const returnToDefaultDistance = (): void => {
+    distance = settings.defaultDistance;
+  };
   const reset = (facing: number): void => {
     yaw = facing;
     pitch = 0;
-    distance = settings.defaultDistance;
+    returnToDefaultDistance();
     turn();
   };
   // How far the arm reaches out from the pivot before the ground or the water's surface stands within its clearance
@@ -98,6 +101,7 @@ export const createFollowCamera = ({
       turn();
     },
     reset,
+    returnToDefaultDistance,
     get yaw() {
       return yaw;
     },

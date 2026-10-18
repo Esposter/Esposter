@@ -1090,6 +1090,8 @@ const endTalk = () => {
   screenKind.value = ScreenKind.World;
 };
 const character = useTemplateRef("character");
+// Entering combat returns the camera to its default distance, keeping the look it has
+events.on("enterCombat", () => character.value?.returnToDefaultDistance());
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
 const isHudHidden = ref(false);
 // Whether the HUD is drawn over the world, which a reference's held camera, a witness render, the pause and the screens
@@ -1489,6 +1491,8 @@ defineExpose({ jumpTo, readCameraPosition });
         @camp-cleared="(camp) => events.emit('campCleared', camp)"
         @camp-locks="(locks) => (campLockSources = locks)"
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
+        @enter-combat="events.emit('enterCombat')"
+        @leave-combat="events.emit('leaveCombat')"
         @ready="emit('ready')"
         @respawn="(spawnKey) => forgetTrounceBlossom(spawnKey)"
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"

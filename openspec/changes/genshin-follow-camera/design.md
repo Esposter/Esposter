@@ -8,6 +8,7 @@ The [follow camera](../../specs/genshin/follow-camera/design.md) stands behind t
 - **The game's settings for this camera.** Its horizontal and vertical sensitivity, its default distance between 4.5 and 6.0, which the camera returns to after a zoom, after combat and after a teleport, and whether its pitch follows the slope as the character climbs or descends, are read from the [menu screens](../genshin-menu-settings/design.md)' Settings, each with the game's range and default. The default distance is metres of the arm: its span is the profile's setting adjustment and its top the profile's furthest radius on foot.
 - **The slope pitch settles on the slope at a provisional rate.** With the slope pitch on, the pitch closes the gap to the slope the ground rises or falls at along the eye's side, a share of it each second (`FOLLOW_CAMERA_SLOPE_PITCH_SPEED`), so the eye keeps its height above the slope as the character climbs or descends, as the wiki's Settings page describes the Y-axis reset. The slope pitch is off until a player turns it on, since the wiki gives no default for it. The rate is provisional until a recording of a climb reads how fast the game's camera settles.
 - **Photo mode's range is the game's, solved off recordings.** Photo mode moves its camera round the character by the game's two sliders, one horizontal and one vertical, and its zoom, within the game's range. Until a recording solves that range, photo mode shares the follow camera's range, a provisional call the [as-built page](../../specs/genshin/follow-camera/design.md) records.
+- **Combat returns the distance, not the look.** The party is in combat once an enemy is aggravated on it, and leaves once none has been for a grace period (`COMBAT_CLEAR_SECONDS`, 5 seconds, provisional: the wiki's Aggravation page names the Distance Clear Time and the Out of Zone Clear Time as its clear timers and gives no figure for either). Entering combat raises `enterCombat` on the world's events, and the camera returns its distance to the default through `returnToDefaultDistance`, which keeps the yaw and pitch that the reset would turn. The wiki's Combat Mode section leaves combat as soon as no enemy is aggravated, so the grace is ours until a recording measures it. The HUD hiding the quest tracker and a battle music switch have no spec, so `leaveCombat` has no listener yet.
 
 ## How it works
 
@@ -26,7 +27,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the field of view, the pitch limits and the wheel's range are the game's, and the pivot is measured; a notch's zoom and the ease back out are provisional, the reset levels the camera, its sensitivity, default distance and slope pitch are read from the stored Settings, at provisional defaults until the Controls tab's export gives the game's, and photo mode orbits the held character within the follow camera's range, not the game's.
+**Today:** the field of view, the pitch limits and the wheel's range are the game's, and the pivot is measured; a notch's zoom and the ease back out are provisional, the reset levels the camera, combat returns its distance to the default, its sensitivity, default distance and slope pitch are read from the stored Settings, at provisional defaults until the Controls tab's export gives the game's, and photo mode orbits the held character within the follow camera's range, not the game's.
 
 **This adds, in order:**
 
@@ -43,11 +44,14 @@ The camera is approved by its own measure: at each reading of the recording, the
 
 ## Key files
 
-| File                                                                        | Role after the change                                                                                                         |
-| :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/camera/constants.ts`                           | The notch's zoom and the ease, read off the recording                                                                         |
-| `packages/genshin-engine/src/camera/createFollowCamera.ts`                  | Reads the settings' sensitivity, distance and slope pitch, settles the pitch on the slope, and resets to the game's elevation |
-| `packages/genshin-world/src/components/World/Character/Camera.reference.ts` | Each reading of the recording                                                                                                 |
+| File                                                                        | Role after the change                                                                                                                                              |
+| :-------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/camera/constants.ts`                           | The notch's zoom and the ease, read off the recording                                                                                                              |
+| `packages/genshin-engine/src/camera/createFollowCamera.ts`                  | Reads the settings' sensitivity, distance and slope pitch, settles the pitch on the slope, resets to the game's elevation, and returns the distance to its default |
+| `packages/genshin-world/src/services/enemy/stepCombat.ts`                   | The party's combat, entered once an enemy is aggravated on it and left after the grace period                                                                      |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`             | Emits the party's combat as it enters and leaves it, from the enemies' fixed step                                                                                  |
+| `packages/genshin-world/src/components/World/Session/Index.vue`             | Forwards the combat onto the world's events, and returns the character's camera distance on entering combat                                                        |
+| `packages/genshin-world/src/components/World/Character/Camera.reference.ts` | Each reading of the recording                                                                                                                                      |
 
 ## Sources
 

@@ -17,10 +17,14 @@ export interface WorldEventMap {
   campCleared: [camp: ClearedCamp];
   chestOpened: [];
   defeatEnemy: [Enemy];
+  // The party entering combat, once an enemy is aggravated on it
+  enterCombat: [];
   // A quest's progress moving from its progress before to the one that finishes it, emitted once on that move
   finishQuest: [quest: Quest, progress: QuestProgress, nextProgress: QuestProgress];
   // A gathering point picked up into the bag, by the id of the item it gave: the only pick up that earns a collected item
   gatheringPickedUp: [itemId: string];
+  // The party leaving combat, once no enemy has been aggravated on it for the grace period
+  leaveCombat: [];
   // The first collection of an Oculus, which the save keeps as found
   oculusFound: [];
   parentQuestFinish: [];

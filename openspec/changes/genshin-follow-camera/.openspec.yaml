@@ -11,5 +11,11 @@ x-touches:
     "packages/genshin-world/src/components/Menu/Settings/**",
     "packages/genshin-world/src/models/menu/**",
     "packages/genshin-world/src/services/menu/**",
+    "packages/genshin-world/src/components/World/Enemies/**",
+    "packages/genshin-world/src/components/World/Session/Index.vue",
+    "packages/genshin-world/src/services/enemy/**",
+    "packages/genshin-world/src/models/combat/**",
+    "packages/genshin-world/src/models/world/WorldEventMap.ts",
+    "packages/genshin-world/src/services/world/createWorldEvents.ts",
   ]
-x-waiting: "3.1's zoom, combat or teleport scenario waits on combat's entry: the world has no enter-combat event for the camera to return its distance on (useWorldCombat has none), so only the zoom and the teleport are built; 3.2 waits on the game's default camera values, read off the PC's export of the Settings screen, since the recording shows the player's values and the wiki gives only the ranges"
+x-waiting: "3.2 waits on the game's default camera values, read off the PC's export of the Settings screen, since the recording shows the player's values and the wiki gives only the ranges; the combat grace (COMBAT_CLEAR_SECONDS, 5 seconds) is provisional, as the wiki gives its clear timers without figures; and the HUD hiding the quest tracker and a battle music switch are not built, since no spec names them, so leaveCombat has no listener yet"

@@ -34,6 +34,10 @@ export const ENGAGED_ENEMY_STATES: EnemyState[] = [
   EnemyState.Stagger,
   EnemyState.Windup,
 ];
+// Provisional: how long after the last enemy stops being aggravated on the party the party stays in combat, in seconds.
+// The wiki's Aggravation page names the Distance Clear Time and the Out of Zone Clear Time as the clear timers and gives
+// No figure for either, so this is a placeholder until a recording measures it
+export const COMBAT_CLEAR_SECONDS = 5;
 // A common enemy comes back this long after its defeat, and a camp with an elite at the next daily reset of the server's clock
 export const COMMON_ENEMY_RESPAWN_DURATION: Temporal.Duration = Temporal.Duration.from({ hours: 12 });
 // Drops are set by an enemy's level band, five levels wide, the last band holding every level from 90

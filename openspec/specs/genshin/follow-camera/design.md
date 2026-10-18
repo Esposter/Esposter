@@ -53,18 +53,18 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 
 ## Key files
 
-| File                                                                        | Its role                                                                                           |
-| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/camera/createFollowCamera.ts`                  | the orbit: look, zoom, reset, the eye pulled in along the arm, and the pitch settling on the slope |
-| `packages/genshin-engine/src/camera/constants.ts`                           | the camera's numbers, the game's and the provisional, and its default settings                     |
-| `packages/genshin-engine/src/models/camera/FollowCameraSettings.ts`         | the settings the camera reads: its sensitivities, default distance and slope pitch                 |
-| `packages/genshin-engine/src/collision/createLandmarkCollider.ts`           | the sphere cast along the arm                                                                      |
-| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`             | how far into the next step a frame has come                                                        |
-| `packages/genshin-world/src/components/World/Character/Index.vue`           | runs the camera each frame on the blended body's pivot, and locks the pointer                      |
-| `packages/genshin-world/src/components/World/Character/Camera.reference.ts` | every investigation of the camera's numbers, and what is open                                      |
-| `packages/genshin-world/src/components/World/Session/Index.vue`             | shows the cursor on Left Alt, and holds the orbit on in photo mode                                 |
-| `scripts/src/services/genshinAssets/camera/readCameraProfile.ts`            | the game's camera profile exported from the install and read                                       |
-| `scripts/src/services/genshinAssets/camera/constants.ts`                    | the global config's words, each named as the 2022 dummy scripts name it                            |
+| File                                                                        | Its role                                                                                                                                 |
+| :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/camera/createFollowCamera.ts`                  | the orbit: look, zoom, reset, the distance's return to its default, the eye pulled in along the arm, and the pitch settling on the slope |
+| `packages/genshin-engine/src/camera/constants.ts`                           | the camera's numbers, the game's and the provisional, and its default settings                                                           |
+| `packages/genshin-engine/src/models/camera/FollowCameraSettings.ts`         | the settings the camera reads: its sensitivities, default distance and slope pitch                                                       |
+| `packages/genshin-engine/src/collision/createLandmarkCollider.ts`           | the sphere cast along the arm                                                                                                            |
+| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`             | how far into the next step a frame has come                                                                                              |
+| `packages/genshin-world/src/components/World/Character/Index.vue`           | runs the camera each frame on the blended body's pivot, returns its distance on combat, and locks the pointer                            |
+| `packages/genshin-world/src/components/World/Character/Camera.reference.ts` | every investigation of the camera's numbers, and what is open                                                                            |
+| `packages/genshin-world/src/components/World/Session/Index.vue`             | shows the cursor on Left Alt, and holds the orbit on in photo mode                                                                       |
+| `scripts/src/services/genshinAssets/camera/readCameraProfile.ts`            | the game's camera profile exported from the install and read                                                                             |
+| `scripts/src/services/genshinAssets/camera/constants.ts`                    | the global config's words, each named as the 2022 dummy scripts name it                                                                  |
 
 ## Sources
 

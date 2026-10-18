@@ -10,5 +10,5 @@
 
 ## 3. Settings
 
-- [ ] 3.1 Read the sensitivity, the default distance and the slope pitch from the Settings screen once its Controls tab exists. Verify: tests named after the scenarios 'Sensitivity from Settings sets the turn speed', 'Zoom, combat or a teleport returns the camera to its default distance', 'Pitch follows the slope when enabled' and 'Pitch stays level when disabled' written first and seen failing.
+- [x] 3.1 Read the sensitivity, the default distance and the slope pitch from the Settings screen once its Controls tab exists. Verify: tests named after the scenarios 'Sensitivity from Settings sets the turn speed', 'Zoom, combat or a teleport returns the camera to its default distance', 'Pitch follows the slope when enabled' and 'Pitch stays level when disabled' written first and seen failing.
 - [ ] 3.2 Replace the provisional default settings with the values the Controls tab's export gives. Verify: the scenario 'Sensitivity from Settings sets the turn speed' passes against the exported defaults.

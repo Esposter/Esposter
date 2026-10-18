@@ -268,6 +268,7 @@ defineExpose({
     emit("clearKitEffects");
     followCamera?.reset(yaw);
   },
+  returnToDefaultDistance: () => followCamera?.returnToDefaultDistance(),
   stamina: characterController.stamina,
 });
 </script>

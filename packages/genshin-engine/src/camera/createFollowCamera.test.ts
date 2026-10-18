@@ -158,6 +158,26 @@ describe(createFollowCamera, () => {
     expect(camera.position.z).toBeCloseTo(DEFAULT_DISTANCE);
   });
 
+  test("zoom, combat or a teleport returns the camera to its default distance", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const pivot = new Vector3(0, PIVOT_HEIGHT, 0);
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery(() => 0, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: { ...FOLLOW_CAMERA_DEFAULT_SETTINGS, defaultDistance: DEFAULT_DISTANCE },
+    });
+    followCamera.look({ ...STILL_INPUT, lookYaw: LOOK_YAW, zoomSteps: ZOOM_OUT_STEPS }, 0);
+    const yaw = followCamera.yaw;
+    followCamera.returnToDefaultDistance();
+    followCamera.follow(pivot, new Vector3(), FRAME_SECONDS);
+
+    expect(followCamera.yaw).toBe(yaw);
+    expect(camera.position.distanceTo(pivot)).toBeCloseTo(DEFAULT_DISTANCE);
+  });
+
   test("pitch follows the slope when enabled", () => {
     expect.hasAssertions();
 
