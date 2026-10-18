@@ -14,6 +14,7 @@ import { MONDSTADT_EXPEDITION_PIN_LAYOUT } from "#src/services/expedition/consta
 import { readExpeditionLimitAdds } from "#src/services/expedition/readExpeditionLimitAdds";
 import { readExpeditionPassives } from "#src/services/expedition/readExpeditionPassives";
 import { readMondstadtExpeditionPlaces } from "#src/services/expedition/readMondstadtExpeditionPlaces";
+import { getResultAsync } from "@esposter/shared";
 
 interface Props {
   adventureRank: number;
@@ -69,19 +70,28 @@ const pinPositions = computed(
     ),
 );
 
-onMounted(async () => {
-  const [loadedPlaces, loadedLimitAdds, loadedPassives] = await Promise.all([
-    readMondstadtExpeditionPlaces(gameDataBaseUrl),
-    readExpeditionLimitAdds(gameDataBaseUrl),
-    readExpeditionPassives(gameDataBaseUrl),
-  ]);
-  places.value = loadedPlaces;
-  expeditionLimitAdds.value = loadedLimitAdds;
-  characterExpeditionPassives.value = new Map(
-    [...characterPassiveGroupIdMap].map(([characterId, groupIds]) => [
-      characterId,
-      loadedPassives.filter(({ proudSkillGroupId }) => groupIds.has(proudSkillGroupId)),
+onMounted(() => {
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(() =>
+    Promise.all([
+      readMondstadtExpeditionPlaces(gameDataBaseUrl),
+      readExpeditionLimitAdds(gameDataBaseUrl),
+      readExpeditionPassives(gameDataBaseUrl),
     ]),
+  ).match(
+    ([loadedPlaces, loadedLimitAdds, loadedPassives]) => {
+      places.value = loadedPlaces;
+      expeditionLimitAdds.value = loadedLimitAdds;
+      characterExpeditionPassives.value = new Map(
+        [...characterPassiveGroupIdMap].map(([characterId, groupIds]) => [
+          characterId,
+          loadedPassives.filter(({ proudSkillGroupId }) => groupIds.has(proudSkillGroupId)),
+        ]),
+      );
+    },
+    (error) => {
+      console.error(error);
+    },
   );
 });
 </script>
