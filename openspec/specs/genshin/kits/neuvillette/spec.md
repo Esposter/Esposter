@@ -1,6 +1,6 @@
 ## Purpose
 
-Neuvillette's kit as built, with his three hydro strikes, the short charged attack, his plunges, O Tears, I Shall Repay with its Spiritbreath Thorn, and O Tides, I Have Returned's first hit and two Waterfalls, and what is left of Equitable Judgment, the droplets and passives.
+Neuvillette's kit as built, with his three hydro strikes, Equitable Judgment, his plunges, O Tears, I Shall Repay with its Spiritbreath Thorn, O Tides, I Have Returned's first hit and two Waterfalls, and the burst's droplets, with what is left of his passives and constellations.
 
 ## Requirements
 
@@ -51,12 +51,28 @@ O Tides, I Have Returned SHALL land a first hit and two Waterfalls, and the seco
 - **THEN** the first hit lands
 - **AND** the second Waterfall lands at 154 frames
 
+### Requirement: Equitable Judgment
+
+Neuvillette's charged attack SHALL be Equitable Judgment, held: its legal evaluation picks up to three Sourcewater Droplets in its pick-up area, its eight waves land from the end of that evaluation, its HP drains and each droplet's heal are queued as it runs, and it spends no stamina.
+
+#### Scenario: A charge picks up droplets and lasts less
+
+- **GIVEN** three Sourcewater Droplets lie in Neuvillette's pick-up area
+- **WHEN** the player holds a charged attack
+- **THEN** the charge lasts 227 frames
+- **AND** its waves land 6, 28, 53, 78, 103, 128, 153 and 173 frames after its legal evaluation ends
+
+#### Scenario: The burst leaves its droplets
+
+- **WHEN** the player casts O Tides, I Have Returned
+- **THEN** three, two and one Sourcewater Droplets are left at 95, 135 and 154 frames, each within its range of its offset from the player
+
 ### Requirement: Unbuilt Neuvillette effects
 
-Equitable Judgment, the droplets the skill and burst leave, Spiritbreath Thorn's aligned cooldown, and Neuvillette's Ascension 1 passive and constellations SHALL NOT take effect.
+Spiritbreath Thorn's aligned cooldown, and Neuvillette's Ascension 1 passive and constellations SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Neuvillette has Equitable Judgment, a droplet effect or his Ascension 1 passive unlocked
+- **GIVEN** Neuvillette has his Ascension 1 passive unlocked, or a constellation
 - **WHEN** the player fights with Neuvillette
 - **THEN** those effects have no effect
