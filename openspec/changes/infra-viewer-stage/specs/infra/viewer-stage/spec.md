@@ -54,11 +54,17 @@ The persona SHALL play the motion mapped to attention wanted on the model, and S
 - **WHEN** the session wants the reader's attention
 - **THEN** the model plays the mapped motion
 
-#### Scenario: An unmapped moment sends nothing to the viewer
+#### Scenario: An expression is cleared when a turn ends
+
+- **GIVEN** an expression is showing on the model
+- **WHEN** a turn ends
+- **THEN** the expression is cleared
+
+#### Scenario: An unmapped moment sends no motion to the viewer
 
 - **GIVEN** no motion is mapped to the end of a turn
 - **WHEN** a turn ends
-- **THEN** nothing is sent to the viewer
+- **THEN** no motion is sent to the viewer
 
 ### Requirement: A tap on the model replays the last line without synthesizing it again
 
