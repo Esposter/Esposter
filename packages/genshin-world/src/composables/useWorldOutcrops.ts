@@ -15,7 +15,6 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { OutcropEvent } from "#src/models/leyLine/OutcropEvent";
 import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
-import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { advanceOutcrop } from "#src/services/leyLine/advanceOutcrop";
 import { advanceOutcropFight } from "#src/services/leyLine/advanceOutcropFight";
 import { computeDailyOutcrops } from "#src/services/leyLine/computeDailyOutcrops";
@@ -34,12 +33,12 @@ import { computed, shallowRef } from "vue";
 // Resin affords, and choosing one spends its resin, grants the kind's rewards for the World Level into the bag and the
 // Wallet, and moves the outcrop on. A claim the holdings or the bag cannot pay whole is refused, and the blossom stays
 export const useWorldOutcrops = ({
+  adventureExp,
   adventureRankTables,
   areaId,
   completedMainQuestIds,
   enemyMap,
   events,
-  gainWorldAdventureExp,
   gameText,
   getGroundHeight,
   inventory,
@@ -51,12 +50,12 @@ export const useWorldOutcrops = ({
   setWallet,
   wallet,
 }: {
+  adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
   completedMainQuestIds: ReadonlySet<string>;
   enemyMap: ReadonlyMap<string, Enemy>;
   events: WorldEvents;
-  gainWorldAdventureExp: (amount: number) => void;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
   inventory: Ref<Inventory>;
@@ -147,16 +146,13 @@ export const useWorldOutcrops = ({
     const rewards = Array.from({ length: offer.claimCount }, () =>
       drawRewardItems(computeOutcropClaimRewards(kindRule, worldLevel), random),
     ).flat();
-    const adventureExp = rewards
-      .filter(({ id }) => id === ADVENTURE_EXP_ITEM_ID)
-      .reduce((sum, { count }) => sum + count, 0);
     const claim = claimResinReward(
       adventureRankTables,
       wallet.value,
       inventory.value,
       offer,
       rewards,
-      adventureExp,
+      adventureExp.value,
       completedMainQuestIds,
       now,
       nameText,
@@ -165,7 +161,7 @@ export const useWorldOutcrops = ({
     if (!claim) return;
     setWallet(claim.wallet);
     setInventory(claim.inventory);
-    gainWorldAdventureExp(claim.adventureExp);
+    adventureExp.value = claim.adventureExp;
     fightCamps.value = new Map([...fightCamps.value].filter(([id]) => id !== prompt.placeId));
     applyEvent(prompt.placeId, OutcropEvent.Claimed);
   };
