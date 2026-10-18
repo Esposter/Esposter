@@ -10,6 +10,8 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
@@ -22,6 +24,8 @@ import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { infusedStonehide } from "#src/services/gcg/cards/infusedStonehide";
 import { stoneForce } from "#src/services/gcg/cards/stoneForce";
 import { stonehide } from "#src/services/gcg/cards/stonehide";
+import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
+import { sweepingTimeSkill } from "#src/services/gcg/cards/sweepingTimeSkill";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -322,5 +326,115 @@ describe("infused Stonehide", () => {
     };
     const character: GcgCharacter = { ...createCharacterState(2601).character, skills: [INFUSED_STONEHIDE_PASSIVE] };
     expect(listGcgStartingStatuses(character).map(({ cardId }) => cardId)).toStrictEqual([126_011, 126_012]);
+  });
+});
+
+describe("sweeping Time", () => {
+  const SWEEPING_TIME_ID = 116_022;
+  const NORMAL_ATTACK: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_16021",
+    energyGain: 1,
+    id: 16_021,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const ELEMENTAL_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_16022",
+    energyGain: 1,
+    id: 16_022,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const createSweepingTimeContext = (): GcgEffectContext => ({
+    duel: createDuel([createSideState([createCharacterState(1602)]), createSideState([])]),
+    sideIndex: 0,
+  });
+
+  test("a Normal Attack deals 2 more DMG, and the character's Physical DMG is converted to Geo", () => {
+    expect.hasAssertions();
+    const zoneCard = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
+    const context: GcgEffectContext = { ...createSweepingTimeContext(), skill: NORMAL_ATTACK };
+    expect(
+      sweepingTime.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
+    ).toStrictEqual({ damageType: Element.Geo, value: 4 });
+  });
+
+  test("an elemental skill gets no bonus, and only its Physical DMG is converted", () => {
+    expect.hasAssertions();
+    const zoneCard = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
+    const context: GcgEffectContext = { ...createSweepingTimeContext(), skill: ELEMENTAL_SKILL };
+    expect(
+      sweepingTime.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
+    ).toStrictEqual({ damageType: Element.Geo, value: 2 });
+    expect(sweepingTime.modifyDamageDealt?.(context, { damageType: Element.Pyro, value: 2 }, zoneCard)).toStrictEqual({
+      damageType: Element.Pyro,
+      value: 2,
+    });
+  });
+
+  test("the first Normal Attack of the round spends one Geo die less, and a later one does not", () => {
+    expect.hasAssertions();
+    const zoneCard = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
+    const context = createSweepingTimeContext();
+    const subject: GcgCostSubject = {
+      costs: [{ count: 2, element: Element.Geo, kind: GcgCostKind.Dice }],
+      element: Element.Geo,
+      skill: NORMAL_ATTACK,
+    };
+    expect(sweepingTime.reduceCost?.(context, subject, zoneCard)).toStrictEqual({ count: 1, element: Element.Geo });
+    sweepingTime.onCostPaid?.(context, subject, zoneCard);
+    expect(sweepingTime.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
+  });
+
+  test("an elemental skill does not spend the Normal Attack's reduction", () => {
+    expect.hasAssertions();
+    const zoneCard = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
+    const subject: GcgCostSubject = {
+      costs: [{ count: 2, element: Element.Geo, kind: GcgCostKind.Dice }],
+      element: Element.Geo,
+      skill: ELEMENTAL_SKILL,
+    };
+    expect(sweepingTime.reduceCost?.(createSweepingTimeContext(), subject, zoneCard)).toBeUndefined();
+  });
+});
+
+describe("sweeping Time skill", () => {
+  const SWEEPING_TIME_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_16023",
+    energyGain: 0,
+    id: 16_023,
+    kind: GcgSkillKind.ElementalBurst,
+  };
+
+  test("the skill deals 4 Geo DMG, and its character gains Sweeping Time", () => {
+    expect.hasAssertions();
+    const SWEEPING_TIME_ID = 116_022;
+    const duel = createDuel([
+      createSideState([createCharacterState(1602)]),
+      createSideState([createCharacterState(1203)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
+    expect(
+      takeOne(duel.sides, 0)
+        .characters.at(0)
+        ?.statuses.map(({ cardId }) => cardId),
+    ).toStrictEqual([SWEEPING_TIME_ID]);
+  });
+
+  test("using the skill again refreshes the status rather than stacking a second one", () => {
+    expect.hasAssertions();
+    const SWEEPING_TIME_ID = 116_022;
+    const duel = createDuel([
+      createSideState([createCharacterState(1602)]),
+      createSideState([createCharacterState(1203)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
+    takeOne(takeOne(takeOne(duel.sides, 0).characters, 0).statuses, 0).rounds = 1;
+    runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
+    const statuses = takeOne(takeOne(duel.sides, 0).characters, 0).statuses;
+    expect(statuses.map(({ cardId }) => cardId)).toStrictEqual([SWEEPING_TIME_ID]);
+    expect(statuses.map(({ rounds }) => rounds)).toStrictEqual([2]);
   });
 });

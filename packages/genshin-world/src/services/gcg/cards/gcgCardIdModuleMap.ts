@@ -84,6 +84,7 @@ import { stoneForce } from "#src/services/gcg/cards/stoneForce";
 import { stonehide } from "#src/services/gcg/cards/stonehide";
 import { strategize } from "#src/services/gcg/cards/strategize";
 import { streamingSurge } from "#src/services/gcg/cards/streamingSurge";
+import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { sweetMadame } from "#src/services/gcg/cards/sweetMadame";
 import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
@@ -129,6 +130,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [115_021, dandelionField],
   [116_011, jadeScreen],
   [116_021, fullPlate],
+  [116_022, sweepingTime],
   [117_011, cuileinAnbar],
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
