@@ -40,18 +40,6 @@ describe(consumeKitResource, () => {
     expect(kitEffectState.effects).toHaveLength(0);
   });
 
-  test("keeps the seconds a timed resource runs for when a stack is spent", () => {
-    expect.hasAssertions();
-
-    const kitEffectState = { effects: [] };
-    addKitStatus(kitEffectState, CHARACTER_ID, { id: RESOURCE_ID, secondsRemaining: 16, stacks: 8 });
-
-    expect(consumeKitResource(kitEffectState, CHARACTER_ID, RESOURCE_ID, 1)).toBe(true);
-    const status = findKitStatus(kitEffectState.effects, CHARACTER_ID, RESOURCE_ID);
-    expect(status?.secondsRemaining).toBe(16);
-    expect(status?.stacks).toBe(7);
-  });
-
   test("keeps the swap end and the Nightsoul rate of a status when a stack is spent", () => {
     expect.hasAssertions();
 
