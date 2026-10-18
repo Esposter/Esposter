@@ -493,7 +493,7 @@ The in-scope features that are open (#203, #351, #390, #436) are the package's o
 ## Sources
 
 - [MJML documentation](https://documentation.mjml.io/): the component set, each component's attributes and defaults, the head components, and "Using MJML in JSON", the object form `mjml2html` takes in place of markup.
-- `mjml-core`'s `createComponent`: `htmlAttributes` writes each attribute with its value as given, which is why the render escapes.
+- `mjml-core`'s "createComponent": `htmlAttributes` writes each attribute with its value as given, which is why the render escapes.
 - `mjml-preset-core`'s `dependencies`: the allowed children of every tag, which the slots are held equal to.
 - `mjml-parser-xml`'s `MJMLParser`: `ignoreIncludes` defaults to true, and the ending tags come from its `components` option.
 - [node-html-parser](https://github.com/taoqf/node-html-parser): the block text elements and the decoded attributes the read back uses.
