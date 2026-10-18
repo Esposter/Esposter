@@ -3,5 +3,4 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
-x-waiting: "agent/data-quests: the quest dataset must carry each step's restriction before the lock can read it"
 x-touches: ["packages/genshin-world/src/services/screen/**"]

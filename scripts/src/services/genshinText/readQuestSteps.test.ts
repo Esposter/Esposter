@@ -1,5 +1,5 @@
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
-import { QuestObjectiveKind } from "genshin-world";
+import { QuestBanType, QuestObjectiveKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(readQuestSteps, () => {
@@ -8,6 +8,57 @@ describe(readQuestSteps, () => {
   const QUEST_ID = 1;
   const TEXT_HASH = 1000;
   const checkIsText = (hash: number) => hash === TEXT_HASH;
+
+  test("a step whose sub quest names a ban group carries its ban type", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [
+        {
+          B: 100,
+          C: 1,
+          D: TEXT_HASH,
+          E: [{ F: "QUEST_CONTENT_OBTAIN_ITEM", G: [0, 3] }],
+          H: "BAN_GROUP_TRANSPORT_ONLY",
+        },
+      ],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: [],
+      offerTalkIds: [],
+      steps: [
+        {
+          banType: QuestBanType.BanGroupTransportOnly,
+          id: "100",
+          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "0" }],
+          textId: String(TEXT_HASH),
+        },
+      ],
+    });
+  });
+
+  test("a ban group the reader does not know is noted and left off the step", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_OBTAIN_ITEM", G: [0, 3] }], H: "BAN_GROUP_UNKNOWN" }],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: [
+        `${QUEST_ID}'s step 100 names a ban group the reader does not know, BAN_GROUP_UNKNOWN, so it is left off`,
+      ],
+      offerTalkIds: [],
+      steps: [
+        {
+          id: "100",
+          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "0" }],
+          textId: String(TEXT_HASH),
+        },
+      ],
+    });
+  });
 
   test("keeps every condition of a step that asks something, in the order the game lists them", () => {
     expect.hasAssertions();

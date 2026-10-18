@@ -2,11 +2,11 @@
 
 ## 1. The restriction on the step
 
-- [ ] 1.1 Carry an optional restriction on the quest step, absent when the step has none. Verify: tests named after the scenarios 'A restricted step carries its restriction' and 'A step with no restriction carries none' written first and seen failing. Blocked on `agent/data-quests` shipping the field in the quest dataset.
+- [x] 1.1 Carry an optional restriction on the quest step, absent when the step has none. Verify: tests named after the scenarios 'A restricted step carries its restriction' and 'A step with no restriction carries none' written first and seen failing. The reader reads the dump's ban group off the sub quest by its value; the dataset publish is the main session's.
 
 ## 2. The Paimon menu's lock
 
-- [ ] 2.1 Keep the Paimon menu shut while an active step is restricted. Verify: tests named after the scenarios 'A restricted step keeps the Paimon menu shut' and 'A step with no restriction opens the Paimon menu' written first and seen failing. Blocked on 1.1.
+- [x] 2.1 Keep the Paimon menu shut while an active step is restricted. Verify: tests named after the scenarios 'A restricted step keeps the Paimon menu shut' and 'A step with no restriction opens the Paimon menu' written first and seen failing.
 
 ## 3. The rest of the restriction
 

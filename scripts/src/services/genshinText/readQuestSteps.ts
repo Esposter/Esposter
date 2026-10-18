@@ -1,8 +1,9 @@
 import type { QuestStep } from "genshin-world";
 
 import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContentObjectiveMap";
+import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
-import { QuestObjectiveKind } from "genshin-world";
+import { QuestBanType, QuestObjectiveKind } from "genshin-world";
 
 // A quest's shown steps in order, and the talks offering it, read off its file in the dump's binary output by shape,
 // Since the dump scrambles every field's name each patch. Its sub quests are the array whose items hold conditions; a
@@ -85,7 +86,11 @@ export const readQuestSteps = (
       notes.push(`${questId}'s step ${id} asks nothing of the Traveler its conditions name`);
       return [];
     }
-    return [{ id: String(id), objectives, textId: String(textHash) }];
+    const banGroup = readQuestBanType(subQuest);
+    const banType = Object.values(QuestBanType).find((member) => member === banGroup);
+    if (banGroup !== undefined && banType === undefined)
+      notes.push(`${questId}'s step ${id} names a ban group the reader does not know, ${banGroup}, so it is left off`);
+    return [{ ...(banType === undefined ? {} : { banType }), id: String(id), objectives, textId: String(textHash) }];
   });
   return { notes, offerTalkIds, steps };
 };
