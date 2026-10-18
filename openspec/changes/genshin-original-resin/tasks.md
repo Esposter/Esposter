@@ -6,4 +6,4 @@
 
 ## 2. Fragile Resin
 
-- [ ] 2.1 Make Fragile Resin restore sixty Original Resin when used from the bag, once the inventory's use of an item lands. Verify: a test named after the scenario 'Using Fragile Resin restores sixty Original Resin'.
+- [x] 2.1 Make Fragile Resin restore sixty Original Resin when used from the bag, once the inventory's use of an item lands. Verify: a test named after the scenario 'Using Fragile Resin restores sixty Original Resin'.
