@@ -76,6 +76,28 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   winnerSideIndex: undefined,
 });
 
+const KABUKI: GcgSkill = {
+  costs: [],
+  effect: "Effect_Damage_Physic_2",
+  energyGain: 1,
+  id: 11_051,
+  kind: GcgSkillKind.NormalAttack,
+};
+const HYOUKA: GcgSkill = {
+  costs: [],
+  effect: "Effect_Damage_Ice_3",
+  energyGain: 1,
+  id: 11_052,
+  kind: GcgSkillKind.ElementalSkill,
+};
+const FIREWORK_FLARE_UP: GcgSkill = {
+  costs: [],
+  effect: "Effect_Damage_Physic_2",
+  energyGain: 1,
+  id: 13_051,
+  kind: GcgSkillKind.NormalAttack,
+};
+
 describe("frostflake Seki no To", () => {
   test("it deals 2 Cryo DMG at each End Phase, for two usages", () => {
     expect.hasAssertions();
@@ -125,13 +147,6 @@ describe("cryo Elemental Infusion", () => {
 });
 
 describe("kamisato Art: Senho", () => {
-  const KABUKI: GcgSkill = {
-    costs: [],
-    effect: "Effect_Damage_Physic_2",
-    energyGain: 1,
-    id: 11_051,
-    kind: GcgSkillKind.NormalAttack,
-  };
   const SENHO_PASSIVE: GcgSkill = {
     costs: [],
     effect: "Char_Skill_11054",
@@ -185,5 +200,43 @@ describe("kamisato Art: Senho", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
 
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([2]);
+  });
+});
+
+describe("the skills whose damage is parsed from the dump's effect", () => {
+  test("kamisato Art: Kabuki deals 2 Physical DMG, with no aura", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(1105)]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
+    expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({ aura: GcgAura.None, hp: 8 });
+  });
+
+  test("kamisato Art: Hyouka deals 3 Cryo DMG, which applies the Cryo aura", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(1105)]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+
+    expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({ aura: Element.Cryo, hp: 7 });
+  });
+
+  test("firework Flare-Up deals 2 Physical DMG for Yoimiya", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(1305)]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, FIREWORK_FLARE_UP);
+
+    expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({ aura: GcgAura.None, hp: 8 });
   });
 });
