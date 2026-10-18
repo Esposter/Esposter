@@ -11,3 +11,7 @@ export const COMBINE_TYPE_CHARACTER_TALENT_MATERIAL = 3;
 export const COMBINE_TYPE_POTION: readonly number[] = [4, 12];
 // The id of the bench's row in the prompts, which holds the one bench the world offers
 export const CRAFTING_BENCH_INTERACTABLE_ID = "craftingBench";
+
+// The Adventure Rank the Mystic Offering opens at, from the wiki's Mystic Offering page, which the dump's tables for it do
+// Not hold
+export const MYSTIC_OFFERING_ADVENTURE_RANK = 45;

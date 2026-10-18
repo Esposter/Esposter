@@ -5,16 +5,16 @@
 
 ## 2. Rolling a strongbox
 
-- [ ] 2.1 Roll one piece of the chosen set through `rollArtifact` at five stars with the piece's starting minor affixes. Verify: a test named after the scenario 'a strongbox rolls a piece of its chosen set at five stars', seen failing first.
-- [ ] 2.2 Share the piece-to-artifact step with the chest drop, which keeps its own suite green. Verify: the existing `rollChestDrops` suite passes unchanged.
+- [x] 2.1 Roll one piece of the chosen set through `rollArtifact` at five stars with the piece's starting minor affixes. Verify: a test named after the scenario 'a strongbox rolls a piece of its chosen set at five stars'.
+- [x] 2.2 Share the piece-to-artifact step with the chest drop, which keeps its own suite green. Verify: the existing `rollChestDrops` suite passes unchanged.
 
 ## 3. Giving up three artifacts
 
-- [ ] 3.1 Take three unlocked five-star bag artifacts into one strongbox artifact in the bag, removing the three. Verify: tests named after the scenarios 'three unlocked five-star artifacts become one strongbox artifact in the bag', 'a locked artifact is not offered', and 'a choice of other than three artifacts is refused', seen failing first.
+- [x] 3.1 Take three unlocked five-star bag artifacts into one strongbox artifact in the bag, removing the three. Verify: tests named after the scenarios 'three unlocked five-star artifacts become one strongbox artifact in the bag', 'a locked artifact is not offered', and 'a choice of other than three artifacts is refused'.
 
 ## 4. Panel
 
-- [ ] 4.1 Open the Mystic Offering from Adventure Rank 45 and no lower. Verify: a test named after the scenario 'the offering opens from adventure rank 45', seen failing first.
+- [x] 4.1 Open the Mystic Offering from Adventure Rank 45 and no lower. Verify: a test named after the scenario 'the offering opens from adventure rank 45'.
 - [ ] 4.2 List only the offerable artifacts in the panel, and pass the craft's result to the parent. Verify: a test named after the scenario 'the panel lists only the offerable artifacts', seen failing first.
 
 ## 5. Words

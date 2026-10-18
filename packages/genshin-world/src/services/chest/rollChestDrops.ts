@@ -4,8 +4,7 @@ import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
-import { rollArtifact } from "#src/services/artifact/rollArtifact";
+import { rollPieceArtifact } from "#src/services/artifact/rollPieceArtifact";
 import { ChestDropPoolMap } from "#src/services/chest/ChestDropPoolMap";
 import {
   CHEST_HIGH_RARITY_ARTIFACT_SET_IDS,
@@ -52,17 +51,7 @@ const rollArtifactDrop = (
       String(id),
       `holds no ${slot} piece of ${rarity} stars with ${minorAffixCount} minor affixes`,
     );
-  const mainAffixPool = artifactMainAffixPools.find((pool) => pool.slot === slot);
-  if (mainAffixPool === undefined)
-    throw new InvalidOperationError(Operation.Read, rollArtifactDrop.name, `no main affix pool for ${slot}`);
-  const artifact = rollArtifact({
-    mainAffixPool,
-    minorAffixCount,
-    random,
-    rarityData: getArtifactRarityData(artifactRarityDataMap, rarity),
-    setId: id,
-  });
-  return [{ artifact, count: 1, itemId: piece.itemId }];
+  return [rollPieceArtifact(id, piece, random, { artifactMainAffixPools, artifactRarityDataMap })];
 };
 
 // What one opening of a chest of a kind pours out: one weapon picked from its pool when the pool names any, one artifact
