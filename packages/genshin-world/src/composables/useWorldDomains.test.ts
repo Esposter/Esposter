@@ -41,7 +41,7 @@ const domainEntrance: DomainEntranceLandmark = {
   titleTextKey: GameTextKey.DomainEntrance24,
 };
 
-// A boss in the arena's camp, staggered by a poise break, with every other field made up
+// A boss in the arena's camp, staggered by its shield's break, with every other field made up
 const createBrokenBoss = (campId: string): Enemy => ({
   attackCooldownSeconds: 0,
   campId,
@@ -114,13 +114,13 @@ describe("stepDomainChallenge", () => {
     const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPlaying: true, partyDown: false });
 
     expect(step()).toStrictEqual([]);
-    events.emit("poiseBreak", createBrokenBoss(campId));
+    events.emit("shieldBreak", createBrokenBoss(campId));
     // Phase 1 allows one shield break, so the first break ends it and its transition attack starts
     expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
     // Phase 2 allows three breaks in total, so the second break is the second of the three and moves nothing
-    events.emit("poiseBreak", createBrokenBoss(campId));
+    events.emit("shieldBreak", createBrokenBoss(campId));
     expect(step()).toStrictEqual([]);
-    events.emit("poiseBreak", createBrokenBoss(campId));
+    events.emit("shieldBreak", createBrokenBoss(campId));
     expect(step()).toStrictEqual(["Caelestinum Finale Termini"]);
   });
 });

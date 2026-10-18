@@ -67,6 +67,23 @@ describe(damageEnemy, () => {
     expect(enemy.state).toBe(EnemyState.Chase);
   });
 
+  test("a shield takes a hit's damage before health, and breaking it staggers the enemy", () => {
+    expect.hasAssertions();
+
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    enemy.shield = { health: 100, maxHealth: 100 };
+    damageEnemy(enemy, { damage: 50, poiseDamage: 0 });
+
+    expect(enemy.health).toBe(enemy.maxHealth);
+    expect(enemy.shield).toStrictEqual({ health: 50, maxHealth: 100 });
+
+    damageEnemy(enemy, { damage: 51, poiseDamage: 0 });
+
+    expect(enemy.health).toBe(enemy.maxHealth - 1);
+    expect(enemy.shield).toStrictEqual({ health: 0, maxHealth: 100 });
+    expect(enemy.state).toBe(EnemyState.Stagger);
+  });
+
   test("a returning enemy is immune", () => {
     expect.hasAssertions();
 
