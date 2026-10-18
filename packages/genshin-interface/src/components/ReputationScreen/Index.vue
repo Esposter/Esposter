@@ -18,6 +18,9 @@ interface Props {
   levels: ReputationLevelCell[];
   // The words a level the nation's Reputation has not reached shows in place of the achieved mark
   notAchievedLabel: string;
+  // The request the keeper offers, its title and the button that takes it in the reader's language, or none where she
+  // Offers none
+  offer?: { acceptLabel: string; title: string };
   // The picked level's requirement, its coloured runs as the game words them, "[]" where the screen names none
   requirement: TextSegment[];
   // The title the game shows over the page, its nation's name filled in
@@ -25,9 +28,9 @@ interface Props {
 }
 
 const level = defineModel<number>("level", { default: 0 });
-const { achievedLabel, backLabel, headline, levelLabel, levels, notAchievedLabel, requirement, title } =
+const { achievedLabel, backLabel, headline, levelLabel, levels, notAchievedLabel, offer, requirement, title } =
   defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ accept: []; close: [] }>();
 </script>
 
 <template>
@@ -46,6 +49,10 @@ const emit = defineEmits<{ close: [] }>();
       <p class="requirement">
         <span v-for="({ color, text }, index) of requirement" :key="index" :style="{ color }">{{ text }}</span>
       </p>
+    </section>
+    <section v-if="offer" class="offer">
+      <p class="offer-title">{{ offer.title }}</p>
+      <button class="accept" type="button" @click="emit('accept')">{{ offer.acceptLabel }}</button>
     </section>
     <ul class="levels">
       <li v-for="cell of levels" :key="cell.level">
@@ -132,6 +139,30 @@ const emit = defineEmits<{ close: [] }>();
 
 .requirement {
   margin: calc(var(--unit) * 16) 0 0;
+  font-size: calc(var(--unit) * 26);
+}
+
+/* The offer sits under the requirement, provisionally, until the reference frames it */
+.offer {
+  position: absolute;
+  top: calc(var(--unit) * 380);
+  left: calc(var(--unit) * 85);
+  width: calc(var(--unit) * 520);
+  color: #ece5d8;
+}
+
+.offer-title {
+  margin: 0 0 calc(var(--unit) * 16);
+  font-size: calc(var(--unit) * 26);
+}
+
+.accept {
+  padding: calc(var(--unit) * 12) calc(var(--unit) * 32);
+  border: none;
+  border-radius: calc(var(--unit) * 8);
+  background: #ece5d8;
+  color: #3b4255;
+  font: inherit;
   font-size: calc(var(--unit) * 26);
 }
 

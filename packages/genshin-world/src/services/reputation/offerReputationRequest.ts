@@ -3,17 +3,20 @@ import type { ReputationRequest } from "#src/models/reputation/ReputationRequest
 
 import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants";
 
-// The request a nation's keeper offers at a level, drawn by weight from the requests of the group the level's row names,
-// With `roll` a number from zero up to one. Undefined below the level requests unlock at, and where that level names no
-// Group with requests in it
+// The request a nation's keeper offers at a level, drawn by weight from the requests of the group that level names,
+// Narrowed to those `offerableQuestIds` name, the ones the player may take, with `roll` a number from zero up to one.
+// Undefined below the level requests unlock at, and where that level names no group with requests in it
 export const offerReputationRequest = (
   city: ReputationCity,
   level: number,
   roll: number,
+  offerableQuestIds: readonly string[],
 ): ReputationRequest | undefined => {
   if (level < REPUTATION_OFFER_FIRST_LEVEL) return undefined;
   const requestGroupId = city.levels.find((reputationLevel) => reputationLevel.level === level)?.requestGroupId;
-  const requests = city.requests.filter(({ groupId }) => groupId === requestGroupId);
+  const requests = city.requests.filter(
+    ({ groupId, questId }) => groupId === requestGroupId && offerableQuestIds.includes(String(questId)),
+  );
   const weightEnds: number[] = [];
   let totalWeight = 0;
   for (const { weight } of requests) weightEnds.push((totalWeight += weight));

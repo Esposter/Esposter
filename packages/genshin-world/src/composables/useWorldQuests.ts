@@ -99,6 +99,10 @@ export const useWorldQuests = ({
       console.error(error);
     },
   );
+  // A quest the player accepts from a Reputation request's offer starts at its first step, once, as the carried quests do
+  const acceptQuest = (questId: string) => {
+    questProgressMap.value = startQuests(quests.value, questProgressMap.value, undefined, questChapters.value, questId);
+  };
   const doQuestEvent = (questEvent: QuestEvent) => {
     const nextProgressMap = new Map(questProgressMap.value);
     const achievementEvents: AchievementEvent[] = [];
@@ -118,6 +122,7 @@ export const useWorldQuests = ({
   };
   events.on("questEvent", doQuestEvent);
   return {
+    acceptQuest,
     finishedMainQuestIds,
     questChapters,
     questProgressMap,

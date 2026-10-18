@@ -15,6 +15,7 @@ import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
+import type { ReputationRequest } from "#src/models/reputation/ReputationRequest";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -80,6 +81,7 @@ import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
+import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
@@ -111,6 +113,7 @@ import { readGenshinSettings } from "#src/services/menu/readGenshinSettings";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
+import { offerReputationRequest } from "#src/services/reputation/offerReputationRequest";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
@@ -251,6 +254,7 @@ const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: Inve
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.characterCopyCountMap);
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
 const {
+  acceptQuest,
   finishedMainQuestIds,
   questChapters,
   questProgressMap,
@@ -619,6 +623,29 @@ const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
 // The expeditions out from the Adventurers' Guild, held for the session, so a reload empties them
 const expeditions = shallowRef<Expedition[]>([]);
 const reputationLevel = shallowRef(reputation.value.level);
+// The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
+// Started, and not kept with the save: a provisional rule until the weekly refresh is read
+const reputationOffer = shallowRef<ReputationRequest>();
+const reputationOfferTitle = computed(() => {
+  const quest = reputationOffer.value && quests.value.find(({ id }) => id === String(reputationOffer.value?.questId));
+  return quest ? questTextMap.value[quest.titleTextId] : undefined;
+});
+const drawReputationOffer = () => {
+  if (!reputationCity.value) return;
+  const offerableQuestIds = ReputationRequestQuestIds.filter((questId) => !questProgressMap.value.has(questId));
+  reputationOffer.value = offerReputationRequest(
+    reputationCity.value,
+    reputation.value.level,
+    Math.random(),
+    offerableQuestIds,
+  );
+};
+// Accepting the offer starts its quest, which the world then runs as any other
+const acceptReputationOffer = () => {
+  if (!reputationOffer.value) return;
+  acceptQuest(String(reputationOffer.value.questId));
+  reputationOffer.value = undefined;
+};
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
   (city) => {
@@ -1055,6 +1082,7 @@ defineExpose({ jumpTo, readCameraPosition });
               )
                 screenKind = ScreenKind.Dialogue;
               reputationLevel = reputation.level;
+              if (screenKind === ScreenKind.Reputation) drawReputationOffer();
             }
           }
         }
@@ -1444,8 +1472,10 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :material-data-map
       :name-text
+      :offer-title="reputationOfferTitle"
       :progress="reputation"
       :reputation="reputationCity"
+      @accept="acceptReputationOffer"
       @close="screenKind = ScreenKind.World"
     />
     <GcgSession
