@@ -14,3 +14,4 @@ x-touches:
     "packages/genshin-world/src/components/Crafting/**",
     "packages/genshin-text/src/models/GameTextKey.ts",
   ]
+x-waiting: "the crafting/strongboxes record (pnpm -C scripts genshin:assets crafting, published by the main session) is not in gameDataLock.json yet, which tasks 1.2 and 4.3 read; the offering's words (5.1) wait on the main session's genshin:text write"

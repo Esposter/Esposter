@@ -17,6 +17,8 @@
 - [x] 4.1 Open the Mystic Offering from Adventure Rank 45 and no lower. Verify: a test named after the scenario 'the offering opens from adventure rank 45'.
 - [x] 4.2 List only the offerable artifacts in the panel, and pass the craft's result to the parent. Verify: a test named after the scenario 'the panel lists only the offerable artifacts'.
 
+- [ ] 4.3 Open the panel from the Crafting Bench from Adventure Rank 45, with the strongbox records read from the hosted game data. Verify: the gate test of 4.1 and the record read of 1.2, once the record is published.
+
 ## 5. Words
 
 - [ ] 5.1 Add the offering's `GameTextKey` members, each by its text id. Verify: a test named after the scenario 'the offering's tip fills its artifact counts', seen failing first.
