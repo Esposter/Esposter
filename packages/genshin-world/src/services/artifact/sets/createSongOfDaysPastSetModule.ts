@@ -74,7 +74,7 @@ export const createSongOfDaysPastSetModule = (bonus: ArtifactSetBonus): PassiveM
       const { kitEffectState, party } = context;
       // A heal its wearer gives records its HP into the Yearning, which it opens if none is running
       if (event.kind === KitEventKind.HealthChanged && event.sourceCharacterId === characterId) {
-        const healed = getKitHealedHp(event, context.characterIdCombatantMap);
+        const healed = getKitHealedHp(event, kitEffectState.effects, party, context.characterIdCombatantMap);
         if (healed <= 0) return;
         const yearning = findYearning(kitEffectState.effects);
         if (yearning) yearning.stacks = Math.min((yearning.stacks ?? 0) + healed, maximumRecord);

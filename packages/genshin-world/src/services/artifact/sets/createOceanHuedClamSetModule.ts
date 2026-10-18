@@ -69,9 +69,9 @@ export const createOceanHuedClamSetModule = (bonus: ArtifactSetBonus): PassiveMo
   return {
     onKitEvent: (event, context, combatant) => {
       const { characterId } = combatant;
-      const { body, characterIdCombatantMap, kitEffectState } = context;
+      const { body, characterIdCombatantMap, kitEffectState, party } = context;
       if (event.kind !== KitEventKind.HealthChanged || event.sourceCharacterId !== characterId) return;
-      const healedHp = getKitHealedHp(event, characterIdCombatantMap);
+      const healedHp = getKitHealedHp(event, kitEffectState.effects, party, characterIdCombatantMap);
       if (healedHp <= 0) return;
       const foam = findSeaDyedFoam(kitEffectState.effects);
       if (foam && foam.characterId !== characterId) return;
