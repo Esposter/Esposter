@@ -129,7 +129,6 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.jadeScreen.hitmarkFrames": { "cause": "DiffersFromSource", "value": 17 },
   "hits.jadeScreen.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2732 } },
   "normalAttacks.length": { "cause": "Unclassified", "value": 2 },
   "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 0 },
