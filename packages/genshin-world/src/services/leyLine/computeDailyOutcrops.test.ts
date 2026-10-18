@@ -36,7 +36,7 @@ describe(computeDailyOutcrops, () => {
     expect(computeDailyOutcrops(kindRules, placements, 8, [], () => 0)).toStrictEqual([
       { kind: OutcropKind.Revelation, placeId: FIRST_PLACE_ID, stage: OutcropStage.Waiting },
     ]);
-    expect(computeDailyOutcrops(kindRules, [placements[0]], 30, [], () => 0)).toStrictEqual([
+    expect(computeDailyOutcrops(kindRules, placements.slice(0, 1), 30, [], () => 0)).toStrictEqual([
       { kind: OutcropKind.Revelation, placeId: FIRST_PLACE_ID, stage: OutcropStage.Waiting },
     ]);
   });
