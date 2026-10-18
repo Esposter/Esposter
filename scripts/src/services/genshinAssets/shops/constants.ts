@@ -45,3 +45,7 @@ export const PAIMON_BARGAINS_ROYAL_ORDER = 1;
 export const PAIMON_BARGAINS_BLACKCLIFF_ORDER = 2;
 // The item use that gives a character card's avatar, and where the avatar's id sits in its parameters
 export const GAIN_AVATAR_ITEM_USE = "ITEM_USE_GAIN_AVATAR";
+// The Sigils a region's Souvenir Shop is paid in, by their item ids in the game's tables: Anemo for Mondstadt and Geo for
+// Liyue. A Souvenir good is one priced in one of them, which is how the builder finds the shops, whose table numbers the
+// Dump's names do not match
+export const SOUVENIR_SIGIL_ITEM_IDS = { liyue: 307, mondstadt: 305 } as const;

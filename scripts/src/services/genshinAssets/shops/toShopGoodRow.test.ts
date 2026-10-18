@@ -73,4 +73,11 @@ describe(toShopGoodRow, () => {
       refresh: ShopRefresh.Daily,
     });
   });
+
+  test("a good the table gives no refresh for never restocks", () => {
+    expect.hasAssertions();
+    const { refreshType: _, ...unlistedRefreshRow } = row;
+
+    expect(toShopGoodRow(unlistedRefreshRow).refresh).toBe(ShopRefresh.None);
+  });
 });
