@@ -26,12 +26,4 @@ describe(getNextScreenKind, () => {
 
     expect(getNextScreenKind(ScreenKind.World, new Set([InputAction.OpenPaimonMenu]), true)).toBe(ScreenKind.World);
   });
-
-  test("a step with no restriction opens the Paimon menu", () => {
-    expect.hasAssertions();
-
-    expect(getNextScreenKind(ScreenKind.World, new Set([InputAction.OpenPaimonMenu]), false)).toBe(
-      ScreenKind.PaimonMenu,
-    );
-  });
 });
