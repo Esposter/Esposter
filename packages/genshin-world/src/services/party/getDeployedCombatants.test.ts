@@ -5,8 +5,10 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const DILUC_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DILUC_CHARACTER_ID);
@@ -31,8 +33,8 @@ describe(getDeployedCombatants, () => {
       [3, cryo],
     ]);
     expect(getDeployedCombatants(createParty([1, 2, 3]), combatants)).toStrictEqual([
-      { ...pyro, isOnField: true },
-      { ...cryo, isOnField: false },
+      createDeployedCombatant(pyro, { isOnField: true }),
+      createDeployedCombatant(cryo, { isOnField: false }),
     ]);
   });
 
@@ -51,8 +53,18 @@ describe(getDeployedCombatants, () => {
         ]),
       ),
     ).toStrictEqual([
-      { ...pyro, isOnField: false },
-      { ...cryo, isOnField: true },
+      createDeployedCombatant(pyro, { isOnField: false }),
+      createDeployedCombatant(cryo, { isOnField: true }),
+    ]);
+  });
+
+  test("reads the Energy each member holds in the party", () => {
+    expect.hasAssertions();
+    const pyro = createCombatant(1, Element.Pyro);
+    const party = createParty([1]);
+    getPartyMember(party, 1).energy = 40;
+    expect(getDeployedCombatants(party, new Map([[1, pyro]]))).toStrictEqual([
+      createDeployedCombatant(pyro, { energy: 40, isOnField: true }),
     ]);
   });
 

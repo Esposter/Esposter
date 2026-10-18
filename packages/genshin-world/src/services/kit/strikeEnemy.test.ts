@@ -35,6 +35,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test, vi } from "vitest";
@@ -807,7 +808,7 @@ describe(strikeEnemy, () => {
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
     expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
-      { ...combatant, isOnField: true },
+      createDeployedCombatant(combatant, { isOnField: true }),
       { combatant, element: Element.Dendro, enemy, reactionType: LunarReactionType.LunarBloom },
       context,
     );
@@ -894,7 +895,7 @@ describe(strikeEnemy, () => {
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
     expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
-      { ...combatant, isOnField: true },
+      createDeployedCombatant(combatant, { isOnField: true }),
       { combatant, element: Element.Electro, enemy, reactionType: StellarReactionType.StellarConduct },
       context,
     );

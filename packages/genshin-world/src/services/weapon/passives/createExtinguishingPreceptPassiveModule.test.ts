@@ -8,6 +8,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createExtinguishingPreceptPassiveModule } from "#src/services/weapon/passives/createExtinguishingPreceptPassiveModule";
 import { describe, expect, test } from "vitest";
@@ -29,8 +30,8 @@ describe(createExtinguishingPreceptPassiveModule, () => {
     level: 1,
   };
   const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
-  const onField: DeployedCombatant[] = [{ ...wielder, isOnField: true }];
-  const offField: DeployedCombatant[] = [{ ...wielder, isOnField: false }];
+  const onField: DeployedCombatant[] = [createDeployedCombatant(wielder, { isOnField: true })];
+  const offField: DeployedCombatant[] = [createDeployedCombatant(wielder, { isOnField: false })];
 
   test("the wielder gains 12% of each Elemental DMG Bonus", () => {
     expect.hasAssertions();

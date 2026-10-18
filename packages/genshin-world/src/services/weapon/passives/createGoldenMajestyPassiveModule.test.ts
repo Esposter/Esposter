@@ -12,6 +12,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createGoldenMajestyPassiveModule } from "#src/services/weapon/passives/createGoldenMajestyPassiveModule";
 import { describe, expect, test } from "vitest";
@@ -33,7 +34,7 @@ describe(createGoldenMajestyPassiveModule, () => {
     kit: TRAVELER_KIT,
     level: 1,
   };
-  const deployedOnField = [{ ...wielder, isOnField: true }];
+  const deployedOnField = [createDeployedCombatant(wielder, { isOnField: true })];
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
     enemy,
@@ -141,7 +142,7 @@ describe(createGoldenMajestyPassiveModule, () => {
       goldenMajestyPassiveModule.getPassiveBonuses?.(
         wielder,
         1,
-        [{ ...wielder, isOnField: false }],
+        [createDeployedCombatant(wielder, { isOnField: false })],
         context.kitEffectState.effects,
       ),
     ).toStrictEqual([

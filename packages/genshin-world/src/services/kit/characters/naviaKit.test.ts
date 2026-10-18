@@ -18,6 +18,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createNaviaKitBehaviour, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -35,11 +36,8 @@ const createNaviaCombatant = (constellationCount = 0): Combatant => ({
   level: 90,
   weaponType: WeaponType.Claymore,
 });
-const createNaviaTeamMember = (element: Element): DeployedCombatant => ({
-  ...createNaviaCombatant(),
-  element,
-  isOnField: false,
-});
+const createNaviaTeamMember = (element: Element): DeployedCombatant =>
+  createDeployedCombatant({ ...createNaviaCombatant(), element }, { isOnField: false });
 
 const getStatus = (kitEffectState: KitEffectState, id: string): KitStatus | undefined =>
   kitEffectState.effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === id);

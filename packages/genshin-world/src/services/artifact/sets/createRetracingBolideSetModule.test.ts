@@ -10,6 +10,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { assert, describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 2;
@@ -24,7 +25,7 @@ const wearer: Combatant = {
   kit: TRAVELER_KIT,
   level: 1,
 };
-const deployed = (isOnField: boolean): DeployedCombatant[] => [{ ...wearer, isOnField }];
+const deployed = (isOnField: boolean): DeployedCombatant[] => [createDeployedCombatant(wearer, { isOnField })];
 const liveShield: KitEffect = { characterId: OTHER_CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 5 };
 const shieldedBonuses = [
   { amount: 0.4, attribute: Attribute.NormalAttackDamageBonus },

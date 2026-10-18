@@ -18,6 +18,7 @@ import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { assert, describe, expect, test } from "vitest";
 
@@ -92,9 +93,9 @@ describe(createObsidianCodexSetModule, () => {
       wearer,
     );
 
-    expect(getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects)).toStrictEqual([
-      { amount: 0.4, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      getPassiveBonuses?.(wearer, 1, [createDeployedCombatant(wearer, { isOnField: true })], kitEffectState.effects),
+    ).toStrictEqual([{ amount: 0.4, attribute: Attribute.CriticalRate }]);
   });
 
   test("raises no CRIT Rate from points consumed while its wearer is off the field", () => {
@@ -111,8 +112,8 @@ describe(createObsidianCodexSetModule, () => {
       wearer,
     );
 
-    expect(getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects)).toStrictEqual([
-      { amount: 0, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      getPassiveBonuses?.(wearer, 1, [createDeployedCombatant(wearer, { isOnField: true })], kitEffectState.effects),
+    ).toStrictEqual([{ amount: 0, attribute: Attribute.CriticalRate }]);
   });
 });

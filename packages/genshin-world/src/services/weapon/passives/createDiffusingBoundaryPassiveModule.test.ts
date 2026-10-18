@@ -12,6 +12,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
 import { describe, expect, test } from "vitest";
@@ -29,7 +30,7 @@ const wielder: Combatant = {
   kit: TRAVELER_KIT,
   level: 1,
 };
-const deployed = (isOnField: boolean): DeployedCombatant[] => [{ ...wielder, isOnField }];
+const deployed = (isOnField: boolean): DeployedCombatant[] => [createDeployedCombatant(wielder, { isOnField })];
 const liveShield: KitEffect = { characterId: OTHER_CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 5 };
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,

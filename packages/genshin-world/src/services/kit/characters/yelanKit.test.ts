@@ -21,6 +21,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -186,8 +187,10 @@ describe("ascension 1", () => {
   ): { amount: number; attribute: Attribute }[] | undefined => {
     const combatant = { ...createYelanCombatant(), ascension, element: Element.Hydro };
     const deployedCombatants = [
-      { ...combatant, isOnField: true },
-      ...teamElements.map((element) => ({ ...createYelanCombatant(), element, isOnField: false })),
+      createDeployedCombatant(combatant, { isOnField: true }),
+      ...teamElements.map((element) =>
+        createDeployedCombatant({ ...createYelanCombatant(), element }, { isOnField: false }),
+      ),
     ];
     return YELAN_KIT.getPassiveBonuses?.(combatant, 0.5, deployedCombatants, []);
   };

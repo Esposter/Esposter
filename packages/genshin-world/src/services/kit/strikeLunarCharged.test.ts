@@ -23,6 +23,7 @@ import { IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeLunarCharged } from "#src/services/kit/strikeLunarCharged";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { takeOne } from "@esposter/shared";
@@ -141,7 +142,7 @@ describe(strikeLunarCharged, () => {
     strikeLunarCharged(enemy, context);
 
     expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
-      { ...member, isOnField: true },
+      createDeployedCombatant(member, { isOnField: true }),
       { combatant: member, element: Element.Electro, enemy, reactionType: LunarReactionType.LunarCharged },
       context,
     );

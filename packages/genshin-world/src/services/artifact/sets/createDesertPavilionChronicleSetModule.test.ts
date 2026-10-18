@@ -18,6 +18,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { assert, describe, expect, test } from "vitest";
 
@@ -71,9 +72,9 @@ describe(createDesertPavilionChronicleSetModule, () => {
       context,
       wearer,
     );
-    expect(getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects)).toStrictEqual([
-      { amount: 0.1, attribute: Attribute.NormalAttackSpeed },
-    ]);
+    expect(
+      getPassiveBonuses?.(wearer, 1, [createDeployedCombatant(wearer, { isOnField: true })], kitEffectState.effects),
+    ).toStrictEqual([{ amount: 0.1, attribute: Attribute.NormalAttackSpeed }]);
     for (const attackTag of [AttackTag.NormalAttack, AttackTag.ChargedAttack, AttackTag.PlungingAttack])
       expect(getStrikeDamageBonus?.(createStrike(attackTag), enemy, party, kitEffectState.effects)).toBeCloseTo(0.4);
     expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, kitEffectState.effects)).toBe(

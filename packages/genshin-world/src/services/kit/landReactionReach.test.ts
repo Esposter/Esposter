@@ -30,6 +30,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { describe, expect, test, vi } from "vitest";
@@ -77,7 +78,7 @@ describe(landReactionReach, () => {
     landReactionReach(bloomContext, origin, [origin, near], bloom, blooming);
 
     expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
-      { ...blooming, isOnField: true },
+      createDeployedCombatant(blooming, { isOnField: true }),
       { combatant: blooming, element: Element.Dendro, enemy: near, reactionType: TransformativeReactionType.Bloom },
       bloomContext,
     );

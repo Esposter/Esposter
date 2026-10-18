@@ -16,6 +16,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { assert, describe, expect, test } from "vitest";
 
@@ -75,10 +76,14 @@ describe(createMarechausseeHunterSetModule, () => {
     const context = createKitTestContext(wearer, { kitEffectState, party });
     const { getPassiveBonuses, onKitEvent } = createMarechausseeHunterSetModule(bonusOf(4));
     const criticalRateBonus = () =>
-      (getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects) ?? []).reduce(
-        (total, { amount }) => total + amount,
-        0,
-      );
+      (
+        getPassiveBonuses?.(
+          wearer,
+          1,
+          [createDeployedCombatant(wearer, { isOnField: true })],
+          kitEffectState.effects,
+        ) ?? []
+      ).reduce((total, { amount }) => total + amount, 0);
 
     onKitEvent?.(healthChangedOf(TRAVELER_CHARACTER_ID), context, wearer);
     expect(criticalRateBonus()).toBeCloseTo(0.12);
@@ -97,8 +102,8 @@ describe(createMarechausseeHunterSetModule, () => {
 
     onKitEvent?.(healthChangedOf(OTHER_CHARACTER_ID), context, wearer);
 
-    expect(getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects)).toStrictEqual([
-      { amount: 0, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      getPassiveBonuses?.(wearer, 1, [createDeployedCombatant(wearer, { isOnField: true })], kitEffectState.effects),
+    ).toStrictEqual([{ amount: 0, attribute: Attribute.CriticalRate }]);
   });
 });

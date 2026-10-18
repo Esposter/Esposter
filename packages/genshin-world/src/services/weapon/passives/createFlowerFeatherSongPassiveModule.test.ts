@@ -7,22 +7,26 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createFlowerFeatherSongPassiveModule } from "#src/services/weapon/passives/createFlowerFeatherSongPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const createMember = (characterId: number, element: Element, regionId?: string): DeployedCombatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId,
-  constellationCount: 0,
-  element,
-  elementalResonances: [],
-  isOnField: false,
-  kit: TRAVELER_KIT,
-  level: 1,
-  regionId,
-});
+const createMember = (characterId: number, element: Element, regionId?: string): DeployedCombatant =>
+  createDeployedCombatant(
+    {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId,
+      constellationCount: 0,
+      element,
+      elementalResonances: [],
+      kit: TRAVELER_KIT,
+      level: 1,
+      regionId,
+    },
+    { isOnField: false },
+  );
 
 describe(createFlowerFeatherSongPassiveModule, () => {
   // Flower-Feather Song at its first rank: 4.8% ATK for each counted member, and 24 Elemental Mastery with three of them
@@ -33,7 +37,7 @@ describe(createFlowerFeatherSongPassiveModule, () => {
     expect.hasAssertions();
 
     const deployedCombatants = [
-      { ...wielder, isOnField: true },
+      createDeployedCombatant(wielder, { isOnField: true }),
       createMember(1, Element.Hydro),
       createMember(2, Element.Pyro, "natlan"),
       createMember(3, Element.Pyro),
@@ -49,7 +53,7 @@ describe(createFlowerFeatherSongPassiveModule, () => {
     expect.hasAssertions();
 
     const deployedCombatants = [
-      { ...wielder, isOnField: true },
+      createDeployedCombatant(wielder, { isOnField: true }),
       createMember(1, Element.Hydro),
       createMember(2, Element.Pyro, "natlan"),
       createMember(3, Element.Cryo),
@@ -67,7 +71,12 @@ describe(createFlowerFeatherSongPassiveModule, () => {
     const natlanWielder: Combatant = createMember(TRAVELER_CHARACTER_ID, Element.Pyro, "natlan");
 
     expect(
-      flowerFeatherSongPassiveModule.getPassiveBonuses?.(natlanWielder, 1, [{ ...natlanWielder, isOnField: true }], []),
+      flowerFeatherSongPassiveModule.getPassiveBonuses?.(
+        natlanWielder,
+        1,
+        [createDeployedCombatant(natlanWielder, { isOnField: true })],
+        [],
+      ),
     ).toStrictEqual([
       { amount: 0, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.ElementalMastery },
