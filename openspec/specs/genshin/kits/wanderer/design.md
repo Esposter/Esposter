@@ -6,13 +6,19 @@ Wanderer's kit is its record and one behaviour module, `createWandererKitBehavio
 
 - **Wanderer's high plunge takes Bennett's timing and poise.** gcsim gives him a low plunge and its collision but no high plunge, so his high plunge lands at Bennett's 38 frames with 150 poise and his own multiplier, as `wandererKit.ts` writes it; his animation showing otherwise would move it.
 
-## Framework pieces not built
+## Framework pieces built, not yet played
 
-Wanderer's Dash, Jump and swap lock wait on three framework pieces that the kit layer does not have. Each is listed so it can be scheduled; none is built here.
+The kit layer has the three pieces Wanderer's Dash, Jump and swap lock wait on, and his kit does not play them yet.
 
-- **A stance's own dash and jump.** Windfavored plays its own dash and jump in place of the kit's, but `KitStanceRecord` has no slot for either (its fields are `burst`, `chargedAttack`, `chargedAttackStamina`, `normalAttacks` and `skill`), and `KitStanceBehaviour` gives no hook for them. Needed: a `dash` and a `jump` slot on the stance record, read by the stance behaviour the way a kit's own dash hits are read for Xiao (`readHits("dash")`), and played while the stance holds. Unlocks the Dash and Jump while Windfavored.
-- **A stance resource drained by actions.** Windfavored lasts as long as its skydweller points, and the Dash and Jump drain them. The record holds the stance's seconds (`readSeconds("windfavored")`) but no points count and no drain per action, and the kit neither drains nor tracks the points. Needed: the starting count and the drain per action on the record, and a stance status that ends when the points run out. Unlocks the drain, and Constellation 2, which reads the points.
-- **A swap lock.** The skill's swap lock is a restriction on switching out, which the kit cannot express: `KitSwapEndable` ends a status when its character leaves the field, but no kit model holds a swap back. Needed: a status that blocks a swap for its duration, started by the skill's `onStart` and ended with the stance. Unlocks the swap lock on his skill.
+- **A stance's own dash and jump.** `KitStanceRecord` holds a `dash` and a `jump` slot, which a stance plays in place of its kit's own.
+- **A stance resource spent by its dash and jump.** The record's `resource` holds a starting count and a drain per action. `consumeKitResource` spends it as each starts, and a spend to none ends the stance.
+- **A skill's swap lock.** `addKitSwapLock` starts a lock on a character, and `checkIsKitSwapBlocked` reads it where a party switch is refused.
+
+Wanderer's kit still lacks:
+
+- His Dash and Jump while Windfavored, which spend the skydweller points.
+- The swap lock on his skill, started from the skill's `onStart`.
+- Constellation 2, which reads the skydweller points that the kit does not spend.
 
 ## Key files
 
