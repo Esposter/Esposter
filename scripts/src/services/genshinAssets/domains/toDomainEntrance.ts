@@ -1,8 +1,8 @@
 import type { DomainEntrancePlace } from "#src/models/genshinAssets/domains/DomainEntrancePlace";
-import type { DumpedEntryPoint } from "#src/models/genshinAssets/domains/DumpedEntryPoint";
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
+import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
 
-import { DungeonEntryTypeDomainKindMap } from "#src/services/genshinAssets/domains/constants";
+import { DOMAIN_ENTRANCE_POINT, DungeonEntryTypeDomainKindMap } from "#src/services/genshinAssets/domains/constants";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { ROTATION_DECIMALS } from "#src/services/genshinAssets/shared/constants";
 import { LandmarkKind } from "genshin-world";
@@ -12,14 +12,17 @@ import { LandmarkKind } from "genshin-world";
 // The mirror reverses it. An entry naming no domain, or whose point is missing or holds no transport position, gives none
 export const toDomainEntrance = (
   entry: ExcelDungeonEntryRow,
-  point: DumpedEntryPoint | undefined,
+  point: DumpedScenePoint | undefined,
   [originX, , originZ]: readonly [number, number, number],
 ): DomainEntrancePlace | undefined => {
   const domainKind = DungeonEntryTypeDomainKindMap[entry.type];
-  if (domainKind === undefined || point?.tranPos === undefined) return undefined;
-  const { x = 0, y = 0, z = 0 } = point.tranPos;
-  const { y: turnDegrees = 0 } = point.tranRot ?? {};
-  const turn = (turnDegrees * Math.PI) / 180;
+  if (domainKind === undefined || point === undefined) return undefined;
+  const transport = point[DOMAIN_ENTRANCE_POINT.position];
+  if (typeof transport !== "object") return undefined;
+  const { x = 0, y = 0, z = 0 } = transport;
+  const turn = point[DOMAIN_ENTRANCE_POINT.rotation];
+  const { y: turnDegrees = 0 } = typeof turn === "object" ? turn : {};
+  const turnRadians = (turnDegrees * Math.PI) / 180;
   return {
     domainKind,
     entryId: entry.id,
@@ -27,6 +30,6 @@ export const toDomainEntrance = (
     id: `domain-entrance-${entry.id}`,
     kind: LandmarkKind.DomainEntrance,
     position: { x: roundFitted(x - originX), z: roundFitted(originZ - z) },
-    rotation: Math.round(-turn * ROTATION_DECIMALS) / ROTATION_DECIMALS || 0,
+    rotation: Math.round(-turnRadians * ROTATION_DECIMALS) / ROTATION_DECIMALS || 0,
   };
 };

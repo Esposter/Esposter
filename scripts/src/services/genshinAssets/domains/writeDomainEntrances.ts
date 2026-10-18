@@ -4,7 +4,7 @@ import type { DomainEntranceLandmark } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { DUNGEON_ENTRY_TABLE_NAME, DungeonEntryTypeDomainKindMap } from "#src/services/genshinAssets/domains/constants";
-import { readDomainScenePoints } from "#src/services/genshinAssets/domains/readDomainScenePoints";
+import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/readDomainEntrancePoints";
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
@@ -38,7 +38,7 @@ export const writeDomainEntrances = async ({ isDryRun }: { isDryRun: boolean }):
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readWorldGroundHeight(),
     readFittedMapPoints(),
-    readDomainScenePoints(),
+    readDomainEntrancePoints(),
   ]);
   const fittedRegions = regions.filter(({ residual }) => residual !== undefined);
   // The map points carried into the region's axes, which the place is too: a mirror and a shift keep every distance

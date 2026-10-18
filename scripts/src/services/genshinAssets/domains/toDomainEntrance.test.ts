@@ -1,5 +1,5 @@
-import type { DumpedEntryPoint } from "#src/models/genshinAssets/domains/DumpedEntryPoint";
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
+import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
 
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
 import { DomainKind, LandmarkKind } from "genshin-world";
@@ -18,7 +18,7 @@ describe(toDomainEntrance, () => {
   test("a domain entrance takes its kind from its entry type and its place from its transport point, carried round the origin", () => {
     expect.hasAssertions();
 
-    const point: DumpedEntryPoint = { tranPos: { x: 150, y: 30, z: 300 }, tranRot: { y: 90 } };
+    const point: DumpedScenePoint = { $type: "Point", tranPos: { x: 150, y: 30, z: 300 }, tranRot: { y: 90 } };
     expect(toDomainEntrance(createEntry({}), point, ORIGIN)).toStrictEqual({
       domainKind: DomainKind.Blessing,
       entryId: 1,
@@ -33,7 +33,7 @@ describe(toDomainEntrance, () => {
   test("a zero component left out of the transport position reads as zero", () => {
     expect.hasAssertions();
 
-    const point: DumpedEntryPoint = { tranPos: { y: 30, z: 300 }, tranRot: { y: 60 } };
+    const point: DumpedScenePoint = { $type: "Point", tranPos: { y: 30, z: 300 }, tranRot: { y: 60 } };
     expect(toDomainEntrance(createEntry({ type: "DUNGEN_ENTRY_TYPE_WEAPON_PROMOTE" }), point, ORIGIN)).toStrictEqual({
       domainKind: DomainKind.Forgery,
       entryId: 1,
@@ -48,14 +48,14 @@ describe(toDomainEntrance, () => {
   test("a point with no turn faces zero, not negative zero", () => {
     expect.hasAssertions();
 
-    const point: DumpedEntryPoint = { tranPos: { x: 150, y: 30, z: 300 } };
+    const point: DumpedScenePoint = { $type: "Point", tranPos: { x: 150, y: 30, z: 300 } };
     expect(toDomainEntrance(createEntry({}), point, ORIGIN)?.rotation).toBe(0);
   });
 
   test("a normal entry gives no domain entrance", () => {
     expect.hasAssertions();
 
-    const point: DumpedEntryPoint = { tranPos: { x: 150, y: 30, z: 300 } };
+    const point: DumpedScenePoint = { $type: "Point", tranPos: { x: 150, y: 30, z: 300 } };
     expect(toDomainEntrance(createEntry({ type: "DUNGEON_ENTRY_TYPE_NORMAL" }), point, ORIGIN)).toBeUndefined();
   });
 
@@ -68,6 +68,6 @@ describe(toDomainEntrance, () => {
   test("an entry whose point holds no transport position gives no domain entrance", () => {
     expect.hasAssertions();
 
-    expect(toDomainEntrance(createEntry({}), {}, ORIGIN)).toBeUndefined();
+    expect(toDomainEntrance(createEntry({}), { $type: "Point" }, ORIGIN)).toBeUndefined();
   });
 });
