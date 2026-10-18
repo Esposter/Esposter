@@ -25,7 +25,7 @@ interface BlockRootDefinition {
 }
 ```
 
-`getRootAcceptedTypes` reads `root.content`, so `getAcceptedTypes` answers `/content` from it. `createBlockDocumentSchema` parses the root's props with `root.propsSchema`, and a refusal names its path under `root`, just as a node's refusal names the slot. A root prop is edited the way a node's prop is: `updateBlockNodeProps` over the pointer `/root` writes `/root/props/<key>`, so the core gains no command for it.
+`getRootAcceptedTypes` reads `root.content`, so `getAcceptedTypes` answers `/content` from it. `createBlockDocumentSchema` parses the root's props with `root.propsSchema`, and a refusal names its path under `root`, just as a node's refusal names the slot. The root's props type is that schema's output, so `models/BlockRoot.ts` is deleted rather than extended: a second declaration of the props would drift from the one the schema checks. A root prop is edited the way a node's prop is: `updateBlockNodeProps` over the pointer `/root` writes `/root/props/<key>`, so the core gains no command for it.
 
 The registry is generic over its definition, so a consumer's extended type definitions keep their own type. That covers a render function, a form schema and an editor half: every core function still takes the base registry, and the fold below hands back the consumer's definition.
 
@@ -63,6 +63,7 @@ The fold runs over a document that has already been parsed, so a type missing fr
 | File                                                                       | Role after the change                                                    |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `packages/headless-block-editor/src/models/BlockRegistry.ts`               | the root's definition beside the types, generic over the type definition |
+| `packages/headless-block-editor/src/models/BlockRoot.ts`                   | deleted: the root's props type is the definition's schema output         |
 | `packages/headless-block-editor/src/services/getRootAcceptedTypes.ts`      | the root's declared content types                                        |
 | `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts` | the root's props parsed, and the slot walk shared with the paste         |
 | `packages/headless-block-editor/src/services/pasteBlockNodes.ts`           | its copies checked as the destination slot's children                    |
