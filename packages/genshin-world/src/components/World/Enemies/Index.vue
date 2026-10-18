@@ -17,7 +17,7 @@ import type { DataTexture, Scene } from "three";
 import { CombatEvent } from "#src/models/combat/CombatEvent";
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
 import { EnemyState } from "#src/models/enemy/EnemyState";
-import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
+import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
@@ -198,7 +198,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       enemy,
       taunt ? taunt.body.position : target,
       ENEMY_STEP_SECONDS,
-      BossMovesMap[enemy.enemyKindId],
+      EnemyKindMovesMap[enemy.enemyKindId],
     );
     // A shield stands again as its stagger ends or the enemy arrives home, and can break again, so a shield the step sees
     // Broken that it did not see broken before is a break. It is read after the step, where a shield stands again, so a

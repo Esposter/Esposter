@@ -115,7 +115,7 @@ import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
+import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { startBossMove } from "#src/services/bosses/startBossMove";
 import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
@@ -1690,7 +1690,7 @@ defineExpose({ jumpTo, readCameraPosition });
           // Each attack a phase's end names starts on whichever boss makes it, and a name no boss makes starts nothing
           for (const attack of transitionAttacks)
             for (const enemy of kitContext.enemyMap.values())
-              startBossMove(enemy, BossMovesMap[enemy.enemyKindId] ?? [], attack);
+              startBossMove(enemy, EnemyKindMovesMap[enemy.enemyKindId] ?? [], attack);
           if (!isPaused && screenKind === ScreenKind.World)
             touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)
