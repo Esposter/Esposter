@@ -78,3 +78,19 @@ Ifa's skill SHALL start its 7.5-second cooldown when pressed and SHALL deal no h
 - **GIVEN** the skill is cooling down
 - **WHEN** the player presses the skill again within 7.5 seconds
 - **THEN** nothing happens
+
+### Requirement: Fourth constellation adds 100 Elemental Mastery for 15 seconds after her burst
+
+From constellation 4, Ifa SHALL gain 100 Elemental Mastery for 15 seconds when her burst starts. Her wind current's three extra seconds are not built.
+
+#### Scenario: A burst at constellation 4 adds the Elemental Mastery
+
+- **GIVEN** Ifa is at constellation 4
+- **WHEN** she casts her burst
+- **THEN** she gains 100 Elemental Mastery for 15 seconds
+
+#### Scenario: A burst below constellation 4 adds nothing
+
+- **GIVEN** Ifa is at constellation 3
+- **WHEN** she casts her burst
+- **THEN** no Elemental Mastery buff is added
