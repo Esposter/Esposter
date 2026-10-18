@@ -9,10 +9,11 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
+import { compareQueuedDelays } from "#src/services/genshinAssets/kits/compareQueuedDelays";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { findQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttacks";
-import { joinGcsimTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray";
+import { joinGcsimVariableTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
 // The candidates a hit's writer gives at its key, by their field names
@@ -56,8 +57,10 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
     if (variableAttacks.length === 0) continue;
     const [attack] = variableAttacks;
     // Gcsim reassigns a literal's Mult in a closure, which reads as a second attack at the literal's own declaration, so the
-    // Literals are counted by where they are declared, not by the attacks read from them
-    const literalSites = new Set(variableAttacks.map(({ file, siteLine }) => `${file}:${siteLine}`));
+    // Literals are counted by where they are declared and the loop iteration each is for, not by the attacks read from them
+    const literalSites = new Set(
+      variableAttacks.map(({ file, iteration, siteLine }) => JSON.stringify([file, siteLine, iteration])),
+    );
     const joinedAttack = literalSites.size === 1 ? attack : undefined;
     // The calls firing any of the variable's attacks, each by the variable, since a named list's calls may fire its literals in turn.
     // A list's hits are taken in the order they land, so a call a loop makes early and one it makes late sort by their delays.
@@ -69,7 +72,7 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
         );
         return callAttack === undefined ? [] : [{ ...queuedAttack, site: `${callAttack.file}:${callAttack.siteLine}` }];
       })
-      .toSorted((left, right) => (left.delay ?? Number.MAX_SAFE_INTEGER) - (right.delay ?? Number.MAX_SAFE_INTEGER));
+      .toSorted(compareQueuedDelays);
     const addNamedHit = (key: string, talentLeaf?: GcsimTalentLeaf) => {
       const namedHitCandidate: NamedHitCandidate = {
         fieldMap: readFieldMap(key, gcsim, tables, { attack: joinedAttack, talentLeaf }),
@@ -91,18 +94,18 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
       const { reference } = leaf;
       const parameter = talentParameterMap.get(`${reference.type}|${reference.label}`);
       const index = parameter?.indexes[reference.selector] ?? parameter?.indexes[0];
+      if (index === undefined) continue;
       const key = `${tables.talentGroupIdMap[GcsimTalentTypeCombatTalentMap[reference.type]]}|${index}`;
-      if (index === undefined || namedHitCandidateMap.has(key)) continue;
-      addNamedHit(key, leaf);
+      if (!namedHitCandidateMap.has(key)) addNamedHit(key, leaf);
+      // A leaf claimed by another variable's is still this variable's label, so its talent array joins none
       isLabelled = true;
     }
-    const talentArray = talentArrayMap.get(variable);
     const joined =
-      talentArray === undefined || isLabelled || joinedAttack === undefined
+      isLabelled || joinedAttack === undefined
         ? undefined
-        : joinGcsimTalentArray(talentArray, tables.talentMultiplierMap, Object.values(tables.talentGroupIdMap));
+        : joinGcsimVariableTalentArray(talentArrayMap, variable, tables);
     if (joined === undefined) continue;
-    const key = `${joined.proudSkillGroupId}|${joined.index}`;
+    const key = `${joined.multiplier.proudSkillGroupId}|${joined.multiplier.index}`;
     if (!namedHitCandidateMap.has(key)) addNamedHit(key);
   }
   return namedHitCandidateMap;

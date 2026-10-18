@@ -333,4 +333,58 @@ describe(getGcsimNamedHitCandidates, () => {
       ["hits.plume.0.element", "hits.wing.0.element"].map((path) => joined.get(path)?.map(({ value }) => value)),
     ).toStrictEqual([[Element.Cryo], [Element.Cryo]]);
   });
+
+  test("gives a variable whose leaf another variable's label claims no talent array, as its own label is claimed", () => {
+    expect.hasAssertions();
+
+    // Both variables' leaves name the one parameter, so the second is labelled by the first's claim and its array joins none
+    const claimedGcsim: GcsimCharacter = {
+      ...gcsim,
+      attacks: [...gcsim.attacks, { ...burstAttack, line: 30, siteLine: 30, talentVariable: "kick" }],
+      config: {
+        ...gcsim.config,
+        talentVariables: [
+          ...gcsim.config.talentVariables,
+          {
+            leaves: [{ path: [0], reference: { label: "Arrow DMG", selector: 0, type: GcsimTalentType.Burst } }],
+            line: 2,
+            name: "kick",
+          },
+        ],
+      },
+      talentArrayMap: new Map([["kick", { line: 7, rows: [[1.5, 2]] }]]),
+    };
+    const claimedTables: KitTables = {
+      ...tables,
+      talentMultiplierMap: {
+        [BURST_PROUD_SKILL_GROUP_ID]: [
+          { level: 1, paramList: [0.5, 1.5] },
+          { level: 2, paramList: [0.6, 2] },
+        ],
+      },
+    };
+
+    expect([...getGcsimNamedHitCandidates(claimedGcsim, claimedTables).keys()]).toStrictEqual([
+      `${BURST_PROUD_SKILL_GROUP_ID}|0`,
+    ]);
+  });
+
+  test("gives a named hit no element where two iterations of one literal give it different elements", () => {
+    expect.hasAssertions();
+
+    // The two variants of one literal share its declaration, each for one loop iteration with its own element
+    const iterationGcsim: GcsimCharacter = {
+      ...gcsim,
+      attacks: [
+        { ...burstAttack, iteration: { value: 0, variable: "i" } },
+        { ...burstAttack, element: undefined, iteration: { value: 1, variable: "i" } },
+      ],
+    };
+    const joined = getNamedHitKitCandidates(
+      multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
+      getGcsimNamedHitCandidates(iterationGcsim, tables),
+    );
+
+    expect(joined.get("hits.fieryRainArrows.0.element")).toBeUndefined();
+  });
 });
