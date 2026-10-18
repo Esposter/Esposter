@@ -19,6 +19,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { DomainLevelRow } from "#src/services/domains/computeDomainLevelRows";
 import type { DomainChallengeLevel } from "#src/services/domains/domainChallengeLevels";
+import type { DomainDisorderTrigger } from "#src/services/domains/applyDomainDisorders";
 import type { GroundPoint } from "genshin-engine";
 import type { Ref } from "vue";
 
@@ -35,7 +36,11 @@ import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevel
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomainWaveAfterDefeat";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
-import { applyDomainDisorder, clearDomainDisorders } from "#src/services/domains/applyDomainDisorders";
+import {
+  applyDomainDisorder,
+  clearDomainDisorders,
+  triggerDomainDisorder,
+} from "#src/services/domains/applyDomainDisorders";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
 import { drawDomainArtifacts } from "#src/services/domains/drawDomainArtifacts";
 import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
@@ -59,6 +64,7 @@ interface DomainArena {
   center: GroundPoint;
   domainKind: DomainKind;
   enemyLevel: number;
+  disorder: string;
   entryId: number;
   // Whether the level is its domain's highest tier, which a weekly boss's clear of marks for its first clear to claim
   isTopTier: boolean;
@@ -171,6 +177,8 @@ export const useWorldDomains = ({
 
   const domainArena = shallowRef<DomainArena>();
   const domainChallenge = shallowRef<DomainChallengeRun>();
+  // The seconds a triggered disorder may trigger again from, read off the challenge's clock and reset as each arena is entered
+  let disorderReadySeconds = 0;
   // Whether a clear has raised the Petrified Tree the player has not claimed yet
   const isDomainTreeRaised = shallowRef(false);
   const domainClaimOffers = shallowRef<BlossomClaimOffer[]>();
@@ -207,6 +215,28 @@ export const useWorldDomains = ({
     };
   });
 
+  // A disorder that triggers on the fight is answered while its challenge runs, its cooldown read off the challenge's clock,
+  // Which pauses with the world as the challenge's own does
+  const triggerDisorder = (trigger: DomainDisorderTrigger) => {
+    const arena = domainArena.value;
+    const challenge = domainChallenge.value;
+    if (!arena || !challenge) return;
+    disorderReadySeconds = triggerDomainDisorder(
+      kitEffectState,
+      party,
+      arena.disorder,
+      trigger,
+      challenge.elapsedMilliseconds / 1000,
+      disorderReadySeconds,
+    );
+  };
+  events.on("partyHealthChanged", ({ healthShare }) => {
+    triggerDisorder({ healthShare, kind: "healthChange" });
+  });
+  events.on("reactionTriggered", (_enemy, reactions) => {
+    triggerDisorder({ kind: "reaction", reactions });
+  });
+
   // A level entered from the screen fades into its stand-in arena beside the entrance, where its first wave spawns. A level
   // With no challenge data does not enter, and an arena already entered is not entered again
   const enterDomain = (dungeonId: number) => {
@@ -221,6 +251,7 @@ export const useWorldDomains = ({
     const arena: DomainArena = {
       areaId: entrance.areaId,
       center: scenePose.point,
+      disorder: scheduledLevel.disorder,
       domainKind: entrance.domainKind,
       enemyLevel: scheduledLevel.enemyLevel,
       entryId: entrance.entryId,
@@ -240,6 +271,7 @@ export const useWorldDomains = ({
       elapsedMilliseconds: 0,
       waveIndex: 0,
     };
+    disorderReadySeconds = 0;
     applyDomainDisorder(kitEffectState, party, scheduledLevel.disorder, level.timeLimitSeconds);
     jumpTo(scenePose);
   };
