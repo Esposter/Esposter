@@ -16,6 +16,7 @@ import {
   EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID,
   EXILE_ARTIFACT_SET_ID,
   FINALE_OF_THE_DEEP_GALLERIES_ARTIFACT_SET_ID,
+  FLOWER_OF_PARADISE_LOST_ARTIFACT_SET_ID,
   GAMBLER_ARTIFACT_SET_ID,
   GILDED_DREAMS_ARTIFACT_SET_ID,
   GLADIATORS_FINALE_ARTIFACT_SET_ID,
@@ -65,6 +66,7 @@ import { createEchoesOfAnOfferingSetModule } from "#src/services/artifact/sets/c
 import { createEmblemOfSeveredFateSetModule } from "#src/services/artifact/sets/createEmblemOfSeveredFateSetModule";
 import { createExileSetModule } from "#src/services/artifact/sets/createExileSetModule";
 import { createFinaleOfTheDeepGalleriesSetModule } from "#src/services/artifact/sets/createFinaleOfTheDeepGalleriesSetModule";
+import { createFlowerOfParadiseLostSetModule } from "#src/services/artifact/sets/createFlowerOfParadiseLostSetModule";
 import { createGamblerSetModule } from "#src/services/artifact/sets/createGamblerSetModule";
 import { createGildedDreamsSetModule } from "#src/services/artifact/sets/createGildedDreamsSetModule";
 import { createGladiatorsFinaleSetModule } from "#src/services/artifact/sets/createGladiatorsFinaleSetModule";
@@ -119,6 +121,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [EMBLEM_OF_SEVERED_FATE_ARTIFACT_SET_ID]: createEmblemOfSeveredFateSetModule,
   [EXILE_ARTIFACT_SET_ID]: createExileSetModule,
   [FINALE_OF_THE_DEEP_GALLERIES_ARTIFACT_SET_ID]: createFinaleOfTheDeepGalleriesSetModule,
+  [FLOWER_OF_PARADISE_LOST_ARTIFACT_SET_ID]: createFlowerOfParadiseLostSetModule,
   [GAMBLER_ARTIFACT_SET_ID]: createGamblerSetModule,
   [GILDED_DREAMS_ARTIFACT_SET_ID]: createGildedDreamsSetModule,
   [GLADIATORS_FINALE_ARTIFACT_SET_ID]: createGladiatorsFinaleSetModule,
