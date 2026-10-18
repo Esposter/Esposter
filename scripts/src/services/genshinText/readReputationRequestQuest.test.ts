@@ -33,6 +33,23 @@ describe(readReputationRequestQuest, () => {
       titleTextId: "1",
     });
   });
+
+  test("a delivery request whose dump leaves its group count at zero is an exact delivery", () => {
+    expect.hasAssertions();
+
+    expect(
+      readReputationRequestQuest({
+        giving: { exactItems: [{ count: 3, id: 9001 }], givingGroupCount: 0, givingGroupIds: [], id: 900101 },
+        groupItemIds: [],
+        mainQuest: { chapterId: 0, descTextMapHash: 2, id: 9001, titleTextMapHash: 1 },
+        rewards: [],
+        subQuest: { mainId: 9001, stepDescTextMapHash: 3, subId: 900101 },
+      }).steps,
+    ).toStrictEqual([
+      { id: "900101", objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "9001" }], textId: "3" },
+    ]);
+  });
+
   test("a group delivery request is one collect step of any one of the items its group names", () => {
     expect.hasAssertions();
 
