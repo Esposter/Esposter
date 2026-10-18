@@ -72,6 +72,7 @@ export const collectForgeOrder = (
     inventory: collectedInventory,
     order: {
       count: remainingCount,
+      queueId: order.queueId,
       recipeId: order.recipeId,
       startedAt: order.startedAt.add({ seconds: collectedCount * order.unitSeconds }),
       unitSeconds: order.unitSeconds,

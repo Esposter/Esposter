@@ -28,7 +28,7 @@ describe(obtainForgeOrder, () => {
     seconds: UNIT_SECONDS,
     unlockItemIds: [],
   };
-  const order = { count: 1, recipeId: recipe.id, startedAt: epoch, unitSeconds: UNIT_SECONDS };
+  const order = { count: 1, queueId: 1, recipeId: recipe.id, startedAt: epoch, unitSeconds: UNIT_SECONDS };
   const inventory = { items: [], nextId: 1 };
   const obtainArguments = {
     adventureExp: 0,

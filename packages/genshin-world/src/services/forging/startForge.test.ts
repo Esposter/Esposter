@@ -73,16 +73,31 @@ describe(startForge, () => {
     expect(result?.wallet[Currency.Mora]).toBe(80);
     expect(result?.progress.forgedPoints).toBe(4000);
     expect(result?.progress.orders).toStrictEqual([
-      { count: 2, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 },
+      { count: 2, queueId: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 },
     ]);
   });
 
   test("should be refused where every queue the rank opens is busy", () => {
     expect.hasAssertions();
 
-    const busyProgress = { ...progress, orders: [{ count: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 }] };
+    const busyProgress = {
+      ...progress,
+      orders: [{ count: 1, queueId: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 }],
+    };
 
     expect(startForge(recipe, 1, { ...startArguments, progress: busyProgress })).toBeUndefined();
+  });
+
+  test("should start in the first queue no order holds, past a queue that is free again", () => {
+    expect.hasAssertions();
+
+    const queuedProgress = {
+      ...progress,
+      orders: [{ count: 1, queueId: 2, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 }],
+    };
+    const result = startForge(recipe, 1, { ...startArguments, adventureRank: 5, progress: queuedProgress });
+
+    expect(result?.progress.orders.map(({ queueId }) => queueId)).toStrictEqual([2, 1]);
   });
 
   test("should be refused where the units would pass the day's forge points", () => {
@@ -158,7 +173,7 @@ describe(startForge, () => {
     const result = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [VENTI_CHARACTER_ID] });
 
     expect(result?.progress.orders).toStrictEqual([
-      { count: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 5 },
+      { count: 1, queueId: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 5 },
     ]);
   });
 

@@ -50,12 +50,16 @@ export const startForge = (
   const resinCount = recipe.materials.find(({ id }) => id === ORIGINAL_RESIN_ITEM_ID)?.count ?? 0;
   const spentWallet = spendOriginalResin(wallet, resinCount * count, now);
   const bagMaterials = recipe.materials.filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID);
+  const queueCount = computeForgeQueueCount(adventureRank);
+  const queueId = Array.from({ length: queueCount }, (_value, index) => index + 1).find(
+    (id) => !progress.orders.some((order) => order.queueId === id),
+  );
   if (
+    queueId === undefined ||
     !checkIsForgeRecipeOpen(recipe, progress, adventureRank) ||
     !Number.isInteger(count) ||
     count < 1 ||
     count > recipe.queueSize ||
-    progress.orders.length >= computeForgeQueueCount(adventureRank) ||
     checkIsForgeDailyCapReached(recipe, count, progress, now) ||
     (isInRealm && checkIsForgeRecipeRefusedInRealm(recipe)) ||
     !checkIsItemCountsHeld(inventory.items, bagMaterials, count) ||
@@ -79,7 +83,7 @@ export const startForge = (
       ...progress,
       forgedPoints: forgedPoints + recipe.forgePoint * count,
       forgedPointsDay: gameDay,
-      orders: [...progress.orders, { count, recipeId: recipe.id, startedAt: now, unitSeconds }],
+      orders: [...progress.orders, { count, queueId, recipeId: recipe.id, startedAt: now, unitSeconds }],
     },
     wallet: { ...spentWallet, [Currency.Mora]: spentWallet[Currency.Mora] - recipe.mora * count },
   };

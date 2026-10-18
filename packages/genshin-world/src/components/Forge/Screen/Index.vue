@@ -154,8 +154,7 @@ const start = () => {
 // Obtains a finished queue: the units done are taken into the bag, the Adventure EXP gained, and the queue freed unless
 // Units are still left in it
 const obtain = (queueId: number) => {
-  const index = queueId - 1;
-  const order = progress.value.orders[index];
+  const order = progress.value.orders.find((queueOrder) => queueOrder.queueId === queueId);
   const recipe = recipes.find(({ id }) => id === order?.recipeId);
   if (!order || !recipe) return;
   const obtained = obtainForgeOrder(recipe, order, {
@@ -173,12 +172,8 @@ const obtain = (queueId: number) => {
   inventory.value = obtained.inventory;
   adventureExp.value = obtained.adventureExp;
   wallet.value = obtained.wallet;
-  progress.value = {
-    ...progress.value,
-    orders: obtained.order
-      ? progress.value.orders.with(index, obtained.order)
-      : progress.value.orders.toSpliced(index, 1),
-  };
+  const otherOrders = progress.value.orders.filter((queueOrder) => queueOrder.queueId !== queueId);
+  progress.value = { ...progress.value, orders: obtained.order ? [...otherOrders, obtained.order] : otherOrders };
 };
 </script>
 

@@ -44,6 +44,7 @@ describe(collectForgeOrder, () => {
   const emptyInventory = { items: [] as InventoryItem[], nextId: 1 };
   const order = (count: number): ForgeOrder => ({
     count,
+    queueId: 1,
     recipeId: recipe.id,
     startedAt: EPOCH,
     unitSeconds: UNIT_SECONDS,

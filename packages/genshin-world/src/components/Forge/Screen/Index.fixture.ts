@@ -36,7 +36,7 @@ const progress: ForgeProgress = {
   forgedPoints: 0,
   forgedPointsDay: gameDay,
   learnedRecipeIds: [],
-  orders: [{ count: 5, recipeId: 11_001, startedAt: now.subtract({ seconds: 6 }), unitSeconds: 3 }],
+  orders: [{ count: 5, queueId: 1, recipeId: 11_001, startedAt: now.subtract({ seconds: 6 }), unitSeconds: 3 }],
 };
 
 export const props = {
