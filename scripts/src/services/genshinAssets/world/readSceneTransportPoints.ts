@@ -4,6 +4,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { SCENE_POINT_AREA_FIELD } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readScenePointsOfKind } from "#src/services/genshinAssets/world/readScenePointsOfKind";
+import { toDumpedVector } from "#src/services/genshinAssets/world/toDumpedVector";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every transport point of the scene, the kind Windrise's statue is: a statue and a waypoint are one kind of point in the
@@ -18,8 +19,8 @@ export const readSceneTransportPoints = async (): Promise<SceneTransportPoint[]>
     if (typeof vector !== "object") return [];
     const area = point[SCENE_POINT_AREA_FIELD];
     const turn = point[statuePoint.rotation];
-    const { x = 0, y = 0, z = 0 } = vector;
-    const turnDegrees = typeof turn === "object" ? (turn.y ?? 0) : 0;
+    const { x = 0, y = 0, z = 0 } = toDumpedVector(vector);
+    const turnDegrees = toDumpedVector(turn).y ?? 0;
     return [{ area: typeof area === "number" ? area : undefined, height: y, id, position: { x, z }, turnDegrees }];
   });
 };

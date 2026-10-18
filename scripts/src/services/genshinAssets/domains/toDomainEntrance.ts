@@ -4,6 +4,7 @@ import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedSce
 
 import { DOMAIN_ENTRANCE_POINT, DungeonEntryTypeDomainKindMap } from "#src/services/genshinAssets/domains/constants";
 import { toRegionAxesPlace } from "#src/services/genshinAssets/shared/toRegionAxesPlace";
+import { toDumpedVector } from "#src/services/genshinAssets/world/toDumpedVector";
 import { LandmarkKind } from "genshin-world";
 
 // A domain entrance's place in its region's axes round the Windrise origin, as the region's landmarks are: the transport
@@ -18,9 +19,9 @@ export const toDomainEntrance = (
   if (domainKind === undefined || point === undefined) return undefined;
   const transport = point[DOMAIN_ENTRANCE_POINT.position];
   if (typeof transport !== "object") return undefined;
-  const { x = 0, y = 0, z = 0 } = transport;
+  const { x = 0, y = 0, z = 0 } = toDumpedVector(transport);
   const turn = point[DOMAIN_ENTRANCE_POINT.rotation];
-  const { y: turnDegrees = 0 } = typeof turn === "object" ? turn : {};
+  const { y: turnDegrees = 0 } = toDumpedVector(turn);
   const { position, rotation } = toRegionAxesPlace({ x, z }, turnDegrees, origin);
   return {
     domainKind,
