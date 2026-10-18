@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CharacterMenuButtons from "#src/components/CharacterMenuButtons/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
+import ToastNotice from "#src/components/ToastNotice/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { computed, ref } from "vue";
 
@@ -28,6 +29,8 @@ interface Props {
   lockLabel: string;
   // The words the set bonus block shows while no bonus is active
   noSetBonusLabel: string;
+  // The game's notice card shown over the panel while an action was refused, such as a full bag, undefined while none is
+  notice?: string;
   // The set bonus block's heading, the game's word for its bonuses
   setBonusHeading: string;
   // Each bonus the worn artifacts' set grants, as its line in the game's words, empty while none is active
@@ -48,6 +51,7 @@ const {
   equipLabel,
   lockLabel,
   noSetBonusLabel,
+  notice,
   setBonusHeading,
   setBonusLines,
   slotNames,
@@ -74,6 +78,7 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
        the set bonus block below them, and the Enhance and Equip or Unequip buttons at its foot. The stats' place is
        provisional -->
   <div class="artifacts">
+    <ToastNotice v-if="notice" class="notice">{{ notice }}</ToastNotice>
     <ul class="slots">
       <li v-for="(stats, index) in slotStats" :key="index">
         <button
@@ -138,6 +143,10 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
 </template>
 
 <style scoped>
+.notice {
+  margin-bottom: calc(var(--unit) * 16);
+}
+
 /* Measured off the English PC client's Artifacts tab at 21:9, its settled frame at 157.5 seconds of session-2.mp4 (the
    registered reference for it), in units from the panel's top: the details pill at 163, the set bonus block's bottom at
    829 and the buttons at 859. The slots are drawn in the panel's top, which the game draws in the scene. The stats rows

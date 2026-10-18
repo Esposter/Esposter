@@ -391,6 +391,7 @@ export enum GameTextKey {
   InventoryDestroyWeaponThreeStar = "UI_STC_BAGPAGE_DESTROY_WEAPON_3",
   InventoryDestroyWeaponTwoStar = "UI_STC_BAGPAGE_DESTROY_WEAPON_2",
   InventoryFood = "ITEM_FOOD",
+  InventoryFull = "INFO_BAG_FULL",
   InventoryFurnishings = "ITEM_FURNITURE",
   InventoryGadget = "ITEM_CITY_REPUTATION",
   InventoryMaterials = "ITEM_MATERIAL",

@@ -82,10 +82,11 @@ describe(unequipArtifactToBag, () => {
         nextId: 2,
         quickSwapItemIds: [],
       },
+      isBagFull: false,
     });
   });
 
-  test("unequipping with the artifacts tab full returns nothing, and the piece stays worn", () => {
+  test("unequipping with the artifacts tab full reports the full bag, and the piece stays worn", () => {
     expect.hasAssertions();
 
     const room = ItemCategoryRoomMap[ItemCategory.Artifact];
@@ -105,7 +106,7 @@ describe(unequipArtifactToBag, () => {
         ArtifactSlot.FlowerOfLife,
         options,
       ),
-    ).toBeUndefined();
+    ).toStrictEqual({ isBagFull: true });
   });
 
   test("unequipping an empty slot is refused", () => {
