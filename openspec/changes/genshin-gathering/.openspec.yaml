@@ -2,5 +2,5 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "section 1 (the mining outcrops' draw and respawn) is the mining outcrops' own, not built here; the Magical Crystal Chunk places are built by `genshin:assets mining-outcrops` (dry run; the main session publishes them), and the world reader waits on that draw. Section 2: the official map's Investigation label (113) holds no points in its point list, so no investigation spot is placed (2.1), the respawn of a Mora spot is not on the wiki (2.2), and the store of each investigation's instant has no spot to take one from (2.3)"
+x-waiting: "section 1 is built: each loaded region's mining outcrops are drawn at its places and struck as ores. The places are published by `genshin:assets mining-outcrops` (a dry run here; the main session publishes them after building genshin-world), so until that publish no outcrop is drawn. Section 2: the official map's Investigation label (113) holds no points in its point list, so no investigation spot is placed (2.1), the respawn of a Mora spot is not on the wiki (2.2), and the store of each investigation's instant has no spot to take one from (2.3)"
 x-touches: ["packages/genshin-world/src/services/gathering/**", "packages/genshin-world/src/models/gathering/**"]

@@ -62,6 +62,7 @@ import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useCharacterPacks } from "#src/composables/useCharacterPacks";
 import { useInteraction } from "#src/composables/useInteraction";
+import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
@@ -834,6 +835,15 @@ const crafting = computed(() =>
 // With resin, and each day's are drawn at the daily reset
 // The places of the outcrop region, which its loaded data holds, and none while the region is not loaded
 const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
+// The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
+const { refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
+  events,
+  gameDataBaseUrl,
+  getWorldNow,
+  placeWorldDrops,
+  rank,
+  regionIds: computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]),
+});
 const {
   chooseOutcropClaim,
   claimPrompt,
@@ -1196,6 +1206,7 @@ defineExpose({ jumpTo, readCameraPosition });
             isPlaying: !isPaused && screenKind === ScreenKind.World && abyssChoices === undefined,
             partyDown: false,
           });
+          if (!isPaused && screenKind === ScreenKind.World) refreshMiningOutcrops(getWorldNow(), kitContext.random);
           if (!isPaused && screenKind === ScreenKind.World)
             touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
           if (!isPaused && screenKind === ScreenKind.Fishing)
@@ -1335,7 +1346,12 @@ defineExpose({ jumpTo, readCameraPosition });
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
           @reaction-triggered="(enemy, reactions) => events.emit('reactionTriggered', enemy, reactions)"
-          @strike-ore="(body, hit) => strikeGatheringOres(body, hit, kitContext.random)"
+          @strike-ore="
+            (body, hit) => {
+              strikeGatheringOres(body, hit, kitContext.random);
+              strikeMiningOutcrops(body, hit, kitContext.random);
+            }
+          "
           @strike-puzzle="(body, hit) => strikeWorldPuzzles(body, hit)"
         />
         <WorldFreeCamera
@@ -1351,6 +1367,8 @@ defineExpose({ jumpTo, readCameraPosition });
         ref="windrise"
         :last-teleport-at
         :trounce-blossoms
+        :jump-pose="jumpPose"
+        :mining-outcrop-places="standingMiningOutcrops"
         :oculus-places="unfoundOculusPlaces"
         :active-character-id="getActiveCharacterId(party)"
         :catalogue
