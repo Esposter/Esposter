@@ -16,8 +16,8 @@ Mona's kit is its record and one behaviour module, `createMonaKitBehaviour`, on 
 
 ## Not yet built
 
-- **Constellation 1's Hydro Swirl.** A `KitReaction` carries the reaction type and no element, so a Swirl cannot be told Hydro from the other elements. Waits on the reaction carrying the element it swirls.
-- **Constellation 1's Frozen duration, 15% longer.** No hook extends a Frozen duration. Waits on a Frozen duration the kit can read and change.
+- **Constellation 1's Hydro Swirl.** A `KitReaction` carries the element a Swirl absorbed, so the bonus waits only on the kit reading it.
+- **Constellation 1's Frozen duration, 15% longer, has no effect, as it has none in the game.** The wiki's notes find it does not change Frozen's duration, and gcsim leaves it out as bugged, so no hook extends a Frozen, as the [combat](../../combat/design.md) page records.
 - **Constellation 4's Lunar-Charged and Lunar-Crystallize CRIT.** `getPartyReactionBonus` is given the reacting member, the reaction and the context, and no enemy, so it cannot read the Omen on the enemy the reaction lands on. Waits on the reaction hook carrying the enemy.
 
 ## Key files
