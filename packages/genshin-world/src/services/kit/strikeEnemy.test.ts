@@ -746,7 +746,7 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
-  test("a direct Lunar hit takes the party reaction bonuses its Lunar reaction takes, and its Elevation last", () => {
+  test("a direct Lunar hit takes the party reaction bonuses its Lunar reaction takes and its own CRIT DMG bonus, with its Elevation last", () => {
     expect.hasAssertions();
 
     const ELEMENTAL_MASTERY = 400;
@@ -755,6 +755,7 @@ describe(strikeEnemy, () => {
     const PARTY_DAMAGE_BONUS = 0.2;
     const PARTY_CRITICAL_DAMAGE_BONUS = 0.5;
     const ELEVATION_BONUS = 0.15;
+    const HIT_CRITICAL_DAMAGE_BONUS = 0.3;
     const enemy = createSturdyEnemy();
     const getPartyReactionBonus = vi.fn<NonNullable<Kit["getPartyReactionBonus"]>>(() => ({
       criticalDamageBonus: PARTY_CRITICAL_DAMAGE_BONUS,
@@ -771,6 +772,7 @@ describe(strikeEnemy, () => {
       kit: { ...TRAVELER_KIT, getPartyReactionBonus },
     };
     const hit: KitHit = {
+      criticalDamageBonus: HIT_CRITICAL_DAMAGE_BONUS,
       element: Element.Dendro,
       hitArea: TRAVELER_KIT.plungeCollision.hitArea,
       hitmarkSeconds: 0,
@@ -790,7 +792,10 @@ describe(strikeEnemy, () => {
         REACTION_BONUS + PARTY_DAMAGE_BONUS,
       ) *
       getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Dendro)) *
-      (1 + combatant.attributes.attributeTotalMap[Attribute.CriticalDamage] + PARTY_CRITICAL_DAMAGE_BONUS) *
+      (1 +
+        combatant.attributes.attributeTotalMap[Attribute.CriticalDamage] +
+        PARTY_CRITICAL_DAMAGE_BONUS +
+        HIT_CRITICAL_DAMAGE_BONUS) *
       (1 + ELEVATION_BONUS);
     const context = createKitTestContext(combatant, { enemyTables, random: () => 0.5 });
 

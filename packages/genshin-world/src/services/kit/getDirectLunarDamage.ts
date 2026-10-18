@@ -9,12 +9,13 @@ import { getResistanceMultiplier } from "#src/services/combat/damage/getResistan
 
 // A direct Lunar hit's damage: the Lunar formula over its talent multiplier, as its stacks leave it, of the stat it
 // Scales, raised by the Base DMG Bonus the party's Benedictions give its Lunar reaction and the reaction bonus of its
-// Ascendant Gleam, with its flat bonus added after, cut by the enemy's RES alone and raised by a CRIT hit's CRIT DMG, as
-// Gcsim (MIT) pkg/enemy/damage.go prices a direct reaction hit. The party reaction bonuses its Lunar reaction takes reach it
-// Too: the DMG Bonus into the reaction bonus, the CRIT DMG onto a CRIT hit, and the Elevation over the whole last
+// Ascendant Gleam, with its flat bonus added after, cut by the enemy's RES alone and raised by a CRIT hit's CRIT DMG
+// And the hit's own CRIT DMG bonus, as Gcsim (MIT) pkg/enemy/damage.go prices a direct reaction hit. The party reaction
+// Bonuses its Lunar reaction takes reach it too: the DMG Bonus into the reaction bonus, the CRIT DMG onto a CRIT hit,
+// And the Elevation over the whole last
 // Https://github.com/genshinsim/gcsim/blob/main/pkg/enemy/damage.go
 export const getDirectLunarDamage = (
-  { additiveBaseDamageBonus }: KitHit,
+  { additiveBaseDamageBonus, criticalDamageBonus = 0 }: KitHit,
   { getScalingStat, lunarReactionType }: KitLunarHit,
   talentMultiplier: number,
   combatant: Combatant,
@@ -34,7 +35,9 @@ export const getDirectLunarDamage = (
   return (
     (lunarDamage + (additiveBaseDamageBonus?.(combatant) ?? 0)) *
     getResistanceMultiplier(resistance) *
-    (isCritical ? 1 + attributeTotalMap[Attribute.CriticalDamage] + partyBonuses.criticalDamageBonus : 1) *
+    (isCritical
+      ? 1 + attributeTotalMap[Attribute.CriticalDamage] + criticalDamageBonus + partyBonuses.criticalDamageBonus
+      : 1) *
     (1 + partyBonuses.elevationBonus)
   );
 };
