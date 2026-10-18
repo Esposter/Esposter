@@ -6,7 +6,9 @@ import { regionGroundSchema } from "#src/models/world/RegionGround";
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
 import { readGameData } from "#src/services/data/readGameData";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
-import { REGION_GROUND_KEYS } from "#src/services/world/constants";
+import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
+import { gameDataLock } from "#src/services/data/gameDataLock";
+import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { SOURCE_CONDITION } from "@esposter/configuration";
 import { getTerrainTileKey, TerrainFeatureKind } from "genshin-engine";
@@ -16,7 +18,9 @@ import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vites
 
 const { baseGround, groundLayers, surfaces, water } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
 const regionGrounds = await Promise.all(
-  REGION_GROUND_KEYS.map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
+  selectLaidGroundKeys(Object.keys(gameDataLock.objects).filter((key) => checkIsGameDataKey(key))).map((key) =>
+    readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema),
+  ),
 );
 
 describe("terrainTile.worker", () => {

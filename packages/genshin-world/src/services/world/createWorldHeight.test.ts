@@ -3,14 +3,18 @@ import { regionGroundSchema } from "#src/models/world/RegionGround";
 import { readGameData } from "#src/services/data/readGameData";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
-import { REGION_GROUND_KEYS } from "#src/services/world/constants";
+import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
+import { gameDataLock } from "#src/services/data/gameDataLock";
+import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { createTerrainShapeHeight, TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const { baseGround } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
 const regionGrounds = await Promise.all(
-  REGION_GROUND_KEYS.map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
+  selectLaidGroundKeys(Object.keys(gameDataLock.objects).filter((key) => checkIsGameDataKey(key))).map((key) =>
+    readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema),
+  ),
 );
 
 describe(createWorldHeight, () => {

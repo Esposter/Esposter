@@ -24,7 +24,7 @@ export const readAuthoredGameData = async (): Promise<Record<string, unknown>> =
         throw new InvalidOperationError(
           Operation.Read,
           join(region, "ground.json"),
-          `is no longer its region's ground, which a fit has drawn as ${GameDataset.Ground}/${region}: delete the file`,
+          `is no longer its region's ground, which a fit has drawn as pieces under ${GameDataset.Ground}/${region}/: delete the file`,
         );
     }),
   );

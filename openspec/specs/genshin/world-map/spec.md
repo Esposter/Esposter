@@ -38,7 +38,7 @@ A region SHALL load only when the camera comes within reach of one of its outlin
 
 ### Requirement: Region released when the camera leaves its reach
 
-A region SHALL be released when the camera leaves its reach, except its ground, which SHALL stay once it has arrived.
+A region SHALL be released when the camera leaves its reach, its ground excepted, which SHALL stay once it has arrived.
 
 #### Scenario: Camera leaves reach
 
@@ -49,9 +49,31 @@ A region SHALL be released when the camera leaves its reach, except its ground, 
 
 #### Scenario: Ground kept after release
 
-- **GIVEN** a region's ground has arrived
-- **WHEN** the camera leaves its reach
+- **GIVEN** a region's ground, or an area's piece of it, has arrived
+- **WHEN** the camera leaves the reach it came in by
 - **THEN** the ground is kept
+
+### Requirement: Ground fetched by reach
+
+A region's ground SHALL be fetched when the camera comes within reach of one of its outlined areas: its own record where no fit has drawn it, or else each of its areas' pieces when that area comes within reach. Nothing out of reach SHALL be fetched.
+
+#### Scenario: Region with no fitted ground
+
+- **GIVEN** the camera moves to within reach of an outlined area of a region whose ground is its own record
+- **WHEN** the region is checked
+- **THEN** its own ground record is fetched
+
+#### Scenario: Area comes within reach
+
+- **GIVEN** the camera moves to within reach of an outlined area that has ground pieces
+- **WHEN** the area is checked
+- **THEN** each of its ground pieces is fetched
+
+#### Scenario: Area out of reach
+
+- **GIVEN** an outlined area that has ground pieces lies out of the camera's reach
+- **WHEN** the area is checked
+- **THEN** none of its ground pieces is fetched
 
 ### Requirement: Region failing validation or stalling hides only itself
 
