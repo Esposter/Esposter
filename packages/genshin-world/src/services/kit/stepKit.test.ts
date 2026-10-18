@@ -194,6 +194,41 @@ describe(stepKit, () => {
     expect(step({ isSkillPressed: true })).toBeUndefined();
   });
 
+  test("a press that ends the state plays none of the skill's hits, and sets no cooldown", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      elementalSkill: { ...TRAVELER_KIT.elementalSkill, checkIsStateEndingPress: () => true },
+    };
+    const { landedHits, partyMember, step } = createFixture(kit);
+    const landed: KitHit[] = [];
+
+    step({ isSkillPressed: true });
+    landed.push(...landedHits);
+    for (let index = 0; index < Math.ceil(kit.elementalSkill.seconds / STEP_SECONDS); index++) {
+      step();
+      landed.push(...landedHits);
+    }
+
+    expect(landed).toStrictEqual([]);
+    expect(partyMember.skillCooldownSeconds).toBe(0);
+  });
+
+  test("a press that ends the state starts the skill off its cooldown, which it leaves as it was", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      elementalSkill: { ...TRAVELER_KIT.elementalSkill, checkIsStateEndingPress: () => true },
+    };
+    const { partyMember, step } = createFixture(kit);
+    partyMember.skillCooldownSeconds = TRAVELER_KIT.skillCooldownSeconds;
+
+    expect(step({ isSkillPressed: true })?.hits).toStrictEqual([]);
+    expect(partyMember.skillCooldownSeconds).toBe(TRAVELER_KIT.skillCooldownSeconds);
+  });
+
   test("shortens a skill's cooldown by 5% under Impetuous Winds, composed with the kit's own multiplier", () => {
     expect.hasAssertions();
 
