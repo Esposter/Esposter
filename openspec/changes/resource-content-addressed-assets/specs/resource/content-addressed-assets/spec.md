@@ -50,7 +50,7 @@ An uploaded asset SHALL be deleted only when no stored version references it.
 
 #### Scenario: Collecting the last reference deletes the asset and credits the owner
 
-- **GIVEN** an image is referenced by one stored version only
+- **GIVEN** an image is referenced by one stored version only, and the counting-only period is not in effect
 - **WHEN** that version is collected
 - **THEN** the image is deleted
 - **AND** the owner's storage usage falls by the size of the image
