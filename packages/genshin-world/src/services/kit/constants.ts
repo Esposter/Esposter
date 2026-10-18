@@ -121,3 +121,7 @@ export const SOURCEWATER_DROPLET_SECONDS = 878 / KIT_FRAMES_PER_SECOND;
 // A tick falls due once the seconds left to it are within this of none: a field counts its seconds down a step at a time,
 // And the float sum of a frame's seconds drifts a sub-nanosecond past the frame it is due on, which would land it a frame late
 export const KIT_TICK_TOLERANCE_SECONDS = 1e-9;
+
+// The fewest Hexerei members a team holds Hexerei: Secret Rite with, as gcsim reads its GetHexereiCount against two
+// (internal/weapons/spear/disasterandremorse/disasterandremorse.go:49)
+export const HEXEREI_SECRET_RITE_MINIMUM = 2;
