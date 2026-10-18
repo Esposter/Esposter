@@ -19,4 +19,6 @@ export interface KitStrike {
   hitbox?: KitHitbox;
   // Whether the hit is an aimed shot's, which takes an enemy's weak point when the enemy has one
   isAimed?: true;
+  // Whether the hit is a summon's, a gadget in gcsim's terms, which a reaction it triggers carries as a gadget's
+  isGadget?: true;
 }

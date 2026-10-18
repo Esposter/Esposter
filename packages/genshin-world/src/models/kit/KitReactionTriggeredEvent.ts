@@ -9,6 +9,8 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 export interface KitReactionTriggeredEvent {
   attackTag?: AttackTag;
   enemy: Enemy;
+  // Whether a summon's hit, a gadget in gcsim's terms, triggered them
+  isGadget?: true;
   kind: KitEventKind.ReactionTriggered;
   reactions: Reaction[];
   striker: Combatant;

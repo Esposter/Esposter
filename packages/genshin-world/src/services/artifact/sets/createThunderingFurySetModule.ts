@@ -1,4 +1,5 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { CatalyzeReactionType } from "#src/models/combat/CatalyzeReactionType";
@@ -31,13 +32,16 @@ const CUT_REACTION_TYPES = new Set<ReactionType>([
   ReactionType.StellarConduct,
   ReactionType.Quicken,
 ]);
+// A summon's reaction cuts only by a Hyperbloom, as gcsim's reduce takes it from any source
+const checkIsCutReaction = ({ reactionType }: Reaction, isGadget?: true): boolean =>
+  CUT_REACTION_TYPES.has(reactionType) && (!isGadget || reactionType === TransformativeReactionType.Hyperbloom);
 
 // Thundering Fury's four-piece. Its first param raises the DMG its wearer's own Overloaded, Electro-Charged, Superconduct and
 // Hyperbloom deal, its third the DMG its own Aggravate deals, and its fourth the DMG its own Lunar-Charged deals. The Stellar-Conduct
 // Share of the fourth is not read, as a Stellar-Conduct deals no damage yet. Its second param is the seconds between cuts: while the
 // Wearer is the active character, a Quicken or one of those reactions the wearer triggers cuts its Elemental Skill cooldown by a
-// Second, once per those seconds. A reaction a summon triggers cuts as well, as this repo's reaction event carries no gadget mark,
-// Where gcsim's reduceNoGadget takes none
+// Second, once per those seconds. A summon's hit cuts only by a Hyperbloom, as gcsim's reduceNoGadget takes the rest from an
+// Enemy's event alone
 export const createThunderingFurySetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const transformativeDamageBonus = takeOne(bonus.params, 0);
   const cutCooldownSeconds = takeOne(bonus.params, 1);
@@ -55,7 +59,7 @@ export const createThunderingFurySetModule = (bonus: ArtifactSetBonus): PassiveM
       if (event.kind !== KitEventKind.ReactionTriggered) return;
       const { characterId } = combatant;
       if (event.striker.characterId !== characterId || getActiveCharacterId(party) !== characterId) return;
-      if (!event.reactions.some(({ reactionType }) => CUT_REACTION_TYPES.has(reactionType))) return;
+      if (!event.reactions.some((reaction) => checkIsCutReaction(reaction, event.isGadget))) return;
       if (checkIsKitStatusActive(kitEffectState.effects, characterId, THUNDERING_FURY_COOLDOWN_ID)) return;
       addKitStatus(kitEffectState, characterId, {
         id: THUNDERING_FURY_COOLDOWN_ID,

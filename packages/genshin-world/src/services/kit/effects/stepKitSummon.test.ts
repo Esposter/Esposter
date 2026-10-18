@@ -24,6 +24,24 @@ describe(stepKitSummon, () => {
   const HIT_AREA = { angle: 2 * Math.PI, height: 2, radius: 2.5 };
   const CONTEXT = createKitTestContext(COMBATANT);
 
+  test("marks each hit a summon lands as a gadget's", () => {
+    expect.hasAssertions();
+    const summon: KitSummon = {
+      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      combatant: COMBATANT,
+      elapsedSeconds: 0,
+      hits: [{ hitArea: HIT_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1 }],
+      kind: "summon",
+      nextHitIndex: 0,
+      secondsRemaining: 1,
+    };
+
+    const strikes: KitStrike[] = [];
+    stepKitSummon(summon, 0.5, { x: 0, z: 0 }, strikes, CONTEXT);
+
+    expect(strikes.map(({ isGadget }) => isGadget)).toStrictEqual([true]);
+  });
+
   test("lands a hit at its cast in its first step, and only then", () => {
     expect.hasAssertions();
     const summon: KitSummon = {

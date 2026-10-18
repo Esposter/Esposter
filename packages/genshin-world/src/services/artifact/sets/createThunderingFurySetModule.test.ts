@@ -61,10 +61,11 @@ const createTeam = (characterIds: number[]) => {
     wearer.kit.getPartyReactionBonus?.(wearer, { combatant, element: undefined, enemy, reactionType }, context)
       ?.damageBonus ?? 0;
   // A hit the striker lands on the enemy, which triggers the given reactions on it
-  const trigger = (striker: Combatant, reactionTypes: ReactionType[]) =>
+  const trigger = (striker: Combatant, reactionTypes: ReactionType[], isGadget?: true) =>
     emitKitEvent(
       {
         enemy,
+        isGadget,
         kind: KitEventKind.ReactionTriggered,
         reactions: reactionTypes.map((reactionType) => ({ reactionType })),
         striker,
@@ -164,5 +165,18 @@ describe(createThunderingFurySetModule, () => {
     trigger(wearer, [TransformativeReactionType.Swirl]);
 
     expect(getSkillCooldownSeconds()).toBe(SKILL_COOLDOWN_SECONDS);
+  });
+
+  test("a reaction a gadget of the wearer's triggers cuts no cooldown, but a Hyperbloom it triggers does", () => {
+    expect.hasAssertions();
+
+    const { getSkillCooldownSeconds, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    trigger(wearer, [TransformativeReactionType.Overloaded], true);
+
+    expect(getSkillCooldownSeconds()).toBe(SKILL_COOLDOWN_SECONDS);
+
+    trigger(wearer, [TransformativeReactionType.Hyperbloom], true);
+
+    expect(getSkillCooldownSeconds()).toBeCloseTo(SKILL_COOLDOWN_SECONDS - 1);
   });
 });
