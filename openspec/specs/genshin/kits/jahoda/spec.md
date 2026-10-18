@@ -1,6 +1,6 @@
 ## Purpose
 
-Jahoda's kit as built: her three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit, with her robots and Meowball on the Moonsign hook.
+Jahoda's kit as built: her three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit, and Constellation 6's Moonsign buff, with her robots, Meowball and the rest of her Moonsign kit not yet built.
 
 ## Requirements
 
@@ -74,3 +74,23 @@ Jahoda's collision and two plunges SHALL land at once with the shared reach, and
 - **WHEN** the player plunges
 - **THEN** the plunge lands at once with the shared reach
 - **AND** its timing stays borrowed until a recording settles it
+
+### Requirement: Constellation 6 buffs the Moonsign team when a full flask drains at Ascendant Gleam
+
+#### Scenario: A full flask drains at Ascendant Gleam and buffs each Moonsign member
+
+- **GIVEN** Jahoda has Constellation 6 and the deployed team is at Ascendant Gleam
+- **WHEN** Savvy Strategy's flask drains full
+- **THEN** each deployed member with a Moonsign Benediction gains 5% Crit Rate and 40% Crit DMG for 20 seconds
+
+#### Scenario: A team at Nascent Gleam gets no Constellation 6 buff
+
+- **GIVEN** Jahoda has Constellation 6 and the deployed team is at Nascent Gleam
+- **WHEN** Savvy Strategy's flask drains full
+- **THEN** no member gains a buff
+
+#### Scenario: Constellation 5 gives no Moonsign buff
+
+- **GIVEN** Jahoda has Constellation 5 and the deployed team is at Ascendant Gleam
+- **WHEN** Savvy Strategy's flask drains full
+- **THEN** no member gains a buff
