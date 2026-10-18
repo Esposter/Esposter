@@ -4,6 +4,7 @@
 - [ ] 1.2 Build the windmill with sails that turn in the wind. Verify: a test named after the scenario 'A windmill's sails turn in a gust'.
       Blocked until the windmill's prefab meshes and its reference come from the PC's export: the tower and the sails are not built yet.
 - [ ] 1.3 Raise the wind at Stormterror's Lair to gale strength. Verify: a test named after the scenario 'Stormterror's Lair blows at gale strength'.
+      Blocked until the Lair's approach reference gives the gale's strength, and the Lair's weather area outline comes from the PC's export so the wind switches on entry.
 
 ## 2. City landmarks
 
