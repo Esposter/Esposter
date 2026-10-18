@@ -10,11 +10,6 @@ import type { MockInstance } from "vitest";
 
 const getPlayedPaths = (playSound: MockInstance<ViewerLink["playSound"]>) =>
   playSound.mock.calls.map(([, path]) => path);
-// Settles a play on the test's clock, so the test can tell whether it has settled yet
-const track = async (playing: Promise<string>, onSettle: () => void) => {
-  await playing;
-  onSettle();
-};
 
 describe(createViewerPlayer, () => {
   const MODEL_ID = 2;
@@ -56,9 +51,11 @@ describe(createViewerPlayer, () => {
     const { link } = createFakeViewerLink();
     const player = createViewerPlayer(link, MODEL_ID);
     let isFirstSettled = false;
-    void track(player.play(AUDIO, CAPTION), () => {
+    const playing = player.play(AUDIO, CAPTION);
+    void (async () => {
+      await playing;
       isFirstSettled = true;
-    });
+    })();
     await vi.advanceTimersByTimeAsync(DURATION_MS - 1);
     expect(isFirstSettled).toBe(false);
 

@@ -2,6 +2,7 @@ import type { ViewerSocket } from "#src/services/connectViewer";
 
 import { ViewerMessage } from "#src/models/ViewerMessage";
 import { connectViewer } from "#src/services/connectViewer";
+import { VIEWER_OPEN_READY_STATE } from "#src/services/constants";
 import { describe, expect, test, vi } from "vitest";
 
 // A socket the test answers by hand: opened or refused on demand, and the frames it is sent recorded
@@ -13,7 +14,7 @@ const createSocket = (isRefused: boolean) => {
       listeners.set(type, [...(listeners.get(type) ?? []), listener]);
     },
     close: vi.fn(),
-    readyState: 1,
+    readyState: VIEWER_OPEN_READY_STATE,
     send: (frame: string) => {
       sent.push(frame);
     },

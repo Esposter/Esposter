@@ -32,4 +32,4 @@ export const createFakeViewerLink = (isInitiallyOpen = true) => {
   };
 };
 
-describe.todo("createFakeViewerLink");
+describe(createFakeViewerLink);
