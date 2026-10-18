@@ -15,9 +15,9 @@ import {
 
 // One step of the gauge over its seconds, written into `sheerCold` in place so a quiet step allocates nothing, and
 // Returning the damage it deals. Heat near the character drains it wherever it stands; otherwise the subzero Climate
-// Fills it, faster while swimming or in a snowstorm and less under an anti-cold, which stops it at none, and outside the
-// Climate it drains at the rate of leaving an area. Full at the step's end, it deals its share of max HP and the flat
-// Amount for each Interval it has stayed full, the time short of the next carried over, and anything else clears that time
+// Fills it, faster while swimming or in a snowstorm and less under an anti-cold, which stops it at none, and outside
+// The Climate it drains at the rate of leaving an area. Full at the step's end, it deals its share of max HP and the
+// Flat amount for each Interval it has stayed full, the time short of the next carried over, and anything else clears it
 export const stepSheerCold = (
   sheerCold: SheerCold,
   { antiColdRatio, isHeated, isInCold, isSnowstorm, isSwimming, maxHealth }: SheerColdStep,
