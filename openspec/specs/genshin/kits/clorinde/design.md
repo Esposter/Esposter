@@ -15,7 +15,7 @@ Clorinde's kit is its record and one behaviour module, `createClorindeKitBehavio
 - **Night Vigil is waiting on the Bond of Life hook.** While Night Vigil stands, her normal attacks become Impale the Night and Swift Hunt, whose damage and healing depend on the Bond of Life a fraction of her HP sets, and that fraction reads wearer HP, which the kit cannot read yet. Night Vigil is therefore not built, and no stance stands in for it.
 - **Bond of Life is waiting on a wearer-HP hook.** Her Bond of Life rises as she attacks and falls as she heals, and Last Lightfall's damage and her Bond of Life gain scale with it. Each waits on that hook, and until it lands her burst deals its base damage only.
 - **Her Surging Blade waits on a conditional follow-up hit.** Her skill's arkhe is a follow-up hit gcsim fires under a 10-second cooldown on a condition of its own, and a conditional follow-up under a cooldown has no hook yet.
-- **Her passives and constellations are not built.** The Nightvigil Shade and the Glimbright Shade that Night Vigil summons, the crit buff after Hunter's Vigil, and the constellations that work through Bond of Life wait on the same hooks. The constellations that raise talent levels are the [talents](../../../../changes/genshin-talents/design.md) page's.
+- **Her passives and constellations are not built.** The Nightvigil Shade and the Glimbright Shade that Night Vigil summons, and the constellations that work through Bond of Life wait on the same hooks. Constellation 6's crit buff after Hunter's Vigil is built on the skill's start. The constellations that raise talent levels are the [talents](../../../../changes/genshin-talents/design.md) page's.
 
 ## Key files
 
