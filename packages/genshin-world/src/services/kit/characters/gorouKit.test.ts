@@ -30,6 +30,19 @@ const createGorouCombatant = (characterId = GOROU_CHARACTER_ID): Combatant => ({
 });
 
 const checkIsField = (effect: KitEffect): effect is KitField => effect.kind === "field";
+
+// The team DEF buffs Juuga's cast gives as Gorou stands at the ascension
+const getA1Buffs = (ascension: number): KitEffect[] =>
+  castKitAction(GOROU_KIT.elementalBurst, { ...createGorouCombatant(), ascension }).effects.filter(
+    (effect) => effect.kind === "buff" && effect.source === "gorou-a1",
+  );
+
+// Gorou with 1,000 DEF at the ascension
+const createGorouWithDefense = (ascension: number): Combatant => ({
+  ...createGorouCombatant(),
+  ascension,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.Defense, value: 1000 }]),
+});
 describe(createGorouKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -124,5 +137,42 @@ describe(createGorouKitBehaviour, () => {
     expect(crystalCollapse?.isFollowing).toBe(true);
     expect(crystalCollapse?.hits).toHaveLength(6);
     expect(crystalCollapse?.hits[0]?.hitmarkSeconds).toBeCloseTo(121 / 60);
+  });
+
+  describe("the Ascension 1 passive, Heedless of the Wind and Weather", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getA1Buffs(1)).toStrictEqual([
+        {
+          amount: 0.25,
+          attribute: Attribute.DefensePercent,
+          characterId: GOROU_CHARACTER_ID,
+          kind: "buff",
+          secondsRemaining: 12,
+          source: "gorou-a1",
+        },
+      ]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(getA1Buffs(0)).toStrictEqual([]);
+    });
+  });
+
+  describe("the Ascension 4 passive, A Favor Repaid", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(takeOne(GOROU_KIT.elementalSkill.hits).additiveBaseDamageBonus?.(createGorouWithDefense(4))).toBe(1560);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(takeOne(GOROU_KIT.elementalSkill.hits).additiveBaseDamageBonus?.(createGorouWithDefense(3))).toBe(0);
+    });
   });
 });
