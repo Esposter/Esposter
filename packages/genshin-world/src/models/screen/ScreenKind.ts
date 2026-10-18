@@ -6,6 +6,7 @@ export enum ScreenKind {
   Archive = "Archive",
   BattlePass = "BattlePass",
   Blessing = "Blessing",
+  Worship = "Worship",
   Character = "Character",
   CharacterArchive = "CharacterArchive",
   Chat = "Chat",

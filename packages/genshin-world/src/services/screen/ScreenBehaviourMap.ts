@@ -12,6 +12,7 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.Archive]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.BattlePass]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Blessing]: MENU_SCREEN_BEHAVIOUR,
+  [ScreenKind.Worship]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Character]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.CharacterArchive]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Chat]: MENU_SCREEN_BEHAVIOUR,

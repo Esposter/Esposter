@@ -28,22 +28,30 @@ An Oculus within a short distance of the player SHALL show on the minimap and so
 - **THEN** the Oculus shows on the minimap
 - **AND** a sound signals it
 
-### Requirement: A found Oculus is offered to its region at once
+### Requirement: A collected Oculus is held until the Worship Statue offers it
 
-A found Oculus SHALL be offered to its region at once, and any level it completes SHALL be reached and paid then.
+A collected Oculus SHALL be held in its region until the region's Worship Statue offers it, and the levels the offered Oculi complete SHALL be reached and paid then.
 
-#### Scenario: An offered Oculus completes a level at once
+#### Scenario: A collected Oculus is held until the Worship Statue offers it
 
-- **GIVEN** a region started at a level whose next level its offered Oculi complete
-- **WHEN** the player finds an Oculus in the region
+- **GIVEN** a region started at a level
+- **WHEN** the player collects an Oculus in the region
+- **THEN** the Oculus is held in the region's collected count
+- **AND** no level is reached
+
+#### Scenario: An offer at the Worship Statue completes a level
+
+- **GIVEN** a region started at a level whose next level its collected Oculi complete
+- **WHEN** the player offers at the region's Worship Statue
 - **THEN** the region's statues reach the next level
 - **AND** that level's rewards are paid
+- **AND** the collected count is none
 
-#### Scenario: An Oculus found in an unstarted region is held until the region starts
+#### Scenario: An Oculus collected before the region starts waits for the Worship Statue
 
-- **GIVEN** a region that no statue has been resonated in
-- **WHEN** the player finds an Oculus in the region
-- **THEN** the Oculus is held in the region's count
+- **GIVEN** a region no statue has been resonated in
+- **WHEN** the player collects an Oculus in the region
+- **THEN** the Oculus is held in the region's collected count
 - **AND** no level is reached
 
 ### Requirement: A region starts at level one on its first resonance
@@ -89,16 +97,23 @@ Resonating with a statue SHALL change the Traveler's element to the element of t
 - **WHEN** the player resonates with the statue
 - **THEN** the Traveler's element is Geo
 
-### Requirement: F on a resonated statue opens the Statue's Blessing
+### Requirement: F on a resonated statue offers the Worship Statue and the Statue's Blessing
 
-Pressing F at a resonated statue SHALL open the Statue's Blessing, which shows the healing pool and the party's portraits, and a click on a portrait SHALL heal that member from the pool.
+Pressing F at a resonated statue SHALL offer two prompts: the Worship Statue, which shows the region's level, its levels and the collected Oculi and offers them, and the Statue's Blessing, which shows the healing pool and the party's portraits, with a click on a portrait healing that member from the pool.
 
 #### Scenario: F on a resonated statue opens the Blessing screen
 
 - **GIVEN** a resonated statue and a party
-- **WHEN** the player presses F at the statue
+- **WHEN** the player picks the Statue's Blessing at the statue
 - **THEN** the Statue's Blessing opens
 - **AND** it shows the healing pool and the party's portraits
+
+#### Scenario: F on a resonated statue opens the Worship Statue
+
+- **GIVEN** a resonated statue
+- **WHEN** the player picks the Worship Statue at the statue
+- **THEN** the Worship Statue opens
+- **AND** it shows the region's level and the Oculi it has collected
 
 ### Requirement: Auto-recover revives and heals the party near a statue
 
@@ -125,7 +140,7 @@ With auto-recover on and a threshold set, standing by a statue for two seconds S
 
 ### Requirement: The statues' state is kept with the world and merged between saves
 
-The statues' levels, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the save further on by its level and then its held count.
+The statues' levels, collected counts, held counts and found Oculi SHALL be kept with the world, the collected Oculi apart from the held ones, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the save further on by its level and then its held count.
 
 #### Scenario: A new player starts with no region started and no Oculus found
 
@@ -149,7 +164,7 @@ The statues' levels, held counts and found Oculi SHALL be kept with the world, a
 
 - **GIVEN** a region both saves hold, one of them further on by its level, or on the same level by its held count
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the region of the save further on, its level and held count as they are
+- **THEN** the merged save holds the region of the save further on, its level, collected and held counts as they are
 
 ## REMOVED Requirements
 

@@ -454,25 +454,33 @@ describe(mergeGenshinSave, () => {
     const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [], regions: {} } };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 2, level: 1 } } },
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { collectedCount: 0, heldCount: 2, level: 1 } } },
     };
 
-    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({ [REGION_ID]: { heldCount: 2, level: 1 } });
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { collectedCount: 0, heldCount: 2, level: 1 },
+    });
   });
 
   test("a region both saves hold is the save further on", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 4, level: ACCOUNT_LEVEL } } },
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { collectedCount: 0, heldCount: 4, level: ACCOUNT_LEVEL } },
+      },
     };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 1, level: GUEST_LEVEL } } },
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { collectedCount: 0, heldCount: 1, level: GUEST_LEVEL } },
+      },
     };
 
     expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { heldCount: 1, level: GUEST_LEVEL },
+      [REGION_ID]: { collectedCount: 0, heldCount: 1, level: GUEST_LEVEL },
     });
   });
 

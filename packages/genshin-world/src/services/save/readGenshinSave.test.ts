@@ -54,7 +54,7 @@ describe(readGenshinSave, () => {
   // A region's statues offered to: the Oculi held toward its next level and the level it has reached, and one Oculus
   // Found in it
   const STATUE_REGION_ID = "1";
-  const STATUE_REGION_PROGRESS = { heldCount: 1, level: 2 };
+  const STATUE_REGION_PROGRESS = { collectedCount: 0, heldCount: 1, level: 2 };
   const FOUND_OCULUS_ID = "2";
   // A Seelie settled in its court and a puzzle solved, each by its id
   const SETTLED_SEELIE_ID = "seelie-1";

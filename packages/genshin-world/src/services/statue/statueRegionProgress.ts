@@ -8,7 +8,7 @@ import { countHeldItems } from "#src/services/offering/countHeldItems";
 // Region whose levels name none
 export const findStatueItemId = (levels: StatueLevel[]): number => levels.flatMap(({ items }) => items)[0]?.itemId ?? 0;
 
-// A region's saved progress as the rule holds it: the Oculi saved are held against the one Oculus the region's levels take
+// A region's saved progress as the rule holds it: the Oculi offered are held against the one Oculus its levels take
 export const toStatueRegionProgress = (
   { heldCount, level }: StatueRegionProgressSave,
   levels: StatueLevel[],
@@ -18,8 +18,9 @@ export const toStatueRegionProgress = (
   levels,
 });
 
-// A region's progress as the save holds it: the Oculi held, whichever kind they are, and the level reached
-export const toStatueRegionProgressSave = ({
-  heldCounts,
-  level,
-}: OfferingProgress<StatueLevel>): StatueRegionProgressSave => ({ heldCount: countHeldItems(heldCounts), level });
+// A region's progress as the save holds it: the Oculi offered toward its next level, whichever kind they are, the Oculi
+// Collected and not yet offered beside them, and the level reached
+export const toStatueRegionProgressSave = (
+  { heldCounts, level }: OfferingProgress<StatueLevel>,
+  collectedCount: number,
+): StatueRegionProgressSave => ({ collectedCount, heldCount: countHeldItems(heldCounts), level });

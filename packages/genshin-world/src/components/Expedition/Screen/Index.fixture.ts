@@ -51,6 +51,6 @@ export const props = {
   place: pinnedPlaces.at(4)?.id,
   places,
   random: createSeededRandom(WORLD_RANDOM_SEED),
-  statueRegions: { mondstadt: { heldCount: 0, level: 1 } },
+  statueRegions: { mondstadt: { collectedCount: 0, heldCount: 0, level: 1 } },
   wallet: { ...EMPTY_WALLET },
 };

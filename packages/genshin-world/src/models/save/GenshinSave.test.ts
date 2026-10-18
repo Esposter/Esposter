@@ -229,7 +229,7 @@ describe("genshinSaveSchema", () => {
         regions: Object.fromEntries(
           Array.from({ length: MAX_STATUE_REGION_COUNT }, (_value, index) => [
             String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
-            { heldCount: maxNumber, level: maxNumber },
+            { collectedCount: maxNumber, heldCount: maxNumber, level: maxNumber },
           ]),
         ),
       },

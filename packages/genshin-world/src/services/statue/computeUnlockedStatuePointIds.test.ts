@@ -26,12 +26,15 @@ describe(computeUnlockedStatuePointIds, () => {
   test("a place opens when its statue is resonated", () => {
     expect.hasAssertions();
 
-    expect(isPlaceOpen({ mondstadt: { heldCount: 0, level: 1 } })).toBe(true);
+    expect(isPlaceOpen({ mondstadt: { collectedCount: 0, heldCount: 0, level: 1 } })).toBe(true);
   });
 
   test("a place whose statue is not resonated stays closed", () => {
     expect.hasAssertions();
 
-    expect([isPlaceOpen({ mondstadt: { heldCount: 0, level: 0 } }), isPlaceOpen({})]).toStrictEqual([false, false]);
+    expect([isPlaceOpen({ mondstadt: { collectedCount: 0, heldCount: 0, level: 0 } }), isPlaceOpen({})]).toStrictEqual([
+      false,
+      false,
+    ]);
   });
 });

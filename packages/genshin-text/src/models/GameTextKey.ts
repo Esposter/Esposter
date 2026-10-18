@@ -594,6 +594,8 @@ export enum GameTextKey {
   StatueBlessing = "3126052466",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
+  StatueOffer = "1162683154",
+  StatueWorship = "1652053571",
   StormbearerMountains = "490004829",
   StormterrorsLair = "775762325",
   // A story the Profile tab shows before its Friendship Level is reached, with the level and the story's title

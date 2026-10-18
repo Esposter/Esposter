@@ -21,3 +21,7 @@ export const OCULUS_REGION_ID = "mondstadt";
 // Provisional: the minimap mark's share of the minimap's radius, until the owed minimap recording measures the Oculus's
 // Own mark
 export const OCULUS_MARK_RADIUS_SHARE = 0.04;
+// The suffixes of a resonated statue's two F prompts, each added to the statue's landmark id: the Statue's Blessing and the
+// Worship Statue
+export const STATUE_BLESSING_SUFFIX = "/blessing";
+export const STATUE_WORSHIP_SUFFIX = "/worship";

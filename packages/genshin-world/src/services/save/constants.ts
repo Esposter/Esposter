@@ -254,7 +254,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     }) +
   MAX_CHARACTER_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_FOUND_OCULUS_COUNT * getListEntryLength(MAX_SAVE_ID) +
-  MAX_STATUE_REGION_COUNT * getRecordEntryLength({ heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
+  MAX_STATUE_REGION_COUNT *
+    getRecordEntryLength({ collectedCount: MAX_SAVE_NUMBER, heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER }) +
   MAX_OFFERING_ITEM_KIND_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   Object.keys(ArchiveSection).length * MAX_ARCHIVE_ENTRY_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_ARCHIVE_KILL_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
