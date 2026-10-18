@@ -1,0 +1,40 @@
+import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+import { MjmlContentKind } from "#src/models/MjmlContentKind";
+
+export const mjNavbarLink: MjmlComponentSpecification = {
+  allowedAttributes: {
+    color: "color",
+    "font-family": "string",
+    "font-size": "unit(px)",
+    "font-style": "string",
+    "font-weight": "string",
+    href: "string",
+    name: "string",
+    target: "string",
+    rel: "string",
+    "letter-spacing": "unitWithNegative(px,em)",
+    "line-height": "unit(px,%,)",
+    "padding-bottom": "unit(px,%)",
+    "padding-left": "unit(px,%)",
+    "padding-right": "unit(px,%)",
+    "padding-top": "unit(px,%)",
+    padding: "unit(px,%){1,4}",
+    "text-decoration": "string",
+    "text-transform": "string",
+  },
+  children: [],
+  contentKind: MjmlContentKind.Label,
+  defaultAttributes: {
+    color: "#000000",
+    "font-family": "Ubuntu, Helvetica, Arial, sans-serif",
+    "font-size": "13px",
+    "font-weight": "normal",
+    "line-height": "22px",
+    padding: "15px 10px",
+    target: "_blank",
+    "text-decoration": "none",
+    "text-transform": "uppercase",
+  },
+  hasAlternativeText: false,
+  type: "mj-navbar-link",
+};

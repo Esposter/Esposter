@@ -1,0 +1,43 @@
+import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+import { MjmlContentKind } from "#src/models/MjmlContentKind";
+
+export const mjTable: MjmlComponentSpecification = {
+  allowedAttributes: {
+    align: "enum(left,right,center)",
+    border: "string",
+    cellpadding: "integer",
+    cellspacing: "integer",
+    "container-background-color": "color",
+    color: "color",
+    "font-family": "string",
+    "font-size": "unit(px)",
+    "font-weight": "string",
+    "line-height": "unit(px,%,)",
+    "padding-bottom": "unit(px,%)",
+    "padding-left": "unit(px,%)",
+    "padding-right": "unit(px,%)",
+    "padding-top": "unit(px,%)",
+    padding: "unit(px,%){1,4}",
+    role: "enum(none,presentation)",
+    "table-layout": "enum(auto,fixed,initial,inherit)",
+    "vertical-align": "enum(top,bottom,middle)",
+    width: "unit(px,%,auto)",
+  },
+  children: [],
+  contentKind: MjmlContentKind.Raw,
+  defaultAttributes: {
+    align: "left",
+    border: "none",
+    cellpadding: "0",
+    cellspacing: "0",
+    color: "#000000",
+    "font-family": "Ubuntu, Helvetica, Arial, sans-serif",
+    "font-size": "13px",
+    "line-height": "22px",
+    padding: "10px 25px",
+    "table-layout": "auto",
+    width: "100%",
+  },
+  hasAlternativeText: false,
+  type: "mj-table",
+};

@@ -1,0 +1,222 @@
+import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+
+import { mjAccordion } from "#src/services/components/mjAccordion";
+import { mjAccordionElement } from "#src/services/components/mjAccordionElement";
+import { mjAccordionText } from "#src/services/components/mjAccordionText";
+import { mjAccordionTitle } from "#src/services/components/mjAccordionTitle";
+import { mjButton } from "#src/services/components/mjButton";
+import { mjCarousel } from "#src/services/components/mjCarousel";
+import { mjCarouselImage } from "#src/services/components/mjCarouselImage";
+import { mjColumn } from "#src/services/components/mjColumn";
+import { mjDivider } from "#src/services/components/mjDivider";
+import { mjGroup } from "#src/services/components/mjGroup";
+import { mjHero } from "#src/services/components/mjHero";
+import { mjImage } from "#src/services/components/mjImage";
+import { mjNavbar } from "#src/services/components/mjNavbar";
+import { mjNavbarLink } from "#src/services/components/mjNavbarLink";
+import { mjRaw } from "#src/services/components/mjRaw";
+import { mjSection } from "#src/services/components/mjSection";
+import { mjSocial } from "#src/services/components/mjSocial";
+import { mjSocialElement } from "#src/services/components/mjSocialElement";
+import { mjSpacer } from "#src/services/components/mjSpacer";
+import { mjTable } from "#src/services/components/mjTable";
+import { mjText } from "#src/services/components/mjText";
+import { mjWrapper } from "#src/services/components/mjWrapper";
+
+export const ALL_ATTRIBUTES_KEY = "all";
+export const ALLOWED_URL_SCHEMES: string[] = ["http", "https", "mailto", "tel"];
+// The tags MJML's preset lists that the package leaves out: includes read the disk, and the other two target by selector
+export const EXCLUDED_MJML_TAGS: string[] = ["mj-include", "mj-html-attributes", "mj-class"];
+// The body's allowed children, and the attributes its own element takes, as MJML's preset lists them
+export const MJML_BODY_ATTRIBUTES: Record<string, string> = {
+  "background-color": "color",
+  id: "string",
+  width: "unit(px)",
+};
+export const MJML_BODY_CHILDREN: string[] = ["mj-raw", "mj-section", "mj-wrapper", "mj-hero"];
+export const MJML_BREAKPOINT_ATTRIBUTES: Record<string, string> = { width: "unit(px)" };
+// The containers that take a consumer's leaf type in their children, beside the MJML tags their preset lists
+export const MJML_LEAF_HOST_TYPES: string[] = ["mj-column", "mj-hero"];
+export const MJML_COMPONENT_SPECIFICATIONS: MjmlComponentSpecification[] = [
+  mjWrapper,
+  mjSection,
+  mjGroup,
+  mjColumn,
+  mjHero,
+  mjText,
+  mjButton,
+  mjImage,
+  mjDivider,
+  mjSpacer,
+  mjTable,
+  mjRaw,
+  mjSocial,
+  mjSocialElement,
+  mjNavbar,
+  mjNavbarLink,
+  mjCarousel,
+  mjCarouselImage,
+  mjAccordion,
+  mjAccordionElement,
+  mjAccordionTitle,
+  mjAccordionText,
+];
+// The colour names MJML's validator accepts, as its own list has them
+const MJML_COLOR_NAMES: string[] = [
+  "aliceblue",
+  "antiquewhite",
+  "aqua",
+  "aquamarine",
+  "azure",
+  "beige",
+  "bisque",
+  "black",
+  "blanchedalmond",
+  "blue",
+  "blueviolet",
+  "brown",
+  "burlywood",
+  "cadetblue",
+  "chartreuse",
+  "chocolate",
+  "coral",
+  "cornflowerblue",
+  "cornsilk",
+  "crimson",
+  "cyan",
+  "darkblue",
+  "darkcyan",
+  "darkgoldenrod",
+  "darkgray",
+  "darkgreen",
+  "darkgrey",
+  "darkkhaki",
+  "darkmagenta",
+  "darkolivegreen",
+  "darkorange",
+  "darkorchid",
+  "darkred",
+  "darksalmon",
+  "darkseagreen",
+  "darkslateblue",
+  "darkslategray",
+  "darkslategrey",
+  "darkturquoise",
+  "darkviolet",
+  "deeppink",
+  "deepskyblue",
+  "dimgray",
+  "dimgrey",
+  "dodgerblue",
+  "firebrick",
+  "floralwhite",
+  "forestgreen",
+  "fuchsia",
+  "gainsboro",
+  "ghostwhite",
+  "gold",
+  "goldenrod",
+  "gray",
+  "green",
+  "greenyellow",
+  "grey",
+  "honeydew",
+  "hotpink",
+  "indianred",
+  "indigo",
+  "inherit",
+  "ivory",
+  "khaki",
+  "lavender",
+  "lavenderblush",
+  "lawngreen",
+  "lemonchiffon",
+  "lightblue",
+  "lightcoral",
+  "lightcyan",
+  "lightgoldenrodyellow",
+  "lightgray",
+  "lightgreen",
+  "lightgrey",
+  "lightpink",
+  "lightsalmon",
+  "lightseagreen",
+  "lightskyblue",
+  "lightslategray",
+  "lightslategrey",
+  "lightsteelblue",
+  "lightyellow",
+  "lime",
+  "limegreen",
+  "linen",
+  "magenta",
+  "maroon",
+  "mediumaquamarine",
+  "mediumblue",
+  "mediumorchid",
+  "mediumpurple",
+  "mediumseagreen",
+  "mediumslateblue",
+  "mediumspringgreen",
+  "mediumturquoise",
+  "mediumvioletred",
+  "midnightblue",
+  "mintcream",
+  "mistyrose",
+  "moccasin",
+  "navajowhite",
+  "navy",
+  "oldlace",
+  "olive",
+  "olivedrab",
+  "orange",
+  "orangered",
+  "orchid",
+  "palegoldenrod",
+  "palegreen",
+  "paleturquoise",
+  "palevioletred",
+  "papayawhip",
+  "peachpuff",
+  "peru",
+  "pink",
+  "plum",
+  "powderblue",
+  "purple",
+  "rebeccapurple",
+  "red",
+  "rosybrown",
+  "royalblue",
+  "saddlebrown",
+  "salmon",
+  "sandybrown",
+  "seagreen",
+  "seashell",
+  "sienna",
+  "silver",
+  "skyblue",
+  "slateblue",
+  "slategray",
+  "slategrey",
+  "snow",
+  "springgreen",
+  "steelblue",
+  "tan",
+  "teal",
+  "thistle",
+  "tomato",
+  "transparent",
+  "turquoise",
+  "violet",
+  "wheat",
+  "white",
+  "whitesmoke",
+  "yellow",
+  "yellowgreen",
+];
+export const MJML_COLOR_MATCHERS: RegExp[] = [
+  /rgba\(\d{1,3},\s?\d{1,3},\s?\d{1,3},\s?\d(\.\d{1,3})?\)/iu,
+  /rgb\(\d{1,3},\s?\d{1,3},\s?\d{1,3}\)/iu,
+  /^#([0-9a-f]{3}){1,2}$/iu,
+  new RegExp(`^(${MJML_COLOR_NAMES.join("|")})$`, "u"),
+];
