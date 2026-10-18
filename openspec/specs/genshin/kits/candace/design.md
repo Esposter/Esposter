@@ -4,6 +4,7 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 
 ## Decisions
 
+- **Aegis of Crossed Arrows completes her hold's charge on a strike.** While she holds Heron's Sanctum, a strike on her completes the charge, so its release plays the charged hold whatever she held for, through the shared [held-charge mechanism](../README.md). A strike is an HP loss on her with no kit as its source, or a shield on her absorbing one; a drown reads the same as the HP loss, as the record gives it no cause. The passive's text is from [genshin.gg](https://genshin.gg/characters/candace/), a guide site, as the Genshin Impact Wiki's page returned an error when it was read; the text is paraphrased, and gcsim leaves the passive as a TODO.
 - **Heron's Sanctum's damage is a share of Max HP carried as flat DMG.** Each of the tap's and the charged hit's talent multipliers is zero, and the additive base DMG Bonus is her Max HP times the table's share, 0.12 for the tap and 0.1904 for the charged hit at level 1. The tap reads the table's slot 2, which equals the shield's share at every level, where gcsim reads its tap at the shield's slot; the slot is a best estimate, as the number matches gcsim's.
 - **Each shield lasts until its hit lands.** gcsim sets the shield's expiry at the hitmark, "treated as frame when attack hits", so the tap's shield stands for 16 frames and the charged hold's for 91 from its release. Its health is a share of Max HP from the table plus a flat amount, 1155.56 at level 1, and it is Hydro.
 - **The charged hold starts at half a second of holding.** gcsim takes the hold as a parameter with no threshold, and no table or wiki page gives one, so the framework's half second stands. The roadmap asks whether the game agrees.
@@ -13,7 +14,6 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 
 ## Not built
 
-- **Ascension 1's instant finish of a charge is not built.** gcsim leaves it as a TODO, and the kit has no hook for damage the team takes: `DamageTaken` reports damage an enemy takes.
 - **Ascension 4's DMG and the Prayer's 20% DMG Bonus on the team's normal attacks are not built.** The hook is a party buff read by another member's normal attack, as `getStrikeDamageBonus` reads only the kit's own strikes.
 - **Constellation 2's Max HP of 20% is not built.** `getBuffedCombatant` adds a buff to the attribute total, and the Max HP the shield and the damage read is derived once in `computeCharacterAttributes`, so the buff does not reach it. The hook is a Max HP buff that the pricing re-derives.
 - **Constellation 4's shorter hold cooldown is not built.** gcsim sets the charged hold's cooldown to the tap's 6 seconds, but a hold's cooldown is one number on the kit, and `getSkillCooldownMultiplier` reads no hold. The hook is a hold cooldown read from the holder's constellations.
@@ -27,4 +27,5 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 ## Sources
 
 - [gcsim (MIT)](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace): the strikes' hitmarks, cancel frames, reaches and poise, the charged attack and the plunges' frames, radii and poise, Heron's Sanctum's frames, hitboxes, shields and cooldowns, Wagtail's Tide's hitmark, duration, infusion and waves, and Constellations 1 and 6.
+- [genshin.gg's Candace](https://genshin.gg/characters/candace/): Aegis of Crossed Arrows's text, Ascension 1.
 - The proud skill groups 7231, 7232 and 7239 in the hosted game data: each multiplier's index, the shield's share and flat HP, the cooldowns, the burst's seconds, wave count, cooldown and energy cost, read at talent level 1.
