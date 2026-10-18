@@ -5,9 +5,19 @@ describe("domain challenge levels", () => {
   test("a level defeats as many enemies as its waves hold", () => {
     expect.hasAssertions();
 
-    const ridgeWatchLevels = DOMAIN_CHALLENGE_LEVELS[13];
+    const levels = Object.values(DOMAIN_CHALLENGE_LEVELS).flatMap((ranks) => Object.values(ranks));
     expect(
-      ridgeWatchLevels.map(({ defeatTarget, waves }) => ({
+      levels.filter(
+        ({ defeatTarget, waves }) => defeatTarget !== waves.flat().reduce((total, { count }) => total + count, 0),
+      ),
+    ).toStrictEqual([]);
+  });
+
+  test("ridge watch's levels run from the lowest rank to the highest", () => {
+    expect.hasAssertions();
+
+    expect(
+      Object.values(DOMAIN_CHALLENGE_LEVELS[13]).map(({ defeatTarget, waves }) => ({
         defeatTarget,
         enemies: waves.flat().reduce((total, { count }) => total + count, 0),
       })),
