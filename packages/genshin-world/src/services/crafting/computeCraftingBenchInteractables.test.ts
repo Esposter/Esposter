@@ -17,7 +17,7 @@ describe(computeCraftingBenchInteractables, () => {
   const interactables = computeCraftingBenchInteractables(place, NAME, getGroundHeight);
   const bench = {
     id: CRAFTING_BENCH_INTERACTABLE_ID,
-    kind: InteractionKind.Activate,
+    kind: InteractionKind.Use,
     name: NAME,
     position: { x: 1, y: GROUND_HEIGHT, z: 2 },
   };
