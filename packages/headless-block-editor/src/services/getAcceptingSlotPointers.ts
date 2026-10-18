@@ -4,8 +4,8 @@ import type { BlockRegistry } from "#src/models/BlockRegistry";
 import { getAcceptedTypes } from "#src/services/getAcceptedTypes";
 import { getBlockLayerRows } from "#src/services/getBlockLayerRows";
 import { getBlockNode } from "#src/services/getBlockNode";
+import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
-import { toJsonPointer } from "@esposter/shared";
 
 // Every slot in the document whose accepted types include the node's type: the root's content first, then each node's slots in layer-row order
 // Never a slot inside the node itself, since a node cannot move into its own subtree, and none for a pointer naming no node
@@ -20,8 +20,8 @@ export const getAcceptingSlotPointers = (
   const slotPointers = [
     "/content",
     ...getBlockLayerRows(document, registry).flatMap((row) =>
-      Object.keys(getBlockTypeDefinition(registry, row.type)?.slots ?? {}).map(
-        (slot) => `${row.nodePointer}/props${toJsonPointer([slot])}`,
+      Object.keys(getBlockTypeDefinition(registry, row.type)?.slots ?? {}).map((slot) =>
+        getBlockPropPointer(row.nodePointer, slot),
       ),
     ),
   ];

@@ -3,8 +3,8 @@ import type { BlockLayerRow } from "#src/models/BlockLayerRow";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
 import { blockNodeShapeSchema } from "#src/services/blockNodeShapeSchema";
+import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
-import { toJsonPointer } from "@esposter/shared";
 
 // The rows of a list of children one depth down: each child's row, then the rows of its slots in the order its type declares them
 // A child that is not a node, and a slot that is not a list, contribute nothing
@@ -22,9 +22,8 @@ const getChildRows = (
     const nodePointer = `${listPointer}/${index}`;
     const slotRows = Object.keys(getBlockTypeDefinition(registry, node.type)?.slots ?? {}).flatMap((slot) => {
       const slotChildren: unknown = node.props[slot];
-      return Array.isArray(slotChildren)
-        ? getChildRows(registry, slotChildren, `${nodePointer}/props${toJsonPointer([slot])}`, depth + 1)
-        : [];
+      const slotPointer = getBlockPropPointer(nodePointer, slot);
+      return Array.isArray(slotChildren) ? getChildRows(registry, slotChildren, slotPointer, depth + 1) : [];
     });
     return [{ depth, nodePointer, type: node.type }, ...slotRows];
   });

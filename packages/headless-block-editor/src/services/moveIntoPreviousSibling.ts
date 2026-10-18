@@ -3,6 +3,7 @@ import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { getBlockNode } from "#src/services/getBlockNode";
+import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { moveBlockNode } from "#src/services/moveBlockNode";
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
@@ -30,5 +31,6 @@ export const moveIntoPreviousSibling = (
   const [slot] = slotEntry;
   const children = previous.props[slot];
   const childCount = Array.isArray(children) ? children.length : 0;
-  return moveBlockNode(document, registry, nodePointer, `${previousPointer}/props${toJsonPointer([slot])}`, childCount);
+  const slotPointer = getBlockPropPointer(previousPointer, slot);
+  return moveBlockNode(document, registry, nodePointer, slotPointer, childCount);
 };

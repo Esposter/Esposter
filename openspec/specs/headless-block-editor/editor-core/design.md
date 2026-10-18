@@ -53,6 +53,7 @@ flowchart TD
 | `packages/headless-block-editor/src/models/BlockLayerRow.ts`                 | a row of the layers tree: a node's depth, its pointer and its type              |
 | `packages/headless-block-editor/src/services/getBlockLayerRows.ts`           | every node in layer order, a node's row before its slots' rows                  |
 | `packages/headless-block-editor/src/services/getAdjacentBlockNodePointer.ts` | the node a row offset from another, past a slot boundary                        |
+| `packages/headless-block-editor/src/services/getBlockPropPointer.ts`         | a node's prop pointer, the prop's key escaped as one JSON pointer segment       |
 | `packages/headless-block-editor/src/services/getAcceptingSlotPointers.ts`    | every slot that accepts a node, outside the node's own subtree                  |
 | `packages/headless-block-editor/src/services/moveOutAfterParent.ts`          | a move to just after the node's parent, in the slot that holds the parent       |
 | `packages/headless-block-editor/src/services/duplicateBlockNode.ts`          | a paste of the node's copy straight after it, in its own slot                   |
