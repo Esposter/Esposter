@@ -88,4 +88,14 @@ describe(startQuests, () => {
 
     expect(startQuests(seriesQuests, new Map(), secondTalkEvent, [chapter])).toStrictEqual(new Map());
   });
+
+  test("an accepted request starts its quest", () => {
+    expect.hasAssertions();
+
+    const request = { ...createQuest("7"), kind: QuestKind.World };
+
+    expect(startQuests([request], new Map(), undefined, [], request.id)).toStrictEqual(
+      new Map([[request.id, { objectiveCounts: [], stepIndex: 0 }]]),
+    );
+  });
 });

@@ -14,6 +14,8 @@ Each nation keeps a Reputation, raised by work done for its people. The [Reputat
 - **A Reputation quest is bound to the quest its parentQuestId names.** A Reputation quest row pays when the quest its `parentQuestId` names finishes, and a request pays when the quest its `questId` names finishes. The reward's own row names no quest, so the binding is the quest's id, and the reward is paid on the move that finishes that quest, never on a move from a progress already finished. Settles task 2.3. `getFinishedReputationRewards` is that rule; nothing calls it yet, since the Mondstadt slice does not hold the Reputation quest rows and the quests they bind are not carried.
 - **A discount applies only at the shop it names, once a shop has a screen.** The shop rows whose `vipFuncID` is the function the level names are the named shops: 203 (the grocery) and 204 (the food shop) for function 1002, each with `cityDiscountLevel` 4. The grocery's goods are filed under shop type 1004, which the shops page reads as the grocery, and no dump field joins that type to shop row 203, so the join is the shops page's mapping. The food shop's goods are not published. No Shop screen is mounted in the worktree (`ScreenKind.Shop` opens nothing), so task 3.2 waits on it and no discount is applied at any shop yet.
 - **Requests and bounties open at level two, on the dump's one-based levels.** The dump's `level` starts at one: its row for level 2 holds the Mining Outcrop Search (function 1001) the wiki gives level two, so no offset applies. The unlock is the wiki's "unlocked upon reaching Reputation Level 2", not the level of the first row that names a request group, since the rows for levels 1 to 4 all name group 5 and a gate read off them would open requests at level one. A request is drawn by weight from the group the nation's current level's row names.
+- **A delivery request is carried as the world quest its row names, a Collect of the items it asks for.** The Mondstadt request rows name twelve sub quests that are deliveries: each has a Giving row with the items and count, and its accepting NPC is in the sub quest's accept condition. The carried quest's id is the request's `questId` (for example 7070101, the sub quest, so the reward binding matches the quest's id), its title and description are its main quest's (the sub quest's `mainId`), its one step is a Collect of each item by the Giving row's count, the same objective `QUEST_CONTENT_OBTAIN_ITEM` already maps to, and it has no offer talk, since the keeper's request board offers it. The hand-in is not an event in the world yet, so a delivery counts the items picked up, provisional. The three camp requests (7070901, 7071001, 7071101) have no Giving row and no target in the tables read, so they are not carried and wait on their camp's target. Task 2.1 adds these to `QuestId`, its loaders and the builder, the one shared seam the quests change also touches, so each is one additive line.
+- **An accepted request starts its quest.** `startQuests` takes the id of an accepted quest and starts it at its first step, once, if it is carried and not yet started. Accepting is the keeper's offer, which has no accept action in the world yet, so nothing calls it yet.
 
 ## How it works
 
@@ -44,12 +46,14 @@ flowchart TD
 
 ## Key files
 
-| File                                                    | Role after the change                              |
-| :------------------------------------------------------ | :------------------------------------------------- |
-| `packages/genshin-world/src/models/world/Resident.ts`   | A nation's Reputation keeper, placed as a resident |
-| `packages/genshin-world/src/models/quest/QuestKind.ts`  | Requests and Reputation quests as world quests     |
-| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`  | A bounty's target, spawned when it is taken        |
-| `packages/genshin-world/src/models/inventory/Wallet.ts` | The Mora a request gives                           |
+| File                                                             | Role after the change                                         |
+| :--------------------------------------------------------------- | :------------------------------------------------------------ |
+| `packages/genshin-world/src/models/world/Resident.ts`            | A nation's Reputation keeper, placed as a resident            |
+| `packages/genshin-world/src/models/quest/QuestKind.ts`           | Requests and Reputation quests as world quests                |
+| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`           | A bounty's target, spawned when it is taken                   |
+| `packages/genshin-world/src/models/inventory/Wallet.ts`          | The Mora a request gives                                      |
+| `packages/genshin-world/src/models/quest/QuestId.ts`             | The delivery requests carried as world quests                 |
+| `scripts/src/services/genshinText/readReputationRequestQuest.ts` | A delivery request's quest, from its sub quest and giving row |
 
 ## Sources
 
