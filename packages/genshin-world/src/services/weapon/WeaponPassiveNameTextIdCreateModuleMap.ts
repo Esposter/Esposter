@@ -28,6 +28,7 @@ import { createDebutPassiveModule } from "#src/services/weapon/passives/createDe
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
+import { createDolorousStrokePassiveModule } from "#src/services/weapon/passives/createDolorousStrokePassiveModule";
 import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
 import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/createEchoOfAVowPassiveModule";
 import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapon/passives/createEchoesOfThePlentifulLandPassiveModule";
@@ -446,4 +447,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "867694867": createMournfulTributePassiveModule,
   // Sunset Reignites the Dawn (A Thousand Blazing Suns)
   "3945977923": createSunsetReignitesTheDawnPassiveModule,
+  // Dolorous Stroke (Disaster and Remorse)
+  "3742127275": createDolorousStrokePassiveModule,
 };
