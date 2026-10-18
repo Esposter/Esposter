@@ -21,6 +21,7 @@ import { guobaAttack } from "#src/services/gcg/cards/guobaAttack";
 import { hide } from "#src/services/gcg/cards/hide";
 import { icyPaws } from "#src/services/gcg/cards/icyPaws";
 import { illusoryTorrent } from "#src/services/gcg/cards/illusoryTorrent";
+import { infusedStonehide } from "#src/services/gcg/cards/infusedStonehide";
 import { lightningFang } from "#src/services/gcg/cards/lightningFang";
 import { midnightPhantasmagoria } from "#src/services/gcg/cards/midnightPhantasmagoria";
 import { mirrorReflectionOfDoom } from "#src/services/gcg/cards/mirrorReflectionOfDoom";
@@ -77,6 +78,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_22014", tideAndTorrent],
   ["Char_Skill_25012", blusteringBlade],
   ["Char_Skill_25013", frostyAssault],
+  ["Char_Skill_26014", infusedStonehide],
   ["Char_Skill_30023", hide],
   ["Char_Skill_33024", flowfireEdgeSkill],
   ["Char_Skill_34063", elementalSedimentation],

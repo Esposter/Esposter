@@ -1,8 +1,10 @@
+import type { GcgCharacter } from "#src/models/gcg/GcgCharacter";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
+import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -17,8 +19,11 @@ import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
+import { infusedStonehide } from "#src/services/gcg/cards/infusedStonehide";
+import { stoneForce } from "#src/services/gcg/cards/stoneForce";
 import { stonehide } from "#src/services/gcg/cards/stonehide";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
@@ -267,5 +272,55 @@ describe("stonehide", () => {
     const zoneCard = createGcgZoneCard(STONEHIDE_ID, stonehide);
     expect(stonehide.modifyDamageReceived?.(context, 0, zoneCard, Element.Geo)).toBe(0);
     expect(zoneCard.usages).toBe(3);
+  });
+});
+
+describe("stone Force", () => {
+  const STONE_FORCE_ID = 126_012;
+  const STONEHIDE_ID = 126_011;
+  const createStoneForceDuel = (statuses: GcgZoneCard[]): GcgDuel =>
+    createDuel([
+      createSideState([{ ...createCharacterState(2601), statuses }]),
+      createSideState([createCharacterState(1203)]),
+    ]);
+
+  test("the character's Physical DMG is converted to Geo, and its first DMG of the round is one more", () => {
+    expect.hasAssertions();
+    const zoneCard = createGcgZoneCard(STONE_FORCE_ID, stoneForce);
+    const context: GcgEffectContext = { duel: createStoneForceDuel([zoneCard]), sideIndex: 0 };
+    expect(
+      stoneForce.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
+    ).toStrictEqual({ damageType: Element.Geo, value: 3 });
+    expect(
+      stoneForce.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
+    ).toStrictEqual({ damageType: Element.Geo, value: 2 });
+  });
+
+  test("at the end phase it is spent once its character holds no Stonehide", () => {
+    expect.hasAssertions();
+    const zoneCard = createGcgZoneCard(STONE_FORCE_ID, stoneForce);
+    const withStonehide = createGcgZoneCard(STONEHIDE_ID, stonehide);
+    stoneForce.onEndPhase?.(
+      { characterIndex: 0, duel: createStoneForceDuel([zoneCard, withStonehide]), sideIndex: 0 },
+      zoneCard,
+    );
+    expect(zoneCard.usages).toBe(1);
+    stoneForce.onEndPhase?.({ characterIndex: 0, duel: createStoneForceDuel([zoneCard]), sideIndex: 0 }, zoneCard);
+    expect(zoneCard.usages).toBe(0);
+  });
+});
+
+describe("infused Stonehide", () => {
+  test("when the battle begins its character gains Stonehide and Stone Force", () => {
+    expect.hasAssertions();
+    const INFUSED_STONEHIDE_PASSIVE: GcgSkill = {
+      costs: [],
+      effect: "Char_Skill_26014",
+      energyGain: 0,
+      id: 26_014,
+      kind: GcgSkillKind.Passive,
+    };
+    const character: GcgCharacter = { ...createCharacterState(2601).character, skills: [INFUSED_STONEHIDE_PASSIVE] };
+    expect(listGcgStartingStatuses(character).map(({ cardId }) => cardId)).toStrictEqual([126_011, 126_012]);
   });
 });
