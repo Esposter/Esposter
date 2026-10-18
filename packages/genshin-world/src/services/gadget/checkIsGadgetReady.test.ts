@@ -11,6 +11,7 @@ describe(checkIsGadgetReady, () => {
     cooldownGroup: 1,
     cooldownOnFailSeconds: 0,
     cooldownSeconds: 30,
+    gatherItemId: 0,
     id: 220003,
     isEquipable: true,
     kind: GadgetKind.Detector,

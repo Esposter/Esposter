@@ -12,11 +12,12 @@ describe(toGadgetRows, () => {
       "220004": { $type: "ConfigWidgetClientCollector", coolDown: 100, isEquipable: true },
     };
 
-    expect(toGadgetRows(widgets)).toStrictEqual([
+    expect(toGadgetRows(widgets, new Map())).toStrictEqual([
       {
         cooldownGroup: 0,
         cooldownOnFailSeconds: 0,
         cooldownSeconds: 100,
+        gatherItemId: 0,
         id: 220004,
         isEquipable: true,
         kind: "Collector",
@@ -33,9 +34,31 @@ describe(toGadgetRows, () => {
       "220013": { $type: "ConfigWidgetTreasureMapDetector", coolDown: 30 },
     };
 
-    expect(toGadgetRows(widgets).map(({ id, region }) => ({ id, region }))).toStrictEqual([
+    expect(toGadgetRows(widgets, new Map()).map(({ id, region }) => ({ id, region }))).toStrictEqual([
       { id: 220003, region: "liyue" },
       { id: 220013, region: "" },
     ]);
+  });
+
+  test("an oculus resonance stone's row names the item its gather point type gives", () => {
+    expect.hasAssertions();
+
+    const widgets: Record<string, ConfigWidgetRow> = {
+      "1": { $type: "ConfigWidgetOneoffGatherPointDetector", coolDown: 300, gatherPointType: 7, isEquipable: true },
+    };
+
+    expect(toGadgetRows(widgets, new Map([[7, 101]])).map(({ gatherItemId }) => gatherItemId)).toStrictEqual([101]);
+  });
+
+  test("a gather point finder whose gather point type gives no item is refused", () => {
+    expect.hasAssertions();
+
+    const widgets: Record<string, ConfigWidgetRow> = {
+      "1": { $type: "ConfigWidgetOneoffGatherPointDetector", gatherPointType: 7 },
+    };
+
+    expect(() => toGadgetRows(widgets, new Map())).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: widget 1, names gather point type 7, which the gather table gives no item]`,
+    );
   });
 });

@@ -10,6 +10,7 @@ describe(startGadgetCooldown, () => {
     cooldownGroup: 2,
     cooldownOnFailSeconds: 5,
     cooldownSeconds: 30,
+    gatherItemId: 0,
     id: 220003,
     isEquipable: true,
     kind: GadgetKind.Detector,

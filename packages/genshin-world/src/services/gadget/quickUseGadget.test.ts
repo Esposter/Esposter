@@ -11,6 +11,7 @@ describe(quickUseGadget, () => {
     cooldownGroup: GROUP_ID,
     cooldownOnFailSeconds: 5,
     cooldownSeconds: 30,
+    gatherItemId: 0,
     id: 1001,
     isEquipable: true,
     kind: GadgetKind.Detector,

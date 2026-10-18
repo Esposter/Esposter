@@ -54,7 +54,7 @@ describe(readGatheringItems, () => {
 
   test("should read a row the dump leaves its point location out of as picked off the ground", () => {
     expect.hasAssertions();
-    readGatherRows([{ itemId: ITEM_ID, saveType: "GATHER_SAVE_TYPE_OWN" }]);
+    readGatherRows([{ itemId: ITEM_ID, pointType: 1001, saveType: "GATHER_SAVE_TYPE_OWN" }]);
     expect(readGatheringItems(labels)).toStrictEqual({
       items: [
         {
@@ -73,7 +73,7 @@ describe(readGatheringItems, () => {
 
   test("should leave out a ground row the dump leaves its save type out of, as it saves nothing", () => {
     expect.hasAssertions();
-    readGatherRows([{ itemId: ITEM_ID, pointLocation: GATHER_POINT_LOCATION_GROUND }]);
+    readGatherRows([{ itemId: ITEM_ID, pointLocation: GATHER_POINT_LOCATION_GROUND, pointType: 1001 }]);
     expect(readGatheringItems(labels)).toStrictEqual({ items: [], labelItemIdMap: new Map() });
   });
 });

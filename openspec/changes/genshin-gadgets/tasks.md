@@ -12,7 +12,7 @@
 
 - [x] 3.1 Point a Treasure Compass to the nearest treasure box once its city joins a region's chest slice. Verify: a test named after the scenario 'A compass points to the nearest box in its city' written first and seen failing.
 - [x] 3.2 Point a Seelie detector to the nearest Seelie crystal in its city. Verify: a test named after the scenario 'A Seelie detector points to the nearest crystal in its city' written first and seen failing.
-- [ ] 3.3 Decide the Oculus Resonance Stone's detector. Options: read its target from a table other than the config, or leave the stone without a detector until a target is found. Decides nothing here; the choice is recorded before the stone's detector is built.
+- [x] 3.3 Decide the Oculus Resonance Stone's detector. Options: read its target from a table other than the config, or leave the stone without a detector until a target is found. Decides nothing here; the choice is recorded before the stone's detector is built.
 
 ## 4. Collectors and placed devices
 
