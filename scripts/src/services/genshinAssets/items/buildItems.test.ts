@@ -22,9 +22,7 @@ vi.mock(import("#src/services/genshinAssets/expeditions/readMondstadtExpeditionP
 vi.mock(import("#src/services/genshinAssets/cooking/readCookingRecipes"), () => ({
   readCookingRecipes: vi.fn<() => CookingRecipe[]>(() => []),
 }));
-vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({
-  readExcelTable: vi.fn<typeof readExcelTable>(() => []),
-}));
+vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<() => never[]>(() => []) }));
 
 // The game's time as the dump writes it, read off the epoch
 const toGameTime = (date: Date) => date.toISOString().slice(0, 19).replace("T", " ");
