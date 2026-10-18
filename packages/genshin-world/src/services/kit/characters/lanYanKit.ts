@@ -1,4 +1,5 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
@@ -12,14 +13,26 @@ const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_ELEMENTAL_MASTERY = 60;
 const CONSTELLATION_4_SECONDS = 12;
 const CONSTELLATION_4_SOURCE = "lanyan-c4";
+// Skyfeather Evil-Subduing Charm, Lan Yan's Ascension 4 passive: each hit of Lustrous Moonrise adds 774% of her Elemental
+// Mastery as flat damage, as gcsim v2.47.2 (MIT) lanyan/burst.go gives it
+// https://github.com/genshinsim/gcsim/blob/main/internal/characters/lanyan/burst.go
+const ASCENSION_4 = 4;
+const LUSTROUS_MOONRISE_ELEMENTAL_MASTERY_SHARE = 7.74;
 
 // Lan Yan's behaviour: from Constellation 4, Lustrous Moonrise's cast gives the deployed team its Elemental Mastery. Not
 // Built: the Swallow-Wisp Pinion Dance's press, which sets a shield going that absorbs the element it finds on the enemy
 // It detects, and its Feathermoon Rings, which play in place of her attacks for 66 frames from that detect. The Rings wait
 // On a stance's attack tags, and the shield on the hook that absorbs an element from the field, so the press deals
-// Nothing until then, as Constellations 1, 2 and 6 and Ascension 1 and 4 wait on the same two
-export const createLanYanKitBehaviour = (): KitBehaviour => ({
+// Nothing until then, as Constellations 1, 2 and 6 and Ascension 1 wait on the same two. Skyfeather Evil-Subduing Charm
+// Is built from Ascension 4 on Lustrous Moonrise, and its Swallow-Wisp Pinion Dance part waits with the press
+export const createLanYanKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour => ({
   burst: {
+    hits: kit.elementalBurst.hits.map(() => ({
+      additiveBaseDamageBonus: ({ ascension, attributes }) =>
+        ascension < ASCENSION_4
+          ? 0
+          : LUSTROUS_MOONRISE_ELEMENTAL_MASTERY_SHARE * attributes.attributeTotalMap[Attribute.ElementalMastery],
+    })),
     onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
       if (combatant.constellationCount < CONSTELLATION_4) return;
       buffKitTeam(kitEffectState, party, {
