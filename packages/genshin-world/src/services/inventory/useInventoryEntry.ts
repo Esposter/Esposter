@@ -6,13 +6,13 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { Party } from "#src/models/party/Party";
 
 import { eatDish } from "#src/services/cooking/eatDish";
-import { FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
+import { checkIsFragileResin } from "#src/services/inventory/checkIsFragileResin";
 import { refillOriginalResinWithFragileResin } from "#src/services/originalResin/refillOriginalResinWithFragileResin";
 import { ItemCategory } from "genshin-interface";
 
 // The bag and wallet after one of its entries is used, routed by the entry's kind: a food is eaten through its dish's use
-// By the Character on the field, and Fragile Resin is routed by its id, since the published material table does not yet
-// Carry the item. Undefined, with nothing changed, where the bag holds no such entry or its kind has no use yet
+// By the Character on the field, and Fragile Resin by its id. Undefined, with nothing changed, where the bag holds no such
+// Entry or its kind has no use yet
 export const useInventoryEntry = (
   inventory: Inventory,
   entryId: number,
@@ -36,7 +36,7 @@ export const useInventoryEntry = (
 ): InventoryEntryUse | undefined => {
   const item = inventory.items.find(({ id }) => id === entryId);
   if (item === undefined) return undefined;
-  if (item.definition.id === FRAGILE_RESIN_ITEM_ID) return refillOriginalResinWithFragileResin(inventory, wallet, now);
+  if (checkIsFragileResin(item)) return refillOriginalResinWithFragileResin(inventory, wallet, now);
   switch (item.definition.category) {
     case ItemCategory.Food: {
       const dishUse = dishUseMap.get(item.definition.id);
