@@ -388,6 +388,18 @@ describe(createColumbinaKitBehaviour, () => {
       expect(shield?.health).toBeCloseTo(0.12 * pressed.attributes.maxHealth);
     });
 
+    test("constellation 1's Lunar-Crystallize shield is 12% of her max HP as her constellation 2 buff raises it", () => {
+      expect.hasAssertions();
+
+      const kitEffectState: KitEffectState = { effects: [] };
+      const { context, field, pressed } = pressSkill(kitEffectState, 2);
+      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
+        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
+
+      const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
+      expect(shield?.health).toBeCloseTo(0.12 * 1.4 * pressed.attributes.maxHealth);
+    });
+
     test("constellation 2 gives her 40% max HP for eight seconds with each Gravity Ripple", () => {
       expect.hasAssertions();
 
@@ -424,7 +436,7 @@ describe(createColumbinaKitBehaviour, () => {
       const [attack] = readTeamBuffs(kitEffectState);
       expect(attack?.attribute).toBe(Attribute.Attack);
       expect(attack?.characterId).toBe(COLUMBINA_CHARACTER_ID);
-      expect(attack?.amount).toBeCloseTo(0.01 * pressed.attributes.maxHealth);
+      expect(attack?.amount).toBeCloseTo(0.01 * 1.4 * pressed.attributes.maxHealth);
 
       for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
         feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);

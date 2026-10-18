@@ -27,6 +27,7 @@ import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { MOONRIDGE_DEW_MAXIMUM_COUNT } from "#src/services/party/constants";
@@ -234,7 +235,9 @@ const applyConstellation1 = (context: KitContext, combatant: Combatant, reaction
   else if (reactionType === LunarReactionType.LunarCrystallize)
     castKitShield(context.kitEffectState, COLUMBINA_CHARACTER_ID, {
       element: Element.Hydro,
-      health: CONSTELLATION_1_SHIELD_HEALTH_SHARE * combatant.attributes.maxHealth,
+      health:
+        CONSTELLATION_1_SHIELD_HEALTH_SHARE *
+        getKitMaxHealth(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap),
       secondsRemaining: CONSTELLATION_1_SHIELD_SECONDS,
     });
 };
@@ -259,7 +262,9 @@ const applyConstellation2 = (context: KitContext, combatant: Combatant, reaction
     )
       effect.secondsRemaining = 0;
   buffKitMember(context.kitEffectState, context.activeCombatant.characterId, {
-    amount: amountPerMaxHealth * combatant.attributes.maxHealth,
+    amount:
+      amountPerMaxHealth *
+      getKitMaxHealth(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap),
     attribute,
     isEndedOnSwap: true,
     secondsRemaining: CONSTELLATION_2_SECONDS,
