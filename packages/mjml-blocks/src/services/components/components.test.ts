@@ -1,8 +1,14 @@
-import { EXCLUDED_MJML_TAGS, MJML_BODY_CHILDREN, MJML_COMPONENT_SPECIFICATIONS } from "#src/services/constants";
+import {
+  EXCLUDED_MJML_TAGS,
+  MJML_BODY_ATTRIBUTES,
+  MJML_BODY_CHILDREN,
+  MJML_BREAKPOINT_ATTRIBUTES,
+  MJML_COMPONENT_SPECIFICATIONS,
+} from "#src/services/constants";
 import { TEST_RICH_TEXT } from "#src/services/constants.test";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { createRequire } from "node:module";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
 
 const CSS_CLASS = "css-class";
@@ -23,47 +29,40 @@ describe("components", () => {
   const preset = PRESET_SCHEMA.parse(createRequire(import.meta.url)("mjml-preset-core"));
   const components = preset.components.map(readComponent);
   const { dependencies } = preset;
+  const SPECIFICATION_ROWS = MJML_COMPONENT_SPECIFICATIONS.map((specification) => [specification.type, specification]);
 
-  test.each(MJML_COMPONENT_SPECIFICATIONS.map((specification) => [specification.type, specification]))(
+  test.each(SPECIFICATION_ROWS)(
     "%s takes the attributes MJML's component allows, less css-class and mj-class",
     (type, specification) => {
       expect.hasAssertions();
 
       const component = components.find((component) => component.componentName === type);
+      assert.exists(component);
       expect(specification.allowedAttributes).toStrictEqual(
         Object.fromEntries(
-          Object.entries(component?.allowedAttributes ?? {}).filter(
-            ([name]) => name !== CSS_CLASS && name !== MJ_CLASS,
-          ),
+          Object.entries(component.allowedAttributes ?? {}).filter(([name]) => name !== CSS_CLASS && name !== MJ_CLASS),
         ),
       );
     },
   );
-  test.each(MJML_COMPONENT_SPECIFICATIONS.map((specification) => [specification.type, specification]))(
-    "%s has the default attributes MJML's component sets",
-    (type, specification) => {
-      expect.hasAssertions();
+  test.each(SPECIFICATION_ROWS)("%s has the default attributes MJML's component sets", (type, specification) => {
+    expect.hasAssertions();
 
-      const component = components.find((component) => component.componentName === type);
-      expect(specification.defaultAttributes).toStrictEqual(
-        Object.fromEntries(
-          Object.entries(component?.defaultAttributes ?? {}).filter(([, value]) => typeof value === "string"),
-        ),
-      );
-    },
-  );
-  test.each(MJML_COMPONENT_SPECIFICATIONS.map((specification) => [specification.type, specification]))(
-    "%s has the children MJML's preset allows it",
-    (type, specification) => {
-      expect.hasAssertions();
+    const component = components.find((component) => component.componentName === type);
+    assert.exists(component);
+    expect(specification.defaultAttributes).toStrictEqual(
+      Object.fromEntries(Object.entries(component.defaultAttributes).filter(([, value]) => typeof value === "string")),
+    );
+  });
+  test.each(SPECIFICATION_ROWS)("%s has the children MJML's preset allows it", (type, specification) => {
+    expect.hasAssertions();
 
-      expect(specification.children).toStrictEqual(
-        (z.array(z.string()).optional().parse(dependencies[type]) ?? []).filter(
-          (tag) => !EXCLUDED_MJML_TAGS.includes(tag),
-        ),
-      );
-    },
-  );
+    expect(specification.children).toStrictEqual(
+      (z.array(z.string()).optional().parse(dependencies[type]) ?? []).filter(
+        (tag) => !EXCLUDED_MJML_TAGS.includes(tag),
+      ),
+    );
+  });
   test("the root's content is the children MJML's preset allows mj-body", () => {
     expect.hasAssertions();
 
@@ -82,7 +81,7 @@ describe("components", () => {
 
     const body = components.find((component) => component.componentName === "mj-body");
     const breakpoint = components.find((component) => component.componentName === "mj-breakpoint");
-    expect(body?.allowedAttributes).toStrictEqual({ "background-color": "color", id: "string", width: "unit(px)" });
-    expect(breakpoint?.allowedAttributes).toStrictEqual({ width: "unit(px)" });
+    expect(MJML_BODY_ATTRIBUTES).toStrictEqual(body?.allowedAttributes);
+    expect(MJML_BREAKPOINT_ATTRIBUTES).toStrictEqual(breakpoint?.allowedAttributes);
   });
 });
