@@ -23,7 +23,8 @@ export const advanceAchievements = (
     // A slot that names no id is an any-target trigger, which takes every doing of its kind
     const namedTargetIds = achievement.trigger.parameters[watch.targetSlot] ?? [];
     const isAnyTarget = namedTargetIds.length === 0;
-    if (!isAnyTarget && !namedTargetIds.includes(event.targetId)) continue;
+    // A region-only trigger does not match the doing's id to the ids it names, and still counts each id once
+    if (!watch.targetIsRegionOnly && !isAnyTarget && !namedTargetIds.includes(event.targetId)) continue;
     // A scope slot that names no id is any scope, as a target slot that names none is any target
     const namedScopeIds = watch.scopeSlot === undefined ? [] : (achievement.trigger.parameters[watch.scopeSlot] ?? []);
     if (namedScopeIds.length > 0 && !namedScopeIds.includes(event.scopeId ?? "")) continue;
