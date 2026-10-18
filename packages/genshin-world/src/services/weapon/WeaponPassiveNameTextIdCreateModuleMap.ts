@@ -30,6 +30,7 @@ import { createInfusionNeedlePassiveModule } from "#src/services/weapon/passives
 import { createInfusionScrollPassiveModule } from "#src/services/weapon/passives/createInfusionScrollPassiveModule";
 import { createInfusionStingerPassiveModule } from "#src/services/weapon/passives/createInfusionStingerPassiveModule";
 import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
+import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
@@ -210,4 +211,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1399609651": createUndyingAdmirationPassiveModule,
   // Spotless Heart (Cinnabar Spindle)
   "1348697123": createSpotlessHeartPassiveModule,
+  // Iwakura Succession (Amenoma Kageuchi)
+  "2700351571": createIwakuraSuccessionPassiveModule,
 };
