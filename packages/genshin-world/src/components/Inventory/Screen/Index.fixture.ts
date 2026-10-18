@@ -29,6 +29,7 @@ const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, i
 
 export const props = {
   dishUseMap: new Map(),
+  gadgetRows: [],
   gameText: ENGLISH_GAME_TEXT,
   initialCategory: ItemCategory.Weapon,
   inventory: { items: weapons, nextId: WEAPON_COUNT },
