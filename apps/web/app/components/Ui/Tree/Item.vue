@@ -32,7 +32,7 @@ const { item } = defineProps<Props>();
         :style="{ paddingInlineStart: `calc(var(--ui-step) * ${depth + 2})` }"
       >
         <Treeview.Cue #default="{ attrs: cueAttrs }" renderless>
-          <UiIcon :="cueAttrs" class="cue" :meaning="UiIconMeaning.Disclosure" />
+          <UiDisclosureIcon :="cueAttrs" />
         </Treeview.Cue>
         <UiItemContent is-markless flex-1 :title="item.title" />
         <UiIcon v-if="isSelected" :meaning="UiIconMeaning.Selected" text-accent />
@@ -45,9 +45,3 @@ const { item } = defineProps<Props>();
     </Treeview.Content>
   </Treeview.Item>
 </template>
-
-<style scoped>
-.cue[data-state="open"] {
-  rotate: 90deg;
-}
-</style>

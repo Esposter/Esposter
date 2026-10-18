@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { Collapsible } from "@vuetify/v0";
 
 interface Props {
@@ -18,7 +17,7 @@ const { headerAttrs } = defineProps<Props>();
       <Collapsible.Activator #default="{ attrs }" renderless>
         <button :="attrs" ui-item flex-1>
           <Collapsible.Cue #default="{ attrs: cueAttrs }" renderless>
-            <UiIcon :="cueAttrs" class="cue" :meaning="UiIconMeaning.Disclosure" />
+            <UiDisclosureIcon :="cueAttrs" />
           </Collapsible.Cue>
           <slot name="title" />
         </button>
@@ -33,9 +32,3 @@ const { headerAttrs } = defineProps<Props>();
     </Collapsible.Content>
   </Collapsible.Root>
 </template>
-
-<style scoped>
-.cue[data-state="open"] {
-  rotate: 90deg;
-}
-</style>
