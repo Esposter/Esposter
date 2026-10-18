@@ -55,6 +55,7 @@ const createCharacterFixture = (
   constantMap: new Map(constants),
   filePaths: [],
   folder,
+  holdCooldowns: [],
   queuedAttacks: [],
   talentFile: `${folder}.go`,
   talentParameterMap: new Map(talentParameters),
