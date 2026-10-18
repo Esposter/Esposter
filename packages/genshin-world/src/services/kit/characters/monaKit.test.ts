@@ -44,6 +44,65 @@ const createMonaCombatant = (): Combatant => ({
 });
 
 describe("mona kit", () => {
+  test("constellation 2 follows a normal attack's last hit with its Charged Attack's hit at the attack's hitmark, at a 20% chance", () => {
+    expect.hasAssertions();
+    const combatant = { ...createMonaCombatant(), constellationCount: 2 };
+    const attack = takeOne(MONA_KIT.normalAttacks);
+    const lastHit = takeOne(attack.hits.slice(-1));
+    const followUp = MONA_KIT.getNormalAttackExtraHit?.(
+      createKitTestContext(combatant, { random: () => 0.1 }),
+      lastHit,
+      MONA_KIT.normalAttacks.indexOf(attack),
+    );
+
+    expect(followUp).toStrictEqual({ ...takeOne(MONA_KIT.chargedAttack.hits), hitmarkSeconds: lastHit.hitmarkSeconds });
+  });
+
+  test("constellation 2 adds no follow-up at a roll of 20% or more, or on a hit that is not the attack's own last hit", () => {
+    expect.hasAssertions();
+    const combatant = { ...createMonaCombatant(), constellationCount: 2 };
+    const attack = takeOne(MONA_KIT.normalAttacks);
+    const chainIndex = MONA_KIT.normalAttacks.indexOf(attack);
+    const lastHit = takeOne(attack.hits.slice(-1));
+
+    expect([
+      MONA_KIT.getNormalAttackExtraHit?.(createKitTestContext(combatant, { random: () => 0.5 }), lastHit, chainIndex),
+      MONA_KIT.getNormalAttackExtraHit?.(
+        createKitTestContext(combatant, { random: () => 0.1 }),
+        { ...lastHit },
+        chainIndex,
+      ),
+    ]).toStrictEqual([undefined, undefined]);
+  });
+
+  test("constellation 2 follows up at most once in 5 seconds, and again after them", () => {
+    expect.hasAssertions();
+    const combatant = { ...createMonaCombatant(), constellationCount: 2 };
+    const attack = takeOne(MONA_KIT.normalAttacks);
+    const chainIndex = MONA_KIT.normalAttacks.indexOf(attack);
+    const lastHit = takeOne(attack.hits.slice(-1));
+    const context = createKitTestContext(combatant, { random: () => 0.1 });
+    const first = MONA_KIT.getNormalAttackExtraHit?.(context, lastHit, chainIndex);
+    const second = MONA_KIT.getNormalAttackExtraHit?.(context, lastHit, chainIndex);
+    stepKitTestEffects(5, context);
+    const third = MONA_KIT.getNormalAttackExtraHit?.(context, lastHit, chainIndex);
+
+    expect([first, second, third].map((followUp) => followUp !== undefined)).toStrictEqual([true, false, true]);
+  });
+
+  test("constellation 2 adds no follow-up below Constellation 2", () => {
+    expect.hasAssertions();
+    const attack = takeOne(MONA_KIT.normalAttacks);
+
+    expect(
+      MONA_KIT.getNormalAttackExtraHit?.(
+        createKitTestContext(createMonaCombatant(), { random: () => 0.1 }),
+        takeOne(attack.hits.slice(-1)),
+        MONA_KIT.normalAttacks.indexOf(attack),
+      ),
+    ).toBeUndefined();
+  });
+
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

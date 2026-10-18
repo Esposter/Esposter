@@ -1,6 +1,6 @@
 ## Purpose
 
-Mona's kit as built: four strikes, a charged attack, Mirror Reflection of Doom's summon, Stellaris Phantasm's bubble and Omen, and A1's phantom and A4's Hydro bonus, with her plunges' reach provisional.
+Mona's kit as built: four strikes, a charged attack, Mirror Reflection of Doom's summon, Stellaris Phantasm's bubble and Omen, A1's phantom, A4's Hydro bonus and Constellation 2's Charged Attack follow-up, with her plunges' reach provisional and Constellations 1, 4 and 6 left out.
 
 ## Requirements
 
@@ -73,6 +73,38 @@ Mona's Ascension 4 SHALL add 20% of her Energy Recharge to her Hydro DMG Bonus o
 - **GIVEN** Mona has Ascension 4 and Energy Recharge
 - **WHEN** a Hydro hit of hers, or of her summon, lands
 - **THEN** its Hydro DMG Bonus includes 20% of her Energy Recharge
+
+### Requirement: Constellation 2's Charged Attack follow-up
+
+From Constellation 2, a normal attack's last hit SHALL have a 20% chance to be followed by her Charged Attack's hit at that hit's hitmark, and no follow-up SHALL land within 5 seconds of the last one.
+
+#### Scenario: A normal attack may be followed by a Charged Attack
+
+- **GIVEN** Mona has Constellation 2
+- **WHEN** a normal attack's last hit lands and the roll is under 20%
+- **THEN** her Charged Attack's hit lands at that hit's hitmark
+
+#### Scenario: Follow-up is limited to once in 5 seconds
+
+- **GIVEN** Mona has Constellation 2 and a follow-up has just landed
+- **WHEN** a normal attack's last hit lands within 5 seconds of it
+- **THEN** no follow-up lands
+
+#### Scenario: Below Constellation 2 nothing follows
+
+- **GIVEN** Mona has Constellation 1
+- **WHEN** a normal attack's last hit lands
+- **THEN** no follow-up lands
+
+### Requirement: Unbuilt Mona effects
+
+Constellations 1, 4 and 6, and Hexerei's post-burst follow-up, SHALL NOT take effect.
+
+#### Scenario: Unbuilt effects do nothing
+
+- **GIVEN** Mona has Constellation 1, 4 or 6, or is Hexerei
+- **WHEN** the player fights with Mona
+- **THEN** those effects have no effect
 
 ### Requirement: Mona's plunge reach
 
