@@ -42,6 +42,10 @@ describe(buyShopGood, () => {
   const GROCERY_NAME_TEXT_ID = "1";
   const GROCERY_NAME = "Ingredient";
   const MORA_PRICE = 3;
+  // A Souvenir Shop's goods are paid in its region's Sigil, here Mondstadt's Anemo Sigil, and give Mora or an item
+  const ANEMO_SIGIL_ITEM_ID = 305;
+  const SIGIL_PRICE = 2;
+  const SIGIL_MORA_COUNT = 5;
   const groceryMaterial: MaterialData = {
     id: GROCERY_ITEM_ID,
     materialType: MaterialType.Exchange,
@@ -185,6 +189,50 @@ describe(buyShopGood, () => {
         quantity: 1,
       },
     ]);
+  });
+
+  test("sigils are traded for materials, blueprints and Mora", () => {
+    expect.hasAssertions();
+
+    const wallet = { ...EMPTY_WALLET, [Currency.AnemoSigil]: SIGIL_PRICE * 2 };
+    const moraGood: ShopGood = {
+      ...groceryGood,
+      goodsId: 3002,
+      itemCount: SIGIL_MORA_COUNT,
+      itemId: MORA_ITEM_ID,
+      priceCount: SIGIL_PRICE,
+      priceItemId: ANEMO_SIGIL_ITEM_ID,
+    };
+    const moraResult = buyShopGood(
+      wallet,
+      EMPTY_INVENTORY,
+      getGroceryItemDefinition,
+      [],
+      moraGood,
+      ADVENTURE_RANK,
+      NOW,
+    );
+
+    expect(moraResult?.wallet[Currency.AnemoSigil]).toBe(SIGIL_PRICE);
+    expect(moraResult?.wallet[Currency.Mora]).toBe(SIGIL_MORA_COUNT);
+    const materialGood: ShopGood = {
+      ...groceryGood,
+      goodsId: 3003,
+      priceCount: SIGIL_PRICE,
+      priceItemId: ANEMO_SIGIL_ITEM_ID,
+    };
+    const materialResult = buyShopGood(
+      wallet,
+      EMPTY_INVENTORY,
+      getGroceryItemDefinition,
+      [],
+      materialGood,
+      ADVENTURE_RANK,
+      NOW,
+    );
+
+    expect(materialResult?.wallet[Currency.AnemoSigil]).toBe(SIGIL_PRICE);
+    expect(materialResult?.inventory.items.map(({ definition }) => definition.id)).toStrictEqual([GROCERY_ITEM_ID]);
   });
 
   test("a purchase the bag cannot hold whole is refused", () => {
