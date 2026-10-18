@@ -14,7 +14,7 @@ Not built, and why each is out of reach of the kit now:
 - Constellations 1, 2, 4 and 6. C1 extends Icefang Rush and needs Gracious Rebuke; C2 adds 40% per Prosecution Edict stack to Darkgold Wolfbite, a damage bonus the strike hook cannot read; C4 and C6 need Rebuke's heal and CRIT and icicle.
 - The charged attack's ascension and constellation boxes.
 
-The kit-records row stays open. Its one `Unclassified` overlay entry, `skill.hits.length`, zero, has no source the builder reads, so it stays until one exists. The five burst areas leave for gcsim's 8 by 16 box, read as a circle of 16.49, the source's value.
+The kit-records row stays open. Its one overlay entry, `skill.hits.length`, zero, is `Unsourced`: gcsim's `skill.go` queues no attack, and Icefang Rush deals no damage, so the zero stands. The five burst areas leave for gcsim's 8 by 16 box, read as a circle of 16.49, the source's value.
 
 ## Key files
 
