@@ -8,10 +8,7 @@ vi.mock(import("#src/services/gameData/publishGameDataStep"), () => ({
   publishGameDataStep: vi.fn<(options: unknown) => Promise<string>>(() => Promise.resolve("published")),
 }));
 vi.mock(import("#src/services/genshinAssets/mail/buildMailPublication"), () => ({
-  buildMailPublication: () => ({
-    note: "",
-    publication: { indexes: { "mail/mail": {} }, objects: { "mailText/ChineseSimplified": {} } },
-  }),
+  buildMailPublication: () => ({ note: "", publication: {} }),
 }));
 
 describe("mailCommand", () => {
