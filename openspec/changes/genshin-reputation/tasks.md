@@ -4,7 +4,7 @@
 
 ## 2. Requests and bounties
 
-- [ ] 2.1 Offer requests from level two as world quests, paying EXP and Mora on completion. Verify: tests named after the scenarios 'A request is not offered before level two', 'A delivery request pays on completion' and 'A camp request pays once its camp is cleared'. The delivery requests are offered and accepted; 7070901, 7071001 and 7071101 stay out until their main quests' binaries name their kinds.
+- [ ] 2.1 Offer requests from level two as world quests, paying EXP and Mora on completion. Verify: tests named after the scenarios 'A request is not offered before level two' and 'A delivery request pays on completion'. The delivery requests are offered and accepted; 7070901, 7071001 and 7071101 stay out: their binaries name them food-group deliveries (WQ, any of a group), not camps, which needs an any-of objective.
 - [ ] 2.2 Offer bounties from level two, spawning the target when a bounty is taken and claiming it back after its defeat. Verify: tests named after the scenarios 'A bounty's target spawns when the bounty is taken' and 'A bounty cannot be claimed before its target is defeated'.
 - [x] 2.3 Decide how a Reputation quest row is bound to the quest that pays it. The options are the quest its parentQuestId names, or the quest that pays the row's reward; this task decides nothing. Verify: the chosen option is recorded in this change before task 3.1 starts.
 
