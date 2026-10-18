@@ -57,7 +57,14 @@ describe(useWorldMap, () => {
     position: { x: 20, z: 0 },
     rotation: 0,
   };
-  const region: RegionData = { enemyCamps: [], id: REGION_ID, landmarks: [statue], residents: [], waterfalls: [] };
+  const region: RegionData = {
+    enemyCamps: [],
+    goToPlaces: [],
+    id: REGION_ID,
+    landmarks: [statue],
+    residents: [],
+    waterfalls: [],
+  };
   const explorationAreas: ExplorationArea[] = [
     {
       areaId: AREA_ID,
