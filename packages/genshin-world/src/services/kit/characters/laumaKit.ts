@@ -68,14 +68,13 @@ const BURST_ID = "lauma-burst";
 const MOON_SONG_DEW_ID = "lauma-moon-song-dew";
 const MOON_SONG_ICD_ID = "lauma-moon-song-icd";
 const PALE_HYMN_GAIN_ID = "lauma-pale-hymn-gain";
-// The reactions a Pale Hymn is spent on: Bloom and its kin, and the Lunar-Bloom her Benediction turns Bloom into
 // Constellation 2 adds Elemental Mastery to each Bloom's and each Lunar-Bloom's Pale Hymn ratio, as gcsim v2.47.2 (MIT)
 // Lauma/cons.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go
 const C2_CONSTELLATION = 2;
 const C2_BLOOM_INCREASE = 5;
 const C2_LUNAR_BLOOM_INCREASE = 4;
-
+// The reactions a Pale Hymn is spent on: Bloom and its kin, and the Lunar-Bloom her Benediction turns Bloom into
 const PALE_HYMN_REACTION_TYPES = new Set<ReactionType>([
   TransformativeReactionType.Bloom,
   TransformativeReactionType.Burgeon,
