@@ -63,6 +63,7 @@ flowchart TD
 | `packages/genshin-engine/src/terrain/getTerrainTileBounds.ts`                  | The rectangle a tile's heights are read over, its padding included                   |
 | `packages/genshin-engine/src/world/computeOriginShift.ts`                      | When the world is moved back under the camera, and by how much                       |
 | `packages/genshin-world/src/components/World/Terrain/Index.vue`                | The worker pool, the tile meshes, and the frame's selection                          |
+| `packages/genshin-world/src/services/world/createTileWorkerLedger.ts`          | Which worker holds each generating tile, so a failure fails only its own             |
 | `packages/genshin-world/src/workers/terrainTile.worker.ts`                     | A tile generated from the heights and colours, with its flowers                      |
 | `packages/genshin-world/src/models/world/TerrainWorkerMessage.ts`              | What the terrain posts a worker: its ground once, then each tile                     |
 | `packages/genshin-world/src/models/world/TerrainWorkerFailure.ts`              | What a worker answers a tile it could not build with: the tile's key                 |
