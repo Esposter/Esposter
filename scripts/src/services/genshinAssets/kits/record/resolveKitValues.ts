@@ -57,9 +57,16 @@ export const resolveKitValues = (
       valueMap.set(path, entry.value);
       provenanceMap.set(path, { cause: entry.cause, source: KitSource.Overlay });
     }
-  const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, tables.talentGroupIdMap);
-  chooseDefaults(namedListKitCandidateMap);
   chooseDefaults(sourceCandidateMap);
+  // A named list's hits list is empty, which supersedes gcsim's count of the talent's hits. Its multipliers may come from
+  // The tables, so the list is read once the source defaults are in, and it takes over what they chose for paths the
+  // Overlay does not set
+  const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, tables.talentGroupIdMap);
+  for (const [path, [candidate]] of namedListKitCandidateMap) {
+    if (candidate === undefined || Object.hasOwn(overlay, path)) continue;
+    valueMap.set(path, candidate.value);
+    provenanceMap.set(path, candidate.provenance);
+  }
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
   chooseDefaults(namedHitKitCandidateMap);
   const ruleCandidateMap = getRuleKitCandidates(valueMap);
