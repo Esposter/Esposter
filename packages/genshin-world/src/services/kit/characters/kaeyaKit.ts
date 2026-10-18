@@ -13,6 +13,10 @@ export const KAEYA_CHARACTER_ID = 10_000_015;
 // Kaeya's behaviour: Frostgnaw's hit heals him from Ascension 1, and Glacial Waltz's icicles are a summon's hits, landing
 // From where he cast it and priced by him. Frostgnaw's damage against Water, A4's particles and Glacial Waltz's
 // Activation knockback are not built
+// Constellation 1 needs the Cryo state on each enemy his normal and charged attacks strike, which is not carried
+// Constellation 2 needs each enemy defeated during Glacial Waltz, which no kit event reports
+// Constellation 4 needs the shield at 20% HP, its 30% of Max HP and 20 seconds, which the kit does not build
+// Constellation 6 needs one more icicle and 15 Energy on Glacial Waltz's cast, neither built
 export const createKaeyaKitBehaviour = ({ readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const icicles = readHits("icicle");
   const glacialWaltzSeconds = readSeconds("glacialWaltz");
