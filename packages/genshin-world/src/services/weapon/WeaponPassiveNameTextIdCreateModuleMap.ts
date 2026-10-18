@@ -36,6 +36,7 @@ import { createFocusPassiveModule } from "#src/services/weapon/passives/createFo
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
 import { createGildingPassiveModule } from "#src/services/weapon/passives/createGildingPassiveModule";
+import { createGoldenMajestyPassiveModule } from "#src/services/weapon/passives/createGoldenMajestyPassiveModule";
 import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passives/createGuerillaTacticsPassiveModule";
 import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
 import { createHeavyPassiveModule } from "#src/services/weapon/passives/createHeavyPassiveModule";
@@ -329,4 +330,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "303626691": createDaylightsAuguryPassiveModule,
   // The Parting Refrain (Elegy for the End)
   "3170252851": createThePartingRefrainPassiveModule,
+  // Golden Majesty (Vortex Vanquisher)
+  "3573861603": createGoldenMajestyPassiveModule,
 };
