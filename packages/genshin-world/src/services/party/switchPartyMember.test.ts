@@ -71,4 +71,19 @@ describe(switchPartyMember, () => {
       switchPartyMember(createParty([1, 2]), 1, 0, otherState.effects),
     ]).toStrictEqual([PartySwitchResult.Blocked, PartySwitchResult.Switched]);
   });
+
+  test("switches off an empty field slot without a swap lock blocking it", () => {
+    expect.hasAssertions();
+
+    const lockedState: KitEffectState = { effects: [] };
+    addKitSwapLock(lockedState, 1, 5);
+    const party = createParty([1, 2]);
+    party.activeIndex = 2;
+    const result = switchPartyMember(party, 1, 0, lockedState.effects);
+
+    expect({ activeIndex: party.activeIndex, result }).toStrictEqual({
+      activeIndex: 1,
+      result: PartySwitchResult.Switched,
+    });
+  });
 });
