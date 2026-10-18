@@ -6,6 +6,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
@@ -90,7 +91,7 @@ export const createCharlotteKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId } = combatant;
         const castCentre = createAheadBody(body, BURST_OFFSET_METRES).position;
-        castKitSummon(kitEffectState, body, combatant, kameraHits);
+        castKitSummon(kitEffectState, body, combatant, kameraHits, { attackTag: AttackTag.ElementalBurst });
         // The cast heal reaches the whole deployed team wherever it stands, whatever the burst strikes
         scheduleKitTask(kitEffectState, characterId, burstHitmarkSeconds, (tick) =>
           healTeam(tick, combatant, stillPhotoFlatHealth, stillPhotoAttackShare),
@@ -122,7 +123,7 @@ export const createCharlotteKitBehaviour = ({
         const thornBody: KitBody = { facing: 0, height: 0, position: { x: position.x, z: position.z } };
         scheduleKitTask(kitEffectState, characterId, thornHitmarkSeconds, ({ kitEffectState: effectState }) => {
           if (!startKitCooldown(effectState, characterId, THORN_COOLDOWN_STATUS_ID, thornCooldownSeconds)) return;
-          castKitSummon(effectState, thornBody, combatant, [thorn]);
+          castKitSummon(effectState, thornBody, combatant, [thorn], { attackTag: AttackTag.ChargedAttack });
         });
       },
     },
@@ -135,7 +136,7 @@ export const createCharlotteKitBehaviour = ({
         { facing: 0, height: 0, position: { x: enemy.position.x, z: enemy.position.z } },
         combatant,
         [snappyMarkHit],
-        { target: enemy },
+        { attackTag: AttackTag.ElementalSkill, target: enemy },
       );
     },
     // Framing's press and its hold share the press's Snappy Silhouette marks. The hold's Focused Impression is not built

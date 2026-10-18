@@ -5,6 +5,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -114,7 +115,9 @@ export const createChongyunKitBehaviour = ({
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount >= RALLY_OF_FOUR_BLADES_CONSTELLATION)
-          castKitSummon(kitEffectState, body, combatant, [rallyOfFourBladesHit]);
+          castKitSummon(kitEffectState, body, combatant, [rallyOfFourBladesHit], {
+            attackTag: AttackTag.ElementalBurst,
+          });
       },
     },
     getStrikeDamageBonus: ({ combatant, hit }, enemy, party) =>
@@ -140,9 +143,13 @@ export const createChongyunKitBehaviour = ({
           { facing: 0, height: 0, position: centre },
           enemyMap.values(),
         );
-        castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy?.position ?? centre }, combatant, [
-          rimechaserBladeHit,
-        ]);
+        castKitSummon(
+          kitEffectState,
+          { facing: 0, height: 0, position: enemy?.position ?? centre },
+          combatant,
+          [rimechaserBladeHit],
+          { attackTag: AttackTag.ElementalSkill },
+        );
       } else if (event.kind === KitEventKind.NormalAttackLanded) {
         if (
           activeCombatant.characterId === characterId &&
