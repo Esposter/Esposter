@@ -91,7 +91,8 @@ export const useWorldDomains = ({
   const enterDomain = (dungeonId: number) => {
     const entrance = domainEntrance.value;
     const schedule = domainSchedule.value;
-    if (!entrance || !schedule) return;
+    // A challenge already running is not restarted, so its timer cannot be reset by entering again from the entrance
+    if (domainChallenge.value || !entrance || !schedule) return;
     const levelIndex = schedule.levels.findIndex((level) => level.dungeonId === dungeonId);
     const level = DOMAIN_CHALLENGE_LEVELS[entrance.entryId]?.[levelIndex];
     if (!level) return;
