@@ -11,9 +11,9 @@ import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe } from "vitest";
 
-// A character's hosted kit record read through the local mirror, with readers for its frames and hits, and the
-// Resolver its kit resolves the record's parameters with: each parameter read off its talent's table at the level the
-// Talent starts at, as `readCharacterKit` plays it
+// A character's hosted kit record read through the local mirror, with readers for its frames, hits and parameters, and
+// the Resolver its kit resolves the record's parameters with: each parameter read off its talent's table at the level
+// the Talent starts at, as `readCharacterKit` plays it
 export const readCharacterKitRecord = async (characterId: number) => {
   const [record, talentMultiplierMap, characterTalentKits] = await Promise.all([
     readGameDataEntry(GAME_DATA_LOCAL_BASE_URL, GameDataset.Kits, String(characterId), kitRecordSchema),
@@ -47,7 +47,14 @@ export const readCharacterKitRecord = async (characterId: number) => {
     if (hits === undefined) throw new InvalidOperationError(Operation.Read, name, "is not a hit of the record");
     return Array.isArray(hits) ? hits : [hits];
   };
-  return { readFrame, readFrameList, readHits, record, toParameter };
+  // A parameter of the record, resolved off its talent's table at the level the talent plays at, as the kit resolves it
+  const readRecordParameter = (name: string): number => {
+    const parameter = record.parameters?.[name];
+    if (parameter === undefined || Array.isArray(parameter))
+      throw new InvalidOperationError(Operation.Read, name, "is not a single parameter of the record");
+    return toParameter(parameter);
+  };
+  return { readFrame, readFrameList, readHits, readRecordParameter, record, toParameter };
 };
 
 describe.todo("readCharacterKitRecord");

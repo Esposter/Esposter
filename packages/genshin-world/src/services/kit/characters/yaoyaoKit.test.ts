@@ -21,26 +21,13 @@ import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { LocomotionState } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const YAOYAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAOYAO_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const {
-  readFrame,
-  readFrameList,
-  readHits,
-  record: yaoyaoRecord,
-  toParameter,
-} = await readCharacterKitRecord(YAOYAO_CHARACTER_ID);
-// A parameter of her record, resolved off its talent's table at the level the talent plays at, as her kit resolves it
-const readRecordParameter = (name: string): number => {
-  const parameter = yaoyaoRecord.parameters?.[name];
-  if (parameter === undefined || Array.isArray(parameter))
-    throw new InvalidOperationError(Operation.Read, name, "is not a single parameter of her record");
-  return toParameter(parameter);
-};
+const { readFrame, readFrameList, readHits, readRecordParameter } = await readCharacterKitRecord(YAOYAO_CHARACTER_ID);
 // A radish's heal, its share of Yaoyao's Max HP and its flat amount, for the skill's radish and the burst's
 const SKILL_RADISH_HEAL_SHARE = readRecordParameter("skillRadishHealMaxHealthShare");
 const SKILL_RADISH_FLAT_HEAL = readRecordParameter("skillRadishFlatHeal");
