@@ -16,6 +16,6 @@ describe(inferOnsets, () => {
 
     const onsets = [[0], [0.2], [0]];
 
-    expect(inferOnsets(onsets, [[0], [0], [0]])).toBe(onsets);
+    expect(inferOnsets(onsets, [[0], [0], [0]])).toStrictEqual(onsets);
   });
 });

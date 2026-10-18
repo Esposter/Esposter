@@ -3,11 +3,11 @@ import { createNotes } from "#src/services/createNotes";
 import { readModel } from "#src/services/readModel";
 import { fileURLToPath } from "node:url";
 import { InferenceSession, Tensor } from "onnxruntime-node";
-import { afterEach, describe, expect, test, vi } from "vitest";
-
-const readShippedSession = (): Promise<InferenceSession> => InferenceSession.create(fileURLToPath(MODEL_URL));
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(readModel, () => {
+  let session: InferenceSession;
+
   // A tone at A4 whose frames the model's first window covers, though its samples run into a second window
   const tone = Float32Array.from(
     { length: 36000 },
@@ -19,23 +19,21 @@ describe(readModel, () => {
     (_value, index) => Math.sin((2 * Math.PI * (index < 18000 ? 440 : 659) * index) / AUDIO_SAMPLE_RATE) / 2,
   );
 
+  beforeAll(async () => {
+    session = await InferenceSession.create(fileURLToPath(MODEL_URL));
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  test("hears a tone's pitch", async () => {
-    expect.hasAssertions();
-
-    const session = await readShippedSession();
-    const readings = await readModel(session, tone);
-
-    expect(new Set(createNotes(readings).map(({ pitchMidi }) => pitchMidi))).toStrictEqual(new Set([69]));
+  afterAll(async () => {
+    await session.release();
   });
 
   test("disposes every output it reads", async () => {
     expect.hasAssertions();
 
-    const session = await readShippedSession();
     const run = vi.spyOn(session, "run");
     const dispose = vi.spyOn(Tensor.prototype, "dispose");
     await readModel(session, tone);
@@ -46,7 +44,6 @@ describe(readModel, () => {
   test("runs no window past the recording's last frame", async () => {
     expect.hasAssertions();
 
-    const session = await readShippedSession();
     const run = vi.spyOn(session, "run");
     const readings = await readModel(session, tone);
 
@@ -59,7 +56,6 @@ describe(readModel, () => {
   test("hears the notes the TensorFlow.js export heard", async () => {
     expect.hasAssertions();
 
-    const session = await readShippedSession();
     const readings = await readModel(session, twoTones);
 
     expect(
@@ -81,6 +77,37 @@ describe(readModel, () => {
           "startFrame": 68,
         },
       ]
+    `);
+  });
+
+  test("reads a note across the seam between two windows", async () => {
+    expect.hasAssertions();
+
+    const seamTone = Float32Array.from(
+      { length: 60000 },
+      (_value, index) => Math.sin((2 * Math.PI * 440 * index) / AUDIO_SAMPLE_RATE) / 2,
+    );
+    const run = vi.spyOn(session, "run");
+    const readings = await readModel(session, seamTone);
+
+    expect({
+      executions: run.mock.calls.length,
+      notes: createNotes(readings).map(({ durationFrames, pitchMidi, startFrame }) => ({
+        durationFrames,
+        pitchMidi,
+        startFrame,
+      })),
+    }).toMatchInlineSnapshot(`
+      {
+        "executions": 2,
+        "notes": [
+          {
+            "durationFrames": 231,
+            "pitchMidi": 69,
+            "startFrame": 2,
+          },
+        ],
+      }
     `);
   });
 });

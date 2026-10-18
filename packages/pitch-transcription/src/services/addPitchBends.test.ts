@@ -1,17 +1,28 @@
-import { CONTOUR_BINS } from "#src/constants";
+import { CONTOUR_BINS, CONTOUR_BINS_PER_SEMITONE, MIDI_OFFSET } from "#src/constants";
 import { addPitchBends } from "#src/services/addPitchBends";
 import { describe, expect, test } from "vitest";
 
+// A contour row whose only readings are a peak of one at each of the bins given
+const toContourRow = (peakBins: number[]) =>
+  Array.from({ length: CONTOUR_BINS }, (_value, bin) => (peakBins.includes(bin) ? 1 : 0));
+
 describe(addPitchBends, () => {
-  test("reads each frame's bend as its contour's offset in bins from the note's pitch", () => {
-    expect.hasAssertions();
+  const MIDDLE_PITCH = 60;
+  const MIDDLE_BIN = (MIDDLE_PITCH - MIDI_OFFSET) * CONTOUR_BINS_PER_SEMITONE;
 
-    const note = { amplitude: 1, durationFrames: 2, pitchMidi: 60, startFrame: 0 };
-    const pitchBin = 117;
-    const contours = [pitchBin + 1, pitchBin - 1].map((peakBin) =>
-      Array.from({ length: CONTOUR_BINS }, (_value, bin) => (bin === peakBin ? 1 : 0)),
-    );
+  test.each<[string, number, number[][], number[]]>([
+    ["the middle of the range", MIDDLE_PITCH, [[MIDDLE_BIN + 1], [MIDDLE_BIN - 1]], [1, -1]],
+    ["the bottom edge, the search clipped at bin 0", MIDI_OFFSET, [[1]], [1]],
+    ["a tie, to the lower bin", MIDDLE_PITCH, [[MIDDLE_BIN - 1, MIDDLE_BIN + 1]], [-1]],
+  ])(
+    "reads each frame's bend as its contour's offset in bins from the note's pitch, %s",
+    (_label, pitchMidi, peakBinsByFrame, expected) => {
+      expect.hasAssertions();
 
-    expect(addPitchBends(contours, [note])).toStrictEqual([{ ...note, pitchBends: [1, -1] }]);
-  });
+      const note = { amplitude: 1, durationFrames: peakBinsByFrame.length, pitchMidi, startFrame: 0 };
+      const contours = peakBinsByFrame.map((peakBins) => toContourRow(peakBins));
+
+      expect(addPitchBends(contours, [note])).toStrictEqual([{ ...note, pitchBends: expected }]);
+    },
+  );
 });
