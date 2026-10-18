@@ -111,6 +111,9 @@ import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
+import { getShortcutWheelStep } from "#src/services/shortcutWheel/getShortcutWheelStep";
+import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
+import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
@@ -787,6 +790,23 @@ const isHudHidden = ref(false);
 const isHudShown = computed(
   () => !cameraPose && !witness && !isPaused && !isHudHidden.value && !screenBehaviour.value.isHudHidden,
 );
+// The shortcut wheel is open while its key is held in the world: the move points at an entry, and letting the key go
+// Opens that entry's screen
+const shortcutWheelDirectionCount = ShortcutWheelDirectionCount.Eight;
+const isShortcutWheelOpen = ref(false);
+const shortcutWheelPickedIndex = ref<number>();
+let shortcutWheelStep: ShortcutWheelStep = {
+  isOpen: false,
+  move: { x: 0, y: 0 },
+  openedScreenKind: undefined,
+  pickedIndex: undefined,
+};
+const stepShortcutWheel = (isHeld: boolean, x: number, y: number): void => {
+  shortcutWheelStep = getShortcutWheelStep(shortcutWheelStep, isHeld, { x, y }, shortcutWheelDirectionCount);
+  isShortcutWheelOpen.value = shortcutWheelStep.isOpen;
+  shortcutWheelPickedIndex.value = shortcutWheelStep.pickedIndex;
+  if (shortcutWheelStep.openedScreenKind !== undefined) screenKind.value = shortcutWheelStep.openedScreenKind;
+};
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
@@ -920,6 +940,12 @@ defineExpose({ jumpTo, readCameraPosition });
               screenKind,
               inputState.pressedActions,
               checkIsSpecialStoryModeActive(questsInProgress.value, questProgressMap.value),
+            );
+          if (!isPaused && screenKind === ScreenKind.World)
+            stepShortcutWheel(
+              inputState.heldActions.has(InputAction.OpenShortcutWheel),
+              inputState.moveRight,
+              -inputState.moveForward,
             );
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
             isHudHidden = !isHudHidden;
@@ -1112,6 +1138,14 @@ defineExpose({ jumpTo, readCameraPosition });
       :name-text
       :origin
     />
+    <!-- The shortcut wheel drawn over the world while its key is held, its entries and their pick from the move -->
+    <div v-if="isShortcutWheelOpen" class="shortcut-wheel">
+      <HudShortcutWheel
+        :direction-count="shortcutWheelDirectionCount"
+        :game-text="gameText"
+        :picked-index="shortcutWheelPickedIndex"
+      />
+    </div>
     <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
     <HudNavigation
       v-if="isHudShown && pointedLandmark"
@@ -1492,6 +1526,17 @@ defineExpose({ jumpTo, readCameraPosition });
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* The shortcut wheel centred over the world, its size the shorter side of the view so it fits any window */
+.shortcut-wheel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(60vh, 60vw);
+  aspect-ratio: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
 }
 
 /* The teleport's fade to the loading screen's background and back, its durations read off the teleport clip */

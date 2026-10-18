@@ -25,11 +25,15 @@ The default entries are the wiki's, in its order clockwise from the top. An 8-di
 
 ## Key files
 
-The work adds new files only, so the wheel's layout is a tree, not a table:
+The session file already exists and changes; the wheel's new files sit in a tree:
+
+| File                                                            | Role                                                                                                 |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Holds the wheel's step each frame, draws the wheel while its key is held, opens the entry on release |
 
 ```text
-packages/genshin-world/src/services/shortcutWheel/   ← the entries and the direction, pure and tested
-packages/genshin-world/src/models/shortcutWheel/     ← the direction count, as an enum
+packages/genshin-world/src/services/shortcutWheel/   ← the entries, the direction and the hold and release step, pure and tested
+packages/genshin-world/src/models/shortcutWheel/     ← the direction count, as an enum, and the step between two frames
 packages/genshin-world/src/components/Hud/ShortcutWheel/ ← the wheel drawn from the picked direction count, with its browser test
 ```
 
@@ -37,3 +41,4 @@ packages/genshin-world/src/components/Hud/ShortcutWheel/ ← the wheel drawn fro
 
 - The wheel is an overlay over the world, not a screen in `ScreenKind`, so `getNextScreenKind` does not change: the entry it picks is opened through the same screen path a shortcut takes.
 - The 8- and 4-direction counts come from Settings once customization lands, so the direction count is a parameter here, not a constant the wheel reads.
+- The move that picks the entry is the stick's or the keys' move, so while the wheel is open the character still walks on that move. Gating the walk on the wheel is open, and waits on the layout's trace.
