@@ -4,6 +4,8 @@ export const ABYSS_SHORT_CLOCK_LAST_FLOOR_INDEX = 4;
 // Provisional until a recording measures a chamber's clock at its clear
 export const ABYSS_SHORT_CLOCK_SECONDS = 300;
 export const ABYSS_LONG_CLOCK_SECONDS = 600;
+// The last floor of the Abyss Corridor, the eighth. Every floor above it is the Abyssal Moon Spire's, whose period gives its blessing
+export const ABYSS_CORRIDOR_LAST_FLOOR_INDEX = 8;
 // The Adventure Rank the Abyss opens at, as the wiki's Spiral Abyss page gives it
 export const ABYSS_OPEN_ADVENTURE_RANK = 20;
 // A Ley Line Monolith starts at full health, and a chamber with none has no percent at all
