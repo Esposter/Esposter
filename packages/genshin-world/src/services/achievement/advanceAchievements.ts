@@ -30,13 +30,20 @@ export const advanceAchievements = (
     if (!isTierDone || checkIsAchievementFinished(achievement.id, nextProgressMap)) continue;
     const progress = nextProgressMap.get(achievement.id);
     const countedTargetIds = progress?.countedTargetIds ?? [];
-    if (!watch.countsQuantity && countedTargetIds.includes(event.targetId)) continue;
-    const step = watch.countsQuantity ? event.quantity : 1;
-    const count = Math.min((progress?.count ?? 0) + step, achievement.progress);
-    if (count < achievement.progress)
+    const levelSlot = watch.levelSlot;
+    const isLevel = levelSlot !== undefined;
+    if (!isLevel && !watch.countsQuantity && countedTargetIds.includes(event.targetId)) continue;
+    const target = isLevel ? Number(achievement.trigger.parameters[levelSlot]?.[0]) : achievement.progress;
+    if (!Number.isInteger(target) || target <= 0) continue;
+    const count = isLevel
+      ? Math.min(event.quantity, target)
+      : Math.min((progress?.count ?? 0) + (watch.countsQuantity ? event.quantity : 1), target);
+    if (count < target)
       nextProgressMap.set(
         achievement.id,
-        watch.countsQuantity ? { count } : { count, countedTargetIds: [...countedTargetIds, event.targetId] },
+        watch.countsQuantity || isLevel
+          ? { count }
+          : { count, countedTargetIds: [...countedTargetIds, event.targetId] },
       );
     else {
       nextProgressMap.set(achievement.id, { count, finishedAt: now });

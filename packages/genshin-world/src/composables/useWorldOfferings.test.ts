@@ -1,14 +1,17 @@
+import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -31,8 +34,13 @@ describe(useWorldOfferings, () => {
     const gainedAdventureExps: number[] = [];
     const frostbearingTreePlace: FrostbearingTreePlace = { id: "tree", position: { x: 1, z: 2 } };
     const placedDrops: [FrostbearingTreePlace, DroppedItem[]][] = [];
+    const events = createWorldEvents();
+    const achievementEvents: AchievementEvent[][] = [];
+    events.on("achievementEvents", (emitted) => {
+      achievementEvents.push(emitted);
+    });
     const { offerFrostbearingTree } = useWorldOfferings({
-      events: createWorldEvents(),
+      events,
       frostbearingTreeProgress,
       gainWorldAdventureExp: (amount) => {
         gainedAdventureExps.push(amount);
@@ -74,5 +82,14 @@ describe(useWorldOfferings, () => {
     expect(gainedAdventureExps).toStrictEqual([adventureExp]);
     expect(placedDrops).toStrictEqual([[frostbearingTreePlace, overflowItems]]);
     expect(frostbearingTreeProgress.value).toStrictEqual({ heldCount: progress.heldCount, level: progress.level });
+    expect(achievementEvents).toStrictEqual([
+      [
+        {
+          kind: AchievementEventKind.OfferingLevelReached,
+          quantity: progress.level,
+          targetId: String(FROSTBEARING_TREE_OFFERING_ID),
+        },
+      ],
+    ]);
   });
 });

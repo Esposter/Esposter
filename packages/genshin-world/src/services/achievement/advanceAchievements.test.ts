@@ -159,6 +159,33 @@ describe(advanceAchievements, () => {
     ).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 1, countedTargetIds: [CHEST_ID] }]]) });
   });
 
+  test("a level trigger takes the level its event reached, not one per event", () => {
+    expect.hasAssertions();
+    const OFFERING_ID = "7";
+    const levelled: Achievement = {
+      ...counted,
+      progress: 1,
+      trigger: { parameters: [[OFFERING_ID], ["3"]], type: "TRIGGER_OFFERING_LEVEL" },
+    };
+    const reachedTwo = advanceAchievements(
+      [levelled],
+      new Map(),
+      { kind: AchievementEventKind.OfferingLevelReached, quantity: 2, targetId: OFFERING_ID },
+      EPOCH,
+    );
+    expect(reachedTwo).toStrictEqual({ primogems: 0, progressMap: new Map([[COUNTED_ID, { count: 2 }]]) });
+    const reachedThree = advanceAchievements(
+      [levelled],
+      reachedTwo.progressMap,
+      { kind: AchievementEventKind.OfferingLevelReached, quantity: 3, targetId: OFFERING_ID },
+      EPOCH,
+    );
+    expect(reachedThree).toStrictEqual({
+      primogems: PRIMOGEMS,
+      progressMap: new Map([[COUNTED_ID, { count: 3, finishedAt: EPOCH }]]),
+    });
+  });
+
   test("a material trigger counts the quantity the event gains", () => {
     expect.hasAssertions();
     const material: Achievement = {
