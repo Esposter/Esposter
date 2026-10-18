@@ -6,10 +6,10 @@ import { HOME_EXTERIOR_FURNISHING_LIMIT, HOME_INTERIOR_FURNISHING_LIMIT } from "
 
 // The load the placements in one area hold: the first copy of a furnishing takes its load and each further copy its reduced
 // Load. A stored placement whose furnishing the table no longer holds counts nothing
-const getAreaLoad = (placements: HomePlacement[], furnishingMap: Map<number, HomeFurnishing>): number => {
+const getAreaLoad = (placements: HomePlacement[], itemIdFurnishingMap: Map<number, HomeFurnishing>): number => {
   const copyCounts = new Map<number, number>();
   return placements.reduce((total, { furnishingItemId }) => {
-    const furnishing = furnishingMap.get(furnishingItemId);
+    const furnishing = itemIdFurnishingMap.get(furnishingItemId);
     if (furnishing === undefined) return total;
     const copyCount = copyCounts.get(furnishingItemId) ?? 0;
     copyCounts.set(furnishingItemId, copyCount + 1);
@@ -26,14 +26,14 @@ export const placeHomeFurnishing = (
   { areas, furnishings }: { areas: HomeArea[]; furnishings: HomeFurnishing[] },
 ): HomePlacement[] | undefined => {
   const area = areas.find(({ areaId, sceneId }) => areaId === placement.areaId && sceneId === placement.sceneId);
-  const furnishingMap = new Map(furnishings.map((furnishing) => [furnishing.itemId, furnishing]));
-  if (area === undefined || !furnishingMap.has(placement.furnishingItemId)) return undefined;
+  const itemIdFurnishingMap = new Map(furnishings.map((furnishing) => [furnishing.itemId, furnishing]));
+  if (area === undefined || !itemIdFurnishingMap.has(placement.furnishingItemId)) return undefined;
   const areaPlacements = [
     ...placements.filter(({ areaId, sceneId }) => areaId === placement.areaId && sceneId === placement.sceneId),
     placement,
   ];
   const furnishingLimit = area.exterior ? HOME_EXTERIOR_FURNISHING_LIMIT : HOME_INTERIOR_FURNISHING_LIMIT;
   const isWithinLimits =
-    areaPlacements.length <= furnishingLimit && getAreaLoad(areaPlacements, furnishingMap) <= area.loadLimit;
+    areaPlacements.length <= furnishingLimit && getAreaLoad(areaPlacements, itemIdFurnishingMap) <= area.loadLimit;
   return isWithinLimits ? [...placements, placement] : undefined;
 };

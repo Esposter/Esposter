@@ -81,7 +81,7 @@ getResultAsync(() =>
     craftingBenchPlace,
     puzzlePlaces,
     wishSchedule,
-    shopGoodMap,
+    shopIdShopGoodMap,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -98,7 +98,7 @@ getResultAsync(() =>
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.Seelie),
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.SeelieCourt).map(({ position }) => position),
       ),
-      shopGoodMap,
+      shopIdShopGoodMap,
       startingCharacterIdKitMap,
       statTables,
       talentUpgradeMap: talentTables.talentUpgradeMap,

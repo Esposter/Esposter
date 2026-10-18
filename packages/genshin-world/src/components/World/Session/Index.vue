@@ -152,7 +152,7 @@ const {
   sceneExportBaseUrl,
   seelies,
   serverClockOffsetMs = 0,
-  shopGoodMap,
+  shopIdShopGoodMap,
   startingCharacterIdKitMap,
   statTables,
   talentUpgradeMap,
@@ -1245,7 +1245,7 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:purchases="shopPurchases"
       :adventure-rank="rank"
       :game-text
-      :goods="shopGoodMap.get(shopId) ?? []"
+      :goods="shopIdShopGoodMap.get(shopId) ?? []"
       :inventory
       :material-data-map
       :name-text
