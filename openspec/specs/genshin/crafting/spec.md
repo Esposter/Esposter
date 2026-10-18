@@ -131,7 +131,7 @@ Open recipes SHALL be listed under one tab per combine type, each named by the g
 
 ### Requirement: Crafting Performed counts every batch since the first craft
 
-The save SHALL count each recipe's batches since the player first crafted it, across visits, and a guest's counts SHALL merge into the account's by the larger.
+The save SHALL count each recipe's batches since the player first crafted it, across visits, and a merge SHALL keep the account's counts.
 
 #### Scenario: Batches count across visits
 
@@ -139,11 +139,11 @@ The save SHALL count each recipe's batches since the player first crafted it, ac
 - **WHEN** it is crafted again on a later visit
 - **THEN** the count includes both visits' batches
 
-#### Scenario: A guest's counts merge into the account by the larger
+#### Scenario: A guest's counts do not replace the account's
 
 - **GIVEN** a guest's count and an account's count for the same recipe
 - **WHEN** the guest's save merges into the account
-- **THEN** the count kept is the larger of the two
+- **THEN** the count kept is the account's
 
 ### Requirement: The recipe build refuses a table it cannot read
 

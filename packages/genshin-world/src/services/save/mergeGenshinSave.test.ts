@@ -19,6 +19,7 @@ describe(mergeGenshinSave, () => {
   const LANDMARK_ID = "1";
   const OTHER_LANDMARK_ID = "2";
   const QUEST_ID = "3";
+  const OTHER_QUEST_ID = "4";
   const ENTRY_ID = 1;
   const OTHER_ENTRY_ID = 2;
   const LIVING_BEING_ID = "3";
@@ -33,6 +34,7 @@ describe(mergeGenshinSave, () => {
   const SEELIE_ID = "seelie-1";
   const OTHER_SEELIE_ID = "seelie-2";
   const PUZZLE_ID = "puzzle-1";
+  const OTHER_PUZZLE_ID = "puzzle-2";
   const TRIAL_STAGE_ID = 51_001;
   const OTHER_TRIAL_STAGE_ID = 51_002;
   const GUEST_TRIAL_STAGE_ID = 51_003;
@@ -82,7 +84,6 @@ describe(mergeGenshinSave, () => {
   const LATER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
   // Two keys in the game day that starts at the 04:00 reset (UTC+8), which the epoch falls in, and one in the day after it
   const EARLIER_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).toString();
-  const LATER_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const NEXT_GAME_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 21 }).toString();
   // A character as a save holds it, the fields a test reads set by its own overrides
   const characterSave = (overrides: Partial<CharacterSave>): CharacterSave => ({
@@ -175,16 +176,16 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).tips).toStrictEqual({ shown: [1001, 1002] });
   });
 
-  test("unions the settled Seelies and the solved puzzles of both copies", () => {
+  test("keeps the account's settled Seelies and solved puzzles, and not one only the guest settled", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, puzzles: { settledSeelieIds: [SEELIE_ID], solvedPuzzleIds: [PUZZLE_ID] } };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      puzzles: { settledSeelieIds: [OTHER_SEELIE_ID, SEELIE_ID], solvedPuzzleIds: [] },
+      puzzles: { settledSeelieIds: [OTHER_SEELIE_ID, SEELIE_ID], solvedPuzzleIds: [OTHER_PUZZLE_ID] },
     };
 
     expect(mergeGenshinSave(account, guest).puzzles).toStrictEqual({
-      settledSeelieIds: [SEELIE_ID, OTHER_SEELIE_ID],
+      settledSeelieIds: [SEELIE_ID],
       solvedPuzzleIds: [PUZZLE_ID],
     });
   });
@@ -252,33 +253,19 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).inventory.quickSwapItemIds).toStrictEqual([QUICK_SWAP_ITEM_ID]);
   });
 
-  test("keeps the further step of a quest", () => {
+  test("keeps the account's quest progress, and not a step or a quest only the guest holds", () => {
     expect.hasAssertions();
-    const account = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [1], stepIndex: 2 } } };
-    const guest = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [0], stepIndex: 1 } } };
+    const account = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [1, 0], stepIndex: 1 } } };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      quests: {
+        [OTHER_QUEST_ID]: { objectiveCounts: [3], stepIndex: 2 },
+        [QUEST_ID]: { objectiveCounts: [0, 3], stepIndex: 2 },
+      },
+    };
 
     expect(mergeGenshinSave(account, guest).quests).toStrictEqual({
-      [QUEST_ID]: { objectiveCounts: [1], stepIndex: 2 },
-    });
-  });
-
-  test("takes the larger count of each objective of a quest on the same step", () => {
-    expect.hasAssertions();
-    const account = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [1, 0], stepIndex: 2 } } };
-    const guest = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [0, 3], stepIndex: 2 } } };
-
-    expect(mergeGenshinSave(account, guest).quests).toStrictEqual({
-      [QUEST_ID]: { objectiveCounts: [1, 3], stepIndex: 2 },
-    });
-  });
-
-  test("keeps an objective of a quest on the same step that only the guest counts", () => {
-    expect.hasAssertions();
-    const account = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [], stepIndex: 2 } } };
-    const guest = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [3], stepIndex: 2 } } };
-
-    expect(mergeGenshinSave(account, guest).quests).toStrictEqual({
-      [QUEST_ID]: { objectiveCounts: [3], stepIndex: 2 },
+      [QUEST_ID]: { objectiveCounts: [1, 0], stepIndex: 1 },
     });
   });
 
@@ -382,7 +369,7 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).cardGameRewardedGameIds).toStrictEqual([1103, 1105]);
   });
 
-  test("unions the learned recipes and keeps each recipe's larger crafted count", () => {
+  test("unions the learned recipes and keeps the account's crafted counts, and not a count only the guest made", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -397,7 +384,7 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).crafting).toStrictEqual({
-      craftedCounts: { [OTHER_RECIPE_ID]: ACCOUNT_COUNT, [RECIPE_ID]: GUEST_COUNT },
+      craftedCounts: { [RECIPE_ID]: ACCOUNT_COUNT },
       learnedRecipeIds: [RECIPE_ID, OTHER_RECIPE_ID],
     });
   });
@@ -560,20 +547,12 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).commissionDay).toStrictEqual(guest.commissionDay);
   });
 
-  test("keeps the account's larger count when both copies counted the same game day", () => {
-    expect.hasAssertions();
-    const account = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 6, dayKey: EARLIER_DAY_KEY } };
-    const guest = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 2, dayKey: LATER_DAY_KEY } };
-
-    expect(mergeGenshinSave(account, guest).investigationDay).toStrictEqual(account.investigationDay);
-  });
-
-  test("keeps the later game day's counter, whatever its count", () => {
+  test("keeps the account's investigation day, and not a later game day only the guest counted", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 6, dayKey: EARLIER_DAY_KEY } };
     const guest = { ...EMPTY_GENSHIN_SAVE, investigationDay: { count: 2, dayKey: NEXT_GAME_DAY_KEY } };
 
-    expect(mergeGenshinSave(account, guest).investigationDay).toStrictEqual(guest.investigationDay);
+    expect(mergeGenshinSave(account, guest).investigationDay).toStrictEqual({ count: 6, dayKey: EARLIER_DAY_KEY });
   });
 
   test("keeps the Encounter Points earned on the later daily reset", () => {
@@ -692,7 +671,7 @@ describe(mergeGenshinSave, () => {
     });
   });
 
-  test("a region only one save holds is kept as it is", () => {
+  test("a region only the guest holds is not kept, since the account's bag paid for none of its Oculi", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [], regions: {} } };
     const guest = {
@@ -700,12 +679,10 @@ describe(mergeGenshinSave, () => {
       statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 2, level: 1 } } },
     };
 
-    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { claimedLevel: 0, heldCount: 2, level: 1 },
-    });
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({});
   });
 
-  test("a region both saves hold is the save further on", () => {
+  test("a region both saves hold is the account's, though the guest's is further on", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -716,87 +693,34 @@ describe(mergeGenshinSave, () => {
     };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 1, level: GUEST_LEVEL } } },
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 1, heldCount: 1, level: GUEST_LEVEL } } },
     };
 
     expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { claimedLevel: 0, heldCount: 1, level: GUEST_LEVEL },
+      [REGION_ID]: { claimedLevel: 0, heldCount: 4, level: ACCOUNT_LEVEL },
     });
   });
 
-  test("a level the account claimed is kept when the copy further on has claimed none", () => {
+  test("keeps the account's wish pity and wish history, and not a draw only the guest made", () => {
     expect.hasAssertions();
+    const accountDraw = { bannerKind: WISH_KIND, itemId: 1, time: EARLIER_START };
     const account = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: {
-        foundOculusIds: [],
-        regions: { [REGION_ID]: { claimedLevel: ACCOUNT_LEVEL, heldCount: 0, level: ACCOUNT_LEVEL } },
-      },
-    };
-    const guest = {
-      ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 3, level: GUEST_LEVEL } } },
-    };
-
-    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { claimedLevel: ACCOUNT_LEVEL, heldCount: 3, level: GUEST_LEVEL },
-    });
-  });
-
-  test("a region both saves hold on the same level keeps the copy with more Oculi held, with the account's claim", () => {
-    expect.hasAssertions();
-    const account = {
-      ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 1, heldCount: 4, level: GUEST_LEVEL } } },
-    };
-    const guest = {
-      ...EMPTY_GENSHIN_SAVE,
-      statues: {
-        foundOculusIds: [],
-        regions: { [REGION_ID]: { claimedLevel: GUEST_LEVEL, heldCount: 0, level: GUEST_LEVEL } },
-      },
-    };
-
-    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { claimedLevel: 1, heldCount: 4, level: GUEST_LEVEL },
-    });
-  });
-
-  test("a level the guest claimed on a region the account does not hold is claimed again on the account", () => {
-    expect.hasAssertions();
-    const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [], regions: {} } };
-    const guest = {
-      ...EMPTY_GENSHIN_SAVE,
-      statues: {
-        foundOculusIds: [],
-        regions: { [REGION_ID]: { claimedLevel: GUEST_LEVEL, heldCount: 0, level: GUEST_LEVEL } },
-      },
-    };
-
-    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { claimedLevel: 0, heldCount: 0, level: GUEST_LEVEL },
-    });
-  });
-
-  test("keeps the counters of the kind of wish the copy that has made more wishes of it holds, whole", () => {
-    expect.hasAssertions();
-    const account = {
-      ...EMPTY_GENSHIN_SAVE,
+      wishHistory: [accountDraw],
       wishPity: { ...EMPTY_GENSHIN_SAVE.wishPity, [WISH_KIND]: { ...INITIAL_WISH_PITY, wishCount: ACCOUNT_COUNT } },
     };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
+      wishHistory: [{ bannerKind: WISH_KIND, itemId: 1, time: LATER_START }],
       wishPity: {
         ...EMPTY_GENSHIN_SAVE.wishPity,
         [WISH_KIND]: { ...INITIAL_WISH_PITY, fatePoints: FATE_POINTS, wishCount: GUEST_COUNT },
       },
     };
+    const merged = mergeGenshinSave(account, guest);
 
-    expect(mergeGenshinSave(account, guest).wishPity[WISH_KIND]).toStrictEqual({
-      ...INITIAL_WISH_PITY,
-      fatePoints: FATE_POINTS,
-      wishCount: GUEST_COUNT,
-    });
+    expect(merged.wishPity[WISH_KIND]).toStrictEqual({ ...INITIAL_WISH_PITY, wishCount: ACCOUNT_COUNT });
+    expect(merged.wishHistory).toStrictEqual([accountDraw]);
   });
 
   test("a dish keeps the higher proficiency of the two copies", () => {
@@ -875,7 +799,7 @@ describe(mergeGenshinSave, () => {
     ]);
   });
 
-  test("keeps each enemy's respawn instant as the later of the two copies', and one only a copy holds", () => {
+  test("keeps the account's enemy respawns, and not a defeat only the guest made", () => {
     expect.hasAssertions();
     const EARLIER_RESPAWN = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 4 }).toString();
     const LATER_RESPAWN = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 28 }).toString();
@@ -894,8 +818,7 @@ describe(mergeGenshinSave, () => {
 
     expect(mergeGenshinSave(account, guest).enemyRespawns).toStrictEqual({
       "mondstadt-camp-1|enemy-1": LATER_RESPAWN,
-      "mondstadt-camp-1|enemy-2": LATER_RESPAWN,
-      "mondstadt-camp-1|enemy-3": EARLIER_RESPAWN,
+      "mondstadt-camp-1|enemy-2": EARLIER_RESPAWN,
     });
   });
 

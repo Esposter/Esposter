@@ -303,7 +303,7 @@ The save SHALL NOT hold expeditions, forge queues or the camps cleared, and thos
 
 ### Requirement: The save holds each defeated enemy's respawn time in a camp with no boss
 
-The save SHALL hold the instant each defeated enemy in a camp with no boss comes back, by its spawn key, as an ISO string on the server's clock, and SHALL NOT hold one for an enemy in a camp with a boss. A merge SHALL keep the later of the two copies' instants for each enemy.
+The save SHALL hold the instant each defeated enemy in a camp with no boss comes back, by its spawn key, as an ISO string on the server's clock, and SHALL NOT hold one for an enemy in a camp with a boss. A merge SHALL keep the account's instant for each enemy.
 
 #### Scenario: A defeat in a camp with no boss is saved with its respawn time
 
@@ -317,8 +317,8 @@ The save SHALL hold the instant each defeated enemy in a camp with no boss comes
 - **WHEN** the save is written
 - **THEN** it holds no instant for the member
 
-#### Scenario: The later respawn time is kept when two saves merge
+#### Scenario: The account's respawn time is kept when two saves merge
 
 - **GIVEN** a guest save and an account save each holding a respawn time for the same enemy, the guest's the later
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the guest's respawn time for the enemy
+- **THEN** the merged save holds the account's respawn time for the enemy
