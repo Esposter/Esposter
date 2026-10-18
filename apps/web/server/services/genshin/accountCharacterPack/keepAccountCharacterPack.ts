@@ -51,11 +51,13 @@ const releaseStagingBlobs = (db: Context["db"], containerClient: ContainerClient
 export const keepAccountCharacterPack = async (
   db: Context["db"],
   userId: string,
-  { characterId, files, modelName, packHash }: KeepCharacterPackInput,
+  { characterId, files, keepId, modelName, packHash }: KeepCharacterPackInput,
 ): Promise<void> => {
   const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
   const uniqueFiles = [...new Map(files.map((file) => [file.sha256, file])).values()];
-  const stagingBlobNames = uniqueFiles.map(({ sha256 }) => getAccountCharacterPackStagingBlobName(userId, sha256));
+  const stagingBlobNames = uniqueFiles.map(({ sha256 }) =>
+    getAccountCharacterPackStagingBlobName(userId, keepId, sha256),
+  );
   return withFinalizerAsync(
     async () => {
       const { etag, packs } = await readAccountCharacterPackManifest(containerClient, userId);
@@ -76,7 +78,7 @@ export const keepAccountCharacterPack = async (
 
       await Promise.all(
         uniqueFiles.map(async ({ sha256, size }) => {
-          const stagingBlobName = getAccountCharacterPackStagingBlobName(userId, sha256);
+          const stagingBlobName = getAccountCharacterPackStagingBlobName(userId, keepId, sha256);
           // The length is checked before the bytes are read, so a staged blob larger than it was granted for is never downloaded.
           // The download is conditioned on the etag that check read, so a blob replaced since then is refused rather than read
           const stagedProperties = await getBlobProperties(containerClient, stagingBlobName);

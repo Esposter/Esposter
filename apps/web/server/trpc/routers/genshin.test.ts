@@ -145,7 +145,8 @@ describe("genshinRouter character packs", () => {
   const characterId = 1;
   const bytes = new TextEncoder().encode("model");
   const sha256 = createHash("sha256").update(bytes).digest("hex");
-  const stagingBlobName = getAccountCharacterPackStagingBlobName(authMocks.user.id, sha256);
+  const keepId = crypto.randomUUID();
+  const stagingBlobName = getAccountCharacterPackStagingBlobName(authMocks.user.id, keepId, sha256);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -160,7 +161,10 @@ describe("genshinRouter character packs", () => {
   test("grants each file's upload against the player's quota for its declared size", async () => {
     expect.hasAssertions();
 
-    const sasUrls = await genshinCaller.generateCharacterPackUploadSasUrls({ files: [{ sha256, size: bytes.length }] });
+    const sasUrls = await genshinCaller.generateCharacterPackUploadSasUrls({
+      files: [{ sha256, size: bytes.length }],
+      keepId,
+    });
 
     expect(sasUrls).toHaveLength(1);
     await expect(
@@ -181,6 +185,7 @@ describe("genshinRouter character packs", () => {
       genshinCaller.keepCharacterPack({
         characterId,
         files: [{ path: "model.pmx", sha256, size: bytes.length + 1 }],
+        keepId,
         modelName: "a",
         packHash: sha256,
       }),
@@ -197,11 +202,12 @@ describe("genshinRouter character packs", () => {
     const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
     const userId = authMocks.user.id;
     await containerClient
-      .getBlockBlobClient(getAccountCharacterPackStagingBlobName(userId, sha256))
+      .getBlockBlobClient(getAccountCharacterPackStagingBlobName(userId, keepId, sha256))
       .upload(bytes, bytes.length);
     await genshinCaller.keepCharacterPack({
       characterId,
       files: [{ path: "model.pmx", sha256, size: bytes.length }],
+      keepId,
       modelName: "a",
       packHash: sha256,
     });
@@ -215,19 +221,49 @@ describe("genshinRouter character packs", () => {
     await expect(readAccountCharacterPackFile(userId, sha256)).resolves.toBeUndefined();
   });
 
+  test("two keeps that carry a file of the same hash both keep their packs", async () => {
+    expect.hasAssertions();
+
+    const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
+    const userId = authMocks.user.id;
+    const otherKeepId = crypto.randomUUID();
+    const files = [{ path: "model.pmx", sha256, size: bytes.length }];
+    await Promise.all(
+      [keepId, otherKeepId].map((id) =>
+        containerClient
+          .getBlockBlobClient(getAccountCharacterPackStagingBlobName(userId, id, sha256))
+          .upload(bytes, bytes.length),
+      ),
+    );
+    await genshinCaller.keepCharacterPack({ characterId, files, keepId, modelName: "a", packHash: sha256 });
+    await genshinCaller.keepCharacterPack({
+      characterId: characterId + 1,
+      files,
+      keepId: otherKeepId,
+      modelName: "b",
+      packHash: sha256,
+    });
+
+    await expect(genshinCaller.readCharacterPacks()).resolves.toStrictEqual([
+      { characterId, files, modelName: "a", packHash: sha256 },
+      { characterId: characterId + 1, files, modelName: "b", packHash: sha256 },
+    ]);
+  });
+
   test("refuses a pack whose uploaded file does not hash to the name it was uploaded under", async () => {
     expect.hasAssertions();
 
     const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
     const userId = authMocks.user.id;
     await containerClient
-      .getBlockBlobClient(getAccountCharacterPackStagingBlobName(userId, sha256))
+      .getBlockBlobClient(getAccountCharacterPackStagingBlobName(userId, keepId, sha256))
       .upload(new TextEncoder().encode("other"), 5);
 
     await expect(
       genshinCaller.keepCharacterPack({
         characterId,
         files: [{ path: "model.pmx", sha256, size: 5 }],
+        keepId,
         modelName: "a",
         packHash: sha256,
       }),
