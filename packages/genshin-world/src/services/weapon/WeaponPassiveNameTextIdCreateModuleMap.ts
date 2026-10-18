@@ -58,6 +58,7 @@ import { createJusticePassiveModule } from "#src/services/weapon/passives/create
 import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passives/createLawsEquilibriumPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
+import { createOfferingUntoWindAndSunPassiveModule } from "#src/services/weapon/passives/createOfferingUntoWindAndSunPassiveModule";
 import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
 import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
@@ -365,4 +366,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1054220683": createSunkenSongOfTheSandsPassiveModule,
   // Primordial Jade Regalia (Jadefall's Splendor)
   "2612600955": createPrimordialJadeRegaliaPassiveModule,
+  // Offering Unto Wind and Sun (Starcaller's Watch)
+  "646104387": createOfferingUntoWindAndSunPassiveModule,
 };
