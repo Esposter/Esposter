@@ -4,9 +4,6 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { KIT_TEAM_ID, NIGHTSOUL_BURST_COOLDOWN_ID } from "#src/services/kit/constants";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
@@ -25,15 +22,11 @@ export const triggerKitNightsoulBurst = (
   context: KitContext,
 ): void => {
   if (element === undefined) return;
-  const { characterIdCombatantMap, kitEffectState, party } = context;
+  const { characterIdCombatantMap, party } = context;
   const natlanCount = getDeployedCombatants(party, characterIdCombatantMap).filter(
     ({ regionId }) => regionId === NATLAN_REGION_ID,
   ).length;
-  if (natlanCount === 0 || checkIsKitStatusActive(kitEffectState.effects, KIT_TEAM_ID, NIGHTSOUL_BURST_COOLDOWN_ID))
-    return;
-  addKitStatus(kitEffectState, KIT_TEAM_ID, {
-    id: NIGHTSOUL_BURST_COOLDOWN_ID,
-    secondsRemaining: NIGHTSOUL_BURST_INTERVAL_SECONDS[Math.min(natlanCount, 4)] ?? 0,
-  });
+  if (natlanCount === 0 || party.nightsoulBurstCooldownSeconds > 0) return;
+  party.nightsoulBurstCooldownSeconds = NIGHTSOUL_BURST_INTERVAL_SECONDS[Math.min(natlanCount, 4)] ?? 0;
   emitKitEvent({ enemy, kind: KitEventKind.NightsoulBurst, striker }, context);
 };

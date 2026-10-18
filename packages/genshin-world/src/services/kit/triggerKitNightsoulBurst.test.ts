@@ -13,10 +13,17 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { triggerKitNightsoulBurst } from "#src/services/kit/triggerKitNightsoulBurst";
 import { IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
 import { createParty } from "#src/services/party/createParty";
+import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { describe, expect, test } from "vitest";
 
 const IANSAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IANSAN_CHARACTER_ID);
 const ENEMY = {} as Enemy;
+
+// The given seconds run through the team's effects and its cooldowns, which the world steps together
+const stepTeamSeconds = (context: KitContext, seconds: number) => {
+  stepKitSeconds(context, seconds);
+  stepPartyCooldowns(context.party, seconds);
+};
 
 // A team of the given size, its members from the given region, each with a kit that records the Nightsoul bursts the
 // Team's kits hear, which the first member's kit alone records, since every kit of the team hears each one
@@ -76,10 +83,10 @@ describe(triggerKitNightsoulBurst, () => {
     ] as const) {
       const { bursts, context, members } = createTeam(size);
       triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, Element.Pyro, context);
-      stepKitSeconds(context, interval - 0.5);
+      stepTeamSeconds(context, interval - 0.5);
       triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, Element.Pyro, context);
       expect(bursts).toHaveLength(1);
-      stepKitSeconds(context, 1);
+      stepTeamSeconds(context, 1);
       triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, Element.Pyro, context);
       expect(bursts).toHaveLength(2);
     }
