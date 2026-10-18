@@ -1,3 +1,4 @@
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { ExcelBlossomGroupRow } from "#src/models/genshinAssets/leyLine/ExcelBlossomGroupRow";
 import type { ExcelBlossomRefreshRow } from "#src/models/genshinAssets/leyLine/ExcelBlossomRefreshRow";
 import type { ExcelBlossomSectionOrderRow } from "#src/models/genshinAssets/leyLine/ExcelBlossomSectionOrderRow";
@@ -10,12 +11,13 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 // The ley line outcrops the world reads, one region file per city with a ley line kind, from the dump's blossom refresh,
-// Group and section order tables
+// Group and section order tables and the reward previews each refresh's claims draw from
 export const writeLeyLineTables = (): void => {
   const regions = toLeyLineRegions(
     readExcelTable<ExcelBlossomRefreshRow>("BlossomRefreshExcelConfigData"),
     readExcelTable<ExcelBlossomGroupRow>("BlossomGroupsExcelConfigData"),
     readExcelTable<ExcelBlossomSectionOrderRow>("BlossomSectionOrderExcelConfigData"),
+    readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData"),
   );
   mkdirSync(LEY_LINE_REGION_DIRECTORY, { recursive: true });
   for (const [cityId, region] of regions) writeJsonFile(join(LEY_LINE_REGION_DIRECTORY, `${cityId}.json`), region);

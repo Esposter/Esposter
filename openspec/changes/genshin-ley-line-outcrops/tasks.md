@@ -1,6 +1,6 @@
 ## 1. The claims' rewards by World Level
 
-- [ ] 1.1 Read each refresh row's reward previews and pay the row for the reader's World Level, the last row past the list. Verify: `toLeyLineRegions.test.ts` gains a refresh row listing two previews and asserts its kind's two reward rows, and `computeOutcropClaimRewards.test.ts` asserts a scenario named "World Level 9 claims the last of nine rows" and "World Level 0 claims the first reward row", written first and seen failing.
+- [x] 1.1 Read each refresh row's reward previews and pay the row for the reader's World Level, the last row past the list. Verify: `toLeyLineRegions.test.ts` gains a refresh row listing two previews and asserts its kind's two reward rows, and `computeOutcropClaimRewards.test.ts` asserts a scenario named "World Level 9 claims the last of nine rows" and "World Level 0 claims the first reward row", written first and seen failing.
 
 ## 2. The reset and the outcrop's states
 
