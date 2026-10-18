@@ -4,6 +4,7 @@ import type { Extension } from "@codemirror/state";
 import { MimeType } from "#shared/models/file/MimeType";
 import MessageModelFileRendererCode from "@/components/Message/Model/FileRenderer/Code.vue";
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
+import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { language, StreamLanguage } from "@codemirror/language";
 import { FileEntity } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -18,18 +19,15 @@ vi.mock(import("@/services/codemirror/getLanguageExtension"), () => ({
 }));
 
 describe("messageModelFileRendererCode", () => {
+  const failedStatus = 500;
   const languageName = "Vue";
   const scrollTop = 40;
   const text = "attachment";
   const url = "";
-  const file = new FileEntity({
-    filename: "filename",
-    id: crypto.randomUUID(),
-    mimetype: MimeType.PlainText,
-    size: 1,
-  });
+  const file = new FileEntity({ filename: "filename", id: crypto.randomUUID(), mimetype: MimeType.PlainText, size: 1 });
   const props = { file, isPreview: false, language: languageName, url };
-  const mountCode = () => mountSuspended(MessageModelFileRendererCode, { attachTo: document.body, props });
+  const mountCode = (propsOverride?: Partial<typeof props>) =>
+    mountSuspended(MessageModelFileRendererCode, { attachTo: document.body, props: { ...props, ...propsOverride } });
   const findView = () => {
     const editor = document.body.querySelector<HTMLElement>(".cm-editor");
     assert.exists(editor);
@@ -51,23 +49,60 @@ describe("messageModelFileRendererCode", () => {
     vi.unstubAllGlobals();
   });
 
+  test("Opening a code attachment", async () => {
+    expect.hasAssertions();
+
+    await mountCode();
+    const view = findView();
+
+    expect(view.state.readOnly).toBe(true);
+    expect(view.state.facet(EditorView.editable)).toBe(false);
+    expect(view.state.doc.toString()).toBe(text);
+  });
+
+  test("Failed fetch of the file's text", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>(async () => new Response(text, { status: failedStatus })),
+    );
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    await mountCode();
+    const view = findView();
+
+    expect(view.state.doc.toString()).toBe("");
+    expect(consoleError).toHaveBeenCalledOnce();
+  });
+
+  test("Previewed code attachment is capped", async () => {
+    expect.hasAssertions();
+
+    await mountCode({ isPreview: true });
+    const view = findView();
+    const probe = document.createElement("div");
+    probe.style.maxHeight = PREVIEW_MAX_HEIGHT;
+    document.body.append(probe);
+
+    expect(getComputedStyle(view.dom).maxHeight).toBe(getComputedStyle(probe).maxHeight);
+  });
+
   // A dialog's leave transition runs after the attachment's component has unmounted, so its text has to stay on screen
   // Until the transition removes the element, and the transition is held here so the text is read while it runs
-  test("#78 keeps the attachment's text in place while it leaves", async () => {
+  test("#78 A dialog closes around a code attachment", async () => {
     expect.hasAssertions();
 
     const isShown = ref(true);
     const { promise: leaveStarted, resolve: onLeaveStarted } = Promise.withResolvers<() => void>();
     const host = defineComponent({
       render: () =>
-        h(
-          Transition,
-          { css: false, onLeave: (_element, done) => onLeaveStarted(done) },
-          () => (isShown.value ? h(MessageModelFileRendererCode, props) : null),
+        h(Transition, { css: false, onLeave: (_element, done) => onLeaveStarted(done) }, () =>
+          isShown.value ? h(MessageModelFileRendererCode, props) : null,
         ),
     });
 
-    await mountSuspended(host, { attachTo: document.body });
+    // Test utils stubs Transition by default, and the stub drops the leave hook this test holds
+    await mountSuspended(host, { attachTo: document.body, global: { stubs: { transition: false } } });
     isShown.value = false;
     const finishLeave = await leaveStarted;
 

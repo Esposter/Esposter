@@ -27,6 +27,11 @@ const container = useTemplateRef("container");
 const compartment = new Compartment();
 let view: EditorView | undefined;
 
+watch(
+  () => extensions.value,
+  (value) => view?.dispatch({ effects: compartment.reconfigure(value) }),
+);
+
 onMounted(() => {
   if (!container.value) return;
 
@@ -45,11 +50,8 @@ onMounted(() => {
       ],
     }),
   });
-  watch(
-    () => extensions.value,
-    (value) => view?.dispatch({ effects: compartment.reconfigure(value) }),
-  );
 });
+
 // A leave transition keeps the attachment on screen after its component unmounts, and destroying the view would empty
 // That element at once, so a static copy takes its place until the transition removes the element
 onBeforeUnmount(() => {
