@@ -1,8 +1,9 @@
+import { SQRT_PI } from "#src/services/mathExpression/constants";
+
 // The error function. Within three it is a series whose terms are all positive, so it does not cancel. Beyond, the
 // Complementary function comes from its continued fraction, read backwards from a fixed depth, and erf is one less it
 const SERIES_LIMIT = 3;
 const CONTINUED_FRACTION_DEPTH = 80;
-const SQRT_PI = Math.sqrt(Math.PI);
 
 export const computeErf = (value: number): number => {
   if (Number.isNaN(value)) return Number.NaN;

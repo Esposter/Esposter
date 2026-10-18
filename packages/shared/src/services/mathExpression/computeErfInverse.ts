@@ -1,9 +1,9 @@
 import { computeErf } from "#src/services/mathExpression/computeErf";
+import { SQRT_PI } from "#src/services/mathExpression/constants";
 
 // The inverse of the error function: Giles's approximation gives the first guess, and Newton steps on erf itself refine
 // It, so that erf of the result returns the argument to machine precision
 const REFINEMENT_STEPS = 4;
-const SQRT_PI = Math.sqrt(Math.PI);
 const LOW_TAIL_COEFFICIENTS: readonly number[] = [
   3.43273939e-7, -3.5233877e-6, -4.39150654e-6, 0.00021858087, -0.00125372503, -0.00417768164, 0.246640727, 1.50140941,
 ];
