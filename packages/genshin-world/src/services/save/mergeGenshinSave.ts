@@ -255,6 +255,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       ...new Set([...account.adventureRankRewardsClaimed, ...guest.adventureRankRewardsClaimed]),
     ].toSorted((firstRank, secondRank) => firstRank - secondRank),
     archive: mergeArchive(account.archive, guest.archive),
+    cardGameExp: Math.max(account.cardGameExp, guest.cardGameExp),
     characters: mergeCharacters(account.characters, guest.characters),
     characterTrials: {
       claimedStageIds: [

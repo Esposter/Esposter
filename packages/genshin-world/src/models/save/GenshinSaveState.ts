@@ -43,6 +43,7 @@ export interface GenshinSaveState {
   adventureRankRewardsClaimed: number[];
   archiveKillsMap: ArchiveKills;
   archiveProgressMap: ArchiveProgress;
+  cardGameExp: number;
   characterCopyCountMap: ReadonlyMap<number, number>;
   characters: Character[];
   characterTrialClaimedStageIds: ReadonlySet<number>;

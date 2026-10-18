@@ -85,6 +85,10 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       adventureExp: maxNumber,
+      cardGameExp: maxNumber,
+      characterTrials: {
+        claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => maxNumber - index),
+      },
       adventureRankRewardsClaimed: Array.from({ length: MAX_ADVENTURE_RANK - 1 }, (_value, index) => index + 2),
       archive: {
         kills: Object.fromEntries(
@@ -454,6 +458,12 @@ describe("genshinSaveSchema", () => {
       genshinSaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } })
         .success,
     ).toBe(true);
+  });
+
+  test("refuses a save with no card game EXP", () => {
+    expect.hasAssertions();
+
+    expect(genshinSaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE, cardGameExp: undefined }).success).toBe(false);
   });
 
   test("refuses a save with no Mora", () => {

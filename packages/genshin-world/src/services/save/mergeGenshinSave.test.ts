@@ -343,6 +343,14 @@ describe(mergeGenshinSave, () => {
     expect(merged.companionshipExp).toStrictEqual({ [CHARACTER_ID]: GUEST_EXP });
   });
 
+  test("keeps the larger card game EXP", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, cardGameExp: ACCOUNT_EXP };
+    const guest = { ...EMPTY_GENSHIN_SAVE, cardGameExp: GUEST_EXP };
+
+    expect(mergeGenshinSave(account, guest).cardGameExp).toBe(GUEST_EXP);
+  });
+
   test("unions the learned recipes and keeps each recipe's larger crafted count", () => {
     expect.hasAssertions();
     const account = {
