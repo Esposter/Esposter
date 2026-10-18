@@ -4,6 +4,8 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import type { Party } from "#src/models/party/Party";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BARBARA_CHARACTER_ID, createBarbaraKitBehaviour } from "#src/services/kit/characters/barbaraKit";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
@@ -19,6 +21,14 @@ import { describe, expect, test } from "vitest";
 
 const BARBARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BARBARA_CHARACTER_ID);
 
+// Jean falls on a team with Barbara, the kit hearing the fall as Jean's HP's change to nothing
+const reportJeanFall = (combatant: Combatant, party: Party, kitEffectState: KitEffectState): void =>
+  BARBARA_KIT.onKitEvent?.(
+    { characterId: JEAN_CHARACTER_ID, healthShare: -1, kind: KitEventKind.HealthChanged, overflowHealthShare: 0 },
+    createKitTestContext({ ...combatant, characterId: JEAN_CHARACTER_ID }, { kitEffectState, party }),
+    combatant,
+  );
+
 describe(createBarbaraKitBehaviour, () => {
   const MAX_HEALTH = 10_000;
   const createBarbaraCombatant = (constellationCount: number): Combatant => ({
@@ -29,6 +39,42 @@ describe(createBarbaraKitBehaviour, () => {
     elementalResonances: [],
     kit: BARBARA_KIT,
     level: 90,
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const barbara = createBarbaraCombatant(6);
+    const party = createParty([BARBARA_CHARACTER_ID, JEAN_CHARACTER_ID]);
+    getPartyMember(party, JEAN_CHARACTER_ID).healthShare = 0;
+
+    reportJeanFall(barbara, party, { effects: [] });
+
+    expect(getPartyMember(party, JEAN_CHARACTER_ID).healthShare).toBe(1);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const barbara = createBarbaraCombatant(5);
+    const party = createParty([BARBARA_CHARACTER_ID, JEAN_CHARACTER_ID]);
+    getPartyMember(party, JEAN_CHARACTER_ID).healthShare = 0;
+
+    reportJeanFall(barbara, party, { effects: [] });
+
+    expect(getPartyMember(party, JEAN_CHARACTER_ID).healthShare).toBe(0);
+  });
+
+  test("a second fall within the fifteen minutes is not revived", () => {
+    expect.hasAssertions();
+    const barbara = createBarbaraCombatant(6);
+    const party = createParty([BARBARA_CHARACTER_ID, JEAN_CHARACTER_ID]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    getPartyMember(party, JEAN_CHARACTER_ID).healthShare = 0;
+    reportJeanFall(barbara, party, kitEffectState);
+    getPartyMember(party, JEAN_CHARACTER_ID).healthShare = 0;
+
+    reportJeanFall(barbara, party, kitEffectState);
+
+    expect(getPartyMember(party, JEAN_CHARACTER_ID).healthShare).toBe(0);
   });
 
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {

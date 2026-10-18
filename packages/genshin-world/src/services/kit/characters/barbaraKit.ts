@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
@@ -11,7 +12,9 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // The Melody Loop's regeneration on the character on the field as it starts and every 5 seconds after, the four heals the
 // Wiki's Let the Show Begin♪ notes give, as gcsim v2.47.2 (MIT) barbara/skill.go ticks it
@@ -24,6 +27,12 @@ const MELODY_LOOP_TICK_INTERVAL_SECONDS = 5;
 const VITALITY_BURST_CONSTELLATION = 2;
 const VITALITY_BURST_COOLDOWN_MULTIPLIER = 0.85;
 const VITALITY_BURST_HYDRO_DAMAGE_BONUS = 0.15;
+// Dedicating Everything to You, from six constellations: a fallen member of the team, while Barbara is in the party but not on
+// The field, is revived to all of its HP, once every fifteen minutes, as the wiki's constellation page gives it
+const DEDICATING_EVERYTHING_TO_YOU_CONSTELLATION = 6;
+const DEDICATING_EVERYTHING_TO_YOU_COOLDOWN_SECONDS = 15 * 60;
+const DEDICATING_EVERYTHING_TO_YOU_HEALTH_SHARE = 1;
+const DEDICATING_EVERYTHING_TO_YOU_STATUS_ID = "barbara-dedicating-everything-to-you";
 
 // Whether the striker's Melody Loop stands on the team: a field it cast that ticks on the loop's interval, which its
 // Burst's single heal does not
@@ -60,7 +69,10 @@ export const BARBARA_CHARACTER_ID = 10_000_014;
 // Otherwise, with no shield needed. Let the Show Begin♪ casts its droplets as a summon and the Melody Loop as a field,
 // Both where she stands and priced by her as she stood then, and Shining Miracle♪, which deals no damage, heals the
 // Character on the field at its hitmark. From two constellations, Vitality Burst cuts the skill's cooldown, and the
-// Loop's first tick gives the rest of the team its Hydro DMG Bonus
+// Loop's first tick gives the rest of the team its Hydro DMG Bonus, and from six constellations a fallen member is revived.
+// Constellations 1 and 4 are not built: 1's energy every ten seconds needs a clock that runs while she stands in the party,
+// And 4's energy per enemy her charged attack strikes, at most five per attack, needs a count across that one attack's
+// Strikes, which a hit's hook does not hold
 export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const regenerationHealthShare = readParameter("regenerationHealthShare");
   const regenerationFlatHeal = readParameter("regenerationFlatHeal");
@@ -91,6 +103,27 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
     getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
       combatant.constellationCount >= VITALITY_BURST_CONSTELLATION ? VITALITY_BURST_COOLDOWN_MULTIPLIER : 1,
     normalAttacks: [strikeBehaviour, strikeBehaviour, strikeBehaviour, strikeBehaviour],
+    onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
+      if (
+        event.kind !== KitEventKind.HealthChanged ||
+        combatant.constellationCount < DEDICATING_EVERYTHING_TO_YOU_CONSTELLATION
+      )
+        return;
+      if (activeCombatant.characterId === combatant.characterId) return;
+      if (!getDeployedCharacterIds(party).includes(event.characterId)) return;
+      const fallenMember = getPartyMember(party, event.characterId);
+      if (fallenMember.healthShare !== 0) return;
+      if (
+        !startKitCooldown(
+          kitEffectState,
+          combatant.characterId,
+          DEDICATING_EVERYTHING_TO_YOU_STATUS_ID,
+          DEDICATING_EVERYTHING_TO_YOU_COOLDOWN_SECONDS,
+        )
+      )
+        return;
+      fallenMember.healthShare = DEDICATING_EVERYTHING_TO_YOU_HEALTH_SHARE;
+    },
     // The droplets are a summon and the Melody Loop a field, both cast where Barbara stands and priced by her as she
     // Stood then
     skill: {
