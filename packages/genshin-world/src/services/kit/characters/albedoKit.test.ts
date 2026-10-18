@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -16,7 +17,9 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALBEDO_CHARACTER_ID, createAlbedoKitBehaviour } from "#src/services/kit/characters/albedoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -62,6 +65,15 @@ const tectonicTideBuffs = (combatant: Combatant): KitBuff[] =>
   castEffects(ALBEDO_KIT.elementalBurst, [createStandingSolarIsotoma()], combatant).filter(
     (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery,
   );
+
+// Strikes an enemy inside the standing Solar Isotoma, then steps past the two-second cooldown the blossom leaves
+const strikeInsideField = (context: KitContext, combatant: Combatant): void => {
+  ALBEDO_KIT.onKitEvent?.(createDamageTaken({ x: 0, z: 0 }), context, combatant);
+  stepKitTestEffects(3, context);
+};
+// The last summon the effects hold, which a burst's start puts there as it casts its Fatal Blossoms
+const findLastSummon = (effects: KitEffect[]): KitSummon | undefined =>
+  effects.findLast((effect): effect is KitSummon => effect.kind === "summon");
 
 describe(createAlbedoKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -178,5 +190,49 @@ describe(createAlbedoKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(tectonicTideBuffs(createAlbedoCombatant(3))).toStrictEqual([]);
+  });
+  describe("constellation 2's Fatal Reckoning", () => {
+    test("each Transient Blossom adds a stack, up to four, that the Fatal Blossoms take as flat damage", () => {
+      expect.hasAssertions();
+      const combatant = createAlbedoCombatant(0, 2);
+      const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
+      const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+      strikeInsideField(context, combatant);
+      strikeInsideField(context, combatant);
+      strikeInsideField(context, combatant);
+      strikeInsideField(context, combatant);
+      strikeInsideField(context, combatant);
+      const burstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
+      const [fatalBlossom] = findLastSummon(burstEffects)?.hits ?? [];
+
+      expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(1.2 * combatant.attributes.defense);
+    });
+
+    test("a Constellation 1 Albedo's Fatal Blossoms take no Fatal Reckoning damage", () => {
+      expect.hasAssertions();
+      const combatant = createAlbedoCombatant(0, 1);
+      const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
+      const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+      strikeInsideField(context, combatant);
+      const burstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
+      const [fatalBlossom] = findLastSummon(burstEffects)?.hits ?? [];
+
+      expect(fatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
+    });
+
+    test("the stacks Tectonic Tide consumes leave its next Fatal Blossoms with no bonus", () => {
+      expect.hasAssertions();
+      const combatant = createAlbedoCombatant(0, 2);
+      const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
+      const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+      strikeInsideField(context, combatant);
+      const firstBurstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
+      const [firstFatalBlossom] = findLastSummon(firstBurstEffects)?.hits ?? [];
+      const secondBurstEffects = castEffects(ALBEDO_KIT.elementalBurst, firstBurstEffects, combatant);
+      const [secondFatalBlossom] = findLastSummon(secondBurstEffects)?.hits ?? [];
+
+      expect(firstFatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.3 * combatant.attributes.defense);
+      expect(secondFatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
+    });
   });
 });
