@@ -1,7 +1,7 @@
 {
   "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
-  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 38 },
+  "burst.hits.0.hitmarkFrames": { "file": "burst.go", "line": 87, "source": "Gcsim", "value": 0 },
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 200 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 40 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 40 },
