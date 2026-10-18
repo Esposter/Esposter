@@ -31,6 +31,7 @@ export enum EnemyKindId {
   ExperimentalFieldGenerator = 24080101,
   SecretSourceAutomatonHunterSeeker = 24090101,
   SecretSourceAutomatonConfigurationDevice = 24090201,
+  TreasureHoarderScout = 25010201,
   NobushiHitsukeban = 25080201,
   MaguuKenki = 25090101,
   WaywardHermeticSpiritspeaker = 25520101,

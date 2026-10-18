@@ -2,7 +2,7 @@ import type { EnemyKindId } from "genshin-world";
 
 // The kind each official map family's camps place: its first variant on the wiki's family page whose English name the
 // Dump's monster table holds, read as that name's lowest monster id. Provisional: a family whose variant the dump lacks,
-// Or whose poise the wiki's table does not list, is left out, which is 55 of the map's 104 families at this build
+// Or whose poise the wiki's table does not list, is left out, which is 54 of the map's 104 families at this build
 export const FamilyLabelEnemyKindIdMap: Record<string, EnemyKindId> = {
   "Abyss Herald": 22020201,
   "Abyss Mage": 22010201,
@@ -49,6 +49,7 @@ export const FamilyLabelEnemyKindIdMap: Record<string, EnemyKindId> = {
   "Solitary Suanni": 26190101,
   Specter: 20060301,
   "Thunder Manifestation": 20070101,
+  "Treasure Hoarder": 25010201,
   "Wayob Manifestations": 26260801,
   "Wayward Hermetic Spiritspeaker": 25520101,
   Whopperflower: 26010101,

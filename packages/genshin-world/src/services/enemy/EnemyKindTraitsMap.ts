@@ -235,6 +235,14 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
   [EnemyKindId.SetekhWenut]: { element: Element.Anemo, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.SolitarySuanni]: { energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.ThunderManifestation]: { element: Element.Electro, energyDrops: [], poiseType: PoiseType.Boss },
+  [EnemyKindId.TreasureHoarderScout]: {
+    energyDrops: [
+      { count: 1, energyDropKind: EnergyDropKind.Particle, healthPercent: 66 },
+      { count: 1, energyDropKind: EnergyDropKind.Particle, healthPercent: 33 },
+      { count: 1, energyDropKind: EnergyDropKind.Particle, healthPercent: 0 },
+    ],
+    poiseType: PoiseType.Minion,
+  },
   [EnemyKindId.WaywardHermeticSpiritspeaker]: { element: Element.Cryo, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.XuanwenBeast]: {
     energyDrops: [
