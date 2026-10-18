@@ -1,0 +1,189 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createNightOfTheSkysUnveilingSetModule } from "#src/services/artifact/sets/createNightOfTheSkysUnveilingSetModule";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { readStatTables } from "#src/services/character/readStatTables";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
+import { getPassiveKit } from "#src/services/kit/getPassiveKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { assert, describe, expect, test } from "vitest";
+
+const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const OTHER_CHARACTER_ID = 2;
+const THIRD_CHARACTER_ID = 3;
+const FOURTH_CHARACTER_ID = 4;
+// A Moonsign character's kit, which counts toward the team's Moonsign level
+const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+const bonusOf = (pieceCount: number) => {
+  const bonus = statTables.artifactSetDataMap
+    .get(NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID)
+    ?.bonuses.find((b) => b.pieceCount === pieceCount);
+  assert.exists(bonus);
+  return bonus;
+};
+const createCombatant = (characterId: number, kit = KIT): Combatant => {
+  const attributes = computeCharacterAttributes([]);
+  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
+};
+// A wearer of four pieces with a kit holding the set's four-piece, the rest of the characters in the map, and the party in the
+// Order given. The characters given in benedictedIds carry a Moonsign benediction, which sets the team's Moonsign level
+const createWearer = () =>
+  createCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(KIT, [createNightOfTheSkysUnveilingSetModule(bonusOf(4))]));
+const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
+  const wearer = createWearer();
+  const characterIdCombatantMap = new Map<number, Combatant>([[TRAVELER_CHARACTER_ID, wearer]]);
+  const createMember = (characterId: number) =>
+    createCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
+  const other = createMember(OTHER_CHARACTER_ID);
+  characterIdCombatantMap.set(OTHER_CHARACTER_ID, other);
+  for (const characterId of [THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID])
+    characterIdCombatantMap.set(characterId, createMember(characterId));
+  const kitEffectState: KitEffectState = { effects: [] };
+  const party = createParty(characterIds);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
+  // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
+  const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
+    getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
+  // A hit the striker lands on the enemy, which triggers the given reactions on it
+  const trigger = (striker: Combatant, reactionTypes: ReactionType[]) =>
+    emitKitEvent(
+      {
+        enemy,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: reactionTypes.map((reactionType) => ({ reactionType })),
+        striker,
+      },
+      context,
+    );
+  // The CRIT Rate buffs the set gives the wearer, one per attribute at most
+  const critRateBuffs = () =>
+    kitEffectState.effects
+      .filter((effect) => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate)
+      .map((effect) => (effect.kind === "buff" ? effect.amount : 0));
+  return { context, critRateBuffs, enemy, other, teamReactionDamageBonus, trigger, wearer };
+};
+
+describe(createNightOfTheSkysUnveilingSetModule, () => {
+  test("a Lunar Reaction the team triggers while the wearer is on the field gives it 15% CRIT Rate for four seconds at Nascent Gleam", () => {
+    expect.hasAssertions();
+
+    const { context, critRateBuffs, other, trigger } = createTeam(
+      [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID],
+      [THIRD_CHARACTER_ID],
+    );
+
+    trigger(other, [LunarReactionType.LunarCharged]);
+    expect(critRateBuffs()).toStrictEqual([expect.closeTo(0.15)]);
+
+    stepKitSeconds(context, 3);
+    expect(critRateBuffs()).toStrictEqual([expect.closeTo(0.15)]);
+
+    stepKitSeconds(context, 1);
+    expect(critRateBuffs()).toStrictEqual([]);
+  });
+
+  test("the same Lunar Reaction gives 30% CRIT Rate at Ascendant Gleam", () => {
+    expect.hasAssertions();
+
+    const { critRateBuffs, other, trigger } = createTeam(
+      [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID],
+      [THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID],
+    );
+
+    trigger(other, [LunarReactionType.LunarBloom]);
+
+    expect(critRateBuffs()).toStrictEqual([expect.closeTo(0.3)]);
+  });
+
+  test("a Lunar Reaction gives the wearer nothing while it is off the field", () => {
+    expect.hasAssertions();
+
+    const { critRateBuffs, other, teamReactionDamageBonus, trigger } = createTeam(
+      [OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID, THIRD_CHARACTER_ID],
+      [THIRD_CHARACTER_ID],
+    );
+
+    trigger(other, [LunarReactionType.LunarCharged]);
+
+    expect(critRateBuffs()).toStrictEqual([]);
+    expect(teamReactionDamageBonus(other, LunarReactionType.LunarCharged)).toBe(0);
+  });
+
+  test("while the effect lasts, every party member's Lunar Reaction DMG is raised by 10%, and its other reactions are not", () => {
+    expect.hasAssertions();
+
+    const { context, other, teamReactionDamageBonus, trigger, wearer } = createTeam(
+      [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID],
+      [THIRD_CHARACTER_ID],
+    );
+
+    trigger(other, [LunarReactionType.LunarCharged]);
+
+    expect(teamReactionDamageBonus(other, LunarReactionType.LunarBloom)).toBeCloseTo(0.1);
+    expect(teamReactionDamageBonus(wearer, LunarReactionType.LunarCrystallize)).toBeCloseTo(0.1);
+    expect(teamReactionDamageBonus(other, TransformativeReactionType.Overloaded)).toBe(0);
+
+    stepKitSeconds(context, 4);
+    expect(teamReactionDamageBonus(other, LunarReactionType.LunarBloom)).toBe(0);
+  });
+
+  test("two wearers of the effect give one 10% between them, as the effects of one kind cannot stack", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const firstWearer = createWearer();
+    const secondWearer = createCombatant(
+      THIRD_CHARACTER_ID,
+      getPassiveKit(KIT, [createNightOfTheSkysUnveilingSetModule(bonusOf(4))]),
+    );
+    const characterIdCombatantMap = new Map<number, Combatant>([
+      [TRAVELER_CHARACTER_ID, firstWearer],
+      [THIRD_CHARACTER_ID, secondWearer],
+    ]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const triggerWhileActive = (striker: Combatant, characterIds: number[]) =>
+      emitKitEvent(
+        {
+          enemy,
+          kind: KitEventKind.ReactionTriggered,
+          reactions: [{ reactionType: LunarReactionType.LunarCharged }],
+          striker,
+        },
+        createKitTestContext(striker, { characterIdCombatantMap, kitEffectState, party: createParty(characterIds) }),
+      );
+    // Each wearer triggers while it is the active character, so each gains the effect
+    triggerWhileActive(firstWearer, [TRAVELER_CHARACTER_ID, THIRD_CHARACTER_ID]);
+    triggerWhileActive(secondWearer, [THIRD_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
+
+    const context = createKitTestContext(firstWearer, {
+      characterIdCombatantMap,
+      kitEffectState,
+      party: createParty([TRAVELER_CHARACTER_ID, THIRD_CHARACTER_ID]),
+    });
+    expect(
+      getDeployedReactionBonuses(
+        { combatant: firstWearer, element: undefined, enemy, reactionType: LunarReactionType.LunarBloom },
+        context,
+      ).damageBonus,
+    ).toBeCloseTo(0.1);
+  });
+});

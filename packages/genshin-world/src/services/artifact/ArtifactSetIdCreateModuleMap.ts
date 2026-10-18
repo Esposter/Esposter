@@ -30,6 +30,7 @@ import {
   MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID,
   MARTIAL_ARTIST_ARTIFACT_SET_ID,
   MIRRORED_NYMPH_ARTIFACT_SET_ID,
+  NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID,
   NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
   OBSIDIAN_CODEX_ARTIFACT_SET_ID,
   OCEAN_HUED_CLAM_ARTIFACT_SET_ID,
@@ -39,6 +40,7 @@ import {
   SCARLETPROOF_ARTIFACT_SET_ID,
   SCHOLAR_ARTIFACT_SET_ID,
   SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID,
+  SILKEN_MOON_SERENADE_ARTIFACT_SET_ID,
   SONG_OF_DAYS_PAST_ARTIFACT_SET_ID,
   TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID,
   THUNDERING_FURY_ARTIFACT_SET_ID,
@@ -77,6 +79,7 @@ import { createMaidenBelovedSetModule } from "#src/services/artifact/sets/create
 import { createMarechausseeHunterSetModule } from "#src/services/artifact/sets/createMarechausseeHunterSetModule";
 import { createMartialArtistSetModule } from "#src/services/artifact/sets/createMartialArtistSetModule";
 import { createMirroredNymphSetModule } from "#src/services/artifact/sets/createMirroredNymphSetModule";
+import { createNightOfTheSkysUnveilingSetModule } from "#src/services/artifact/sets/createNightOfTheSkysUnveilingSetModule";
 import { createNoblesseObligeSetModule } from "#src/services/artifact/sets/createNoblesseObligeSetModule";
 import { createObsidianCodexSetModule } from "#src/services/artifact/sets/createObsidianCodexSetModule";
 import { createOceanHuedClamSetModule } from "#src/services/artifact/sets/createOceanHuedClamSetModule";
@@ -86,6 +89,7 @@ import { createRetracingBolideSetModule } from "#src/services/artifact/sets/crea
 import { createScarletproofSetModule } from "#src/services/artifact/sets/createScarletproofSetModule";
 import { createScholarSetModule } from "#src/services/artifact/sets/createScholarSetModule";
 import { createShimenawasReminiscenceSetModule } from "#src/services/artifact/sets/createShimenawasReminiscenceSetModule";
+import { createSilkenMoonsSerenadeSetModule } from "#src/services/artifact/sets/createSilkenMoonsSerenadeSetModule";
 import { createSongOfDaysPastSetModule } from "#src/services/artifact/sets/createSongOfDaysPastSetModule";
 import { createTenacityOfTheMillelithSetModule } from "#src/services/artifact/sets/createTenacityOfTheMillelithSetModule";
 import { createThunderingFurySetModule } from "#src/services/artifact/sets/createThunderingFurySetModule";
@@ -129,6 +133,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID]: createMarechausseeHunterSetModule,
   [MARTIAL_ARTIST_ARTIFACT_SET_ID]: createMartialArtistSetModule,
   [MIRRORED_NYMPH_ARTIFACT_SET_ID]: createMirroredNymphSetModule,
+  [NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID]: createNightOfTheSkysUnveilingSetModule,
   [NOBLESSE_OBLIGE_ARTIFACT_SET_ID]: createNoblesseObligeSetModule,
   [OBSIDIAN_CODEX_ARTIFACT_SET_ID]: createObsidianCodexSetModule,
   [OCEAN_HUED_CLAM_ARTIFACT_SET_ID]: createOceanHuedClamSetModule,
@@ -138,6 +143,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [SCARLETPROOF_ARTIFACT_SET_ID]: createScarletproofSetModule,
   [SCHOLAR_ARTIFACT_SET_ID]: createScholarSetModule,
   [SHIMENAWAS_REMINISCENCE_ARTIFACT_SET_ID]: createShimenawasReminiscenceSetModule,
+  [SILKEN_MOON_SERENADE_ARTIFACT_SET_ID]: createSilkenMoonsSerenadeSetModule,
   [SONG_OF_DAYS_PAST_ARTIFACT_SET_ID]: createSongOfDaysPastSetModule,
   [TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID]: createTenacityOfTheMillelithSetModule,
   [THUNDERING_FURY_ARTIFACT_SET_ID]: createThunderingFurySetModule,
