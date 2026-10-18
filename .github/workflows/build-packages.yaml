@@ -59,6 +59,15 @@ jobs:
           path: ~/Esposter/cache/content
           key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
           lookup-only: true
+      # Every object is named by its hash, so whatever an earlier lock's mirror holds is still valid, and the fill
+      # downloads only what that mirror lacks
+      - name: ♻️ Restore an earlier game data mirror
+        if: steps.game-data-mirror.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Esposter/cache/content
+          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
+          restore-keys: game-data-mirror-
 
       - name: 📥 Fill the game data mirror
         if: steps.game-data-mirror.outputs.cache-hit != 'true'
