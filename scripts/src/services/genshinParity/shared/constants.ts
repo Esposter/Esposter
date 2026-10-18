@@ -119,9 +119,6 @@ export const COMPARISON_HEIGHT = 540;
 export const APPROVAL_FLIP_BAR = 0.05;
 // The approval a screen gets when its reference records none
 export const DEFAULT_APPROVAL: ParityApproval = { bar: APPROVAL_FLIP_BAR, measure: ParityApprovalMeasure.Flip };
-// The separator between a screen's name and a fixture variant's in its visual test's title and its image's name, as
-// The interface's `FIXTURE_VARIANT_SEPARATOR` spells it
-export const VISUAL_VARIANT_SEPARATOR = "-";
 // The contact sheet `frames` writes beside its frames, which is not one of them
 export const CONTACT_SHEET_NAME = "sheet.png";
 // The map naming every reference, whose held cameras `pose --write` rewrites

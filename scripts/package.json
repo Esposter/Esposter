@@ -105,6 +105,7 @@
     "@webgpu/types": "catalog:",
     "azure-mock": "workspace:*",
     "genshin-engine": "workspace:*",
+    "genshin-interface": "workspace:*",
     "genshin-persona": "workspace:*",
     "genshin-world": "workspace:*",
     "imagetracerjs": "catalog:",
