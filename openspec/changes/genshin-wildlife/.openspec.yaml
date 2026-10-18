@@ -3,4 +3,4 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
 x-touches: ["packages/genshin-world/src/services/wildlife/**", "packages/genshin-world/src/models/wildlife/**"]
-x-waiting: "2.2 waits on weapon passives reaching combat (genshin-weapon-enhancement 1.1 and 2.2, which need the character kits' shared effects first); 5.1 waits on a pet kind and its map labels (WildlifeKind holds none, and the official map's Animals subtree has no Mondstadt cat or dog)"
+x-waiting: "2.2 waits on weapon passives reaching combat (genshin-weapon-enhancement 1.1 and 2.2, which need the character kits' shared effects first); 5.1 is deferred, not blocked: WildlifeKind holds no pet kind and the official map's Animals subtree has no Mondstadt cat or dog label, so no pet kind is added until the map carries one"
