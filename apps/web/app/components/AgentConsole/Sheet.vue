@@ -15,6 +15,7 @@ import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection"
 import { useAgentConsolePaneStore } from "@/store/agentConsole/pane";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
+import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { CommandType } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
@@ -28,6 +29,7 @@ const { currentSessionId, isTurnRunning, pendingPermissionRequests, themeStyle }
   storeToRefs(agentConsoleSessionStore);
 const agentConsolePaneStore = useAgentConsolePaneStore();
 const { isPaneOpen, paneWidth } = storeToRefs(agentConsolePaneStore);
+const { isSideChatOpen } = storeToRefs(useAgentConsoleSideChatStore());
 useAgentConsoleCommands();
 // A question from the agent is never left waiting where nobody looks
 watch(
@@ -100,6 +102,14 @@ onConsoleFocusRequest(async () => {
         if (!isTurnRunning) return;
         event.preventDefault();
         sendCommand({ sessionId: currentSessionId, type: CommandType.BackgroundTasks });
+      }
+    "
+    @keydown="
+      (event: KeyboardEvent) => {
+        // Ctrl+; asks a side question of the open session; with none open there is nothing to ask beside
+        if (!event.ctrlKey || event.key !== ';' || !currentSessionId) return;
+        event.preventDefault();
+        isSideChatOpen = true;
       }
     "
     @keydown.esc="
@@ -202,6 +212,7 @@ onConsoleFocusRequest(async () => {
             </div>
           </template>
         </UiTabs>
+        <AgentConsolePanelSideChat v-if="isSideChatOpen" />
         <template v-if="isPaneOpen">
           <UiResizeHandle
             v-model="width"

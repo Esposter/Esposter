@@ -4,8 +4,10 @@ import { LOCAL_HOST_ADDRESS } from "@/services/agentConsole/constants";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
+import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { takeOne } from "@esposter/shared";
 import {
+  AgentEventType,
   CommandType,
   DEFAULT_PORT,
   getSignedText,
@@ -319,5 +321,100 @@ describe(useAgentConsoleConnectionStore, () => {
       [stoppingSessionId, SessionState.Closed],
     ]);
     expect(FakeWebSocket.sockets).toHaveLength(2);
+  });
+
+  describe("the side chat", () => {
+    const sideChatSessionId = crypto.randomUUID();
+    const mainMessage = {
+      attachmentCount: 0,
+      createdAt: new Date(0),
+      id: crypto.randomUUID(),
+      messageUuid: crypto.randomUUID(),
+      parentToolUseId: "",
+      text: "earlier work",
+      type: AgentEventType.UserMessage,
+    };
+    const sideAnswer = {
+      createdAt: new Date(0),
+      id: crypto.randomUUID(),
+      messageUuid: crypto.randomUUID(),
+      parentToolUseId: "",
+      text: "it renders the list",
+      type: AgentEventType.AssistantMessage,
+    };
+
+    // The last command the page sent the host, read back as the host would
+    const readLastCommand = (socket: FakeWebSocket) =>
+      // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
+      JSON.parse(takeOne(socket.send.mock.calls, socket.send.mock.calls.length - 1)[0]) as Record<string, unknown>;
+
+    // Opens the side chat with one question, which the host's fork answers, with one session open in the console
+    const askSideChat = async () => {
+      const { privateKey, publicKey } = await createHostKeyPair();
+      const { agentConsoleConnectionStore, connectionId, socket } = connectPaired(publicKey);
+      await admit(socket, privateKey);
+      const agentConsoleSessionStore = useAgentConsoleSessionStore();
+      const { currentSessionId, sessions } = storeToRefs(agentConsoleSessionStore);
+      const sessionId = crypto.randomUUID();
+      sessions.value = [
+        { connectionId, cwd: "", id: sessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" },
+      ];
+      currentSessionId.value = sessionId;
+      agentConsoleSessionStore.storeEvents(sessionId, [mainMessage]);
+      useAgentConsoleSideChatStore().isSideChatOpen = true;
+      agentConsoleConnectionStore.askSideChat("what does this render?", []);
+      const forkCommand = readLastCommand(socket);
+      dispatchMessage(socket, {
+        commandId: forkCommand.id,
+        sessionId: sideChatSessionId,
+        type: ServerMessageType.SessionOpened,
+      });
+      dispatchMessage(socket, { events: [sideAnswer], sessionId: sideChatSessionId, type: ServerMessageType.Events });
+      return { agentConsoleConnectionStore, agentConsoleSessionStore, forkCommand, sessionId, socket };
+    };
+
+    test("A side chat question leaves the main conversation unchanged", async () => {
+      expect.hasAssertions();
+
+      const { agentConsoleSessionStore, forkCommand, sessionId, socket } = await askSideChat();
+      const { conversationEvents } = storeToRefs(agentConsoleSessionStore);
+
+      expect(forkCommand).toStrictEqual({
+        id: expect.any(String),
+        isSideChat: true,
+        messageUuid: "",
+        sessionId,
+        type: CommandType.Fork,
+      });
+      expect(readLastCommand(socket)).toStrictEqual({
+        attachments: [],
+        id: expect.any(String),
+        sessionId: sideChatSessionId,
+        text: "what does this render?",
+        type: CommandType.Prompt,
+      });
+      expect(conversationEvents.value).toStrictEqual([mainMessage]);
+      expect(agentConsoleSessionStore.getDataRef(sideChatSessionId).value.conversationEvents).toStrictEqual([
+        sideAnswer,
+      ]);
+    });
+
+    test("Closing the drawer discards its answers", async () => {
+      expect.hasAssertions();
+
+      const { agentConsoleConnectionStore, agentConsoleSessionStore, socket } = await askSideChat();
+      const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+      const { conversationEvents } = storeToRefs(agentConsoleSessionStore);
+      agentConsoleConnectionStore.closeSideChat();
+
+      expect(readLastCommand(socket)).toStrictEqual({
+        id: expect.any(String),
+        sessionId: sideChatSessionId,
+        type: CommandType.CloseSession,
+      });
+      expect(agentConsoleSideChatStore.isSideChatOpen).toBe(false);
+      expect(agentConsoleSessionStore.getDataRef(sideChatSessionId).value.conversationEvents).toStrictEqual([]);
+      expect(conversationEvents.value).toStrictEqual([mainMessage]);
+    });
   });
 });

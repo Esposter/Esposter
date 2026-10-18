@@ -20,15 +20,20 @@ A sub-spec of the [agent console](../infra-agent-console-program/design.md). A q
 
 ## Key files
 
-| File                                                                                              | Role after the change                                                      |
-| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/Sheet.vue`                                                  | the drawer beside the conversation, not yet built (tasks 2.1 and 2.3)      |
-| `packages/agent-console-server/src/models/command/ForkCommand.ts`                                 | gains `isSideChat`, the flag for a fork that is never saved                |
-| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | passes the flag into the fork, which the drawer closes                     |
-| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createSessionOpener.ts`        | opens a side chat's fork with `persistSession: false` and plan mode        |
-| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/listSessionSummaries.ts`       | leaves an open side chat out of the sessions list                          |
-| `packages/agent-console-server/src/services/drivers/window/createWindowDriver.ts`                 | holds the flag for a side chat's window, for the list and for a rejoin     |
-| `packages/agent-console-server/src/services/drivers/window/serveSessionChild.ts`                  | reports the flag when a window's session opens and when the window rejoins |
+| File                                                                                              | Role after the change                                                                      |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `apps/web/app/components/AgentConsole/Sheet.vue`                                                  | the Ctrl+; chord, and the drawer beside the console's tabs                                 |
+| `apps/web/app/components/AgentConsole/Panel/SideChat.vue`                                         | the drawer: its header, its conversation and composer, and the session scope they read     |
+| `apps/web/app/store/agentConsole/sideChat.ts`                                                     | whether the drawer is open, the fork it asks through and the question held until it opens  |
+| `apps/web/app/store/agentConsole/connection.ts`                                                   | asks, adopts and closes the side chat's fork, and routes its commands to its host          |
+| `apps/web/app/services/agentConsole/createSessionReads.ts`                                        | the reads of one session's view, shared by the console's session and the drawer's          |
+| `apps/web/app/composables/agentConsole/useAgentConsoleSession.ts`                                 | the session a component reads: the drawer's where it provides one, the console's otherwise |
+| `packages/agent-console-server/src/models/command/ForkCommand.ts`                                 | gains `isSideChat`, the flag for a fork that is never saved                                |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | passes the flag into the fork, which the drawer closes                                     |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createSessionOpener.ts`        | opens a side chat's fork with `persistSession: false` and plan mode                        |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/listSessionSummaries.ts`       | leaves an open side chat out of the sessions list                                          |
+| `packages/agent-console-server/src/services/drivers/window/createWindowDriver.ts`                 | holds the flag for a side chat's window, for the list and for a rejoin                     |
+| `packages/agent-console-server/src/services/drivers/window/serveSessionChild.ts`                  | reports the flag when a window's session opens and when the window rejoins                 |
 
 ## Sources
 

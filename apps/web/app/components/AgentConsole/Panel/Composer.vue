@@ -5,20 +5,21 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeMenuItems";
 import { readAttachment } from "@/services/agentConsole/readAttachment";
-import { toSlashCommand } from "@/services/agentConsole/toSlashCommand";
+import { toPromptCommand } from "@/services/agentConsole/toPromptCommand";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
-import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
-import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { CommandType, PermissionMode, SessionState } from "agent-console-server/contracts";
 
+interface Props {
+  // The side chat's composer asks its own session, and is not the console's
+  isSideChat?: true;
+}
+
+const { isSideChat } = defineProps<Props>();
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-const { sendCommand } = agentConsoleConnectionStore;
-const agentConsolePanelStore = useAgentConsolePanelStore();
-const { composerText } = storeToRefs(agentConsolePanelStore);
-const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { capabilities, currentSession, currentSessionId, isTurnRunning, sessionSettings } =
-  storeToRefs(agentConsoleSessionStore);
+const { askSideChat, sendCommand } = agentConsoleConnectionStore;
+const { capabilities, composerText, currentSession, isTurnRunning, sessionId, sessionSettings } =
+  useAgentConsoleSession();
 const prompt = useTemplateRef("prompt");
 const attachments = ref<Attachment[]>([]);
 // The palette lists the session's own commands — the person's skills and plugins included — while the input is a
@@ -50,8 +51,9 @@ const mentionMenuItems = computed(() => {
 });
 const suggestionItems = computed(() => (isMentioning.value ? mentionMenuItems.value : commandMenuItems.value));
 const suggestionLabel = computed(() => (isMentioning.value ? "Files" : "Slash commands"));
+// A side chat has no session until its first question opens one, and there is no file list to ask of none
 watch(isMentioning, (newIsMentioning) => {
-  if (newIsMentioning) sendCommand({ sessionId: currentSessionId.value, type: CommandType.ListFiles });
+  if (newIsMentioning && sessionId.value) sendCommand({ sessionId: sessionId.value, type: CommandType.ListFiles });
 });
 const selectSuggestion = (value: string) => {
   composerText.value = isMentioning.value ? composerText.value.replace(/@\S*$/u, `@${value} `) : `/${value} `;
@@ -68,37 +70,31 @@ const modelMenuItems = computed(
 const model = computed({
   get: () => sessionSettings.value?.model ?? "",
   set: (newModel) => {
-    sendCommand({ model: newModel, sessionId: currentSessionId.value, type: CommandType.SetModel });
+    sendCommand({ model: newModel, sessionId: sessionId.value, type: CommandType.SetModel });
   },
 });
 const permissionMode = computed({
   get: () => sessionSettings.value?.permissionMode ?? PermissionMode.Default,
   set: (newPermissionMode) => {
-    sendCommand({
-      permissionMode: newPermissionMode,
-      sessionId: currentSessionId.value,
-      type: CommandType.SetPermissionMode,
-    });
+    sendCommand({ permissionMode: newPermissionMode, sessionId: sessionId.value, type: CommandType.SetPermissionMode });
   },
 });
 const attach = async (fileList: FileList | undefined) => {
   const newAttachments = await Promise.all(Array.from(fileList ?? [], (file) => readAttachment(file)));
   attachments.value = [...attachments.value, ...newAttachments.filter((attachment) => attachment !== undefined)];
 };
+// The text stays in the composer until the question is taken, so one refused — a side chat still opening — is not lost
 const submit = () => {
   if (!composerText.value && attachments.value.length === 0) return;
   const sentText = composerText.value;
   const sentAttachments = attachments.value;
+  const isSent = isSideChat
+    ? askSideChat(sentText, sentAttachments)
+    : sendCommand(toPromptCommand(sessionId.value, sentText, sentAttachments));
+  if (!isSent) return;
+
   composerText.value = "";
   attachments.value = [];
-  sendCommand(
-    toSlashCommand(currentSessionId.value, sentText) ?? {
-      attachments: sentAttachments,
-      sessionId: currentSessionId.value,
-      text: sentText,
-      type: CommandType.Prompt,
-    },
-  );
 };
 </script>
 
@@ -106,7 +102,7 @@ const submit = () => {
   <UiFrame>
     <UiButton
       v-if="currentSession?.state === SessionState.Closed"
-      @click="sendCommand({ sessionId: currentSessionId, type: CommandType.Resume })"
+      @click="sendCommand({ sessionId: sessionId, type: CommandType.Resume })"
     >
       Resume this session
     </UiButton>
@@ -128,7 +124,7 @@ const submit = () => {
       <textarea
         ref="prompt"
         v-model="composerText"
-        aria-label="Message Claude"
+        :aria-label="isSideChat ? 'Ask the side chat' : 'Message Claude'"
         max-h="[40dvh]"
         placeholder="Message Claude — / for commands, @ for files, paste or drop a file"
         rows="1"
@@ -156,20 +152,23 @@ const submit = () => {
         @select="(value) => selectSuggestion(value)"
       />
       <div flex flex-wrap gap-2 items-center>
-        <UiSelect v-model="model" :items="modelMenuItems" label="Model" />
-        <UiSelect v-model="permissionMode" :items="PermissionModeMenuItems" label="Mode" />
+        <!-- The settings are the session's, so a side chat with no session yet has none to choose for -->
+        <template v-if="sessionId">
+          <UiSelect v-model="model" :items="modelMenuItems" label="Model" />
+          <UiSelect v-model="permissionMode" :items="PermissionModeMenuItems" label="Mode" />
+        </template>
         <!-- The terminal's Ctrl+B: what is running keeps running in the background while the turn goes on -->
         <UiButton
           v-if="isTurnRunning"
           ml-a
-          @click="sendCommand({ sessionId: currentSessionId, type: CommandType.BackgroundTasks })"
+          @click="sendCommand({ sessionId: sessionId, type: CommandType.BackgroundTasks })"
         >
           Background (Ctrl+B)
         </UiButton>
         <UiButton
           v-if="isTurnRunning"
           :variant="UiButtonVariant.Danger"
-          @click="sendCommand({ sessionId: currentSessionId, type: CommandType.Interrupt })"
+          @click="sendCommand({ sessionId: sessionId, type: CommandType.Interrupt })"
         >
           Stop (Esc)
         </UiButton>

@@ -1,7 +1,7 @@
 import type { Connection } from "@/models/agentConsole/Connection";
 import type { ConnectionSocket } from "@/models/agentConsole/ConnectionSocket";
 import type { Pairing } from "@/models/agentConsole/Pairing";
-import type { Command, ServerMessage } from "agent-console-server/contracts";
+import type { Attachment, Command, ServerMessage } from "agent-console-server/contracts";
 import type { DistributedOmit } from "type-fest";
 
 import { AgentConsoleThemeType } from "@/models/agentConsole/AgentConsoleThemeType";
@@ -17,11 +17,13 @@ import { getPort } from "@/services/agentConsole/getPort";
 import { getRemoteHostname } from "@/services/agentConsole/getRemoteHostname";
 import { reactToEvents } from "@/services/agentConsole/reactToEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
+import { toPromptCommand } from "@/services/agentConsole/toPromptCommand";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleShellStore } from "@/store/agentConsole/shell";
+import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { useAlertStore } from "@/store/alert";
 import { exhaustiveGuard, getOrCreate, getResult, getResultAsync, noop } from "@esposter/shared";
 import {
@@ -59,6 +61,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const { storeEvents, storeSessionReset, storeSessions } = agentConsoleSessionStore;
   const agentConsoleShellStore = useAgentConsoleShellStore();
   const { storeShellOpened, storeShellOutput, storeShellsClosed } = agentConsoleShellStore;
+  const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
   const agentConsoleFileStore = useAgentConsoleFileStore();
   const { storeFiles, storeOpenedFile } = agentConsoleFileStore;
   const connections = useLocalStorage<Connection[]>(LocalStorageKey.AgentConsoleConnections, []);
@@ -70,6 +73,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const theme = AgentConsoleThemeMap[AgentConsoleThemeType.Default];
   // The commands this tab sent that open a session or a shell: what they open is what this tab moves to
   const openingCommandIds = new Set<string>();
+  // The forks the side chat sent, which open its session rather than moving the tab to one
+  const sideChatCommandIds = new Set<string>();
   const connectionSocketMap = new Map<string, ConnectionSocket>();
   const getConnectionSocket = (connectionId: string) =>
     getOrCreate(connectionSocketMap, connectionId, (): ConnectionSocket => ({
@@ -104,6 +109,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         break;
       case ServerMessageType.CommandError:
         openingCommandIds.delete(serverMessage.commandId);
+        // A fork that failed to open leaves its question unasked, so the reader can send it again
+        if (sideChatCommandIds.delete(serverMessage.commandId)) agentConsoleSideChatStore.pendingQuestion = undefined;
         // oxlint-disable-next-line error-alert/no-raw-error-alert -- a host's command error is not a tRPC rejection, so no error link has shown it
         createAlert(serverMessage.message, "error");
         break;
@@ -141,6 +148,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       case ServerMessageType.SessionOpened:
         if (openingCommandIds.delete(serverMessage.commandId))
           agentConsoleSessionStore.currentSessionId = serverMessage.sessionId;
+        else if (sideChatCommandIds.delete(serverMessage.commandId))
+          storeSideChatOpened(connectionId, serverMessage.sessionId);
         break;
       case ServerMessageType.SessionReset:
         storeSessionReset(serverMessage.sessionId);
@@ -382,14 +391,18 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     reconnect(connectionId);
   };
 
+  // The host a session is on: the one the sessions list names, or a side chat's, which the list leaves out
+  const getSessionConnectionId = (sessionId: string) =>
+    agentConsoleSessionStore.sessions.find(({ id }) => id === sessionId)?.connectionId ??
+    (sessionId && sessionId === agentConsoleSideChatStore.sideChatSessionId
+      ? agentConsoleSideChatStore.sideChatConnectionId
+      : undefined);
   // A command about a session or a shell goes to the host holding it; one that opens a session goes where the reader
-  // Chose, or to the first host reached
+  // Chose, or to the first host reached. Returns whether the command was sent
   const sendCommand = (command: DistributedOmit<Command, "id">, connectionId?: string) => {
     const targetConnectionId =
       connectionId ??
-      ("sessionId" in command
-        ? agentConsoleSessionStore.sessions.find(({ id }) => id === command.sessionId)?.connectionId
-        : undefined) ??
+      ("sessionId" in command ? getSessionConnectionId(command.sessionId) : undefined) ??
       ("shellId" in command
         ? agentConsoleShellStore.shells.find(({ id }) => id === command.shellId)?.connectionId
         : undefined) ??
@@ -401,11 +414,12 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       getStatusRef(targetConnectionId).value !== ConnectionStatus.Connected
     ) {
       createAlert("Not connected to the host — the command was not sent", "error");
-      return;
+      return false;
     }
 
     const id = crypto.randomUUID();
-    if (
+    if (command.type === CommandType.Fork && command.isSideChat) sideChatCommandIds.add(id);
+    else if (
       [
         CommandType.CreateSession,
         CommandType.Fork,
@@ -416,9 +430,66 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     )
       openingCommandIds.add(id);
     webSocket.send(JSON.stringify({ ...command, id }));
+    return true;
+  };
+
+  // The side chat's fork is open. It becomes the drawer's session when the drawer is open and has none, and the
+  // Question held while it opened is asked of it first. Any other fork — one the drawer closed before it opened, or a
+  // Second one — is closed on the host, since nothing shows it
+  const storeSideChatOpened = (connectionId: string, sessionId: string) => {
+    if (!agentConsoleSideChatStore.isSideChatOpen || agentConsoleSideChatStore.sideChatSessionId) {
+      sendCommand({ sessionId, type: CommandType.CloseSession }, connectionId);
+      return;
+    }
+
+    agentConsoleSideChatStore.sideChatSessionId = sessionId;
+    agentConsoleSideChatStore.sideChatConnectionId = connectionId;
+    const { pendingQuestion } = agentConsoleSideChatStore;
+    if (!pendingQuestion) return;
+
+    agentConsoleSideChatStore.pendingQuestion = undefined;
+    sendCommand(toPromptCommand(sessionId, pendingQuestion.text, pendingQuestion.attachments));
+  };
+
+  // The side chat's first question forks the session at its latest message and is asked of the fork once it has opened;
+  // every question after that is asked of the fork, which holds the conversation it was forked from. Returns whether the
+  // Question was taken, so a question refused — the fork still opening, or no host reached — is kept by the reader
+  const askSideChat = (text: string, attachments: Attachment[]) => {
+    if (agentConsoleSideChatStore.sideChatSessionId)
+      return sendCommand(toPromptCommand(agentConsoleSideChatStore.sideChatSessionId, text, attachments));
+
+    // The fork is still opening, and its question is the one asked when it has
+    if (agentConsoleSideChatStore.pendingQuestion) return false;
+
+    agentConsoleSideChatStore.pendingQuestion = { attachments, text };
+    const isForkSent = sendCommand({
+      isSideChat: true,
+      messageUuid: "",
+      sessionId: agentConsoleSessionStore.currentSessionId,
+      type: CommandType.Fork,
+    });
+    if (!isForkSent) agentConsoleSideChatStore.pendingQuestion = undefined;
+    return isForkSent;
+  };
+
+  // Closing the drawer closes its fork on the host and discards its answers, which were never in the main conversation.
+  // A fork still opening is left to storeSideChatOpened, which closes it as it arrives
+  const closeSideChat = () => {
+    const { sideChatSessionId } = agentConsoleSideChatStore;
+    if (sideChatSessionId) {
+      sendCommand({ sessionId: sideChatSessionId, type: CommandType.CloseSession });
+      agentConsoleSessionStore.deleteData(sideChatSessionId);
+    }
+
+    agentConsoleSideChatStore.isSideChatOpen = false;
+    agentConsoleSideChatStore.sideChatSessionId = "";
+    agentConsoleSideChatStore.sideChatConnectionId = "";
+    agentConsoleSideChatStore.pendingQuestion = undefined;
   };
 
   return {
+    askSideChat,
+    closeSideChat,
     connect,
     connectedConnections,
     connections,
