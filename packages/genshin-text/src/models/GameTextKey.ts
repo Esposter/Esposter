@@ -144,6 +144,8 @@ export enum GameTextKey {
   // The feedback link, a web page the Paimon menu opens
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
   FineEnhancementOre = "377860124",
+  // The prompt a fishing point offers on its entrance button, as the game names it
+  Fishing = "UI_FISH_ENTRANCE_BUTTON",
   FlamingFlowerStamen = "2387249548",
   FluorescentFungus = "3996649804",
   // The Amount line over the forge slider, "Amount: {0}"
