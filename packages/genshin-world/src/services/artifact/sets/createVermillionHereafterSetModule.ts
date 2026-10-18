@@ -6,12 +6,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { checkIsKitHoldId } from "#src/services/kit/effects/checkIsKitHoldId";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { releaseKitHolds } from "#src/services/kit/effects/releaseKitHolds";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { ID_SEPARATOR, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 
 const VERMILLION_HEREAFTER_NASCENT_LIGHT_ID = "vermillionHereafterNascentLight";
 const VERMILLION_HEREAFTER_INCREASE_ID = "vermillionHereafterIncrease";
@@ -22,10 +23,10 @@ const clearNascentLight = (kitEffectState: KitEffectState, characterId: number):
   removeKitEffects(
     kitEffectState,
     (effect) =>
-      effect.kind === "status" &&
-      effect.characterId === characterId &&
-      (effect.id === VERMILLION_HEREAFTER_NASCENT_LIGHT_ID ||
-        effect.id.startsWith(`${VERMILLION_HEREAFTER_INCREASE_ID}${ID_SEPARATOR}`)),
+      (effect.kind === "status" &&
+        effect.characterId === characterId &&
+        effect.id === VERMILLION_HEREAFTER_NASCENT_LIGHT_ID) ||
+      checkIsKitHoldId(effect, characterId, VERMILLION_HEREAFTER_INCREASE_ID),
   );
 
 // Vermillion Hereafter. Its four-piece bonus gives its wearer Nascent Light on casting an Elemental Burst, which raises its
