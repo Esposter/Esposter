@@ -3,3 +3,5 @@ export const SUNDAY_DAY_OF_WEEK = 7;
 // How far east of an entrance's arrival the stand-in arena's place lies, in world units. PROVISIONAL until the domain's
 // Scene export gives its own transfer point
 export const DOMAIN_ARENA_OFFSET = 30;
+// How far from an arena's centre its stand-in enemies stand, in world units. PROVISIONAL, as the arena is
+export const DOMAIN_ARENA_SPREAD = 6;
