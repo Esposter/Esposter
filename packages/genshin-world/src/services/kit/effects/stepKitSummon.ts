@@ -1,3 +1,4 @@
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -14,6 +15,7 @@ export const stepKitSummon = (
   stepSeconds: number,
   body: GroundPoint,
   strikes: KitStrike[],
+  context: KitContext,
 ): void => {
   const fromSeconds = summon.elapsedSeconds;
   summon.elapsedSeconds += stepSeconds;
@@ -33,6 +35,6 @@ export const stepKitSummon = (
   const { attackTag, combatant, hits, target } = summon;
   // A hit whose hitmark is the cast itself falls at the seconds the first step begins at, so it lands on that step
   const landedHits: KitHit[] = [];
-  summon.nextHitIndex = landKitHits(hits, summon.nextHitIndex, summon.elapsedSeconds, landedHits);
+  summon.nextHitIndex = landKitHits(hits, summon.nextHitIndex, summon.elapsedSeconds, landedHits, context);
   for (const hit of landedHits) strikes.push({ attackTag, body: summon.body, combatant, hit, target });
 };

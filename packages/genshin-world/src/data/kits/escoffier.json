@@ -1,6 +1,5 @@
 {
   "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 92 },
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.burstHeal": { "cause": "Unclassified", "value": 97 },
   "frames.rehabDietLastTick": { "cause": "Unclassified", "value": 625 },
@@ -174,6 +173,5 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "source": "Gcsim" },
   "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
-  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.surgingBlade.gauge": { "cause": "DiffersFromSource" }
 }

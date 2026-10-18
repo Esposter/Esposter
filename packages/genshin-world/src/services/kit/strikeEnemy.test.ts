@@ -1,5 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -30,7 +31,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -656,6 +657,68 @@ describe(strikeEnemy, () => {
     });
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("a direct Lunar hit takes the party reaction bonuses its Lunar reaction takes, and its Elevation last", () => {
+    expect.hasAssertions();
+
+    const ELEMENTAL_MASTERY = 400;
+    const BASE_DAMAGE_BONUS = 0.07;
+    const REACTION_BONUS = 0.18;
+    const PARTY_DAMAGE_BONUS = 0.2;
+    const PARTY_CRITICAL_DAMAGE_BONUS = 0.5;
+    const ELEVATION_BONUS = 0.15;
+    const enemy = createSturdyEnemy();
+    const getPartyReactionBonus = vi.fn<NonNullable<Kit["getPartyReactionBonus"]>>(() => ({
+      criticalDamageBonus: PARTY_CRITICAL_DAMAGE_BONUS,
+      criticalRateBonus: 1,
+      damageBonus: PARTY_DAMAGE_BONUS,
+      elevationBonus: ELEVATION_BONUS,
+    }));
+    const combatant: Combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY },
+      ]),
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus },
+    };
+    const hit: KitHit = {
+      element: Element.Dendro,
+      hitArea: TRAVELER_KIT.plungeCollision.hitArea,
+      hitmarkSeconds: 0,
+      lunarHit: {
+        getScalingStat: ({ attributes }) => attributes.attributeTotalMap[Attribute.ElementalMastery],
+        lunarReactionType: LunarReactionType.LunarBloom,
+      },
+      poiseDamage: 0,
+      talentMultiplier: 2,
+    };
+    const damage =
+      getLunarDamage(
+        LunarReactionType.LunarBloom,
+        2 * ELEMENTAL_MASTERY,
+        ELEMENTAL_MASTERY,
+        BASE_DAMAGE_BONUS,
+        REACTION_BONUS + PARTY_DAMAGE_BONUS,
+      ) *
+      getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Dendro)) *
+      (1 + combatant.attributes.attributeTotalMap[Attribute.CriticalDamage] + PARTY_CRITICAL_DAMAGE_BONUS) *
+      (1 + ELEVATION_BONUS);
+    const context = createKitTestContext(combatant, { enemyTables, random: () => 0.5 });
+
+    strikeEnemy(enemy, hit, combatant, context, {
+      baseDamageBonusMap: { [LunarReactionType.LunarBloom]: BASE_DAMAGE_BONUS },
+      lunarReactionTypes: [LunarReactionType.LunarBloom],
+      reactionBonus: REACTION_BONUS,
+    });
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+    expect(getPartyReactionBonus).toHaveBeenCalledExactlyOnceWith(
+      { ...combatant, isOnField: true },
+      { combatant, element: Element.Dendro, enemy, reactionType: LunarReactionType.LunarBloom },
+      context,
+    );
   });
 
   test("takes an enemy's statuses' Physical RES reduction off the RES a physical hit reads", () => {

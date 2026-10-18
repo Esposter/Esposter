@@ -9,9 +9,10 @@ import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGc
 import { readGcsimHoldHitmarks } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldHitmarks";
 
 // The hits of an ability with no hitmark constant, fired by its queue calls: each call of the file its frames are in
-// Firing its first literal, at its damage delay, joined to its multiplier by its place and to its own hitbox, else to the
-// Ability's hitbox of its place where the ability's hitboxes are as many as its hits. A call firing another literal is a DoT's or a passive's, not one of its hits, and a call firing an excluded
-// Literal is another action's, such as a charged attack's variant's
+// Firing its first literal, at its damage delay, joined to its multiplier by its place and to its own hitbox, else to
+// The ability's hitbox of its place where the ability's hitboxes are as many as its hits. A call firing another literal
+// Is a DoT's or a passive's, not one of its hits, and a call firing an excluded literal is another action's, such as a
+// Charged attack's variant's
 export const addGcsimQueuedHits = (
   { add, addHit, toFile }: GcsimKitCandidateWriter,
   gcsim: GcsimCharacter,

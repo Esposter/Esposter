@@ -1,4 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -7,6 +9,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import {
   createZibaiKitBehaviour,
   PHASE_SHIFT_RADIANCE_STATUS_ID,
@@ -15,13 +18,21 @@ import {
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { landKitHits } from "#src/services/kit/landKitHits";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const ZIBAI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ZIBAI_CHARACTER_ID);
 
 const MAX_HEALTH = 10_000;
+
+// A combatant whose kit is a Moonsign benediction, the member a team's Ascendant Gleam counts
+const withMoonsignBenediction = (combatant: Combatant): Combatant => ({
+  ...combatant,
+  kit: { ...combatant.kit, moonsignBenediction: { getBaseDamageBonus: () => 0, lunarReactionTypes: [] } },
+});
 
 const createZibaiCombatant = (): Combatant => ({
   ascension: 0,
@@ -65,6 +76,34 @@ describe(createZibaiKitBehaviour, () => {
     expect(stance?.combatant.kit.normalAttacks).toHaveLength(4);
     expect(normalAttackHits.every((hit) => hit.element === Element.Geo)).toBe(true);
     expect(stance?.secondsRemaining).toBeGreaterThan(0);
+  });
+
+  test("her fourth normal attack's extra instance of Geo DMG lands only at Ascendant Gleam", () => {
+    expect.hasAssertions();
+    const zibai = createZibaiCombatant();
+    const context = createKitTestContext(zibai);
+    ZIBAI_KIT.elementalSkill.onStart?.(context);
+    const fourthStrikeHits =
+      findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID)?.combatant.kit.normalAttacks[3]?.hits ?? [];
+    const countLandedHits = (landingContext: KitContext): number => {
+      const landedHits: KitHit[] = [];
+      landKitHits(fourthStrikeHits, 0, Number.POSITIVE_INFINITY, landedHits, landingContext);
+      return landedHits.length;
+    };
+
+    // Zibai alone is no Moonsign, so only the strike's first hit lands
+    expect(countLandedHits(context)).toBe(1);
+
+    // Two Moonsign benedictions deployed make Ascendant Gleam, which lands the extra instance too
+    const gleamZibai = withMoonsignBenediction(zibai);
+    const gleamContext = createKitTestContext(gleamZibai, {
+      characterIdCombatantMap: new Map([
+        [ZIBAI_CHARACTER_ID, gleamZibai],
+        [TRAVELER_CHARACTER_ID, withMoonsignBenediction({ ...zibai, characterId: TRAVELER_CHARACTER_ID })],
+      ]),
+      party: createParty([ZIBAI_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
+    });
+    expect(countLandedHits(gleamContext)).toBe(2);
   });
 
   test("her Lunar Phase Shift gains 10 Radiance a second, and 5 for a normal attack's hit once every half second, up to 100", () => {

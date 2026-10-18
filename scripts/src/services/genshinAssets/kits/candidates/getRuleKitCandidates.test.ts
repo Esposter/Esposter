@@ -97,6 +97,7 @@ describe(getRuleKitCandidates, () => {
         ["plungeVariants.1.hits.length", 1],
         ["plungeVariants.1.hits.0.hitmarkFrames", 40],
       ]),
+      undefined,
     );
 
     expect(

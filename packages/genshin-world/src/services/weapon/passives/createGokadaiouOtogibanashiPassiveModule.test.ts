@@ -50,6 +50,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
           enemy,
           context.party,
           context.kitEffectState.effects,
+          context.characterIdCombatantMap,
         ),
       ),
     ).toStrictEqual([0.4 * wielder.attributes.defense, 0.4 * wielder.attributes.defense]);
@@ -83,6 +84,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toStrictEqual(0.4 * buffedDefense);
   });
@@ -97,6 +99,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });

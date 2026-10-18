@@ -3,6 +3,7 @@ import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 const JADE_FORGED_CROWN_SOURCE = "jadeForgedCrown";
@@ -17,9 +18,11 @@ export const createEchoesOfThePlentifulLandPassiveModule = (params: number[]): W
   const maximumAmount = takeOne(params, 1);
   const seconds = takeOne(params, 2);
   return {
-    onKitEvent: (event, { kitEffectState }, combatant) => {
+    onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       if (event.kind !== KitEventKind.SkillUsed || event.characterId !== combatant.characterId) return;
-      const steps = Math.floor(combatant.attributes.maxHealth / MAX_HEALTH_STEP);
+      const steps = Math.floor(
+        getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap) / MAX_HEALTH_STEP,
+      );
       buffKitMember(kitEffectState, combatant.characterId, {
         amount: Math.min(steps * amountPerStep, maximumAmount),
         attribute: Attribute.NormalAttackDamageBonus,

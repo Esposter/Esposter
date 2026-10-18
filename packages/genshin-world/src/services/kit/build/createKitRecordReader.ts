@@ -10,6 +10,9 @@ import { applyKitActionBehaviour } from "#src/services/kit/build/applyKitActionB
 import { applyKitHitBehaviour } from "#src/services/kit/build/applyKitHitBehaviour";
 import { checkIsKitHitIncomplete } from "#src/services/kit/build/checkIsKitHitIncomplete";
 import { checkIsKitHitShortOf } from "#src/services/kit/build/checkIsKitHitShortOf";
+import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { endKitStance } from "#src/services/kit/effects/endKitStance";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -32,6 +35,30 @@ const readList = <T>(bag: string, bagValueMap: Record<string, T | T[]> | undefin
   return value;
 };
 
+// A dash or a jump of a stance holding a resource: it is refused short of its drain, and spends the drain as it starts,
+// Which ends the stance once the resource is spent to none
+const drainStanceResource = (
+  stanceName: string,
+  drainPerAction: number,
+  actionBehaviour: KitActionBehaviour | undefined,
+): KitActionBehaviour => ({
+  ...actionBehaviour,
+  canStart: (context) =>
+    countKitResource(context.kitEffectState.effects, context.activeCombatant.characterId, stanceName) >=
+      drainPerAction &&
+    (actionBehaviour?.canStart?.(context) ?? true),
+  onStart: (context, target) => {
+    const { activeCombatant, kitEffectState } = context;
+    const { characterId } = activeCombatant;
+    if (
+      consumeKitResource(kitEffectState, characterId, stanceName, drainPerAction) &&
+      countKitResource(kitEffectState.effects, characterId, stanceName) === 0
+    )
+      endKitStance(kitEffectState.effects, characterId);
+    actionBehaviour?.onStart?.(context, target);
+  },
+});
+
 // A kit's record as its behaviour reads it, over the kit its slots built: each value of a bag by its name, resolved as
 // The slots are, failing on a name the bag does not hold or holds in the other shape
 export const createKitRecordReader = (
@@ -45,10 +72,17 @@ export const createKitRecordReader = (
     const path = `stances.${name}`;
     const stance = readEntry("stances", record.stances, name);
     const normalAttackBehaviours = behaviour.normalAttacks ?? [];
+    const { resource } = stance;
+    const drainBehaviour = (actionBehaviour: KitActionBehaviour | undefined) =>
+      resource === undefined
+        ? actionBehaviour
+        : drainStanceResource(name, toParameter(resource.drainPerAction), actionBehaviour);
     if (
       (behaviour.burst && !stance.burst) ||
       (behaviour.chargedAttack && !stance.chargedAttack) ||
       (behaviour.skill && !stance.skill) ||
+      (behaviour.dash && !stance.dash) ||
+      (behaviour.jump && !stance.jump) ||
       normalAttackBehaviours.length > (stance.normalAttacks?.length ?? 0)
     )
       throw new InvalidOperationError(Operation.Read, path, "its behaviour names an action it plays as its kit does");
@@ -58,12 +92,15 @@ export const createKitRecordReader = (
         : kit.chargedAttack,
       chargedAttackStamina:
         stance.chargedAttackStamina === undefined ? kit.chargedAttackStamina : toParameter(stance.chargedAttackStamina),
+      dash: stance.dash ? buildAction(stance.dash, drainBehaviour(behaviour.dash), `${path}.dash`) : kit.dash,
       elementalBurst: stance.burst ? buildAction(stance.burst, behaviour.burst, `${path}.burst`) : kit.elementalBurst,
       elementalSkill: stance.skill ? buildAction(stance.skill, behaviour.skill, `${path}.skill`) : kit.elementalSkill,
+      jump: stance.jump ? buildAction(stance.jump, drainBehaviour(behaviour.jump), `${path}.jump`) : kit.jump,
       normalAttacks:
         stance.normalAttacks?.map((actionRecord, index) =>
           buildAction(actionRecord, normalAttackBehaviours[index], `${path}.normalAttacks.${index}`),
         ) ?? kit.normalAttacks,
+      ...(resource && { resource: { id: name, startingCount: toParameter(resource.startingCount) } }),
     };
   };
   return {

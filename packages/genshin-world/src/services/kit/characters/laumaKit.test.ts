@@ -9,6 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
@@ -336,7 +337,7 @@ const readPaleHymnBaseDamageBonus = (
   return (
     LAUMA_KIT.getPartyReactionBonus?.(
       combatant,
-      { combatant, reactionType },
+      { combatant, element: Element.Dendro, enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), reactionType },
       createKitTestContext(combatant, { kitEffectState }),
     )?.additiveBaseDamageBonus ?? 0
   );

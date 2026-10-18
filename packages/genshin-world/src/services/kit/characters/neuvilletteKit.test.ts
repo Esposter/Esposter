@@ -31,20 +31,19 @@ const getPassiveBonusPairs = (ascension: number, healthShare: number): [Attribut
   ).map(({ amount, attribute }) => [attribute, Math.round(amount * 1000) / 1000]);
 
 describe(createNeuvilletteKitBehaviour, () => {
-  test("reads the strikes', charged attack's, plunges' and Spiritbreath Thorn's multipliers from his proud skill groups", () => {
+  test("reads the strikes', plunges' and Spiritbreath Thorn's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
       ...NEUVILLETTE_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
-      NEUVILLETTE_KIT.chargedAttack.hits[0]?.talentMultiplier,
       NEUVILLETTE_KIT.plungeCollision.talentMultiplier,
       NEUVILLETTE_KIT.lowPlunge.hits[0]?.talentMultiplier,
       NEUVILLETTE_KIT.highPlunge.hits[0]?.talentMultiplier,
       NEUVILLETTE_KIT.elementalSkill.hits[1]?.talentMultiplier,
     ];
-    expect(multipliers).toStrictEqual([0.545768, 0.462456, 0.723376, 1.368, 0.568288, 1.136335, 1.419344, 0.208]);
+    expect(multipliers).toStrictEqual([0.545768, 0.462456, 0.723376, 0.568288, 1.136335, 1.419344, 0.208]);
   });
 
-  test("the charged attack costs 50 stamina, his burst costs 70 energy and cools for 18 seconds, and his skill cools for 12 seconds", () => {
+  test("the charged attack costs no stamina, his burst costs 70 energy and cools for 18 seconds, and his skill cools for 12 seconds", () => {
     expect.hasAssertions();
     expect({
       burstCooldownSeconds: NEUVILLETTE_KIT.burstCooldownSeconds,
@@ -54,7 +53,7 @@ describe(createNeuvilletteKitBehaviour, () => {
     }).toStrictEqual({
       burstCooldownSeconds: 18,
       burstEnergyCost: 70,
-      chargedAttackStamina: 50,
+      chargedAttackStamina: 0,
       skillCooldownSeconds: 12,
     });
   });

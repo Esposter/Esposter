@@ -14,7 +14,6 @@
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unclassified", "value": "NormalAttack" },
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 7, "proudSkillGroupId": 2431 } },
-  "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "frames.baneOfEvil": { "cause": "Unclassified", "value": 90 },
   "hitFields.lightningDischarge.element": { "cause": "Unclassified", "value": "Electric" },
   "hitFields.lightningDischarge.gauge": { "cause": "Unclassified", "value": 1 },

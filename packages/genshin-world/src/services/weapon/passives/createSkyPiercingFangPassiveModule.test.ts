@@ -70,6 +70,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
           enemy,
           context.party,
           context.kitEffectState.effects,
+          context.characterIdCombatantMap,
         ),
       ),
     ).toStrictEqual([0.2 * wielder.attributes.attack, 0.2 * wielder.attributes.attack]);
@@ -104,6 +105,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBeCloseTo(0.2 * buffedAttack);
   });
@@ -118,6 +120,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
     skywardBladePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
@@ -128,6 +131,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
@@ -145,6 +149,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ),
     ).toBe(0);
   });
