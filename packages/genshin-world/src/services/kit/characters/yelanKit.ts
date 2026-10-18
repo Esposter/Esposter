@@ -20,9 +20,12 @@ const BREAKTHROUGH_BARB_ID = "yelan-breakthrough-barb";
 
 export const YELAN_CHARACTER_ID = 10_000_060;
 
+const CONSTELLATION_1 = 1;
+
 // Yelan's behaviour: Depth-Clarion Dice sets its field as it is cast, which waves an Exquisite Throw each second from a
 // Second after its hit for its seconds, and each Lingering Lifeline hit throws one more while the field stands.
-// Her Breakthrough Barb's own hit, her passives and constellations are not built
+// Her Breakthrough Barb's own hit, her passives and Constellations 2, 4 and 6 are not built
+// Constellation 1's charge is built
 // Constellation 2 needs Exquisite Throw's coordinated attack and its extra arrow, which the kit does not build
 // Constellation 4 needs the marked opponents on Lifeline's explosion, which the kit does not build
 // Constellation 6 needs the Mastermind state after Depth-Clarion Dice, which the kit does not build
@@ -33,6 +36,8 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
   return {
     // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the field's
     // Ticks do not depend on where the body stands
+    // Enter the Plotters, from Constellation 1: Lingering Lifeline gains one more charge
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { facing, height, position } = body;
