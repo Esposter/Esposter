@@ -16,7 +16,7 @@ Mizuki's three strikes SHALL each deal Anemo damage on the primary target, landi
 
 ### Requirement: Mizuki's charged attack
 
-Mizuki's charged attack SHALL land a 3.5-metre Anemo circle on the primary target at 39 frames and SHALL need 50 stamina to start.
+Mizuki's charged attack SHALL land an 8.5-metre Anemo circle on the primary target at 39 frames and SHALL need 50 stamina to start.
 
 #### Scenario: Charged attack with enough stamina
 
