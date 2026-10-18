@@ -1,8 +1,8 @@
 import type { GroundPieceArea } from "#src/models/genshinAssets/fit/GroundPieceArea";
 import type { GroundPoint } from "genshin-engine";
 
-import { TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 import { TERRAIN_NAME_PREFIX, TERRAIN_NAME_SUFFIX } from "#src/services/genshinAssets/world/constants";
+import { getBoxTiles } from "#src/services/genshinAssets/world/getBoxTiles";
 
 interface TerrainTile {
   column: number;
@@ -25,14 +25,7 @@ const getCapitalTiles = ({ column, row }: TerrainTile): TerrainTile[] => [
 const getOutlineTiles = (outline: readonly GroundPoint[], [originX, , originZ]: Origin): TerrainTile[] => {
   const xs = outline.map(({ x }) => originX + x);
   const zs = outline.map(({ z }) => originZ - z);
-  const columnStart = Math.floor(Math.min(...xs) / TERRAIN_TILE_SIZE);
-  const columnEnd = Math.floor(Math.max(...xs) / TERRAIN_TILE_SIZE);
-  const rowStart = Math.floor(Math.min(...zs) / TERRAIN_TILE_SIZE);
-  const rowEnd = Math.floor(Math.max(...zs) / TERRAIN_TILE_SIZE);
-  const tiles: TerrainTile[] = [];
-  for (let column = columnStart; column <= columnEnd; column++)
-    for (let row = rowStart; row <= rowEnd; row++) tiles.push({ column, row });
-  return tiles;
+  return getBoxTiles(Math.min(...xs), Math.max(...xs), Math.min(...zs), Math.max(...zs));
 };
 
 // The terrain tiles a capital's world is read from, each named once: the 2x2 Windrise's ground is drawn from, and every
