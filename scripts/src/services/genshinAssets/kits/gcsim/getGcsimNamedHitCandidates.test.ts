@@ -195,13 +195,14 @@ describe(getGcsimNamedHitCandidates, () => {
     ).toStrictEqual([[KitProvisionalCause.NoPoiseSource, 0]]);
   });
 
-  test("joins a skill hold's and a stance's hit to the same talent variable, and a non-hit multiplier to none", () => {
+  test("joins a single hit's, a skill hold's and a stance's multiplier by its value to the one candidate of its key, and a multiplier of no named hit to none", () => {
     expect.hasAssertions();
 
     const namedHitCandidateMap = getGcsimNamedHitCandidates(gcsim, tables);
     const joined = getNamedHitKitCandidates(
       new Map<string, unknown>([
         ["hitFields.dragonBreath.multiplier", { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }],
+        ["hitFields.otherBreath.multiplier", { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }],
         ["skillHolds.0.action.hits.0.multiplier", { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }],
         [
           "stances.windfavored.normalAttacks.0.hits.0.multiplier",
@@ -212,9 +213,11 @@ describe(getGcsimNamedHitCandidates, () => {
     );
 
     expect([...joined.keys()].filter((path) => path.endsWith(".element"))).toStrictEqual([
+      "hitFields.dragonBreath.element",
       "skillHolds.0.action.hits.0.element",
       "stances.windfavored.normalAttacks.0.hits.0.element",
     ]);
+    expect(joined.get("hitFields.dragonBreath.element")?.map(({ value }) => value)).toStrictEqual([Element.Pyro]);
   });
 
   test("gives a call after an if else's branches to the attack of each branch, so each branch's list takes it", () => {
