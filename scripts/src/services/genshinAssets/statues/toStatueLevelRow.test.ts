@@ -68,9 +68,12 @@ describe(toStatueLevelRow, () => {
       sceneId: 3,
     };
 
-    expect(toStatueLevelRow(levelRow, { rewardId: REWARD_ID, rewardItemList: [] })).toMatchObject({
+    expect(toStatueLevelRow(levelRow, { rewardId: REWARD_ID, rewardItemList: [] })).toStrictEqual({
       itemCount: 0,
       itemId: 0,
+      level: 1,
+      rewards: [],
+      staminaShare: 0,
     });
   });
 });
