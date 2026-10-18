@@ -28,5 +28,5 @@ An email is built from email node types, edited on a design canvas, and checked 
 
 - The email editor's shell, its dataset picker and its preview text field.
 - The email node types and their default looks, which a server test holds equal to the installed email engine's defaults.
-- The server, which compiles the email on publish and for preview, and refuses invalid markup.
+- The server, which compiles the email on publish, where invalid markup is refused, and for preview, which returns the validator's messages with the compiled email.
 - The personalised export, which reads the compiled email instead of a live editor, and the merge field substitution it runs.
