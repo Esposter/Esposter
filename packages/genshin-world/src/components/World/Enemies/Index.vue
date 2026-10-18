@@ -21,6 +21,7 @@ import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
+import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { checkIsEnemyRespawned } from "#src/services/enemy/checkIsEnemyRespawned";
 import { computeCampLockSources } from "#src/services/enemy/computeCampLockSources";
 import { computeEnemyDrops } from "#src/services/enemy/computeEnemyDrops";
@@ -198,7 +199,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       enemy,
       taunt ? taunt.body.position : target,
       ENEMY_STEP_SECONDS,
-      BossMovesMap[enemy.enemyKindId],
+      checkIsEnemyKindId(enemy.enemyKindId) ? BossMovesMap[enemy.enemyKindId] : undefined,
     );
     // A shield stands again as its stagger ends or the enemy arrives home, and can break again, so a shield the step sees
     // Broken that it did not see broken before is a break. It is read after the step, where a shield stands again, so a
