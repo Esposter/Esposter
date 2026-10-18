@@ -11,8 +11,8 @@ Beside the Statues of The Seven, many areas keep an offering of their own: the F
 - **One levels builder over the dump's offering table.** `buildOfferingLevels` publishes each offering id the level-up table names under its kind (`offerings/<kind>`), the kind given by `OfferingIdKindMap`. An id the map does not hold is an error, so a new offering cannot publish under no key, unless its event has ended.
 - **A level takes a list of items.** `items` holds every item a level takes, each with its count, in the slots the dump names them. Lumenstone Adjuvant's levels 2, 6 and 8 take Lumenspar and Lumenstone Ore, so their `items` hold both. The Frostbearing Tree's levels hold one item or none, and the tree's reader still reads them as the offer rule's single item: that rule holds one count, and its saved progress is one count shared with the statues' progress. A level naming more than one item is refused as the tree's data is read. Lumenstone's two-item levels publish, and no world reader reads them until the rule holds each item, a decision the main session owns with the save.
 - **A level at level 0 is the unstarted state.** The table writes it with no level, no reward and no item, and the builder keeps only levels above zero, so it is left out. The tree has no such row: its level 1 is a real level paying its reward.
-- **An offering whose level names no reward the table holds is left out, with a note.** The Gift of Amrita is the one case; see below.
-- **The Gift of Amrita is left out.** Its six level rows take six Plumes of Purifying Light and name no reward in the level table: they name a Lua group (`133317140`) which draws the blessing. The table's only reward for the offering is the finish reward `313007`, one item (`210160`). The wiki's Gift of Amrita page gives six sets of rewards, "The player receives each set of rewards once, their order is randomized", and a fixed per-level reward would invent the order the game draws. A random pool is a shape the level does not have. Waits on that decision.
+- **An offering whose level names no reward the table holds is left out, with a note, unless its levels draw from a pool.** The Gift of Amrita is the one offering whose levels name none, and it draws from a pool, below.
+- **The Gift of Amrita draws each level's reward from a pool.** Its six level rows take six Plumes of Purifying Light each and name no reward: they name a Lua group (`133317140`) which draws the blessing, and the dump holds no table for the group. The table's only reward for the offering is the finish reward `313007`, one item (`210160`). The wiki's Gift of Amrita page gives six sets of rewards, "The player receives each set of rewards once, their order is randomized", so a fixed reward per level would invent the order. The reward rows `313001` to `313006` are the six sets (`OFFERING_REWARD_POOL_IDS`), matched to the wiki's sets by their item counts; the dump's item names are not checked against the wiki's. A level's `reward` is `{ kind: "pool", sets }`, every level carrying the whole pool, and the world draws one set a level without repeats. The offering is published, so it matches its page.
 - **Primal Flame Resonance is published from the wiki, provisionally.** The dump holds no level table for it (`ActivityNatlanOfferExcelConfigData` has no rows). The wiki's Primal Flame Resonance page gives six levels, "offered in groups of 1. A total of 6 Blazing Flint Ores are required to reach the maximum level", and its bonuses are per constellation, not items. The six levels take one Blazing Flint Ore each (the dump's material `918`) and pay no reward. The values are provisional in `constants.ts` until a recording confirms them.
 - **Michiae Casket's event has ended, so its id is left out.** Michiae Casket (id 4) is the Three Realms Gateway Offering's, a Version 2.5 flagship event that ran from 2022/02/17 to 2022/03/30. The event's Part I page gives its Japanese name, "Sankai Michiae-no-Matsuri". `ENDED_OFFERING_IDS` names the id, and the kind is not held.
 - **Offering places beside the tree's, one generic builder.** `buildOfferingPlaces` publishes each offering's map point through the shared placement into the `offeringPlaces` dataset, one slice per region, each place carrying its offering's kind. The tree keeps its own `frostbearingTreePlaces` dataset, which the world reads, so it is not published twice.
@@ -24,7 +24,7 @@ Checked on 2026-10-18 against the [Offering System](https://genshin-impact.fando
 
 **The wording matches the rule.** The page says an offering system takes items found through exploration, is "similar to Statue of The Seven but instead of being able to offer one item at a time, the player automatically offers all in Inventory". That is the rule's first requirement, every offering item in the bag offered at once.
 
-**The page lists eleven offerings; ten match the dump one for one by item, group size and total.** Each sub-page's "groups of" and total give the dump's per-level count and level count:
+**The page lists eleven offerings, and all eleven match the published list one for one by item, group size and total.** Each sub-page's "groups of" and total give the dump's per-level count and level count:
 
 | Wiki section (sub-page)           | Dump id | Item and figure                                                                                                |
 | :-------------------------------- | ------: | :------------------------------------------------------------------------------------------------------------- |
@@ -32,7 +32,7 @@ Checked on 2026-10-18 against the [Offering System](https://genshin-impact.fando
 | Sacred Sakura's Favor             |       2 | Electro Sigil, groups of 25, 1,250 total: 50 levels of 25                                                      |
 | Enhance the Lumenstone Adjuvant   |       3 | Lumenspar, groups of 8, 80 total, and one Lumenstone Ore at levels 2, 6 and 8                                  |
 | Vanarana's Favor (Tree of Dreams) |       5 | Dendro Sigil, groups of 35, 1,750 total: 50 levels of 35                                                       |
-| The Gift of Amrita                |       6 | Plume of Purifying Light, groups of 6, 36 total: 6 levels of 6. Not published, see above                       |
+| The Gift of Amrita                |       6 | Plume of Purifying Light, groups of 6, 36 total: 6 levels of 6. Published as a pool of six sets, see Decisions |
 | Fountain of Lucine's Accolades    |       7 | Hydro Sigil, groups of 30, 1,500 total: 50 levels of 30                                                        |
 | Rainjade's Benediction            |       8 | Spirit Carp, groups of 5, 50 total: 10 levels of 5                                                             |
 | Tona's Flame's Restitution        |       9 | Pyro Sigil, groups of 30, 1,500 total: 50 levels of 30                                                         |
@@ -42,7 +42,7 @@ Checked on 2026-10-18 against the [Offering System](https://genshin-impact.fando
 
 **Where the published list and the page differ:**
 
-- **The Gift of Amrita** is the page's one offering not published (see the decision above). It is the only page offering that does not match, so the check below does not pass.
+- **The Gift of Amrita** is published as a pool, not a fixed set per level. Its per-level count and group size match the page, and its six sets are the page's six, so it matches on the list.
 - **Shadow Realm Analyzer:** the page says levels above 5 "will unlock in future", while the table holds nine levels. The dump's version table caps this offering at level 5, the page's level, so the published levels 6 to 9 sit above the cap, which the world applies.
 - **Temple of Space: Memory Core:** the page's level table gates some levels on exploration progress at 10, 50 and 90 percent. The rule has no such gate, so those levels publish without it. The Memory Core's label has no point on the official map.
 - **Version caps:** the dump's version table caps Sacred Sakura (id 2), Tree of Dreams (5), Fountain of Lucine (7) and Tona's Flame (9) at 20, 30, 40 and 50, and the Shadow Realm Analyzer (19) at 5. The page gives the caps by version, before Versions 2.4, 3.6, 4.6 and 5.8. The published levels run to 50 and ignore these caps, which are the world's to apply.
@@ -58,13 +58,13 @@ Checked on 2026-10-18 against the [Offering System](https://genshin-impact.fando
 
 Meeting Point is the page the wiki names as "the Reputation system for Nod-Krai and Snezhnaya"; its offerings are Construction levels, the same rule. The Snezhnaya page's exploration gates (10, 30, 50, 70 and 90 percent) are not part of the rule. The Nod-Krai page's Luna Sigil figures are not compared here.
 
-The published set is the page's offerings but the Gift of Amrita (ten, Primal Flame Resonance included from the wiki), the eleven kinds the Meeting Points list (Nod-Krai's eight and Snezhnaya's three), and no Michiae Casket. Only the Gift of Amrita is missing from the page's list, so task 3.1 stays open.
+The published set is the page's eleven offerings (Primal Flame Resonance from the wiki, the Gift of Amrita as a pool), the eleven kinds the Meeting Points list (Nod-Krai's eight and Snezhnaya's three), and no Michiae Casket. Every page offering matches, so task 3.1 is ticked.
 
 ## Scope and order
 
 **This still adds:**
 
-1. **Every offering's levels and rewards**, from its level-up table or its wiki page, on the one rule. Built for every id but Michiae Casket's ended event and the Gift of Amrita, which waits on the random-pool decision.
+1. **Every offering's levels and rewards**, from its level-up table or its wiki page, on the one rule. Built for every id but Michiae Casket's ended event, which is left out.
 2. **Each offering's place**, from the official map's point, published per region as the Frostbearing Tree's is. The map has no point for the Fountain of Lucine, the Votive Rainjade, the Lumenstone Adjuvant or the Shadow Realm Analyzer, and the Memory Core's label has none, so those wait. The Snezhnaya and Nod-Krai meeting points (labels 518 and 693) are not placed: the map gives three and six points for three and eight offerings, and which point is which is not settled.
 
 ## Data and measures
@@ -82,14 +82,16 @@ The published set is the page's offerings but the Gift of Amrita (ten, Primal Fl
 | `packages/genshin-world/src/models/data/GameDataset.ts`                        | Gains the `offeringPlaces` dataset beside the tree's                                                           |
 | `packages/genshin-world/src/services/offering/readFrostbearingTreeLevels.ts`   | Reads the tree's levels as the published list, one item a level, as the rule holds                             |
 | `scripts/src/models/genshinAssets/offerings/OfferingKind.ts`                   | Each offering's kind, the key its levels and places publish under                                              |
-| `scripts/src/models/genshinAssets/offerings/OfferingLevelRow.ts`               | One published level: the items it takes as a list, and its rewards                                             |
+| `scripts/src/models/genshinAssets/offerings/OfferingLevelRow.ts`               | One published level: the items it takes as a list, and its reward, fixed or a pool                             |
 | `scripts/src/services/genshinAssets/offerings/OfferingIdKindMap.ts`            | Each level-up table id's kind                                                                                  |
 | `scripts/src/services/genshinAssets/offerings/LabelIdOfferingKindMap.ts`       | Each offering's official map label, where the map has one                                                      |
 | `scripts/src/services/genshinAssets/offerings/buildOfferingLevels.ts`          | Builds every offering's levels, each row's reward joined from the reward table, and Primal Flame's wiki levels |
 | `scripts/src/services/genshinAssets/offerings/buildOfferingPlaces.ts`          | Builds each region's offering places from the official map's points and the fit                                |
-| `scripts/src/services/genshinAssets/offerings/constants.ts`                    | The ended event's ids and Primal Flame's provisional wiki values                                               |
+| `scripts/src/services/genshinAssets/offerings/constants.ts`                    | The ended event's ids, Primal Flame's provisional wiki values and the Gift of Amrita's reward pool             |
 | `scripts/src/services/genshinAssets/offerings/getConsumedItems.ts`             | The item slots a level names, the zeroed empty slots dropped                                                   |
-| `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`           | One level's row: every item it takes, its rewards                                                              |
+| `scripts/src/services/genshinAssets/offerings/toLevelItems.ts`                 | Every item a level takes, as its item and its count                                                            |
+| `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`           | One fixed-reward level's row: every item it takes, its rewards                                                 |
+| `scripts/src/services/genshinAssets/offerings/toPoolOfferingLevelRow.ts`       | One pool-reward level's row: every item it takes, every set of its pool                                        |
 | `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreePlaces.ts`  | Builds the tree's place from the official map's point and the fit                                              |
 | `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`                  | The reward table keyed by reward id, shared by the level builders                                              |
 
