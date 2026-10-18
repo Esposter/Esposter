@@ -54,6 +54,8 @@ describe(useGridLayout, () => {
   }) => {
     const onCommit = vi.fn<(commit: GridCommit) => void>();
     const gridLayout = shallowRef<GridLayout>();
+    // The items are held as a ref, so a test can replace them under a gesture the way a version restore does
+    const itemsRef = shallowRef(items);
     const wrapper = mount(
       defineComponent({
         setup() {
@@ -64,7 +66,7 @@ describe(useGridLayout, () => {
             compactType,
             dragStartDistance,
             isEditable,
-            items,
+            items: itemsRef.value,
             onCommit,
             rowHeight,
             spacing: gridSpacing,
@@ -102,7 +104,11 @@ describe(useGridLayout, () => {
     // A pointer over a grid is over its own root, so a release lands on the grid that was pressed
     vi.spyOn(document, "elementsFromPoint").mockReturnValue([wrapper.element]);
 
-    return { grid: gridLayout, onCommit, wrapper };
+    const setItems = (nextItems: GridItem[]) => {
+      itemsRef.value = nextItems;
+    };
+
+    return { grid: gridLayout, onCommit, setItems, wrapper };
   };
   // The palette sits outside every grid, so an entry is dragged in from a plain element that starts the drag on a press.
   // The returned function fires a pointer event of the given type at that element
@@ -145,6 +151,7 @@ describe(useGridLayout, () => {
     expect.hasAssertions();
 
     const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    await flushPromises();
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await tile.trigger("pointermove", { buttons: 1, clientX: 2, clientY: 0, pointerId });
@@ -158,6 +165,7 @@ describe(useGridLayout, () => {
     expect.hasAssertions();
 
     const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    await flushPromises();
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch, clientY: 0, pointerId });
@@ -180,6 +188,7 @@ describe(useGridLayout, () => {
         { h: 2, id: "b", w: 2, x: 4, y: 0 },
       ],
     });
+    await flushPromises();
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
@@ -197,6 +206,27 @@ describe(useGridLayout, () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
+  test("a layout replaced during a gesture ends it", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, setItems, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    await flushPromises();
+    const tile = wrapper.get(".tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch, clientY: 0, pointerId });
+
+    expect(wrapper.find(".placeholder").exists()).toBe(true);
+
+    setItems([{ h: 2, id: "a", w: 2, x: 4, y: 0 }]);
+    await flushPromises();
+
+    expect(wrapper.find(".placeholder").exists()).toBe(false);
+
+    await wrapper.get(".grid").trigger("pointerup", { clientX: cellPitch, clientY: 0, pointerId });
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
   test("a second pointer pressed during a drag", async () => {
     expect.hasAssertions();
 
@@ -206,6 +236,7 @@ describe(useGridLayout, () => {
         { h: 2, id: "b", w: 2, x: 4, y: 0 },
       ],
     });
+    await flushPromises();
     const tiles = wrapper.findAll(".tile");
     await tiles[0]?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await tiles[0]?.trigger("pointermove", { buttons: 1, clientX: cellPitch, clientY: 0, pointerId });
@@ -220,6 +251,7 @@ describe(useGridLayout, () => {
     expect.hasAssertions();
 
     const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    await flushPromises();
     await wrapper.get(".tile").trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await wrapper.get(".grid").trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
     await wrapper.get(".grid").trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
@@ -231,6 +263,7 @@ describe(useGridLayout, () => {
     expect.hasAssertions();
 
     const { onCommit, wrapper } = mountGrid({ edge: ResizeEdge.West, items: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }] });
+    await flushPromises();
     const handle = wrapper.get(".handle");
     await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await handle.trigger("pointermove", { buttons: 1, clientX: -cellPitch, clientY: 0, pointerId });
@@ -243,6 +276,7 @@ describe(useGridLayout, () => {
     expect.hasAssertions();
 
     const { onCommit, wrapper } = mountGrid({ edge: ResizeEdge.West, items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    await flushPromises();
     const handle = wrapper.get(".handle");
     await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await handle.trigger("pointermove", { buttons: 1, clientX: -cellPitch, clientY: 0, pointerId });
@@ -252,6 +286,18 @@ describe(useGridLayout, () => {
     await handle.trigger("pointerup", { clientX: -cellPitch, clientY: 0, pointerId });
 
     expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a grid draws no tiles before its width is known", async () => {
+    expect.hasAssertions();
+
+    const { grid, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+
+    expect(grid.value?.tiles.value).toStrictEqual([]);
+
+    await flushPromises();
+
+    expect(wrapper.get(".tile").attributes("style")).toBe("height: 90px; left: 10px; top: 10px; width: 150px;");
   });
 
   test("#17 #62 Padding the grid apart from its gaps", async () => {
@@ -523,11 +569,42 @@ describe(useGridLayout, () => {
     const innerCommit = vi.fn<(commit: GridCommit) => void>();
     const outerItems: GridItem[] = [{ h: 4, id: "outer", w: 12, x: 0, y: 0 }];
     const innerItems: GridItem[] = [{ h: 2, id: "inner", w: 2, x: 0, y: 0 }];
+    const innerGrid = shallowRef<GridLayout>();
+    // The inner grid is a component of its own, as a nested grid is in an app, so its root mounts with its tile
+    const InnerGrid = defineComponent({
+      setup() {
+        const innerRoot = useTemplateRef<HTMLElement>("innerRoot");
+        const inner = useGridLayout(innerRoot, () => ({
+          collision: CollisionMode.Push,
+          columnNumber,
+          compactType: CompactType.Vertical,
+          dragStartDistance,
+          isEditable: true,
+          items: innerItems,
+          onCommit: innerCommit,
+          rowHeight,
+          spacing,
+        }));
+        innerGrid.value = inner;
+
+        return () =>
+          h(
+            "div",
+            { class: "inner", ref: "innerRoot" },
+            inner.tiles.value.map(({ geometry, item }) =>
+              h("div", {
+                class: "inner-tile",
+                onPointerdown: (event: PointerEvent) => inner.startGesture(event, item),
+                style: getStyle(geometry),
+              }),
+            ),
+          );
+      },
+    });
     const wrapper = mount(
       defineComponent({
         setup() {
           const outerRoot = useTemplateRef<HTMLElement>("outerRoot");
-          const innerRoot = useTemplateRef<HTMLElement>("innerRoot");
           const outer = useGridLayout(outerRoot, () => ({
             collision: CollisionMode.Push,
             columnNumber,
@@ -536,17 +613,6 @@ describe(useGridLayout, () => {
             isEditable: true,
             items: outerItems,
             onCommit: outerCommit,
-            rowHeight,
-            spacing,
-          }));
-          const inner = useGridLayout(innerRoot, () => ({
-            collision: CollisionMode.Push,
-            columnNumber,
-            compactType: CompactType.Vertical,
-            dragStartDistance,
-            isEditable: true,
-            items: innerItems,
-            onCommit: innerCommit,
             rowHeight,
             spacing,
           }));
@@ -564,19 +630,7 @@ describe(useGridLayout, () => {
                     onPointerdown: (event: PointerEvent) => outer.startGesture(event, item),
                     style: getStyle(geometry),
                   },
-                  [
-                    h(
-                      "div",
-                      { class: "inner", ref: "innerRoot" },
-                      inner.tiles.value.map(({ geometry: innerGeometry, item: innerItem }) =>
-                        h("div", {
-                          class: "inner-tile",
-                          onPointerdown: (event: PointerEvent) => inner.startGesture(event, innerItem),
-                          style: getStyle(innerGeometry),
-                        }),
-                      ),
-                    ),
-                  ],
+                  [h(InnerGrid)],
                 ),
               ),
             );
@@ -616,6 +670,7 @@ describe(useGridLayout, () => {
     expect.hasAssertions();
 
     const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    await flushPromises();
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { button: 2, clientX: 0, clientY: 0, pointerId });
     await tile.trigger("pointermove", { buttons: 2, clientX: cellPitch, clientY: 0, pointerId });
@@ -629,6 +684,7 @@ describe(useGridLayout, () => {
     expect.hasAssertions();
 
     const { wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    await flushPromises();
     const tile = wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     // The release fell outside the grid, so no release reached it, and the move that follows holds no button

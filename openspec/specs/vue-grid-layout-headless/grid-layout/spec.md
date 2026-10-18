@@ -221,3 +221,25 @@ The package SHALL give a press to the grid nearest the pressed element, so a gri
 - **WHEN** an item of the inner grid is dragged
 - **THEN** the inner grid moves that item
 - **AND** the outer grid's item stays where it was
+
+### Requirement: A gesture ends when its layout is replaced
+
+The package SHALL end a gesture when the layout it previews is replaced under it, so a release never writes cells the new layout does not have.
+
+#### Scenario: A layout replaced during a gesture ends it
+
+- **GIVEN** a drag in progress with its placeholder shown
+- **WHEN** the consumer replaces the items
+- **THEN** the placeholder is gone
+- **AND** a release writes nothing
+
+### Requirement: A grid draws no tiles before its width is known
+
+The package SHALL return no tiles until its root reports a width, so a server render or a first frame draws no tile of no width.
+
+#### Scenario: A grid draws no tiles before its width is known
+
+- **GIVEN** a grid whose items are placed but whose width is not yet measured
+- **WHEN** the grid is first rendered
+- **THEN** it draws no tiles
+- **AND** it draws them once the width is reported

@@ -27,7 +27,7 @@ import { findGridAt } from "#src/services/findGridAt";
 import { findGridRoot } from "#src/services/findGridRoot";
 import { mountedGrids } from "#src/services/mountedGrids";
 import { checkIsNestedControl, takeOne } from "@esposter/shared";
-import { computed, onMounted, onUnmounted, ref, shallowRef, toValue } from "vue";
+import { computed, onMounted, onUnmounted, ref, shallowRef, toValue, watch } from "vue";
 
 // The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout as
 // The pointer moves, and the release writes the cells the drag changed, once. The consumer draws the returned tiles and
@@ -58,8 +58,12 @@ export const useGridLayout = <T extends GridItem>(
     };
   };
   // A dragged item stays under the pointer while the others move aside, so it is drawn from its own cell and offset
-  const tiles = computed((): GridTile<T>[] =>
-    layout.value.map((item) => {
+  // The grid draws its tiles once it knows its width, as react-grid-layout's measureBeforeMount does, so neither a
+  // Server render nor a first frame draws tiles of no width
+  const tiles = computed((): GridTile<T>[] => {
+    if (width.value === 0) return [];
+
+    return layout.value.map((item) => {
       const dragged = draggedGesture.value?.origin.id === item.id ? draggedGesture.value : undefined;
       const cell = dragged ? item : (previewItemMap.value.get(item.id) ?? item);
       return {
@@ -68,8 +72,8 @@ export const useGridLayout = <T extends GridItem>(
         item,
         offset: dragged?.offset ?? { x: 0, y: 0 },
       };
-    }),
-  );
+    });
+  });
   const placeholder = computed((): GridGeometry | undefined => {
     if (!gesture.value?.isStarted) return undefined;
 
@@ -86,6 +90,9 @@ export const useGridLayout = <T extends GridItem>(
     gesture.value = undefined;
     preview.value = undefined;
   };
+  // A gesture previews the layout it began on, so a layout replaced under it — a reload, a restore, another column
+  // Count — ends the gesture rather than letting its release write cells the new layout never had
+  watch(layout, () => resetGesture());
 
   // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
   const startGesture = (event: PointerEvent, item: T, edge?: ResizeEdge) => {
