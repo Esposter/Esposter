@@ -1,9 +1,9 @@
 import type { AbyssBenedictionChoice } from "#src/models/spiralAbyss/AbyssBenedictionChoice";
 
 import { pickAbyssBenedictionList } from "#src/services/spiralAbyss/pickAbyssBenedictionList";
+import { MILLISECONDS_IN_DAY } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
-const MILLISECONDS_IN_DAY = 86_400_000;
 const LISTS: AbyssBenedictionChoice[][] = [
   [{ descriptionTextHash: 1, towerBuffId: 1, weight: 100 }],
   [{ descriptionTextHash: 2, towerBuffId: 2, weight: 100 }],
