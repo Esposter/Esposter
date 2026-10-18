@@ -1,11 +1,11 @@
-import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
+import type { NamedHitCall, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { describe, expect, test } from "vitest";
 
 // A call that lands at the delay, from the declaration at the site, giving its hitmark as the candidate
-const call = (site: string, delay: number) => ({
+const call = (site: string, delay: number): NamedHitCall => ({
   delay,
   fieldMap: new Map([
     ["hitmarkFrames", [{ provenance: { file: "burst.go", line: delay, source: KitSource.Gcsim }, value: delay }]],
