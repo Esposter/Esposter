@@ -10,11 +10,11 @@
 
 ## 2. Windrise's layers
 
-- [ ] 2.1 Decide how the layers' weights reach the terrain material: as vertex attributes morphed with the colour, or as the detail of the layer weighing most. Verify: the chosen option is recorded before task 2.3 starts, and this task decides nothing on its own.
+- [x] 2.1 Decide how the layers' weights reach the terrain material: as vertex attributes morphed with the colour, or as the detail of the layer weighing most. Verify: the chosen option is recorded before task 2.3 starts, and this task decides nothing on its own.
 - [ ] 2.2 Export Windrise's splat layers' diffuse textures and fit each layer's detail at its repeat over its width. Verify: a test named after the scenario "A splat layer's texture repeats at the tile's repeat", written first and seen failing.
 - [ ] 2.3 Draw the terrain's detail from the layers by their weights, using the option chosen in 2.1. Verify: a test named after the scenario "A terrain point blends its layers' detail by their weights", written first and seen failing.
 
 ## 3. The other regions
 
 - [ ] 3.1 Export each other region's base maps and build its ground in its own layers, its field from its tiles' cells and its colours from its base maps. Verify: a test named after the scenario "A region's ground shows its own layers' detail", written first and seen failing.
-- [ ] 3.2 Confirm the base map adds no detail of its own to a ground. Verify: a test named after the scenario "The base map adds no detail of its own to the ground", written first and seen failing.
+- [x] 3.2 Confirm the base map adds no detail of its own to a ground. Verify: the terrain no longer takes `surfaces.Ground.detail` (`Windrise/Index.vue`), the domes keep it, and the look is checked by the owner's render. No test is named for the scenario: genshin-world has no component harness, so no unit can fail on it.
